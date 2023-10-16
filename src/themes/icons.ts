@@ -1,0 +1,21 @@
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import PortraitOutlinedIcon from '@mui/icons-material/PortraitOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import SearchIcon from '@mui/icons-material/Search';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import LanguageIcon from '@mui/icons-material/Language';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
+
+
+
+
+export const PLACE_ICON = PlaceOutlinedIcon;
+export const SHIPPING_CAR_ICON = LocalShippingOutlinedIcon;
+export const STAFF_ICON =  PortraitOutlinedIcon;
+export const DOCUMENT_ICON = DescriptionOutlinedIcon;
+export const SEARCH_ICON = SearchIcon;
+export const NOTIFICATION_ICON = NotificationsNoneIcon;
+export const LANGUAGE_ICON = LanguageIcon;
+export const RIGHT_ARROW_ICON = ChevronRightIcon;
