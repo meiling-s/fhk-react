@@ -22,7 +22,7 @@ const MainDrawer = () => {
   let drawerMenus: { name: string; icon: any;onclick:()=>void;}[] = [
     { name: "回收點", icon: <PLACE_ICON />, onclick: () =>  navigate("/homepage")},
     { name: "回收運單", icon: <SHIPPING_CAR_ICON />,onclick: () =>  navigate("/homepage/collectionorder")},
-    { name: "報表", icon: <DOCUMENT_ICON />,onclick: () =>  navigate("/homepage") },
+    { name: "報表", icon: <DOCUMENT_ICON />,onclick: () =>  navigate("/homepage/report") },
     { name: "員工", icon: <STAFF_ICON />,onclick: () =>  navigate("/homepage/staff") },
   ];
   
