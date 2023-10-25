@@ -12,16 +12,20 @@ import {
   STAFF_ICON,
 } from "../themes/icons";
 import logo_company from "../logo_company.png";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 225;
 
-let drawerMenus: { name: string; icon: any }[] = [
-  { name: "回收點", icon: <PLACE_ICON /> },
-  { name: "回收運單", icon: <SHIPPING_CAR_ICON /> },
-  { name: "報表", icon: <DOCUMENT_ICON /> },
-  { name: "員工", icon: <STAFF_ICON /> },
-];
+
 const MainDrawer = () => {
+  const navigate = useNavigate();
+  let drawerMenus: { name: string; icon: any;onclick:()=>void;}[] = [
+    { name: "回收點", icon: <PLACE_ICON />, onclick: () =>  navigate("/homepage")},
+    { name: "回收運單", icon: <SHIPPING_CAR_ICON />,onclick: () =>  navigate("/homepage/collectionorder")},
+    { name: "報表", icon: <DOCUMENT_ICON />,onclick: () =>  navigate("/homepage") },
+    { name: "員工", icon: <STAFF_ICON />,onclick: () =>  navigate("/homepage/staff") },
+  ];
+  
   return (
     <Drawer
       sx={{
@@ -47,7 +51,7 @@ const MainDrawer = () => {
           <img src={logo_company} alt="logo_company" style={{width:'90px'}} />
         </Box>
         {drawerMenus.map((drawerMenu, index) => (
-          <ListItem sx={{ marginTop: 2 }} key={drawerMenu.name} disablePadding>
+          <ListItem sx={{ marginTop: 2 }} key={drawerMenu.name} onClick={drawerMenu.onclick} disablePadding>
             <ListItemButton
                    sx={{
                     '&:hover .MuiSvgIcon-root': {
