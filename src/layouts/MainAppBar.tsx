@@ -25,19 +25,18 @@ import BackgroundLetterAvatars from "../components/CustomAvatar";
 import CustomCard from "../components/CustomCard";
 import { CollectionPointType } from "../utils/collectionPointType";
 import { start } from "repl";
+import { useNavigate } from "react-router-dom";
 
 
 const MainAppBar = () => {
+
   const [keywords, setKeywords] = useState<string>("");
+  const navigate = useNavigate();
   const drawerWidth = 246;
 
   const onKeywordsChange = (k: string) => {
     setKeywords(k);
   };
-
- 
-  
-
 
   return (
     //<Box flexDirection={"row"} sx={{ flexGrow: 1 }}>
@@ -90,6 +89,7 @@ const MainAppBar = () => {
                   collectionpointadmin
                 </Typography>
                 <Button
+                  onClick={() => navigate("/")}
                   sx={{
                     flex: 1,
                     color: "black",
