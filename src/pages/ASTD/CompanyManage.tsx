@@ -1,8 +1,7 @@
-import { Alert, Box, Button, Checkbox, IconButton, InputAdornment, Modal, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, TextField, Typography } from "@mui/material";
+import { Box, Button, Checkbox, IconButton, InputAdornment, Modal, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, TextField, Typography } from "@mui/material";
 import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
-import { CSSProperties, useState } from "react";
+import { useState } from "react";
 import { visuallyHidden } from '@mui/utils';
-import { CSSProp } from "styled-components";
 import React from "react";
 import { createInvitation } from "../../APICalls/tenantManage";
 import { login } from "../../APICalls/login";
@@ -369,7 +368,11 @@ function CompanyManage(){
     };
 
     async function onInviteFormSubmit(TChiName: string, SChiName: string, EngName: string, type: string, BRNo: string, remark: string){
-        const accessToken = await login("admin1","admin1","astd");
+        const accessToken = await login({
+            username: 'admin1',
+            password: 'admin1',
+            realm: 'astd',
+        });
         const result = await createInvitation({TChiName,SChiName,EngName,type,BRNo,remark},accessToken);
         console.log(result);
         setInvSendModal(true);

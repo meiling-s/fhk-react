@@ -1,28 +1,30 @@
 import {
   Box,
   Button,
-  Container,
   IconButton,
-  Input,
   InputAdornment,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import styled from "styled-components";
 import logo_company from "../logo_company.png";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { login } from "../APICalls/login";
 
 const Login = () => {
-
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const navigate = useNavigate();
 
-  const onLoginButtonClick = (userName: String) => {
+  const onLoginButtonClick = async (userName: string) => {
+    const accessToken = await login({
+      username: userName,
+      password: password,
+      realm: 'astd'
+    });
     switch(userName){
       case "astd":
         navigate("/astd");
@@ -33,6 +35,7 @@ const Login = () => {
       default:
         navigate("/astd");
     }
+    console.log(accessToken);
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -80,7 +83,6 @@ const Login = () => {
                 sx: styles.textField
               }}
               onChange={(event) => {
-                console.log(event.target.value);
                 setUserName(event.target.value);
               }}
             />
@@ -102,8 +104,7 @@ const Login = () => {
                 ),
               }}
               onChange={(event) => {
-                console.log(event.target.value);
-                setUserName(event.target.value);
+                setPassword(event.target.value);
               }}
             />
           </Box>
