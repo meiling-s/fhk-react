@@ -76,7 +76,7 @@ import CustomCopyrightSection from "../../components/CustomCopyrightSection";
             </Box>
 
             <Box>
-                <Typography sx={styles.typo}>EPD 合約（可上傳多張合約</Typography>
+                <Typography sx={styles.typo}>EPD 合約（可上傳多張合約)</Typography>
                 <Card sx={{
                     borderRadius: 5,
                     backgroundColor: "#F4F4F4",

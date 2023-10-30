@@ -1,10 +1,11 @@
 import { Box, Button, Checkbox, IconButton, InputAdornment, Modal, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, TextField, Typography } from "@mui/material";
 import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { visuallyHidden } from '@mui/utils';
 import React from "react";
 import { createInvitation } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
+import { defaultPath } from "../../constants/constant";
 
 type Company = {
     id: string,
@@ -112,10 +113,11 @@ interface HeadCell {
 
 type inviteModal = {
     open: boolean,
-    onClose: () => void
+    onClose: () => void,
+    id: string
 }
 
-function InviteModal({open,onClose}: inviteModal){
+function InviteModal({open,onClose,id}: inviteModal){
 
     return(
         <Modal
@@ -164,6 +166,7 @@ function InviteModal({open,onClose}: inviteModal){
                         <Typography sx={styles.typo}>發送連結邀請</Typography>
                         <TextField
                             fullWidth
+                            value={defaultPath.tenantRegisterPath+id}
                             onChange={(event) => {
                                 console.log(event.target.value);
                             }}
@@ -172,6 +175,7 @@ function InviteModal({open,onClose}: inviteModal){
                                 endAdornment: (
                                   <InputAdornment position="end" sx={{height: "100%"}}>
                                     <Button
+                                        onClick={() => navigator.clipboard.writeText(defaultPath.tenantRegisterPath+id)}
                                         sx={[styles.btn_WhiteGreenTheme,{
                                             width:'90px',
                                             height: "100%"
@@ -210,16 +214,17 @@ function InviteForm({
     const [type, setType] = useState<string>("");
     const [BRN, setBRN] = useState<string>("");
     const [remark, setRemark] = useState<string>("");
+    const [submitable, setSubmitable] = useState<boolean>(false);
 
-    function checkSubmitable(){
+    useEffect(()=>{
         //check if any of these value empty
         if( TChiName && SChiName && EngName && type && BRN ){
             //should also check if value valid
-            return true;
+            setSubmitable(true);
         }else{
-            return false;
+            setSubmitable(false);
         }
-    }
+    },[TChiName,SChiName,EngName,type,BRN])
 
     return(
 
@@ -306,6 +311,7 @@ function InviteForm({
                     <Box sx={{ alignSelf: "center" }}
                     >
                         <Button
+                            disabled={!submitable}
                             onClick={() => onSubmit(TChiName,SChiName,EngName,type,BRN,remark)}
                             sx={styles.formButton}
                             >
@@ -332,6 +338,8 @@ function CompanyManage(){
     const [invFormModal, setInvFormModal] = useState<boolean>(false);
 
     const [invSendModal, setInvSendModal] = useState<boolean>(false);
+
+    const [InviteId, setInviteId] = useState<string>("");
 
     const handleRequestSort = (_event: React.MouseEvent<unknown>, property: string) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -402,9 +410,13 @@ function CompanyManage(){
             createdBy: "string",
             updatedBy: "string"
         });
-        console.log(result);
-        setInvSendModal(true);
-        setInvFormModal(false);
+        if(result!=null){
+            console.log(result);
+            setInviteId(result.data?.tenantId);
+            setInvSendModal(true);
+            setInvFormModal(false);
+        }
+        
     }
 
     return(
@@ -543,7 +555,7 @@ function CompanyManage(){
                 
                 <InviteForm open={invFormModal} onClose={() => setInvFormModal(false)} onSubmit={onInviteFormSubmit}/>
 
-                <InviteModal open={invSendModal} onClose={() => setInvSendModal(false)}/>
+                <InviteModal open={invSendModal} onClose={() => setInvSendModal(false)} id={InviteId}/>
             </Box>
         </Box>
     );

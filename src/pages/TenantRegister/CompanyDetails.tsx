@@ -11,22 +11,66 @@ import logo_company from "../../logo_company.png";
 import { useNavigate, useParams } from "react-router-dom";
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import CustomCopyrightSection from "../../components/CustomCopyrightSection";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getTenantById } from "../../APICalls/tenantManage";
+
+//this type just for register usage
+type registerData = {
+  type: string,
+  ChiName: string,
+  EngName: string,
+  BRN: string
+}
   
 const CompanyDetails = () => {
+
   const navigate = useNavigate();
   const { inviteID } = useParams();
 
-  //should use the invite ID to ask for the data from DB
-  var type = "", cName = "", eName = "", brn = "";    //brn = Business registration no.
-  if(inviteID === "testinviteID"){
-    type = "Collector";
-    cName = "回收公司";
-    eName = "Collector Company";
-    brn = "XY123456";
+  const [type, setType] = useState("");
+  const [ChiName, setChiName] = useState("");
+  const [EngName, setEngName] = useState("");
+  const [BRN, setBRN] = useState("");   //brn = Business registration no.
+  const [BRNImage, setBRNImage] = useState("");
+
+  useEffect(()=>{
+    initInviteForm();
+  },[]);
+
+  async function initInviteForm() {
+    console.log('invite id: '+inviteID);
+    if(inviteID){
+      const result = await getTenantById(inviteID);
+      const data = result?.data;
+      setChiName(data?.companyNameTchi);
+      setEngName(data?.companyNameEng);
+      setBRN(data?.brNo);
+      setType(data?.tenantType);
+      console.log(result?.data);
+    }
+  }
+
+  const formData = () => {
+    return{
+      type: type,
+      ChiName: ChiName,
+      EngName: EngName,
+      BRN: BRN,
+      BRNImage: BRNImage
+    }
   }
 
   const onContinueButtonClick = () => {
-    navigate("/register/contact");
+    return(
+      <Link
+        to={{
+          pathname: "/register/contact"
+        }}
+        state={formData()}
+      />
+    )
+    navigate("");
   };
 
   return (
@@ -82,7 +126,7 @@ const CompanyDetails = () => {
               InputProps={{
                   sx: styles.textField
               }}
-              value={cName}
+              value={ChiName}
             />
           </Box>
           <Box>
@@ -93,7 +137,7 @@ const CompanyDetails = () => {
               InputProps={{
                   sx: styles.textField
               }}
-              value={eName}
+              value={EngName}
             />
           </Box>
           <Box>
@@ -104,7 +148,7 @@ const CompanyDetails = () => {
               InputProps={{
                   sx: styles.textField
               }}
-              value={brn}
+              value={BRN}
             />
           </Box>
 
