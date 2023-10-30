@@ -36,7 +36,7 @@ const Login = () => {
       default:
         navigate("/astd");
     }
-    console.log(accessToken);
+    console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
     localStorage.setItem(localStorgeKeyName.keycloakToken, accessToken || '');
   };
 
