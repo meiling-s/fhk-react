@@ -367,13 +367,39 @@ function CompanyManage(){
         setSelected(newSelected);
     };
 
-    async function onInviteFormSubmit(TChiName: string, SChiName: string, EngName: string, type: string, BRNo: string, remark: string){
-        const accessToken = await login({
-            username: 'admin1',
-            password: 'admin1',
-            realm: 'astd',
+    const onInviteFormSubmit = async(
+        TChiName: string, 
+        SChiName: string, 
+        EngName: string, 
+        type: string, 
+        BRNo: string, 
+        remark: string
+    ) => {
+        const result = await createInvitation({
+            tenantId: 2,
+            companyNameTchi: TChiName,
+            companyNameSchi: SChiName,
+            companyNameEng: EngName,
+            tenantType: type,
+            status: "string",
+            brNo: BRNo,
+            remark: remark,
+            contactNo: "string",
+            email: "string",
+            contactName: "string",
+            brPhoto: "string",
+            decimalPlace: 0,
+            monetaryValue: "string",
+            inventoryMethod: "string",
+            allowImgSize: 0,
+            allowImgNum: 0,
+            approvedAt: "2023-10-25T07:14:25.562Z",
+            approvedBy: "string",
+            rejectedAt: "2023-10-25T07:14:25.562Z",
+            rejectedBy: "string",
+            createdBy: "string",
+            updatedBy: "string"
         });
-        const result = await createInvitation({TChiName,SChiName,EngName,type,BRNo,remark},accessToken);
         console.log(result);
         setInvSendModal(true);
         setInvFormModal(false);
