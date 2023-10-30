@@ -1,7 +1,4 @@
-import { Box, Button, Typography } from '@mui/material'
-import React from 'react'
-import CustomCard from '../../components/CustomCard'
-import { CollectionPointType } from '../../utils/collectionPointType'
+import { Box, Typography } from '@mui/material'
 
 const Staff = () => {
    

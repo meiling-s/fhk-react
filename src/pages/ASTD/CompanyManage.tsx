@@ -4,7 +4,6 @@ import { useState } from "react";
 import { visuallyHidden } from '@mui/utils';
 import React from "react";
 import { createInvitation } from "../../APICalls/tenantManage";
-import { login } from "../../APICalls/login";
 
 type Company = {
     id: string,

@@ -2,19 +2,13 @@ import {
   AppBar,
   Box,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  Container,
-  Grid,
   IconButton,
   InputAdornment,
   TextField,
   Toolbar,
   Typography,
-  styled,
 } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   LANGUAGE_ICON,
   NOTIFICATION_ICON,
@@ -22,9 +16,6 @@ import {
   SEARCH_ICON,
 } from "../themes/icons";
 import BackgroundLetterAvatars from "../components/CustomAvatar";
-import CustomCard from "../components/CustomCard";
-import { CollectionPointType } from "../utils/collectionPointType";
-import { start } from "repl";
 import { useNavigate } from "react-router-dom";
 
 

@@ -13,6 +13,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { login } from "../APICalls/login";
 import { localStorgeKeyName } from "../constants/constant";
+import CustomCopyrightSection from "../components/CustomCopyrightSection";
 
 const Login = () => {
   const [userName, setUserName] = useState("");
@@ -135,9 +136,7 @@ const Login = () => {
           </Box>
         </Stack>
       </Box>
-      <Typography sx={{ color: "white", marginBottom: "20px" }}>
-        Copyright by GreenHoop 2023
-      </Typography>
+      <CustomCopyrightSection />
     </Box>
   );
 };

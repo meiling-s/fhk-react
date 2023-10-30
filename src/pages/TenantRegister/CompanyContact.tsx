@@ -1,15 +1,16 @@
 import {
-    Box,
-    Button,
-    Stack,
-    TextField,
-    Typography,
-    Card,
-    ButtonBase
-  } from "@mui/material";
-  import logo_company from "../../logo_company.png";
-  import { useNavigate } from "react-router-dom";
-  import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
+  Box,
+  Button,
+  Stack,
+  TextField,
+  Typography,
+  Card,
+  ButtonBase
+} from "@mui/material";
+import logo_company from "../../logo_company.png";
+import { useNavigate } from "react-router-dom";
+import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
+import CustomCopyrightSection from "../../components/CustomCopyrightSection";
   
   const TenantRegisterForm2 = () => {
 
@@ -22,13 +23,13 @@ import {
     return (
       <Box
         sx={{
-            backgroundImage: "linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)",
-            minHeight: "100vh",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
+          backgroundImage: "linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)",
+          minHeight: "100vh",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <Box
@@ -117,11 +118,8 @@ import {
             </Box>
           </Stack>
         </Box>
-        <Typography sx={{ color: "white", marginBottom: "10px" }}>
-          Copyright by GreenHoop 2023
-        </Typography>
+        <CustomCopyrightSection />
       </Box>
-
     );
   };
   
