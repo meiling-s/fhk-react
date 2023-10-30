@@ -4,6 +4,7 @@ import { useState } from "react";
 import { visuallyHidden } from '@mui/utils';
 import React from "react";
 import { createInvitation } from "../../APICalls/tenantManage";
+import { generateNumericId } from "../../utils/uuidgenerator";
 
 type Company = {
     id: string,
@@ -374,8 +375,10 @@ function CompanyManage(){
         BRNo: string, 
         remark: string
     ) => {
+        const randomId = generateNumericId();
+        console.log(randomId);
         const result = await createInvitation({
-            tenantId: 2,
+            tenantId: randomId,
             companyNameTchi: TChiName,
             companyNameSchi: SChiName,
             companyNameEng: EngName,
