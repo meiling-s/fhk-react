@@ -12,6 +12,7 @@ import logo_company from "../logo_company.png";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { login } from "../APICalls/login";
+import { localStorgeKeyName } from "../constants/constant";
 
 const Login = () => {
   const [userName, setUserName] = useState("");
@@ -36,6 +37,7 @@ const Login = () => {
         navigate("/astd");
     }
     console.log(accessToken);
+    localStorage.setItem(localStorgeKeyName.keycloakToken, accessToken || '');
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);

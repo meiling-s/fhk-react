@@ -1,3 +1,4 @@
+import { localStorgeKeyName } from '../constants/constant';
 import axios from './authAxios'
 //import axios from 'axios'
 
@@ -29,7 +30,7 @@ export async function createInvitation(data: invitation, token: string){
 
     const headers = {
       'Content-Type': 'application/json', 
-      'Authorization': "Bearer "+token
+      'Authorization': `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
     }
 
     console.log("token: ",token);
