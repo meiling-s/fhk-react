@@ -17,6 +17,7 @@ import {
 } from "../themes/icons";
 import BackgroundLetterAvatars from "../components/CustomAvatar";
 import { useNavigate } from "react-router-dom";
+import { localStorgeKeyName } from "../constants/constant";
 
 
 const MainAppBar = () => {
@@ -76,8 +77,7 @@ const MainAppBar = () => {
                 <Typography
                   sx={{ flex: 1, color: "black", fontWeight: "bold" }}
                 >
-                  {" "}
-                  collectionpointadmin
+                  {localStorage.getItem(localStorgeKeyName.username)}
                 </Typography>
                 <Button
                   onClick={() => navigate("/")}

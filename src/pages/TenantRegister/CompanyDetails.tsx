@@ -5,43 +5,58 @@ import {
   TextField,
   Typography,
   Card,
-  ButtonBase
+  ButtonBase,
+  ImageList,
+  ImageListItem
 } from "@mui/material";
 import logo_company from "../../logo_company.png";
 import { useNavigate, useParams } from "react-router-dom";
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import CustomCopyrightSection from "../../components/CustomCopyrightSection";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { getTenantById } from "../../APICalls/tenantManage";
-
-//this type just for register usage
-type registerData = {
-  type: string,
-  ChiName: string,
-  EngName: string,
-  BRN: string
-}
+import { RegisterItem } from "../../interfaces/account";
+import ImageUploading, { ImageListType } from "react-images-uploading";
+import { TENANT_REGISTER_CONFIGS } from "../../constants/configs";
   
+const ImageToBase64 = (images: ImageListType) => {
+  var base64: string[] = [];
+  images.map((image) => {
+    if(image['data_url']){
+      var imageBase64: string = image['data_url'].toString();
+      imageBase64 = imageBase64.split(',')[1];
+      console.log("dataURL: ",imageBase64);
+      base64.push(imageBase64);
+    }
+  })
+  return base64;
+}
+
 const CompanyDetails = () => {
 
   const navigate = useNavigate();
-  const { inviteID } = useParams();
+  const { inviteId } = useParams();
 
   const [type, setType] = useState("");
   const [ChiName, setChiName] = useState("");
   const [EngName, setEngName] = useState("");
   const [BRN, setBRN] = useState("");   //brn = Business registration no.
-  const [BRNImage, setBRNImage] = useState("");
+  const [BRNImages, setBRNImages] = useState<ImageListType>([]);
+
+  const onImageChange = (imageList: ImageListType, addUpdateIndex: number[]|undefined) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setBRNImages(imageList);
+  };
 
   useEffect(()=>{
     initInviteForm();
   },[]);
 
   async function initInviteForm() {
-    console.log('invite id: '+inviteID);
-    if(inviteID){
-      const result = await getTenantById(inviteID);
+    console.log('invite id: '+inviteId);
+    if(inviteId){
+      const result = await getTenantById(inviteId);
       const data = result?.data;
       setChiName(data?.companyNameTchi);
       setEngName(data?.companyNameEng);
@@ -52,25 +67,16 @@ const CompanyDetails = () => {
   }
 
   const formData = () => {
-    return{
-      type: type,
-      ChiName: ChiName,
-      EngName: EngName,
-      BRN: BRN,
-      BRNImage: BRNImage
+    const item = {
+      //type, ChiName, EngName, BRN doesn't require to upload to the server
+      BRNImages: ImageToBase64(BRNImages),
+      inviteId: inviteId
     }
+    return item;
   }
 
   const onContinueButtonClick = () => {
-    return(
-      <Link
-        to={{
-          pathname: "/register/contact"
-        }}
-        state={formData()}
-      />
-    )
-    navigate("");
+    navigate("/register/contact",{state:formData()});
   };
 
   return (
@@ -152,28 +158,59 @@ const CompanyDetails = () => {
             />
           </Box>
 
-          <Card sx={{
-            borderRadius: 2,
-            backgroundColor: "#F4F4F4",
-            width: "100%",
-            height: 120,
-          }}>
-            <ButtonBase
-              disabled={ type === "" ? true : false }
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onClick={event => {}}>
-              <CameraAltOutlinedIcon style={{color: "#ACACAC"}}/>
-              <Typography sx={[styles.typo,{fontWeight: "bold"}]}>上載商業登記圖片</Typography>
-            </ButtonBase>
-          </Card>
-
+          <ImageUploading
+            multiple
+            value={BRNImages}
+            onChange={onImageChange}
+            maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
+            maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
+            dataURLKey="data_url"
+          >
+            {({
+              imageList,
+              onImageUpload,
+              onImageRemoveAll,
+              onImageUpdate,
+              onImageRemove,
+              isDragging,
+              dragProps,
+            }) => (
+              <Box>
+                <Card sx={{
+                  borderRadius: 2,
+                  backgroundColor: "#F4F4F4",
+                  width: "100%",
+                  height: 120,
+                }}>
+                  <ButtonBase
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    onClick={event => onImageUpload()}>
+                    <CameraAltOutlinedIcon style={{color: "#ACACAC"}}/>
+                    <Typography sx={[styles.typo,{fontWeight: "bold"}]}>上載商業登記圖片</Typography>
+                  </ButtonBase>
+                </Card>
+                <ImageList sx={styles.imagesContainer} cols={3} >
+                  {imageList.map((image) => (
+                    <ImageListItem  key={image['file']?.name}>
+                      <img
+                        style={styles.image}
+                        src={image['data_url']}
+                        alt={image['file']?.name}
+                        loading="lazy"
+                      />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
+              </Box>
+            )}
+          </ImageUploading>
           <Box>
             <Button
               fullWidth
@@ -204,11 +241,18 @@ let styles = {
     fontSize: 14
   },
   textField: {
-      borderRadius: "10px",
-      fontWeight: "500",
-      "& .MuiOutlinedInput-input": {
-          padding: "10px"
-      }
+    borderRadius: "10px",
+    fontWeight: "500",
+    "& .MuiOutlinedInput-input": {
+        padding: "10px"
+    }
+  },
+  imagesContainer: {
+    width: "100%",
+    height: "fit-content"
+  },
+  image: {
+    aspectRatio: '1/1'
   }
 }
 

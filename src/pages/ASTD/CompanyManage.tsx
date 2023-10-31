@@ -3,15 +3,16 @@ import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
 import { useEffect, useState } from "react";
 import { visuallyHidden } from '@mui/utils';
 import React from "react";
-import { createInvitation } from "../../APICalls/tenantManage";
+import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
 import { defaultPath } from "../../constants/constant";
+import format from "date-fns/format";
 
 type Company = {
     id: string,
     cName: string,
     eName: string,
-    status: number,
+    status: string,
     type: string,
     createDate: Date,
     accountNum: number
@@ -21,18 +22,13 @@ function createCompany(
     id: string,
     cName: string,
     eName: string,
-    status: number,
+    status: string,
     type: string,
     createDate: Date,
     accountNum: number
 ): Company {
     return { id, cName, eName, status, type, createDate, accountNum };
 }
-
-const rows = [
-    createCompany("T001", '回收公司1', 'Collector Company1', 1, 'collector', new Date("2023/09/20 2:31pm"), 3),
-    createCompany("T002", '回收公司2', 'Collector Company2', 1, 'collector', new Date("2023/09/20 4:54pm"), 6),
-];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -69,7 +65,7 @@ interface HeadCell {
     {
         id: 'id',
         numeric: false,
-        disablePadding: true,
+        disablePadding: false,
         label: '公司編號',
     },
     {
@@ -107,7 +103,7 @@ interface HeadCell {
         numeric: false,
         disablePadding: false,
         label: '帳戶數量',
-    },
+    }
 
   ];
 
@@ -115,6 +111,18 @@ type inviteModal = {
     open: boolean,
     onClose: () => void,
     id: string
+}
+
+const Required = () => {
+    return(
+        <Typography
+            sx={{
+                color: 'red',
+                ml: "5px"
+            }}>
+                *
+        </Typography>
+    )
 }
 
 function InviteModal({open,onClose,id}: inviteModal){
@@ -134,7 +142,7 @@ function InviteModal({open,onClose,id}: inviteModal){
                         </Typography>
                     </Box>  
                     <Box>
-                        <Typography sx={styles.typo}>以電郵地址邀請</Typography>
+                        <Typography sx={styles.typo}>以電郵地址邀請<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入電郵地址"
@@ -242,7 +250,7 @@ function InviteForm({
                         </Typography>
                     </Box>  
                     <Box>
-                        <Typography sx={styles.typo}>公司類別</Typography>
+                        <Typography sx={styles.typo}>公司類別<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入公司類別"
@@ -253,7 +261,7 @@ function InviteForm({
                         />
                     </Box>
                     <Box>
-                        <Typography sx={styles.typo}>公司繁體中文名</Typography>
+                        <Typography sx={styles.typo}>公司繁體中文名<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入公司繁體中文名稱"
@@ -264,7 +272,7 @@ function InviteForm({
                         />
                     </Box>
                     <Box>
-                        <Typography sx={styles.typo}>公司簡體中文名</Typography>
+                        <Typography sx={styles.typo}>公司簡體中文名<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入公司簡體中文名稱"
@@ -275,7 +283,7 @@ function InviteForm({
                         />
                     </Box>
                     <Box>
-                        <Typography sx={styles.typo}>公司英文名</Typography>
+                        <Typography sx={styles.typo}>公司英文名<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入公司英文名稱"
@@ -286,7 +294,7 @@ function InviteForm({
                         />
                     </Box>
                     <Box>
-                        <Typography sx={styles.typo}>商業登記編號</Typography>
+                        <Typography sx={styles.typo}>商業登記編號<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入商業登記編號"
@@ -329,6 +337,8 @@ function CompanyManage(){
 
     const drawerWidth = 246;
 
+    const [searchText, setSearchText] = useState<string>("");
+
     const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
     const [selected, setSelected] = useState<string[]>([]);
@@ -341,19 +351,83 @@ function CompanyManage(){
 
     const [InviteId, setInviteId] = useState<string>("");
 
+    const [companies, setCompanies] = useState<Company[]>([]);
+
+    const [filterCompanies, setFilterCompanies] = useState<Company[]>([]);
+
+    useEffect(()=>{
+        initCompanies()
+    },[]);
+
+    async function initCompanies() {
+        const result = await getAllTenant();
+        const data = result?.data;
+        if(data){
+            var coms: Company[] = [];
+            data.map((com: any) => {
+                coms.push(
+                    createCompany(
+                        com?.tenantId,
+                        com?.companyNameTchi,
+                        com?.companyNameEng,
+                        com?.status,
+                        com?.tenantType,
+                        new Date(com?.createdAt),
+                        0
+                ));
+            })
+            setCompanies(coms);
+            setFilterCompanies(coms);
+        }
+    }
+
     const handleRequestSort = (_event: React.MouseEvent<unknown>, property: string) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
 
+    const handleFilterCompanies = (searchWord: string) => {
+
+        if(searchWord != ""){
+            const filteredCompanies: Company[] = [];
+            companies.map((company)=>{
+                if(
+                    company.id.toString().includes(searchWord) ||
+                    company.cName.includes(searchWord) ||
+                    company.eName.includes(searchWord) ||
+                    company.status.includes(searchWord) ||
+                    company.type.includes(searchWord) ||
+                    format(company.createDate,"yyyy/MM/dd HH:mm").includes(searchWord) ||
+                    company.accountNum.toString().includes(searchWord)
+                ){
+                    filteredCompanies.push(company);
+                }
+            });
+
+            if(filteredCompanies){
+                setFilterCompanies(filteredCompanies);
+            }
+
+        }else{
+            console.log("searchWord empty, don't filter companies")
+            setFilterCompanies(companies);
+        }
+        
+    }
+
     const createSortHandler = (property: keyof Company) => (event: React.MouseEvent<unknown>) => {
         handleRequestSort(event, property);
     };
 
     function onSelectAllClick(){
-        const newSelected = rows.map((row) => row.id);
-        setSelected(newSelected);
+        if(selected.length < companies.length){
+            const newSelected = companies.map((company) => company.id);
+            setSelected(newSelected);
+        }else{
+            setSelected([]);
+        }
+        
     }
 
     const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
@@ -397,7 +471,8 @@ function CompanyManage(){
             contactNo: "string",
             email: "string",
             contactName: "string",
-            brPhoto: "string",
+            brPhoto: ["string"],
+            epdPhoto: ["string"],
             decimalPlace: 0,
             monetaryValue: "string",
             inventoryMethod: "string",
@@ -445,6 +520,7 @@ function CompanyManage(){
                 </Button>
                 <TextField
                     id="searchCompany"
+                    onChange={(event) => handleFilterCompanies(event.target.value)}
                     sx={{
                         mt: 3,
                         width: "100%",
@@ -483,11 +559,14 @@ function CompanyManage(){
                         size='small'
                     >
                         <TableHead>
-                            <TableRow>
-                                <TableCell sx={styles.cell}>
+                            <TableRow
+                                key={"header"}
+                                tabIndex={-1}
+                                sx={[styles.headerRow]}>
+                                <TableCell sx={styles.headCell}>
                                     <Checkbox
                                         color="primary"
-                                        indeterminate={selected.length > 0 && selected.length < rows.length}
+                                        indeterminate={selected.length > 0 && selected.length < companies.length}
                                         checked={ selected.length > 0 }
                                         onChange={onSelectAllClick}
                                         inputProps={{
@@ -496,32 +575,34 @@ function CompanyManage(){
                                     />
                                 </TableCell>
                                 {headCells.map((headCell) => (
-                                <TableCell
-                                    key={headCell.id}
-                                    align={headCell.numeric ? 'right' : 'left'}
-                                    padding={headCell.disablePadding ? 'none' : 'normal'}
-                                    sortDirection={orderBy === headCell.id ? order : false}
-                                    sx={styles.cell}
-                                >
-                                    <TableSortLabel
-                                    active={orderBy === headCell.id}
-                                    direction={orderBy === headCell.id ? order : 'asc'}
-                                    onClick={createSortHandler(headCell.id)}
+                                    <TableCell
+                                        key={headCell.id}
+                                        align={headCell.numeric ? 'right' : 'left'}
+                                        padding={headCell.disablePadding ? 'none' : 'normal'}
+                                        sortDirection={orderBy === headCell.id ? order : false}
+                                        sx={styles.headCell}
                                     >
-                                    {headCell.label}
-                                    {orderBy === headCell.id ? (
-                                        <Box component="span" sx={visuallyHidden}>
-                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                        </Box>
-                                    ) : null}
-                                    </TableSortLabel>
-                                </TableCell>
+                                        <TableSortLabel
+                                            active={orderBy === headCell.id}
+                                            direction={orderBy === headCell.id ? order : 'asc'}
+                                            onClick={() => {
+                                                createSortHandler(headCell.id)
+                                            }}
+                                        >
+                                            {headCell.label}
+                                            {orderBy === headCell.id ? (
+                                                <Box component="span" sx={visuallyHidden}>
+                                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                </Box>
+                                            ) : null}
+                                        </TableSortLabel>
+                                    </TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((row) => {
-                                const { id, cName, eName, status, type, createDate, accountNum } = row;
+                            {filterCompanies.map((company) => {
+                                const { id, cName, eName, status, type, createDate, accountNum } = company;
                                 return (
                                     <TableRow
                                         hover key={id}
@@ -530,7 +611,7 @@ function CompanyManage(){
                                         sx={[styles.row]}
                                         onClick={(event)=>handleClick(event,id)}
                                         >
-                                        <TableCell sx={styles.cell}>
+                                        <TableCell sx={styles.bodyCell}>
                                             <Checkbox
                                                 color="primary"
                                                 checked={selected.includes(id)}
@@ -539,13 +620,13 @@ function CompanyManage(){
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell sx={styles.cell}>{id}</TableCell>
-                                        <TableCell sx={styles.cell}>{cName}</TableCell>
-                                        <TableCell sx={styles.cell}>{eName}</TableCell>
-                                        <TableCell sx={styles.cell}>{status}</TableCell>
-                                        <TableCell sx={styles.cell}>{type}</TableCell>
-                                        <TableCell sx={styles.cell}>{createDate.toString()}</TableCell>
-                                        <TableCell sx={styles.cell}>{accountNum}</TableCell>
+                                        <TableCell sx={styles.bodyCell}>{id}</TableCell>
+                                        <TableCell sx={styles.bodyCell}>{cName}</TableCell>
+                                        <TableCell sx={styles.bodyCell}>{eName}</TableCell>
+                                        <TableCell sx={styles.bodyCell}>{status}</TableCell>
+                                        <TableCell sx={styles.bodyCell}>{type}</TableCell>
+                                        <TableCell sx={styles.bodyCell}>{format(createDate,"yyyy/MM/dd HH:mm")}</TableCell>
+                                        <TableCell sx={styles.bodyCell}>{accountNum}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -579,6 +660,17 @@ let styles = {
         borderCollapse: 'separate',
         borderSpacing: '0px 10px'
     },
+    headerRow: {
+        //backgroundColor: "#97F33B",
+        borderRadius: 10,
+        mb: 1,
+        "th:first-child": {
+            borderRadius: "10px 0 0 10px"
+        },
+        "th:last-child": {
+            borderRadius: "0 10px 10px 0"
+        },
+    },
     row: {
         backgroundColor: "#FBFBFB",
         borderRadius: 10,
@@ -590,13 +682,18 @@ let styles = {
             borderRadius: "0 10px 10px 0"
         },
     },
-    cell: {
+    headCell: {
+        border: "none",
+        fontWeight: "bold"
+    },
+    bodyCell: {
         border: "none"
     },
     typo: {
         color: "grey",
         fontSize: 14,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        display: "flex"
     },
     textField: {
         borderRadius: "10px",
@@ -628,7 +725,10 @@ let styles = {
         width: "150px",
         borderRadius: 5,
         backgroundColor: "#79CA25",
-        color: "white"
+        color: "white",
+        '&.MuiButton-root:hover':{
+            backgroundColor: "#7AD123",
+        }
     }
 }
 

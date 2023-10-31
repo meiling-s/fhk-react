@@ -10,3 +10,9 @@ export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
     },
   },
 });
+
+export const TENANT_REGISTER_CONFIGS = Object.freeze({
+  maxBRNImages: 3,
+  maxEPDImages: 3,
+  maxImageSize: 3 * 1000 * 1000   //In bytes, MB contains 1000 KB, 1 KB contains 1000 bytes
+})

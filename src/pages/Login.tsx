@@ -22,7 +22,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const onLoginButtonClick = async (userName: string) => {
-    const accessToken = await login({
+    const result = await login({
       username: userName,
       password: password,
       realm: 'astd'
@@ -38,7 +38,8 @@ const Login = () => {
         navigate("/astd");
     }
     console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
-    localStorage.setItem(localStorgeKeyName.keycloakToken, accessToken || '');
+    localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
+    localStorage.setItem(localStorgeKeyName.username, result?.username || '');
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);

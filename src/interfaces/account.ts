@@ -4,6 +4,14 @@ export type LoginItem = {
   realm: string,
 }
 
+//tenant register item
+export type RegisterItem = {
+  contactName: string,
+  contactNo: string,
+  BRNImages: string[],
+  EPDImages: string[]
+}
+
 export type Tenant = {
   tenantId: number,
   companyNameTchi: string,
@@ -16,7 +24,8 @@ export type Tenant = {
   contactNo: string,
   email: string,
   contactName: string,
-  brPhoto: string,
+  brPhoto: string[],
+  epdPhoto: string[],
   decimalPlace: 0,
   monetaryValue: string,
   inventoryMethod: string,

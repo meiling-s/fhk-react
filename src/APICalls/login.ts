@@ -9,7 +9,10 @@ export const login = async(item: LoginItem) => {
       data: item,
     });
     if (response.status === 200) {
-      return response.data?.access_token;
+      return {
+        access_token: response.data?.access_token,
+        username: response.data?.username
+      };
     }
     console.log("Login user Success:", JSON.stringify(response.data));
   } catch (e) {
