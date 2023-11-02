@@ -1,16 +1,11 @@
 import Router from './Router';
-import MainLayout from './layouts/MainLayout';
-
-
-
-
+import axiosSetup from './setups/axiosSetup';
 
 function App() {
+  axiosSetup();
 
   return (
-  
     <Router/>
-  
   );
 }
 

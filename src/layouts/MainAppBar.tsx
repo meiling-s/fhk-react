@@ -2,19 +2,13 @@ import {
   AppBar,
   Box,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  Container,
-  Grid,
   IconButton,
   InputAdornment,
   TextField,
   Toolbar,
   Typography,
-  styled,
 } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   LANGUAGE_ICON,
   NOTIFICATION_ICON,
@@ -22,22 +16,19 @@ import {
   SEARCH_ICON,
 } from "../themes/icons";
 import BackgroundLetterAvatars from "../components/CustomAvatar";
-import CustomCard from "../components/CustomCard";
-import { CollectionPointType } from "../utils/collectionPointType";
-import { start } from "repl";
+import { useNavigate } from "react-router-dom";
+import { localStorgeKeyName } from "../constants/constant";
 
 
 const MainAppBar = () => {
+
   const [keywords, setKeywords] = useState<string>("");
+  const navigate = useNavigate();
   const drawerWidth = 246;
 
   const onKeywordsChange = (k: string) => {
     setKeywords(k);
   };
-
- 
-  
-
 
   return (
     //<Box flexDirection={"row"} sx={{ flexGrow: 1 }}>
@@ -86,10 +77,10 @@ const MainAppBar = () => {
                 <Typography
                   sx={{ flex: 1, color: "black", fontWeight: "bold" }}
                 >
-                  {" "}
-                  collectionpointadmin
+                  {localStorage.getItem(localStorgeKeyName.username)}
                 </Typography>
                 <Button
+                  onClick={() => navigate("/")}
                   sx={{
                     flex: 1,
                     color: "black",

@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from '@mui/material';
 import React from 'react'
-import { CollectionPointType } from '../utils/collectionPointType';
-import CustomCard from '../components/CustomCard';
+import { CollectionPointType } from '../../utils/collectionPointType';
+import CustomCard from '../../components/CustomCard';
 
 const CollectionPoint = () => {
     const collectionPoints : CollectionPointType[] = [
@@ -35,7 +35,7 @@ const CollectionPoint = () => {
         <Box/>
      <CustomCard collectionPoints ={collectionPoints}/>
     </Box>
-    <Box sx={{ width: "55%", backgroundColor: "blue", height: "100%" }}>
+    <Box sx={{ width: "55%", height: "100%" }}>
     
     </Box>
   </Box>
