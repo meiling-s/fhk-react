@@ -9,5 +9,6 @@ export const defaultPath = {
 }
 
 export const layout = {
-  drawerWidth: 246
+  drawerWidth: 246,
+  appbarHeight: "64px"
 }

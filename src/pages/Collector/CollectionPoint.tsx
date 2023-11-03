@@ -44,7 +44,8 @@ const CollectionPoint = () => {
         <Box/>
         <CustomCard collectionPoints ={collectionPoints}/>
       </Box>
-      <Box sx={{ width: "60%", height: "100%" }}>
+      <Box
+        sx={styles.mapRightContainer}>
         <MyMap collectionPoints ={collectionPoints} />
       </Box>
     </Box>
