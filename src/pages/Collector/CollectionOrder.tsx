@@ -1,9 +1,10 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
+import { styles } from '../../constants/styles'
 
 const CollectionOrder = () => {
   return (
-   <Box sx={{display:'flex'}}>
+   <Box sx={styles.innerScreen}>
          <Typography>hi</Typography>
    </Box>
   )

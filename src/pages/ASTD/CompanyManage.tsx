@@ -146,7 +146,7 @@ function InviteModal({open,onClose,id}: inviteModal){
                         <TextField
                             fullWidth
                             placeholder="請輸入電郵地址"
-                            onChange={(event) => {
+                            onChange={(event: { target: { value: any; }; }) => {
                                 console.log(event.target.value);
                             }}
                             InputProps={{
@@ -175,7 +175,7 @@ function InviteModal({open,onClose,id}: inviteModal){
                         <TextField
                             fullWidth
                             value={defaultPath.tenantRegisterPath+id}
-                            onChange={(event) => {
+                            onChange={(event: { target: { value: any; }; }) => {
                                 console.log(event.target.value);
                             }}
                             InputProps={{
@@ -257,7 +257,7 @@ function InviteForm({
                             InputProps={ {
                                 sx: styles.textField
                             }}
-                            onChange={(event) => setType(event.target.value)}
+                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setType(event.target.value)}
                         />
                     </Box>
                     <Box>
@@ -268,7 +268,7 @@ function InviteForm({
                             InputProps={ {
                                 sx: styles.textField
                             }}
-                            onChange={(event) => setTChiName(event.target.value)}
+                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setTChiName(event.target.value)}
                         />
                     </Box>
                     <Box>
@@ -279,7 +279,7 @@ function InviteForm({
                             InputProps={ {
                                 sx: styles.textField
                             }}
-                            onChange={(event) => setSChiName(event.target.value)}
+                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setSChiName(event.target.value)}
                         />
                     </Box>
                     <Box>
@@ -290,7 +290,7 @@ function InviteForm({
                             InputProps={ {
                                 sx: styles.textField
                             }}
-                            onChange={(event) => setEngName(event.target.value)}
+                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setEngName(event.target.value)}
                         />
                     </Box>
                     <Box>
@@ -301,7 +301,7 @@ function InviteForm({
                             InputProps={ {
                                 sx: styles.textField
                             }}
-                            onChange={(event) => setBRN(event.target.value)}
+                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setBRN(event.target.value)}
                         />
                     </Box>
                     <Box>
@@ -520,7 +520,7 @@ function CompanyManage(){
                 </Button>
                 <TextField
                     id="searchCompany"
-                    onChange={(event) => handleFilterCompanies(event.target.value)}
+                    onChange={(event: { target: { value: string; }; }) => handleFilterCompanies(event.target.value)}
                     sx={{
                         mt: 3,
                         width: "100%",
@@ -609,7 +609,7 @@ function CompanyManage(){
                                         tabIndex={-1}
                                         role="checkbox"
                                         sx={[styles.row]}
-                                        onClick={(event)=>handleClick(event,id)}
+                                        onClick={(event: React.MouseEvent<unknown, MouseEvent>)=>handleClick(event,id)}
                                         >
                                         <TableCell sx={styles.bodyCell}>
                                             <Checkbox
