@@ -4,26 +4,23 @@ import { CollectionPointType } from '../../utils/collectionPointType';
 import CustomCard from '../../components/CustomCard';
 import { styles } from '../../constants/styles';
 import { useNavigate } from 'react-router-dom';
+import MyMap from '../../components/MyMap';
 
-function CollectionPoint() {
-
-  console.log("testing testing 123")
+const CollectionPoint = () => {
 
   const navigate = useNavigate();
 
   const collectionPoints : CollectionPointType[] = [
-    {id: "1", collectionName:'緣在堅城',collectionType:'固定服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）'},
-    {id: "2",collectionName:'緣在堅城',collectionType:'流動服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）'},
-    {id: "3",collectionName:'緣在堅城',collectionType:'上門服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）'},
-    {id: "4",collectionName:'緣在堅城',collectionType:'固定服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）'},
+    {collectionName:'緣在堅城',collectionType:'固定服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）',collectionLatitude:{latitude:22.3760,longitude:114.1751},markerColor:'abcdef',collectionFontColor:'#9bd85e',collectionBgColor:'#e4f6dc'},
+    {collectionName:'緣在堅城',collectionType:'流動服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）',collectionLatitude:{latitude:22.3500,longitude:114.2000},markerColor:'e85141',collectionFontColor:'#f7b4c4',collectionBgColor:'#fff0f4'},
+    {collectionName:'緣在堅城',collectionType:'上門服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）',collectionLatitude:{latitude:22.3202,longitude:114.2128},markerColor:'abcdef',collectionFontColor:'#71c9ff',collectionBgColor:'#e1f4ff'},
+    {collectionName:'緣在堅城',collectionType:'固定服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）',collectionLatitude:{latitude:22.3375,longitude:114.2634},markerColor:'2ecc71',collectionFontColor:'#9bd85e',collectionBgColor:'#e4f6dc'},
   ]
-  
+
   return (
-    <Box sx={styles.innerScreen}>
+    <Box sx={{display: "flex", width: "100%"}}>
       <Box
         sx={{
-          pt: "50px",
-          pl:'40px',
           width: "45%",
           height: "100%",
         }}
@@ -47,10 +44,10 @@ function CollectionPoint() {
         <Box/>
         <CustomCard collectionPoints ={collectionPoints}/>
       </Box>
-    <Box sx={{ width: "55%", height: "100%" }}>
-    
+      <Box sx={{ width: "60%", height: "100%" }}>
+        <MyMap collectionPoints ={collectionPoints} />
+      </Box>
     </Box>
-  </Box>
   )
 }
 

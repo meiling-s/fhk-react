@@ -4,7 +4,7 @@ import { styles } from '../../constants/styles'
 
 const CollectionOrder = () => {
   return (
-   <Box sx={styles.innerScreen}>
+   <Box>
          <Typography>hi</Typography>
    </Box>
   )

@@ -49,7 +49,7 @@ function CreateCollectionPoint(){
     }
 
     return(
-        <Box sx={styles.innerScreen}>
+        <Box>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Grid container direction={"column"} spacing={2.5} sx={localstyles.form}>
                 <Grid item>

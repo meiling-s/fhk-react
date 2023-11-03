@@ -4,8 +4,9 @@ export const styles = {
     innerScreen: {
         display: "flex",
         width: `calc(100% - ${layout.drawerWidth}px)`,
-        height: "100%",
+        height: "100vh",
         ml: `${layout.drawerWidth}px`,
+        mt: "64px",
         backgroundColor: "#F4F5F7",
         p: 4
     },

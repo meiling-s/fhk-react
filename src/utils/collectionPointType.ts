@@ -1,7 +1,14 @@
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
 export type CollectionPointType = {
-  id: string;
   collectionName:string;
   collectionType:string;
   collectionAddress:string;
+  collectionLatitude:Coordinates;
+  markerColor:string;
+  collectionFontColor:string; 
+  collectionBgColor:string
 }
-

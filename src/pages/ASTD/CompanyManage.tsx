@@ -520,7 +520,7 @@ function CompanyManage(){
                 </Button>
                 <TextField
                     id="searchCompany"
-                    onChange={(event: { target: { value: string; }; }) => handleFilterCompanies(event.target.value)}
+                    onChange={(event) => handleFilterCompanies(event.target.value)}
                     sx={{
                         mt: 3,
                         width: "100%",
@@ -609,7 +609,7 @@ function CompanyManage(){
                                         tabIndex={-1}
                                         role="checkbox"
                                         sx={[styles.row]}
-                                        onClick={(event: React.MouseEvent<unknown, MouseEvent>)=>handleClick(event,id)}
+                                        onClick={(event)=>handleClick(event,id)}
                                         >
                                         <TableCell sx={styles.bodyCell}>
                                             <Checkbox
