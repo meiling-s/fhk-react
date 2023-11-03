@@ -14,6 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CustomTimePicker from "../../components/CustomTimePicker";
 import CustomSwitch from "../../components/CustomSwitch";
 import CustomItemList from "../../components/CustomItemList";
+import CustomDatePicker from "../../components/CustomDatePicker";
 
 const cpTypes: string[] = ["固定服務點","流動服務點","上門服務點"];
 const enginLandCats: string[] = ["房屋工程工地","大型基建工程工地","重建工程工地"];
@@ -49,8 +50,8 @@ function CreateCollectionPoint(){
     }
 
     return(
-        <Box>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
             <Grid container direction={"column"} spacing={2.5} sx={localstyles.form}>
                 <Grid item>
                     <Button sx={[localstyles.headerSection]}>
@@ -78,7 +79,7 @@ function CreateCollectionPoint(){
                     <CustomTextField
                         id="cpName"
                         placeholder="請輸入名稱"
-                        onChange={setCPName}
+                        onChange={(event)=>setCPName(event.target.value)}
                     />
                 </CustomField>
 
@@ -86,7 +87,7 @@ function CreateCollectionPoint(){
                     <CustomTextField
                         id="location"
                         placeholder="請輸入地點"
-                        onChange={setCPLocation}
+                        onChange={(event)=>setCPLocation(event.target.value)}
                         endAdornment={locationSelect(setCPLocation)}
                     />
                 </CustomField>
@@ -95,12 +96,14 @@ function CreateCollectionPoint(){
                     <CustomTextField
                         id="contact"
                         placeholder="請輸入聯絡號碼"
-                        onChange={setContact}
+                        onChange={(event)=>setContact(event.target.value)}
                     />
                 </CustomField>
 
                 <CustomField label={"開放日期由"}>
-                    
+                    <CustomDatePicker
+                        setState={setOpeningPeriod}
+                    /> 
                 </CustomField>
 
                 <CustomField label={"服務時間"}>
@@ -121,7 +124,7 @@ function CreateCollectionPoint(){
                     <CustomTextField
                         id="HouseOrPlaceName"
                         placeholder="請輸入名稱"
-                        onChange={setHousePlaceName}
+                        onChange={(event)=>setHousePlaceName(event.target.value)}
                     />
                 </CustomField>
 
@@ -136,7 +139,7 @@ function CreateCollectionPoint(){
                     <CustomTextField
                         id="remark"
                         placeholder="請輸入文字"
-                        onChange={setRemark}
+                        onChange={(event)=>setRemark(event.target.value)}
                     />
                 </CustomField>
 
@@ -180,10 +183,11 @@ function CreateCollectionPoint(){
                     <CustomTextField
                         id="remark"
                         placeholder="請輸入人數"
-                        onChange={(value) => {
+                        onChange={(event)=>{
+                            const value = event.target.value
                             if(!isNaN(+value)){     //if value is number
-                               setEmployeeNum(parseInt(value)); 
-                            }
+                                setEmployeeNum(parseInt(value)); 
+                             }
                         }}
                     />
                 </CustomField>
@@ -217,7 +221,7 @@ function CreateCollectionPoint(){
                 </CustomField>
             </Grid>
             </LocalizationProvider>
-        </Box>
+        </>
     )
 }
 

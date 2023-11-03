@@ -1,8 +1,8 @@
 import dayjs from "dayjs"
 
 export type openingPeriod = {
-    startDate: Date,
-    endDate: Date | undefined
+    startDate: dayjs.Dayjs,
+    endDate: dayjs.Dayjs
 }
 
 export type serviceHr = {
