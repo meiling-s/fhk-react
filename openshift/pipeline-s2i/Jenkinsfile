@@ -1,0 +1,72 @@
+def inputTagVersion = env.TAG_VERSION.trim()
+def inputTagComment = env.TAG_COMMENT.trim()
+def inputDevProject = env.DEV_PROJECT.trim()
+
+pipeline {
+  agent {
+    label 'nodejs'
+  }
+  stages {
+    stage('Manage Source Tag') {
+      steps {
+        script {
+          openshift.withCluster() {
+            withCredentials([usernamePassword(credentialsId: "${inputDevProject}-basic-auth-code-repo-read-write-secret-react", usernameVariable: "GITLAB_USER", passwordVariable: "GITLAB_PWD")]) {
+              if (inputTagVersion.isEmpty()) {
+                error('Please set non-empty environment variable TAG_VERSION!')
+              }
+              git branch: 'master', url: "https://${GITLAB_USER}:${GITLAB_PWD}@fhkgitlab.fhk.app/bas/as/astd/react.git"
+              sh "git fetch"
+              def gitTag = sh(script:"git tag -l ${inputTagVersion}", returnStdout:true).trim()
+              if (gitTag.isEmpty()) {
+                if (inputTagComment.isEmpty()) {
+                  error('Please set non-empty environment variable TAG_COMMENT for creating new tag!')
+                }
+                echo ("Tag new version ${inputTagVersion} in master.")
+                sh("""
+                  git pull origin master
+                  git tag -a ${inputTagVersion} -m '${inputTagComment}'
+                  git push origin ${inputTagVersion}
+                """)
+              }
+              else {
+                echo ("Tag ${inputTagVersion} already exist. Will build from existing tag.")
+              }
+            }
+          }
+        }
+      }
+    }
+
+    stage('S2I Build Image') {
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.withProject(inputDevProject) {
+              openshift.patch("bc/react",
+                "'{ \"spec\": { \"source\": { \"git\": { \"ref\": \"${inputTagVersion}\" }}}}'"
+              );
+              openshift.selector("bc", "react").startBuild("--wait=true");
+            }
+          }
+        }
+      }
+    }
+
+    stage('Tag Image Version') {
+      agent {
+        label 'skopeo'
+      }
+      steps {
+        script {
+          openshift.withCluster() {
+            withCredentials([usernamePassword(credentialsId: "${inputDevProject}-opaque-image-repo-push-pull-secret", usernameVariable: "HARBOR_USER", passwordVariable: "HARBOR_PWD")]) {
+              sh "skopeo copy docker://fhkrepo.fhk.app/astd/react:latest docker://fhkrepo.fhk.app/astd/react:${inputTagVersion} --src-creds '${HARBOR_USER}:${HARBOR_PWD}' --dest-creds '${HARBOR_USER}:${HARBOR_PWD}' --src-tls-verify=false --dest-tls-verify=false"
+            }
+          }
+        }
+      }
+    }
+
+  }
+}
