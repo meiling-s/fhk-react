@@ -3,13 +3,27 @@ import "leaflet/dist/leaflet.css";
 import "../index.css";
 import { Icon } from "leaflet";
 import { CollectionPointType } from "../utils/collectionPointType";
+import { useEffect, useState } from "react";
 
 const MyMap = ({
   collectionPoints,
 }: {
   collectionPoints: CollectionPointType[];
 }) => {
-    
+  const [location,setLocation] = useState<number[]>([0,0]);
+ 
+ console.log(location)
+
+  useEffect(() => {
+
+    const lat = localStorage.getItem('selectedLatitude'??'0');
+    const long = localStorage.getItem('selectedLongtitude'??'0');
+    if(lat && long && parseFloat(lat) && parseFloat(long)){
+      setLocation([parseFloat(lat),parseFloat(long)]);
+    }
+  }, [location]);
+  
+  
   return (
     
     <MapContainer center={[22.3193, 114.1694]} zoom={13} zoomControl={false}  >
@@ -19,10 +33,10 @@ const MyMap = ({
       />
       {collectionPoints.map((collectionPoint) => (
         <Marker
-          position={[
-            collectionPoint.collectionLatitude.latitude,
-            collectionPoint.collectionLatitude.longitude,
-          ]}
+          position={
+            [collectionPoint.collectionLatitude.latitude,
+            collectionPoint.collectionLatitude.longitude]
+          }
           icon={
             new Icon({
               iconUrl: `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|${collectionPoint.markerColor}&chf=a,s,ee00FFFF`,

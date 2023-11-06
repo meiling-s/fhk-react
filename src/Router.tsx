@@ -12,6 +12,7 @@ import Report from './pages/Collector/Report';
 import CompanyManage from './pages/ASTD/CompanyManage';
 import CreateCollectionPoint from './pages/Collector/CreateCollectionPoint';
 
+
 const Router = () => {
   return (
     <BrowserRouter>
@@ -22,7 +23,7 @@ const Router = () => {
         <Route path="/register/contact" element={<CompanyContact />}/>
         <Route path="/register/result" element={<RegisterResult />}/>
 
-        <Route element={<MainLayout/>}>
+        <Route element={<MainLayout />}>
           <Route path="/collector" element={<CollectionPoint/>}/>
           <Route path="/collector/collectionPoint" element={<CollectionPoint/>}/>
           <Route path="/collector/createCollectionPoint" element={<CreateCollectionPoint/>}/>

@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from '@mui/material';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { CollectionPointType } from '../../utils/collectionPointType';
 import CustomCard from '../../components/CustomCard';
 import { styles } from '../../constants/styles';
@@ -10,6 +10,8 @@ const CollectionPoint = () => {
 
   const navigate = useNavigate();
 
+  
+
   const collectionPoints : CollectionPointType[] = [
     {collectionName:'緣在堅城',collectionType:'固定服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）',collectionLatitude:{latitude:22.3760,longitude:114.1751},markerColor:'abcdef',collectionFontColor:'#9bd85e',collectionBgColor:'#e4f6dc'},
     {collectionName:'緣在堅城',collectionType:'流動服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）',collectionLatitude:{latitude:22.3500,longitude:114.2000},markerColor:'e85141',collectionFontColor:'#f7b4c4',collectionBgColor:'#fff0f4'},
@@ -17,6 +19,7 @@ const CollectionPoint = () => {
     {collectionName:'緣在堅城',collectionType:'固定服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）',collectionLatitude:{latitude:22.3375,longitude:114.2634},markerColor:'2ecc71',collectionFontColor:'#9bd85e',collectionBgColor:'#e4f6dc'},
   ]
 
+  
   return (
     <Box sx={{display: "flex", width: "100%"}}>
       <Box

@@ -5,7 +5,7 @@ import useDebounce from '../../hooks/useDebounce';
 import axios from 'axios';
 import { getLocation } from '../../APICalls/getLocation';
 
-const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
+
 
 const Staff = () => {
 

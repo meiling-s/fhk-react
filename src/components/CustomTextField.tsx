@@ -5,7 +5,7 @@ type props = {
     id: string,
     placeholder: string,
     value?: string | number,
-    onChange: (s: string) => void
+    onChange: (s: any) => void
     endAdornment?: JSX.Element
 }
 
@@ -22,7 +22,7 @@ function CustomTextField({
             id={id}
             placeholder={placeholder}
             defaultValue={value? value : ''}
-            onChange={(event: { target: { value: string } }) => {onChange(event.target.value)}}
+            onChange={onChange}
             sx={styles.textField}
             InputProps={{
                 endAdornment: (
