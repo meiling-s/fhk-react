@@ -4,6 +4,8 @@ import "../index.css";
 import { Icon } from "leaflet";
 import { CollectionPointType } from "../utils/collectionPointType";
 import { useEffect, useState } from "react";
+import { styles } from "../constants/styles";
+import { Box } from "@mui/material";
 
 const MyMap = ({
   collectionPoints,
@@ -21,7 +23,7 @@ const MyMap = ({
     if(lat && long && parseFloat(lat) && parseFloat(long)){
       setLocation([parseFloat(lat),parseFloat(long)]);
     }
-  }, [location]);
+  }, []);
   
   
   return (
@@ -33,6 +35,7 @@ const MyMap = ({
       />
       {collectionPoints.map((collectionPoint) => (
         <Marker
+          key={Math.random()}
           position={
             [collectionPoint.collectionLatitude.latitude,
             collectionPoint.collectionLatitude.longitude]
@@ -49,6 +52,12 @@ const MyMap = ({
             </Popup>
         </Marker>
       ))}
+      <Marker position={[location[0],location[1]]}    icon={
+            new Icon({
+              iconUrl: `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|abcdef&chf=a,s,ee00FFFF`,
+              iconSize: [28, 35],
+            })
+          }/>
     </MapContainer>
 
   );

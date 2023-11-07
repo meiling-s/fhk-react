@@ -29,8 +29,8 @@ import CustomItemList from "../../components/CustomItemList";
 import useDebounce from "../../hooks/useDebounce";
 import { getLocation } from "../../APICalls/getLocation";
 import { MapData } from "../../interfaces/map";
-
-
+import CustomDatePicker from "../../components/CustomDatePicker";
+import { useNavigate } from "react-router-dom";
 
 const cpTypes: string[] = ["固定服務點", "流動服務點", "上門服務點"];
 const enginLandCats: string[] = [
@@ -42,7 +42,6 @@ const housePlaceCats: string[] = ["單幢樓", "公共屋邨", "私人屋苑"];
 const recyclable: string[] = ["廢紙", "金屬", "塑膠"];
 
 function CreateCollectionPoint() {
-  
   const [cpType, setCPType] = useState<string>();
   const [cpName, setCPName] = useState<string>();
   const [cpLocation, setCPLocation] = useState<string>();
@@ -61,18 +60,18 @@ function CreateCollectionPoint() {
   const [searchText, setSearchText] = useState<string>("");
   const [listPlace, setListPlace] = useState<any[]>([]);
   const debouncedSearchValue: string = useDebounce(searchText, 1000);
-  const [selectPosition,setSelectPosition] = useState<number[]>([0,0]);
+  const [selectPosition, setSelectPosition] = useState<number[]>([0, 0]);
 
   const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
   };
-  
-useEffect(() => {
-    console.log(selectPosition);
-    localStorage.setItem('selectedLatitude', selectPosition[0]+"");
-    localStorage.setItem('selectedLongtitude', selectPosition[1]+"");
+  console.log(selectPosition)
+
+  useEffect(() => {
+    localStorage.setItem("selectedLatitude", selectPosition[0] + "");
+    localStorage.setItem("selectedLongtitude", selectPosition[1] + "");
   }, [selectPosition]);
-  
+
   useEffect(() => {
     if (debouncedSearchValue) {
       getLocation(debouncedSearchValue)
@@ -87,23 +86,23 @@ useEffect(() => {
       setListPlace([]);
     }
   }, [debouncedSearchValue]);
-  
-   
-//   const locationSelect = (setState: (s: string) => void) => {
-//     return (
-//       <IconButton
-//         aria-label="select location"
-//         size="medium"
-//         onClick={() => setState("testing")}
-//       >
-//         <LocationOnIcon sx={styles.endAdornmentIcon} />
-//       </IconButton>
-//     );
-//   };
- 
+  const navigate = useNavigate();
+
+  //   const locationSelect = (setState: (s: string) => void) => {
+  //     return (
+  //       <IconButton
+  //         aria-label="select location"
+  //         size="medium"
+  //         onClick={() => setState("testing")}
+  //       >
+  //         <LocationOnIcon sx={styles.endAdornmentIcon} />
+  //       </IconButton>
+  //     );
+  //   };
+
   return (
-    <Box>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
         <Grid
           container
           direction={"column"}
@@ -111,25 +110,17 @@ useEffect(() => {
           sx={localstyles.form}
         >
           <Grid item>
-            <Button sx={[localstyles.headerSection]}>
+            <Button sx={[localstyles.headerSection]} onClick={() => {navigate(-1)}}>
               <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
               <Typography sx={localstyles.header1}>建立回收點</Typography>
             </Button>
           </Grid>
 
-          <Grid item>
-            <Typography sx={localstyles.header2}>地點資料</Typography>
-          </Grid>
-
-          <CustomField label={"回收點類別"}>
-            <CustomItemList items={cpTypes} singleSelect={setCPType} />
-          </CustomField>
-
           <CustomField label={"回收點名稱"}>
             <CustomTextField
               id="cpName"
               placeholder="請輸入名稱"
-              onChange={setCPName}
+              onChange={(event) => setCPName(event.target.value)}
             />
           </CustomField>
 
@@ -137,18 +128,25 @@ useEffect(() => {
             <CustomTextField
               id="location"
               placeholder="請輸入地點"
-              onChange={handleSearchTextChange}
-             // endAdornment={locationSelect(setCPLocation)}
+              onChange={(event) => handleSearchTextChange(event)}
+              // endAdornment={locationSelect(setCPLocation)}
               value={searchText}
             />
             <Box
-              sx={{ display: "flex", flexDirection: "column", width: "100%",borderColor:'black' }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                borderColor: "black",
+              }}
             >
               {listPlace.map((item) => (
                 <List key={item?.osm_id}>
-                  <ListItemButton onClick={()=>{
-                        setSelectPosition([item.lat,item.lon])
-                    }}>
+                  <ListItemButton
+                    onClick={() => {
+                      setSelectPosition([item.lat, item.lon]);
+                    }}
+                  >
                     <ListItemText>{item?.display_name}</ListItemText>
                   </ListItemButton>
                   <Divider />
@@ -161,7 +159,7 @@ useEffect(() => {
             <CustomTextField
               id="contact"
               placeholder="請輸入聯絡號碼"
-              onChange={setContact}
+              onChange={(event) => setContact(event.target.value)}
             />
           </CustomField>
 
@@ -182,14 +180,7 @@ useEffect(() => {
             <CustomTextField
               id="HouseOrPlaceName"
               placeholder="請輸入名稱"
-              onChange={setHousePlaceName}
-            />
-          </CustomField>
-
-          <CustomField label={"房屋或場所類別"}>
-            <CustomItemList
-              items={housePlaceCats}
-              singleSelect={setHousePlaceCat}
+              onChange={(event) => setHousePlaceName(event.target.value)}
             />
           </CustomField>
 
@@ -197,7 +188,7 @@ useEffect(() => {
             <CustomTextField
               id="remark"
               placeholder="請輸入文字"
-              onChange={setRemark}
+              onChange={(event) => setRemark(event.target.value)}
             />
           </CustomField>
 
@@ -234,7 +225,8 @@ useEffect(() => {
             <CustomTextField
               id="remark"
               placeholder="請輸入人數"
-              onChange={(value) => {
+              onChange={(event) => {
+                const value = event.target.value;
                 if (!isNaN(+value)) {
                   //if value is number
                   setEmployeeNum(parseInt(value));
@@ -268,12 +260,29 @@ useEffect(() => {
               setState={setServiceType}
             />
           </CustomField>
+          <Grid item>
+            <Button
+              sx={[localstyles.localButton]}
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
+              儲存
+            </Button>
+            <Button
+              sx={[localstyles.localButton]}
+              onClick={() => {
+                navigate("/collector/collectionPoint");
+              }}
+            >
+              取消
+            </Button>
+          </Grid>
         </Grid>
       </LocalizationProvider>
-    </Box>
+    </>
   );
 }
-
 const localstyles = {
   headerSection: {
     display: "flex",
@@ -296,6 +305,15 @@ const localstyles = {
   timePicker: {
     ...styles.textField,
     maxWidth: "150px",
+  },
+  timeText: {
+    color: "#ACACAC",
+    fontWeight: "500",
+  },
+  localButton: {
+    width: "200px",
+    fontSize: 18,
+    mr: 3,
   },
 };
 

@@ -19,7 +19,7 @@ function CustomTimePicker({
     setTime
 }: timePicker){
 
-    const [tempSHR, setTempSHR] = useState<serviceHr>({startFrom: dayjs(new Date()), endAt: dayjs(new Date())});
+    const [tempSHR, setTempSHR] = useState<serviceHr>({startFrom: dayjs("09:00", "HH:mm"), endAt: dayjs("17:00", "HH:mm")});
     const [sHr, setSHr] = useState<serviceHr[]>([]);
 
     useEffect(()=>{
@@ -158,24 +158,6 @@ function CustomTimePicker({
 }
 
 const localstyles = {
-    headerSection: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        color: "black"
-    },
-    form: {
-        alignItems: "flex-start"
-    },
-    header1: {
-        fontSize: 25,
-        fontWeight: "bold"
-    },
-    header2: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "#717171"
-    },
     timePicker: {
         ...styles.textField,
         maxWidth: "150px"

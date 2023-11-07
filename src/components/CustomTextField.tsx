@@ -5,7 +5,7 @@ type props = {
     id: string,
     placeholder: string,
     value?: string | number,
-    onChange: (s: any) => void
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     endAdornment?: JSX.Element
 }
 
@@ -20,6 +20,7 @@ function CustomTextField({
         <TextField
             hiddenLabel
             id={id}
+            value={value}
             placeholder={placeholder}
             defaultValue={value? value : ''}
             onChange={onChange}

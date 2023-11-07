@@ -3,13 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { CollectionPointType } from '../../utils/collectionPointType';
 import CustomCard from '../../components/CustomCard';
 import { styles } from '../../constants/styles';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MyMap from '../../components/MyMap';
 
 const CollectionPoint = () => {
 
   const navigate = useNavigate();
-
   
 
   const collectionPoints : CollectionPointType[] = [
@@ -47,7 +46,8 @@ const CollectionPoint = () => {
         <Box/>
         <CustomCard collectionPoints ={collectionPoints}/>
       </Box>
-      <Box sx={{ width: "60%", height: "100%" }}>
+      <Box
+        sx={styles.mapRightContainer}>
         <MyMap collectionPoints ={collectionPoints} />
       </Box>
     </Box>
