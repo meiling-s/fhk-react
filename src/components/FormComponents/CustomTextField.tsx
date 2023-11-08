@@ -1,5 +1,5 @@
 import { Button, InputAdornment, TextField } from "@mui/material"
-import { styles } from "../constants/styles"
+import { styles } from "../../constants/styles"
 
 type props = {
     id: string,

@@ -11,7 +11,7 @@ import Staff from './pages/Collector/Staff';
 import Report from './pages/Collector/Report';
 import CompanyManage from './pages/ASTD/CompanyManage';
 import CreateCollectionPoint from './pages/Collector/CreateCollectionPoint';
-
+import EditCollectionPoint from './pages/Collector/EditCollectionPoint';
 
 const Router = () => {
   return (
@@ -27,6 +27,7 @@ const Router = () => {
           <Route path="/collector" element={<CollectionPoint/>}/>
           <Route path="/collector/collectionPoint" element={<CollectionPoint/>}/>
           <Route path="/collector/createCollectionPoint" element={<CreateCollectionPoint/>}/>
+          <Route path="/collector/editCollectionPoint" element={<EditCollectionPoint/>}/>
           <Route path="/collector/collectionorder" element={<CollectionOrder/>}/>
           <Route path="/collector/report" element={<Report/>}/>
           <Route path="/collector/staff" element={<Staff/>}/> 

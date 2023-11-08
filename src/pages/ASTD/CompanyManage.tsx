@@ -5,8 +5,9 @@ import { visuallyHidden } from '@mui/utils';
 import React from "react";
 import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
-import { defaultPath } from "../../constants/constant";
-import format from "date-fns/format";
+import { defaultPath, format } from "../../constants/constant";
+import { styles } from "../../constants/styles"
+import dateFormat from "date-fns/format";
 
 type Company = {
     id: string,
@@ -134,7 +135,7 @@ function InviteModal({open,onClose,id}: inviteModal){
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
             >
-            <Box sx={styles.modal}>
+            <Box sx={localstyles.modal}>
                 <Stack spacing={2}>
                     <Box>
                         <Typography id="modal-modal-title" variant="h6" component="h2" sx={{fontWeight: "bold"}}>
@@ -142,7 +143,7 @@ function InviteModal({open,onClose,id}: inviteModal){
                         </Typography>
                     </Box>  
                     <Box>
-                        <Typography sx={styles.typo}>以電郵地址邀請<Required/></Typography>
+                        <Typography sx={localstyles.typo}>以電郵地址邀請<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入電郵地址"
@@ -154,7 +155,7 @@ function InviteModal({open,onClose,id}: inviteModal){
                                 endAdornment: (
                                   <InputAdornment position="end" sx={{height: "100%"}}>
                                     <Button
-                                        sx={[styles.btn_WhiteGreenTheme,{
+                                        sx={[styles.buttonFilledGreen,{
                                             width:'90px',
                                             height: "100%"
                                         }]}
@@ -171,7 +172,7 @@ function InviteModal({open,onClose,id}: inviteModal){
                     <Typography variant="h6" component="h2" sx={{fontWeight: "bold"}}>或</Typography>
                     
                     <Box>
-                        <Typography sx={styles.typo}>發送連結邀請</Typography>
+                        <Typography sx={localstyles.typo}>發送連結邀請</Typography>
                         <TextField
                             fullWidth
                             value={defaultPath.tenantRegisterPath+id}
@@ -184,7 +185,7 @@ function InviteModal({open,onClose,id}: inviteModal){
                                   <InputAdornment position="end" sx={{height: "100%"}}>
                                     <Button
                                         onClick={() => navigator.clipboard.writeText(defaultPath.tenantRegisterPath+id)}
-                                        sx={[styles.btn_WhiteGreenTheme,{
+                                        sx={[styles.buttonFilledGreen,{
                                             width:'90px',
                                             height: "100%"
                                         }]}
@@ -242,7 +243,7 @@ function InviteForm({
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
             >
-            <Box sx={styles.modal}>
+            <Box sx={localstyles.modal}>
                 <Stack spacing={2}>
                     <Box>
                         <Typography id="modal-modal-title" variant="h6" component="h2" sx={{fontWeight: "bold"}}>
@@ -250,7 +251,7 @@ function InviteForm({
                         </Typography>
                     </Box>  
                     <Box>
-                        <Typography sx={styles.typo}>公司類別<Required/></Typography>
+                        <Typography sx={localstyles.typo}>公司類別<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入公司類別"
@@ -261,7 +262,7 @@ function InviteForm({
                         />
                     </Box>
                     <Box>
-                        <Typography sx={styles.typo}>公司繁體中文名<Required/></Typography>
+                        <Typography sx={localstyles.typo}>公司繁體中文名<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入公司繁體中文名稱"
@@ -272,7 +273,7 @@ function InviteForm({
                         />
                     </Box>
                     <Box>
-                        <Typography sx={styles.typo}>公司簡體中文名<Required/></Typography>
+                        <Typography sx={localstyles.typo}>公司簡體中文名<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入公司簡體中文名稱"
@@ -283,7 +284,7 @@ function InviteForm({
                         />
                     </Box>
                     <Box>
-                        <Typography sx={styles.typo}>公司英文名<Required/></Typography>
+                        <Typography sx={localstyles.typo}>公司英文名<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入公司英文名稱"
@@ -294,7 +295,7 @@ function InviteForm({
                         />
                     </Box>
                     <Box>
-                        <Typography sx={styles.typo}>商業登記編號<Required/></Typography>
+                        <Typography sx={localstyles.typo}>商業登記編號<Required/></Typography>
                         <TextField
                             fullWidth
                             placeholder="請輸入商業登記編號"
@@ -305,11 +306,11 @@ function InviteForm({
                         />
                     </Box>
                     <Box>
-                        <Typography sx={styles.typo}>備註</Typography>
+                        <Typography sx={localstyles.typo}>備註</Typography>
                         <textarea 
                             name="remark"
                             placeholder="請輸入文字"
-                            style={{...styles.textArea,
+                            style={{...localstyles.textArea,
                                 boxSizing: "border-box"
                             }}
                             onChange={(event) => setRemark(event.target.value)}
@@ -321,7 +322,7 @@ function InviteForm({
                         <Button
                             disabled={!submitable}
                             onClick={() => onSubmit(TChiName,SChiName,EngName,type,BRN,remark)}
-                            sx={styles.formButton}
+                            sx={localstyles.formButton}
                             >
                             提交
                         </Button>
@@ -398,7 +399,7 @@ function CompanyManage(){
                     company.eName.includes(searchWord) ||
                     company.status.includes(searchWord) ||
                     company.type.includes(searchWord) ||
-                    format(company.createDate,"yyyy/MM/dd HH:mm").includes(searchWord) ||
+                    dateFormat(company.createDate,"yyyy/MM/dd HH:mm").includes(searchWord) ||
                     company.accountNum.toString().includes(searchWord)
                 ){
                     filteredCompanies.push(company);
@@ -508,7 +509,7 @@ function CompanyManage(){
                 }}
             >
                 <Typography fontSize={20} color='black' fontWeight='bold'>公司</Typography>
-                <Button sx={[styles.btn_WhiteGreenTheme,{
+                <Button sx={[styles.buttonFilledGreen,{
                     mt: 3,
                     width:'90px',
                     height: "40px"
@@ -554,7 +555,7 @@ function CompanyManage(){
                         mt: 2
                     }}>
                     <Table
-                        sx={styles.table}
+                        sx={localstyles.table}
                         aria-labelledby="tableTitle"
                         size='small'
                     >
@@ -562,8 +563,8 @@ function CompanyManage(){
                             <TableRow
                                 key={"header"}
                                 tabIndex={-1}
-                                sx={[styles.headerRow]}>
-                                <TableCell sx={styles.headCell}>
+                                sx={[localstyles.headerRow]}>
+                                <TableCell sx={localstyles.headCell}>
                                     <Checkbox
                                         color="primary"
                                         indeterminate={selected.length > 0 && selected.length < companies.length}
@@ -580,7 +581,7 @@ function CompanyManage(){
                                         align={headCell.numeric ? 'right' : 'left'}
                                         padding={headCell.disablePadding ? 'none' : 'normal'}
                                         sortDirection={orderBy === headCell.id ? order : false}
-                                        sx={styles.headCell}
+                                        sx={localstyles.headCell}
                                     >
                                         <TableSortLabel
                                             active={orderBy === headCell.id}
@@ -608,10 +609,10 @@ function CompanyManage(){
                                         hover key={id}
                                         tabIndex={-1}
                                         role="checkbox"
-                                        sx={[styles.row]}
+                                        sx={[localstyles.row]}
                                         onClick={(event)=>handleClick(event,id)}
                                         >
-                                        <TableCell sx={styles.bodyCell}>
+                                        <TableCell sx={localstyles.bodyCell}>
                                             <Checkbox
                                                 color="primary"
                                                 checked={selected.includes(id)}
@@ -620,13 +621,13 @@ function CompanyManage(){
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell sx={styles.bodyCell}>{id}</TableCell>
-                                        <TableCell sx={styles.bodyCell}>{cName}</TableCell>
-                                        <TableCell sx={styles.bodyCell}>{eName}</TableCell>
-                                        <TableCell sx={styles.bodyCell}>{status}</TableCell>
-                                        <TableCell sx={styles.bodyCell}>{type}</TableCell>
-                                        <TableCell sx={styles.bodyCell}>{format(createDate,"yyyy/MM/dd HH:mm")}</TableCell>
-                                        <TableCell sx={styles.bodyCell}>{accountNum}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{id}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{cName}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{eName}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{status}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{type}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(createDate,format.dateFormat2)}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{accountNum}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -642,7 +643,7 @@ function CompanyManage(){
     );
 }
 
-let styles = {
+let localstyles = {
     btn_WhiteGreenTheme: {
         borderRadius: "20px",
         borderWidth: 1,

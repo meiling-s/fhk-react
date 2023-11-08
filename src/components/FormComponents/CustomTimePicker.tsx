@@ -2,10 +2,10 @@ import { Box, IconButton, Typography } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { serviceHr } from "../interfaces/collectionPoint";
+import { serviceHr } from "../../interfaces/collectionPoint";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import { styles } from "../constants/styles";
+import { styles } from "../../constants/styles";
 
 type timePicker = {
     multiple: boolean,
@@ -112,7 +112,7 @@ function CustomTimePicker({
                 }
                 <Box sx={{display: "flex", alignItems: "center"}}>
                     <TimePicker
-                        defaultValue={dayjs(new Date())}
+                        defaultValue={tempSHR.startFrom}
                         onChange={(value) => SHRonChange(true,value,-1)}
                         sx={localstyles.timePicker}
                     />
@@ -120,7 +120,7 @@ function CustomTimePicker({
                             至
                         </Typography>
                     <TimePicker
-                        defaultValue={dayjs(new Date())}
+                        defaultValue={tempSHR.endAt}
                         onChange={(value) => SHRonChange(false,value,-1)}
                         sx={localstyles.timePicker}
                     />
@@ -137,7 +137,7 @@ function CustomTimePicker({
             <>
                 <Box sx={{display: "flex", alignItems: "center"}}>
                     <TimePicker
-                        defaultValue={dayjs(new Date())}
+                        defaultValue={tempSHR.startFrom}
                         onChange={(value) => SHRonChange(true,value,0)}
                         sx={localstyles.timePicker}
                     />
@@ -145,7 +145,7 @@ function CustomTimePicker({
                             至
                         </Typography>
                     <TimePicker
-                        defaultValue={dayjs(new Date())}
+                        defaultValue={tempSHR.endAt}
                         onChange={(value) => SHRonChange(false,value,0)}
                         sx={localstyles.timePicker}
                     />

@@ -12,3 +12,9 @@ export const layout = {
   drawerWidth: 246,
   appbarHeight: "64px"
 }
+
+export const format = {
+  //format for date-fns
+  dateFormat1: "yyyy/MM/dd",
+  dateFormat2: "yyyy/MM/dd HH:mm"
+}

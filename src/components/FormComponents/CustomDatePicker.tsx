@@ -1,9 +1,9 @@
 import { Box, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import { styles } from "../constants/styles";
+import { styles } from "../../constants/styles";
 import dayjs from "dayjs";
 import { useState } from "react";
-import { openingPeriod } from "../interfaces/collectionPoint";
+import { openingPeriod } from "../../interfaces/collectionPoint";
 
 type DatePicker = {
     setState: (period: openingPeriod) => void
@@ -24,6 +24,7 @@ function CustomDatePicker({
                 peri.endDate = value;
             }
             setPeriod(peri);
+            setState(peri);
         }
     }
 
@@ -32,6 +33,7 @@ function CustomDatePicker({
             <Box sx={{display: "flex", alignItems: "center"}}>
                 <DatePicker
                     defaultValue={dayjs(new Date())}
+                    maxDate={period.endDate}
                     onChange={(value) => onChangeDate(true,value)}
                     sx={localstyles.datePicker}
                 />
@@ -40,6 +42,7 @@ function CustomDatePicker({
                     </Typography>
                 <DatePicker
                     defaultValue={dayjs(new Date())}
+                    minDate={period.startDate}
                     onChange={(value) => onChangeDate(true,value)}
                     sx={localstyles.datePicker}
                 />
@@ -53,7 +56,10 @@ function CustomDatePicker({
 const localstyles = {
     datePicker: {
         ...styles.textField,
-        maxWidth: "150px"
+        maxWidth: "150px",
+        "& .MuiIconButton-edgeEnd": {
+            color: "#79CA25"
+        }
     }
 }
 
