@@ -1,15 +1,33 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { CollectionPointType } from '../../utils/collectionPointType';
 import CustomCard from '../../components/CustomCard';
 import { styles } from '../../constants/styles';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import MyMap from '../../components/MyMap';
 
 const CollectionPoint = () => {
 
+  const [cpsType, setCPSType] = useState<string>('');
+  const [cpsName, setCPSName] = useState<string>('');
+  const [cpsAddress,setCPSAddress] = useState<string>('');
+  useEffect(() => {
+    const type = localStorage.getItem('selectedCollectionType');
+    if(type){
+      setCPSType(type)
+    }
+    const Name = localStorage.getItem('selectedCollectionName');
+    if(Name){
+      setCPSName(Name)
+    }
+    const address = localStorage.getItem('selectedCollectionAddress');
+    if(address){
+      setCPSAddress(address)
+    }
+   
+  }, []);
+
   const navigate = useNavigate();
-  
 
   const collectionPoints : CollectionPointType[] = [
     {collectionName:'緣在堅城',collectionType:'固定服務點',collectionAddress:'中環堅道99號豐藥閣對出行人路 (近鴨巴甸街）',collectionLatitude:{latitude:22.3760,longitude:114.1751},markerColor:'abcdef',collectionFontColor:'#9bd85e',collectionBgColor:'#e4f6dc'},

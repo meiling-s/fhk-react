@@ -1,8 +1,10 @@
 import axios from 'axios';
-
-const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
-
-export const getLocation = (searchValue: string) => {
-  const url = `${NOMINATIM_BASE_URL}q=${searchValue}&format=json&addressdetails=1&polygon_geojson=0`;
-  return axios.get(url);
+ 
+const GEOCODING_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json?";
+const API_KEY = "AIzaSyAMP8qUxbhEYGxwF9veifN7ciMUZcZOPsg"
+ 
+export const getLocation = async(searchValue: string) => {
+  const url = `${GEOCODING_BASE_URL}address=${searchValue}&key=${API_KEY}`;
+  const location =  await axios.get(url);
+  return location
 };

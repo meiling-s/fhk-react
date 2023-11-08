@@ -53,16 +53,17 @@ const recycItems: recyclable[] = [{
 }]
 
 function CreateCollectionPoint() {
-    const [cpType, setCPType] = useState<string>();
-    const [cpName, setCPName] = useState<string>();
-    const [cpLocation, setCPLocation] = useState<string>();
-    const [contact, setContact] = useState<string>();
+    const [cpType, setCPType] = useState<string>("");
+    const [cpName, setCPName] = useState<string>("");
+    const [cpLocation, setCPLocation] = useState<string>("");
+    const [collectionAddress, setCollectionAddress] = useState<string>("");
+    const [contact, setContact] = useState<string>("");
     const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>();
     const [sHr, setSHr] = useState<serviceHr[]>([]);
-    const [enginLandCat, setEnginLandCat] = useState<string>(); //Engineering land category
-    const [housePlaceName, setHousePlaceName] = useState<string>(); //Name of the house/place
-    const [housePlaceCat, setHousePlaceCat] = useState<string>(); //Category of the house/place
-    const [remark, setRemark] = useState<string>();
+    const [enginLandCat, setEnginLandCat] = useState<string>(""); //Engineering land category
+    const [housePlaceName, setHousePlaceName] = useState<string>(""); //Name of the house/place
+    const [housePlaceCat, setHousePlaceCat] = useState<string>(""); //Category of the house/place
+    const [remark, setRemark] = useState<string>("");
     const [openState, setOpenState] = useState<boolean>(true);
     const [recycCat, setRecycCat] = useState<recyclable[]>([]);     //Recyclables category
     const [curRecycCat, setCurRecycCat] = useState<string>(" ");     //Current selected recyclables category
@@ -78,8 +79,11 @@ function CreateCollectionPoint() {
     const navigate = useNavigate();
 
     const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (collectionAddress) {
+          setCollectionAddress("");
+        }
         setSearchText(e.target.value);
-    };
+    }
     console.log(selectPosition)
 
     useEffect(() => {
@@ -89,22 +93,29 @@ function CreateCollectionPoint() {
     useEffect(() => {
         localStorage.setItem("selectedLatitude", selectPosition[0] + "");
         localStorage.setItem("selectedLongtitude", selectPosition[1] + "");
-    }, [selectPosition]);
+        localStorage.setItem("selectedCollectionName", cpName);
+        localStorage.setItem("selectedCollectionType", cpType);
+        localStorage.setItem("selectedCollectionAddress", collectionAddress);
+    }, [selectPosition, cpName, cpType, collectionAddress]);
 
     useEffect(() => {
         if (debouncedSearchValue) {
-            getLocation(debouncedSearchValue)
-                .then((response) => {
-                    const result = response.data;
-                    setListPlace(result);
-                })
-                .catch((error) => {
-                    console.log("Error fetching data:", error);
-                });
+          getLocation(debouncedSearchValue)
+            .then((response) => {
+              const result = response.data.results;
+              setListPlace(result);
+            })
+            .catch((error) => {
+              console.log("Error fetching data:", error);
+            });
         } else {
-            setListPlace([]);
+          setListPlace([]);
         }
     }, [debouncedSearchValue]);
+
+    useEffect(()=>{
+        console.log("listplace: ",listPlace);
+    },[listPlace])
 
     const returnRecyclables = (recycS: recyclable[]) => {       //transforming recyclables to string array with main items name only
         const recyclables: string[] = recycS.map((recyc) => {
@@ -232,11 +243,11 @@ function CreateCollectionPoint() {
 
                     <CustomField label={"地點"}>
                         <CustomTextField
-                            id="location"
-                            placeholder="請輸入地點"
-                            onChange={(event) => handleSearchTextChange(event)}
-                            //endAdornment={locationSelect(setCPLocation)}
-                            value={searchText}
+                        id="location"
+                        placeholder="請輸入地點"
+                        onChange={(event) => handleSearchTextChange(event)}
+                        // endAdornment={locationSelect(setCPLocation)}
+                        value={collectionAddress ? collectionAddress : searchText}
                         />
                         <Box
                             sx={{
@@ -246,18 +257,19 @@ function CreateCollectionPoint() {
                                 borderColor: "black",
                             }}
                         >
-                            {listPlace.map((item) => (
-                                <List key={item?.osm_id}>
+                            {listPlace&&(
+                                <List key={listPlace[0]?.place_id}>
                                     <ListItemButton
-                                        onClick={() => {
-                                            setSelectPosition([item.lat, item.lon]);
-                                        }}
+                                    onClick={() => {
+                                        setSelectPosition([listPlace[0]?.geometry?.location?.lat,listPlace[0]?.geometry?.location?.lng]);
+                                        setCollectionAddress(listPlace[0].formatted_address);
+                                    }}
                                     >
-                                        <ListItemText>{item?.display_name}</ListItemText>
+                                    <ListItemText>{listPlace[0]?.formatted_address}</ListItemText>
                                     </ListItemButton>
                                     <Divider />
                                 </List>
-                            ))}
+                            )}
                         </Box>
                     </CustomField>
 
