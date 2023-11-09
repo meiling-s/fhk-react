@@ -15,6 +15,14 @@ export type recyclable = {
     recycSubtypeId: string[]
 }
 
+export type roster = {
+	rosterId: string,
+	routineType: string,
+    startAt: string,
+    endAt: string,
+   	status: string,
+}
+
 export type collectionPoint = {
 
     colId: string,
@@ -26,8 +34,8 @@ export type collectionPoint = {
 	endTime: string[],
 	address: string,
 	gpsCode: [cor1: number, cor2: number],
-	isEpd: boolean,
-	isExtraService: boolean,
+	epdFlg: boolean,
+	extraServiceFlg: boolean,
 	siteTypeId: string,
 	contractNo: string,
 	noOfStaff: number,
@@ -35,11 +43,12 @@ export type collectionPoint = {
 	premiseName: string,
 	premiseTypeId: string,
 	premiseRemark: string,
-	isNormal: boolean,
+	normalFlg: boolean,
 	createdAt: Date,
 	updatedAt: Date,
 	createdBy: string,
 	updatedBy: string,
+	roster: roster[],
 	colPtRecyc: recyclable[]
 
 }
@@ -54,8 +63,8 @@ export type createCP = {        //data for creating Collection Point
 	endTime: string[],
 	address: string,
 	gpsCode: string,
-	isEpd: boolean,
-	isExtraService: boolean,
+	epdFlg: boolean,
+	extraServiceFlg: boolean,
 	siteTypeId: string,
 	contractNo: string,
 	noOfStaff: number,
@@ -63,9 +72,10 @@ export type createCP = {        //data for creating Collection Point
 	premiseName: string,
 	premiseTypeId: string,
 	premiseRemark: string,
-	isNormal: boolean,
+	normalFlg: boolean,
 	createdBy: string,
 	updatedBy: string,
+	roster: roster[],
 	colPtRecyc: recyclable[]
 
 }

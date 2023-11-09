@@ -27,10 +27,10 @@ export const UPDATE_TENANT_REGISTER: AxiosRequestConfig = {
 
 export const GET_ALL_COLLECTIONPOINT: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/collectors/getCollectionPoint'
+  url: 'api/collectors/collectionPoint'
 }
 
 export const CREATE_COLLECTIONPOINT: AxiosRequestConfig = {
   method: 'post',
-  url: 'api/collectors/addCollectionPoint'
+  url: 'api/collectors/collectionPoint'
 }

@@ -205,8 +205,8 @@ function CreateCollectionPoint() {
             endTime: ET,
             address: cpAddress,
             gpsCode: "",
-            isEpd: EPDEnable,
-            isExtraService: !serviceType,
+            epdFlg: EPDEnable,
+            extraServiceFlg: !serviceType,
             siteTypeId: "",
             contractNo: "",
             noOfStaff: employeeNum,
@@ -214,9 +214,10 @@ function CreateCollectionPoint() {
             premiseName: premiseName,
             premiseTypeId: premiseCat,
             premiseRemark: remark,
-            isNormal: true,
+            normalFlg: true,
             createdBy: "colAdmin",
             updatedBy: "colAdmin",
+            roster: [],
             colPtRecyc: recycCat
         }
         const result = await createCollectionPoint(cp);
