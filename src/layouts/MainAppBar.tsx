@@ -2,8 +2,11 @@ import {
   AppBar,
   Box,
   Button,
+  Fade,
   IconButton,
   InputAdornment,
+  Menu,
+  MenuItem,
   TextField,
   Toolbar,
   Typography,
@@ -23,8 +26,17 @@ import { localStorgeKeyName } from "../constants/constant";
 const MainAppBar = () => {
 
   const [keywords, setKeywords] = useState<string>("");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const drawerWidth = 246;
+
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const onKeywordsChange = (k: string) => {
     setKeywords(k);
@@ -66,9 +78,25 @@ const MainAppBar = () => {
             <IconButton>
               <NOTIFICATION_ICON />
             </IconButton>
-            <IconButton sx={{ ml: 3 }}>
+            <IconButton
+              aria-controls={open ? "fade-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+            >
               <LANGUAGE_ICON />
             </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={anchorEl? true : false}
+              onClose={handleClose}
+              TransitionComponent={Fade}
+              style={{padding:'16px'}}
+            >
+              <MenuItem divider={true} onClick={() => {}}><Typography >簡體中文</Typography></MenuItem>
+              <MenuItem divider={true}onClick={() => {}}><Typography>繁體中文</Typography></MenuItem>
+              <MenuItem onClick={() => {}}><Typography>English</Typography></MenuItem>
+            </Menu>
             <Box sx={{ display: "flex", flexDirection: "row", ml: 3 }}>
               <IconButton>
                 <BackgroundLetterAvatars name="Cawin Pan" />
