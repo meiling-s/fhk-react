@@ -5,12 +5,16 @@ import CustomCard from '../../components/CustomCard';
 import { styles } from '../../constants/styles';
 import { useNavigate } from 'react-router-dom';
 import MyMap from '../../components/MyMap';
+import { getAllCollectionPoint } from '../../APICalls/collectionPointManage';
+import { collectionPoint } from '../../interfaces/collectionPoint';
 
 const CollectionPoint = () => {
 
   const [cpsType, setCPSType] = useState<string>('');
   const [cpsName, setCPSName] = useState<string>('');
   const [cpsAddress,setCPSAddress] = useState<string>('');
+  const [cpList, setCPList] = useState<collectionPoint[]>([]);
+
   useEffect(() => {
     const type = localStorage.getItem('selectedCollectionType');
     if(type){
@@ -24,8 +28,19 @@ const CollectionPoint = () => {
     if(address){
       setCPSAddress(address)
     }
+
+    initCollectionPoint();
    
   }, []);
+
+  const initCollectionPoint = async () => {
+    const result = await getAllCollectionPoint();
+    const data = result?.data;
+    if(data && data.length>0){
+        console.log("all collection point: ",data);
+        setCPList(data);
+    }
+  }
 
   const navigate = useNavigate();
 
@@ -62,7 +77,7 @@ const CollectionPoint = () => {
           </Button>
         </Box>
         <Box/>
-        <CustomCard collectionPoints ={collectionPoints}/>
+        <CustomCard collectionPoints ={cpList}/>
       </Box>
       <Box
         sx={styles.mapRightContainer}>

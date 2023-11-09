@@ -2,6 +2,9 @@ import axios from 'axios';
 import { localStorgeKeyName } from '../constants/constant';
 import { ADD_TENANT, GET_ALL_TENANT, GET_TENANT_BY_TENANT_ID, UPDATE_TENANT_REGISTER } from '../constants/requests';
 import { RegisterItem, Tenant } from '../interfaces/account';
+import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
+
+axios.defaults.baseURL = AXIOS_DEFAULT_CONFIGS.baseURL;
 
 //require Authorization token
 export const createInvitation = async (item: Tenant) => {

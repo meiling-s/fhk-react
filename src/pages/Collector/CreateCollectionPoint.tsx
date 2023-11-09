@@ -16,7 +16,7 @@ import { styles } from "../../constants/styles";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CustomField from "../../components/FormComponents/CustomField";
 import { useEffect, useState } from "react";
-import { openingPeriod, recyclable, serviceHr } from "../../interfaces/collectionPoint";
+import { createCP, openingPeriod, recyclable, serviceHr } from "../../interfaces/collectionPoint";
 import CustomTextField from "../../components/FormComponents/CustomTextField";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
@@ -24,12 +24,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useDebounce from "../../hooks/useDebounce";
 import { getLocation } from "../../APICalls/getLocation";
 import { MapData } from "../../interfaces/map";
-import dateFormat from "date-fns/format";
 import CustomTimePicker from "../../components/FormComponents/CustomTimePicker";
 import CustomSwitch from "../../components/FormComponents/CustomSwitch";
 import CustomItemList from "../../components/FormComponents/CustomItemList";
 import CustomDatePicker from "../../components/FormComponents/CustomDatePicker";
 import { useNavigate } from "react-router-dom";
+import { createCollectionPoint, getAllCollectionPoint } from "../../APICalls/collectionPointManage";
+import { format } from "../../constants/constant";
 
 
 const cpTypes: string[] = ["固定服務點", "流動服務點", "上門服務點"];
@@ -38,37 +39,36 @@ const enginLandCats: string[] = [
     "大型基建工程工地",
     "重建工程工地",
 ];
-const housePlaceCats: string[] = ["單幢樓", "公共屋邨", "私人屋苑"];
+const premiseCats: string[] = ["單幢樓", "公共屋邨", "私人屋苑"];
 const recycItems: recyclable[] = [{
-    recyc_type_id: "廢紙",
-    recyc_subtype_id: ["紙皮", "報紙"]
+    recycTypeId: "廢紙",
+    recycSubtypeId: ["紙皮", "報紙"]
 },
 {
-    recyc_type_id: "金屬",
-    recyc_subtype_id: ["金屬1", "金屬2"]
+    recycTypeId: "金屬",
+    recycSubtypeId: ["金屬1", "金屬2"]
 },
 {
-    recyc_type_id: "塑膠",
-    recyc_subtype_id: ["塑膠1", "塑膠2"]
+    recycTypeId: "塑膠",
+    recycSubtypeId: ["塑膠1", "塑膠2"]
 }]
 
 function CreateCollectionPoint() {
     const [cpType, setCPType] = useState<string>("");
     const [cpName, setCPName] = useState<string>("");
-    const [cpLocation, setCPLocation] = useState<string>("");
-    const [collectionAddress, setCollectionAddress] = useState<string>("");
+    const [cpAddress, setCPAddress] = useState<string>("");
     const [contact, setContact] = useState<string>("");
-    const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>();
+    const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({startDate: dayjs(new Date(),format.dateFormat3), endDate: dayjs(new Date(),format.dateFormat3)});
     const [sHr, setSHr] = useState<serviceHr[]>([]);
     const [enginLandCat, setEnginLandCat] = useState<string>(""); //Engineering land category
-    const [housePlaceName, setHousePlaceName] = useState<string>(""); //Name of the house/place
-    const [housePlaceCat, setHousePlaceCat] = useState<string>(""); //Category of the house/place
+    const [premiseName, setPremiseName] = useState<string>(""); //Name of the house/place
+    const [premiseCat, setPremiseCat] = useState<string>(""); //Category of the house/place
     const [remark, setRemark] = useState<string>("");
     const [openState, setOpenState] = useState<boolean>(true);
     const [recycCat, setRecycCat] = useState<recyclable[]>([]);     //Recyclables category
     const [curRecycCat, setCurRecycCat] = useState<string>(" ");     //Current selected recyclables category
     const [fullSubItemList, setFullSubItemList] = useState<string[]>([]);     //Sub-items of current selected recyclables category
-    const [employeeNum, setEmployeeNum] = useState<number>();
+    const [employeeNum, setEmployeeNum] = useState<number>(0);
     const [EPDEnable, setEPDEnable] = useState<boolean>(false);
     const [serviceType, setServiceType] = useState<boolean>(true);
     const [searchText, setSearchText] = useState<string>("");
@@ -79,8 +79,8 @@ function CreateCollectionPoint() {
     const navigate = useNavigate();
 
     const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (collectionAddress) {
-          setCollectionAddress("");
+        if (cpAddress) {
+          setCPAddress("");
         }
         setSearchText(e.target.value);
     }
@@ -95,8 +95,8 @@ function CreateCollectionPoint() {
         localStorage.setItem("selectedLongtitude", selectPosition[1] + "");
         localStorage.setItem("selectedCollectionName", cpName);
         localStorage.setItem("selectedCollectionType", cpType);
-        localStorage.setItem("selectedCollectionAddress", collectionAddress);
-    }, [selectPosition, cpName, cpType, collectionAddress]);
+        localStorage.setItem("selectedcpAddress", cpAddress);
+    }, [selectPosition, cpName, cpType, cpAddress]);
 
     useEffect(() => {
         if (debouncedSearchValue) {
@@ -119,17 +119,17 @@ function CreateCollectionPoint() {
 
     const returnRecyclables = (recycS: recyclable[]) => {       //transforming recyclables to string array with main items name only
         const recyclables: string[] = recycS.map((recyc) => {
-            return recyc.recyc_type_id;
+            return recyc.recycTypeId;
         });
         return recyclables;
     }
 
     const returnSubRecyclables = (recyc: string) => {       //return sub items of recyc
         const item: recyclable | undefined = recycItems.find((recycItem) => {
-            return recycItem.recyc_type_id === recyc;
+            return recycItem.recycTypeId === recyc;
         });
         if (item) {
-            const subItems = item.recyc_subtype_id
+            const subItems = item.recycSubtypeId
             return subItems;
         } else {
             return [];
@@ -138,7 +138,7 @@ function CreateCollectionPoint() {
 
     const returnWithSubItem = () => {
         const recyc = recycCat.filter((items) => {
-            return items.recyc_subtype_id.length > 0;
+            return items.recycSubtypeId.length > 0;
         });
         return returnRecyclables(recyc);
     }
@@ -152,7 +152,7 @@ function CreateCollectionPoint() {
             if (RecycItemDif.length > 0) {
                 const newRecyc = Object.assign([], recycCat);
                 RecycItemDif.map((recyc) => {
-                    newRecyc.push({ recyc_type_id: recyc, recyc_subtype_id: [] });
+                    newRecyc.push({ recycTypeId: recyc, recycSubtypeId: [] });
                 })
                 setRecycCat(newRecyc);
             }
@@ -163,14 +163,14 @@ function CreateCollectionPoint() {
             if (RecycItemDif.length > 0) {
                 const newRecyc: recyclable[] = recycCat.filter((recyc) => {
                     //remove subitem of this main item from full sub item list
-                    if (RecycItemDif.includes(recyc.recyc_type_id)) {
+                    if (RecycItemDif.includes(recyc.recycTypeId)) {
                         //remove subitem of this main item from full sub item list
                         const newFullSubItemList = fullSubItemList.filter((subitem) => {
-                            return !returnSubRecyclables(recyc.recyc_type_id).includes(subitem);
+                            return !returnSubRecyclables(recyc.recycTypeId).includes(subitem);
                         })
                         setFullSubItemList(newFullSubItemList);
                     }
-                    return !RecycItemDif.includes(recyc.recyc_type_id);
+                    return !RecycItemDif.includes(recyc.recycTypeId);
                 })
                 setRecycCat(newRecyc);
                 //setCurRecycCat(" ");     //reset the current selected recyclable since the last selected item has been unselected
@@ -181,8 +181,8 @@ function CreateCollectionPoint() {
     }
     const selectSubRecyc = (s: string[]) => {       //do select and unselect action for sub item
         var recycS: recyclable[] = recycCat.map((recyc) => {
-            if (recyc.recyc_type_id === curRecycCat) {
-                recyc.recyc_subtype_id = returnSubRecyclables(curRecycCat).filter((subItems) => {     //get the full list of sub items of current selected main item and check the overlapping part
+            if (recyc.recycTypeId === curRecycCat) {
+                recyc.recycSubtypeId = returnSubRecyclables(curRecycCat).filter((subItems) => {     //get the full list of sub items of current selected main item and check the overlapping part
                     return s.includes(subItems);
                 })
             }
@@ -192,12 +192,45 @@ function CreateCollectionPoint() {
         setFullSubItemList(s);
     }
 
-    const handleCreateOnClick = () => {
+    const handleCreateOnClick = async () => {
+        const ST: string[] = sHr.map((value) => value.startFrom.toString());
+        const ET: string[] = sHr.map((value) => value.endAt.toString());
+        const cp: createCP = {
+            colName: cpName,
+            colPointTypeId: cpType,
+            effFrmDate: openingPeriod?.startDate.toString(),
+            effToDate: openingPeriod?.endDate.toString(),
+            startTime: ST,
+            endTime: ET,
+            address: cpAddress,
+            gpsCode: "",
+            isEpd: EPDEnable,
+            isExtraService: !serviceType,
+            siteTypeId: "",
+            contractNo: "",
+            noOfStaff: employeeNum,
+            status: openState? "ACTIVE" : "INACTIVE",
+            premiseName: premiseName,
+            premiseTypeId: premiseCat,
+            premiseRemark: remark,
+            isNormal: true,
+            createdBy: "colAdmin",
+            updatedBy: "colAdmin",
+            colPtRecyc: recycCat
+        }
+        const result = await createCollectionPoint(cp);
+        const data = result?.data;
+        if(data){
+            console.log("all collection point: ",data);
+        }
+        navigate(-1);       //goback to last page
     }
+
     const handleCancelOnClick = () => {
         console.log("Cancel click");
         navigate(-1);       //goback to last page
     }
+
     const handleHeaderOnClick = () => {
         console.log("Header click");
         navigate(-1);       //goback to last page
@@ -247,7 +280,7 @@ function CreateCollectionPoint() {
                         placeholder="請輸入地點"
                         onChange={(event) => handleSearchTextChange(event)}
                         // endAdornment={locationSelect(setCPLocation)}
-                        value={collectionAddress ? collectionAddress : searchText}
+                        value={cpAddress ? cpAddress : searchText}
                         />
                         <Box
                             sx={{
@@ -262,7 +295,7 @@ function CreateCollectionPoint() {
                                     <ListItemButton
                                     onClick={() => {
                                         setSelectPosition([listPlace[0]?.geometry?.location?.lat,listPlace[0]?.geometry?.location?.lng]);
-                                        setCollectionAddress(listPlace[0].formatted_address);
+                                        setCPAddress(listPlace[0].formatted_address);
                                     }}
                                     >
                                     <ListItemText>{listPlace[0]?.formatted_address}</ListItemText>
@@ -281,7 +314,9 @@ function CreateCollectionPoint() {
                         />
                     </CustomField>
 
-                    <CustomField label={"開放日期由"}></CustomField>
+                    <CustomField label={"開放日期由"}>
+                        <CustomDatePicker setDate={setOpeningPeriod}/>
+                    </CustomField>
 
                     <CustomField label={"服務時間"}>
                         <CustomTimePicker multiple={true} setTime={setSHr} />
@@ -298,7 +333,14 @@ function CreateCollectionPoint() {
                         <CustomTextField
                             id="HouseOrPlaceName"
                             placeholder="請輸入名稱"
-                            onChange={(event) => setHousePlaceName(event.target.value)}
+                            onChange={(event) => setPremiseName(event.target.value)}
+                        />
+                    </CustomField>
+
+                    <CustomField label={"房屋或場所類別"}>
+                        <CustomItemList
+                            items={premiseCats}
+                            singleSelect={setPremiseCat}
                         />
                     </CustomField>
 

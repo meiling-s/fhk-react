@@ -20,16 +20,16 @@ const cpTypes: string[] = ["固定服務點","流動服務點","上門服務點"
 const enginLandCats: string[] = ["房屋工程工地","大型基建工程工地","重建工程工地"];
 const housePlaceCats: string[] = ["單幢樓","公共屋邨","私人屋苑"];
 const recycItems: recyclable[] = [{
-    recyc_type_id: "廢紙",
-    recyc_subtype_id: ["紙皮","報紙"]
+    recycTypeId: "廢紙",
+    recycSubtypeId: ["紙皮","報紙"]
 },
 {
-    recyc_type_id: "金屬",
-    recyc_subtype_id: ["金屬1","金屬2"]
+    recycTypeId: "金屬",
+    recycSubtypeId: ["金屬1","金屬2"]
 },
 {
-    recyc_type_id: "塑膠",
-    recyc_subtype_id: ["塑膠1","塑膠2"]
+    recycTypeId: "塑膠",
+    recycSubtypeId: ["塑膠1","塑膠2"]
 }]
 const createTime = new Date("2023/09/24 17:00");
 const lastUpdateTime = new Date("2023/09/24 17:00");
@@ -72,17 +72,17 @@ function EditCollectionPoint(){
 
     const returnRecyclables = (recycS: recyclable[]) => {       //transforming recyclables to string array with main items name only
         const recyclables: string[] = recycS.map((recyc)=>{
-            return recyc.recyc_type_id;
+            return recyc.recycTypeId;
         });
         return recyclables;
     }
     
     const returnSubRecyclables = (recyc: string) => {       //return sub items of recyc
         const item: recyclable | undefined = recycItems.find((recycItem)=>{
-            return recycItem.recyc_type_id === recyc;
+            return recycItem.recycTypeId === recyc;
         });
         if(item){
-            const subItems = item.recyc_subtype_id
+            const subItems = item.recycSubtypeId
             return subItems;
         }else{
             return [];
@@ -91,7 +91,7 @@ function EditCollectionPoint(){
     
     const returnWithSubItem = () => {
         const recyc = recycCat.filter((items) => {
-            return items.recyc_subtype_id.length > 0;
+            return items.recycSubtypeId.length > 0;
         });
         return returnRecyclables(recyc);
     }
@@ -106,7 +106,7 @@ function EditCollectionPoint(){
             if(RecycItemDif.length > 0){
                 const newRecyc = Object.assign([],recycCat);
                 RecycItemDif.map((recyc) => {
-                    newRecyc.push({recyc_type_id: recyc, recyc_subtype_id: []});
+                    newRecyc.push({recycTypeId: recyc, recycSubtypeId: []});
                 })
                 setRecycCat(newRecyc);
             }
@@ -118,14 +118,14 @@ function EditCollectionPoint(){
             if(RecycItemDif.length > 0){
                 const newRecyc: recyclable[] = recycCat.filter((recyc) => {
                     //remove subitem of this main item from full sub item list
-                    if(RecycItemDif.includes(recyc.recyc_type_id)){
+                    if(RecycItemDif.includes(recyc.recycTypeId)){
                         //remove subitem of this main item from full sub item list
                         const newFullSubItemList = fullSubItemList.filter((subitem) => {
-                            return !returnSubRecyclables(recyc.recyc_type_id).includes(subitem);
+                            return !returnSubRecyclables(recyc.recycTypeId).includes(subitem);
                         })
                         setFullSubItemList(newFullSubItemList);
                     }
-                    return !RecycItemDif.includes(recyc.recyc_type_id);
+                    return !RecycItemDif.includes(recyc.recycTypeId);
                 })
                 setRecycCat(newRecyc);
                 //setCurRecycCat(" ");     //reset the current selected recyclable since the last selected item has been unselected
@@ -137,8 +137,8 @@ function EditCollectionPoint(){
 
     const selectSubRecyc = (s: string[]) => {       //do select and unselect action for sub item
         var recycS: recyclable[] = recycCat.map((recyc) => {
-            if(recyc.recyc_type_id === curRecycCat){
-                recyc.recyc_subtype_id = returnSubRecyclables(curRecycCat).filter((subItems)=>{     //get the full list of sub items of current selected main item and check the overlapping part
+            if(recyc.recycTypeId === curRecycCat){
+                recyc.recycSubtypeId = returnSubRecyclables(curRecycCat).filter((subItems)=>{     //get the full list of sub items of current selected main item and check the overlapping part
                     return s.includes(subItems);
                 })
             }
@@ -211,7 +211,7 @@ function EditCollectionPoint(){
 
                 <CustomField label={"開放日期由"}>
                     <CustomDatePicker
-                        setState={setOpeningPeriod}
+                        setDate={setOpeningPeriod}
                     /> 
                 </CustomField>
 

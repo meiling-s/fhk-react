@@ -11,31 +11,61 @@ export type serviceHr = {
 }
 
 export type recyclable = {
-    recyc_type_id: string,
-    recyc_subtype_id: string[]
+    recycTypeId: string,
+    recycSubtypeId: string[]
 }
+
 export type collectionPoint = {
-    col_id: string,
-	col_name: string,
-	eff_frm_date: Date,
-	eff_to_date: Date,
-	start_time: string[2],
-	end_time: string[2],
+
+    colId: string,
+	colName: string,
+    colPointTypeId: string,
+	effFrmDate: String,
+	effToDate: String,
+	startTime: string[],
+	endTime: string[],
 	address: string,
-	gps_code: [cor1: number, cor2: number],
-	is_epd: boolean,
-	is_extra_service: boolean,
-	site_type_id: string,
-	contract_no: string,
-	no_of_staff: number,
+	gpsCode: [cor1: number, cor2: number],
+	isEpd: boolean,
+	isExtraService: boolean,
+	siteTypeId: string,
+	contractNo: string,
+	noOfStaff: number,
 	status: string,
-	premise_name: string,
-	premise_type_id: string,
-	premise_remark: string,
-	is_normal: boolean,
-	created_at: Date,
-	updated_at: Date,
-	created_by: string,
-	updated_by: string,
-	col_pt_recyc: recyclable
+	premiseName: string,
+	premiseTypeId: string,
+	premiseRemark: string,
+	isNormal: boolean,
+	createdAt: Date,
+	updatedAt: Date,
+	createdBy: string,
+	updatedBy: string,
+	colPtRecyc: recyclable[]
+
+}
+
+export type createCP = {        //data for creating Collection Point
+
+	colName: string,
+    colPointTypeId: string,
+	effFrmDate: String,
+	effToDate: String,
+	startTime: string[],
+	endTime: string[],
+	address: string,
+	gpsCode: string,
+	isEpd: boolean,
+	isExtraService: boolean,
+	siteTypeId: string,
+	contractNo: string,
+	noOfStaff: number,
+	status: string,
+	premiseName: string,
+	premiseTypeId: string,
+	premiseRemark: string,
+	isNormal: boolean,
+	createdBy: string,
+	updatedBy: string,
+	colPtRecyc: recyclable[]
+
 }

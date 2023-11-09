@@ -4,16 +4,17 @@ import { styles } from "../../constants/styles";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { openingPeriod } from "../../interfaces/collectionPoint";
+import { format } from "../../constants/constant";
 
 type DatePicker = {
-    setState: (period: openingPeriod) => void
+    setDate: (period: openingPeriod) => void
 }
 
 function CustomDatePicker({
-    setState
+    setDate
 }: DatePicker){
 
-    const [period, setPeriod] = useState<openingPeriod>({startDate: dayjs(new Date()), endDate: dayjs(new Date())});
+    const [period, setPeriod] = useState<openingPeriod>({startDate: dayjs(new Date(),format.dateFormat3), endDate: dayjs(new Date(),format.dateFormat3)});
 
     const onChangeDate = (start: boolean, value: dayjs.Dayjs | null) => {
         if(value != null){
@@ -24,7 +25,7 @@ function CustomDatePicker({
                 peri.endDate = value;
             }
             setPeriod(peri);
-            setState(peri);
+            setDate(peri);
         }
     }
 
@@ -36,6 +37,7 @@ function CustomDatePicker({
                     maxDate={period.endDate}
                     onChange={(value) => onChangeDate(true,value)}
                     sx={localstyles.datePicker}
+                    format={format.dateFormat3}
                 />
                     <Typography sx={{marginX: 1}}>
                         至
@@ -45,6 +47,7 @@ function CustomDatePicker({
                     minDate={period.startDate}
                     onChange={(value) => onChangeDate(true,value)}
                     sx={localstyles.datePicker}
+                    format={format.dateFormat3}
                 />
             </Box>
         </>
