@@ -1,7 +1,11 @@
-import { Box, Card, CardContent, Typography } from '@mui/material'
-import React, { useEffect } from 'react'
+import { Box, ButtonBase, Card, CardContent, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import { CollectionPointType } from '../utils/collectionPointType'
 import { collectionPoint } from '../interfaces/collectionPoint'
+import { useNavigate } from 'react-router-dom'
+import { getColPointType } from '../APICalls/commonManage'
+import { useTranslation } from 'react-i18next'
+import { colPointType } from '../interfaces/common'
 
 type props = {
   collectionPoints: collectionPoint[]
@@ -9,14 +13,14 @@ type props = {
 
 const returnBgColor = (type: string) => {
   var bgColor = "";
-  switch(type){
-    case "固定服務點":
+  switch (type) {
+    case "CPT00001":
       bgColor = '#e4f6dc';
       break;
-    case "流動服務點":
+    case "CPT00002":
       bgColor = '#fff0f4';
       break;
-    case '上門服務點':
+    case 'CPT00003':
       bgColor = '#e1f4ff';
       break;
     default:
@@ -26,15 +30,16 @@ const returnBgColor = (type: string) => {
 }
 
 const returnFontColor = (type: string) => {
+
   var bgColor = "";
-  switch(type){
-    case "固定服務點":
+  switch (type) {
+    case "CPT00001":
       bgColor = '#9bd85e';
       break;
-    case "流動服務點":
+    case "CPT00002":
       bgColor = '#f7b4c4';
       break;
-    case '上門服務點':
+    case 'CPT00003':
       bgColor = '#71c9ff';
       break;
     default:
@@ -45,50 +50,108 @@ const returnFontColor = (type: string) => {
 
 const CustomCard = ({
   collectionPoints
-}:props) => {
+}: props) => {
+
+  const [colType, setColType] = useState<colPointType[]>([]);
+
+  const navigate = useNavigate();
+
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    initTypes();
     return () => {
-        document.body.style.overflow = "scroll"
+      document.body.style.overflow = "scroll"
     };
+
   }, []);
-    
+
+  const initTypes = async () => {
+    const result = await getColPointType();
+    const data = result;
+    console.log(data);
+    if(data){
+      setColType(data);
+    }
+  }
+
+  const handleCardOnClick = (col: collectionPoint) => {
+    navigate("/collector/editCollectionPoint", { state: col })
+  }
+
+  const getColPointNameById = (id: string) => {
+    var name: string = "";
+    colType.map((col) => {
+      console.log(id,col.colPointTypeId);
+      if(id == col.colPointTypeId){
+        switch(i18n.language){
+          case "enus":
+              name = col.colPointTypeEng;
+              break;
+          case "zhch":
+              name = col.colPointTypeSchi;
+              break;
+          case "zhhk":
+              name = col.colPointTypeTchi;
+              break;
+          default:
+              name = col.colPointTypeTchi;        //default fallback language is zhhk
+              break;
+        }
+      }
+    })
+    console.log("name: ",name)
+    return name;
+  }
+
   return (
     <>
-    {collectionPoints.map((collectionPoint)=>(
+      {collectionPoints.map((collectionPoint) => (
         <Card
           sx={{
             display: "flex",
             marginRight: "150px",
-            borderRadius:'10px',
-            marginTop:'20px'
+            borderRadius: '10px',
+            marginTop: '20px'
           }}
         >
-          <CardContent sx={{ display: "flex", alignItems: "flex-start",flexDirection:'column' }}>
-            <Box sx={{display:'flex',flexDirection:'row',alignItems:'center'}}>
-            <Typography  fontWeight='bold'>{collectionPoint.colName}</Typography>
-            <Box
-              sx={{
-                pt:'4px',
-                pm:'4px',
-                pl:'8px',
-                pr:'8px',
-                mb:'5px',
-                ml:'7px',
-                borderRadius: "10px",
-                bgcolor: returnBgColor(collectionPoint.colPointTypeId)
-              }}
-            >
-              <Typography color={returnFontColor(collectionPoint.colPointTypeId)} fontSize={12}>{collectionPoint.colPointTypeId}</Typography>
-            </Box>
-            </Box>              
-            <Typography >{collectionPoint.address}</Typography>
-          </CardContent>
+          <ButtonBase onClick={() => handleCardOnClick(collectionPoint)}>
+            <CardContent sx={{ display: "flex", flexDirection: 'column' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Typography fontWeight='bold'>{collectionPoint.colName}</Typography>
+                <Box
+                  sx={{
+                    ...localstyles.colPointType,
+                    bgcolor: returnBgColor(collectionPoint.colPointTypeId)
+                  }}
+                >
+                  <Typography color={returnFontColor(collectionPoint.colPointTypeId)} fontSize={12}>{getColPointNameById(collectionPoint.colPointTypeId)}</Typography>
+                </Box>
+              </Box>
+              <Typography sx={localstyles.address}>{collectionPoint.address}</Typography>
+            </CardContent>
+          </ButtonBase>
         </Card>
       ))}
     </>
-    )
+  )
+}
+
+const localstyles = {
+  colPointType:{
+    pt: '4px',
+    pm: '4px',
+    pl: '8px',
+    pr: '8px',
+    mb: '5px',
+    ml: '7px',
+    borderRadius: "10px"
+  },
+  address: {
+    textAlign: "left",
+    color: "#717171"
   }
+}
 
 export default CustomCard

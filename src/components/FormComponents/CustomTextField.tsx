@@ -5,24 +5,29 @@ type props = {
     id: string,
     placeholder: string,
     value?: string | number,
+    defaultValue?: string | number,
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-    endAdornment?: JSX.Element
+    endAdornment?: JSX.Element,
+    error?: boolean
 }
 
 function CustomTextField({
     id,
     placeholder,
     value,
+    defaultValue,
     onChange,
-    endAdornment
+    endAdornment,
+    error
 }: props) {
     return(
         <TextField
+            error={error}
             hiddenLabel
             id={id}
             value={value}
             placeholder={placeholder}
-            defaultValue={value? value : ''}
+            defaultValue={defaultValue? defaultValue : ''}
             onChange={onChange}
             sx={styles.textField}
             InputProps={{
@@ -31,6 +36,7 @@ function CustomTextField({
                         {endAdornment&& endAdornment}
                     </InputAdornment>
                 ),
+                sx: styles.inputProps
             }}
         />
     )

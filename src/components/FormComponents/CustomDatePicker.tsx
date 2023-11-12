@@ -5,16 +5,29 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { openingPeriod } from "../../interfaces/collectionPoint";
 import { format } from "../../constants/constant";
+import { useTranslation } from "react-i18next";
 
 type DatePicker = {
-    setDate: (period: openingPeriod) => void
+    setDate: (period: openingPeriod) => void,
+    defaultStartDate?: Date | string,
+    defaultEndDate?: Date| string
 }
 
 function CustomDatePicker({
-    setDate
+    setDate,
+    defaultStartDate,
+    defaultEndDate
 }: DatePicker){
 
-    const [period, setPeriod] = useState<openingPeriod>({startDate: dayjs(new Date(),format.dateFormat3), endDate: dayjs(new Date(),format.dateFormat3)});
+    const startDate = defaultStartDate? defaultStartDate : new Date();
+    const endDate = defaultEndDate? defaultEndDate : new Date();
+
+    const [period, setPeriod] = useState<openingPeriod>({
+            startDate: dayjs(startDate),
+            endDate: dayjs(endDate)
+        });
+
+    const { t } = useTranslation();
 
     const onChangeDate = (start: boolean, value: dayjs.Dayjs | null) => {
         if(value != null){
@@ -33,19 +46,19 @@ function CustomDatePicker({
         <>
             <Box sx={{display: "flex", alignItems: "center"}}>
                 <DatePicker
-                    defaultValue={dayjs(new Date())}
+                    defaultValue={dayjs(startDate)}
                     maxDate={period.endDate}
                     onChange={(value) => onChangeDate(true,value)}
                     sx={localstyles.datePicker}
                     format={format.dateFormat3}
                 />
                     <Typography sx={{marginX: 1}}>
-                        至
+                        {t("to")}
                     </Typography>
                 <DatePicker
-                    defaultValue={dayjs(new Date())}
+                    defaultValue={dayjs(endDate)}
                     minDate={period.startDate}
-                    onChange={(value) => onChangeDate(true,value)}
+                    onChange={(value) => onChangeDate(false,value)}
                     sx={localstyles.datePicker}
                     format={format.dateFormat3}
                 />

@@ -10,6 +10,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Tooltip,
     Typography,
 } from "@mui/material";
 import { styles } from "../../constants/styles";
@@ -26,206 +27,399 @@ import { getLocation } from "../../APICalls/getLocation";
 import { MapData } from "../../interfaces/map";
 import CustomTimePicker from "../../components/FormComponents/CustomTimePicker";
 import CustomSwitch from "../../components/FormComponents/CustomSwitch";
-import CustomItemList from "../../components/FormComponents/CustomItemList";
+import CustomItemList, { il_item } from "../../components/FormComponents/CustomItemList";
 import CustomDatePicker from "../../components/FormComponents/CustomDatePicker";
 import { useNavigate } from "react-router-dom";
 import { createCollectionPoint, getAllCollectionPoint } from "../../APICalls/collectionPointManage";
 import { format } from "../../constants/constant";
+import { useTranslation } from "react-i18next";
+import { getCommonTypes } from "../../APICalls/commonManage";
+import { colPointType, premiseType, siteType } from "../../interfaces/common";
+import { toast } from "react-toastify";
 
+type recycItem = {
+    recycType: il_item,
+    recycSubtype: il_item[]
+}
 
-const cpTypes: string[] = ["固定服務點", "流動服務點", "上門服務點"];
-const enginLandCats: string[] = [
-    "房屋工程工地",
-    "大型基建工程工地",
-    "重建工程工地",
-];
-const premiseCats: string[] = ["單幢樓", "公共屋邨", "私人屋苑"];
-
-const recycItems: recyclable[] = [{
-    recycTypeId: "廢紙",
-    recycSubtypeId: ["紙皮", "報紙"]
+const recycTypes: recycItem[] = [{
+    recycType: {name: "廢紙", id: "RC00002"},
+    recycSubtype: [{name: "紙包飲品盒", id: "RSC00014"}, {name: "包裝紙皮", id: "RSC00011"}]
 },
 {
-    recycTypeId: "金屬",
-    recycSubtypeId: ["金屬1", "金屬2"]
+    recycType: {name: "金屬", id: "RC00003"},
+    recycSubtype: [{name: "鋁罐", id: "RSC00016"}, {name: "罐頭", id: "RSC00015"}]
 },
 {
-    recycTypeId: "塑膠",
-    recycSubtypeId: ["塑膠1", "塑膠2"]
+    recycType: {name: "塑膠", id: "RC00001"},
+    recycSubtype: [{name: "膠樽", id: "RSC00001"}, {name: "膠杯", id: "RSC00002"}]
 }]
 
 function CreateCollectionPoint() {
-    const [cpType, setCPType] = useState<string>("");
-    const [cpName, setCPName] = useState<string>("");
-    const [cpAddress, setCPAddress] = useState<string>("");
-    const [contact, setContact] = useState<string>("");
-    const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({startDate: dayjs(new Date(),format.dateFormat3), endDate: dayjs(new Date(),format.dateFormat3)});
+
+    const [colType, setCOLType] = useState<string>("");
+    const [colName, setCOLName] = useState<string>("");
+    const [address, setAddress] = useState<string>("");
+    const [gpsCode, setGPSCode] = useState<number[]>([0, 0]);
+    const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({ startDate: dayjs(new Date()), endDate: dayjs(new Date()) });
     const [sHr, setSHr] = useState<serviceHr[]>([]);
-    const [enginLandCat, setEnginLandCat] = useState<string>(""); //Engineering land category
+    const [siteType, setSiteType] = useState<string>(""); //site type
+    const [contractNo, setContractNo] = useState<string>("");
     const [premiseName, setPremiseName] = useState<string>(""); //Name of the house/place
-    const [premiseCat, setPremiseCat] = useState<string>(""); //Category of the house/place
-    const [remark, setRemark] = useState<string>("");
-    const [openState, setOpenState] = useState<boolean>(true);
-    const [recycCat, setRecycCat] = useState<recyclable[]>([]);     //Recyclables category
-    const [curRecycCat, setCurRecycCat] = useState<string>(" ");     //Current selected recyclables category
-    const [fullSubItemList, setFullSubItemList] = useState<string[]>([]);     //Sub-items of current selected recyclables category
-    const [employeeNum, setEmployeeNum] = useState<number>(0);
+    const [premiseType, setPremiseType] = useState<string>(""); //Category of the house/place
+    const [premiseRemark, setPremiseRemark] = useState<string>("");
+    const [status, setStatus] = useState<boolean>(true);
+    const [colRecyc, setCOLRecyc] = useState<string[]>([]);     //Recyclables
+    const [curRecyc, setCurRecyc] = useState<string>(" ");     //Current selected recyclables
+    const [subTypeList, setSubTypeList] = useState<string[]>([]);     //all selected sub type
+    const [staffNum, setStaffNum] = useState<number>(NaN);
     const [EPDEnable, setEPDEnable] = useState<boolean>(false);
     const [serviceType, setServiceType] = useState<boolean>(true);
     const [searchText, setSearchText] = useState<string>("");
     const [listPlace, setListPlace] = useState<any[]>([]);
+    const [trySubmited, setTrySubmited] = useState<boolean>(false);
+    const [validation, setValidation] = useState<{ field: string, problem: string }[]>([]);
+    const [typeList, setTypeList] = useState<{colPoint: colPointType[], premise: premiseType[], site: siteType[]}>({colPoint: [], premise: [], site: []});
     const debouncedSearchValue: string = useDebounce(searchText, 1000);
-    const [selectPosition, setSelectPosition] = useState<number[]>([0, 0]);
 
     const navigate = useNavigate();
 
+    const { t, i18n } = useTranslation();
+
     const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (cpAddress) {
-          setCPAddress("");
+        if (address) {
+            setAddress("");
         }
         setSearchText(e.target.value);
     }
-    console.log(selectPosition)
 
-    useEffect(() => {
-        console.log("curRecycCat: ", curRecycCat);
-    }, [curRecycCat])
+    // useEffect(() => {
+    //     localStorage.setItem("selectedLatitude", gpsCode[0] + "");
+    //     localStorage.setItem("selectedLongtitude", gpsCode[1] + "");
+    //     localStorage.setItem("selectedCollectionName", colName);
+    //     localStorage.setItem("selectedCollectionType", colType);
+    //     localStorage.setItem("selectedcpAddress", address);
+    // }, [gpsCode, colName, colType, address]);
 
-    useEffect(() => {
-        localStorage.setItem("selectedLatitude", selectPosition[0] + "");
-        localStorage.setItem("selectedLongtitude", selectPosition[1] + "");
-        localStorage.setItem("selectedCollectionName", cpName);
-        localStorage.setItem("selectedCollectionType", cpType);
-        localStorage.setItem("selectedcpAddress", cpAddress);
-    }, [selectPosition, cpName, cpType, cpAddress]);
+    useEffect(()=>{
+        initType();
+    },[])
+
+    const initType = async () => {
+        const result = await getCommonTypes();
+        if(result){
+            setTypeList(result);
+        }
+    }
 
     useEffect(() => {
         if (debouncedSearchValue) {
-          getLocation(debouncedSearchValue)
-            .then((response) => {
-              const result = response.data.results;
-              setListPlace(result);
-            })
-            .catch((error) => {
-              console.log("Error fetching data:", error);
-            });
+            getLocation(debouncedSearchValue)
+                .then((response) => {
+                    const result = response.data.results;
+                    setListPlace(result);
+                })
+                .catch((error) => {
+                    console.log("Error fetching data:", error);
+                });
         } else {
-          setListPlace([]);
+            setListPlace([]);
         }
     }, [debouncedSearchValue]);
 
-    useEffect(()=>{
-        console.log("listplace: ",listPlace);
-    },[listPlace])
+    useEffect(() => {
+        //do validation here
+        const tempV: { field: string, problem: string }[] = []        //temp validation
+        colType == "" && tempV.push({ field: "col.colType", problem: "empty" });
+        siteType == "" && tempV.push({ field: "col.siteType", problem: "empty" });
+        colName == "" && tempV.push({ field: "col.colName", problem: "empty" });
+        address == "" && tempV.push({ field: "col.address", problem: "empty" });
+        premiseName == "" && tempV.push({ field: "col.premiseName", problem: "empty" });
+        premiseType == "" && tempV.push({ field: "col.premiseType", problem: "empty" });
+        colRecyc.length == 0 && tempV.push({ field: "col.recycType", problem: "empty" });
+        Number.isNaN(staffNum) && tempV.push({ field: "col.numOfStaff", problem: "empty" });
+        !Number.isInteger(staffNum)
+            ? tempV.push({ field: "col.numOfStaff", problem: "wrongFormat" })
+            : (Number.isInteger(staffNum) && staffNum < 0) && tempV.push({ field: "col.numOfStaff", problem: "numSmallerThan0" });
+        contractNo == "" && tempV.push({ field: "col.contractNo", problem: "empty" });
+        setValidation(tempV);
+    }, [colType, siteType, colName, address, premiseName, premiseType, colRecyc, staffNum, contractNo])
 
-    const returnRecyclables = (recycS: recyclable[]) => {       //transforming recyclables to string array with main items name only
-        const recyclables: string[] = recycS.map((recyc) => {
-            return recyc.recycTypeId;
+    // useEffect(() => {
+    //     console.log("staffNum: ", staffNum);
+    // }, [staffNum])
+
+    // useEffect(()=>{
+    //     console.log("listplace: ",listPlace);
+    // },[listPlace])
+
+    //validation function
+    const checkString = (s: string) => {
+        if(!trySubmited){       //before first submit, don't check the validation
+            return false;
+        }
+        return s == "";
+    }
+    const checkNumber = (n: number) => {        //before first submit, don't check the validation
+        if(!trySubmited){
+            return false;
+        }
+        return Number.isNaN(n) || !Number.isInteger(n) || (Number.isInteger(n) && n < 0);
+    }
+
+    const getValidationMsg = (valid: { field: string, problem: string }[]) => {
+        var msg: string = "";
+        var empty: string[] = [];
+        var wrongFormat: string[] = [];
+        var numSmallerThan0: string[] = [];
+        valid.map((v)=>{
+            switch(v.problem){
+                case "empty":
+                    empty.push(v.field);
+                    break;
+                case "wrongFormat":
+                    wrongFormat.push(v.field);
+                    break;
+                case "numSmallerThan0":
+                    numSmallerThan0.push(v.field);
+                    break;
+            }
+        })
+        if(empty.length > 0){
+            empty.map((e, index) => {
+                msg += t(e);
+                msg += (index==empty.length-1)? t("form.shouldNotBeEmpty") : ", "
+            })
+            msg += "\n";
+        }
+        if(wrongFormat.length > 0){
+            wrongFormat.map((w, index) => {
+                msg += t(w);
+                msg += (index==wrongFormat.length-1)? t("form.isInWrongFormat") : ", "
+            })
+            msg += "\n";
+        }
+        if(numSmallerThan0.length > 0){
+            numSmallerThan0.map((n, index) => {
+                msg += t(n);
+                msg += (index==numSmallerThan0.length-1)? t("form.shouldNotSmallerThanZero") : ", "
+            })
+            msg += "\n";
+        }
+        //console.log("validation: ",empty,wrongFormat,numSmallerThan0,msg);
+        return msg;
+    }
+
+    const returnColTypes = () => {
+        const colList: il_item[] = typeList.colPoint.map((col) => {
+            var name = "";
+            switch(i18n.language){
+                case "enus":
+                    name = col.colPointTypeEng;
+                    break;
+                case "zhch":
+                    name = col.colPointTypeSchi;
+                    break;
+                case "zhhk":
+                    name = col.colPointTypeTchi;
+                    break;
+                default:
+                    name = col.colPointTypeTchi;        //default fallback language is zhhk
+                    break;
+            }
+            return {name: name, id: col.colPointTypeId};
+        });
+        return colList;
+    };
+
+    const returnPremiseTypes = () => {
+        const premiseList: il_item[] = typeList.premise.map((pre) => {
+            var name = "";
+            switch(i18n.language){
+                case "enus":
+                    name = pre.premiseTypeNameEng;
+                    break;
+                case "zhch":
+                    name = pre.premiseTypeNameSchi;
+                    break;
+                case "zhhk":
+                    name = pre.premiseTypeNameTchi;
+                    break;
+                default:
+                    name = pre.premiseTypeNameTchi;        //default fallback language is zhhk
+                    break;
+            }
+            return {name: name, id: pre.premiseTypeId};
+        });
+        return premiseList;
+    };
+
+    const returnSiteTypes = () => {
+        const siteList: il_item[] = typeList.site.map((s) => {
+            var name = "";
+            switch(i18n.language){
+                case "enus":
+                    name = s.siteTypeNameEng;
+                    break;
+                case "zhch":
+                    name = s.siteTypeNameSchi;
+                    break;
+                case "zhhk":
+                    name = s.siteTypeNameTchi;
+                    break;
+                default:
+                    name = s.siteTypeNameTchi;        //default fallback language is zhhk
+                    break;
+            }
+            return {name: name, id: s.siteTypeId};
+        });
+        return siteList;
+    };
+
+    const returnRecyclables = (recycS: recycItem[]) => {       //transforming recyclables to string array with main items name only
+        const recyclables: il_item[] = recycS.map((recyc) => {
+            return recyc.recycType;
         });
         return recyclables;
     }
 
-    const returnSubRecyclables = (recyc: string) => {       //return sub items of recyc
-        const item: recyclable | undefined = recycItems.find((recycItem) => {
-            return recycItem.recycTypeId === recyc;
+    const returnSubRecyclables = (recycId: string) => {       //return sub items of recyc
+        const item: recycItem | undefined = recycTypes.find((recycType) => {
+            return recycType.recycType.id === recycId;
         });
         if (item) {
-            const subItems = item.recycSubtypeId
+            const subItems = item.recycSubtype
             return subItems;
         } else {
             return [];
         }
     }
 
-    const returnWithSubItem = () => {
-        const recyc = recycCat.filter((items) => {
-            return items.recycSubtypeId.length > 0;
-        });
-        return returnRecyclables(recyc);
-    }
-    const selectRecyc = (str: string[]) => {        //do select and unselect action for main item
-        const tempRecycItem = returnRecyclables(recycCat);      //current selected main item
-        var RecycItemDif: string[] = [];        //Recyclables item difference, used for storing the difference between current selected list and new selected list
-        if (tempRecycItem.length < str.length) {        //selected a new item
-            RecycItemDif = str.filter((s) => {        //getting the difference for adding item(s) to the selected list
-                return !tempRecycItem.includes(s)
-            });
-            if (RecycItemDif.length > 0) {
-                const newRecyc = Object.assign([], recycCat);
-                RecycItemDif.map((recyc) => {
-                    newRecyc.push({ recycTypeId: recyc, recycSubtypeId: [] });
-                })
-                setRecycCat(newRecyc);
-            }
-        } else if (tempRecycItem.length > str.length) {      //unselected a item
-            RecycItemDif = tempRecycItem.filter((recyc) => {      //getting the difference for item(s) extraction from the selected list
-                return !str.includes(recyc)
-            });
-            if (RecycItemDif.length > 0) {
-                const newRecyc: recyclable[] = recycCat.filter((recyc) => {
-                    //remove subitem of this main item from full sub item list
-                    if (RecycItemDif.includes(recyc.recycTypeId)) {
-                        //remove subitem of this main item from full sub item list
-                        const newFullSubItemList = fullSubItemList.filter((subitem) => {
-                            return !returnSubRecyclables(recyc.recycTypeId).includes(subitem);
-                        })
-                        setFullSubItemList(newFullSubItemList);
-                    }
-                    return !RecycItemDif.includes(recyc.recycTypeId);
-                })
-                setRecycCat(newRecyc);
-                //setCurRecycCat(" ");     //reset the current selected recyclable since the last selected item has been unselected
-            }
+    const returnSubTypesId = (id: string) => {
+        var subTypesId: string[] = [];
+        const re = recycTypes.find((recyc) => {     //find the corresponding recyclable object
+            return recyc.recycType.id == id;
+        })
+        if(re){
+            re.recycSubtype.map((sub) => {
+                subTypesId.push(sub.id);
+            })
         }
-
-        //console.log(RecycItemDif, tempRecycItem.length, str.length);
+        return subTypesId;
     }
-    const selectSubRecyc = (s: string[]) => {       //do select and unselect action for sub item
-        var recycS: recyclable[] = recycCat.map((recyc) => {
-            if (recyc.recycTypeId === curRecycCat) {
-                recyc.recycSubtypeId = returnSubRecyclables(curRecycCat).filter((subItems) => {     //get the full list of sub items of current selected main item and check the overlapping part
-                    return s.includes(subItems);
-                })
-            }
-            return recyc;
+
+    const returnWithSubItem = () => {
+        var withSubItem: string[] = []      //store the ids of recycType that have selected sub item
+        colRecyc.map((id) => {
+            const subId = returnSubTypesId(id);
+            subId.map((sub) => {
+                if(subTypeList.includes(sub)){
+                    withSubItem.push(id)
+                }
+            })
         });
-        setRecycCat(recycS);
-        setFullSubItemList(s);
+        return withSubItem;
+    }
+
+    const selectRecyc = (str: string[]) => {        //do select and unselect action for main item
+        if(colRecyc.length < str.length){       //selecting new item
+            setCOLRecyc(str)
+        }else if(colRecyc.length > str.length){     //unselecting an item
+            const removeRecyc = colRecyc.find((recyc) => {     //find the item that has been removed
+                return !str.includes(recyc);
+            });
+            if(removeRecyc){
+                const subId = returnSubTypesId(removeRecyc);
+                const subList = subTypeList.filter((sub) => {       //remove the sub items of unselected item from sub type list
+                    return !subId.includes(sub);
+                })
+                //console.log(subList);
+                setSubTypeList(subList);
+            }
+            setCOLRecyc(str);
+        }
+    }
+    const selectSubRecyc = (selectedSubType: string[]) => {
+        setSubTypeList(selectedSubType);
+    }
+
+    const recyclables_getRecycTypes = (recycs: recyclable[]) => {
+        const reTypes: string[] = recycs.map((recyc) => {
+            return recyc.recycTypeId;
+        });
+        return reTypes;
+    }
+
+    const recyclables_getSubTypes = (recycs: recyclable[]) => {
+        var subTypes: string[] = [];
+        recycs.map((recyc) => {
+            recyc.recycSubtypeId.map((sub) => {
+                subTypes.push(sub);
+            })
+        });
+        return subTypes;
+    }
+
+    const toRecyclables = () => {
+        var recyclableS: recyclable[] = [];
+        colRecyc.map((recyc) => {
+            const subId = returnSubTypesId(recyc);
+            const subList = subTypeList.filter((sub) => {       //get the selected sub types of corresponding recyc type
+                return subId.includes(sub);
+            })
+            //console.log(subList);
+            recyclableS.push({recycTypeId: recyc, recycSubtypeId: subList});
+        });
+        return recyclableS;
     }
 
     const handleCreateOnClick = async () => {
-        const ST: string[] = sHr.map((value) => value.startFrom.toString());
-        const ET: string[] = sHr.map((value) => value.endAt.toString());
-        const cp: createCP = {
-            colName: cpName,
-            colPointTypeId: cpType,
-            effFrmDate: openingPeriod?.startDate.toString(),
-            effToDate: openingPeriod?.endDate.toString(),
-            startTime: ST,
-            endTime: ET,
-            address: cpAddress,
-            gpsCode: "",
-            epdFlg: EPDEnable,
-            extraServiceFlg: !serviceType,
-            siteTypeId: "",
-            contractNo: "",
-            noOfStaff: employeeNum,
-            status: openState? "ACTIVE" : "INACTIVE",
-            premiseName: premiseName,
-            premiseTypeId: premiseCat,
-            premiseRemark: remark,
-            normalFlg: true,
-            createdBy: "colAdmin",
-            updatedBy: "colAdmin",
-            roster: [],
-            colPtRecyc: recycCat
+        toast.info('Collection point created', {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+        if(validation.length == 0){
+            const ST: string[] = sHr.map((value) => value.startFrom.toString());
+            const ET: string[] = sHr.map((value) => value.endAt.toString());
+            const cp: createCP = {
+                colName: colName,
+                colPointTypeId: colType,
+                effFrmDate: openingPeriod?.startDate.format(format.dateFormat3),
+                effToDate: openingPeriod?.endDate.format(format.dateFormat3),
+                startTime: ST,
+                endTime: ET,
+                address: address,
+                gpsCode: gpsCode,
+                epdFlg: EPDEnable,
+                extraServiceFlg: !serviceType,
+                siteTypeId: siteType,
+                contractNo: contractNo,
+                noOfStaff: staffNum,
+                status: status ? "CREATED" : "CLOSED",
+                premiseName: premiseName,
+                premiseTypeId: premiseType,
+                premiseRemark: premiseRemark,
+                normalFlg: true,
+                createdBy: "colAdmin",
+                updatedBy: "colAdmin",
+                roster: [],
+                colPtRecyc: toRecyclables()
+            }
+            const result = await createCollectionPoint(cp);
+            const data = result?.data;
+            if (data) {
+                console.log("all collection point: ", data);
+            }
+            navigate("/collector/collectionPoint",{ state: "created" });       //goback to last page
+        }else{
+            setTrySubmited(true);
         }
-        const result = await createCollectionPoint(cp);
-        const data = result?.data;
-        if(data){
-            console.log("all collection point: ",data);
-        }
-        navigate(-1);       //goback to last page
     }
 
     const handleCancelOnClick = () => {
@@ -252,204 +446,221 @@ function CreateCollectionPoint() {
 
     return (
         <>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-                <Grid container direction={"column"} spacing={2.5} sx={styles.gridForm}>
-                    <Grid item>
-                        <Button sx={[styles.headerSection]} onClick={() => handleHeaderOnClick()}>
-                            <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
-                            <Typography sx={styles.header1}>建立回收點</Typography>
-                        </Button>
+            <form>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
+                    <Grid container direction={"column"} spacing={2.5} sx={styles.gridForm}>
+                        <Grid item>
+                            <Button sx={[styles.headerSection]} onClick={() => handleHeaderOnClick()}>
+                                <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
+                                <Typography sx={styles.header1}>{t("col.createCP")}</Typography>
+                            </Button>
+                        </Grid>
+
+                        <CustomField label={t("col.colType")} mandatory={true}>
+                            <CustomItemList
+                                items={returnColTypes()}
+                                singleSelect={setCOLType}
+                                error={trySubmited && checkString(colType)}
+                            />
+                        </CustomField>
+
+                        <CustomField label={t("col.siteType")} mandatory={true}>
+                            <CustomItemList
+                                items={returnSiteTypes()}
+                                singleSelect={setSiteType}
+                                error={checkString(siteType)}
+                            />
+                        </CustomField>
+
+                        <CustomField label={t("col.colName")} mandatory={true}>
+                            <CustomTextField
+                                id="colName"
+                                placeholder={t("col.enterName")}
+                                onChange={(event) => setCOLName(event.target.value)}
+                                error={checkString(colName)}
+                            />
+                        </CustomField>
+
+                        <CustomField label={t("col.address")} mandatory={true}>
+                            <CustomTextField
+                                id="address"
+                                placeholder={t("col.enterAddress")}
+                                onChange={(event) => handleSearchTextChange(event)}
+                                // endAdornment={locationSelect(setCPLocation)}
+                                value={address ? address : searchText}
+                                error={checkString(address)}
+                            />
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    width: "100%",
+                                    borderColor: "black",
+                                }}
+                            >
+                                {listPlace && (
+                                    <List key={listPlace[0]?.place_id}>
+                                        <ListItemButton
+                                            onClick={() => {
+                                                setAddress(listPlace[0].formatted_address);
+                                                setGPSCode([listPlace[0]?.geometry?.location?.lat, listPlace[0]?.geometry?.location?.lng]);
+                                            }}
+                                        >
+                                            <ListItemText>{listPlace[0]?.formatted_address}</ListItemText>
+                                        </ListItemButton>
+                                        <Divider />
+                                    </List>
+                                )}
+                            </Box>
+                        </CustomField>
+
+                        <CustomField label={t("col.effFromDate")}>
+                            <CustomDatePicker setDate={setOpeningPeriod} />
+                        </CustomField>
+
+                        <CustomField label={t("col.startTime")} mandatory={true}>
+                            <CustomTimePicker multiple={true} setTime={setSHr} />
+                        </CustomField>
+
+                        <CustomField label={t("col.premiseName")} mandatory={true}>
+                            <CustomTextField
+                                id="HouseOrPlaceName"
+                                placeholder={t("col.enterName")}
+                                onChange={(event) => setPremiseName(event.target.value)}
+                                error={checkString(premiseName)}
+                            />
+                        </CustomField>
+
+                        <CustomField label={t("col.premiseType")} mandatory={true}>
+                            <CustomItemList
+                                items={returnPremiseTypes()}
+                                singleSelect={setPremiseType}
+                                error={checkString(premiseType)}
+                            />
+                        </CustomField>
+
+                        <Grid item>
+                            <Collapse in={premiseType == "PT00010"} >
+                                <CustomField label={t("col.premiseRemark")}>
+                                    <CustomTextField
+                                        id="premiseRemark"
+                                        placeholder={t("col.enterText")}
+                                        onChange={(event) => setPremiseRemark(event.target.value)}
+                                    />
+                                </CustomField>
+                            </Collapse>
+                        </Grid>
+
+                        <CustomField label={t("col.status")}>
+                            <CustomSwitch
+                                onText={t("col.open")}
+                                offText={t("col.close")}
+                                defaultValue={true}
+                                setState={setStatus}
+                            />
+                        </CustomField>
+
+                        <Grid item sx={{ width: "100%" }}>
+                            <Divider />
+                        </Grid>
+
+                        <Grid item>
+                            <Typography sx={styles.header2}>{t("col.colRecycType")}</Typography>
+                        </Grid>
+
+                        <CustomField label={t("col.recycType")} mandatory={true}>
+                            <CustomItemList
+                                items={returnRecyclables(recycTypes)}
+                                withSubItems={returnWithSubItem()}
+                                multiSelect={selectRecyc}
+                                setLastSelect={setCurRecyc}
+                                dbClickSelect={true}
+                                error={trySubmited && colRecyc.length == 0}
+                            />
+                        </CustomField>
+                        <Grid item>
+                            <Collapse in={curRecyc != " " && colRecyc.length > 0} unmountOnExit>
+                                <CustomField label={curRecyc == " " ? "" : curRecyc + t("col.category")}>
+                                    <CustomItemList
+                                        items={returnSubRecyclables(curRecyc)}
+                                        multiSelect={selectSubRecyc}
+                                        defaultSelected={subTypeList}
+                                        dbClickSelect={true}
+                                    />
+                                </CustomField>
+                            </Collapse>
+                        </Grid>
+
+                        <Grid item sx={{ width: "100%" }}>
+                            <Divider />
+                        </Grid>
+
+                        <Grid item>
+                            <Typography sx={styles.header2}>{t("col.staffInfo")}</Typography>
+                        </Grid>
+
+                        <CustomField label={t("col.numOfStaff")} mandatory={true}>
+                            <CustomTextField
+                                id="employee number"
+                                placeholder={t("col.enterNumOfStaff")}
+                                onChange={(event) => {
+                                    const value = event.target.value;
+                                    if (!isNaN(+value)) {
+                                        //if value is number
+                                        setStaffNum(parseInt(value));
+                                    }
+                                }}
+                                error={checkNumber(staffNum)}
+                            />
+                        </CustomField>
+
+                        <Grid item sx={{ width: "100%" }}>
+                            <Divider />
+                        </Grid>
+
+                        <Grid item>
+                            <Typography sx={styles.header2}>{t("col.serviceInfo")}</Typography>
+                        </Grid>
+
+                        <CustomField label={"是否EPD 服務"}>
+                            <CustomSwitch
+                                onText="是"
+                                offText="否"
+                                defaultValue={false}
+                                setState={setEPDEnable}
+                            />
+                        </CustomField>
+
+                        <CustomField label={t("col.contractNo")} mandatory={true}>
+                            <CustomTextField
+                                id="contractNo"
+                                placeholder={t("col.enterNo")}
+                                onChange={(event) => setContractNo(event.target.value)}
+                                error={checkString(contractNo)}
+                            />
+                        </CustomField>
+
+                        <CustomField label={t("col.serviceType")}>
+                            <CustomSwitch
+                                onText={t("col.basic")}
+                                offText={t("col.extra")}
+                                defaultValue={true}
+                                setState={setServiceType}
+                            />
+                        </CustomField>
+                        <Grid item>
+                            <Tooltip title={/*getValidationMsg(validation)*/""} placement="top-start">
+                                <Button sx={[styles.buttonFilledGreen, localstyles.localButton]} onClick={() => handleCreateOnClick()}>
+                                    {t("col.create")}
+                                </Button>
+                            </Tooltip>
+                            <Button sx={[styles.buttonOutlinedGreen, localstyles.localButton]} onClick={() => handleCancelOnClick()}>
+                                {t("col.cancel")}
+                            </Button>
+                        </Grid>
                     </Grid>
-
-                    <CustomField label={"回收點類別"} necessary={true}>
-                        <CustomItemList
-                            items={cpTypes}
-                            singleSelect={setCPType}
-                        />
-                    </CustomField>
-
-                    <CustomField label={"回收點名稱"}>
-                        <CustomTextField
-                            id="cpName"
-                            placeholder="請輸入名稱"
-                            onChange={(event) => setCPName(event.target.value)}
-                        />
-                    </CustomField>
-
-                    <CustomField label={"地點"}>
-                        <CustomTextField
-                        id="location"
-                        placeholder="請輸入地點"
-                        onChange={(event) => handleSearchTextChange(event)}
-                        // endAdornment={locationSelect(setCPLocation)}
-                        value={cpAddress ? cpAddress : searchText}
-                        />
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                width: "100%",
-                                borderColor: "black",
-                            }}
-                        >
-                            {listPlace&&(
-                                <List key={listPlace[0]?.place_id}>
-                                    <ListItemButton
-                                    onClick={() => {
-                                        setSelectPosition([listPlace[0]?.geometry?.location?.lat,listPlace[0]?.geometry?.location?.lng]);
-                                        setCPAddress(listPlace[0].formatted_address);
-                                    }}
-                                    >
-                                    <ListItemText>{listPlace[0]?.formatted_address}</ListItemText>
-                                    </ListItemButton>
-                                    <Divider />
-                                </List>
-                            )}
-                        </Box>
-                    </CustomField>
-
-                    <CustomField label={"聯絡"}>
-                        <CustomTextField
-                            id="contact"
-                            placeholder="請輸入聯絡號碼"
-                            onChange={(event) => setContact(event.target.value)}
-                        />
-                    </CustomField>
-
-                    <CustomField label={"開放日期由"}>
-                        <CustomDatePicker setDate={setOpeningPeriod}/>
-                    </CustomField>
-
-                    <CustomField label={"服務時間"}>
-                        <CustomTimePicker multiple={true} setTime={setSHr} />
-                    </CustomField>
-
-                    <CustomField label={"工程用地類別"}>
-                        <CustomItemList
-                            items={enginLandCats}
-                            singleSelect={setEnginLandCat}
-                        />
-                    </CustomField>
-
-                    <CustomField label={"房屋或場所名稱"}>
-                        <CustomTextField
-                            id="HouseOrPlaceName"
-                            placeholder="請輸入名稱"
-                            onChange={(event) => setPremiseName(event.target.value)}
-                        />
-                    </CustomField>
-
-                    <CustomField label={"房屋或場所類別"}>
-                        <CustomItemList
-                            items={premiseCats}
-                            singleSelect={setPremiseCat}
-                        />
-                    </CustomField>
-
-                    <CustomField label={"備註"}>
-                        <CustomTextField
-                            id="remark"
-                            placeholder="請輸入文字"
-                            onChange={(event) => setRemark(event.target.value)}
-                        />
-                    </CustomField>
-
-                    <CustomField label={"開放收態"}>
-                        <CustomSwitch
-                            onText="開放"
-                            offText="關閉"
-                            defaultValue={true}
-                            setState={setOpenState}
-                        />
-                    </CustomField>
-
-                    <Grid item sx={{ width: "100%" }}>
-                        <Divider />
-                    </Grid>
-
-                    <Grid item>
-                        <Typography sx={styles.header2}>回收物資料</Typography>
-                    </Grid>
-
-                    <CustomField label={"可回收物類別"} necessary={true}>
-                        <CustomItemList
-                            items={returnRecyclables(recycItems)}
-                            withSubItems={returnWithSubItem()}
-                            multiSelect={selectRecyc}
-                            setLastSelect={setCurRecycCat}
-                            dbClickSelect={true}
-                        />
-                    </CustomField>
-                    <Grid item>
-                        <Collapse in={curRecycCat != " " && recycCat.length > 0} unmountOnExit>
-                            <CustomField label={curRecycCat == " " ? "" : curRecycCat + "類別"}>
-                                <CustomItemList
-                                    items={returnSubRecyclables(curRecycCat)}
-                                    multiSelect={selectSubRecyc}
-                                    defaultSelected={fullSubItemList}
-                                    dbClickSelect={true}
-                                />
-                            </CustomField>
-                        </Collapse>
-                    </Grid>
-
-                    <Grid item sx={{ width: "100%" }}>
-                        <Divider />
-                    </Grid>
-
-                    <Grid item>
-                        <Typography sx={styles.header2}>員工資料</Typography>
-                    </Grid>
-
-                    <CustomField label={"員工數量"}>
-                        <CustomTextField
-                            id="remark"
-                            placeholder="請輸入人數"
-                            onChange={(event) => {
-                                const value = event.target.value;
-                                if (!isNaN(+value)) {
-                                    //if value is number
-                                    setEmployeeNum(parseInt(value));
-                                }
-                            }}
-                        />
-                    </CustomField>
-
-                    <Grid item sx={{ width: "100%" }}>
-                        <Divider />
-                    </Grid>
-
-                    <Grid item>
-                        <Typography sx={styles.header2}>服務資料</Typography>
-                    </Grid>
-
-                    <CustomField label={"是否EPD 服務"}>
-                        <CustomSwitch
-                            onText="是"
-                            offText="否"
-                            defaultValue={false}
-                            setState={setEPDEnable}
-                        />
-                    </CustomField>
-
-                    <CustomField label={"服務種類"}>
-                        <CustomSwitch
-                            onText="基本"
-                            offText="額外"
-                            defaultValue={true}
-                            setState={setServiceType}
-                        />
-                    </CustomField>
-                    <Grid item>
-                        <Button sx={[styles.buttonFilledGreen, localstyles.localButton]} onClick={() => handleCreateOnClick()}>
-                            建立
-                        </Button>
-                        <Button sx={[styles.buttonOutlinedGreen, localstyles.localButton]} onClick={() => handleCancelOnClick()}>
-                            取消
-                        </Button>
-                    </Grid>
-                </Grid>
-            </LocalizationProvider>
+                </LocalizationProvider>
+            </form>
         </>
     );
 }

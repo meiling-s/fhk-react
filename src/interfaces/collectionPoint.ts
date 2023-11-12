@@ -1,4 +1,5 @@
 import dayjs from "dayjs"
+import { il_item } from "../components/FormComponents/CustomItemList"
 
 export type openingPeriod = {
     startDate: dayjs.Dayjs,
@@ -11,8 +12,8 @@ export type serviceHr = {
 }
 
 export type recyclable = {
-    recycTypeId: string,
-    recycSubtypeId: string[]
+	recycTypeId: string,
+	recycSubtypeId: string[]
 }
 
 export type roster = {
@@ -28,12 +29,12 @@ export type collectionPoint = {
     colId: string,
 	colName: string,
     colPointTypeId: string,
-	effFrmDate: String,
-	effToDate: String,
+	effFrmDate: string,
+	effToDate: string,
 	startTime: string[],
 	endTime: string[],
 	address: string,
-	gpsCode: [cor1: number, cor2: number],
+	gpsCode: number[],
 	epdFlg: boolean,
 	extraServiceFlg: boolean,
 	siteTypeId: string,
@@ -62,7 +63,7 @@ export type createCP = {        //data for creating Collection Point
 	startTime: string[],
 	endTime: string[],
 	address: string,
-	gpsCode: string,
+	gpsCode: number[],
 	epdFlg: boolean,
 	extraServiceFlg: boolean,
 	siteTypeId: string,

@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Collapse, createTheme } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 type MainDrawer = {
   role: string;
@@ -36,24 +37,25 @@ function MainDrawer() {
 
   const navigate = useNavigate();
   const [CPDrawer, setCPDrawer] = useState<boolean>(false);   //CP = collection point, this state determine collection point drawer group expand or not
+  const { t } = useTranslation();
 
   var role = "collector";
 
   let drawerMenus_collector: DrawerItem[] = [
-    { name: "回收點", icon: <PLACE_ICON />, onClick: () =>  setCPDrawer(!CPDrawer), collapse: false, collapseGroup: CPDrawer },
-    { name: "所有回收點", onClick: () =>  navigate("/collector/collectionPoint"), collapse: true, collapseGroup: CPDrawer },
-    { name: "處理記錄", onClick: () =>  navigate("/collector/processRecord"), collapse: true, collapseGroup: CPDrawer },
-    { name: "回收運單", icon: <SHIPPING_CAR_ICON />,onClick: () =>  navigate("/collector/collectionorder"), collapse: false },
-    { name: "報表", icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/collector/report"), collapse: false },
-    { name: "員工", icon: <STAFF_ICON />,onClick: () =>  navigate("/collector/staff"), collapse: false },
+    { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  setCPDrawer(!CPDrawer), collapse: false, collapseGroup: CPDrawer },
+    { name: t('all_Collection_Point'), onClick: () =>  navigate("/collector/collectionPoint"), collapse: true, collapseGroup: CPDrawer },
+    { name: t('process_Records'), onClick: () =>  navigate("/collector/processRecord"), collapse: true, collapseGroup: CPDrawer },
+    { name: t('pickup_Orders'), icon: <SHIPPING_CAR_ICON />,onClick: () =>  navigate("/collector/collectionorder"), collapse: false },
+    { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/collector/report"), collapse: false },
+    { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/collector/staff"), collapse: false },
   ];
 
   let drawerMenus_astd: DrawerItem[] = [
-    { name: "公司", icon: <FOLDER_ICON />, onClick: () =>  navigate("/astd"), collapse: false },
-    { name: "回收點", icon: <PLACE_ICON />, onClick: () =>  navigate("/astd/collectionPoint"), collapse: false },
+    { name: t('company'), icon: <FOLDER_ICON />, onClick: () =>  navigate("/astd"), collapse: false },
+    { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  navigate("/astd/collectionPoint"), collapse: false },
     { name: "回收運單", icon: <SHIPPING_CAR_ICON />,onClick: () =>  navigate("/astd/collectionorder"), collapse: false },
-    { name: "報表", icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/astd/report"), collapse: false },
-    { name: "員工", icon: <STAFF_ICON />,onClick: () =>  navigate("/astd/staff"), collapse: false },
+    { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/astd/report"), collapse: false },
+    { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/astd/staff"), collapse: false },
   ];
 
   var drawerMenus;

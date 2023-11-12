@@ -28,6 +28,8 @@ export const createInvitation = async (item: Tenant) => {
 
 export const getAllTenant = async () => {
   
+  console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
+
   try {
     const response = await axios({
       ...GET_ALL_TENANT,

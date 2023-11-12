@@ -1,9 +1,9 @@
-import React from 'react'
 import MainDrawer from './MainDrawer'
 import MainAppBar from './MainAppBar'
-import { Box, Grid, Typography } from '@mui/material'
-import { Outlet, useLoaderData } from 'react-router-dom'
+import { Box } from '@mui/material'
+import { Outlet } from 'react-router-dom'
 import { styles } from '../constants/styles'
+import Toast from '../components/Toast'
 
 
 function MainLayout() {

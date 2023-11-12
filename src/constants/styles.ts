@@ -2,12 +2,13 @@ import { layout } from "./constant";
 export const styles = {
     innerScreen: {
         display: "flex",
-        width: `calc(100% - ${layout.drawerWidth}px)`,
         height: "100%",
         ml: `${layout.drawerWidth}px`,
         mt: layout.appbarHeight,
         backgroundColor: "#F4F5F7",
-        p: 4
+        pl: 4,
+        pt: 4,
+        pb: 4
     },
     headerSection: {
         display: "flex",
@@ -60,14 +61,21 @@ export const styles = {
     mapRightContainer: {
         width: "50%",
         height: `calc(100vh - ${layout.appbarHeight})`,
-        mt: -4,
-        ml: 4
+        mt: -4
     },
     textField: {
         borderRadius: 5,
         backgroundColor: "white",
         "& fieldset":{
             borderRadius: 5,
+        }
+    },
+    inputProps: {
+        '&:hover fieldset': {
+            borderColor: "#A8A8A8 !important"
+        },
+        '&:focus-within fieldset, &:focus-visible fieldset': {
+            borderColor: "#79CA25 !important",
         }
     },
     endAdornmentIcon: {

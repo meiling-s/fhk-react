@@ -496,16 +496,14 @@ function CompanyManage(){
     }
 
     return(
-        <Box sx={{width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, bgcolor:'#f4f5f7', height: "100vh", display: "flex" }}>
+        <>
             <Box
                 sx={{
-                    pt: "50px",
-                    pl:'40px',
-                    pr:'40px',
                     width: "100%",
                     height: "100%",
                     display:'flex',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    pr: 4
                 }}
             >
                 <Typography fontSize={20} color='black' fontWeight='bold'>公司</Typography>
@@ -639,7 +637,7 @@ function CompanyManage(){
 
                 <InviteModal open={invSendModal} onClose={() => setInvSendModal(false)} id={InviteId}/>
             </Box>
-        </Box>
+        </>
     );
 }
 

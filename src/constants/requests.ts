@@ -1,8 +1,9 @@
 import { AxiosRequestConfig } from 'axios';
 
+//tenant manage
 export const LOGIN: AxiosRequestConfig = {
   method: 'post',
-  url: '/api/ac/login',
+  url: 'api/ac/login',
 };
 
 export const ADD_TENANT: AxiosRequestConfig = {
@@ -25,6 +26,7 @@ export const UPDATE_TENANT_REGISTER: AxiosRequestConfig = {
   url: 'api/ac/tenantInvite'
 }
 
+//collection point
 export const GET_ALL_COLLECTIONPOINT: AxiosRequestConfig = {
   method: 'get',
   url: 'api/collectors/collectionPoint'
@@ -33,4 +35,35 @@ export const GET_ALL_COLLECTIONPOINT: AxiosRequestConfig = {
 export const CREATE_COLLECTIONPOINT: AxiosRequestConfig = {
   method: 'post',
   url: 'api/collectors/collectionPoint'
+}
+
+//common
+export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/common/colPointType'
+}
+
+export const ADD_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/common/colPointType'
+}
+
+export const GET_PREMISE_TYPE: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/common/premiseType'
+}
+
+export const ADD_PREMISE_TYPE: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/common/premiseType'
+}
+
+export const GET_SITE_TYPE: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/common/siteType'
+}
+
+export const ADD_SITE_TYPE: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/common/siteType'
 }

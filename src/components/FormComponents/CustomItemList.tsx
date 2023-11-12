@@ -1,14 +1,22 @@
 import { Box, Button } from "@mui/material"
 import { useEffect, useState } from "react"
 import { styles } from "../../constants/styles"
+
+//item list's item
+export type il_item = {
+    name: string,
+    id: string
+}
+
 type props = {
-    items: string[],
+    items: il_item[],
     withSubItems?: string[],
     singleSelect?: (s: string) => void
     multiSelect?: (s: string[]) => void
-    defaultSelected?: string[],     //just for setting the defaultSelected value of selectMulti
+    defaultSelected?: string[] | string,     //just for setting the defaultSelected value of selectMulti
     setLastSelect?: (s: string) => void        //for determinding the last selected item
     dbClickSelect?: boolean,
+    error?: boolean
 }
 function CustomItemList({
     items,
@@ -17,14 +25,17 @@ function CustomItemList({
     multiSelect,
     defaultSelected,
     setLastSelect,
-    dbClickSelect
+    dbClickSelect,
+    error
 }: props){
     const [selectSingle, setSelectSingle] = useState<string>("");
     const [selectMulti, setSelectMulti] = useState<string[]>([]);
     const [LS, setLS] = useState<string>(" ");      //last select
     useEffect(()=>{
-        if(defaultSelected && multiSelect){
+        if(defaultSelected && Array.isArray(defaultSelected) && multiSelect){
             setSelectMulti(defaultSelected);
+        }else if(defaultSelected && !Array.isArray(defaultSelected)){
+            setSelectSingle(defaultSelected);
         }
     },[])
     if(!(singleSelect || multiSelect)){        //if none of the select method exist
@@ -90,10 +101,10 @@ function CustomItemList({
                 items.map((item) => (
                     <Button
                         variant="outlined"
-                        sx={returnTheme(item)}
-                        onClick={()=>{dbClickSelect? handleSingleClick(item) : handleSelect(item)}}
-                        onDoubleClick={(event) => {dbClickSelect && handleSelect(item)}}>
-                        {item}
+                        sx={error? localstyles.error : returnTheme(item.id)}
+                        onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}
+                        onDoubleClick={(event) => {dbClickSelect && handleSelect(item.id)}}>
+                        {item.name}
                     </Button>
                 ))
             }
@@ -105,6 +116,7 @@ const localstyles = {
         mt: 1,
         display: "flex",
         flexDirection: "row",
+        flexWrap: 'wrap'
     },
     item: {
         ...styles.listItemTemp,
@@ -134,6 +146,16 @@ const localstyles = {
         '&.MuiButton-root:hover':{
             //bgcolor: "#F4F4F4",
             borderColor: "#79CA25"
+        }
+    },
+    error: {
+        ...styles.listItemTemp,
+        backgroundColor: "white",
+        borderColor: "#d32f2f",
+        color: "#535353",
+        '&.MuiButton-root:hover':{
+            borderColor: "#d32f2f",
+            backgroundColor: "#F0F0F0"
         }
     }
 }

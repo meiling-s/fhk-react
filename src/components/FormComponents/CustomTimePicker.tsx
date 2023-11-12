@@ -6,21 +6,26 @@ import { serviceHr } from "../../interfaces/collectionPoint";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { styles } from "../../constants/styles";
+import { useTranslation } from "react-i18next";
 
 type timePicker = {
     multiple: boolean,
     //serviceHr: boolean,       enable it if need to support non serviceHr time picker
     setTime: (shr: serviceHr[]) => void
+    defaultTime?: serviceHr[]
 }
 
 function CustomTimePicker({
     multiple,
     //serviceHr,
-    setTime
+    setTime,
+    defaultTime
 }: timePicker){
 
     const [tempSHR, setTempSHR] = useState<serviceHr>({startFrom: dayjs("09:00", "HH:mm"), endAt: dayjs("17:00", "HH:mm")});
-    const [sHr, setSHr] = useState<serviceHr[]>([]);
+    const [sHr, setSHr] = useState<serviceHr[]>(defaultTime? defaultTime : []);
+
+    const { t } = useTranslation();
 
     useEffect(()=>{
         setTime(sHr);
@@ -85,7 +90,7 @@ function CustomTimePicker({
                     sx={localstyles.timePicker}
                 />
                 <Typography sx={{marginX: 1}}>
-                    至
+                    {t("to")}
                 </Typography>
                 <TimePicker
                     defaultValue={endTime}
@@ -117,7 +122,7 @@ function CustomTimePicker({
                         sx={localstyles.timePicker}
                     />
                         <Typography sx={{marginX: 1}}>
-                            至
+                            {t("to")}
                         </Typography>
                     <TimePicker
                         defaultValue={tempSHR.endAt}

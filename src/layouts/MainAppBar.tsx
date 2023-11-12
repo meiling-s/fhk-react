@@ -21,14 +21,20 @@ import {
 import BackgroundLetterAvatars from "../components/CustomAvatar";
 import { useNavigate } from "react-router-dom";
 import { localStorgeKeyName } from "../constants/constant";
-
+import { useTranslation } from "react-i18next";
 
 const MainAppBar = () => {
 
   const [keywords, setKeywords] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const drawerWidth = 246;
+ 
+  const handleLanguageChange = (lng: string) => {
+    console.log("change language: ",lng);
+    i18n.changeLanguage(lng);
+  };
 
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -55,7 +61,7 @@ const MainAppBar = () => {
               size="small"
               value={keywords}
               onChange={(e) => onKeywordsChange(e.target.value)}
-              placeholder="輸入關鍵字查詢"
+              placeholder={t("enter_Keyword_To_Search")}
               sx={{
                 "& fieldset": {
                   display: "none",
@@ -93,9 +99,9 @@ const MainAppBar = () => {
               TransitionComponent={Fade}
               style={{padding:'16px'}}
             >
-              <MenuItem divider={true} onClick={() => {}}><Typography >簡體中文</Typography></MenuItem>
-              <MenuItem divider={true}onClick={() => {}}><Typography>繁體中文</Typography></MenuItem>
-              <MenuItem onClick={() => {}}><Typography>English</Typography></MenuItem>
+              <MenuItem divider={true} onClick={() => handleLanguageChange('zhch')}><Typography >簡體中文</Typography></MenuItem>
+              <MenuItem divider={true}onClick={() => handleLanguageChange('zhhk')}><Typography>繁體中文</Typography></MenuItem>
+              <MenuItem onClick={() => handleLanguageChange('enus')}><Typography>English</Typography></MenuItem>
             </Menu>
             <Box sx={{ display: "flex", flexDirection: "row", ml: 3 }}>
               <IconButton>
@@ -118,7 +124,7 @@ const MainAppBar = () => {
                   }}
                   endIcon={<RIGHT_ARROW_ICON />}
                 >
-                  登出
+                  {t('signOut')}
                 </Button>
               </Box>
             </Box>
