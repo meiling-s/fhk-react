@@ -21,11 +21,11 @@ const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const navigate = useNavigate();
 
-  const onLoginButtonClick = async (userName: string) => {
+  const onLoginButtonClick = async (userName: string, password: string) => {
     const result = await login({
       username: userName,
       password: password,
-      realm: 'astd'
+      realm: 'collector'
     });
     switch(userName){
       case "astd":
@@ -35,7 +35,7 @@ const Login = () => {
         navigate("/collector");
         break;
       default:
-        navigate("/astd");
+        navigate("/warehouse");
     }
     console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
     localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
@@ -86,7 +86,7 @@ const Login = () => {
               InputProps={{
                 sx: styles.textField
               }}
-              onChange={(event) => {
+              onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => {
                 setUserName(event.target.value);
               }}
             />
@@ -107,7 +107,7 @@ const Login = () => {
                   </InputAdornment>
                 ),
               }}
-              onChange={(event) => {
+              onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => {
                 setPassword(event.target.value);
               }}
             />
@@ -115,7 +115,7 @@ const Login = () => {
           <Box>
             <Button
               fullWidth
-              onClick={() => onLoginButtonClick(userName)}
+              onClick={() => onLoginButtonClick(userName,password)}
               sx={{
                 borderRadius: "20px",
                 backgroundColor: "#79ca25",

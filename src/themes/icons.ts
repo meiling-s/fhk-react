@@ -8,6 +8,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 export const PLACE_ICON = PlaceOutlinedIcon;
 export const SHIPPING_CAR_ICON = LocalShippingOutlinedIcon;
@@ -19,3 +20,4 @@ export const LANGUAGE_ICON = LanguageIcon;
 export const RIGHT_ARROW_ICON = ChevronRightIcon;
 export const FOLDER_ICON = FolderCopyIcon;
 export const ADD_PERSON_ICON = PersonAddIcon;
+export const LOCATION_ICON = LocationOnIcon;

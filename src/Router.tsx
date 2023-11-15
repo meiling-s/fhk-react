@@ -1,15 +1,25 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import MainLayout from './layouts/MainLayout';
 import Login from './pages/Login';
+//ASTD admin
+import CompanyManage from './pages/ASTD/CompanyManage';
+//collection point
+import CollectionPoint from './pages/Collector/CollectionPoint/CollectionPoint/CollectionPoint';
+import CreateCollectionPoint from './pages/Collector/CollectionPoint/CreateCollectionPoint/CreateCollectionPoint';
+import EditCollectionPoint from './pages/Collector/CollectionPoint/EditCollectionPoint/EditCollectionPoint';
+//warehouse
+import Overview from './pages/Collector/Manage/Overview'
+//Tenant Register
 import CompanyDetails from './pages/TenantRegister/CompanyDetails';
 import CompanyContact from './pages/TenantRegister/CompanyContact';
 import RegisterResult from './pages/TenantRegister/RegisterResult';
-import MainLayout from './layouts/MainLayout';
-import CollectionPoint from './pages/Collector/CollectionPoint';
-import CollectionOrder from './pages/Collector/CollectionOrder';
+//general
 import Staff from './pages/Collector/Staff';
 import Report from './pages/Collector/Report';
-import CompanyManage from './pages/ASTD/CompanyManage';
+import RecycleShipment from './pages/Collector/RecycleShipment';
+import ProcessRecord from './pages/Collector/Manage/ProcessRecord';
 
 const Router = () => {
   return (
@@ -21,11 +31,14 @@ const Router = () => {
         <Route path="/register/contact" element={<CompanyContact />}/>
         <Route path="/register/result" element={<RegisterResult />}/>
 
-        <Route element={<MainLayout/>}>
+        <Route element={<MainLayout />}>
           <Route path="/collector" element={<CollectionPoint/>}/>
-          <Route path="/collector/collectionorder" element={<CollectionOrder/>}/>
+          <Route path="/collector/collectionPoint" element={<CollectionPoint/>}/>
+          <Route path="/collector/shipment" element={<RecycleShipment/>}/>
           <Route path="/collector/report" element={<Report/>}/>
           <Route path="/collector/staff" element={<Staff/>}/> 
+          <Route path="/collector/createCollectionPoint" element={<CreateCollectionPoint/>}/>
+          <Route path="/collector/editCollectionPoint" element={<EditCollectionPoint/>}/>
         </Route>
 
         <Route element={<MainLayout/>}>
@@ -34,6 +47,14 @@ const Router = () => {
           <Route path="/astd/collectionorder" element={<></>}/>
           <Route path="/astd/report" element={<></>}/>
           <Route path="/astd/staff" element={<></>}/> 
+        </Route>
+
+        <Route element={<MainLayout/>}>
+          <Route path="/warehouse" element={<RecycleShipment/>}/>
+          <Route path="/warehouse/shipment" element={<RecycleShipment/>}/>
+          <Route path="/warehouse/overview" element={<Overview/>}/>
+          <Route path="/warehouse/process" element={<ProcessRecord/>}/>
+          <Route path="/warehouse/staff" element={<Staff/>}/> 
         </Route>
 
       </Routes>

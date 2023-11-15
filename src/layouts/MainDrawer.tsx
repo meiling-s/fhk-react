@@ -14,32 +14,55 @@ import {
 } from "../themes/icons";
 import logo_company from "../logo_company.png";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Collapse, createTheme } from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 type MainDrawer = {
   role: string;
 }
 
+type DrawerItem = {
+  name: string,
+  icon?: JSX.Element,
+  onClick: () => void,
+  collapse: boolean,
+  collapseGroup?: boolean
+}
+
 const drawerWidth = 225;
 
 function MainDrawer() {
+
   const navigate = useNavigate();
+  const [CPDrawer, setCPDrawer] = useState<boolean>(false);   //CP = collection point, this state determine collection point drawer group expand or not
+  const { t } = useTranslation();
 
-  var role = "astd";
+  var role = "warehouse";
 
-  let drawerMenus_collector: { name: string; icon: any;onclick:()=>void;}[] = [
-    { name: "回收點", icon: <PLACE_ICON />, onclick: () =>  navigate("/collector")},
-    { name: "回收運單", icon: <SHIPPING_CAR_ICON />,onclick: () =>  navigate("/collector/collectionorder")},
-    { name: "管理", icon: <SHIPPING_CAR_ICON />,onclick: () =>  navigate("/collector/collectionorder")}, 
-    { name: "報表", icon: <DOCUMENT_ICON />,onclick: () =>  navigate("/collector/report") },
-    { name: "員工", icon: <STAFF_ICON />,onclick: () =>  navigate("/collector/staff") },
+  let drawerMenus_collector: DrawerItem[] = [
+    { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  setCPDrawer(!CPDrawer), collapse: false, collapseGroup: CPDrawer },
+    { name: t('all_Collection_Point'), onClick: () =>  navigate("/collector/collectionPoint"), collapse: true, collapseGroup: CPDrawer },
+    { name: t('process_Records'), onClick: () =>  navigate("/collector/processRecord"), collapse: true, collapseGroup: CPDrawer },
+    { name: t('recycle_Shipment'), icon: <SHIPPING_CAR_ICON />,onClick: () =>  navigate("/collector/shipment"), collapse: false },
+    { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/collector/report"), collapse: false },
+    { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/collector/staff"), collapse: false },
   ];
 
-  let drawerMenus_astd: { name: string; icon: any;onclick:()=>void;}[] = [
-    { name: "公司", icon: <FOLDER_ICON />, onclick: () =>  navigate("/astd")},
-    { name: "回收點", icon: <PLACE_ICON />, onclick: () =>  navigate("/astd/collectionPoint")},
-    { name: "回收運單", icon: <SHIPPING_CAR_ICON />,onclick: () =>  navigate("/astd/collectionorder")},
-    { name: "報表", icon: <DOCUMENT_ICON />,onclick: () =>  navigate("/astd/report") },
-    { name: "員工", icon: <STAFF_ICON />,onclick: () =>  navigate("/astd/staff") },
+  let drawerMenus_astd: DrawerItem[] = [
+    { name: t('company'), icon: <FOLDER_ICON />, onClick: () =>  navigate("/astd"), collapse: false },
+    { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  navigate("/astd/collectionPoint"), collapse: false },
+    { name: t('recycle_Shipment'), icon: <SHIPPING_CAR_ICON />,onClick: () =>  navigate("/astd/collectionorder"), collapse: false },
+    { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/astd/report"), collapse: false },
+    { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/astd/staff"), collapse: false },
+  ];
+
+  let drawerMenus_warehouse: DrawerItem[] = [
+    { name: t('recycle_Shipment'), icon: <SHIPPING_CAR_ICON />, onClick: () =>  navigate("/warehouse/shipment"), collapse: false },
+    { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  navigate("/warehouse/overview"), collapse: false },
+    { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/warehouse/process"), collapse: false },
+    { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/warehouse/staff"), collapse: false },
   ];
 
   var drawerMenus;
@@ -50,6 +73,9 @@ function MainDrawer() {
       break;
     case "collector":
       drawerMenus = drawerMenus_collector;
+      break;
+    case "warehouse":
+      drawerMenus = drawerMenus_warehouse;
       break;
     default:
       drawerMenus = drawerMenus_astd;
@@ -80,22 +106,46 @@ function MainDrawer() {
           <img src={logo_company} alt="logo_company" style={{width:'90px'}} />
         </Box>
         {drawerMenus.map((drawerMenu, index) => (
-          <ListItem sx={{ marginTop: 2 }} key={drawerMenu.name} onClick={drawerMenu.onclick} disablePadding>
-            <ListItemButton
-                   sx={{
-                    '&:hover .MuiSvgIcon-root': {
-                      color: '#79ca25' // Change the color to your desired hover color
-                    },
-                  }}
-            >
-              <ListItemIcon>{drawerMenu.icon}</ListItemIcon>
-              <ListItemText sx={{ marginLeft: -2 }} primary={drawerMenu.name} />
-            </ListItemButton>
-          </ListItem>
+          drawerMenu.collapse?
+            <Collapse sx={[styles.drawerSubItem]} in={drawerMenu.collapseGroup} timeout="auto" unmountOnExit>
+              <ListItem sx={{ marginTop: 2 }} key={drawerMenu.name} onClick={drawerMenu.onClick} disablePadding>
+                <ListItemButton
+                      sx={{
+                        '&:hover .MuiSvgIcon-root': {
+                          color: '#79ca25'
+                        },
+                      }}
+                >
+                  <ListItemText sx={{ marginLeft: -2 }} primary={drawerMenu.name} />
+                </ListItemButton>
+              </ListItem>
+            </Collapse> :
+            <ListItem sx={{ marginTop: 2 }} key={drawerMenu.name} onClick={drawerMenu.onClick} disablePadding>
+              <ListItemButton
+                    sx={{
+                      '&:hover .MuiSvgIcon-root': {
+                        color: '#79ca25'
+                      },
+                    }}
+              >
+                <ListItemIcon>{drawerMenu.icon}</ListItemIcon>
+                <ListItemText sx={{ marginLeft: -2 }} primary={drawerMenu.name} />
+                {(drawerMenu.collapseGroup!=undefined)&& (drawerMenu.collapseGroup ? <ExpandLess /> : <ExpandMore />)}
+              </ListItemButton>
+            </ListItem>
         ))}
       </List>
     </Drawer>
   );
 };
+
+const styles = {
+  drawerSubItem: {
+    ml: 3,
+    pl: 3,
+    borderLeft: 3,
+    borderLeftColor: "#F4F4F4"
+  }
+}
 
 export default MainDrawer;

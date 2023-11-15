@@ -2,8 +2,11 @@ import {
   AppBar,
   Box,
   Button,
+  Fade,
   IconButton,
   InputAdornment,
+  Menu,
+  MenuItem,
   TextField,
   Toolbar,
   Typography,
@@ -18,13 +21,28 @@ import {
 import BackgroundLetterAvatars from "../components/CustomAvatar";
 import { useNavigate } from "react-router-dom";
 import { localStorgeKeyName } from "../constants/constant";
-
+import { useTranslation } from "react-i18next";
 
 const MainAppBar = () => {
 
   const [keywords, setKeywords] = useState<string>("");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const drawerWidth = 246;
+ 
+  const handleLanguageChange = (lng: string) => {
+    console.log("change language: ",lng);
+    i18n.changeLanguage(lng);
+  };
+
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const onKeywordsChange = (k: string) => {
     setKeywords(k);
@@ -37,38 +55,34 @@ const MainAppBar = () => {
         position="fixed"
         sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
       >
-        <Toolbar style={{ background: "white" }}>
-          <Box display="flex" width="20%" sx={{ ml: 5 }}>
-            <TextField
-              size="small"
-              value={keywords}
-              onChange={(e) => onKeywordsChange(e.target.value)}
-              placeholder="輸入關鍵字查詢"
-              sx={{
-                "& fieldset": {
-                  display: "none",
-                },
-                flexGrow: 1,
-              }}
-              InputProps={{
-                style: { borderRadius: "10px", backgroundColor: "#f4f4f4" },
-
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SEARCH_ICON />
-                  </InputAdornment>
-                ),
-              }}
-            />
+        <Toolbar style={{ background: "white"}} sx={{height:{sm:'100px',lg:'64px'}}}>
+          <Box display="flex" sx={{ ml: 5 ,width:{sm:'50%',lg:'20%'}}}>
+            
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: "flex" }}>
             <IconButton>
               <NOTIFICATION_ICON />
             </IconButton>
-            <IconButton sx={{ ml: 3 }}>
+            <IconButton
+              aria-controls={open ? "fade-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+            >
               <LANGUAGE_ICON />
             </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={anchorEl? true : false}
+              onClose={handleClose}
+              TransitionComponent={Fade}
+              style={{padding:'16px'}}
+            >
+              <MenuItem divider={true} onClick={() => handleLanguageChange('zhch')}><Typography >簡體中文</Typography></MenuItem>
+              <MenuItem divider={true}onClick={() => handleLanguageChange('zhhk')}><Typography>繁體中文</Typography></MenuItem>
+              <MenuItem onClick={() => handleLanguageChange('enus')}><Typography>English</Typography></MenuItem>
+            </Menu>
             <Box sx={{ display: "flex", flexDirection: "row", ml: 3 }}>
               <IconButton>
                 <BackgroundLetterAvatars name="Cawin Pan" />
@@ -90,7 +104,7 @@ const MainAppBar = () => {
                   }}
                   endIcon={<RIGHT_ARROW_ICON />}
                 >
-                  登出
+                  {t('signOut')}
                 </Button>
               </Box>
             </Box>
