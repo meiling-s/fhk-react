@@ -19,3 +19,10 @@ export const format = {
   dateFormat2: "yyyy/MM/dd HH:mm",
   dateFormat3: "YYYY/MM/DD"
 }
+
+export const formErr = {
+  empty: "empty",
+  wrongFormat: "wrongFormat",
+  numberSmallThanZero: "numSmallerThanZero",
+
+}

@@ -80,3 +80,26 @@ export type createCP = {        //data for creating Collection Point
 	colPtRecyc: recyclable[]
 
 }
+
+export type updateCP = {        //data for creating Collection Point
+
+    colPointTypeId: string,
+	effFrmDate: String,
+	effToDate: String,
+	address: string,
+	gpsCode: number[],
+	epdFlg: boolean,	
+	extraServiceFlg: boolean,
+	siteTypeId: string,
+	contractNo: string,
+	noOfStaff: number,
+	status: string,
+	premiseName: string,
+	premiseTypeId: string,
+	premiseRemark: string,
+	normalFlg: boolean,
+	updatedBy: string,
+	colPtRecyc: recyclable[],
+	roster: roster[]
+
+}

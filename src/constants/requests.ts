@@ -37,6 +37,21 @@ export const CREATE_COLLECTIONPOINT: AxiosRequestConfig = {
   url: 'api/collectors/collectionPoint'
 }
 
+export const UPDATE_COLLECTIONPOINT: AxiosRequestConfig = {
+  method: 'put',
+  url: 'api/collectors/collectionPoint'
+}
+
+export const GET_RECYC_TYPE: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/collectors/recycType'
+}
+
+export const GET_CONTRACT: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/collectors/contract'
+}
+
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
   method: 'get',

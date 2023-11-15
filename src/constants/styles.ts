@@ -4,11 +4,10 @@ export const styles = {
         display: "flex",
         height: "100%",
         ml: `${layout.drawerWidth}px`,
-        mt: layout.appbarHeight,
+        mt:{lg:layout.appbarHeight,sm:'100px'},
         backgroundColor: "#F4F5F7",
         pl: 4,
-        pt: 4,
-        pb: 4
+        pt: 4
     },
     headerSection: {
         display: "flex",
@@ -17,7 +16,8 @@ export const styles = {
         color: "black"
     },
     gridForm: {
-        alignItems: "flex-start"
+        alignItems: "flex-start",
+        pb: 2
     },
     header1: {
         fontSize: 25,

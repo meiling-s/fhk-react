@@ -1,10 +1,14 @@
 import axios from 'axios';
 import { localStorgeKeyName } from '../constants/constant';
-import { GET_COLLECTIONPOINT_TYPE, GET_PREMISE_TYPE, GET_SITE_TYPE } from '../constants/requests';
-import { colPointType, premiseType, siteType } from '../interfaces/common';
+import { GET_COLLECTIONPOINT_TYPE, GET_CONTRACT, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE } from '../constants/requests';
+import { colPointType, contract, premiseType, recycType, siteType } from '../interfaces/common';
 
 const commonAPI = {
     baseURL: 'http://localhost:8002/'
+}
+
+const collectionPointAPI = {
+    baseURL: 'http://localhost:8001/'
 }
 
 export const getColPointType = async () => {
@@ -66,10 +70,12 @@ export const getSiteType = async () => {
 }
 
 export const getCommonTypes = async () => {
-    var types: { colPoint: colPointType[], premise: premiseType[], site: siteType[]} = {
+    var types: { colPoint: colPointType[], premise: premiseType[], site: siteType[], recyc: recycType[], contract: contract[]} = {
         colPoint: [],
         premise: [],
-        site: []
+        site: [],
+        recyc: [],
+        contract: []
     }
 
     try {
@@ -97,6 +103,23 @@ export const getCommonTypes = async () => {
         });
         //console.log('Get site type success:', JSON.stringify(response.data));
         types.site = response.data;
+
+        response = await axios({
+            ...GET_RECYC_TYPE,
+            baseURL: collectionPointAPI.baseURL
+            // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+        });
+        //console.log('Get recyc type success:', JSON.stringify(response.data));
+        types.recyc = response.data;
+
+        response = await axios({
+            ...GET_CONTRACT,
+            baseURL: collectionPointAPI.baseURL
+            // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+        });
+        console.log('Get contract success:', JSON.stringify(response.data));
+        types.contract = response.data;
+
         return types;
 
     } catch (e) {

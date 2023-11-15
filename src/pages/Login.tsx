@@ -35,7 +35,7 @@ const Login = () => {
         navigate("/collector");
         break;
       default:
-        navigate("/collector");
+        navigate("/warehouse");
     }
     console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
     localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');

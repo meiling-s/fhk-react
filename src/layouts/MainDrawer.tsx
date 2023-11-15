@@ -39,13 +39,13 @@ function MainDrawer() {
   const [CPDrawer, setCPDrawer] = useState<boolean>(false);   //CP = collection point, this state determine collection point drawer group expand or not
   const { t } = useTranslation();
 
-  var role = "collector";
+  var role = "warehouse";
 
   let drawerMenus_collector: DrawerItem[] = [
     { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  setCPDrawer(!CPDrawer), collapse: false, collapseGroup: CPDrawer },
     { name: t('all_Collection_Point'), onClick: () =>  navigate("/collector/collectionPoint"), collapse: true, collapseGroup: CPDrawer },
     { name: t('process_Records'), onClick: () =>  navigate("/collector/processRecord"), collapse: true, collapseGroup: CPDrawer },
-    { name: t('pickup_Orders'), icon: <SHIPPING_CAR_ICON />,onClick: () =>  navigate("/collector/collectionorder"), collapse: false },
+    { name: t('recycle_Shipment'), icon: <SHIPPING_CAR_ICON />,onClick: () =>  navigate("/collector/shipment"), collapse: false },
     { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/collector/report"), collapse: false },
     { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/collector/staff"), collapse: false },
   ];
@@ -53,9 +53,16 @@ function MainDrawer() {
   let drawerMenus_astd: DrawerItem[] = [
     { name: t('company'), icon: <FOLDER_ICON />, onClick: () =>  navigate("/astd"), collapse: false },
     { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  navigate("/astd/collectionPoint"), collapse: false },
-    { name: "回收運單", icon: <SHIPPING_CAR_ICON />,onClick: () =>  navigate("/astd/collectionorder"), collapse: false },
+    { name: t('recycle_Shipment'), icon: <SHIPPING_CAR_ICON />,onClick: () =>  navigate("/astd/collectionorder"), collapse: false },
     { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/astd/report"), collapse: false },
     { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/astd/staff"), collapse: false },
+  ];
+
+  let drawerMenus_warehouse: DrawerItem[] = [
+    { name: t('recycle_Shipment'), icon: <SHIPPING_CAR_ICON />, onClick: () =>  navigate("/warehouse/shipment"), collapse: false },
+    { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  navigate("/warehouse/overview"), collapse: false },
+    { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/warehouse/process"), collapse: false },
+    { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/warehouse/staff"), collapse: false },
   ];
 
   var drawerMenus;
@@ -66,6 +73,9 @@ function MainDrawer() {
       break;
     case "collector":
       drawerMenus = drawerMenus_collector;
+      break;
+    case "warehouse":
+      drawerMenus = drawerMenus_warehouse;
       break;
     default:
       drawerMenus = drawerMenus_astd;

@@ -45,6 +45,7 @@ export type recycType = {
     recyclableNameEng: string,
     recyclableNameSchi: string,
     recyclableNameTchi: string,
+    recycSubtype: Array<recycSubType>,
     description: string,
     remark: string,
     status: string,
@@ -62,8 +63,20 @@ export type recycSubType = {
     description: string,
     remark: string,
     status: string,
-    createdAt: string,
     createdBy: string,
-    updatedAt: string,
     updatedBy: string
+}
+
+export type contract = {
+    contractNo: string,
+    contractFrmDate: string,
+    contractToDate: string,
+    parentContractNo: string,
+    epdFlg: boolean,
+    remark: string,
+    status: string,
+    createdBy: string,
+    createdAt: string,
+    updatedBy: string,
+    updatedAt: string
 }

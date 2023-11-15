@@ -1,20 +1,19 @@
-import { Box, Button, Card, CardContent, Typography } from '@mui/material';
-import React, { useEffect, useState, useTransition } from 'react'
-import { CollectionPointType } from '../../utils/collectionPointType';
-import CustomCard from '../../components/CustomCard';
-import { styles } from '../../constants/styles';
+import { Box, Button, Typography } from '@mui/material';
+import { useEffect, useState } from 'react'
+import CustomCard from '../../../../components/CustomCard';
+import { styles } from '../../../../constants/styles';
 import { useLocation, useNavigate } from 'react-router-dom';
-import MyMap from '../../components/MyMap';
-import { getAllCollectionPoint, getCollectionPoint } from '../../APICalls/collectionPointManage';
-import { collectionPoint } from '../../interfaces/collectionPoint';
+import MyMap from '../../../../components/MyMap';
+import { getCollectionPoint } from '../../../../APICalls/collectionPointManage';
+import { collectionPoint } from '../../../../interfaces/collectionPoint';
 import { useTranslation } from 'react-i18next';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CollectionPoint = () => {
 
-  const {state} = useLocation();
-  const action: string = state;
+  const location = useLocation();
+  const action: string = location.state;
 
   const [colsType, setColsType] = useState<string>('');
   const [colsName, setColsName] = useState<string>('');
@@ -61,6 +60,7 @@ const CollectionPoint = () => {
       });
     }
     
+    navigate(location.pathname, { replace: true });
    
   }, []);
 
@@ -81,7 +81,7 @@ const CollectionPoint = () => {
       <Box sx={{display: "flex", width: "100%"}}>
         <Box
           sx={{
-            width: "50%",
+            width: {sm:'45%',lg:'50%'},
             height: "100%",
           }}
         >

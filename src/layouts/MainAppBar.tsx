@@ -55,29 +55,9 @@ const MainAppBar = () => {
         position="fixed"
         sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
       >
-        <Toolbar style={{ background: "white" }}>
-          <Box display="flex" width="20%" sx={{ ml: 5 }}>
-            <TextField
-              size="small"
-              value={keywords}
-              onChange={(e) => onKeywordsChange(e.target.value)}
-              placeholder={t("enter_Keyword_To_Search")}
-              sx={{
-                "& fieldset": {
-                  display: "none",
-                },
-                flexGrow: 1,
-              }}
-              InputProps={{
-                style: { borderRadius: "10px", backgroundColor: "#f4f4f4" },
-
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SEARCH_ICON />
-                  </InputAdornment>
-                ),
-              }}
-            />
+        <Toolbar style={{ background: "white"}} sx={{height:{sm:'100px',lg:'64px'}}}>
+          <Box display="flex" sx={{ ml: 5 ,width:{sm:'50%',lg:'20%'}}}>
+            
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: "flex" }}>

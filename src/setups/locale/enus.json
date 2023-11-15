@@ -9,6 +9,7 @@
     "enterAddress": "Enter address",
     "enterName": "Enter name",
     "effFromDate": "Effective from date",
+    "openingDate": "Opening Date",
     "startTime": "Start time",
     "premiseName": "Premise name",
     "premiseType": "Premise type",
@@ -40,12 +41,16 @@
     "isInWrongFormat": " is in wrong format",
     "shouldNotSmallerThanZero": " should not smaller than 0"
   },
+  "drawer": {
+
+  },
   "to": "to",
   "company": "Company",
   "collection_Point": "Collection Point",
   "all_Collection_Point": "All Collection Point",
   "process_Records": "Process Records",
   "pickup_Orders": "Pickup Orders",
+  "recycle_Shipment": "Recycle Shipment",
   "reports": "Reports",
   "staff": "Staff",
   "enter_Keyword_To_Search": "Enter keyword to search",

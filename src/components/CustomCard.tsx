@@ -1,11 +1,11 @@
 import { Box, ButtonBase, Card, CardContent, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { CollectionPointType } from '../utils/collectionPointType'
 import { collectionPoint } from '../interfaces/collectionPoint'
 import { useNavigate } from 'react-router-dom'
 import { getColPointType } from '../APICalls/commonManage'
 import { useTranslation } from 'react-i18next'
 import { colPointType } from '../interfaces/common'
+import { useMap } from 'react-leaflet'
 
 type props = {
   collectionPoints: collectionPoint[]
@@ -70,7 +70,6 @@ const CustomCard = ({
   const initTypes = async () => {
     const result = await getColPointType();
     const data = result;
-    console.log(data);
     if(data){
       setColType(data);
     }
@@ -83,7 +82,7 @@ const CustomCard = ({
   const getColPointNameById = (id: string) => {
     var name: string = "";
     colType.map((col) => {
-      console.log(id,col.colPointTypeId);
+      //console.log(id,col.colPointTypeId);
       if(id == col.colPointTypeId){
         switch(i18n.language){
           case "enus":
@@ -101,23 +100,28 @@ const CustomCard = ({
         }
       }
     })
-    console.log("name: ",name)
+    //console.log("name: ",name)
     return name;
   }
 
   return (
     <>
       {collectionPoints.map((collectionPoint) => (
+        
         <Card
           sx={{
             display: "flex",
             marginRight: "150px",
             borderRadius: '10px',
-            marginTop: '20px'
+            marginTop: '20px',
+            width:{
+              sm:'80%',
+              lg:'515px'
+            },
           }}
         >
-          <ButtonBase onClick={() => handleCardOnClick(collectionPoint)}>
-            <CardContent sx={{ display: "flex", flexDirection: 'column' }}>
+          <ButtonBase sx={{width: "100%"}} onClick={() => handleCardOnClick(collectionPoint)}>
+            <CardContent sx={{ display: "flex", flexDirection: 'column', width: "100%" }}>
               <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <Typography fontWeight='bold'>{collectionPoint.colName}</Typography>
                 <Box

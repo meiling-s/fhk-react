@@ -4,14 +4,11 @@ import "../index.css";
 import L, { Icon } from "leaflet";
 import { useEffect, useState } from "react";
 import { collectionPoint } from "../interfaces/collectionPoint";
+import { useNavigate } from "react-router-dom";
 
-const MyMap = ({
+function MyMap({
   collectionPoints,
-
-}: {
-  collectionPoints: collectionPoint[];
-
-}) => {
+}: { collectionPoints: collectionPoint[] }) {
 
   // var color
 
@@ -38,11 +35,10 @@ const MyMap = ({
   //     setLocation([parseFloat(lat),parseFloat(long)]);
   //   }
   // }, []);
+  const navigate = useNavigate();
 
-
-  const handleMarkerClick = () => {
-    // Handle the click event here
-
+  const handleMarkerClick = (col: collectionPoint) => {
+    navigate("/collector/editCollectionPoint", { state: col })
   };
   var color: string;
 
@@ -81,7 +77,7 @@ const MyMap = ({
               })
             }
             eventHandlers={{
-              click: () => handleMarkerClick(),
+              click: () => handleMarkerClick(collectionPoint),
             }}
           >
             <Popup>{collectionPoint.address}</Popup>
