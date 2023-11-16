@@ -8,7 +8,7 @@ const commonAPI = {
 }
 
 const collectionPointAPI = {
-    baseURL: 'http://localhost:8001/'
+    baseURL: 'http://10.166.22.107:30001/'
 }
 
 export const getColPointType = async () => {
