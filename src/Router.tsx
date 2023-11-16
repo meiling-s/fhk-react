@@ -11,6 +11,7 @@ import CreateCollectionPoint from './pages/Collector/CollectionPoint/CreateColle
 import EditCollectionPoint from './pages/Collector/CollectionPoint/EditCollectionPoint/EditCollectionPoint';
 //warehouse
 import Overview from './pages/Collector/Manage/Overview'
+import Settings from './pages/Settings'
 //Tenant Register
 import CompanyDetails from './pages/TenantRegister/CompanyDetails';
 import CompanyContact from './pages/TenantRegister/CompanyContact';
@@ -55,6 +56,7 @@ const Router = () => {
           <Route path="/warehouse/overview" element={<Overview/>}/>
           <Route path="/warehouse/process" element={<ProcessRecord/>}/>
           <Route path="/warehouse/staff" element={<Staff/>}/> 
+          <Route path="/warehouse/settings" element={<Settings/>}/> 
         </Route>
 
       </Routes>
