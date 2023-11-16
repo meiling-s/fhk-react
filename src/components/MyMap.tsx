@@ -20,14 +20,10 @@ function MyMap({
 
   const FlyToMarker = ({ hoveredCard }: { hoveredCard: Position | null }) => {
     const map = useMap();
-    
-
       if (hoveredCard) {
         const { lat, lon } = hoveredCard;
         map.flyTo([lat, lon], 16, { duration: 2 });
       }
-    
-  
     return null;
   };
   var color: string;
@@ -71,6 +67,7 @@ function MyMap({
             }}
           >
             <Popup>{collectionPoint.address}</Popup>
+            <FlyToMarker hoveredCard={hoveredCard} />
           </Marker>
         );
       })}
