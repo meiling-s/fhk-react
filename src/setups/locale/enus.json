@@ -41,8 +41,12 @@
     "isInWrongFormat": " is in wrong format",
     "shouldNotSmallerThanZero": " should not smaller than 0"
   },
-  "drawer": {
-
+  "component": {
+    "routine":{
+      "everyWeekDay": "Every",
+      "addPeriod": "Add Period",
+      "addDate": "Add Date"
+    }
   },
   "to": "to",
   "company": "Company",
@@ -55,5 +59,8 @@
   "staff": "Staff",
   "enter_Keyword_To_Search": "Enter keyword to search",
   "account": "Account",
-  "signOut": "Sign out"
+  "signOut": "Sign out",
+  "date": "Date",
+  "week": "Week",
+  "time_Period": "Time period"
 }

@@ -6,7 +6,7 @@ export type openingPeriod = {
     endDate: dayjs.Dayjs
 }
 
-export type serviceHr = {
+export type timePeriod = {
     startFrom: dayjs.Dayjs,
     endAt: dayjs.Dayjs
 }
@@ -102,4 +102,8 @@ export type updateCP = {        //data for creating Collection Point
 	colPtRecyc: recyclable[],
 	roster: roster[]
 
+}
+
+export type routine = {
+	
 }

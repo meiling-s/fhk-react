@@ -41,6 +41,13 @@
     "isInWrongFormat": "格式錯誤",
     "shouldNotSmallerThanZero": "不應小於 0"
   },
+  "component": {
+    "routine":{
+      "everyWeekDay": "逢星期",
+      "addPeriod": "新增時段",
+      "addDate": "新增日期"
+    }
+  },
   "to": "至",
   "company": "公司",
   "collection_Point": "回收點",
@@ -52,5 +59,8 @@
   "staff": "員工",
   "enter_Keyword_To_Search": "輸入關鍵字查詢",
   "account": "帳戶",
-  "signOut": "登出"
+  "signOut": "登出",
+  "date": "日期",
+  "week": "星期",
+  "time_Period": "時段"
 }

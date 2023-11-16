@@ -10,31 +10,6 @@ function MyMap({
   collectionPoints,
 }: { collectionPoints: collectionPoint[] }) {
 
-  // var color
-
-  // switch(collectionType){
-  //   case "固定服務點":
-  //     color = 'abcdef'
-  //     break;
-  //   case "上門服務點":
-  //     color = 'e85141'
-  //     break;
-  //   case "流動服務點":
-  //     color = '2ecc71'
-  //     break;
-  //   default:
-  //     color = 'ffffff'
-  // }
-
-
-  // useEffect(() => {
-
-  //   const lat = localStorage.getItem('selectedLatitude'??'0');
-  //   const long = localStorage.getItem('selectedLongtitude'??'0');
-  //   if(lat && long && parseFloat(lat) && parseFloat(long)){
-  //     setLocation([parseFloat(lat),parseFloat(long)]);
-  //   }
-  // }, []);
   const navigate = useNavigate();
 
   const handleMarkerClick = (col: collectionPoint) => {
@@ -50,7 +25,6 @@ function MyMap({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {collectionPoints.map((collectionPoint) => {
-        console.log("test", collectionPoint)
         switch (collectionPoint.colPointTypeId) {
           case 'CPT00001':
             color = 'abcdef';
