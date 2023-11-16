@@ -5,6 +5,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+
 import {
   DOCUMENT_ICON,
   FOLDER_ICON,
@@ -18,6 +21,11 @@ import { useState } from "react";
 import { Collapse, createTheme } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import '../styles/MainDrawer.css';
+
+
 
 type MainDrawer = {
   role: string;
@@ -38,6 +46,17 @@ function MainDrawer() {
   const navigate = useNavigate();
   const [CPDrawer, setCPDrawer] = useState<boolean>(false);   //CP = collection point, this state determine collection point drawer group expand or not
   const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   var role = "warehouse";
 
@@ -82,6 +101,17 @@ function MainDrawer() {
   }
   
   return (
+    <>
+      {isMobile ? (
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={open ? handleDrawerClose : handleDrawerOpen}
+        >
+          <MenuIcon  className="menu-button" />
+        </IconButton>
+      ) : null}
     <Drawer
       sx={{
         width: drawerWidth,
@@ -91,7 +121,9 @@ function MainDrawer() {
           padding: "10px"
         },
       }}
-      variant="permanent"
+      variant={isMobile ? 'temporary' : 'permanent'}
+      open={isMobile ? open : true}
+      onClose={handleDrawerClose}
       anchor="left"
     >
       <List>
@@ -136,6 +168,7 @@ function MainDrawer() {
         ))}
       </List>
     </Drawer>
+    </>
   );
 };
 

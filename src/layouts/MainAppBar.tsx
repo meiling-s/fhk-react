@@ -22,6 +22,8 @@ import BackgroundLetterAvatars from "../components/CustomAvatar";
 import { useNavigate } from "react-router-dom";
 import { localStorgeKeyName } from "../constants/constant";
 import { useTranslation } from "react-i18next";
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const MainAppBar = () => {
 
@@ -30,6 +32,8 @@ const MainAppBar = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const drawerWidth = 246;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
  
   const handleLanguageChange = (lng: string) => {
     console.log("change language: ",lng);
@@ -53,7 +57,7 @@ const MainAppBar = () => {
       <AppBar
         elevation={5}
         position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+        sx={{ width: `calc(100% - ${isMobile? 0 : drawerWidth}px)`, ml: `${drawerWidth}px` }}
       >
         <Toolbar style={{ background: "white"}} sx={{height:{sm:'100px',lg:'64px'}}}>
           <Box display="flex" sx={{ ml: 5 ,width:{sm:'50%',lg:'20%'}}}>
