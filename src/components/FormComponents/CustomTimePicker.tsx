@@ -1,103 +1,95 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { serviceHr } from "../../interfaces/collectionPoint";
+import { timePeriod } from "../../interfaces/collectionPoint";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { styles } from "../../constants/styles";
 import { useTranslation } from "react-i18next";
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 
 type timePicker = {
     multiple: boolean,
-    //serviceHr: boolean,       enable it if need to support non serviceHr time picker
-    setTime: (shr: serviceHr[]) => void
-    defaultTime?: serviceHr[]
+    //timePeriod: boolean,       enable it if need to support non timePeriod time picker
+    setTime: (timePeriod: timePeriod[]) => void
+    defaultTime?: timePeriod[]
 }
 
 function CustomTimePicker({
     multiple,
-    //serviceHr,
+    //timePeriod,
     setTime,
     defaultTime
 }: timePicker){
 
-    const [tempSHR, setTempSHR] = useState<serviceHr>({startFrom: dayjs("09:00", "HH:mm"), endAt: dayjs("17:00", "HH:mm")});
-    const [sHr, setSHr] = useState<serviceHr[]>(defaultTime? defaultTime : []);
+    const tempTP: timePeriod = {startFrom: dayjs("09:00", "HH:mm"), endAt: dayjs("17:00", "HH:mm")};
+    const [timePeriod, setTimePeriod] = useState<timePeriod[]>(defaultTime? defaultTime : []);
 
     const { t } = useTranslation();
 
     useEffect(()=>{
-        setTime(sHr);
-    },[sHr])
+        setTime(timePeriod);
+    },[timePeriod])
 
     useEffect(()=>{
         if(!multiple){
-           addServiceHr(); 
+           addTimePeriod(); 
         }
     },[])
 
-    const SHRonChange = (start: boolean, value: dayjs.Dayjs | null, index: number) => {
+    const handleTimePeriodChange = (start: boolean, value: dayjs.Dayjs | null, index: number) => {
         if(value != null){
-            if(index == -1){        //-1 = default time picker
-                const shr = tempSHR;
+            if(index >= 0){
+                const TP = timePeriod[index];
                 if(start){
-                    shr.startFrom = value;
+                    TP.startFrom = value;
                 }else{
-                    shr.endAt = value;
-                }
-                setTempSHR(shr);
-            }else if(index >= 0){
-                const shr = sHr[index];
-                if(start){
-                    shr.startFrom = value;
-                }else{
-                    shr.endAt = value;
+                    TP.endAt = value;
                 }
 
-                const servicesHr = sHr.map((hr, index2) => {
-                    if(index==index2){
-                        return shr
+                const timeP = timePeriod.map((hr, curIndex) => {
+                    if( index == curIndex ){      //if current index = index of modifying item
+                        return TP
                     }
                     return hr
                 })
-                setSHr(servicesHr);
+                setTimePeriod(timeP);
 
             }
         }
     }
 
-    const addServiceHr = () => {
-        const servicesHr = Object.assign([],sHr);
-        const shr = Object.assign({},tempSHR);
-        servicesHr.push(shr);
-        setSHr(servicesHr);
+    const addTimePeriod = () => {
+        const timeP = Object.assign([],timePeriod);
+        const TP = Object.assign({},tempTP);
+        timeP.push(TP);
+        setTimePeriod(timeP);
     }
 
-    const removeServiceHr = (index: number) => {
-        if(index>-1 && sHr.length>0){
-            setSHr(Object.values(sHr).filter((i,index2)=>(index2 !== index)));
+    const removeTimePeriod = (index: number) => {
+        if(index>-1 && timePeriod.length>0){
+            setTimePeriod(Object.values(timePeriod).filter((i,index2)=>(index2 !== index)));
         }
-        
     }
 
-    const showSHr = (startTime: dayjs.Dayjs, endTime: dayjs.Dayjs, index: number) => {
+    const showTP = (startTime: dayjs.Dayjs, endTime: dayjs.Dayjs, index: number) => {
         return(
-            <Box sx={{display: "flex", alignItems: "center", marginY: 2}}>
-                <TimePicker
+            <Box sx={localstyles.timePeriodItem}>
+                <MobileTimePicker
                     defaultValue={startTime}
-                    onChange={(value) => SHRonChange(true,value,index)}
+                    onChange={(value) => handleTimePeriodChange(true,value,index)}
                     sx={localstyles.timePicker}
                 />
-                <Typography sx={{marginX: 1}}>
-                    {t("to")}
-                </Typography>
-                <TimePicker
+                    <Typography sx={localstyles.txtStyle_to}>
+                        {t("to")}
+                    </Typography>
+                <MobileTimePicker
                     defaultValue={endTime}
-                    onChange={(value) => SHRonChange(false,value,index)}
+                    onChange={(value) => handleTimePeriodChange(false,value,index)}
                     sx={localstyles.timePicker}
                 />
-                <IconButton aria-label="addSerivceHr" size="medium" onClick={()=>removeServiceHr(index)}>
+                <IconButton aria-label="addSerivceHr" size="medium" onClick={()=>removeTimePeriod(index)}>
                     <RemoveCircleOutlineIcon
                         sx={styles.disableIcon}
                     />
@@ -109,53 +101,44 @@ function CustomTimePicker({
 
     if(multiple){
         return(
-            <>
+            <Box sx={localstyles.container}>
                 {
-                    sHr.map((serviceHr,index) => (
-                        showSHr(serviceHr.startFrom,serviceHr.endAt,index)
+                    timePeriod.map((timePeriod,index) => (
+                        showTP(timePeriod.startFrom,timePeriod.endAt,index)
                     ))
                 }
                 <Box sx={{display: "flex", alignItems: "center"}}>
-                    <TimePicker
-                        defaultValue={tempSHR.startFrom}
-                        onChange={(value) => SHRonChange(true,value,-1)}
-                        sx={localstyles.timePicker}
-                    />
-                        <Typography sx={{marginX: 1}}>
-                            {t("to")}
-                        </Typography>
-                    <TimePicker
-                        defaultValue={tempSHR.endAt}
-                        onChange={(value) => SHRonChange(false,value,-1)}
-                        sx={localstyles.timePicker}
-                    />
-                    <IconButton aria-label="addSerivceHr" size="medium" onClick={()=>addServiceHr()}>
+                    <Button
+                        sx={styles.buttonOutlinedGreen}
+                        onClick={(event) => addTimePeriod()}
+                    >
                         <AddCircleOutlineIcon
                             sx={styles.endAdornmentIcon}
                         />
-                    </IconButton>
+                        {t("component.routine.addPeriod")}
+                    </Button>
                 </Box>
-            </>
+            </Box>
         )
     }else{      //just one time picker
         return(
-            <>
-                <Box sx={{display: "flex", alignItems: "center"}}>
-                    <TimePicker
-                        defaultValue={tempSHR.startFrom}
-                        onChange={(value) => SHRonChange(true,value,0)}
+            <Box sx={localstyles.container}>
+                <Box sx={localstyles.timePeriodItem}>
+                    <MobileTimePicker
+                        defaultValue={tempTP.startFrom}
+                        onChange={(value) => handleTimePeriodChange(true,value,0)}
                         sx={localstyles.timePicker}
                     />
-                        <Typography sx={{marginX: 1}}>
-                            至
+                        <Typography sx={localstyles.txtStyle_to}>
+                            {t("to")}
                         </Typography>
-                    <TimePicker
-                        defaultValue={tempSHR.endAt}
-                        onChange={(value) => SHRonChange(false,value,0)}
+                    <MobileTimePicker
+                        defaultValue={tempTP.endAt}
+                        onChange={(value) => handleTimePeriodChange(false,value,0)}
                         sx={localstyles.timePicker}
                     />
                 </Box>
-            </>
+            </Box>
             
         )
     }
@@ -164,9 +147,38 @@ function CustomTimePicker({
 
 const localstyles = {
     timePicker: {
-        ...styles.textField,
-        maxWidth: "150px"
-    }
+        width: 72,
+        borderRadius: 5,
+        backgroundColor: "white",
+        "& fieldset":{
+            borderWidth: 0
+        },
+        "& input":{
+            paddingX: 0
+        }
+    },
+    timePeriodItem: {
+        display: "flex",
+        alignItems: "center",
+        backgroundColor: "white",
+        paddingX: 2,
+        mr: 2,
+        border: 2,
+        borderRadius: 3,
+        borderColor: "#E2E2E2",
+    },
+    container: {
+        display: "flex",
+        flexDirection: "row",
+        borderRadius: 10,
+        mt: 1
+    },
+    txtStyle_to: {
+        marginX: 1,
+        color: "#ACACAC",
+        fontSize: 15,
+        fontWeight: "bold"
+    }    
 }
 
 export default CustomTimePicker

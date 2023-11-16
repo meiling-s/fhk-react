@@ -1,8 +1,12 @@
 import {
   Box,
   Button,
+  FormControl,
   IconButton,
   InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
@@ -19,23 +23,27 @@ const Login = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = React.useState(false);
+  const [loginTo, setLoginTo] = useState("astd");
   const navigate = useNavigate();
 
   const onLoginButtonClick = async (userName: string, password: string) => {
     const result = await login({
       username: userName,
       password: password,
-      realm: 'collector'
+      realm: 'astd'
     });
-    switch(userName){
+    switch(loginTo){
       case "astd":
         navigate("/astd");
         break;
       case "collector":
         navigate("/collector");
         break;
-      default:
+      case "warehouse":
         navigate("/warehouse");
+        break;
+      default:
+        navigate("/collector");
     }
     console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
     localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
@@ -112,6 +120,18 @@ const Login = () => {
               }}
             />
           </Box>
+          <FormControl fullWidth>
+            <InputLabel>Login to (for testing)</InputLabel>
+            <Select
+              value={loginTo}
+              label="Age"
+              onChange={(event) => setLoginTo(event.target.value)}
+            >
+              <MenuItem value={"astd"}>ASTD</MenuItem>
+              <MenuItem value={"collector"}>Collector</MenuItem>
+              <MenuItem value={"warehouse"}>Warehouse</MenuItem>
+            </Select>
+          </FormControl>
           <Box>
             <Button
               fullWidth

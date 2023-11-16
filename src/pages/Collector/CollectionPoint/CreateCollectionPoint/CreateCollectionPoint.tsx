@@ -1,24 +1,12 @@
 // @ts-nocheck
-import {
-    Box,
-    Button,
-    Collapse,
-    Divider,
-    FormHelperText,
-    Grid,
-    List,
-    ListItemButton,
-    ListItemText,
-    Tooltip,
-    Typography,
-} from "@mui/material";
+import { Box, Button, Collapse, Divider, FormHelperText, Grid, List, ListItemButton, ListItemText, Typography, } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { styles } from "../../../../constants/styles";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CustomField from "../../../../components/FormComponents/CustomField";
 import { useEffect, useState } from "react";
-import { createCP, openingPeriod, recyclable, serviceHr } from "../../../../interfaces/collectionPoint";
+import { createCP, openingPeriod, recyclable, timePeriod } from "../../../../interfaces/collectionPoint";
 import CustomTextField from "../../../../components/FormComponents/CustomTextField";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -26,25 +14,22 @@ import isBetween from "dayjs/plugin/isBetween";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useDebounce from "../../../../hooks/useDebounce";
 import { getLocation } from "../../../../APICalls/getLocation";
-import { MapData } from "../../../../interfaces/map";
 import CustomTimePicker from "../../../../components/FormComponents/CustomTimePicker";
 import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
-import CustomItemList, { il_item } from "../../../../components/FormComponents/CustomItemList";
 import CustomDatePicker from "../../../../components/FormComponents/CustomDatePicker";
 import { useNavigate } from "react-router-dom";
-import { createCollectionPoint, getAllCollectionPoint } from "../../../../APICalls/collectionPointManage";
+import { createCollectionPoint } from "../../../../APICalls/collectionPointManage";
 import { formErr, format } from "../../../../constants/constant";
 import { useTranslation } from "react-i18next";
 import { getCommonTypes } from "../../../../APICalls/commonManage";
 import { colPointType, premiseType, recycType, siteType } from "../../../../interfaces/common";
-import { toast } from "react-toastify";
+import RecyclablesList from "../../../../components/SpecializeComponents/RecyclablesList";
+import PremiseTypeList from "../../../../components/SpecializeComponents/PremiseTypeList";
+import ColPointTypeList from "../../../../components/SpecializeComponents/CollectionPointTypeList";
+import SiteTypeList from "../../../../components/SpecializeComponents/SiteTypeList";
+import RoutineSelect from "../../../../components/SpecializeComponents/RoutineSelect";
 
 dayjs.extend(isBetween)
-
-type recycItem = {
-    recycType: il_item,
-    recycSubtype: il_item[]
-}
 
 function CreateCollectionPoint() {
 
@@ -53,16 +38,14 @@ function CreateCollectionPoint() {
     const [address, setAddress] = useState<string>("");
     const [gpsCode, setGPSCode] = useState<number[]>([0, 0]);
     const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({ startDate: dayjs(new Date()), endDate: dayjs(new Date()) });
-    const [sHr, setSHr] = useState<serviceHr[]>([]);
+    const [sHr, setSHr] = useState<timePeriod[]>([]);
     const [siteType, setSiteType] = useState<string>(""); //site type
     const [contractNo, setContractNo] = useState<string>("");
     const [premiseName, setPremiseName] = useState<string>(""); //Name of the house/place
     const [premiseType, setPremiseType] = useState<string>(""); //Category of the house/place
     const [premiseRemark, setPremiseRemark] = useState<string>("");
     const [status, setStatus] = useState<boolean>(true);
-    const [colRecyc, setCOLRecyc] = useState<string[]>([]);     //Recyclables
-    const [curRecyc, setCurRecyc] = useState<string>(" ");     //Current selected recyclables
-    const [subTypeList, setSubTypeList] = useState<string[]>([]);     //all selected sub type
+    const [recyclables, setRecyclables] = useState<recyclable[]>([]);
     const [staffNum, setStaffNum] = useState<string>("");
     const [EPDFlg, setEPDFlg] = useState<boolean>(false);
     const [serviceType, setServiceType] = useState<boolean>(true);
@@ -104,6 +87,10 @@ function CreateCollectionPoint() {
         }
     }
 
+    useEffect(()=>{
+        console.log("recyclables: ",recyclables);
+    },[recyclables])
+
     useEffect(() => {
         if (debouncedSearchValue) {
             getLocation(debouncedSearchValue)
@@ -133,28 +120,20 @@ function CreateCollectionPoint() {
             tempV.push({ field: "col.openingDate", problem: "stillInPeriod" });
         premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty });
         premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty });
-        colRecyc.length == 0 && tempV.push({ field: "col.recycType", problem: formErr.empty });
+        recyclables.length == 0 && tempV.push({ field: "col.recycType", problem: formErr.empty });
         console.log("num:",staffNum,Number.isNaN(parseInt(staffNum)),staffNum == "")
         staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty });
-        (Number.isNaN(parseInt(staffNum)) && !staffNum == "")
+        (Number.isNaN(parseInt(staffNum)) && !(staffNum == ""))
             ? tempV.push({ field: "col.numOfStaff", problem: formErr.wrongFormat })
             : (!Number.isNaN(parseInt(staffNum)) && parseInt(staffNum) < 0) && tempV.push({ field: "col.numOfStaff", problem: formErr.numberSmallThanZero });
         contractNo == "" && tempV.push({ field: "col.contractNo", problem: formErr.empty });
         setValidation(tempV);
         console.log(tempV);
-    }, [colType, siteType, colName, address, premiseName, premiseType, colRecyc, staffNum, contractNo])
+    }, [colType, siteType, colName, address, premiseName, premiseType, recyclables, staffNum, contractNo])
 
     useEffect(() => {
         checkEPD(contractNo);
     }, [contractNo])
-
-    // useEffect(() => {
-    //     console.log("staffNum: ", staffNum);
-    // }, [staffNum])
-
-    // useEffect(()=>{
-    //     console.log("listplace: ",listPlace);
-    // },[listPlace])
 
     //validation function
     const checkString = (s: string) => {
@@ -163,14 +142,15 @@ function CreateCollectionPoint() {
         }
         return s == "";
     }
+
     const checkNumber = (n: string) => {        //before first submit, don't check the validation
         if(!trySubmited){
             return false;
         }
-        return Number.isNaN(parseInt(staffNum)) || n == "" || (!Number.isNaN(parseInt(staffNum)) && n < 0);
+        return Number.isNaN(parseInt(n)) || n == "" || (!Number.isNaN(parseInt(n)) && parseInt(n) < 0);
     }
 
-    const getValidationMsg = (valid: {field: string, problem: string}) => {
+    const getValidationMsg = (valid: {field: string, problem: string}[]) => {
         var msg: string[] = [];
         var tempM: string = "";
         var empty: string[] = [];
@@ -234,235 +214,6 @@ function CreateCollectionPoint() {
         )
     }
 
-    const returnColTypes = () => {
-        const colList: il_item[] = typeList.colPoint.map((col) => {
-            var name = "";
-            switch(i18n.language){
-                case "enus":
-                    name = col.colPointTypeEng;
-                    break;
-                case "zhch":
-                    name = col.colPointTypeSchi;
-                    break;
-                case "zhhk":
-                    name = col.colPointTypeTchi;
-                    break;
-                default:
-                    name = col.colPointTypeTchi;        //default fallback language is zhhk
-                    break;
-            }
-            return {name: name, id: col.colPointTypeId};
-        });
-        return colList;
-    };
-
-    const returnPremiseTypes = () => {
-        const premiseList: il_item[] = typeList.premise.map((pre) => {
-            var name = "";
-            switch(i18n.language){
-                case "enus":
-                    name = pre.premiseTypeNameEng;
-                    break;
-                case "zhch":
-                    name = pre.premiseTypeNameSchi;
-                    break;
-                case "zhhk":
-                    name = pre.premiseTypeNameTchi;
-                    break;
-                default:
-                    name = pre.premiseTypeNameTchi;        //default fallback language is zhhk
-                    break;
-            }
-            return {name: name, id: pre.premiseTypeId};
-        });
-        return premiseList;
-    };
-
-    const returnSiteTypes = () => {
-        const siteList: il_item[] = typeList.site.map((s) => {
-            var name = "";
-            switch(i18n.language){
-                case "enus":
-                    name = s.siteTypeNameEng;
-                    break;
-                case "zhch":
-                    name = s.siteTypeNameSchi;
-                    break;
-                case "zhhk":
-                    name = s.siteTypeNameTchi;
-                    break;
-                default:
-                    name = s.siteTypeNameTchi;        //default fallback language is zhhk
-                    break;
-            }
-            return {name: name, id: s.siteTypeId};
-        });
-        return siteList;
-    };
-
-    const returnRecycTypes = () => {
-        const recycItem: recycItem[] = [];
-        typeList.recyc.map((re) => {
-            var reItem: recycItem = {recycType: {name: "", id: ""}, recycSubtype: []};
-            var subItem: il_item[] = [];
-            var name = "";
-            switch(i18n.language){
-                case "enus":
-                    name = re.recyclableNameEng;
-                    break;
-                case "zhch":
-                    name = re.recyclableNameSchi;
-                    break;
-                case "zhhk":
-                    name = re.recyclableNameTchi;
-                    break;
-                default:
-                    name = re.recyclableNameTchi;        //default fallback language is zhhk
-                    break;
-            }
-            reItem.recycType = {name: name, id: re.recycTypeId};
-
-            re.recycSubtype.map((sub) => {
-                var subName = "";
-                switch(i18n.language){
-                    case "enus":
-                        subName = sub.recyclableNameEng;
-                        break;
-                    case "zhch":
-                        subName = sub.recyclableNameSchi;
-                        break;
-                    case "zhhk":
-                        subName = sub.recyclableNameTchi;
-                        break;
-                    default:
-                        subName = sub.recyclableNameTchi;        //default fallback language is zhhk
-                        break;
-                }
-                subItem.push({name: subName, id: sub.recycSubtypeId})
-            })
-            reItem.recycSubtype = subItem;
-
-            recycItem.push(reItem)
-        });
-        return(recycItem);
-    };
-
-    const returnRecyclables = (recycS: recycItem[]) => {       //transforming recyclables to string array with main items name only
-        const recyclables: il_item[] = recycS.map((recyc) => {
-            return recyc.recycType;
-        });
-        return recyclables;
-    }
-
-    const returnSubRecyclables = (recycId: string) => {       //return sub items of recyc
-        const item: recycItem | undefined = returnRecycTypes().find((recycType) => {
-            return recycType.recycType.id === recycId;
-        });
-        if (item) {
-            const subItems = item.recycSubtype
-            return subItems;
-        } else {
-            return [];
-        }
-    }
-
-    const returnSubTypesId = (id: string) => {
-        var subTypesId: string[] = [];
-        const re = returnRecycTypes().find((recyc) => {     //find the corresponding recyclable object
-            return recyc.recycType.id == id;
-        })
-        if(re){
-            re.recycSubtype.map((sub) => {
-                subTypesId.push(sub.id);
-            })
-        }
-        return subTypesId;
-    }
-
-    const returnWithSubItem = () => {
-        var withSubItem: string[] = []      //store the ids of recycType that have selected sub item
-        colRecyc.map((id) => {
-            const subId = returnSubTypesId(id);
-            subId.map((sub) => {
-                if(subTypeList.includes(sub)){
-                    withSubItem.push(id)
-                }
-            })
-        });
-        return withSubItem;
-    }
-
-    const selectRecyc = (str: string[]) => {        //do select and unselect action for main item
-        if(colRecyc.length < str.length){       //selecting new item
-            setCOLRecyc(str)
-        }else if(colRecyc.length > str.length){     //unselecting an item
-            const removeRecyc = colRecyc.find((recyc) => {     //find the item that has been removed
-                return !str.includes(recyc);
-            });
-            if(removeRecyc){
-                const subId = returnSubTypesId(removeRecyc);
-                const subList = subTypeList.filter((sub) => {       //remove the sub items of unselected item from sub type list
-                    return !subId.includes(sub);
-                })
-                //console.log(subList);
-                setSubTypeList(subList);
-            }
-            setCOLRecyc(str);
-        }
-    }
-    const selectSubRecyc = (selectedSubType: string[]) => {
-        setSubTypeList(selectedSubType);
-    }
-
-    const recyclables_getRecycTypes = (recycs: recyclable[]) => {
-        const reTypes: string[] = recycs.map((recyc) => {
-            return recyc.recycTypeId;
-        });
-        return reTypes;
-    }
-
-    const recyclables_getSubTypes = (recycs: recyclable[]) => {
-        var subTypes: string[] = [];
-        recycs.map((recyc) => {
-            recyc.recycSubtypeId.map((sub) => {
-                subTypes.push(sub);
-            })
-        });
-        return subTypes;
-    }
-
-    const toRecyclables = () => {
-        var recyclableS: recyclable[] = [];
-        colRecyc.map((recyc) => {
-            const subId = returnSubTypesId(recyc);
-            const subList = subTypeList.filter((sub) => {       //get the selected sub types of corresponding recyc type
-                return subId.includes(sub);
-            })
-            //console.log(subList);
-            recyclableS.push({recycTypeId: recyc, recycSubtypeId: subList});
-        });
-        return recyclableS;
-    }
-
-    const getNameFromRecycId = (id: string) => {
-        const reType = typeList.recyc.find((re) => {
-            return re.recycTypeId == id
-        });
-        if(reType){
-            switch(i18n.language){
-                case "enus":
-                    return reType.recyclableNameEng;
-                case "zhch":
-                    return reType.recyclableNameSchi;
-                case "zhhk":
-                    return reType.recyclableNameTchi;
-                default:
-                    return reType.recyclableNameTchi;        //default fallback language is zhhk
-            }
-        }
-        return "";
-    }
-
     const checkEPD = (contractNo: string) => {
         const contract = contractList.find((contract) => {
             return contract.contractNo == contractNo
@@ -490,7 +241,7 @@ function CreateCollectionPoint() {
                 extraServiceFlg: !serviceType,
                 siteTypeId: siteType,
                 contractNo: contractNo,
-                noOfStaff: staffNum,
+                noOfStaff: parseInt(staffNum),
                 status: status ? "CREATED" : "CLOSED",
                 premiseName: premiseName,
                 premiseTypeId: premiseType,
@@ -498,8 +249,8 @@ function CreateCollectionPoint() {
                 normalFlg: true,
                 createdBy: "colAdmin",
                 updatedBy: "colAdmin",
-                roster: [],
-                colPtRecyc: toRecyclables()
+                colPtRecyc: recyclables,
+                roster: []
             }
             const result = await createCollectionPoint(cp);
             const data = result?.data;
@@ -536,17 +287,17 @@ function CreateCollectionPoint() {
                     </Grid>
 
                     <CustomField label={t("col.colType")} mandatory={true}>
-                        <CustomItemList
-                            items={returnColTypes()}
-                            singleSelect={setCOLType}
-                            error={trySubmited && checkString(colType)}
+                        <ColPointTypeList
+                            setState={setCOLType}
+                            colPointTypes={typeList.colPoint}
+                            error={checkString(colType)}
                         />
                     </CustomField>
 
                     <CustomField label={t("col.siteType")} mandatory={true}>
-                        <CustomItemList
-                            items={returnSiteTypes()}
-                            singleSelect={setSiteType}
+                        <SiteTypeList
+                            setState={setSiteType}
+                            siteTypes={typeList.site}
                             error={checkString(siteType)}
                         />
                     </CustomField>
@@ -598,7 +349,7 @@ function CreateCollectionPoint() {
                     </CustomField>
 
                     <CustomField label={t("col.startTime")} mandatory={true}>
-                        <CustomTimePicker multiple={true} setTime={setSHr} />
+                        <RoutineSelect/>
                     </CustomField>
 
                     <CustomField label={t("col.premiseName")} mandatory={true}>
@@ -611,9 +362,9 @@ function CreateCollectionPoint() {
                     </CustomField>
 
                     <CustomField label={t("col.premiseType")} mandatory={true}>
-                        <CustomItemList
-                            items={returnPremiseTypes()}
-                            singleSelect={setPremiseType}
+                        <PremiseTypeList
+                            setState={setPremiseType}
+                            premiseTypes={typeList.premise}
                             error={checkString(premiseType)}
                         />
                     </CustomField>
@@ -648,27 +399,11 @@ function CreateCollectionPoint() {
                     </Grid>
 
                     <CustomField label={t("col.recycType")} mandatory={true}>
-                        <CustomItemList
-                            items={returnRecyclables(returnRecycTypes())}
-                            withSubItems={returnWithSubItem()}
-                            multiSelect={selectRecyc}
-                            setLastSelect={setCurRecyc}
-                            dbClickSelect={true}
-                            error={trySubmited && colRecyc.length == 0}
+                        <RecyclablesList
+                            recycL={typeList.recyc}
+                            setState={setRecyclables}
                         />
                     </CustomField>
-                    <Grid item>
-                        <Collapse in={curRecyc != " " && colRecyc.length > 0} unmountOnExit>
-                            <CustomField label={curRecyc == " " ? "" : getNameFromRecycId(curRecyc) + t("col.category")}>
-                                <CustomItemList
-                                    items={returnSubRecyclables(curRecyc)}
-                                    multiSelect={selectSubRecyc}
-                                    defaultSelected={subTypeList}
-                                    dbClickSelect={true}
-                                />
-                            </CustomField>
-                        </Collapse>
-                    </Grid>
 
                     <Grid item sx={{ width: "100%" }}>
                         <Divider />
@@ -750,10 +485,6 @@ function CreateCollectionPoint() {
     );
 }
 const localstyles = {
-    timeText: {
-        color: "#ACACAC",
-        fontWeight: "500"
-    },
     localButton: {
         width: "200px",
         fontSize: 18,

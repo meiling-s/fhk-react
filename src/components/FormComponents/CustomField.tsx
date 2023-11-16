@@ -4,15 +4,17 @@ import { styles } from '../../constants/styles';
 type props = {
     children?: React.ReactNode | React.ReactNode[],
     label: string,
-    mandatory?: boolean
+    mandatory?: boolean,
+    key?: string
 }
 function CustomField({
     children,
     label,
-    mandatory
+    mandatory,
+    key
 }: props) {
   return(
-    <Grid item>
+    <Grid item key={key? key : ""}>
         <Box sx={{display: "flex", flexDirection: "row"}}>
           <Typography sx={styles.header3}> {label} </Typography>
           {
