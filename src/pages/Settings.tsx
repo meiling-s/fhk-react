@@ -1,7 +1,11 @@
-import { FunctionComponent, useCallback, ReactNode } from 'react'
+import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-import { EDIT_ICON, DELETE_ICON, ADD_ICON } from '../themes/icons'
+import {
+  EDIT_OUTLINED_ICON,
+  DELETE_OUTLINED_ICON,
+  ADD_ICON
+} from '../themes/icons'
+import AddWarehouse from '../components/AddWarehouse'
 
 interface WarehouseItem {
   id: string
@@ -47,13 +51,18 @@ const TableStatusProps: React.FC<TableColumnProps> = ({ children }) => {
   )
 }
 // end of compoent table
-
 const Warehouse: FunctionComponent = () => {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
-  const onAppButtonContainerClick = useCallback(() => {
-    navigate('/21-add-warehouse')
-  }, [navigate])
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const handleDrawerOpen = () => {
+    setDrawerOpen(true)
+  }
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false)
+  }
 
   // get real data from api later
   const warehouseItems: WarehouseItem[] = [
@@ -103,7 +112,7 @@ const Warehouse: FunctionComponent = () => {
                 </b>
                 <div
                   className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi text-green-primary border-[1px] border-solid border-green-pale"
-                  onClick={onAppButtonContainerClick}
+                  onClick={handleDrawerOpen}
                 >
                   <ADD_ICON />
                   <b className="relative tracking-[1px] leading-[20px]">新增</b>
@@ -150,8 +159,16 @@ const Warehouse: FunctionComponent = () => {
                     </div>
                     <div className="flex flex-row items-center justify-start gap-[20px]">
                       {/* Edit and delete action */}
-                      <EDIT_ICON />
-                      <DELETE_ICON />
+                      <EDIT_OUTLINED_ICON
+                        onClick={handleDrawerOpen}
+                        className="cursor-pointer text-grey-light"
+                        fontSize="small"
+                      />
+                      <DELETE_OUTLINED_ICON
+                        onClick={handleDrawerOpen}
+                        className="cursor-pointer text-grey-light"
+                        fontSize="small"
+                      />
                     </div>
                   </div>
                 ))}
@@ -160,6 +177,11 @@ const Warehouse: FunctionComponent = () => {
           </div>
         </div>
       </div>
+      {/* right drawer */}
+      <AddWarehouse
+        drawerOpen={drawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      ></AddWarehouse>
     </div>
   )
 }

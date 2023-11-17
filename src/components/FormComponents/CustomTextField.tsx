@@ -8,7 +8,8 @@ type props = {
     defaultValue?: string | number,
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     endAdornment?: JSX.Element,
-    error?: boolean
+    error?: boolean,
+    className?: string;
 }
 
 function CustomTextField({
@@ -18,11 +19,13 @@ function CustomTextField({
     defaultValue,
     onChange,
     endAdornment,
-    error
+    error,
+    className
 }: props) {
     return(
         <TextField
             error={error}
+            className={className}
             hiddenLabel
             id={id}
             value={value}
