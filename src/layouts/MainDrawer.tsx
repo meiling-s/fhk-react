@@ -50,6 +50,7 @@ function MainDrawer() {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [selectedIndex, setSelectedIndex] = useState<number | 0>();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -57,6 +58,10 @@ function MainDrawer() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleListItemClick = (index: number) => {
+    setSelectedIndex(index);
   };
 
   var role = "warehouse";
@@ -144,13 +149,16 @@ function MainDrawer() {
         {drawerMenus.map((drawerMenu, index) => (
           drawerMenu.collapse?
             <Collapse sx={[styles.drawerSubItem]} in={drawerMenu.collapseGroup} timeout="auto" unmountOnExit>
-              <ListItem sx={{ marginTop: 2 }} key={drawerMenu.name} onClick={drawerMenu.onClick} disablePadding>
+              <ListItem sx={{ marginTop: 2 }} 
+                key={drawerMenu.name} onClick={drawerMenu.onClick}  selected={selectedIndex === index} disablePadding>
                 <ListItemButton
                       sx={{
                         '&:hover .MuiSvgIcon-root': {
                           color: '#79ca25'
                         },
                       }}
+                      selected={selectedIndex === 4}
+                      onClick={(event) => handleListItemClick(index)}
                 >
                   <ListItemText sx={{ marginLeft: -2 }} primary={drawerMenu.name} />
                 </ListItemButton>

@@ -1,5 +1,11 @@
 import React from 'react'
-import { Tabs as MuiTabs, Tab, useMediaQuery, useTheme } from '@mui/material'
+import {
+  Tabs as MuiTabs,
+  Tab,
+  Box,
+  useMediaQuery,
+  useTheme
+} from '@mui/material'
 
 type TabsProps = {
   tabs: string[]
@@ -27,36 +33,46 @@ const Tabs: React.FC<TabsProps> = ({
   }
 
   return (
-    <MuiTabs
-      value={selected}
-      onChange={handleChange}
-      variant={isMobile ? 'scrollable' : 'standard'}
-      scrollButtons="auto"
-      className={`${className}`}
-      sx={{ borderBottom: '1px solid #E2E2E2;' }}
-      TabIndicatorProps={{
-        style: {
-          backgroundColor: activeTab
-        }
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: { sm: 480, md: '100%' }
       }}
     >
-      {tabs.map((tab, index) => (
-        <Tab
-          key={index}
-          label={
-            <span
-              style={{
-                fontWeight: selected === index ? 'bold' : 'normal',
-                color: 'black'
-              }}
-            >
-              {tab}
-            </span>
+      <MuiTabs
+        value={selected}
+        onChange={handleChange}
+        variant={isMobile ? 'scrollable' : 'standard'}
+        scrollButtons
+        allowScrollButtonsMobile
+        className={`${className}`}
+        sx={{
+          borderBottom: '1px solid #E2E2E2;'
+        }}
+        TabIndicatorProps={{
+          style: {
+            backgroundColor: activeTab
           }
-          value={index}
-        />
-      ))}
-    </MuiTabs>
+        }}
+      >
+        {tabs.map((tab, index) => (
+          <Tab
+            key={index}
+            label={
+              <span
+                style={{
+                  fontWeight: selected === index ? 'bold' : 'normal',
+                  color: 'black'
+                }}
+              >
+                {tab}
+              </span>
+            }
+            value={index}
+          />
+        ))}
+      </MuiTabs>
+    </Box>
   )
 }
 

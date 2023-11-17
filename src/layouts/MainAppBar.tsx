@@ -57,7 +57,7 @@ const MainAppBar = () => {
       <AppBar
         elevation={5}
         position="fixed"
-        sx={{ width: `calc(100% - ${isMobile? 0 : drawerWidth}px)`, ml: `${drawerWidth}px` }}
+        sx={{ width: `calc(100% - ${isMobile? 0 :drawerWidth}px)`, ml: `${drawerWidth}px` }}
       >
         <Toolbar style={{ background: "white"}} sx={{height:{sm:'100px',lg:'64px'}}}>
           <Box display="flex" sx={{ ml: 5 ,width:{sm:'50%',lg:'20%'}}}>

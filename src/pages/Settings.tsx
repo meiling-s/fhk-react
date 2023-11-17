@@ -28,7 +28,7 @@ const Settings: FunctionComponent = () => {
         tabs={tabSettings}
         navigate={handleTabChange}
         selectedProp={selectedTab}
-        className="px-10"
+        className="lg:px-10 sm:px-4 bg-bg-primary"
       />
       {/* rendering content base on tab index */}
       {selectedTab === 2 ? (

@@ -9,6 +9,11 @@ export const styles = {
         pl: 4,
         pt: 4
     },
+    mobileScreen:{
+        ml: 0,
+        pl: 0,
+        pt: 0
+    },
     headerSection: {
         display: "flex",
         flexDirection: "row",
