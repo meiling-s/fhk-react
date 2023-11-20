@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import DrawerBox from './DrawBox'
+import RightOverlayForm from './RightOverlayForm'
 import TextField from '@mui/material/TextField'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
@@ -26,35 +26,27 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     { label: 'English Name', placeholder: 'Please type a name' }
   ]
 
+  const handleSubmit = () => {
+    console.log('submit form')
+    handleDrawerClose()
+  }
+
   return (
     <div className="add-warehouse">
-      <DrawerBox open={drawerOpen} onClose={handleDrawerClose} anchor={'right'}>
-        {/* header section */}
-        <div className="header-section">
-          <div className="self-stretch flex flex-row items-center justify-start p-[25px] gap-[25px">
-            <div className="flex-1 flex flex-col items-start justify-start">
-              <b className="relative tracking-[0.08em] leading-[28px]">新增</b>
-              <div className="relative text-smi tracking-[1px] leading-[20px] text-grey-dark text-left">
-                工場
-              </div>
-            </div>
-            <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
-              <div className="rounded-6xl bg-green-primary overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] cursor-pointer">
-                <b className="relative tracking-[1px] leading-[20px]">儲存</b>
-              </div>
-              <div className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] text-green-primary border-[1px] border-solid border-green-pale">
-                <b className="relative tracking-[1px] leading-[20px]">刪除</b>
-              </div>
-            </div>
-            <img
-              className="relative w-6 h-6 overflow-hidden shrink-0"
-              alt=""
-              src="/collapse1.svg"
-              onClick={handleDrawerClose}
-            />
-          </div>
-        </div>
-        {/* form section */}
+      <RightOverlayForm
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        anchor={'right'}
+        headerProps={{
+          title: '新增',
+          subTitle: '工場',
+          submitText: '儲存<',
+          cancelText: '刪除',
+          onCloseHeader: handleDrawerClose,
+          onSubmit: handleSubmit,
+          onCancel: handleDrawerClose
+        }}
+      >
         <div
           style={{ borderTop: '1px solid lightgrey' }}
           className="form-container"
@@ -300,7 +292,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             </div>
           </div>
         </div>
-      </DrawerBox>
+      </RightOverlayForm>
     </div>
   )
 }
