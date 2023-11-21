@@ -11,19 +11,20 @@ import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useDebounce from "../../../../hooks/useDebounce";
 import { getLocation } from "../../../../APICalls/getLocation";
-import CustomTimePicker from "../../../../components/FormComponents/CustomTimePicker";
 import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
-import CustomDatePicker from "../../../../components/FormComponents/CustomDatePicker";
+import CustomPeriodSelect from "../../../../components/FormComponents/CustomPeriodSelect";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateCollectionPoint } from "../../../../APICalls/collectionPointManage";
 import { useTranslation } from "react-i18next";
-import { colPointType, premiseType, recycType, siteType } from "../../../../interfaces/common";
+import { colPointType, premiseType, recycType, siteType, colPtRoutine, formValidate } from "../../../../interfaces/common";
 import { getCommonTypes } from "../../../../APICalls/commonManage";
 import RecyclablesList from "../../../../components/SpecializeComponents/RecyclablesList";
 import PremiseTypeList from "../../../../components/SpecializeComponents/PremiseTypeList";
 import ColPointTypeList from "../../../../components/SpecializeComponents/CollectionPointTypeList";
 import SiteTypeList from "../../../../components/SpecializeComponents/SiteTypeList";
 import { formErr } from "../../../../constants/constant";
+import RoutineSelect from "../../../../components/SpecializeComponents/RoutineSelect";
+import { FormErrorMsg } from "../../../../components/FormComponents/FormErrorMsg";
 
 function CreateCollectionPoint() {
 
@@ -34,23 +35,24 @@ function CreateCollectionPoint() {
     const [address, setAddress] = useState<string>(colInfo.address);
     const [gpsCode, setGPSCode] = useState<number[]>(colInfo.gpsCode);
     const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({ startDate: dayjs(colInfo.effFrmDate), endDate: dayjs(colInfo.effToDate) });
-    const [sHr, setSHr] = useState<timePeriod[]>([]);
+    const [colPtRoutine, setColPtRoutine] = useState<colPtRoutine>();
     const [siteType, setSiteType] = useState<string>(colInfo.siteTypeId); //site type
     const [contractNo, setContractNo] = useState<string>(colInfo.contractNo);
     const [premiseName, setPremiseName] = useState<string>(colInfo.premiseName); //Name of the house/place
     const [premiseType, setPremiseType] = useState<string>(colInfo.premiseTypeId); //Category of the house/place
     const [premiseRemark, setPremiseRemark] = useState<string>(colInfo.premiseRemark);
     const [status, setStatus] = useState<boolean>(true);
-    const [recyclables, setRecyclables] = useState<recyclable[]>([]);
+    const [recyclables, setRecyclables] = useState<recyclable[]>(colInfo.colPtRecyc);
     const [staffNum, setStaffNum] = useState<string>(colInfo.noOfStaff.toString());
     const [EPDEnable, setEPDEnable] = useState<boolean>(colInfo.epdFlg);
     const [serviceType, setServiceType] = useState<boolean>(colInfo.extraServiceFlg);
     const [searchText, setSearchText] = useState<string>("");
     const [listPlace, setListPlace] = useState<any[]>([]);
     const [trySubmited, setTrySubmited] = useState<boolean>(false);
-    const [validation, setValidation] = useState<{ field: string, problem: string }[]>([]);
+    const [validation, setValidation] = useState<formValidate[]>([]);
+    const [skipValidation, setSkipValidation] = useState<string[]>([]);     //store the fields of validation that are going to skip
     const [typeList, setTypeList] = useState<{colPoint: colPointType[], premise: premiseType[], site: siteType[], recyc: recycType[]}>({colPoint: [], premise: [], site: [], recyc: []});
-    const [contractList, setContractList] = useState<{contractNo: string, isEpd: boolean}[]>([]);
+    const [contractList, setContractList] = useState<{contractNo: string, isEpd: boolean, frmDate: string, toDate: string}[]>([]);
     const debouncedSearchValue: string = useDebounce(searchText, 1000);
 
     const navigate = useNavigate();
@@ -65,8 +67,7 @@ function CreateCollectionPoint() {
     }
 
     useEffect(()=>{
-        var SHR: timePeriod[] = toSHR();
-        setSHr(SHR);
+        
         initType();
     },[])
 
@@ -76,9 +77,9 @@ function CreateCollectionPoint() {
             setTypeList(result);
         }
         if(result?.contract){
-            var conList : {contractNo: string, isEpd: boolean}[] = [];
+            var conList : {contractNo: string, isEpd: boolean, frmDate: string, toDate: string}[] = [];
             result?.contract.map((con) => {
-                conList.push({contractNo: con.contractNo, isEpd: con.epdFlg})
+                conList.push({contractNo: con.contractNo, isEpd: con.epdFlg, frmDate: con.contractFrmDate, toDate: con.contractToDate})
             })
             setContractList(conList);
         }
@@ -101,36 +102,29 @@ function CreateCollectionPoint() {
 
     useEffect(() => {
         //do validation here
-        const tempV: { field: string, problem: string }[] = []        //temp validation
-        colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty });
-        siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty });
-        address == "" && tempV.push({ field: "col.address", problem: formErr.empty });
-        (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false) &&      //status == false: status is "CLOSED"
-            tempV.push({ field: "col.openingDate", problem: "stillInPeriod" });
-        premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty });
-        premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty });
-        recyclables.length == 0 && tempV.push({ field: "col.recycType", problem: formErr.empty });
+        const tempV: formValidate[] = []        //temp validation
+        colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
+        siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
+        address == "" && tempV.push({ field: "col.address", problem: formErr.empty, type: "error" });
+        (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
+            tempV.push({ field: "col.openingDate", problem: formErr.withInColPt_Period, type: "warning" });
+        premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
+        premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty, type: "error" });
+        recyclables.length == 0 && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
         console.log("num:",staffNum,Number.isNaN(parseInt(staffNum)),staffNum == "")
-        staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty });
+        staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty, type: "error" });
         (Number.isNaN(parseInt(staffNum)) && !(staffNum == ""))
-            ? tempV.push({ field: "col.numOfStaff", problem: formErr.wrongFormat })
-            : (!Number.isNaN(parseInt(staffNum)) && parseInt(staffNum) < 0) && tempV.push({ field: "col.numOfStaff", problem: formErr.numberSmallThanZero });
-        contractNo == "" && tempV.push({ field: "col.contractNo", problem: formErr.empty });
+            ? tempV.push({ field: "col.numOfStaff", problem: formErr.wrongFormat, type: "error" })
+            : (!Number.isNaN(parseInt(staffNum)) && parseInt(staffNum) < 0) && tempV.push({ field: "col.numOfStaff", problem: formErr.numberSmallThanZero, type: "error" });
+        contractNo == "" ? tempV.push({ field: "col.contractNo", problem: formErr.empty, type: "error" })
+            : (!checkContractisEff(contractNo) && !skipValidation.includes("col.contractNo")) && tempV.push({ field: "col.contractNo", problem: formErr.notWithInContractEffDate, type: "warning" });
         setValidation(tempV);
-        console.log(tempV);
-    }, [colType, siteType, address, premiseName, premiseType, recyclables, staffNum, contractNo])
+        //console.log(tempV);
+    }, [colType, siteType, address, openingPeriod, premiseName, premiseType, status, recyclables, staffNum, contractNo, skipValidation])
 
     useEffect(() => {
         checkEPD(contractNo);
     }, [contractNo])
-
-    const toSHR = () => {
-        var SHR: timePeriod[] = [];
-        for( var i = 0; i < Math.min(colInfo.startTime.length,colInfo.endTime.length); i++){
-            SHR.push({startFrom: dayjs(colInfo.startTime[i]), endAt: dayjs(colInfo.endTime[i])});
-        }
-        return SHR;
-    }
 
     //validation function
     const checkString = (s: string) => {
@@ -146,46 +140,33 @@ function CreateCollectionPoint() {
         return Number.isNaN(parseInt(n)) || n == "" || (!Number.isNaN(parseInt(n)) && parseInt(n) < 0);
     }
 
-    const getValidationMsg = (valid: { field: string, problem: string }[]) => {
-        var msg: string = "";
-        var empty: string[] = [];
-        var wrongFormat: string[] = [];
-        var numSmallerThan0: string[] = [];
-        valid.map((v)=>{
-            switch(v.problem){
-                case "empty":
-                    empty.push(v.field);
-                    break;
-                case "wrongFormat":
-                    wrongFormat.push(v.field);
-                    break;
-                case "numSmallerThan0":
-                    numSmallerThan0.push(v.field);
-                    break;
-            }
-        })
-        if(empty.length > 0){
-            empty.map((e, index) => {
-                msg += t(e);
-                msg += (index==empty.length-1)? t("form.shouldNotBeEmpty") : ", "
-            })
-            msg += "\n";
+    const addSkipValidation = (skip: string) => {
+        console.log(skip, skipValidation)
+        var tempSkipValid = Object.assign([],skipValidation);
+        tempSkipValid.push(skip);
+        setSkipValidation(tempSkipValid);
+    }
+
+    const returnErrorMsg = (error: string) => {
+        var msg = "";
+        console.log(error);
+        switch(error){
+            case formErr.empty:
+                msg = t("form.error.shouldNotBeEmpty");
+                break;
+            case formErr.wrongFormat:
+                msg = t("form.error.isInWrongFormat")
+                break;
+            case formErr.numberSmallThanZero:
+                msg = t("form.error.shouldNotSmallerThanZero")
+                break;
+            case formErr.withInColPt_Period:
+                msg = t("form.error.withInColPt_Period")
+                break;
+            case formErr.notWithInContractEffDate:
+                msg = t("form.error.isNotWithInContractEffDate")
+                break;
         }
-        if(wrongFormat.length > 0){
-            wrongFormat.map((w, index) => {
-                msg += t(w);
-                msg += (index==wrongFormat.length-1)? t("form.isInWrongFormat") : ", "
-            })
-            msg += "\n";
-        }
-        if(numSmallerThan0.length > 0){
-            numSmallerThan0.map((n, index) => {
-                msg += t(n);
-                msg += (index==numSmallerThan0.length-1)? t("form.shouldNotSmallerThanZero") : ", "
-            })
-            msg += "\n";
-        }
-        //console.log("validation: ",empty,wrongFormat,numSmallerThan0,msg);
         return msg;
     }
 
@@ -198,14 +179,25 @@ function CreateCollectionPoint() {
         }
     }
 
+    const checkContractisEff = (contractNo: string) => {
+        console.log("checkContractisEff");
+        const contract = contractList.find((contract) => {
+            return contract.contractNo == contractNo
+        });
+        var isBetween = false;
+        if(contract){
+            isBetween = dayjs(contract.frmDate).isBefore(openingPeriod.startDate) && dayjs(contract.toDate).isAfter(openingPeriod.endDate);
+        }
+        return isBetween;
+    }
+
     const handleSaveOnClick = async () => {
         if(validation.length == 0){
-            const ST: string[] = sHr.map((value) => value.startFrom.toString());
-            const ET: string[] = sHr.map((value) => value.endAt.toString());
             const cp: updateCP = {
                 colPointTypeId: colType,
                 effFrmDate: openingPeriod?.startDate.toString(),
                 effToDate: openingPeriod?.endDate.toString(),
+                routine: colPtRoutine,
                 address: address,
                 gpsCode: gpsCode,
                 epdFlg: EPDEnable,
@@ -221,7 +213,6 @@ function CreateCollectionPoint() {
                 updatedBy: "colAdmin",
                 colPtRecyc: recyclables,
                 roster: []
-                
             }
             const result = await updateCollectionPoint(colInfo.colId,cp);
             const data = result?.data;
@@ -247,219 +238,238 @@ function CreateCollectionPoint() {
     
     return (
         <>
-        <form>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-                <Grid container direction={"column"} spacing={2.5} sx={styles.gridForm}>
-                    <Grid item>
-                        <Button sx={[styles.headerSection]} onClick={() => handleHeaderOnClick()}>
-                            <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
-                            <Typography sx={styles.header1}>{t("col.editCP")}</Typography>
-                        </Button>
-                    </Grid>
+            <Box sx={styles.innerScreen_container}>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
+                    <Grid container direction={"column"} spacing={2.5} sx={styles.gridForm}>
+                        <Grid item>
+                            <Button sx={[styles.headerSection]} onClick={() => handleHeaderOnClick()}>
+                                <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
+                                <Typography sx={styles.header1}>{t("col.editCP")}</Typography>
+                            </Button>
+                        </Grid>
 
-                    <CustomField label={t("col.colType")} mandatory={true}>
-                        <ColPointTypeList
-                            setState={setCOLType}
-                            colPointTypes={typeList.colPoint}
-                            error={checkString(colType)}
-                            defaultValue={colInfo.colPointTypeId}
-                        />
-                    </CustomField>
+                        <CustomField label={t("col.colType")} mandatory={true}>
+                            <ColPointTypeList
+                                setState={setCOLType}
+                                colPointTypes={typeList.colPoint}
+                                defaultValue={colInfo.colPointTypeId}
+                                editable={false}
+                            />
+                        </CustomField>
 
-                    <CustomField label={t("col.siteType")} mandatory={true}>
-                        <SiteTypeList
-                            setState={setSiteType}
-                            siteTypes={typeList.site}
-                            error={checkString(siteType)}
-                            defaultValue={colInfo.siteTypeId}
-                        />
-                    </CustomField>
+                        <CustomField label={t("col.siteType")} mandatory={true}>
+                            <SiteTypeList
+                                setState={setSiteType}
+                                siteTypes={typeList.site}
+                                error={checkString(siteType)}
+                                defaultValue={colInfo.siteTypeId}
+                                editable={false}
+                            />
+                        </CustomField>
 
-                    <CustomField label={t("col.colName")}>
-                        <Typography sx={styles.formDataText}>
-                            {colInfo.colName}
-                        </Typography>
-                    </CustomField>
+                        <CustomField label={t("col.colName")}>
+                            <Typography sx={styles.formDataText}>
+                                {colInfo.colName}
+                            </Typography>
+                        </CustomField>
 
-                    <CustomField label={t("col.address")} mandatory={true}>
-                        <CustomTextField
-                            id="address"
-                            placeholder={t("col.enterAddress")}
-                            onChange={(event) => handleSearchTextChange(event)}
-                            // endAdornment={locationSelect(setCPLocation)}
-                            value={address ? address : searchText}
-                            error={checkString(address)}
-                        />
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                width: "100%",
-                                borderColor: "black",
-                            }}
-                        >
-                            {listPlace&&(
-                                <List key={listPlace[0]?.place_id}>
-                                    <ListItemButton
-                                    onClick={() => {
-                                        setAddress(listPlace[0].formatted_address);
-                                        setGPSCode([listPlace[0]?.geometry?.location?.lat,listPlace[0]?.geometry?.location?.lng]);
-                                    }}
-                                    >
-                                    <ListItemText>{listPlace[0]?.formatted_address}</ListItemText>
-                                    </ListItemButton>
-                                    <Divider />
-                                </List>
-                            )}
-                        </Box>
-                    </CustomField>
+                        <CustomField label={t("col.address")} mandatory={true}>
+                            <CustomTextField
+                                id="address"
+                                placeholder={t("col.enterAddress")}
+                                onChange={(event) => handleSearchTextChange(event)}
+                                // endAdornment={locationSelect(setCPLocation)}
+                                value={address ? address : searchText}
+                                error={checkString(address)}
+                            />
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    width: "100%",
+                                    borderColor: "black",
+                                }}
+                            >
+                                {listPlace&&(
+                                    <List key={listPlace[0]?.place_id}>
+                                        <ListItemButton
+                                        onClick={() => {
+                                            setAddress(listPlace[0].formatted_address);
+                                            setGPSCode([listPlace[0]?.geometry?.location?.lat,listPlace[0]?.geometry?.location?.lng]);
+                                        }}
+                                        >
+                                        <ListItemText>{listPlace[0]?.formatted_address}</ListItemText>
+                                        </ListItemButton>
+                                        <Divider />
+                                    </List>
+                                )}
+                            </Box>
+                        </CustomField>
 
-                    <CustomField label={t("col.effFromDate")} mandatory={true}>
-                        <CustomDatePicker
-                            setDate={setOpeningPeriod}
-                            defaultStartDate={colInfo.effFrmDate}
-                            defaultEndDate={colInfo.effToDate}
-                        />
-                    </CustomField>
+                        <CustomField label={t("col.effFromDate")} mandatory={true}>
+                            <CustomPeriodSelect
+                                setDate={setOpeningPeriod}
+                                defaultStartDate={colInfo.effFrmDate}
+                                defaultEndDate={colInfo.effToDate}
+                            />
+                        </CustomField>
 
-                    <CustomField label={t("col.startTime")} mandatory={true}>
-                        <CustomTimePicker multiple={true} setTime={setSHr} defaultTime={toSHR()}/>
-                    </CustomField>
-
-                    <CustomField label={t("col.premiseName")} mandatory={true}>
-                        <CustomTextField
-                            id="HouseOrPlaceName"
-                            placeholder={t("col.enterName")}
-                            onChange={(event) => setPremiseName(event.target.value)}
-                            error={checkString(premiseName)}
-                            defaultValue={colInfo.premiseName}
-                        />
-                    </CustomField>
-
-                    <CustomField label={t("col.premiseType")} mandatory={true}>
-                        <PremiseTypeList
-                            setState={setPremiseType}
-                            premiseTypes={typeList.premise}
-                            error={checkString(premiseType)}
-                            defaultValue={colInfo.premiseTypeId}
-                        />
-                    </CustomField>
-
-                    <Grid item>
-                        <Collapse in={premiseType == "PT00010"} >
-                            <CustomField label={t("col.premiseRemark")}>
-                                <CustomTextField
-                                    id="premiseRemark"
-                                    placeholder={t("col.enterText")}
-                                    onChange={(event) => setPremiseRemark(event.target.value)}
-                                    defaultValue={colInfo.premiseRemark}
-                                />
-                            </CustomField>
-                        </Collapse>
-                    </Grid>
-                    
-
-                    <CustomField label={t("col.status")}>
-                        <CustomSwitch
-                            onText={t("col.open")}
-                            offText={t("col.close")}
-                            defaultValue={colInfo.status=="CREATED"}
-                            setState={setStatus}
-                        />
-                    </CustomField>
-
-                    <Grid item sx={{ width: "100%" }}>
-                        <Divider />
-                    </Grid>
-
-                    <Grid item>
-                        <Typography sx={styles.header2}>{t("col.colRecycType")}</Typography>
-                    </Grid>
-
-                    <CustomField label={t("col.recycType")} mandatory={true}>
-                        <RecyclablesList
-                            recycL={typeList.recyc}
-                            setState={setRecyclables}
-                            defaultRecycL={colInfo.colPtRecyc}
-                        />
-                    </CustomField>
-
-                    <Grid item sx={{ width: "100%" }}>
-                        <Divider />
-                    </Grid>
-
-                    <Grid item>
-                        <Typography sx={styles.header2}>{t("col.staffInfo")}</Typography>
-                    </Grid>
-
-                    <CustomField label={t("col.numOfStaff")} mandatory={true}>
-                        <CustomTextField
-                            id="employee number"
-                            placeholder={t("col.enterNumOfStaff")}
-                            onChange={(event) => {
-                                const value = event.target.value;
-                                setStaffNum(value);
-                            }}
-                            error={checkNumber(staffNum)}
-                            defaultValue={colInfo.noOfStaff}
-                        />
-                    </CustomField>
-
-                    <Grid item sx={{ width: "100%" }}>
-                        <Divider />
-                    </Grid>
-
-                    <Grid item>
-                        <Typography sx={styles.header2}>{t("col.serviceInfo")}</Typography>
-                    </Grid>
-
-                    <CustomField label={t("col.contractNo")} mandatory={true}>
-                    <Autocomplete
-                        disablePortal
-                        id="contractNo"
-                        options={contractList.map((contract) => contract.contractNo)}
-                        defaultValue={colInfo.contractNo}
-                        onChange={(event, value) =>
-                            {
-                                console.log(value)
-                                if(value){
-                                    setContractNo(value) 
-                                }
-                            }}
-                        renderInput={(params) => 
-                            <TextField
-                                {...params}
-                                placeholder={t("col.enterNo")}
-                                sx={[styles.textField, {width: 250}]}
-                                error={checkString(contractNo)}
-                                InputProps={{
-                                    ...params.InputProps,
-                                    sx: styles.inputProps
+                        <CustomField label={t("col.startTime")} mandatory={true} style={{width:"100%"}}>
+                            <RoutineSelect
+                                setRoutine={setColPtRoutine}
+                                defaultValue={{
+                                    routineType: colInfo.routineType,
+                                    routineContent: colInfo.routine
                                 }}
                             />
-                        }
-                    />
-                    </CustomField>
+                        </CustomField>
 
-                    <CustomField label={t("col.serviceType")}>
-                        <CustomSwitch
-                            onText={t("col.basic")}
-                            offText={t("col.extra")}
-                            defaultValue={colInfo.extraServiceFlg}
-                            setState={setServiceType}
+                        <CustomField label={t("col.premiseName")} mandatory={true}>
+                            <CustomTextField
+                                id="HouseOrPlaceName"
+                                placeholder={t("col.enterName")}
+                                onChange={(event) => setPremiseName(event.target.value)}
+                                error={checkString(premiseName)}
+                                defaultValue={colInfo.premiseName}
+                            />
+                        </CustomField>
+
+                        <CustomField label={t("col.premiseType")} mandatory={true}>
+                            <PremiseTypeList
+                                setState={setPremiseType}
+                                premiseTypes={typeList.premise}
+                                error={checkString(premiseType)}
+                                defaultValue={colInfo.premiseTypeId}
+                                editable={false}
+                            />
+                        </CustomField>
+
+                        <Grid item>
+                            <Collapse in={premiseType == "PT00010"} >
+                                <CustomField label={t("col.premiseRemark")}>
+                                    <CustomTextField
+                                        id="premiseRemark"
+                                        placeholder={t("col.enterText")}
+                                        onChange={(event) => setPremiseRemark(event.target.value)}
+                                        defaultValue={colInfo.premiseRemark}
+                                    />
+                                </CustomField>
+                            </Collapse>
+                        </Grid>
+                        
+
+                        <CustomField label={t("col.status")}>
+                            <CustomSwitch
+                                onText={t("col.open")}
+                                offText={t("col.close")}
+                                defaultValue={colInfo.status=="CREATED"}
+                                setState={setStatus}
+                            />
+                        </CustomField>
+
+                        <Grid item sx={{ width: "100%" }}>
+                            <Divider />
+                        </Grid>
+
+                        <Grid item>
+                            <Typography sx={styles.header2}>{t("col.colRecycType")}</Typography>
+                        </Grid>
+
+                        <CustomField label={t("col.recycType")} mandatory={true}>
+                            <RecyclablesList
+                                recycL={typeList.recyc}
+                                setState={setRecyclables}
+                                defaultRecycL={colInfo.colPtRecyc}
+                            />
+                        </CustomField>
+
+                        <Grid item sx={{ width: "100%" }}>
+                            <Divider />
+                        </Grid>
+
+                        <Grid item>
+                            <Typography sx={styles.header2}>{t("col.staffInfo")}</Typography>
+                        </Grid>
+
+                        <CustomField label={t("col.numOfStaff")} mandatory={true}>
+                            <CustomTextField
+                                id="employee number"
+                                placeholder={t("col.enterNumOfStaff")}
+                                onChange={(event) => {
+                                    const value = event.target.value;
+                                    setStaffNum(value);
+                                }}
+                                error={checkNumber(staffNum)}
+                                defaultValue={colInfo.noOfStaff}
+                            />
+                        </CustomField>
+
+                        <Grid item sx={{ width: "100%" }}>
+                            <Divider />
+                        </Grid>
+
+                        <Grid item>
+                            <Typography sx={styles.header2}>{t("col.serviceInfo")}</Typography>
+                        </Grid>
+
+                        <CustomField label={t("col.contractNo")} mandatory={true}>
+                        <Autocomplete
+                            disablePortal
+                            id="contractNo"
+                            options={contractList.map((contract) => contract.contractNo)}
+                            defaultValue={colInfo.contractNo}
+                            onChange={(event, value) =>
+                                {
+                                    console.log(value)
+                                    if(value){
+                                        setContractNo(value) 
+                                    }
+                                }}
+                            renderInput={(params) => 
+                                <TextField
+                                    {...params}
+                                    placeholder={t("col.enterNo")}
+                                    sx={[styles.textField, {width: 250}]}
+                                    error={checkString(contractNo)}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        sx: styles.inputProps
+                                    }}
+                                />
+                            }
                         />
-                    </CustomField>
-                    <Grid item>
-                        <Button sx={[styles.buttonFilledGreen, localstyles.localButton]} onClick={() => handleSaveOnClick()}>
-                            {t("col.save")}
-                        </Button>
-                        <Button sx={[styles.buttonOutlinedGreen, localstyles.localButton]} onClick={() => handleCancelOnClick()}>
-                            {t("col.cancel")}
-                        </Button>
+                        </CustomField>
+
+                        <CustomField label={t("col.serviceType")}>
+                            <Typography sx={styles.formDataText}>
+                                {colInfo.extraServiceFlg? t("col.basic") : t("col.extra")}
+                            </Typography>
+                            
+                        </CustomField>
+                        <Grid item>
+                            <Button sx={[styles.buttonFilledGreen, localstyles.localButton]} onClick={() => handleSaveOnClick()}>
+                                {t("col.save")}
+                            </Button>
+                            <Button sx={[styles.buttonOutlinedGreen, localstyles.localButton]} onClick={() => handleCancelOnClick()}>
+                                {t("col.cancel")}
+                            </Button>
+                        </Grid>
+                        <Grid item sx={{width: "50%"}}>
+                            {
+                                trySubmited&&
+                                    validation.map((val) => 
+                                        <FormErrorMsg
+                                            field={t(val.field)}
+                                            errorMsg={returnErrorMsg(val.problem)}
+                                            type={val.type}
+                                            setContinue={() => addSkipValidation(val.field)}
+                                        />
+                                    )
+                            }
+                        </Grid>
                     </Grid>
-                </Grid>
-            </LocalizationProvider>
-            </form>
+                </LocalizationProvider>
+            </Box>
         </>
     );
 }

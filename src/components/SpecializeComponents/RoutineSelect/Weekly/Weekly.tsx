@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomTimePicker from "../../../FormComponents/CustomTimePicker";
 import CustomItemList, { il_item } from "../../../FormComponents/CustomItemList";
 import { useTranslation } from "react-i18next";
@@ -6,9 +6,12 @@ import { weekDayT, weekDs } from "../predefinedOption";
 import CustomField from "../../../FormComponents/CustomField";
 import { timePeriod } from "../../../../interfaces/collectionPoint";
 import { Collapse } from "@mui/material";
+import { routineContent } from "../../../../interfaces/common";
+import dayjs from "dayjs";
 
 type props = {
-
+    setWeekly: (RWs: routineContent[]) => void,
+    defaultWeek?: routineContent[]
 }
 
 type weekDay_timePeriod = {     //store the timePeriod with the weekDay id
@@ -17,7 +20,8 @@ type weekDay_timePeriod = {     //store the timePeriod with the weekDay id
 }
 
 export default function Weekly({
-
+    setWeekly,
+    defaultWeek
 }: props){
 
     const [weekDays, setWeekDays] = useState<string[]>([]);
@@ -25,6 +29,71 @@ export default function Weekly({
     const [timePeriods, setTimePeriods] = useState<weekDay_timePeriod[]>([]);
 
     const { t, i18n } = useTranslation();
+
+    useEffect(() => {
+        if(defaultWeek){
+            var weekDays: string[] | undefined = returnDefaultWeekDay();
+            var wd_period: weekDay_timePeriod[] | undefined = returnDefaultTimePeriods();
+            if(weekDays){
+                setWeekDays(weekDays);
+            }
+            if(wd_period){
+                setTimePeriods(wd_period);
+            }
+        }
+
+        return () => {
+            setWeekly(returnRoutineContent([]));
+        }
+    },[])
+
+    useEffect(() => {
+        setWeekly(returnRoutineContent(timePeriods))
+    },[timePeriods])
+
+    const returnDefaultWeekDay = () => {
+        if(defaultWeek){
+            var weekDays: string[] = [];
+            defaultWeek.map((weekday) => {
+                weekDays.push(weekday.id);
+            })
+            return weekDays;
+        }
+        return undefined
+    }
+
+    const returnDefaultTimePeriods = () => {
+        if(defaultWeek){
+            var wd_period: weekDay_timePeriod[] = [];
+            defaultWeek.map((weekday) => {
+                wd_period.push({id: weekday.id, timePeriod: toTimePeriod(weekday.startTime, weekday.endTime)})
+            })
+            return wd_period;
+        }
+        return undefined
+    }
+
+    const toTimePeriod = (st: string[], et: string[]) => {      //start time end time
+        const timeP: timePeriod[] = [];
+        for(var i = 0; i < Math.min(st.length,et.length); i++){
+            timeP.push({startFrom: dayjs(st[i]), endAt: dayjs(et[i])});
+        }
+        return timeP;
+    }
+
+    const returnRoutineContent = (week_TimePeriod: weekDay_timePeriod[]) => {
+        const routineWeekly: routineContent[] = week_TimePeriod.map((weekday) => {
+            const ST: string[] = weekday.timePeriod.map((value) => value.startFrom.toString());
+            const ET: string[] = weekday.timePeriod.map((value) => value.endAt.toString());
+            const RW: routineContent = {
+                id: weekday.id,
+                startTime: ST,
+                endTime: ET
+            }
+            return RW;
+        })
+        return routineWeekly;
+    }
 
     const getWeekDays = () => {
         const weekD: il_item[] = weekDs.map((weekDay) => {
@@ -68,47 +137,53 @@ export default function Weekly({
     }
 
     const setWeekD = (s: string[]) => {
-        console.log(s);
+        console.log("setWeekD: ",s);
         if(s.length > weekDays.length){     //if adding item to weekDays
             console.log("adding item");
-            setWeekDays(s);
+            const day = s.find((str) => {     //find the item that has been added
+                return !weekDays.includes(str);
+            });
+            if(day){        //if found
+                setWeekDays(s);
+                var tempTP: weekDay_timePeriod = {id: day, timePeriod: []};      //add a new record of added week day into timePeriods
+                var timePeriodsSet = Object.assign([],timePeriods);
+                timePeriodsSet.push(tempTP);
+                setTimePeriods(timePeriodsSet);
+            }
         }else if(s.length < weekDays.length){
-            console.log("remove item",s);
+            console.log("remove item");
             const day = weekDays.find((day) => {     //find the item that has been removed
                 return !s.includes(day);
             });
-            if(day){
-                const timeP = timePeriods.filter((TP) => {
+            if(day){        //if found
+                setWeekDays(s)
+                const timeP = timePeriods.filter((TP) => {      //filter the deleted week day from timePeriods
                     console.log(TP.id,day);
                     return !(TP.id == day)
                 });
                 console.log(timeP);
                 setTimePeriods(timeP);
             }
-            setWeekDays(s)
         }
 
     }
 
     const setTimePeriodForWeekDay = (TPs: timePeriod[]) => {
         var tempTP: weekDay_timePeriod = {id: curWeekDay, timePeriod: TPs};
-        var findTP = timePeriods.find((twTPs) => {
+        var findTP = timePeriods.find((twTPs) => {      //find the timePeriod first to make sure the curWeekDay is selected
+            console.log(twTPs.id, curWeekDay);
             return twTPs.id == curWeekDay
         });
-        var timePeriodsSet: weekDay_timePeriod[] = [];
         if(findTP){
-            timePeriodsSet = timePeriods.map((twTPs) => {
+            var timePeriodsSet = timePeriods.map((twTPs) => {
                 if(twTPs.id == curWeekDay){
                     return tempTP;
                 }
                 return twTPs;
             });
-        }else{
-            timePeriodsSet = Object.assign([],timePeriods);
-            timePeriodsSet.push(tempTP);
+            setTimePeriods(timePeriodsSet);
         }
         console.log(timePeriods,curWeekDay,findTP,TPs)
-        setTimePeriods(timePeriodsSet);
     }
 
     const getTimePeriod = (id: string) => {
@@ -137,13 +212,14 @@ export default function Weekly({
                     dbClickSelect={true}
                     setLastSelect={setCurWeekDay}
                     withSubItems={getWithSubItemList()}
+                    defaultSelected={returnDefaultWeekDay()}
                 />
                 <Collapse sx={{mt: 1}} in={curWeekDay != " " && weekDays.length > 0}>
                     <CustomField label={t("time_Period") + ` (${getWeekDayById(curWeekDay)})`} key={curWeekDay}>
                         <CustomTimePicker
                             multiple={true}
                             setTime={setTimePeriodForWeekDay}
-                            defaultTime={getTimePeriod(curWeekDay).timePeriod}
+                            defaultTime={ (curWeekDay != " ")? getTimePeriod(curWeekDay).timePeriod : undefined}
                         />
                     </CustomField>
                 </Collapse>

@@ -25,8 +25,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import '../styles/MainDrawer.css';
-
-
+import { localStorgeKeyName } from "../constants/constant";
 
 type MainDrawer = {
   role: string;
@@ -64,7 +63,7 @@ function MainDrawer() {
     setSelectedIndex(index);
   };
 
-  var role = "collector";
+  var role = localStorage.getItem(localStorgeKeyName.role);
 
   let drawerMenus_collector: DrawerItem[] = [
     { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  setCPDrawer(!CPDrawer), collapse: false, collapseGroup: CPDrawer },

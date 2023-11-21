@@ -64,12 +64,7 @@ const CustomCard = ({
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
     initTypes();
-    return () => {
-      document.body.style.overflow = "scroll"
-    };
-
   }, []);
 
   const initTypes = async () => {

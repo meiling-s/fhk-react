@@ -7,6 +7,7 @@ type props = {
     setState: (s: string) => void,
     siteTypes: siteType[],
     error?: boolean,
+    editable?: boolean,
     defaultValue?: string
 }
 
@@ -14,6 +15,7 @@ export default function SiteTypeList({
     setState,
     siteTypes,
     error,
+    editable,
     defaultValue
 }: props){
 
@@ -53,6 +55,7 @@ export default function SiteTypeList({
                 items={returnSiteTypes()}
                 singleSelect={setSiteType}
                 error={error}
+                editable={(editable != undefined)? editable : true}
                 defaultSelected={defaultValue? defaultValue : ""}
             />
         </>

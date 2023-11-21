@@ -7,6 +7,7 @@ type props = {
     setState: (s: string) => void,
     premiseTypes: premiseType[],
     error?: boolean,
+    editable?: boolean,
     defaultValue?: string
 }
 
@@ -14,6 +15,7 @@ export default function PremiseTypeList({
     setState,
     premiseTypes,
     error,
+    editable,
     defaultValue
 }: props){
 
@@ -53,6 +55,7 @@ export default function PremiseTypeList({
                 items={returnPremiseTypes()}
                 singleSelect={setPremiseType}
                 error={error}
+                editable={(editable != undefined)? editable : true}
                 defaultSelected={defaultValue? defaultValue : ""}
             />
         </>

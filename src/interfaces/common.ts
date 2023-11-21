@@ -1,3 +1,9 @@
+export type formValidate = {
+    field: string,
+    problem: string,
+    type: string
+}
+
 export type colPointType = {
     colPointTypeId: string,
     colPointTypeEng: string,
@@ -79,4 +85,23 @@ export type contract = {
     createdAt: string,
     updatedBy: string,
     updatedAt: string
+}
+
+export type routine = {
+    colId: string,
+    colPtRoutine: colPtRoutine,
+    status: string,
+    createdBy: string,
+    updatedBy: string
+}
+
+export type routineContent = {
+    id: string,
+    startTime: string[],
+    endTime: string[]
+}
+
+export type colPtRoutine = {
+    routineType: string,
+    routineContent: routineContent[]
 }

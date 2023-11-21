@@ -42,9 +42,14 @@ export const UPDATE_COLLECTIONPOINT: AxiosRequestConfig = {
   url: 'api/collectors/collectionPoint'
 }
 
-export const GET_RECYC_TYPE: AxiosRequestConfig = {
+export const FIND_COLLECTIONPOINT_EXIST_BYNAME: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/collectors/recycType'
+  url: 'api/collectors/collectionPoint/byName'
+}
+
+export const FIND_COLLECTIONPOINT_EXIST_BYADDRESS: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/collectors/collectionPoint/byAddress'
 }
 
 export const GET_CONTRACT: AxiosRequestConfig = {
@@ -81,4 +86,14 @@ export const GET_SITE_TYPE: AxiosRequestConfig = {
 export const ADD_SITE_TYPE: AxiosRequestConfig = {
   method: 'post',
   url: 'api/common/siteType'
+}
+
+export const GET_RECYC_TYPE: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/common/recycType'
+}
+
+export const ADD_RECYC_TYPE: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/common/recycType'
 }

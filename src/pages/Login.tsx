@@ -1,16 +1,5 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import LoadingButton from '@mui/lab/LoadingButton';
 import React, { useState } from "react";
 import logo_company from "../logo_company.png";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -24,15 +13,19 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [loginTo, setLoginTo] = useState("astd");
+  const [loggingIn, setLogginIn] = useState(false);
   const navigate = useNavigate();
 
-  const onLoginButtonClick = async (userName: string, password: string) => {
+  const onLogin = async () => {
+    setLogginIn(true);
     const result = await login({
       username: userName,
       password: password,
       realm: 'astd'
     });
-    switch(loginTo){
+    if(result){
+      console.log(result);
+      switch(loginTo){
       case "astd":
         navigate("/astd");
         break;
@@ -44,10 +37,13 @@ const Login = () => {
         break;
       default:
         navigate("/collector");
+      }
+      //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
+      localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
+      localStorage.setItem(localStorgeKeyName.role, loginTo);
+      localStorage.setItem(localStorgeKeyName.username, result?.username || '');
     }
-    console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
-    localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
-    localStorage.setItem(localStorgeKeyName.username, result?.username || '');
+    setLogginIn(false);
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -62,6 +58,11 @@ const Login = () => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+        }}
+        component="form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onLogin();
         }}
       >
         <Box
@@ -133,9 +134,10 @@ const Login = () => {
             </Select>
           </FormControl>
           <Box>
-            <Button
+            <LoadingButton
               fullWidth
-              onClick={() => onLoginButtonClick(userName,password)}
+              loading={loggingIn}
+              type="submit"
               sx={{
                 borderRadius: "20px",
                 backgroundColor: "#79ca25",
@@ -145,7 +147,7 @@ const Login = () => {
               variant="contained"
             >
               登入
-            </Button>
+            </LoadingButton>
           </Box>
           <Box>
             <Button

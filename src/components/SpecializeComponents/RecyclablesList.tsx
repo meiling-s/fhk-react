@@ -31,6 +31,7 @@ export default function RecyclablesList({
     const { t, i18n } = useTranslation();
 
     useEffect(() => {
+        //console.log("defaultRecycL:",defaultRecycL);
         if(defaultRecycL){
             setRecycTypeList(recyclables_getRecycTypes(defaultRecycL));
             setSubTypeList(recyclables_getSubTypes(defaultRecycL));
@@ -38,11 +39,13 @@ export default function RecyclablesList({
     },[])
 
     useEffect(() => {
+        console.log(toRecyclables());
         setState(toRecyclables());
     },[recycTypeList, subTypeList])
 
     const returnRecycTypes = () => {
         const recycItem: recycItem[] = [];
+        //console.log("recycL: ", recycL);
         recycL.map((re) => {
             var reItem: recycItem = {recycType: {name: "", id: ""}, recycSubtype: []};
             var subItem: il_item[] = [];
