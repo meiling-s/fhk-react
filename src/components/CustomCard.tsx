@@ -6,9 +6,12 @@ import { getColPointType } from '../APICalls/commonManage'
 import { useTranslation } from 'react-i18next'
 import { colPointType } from '../interfaces/common'
 import { useMap } from 'react-leaflet'
+import { Position } from '../interfaces/map'
 
 type props = {
   collectionPoints: collectionPoint[]
+  hoveredCard:Position|null
+  setHoveredCard: React.Dispatch<React.SetStateAction<Position| null>>
 }
 
 const returnBgColor = (type: string) => {
@@ -49,7 +52,9 @@ const returnFontColor = (type: string) => {
 }
 
 const CustomCard = ({
-  collectionPoints
+  collectionPoints,
+  hoveredCard,
+  setHoveredCard
 }: props) => {
 
   const [colType, setColType] = useState<colPointType[]>([]);
@@ -106,56 +111,60 @@ const CustomCard = ({
 
   return (
     <>
-      {collectionPoints.map((collectionPoint) => (
+      {collectionPoints.map((collectionPoint) => {
+        var posistion = JSON.parse("[" + collectionPoint.gpsCode + "]");
         
-        <Card
-          sx={{
-            display: "flex",
-            marginRight: "150px",
-            borderRadius: '10px',
-            marginTop: '20px',
-            width:{
-              sm:'80%',
-              lg:'515px'
-            },
-          }}
-        >
-          <ButtonBase sx={{width: "100%"}} onClick={() => handleCardOnClick(collectionPoint)}>
-            <CardContent sx={{ display: "flex", flexDirection: 'column', width: "100%" }}>
-              <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <Typography fontWeight='bold'>{collectionPoint.colName}</Typography>
-                <Box
-                  sx={{
-                    ...localstyles.colPointType,
-                    bgcolor: returnBgColor(collectionPoint.colPointTypeId)
-                  }}
-                >
-                  <Typography color={returnFontColor(collectionPoint.colPointTypeId)} fontSize={12}>{getColPointNameById(collectionPoint.colPointTypeId)}</Typography>
+        return (
+          <Card
+            onMouseEnter={() => setHoveredCard({ lat: posistion[0], lon:posistion[1] })}
+            onMouseLeave={() => setHoveredCard(null)}
+            sx={{
+              display: "flex",
+              marginRight: "150px",
+              borderRadius: '10px',
+              marginTop: '20px',
+              width: {
+                sm: '80%',
+                lg: '515px'
+              }
+            }}
+          >
+            <ButtonBase onClick={() => handleCardOnClick(collectionPoint)}>
+              <CardContent sx={{ display: "flex", flexDirection: 'column' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                  <Typography fontWeight='bold'>{collectionPoint.colName}</Typography>
+                  <Box
+                    sx={{
+                      ...localstyles.colPointType,
+                      bgcolor: returnBgColor(collectionPoint.colPointTypeId)
+                    }}
+                  >
+                    <Typography color={returnFontColor(collectionPoint.colPointTypeId)} fontSize={12}>{getColPointNameById(collectionPoint.colPointTypeId)}</Typography>
+                  </Box>
                 </Box>
-              </Box>
-              <Typography sx={localstyles.address}>{collectionPoint.address}</Typography>
-            </CardContent>
-          </ButtonBase>
-        </Card>
-      ))}
+                <Typography sx={localstyles.address}>{collectionPoint.address}</Typography>
+              </CardContent>
+            </ButtonBase>
+          </Card>
+        );
+      })}
     </>
-  )
-}
-
-const localstyles = {
-  colPointType:{
-    pt: '4px',
-    pm: '4px',
-    pl: '8px',
-    pr: '8px',
-    mb: '5px',
-    ml: '7px',
-    borderRadius: "10px"
-  },
-  address: {
-    textAlign: "left",
-    color: "#717171"
-  }
-}
+  )};
+  
+  const localstyles = {
+    colPointType: {
+      pt: '4px',
+      pm: '4px',
+      pl: '8px',
+      pr: '8px',
+      mb: '5px',
+      ml: '7px',
+      borderRadius: "10px"
+    },
+    address: {
+      textAlign: "left",
+      color: "#717171"
+    }
+  };
 
 export default CustomCard

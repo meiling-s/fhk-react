@@ -39,7 +39,7 @@ function MainDrawer() {
   const [CPDrawer, setCPDrawer] = useState<boolean>(false);   //CP = collection point, this state determine collection point drawer group expand or not
   const { t } = useTranslation();
 
-  var role = "warehouse";
+  var role = "collector";
 
   let drawerMenus_collector: DrawerItem[] = [
     { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  setCPDrawer(!CPDrawer), collapse: false, collapseGroup: CPDrawer },
@@ -68,7 +68,7 @@ function MainDrawer() {
   var drawerMenus;
 
   switch(role){
-    case "astd":
+    case "warehouse":
       drawerMenus = drawerMenus_astd;
       break;
     case "collector":

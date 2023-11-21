@@ -26,3 +26,9 @@ export interface Address {
     country:          string;
     country_code:     string;
 }
+
+export type Position = {
+    lat: number;
+    lon: number;
+  };
+

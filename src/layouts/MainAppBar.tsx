@@ -85,7 +85,7 @@ const MainAppBar = () => {
             </Menu>
             <Box sx={{ display: "flex", flexDirection: "row", ml: 3 }}>
               <IconButton>
-                <BackgroundLetterAvatars name="Cawin Pan" />
+                <BackgroundLetterAvatars name="Cawin Pan" backgroundColor='#79ca25'/>
               </IconButton>
               <Box flexDirection={"column"} sx={{ flex: 3.5, pt: 0.4 }}>
                 <Typography
