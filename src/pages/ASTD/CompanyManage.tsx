@@ -108,6 +108,15 @@ interface HeadCell {
 
   ];
 
+     const fakeData = [
+        {
+            id: "test", cName: "test", eName: "test", status: "test", type: "test", createDate: new Date(), accountNum: 5 
+        },
+        {
+            id: "test2", cName: "test2", eName: "test2", status: "test2", type: "tes2", createDate: new Date(), accountNum: 8 
+        }
+    ]
+
 type inviteModal = {
     open: boolean,
     onClose: () => void,
@@ -357,7 +366,9 @@ function CompanyManage(){
     const [filterCompanies, setFilterCompanies] = useState<Company[]>([]);
 
     useEffect(()=>{
-        initCompanies()
+        //initCompanies()
+        setCompanies(fakeData);
+        setFilterCompanies(fakeData);
     },[]);
 
     async function initCompanies() {

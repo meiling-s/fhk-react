@@ -93,5 +93,18 @@ export const styles = {
         borderWidth: 1,
         borderRadius: 50,
         fontWeight: "bold"
-    }
+    },
+    buttonBlack: {
+        color: "#000000"
+    },
+    buttonOutlinedWhite: {
+        borderRadius: "40px",
+        borderColor: "#D1D1D1",
+        backgroundColor: "#FFFFFF",
+        color: "#000000",
+        // fontWeight: "bold",
+        '&.MuiButton-root:hover':{
+            backgroundColor: "#F4F4F4"
+        }
+    },
 }
