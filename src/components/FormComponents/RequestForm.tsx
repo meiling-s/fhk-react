@@ -1,9 +1,10 @@
-import { Alert, Box, Divider, Stack, Typography } from "@mui/material";
+import { Alert, Box, Divider, IconButton, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import CheckIcon from "@mui/icons-material/Check";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RecycleCard from "../RecycleCard";
 import { FakeDataItem } from "../../interfaces/fakeData";
+import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
 
 const RequestForm = ({
   onClose,
@@ -12,7 +13,6 @@ const RequestForm = ({
   onClose: () => void;
   fakedata: FakeDataItem[] | null;
 }) => {
-  const [stockAdjust, setStockAdjust] = useState<boolean>(false);
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -35,13 +35,20 @@ const RequestForm = ({
           onClick={handleOverlayClick}
         >
           <Box sx={{ height: "100%", bgcolor: "white", width: "40%" }}>
-            <Box sx={{ p: 4 }}>
+            <Box sx={{ p: 4,display:'flex' ,justifyContent:'space-between'}}>
+              <Box>
               <Typography fontSize="25px" fontWeight="bold" letterSpacing="2px">
                 送入請求
               </Typography>
               <Typography fontSize="15px" color="#979797" letterSpacing="2px">
                 {data.poNumber}
               </Typography>
+              </Box>
+              <Box sx={{display:'flex',alignSelf:'center'}}>
+                <IconButton onClick={onClose}>
+                <KeyboardTabIcon sx={{fontSize:'30px'}}/>
+                </IconButton>
+              </Box>
             </Box>
             <Divider />
             <Stack spacing={2} sx={{ p: 4 }}>
