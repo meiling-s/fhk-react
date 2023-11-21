@@ -2,7 +2,9 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import MainLayout from './layouts/MainLayout';
-import Login from './pages/Login';
+import Login from './pages/Auth/Login';
+import ForgetPassword from './pages/Auth/ForgetPassword';
+import ConfirmNewPassword from './pages/Auth/ConfirmNewPassword'
 //ASTD admin
 import CompanyManage from './pages/ASTD/CompanyManage';
 //collection point
@@ -28,6 +30,8 @@ const Router = () => {
       <Routes>
 
         <Route path="/" element={<Login />} />
+        <Route path="/forgetPassword" element={<ForgetPassword />} />
+        <Route path="/confirmNewPassword" element={<ConfirmNewPassword />} />
         <Route path="/register/details/:inviteId" element={<CompanyDetails />}/>
         <Route path="/register/contact" element={<CompanyContact />}/>
         <Route path="/register/result" element={<RegisterResult />}/>
