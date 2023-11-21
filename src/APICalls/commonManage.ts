@@ -8,7 +8,7 @@ const commonAPI = {
 }
 
 const collectionPointAPI = {
-    baseURL: 'http://10.166.22.107:8001/'
+    baseURL: 'http://localhost:8001/'
 }
 
 export const getColPointType = async () => {
@@ -21,7 +21,7 @@ export const getColPointType = async () => {
             baseURL: commonAPI.baseURL
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });
-        console.log('Get collection point type success:', JSON.stringify(response.data));
+        //console.log('Get collection point type success:', JSON.stringify(response.data));
         colPointType = response.data;
         return colPointType;
 
@@ -106,7 +106,7 @@ export const getCommonTypes = async () => {
 
         response = await axios({
             ...GET_RECYC_TYPE,
-            baseURL: collectionPointAPI.baseURL
+            baseURL: commonAPI.baseURL
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });
         //console.log('Get recyc type success:', JSON.stringify(response.data));
@@ -117,7 +117,7 @@ export const getCommonTypes = async () => {
             baseURL: collectionPointAPI.baseURL
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });
-        console.log('Get contract success:', JSON.stringify(response.data));
+        console.log('Get contract success:', JSON.stringify(response));
         types.contract = response.data;
 
         return types;

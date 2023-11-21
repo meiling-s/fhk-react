@@ -7,6 +7,7 @@ type props = {
     setState: (s: string) => void,
     colPointTypes: colPointType[],
     error?: boolean,
+    editable?: boolean,
     defaultValue?: string
 }
 
@@ -14,6 +15,7 @@ export default function ColPointTypeList({
     setState,
     colPointTypes,
     error,
+    editable,
     defaultValue
 }: props){
 
@@ -47,12 +49,15 @@ export default function ColPointTypeList({
         return colList;
     };
 
+    console.log("init editable ",editable)
+
     return(
         <>
             <CustomItemList
                 items={returnColPointTypes()}
                 singleSelect={setColPointType}
                 error={error}
+                editable={(editable != undefined)? editable : true}
                 defaultSelected={defaultValue? defaultValue : ""}
             />
         </>

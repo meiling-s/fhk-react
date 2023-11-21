@@ -16,7 +16,8 @@ type props = {
     defaultSelected?: string[] | string,     //just for setting the defaultSelected value of selectMulti
     setLastSelect?: (s: string) => void        //for determinding the last selected item
     dbClickSelect?: boolean,
-    error?: boolean
+    error?: boolean,
+    editable?: boolean
 }
 function CustomItemList({
     items,
@@ -26,7 +27,8 @@ function CustomItemList({
     defaultSelected,
     setLastSelect,
     dbClickSelect,
-    error
+    error,
+    editable
 }: props){
     const [selectSingle, setSelectSingle] = useState<string>("");
     const [selectMulti, setSelectMulti] = useState<string[]>([]);
@@ -45,6 +47,9 @@ function CustomItemList({
     }
     //determine currently using single select or multi select, do action accordingly
     const handleSelect = (select: string) => {
+        if(editable != undefined && !editable){
+            return;
+        }
         var selectAction: boolean = true;       //true = doing select, false = doing unselect
         if(singleSelect){
             if(selectSingle!="" && selectSingle==select){       //if selected, do unselect
@@ -72,21 +77,31 @@ function CustomItemList({
             setLS(selectAction? select : " ");
         }
     }
+
     const handleSingleClick = (select: string) => {     //condition to go into this function: on single click & dbClickSelect == true
+        if(editable != undefined && !editable){
+            return;
+        }
         if(setLastSelect && selectMulti.includes(select)){      //when parent provided the function for setLastSelect(set current select item) and this item is already selected, switch current select item to it
             setLastSelect((LS == select)? " " : select);
             setLS((LS == select)? " " : select);
         }
     }
+
     const returnTheme = (s: string) => {
         var theme = localstyles.item;
+        var edit = (editable != undefined)? editable : true;
         if(singleSelect){
-            if(selectSingle == s){
+            if(selectSingle == s && edit){
                 theme = localstyles.triggered;
+            }else if(selectSingle == s && !edit){
+                theme = localstyles.uneditable;
             }
         }else if(multiSelect){
             if(selectMulti.includes(s)){
-                if(withSubItems && withSubItems.includes(s)){
+                if(!edit){
+                    theme = localstyles.uneditable;
+                }else if(withSubItems && withSubItems.includes(s)){
                     theme = localstyles.withSubItems;
                 }else{
                     theme = localstyles.triggered; 
@@ -103,7 +118,7 @@ function CustomItemList({
                         variant="outlined"
                         sx={error? localstyles.error : returnTheme(item.id)}
                         onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}
-                        onDoubleClick={(event) => {dbClickSelect && handleSelect(item.id)}}>
+                        onDoubleClick={() => {dbClickSelect && handleSelect(item.id)}}>
                         {item.name}
                     </Button>
                 ))
@@ -156,6 +171,16 @@ const localstyles = {
         '&.MuiButton-root:hover':{
             borderColor: "#d32f2f",
             backgroundColor: "#F0F0F0"
+        }
+    },
+    uneditable: {
+        ...styles.listItemTemp,
+        backgroundColor: "#C7C7C7",
+        borderColor: "#D1D1D1",
+        color: "#808080",
+        '&.MuiButton-root:hover':{
+            borderColor: "#D1D1D1",
+            backgroundColor: "#C7C7C7"
         }
     }
 }

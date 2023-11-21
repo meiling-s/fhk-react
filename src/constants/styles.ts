@@ -2,12 +2,20 @@ import { layout } from "./constant";
 export const styles = {
     innerScreen: {
         display: "flex",
-        height: '100%',
+        minHeight: `calc(100vh - ${layout.appbarHeight} - ${layout.innerScreen_padding} )`,
         ml: `${layout.drawerWidth}px`,
         mt:{lg:layout.appbarHeight,sm:'100px'},
         backgroundColor: "#F4F5F7",
-        pl: 4,
-        pt: 4
+        pl: layout.innerScreen_padding,
+        pt: layout.innerScreen_padding
+    },
+    innerScreen_container: {
+        width: "100%",
+        height: "100%",
+        display:'flex',
+        flexDirection: 'column',
+        pr: layout.innerScreen_padding,
+        pb: layout.innerScreen_padding
     },
     headerSection: {
         display: "flex",    
@@ -16,8 +24,7 @@ export const styles = {
         color: "black"
     },
     gridForm: {
-        alignItems: "flex-start",
-        pb: 2
+        alignItems: "flex-start"
     },
     header1: {
         fontSize: 25,
@@ -31,6 +38,11 @@ export const styles = {
     header3: {
         fontSize: 16,
         color: "#ACACAC"
+    },
+    header4: {
+        fontSize: 20,
+        color: 'black',
+        fontWeight: 'bold'
     },
     formDataText: {
         fontSize: 18,
@@ -49,6 +61,18 @@ export const styles = {
     },
     buttonOutlinedGreen: {
         borderRadius: "40px",
+        border: 1,
+        borderColor: "#79ca25",
+        backgroundColor: "white",
+        color: "#79ca25",
+        fontWeight: "bold",
+        '&.MuiButton-root:hover':{
+            bgcolor: "#F4F4F4"
+        }
+    },
+    buttonOutlinedGreen_2: {
+        padding: 2,
+        borderRadius: 3,
         border: 1,
         borderColor: "#79ca25",
         backgroundColor: "white",

@@ -1,44 +1,29 @@
-import { Box, Typography } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import { styles } from "../../constants/styles";
-import dayjs from "dayjs";
+import { Box } from "@mui/material"
+import { DatePicker } from "@mui/x-date-pickers"
+import dayjs from "dayjs"
 import { useState } from "react";
-import { openingPeriod } from "../../interfaces/collectionPoint";
+import { styles } from "../../constants/styles";
 import { format } from "../../constants/constant";
-import { useTranslation } from "react-i18next";
 
-type DatePicker = {
-    setDate: (period: openingPeriod) => void,
-    defaultStartDate?: Date | string,
-    defaultEndDate?: Date| string
+type props = {
+    defaultDate?: Date | string,
+    minDate?: Date | string,
+    maxDate?: Date | string
+    setDate: (date: dayjs.Dayjs) => void
 }
 
-function CustomDatePicker({
-    setDate,
-    defaultStartDate,
-    defaultEndDate
-}: DatePicker){
+export default function CustomDatePicker({
+    defaultDate,
+    minDate,
+    maxDate,
+    setDate
+}: props){
 
-    const startDate = defaultStartDate? defaultStartDate : new Date();
-    const endDate = defaultEndDate? defaultEndDate : new Date();
+    const default_Date = defaultDate? defaultDate : new Date();
 
-    const [period, setPeriod] = useState<openingPeriod>({
-            startDate: dayjs(startDate),
-            endDate: dayjs(endDate)
-        });
-
-    const { t } = useTranslation();
-
-    const onChangeDate = (start: boolean, value: dayjs.Dayjs | null) => {
-        if(value != null){
-            const peri = Object.assign({},period);
-            if(start){
-                peri.startDate = value;
-            }else{
-                peri.endDate = value;
-            }
-            setPeriod(peri);
-            setDate(peri);
+    const handleDateChange = (date: dayjs.Dayjs | null) => {
+        if(date){
+            setDate(date);
         }
     }
 
@@ -46,37 +31,24 @@ function CustomDatePicker({
         <>
             <Box sx={{display: "flex", alignItems: "center"}}>
                 <DatePicker
-                    defaultValue={dayjs(startDate)}
-                    maxDate={period.endDate}
-                    onChange={(value) => onChangeDate(true,value)}
-                    sx={localstyles.datePicker}
-                    format={format.dateFormat3}
-                />
-                    <Typography sx={{marginX: 1}}>
-                        {t("to")}
-                    </Typography>
-                <DatePicker
-                    defaultValue={dayjs(endDate)}
-                    minDate={period.startDate}
-                    onChange={(value) => onChangeDate(false,value)}
+                    defaultValue={dayjs(default_Date)}
+                    minDate={minDate? dayjs(minDate) : undefined}
+                    maxDate={maxDate? dayjs(maxDate) : undefined}
+                    onChange={(value) => handleDateChange(value)}
                     sx={localstyles.datePicker}
                     format={format.dateFormat3}
                 />
             </Box>
         </>
-        
     )
-    
 }
 
-const localstyles = {
+let localstyles = {
     datePicker: {
         ...styles.textField,
-        maxWidth: "150px",
+        maxWidth: "250px",
         "& .MuiIconButton-edgeEnd": {
             color: "#79CA25"
         }
     }
 }
-
-export default CustomDatePicker;

@@ -37,9 +37,15 @@
     "collectionPoint_updated": "回收點已更新"
   },
   "form": {
-    "shouldNotBeEmpty": "不應留白",
-    "isInWrongFormat": "格式錯誤",
-    "shouldNotSmallerThanZero": "不應小於 0"
+    "error": {
+      "shouldNotBeEmpty": "不應留白",
+      "isInWrongFormat": "格式錯誤",
+      "shouldNotSmallerThanZero": "不應小於 0",
+      "withInColPt_Period": " 仍然有效，但開放狀態已設定為關閉",
+      "isNotWithInContractEffDate": "生效時間不完全覆蓋回收點開放日期",
+      "hasBeenUsed": "已被使用",
+      "alreadyExist": "已經存在"
+    }
   },
   "component": {
     "routine":{
@@ -48,6 +54,7 @@
       "addDate": "新增日期"
     }
   },
+  "continue": "繼續",
   "to": "至",
   "company": "公司",
   "collection_Point": "回收點",

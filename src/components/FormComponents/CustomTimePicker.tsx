@@ -109,11 +109,11 @@ function CustomTimePicker({
                 }
                 <Box sx={{display: "flex", alignItems: "center"}}>
                     <Button
-                        sx={styles.buttonOutlinedGreen}
+                        sx={{...styles.buttonOutlinedGreen_2, marginY: 2}}
                         onClick={(event) => addTimePeriod()}
                     >
                         <AddCircleOutlineIcon
-                            sx={styles.endAdornmentIcon}
+                            sx={{...styles.endAdornmentIcon, pr: 1}}
                         />
                         {t("component.routine.addPeriod")}
                     </Button>
@@ -159,10 +159,12 @@ const localstyles = {
     },
     timePeriodItem: {
         display: "flex",
-        alignItems: "center",
-        backgroundColor: "white",
+        height: "fit-content",
         paddingX: 2,
         mr: 2,
+        marginY: 2,
+        alignItems: "center",
+        backgroundColor: "white",
         border: 2,
         borderRadius: 3,
         borderColor: "#E2E2E2",
@@ -170,8 +172,8 @@ const localstyles = {
     container: {
         display: "flex",
         flexDirection: "row",
-        borderRadius: 10,
-        mt: 1
+        flexWrap: "wrap",
+        borderRadius: 10
     },
     txtStyle_to: {
         marginX: 1,

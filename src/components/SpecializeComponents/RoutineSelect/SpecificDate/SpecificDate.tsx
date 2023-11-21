@@ -1,49 +1,201 @@
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
+import { Button, Grid, Typography, IconButton } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { styles } from "../../../../constants/styles";
+import { timePeriod } from "../../../../interfaces/collectionPoint";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import CustomTimePicker from "../../../FormComponents/CustomTimePicker";
+import CustomDatePicker from "../../../FormComponents/CustomDatePicker";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { routineContent } from "../../../../interfaces/common";
+import { format } from "../../../../constants/constant";
 
 type props = {
-
+    setSpecificDate: (RSDs: routineContent[]) => void,
+    defaultDates?: routineContent[]
 }
 
-const data = [
-    {
-        date: "2023/11/04",
-        period: "1-4"
-    }
-]
+type specificDate_timePeriod = {     //store the timePeriod with the weekDay id
+    id: number,
+    date: dayjs.Dayjs,
+    timePeriod: timePeriod[]
+}
 
 export default function SpecificDate({
-
+    setSpecificDate,
+    defaultDates
 }: props){
+
+    const [specificDates, setSpecificDates] = useState<specificDate_timePeriod[]>([]);
+    const [lastIndex, setLastIndex] = useState<number>(0);
 
     const { t } = useTranslation();
 
+    useEffect(() => {
+        if(defaultDates){
+            handleAddDefaultDate()
+        }
+        return () => {
+            setSpecificDate(returnRoutineContent([]));
+        }
+    },[])
+
+    useEffect(() => {
+        setSpecificDate(returnRoutineContent(specificDates))
+    },[specificDates])
+    
+    const toTimePeriod = (st: string[], et: string[]) => {      //start time end time
+        const timeP: timePeriod[] = [];
+        for(var i = 0; i < Math.min(st.length,et.length); i++){
+            timeP.push({startFrom: dayjs(st[i]), endAt: dayjs(et[i])});
+        }
+        return timeP;
+    }
+
+    // const returnDefaultTime = (index: number) => {
+    //     if(defaultDates){
+    //         if(index <= defaultDates.length){
+    //             const default_time = defaultDates.find((date, index2) => {
+    //                 return index2 == index;
+    //             })
+    //         }
+    //     }
+    //     return undefined;
+    // }
+
+    const returnRoutineContent = (specificDate: specificDate_timePeriod[]) => {
+        const routineSpecificDate: routineContent[] = specificDate.map((date) => {
+            const ST: string[] = date.timePeriod.map((value) => value.startFrom.toString());
+            const ET: string[] = date.timePeriod.map((value) => value.endAt.toString());
+            const RSD: routineContent = {
+                id: date.date.format(format.dateFormat3),
+                startTime: ST,
+                endTime: ET
+            }
+            return RSD;
+        })
+        return routineSpecificDate;
+    }
+
+    const handleDatePick = (day: dayjs.Dayjs, index: number) => {
+        var newSpecificDates = specificDates.map((date) => {
+            if(date.id == index){
+                date.date = day;
+            }
+            return date;
+        });
+        setSpecificDates(newSpecificDates);
+    }
+
+    const handleTimePick = (timePeriod: timePeriod[], index: number) => {
+        var newSpecificDates = specificDates.map((date) => {
+            if(date.id == index){
+                date.timePeriod = timePeriod;
+            }
+            return date;
+        });
+        setSpecificDates(newSpecificDates);
+    }
+
+    const handleAddDate = () => {
+        var newSpecificDates = Object.assign([],specificDates);
+        newSpecificDates.push({id: lastIndex, date: dayjs(new Date()), timePeriod: []});
+        setSpecificDates(newSpecificDates);
+        setLastIndex(lastIndex+1);
+    }
+
+    const handleAddDefaultDate = () => {
+        if(defaultDates){
+            var newSpecificDates = Object.assign([],specificDates);
+            defaultDates.map((date, index) => {
+                newSpecificDates.push({id: index, date: dayjs(date.id), timePeriod: toTimePeriod(date.startTime, date.endTime)});    
+            })
+            setSpecificDates(newSpecificDates);
+            setLastIndex(defaultDates.length);
+        }
+    }
+
+    const handleRemoveDate = (index: number) => {
+        var newSpecificDates = specificDates.filter((date) => {
+            return date.id != index;        //if date.id == id of item we are deleting, filter it (delete)
+        });
+        if(newSpecificDates){
+            console.log(newSpecificDates);
+            setSpecificDates(newSpecificDates);
+        }
+    }
+
     return(
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>{t("date")}</TableCell>
-                        <TableCell>{t("time_Period")}</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                {data.map((row) => (
-                    <TableRow
-                    key={row.date}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        <Grid container sx={localstyles.gridContainer}>
+            <Grid container item key={"header"} sx={[localstyles.gridRow]}>
+                <Grid xs={3}>
+                    <Typography sx={localstyles.txtHeader}>
+                        {t("date")}
+                    </Typography>
+                </Grid>
+                <Grid xs={9}>
+                    <Typography sx={localstyles.txtHeader}>
+                        {t("time_Period")}
+                    </Typography>
+                </Grid>
+            </Grid>
+            {
+                specificDates.map((date) => 
+                    <Grid container item key={date.id} sx={[localstyles.gridRow,localstyles.dataRow]}>
+                        <Grid xs={3} sx={localstyles.tableCell} key={date.id+"datePick"}>
+                            <CustomDatePicker
+                                setDate={(d) => handleDatePick(d, date.id)}
+                            />
+                        </Grid>
+                        <Grid xs={8.5} sx={localstyles.tableCell} key={date.id+"timePick"}>
+                            <CustomTimePicker
+                                setTime={(periods) => handleTimePick(periods, date.id)}
+                                multiple={true}
+                                defaultTime={date.timePeriod}
+                            />
+                        </Grid>
+                        <Grid xs={0.5} sx={localstyles.tableCell} key={date.id+"delete"}>
+                            <IconButton onClick={() => handleRemoveDate(date.id)}>
+                                <DeleteOutlineIcon />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                )
+            }
+            <Grid item key={"addDateBtn"} sx={localstyles.gridRow}>
+                <Button
+                    sx={{...styles.buttonOutlinedGreen, width: "100%", paddingY: 2, borderRadius: 5}}
+                    onClick={() => handleAddDate()}
                     >
-                        <TableCell>
-                            {row.date}
-                        </TableCell>
-                        <TableCell>
-                            {row.period}
-                        </TableCell>
-                    </TableRow>
-                ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                    {t("component.routine.addDate")}
+                </Button>
+            </Grid>
+        </Grid>
+
     )
     
+}
+
+let localstyles = {
+    gridContainer: {
+        width: "100%",
+    },
+    gridRow: {
+        width: "100%",
+        flexDirection: "row",
+        marginY: 1
+    },
+    dataRow: {
+        backgroundColor: "#FBFBFB",
+        borderRadius: 5,
+        paddingX: 2
+    },
+    txtHeader: {
+        ...styles.header3,
+        pl: 1
+    },
+    tableCell: {
+        display: "flex",
+        alignSelf: "center"
+    }
 }

@@ -1,30 +1,48 @@
 import { useTranslation } from "react-i18next";
 import CustomItemList, { il_item } from "../../FormComponents/CustomItemList"
 import { routineType } from "./predefinedOption"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import Daily from "./Daily/Daily";
 import SpecificDate from "./SpecificDate/SpecificDate";
 import Weekly from "./Weekly/Weekly";
+import { routineContent, colPtRoutine } from "../../../interfaces/common"
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 type props = {
-
+    setRoutine: (routine: colPtRoutine) => void,
+    defaultValue?: colPtRoutine
 }
 
 export default function RoutineSelect({
-
+    setRoutine,
+    defaultValue
 }: props){
 
     //shared state
     const [rouType, setRouType] = useState<string>("");
-    //state for daily
-    const [dailyPeriod, setDailyPeriod] = useState<string>("");
-    //state for weekly
-    const [weekDays, setWeekDays] = useState<string>("");
-    const [weeklyPeriod, setWeeklyPeriod] = useState<string>("");
-    //state for specific date
-    const [specificDates, setSpecificDates] = useState<string>("");
+    const [routineContent, setRoutineContent] = useState<routineContent[]>([]);
 
+    useEffect(() => {
+        if(defaultValue){
+            setRouType(defaultValue.routineType)
+            setRoutineContent(defaultValue.routineContent)
+        }
+    },[])
+
+    useEffect(() => {
+        setRoutine(returnColPtRoutine(rouType, routineContent));
+    },[rouType, routineContent])
+
+    const returnColPtRoutine = (rType: string, rContent: routineContent[]) => {
+        const colPtRoutine: colPtRoutine = {
+            routineType: rType,
+            routineContent: rContent
+        }
+        console.log(colPtRoutine);
+        return colPtRoutine;
+    }
 
     const { t, i18n } = useTranslation();
 
@@ -46,27 +64,35 @@ export default function RoutineSelect({
             }
             return {name: name, id: routine.id}
         })
-        console.log(routineT);
         return routineT
     }
     
     return(
-        <>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
             <CustomItemList
                 items={getRoutineType()}
                 singleSelect={setRouType}
+                defaultSelected={defaultValue? defaultValue.routineType : undefined}
             />
             <Box sx={{marginTop: 2}}>
                {
                     rouType == "daily"?
-                        <Daily/>
+                        <Daily
+                            setDaily={setRoutineContent}
+                            defaultTime={defaultValue?.routineType == routineType[0].id? defaultValue.routineContent : undefined}
+                        />
                     :   rouType == "weekly"?
-                        <Weekly/>
+                        <Weekly
+                            setWeekly={setRoutineContent}
+                            defaultWeek={defaultValue?.routineType == routineType[1].id? defaultValue.routineContent : undefined}
+                        />
                     :   rouType == "specificDate"&&
-                        <SpecificDate/>
+                        <SpecificDate
+                            setSpecificDate={setRoutineContent}
+                            defaultDates={defaultValue?.routineType == routineType[2].id? defaultValue.routineContent : undefined}
+                        />
                 } 
             </Box>
-            
-        </>
+        </LocalizationProvider>
     )
 }

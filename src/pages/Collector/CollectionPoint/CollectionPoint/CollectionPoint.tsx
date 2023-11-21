@@ -16,27 +16,12 @@ const CollectionPoint = () => {
   const location = useLocation();
   const action: string = location.state;
 
-  const [colsType, setColsType] = useState<string>('');
-  const [colsName, setColsName] = useState<string>('');
-  const [colsAddress,setColsAddress] = useState<string>('');
   const [colList, setColList] = useState<collectionPoint[]>([]);
   const [hoveredCard, setHoveredCard] = useState<Position| null>(null);
 
   const { t } = useTranslation();
 
   useEffect(() => {
-    const type = localStorage.getItem('selectedCollectionType');
-    if(type){
-      setColsType(type)
-    }
-    const Name = localStorage.getItem('selectedCollectionName');
-    if(Name){
-      setColsName(Name)
-    }
-    const address = localStorage.getItem('selectedCollectionAddress');
-    if(address){
-      setColsAddress(address)
-    }
 
     initCollectionPoint();
 
@@ -70,7 +55,7 @@ const CollectionPoint = () => {
     const result = await getCollectionPoint(0, 10);
     const data = result?.data.content;
     if(data && data.length>0){
-        console.log("all collection point: ",data);
+        //console.log("all collection point: ",data);
         setColList(data);
     }
   }

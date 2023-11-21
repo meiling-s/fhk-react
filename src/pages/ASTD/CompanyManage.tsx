@@ -498,13 +498,7 @@ function CompanyManage(){
     return(
         <>
             <Box
-                sx={{
-                    width: "100%",
-                    height: "100%",
-                    display:'flex',
-                    flexDirection: 'column',
-                    pr: 4
-                }}
+                sx={styles.innerScreen_container}
             >
                 <Typography fontSize={20} color='black' fontWeight='bold'>公司</Typography>
                 <Button sx={[styles.buttonFilledGreen,{

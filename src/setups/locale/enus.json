@@ -37,9 +37,15 @@
     "collectionPoint_updated": "Collection Point Updated"
   },
   "form": {
-    "shouldNotBeEmpty": " should not be empty",
-    "isInWrongFormat": " is in wrong format",
-    "shouldNotSmallerThanZero": " should not smaller than 0"
+    "error": {
+      "shouldNotBeEmpty": " should not be empty",
+      "isInWrongFormat": " is in wrong format",
+      "shouldNotSmallerThanZero": " should not smaller than 0",
+      "withInColPt_Period": " is still effective but status has been set to CLOSED",
+      "isNotWithInContractEffDate": " effective date does not cover the collection point effective date",
+      "hasBeenUsed": " has been used",
+      "alreadyExist": " already exist"
+    }
   },
   "component": {
     "routine":{
@@ -48,6 +54,7 @@
       "addDate": "Add Date"
     }
   },
+  "continue": "Continue",
   "to": "to",
   "company": "Company",
   "collection_Point": "Collection Point",

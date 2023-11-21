@@ -1,5 +1,6 @@
 export const localStorgeKeyName = {
   keycloakToken: 'keycloakToken',
+  role: 'userRole',
   username: 'username',
 };
 
@@ -10,7 +11,8 @@ export const defaultPath = {
 
 export const layout = {
   drawerWidth: 246,
-  appbarHeight: "64px"
+  appbarHeight: "64px",
+  innerScreen_padding: "32px"
 }
 
 export const format = {
@@ -24,5 +26,8 @@ export const formErr = {
   empty: "empty",
   wrongFormat: "wrongFormat",
   numberSmallThanZero: "numSmallerThanZero",
-
+  withInColPt_Period: "withIn_ColPt_EffectivePeriod",
+  notWithInContractEffDate: "isNotWithIn_ContractEffDate",
+  alreadyExist: "alreadyExist",
+  hasBeenUsed: "hasBeenUsed"
 }

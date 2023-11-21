@@ -4,26 +4,31 @@ import { useState } from "react";
 type props = {
     onText: string,
     offText: string,
+    setState: (b: boolean) => void,
     defaultValue?: boolean,
-    setState: (b: boolean) => void
+    disabled?: boolean
 }
 
 export default function Switches({
     onText,
     offText,
     defaultValue,
-    setState
+    setState,
+    disabled
 }: props) {
     const [onOff, setOnOff] = useState<boolean>((defaultValue!=undefined)? defaultValue : false);
 
     const handleSwitchChange = () => {
+        if(disabled){
+            return;
+        }
         setState(!onOff);
         setOnOff(!onOff);
     }
   
     return (
         <Button sx={localstyles.container} onClick={() => handleSwitchChange()}>
-            <Box sx={[localstyles.switch,{ml: onOff? "5px" : "105px"}]} />
+            <Box sx={[disabled? localstyles.switch_disabled : localstyles.switch,{ml: onOff? "5px" : "105px"}]} />
             <Typography sx={localstyles.onOffLabel}>
                 {onText}
             </Typography>
@@ -49,6 +54,15 @@ const localstyles = {
         width: "90px",
         height: "50px",
         backgroundColor: "white",
+        ml: "5px",
+        position: "absolute",
+        borderRadius: 50,
+        transition: "transform 1s"
+    },
+    switch_disabled: {
+        width: "90px",
+        height: "50px",
+        backgroundColor: "#CBCBCB",
         ml: "5px",
         position: "absolute",
         borderRadius: 50,

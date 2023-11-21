@@ -6,7 +6,7 @@ function App() {
   axiosSetup();
 
   return (
-    <Router/>
+      <Router/>
   );
 }
 

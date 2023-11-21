@@ -18,6 +18,7 @@ import { useState } from "react";
 import { Collapse, createTheme } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
+import { localStorgeKeyName } from "../constants/constant";
 
 type MainDrawer = {
   role: string;
@@ -39,7 +40,7 @@ function MainDrawer() {
   const [CPDrawer, setCPDrawer] = useState<boolean>(false);   //CP = collection point, this state determine collection point drawer group expand or not
   const { t } = useTranslation();
 
-  var role = "collector";
+  var role = localStorage.getItem(localStorgeKeyName.role);
 
   let drawerMenus_collector: DrawerItem[] = [
     { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  setCPDrawer(!CPDrawer), collapse: false, collapseGroup: CPDrawer },

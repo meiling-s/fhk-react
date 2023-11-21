@@ -6,15 +6,17 @@ type props = {
     label: string,
     mandatory?: boolean,
     key?: string
+    style?: object
 }
 function CustomField({
     children,
     label,
     mandatory,
-    key
+    key,
+    style
 }: props) {
   return(
-    <Grid item key={key? key : ""}>
+    <Grid item key={key? key : ""} sx={style}>
         <Box sx={{display: "flex", flexDirection: "row"}}>
           <Typography sx={styles.header3}> {label} </Typography>
           {
@@ -22,9 +24,9 @@ function CustomField({
               <Typography sx={localstyles.mandatory}>*</Typography>
           }
         </Box>
-        <Box>
+        <>
           {children}
-        </Box>
+        </>
     </Grid>
   )
 }
