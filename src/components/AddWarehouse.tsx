@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
+import Switcher from './Switcher'
 
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
 
@@ -47,6 +48,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           onCancel: handleDrawerClose
         }}
       >
+        {/* child / or centent RightOverlayForm */}
         <div
           style={{ borderTop: '1px solid lightgrey' }}
           className="form-container"
@@ -70,31 +72,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 </FormControl>
               </div>
             ))}
-            <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
-              <div className="relative tracking-[1px] leading-[20px] text-left">
-                實體地點
-              </div>
-              <div className="rounded-61xl bg-grey-line flex flex-row items-start justify-start p-1 gap-[8px] text-mini text-grey-dark">
-                <div className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-3 px-[25px]">
-                  <div className="relative tracking-[1.5px] leading-[20px] font-medium">
-                    是
-                  </div>
-                </div>
-                <div className="rounded-6xl overflow-hidden flex flex-row items-center justify-center py-3 px-[25px]">
-                  <div className="relative tracking-[1.5px] leading-[20px] font-medium">
-                    否
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-6xl bg-green-primary overflow-hidden hidden flex-row items-center justify-center py-2 px-5 gap-[5px] text-white">
-                <img
-                  className="relative w-[18px] h-[18px] hidden"
-                  alt=""
-                  src="/vuesaxlinearadd4.svg"
-                />
-                <b className="relative tracking-[1px] leading-[20px]">確定</b>
-              </div>
-            </div>
+            <Switcher />
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center text-mini text-black">
               <div className="relative text-smi tracking-[1px] leading-[20px] text-grey-middle text-left">
                 合約編號
@@ -189,53 +167,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               <div className="relative tracking-[1px] leading-[20px] text-left">
                 狀態
               </div>
-              <div className="rounded-61xl bg-grey-line flex flex-row items-start justify-start p-1 gap-[8px] text-mini text-grey-dark">
-                <div className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-3 px-[25px]">
-                  <div className="relative tracking-[1.5px] leading-[20px] font-medium">
-                    開放
-                  </div>
-                </div>
-                <div className="rounded-6xl overflow-hidden flex flex-row items-center justify-center py-3 px-[25px]">
-                  <div className="relative tracking-[1.5px] leading-[20px] font-medium">
-                    關閉
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-6xl bg-green-primary overflow-hidden hidden flex-row items-center justify-center py-2 px-5 gap-[5px] text-white">
-                <img
-                  className="relative w-[18px] h-[18px] hidden"
-                  alt=""
-                  src="/vuesaxlinearadd4.svg"
-                />
-                <b className="relative tracking-[1px] leading-[20px]">確定</b>
-              </div>
-            </div>
-            <div className="self-stretch hidden flex-col items-start justify-start gap-[10px]">
-              <div className="relative tracking-[1px] leading-[20px] hidden">
-                圖片
-              </div>
-              <div className="self-stretch rounded-lg bg-grey-field1 overflow-hidden flex flex-col items-center justify-center py-[45px] px-0 gap-[2px] text-center text-base text-grey-dark">
-                <img
-                  className="relative w-[30px] h-[31px] overflow-hidden shrink-0"
-                  alt=""
-                  src="/camera.svg"
-                />
-                <b className="relative tracking-[0.08em] leading-[28px]">
-                  上載圖片
-                </b>
-              </div>
+              <Switcher />
             </div>
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px]">
               <div className="relative tracking-[1px] leading-[20px]">
                 回收物類別
-              </div>
-              <div className="rounded-6xl bg-green-primary overflow-hidden hidden flex-row items-center justify-center py-2 px-5 gap-[5px] text-center text-white">
-                <img
-                  className="relative w-[18px] h-[18px] hidden"
-                  alt=""
-                  src="/vuesaxlinearadd4.svg"
-                />
-                <b className="relative tracking-[1px] leading-[20px]">確定</b>
               </div>
               <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-mini">
                 <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">

@@ -11,7 +11,7 @@ import CreateCollectionPoint from './pages/Collector/CollectionPoint/CreateColle
 import EditCollectionPoint from './pages/Collector/CollectionPoint/EditCollectionPoint/EditCollectionPoint';
 //warehouse
 import Overview from './pages/Collector/Manage/Overview'
-import Settings from './pages/Settings'
+import Settings from './pages/Collector/Warehouse/Settings'
 //Tenant Register
 import CompanyDetails from './pages/TenantRegister/CompanyDetails';
 import CompanyContact from './pages/TenantRegister/CompanyContact';

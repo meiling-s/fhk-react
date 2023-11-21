@@ -1,0 +1,158 @@
+import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
+// import { useNavigate } from 'react-router-dom'
+import { Box } from '@mui/material'
+import { ADD_ICON } from '../../../themes/icons'
+
+import AddWarehouse from '../../../components/AddWarehouse'
+import TableBase from '../../../components/TableBase'
+
+const Warehouse: FunctionComponent = () => {
+  // const navigate = useNavigate()
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const handleDrawerOpen = () => {
+    setDrawerOpen(true)
+  }
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false)
+  }
+
+  const editRow = () => {
+    setDrawerOpen(true)
+  }
+  // get real data from api later
+  const warehouseItems = [
+    {
+      id: '1',
+      traditionalName: '火炭',
+      simplifiedName: '火炭',
+      englishName: 'Fo Tan',
+      location: '是',
+      place: '火炭拗背灣街14號',
+      status: '已啓用',
+      recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
+    },
+    {
+      id: '2',
+      traditionalName: '火炭',
+      simplifiedName: '火炭',
+      englishName: 'Fo Tan',
+      location: '是',
+      place: '火炭拗背灣街14號',
+      status: '已啓用',
+      recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
+    },
+    {
+      id: '2',
+      traditionalName: '火炭',
+      simplifiedName: '火炭',
+      englishName: 'Fo Tan',
+      location: '是',
+      place: '火炭拗背灣街14號',
+      status: '已啓用',
+      recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
+    }
+  ]
+
+  const headerTitles = [
+    {
+      type: 'string',
+      field: 'traditionalName',
+      label: '繁體中文名稱'
+    },
+    {
+      type: 'string',
+      field: 'simplifiedName',
+      label: '简体中文名称'
+    },
+    {
+      type: 'string',
+      field: 'englishName',
+      label: 'English Name',
+      width: 150
+    },
+    {
+      type: 'string',
+      field: 'location',
+      label: '實體地點'
+    },
+    {
+      type: 'string',
+      field: 'place',
+      label: '地點'
+    },
+    {
+      type: 'status',
+      field: 'status',
+      label: '狀態',
+      width: 100
+    },
+    {
+      type: 'string',
+      field: 'recyclableSubcategories',
+      label: '回收物類別'
+    }
+  ]
+
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: { xs: 375, sm: 480, md: '100%' }
+      }}
+    >
+      <div className="warehouse-section">
+        <div className="settings-page relative bg-bg-primary w-full h-[1046px] overflow-hidden flex flex-row items-start justify-start text-center text-mini text-grey-darker font-tag-chi-medium">
+          <div className=" self-stretch flex-1 bg-white flex flex-col items-start justify-start text-smi text-grey-middle font-noto-sans-cjk-tc">
+            <div className="self-stretch flex-1 bg-bg-primary flex flex-col items-start justify-start text-3xl text-black font-tag-chi-medium">
+              <div
+                className={`settings-container self-stretch flex-1 flex flex-col items-start justify-start pt-[30px] pb-[75px] text-mini text-grey-darker ${
+                  isMobile
+                    ? 'overflow-auto whitespace-nowrap w-[375px] mx-4 my-0'
+                    : 'px-10'
+                }`}
+              >
+                <div className="self-stretch flex flex-col items-start justify-start gap-[12px] overflow-auto">
+                  <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-grey-dark">
+                    <b className="relative tracking-[0.08em] leading-[28px]">
+                      工場
+                    </b>
+                    <div
+                      className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi text-green-primary border-[1px] border-solid border-green-pale"
+                      onClick={handleDrawerOpen}
+                    >
+                      <ADD_ICON />
+                      <b className="relative tracking-[1px] leading-[20px]">
+                        新增
+                      </b>
+                    </div>
+                  </div>
+                  <Box className="w-full">
+                    <TableBase
+                      header={headerTitles}
+                      dataRow={warehouseItems}
+                      onDelete={handleDrawerOpen}
+                      onEdit={editRow}
+                    />
+                  </Box>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* right drawer */}
+          <AddWarehouse
+            drawerOpen={drawerOpen}
+            handleDrawerClose={handleDrawerClose}
+          ></AddWarehouse>
+        </div>
+      </div>
+    </Box>
+  )
+}
+
+export default Warehouse

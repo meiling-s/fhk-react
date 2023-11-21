@@ -2,11 +2,12 @@ import { layout } from "./constant";
 export const styles = {
     innerScreen: {
         display: "flex",
-        height: "100%",
+        // height: "100%",
+        height: "100vw",
         ml: `${layout.drawerWidth}px`,
         mt:{lg:layout.appbarHeight,sm:'100px'},
         backgroundColor: "#F4F5F7",
-        pl: 4,
+        // pl: 4,
         pt: 4
     },
     mobileScreen:{
