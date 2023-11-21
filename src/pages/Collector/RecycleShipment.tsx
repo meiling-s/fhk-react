@@ -573,12 +573,13 @@ function ShipmentManage(){
                 }}
             >
                 <Box>
-                    <IconButton aria-label="back" size="small" sx={{m:1}} >
+                    <Button aria-label="back" size="medium" sx={{m:1}} >
                         <ChevronLeftIcon
                             sx={styles.buttonBlack}
                         />
-                    </IconButton> 
-                    <Typography fontSize={20} color='black' fontWeight='bold' display='inline'>送入請求</Typography>
+                        <Typography fontSize={20} color='black' fontWeight='bold' display='inline'>送入請求</Typography>
+                    </Button> 
+                    
                 </Box>
                 <Box>
                     <Button sx={[styles.buttonFilledGreen,{
