@@ -28,6 +28,7 @@ import '../styles/MainDrawer.css';
 
 
 
+
 type MainDrawer = {
   role: string;
 }
@@ -50,7 +51,7 @@ function MainDrawer() {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedIndex, setSelectedIndex] = useState<number | 0>();
+  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -63,6 +64,7 @@ function MainDrawer() {
   const handleListItemClick = (index: number) => {
     setSelectedIndex(index);
   };
+
 
   var role = "warehouse";
 
@@ -157,7 +159,7 @@ function MainDrawer() {
                           color: '#79ca25'
                         },
                       }}
-                      selected={selectedIndex === 4}
+                      selected={selectedIndex === index}
                       onClick={(event) => handleListItemClick(index)}
                 >
                   <ListItemText sx={{ marginLeft: -2 }} primary={drawerMenu.name} />
@@ -166,13 +168,17 @@ function MainDrawer() {
             </Collapse> :
             <ListItem sx={{ marginTop: 2 }} key={drawerMenu.name} onClick={drawerMenu.onClick} disablePadding>
               <ListItemButton
-                    sx={{
-                      '&:hover .MuiSvgIcon-root': {
-                        color: '#79ca25'
-                      },
-                    }}
+              selected={selectedIndex === index}
+              onClick={(event) => handleListItemClick(index)}
+              sx={{
+                '&:hover': {
+                  '.MuiSvgIcon-root': {
+                    color: '#79ca25', // Change color on hover
+                  },
+                },
+              }}
               >
-                <ListItemIcon>{drawerMenu.icon}</ListItemIcon>
+                <ListItemIcon  className={selectedIndex === index ? 'icon-menu-active' : ''}>{drawerMenu.icon}</ListItemIcon>
                 <ListItemText sx={{ marginLeft: -2 }} primary={drawerMenu.name} />
                 {(drawerMenu.collapseGroup!=undefined)&& (drawerMenu.collapseGroup ? <ExpandLess /> : <ExpandMore />)}
               </ListItemButton>
