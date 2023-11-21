@@ -9,6 +9,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 export const PLACE_ICON = PlaceOutlinedIcon;
 export const SHIPPING_CAR_ICON = LocalShippingOutlinedIcon;

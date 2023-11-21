@@ -2,7 +2,7 @@ import { layout } from "./constant";
 export const styles = {
     innerScreen: {
         display: "flex",
-        height: "100%",
+        height: '100%',
         ml: `${layout.drawerWidth}px`,
         mt:{lg:layout.appbarHeight,sm:'100px'},
         backgroundColor: "#F4F5F7",
@@ -10,7 +10,7 @@ export const styles = {
         pt: 4
     },
     headerSection: {
-        display: "flex",
+        display: "flex",    
         flexDirection: "row",
         alignItems: "center",
         color: "black"
@@ -93,5 +93,16 @@ export const styles = {
         borderWidth: 1,
         borderRadius: 50,
         fontWeight: "bold"
-    }
+    },
+    imageContainer:{
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 800,
+     
+    },
+    buttonBlack: {
+        color: "#000000"
+    },
 }
