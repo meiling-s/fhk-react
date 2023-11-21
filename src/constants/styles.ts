@@ -17,6 +17,11 @@ export const styles = {
         pr: layout.innerScreen_padding,
         pb: layout.innerScreen_padding
     },
+    mobileScreen:{
+        ml: 0,
+        pl: 0,
+        pt: 0
+    },
     headerSection: {
         display: "flex",    
         flexDirection: "row",

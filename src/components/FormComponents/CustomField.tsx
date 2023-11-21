@@ -5,7 +5,8 @@ type props = {
     children?: React.ReactNode | React.ReactNode[],
     label: string,
     mandatory?: boolean,
-    key?: string
+    key?: string,
+    className?: string,
     style?: object
 }
 function CustomField({
@@ -13,10 +14,11 @@ function CustomField({
     label,
     mandatory,
     key,
+    className,
     style
 }: props) {
   return(
-    <Grid item key={key? key : ""} sx={style}>
+    <Grid item key={key? key : ""} className={className} sx={style}>
         <Box sx={{display: "flex", flexDirection: "row"}}>
           <Typography sx={styles.header3}> {label} </Typography>
           {

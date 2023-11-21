@@ -1,0 +1,57 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        white: "#fff",
+        "grey-line": "#e2e2e2",
+        black: "#000",
+        "grey-middle": "#acacac",
+        "pink-light": "#fdf8f8",
+        red: "#ff6166",
+        "green-primary": "#79ca25",
+        "grey-light": "#d1d1d1",
+        "grey-darker": "#535353",
+        "grey-dark": "#717171",
+        "green-light": "#e4f7dc",
+        ghostwhite: "#f2f2f7",
+        "grey-field": "#989898",
+        "green-pale": "#afe397",
+        "red-primary": "#ff4242",
+        gray: "#949494",
+        "bg-light": "#fbfbfb",
+        "bg-primary": "#f4f5f7",
+        "grey-field1": "#f4f4f4",
+      },
+      spacing: {},
+      fontFamily: {
+        "body-eng-medium": "Barlow",
+        "tag-chi-medium": "'Noto Sans TC'",
+        "noto-sans-cjk-tc": "'Noto Sans CJK TC'",
+      },
+      borderRadius: {
+        "6xl": "25px",
+        "61xl": "80px",
+        "21xl": "40px",
+        "9980xl": "9999px",
+        "41xl": "60px",
+        "71xl": "90px",
+      },
+    },
+    fontSize: {
+      base: "16px",
+      mini: "15px",
+      "2xs": "11px",
+      smi: "13px",
+      xs: "12px",
+      sm: "14px",
+      "3xl": "22px",
+      "4xs": "9px",
+      inherit: "inherit",
+    },
+  },
+  corePlugins: {
+    preflight: false,
+  },
+};
