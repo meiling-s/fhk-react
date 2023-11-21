@@ -1,0 +1,6 @@
+.menu-button {
+  z-index: 1200;
+  position: fixed;
+  left: 20px;
+  top: 16px;
+}

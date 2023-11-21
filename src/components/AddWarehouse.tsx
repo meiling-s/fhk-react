@@ -1,0 +1,300 @@
+import { FunctionComponent, useCallback, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import RightOverlayForm from './RightOverlayForm'
+import TextField from '@mui/material/TextField'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+
+import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
+
+interface AddWarehouseProps {
+  drawerOpen: boolean
+  handleDrawerClose: () => void
+}
+
+const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
+  drawerOpen,
+  handleDrawerClose
+}) => {
+  //   const navigate = useNavigate()
+  const RecycleCategory = ['請輸入重量', '紙皮', '請輸入重量']
+  const FormData1_3 = [
+    { label: '繁體中文名稱', placeholder: '請輸入名稱' },
+    { label: '简体中文名称', placeholder: '请输入名称' },
+    { label: 'English Name', placeholder: 'Please type a name' }
+  ]
+
+  const handleSubmit = () => {
+    console.log('submit form')
+    handleDrawerClose()
+  }
+
+  return (
+    <div className="add-warehouse">
+      <RightOverlayForm
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        anchor={'right'}
+        headerProps={{
+          title: '新增',
+          subTitle: '工場',
+          submitText: '儲存<',
+          cancelText: '刪除',
+          onCloseHeader: handleDrawerClose,
+          onSubmit: handleSubmit,
+          onCancel: handleDrawerClose
+        }}
+      >
+        <div
+          style={{ borderTop: '1px solid lightgrey' }}
+          className="form-container"
+        >
+          <div className="self-stretch flex flex-col items-start justify-start pt-[25px] px-[25px] pb-[75px] gap-[25px] text-left text-smi text-grey-middle">
+            {FormData1_3.map((item, index) => (
+              <div
+                key={index}
+                className="self-stretch flex flex-col items-start justify-center gap-2"
+              >
+                <div className="relative tracking-1px leading-20px text-left">
+                  {item.label}
+                </div>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <TextField
+                    fullWidth
+                    label={item.placeholder}
+                    id={`fullWidth-${index}`}
+                    InputLabelProps={{ shrink: false }}
+                  />
+                </FormControl>
+              </div>
+            ))}
+            <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
+              <div className="relative tracking-[1px] leading-[20px] text-left">
+                實體地點
+              </div>
+              <div className="rounded-61xl bg-grey-line flex flex-row items-start justify-start p-1 gap-[8px] text-mini text-grey-dark">
+                <div className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-3 px-[25px]">
+                  <div className="relative tracking-[1.5px] leading-[20px] font-medium">
+                    是
+                  </div>
+                </div>
+                <div className="rounded-6xl overflow-hidden flex flex-row items-center justify-center py-3 px-[25px]">
+                  <div className="relative tracking-[1.5px] leading-[20px] font-medium">
+                    否
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-6xl bg-green-primary overflow-hidden hidden flex-row items-center justify-center py-2 px-5 gap-[5px] text-white">
+                <img
+                  className="relative w-[18px] h-[18px] hidden"
+                  alt=""
+                  src="/vuesaxlinearadd4.svg"
+                />
+                <b className="relative tracking-[1px] leading-[20px]">確定</b>
+              </div>
+            </div>
+            <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center text-mini text-black">
+              <div className="relative text-smi tracking-[1px] leading-[20px] text-grey-middle text-left">
+                合約編號
+              </div>
+              <div className="self-stretch flex flex-col items-start justify-start">
+                <div className="self-stretch flex flex-row items-center justify-start gap-[8px]">
+                  <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                    <TextField
+                      fullWidth
+                      label=" 請輸入編號"
+                      id="fullWidth"
+                      InputLabelProps={{ shrink: false }}
+                    />
+                  </FormControl>
+                  <REMOVE_CIRCLE_ICON
+                    fontSize="small"
+                    className="text-grey-light"
+                  />
+                </div>
+              </div>
+              <div className="self-stretch flex flex-col items-start justify-start">
+                <div className="self-stretch flex flex-row items-center justify-start gap-[8px]">
+                  <div className="rounded-xl bg-white box-border w-[120px] overflow-hidden shrink-0 hidden flex-row items-center justify-between py-[15px] px-5 border-[1px] border-solid border-grey-line">
+                    <img
+                      className="relative w-6 h-6 overflow-hidden shrink-0 hidden"
+                      alt=""
+                      src="/search2.svg"
+                    />
+                    <div className="relative tracking-[1.5px] leading-[20px]">
+                      金屬
+                    </div>
+                    <img
+                      className="relative w-6 h-6 overflow-hidden shrink-0"
+                      alt=""
+                      src="/chevrondown5.svg"
+                    />
+                  </div>
+                  <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                    <TextField
+                      fullWidth
+                      label="請輸入編號"
+                      id="fullWidth"
+                      InputLabelProps={{ shrink: false }}
+                    />
+                  </FormControl>
+                  <ADD_CIRCLE_ICON
+                    fontSize="small"
+                    className="text-green-primary"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="self-stretch flex flex-col items-start justify-center gap-[8px]">
+              <div className="relative tracking-[1px] leading-[20px]">地點</div>
+              <div className="self-stretch flex flex-col items-start justify-center gap-[8px] text-center text-mini text-grey-darker">
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <TextField
+                    fullWidth
+                    multiline
+                    label="請輸入編號"
+                    id="fullWidth"
+                    rows={4}
+                    InputLabelProps={{ shrink: false }}
+                  />
+                </FormControl>
+                <div className="self-stretch rounded-xl bg-white overflow-hidden hidden flex-row items-center justify-between py-[15px] px-5 text-grey-middle border-[1px] border-solid border-grey-line">
+                  <img
+                    className="relative w-6 h-6 overflow-hidden shrink-0 hidden"
+                    alt=""
+                    src="/search2.svg"
+                  />
+                  <div className="relative tracking-[1.5px] leading-[20px]">
+                    請輸入回收地點
+                  </div>
+                  <img
+                    className="relative w-6 h-6 overflow-hidden shrink-0"
+                    alt=""
+                    src="/location.svg"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="rounded-6xl bg-green-primary overflow-hidden hidden flex-row items-center justify-center py-2 px-5 gap-[5px] text-center text-white">
+              <img
+                className="relative w-[18px] h-[18px] hidden"
+                alt=""
+                src="/vuesaxlinearadd4.svg"
+              />
+              <b className="relative tracking-[1px] leading-[20px]">確定</b>
+            </div>
+            <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
+              <div className="relative tracking-[1px] leading-[20px] text-left">
+                狀態
+              </div>
+              <div className="rounded-61xl bg-grey-line flex flex-row items-start justify-start p-1 gap-[8px] text-mini text-grey-dark">
+                <div className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-3 px-[25px]">
+                  <div className="relative tracking-[1.5px] leading-[20px] font-medium">
+                    開放
+                  </div>
+                </div>
+                <div className="rounded-6xl overflow-hidden flex flex-row items-center justify-center py-3 px-[25px]">
+                  <div className="relative tracking-[1.5px] leading-[20px] font-medium">
+                    關閉
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-6xl bg-green-primary overflow-hidden hidden flex-row items-center justify-center py-2 px-5 gap-[5px] text-white">
+                <img
+                  className="relative w-[18px] h-[18px] hidden"
+                  alt=""
+                  src="/vuesaxlinearadd4.svg"
+                />
+                <b className="relative tracking-[1px] leading-[20px]">確定</b>
+              </div>
+            </div>
+            <div className="self-stretch hidden flex-col items-start justify-start gap-[10px]">
+              <div className="relative tracking-[1px] leading-[20px] hidden">
+                圖片
+              </div>
+              <div className="self-stretch rounded-lg bg-grey-field1 overflow-hidden flex flex-col items-center justify-center py-[45px] px-0 gap-[2px] text-center text-base text-grey-dark">
+                <img
+                  className="relative w-[30px] h-[31px] overflow-hidden shrink-0"
+                  alt=""
+                  src="/camera.svg"
+                />
+                <b className="relative tracking-[0.08em] leading-[28px]">
+                  上載圖片
+                </b>
+              </div>
+            </div>
+            <div className="self-stretch flex flex-col items-start justify-start gap-[8px]">
+              <div className="relative tracking-[1px] leading-[20px]">
+                回收物類別
+              </div>
+              <div className="rounded-6xl bg-green-primary overflow-hidden hidden flex-row items-center justify-center py-2 px-5 gap-[5px] text-center text-white">
+                <img
+                  className="relative w-[18px] h-[18px] hidden"
+                  alt=""
+                  src="/vuesaxlinearadd4.svg"
+                />
+                <b className="relative tracking-[1px] leading-[20px]">確定</b>
+              </div>
+              <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-mini">
+                <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
+                  <div>
+                    {RecycleCategory.map((item, index) => (
+                      <FormControl key={index} sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id={`demo-simple-select-label-${index}`}>
+                          {item}
+                        </InputLabel>
+                        <Select
+                          labelId={`demo-simple-select-label-${index}`}
+                          id={`demo-simple-select-${index}`}
+                          value=""
+                          label={item}
+                        >
+                          <MenuItem value={10}>Ten</MenuItem>
+                          <MenuItem value={20}>Twenty</MenuItem>
+                          <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+                      </FormControl>
+                    ))}
+                  </div>
+                  <REMOVE_CIRCLE_ICON
+                    fontSize="small"
+                    className="text-grey-light"
+                  />
+                </div>
+                <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
+                  <div>
+                    {RecycleCategory.map((item, index) => (
+                      <FormControl key={index} sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id={`demo-simple-select-label-${index}`}>
+                          {item}
+                        </InputLabel>
+                        <Select
+                          labelId={`demo-simple-select-label-${index}`}
+                          id={`demo-simple-select-${index}`}
+                          value=""
+                          label={item}
+                        >
+                          <MenuItem value={10}>Ten</MenuItem>
+                          <MenuItem value={20}>Twenty</MenuItem>
+                          <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+                      </FormControl>
+                    ))}
+                  </div>
+                  <ADD_CIRCLE_ICON
+                    fontSize="small"
+                    className="text-green-primary"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </RightOverlayForm>
+    </div>
+  )
+}
+
+export default AddWarehouse
