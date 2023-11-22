@@ -9,6 +9,7 @@ import {
 type TableColumnStatusProps = {
   children: ReactNode
   width?: number
+  status?: string
 }
 
 type HeaderTable = {
@@ -32,16 +33,23 @@ type TableProps = {
 
 const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
   children,
-  width
+  width,
+  status
 }) => {
   return (
     <div
       style={{
         width: width ? `${width}px` : '120px'
       }}
-      className={`self-stretch text overflow-hidden shrink-0 flex flex-row items-center justify-start text-center text-smi text-green-primary`}
+      className={` text-center self-stretch text overflow-hidden shrink-0 flex flex-row items-center justify-start text-smi`}
     >
-      <div className="rounded-lg bg-green-light flex flex-row items-center justify-center py-1 px-[15px]">
+      <div
+        className={`${
+          status === 'deleted'
+            ? 'bg-rose-300 text-rose-800'
+            : 'bg-green-light text-green-primary'
+        } rounded-lg  flex flex-row items-center justify-center py-1 px-[15px]`}
+      >
         <div className="relative tracking-[1px] leading-[20px] font-medium">
           {children}
         </div>
@@ -113,6 +121,7 @@ const TableBase: React.FC<TableProps> = ({
                           ? headerItem.width
                           : 120
                       }
+                      status={item[headerItem.field as string] as string}
                     >
                       {item[headerItem.field as string]}
                     </TableColumnStatus>
@@ -131,18 +140,36 @@ const TableBase: React.FC<TableProps> = ({
                 </td>
               ))}
               <td className="px-3 py-0">
-                <EDIT_OUTLINED_ICON
+                {/* <EDIT_OUTLINED_ICON
                   className="cursor-pointer text-grey-light"
                   fontSize="small"
                   onClick={() => handleEdit(item)}
-                />
-              </td>
-              <td className="rounded-tr-lg rounded-br-lg px-3 py-0">
-                <DELETE_OUTLINED_ICON
-                  className="cursor-pointer text-grey-light"
-                  fontSize="small"
-                  onClick={() => handleDelete(item)}
-                />
+                /> */}
+                {item?.status === 'deleted' ? (
+                  <div className="flex justify-around ">
+                    <EDIT_OUTLINED_ICON
+                      className=" text-grey-light cursor-not-allowed"
+                      fontSize="small"
+                    />
+                    <DELETE_OUTLINED_ICON
+                      className="text-grey-light cursor-not-allowed"
+                      fontSize="small"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex justify-around">
+                    <EDIT_OUTLINED_ICON
+                      className="cursor-pointer text-grey-dark "
+                      fontSize="small"
+                      onClick={() => handleEdit(item)}
+                    />
+                    <DELETE_OUTLINED_ICON
+                      className="cursor-pointer text-grey-dark"
+                      fontSize="small"
+                      onClick={() => handleDelete(item)}
+                    />
+                  </div>
+                )}
               </td>
             </tr>
           ))}

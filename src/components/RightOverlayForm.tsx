@@ -8,7 +8,8 @@ type HeaderProps = {
   cancelText?: string
   onCloseHeader?: () => void
   onSubmit?: () => void
-  onCancel?: () => void
+  onDelete?: () => void
+  action?: 'add' | 'edit' | 'delete'
 }
 
 type RightOverlayFormProps = {
@@ -18,6 +19,7 @@ type RightOverlayFormProps = {
   anchor?: 'left' | 'right'
   showHeader?: boolean
   headerProps?: HeaderProps
+  action?: 'add' | 'edit' | 'delete'
 }
 
 const HeaderSection: React.FC<HeaderProps> = ({
@@ -27,7 +29,8 @@ const HeaderSection: React.FC<HeaderProps> = ({
   cancelText,
   onCloseHeader,
   onSubmit,
-  onCancel
+  onDelete,
+  action = 'add'
 }) => {
   return (
     <div className="header-section">
@@ -39,24 +42,28 @@ const HeaderSection: React.FC<HeaderProps> = ({
           </div>
         </div>
         <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
-          <div
+          <button
             onClick={onSubmit}
-            className="rounded-6xl bg-green-primary overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] cursor-pointer"
+            disabled={action === 'delete'}
+            className={`${
+              action === 'delete' ? 'cursor-not-allowed' : ''
+            } rounded-6xl bg-green-primary text-white flex flex-row items-center justify-center py-2 px-5 gap-[5px] cursor-pointer border-[1px] border-solid border-green-primary`}
           >
-            <b className="relative tracking-[1px] leading-[20px]">
-              {submitText}
-            </b>
-          </div>
-          <div
-            onClick={onCancel}
-            className="rounded-6xl  overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] text-green-primary border-[1px] border-solid border-green-pale"
+            {submitText}
+          </button>
+          <button
+            onClick={onDelete}
+            disabled={action === 'add' || action === 'edit'}
+            className={`${
+              action === 'add' || action === 'edit'
+                ? 'cursor-not-allowed text-gray border-gray'
+                : ''
+            } rounded-6xl  overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] text-green-primary border-[1px] border-solid border-green-pale`}
           >
-            <b className="relative tracking-[1px] leading-[20px]">
-              {cancelText}
-            </b>
-          </div>
+            {cancelText}
+          </button>
         </div>
-        <div className="close-icon ml-2">
+        <div className="close-icon ml-2 cursor-pointer">
           <img
             className="relative w-6 h-6 overflow-hidden shrink-0"
             alt=""
@@ -75,9 +82,11 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   children,
   anchor = 'left',
   showHeader = true,
-  headerProps
+  headerProps,
+  action = 'add'
 }) => {
   const [isOpen, setIsOpen] = useState(open)
+  console.log('action', action)
 
   useEffect(() => {
     setIsOpen(open)
@@ -104,7 +113,7 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
       >
         {showHeader ? (
           <div className="header">
-            <HeaderSection {...headerProps} />
+            <HeaderSection {...headerProps} action={action} />
           </div>
         ) : null}
 

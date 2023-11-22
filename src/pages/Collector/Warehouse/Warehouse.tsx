@@ -8,25 +8,24 @@ import { ADD_ICON } from '../../../themes/icons'
 import AddWarehouse from '../../../components/AddWarehouse'
 import TableBase from '../../../components/TableBase'
 
+interface WarehouseFormData {
+  id: string
+  traditionalName: string
+  simplifiedName: string
+  englishName: string
+  location: string
+  place: string
+  status: string
+  recyclableSubcategories: string
+}
+
 const Warehouse: FunctionComponent = () => {
   // const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-
-  const handleDrawerOpen = () => {
-    setDrawerOpen(true)
-  }
-
-  const handleDrawerClose = () => {
-    setDrawerOpen(false)
-  }
-
-  const editRow = () => {
-    setDrawerOpen(true)
-  }
-  // get real data from api later
-  const warehouseItems = [
+  const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
+  const [warehouseItems, setWarehouseItems] = useState([
     {
       id: '1',
       traditionalName: '火炭',
@@ -34,7 +33,7 @@ const Warehouse: FunctionComponent = () => {
       englishName: 'Fo Tan',
       location: '是',
       place: '火炭拗背灣街14號',
-      status: '已啓用',
+      status: 'activated',
       recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
     },
     {
@@ -44,7 +43,17 @@ const Warehouse: FunctionComponent = () => {
       englishName: 'Fo Tan',
       location: '是',
       place: '火炭拗背灣街14號',
-      status: '已啓用',
+      status: 'activated',
+      recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
+    },
+    {
+      id: '3',
+      traditionalName: '火炭',
+      simplifiedName: '火炭',
+      englishName: 'Fo Tan',
+      location: '是',
+      place: '火炭拗背灣街14號',
+      status: 'activated',
       recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
     },
     {
@@ -54,11 +63,10 @@ const Warehouse: FunctionComponent = () => {
       englishName: 'Fo Tan',
       location: '是',
       place: '火炭拗背灣街14號',
-      status: '已啓用',
+      status: 'deleted',
       recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
     }
-  ]
-
+  ])
   const headerTitles = [
     {
       type: 'string',
@@ -99,6 +107,46 @@ const Warehouse: FunctionComponent = () => {
     }
   ]
 
+  const addDataWarehouse = () => {
+    setDrawerOpen(true)
+    setAction('add')
+  }
+
+  const handleEdit = () => {
+    setDrawerOpen(true)
+    setAction('edit')
+  }
+
+  const handleDelete = () => {
+    setDrawerOpen(true)
+    setAction('delete')
+  }
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false)
+  }
+
+  const handleOnSubmitData = (formData: WarehouseFormData, action: string) => {
+    if (action == 'add') {
+      //real case use post api
+      setWarehouseItems([...warehouseItems, formData])
+    }
+
+    if (action == 'delete') {
+      //real case use delete api base on id
+      const { id } = formData
+      if (id) {
+        const updatedItems = warehouseItems.filter((item) => item.id !== id)
+        setWarehouseItems(updatedItems)
+      }
+    }
+
+    if (action == 'edit') {
+      //real case use put api
+      //setWarehouseItems([...warehouseItems, formData])
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -124,7 +172,7 @@ const Warehouse: FunctionComponent = () => {
                     </b>
                     <div
                       className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi text-green-primary border-[1px] border-solid border-green-pale"
-                      onClick={handleDrawerOpen}
+                      onClick={addDataWarehouse}
                     >
                       <ADD_ICON />
                       <b className="relative tracking-[1px] leading-[20px]">
@@ -136,8 +184,8 @@ const Warehouse: FunctionComponent = () => {
                     <TableBase
                       header={headerTitles}
                       dataRow={warehouseItems}
-                      onDelete={handleDrawerOpen}
-                      onEdit={editRow}
+                      onDelete={handleDelete}
+                      onEdit={handleEdit}
                     />
                   </Box>
                 </div>
@@ -148,6 +196,8 @@ const Warehouse: FunctionComponent = () => {
           <AddWarehouse
             drawerOpen={drawerOpen}
             handleDrawerClose={handleDrawerClose}
+            action={action}
+            onSubmitData={handleOnSubmitData}
           ></AddWarehouse>
         </div>
       </div>

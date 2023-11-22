@@ -13,13 +13,27 @@ import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
 interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
+  action?: 'add' | 'edit' | 'delete'
+  onSubmitData?: (formData: WarehouseFormData, type: string) => void
+}
+
+interface WarehouseFormData {
+  id: string
+  traditionalName: string
+  simplifiedName: string
+  englishName: string
+  location: string
+  place: string
+  status: string
+  recyclableSubcategories: string
 }
 
 const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   drawerOpen,
-  handleDrawerClose
+  handleDrawerClose,
+  action = 'add',
+  onSubmitData
 }) => {
-  //   const navigate = useNavigate()
   const RecycleCategory = ['請輸入重量', '紙皮', '請輸入重量']
   const FormData1_3 = [
     { label: '繁體中文名稱', placeholder: '請輸入名稱' },
@@ -28,7 +42,19 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   ]
 
   const handleSubmit = () => {
-    console.log('submit form')
+    const formData = {
+      id: '4',
+      traditionalName: 'New Warehouse',
+      simplifiedName: 'New Simplified Warehouse',
+      englishName: 'New English Warehouse',
+      location: 'Yes',
+      place: 'New Warehouse Location',
+      status: 'Active',
+      recyclableSubcategories: 'New Recyclable Categories'
+    }
+    if (onSubmitData && typeof onSubmitData === 'function') {
+      onSubmitData(formData, action)
+    }
     handleDrawerClose()
   }
 
@@ -38,6 +64,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         open={drawerOpen}
         onClose={handleDrawerClose}
         anchor={'right'}
+        action={action}
         headerProps={{
           title: '新增',
           subTitle: '工場',
@@ -45,7 +72,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           cancelText: '刪除',
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onCancel: handleDrawerClose
+          onDelete: handleSubmit
         }}
       >
         {/* child / or centent RightOverlayForm */}
@@ -65,7 +92,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                   <TextField
                     fullWidth
-                    label={item.placeholder}
+                    placeholder={item.placeholder}
                     id={`fullWidth-${index}`}
                     InputLabelProps={{ shrink: false }}
                   />
@@ -82,7 +109,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                   <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                     <TextField
                       fullWidth
-                      label=" 請輸入編號"
+                      placeholder=" 請輸入編號"
                       id="fullWidth"
                       InputLabelProps={{ shrink: false }}
                     />
@@ -113,7 +140,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                   <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                     <TextField
                       fullWidth
-                      label="請輸入編號"
+                      placeholder="請輸入編號"
                       id="fullWidth"
                       InputLabelProps={{ shrink: false }}
                     />
@@ -132,7 +159,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                   <TextField
                     fullWidth
                     multiline
-                    label="請輸入編號"
+                    placeholder="請輸入編號"
                     id="fullWidth"
                     rows={4}
                     InputLabelProps={{ shrink: false }}
@@ -175,9 +202,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               </div>
               <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-mini">
                 <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
-                  <div>
+                  <div className="w-full flex">
                     {RecycleCategory.map((item, index) => (
-                      <FormControl key={index} sx={{ m: 1, minWidth: 120 }}>
+                      <FormControl key={index} sx={{ m: 1, width: '100%' }}>
                         <InputLabel id={`demo-simple-select-label-${index}`}>
                           {item}
                         </InputLabel>
@@ -200,9 +227,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                   />
                 </div>
                 <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
-                  <div>
+                  <div className="w-full flex">
                     {RecycleCategory.map((item, index) => (
-                      <FormControl key={index} sx={{ m: 1, minWidth: 120 }}>
+                      <FormControl key={index} sx={{ m: 1, width: '100%' }}>
                         <InputLabel id={`demo-simple-select-label-${index}`}>
                           {item}
                         </InputLabel>
