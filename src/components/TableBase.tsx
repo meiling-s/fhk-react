@@ -51,7 +51,7 @@ const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
         } rounded-lg  flex flex-row items-center justify-center py-1 px-[15px]`}
       >
         <div className="relative tracking-[1px] leading-[20px] font-medium">
-          {children}
+          {children === 'deleted' ? '刪除' : '已啓用'}
         </div>
       </div>
     </div>
@@ -140,11 +140,6 @@ const TableBase: React.FC<TableProps> = ({
                 </td>
               ))}
               <td className="px-3 py-0">
-                {/* <EDIT_OUTLINED_ICON
-                  className="cursor-pointer text-grey-light"
-                  fontSize="small"
-                  onClick={() => handleEdit(item)}
-                /> */}
                 {item?.status === 'deleted' ? (
                   <div className="flex justify-around ">
                     <EDIT_OUTLINED_ICON

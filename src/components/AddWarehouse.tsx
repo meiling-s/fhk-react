@@ -14,7 +14,12 @@ interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action?: 'add' | 'edit' | 'delete'
-  onSubmitData?: (formData: WarehouseFormData, type: string) => void
+  onSubmitData?: (
+    formData: WarehouseFormData,
+    type: string,
+    id?: 'string'
+  ) => void
+  rowId?: string
 }
 
 interface WarehouseFormData {
@@ -32,7 +37,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   drawerOpen,
   handleDrawerClose,
   action = 'add',
-  onSubmitData
+  onSubmitData,
+  rowId
 }) => {
   const RecycleCategory = ['請輸入重量', '紙皮', '請輸入重量']
   const FormData1_3 = [
@@ -43,17 +49,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const handleSubmit = () => {
     const formData = {
-      id: '4',
+      id: '5',
       traditionalName: 'New Warehouse',
       simplifiedName: 'New Simplified Warehouse',
       englishName: 'New English Warehouse',
       location: 'Yes',
       place: 'New Warehouse Location',
-      status: 'Active',
+      status: 'activated',
       recyclableSubcategories: 'New Recyclable Categories'
     }
-    if (onSubmitData && typeof onSubmitData === 'function') {
-      onSubmitData(formData, action)
+    if (
+      onSubmitData &&
+      typeof onSubmitData === 'function' &&
+      typeof rowId === 'string'
+    ) {
+      onSubmitData(formData, action, rowId as 'string')
     }
     handleDrawerClose()
   }

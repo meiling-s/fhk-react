@@ -19,18 +19,23 @@ interface WarehouseFormData {
   recyclableSubcategories: string
 }
 
+type TableRow = {
+  [key: string]: string | number | null
+}
+
 const Warehouse: FunctionComponent = () => {
   // const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
+  const [rowId, setRowId] = useState<string>('1')
   const [warehouseItems, setWarehouseItems] = useState([
     {
       id: '1',
       traditionalName: '火炭',
       simplifiedName: '火炭',
-      englishName: 'Fo Tan',
+      englishName: 'Fo Tan 1',
       location: '是',
       place: '火炭拗背灣街14號',
       status: 'activated',
@@ -40,7 +45,7 @@ const Warehouse: FunctionComponent = () => {
       id: '2',
       traditionalName: '火炭',
       simplifiedName: '火炭',
-      englishName: 'Fo Tan',
+      englishName: 'Fo Tan 2',
       location: '是',
       place: '火炭拗背灣街14號',
       status: 'activated',
@@ -50,17 +55,17 @@ const Warehouse: FunctionComponent = () => {
       id: '3',
       traditionalName: '火炭',
       simplifiedName: '火炭',
-      englishName: 'Fo Tan',
+      englishName: 'Fo Tan 3',
       location: '是',
       place: '火炭拗背灣街14號',
       status: 'activated',
       recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
     },
     {
-      id: '2',
+      id: '4',
       traditionalName: '火炭',
       simplifiedName: '火炭',
-      englishName: 'Fo Tan',
+      englishName: 'Fo Tan 4',
       location: '是',
       place: '火炭拗背灣街14號',
       status: 'deleted',
@@ -112,21 +117,27 @@ const Warehouse: FunctionComponent = () => {
     setAction('add')
   }
 
-  const handleEdit = () => {
+  const handleEdit = (type: string, row: TableRow) => {
+    setRowId(row.id as string)
     setDrawerOpen(true)
     setAction('edit')
   }
 
-  const handleDelete = () => {
+  const handleDelete = (type: string, row: TableRow) => {
     setDrawerOpen(true)
     setAction('delete')
+    setRowId(row.id as string)
   }
 
   const handleDrawerClose = () => {
     setDrawerOpen(false)
   }
 
-  const handleOnSubmitData = (formData: WarehouseFormData, action: string) => {
+  const handleOnSubmitData = (
+    formData: WarehouseFormData,
+    action: string,
+    id?: string
+  ) => {
     if (action == 'add') {
       //real case use post api
       setWarehouseItems([...warehouseItems, formData])
@@ -134,11 +145,11 @@ const Warehouse: FunctionComponent = () => {
 
     if (action == 'delete') {
       //real case use delete api base on id
-      const { id } = formData
-      if (id) {
-        const updatedItems = warehouseItems.filter((item) => item.id !== id)
-        setWarehouseItems(updatedItems)
-      }
+      // const { idRow } = id
+      // if (idRow) {
+      const updatedItems = warehouseItems.filter((item) => item.id !== id)
+      setWarehouseItems(updatedItems)
+      // }
     }
 
     if (action == 'edit') {
@@ -184,8 +195,8 @@ const Warehouse: FunctionComponent = () => {
                     <TableBase
                       header={headerTitles}
                       dataRow={warehouseItems}
-                      onDelete={handleDelete}
-                      onEdit={handleEdit}
+                      onDelete={(type, row) => handleDelete(action, row)}
+                      onEdit={(type, row) => handleEdit(action, row)}
                     />
                   </Box>
                 </div>
@@ -198,6 +209,7 @@ const Warehouse: FunctionComponent = () => {
             handleDrawerClose={handleDrawerClose}
             action={action}
             onSubmitData={handleOnSubmitData}
+            rowId={rowId}
           ></AddWarehouse>
         </div>
       </div>

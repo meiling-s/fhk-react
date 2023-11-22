@@ -86,7 +86,6 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   action = 'add'
 }) => {
   const [isOpen, setIsOpen] = useState(open)
-  console.log('action', action)
 
   useEffect(() => {
     setIsOpen(open)
