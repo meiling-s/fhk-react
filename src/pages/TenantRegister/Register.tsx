@@ -85,7 +85,9 @@ const RegisterTenant = () => {
           </Box>
         </Stack>
       </Box>
-      <CustomCopyrightSection />
+      <div className="sm:mt-4 w-full pt-4 text-center">
+        <CustomCopyrightSection />
+      </div>
     </Box>
   )
 }

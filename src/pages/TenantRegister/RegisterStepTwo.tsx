@@ -157,7 +157,6 @@ const RegisterStepTwo = () => {
                       <ImageList sx={styles.imagesContainer} cols={3}>
                         {imageList.map((image) => (
                           <ImageListItem key={image['file']?.name}>
-                            
                             <img
                               style={styles.image}
                               src={image['data_url']}
@@ -199,7 +198,9 @@ const RegisterStepTwo = () => {
           </Button>
         </Stack>
       </Box>
-      <CustomCopyrightSection />
+      <div className="sm:mt-4 w-full pt-4 text-center">
+        <CustomCopyrightSection />
+      </div>
     </Box>
   )
 }

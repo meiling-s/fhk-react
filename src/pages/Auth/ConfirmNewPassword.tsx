@@ -15,7 +15,17 @@ const ConfirmNewPassword = () => {
   }
 
   return (
-    <Box sx={constantStyle.loginPageBg}>
+    <Box
+      sx={{
+        backgroundImage: 'linear-gradient(to bottom, #A8EC7E, #7EECB7,#3BD2F3)',
+        minHeight: '100vh',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
       <Box sx={constantStyle.loginBox}>
         <img src={logo_company} alt="logo_company" style={{ width: '70px' }} />
         <Typography
@@ -48,7 +58,9 @@ const ConfirmNewPassword = () => {
           </Button>
         </Box>
       </Box>
-      <CustomCopyrightSection />
+      <div className="sm:mt-4 w-full pt-4 text-center">
+        <CustomCopyrightSection />
+      </div>
     </Box>
   )
 }

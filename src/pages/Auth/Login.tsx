@@ -168,13 +168,7 @@ const Login = () => {
           </Box>
         </Stack>
       </Box>
-      <div
-        className="sm:mt-4 w-full px-5 pt-4 text-center"
-        style={{
-          backgroundImage:
-            'linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)'
-        }}
-      >
+      <div className="sm:mt-4 w-full pt-4 text-center">
         <CustomCopyrightSection />
       </div>
     </Box>

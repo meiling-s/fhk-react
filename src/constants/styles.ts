@@ -108,26 +108,31 @@ export const styles = {
     fontWeight: 'bold'
   },
   loginPageBg: {
-    backgroundImage: {
-      sm: 'white',
-      md: 'linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)'
-    },
+    backgroundImage:
+      'linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)',
     minHeight: '100vh',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: {
+      sm: 'flex-start',
+      md: 'center'
+    }
   },
   loginBox: {
-    padding: { sm: '10px', md: '40px' },
-    margin: 'auto',
+    paddingX: 4,
+    paddingY: 4,
+    margin: {
+      sm: '0 auto',
+      md: 'auto'
+    },
     borderRadius: '20px',
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: 'white',
     height: 'fit-content',
-    width: '20%',
+    // width: '20%',
     minWidth: 300,
     transition: 'height 0.3s ease-in-out'
   },
