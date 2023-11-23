@@ -61,7 +61,8 @@ export const styles = {
         color: "white",
         fontWeight: "bold",
         '&.MuiButton-root:hover':{
-            backgroundColor: "#7AD123"
+            backgroundColor: "#7AD123",
+            border: "2px solid #D0DFC2"
         }
     },
     buttonOutlinedGreen: {

@@ -599,6 +599,8 @@ function ShipmentManage() {
       decimalPlace: 0,
       monetaryValue: "string",
       inventoryMethod: "string",
+      effFrmDate: "2023/11/04",
+      effToDate: "2010/02/15",
       allowImgSize: 0,
       allowImgNum: 0,
       approvedAt: "2023-10-25T07:14:25.562Z",

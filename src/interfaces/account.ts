@@ -31,6 +31,8 @@ export type Tenant = {
   inventoryMethod: string,
   allowImgSize: 0,
   allowImgNum: 0,
+  effFrmDate: string,
+  effToDate: string,
   approvedAt: string,
   approvedBy: string,
   rejectedAt: string,
