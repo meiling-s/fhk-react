@@ -162,7 +162,7 @@ const Warehouse: FunctionComponent = () => {
     <Box
       sx={{
         width: '100%',
-        maxWidth: { xs: 375, sm: 480, md: '100%' }
+        maxWidth: { xs: 400, sm: 480, md: '100%' }
       }}
     >
       <div className="warehouse-section">

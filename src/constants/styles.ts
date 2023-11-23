@@ -128,6 +128,13 @@ export const styles = {
     backgroundColor: 'white',
     height: 'fit-content',
     width: '20%',
-    minWidth: 300
+    minWidth: 300,
+    transition: 'height 0.3s ease-in-out'
+  },
+  labelField: {
+    color: '#717171',
+    fontSize: 14,
+    marginBottom: 1,
+    fontWeight: 900
   }
 }

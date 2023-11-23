@@ -83,7 +83,7 @@ const TableBase: React.FC<TableProps> = ({
         <thead>
           <tr className="p-2">
             {checkboxSelection && (
-              <th>
+              <th className="w-[60px]">
                 <Checkbox color="primary" />
               </th>
             )}
@@ -139,7 +139,7 @@ const TableBase: React.FC<TableProps> = ({
                   )}
                 </td>
               ))}
-              <td className="px-3 py-0">
+              <td className="px-3 py-0 w-[50px]">
                 {item?.status === 'deleted' ? (
                   <div className="flex justify-around ">
                     <EDIT_OUTLINED_ICON
