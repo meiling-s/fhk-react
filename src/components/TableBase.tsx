@@ -29,6 +29,7 @@ type TableProps = {
   onDelete?: (type: string, row: TableRow) => void
   onEdit?: (type: string, row: TableRow) => void
   checkboxSelection?: boolean
+  actionRow?: boolean
 }
 
 const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
@@ -63,7 +64,8 @@ const TableBase: React.FC<TableProps> = ({
   dataRow,
   onDelete,
   onEdit,
-  checkboxSelection = true
+  checkboxSelection = true,
+  actionRow = true
 }) => {
   const handleDelete = (row: TableRow) => {
     if (onDelete) {
@@ -89,10 +91,12 @@ const TableBase: React.FC<TableProps> = ({
             )}
             {header.map((headerItem, index) => (
               <th
-                className={`font-bold leading-[20px] text-base text-left`}
+                className={`leading-[20px] text-base text-left`}
                 key={index}
                 style={{
-                  width: headerItem.width ? `${headerItem.width}px` : '120px'
+                  width: headerItem.width ? `${headerItem.width}px` : '120px',
+                  fontWeight: 700,
+                  color: '#535353'
                 }}
               >
                 {headerItem.label}
@@ -130,7 +134,8 @@ const TableBase: React.FC<TableProps> = ({
                       style={{
                         width: headerItem.width
                           ? `${headerItem.width}px`
-                          : '120px'
+                          : '120px',
+                        color: '#535353'
                       }}
                       className="text-left text-smi overflow-hidden text-ellipsis whitespace-nowrap"
                     >
@@ -139,33 +144,35 @@ const TableBase: React.FC<TableProps> = ({
                   )}
                 </td>
               ))}
-              <td className="px-3 py-0 w-[50px]">
-                {item?.status === 'deleted' ? (
-                  <div className="flex justify-around ">
-                    <EDIT_OUTLINED_ICON
-                      className=" text-grey-light cursor-not-allowed"
-                      fontSize="small"
-                    />
-                    <DELETE_OUTLINED_ICON
-                      className="text-grey-light cursor-not-allowed"
-                      fontSize="small"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex justify-around">
-                    <EDIT_OUTLINED_ICON
-                      className="cursor-pointer text-grey-dark "
-                      fontSize="small"
-                      onClick={() => handleEdit(item)}
-                    />
-                    <DELETE_OUTLINED_ICON
-                      className="cursor-pointer text-grey-dark"
-                      fontSize="small"
-                      onClick={() => handleDelete(item)}
-                    />
-                  </div>
-                )}
-              </td>
+              {actionRow ? (
+                <td className="px-3 py-0 w-[50px] rounded-tr-lg rounded-br-lg">
+                  {item?.status === 'deleted' ? (
+                    <div className="flex justify-around ">
+                      <EDIT_OUTLINED_ICON
+                        className=" text-grey-light cursor-not-allowed"
+                        fontSize="small"
+                      />
+                      <DELETE_OUTLINED_ICON
+                        className="text-grey-light cursor-not-allowed"
+                        fontSize="small"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex justify-around">
+                      <EDIT_OUTLINED_ICON
+                        className="cursor-pointer text-grey-dark "
+                        fontSize="small"
+                        onClick={() => handleEdit(item)}
+                      />
+                      <DELETE_OUTLINED_ICON
+                        className="cursor-pointer text-grey-dark"
+                        fontSize="small"
+                        onClick={() => handleDelete(item)}
+                      />
+                    </div>
+                  )}
+                </td>
+              ) : null}
             </tr>
           ))}
         </tbody>
