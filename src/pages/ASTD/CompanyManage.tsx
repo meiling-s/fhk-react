@@ -5,9 +5,10 @@ import { visuallyHidden } from '@mui/utils';
 import React from "react";
 import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
-import { defaultPath, format } from "../../constants/constant";
+import { defaultPath, format, localStorgeKeyName } from "../../constants/constant";
 import { styles } from "../../constants/styles"
 import dateFormat from "date-fns/format";
+import dayjs from "dayjs";
 
 type Company = {
     id: string,
@@ -399,7 +400,8 @@ function CompanyManage(){
                     company.eName.includes(searchWord) ||
                     company.status.includes(searchWord) ||
                     company.type.includes(searchWord) ||
-                    dateFormat(company.createDate,"yyyy/MM/dd HH:mm").includes(searchWord) ||
+                    dayjs(new Date()).format(format.dateFormat2).includes(searchWord) ||
+                    //dateFormat(company.createDate,"yyyy/MM/dd HH:mm").includes(searchWord) ||
                     company.accountNum.toString().includes(searchWord)
                 ){
                     filteredCompanies.push(company);
@@ -460,6 +462,7 @@ function CompanyManage(){
     ) => {
         const randomId = generateNumericId();
         console.log(randomId);
+        const username = localStorage.getItem(localStorgeKeyName.username);
         const result = await createInvitation({
             tenantId: randomId,
             companyNameTchi: TChiName,
@@ -470,21 +473,23 @@ function CompanyManage(){
             brNo: BRNo,
             remark: remark,
             contactNo: "string",
-            email: "string",
+            email: "",
             contactName: "string",
-            brPhoto: ["string"],
-            epdPhoto: ["string"],
+            brPhoto: [],
+            epdPhoto: [],
             decimalPlace: 0,
-            monetaryValue: "string",
-            inventoryMethod: "string",
+            monetaryValue: "",
+            inventoryMethod: "",
             allowImgSize: 0,
             allowImgNum: 0,
+            effFrmDate: dayjs(new Date()).format(format.dateFormat3),
+            effToDate: dayjs(new Date()).format(format.dateFormat3),
             approvedAt: "2023-10-25T07:14:25.562Z",
-            approvedBy: "string",
+            approvedBy: "admin",
             rejectedAt: "2023-10-25T07:14:25.562Z",
-            rejectedBy: "string",
-            createdBy: "string",
-            updatedBy: "string"
+            rejectedBy: "admin",
+            createdBy: username? username : "",
+            updatedBy: username? username : ""
         });
         if(result!=null){
             console.log(result);

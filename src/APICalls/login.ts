@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { LOGIN } from '../constants/requests';
 import { LoginItem } from '../interfaces/account';
+import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
+
+const request = axios.create({
+  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
+})
 
 export const login = async(item: LoginItem) => {
   try {
-    const response = await axios({
+    const response = await request({
       ...LOGIN,
       data: item,
     });

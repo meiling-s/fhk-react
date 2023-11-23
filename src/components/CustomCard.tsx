@@ -112,7 +112,7 @@ const CustomCard = ({
         return (
           <Card
             onMouseEnter={() => setHoveredCard({ lat: posistion[0], lon:posistion[1] })}
-            onMouseLeave={() => setHoveredCard(null)}
+            onMouseLeave={() => {/*setHoveredCard(null)*/}}
             sx={{
               display: "flex",
               marginRight: "150px",
@@ -123,6 +123,7 @@ const CustomCard = ({
                 lg: '515px'
               }
             }}
+            key={collectionPoint.colName}
           >
             <ButtonBase onClick={() => handleCardOnClick(collectionPoint)}>
               <CardContent sx={{ display: "flex", flexDirection: 'column' }}>

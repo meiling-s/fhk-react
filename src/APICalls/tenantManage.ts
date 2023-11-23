@@ -4,14 +4,16 @@ import { ADD_TENANT, GET_ALL_TENANT, GET_TENANT_BY_TENANT_ID, UPDATE_TENANT_REGI
 import { RegisterItem, Tenant } from '../interfaces/account';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 
-axios.defaults.baseURL = AXIOS_DEFAULT_CONFIGS.baseURL;
+const request = axios.create({
+  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
+})
 
 //require Authorization token
 export const createInvitation = async (item: Tenant) => {
   console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
 
   try {
-    const response = await axios({
+    const response = await request({
       ...ADD_TENANT,
       data: item,
       headers: {
@@ -31,7 +33,7 @@ export const getAllTenant = async () => {
   console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
 
   try {
-    const response = await axios({
+    const response = await request({
       ...GET_ALL_TENANT,
       headers: {
         Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
@@ -53,7 +55,7 @@ export const getTenantById = async (tenantId: string) => {
   axiosConfig.url = GET_TENANT_BY_TENANT_ID.url+`/${tenantId}`;
   
   try {
-    const response = await axios({
+    const response = await request({
       ...axiosConfig
     });
     console.log('Get tenant by id success:', JSON.stringify(response.data));
@@ -71,7 +73,7 @@ export const updateTenantRegInfo = async (item: RegisterItem, inviteId: string) 
   axiosConfig.url = UPDATE_TENANT_REGISTER.url+`/${inviteId}`;
   
   try {
-    const response = await axios({
+    const response = await request({
       ...axiosConfig,
       data: item
     });
