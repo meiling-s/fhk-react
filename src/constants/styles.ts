@@ -141,5 +141,6 @@ export const styles = {
     fontSize: 14,
     marginBottom: 1,
     fontWeight: 900
-  }
+  },
+  
 }

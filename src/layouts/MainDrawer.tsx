@@ -14,7 +14,8 @@ import {
   PLACE_ICON,
   SHIPPING_CAR_ICON,
   STAFF_ICON,
-  SETTINGS_ICON
+  SETTINGS_ICON,
+  INBOX_OUTLINE_ICON
 } from "../themes/icons";
 import logo_company from "../logo_company.png";
 import { useNavigate } from "react-router-dom";
@@ -89,7 +90,7 @@ function MainDrawer() {
 
   let drawerMenus_warehouse: DrawerItem[] = [
     { name: t('recycle_Shipment'), icon: <SHIPPING_CAR_ICON />, onClick: () =>  navigate("/warehouse/shipment"), collapse: false },
-    { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  navigate("/warehouse/overview"), collapse: false },
+    { name: t('collection_Point'), icon: <INBOX_OUTLINE_ICON />, onClick: () =>  navigate("/warehouse/overview"), collapse: false },
     { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/warehouse/process"), collapse: false },
     { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/warehouse/staff"), collapse: false },
     { name: t('settings'), icon: <SETTINGS_ICON />,onClick: () =>  navigate("/warehouse/settings"), collapse: false },

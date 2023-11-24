@@ -85,7 +85,7 @@ const TableBase: React.FC<TableProps> = ({
         <thead>
           <tr className="p-2">
             {checkboxSelection && (
-              <th className="w-[60px]">
+              <th className="w-[60px] text-left">
                 <Checkbox color="primary" />
               </th>
             )}
@@ -112,12 +112,19 @@ const TableBase: React.FC<TableProps> = ({
               className="overflow-x-auto overflow-y-hidden whitespace-nowrap bg-white p-2 rounded-lg mb-3"
             >
               {checkboxSelection && (
-                <td className="rounded-tl-lg rounded-bl-lg">
+                <td className="rounded-tl-lg rounded-bl-lg text-left">
                   <Checkbox color="primary" />
                 </td>
               )}
               {header.map((headerItem, columnIndex) => (
-                <td key={columnIndex}>
+                <td
+                  key={columnIndex}
+                  className={`${
+                    columnIndex === header.length - 1 && !actionRow
+                      ? 'rounded-tr-lg rounded-br-lg'
+                      : ''
+                  }`}
+                >
                   {headerItem.type == 'status' ? (
                     <TableColumnStatus
                       width={
