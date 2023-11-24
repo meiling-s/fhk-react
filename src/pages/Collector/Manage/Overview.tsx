@@ -138,11 +138,7 @@ const Overview: FunctionComponent = () => {
         </div>
         <div className="table-overview">
           <Box className="w-full">
-            <TableBase
-              header={headerTitles}
-              dataRow={overviewItems}
-              actionRow={false}
-            />
+            <TableBase header={headerTitles} dataRow={overviewItems} />
           </Box>
         </div>
       </div>

@@ -161,7 +161,7 @@ const TableBase: React.FC<TableProps> = ({
                                 ) : (
                                     <div className="flex justify-around">
                                         <EDIT_OUTLINED_ICON
-                                            className="cursor-pointer text-grey-dark "
+                                            className="cursor-pointer text-grey-dark mr-2"
                                             fontSize="small"
                                             onClick={() => handleEdit(item)}
                                         />
