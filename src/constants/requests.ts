@@ -52,6 +52,15 @@ export const GET_CONTRACT: AxiosRequestConfig = {
   url: 'api/collectors/contract'
 }
 
+export const GET_ALL_CHECKIN_REQUESTS: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/collectors/checkin'
+}
+
+export const UPDATE_CHECK_IN_STATUS: AxiosRequestConfig = {
+  method: 'patch',
+  url: 'api/collectors/checkin/'
+}
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
   method: 'get',
@@ -82,3 +91,4 @@ export const ADD_SITE_TYPE: AxiosRequestConfig = {
   method: 'post',
   url: 'api/common/siteType'
 }
+

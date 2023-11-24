@@ -15,7 +15,7 @@ import CustomTimePicker from "../../../../components/FormComponents/CustomTimePi
 import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
 import CustomDatePicker from "../../../../components/FormComponents/CustomDatePicker";
 import { useLocation, useNavigate } from "react-router-dom";
-import { updateCollectionPoint } from "../../../../APICalls/collectionPointManage";
+import { updateCollectionPoint } from "../../../../APICalls/Collector/collectionPointManage";
 import { useTranslation } from "react-i18next";
 import { colPointType, premiseType, recycType, siteType } from "../../../../interfaces/common";
 import { getCommonTypes } from "../../../../APICalls/commonManage";
