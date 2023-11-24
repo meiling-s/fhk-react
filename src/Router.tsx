@@ -18,6 +18,11 @@ import Settings from './pages/Collector/Warehouse/Settings'
 import CompanyDetails from './pages/TenantRegister/CompanyDetails';
 import CompanyContact from './pages/TenantRegister/CompanyContact';
 import RegisterResult from './pages/TenantRegister/RegisterResult';
+//new tenantpage
+import TenantRegister from './pages/TenantRegister/Register'; 
+import RegisterStepOne from './pages/TenantRegister/RegisterStepOne';
+import RegisterStepTwo from './pages/TenantRegister/RegisterStepTwo';
+
 //general
 import Staff from './pages/Collector/Staff';
 import Report from './pages/Collector/Report';
@@ -32,8 +37,13 @@ const Router = () => {
         <Route path="/" element={<Login />} />
         <Route path="/forgetPassword" element={<ForgetPassword />} />
         <Route path="/confirmNewPassword" element={<ConfirmNewPassword />} />
+
+        {/* tenant page */}
         <Route path="/register/details/:inviteId" element={<CompanyDetails />}/>
         <Route path="/register/contact" element={<CompanyContact />}/>
+        <Route path="/register/tenant" element={<TenantRegister />}/>
+        <Route path="/register/firstStep" element={<RegisterStepOne />}/>
+        <Route path="/register/secondStep" element={<RegisterStepTwo />}/>
         <Route path="/register/result" element={<RegisterResult />}/>
 
         <Route element={<MainLayout />}>

@@ -16,6 +16,7 @@ import AddIcon from '@mui/icons-material/Add'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
+import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 
 export const PLACE_ICON = PlaceOutlinedIcon
 export const SHIPPING_CAR_ICON = LocalShippingOutlinedIcon
@@ -35,3 +36,4 @@ export const ADD_ICON = AddIcon
 export const ARROWDOWN_ICON = KeyboardArrowDownIcon
 export const ADD_CIRCLE_ICON = AddCircleOutlineIcon
 export const REMOVE_CIRCLE_ICON = RemoveCircleOutlineIcon
+export const CAMERA_OUTLINE_ICON =  CameraAltOutlinedIcon

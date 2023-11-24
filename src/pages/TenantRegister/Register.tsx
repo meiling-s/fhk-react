@@ -9,17 +9,23 @@ interface FormValues {
   [key: string]: string
 }
 
-const ForgetPassword = () => {
+const RegisterTenant = () => {
   const navigate = useNavigate()
-  const titlePage = '登入名稱'
-  const submitBtn = ' 發送'
+  const titlePage = '登記'
+  const submitBtn = ' 繼續'
   const [formValues, setFormValues] = useState<FormValues>({
-    username: '',
-    email: ''
+    company_category: '',
+    company_cn_name: '',
+    company_en_name: ''
   })
   const formFields = [
-    { name: 'username', label: '用戶名稱', placeholder: '請輸入登入名稱' },
-    { name: 'email', label: '電郵地址', placeholder: '請輸入電郵地址' }
+    { name: 'company_category', label: '公司類別', placeholder: 'Collector' },
+    { name: 'company_cn_name', label: '公司中文名', placeholder: '回收公司' },
+    {
+      name: 'company_en_name',
+      label: '公司英文名',
+      placeholder: 'Collector Company'
+    }
   ]
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,9 +36,9 @@ const ForgetPassword = () => {
     }))
   }
 
-  const submitNewPassword = () => {
+  const registerTenant = () => {
     console.log('Submitted:', formValues)
-    navigate('/confirmNewPassword')
+    navigate('/register/firstStep')
   }
 
   return (
@@ -49,7 +55,7 @@ const ForgetPassword = () => {
         <Stack spacing={4}>
           {formFields.map((field) => (
             <Box key={field.name}>
-              <Typography sx={styles.typo}>{field.label}</Typography>
+              <Typography sx={constantStyle.labelField}>{field.label}</Typography>
               <TextField
                 fullWidth
                 placeholder={field.placeholder}
@@ -65,7 +71,7 @@ const ForgetPassword = () => {
           <Box>
             <Button
               fullWidth
-              onClick={submitNewPassword}
+              onClick={registerTenant}
               sx={{
                 borderRadius: '20px',
                 backgroundColor: '#79ca25',
@@ -87,10 +93,6 @@ const ForgetPassword = () => {
 }
 
 let styles = {
-  typo: {
-    color: 'grey',
-    fontSize: 14
-  },
   textField: {
     borderRadius: '10px',
     fontWeight: '500',
@@ -100,4 +102,4 @@ let styles = {
   }
 }
 
-export default ForgetPassword
+export default RegisterTenant
