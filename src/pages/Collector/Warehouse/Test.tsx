@@ -31,8 +31,8 @@ interface recyclableItem {
 
 interface Warehouse {
     warehouseId: number;
-    wareHouseNameTChi: string;
-    wareHouseNameSChi: string;
+    wareHouseNameTchi: string;
+    wareHouseNameSchi: string;
     wareHouseNameEng: string;
     location: string;
     place: string;
@@ -65,8 +65,8 @@ const Test: FunctionComponent = () => {
             <ul>
                 {warehouses.map((warehouse) => (
                     <li key={warehouse.warehouseId}>
-                        {warehouse.wareHouseNameTChi} -{" "}
-                        {warehouse.wareHouseNameSChi} -{" "}
+                        {warehouse.wareHouseNameTchi} -{" "}
+                        {warehouse.wareHouseNameSchi} -{" "}
                         {warehouse.wareHouseNameEng}
                     </li>
                 ))}

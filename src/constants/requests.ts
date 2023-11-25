@@ -89,6 +89,21 @@ export const GET_ALL_WAREHOUSE: AxiosRequestConfig = {
     url: "api/v1/collectors/warehouse",
 };
 
+export const GET_WAREHOUSE_BY_ID: AxiosRequestConfig = {
+    method: "get",
+    url: "api/v1/collectors/warehouse",
+};
+
+export const ADD_WAREHOUSE: AxiosRequestConfig = {
+    method: "post",
+    url: "api/v1/collectors/warehouse",
+};
+
+export const UPDATE_WAREHOUSE_BY_ID: AxiosRequestConfig = {
+    method: "put",
+    url: "api/v1/collectors/warehouse",
+};
+
 // test
 export const GET_ALL_USERNAME: AxiosRequestConfig = {
     method: "get",

@@ -101,7 +101,7 @@ const Router = () => {
                     />
                     <Route path="/warehouse/staff" element={<Staff />} />
                     <Route path="/warehouse/settings" element={<Settings />} />
-                    <Route path="/warehouse/Test" element={<Test />} />
+                    <Route path="/warehouse/test" element={<Test />} />
                 </Route>
             </Routes>
         </BrowserRouter>
