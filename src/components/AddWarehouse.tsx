@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from './RightOverlayForm'
 import TextField from '@mui/material/TextField'
 import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
+import OutlinedInput from '@mui/material/OutlinedInput'
+import InputAdornment from '@mui/material/InputAdornment'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import Switcher from './Switcher'
+// import Switcher from './Switcher'
+import Switcher from './FormComponents/CustomSwitch'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
 import { useTranslation } from 'react-i18next'
 
@@ -41,7 +43,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   rowId
 }) => {
   const { t } = useTranslation()
-  const RecycleCategory = ['請輸入重量', '紙皮', '請輸入重量']
+  const [switchState, setSwitchState] = useState(false)
+  const initContactNumber: { contact_number: string }[] = [
+    { contact_number: '' },
+    { contact_number: '' }
+  ]
+
   const FormData1_3 = [
     {
       label: t('warehouse_page.trad_name'),
@@ -56,6 +63,68 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       placeholder: 'Please type a name'
     }
   ]
+
+  // get opion RecyleCategory form api
+  const recycleType = ['請輸入重量', '紙皮', '請輸入重量']
+  const subType = ['請輸入重量 1', '紙皮 2', '請輸入重量 3']
+
+  const initRecyleCategory: {
+    recyle_type: string
+    subtype: string
+    weight: string
+  }[] = [
+    {
+      recyle_type: '',
+      subtype: '',
+      weight: ''
+    },
+    {
+      recyle_type: '',
+      subtype: '',
+      weight: ''
+    }
+  ]
+
+  const [contactNumber, setContactNumber] =
+    useState<{ contact_number: string }[]>(initContactNumber)
+
+  const [recycleCategory, setRecycleCategory] =
+    useState<{ recyle_type: string; subtype: string; weight: string }[]>(
+      initRecyleCategory
+    )
+
+  const handleRemoveContact = (indexToRemove: number) => {
+    const updatedContactNumber = contactNumber.filter(
+      (_, index) => index !== indexToRemove
+    )
+    setContactNumber(updatedContactNumber)
+  }
+
+  const handleAddContact = () => {
+    const updatedContactNumber = [...contactNumber, { contact_number: '' }]
+    setContactNumber(updatedContactNumber)
+  }
+
+  const handleAddReycleCategory = () => {
+    const updatedrecycleCategory = [
+      ...recycleCategory,
+      { recyle_type: '', subtype: '', weight: '' }
+    ]
+    setRecycleCategory(updatedrecycleCategory)
+  }
+
+  const handleRemoveReycleCategory = (indexToRemove: number) => {
+    const updatedRecycleCategory = recycleCategory.filter(
+      (_, index) => index !== indexToRemove
+    )
+    setRecycleCategory(updatedRecycleCategory)
+  }
+
+  const [age, setAge] = useState('')
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setAge(event.target.value)
+  }
 
   const handleSubmit = () => {
     const formData = {
@@ -129,67 +198,59 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               <div className="relative tracking-[1px] leading-[20px] text-left">
                 {t('warehouse_page.location')}
               </div>
-              <Switcher />
+              {/* <Switcher /> */}
+              <Switcher
+                onText="On"
+                offText="Off"
+                defaultValue={switchState}
+                setState={(newValue) => {
+                  setSwitchState(newValue) // Update the state in your parent component
+                }}
+              />
             </div>
+            {/* contact number */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center text-mini text-black">
               <div className="relative text-smi tracking-[1px] leading-[20px] text-grey-middle text-left">
                 {t('col.contractNo')}
               </div>
               <div className="self-stretch flex flex-col items-start justify-start">
-                <div className="self-stretch flex flex-row items-center justify-start gap-[8px] mb-2">
-                  <FormControl fullWidth variant="standard">
-                    <TextField
-                      fullWidth
-                      placeholder={t('col.enterNo')}
-                      id="fullWidth"
-                      InputLabelProps={{ shrink: false }}
-                      InputProps={{
-                        sx: styles.textField
-                      }}
-                      sx={styles.inputState}
-                      disabled={action === 'delete'}
-                    />
-                  </FormControl>
-                  <REMOVE_CIRCLE_ICON
-                    fontSize="small"
-                    className="text-grey-light"
-                  />
-                </div>
-              </div>
-              <div className="self-stretch flex flex-col items-start justify-start">
-                <div className="self-stretch flex flex-row items-center justify-start gap-[8px]">
-                  <div className="rounded-xl bg-white box-border w-[120px] overflow-hidden shrink-0 hidden flex-row items-center justify-between py-[15px] px-5 border-[1px] border-solid border-grey-line">
-                    <img
-                      className="relative w-6 h-6 overflow-hidden shrink-0 hidden"
-                      alt=""
-                      src="/search2.svg"
-                    />
-                    <div className="relative tracking-[1.5px] leading-[20px]">
-                      金屬
+                <div className="self-stretch ">
+                  {contactNumber.map((item, index) => (
+                    <div className="flex flex-row items-center justify-start gap-[8px] mb-2">
+                      <FormControl fullWidth variant="standard">
+                        <TextField
+                          fullWidth
+                          placeholder={t('col.enterNo')}
+                          id="fullWidth"
+                          InputLabelProps={{ shrink: false }}
+                          InputProps={{
+                            sx: styles.textField
+                          }}
+                          sx={styles.inputState}
+                          disabled={action === 'delete'}
+                        />
+                      </FormControl>
+                      {index === contactNumber.length - 1 ? (
+                        <ADD_CIRCLE_ICON
+                          fontSize="small"
+                          className="text-green-primary cursor-pointer"
+                          onClick={handleAddContact}
+                        />
+                      ) : (
+                        index !== contactNumber.length - 1 && (
+                          <REMOVE_CIRCLE_ICON
+                            fontSize="small"
+                            className={`text-grey-light ${
+                              contactNumber.length === 1
+                                ? 'cursor-not-allowed'
+                                : 'cursor-pointer'
+                            } `}
+                            onClick={() => handleRemoveContact(index)}
+                          />
+                        )
+                      )}
                     </div>
-                    <img
-                      className="relative w-6 h-6 overflow-hidden shrink-0"
-                      alt=""
-                      src="/chevrondown5.svg"
-                    />
-                  </div>
-                  <FormControl fullWidth variant="standard">
-                    <TextField
-                      fullWidth
-                      placeholder={t('col.enterNo')}
-                      id="fullWidth"
-                      InputLabelProps={{ shrink: false }}
-                      InputProps={{
-                        sx: styles.textField
-                      }}
-                      sx={styles.inputState}
-                      disabled={action === 'delete'}
-                    />
-                  </FormControl>
-                  <ADD_CIRCLE_ICON
-                    fontSize="small"
-                    className="text-green-primary"
-                  />
+                  ))}
                 </div>
               </div>
             </div>
@@ -242,7 +303,15 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               <div className="relative tracking-[1px] leading-[20px] text-left">
                 {t('warehouse_page.status')}
               </div>
-              <Switcher />
+              {/* <Switcher /> */}
+              <Switcher
+                onText="On"
+                offText="Off"
+                defaultValue={switchState}
+                setState={(newValue) => {
+                  setSwitchState(newValue) // Update the state in your parent component
+                }}
+              />
             </div>
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px]">
               <div className="relative tracking-[1px] leading-[20px]">
@@ -250,56 +319,86 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               </div>
               <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-mini">
                 <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
-                  <div className="w-full flex gap-2">
-                    {RecycleCategory.map((item, index) => (
-                      <FormControl key={index} sx={{ width: '100%' }}>
-                        <InputLabel id={`demo-simple-select-label-${index}`}>
-                          {item}
-                        </InputLabel>
-                        <Select
-                          labelId={`demo-simple-select-label-${index}`}
-                          id={`demo-simple-select-${index}`}
-                          value=""
-                          label={item}
-                          sx={styles.dropDown}
-                          disabled={action === 'delete'}
-                        >
-                          <MenuItem value={10}>Ten</MenuItem>
-                          <MenuItem value={20}>Twenty</MenuItem>
-                          <MenuItem value={30}>Thirty</MenuItem>
-                        </Select>
-                      </FormControl>
+                  <div className="w-full ">
+                    {recycleCategory.map((item, index) => (
+                      <div className="flex justify-center items-center gap-2 mb-2">
+                        <FormControl sx={{ m: 1, width: '100%' }}>
+                          <Select
+                            value={age}
+                            onChange={handleChange}
+                            displayEmpty
+                            disabled={action === 'delete'}
+                            inputProps={{ 'aria-label': 'Without label' }}
+                            sx={{
+                              borderRadius: '12px' // Adjust the value as needed
+                            }}
+                          >
+                            <MenuItem value="">
+                              <em>None</em>
+                            </MenuItem>
+                            {recycleType.map((item, index) => (
+                              <MenuItem value={10}>{item}</MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl sx={{ m: 1, width: '100%' }}>
+                          <Select
+                            value={age}
+                            onChange={handleChange}
+                            displayEmpty
+                            disabled={action === 'delete'}
+                            inputProps={{ 'aria-label': 'Without label' }}
+                            sx={{
+                              borderRadius: '12px' // Adjust the value as needed
+                            }}
+                          >
+                            <MenuItem value="">
+                              <em>None</em>
+                            </MenuItem>
+                            {subType.map((item, index) => (
+                              <MenuItem value={10}>{item}</MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl fullWidth variant="standard">
+                          <OutlinedInput
+                            fullWidth
+                            id="outlined-adornment-weight"
+                            placeholder={t('col.enterNo')}
+                            endAdornment={
+                              <InputAdornment position="end">kg</InputAdornment>
+                            }
+                            aria-describedby="outlined-weight-helper-text"
+                            inputProps={{
+                              'aria-label': 'weight',
+                              sx: styles.textField
+                            }}
+                            sx={styles.textField}
+                            disabled={action === 'delete'}
+                          />
+                        </FormControl>
+                        {index === recycleCategory.length - 1 ? (
+                          <ADD_CIRCLE_ICON
+                            fontSize="small"
+                            className="text-green-primary cursor-pointer"
+                            onClick={handleAddReycleCategory}
+                          />
+                        ) : (
+                          index !== recycleCategory.length - 1 && (
+                            <REMOVE_CIRCLE_ICON
+                              fontSize="small"
+                              className={`text-grey-light ${
+                                contactNumber.length === 1
+                                  ? 'cursor-not-allowed'
+                                  : 'cursor-pointer'
+                              } `}
+                              onClick={() => handleRemoveReycleCategory(index)}
+                            />
+                          )
+                        )}
+                      </div>
                     ))}
                   </div>
-                  <REMOVE_CIRCLE_ICON
-                    fontSize="small"
-                    className="text-grey-light"
-                  />
-                </div>
-                <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
-                  <div className="w-full flex">
-                    {RecycleCategory.map((item, index) => (
-                      <FormControl key={index} sx={{ width: '100%' }}>
-                        <InputLabel id={`demo-simple-select-label-${index}`}>
-                          {item}
-                        </InputLabel>
-                        <Select
-                          labelId={`demo-simple-select-label-${index}`}
-                          id={`demo-simple-select-${index}`}
-                          value=""
-                          label={item}
-                        >
-                          <MenuItem value={10}>Ten</MenuItem>
-                          <MenuItem value={20}>Twenty</MenuItem>
-                          <MenuItem value={30}>Thirty</MenuItem>
-                        </Select>
-                      </FormControl>
-                    ))}
-                  </div>
-                  <ADD_CIRCLE_ICON
-                    fontSize="small"
-                    className="text-green-primary"
-                  />
                 </div>
               </div>
             </div>
