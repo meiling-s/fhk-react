@@ -31,9 +31,9 @@ interface recyclableItem {
 
 interface Warehouse {
     warehouseId: number;
-    wareHouseNameTchi: string;
-    wareHouseNameSchi: string;
-    wareHouseNameEng: string;
+    warehouseNameTchi: string;
+    warehouseNameSchi: string;
+    warehouseNameEng: string;
     location: string;
     place: string;
     status: string;
@@ -49,8 +49,8 @@ const Test: FunctionComponent = () => {
             try {
                 const response = await getAllWarehouse(0, 10);
                 if (response) {
-                    setWarehouses(response.data); // Extract the 'data' property
-                    console.log(response.data);
+                    setWarehouses(response.data.content); // Extract the 'data' property
+                    console.log(response.data.content);
                 }
             } catch (error) {
                 console.error(error);
@@ -65,9 +65,9 @@ const Test: FunctionComponent = () => {
             <ul>
                 {warehouses.map((warehouse) => (
                     <li key={warehouse.warehouseId}>
-                        {warehouse.wareHouseNameTchi} -{" "}
-                        {warehouse.wareHouseNameSchi} -{" "}
-                        {warehouse.wareHouseNameEng}
+                        {warehouse.warehouseNameTchi} -{" "}
+                        {warehouse.warehouseNameSchi} -{" "}
+                        {warehouse.warehouseNameEng}
                     </li>
                 ))}
             </ul>
