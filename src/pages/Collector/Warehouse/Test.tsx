@@ -42,14 +42,14 @@ interface Warehouse {
 
 const Test: FunctionComponent = () => {
     // const [persons, setPersons] = useState<Person[]>([]);
-    const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
+    const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await getAllWarehouse();
+                const response = await getAllWarehouse(0, 10);
                 if (response) {
-                    setWarehouse(response.data); // Extract the 'data' property
+                    setWarehouses(response.data); // Extract the 'data' property
                     console.log(response.data);
                 }
             } catch (error) {
@@ -60,21 +60,25 @@ const Test: FunctionComponent = () => {
         fetchData();
     }, []);
 
-    // return (
-    //     <div>
-    //         <ul>
-    //             {persons.map((person) => (
-    //                 <li key={person.id}>{person.website}</li>
-    //             ))}
-    //         </ul>
-    //     </div>
-    // );
-
     return (
         <div>
-            <h1>Test</h1>
+            <ul>
+                {warehouses.map((warehouse) => (
+                    <li key={warehouse.warehouseId}>
+                        {warehouse.wareHouseNameTChi} -{" "}
+                        {warehouse.wareHouseNameSChi} -{" "}
+                        {warehouse.wareHouseNameEng}
+                    </li>
+                ))}
+            </ul>
         </div>
     );
+
+    // return (
+    //     <div>
+    //         <h1>Test</h1>
+    //     </div>
+    // );
 };
 
 export default Test;

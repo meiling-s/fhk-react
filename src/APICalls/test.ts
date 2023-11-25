@@ -25,11 +25,15 @@ export const getAllUsers = async () => {
     }
 };
 
-export const getAllWarehouse = async () => {
+export const getAllWarehouse = async (page: number, size: number) => {
     try {
         const response = await axios({
             ...GET_ALL_WAREHOUSE,
             baseURL: collectionPointAPI.baseURL,
+            params: {
+                page: page,
+                size: size,
+            },
         });
         return response;
     } catch (e) {
