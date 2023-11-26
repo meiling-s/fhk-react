@@ -88,6 +88,10 @@
     "add_warehouse_page": {
         "save": "Save",
         "delete": "Delete",
-        "type_name": "Please type a name"
+        "type_name": "Please type a name",
+        "yes": "Yes",
+        "no": "No",
+        "open": "Open",
+        "close": "Close"
     }
 }

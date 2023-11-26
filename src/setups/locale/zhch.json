@@ -88,6 +88,10 @@
     "add_warehouse_page": {
         "save": "儲存<",
         "delete": "刪除",
-        "type_name": "请输入名称"
+        "type_name": "请输入名称",
+        "yes": "是",
+        "no": "否",
+        "open": "開放",
+        "close": "關閉"
     }
 }
