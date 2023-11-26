@@ -7,6 +7,8 @@ import {
     GET_WAREHOUSE_BY_ID,
     ADD_WAREHOUSE,
     UPDATE_WAREHOUSE_BY_ID,
+    UPDATE_RECYCLE_CAPACITY_BY_ID,
+    UPDATE_WAREHOUSE_STATUS_BY_ID,
 } from "../constants/requests";
 
 const collectionPointAPI = {
@@ -32,7 +34,7 @@ export const getAllWarehouse = async (page: number, size: number) => {
 };
 
 //get warehouse by id
-export const getWarehouseById = async (warehouseId: string) => {
+export const getWarehouseById = async (warehouseId: number) => {
     try {
         const response = await axios({
             ...GET_WAREHOUSE_BY_ID,
@@ -64,7 +66,7 @@ export const createWarehouse = async (data: any) => {
 };
 
 //edit warehouse
-export const editWarehouse = async (data: any, warehouseId: string) => {
+export const editWarehouse = async (data: any, warehouseId: number) => {
     try {
         const response = await axios({
             ...UPDATE_WAREHOUSE_BY_ID,
@@ -77,6 +79,45 @@ export const editWarehouse = async (data: any, warehouseId: string) => {
         return response;
     } catch (e) {
         console.error("Edit a warehouse failed:", e);
+        return null;
+    }
+};
+
+//edit warehouse recycle capacity by id
+export const editWarehouseRecycleCapacity = async (
+    data: any,
+    warehouseRecycId: number
+) => {
+    try {
+        const response = await axios({
+            ...UPDATE_RECYCLE_CAPACITY_BY_ID,
+            baseURL: collectionPointAPI.baseURL,
+            data: data,
+            params: {
+                warehouseRecycId: warehouseRecycId,
+            },
+        });
+        return response;
+    } catch (e) {
+        console.error("Edit a warehouse recycle capacity failed:", e);
+        return null;
+    }
+};
+
+//edit warehouse status by id
+export const editWarehouseStatus = async (data: any, warehouseId: number) => {
+    try {
+        const response = await axios({
+            ...UPDATE_WAREHOUSE_STATUS_BY_ID,
+            baseURL: collectionPointAPI.baseURL,
+            data: data,
+            params: {
+                warehouseId: warehouseId,
+            },
+        });
+        return response;
+    } catch (e) {
+        console.error("Edit a warehouse status failed:", e);
         return null;
     }
 };
