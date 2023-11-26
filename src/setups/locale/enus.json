@@ -95,6 +95,8 @@
         "recycle_type": "Recycle Type", 
         "weight": "please input weight",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "open": "Open",
+        "close": "Close"
     }
 }
