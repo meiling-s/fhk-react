@@ -1,4 +1,10 @@
-import { FunctionComponent, useCallback, ReactNode, useState, useEffect } from 'react'
+import {
+  FunctionComponent,
+  useCallback,
+  ReactNode,
+  useState,
+  useEffect
+} from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
@@ -7,21 +13,10 @@ import { ADD_ICON } from '../../../themes/icons'
 import AddWarehouse from '../../../components/AddWarehouse'
 import TableBase from '../../../components/TableBase'
 import { useTranslation } from 'react-i18next'
-import { getAllWarehouse } from "../../../APICalls/test";
-
-// interface WarehouseFormData {
-//   id: string
-//   traditionalName: string
-//   simplifiedName: string
-//   englishName: string
-//   location: string
-//   place: string
-//   status: string
-//   recyclableSubcategories: string
-// }
+import { getAllWarehouse } from '../../../APICalls/test'
 
 interface Warehouse {
-  id: string
+  id: number
   warehouseNameTchi: string
   warehouseNameSchi: string
   warehouseNameEng: string
@@ -33,7 +28,7 @@ interface Warehouse {
 }
 
 type TableRow = {
-  [key: string]: string | number | null
+  [key: string]: any
 }
 
 const Warehouse: FunctionComponent = () => {
@@ -44,66 +39,24 @@ const Warehouse: FunctionComponent = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
-  const [rowId, setRowId] = useState<string>('1')
+  const [rowId, setRowId] = useState<number>()
   const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
-  // const [warehouseItems, setWarehouseItems] = useState([
-  //   {
-  //     id: '1',
-  //     traditionalName: '火炭',
-  //     simplifiedName: '火炭',
-  //     englishName: 'Fo Tan 1',
-  //     location: '是',
-  //     place: '火炭拗背灣街14號',
-  //     status: 'activated',
-  //     recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
-  //   },
-  //   {
-  //     id: '2',
-  //     traditionalName: '火炭',
-  //     simplifiedName: '火炭',
-  //     englishName: 'Fo Tan 2',
-  //     location: '是',
-  //     place: '火炭拗背灣街14號',
-  //     status: 'activated',
-  //     recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
-  //   },
-  //   {
-  //     id: '3',
-  //     traditionalName: '火炭',
-  //     simplifiedName: '火炭',
-  //     englishName: 'Fo Tan 3',
-  //     location: '是',
-  //     place: '火炭拗背灣街14號',
-  //     status: 'activated',
-  //     recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
-  //   },
-  //   {
-  //     id: '4',
-  //     traditionalName: '火炭',
-  //     simplifiedName: '火炭',
-  //     englishName: 'Fo Tan 4',
-  //     location: '是',
-  //     place: '火炭拗背灣街14號',
-  //     status: 'deleted',
-  //     recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
-  //   }
-  // ])
   const headerTitles = [
     {
       type: 'string',
-      field: 'traditionalName',
+      field: 'warehouseNameTchi',
       label: t('warehouse_page.trad_name'),
       width: 150
     },
     {
       type: 'string',
-      field: 'simplifiedName',
+      field: 'warehouseNameSchi',
       label: t('warehouse_page.simp_name'),
       width: 150
     },
     {
       type: 'string',
-      field: 'englishName',
+      field: 'warehouseNameEng',
       label: t('warehouse_page.english_name'),
       width: 150
     },
@@ -115,7 +68,13 @@ const Warehouse: FunctionComponent = () => {
     },
     {
       type: 'string',
-      field: 'place',
+      field: 'physicalFlag',
+      label: t('warehouse_page.place'),
+      width: 100
+    },
+    {
+      type: 'string',
+      field: 'contractNo',
       label: t('warehouse_page.place'),
       width: 100
     },
@@ -127,28 +86,43 @@ const Warehouse: FunctionComponent = () => {
     },
     {
       type: 'string',
-      field: 'recyclableSubcategories',
+      field: 'warehouseRecyc',
       label: t('warehouse_page.recyclable_subcategories'),
       width: 200
     }
   ]
 
-  
+  const transformToTableRow = (warehouse: Warehouse): TableRow => {
+    return {
+      id: warehouse.id,
+      warehouseNameTchi: warehouse.warehouseNameTchi,
+      warehouseNameSchi: warehouse.warehouseNameSchi,
+      warehouseNameEng: warehouse.warehouseNameEng,
+      location: warehouse.location,
+      physicalFlag: warehouse.physicalFlag ? 'yes' : 'no', // Adjust this line
+      status: warehouse.status,
+      contractNo: warehouse.contractNo.join(', '), // Adjust this line
+      warehouseRecyc: warehouse.warehouseRecyc
+        .map((subcategory) => subcategory.subtype)
+        .join(', ') // Adjust this line
+    }
+  }
+
   useEffect(() => {
     const fetchData = async () => {
-        try {
-            const response = await getAllWarehouse(0, 10);
-            if (response) {
-                setWarehouseItems(response.data.content); // Extract the 'data' property
-                console.log(response.data.content);
-            }
-        } catch (error) {
-            console.error(error);
+      try {
+        const response = await getAllWarehouse(0, 10)
+        if (response) {
+          setWarehouseItems(response.data.content.map(transformToTableRow))
+          console.log(response.data.content)
         }
-    };
+      } catch (error) {
+        console.error(error)
+      }
+    }
 
-    fetchData();
-}, []);
+    fetchData()
+  }, [])
 
   const addDataWarehouse = () => {
     setDrawerOpen(true)
@@ -156,7 +130,7 @@ const Warehouse: FunctionComponent = () => {
   }
 
   const handleEdit = (type: string, row: TableRow) => {
-    setRowId(row.id as string)
+    setRowId(row.id)
     setDrawerOpen(true)
     setAction('edit')
   }
@@ -164,7 +138,7 @@ const Warehouse: FunctionComponent = () => {
   const handleDelete = (type: string, row: TableRow) => {
     setDrawerOpen(true)
     setAction('delete')
-    setRowId(row.id as string)
+    setRowId(row.id)
   }
 
   const handleDrawerClose = () => {
@@ -173,11 +147,11 @@ const Warehouse: FunctionComponent = () => {
 
   const handleCheckAll = (checked: boolean) => {
     console.log('checkedAll', checked)
-    // if (checked) {
-    //   setCheckedRows([...warehouseItems]) // Select all rows
-    // } else {
-    //   setCheckedRows([]) // Unselect all rows
-    // }
+    if (checked) {
+      setCheckedRows([...warehouseItems]) // Select all rows
+    } else {
+      setCheckedRows([]) // Unselect all rows
+    }
   }
 
   // Handle selecting/deselecting individual row
@@ -197,7 +171,7 @@ const Warehouse: FunctionComponent = () => {
   const handleOnSubmitData = (
     formData: Warehouse,
     action: string,
-    id?: string
+    id?: number
   ) => {
     if (action == 'add') {
       //real case use post api
@@ -208,7 +182,7 @@ const Warehouse: FunctionComponent = () => {
       //real case use delete api base on id
       // const { idRow } = id
       // if (idRow) {
-      const updatedItems = warehouseItems.filter((item) => item.id !== id)
+      const updatedItems = warehouseItems.filter((item) => item.id != id)
       setWarehouseItems(updatedItems)
       // }
     }
@@ -255,7 +229,7 @@ const Warehouse: FunctionComponent = () => {
                   <Box className="w-full">
                     <TableBase
                       header={headerTitles}
-                      dataRow={warehouseItems}
+                      dataRow={warehouseItems.map(transformToTableRow)}
                       onDelete={(type, row) => handleDelete(action, row)}
                       onEdit={(type, row) => handleEdit(action, row)}
                       checkAll={checkedRows.length === warehouseItems.length}
