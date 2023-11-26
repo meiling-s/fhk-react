@@ -104,17 +104,15 @@ export const UPDATE_WAREHOUSE_BY_ID =  (warehouseId: number) : AxiosRequestConfi
     url: `api/v1/collectors/warehouse/${warehouseId}`,
 });
 
-export const UPDATE_RECYCLE_CAPACITY_BY_ID: AxiosRequestConfig = {
+export const UPDATE_RECYCLE_CAPACITY_BY_ID = (warehouseRecycId: number) : AxiosRequestConfig => ({
     method: "put",
-    // eslint-disable-next-line no-template-curly-in-string
-    url: "api/v1/collectors/warehouseRecyc/${warehouseRecycId}/status",
-};
+    url: `api/v1/collectors/warehouseRecyc/${warehouseRecycId}/status`,
+});
 
-export const UPDATE_WAREHOUSE_STATUS_BY_ID: AxiosRequestConfig = {
+export const UPDATE_WAREHOUSE_STATUS_BY_ID = (warehouseId: number) : AxiosRequestConfig => ({
     method: "put",
-    // eslint-disable-next-line no-template-curly-in-string
-    url: "api/v1/collectors/warehouse/${warehouseId}/status",
-};
+    url: `api/v1/collectors/warehouse/${warehouseId}/status`,
+});
 
 // test
 export const GET_ALL_USERNAME: AxiosRequestConfig = {

@@ -84,12 +84,9 @@ export const editWarehouseRecycleCapacity = async (
 ) => {
     try {
         const response = await axios({
-            ...UPDATE_RECYCLE_CAPACITY_BY_ID,
+            ...UPDATE_RECYCLE_CAPACITY_BY_ID(warehouseRecycId),
             baseURL: collectionPointAPI.baseURL,
             data: data,
-            params: {
-                warehouseRecycId: warehouseRecycId,
-            },
         });
         return response;
     } catch (e) {
@@ -102,12 +99,9 @@ export const editWarehouseRecycleCapacity = async (
 export const editWarehouseStatus = async (data: any, warehouseId: number) => {
     try {
         const response = await axios({
-            ...UPDATE_WAREHOUSE_STATUS_BY_ID,
+            ...UPDATE_WAREHOUSE_STATUS_BY_ID(warehouseId),
             baseURL: collectionPointAPI.baseURL,
             data: data,
-            params: {
-                warehouseId: warehouseId,
-            },
         });
         return response;
     } catch (e) {
