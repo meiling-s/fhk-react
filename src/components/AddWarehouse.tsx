@@ -10,7 +10,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Switcher from './FormComponents/CustomSwitch'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
 import { useTranslation } from 'react-i18next'
-import { createWarehouse, getWarehouseById } from '../APICalls/warehouseManage'
+import { createWarehouse, getWarehouseById, editWarehouse } from '../APICalls/warehouseManage'
 
 interface AddWarehouseProps {
   drawerOpen: boolean
@@ -86,30 +86,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         }
       }
       warehouseDatById()
-      // Assuming you have some sample data for edit action
-      //   const editData: WarehouseFormData = {
-      //     id: 9,
-      //     warehouseNameTchi: 'Sample Warehouse Tchi',
-      //     warehouseNameSchi: 'Sample Warehouse Schi',
-      //     warehouseNameEng: 'Sample Warehouse Eng',
-      //     location: 'Sample Location',
-      //     physicalFlag: true,
-      //     contractNo: ['123456', '789012'],
-      //     status: 'active',
-      //     warehouseRecyc: [
-      //       {
-      //         recyle_type: '請輸入重量',
-      //         subtype: '紙皮 2',
-      //         weight: '10'
-      //       },
-      //       {
-      //         recyle_type: '請輸入重量',
-      //         subtype: '紙皮 2',
-      //         weight: '20'
-      //       }
-      //     ]
-      //   }
-
     }
   }, [action])
 
@@ -267,18 +243,20 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   //submit data
   const handleSubmit = () => {
     // real form data
-    const warehouseForm = {
-      id: 0,
+    const editWarehouseForm = {
+      id: 1,
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
       warehouseNameEng: nameValue.warehouseNameEng,
       location: place,
       physicalFlag: pysicalLocation,
       contractNo: contractNum,
-      status: status === true ? 'active' : 'deleted',
+      status: 'ACTIVE',
+      createdBy: 'string',
+      updatedBy: 'string',
       warehouseRecyc: recycleCategory
     }
-    console.log('submited data ', warehouseForm)
+    console.log('submited data ', editWarehouseForm)
 
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
@@ -299,21 +277,35 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       typeof onSubmitData === 'function' &&
       typeof rowId === 'number'
     ) {
-      onSubmitData(warehouseForm, action, rowId)
+      onSubmitData(editWarehouseForm, action, rowId)
      
       
     }
-    const fetchData = async () => {
-      try {
-        const response = await createWarehouse(addWarehouseForm)
-        if (response) {
-          console.log(response)
+    if(action === "add"){
+      const createWareHouseData = async () => {
+        try {
+          const response = await createWarehouse(addWarehouseForm)
+          if (response) {
+            console.log(response)
+          }
+        } catch (error) {
+          console.error(error)
         }
-      } catch (error) {
-        console.error(error)
       }
+      createWareHouseData()
+    }else {
+      const editWarehouseData = async () => {
+        try {
+          const response = await editWarehouse(addWarehouseForm, 1)
+          if (response) {
+            console.log(response)
+          }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+      editWarehouseData()
     }
-    fetchData()
 
     handleDrawerClose()
   }
@@ -467,8 +459,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 {t('warehouse_page.status')}
               </div>
               <Switcher
-                onText={t('add_warehouse_page.yes')}
-                offText={t('add_warehouse_page.no')}
+                onText={t('add_warehouse_page.open')}
+                offText={t('add_warehouse_page.close')}
                 defaultValue={status}
                 setState={(newValue) => {
                   setStatus(newValue) // Update the state in your parent component

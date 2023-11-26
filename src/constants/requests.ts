@@ -99,10 +99,10 @@ export const ADD_WAREHOUSE: AxiosRequestConfig = {
     url: "api/v1/collectors/warehouse",
 };
 
-export const UPDATE_WAREHOUSE_BY_ID: AxiosRequestConfig = {
+export const UPDATE_WAREHOUSE_BY_ID =  (warehouseId: number) : AxiosRequestConfig =>  ( {
     method: "put",
-    url: "api/v1/collectors/warehouse",
-};
+    url: `api/v1/collectors/warehouse/${warehouseId}`,
+});
 
 export const UPDATE_RECYCLE_CAPACITY_BY_ID: AxiosRequestConfig = {
     method: "put",

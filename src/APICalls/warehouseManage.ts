@@ -66,12 +66,9 @@ export const createWarehouse = async (data: any) => {
 export const editWarehouse = async (data: any, warehouseId: number) => {
     try {
         const response = await axios({
-            ...UPDATE_WAREHOUSE_BY_ID,
+            ...UPDATE_WAREHOUSE_BY_ID(warehouseId),
             baseURL: collectionPointAPI.baseURL,
             data: data,
-            params: {
-                warehouseId: warehouseId,
-            },
         });
         return response;
     } catch (e) {
