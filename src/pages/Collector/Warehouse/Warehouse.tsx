@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
+import { FunctionComponent, useCallback, ReactNode, useState, useEffect } from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
@@ -7,19 +7,20 @@ import { ADD_ICON } from '../../../themes/icons'
 import AddWarehouse from '../../../components/AddWarehouse'
 import TableBase from '../../../components/TableBase'
 import { useTranslation } from 'react-i18next'
+import { getAllWarehouse } from "../../../APICalls/test";
 
-interface WarehouseFormData {
-  id: string
-  traditionalName: string
-  simplifiedName: string
-  englishName: string
-  location: string
-  place: string
-  status: string
-  recyclableSubcategories: string
-}
+// interface WarehouseFormData {
+//   id: string
+//   traditionalName: string
+//   simplifiedName: string
+//   englishName: string
+//   location: string
+//   place: string
+//   status: string
+//   recyclableSubcategories: string
+// }
 
-interface WarehouseFormDataNew {
+interface Warehouse {
   id: string
   warehouseNameTchi: string
   warehouseNameSchi: string
@@ -44,48 +45,49 @@ const Warehouse: FunctionComponent = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<string>('1')
-  const [warehouseItems, setWarehouseItems] = useState([
-    {
-      id: '1',
-      traditionalName: '火炭',
-      simplifiedName: '火炭',
-      englishName: 'Fo Tan 1',
-      location: '是',
-      place: '火炭拗背灣街14號',
-      status: 'activated',
-      recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
-    },
-    {
-      id: '2',
-      traditionalName: '火炭',
-      simplifiedName: '火炭',
-      englishName: 'Fo Tan 2',
-      location: '是',
-      place: '火炭拗背灣街14號',
-      status: 'activated',
-      recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
-    },
-    {
-      id: '3',
-      traditionalName: '火炭',
-      simplifiedName: '火炭',
-      englishName: 'Fo Tan 3',
-      location: '是',
-      place: '火炭拗背灣街14號',
-      status: 'activated',
-      recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
-    },
-    {
-      id: '4',
-      traditionalName: '火炭',
-      simplifiedName: '火炭',
-      englishName: 'Fo Tan 4',
-      location: '是',
-      place: '火炭拗背灣街14號',
-      status: 'deleted',
-      recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
-    }
-  ])
+  const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
+  // const [warehouseItems, setWarehouseItems] = useState([
+  //   {
+  //     id: '1',
+  //     traditionalName: '火炭',
+  //     simplifiedName: '火炭',
+  //     englishName: 'Fo Tan 1',
+  //     location: '是',
+  //     place: '火炭拗背灣街14號',
+  //     status: 'activated',
+  //     recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
+  //   },
+  //   {
+  //     id: '2',
+  //     traditionalName: '火炭',
+  //     simplifiedName: '火炭',
+  //     englishName: 'Fo Tan 2',
+  //     location: '是',
+  //     place: '火炭拗背灣街14號',
+  //     status: 'activated',
+  //     recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
+  //   },
+  //   {
+  //     id: '3',
+  //     traditionalName: '火炭',
+  //     simplifiedName: '火炭',
+  //     englishName: 'Fo Tan 3',
+  //     location: '是',
+  //     place: '火炭拗背灣街14號',
+  //     status: 'activated',
+  //     recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
+  //   },
+  //   {
+  //     id: '4',
+  //     traditionalName: '火炭',
+  //     simplifiedName: '火炭',
+  //     englishName: 'Fo Tan 4',
+  //     location: '是',
+  //     place: '火炭拗背灣街14號',
+  //     status: 'deleted',
+  //     recyclableSubcategories: '紙張、金屬、塑膠、玻璃樽'
+  //   }
+  // ])
   const headerTitles = [
     {
       type: 'string',
@@ -131,6 +133,23 @@ const Warehouse: FunctionComponent = () => {
     }
   ]
 
+  
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const response = await getAllWarehouse(0, 10);
+            if (response) {
+                setWarehouseItems(response.data.content); // Extract the 'data' property
+                console.log(response.data.content);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    fetchData();
+}, []);
+
   const addDataWarehouse = () => {
     setDrawerOpen(true)
     setAction('add')
@@ -154,11 +173,11 @@ const Warehouse: FunctionComponent = () => {
 
   const handleCheckAll = (checked: boolean) => {
     console.log('checkedAll', checked)
-    if (checked) {
-      setCheckedRows([...warehouseItems]) // Select all rows
-    } else {
-      setCheckedRows([]) // Unselect all rows
-    }
+    // if (checked) {
+    //   setCheckedRows([...warehouseItems]) // Select all rows
+    // } else {
+    //   setCheckedRows([]) // Unselect all rows
+    // }
   }
 
   // Handle selecting/deselecting individual row
@@ -176,7 +195,7 @@ const Warehouse: FunctionComponent = () => {
   }
 
   const handleOnSubmitData = (
-    formData: WarehouseFormDataNew,
+    formData: Warehouse,
     action: string,
     id?: string
   ) => {

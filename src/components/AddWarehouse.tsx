@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Switcher from './FormComponents/CustomSwitch'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
 import { useTranslation } from 'react-i18next'
+import { createWarehouse } from "../APICalls/warehouseManage";
 
 interface AddWarehouseProps {
   drawerOpen: boolean
@@ -34,6 +35,21 @@ interface WarehouseFormData {
   status: string
   warehouseRecyc: { recyle_type: string; subtype: string; weight: string }[]
 }
+
+interface WarehouseNewForm {
+  warehouseNameTchi: string
+  warehouseNameSchi: string
+  warehouseNameEng: string
+  location: string
+  locationGps: number[]
+  physicalFlg: boolean
+  contractNo: string[]
+  status: string
+  createdBy: string
+  updatedBy: string
+  warehouseRecyc: {recycTypeId: string; recycSubtypeId: string; recycSubtypeCapacity: string }
+}
+
 
 interface nameFields {
   warehouseNameTchi: string
@@ -274,6 +290,46 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     ) {
       onSubmitData(warehouseForm, action, rowId as 'string')
     }
+
+    // api call
+    const newWarehouseForm = {
+      "warehouseNameTchi": "string",
+      "warehouseNameSchi": "string",
+      "warehouseNameEng": "string",
+      "location": "string",
+      "locationGps": [
+        0
+      ],
+      "physicalFlg": true,
+      "contractNo": [
+        "string"
+      ],
+      "status": "ACTIVE",
+      "createdBy": "string",
+      "updatedBy": "string",
+      "warehouseRecyc": [
+        {
+          "recycTypeId": "string",
+          "recycSubtypeId": "string",
+          "recycSubtypeCapacity": 0,
+          "recycTypeCapacity": 0
+        }
+      ]
+    }
+
+    const fetchData = async () => {
+      try {
+          const response = await createWarehouse(newWarehouseForm);
+          if (response) {
+              //setWarehouses(response.data.content); // Extract the 'data' property
+              console.log(response);
+          }
+      } catch (error) {
+          console.error(error);
+      }
+  };
+
+    fetchData()
     handleDrawerClose()
   }
 
