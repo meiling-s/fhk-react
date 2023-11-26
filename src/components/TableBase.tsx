@@ -42,6 +42,7 @@ const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
   width,
   status
 }) => {
+  const rowStatus = status?.toLocaleLowerCase()
   return (
     <div
       style={{
@@ -51,13 +52,20 @@ const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
     >
       <div
         className={`${
-          status === 'deleted'
+          rowStatus === 'deleted'
             ? 'bg-rose-300 text-rose-800'
+            :   rowStatus === 'inactive'
+            ? 'bg-yellow-100 text-yellow-800'
             : 'bg-green-light text-green-primary'
         } rounded-lg  flex flex-row items-center justify-center py-1 px-[15px]`}
       >
         <div className="relative tracking-[1px] leading-[20px] font-medium">
-          {children === 'deleted' ? '刪除' : '已啓用'}
+          { rowStatus === 'deleted' 
+            ? '刪除' 
+            : rowStatus === 'inactive' 
+            ?'不活跃的'
+            :'已啓用'
+          }
         </div>
       </div>
     </div>

@@ -38,7 +38,7 @@ interface WarehouseFormData {
   warehouseNameSchi: string
   warehouseNameEng: string
   location: string
-  physicalFlag: boolean
+  physicalFlg: string | boolean
   contractNo: string[]
   status: string
   warehouseRecyc: recyleItem[]
@@ -78,7 +78,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             })
             setContractNum([...warehouse.contractNo])
             setPlace(warehouse.location)
-            setPysicalLocation(warehouse.physicalFlag)
+            setPysicalLocation(warehouse.physicalFlg)
             setStatus(warehouse.status === 'active')
             setRecycleCategory([...warehouse.warehouseRecyc])
           }
@@ -134,7 +134,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   // contract field
-  const initContractNum: string[] = ['', '']
+  const initContractNum: string[] = ['']
   const [contractNum, setContractNum] = useState<string[]>(initContractNum)
 
   const handleRemoveContact = (indexToRemove: number) => {
@@ -166,7 +166,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   // pysical location field
   const [pysicalLocation, setPysicalLocation] = useState(false)
-
+  
   // status field
   const [status, setStatus] = useState(false)
 
@@ -175,12 +175,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const subType = ['請輸入重量 1', '紙皮 2', '請輸入重量 3']
 
   const initRecyleCategory: recyleItem[] = [
-    {
-      recycTypeId: '',
-      recycSubtypeId: '',
-      recycSubtypeCapacity: 0,
-      recycTypeCapacity: 0
-    },
     {
       recycTypeId: '',
       recycSubtypeId: '',
@@ -251,14 +245,18 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       warehouseNameSchi: nameValue.warehouseNameSchi,
       warehouseNameEng: nameValue.warehouseNameEng,
       location: place,
-      physicalFlag: pysicalLocation,
+      physicalFlg: pysicalLocation,
       contractNo: contractNum,
       status: 'ACTIVE',
       createdBy: 'string',
       updatedBy: 'string',
       warehouseRecyc: recycleCategory
     }
-    console.log('submited data ', editWarehouseForm)
+
+    let statusWarehouse = status ? 'ACTIVE': 'INACTIVE'
+    if(action == 'delete') {
+      statusWarehouse = 'DELETED'
+    }
 
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
@@ -266,9 +264,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       warehouseNameEng: nameValue.warehouseNameEng,
       location: place,
       locationGps: [0],
-      physicalFlag: pysicalLocation,
+      physicalFlg: pysicalLocation,
       contractNo: contractNum,
-      status: 'ACTIVE',
+      status: statusWarehouse,
       createdBy: 'string',
       updatedBy: 'string',
       warehouseRecyc: recycleCategory
@@ -280,15 +278,15 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       typeof rowId === 'number'
     ) {
       onSubmitData(editWarehouseForm, action, rowId)
-     
-      
     }
+
+    // MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
     if(action === "add"){
       const createWareHouseData = async () => {
         try {
           const response = await createWarehouse(addWarehouseForm)
           if (response) {
-            console.log(response)
+            console.log('added', response)
           }
         } catch (error) {
           console.error(error)
@@ -300,7 +298,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         try {
           const response = await editWarehouse(addWarehouseForm, rowId)
           if (response) {
-            console.log(response)
+            console.log('edited', response)
           }
         } catch (error) {
           console.error(error)
@@ -368,9 +366,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               <Switcher
                 onText={t('add_warehouse_page.yes')}
                 offText={t('add_warehouse_page.no')}
+                disabled= {action === 'delete'}
                 defaultValue={pysicalLocation}
                 setState={(newValue) => {
-                  setPysicalLocation(newValue) // Update the state in your parent component
+                  setPysicalLocation(newValue)
                 }}
               />
             </div>
@@ -463,9 +462,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               <Switcher
                 onText={t('add_warehouse_page.open')}
                 offText={t('add_warehouse_page.close')}
+                disabled= {action === 'delete'}
                 defaultValue={status}
                 setState={(newValue) => {
-                  setStatus(newValue) // Update the state in your parent component
+                  setStatus(newValue)
                 }}
               />
             </div>

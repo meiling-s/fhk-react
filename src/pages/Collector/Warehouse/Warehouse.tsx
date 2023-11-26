@@ -25,7 +25,7 @@ interface Warehouse {
   warehouseNameSchi: string
   warehouseNameEng: string
   location: string
-  physicalFlag: boolean
+  physicalFlg: string | boolean
   contractNo: string[]
   status: string
   // warehouseRecyc: string
@@ -79,7 +79,7 @@ const Warehouse: FunctionComponent = () => {
     },
     {
       type: 'string',
-      field: 'physicalFlag',
+      field: 'physicalFlg',
       label: t('warehouse_page.place'),
       width: 100
     },
@@ -125,9 +125,11 @@ const Warehouse: FunctionComponent = () => {
       //real case use put api
       //setWarehouseItems([...warehouseItems, formData])
     }
+    fetchData()
   }
 
   const transformToTableRow = (warehouse: Warehouse): TableRow => {
+   
     return {
       id:  warehouse.warehouseId,
       warehouseId: warehouse.warehouseId,
@@ -135,7 +137,7 @@ const Warehouse: FunctionComponent = () => {
       warehouseNameSchi: warehouse.warehouseNameSchi,
       warehouseNameEng: warehouse.warehouseNameEng,
       location: warehouse.location,
-      physicalFlag: warehouse.physicalFlag ? 'yes' : 'no',
+      physicalFlg:  warehouse.physicalFlg ? "YES" : 'NO',
       status: warehouse.status,
       contractNo: warehouse.contractNo,
       //warehouseRecyc: warehouse.warehouseRecyc.map(item => `${item.recycSubtypeId},  ${item.recycTypeId},  ${item.warehouseRecycId}` ).join(", ")
@@ -143,19 +145,19 @@ const Warehouse: FunctionComponent = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getAllWarehouse(0, 10)
-        if (response) {
-          setWarehouseItems(response.data.content.map(transformToTableRow))
-          console.log(response.data.content.map(transformToTableRow))
-        }
-      } catch (error) {
-        console.error(error)
+  const fetchData = async () => {
+    try {
+      const response = await getAllWarehouse(0, 10)
+      if (response) {
+        setWarehouseItems(response.data.content.map(transformToTableRow))
+        console.log("fetch DATA", response.data.content)
       }
+    } catch (error) {
+      console.error(error)
     }
+  }
 
+  useEffect(() => {
     fetchData()
     setCheckedRows([])
   }, [action])
@@ -170,6 +172,7 @@ const Warehouse: FunctionComponent = () => {
     console.log(row)
     setDrawerOpen(true)
     setAction('edit')
+    fetchData()
   }
 
   const handleDelete = (type: string, row: TableRow) => {
@@ -242,7 +245,7 @@ const Warehouse: FunctionComponent = () => {
                   <Box className="w-full">
                     <TableBase
                       header={headerTitles}
-                      dataRow={warehouseItems.map(transformToTableRow)}
+                      dataRow={warehouseItems}
                       onDelete={(type, row) => handleDelete(action, row)}
                       onEdit={(type, row) => handleEdit(action, row)}
                       checkAll={checkedRows.length === warehouseItems.length}
