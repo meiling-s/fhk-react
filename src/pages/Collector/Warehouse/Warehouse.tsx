@@ -24,8 +24,10 @@ interface Warehouse {
   physicalFlag: boolean
   contractNo: string[]
   status: string
-  warehouseRecyc: { recyle_type: string; subtype: string; weight: string }[]
+  warehouseRecyc: string
 }
+
+
 
 type TableRow = {
   [key: string]: any
@@ -93,18 +95,18 @@ const Warehouse: FunctionComponent = () => {
   ]
 
   const transformToTableRow = (warehouse: Warehouse): TableRow => {
+  
     return {
       id: warehouse.id,
       warehouseNameTchi: warehouse.warehouseNameTchi,
       warehouseNameSchi: warehouse.warehouseNameSchi,
       warehouseNameEng: warehouse.warehouseNameEng,
       location: warehouse.location,
-      physicalFlag: warehouse.physicalFlag ? 'yes' : 'no', // Adjust this line
+      physicalFlag: warehouse.physicalFlag ? 'yes' : 'no', 
       status: warehouse.status,
-      contractNo: warehouse.contractNo.join(', '), // Adjust this line
-      warehouseRecyc: warehouse.warehouseRecyc
-        .map((subcategory) => subcategory.subtype)
-        .join(', ') // Adjust this line
+      contractNo: warehouse.contractNo, 
+      //warehouseRecyc: warehouse.warehouseRecyc.map(item => `${item.recycSubtypeId},  ${item.recycTypeId},  ${item.warehouseRecycId}` ).join(", ")
+      warehouseRecyc: "warehouseRecyc"
     }
   }
 
