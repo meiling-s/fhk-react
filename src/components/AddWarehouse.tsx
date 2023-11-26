@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useState } from 'react'
+import { FunctionComponent, useCallback, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from './RightOverlayForm'
 import TextField from '@mui/material/TextField'
@@ -7,7 +7,6 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-// import Switcher from './Switcher'
 import Switcher from './FormComponents/CustomSwitch'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
 import { useTranslation } from 'react-i18next'
@@ -26,13 +25,20 @@ interface AddWarehouseProps {
 
 interface WarehouseFormData {
   id: string
-  traditionalName: string
-  simplifiedName: string
-  englishName: string
+  warehouseNameTchi: string
+  warehouseNameSchi: string
+  warehouseNameEng: string
   location: string
-  place: string
+  physicalFlag: boolean
+  contractNo: string[]
   status: string
-  recyclableSubcategories: string
+  warehouseRecyc: { recyle_type: string; subtype: string; weight: string }[]
+}
+
+interface nameFields {
+  warehouseNameTchi: string
+  warehouseNameSchi: string
+  warehouseNameEng: string
 }
 
 const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
@@ -43,28 +49,131 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   rowId
 }) => {
   const { t } = useTranslation()
-  const [switchState, setSwitchState] = useState(false)
-  const initContactNumber: { contact_number: string }[] = [
-    { contact_number: '' },
-    { contact_number: '' }
-  ]
 
-  const FormData1_3 = [
+  //mapping data
+  useEffect(() => {
+    if (action === 'add') {
+      resetForm()
+    } else if (action === 'edit' || action === 'delete') {
+      // Assuming you have some sample data for edit action
+      const editData: WarehouseFormData = {
+        id: '1',
+        warehouseNameTchi: 'Sample Warehouse Tchi',
+        warehouseNameSchi: 'Sample Warehouse Schi',
+        warehouseNameEng: 'Sample Warehouse Eng',
+        location: 'Sample Location',
+        physicalFlag: true,
+        contractNo: ['123456', '789012'],
+        status: 'active',
+        warehouseRecyc: [
+          {
+            recyle_type: '請輸入重量',
+            subtype: '紙皮 2',
+            weight: '10'
+          },
+          {
+            recyle_type: '請輸入重量',
+            subtype: '紙皮 2',
+            weight: '20'
+          }
+        ]
+      }
+
+      setNamesField({
+        warehouseNameTchi: editData.warehouseNameTchi,
+        warehouseNameSchi: editData.warehouseNameSchi,
+        warehouseNameEng: editData.warehouseNameEng
+      })
+      setContractNum([...editData.contractNo])
+      setPlace(editData.location)
+      setPysicalLocation(editData.physicalFlag)
+      setStatus(editData.status === 'active')
+
+      setRecycleCategory([...editData.warehouseRecyc])
+    }
+  }, [action])
+
+  const resetForm = () => {
+    setNamesField({
+      warehouseNameTchi: '',
+      warehouseNameSchi: '',
+      warehouseNameEng: ''
+    })
+    setContractNum([...initContractNum])
+    setPlace('')
+    setPysicalLocation(false)
+    setStatus(false)
+    setRecycleCategory([...initRecyleCategory])
+  }
+
+  // name field
+  const name_fields = [
     {
+      field: 'warehouseNameTchi',
       label: t('warehouse_page.trad_name'),
       placeholder: t('add_warehouse_page.type_name')
     },
     {
+      field: 'warehouseNameSchi',
       label: t('warehouse_page.simp_name'),
       placeholder: t('add_warehouse_page.type_name')
     },
     {
+      field: 'warehouseNameEng',
       label: t('warehouse_page.english_name'),
       placeholder: 'Please type a name'
     }
   ]
 
-  // get opion RecyleCategory form api
+  const [nameValue, setNamesField] = useState<nameFields>({
+    warehouseNameTchi: '',
+    warehouseNameSchi: '',
+    warehouseNameEng: ''
+  })
+
+  const handleChange = (fieldName: string, value: string) => {
+    setNamesField({ ...nameValue, [fieldName]: value })
+    console.log('nameValue', nameValue)
+  }
+
+  // contract field
+  const initContractNum: string[] = ['', '']
+  const [contractNum, setContractNum] = useState<string[]>(initContractNum)
+
+  const handleRemoveContact = (indexToRemove: number) => {
+    const updatedContractNum = contractNum.filter(
+      (_, index) => index !== indexToRemove
+    )
+    setContractNum(updatedContractNum)
+  }
+
+  const handleAddContact = () => {
+    const updatedContractNum = [...contractNum, '']
+    setContractNum(updatedContractNum)
+  }
+
+  const handleContactonChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const updatedContacts = [...contractNum]
+    updatedContacts[index] = event.target.value
+    setContractNum(updatedContacts)
+  }
+
+  // place field
+  const [place, setPlace] = useState('')
+  const handlePlaceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPlace(event.target.value)
+  }
+
+  // pysical location field
+  const [pysicalLocation, setPysicalLocation] = useState(false)
+
+  // status field
+  const [status, setStatus] = useState(false)
+
+  // recyle category field
   const recycleType = ['請輸入重量', '紙皮', '請輸入重量']
   const subType = ['請輸入重量 1', '紙皮 2', '請輸入重量 3']
 
@@ -85,25 +194,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   ]
 
-  const [contactNumber, setContactNumber] =
-    useState<{ contact_number: string }[]>(initContactNumber)
-
   const [recycleCategory, setRecycleCategory] =
     useState<{ recyle_type: string; subtype: string; weight: string }[]>(
       initRecyleCategory
     )
-
-  const handleRemoveContact = (indexToRemove: number) => {
-    const updatedContactNumber = contactNumber.filter(
-      (_, index) => index !== indexToRemove
-    )
-    setContactNumber(updatedContactNumber)
-  }
-
-  const handleAddContact = () => {
-    const updatedContactNumber = [...contactNumber, { contact_number: '' }]
-    setContactNumber(updatedContactNumber)
-  }
 
   const handleAddReycleCategory = () => {
     const updatedrecycleCategory = [
@@ -120,29 +214,65 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setRecycleCategory(updatedRecycleCategory)
   }
 
-  const [age, setAge] = useState('')
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value)
+  const handleChangeRecycleType = (
+    event: SelectChangeEvent<string>,
+    index: number
+  ) => {
+    const updatedRecycleCategory = [...recycleCategory]
+    updatedRecycleCategory[index].recyle_type = event.target.value
+    setRecycleCategory(updatedRecycleCategory)
   }
 
+  const handleChangeSubtype = (
+    event: SelectChangeEvent<string>,
+    index: number
+  ) => {
+    const updatedRecycleCategory = [...recycleCategory]
+    updatedRecycleCategory[index].subtype = event.target.value as string
+    setRecycleCategory(updatedRecycleCategory)
+  }
+
+  const handleChangeWeight = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const updatedRecycleCategory = [...recycleCategory]
+    updatedRecycleCategory[index].weight = event.target.value
+    setRecycleCategory(updatedRecycleCategory)
+  }
+
+  //submit data
   const handleSubmit = () => {
-    const formData = {
-      id: '5',
-      traditionalName: 'New Warehouse',
-      simplifiedName: 'New Simplified Warehouse',
-      englishName: 'New English Warehouse',
-      location: 'Yes',
-      place: 'New Warehouse Location',
-      status: 'activated',
-      recyclableSubcategories: 'New Recyclable Categories'
+    // real form data
+    const warehouseForm = {
+      id: '',
+      warehouseNameTchi: nameValue.warehouseNameTchi,
+      warehouseNameSchi: nameValue.warehouseNameSchi,
+      warehouseNameEng: nameValue.warehouseNameEng,
+      location: place,
+      physicalFlag: pysicalLocation,
+      contractNo: contractNum,
+      status: status === true ? 'active' : 'deleted',
+      warehouseRecyc: recycleCategory
     }
+    console.log('submited data ', warehouseForm)
+
+    // const formData = {
+    //   id: '5',
+    //   traditionalName: 'New Warehouse',
+    //   simplifiedName: 'New Simplified Warehouse',
+    //   englishName: 'New English Warehouse',
+    //   location: 'Yes',
+    //   place: 'New Warehouse Location',
+    //   status: 'activated',
+    //   recyclableSubcategories: 'New Recyclable Categories'
+    // }
     if (
       onSubmitData &&
       typeof onSubmitData === 'function' &&
       typeof rowId === 'string'
     ) {
-      onSubmitData(formData, action, rowId as 'string')
+      onSubmitData(warehouseForm, action, rowId as 'string')
     }
     handleDrawerClose()
   }
@@ -164,13 +294,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           onDelete: handleSubmit
         }}
       >
-        {/* child / or centent RightOverlayForm */}
+        {/* form warehouse */}
         <div
           style={{ borderTop: '1px solid lightgrey' }}
           className="form-container"
         >
           <div className="self-stretch flex flex-col items-start justify-start pt-[25px] px-[25px] pb-[75px] gap-[25px] text-left text-smi text-grey-middle">
-            {FormData1_3.map((item, index) => (
+            {name_fields.map((item, index) => (
               <div
                 key={index}
                 className="self-stretch flex flex-col items-start justify-center gap-2"
@@ -180,6 +310,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 </div>
                 <FormControl fullWidth variant="standard">
                   <TextField
+                    value={nameValue[item.field as keyof nameFields]}
+                    onChange={(e) => handleChange(item.field, e.target.value)}
                     fullWidth
                     placeholder={item.placeholder}
                     id={`fullWidth-${index}`}
@@ -193,18 +325,17 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 </FormControl>
               </div>
             ))}
-            {/* <Switcher /> */}
+            {/* <Switcher  Physical location/> */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <div className="relative tracking-[1px] leading-[20px] text-left">
                 {t('warehouse_page.location')}
               </div>
-              {/* <Switcher /> */}
               <Switcher
-                onText="On"
-                offText="Off"
-                defaultValue={switchState}
+                onText={t('add_warehouse_page.yes')}
+                offText={t('add_warehouse_page.no')}
+                defaultValue={pysicalLocation}
                 setState={(newValue) => {
-                  setSwitchState(newValue) // Update the state in your parent component
+                  setPysicalLocation(newValue) // Update the state in your parent component
                 }}
               />
             </div>
@@ -215,10 +346,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               </div>
               <div className="self-stretch flex flex-col items-start justify-start">
                 <div className="self-stretch ">
-                  {contactNumber.map((item, index) => (
+                  {contractNum.map((contact, index) => (
                     <div className="flex flex-row items-center justify-start gap-[8px] mb-2">
                       <FormControl fullWidth variant="standard">
                         <TextField
+                          value={contractNum[index]}
                           fullWidth
                           placeholder={t('col.enterNo')}
                           id="fullWidth"
@@ -228,20 +360,30 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                           }}
                           sx={styles.inputState}
                           disabled={action === 'delete'}
+                          onChange={(
+                            event: React.ChangeEvent<
+                              HTMLInputElement | HTMLTextAreaElement
+                            >
+                          ) => {
+                            handleContactonChange(
+                              event as React.ChangeEvent<HTMLInputElement>,
+                              index
+                            )
+                          }}
                         />
                       </FormControl>
-                      {index === contactNumber.length - 1 ? (
+                      {index === contractNum.length - 1 ? (
                         <ADD_CIRCLE_ICON
                           fontSize="small"
                           className="text-green-primary cursor-pointer"
                           onClick={handleAddContact}
                         />
                       ) : (
-                        index !== contactNumber.length - 1 && (
+                        index !== contractNum.length - 1 && (
                           <REMOVE_CIRCLE_ICON
                             fontSize="small"
                             className={`text-grey-light ${
-                              contactNumber.length === 1
+                              contractNum.length === 1
                                 ? 'cursor-not-allowed'
                                 : 'cursor-pointer'
                             } `}
@@ -254,6 +396,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 </div>
               </div>
             </div>
+            {/* Adress field */}
             <div className="self-stretch flex flex-col items-start justify-center gap-[8px]">
               <div className="relative tracking-[1px] leading-[20px]">
                 {t('warehouse_page.place')}
@@ -261,10 +404,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               <div className="self-stretch flex flex-col items-start justify-center gap-[8px] text-center text-mini text-grey-darker">
                 <FormControl fullWidth variant="standard">
                   <TextField
+                    value={place}
+                    onChange={handlePlaceChange}
                     fullWidth
                     multiline
-                    placeholder={t('col.enterNo')}
-                    id="fullWidth"
+                    placeholder={t('add_warehouse_page.place')}
                     rows={4}
                     InputLabelProps={{ shrink: false }}
                     InputProps={{
@@ -274,45 +418,23 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                     disabled={action === 'delete'}
                   />
                 </FormControl>
-                <div className="self-stretch rounded-xl bg-white overflow-hidden hidden flex-row items-center justify-between py-[15px] px-5 text-grey-middle border-[1px] border-solid border-grey-line">
-                  <img
-                    className="relative w-6 h-6 overflow-hidden shrink-0 hidden"
-                    alt=""
-                    src="/search2.svg"
-                  />
-                  <div className="relative tracking-[1.5px] leading-[20px]">
-                    請輸入回收地點
-                  </div>
-                  <img
-                    className="relative w-6 h-6 overflow-hidden shrink-0"
-                    alt=""
-                    src="/location.svg"
-                  />
-                </div>
               </div>
             </div>
-            <div className="rounded-6xl bg-green-primary overflow-hidden hidden flex-row items-center justify-center py-2 px-5 gap-[5px] text-center text-white">
-              <img
-                className="relative w-[18px] h-[18px] hidden"
-                alt=""
-                src="/vuesaxlinearadd4.svg"
-              />
-              <b className="relative tracking-[1px] leading-[20px]">確定</b>
-            </div>
+            {/* <Switcher status/> */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <div className="relative tracking-[1px] leading-[20px] text-left">
                 {t('warehouse_page.status')}
               </div>
-              {/* <Switcher /> */}
               <Switcher
-                onText="On"
-                offText="Off"
-                defaultValue={switchState}
+                onText={t('add_warehouse_page.yes')}
+                offText={t('add_warehouse_page.no')}
+                defaultValue={status}
                 setState={(newValue) => {
-                  setSwitchState(newValue) // Update the state in your parent component
+                  setStatus(newValue) // Update the state in your parent component
                 }}
               />
             </div>
+            {/* Recyle category */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px]">
               <div className="relative tracking-[1px] leading-[20px]">
                 {t('warehouse_page.recyclable_subcategories')}
@@ -324,8 +446,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                       <div className="flex justify-center items-center gap-2 mb-2">
                         <FormControl sx={{ m: 1, width: '100%' }}>
                           <Select
-                            value={age}
-                            onChange={handleChange}
+                            value={item.recyle_type}
+                            onChange={(event: SelectChangeEvent<string>) =>
+                              handleChangeRecycleType(event, index)
+                            }
                             displayEmpty
                             disabled={action === 'delete'}
                             inputProps={{ 'aria-label': 'Without label' }}
@@ -334,37 +458,54 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             }}
                           >
                             <MenuItem value="">
-                              <em>None</em>
+                              <em>{t('add_warehouse_page.recycle_type')}</em>
                             </MenuItem>
                             {recycleType.map((item, index) => (
-                              <MenuItem value={10}>{item}</MenuItem>
+                              <MenuItem value={item} key={index}>
+                                {item}
+                              </MenuItem>
                             ))}
                           </Select>
                         </FormControl>
                         <FormControl sx={{ m: 1, width: '100%' }}>
                           <Select
-                            value={age}
-                            onChange={handleChange}
+                            value={item.subtype}
+                            onChange={(event: SelectChangeEvent<string>) =>
+                              handleChangeSubtype(event, index)
+                            }
                             displayEmpty
                             disabled={action === 'delete'}
                             inputProps={{ 'aria-label': 'Without label' }}
                             sx={{
-                              borderRadius: '12px' // Adjust the value as needed
+                              borderRadius: '12px'
                             }}
                           >
                             <MenuItem value="">
-                              <em>None</em>
+                              <em>{t('add_warehouse_page.subtype')}</em>
                             </MenuItem>
                             {subType.map((item, index) => (
-                              <MenuItem value={10}>{item}</MenuItem>
+                              <MenuItem value={item} key={index}>
+                                {item}
+                              </MenuItem>
                             ))}
                           </Select>
                         </FormControl>
                         <FormControl fullWidth variant="standard">
                           <OutlinedInput
+                            value={item.weight}
+                            onChange={(
+                              event: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >
+                            ) =>
+                              handleChangeWeight(
+                                event as React.ChangeEvent<HTMLInputElement>,
+                                index
+                              )
+                            }
                             fullWidth
                             id="outlined-adornment-weight"
-                            placeholder={t('col.enterNo')}
+                            placeholder={t('add_warehouse_page.weight')}
                             endAdornment={
                               <InputAdornment position="end">kg</InputAdornment>
                             }
@@ -388,7 +529,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <REMOVE_CIRCLE_ICON
                               fontSize="small"
                               className={`text-grey-light ${
-                                contactNumber.length === 1
+                                contractNum.length === 1
                                   ? 'cursor-not-allowed'
                                   : 'cursor-pointer'
                               } `}

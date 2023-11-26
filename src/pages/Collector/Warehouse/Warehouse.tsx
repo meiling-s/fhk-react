@@ -19,6 +19,18 @@ interface WarehouseFormData {
   recyclableSubcategories: string
 }
 
+interface WarehouseFormDataNew {
+  id: string
+  warehouseNameTchi: string
+  warehouseNameSchi: string
+  warehouseNameEng: string
+  location: string
+  physicalFlag: boolean
+  contractNo: string[]
+  status: string
+  warehouseRecyc: { recyle_type: string; subtype: string; weight: string }[]
+}
+
 type TableRow = {
   [key: string]: string | number | null
 }
@@ -164,13 +176,13 @@ const Warehouse: FunctionComponent = () => {
   }
 
   const handleOnSubmitData = (
-    formData: WarehouseFormData,
+    formData: WarehouseFormDataNew,
     action: string,
     id?: string
   ) => {
     if (action == 'add') {
       //real case use post api
-      setWarehouseItems([...warehouseItems, formData])
+      // setWarehouseItems([...warehouseItems, formData])
     }
 
     if (action == 'delete') {

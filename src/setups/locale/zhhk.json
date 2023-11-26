@@ -88,6 +88,12 @@
     "add_warehouse_page": {
         "save": "儲存<",
         "delete": "刪除",
-        "type_name": "请输入名称"
+        "type_name": "请输入名称",
+        "place" : "火炭拗背灣街14號",
+        "subtype" : "亞型",
+        "recycle_type": "可回收型", 
+        "weight": "請輸入重量",
+        "yes": "是",
+        "no": "否"
     }
 }
