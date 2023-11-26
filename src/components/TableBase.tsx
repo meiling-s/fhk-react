@@ -75,6 +75,7 @@ const TableBase: React.FC<TableProps> = ({
   checkedRows,
   onCheckRow
 }) => {
+  const sortedRow = dataRow.sort((a,b) => a.id -b.id)
   const handleDelete = (row: TableRow) => {
     if (onDelete) {
       onDelete('delete', row)
@@ -128,7 +129,7 @@ const TableBase: React.FC<TableProps> = ({
           </tr>
         </thead>
         <tbody className="overflow-x-scroll">
-          {dataRow.map((item, rowIndex) => (
+          {sortedRow.map((item, rowIndex) => (
             <tr
               key={rowIndex}
               className={`overflow-x-auto overflow-y-hidden whitespace-nowrap bg-white rounded-lg mb-3 ${

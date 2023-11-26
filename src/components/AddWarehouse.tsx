@@ -32,6 +32,7 @@ interface recyleItem {
 }
 
 interface WarehouseFormData {
+  id: number
   warehouseId: number
   warehouseNameTchi: string
   warehouseNameSchi: string
@@ -244,7 +245,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const handleSubmit = () => {
     // real form data
     const editWarehouseForm = {
-      warehouseId: 1,
+      id: rowId,
+      warehouseId: rowId,
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
       warehouseNameEng: nameValue.warehouseNameEng,

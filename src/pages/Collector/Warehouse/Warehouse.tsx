@@ -19,6 +19,7 @@ import {
 } from '../../../APICalls/warehouseManage'
 
 interface Warehouse {
+  id: number
   warehouseId: number
   warehouseNameTchi: string
   warehouseNameSchi: string
@@ -148,7 +149,7 @@ const Warehouse: FunctionComponent = () => {
         const response = await getAllWarehouse(0, 10)
         if (response) {
           setWarehouseItems(response.data.content.map(transformToTableRow))
-          console.log(response.data.content)
+          console.log(response.data.content.map(transformToTableRow))
         }
       } catch (error) {
         console.error(error)
