@@ -33,7 +33,7 @@ interface WarehouseFormData {
   physicalFlag: boolean
   contractNo: string[]
   status: string
-  warehouseRecyc: { recyle_type: string; subtype: string; weight: string }[]
+  warehouseRecyc: string
 }
 
 interface WarehouseNewForm {
@@ -75,40 +75,40 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       resetForm()
     } else if (action === 'edit' || action === 'delete') {
       // Assuming you have some sample data for edit action
-      const editData: WarehouseFormData = {
-        id: 9,
-        warehouseNameTchi: 'Sample Warehouse Tchi',
-        warehouseNameSchi: 'Sample Warehouse Schi',
-        warehouseNameEng: 'Sample Warehouse Eng',
-        location: 'Sample Location',
-        physicalFlag: true,
-        contractNo: ['123456', '789012'],
-        status: 'active',
-        warehouseRecyc: [
-          {
-            recyle_type: '請輸入重量',
-            subtype: '紙皮 2',
-            weight: '10'
-          },
-          {
-            recyle_type: '請輸入重量',
-            subtype: '紙皮 2',
-            weight: '20'
-          }
-        ]
-      }
+    //   const editData: WarehouseFormData = {
+    //     id: 9,
+    //     warehouseNameTchi: 'Sample Warehouse Tchi',
+    //     warehouseNameSchi: 'Sample Warehouse Schi',
+    //     warehouseNameEng: 'Sample Warehouse Eng',
+    //     location: 'Sample Location',
+    //     physicalFlag: true,
+    //     contractNo: ['123456', '789012'],
+    //     status: 'active',
+    //     warehouseRecyc: [
+    //       {
+    //         recyle_type: '請輸入重量',
+    //         subtype: '紙皮 2',
+    //         weight: '10'
+    //       },
+    //       {
+    //         recyle_type: '請輸入重量',
+    //         subtype: '紙皮 2',
+    //         weight: '20'
+    //       }
+    //     ]
+    //   }
 
-      setNamesField({
-        warehouseNameTchi: editData.warehouseNameTchi,
-        warehouseNameSchi: editData.warehouseNameSchi,
-        warehouseNameEng: editData.warehouseNameEng
-      })
-      setContractNum([...editData.contractNo])
-      setPlace(editData.location)
-      setPysicalLocation(editData.physicalFlag)
-      setStatus(editData.status === 'active')
+    //   setNamesField({
+    //     warehouseNameTchi: editData.warehouseNameTchi,
+    //     warehouseNameSchi: editData.warehouseNameSchi,
+    //     warehouseNameEng: editData.warehouseNameEng
+    //   })
+    //   setContractNum([...editData.contractNo])
+    //   setPlace(editData.location)
+    //   setPysicalLocation(editData.physicalFlag)
+    //   setStatus(editData.status === 'active')
 
-      setRecycleCategory([...editData.warehouseRecyc])
+    //   setRecycleCategory([...editData.warehouseRecyc])
     }
   }, [action])
 
@@ -272,7 +272,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       physicalFlag: pysicalLocation,
       contractNo: contractNum,
       status: status === true ? 'active' : 'deleted',
-      warehouseRecyc: recycleCategory
+      // warehouseRecyc: recycleCategory
+      warehouseRecyc: ''
     }
     console.log('submited data ', warehouseForm)
 
