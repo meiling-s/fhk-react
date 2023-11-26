@@ -10,7 +10,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Switcher from './FormComponents/CustomSwitch'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
 import { useTranslation } from 'react-i18next'
-import { createWarehouse } from '../APICalls/warehouseManage'
+import { createWarehouse, getWarehouseById } from '../APICalls/warehouseManage'
 
 interface AddWarehouseProps {
   drawerOpen: boolean
@@ -21,7 +21,7 @@ interface AddWarehouseProps {
     type: string,
     id?: number
   ) => void
-  rowId?: number
+  rowId: number
 }
 
 interface recyleItem {
@@ -63,6 +63,29 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     if (action === 'add') {
       resetForm()
     } else if (action === 'edit' || action === 'delete') {
+      
+      const warehouseDatById = async () => {
+        try {
+          const response = await getWarehouseById(1)
+          if (response) {
+            console.log(response)
+            const warehouse = response.data
+            setNamesField({
+              warehouseNameTchi: warehouse.warehouseNameTchi,
+              warehouseNameSchi: warehouse.warehouseNameSchi,
+              warehouseNameEng: warehouse.warehouseNameEng
+            })
+            setContractNum([...warehouse.contractNo])
+            setPlace(warehouse.location)
+            setPysicalLocation(warehouse.physicalFlag)
+            setStatus(warehouse.status === 'active')
+            setRecycleCategory([...warehouse.warehouseRecyc])
+          }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+      warehouseDatById()
       // Assuming you have some sample data for edit action
       //   const editData: WarehouseFormData = {
       //     id: 9,
@@ -86,16 +109,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       //       }
       //     ]
       //   }
-      //   setNamesField({
-      //     warehouseNameTchi: editData.warehouseNameTchi,
-      //     warehouseNameSchi: editData.warehouseNameSchi,
-      //     warehouseNameEng: editData.warehouseNameEng
-      //   })
-      //   setContractNum([...editData.contractNo])
-      //   setPlace(editData.location)
-      //   setPysicalLocation(editData.physicalFlag)
-      //   setStatus(editData.status === 'active')
-      //   setRecycleCategory([...editData.warehouseRecyc])
+
     }
   }, [action])
 
@@ -266,26 +280,19 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
     console.log('submited data ', warehouseForm)
 
-    // const newWarehouseForm = {
-    //   warehouseNameTchi: 'string',
-    //   warehouseNameSchi: 'string',
-    //   warehouseNameEng: 'string',
-    //   location: 'string',
-    //   locationGps: [0],
-    //   physicalFlg: true,
-    //   contractNo: ['string'],
-    //   status: 'ACTIVE',
-    //   createdBy: 'string',
-    //   updatedBy: 'string',
-    //   warehouseRecyc: [
-    //     {
-    //       recycTypeId: 'string',
-    //       recycSubtypeId: 'string',
-    //       recycSubtypeCapacity: 0,
-    //       recycTypeCapacity: 0
-    //     }
-    //   ]
-    // }
+    const addWarehouseForm = {
+      warehouseNameTchi: nameValue.warehouseNameTchi,
+      warehouseNameSchi: nameValue.warehouseNameSchi,
+      warehouseNameEng: nameValue.warehouseNameEng,
+      location: place,
+      locationGps: [0],
+      physicalFlag: pysicalLocation,
+      contractNo: contractNum,
+      status: 'ACTIVE',
+      createdBy: 'string',
+      updatedBy: 'string',
+      warehouseRecyc: recycleCategory
+    }
 
     if (
       onSubmitData &&
@@ -293,7 +300,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       typeof rowId === 'number'
     ) {
       onSubmitData(warehouseForm, action, rowId)
+     
+      
     }
+    const fetchData = async () => {
+      try {
+        const response = await createWarehouse(addWarehouseForm)
+        if (response) {
+          console.log(response)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+
     handleDrawerClose()
   }
 

@@ -48,7 +48,7 @@ const Warehouse: FunctionComponent = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
-  const [rowId, setRowId] = useState<number>()
+  const [rowId, setRowId] = useState<number>(1)
   const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
   const headerTitles = [
     {
@@ -101,6 +101,30 @@ const Warehouse: FunctionComponent = () => {
     }
   ]
 
+  const handleOnSubmitData = (
+    formData: Warehouse,
+    action: string,
+    id?: number
+  ) => {
+    if (action == 'add') {
+  
+    }
+
+    if (action == 'delete') {
+      //real case use delete api base on id
+      // const { idRow } = id
+      // if (idRow) {
+      const updatedItems = warehouseItems.filter((item) => item.id != id)
+      setWarehouseItems(updatedItems)
+      // }
+    }
+
+    if (action == 'edit') {
+      //real case use put api
+      //setWarehouseItems([...warehouseItems, formData])
+    }
+  }
+
   const transformToTableRow = (warehouse: Warehouse): TableRow => {
     return {
       id: warehouse.id,
@@ -130,7 +154,7 @@ const Warehouse: FunctionComponent = () => {
     }
 
     fetchData()
-  }, [])
+  }, [action])
 
   const addDataWarehouse = () => {
     setDrawerOpen(true)
@@ -173,43 +197,6 @@ const Warehouse: FunctionComponent = () => {
           (existingRow) => JSON.stringify(existingRow) !== JSON.stringify(row)
         )
       )
-    }
-  }
-
-  const handleOnSubmitData = (
-    formData: Warehouse,
-    action: string,
-    id?: number
-  ) => {
-    if (action == 'add') {
-      //real case use post api
-      // setWarehouseItems([...warehouseItems, formData])
-      const fetchData = async () => {
-        try {
-          const response = await createWarehouse(formData)
-          if (response) {
-            console.log(response)
-          }
-        } catch (error) {
-          console.error(error)
-        }
-      }
-
-      fetchData()
-    }
-
-    if (action == 'delete') {
-      //real case use delete api base on id
-      // const { idRow } = id
-      // if (idRow) {
-      const updatedItems = warehouseItems.filter((item) => item.id != id)
-      setWarehouseItems(updatedItems)
-      // }
-    }
-
-    if (action == 'edit') {
-      //real case use put api
-      //setWarehouseItems([...warehouseItems, formData])
     }
   }
 

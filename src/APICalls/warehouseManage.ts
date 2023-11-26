@@ -37,11 +37,8 @@ export const getAllWarehouse = async (page: number, size: number) => {
 export const getWarehouseById = async (warehouseId: number) => {
     try {
         const response = await axios({
-            ...GET_WAREHOUSE_BY_ID,
-            baseURL: collectionPointAPI.baseURL,
-            params: {
-                warehouseId: warehouseId,
-            },
+            ...GET_WAREHOUSE_BY_ID(warehouseId),
+            baseURL: collectionPointAPI.baseURL
         });
         return response;
     } catch (e) {
