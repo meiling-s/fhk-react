@@ -63,7 +63,7 @@ const Overview: FunctionComponent = () => {
   const [keyword, setKeyword] = useState('')
   const [overviewItems, setOverviewItem] = useState([
     {
-      id: '1',
+      id: 10,
       created: '2023/09/18 18:00',
       shipping_company: '寄件公司',
       receiver: '收件公司',
@@ -74,7 +74,7 @@ const Overview: FunctionComponent = () => {
       arrived: '到達地點'
     },
     {
-      id: '1',
+      id: 1,
       created: '2023/09/18 18:00',
       shipping_company: '寄件公司',
       receiver: '收件公司',
@@ -85,7 +85,7 @@ const Overview: FunctionComponent = () => {
       arrived: '到達地點'
     },
     {
-      id: '2',
+      id: 2,
       created: '2023/09/18 18:00',
       shipping_company: '寄件公司',
       receiver: '收件公司',

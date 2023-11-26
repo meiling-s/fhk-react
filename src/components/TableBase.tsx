@@ -21,7 +21,8 @@ type HeaderTable = {
 }
 
 type TableRow = {
-  [key: string]: string | number | null
+  id: number
+  [key: string]: any
 }
 
 type TableProps = {

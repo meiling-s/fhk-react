@@ -19,7 +19,7 @@ import {
 } from '../../../APICalls/warehouseManage'
 
 interface Warehouse {
-  id: number
+  warehouseId: number
   warehouseNameTchi: string
   warehouseNameSchi: string
   warehouseNameEng: string
@@ -37,6 +37,7 @@ interface Warehouse {
 }
 
 type TableRow = {
+  id: number
   [key: string]: any
 }
 
@@ -114,7 +115,7 @@ const Warehouse: FunctionComponent = () => {
       //real case use delete api base on id
       // const { idRow } = id
       // if (idRow) {
-      const updatedItems = warehouseItems.filter((item) => item.id != id)
+      const updatedItems = warehouseItems.filter((item) => item.warehouseId != id)
       setWarehouseItems(updatedItems)
       // }
     }
@@ -127,7 +128,8 @@ const Warehouse: FunctionComponent = () => {
 
   const transformToTableRow = (warehouse: Warehouse): TableRow => {
     return {
-      id: warehouse.id,
+      id:  warehouse.warehouseId,
+      warehouseId: warehouse.warehouseId,
       warehouseNameTchi: warehouse.warehouseNameTchi,
       warehouseNameSchi: warehouse.warehouseNameSchi,
       warehouseNameEng: warehouse.warehouseNameEng,
@@ -164,6 +166,7 @@ const Warehouse: FunctionComponent = () => {
 
   const handleEdit = (type: string, row: TableRow) => {
     setRowId(row.id)
+    console.log(row)
     setDrawerOpen(true)
     setAction('edit')
   }
