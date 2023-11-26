@@ -160,7 +160,7 @@ const Warehouse: FunctionComponent = () => {
   useEffect(() => {
     fetchData()
     setCheckedRows([])
-  }, [action])
+  }, [action, drawerOpen])
 
   const addDataWarehouse = () => {
     setDrawerOpen(true)
