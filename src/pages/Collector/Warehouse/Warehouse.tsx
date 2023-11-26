@@ -13,7 +13,10 @@ import { ADD_ICON } from '../../../themes/icons'
 import AddWarehouse from '../../../components/AddWarehouse'
 import TableBase from '../../../components/TableBase'
 import { useTranslation } from 'react-i18next'
-import { getAllWarehouse } from '../../../APICalls/test'
+import {
+  getAllWarehouse,
+  createWarehouse
+} from '../../../APICalls/warehouseManage'
 
 interface Warehouse {
   id: number
@@ -24,10 +27,14 @@ interface Warehouse {
   physicalFlag: boolean
   contractNo: string[]
   status: string
-  warehouseRecyc: string
+  // warehouseRecyc: string
+  warehouseRecyc: {
+    recycTypeId: string
+    recycSubtypeId: string
+    recycSubtypeCapacity: number
+    recycTypeCapacity: number
+  }[]
 }
-
-
 
 type TableRow = {
   [key: string]: any
@@ -95,18 +102,17 @@ const Warehouse: FunctionComponent = () => {
   ]
 
   const transformToTableRow = (warehouse: Warehouse): TableRow => {
-  
     return {
       id: warehouse.id,
       warehouseNameTchi: warehouse.warehouseNameTchi,
       warehouseNameSchi: warehouse.warehouseNameSchi,
       warehouseNameEng: warehouse.warehouseNameEng,
       location: warehouse.location,
-      physicalFlag: warehouse.physicalFlag ? 'yes' : 'no', 
+      physicalFlag: warehouse.physicalFlag ? 'yes' : 'no',
       status: warehouse.status,
-      contractNo: warehouse.contractNo, 
+      contractNo: warehouse.contractNo,
       //warehouseRecyc: warehouse.warehouseRecyc.map(item => `${item.recycSubtypeId},  ${item.recycTypeId},  ${item.warehouseRecycId}` ).join(", ")
-      warehouseRecyc: "warehouseRecyc"
+      warehouseRecyc: 'warehouseRecyc'
     }
   }
 
@@ -178,6 +184,18 @@ const Warehouse: FunctionComponent = () => {
     if (action == 'add') {
       //real case use post api
       // setWarehouseItems([...warehouseItems, formData])
+      const fetchData = async () => {
+        try {
+          const response = await createWarehouse(formData)
+          if (response) {
+            console.log(response)
+          }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+
+      fetchData()
     }
 
     if (action == 'delete') {

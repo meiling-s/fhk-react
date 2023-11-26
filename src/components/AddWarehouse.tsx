@@ -24,6 +24,13 @@ interface AddWarehouseProps {
   rowId?: number
 }
 
+interface recyleItem {
+  recycTypeId: string
+  recycSubtypeId: string
+  recycSubtypeCapacity: number
+  recycTypeCapacity: number
+}
+
 interface WarehouseFormData {
   id: number
   warehouseNameTchi: string
@@ -33,25 +40,7 @@ interface WarehouseFormData {
   physicalFlag: boolean
   contractNo: string[]
   status: string
-  warehouseRecyc: string
-}
-
-interface WarehouseNewForm {
-  warehouseNameTchi: string
-  warehouseNameSchi: string
-  warehouseNameEng: string
-  location: string
-  locationGps: number[]
-  physicalFlg: boolean
-  contractNo: string[]
-  status: string
-  createdBy: string
-  updatedBy: string
-  warehouseRecyc: {
-    recycTypeId: string
-    recycSubtypeId: string
-    recycSubtypeCapacity: string
-  }
+  warehouseRecyc: recyleItem[]
 }
 
 interface nameFields {
@@ -75,40 +64,38 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       resetForm()
     } else if (action === 'edit' || action === 'delete') {
       // Assuming you have some sample data for edit action
-    //   const editData: WarehouseFormData = {
-    //     id: 9,
-    //     warehouseNameTchi: 'Sample Warehouse Tchi',
-    //     warehouseNameSchi: 'Sample Warehouse Schi',
-    //     warehouseNameEng: 'Sample Warehouse Eng',
-    //     location: 'Sample Location',
-    //     physicalFlag: true,
-    //     contractNo: ['123456', '789012'],
-    //     status: 'active',
-    //     warehouseRecyc: [
-    //       {
-    //         recyle_type: '請輸入重量',
-    //         subtype: '紙皮 2',
-    //         weight: '10'
-    //       },
-    //       {
-    //         recyle_type: '請輸入重量',
-    //         subtype: '紙皮 2',
-    //         weight: '20'
-    //       }
-    //     ]
-    //   }
-
-    //   setNamesField({
-    //     warehouseNameTchi: editData.warehouseNameTchi,
-    //     warehouseNameSchi: editData.warehouseNameSchi,
-    //     warehouseNameEng: editData.warehouseNameEng
-    //   })
-    //   setContractNum([...editData.contractNo])
-    //   setPlace(editData.location)
-    //   setPysicalLocation(editData.physicalFlag)
-    //   setStatus(editData.status === 'active')
-
-    //   setRecycleCategory([...editData.warehouseRecyc])
+      //   const editData: WarehouseFormData = {
+      //     id: 9,
+      //     warehouseNameTchi: 'Sample Warehouse Tchi',
+      //     warehouseNameSchi: 'Sample Warehouse Schi',
+      //     warehouseNameEng: 'Sample Warehouse Eng',
+      //     location: 'Sample Location',
+      //     physicalFlag: true,
+      //     contractNo: ['123456', '789012'],
+      //     status: 'active',
+      //     warehouseRecyc: [
+      //       {
+      //         recyle_type: '請輸入重量',
+      //         subtype: '紙皮 2',
+      //         weight: '10'
+      //       },
+      //       {
+      //         recyle_type: '請輸入重量',
+      //         subtype: '紙皮 2',
+      //         weight: '20'
+      //       }
+      //     ]
+      //   }
+      //   setNamesField({
+      //     warehouseNameTchi: editData.warehouseNameTchi,
+      //     warehouseNameSchi: editData.warehouseNameSchi,
+      //     warehouseNameEng: editData.warehouseNameEng
+      //   })
+      //   setContractNum([...editData.contractNo])
+      //   setPlace(editData.location)
+      //   setPysicalLocation(editData.physicalFlag)
+      //   setStatus(editData.status === 'active')
+      //   setRecycleCategory([...editData.warehouseRecyc])
     }
   }, [action])
 
@@ -196,34 +183,35 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const recycleType = ['請輸入重量', '紙皮', '請輸入重量']
   const subType = ['請輸入重量 1', '紙皮 2', '請輸入重量 3']
 
-  const initRecyleCategory: {
-    recyle_type: string
-    subtype: string
-    weight: string
-  }[] = [
+  const initRecyleCategory: recyleItem[] = [
     {
-      recyle_type: '',
-      subtype: '',
-      weight: ''
+      recycTypeId: '',
+      recycSubtypeId: '',
+      recycSubtypeCapacity: 0,
+      recycTypeCapacity: 0
     },
     {
-      recyle_type: '',
-      subtype: '',
-      weight: ''
+      recycTypeId: '',
+      recycSubtypeId: '',
+      recycSubtypeCapacity: 0,
+      recycTypeCapacity: 0
     }
   ]
 
   const [recycleCategory, setRecycleCategory] =
-    useState<{ recyle_type: string; subtype: string; weight: string }[]>(
-      initRecyleCategory
-    )
+    useState<recyleItem[]>(initRecyleCategory)
 
-  const handleAddReycleCategory = () => {
-    const updatedrecycleCategory = [
+  const handleAddRecycleCategory = () => {
+    const updatedRecycleCategory = [
       ...recycleCategory,
-      { recyle_type: '', subtype: '', weight: '' }
+      {
+        recycTypeId: '',
+        recycSubtypeId: '',
+        recycSubtypeCapacity: 0,
+        recycTypeCapacity: 0
+      }
     ]
-    setRecycleCategory(updatedrecycleCategory)
+    setRecycleCategory(updatedRecycleCategory)
   }
 
   const handleRemoveReycleCategory = (indexToRemove: number) => {
@@ -238,7 +226,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     index: number
   ) => {
     const updatedRecycleCategory = [...recycleCategory]
-    updatedRecycleCategory[index].recyle_type = event.target.value
+    updatedRecycleCategory[index].recycTypeId = event.target.value
     setRecycleCategory(updatedRecycleCategory)
   }
 
@@ -247,7 +235,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     index: number
   ) => {
     const updatedRecycleCategory = [...recycleCategory]
-    updatedRecycleCategory[index].subtype = event.target.value as string
+    updatedRecycleCategory[index].recycSubtypeId = event.target.value as string
     setRecycleCategory(updatedRecycleCategory)
   }
 
@@ -256,7 +244,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     index: number
   ) => {
     const updatedRecycleCategory = [...recycleCategory]
-    updatedRecycleCategory[index].weight = event.target.value
+    updatedRecycleCategory[index].recycSubtypeCapacity = Number(
+      event.target.value
+    )
     setRecycleCategory(updatedRecycleCategory)
   }
 
@@ -264,7 +254,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const handleSubmit = () => {
     // real form data
     const warehouseForm = {
-      id: 10,
+      id: 0,
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
       warehouseNameEng: nameValue.warehouseNameEng,
@@ -272,21 +262,31 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       physicalFlag: pysicalLocation,
       contractNo: contractNum,
       status: status === true ? 'active' : 'deleted',
-      // warehouseRecyc: recycleCategory
-      warehouseRecyc: ''
+      warehouseRecyc: recycleCategory
     }
     console.log('submited data ', warehouseForm)
 
-    // const formData = {
-    //   id: '5',
-    //   traditionalName: 'New Warehouse',
-    //   simplifiedName: 'New Simplified Warehouse',
-    //   englishName: 'New English Warehouse',
-    //   location: 'Yes',
-    //   place: 'New Warehouse Location',
-    //   status: 'activated',
-    //   recyclableSubcategories: 'New Recyclable Categories'
+    // const newWarehouseForm = {
+    //   warehouseNameTchi: 'string',
+    //   warehouseNameSchi: 'string',
+    //   warehouseNameEng: 'string',
+    //   location: 'string',
+    //   locationGps: [0],
+    //   physicalFlg: true,
+    //   contractNo: ['string'],
+    //   status: 'ACTIVE',
+    //   createdBy: 'string',
+    //   updatedBy: 'string',
+    //   warehouseRecyc: [
+    //     {
+    //       recycTypeId: 'string',
+    //       recycSubtypeId: 'string',
+    //       recycSubtypeCapacity: 0,
+    //       recycTypeCapacity: 0
+    //     }
+    //   ]
     // }
+
     if (
       onSubmitData &&
       typeof onSubmitData === 'function' &&
@@ -294,42 +294,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     ) {
       onSubmitData(warehouseForm, action, rowId)
     }
-
-    // api call
-    const newWarehouseForm = {
-      warehouseNameTchi: 'string',
-      warehouseNameSchi: 'string',
-      warehouseNameEng: 'string',
-      location: 'string',
-      locationGps: [0],
-      physicalFlg: true,
-      contractNo: ['string'],
-      status: 'ACTIVE',
-      createdBy: 'string',
-      updatedBy: 'string',
-      warehouseRecyc: [
-        {
-          recycTypeId: 'string',
-          recycSubtypeId: 'string',
-          recycSubtypeCapacity: 0,
-          recycTypeCapacity: 0
-        }
-      ]
-    }
-
-    const fetchData = async () => {
-      try {
-        const response = await createWarehouse(newWarehouseForm)
-        if (response) {
-          //setWarehouses(response.data.content); // Extract the 'data' property
-          console.log(response)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    fetchData()
     handleDrawerClose()
   }
 
@@ -502,7 +466,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                       <div className="flex justify-center items-center gap-2 mb-2">
                         <FormControl sx={{ m: 1, width: '100%' }}>
                           <Select
-                            value={item.recyle_type}
+                            value={item.recycTypeId}
                             onChange={(event: SelectChangeEvent<string>) =>
                               handleChangeRecycleType(event, index)
                             }
@@ -525,7 +489,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                         </FormControl>
                         <FormControl sx={{ m: 1, width: '100%' }}>
                           <Select
-                            value={item.subtype}
+                            value={item.recycSubtypeId}
                             onChange={(event: SelectChangeEvent<string>) =>
                               handleChangeSubtype(event, index)
                             }
@@ -548,7 +512,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                         </FormControl>
                         <FormControl fullWidth variant="standard">
                           <OutlinedInput
-                            value={item.weight}
+                            value={item.recycSubtypeCapacity}
+                            type="number"
                             onChange={(
                               event: React.ChangeEvent<
                                 HTMLInputElement | HTMLTextAreaElement
@@ -578,7 +543,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                           <ADD_CIRCLE_ICON
                             fontSize="small"
                             className="text-green-primary cursor-pointer"
-                            onClick={handleAddReycleCategory}
+                            onClick={handleAddRecycleCategory}
                           />
                         ) : (
                           index !== recycleCategory.length - 1 && (
