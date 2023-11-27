@@ -13,7 +13,8 @@ import { useTranslation } from 'react-i18next'
 import {
   createWarehouse,
   getWarehouseById,
-  editWarehouse
+  editWarehouse,
+  getRecycleType
 } from '../APICalls/warehouseManage'
 
 interface AddWarehouseProps {
@@ -33,6 +34,28 @@ interface recyleItem {
   recycSubtypeId: string
   recycSubtypeCapacity: number
   recycTypeCapacity: number
+}
+
+interface recyleTypeData {
+  createdAt : string
+  createdBy : string
+  description: string
+  recycSubtype: []
+  recycTypeI: string
+  recyclableNameEng: string
+  recyclableNameSchi: string
+  recyclableNameTchi: string
+  remark: string
+  status : string
+  updatedAt: string
+  updatedBy: string
+  }
+
+
+
+interface recyleTypeOption{
+  id: string,
+  label: string
 }
 
 interface WarehouseFormData {
@@ -174,8 +197,24 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [status, setStatus] = useState(false)
 
   // recyle category field
-  const recycleType = ['請輸入重量', '紙皮', '請輸入重量']
-  const subType = ['請輸入重量 1', '紙皮 2', '請輸入重量 3']
+  const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
+  const getRecyleCategory = async () => {
+    try {
+      const response = await getRecycleType()
+      if (response) {
+        console.log('getRecyleCategory', response)
+        // const data = response.data.content.map( item: recyleTypeData => ({
+        //    id : item.recycTypeId,
+        //    label: item.recyclableNameEng
+        // }))
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  getRecyleCategory()
+  // const recycleType = ['請輸入重量', '紙皮', '請輸入重量']
+  // const subType = ['請輸入重量 1', '紙皮 2', '請輸入重量 3']
 
   const initRecyleCategory: recyleItem[] = [
     {
