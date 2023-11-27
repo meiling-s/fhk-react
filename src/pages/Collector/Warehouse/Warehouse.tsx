@@ -18,6 +18,13 @@ import {
   createWarehouse
 } from '../../../APICalls/warehouseManage'
 
+interface RecyleItem {
+  recycTypeId: string
+  recycSubtypeId: string
+  recycSubtypeCapacity: number
+  recycTypeCapacity: number
+}
+
 interface Warehouse {
   id: number
   warehouseId: number
@@ -29,12 +36,7 @@ interface Warehouse {
   contractNo: string[]
   status: string
   // warehouseRecyc: string
-  warehouseRecyc: {
-    recycTypeId: string
-    recycSubtypeId: string
-    recycSubtypeCapacity: number
-    recycTypeCapacity: number
-  }[]
+  warehouseRecyc: RecyleItem[]
 }
 
 type TableRow = {
@@ -125,11 +127,12 @@ const Warehouse: FunctionComponent = () => {
       //real case use put api
       //setWarehouseItems([...warehouseItems, formData])
     }
-    fetchData()
   }
 
   const transformToTableRow = (warehouse: Warehouse): TableRow => {
-   
+   const recyleType = warehouse.warehouseRecyc.map((item: RecyleItem) =>
+   `${item.recycSubtypeId}`
+   )
     return {
       id:  warehouse.warehouseId,
       warehouseId: warehouse.warehouseId,
@@ -140,8 +143,7 @@ const Warehouse: FunctionComponent = () => {
       physicalFlg:  warehouse.physicalFlg ? "YES" : 'NO',
       status: warehouse.status,
       contractNo: warehouse.contractNo,
-      //warehouseRecyc: warehouse.warehouseRecyc.map(item => `${item.recycSubtypeId},  ${item.recycTypeId},  ${item.warehouseRecycId}` ).join(", ")
-      warehouseRecyc: 'warehouseRecyc'
+      warehouseRecyc: recyleType
     }
   }
 
@@ -149,7 +151,11 @@ const Warehouse: FunctionComponent = () => {
     try {
       const response = await getAllWarehouse(0, 10)
       if (response) {
-        setWarehouseItems(response.data.content.map(transformToTableRow))
+        const filteredData = response.data.content
+          .filter((warehouse: Warehouse) => warehouse.status.toLowerCase() !== 'deleted')
+          .map(transformToTableRow)
+        
+          setWarehouseItems(filteredData)
         console.log("fetch DATA", response.data.content)
       }
     } catch (error) {
@@ -159,7 +165,6 @@ const Warehouse: FunctionComponent = () => {
 
   useEffect(() => {
     fetchData()
-   
   }, [action, drawerOpen])
 
   const addDataWarehouse = () => {

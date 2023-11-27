@@ -110,7 +110,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     try {
       const response = await getRecycleType()
       if (response) {
-        console.log('respons', response.data)
+        console.log('getRecyleCategory', response.data)
         const dataReycleType: recyleTypeOption[] = response.data.map((item: recyleTypeData)  => ({
           id : item.recycTypeId,
           recyclableNameEng: item.recyclableNameEng,
@@ -123,7 +123,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           list: item.recycSubtype
         }))
 
-        console.log("data", data)
         setRecycleType(dataReycleType)
         setSubRecycleType(data)
         
@@ -601,7 +600,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               <em>-</em>
                             </MenuItem>
                             {selectedSubType?.list?.map((item, index) => (
-                              <MenuItem value={item.recycTypeId} key={index}>
+                              <MenuItem value={selectedSubType.recycTypeId} key={index}>
                                 {item.recyclableNameEng}
                               </MenuItem>
                             ))}
