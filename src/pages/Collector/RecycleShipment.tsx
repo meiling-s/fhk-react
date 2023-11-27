@@ -313,7 +313,7 @@ function ShipmentManage(){
                         ship?.senderName,
                         ship?.recipientCompany,
                         ship?.picoId,
-                        ship?.normalFlg,
+                        ship?.adjustmentFlg,
                         ship?.logisticName,
                         ship?.senderAddr,
                         ship?.deliveryAddress,

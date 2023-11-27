@@ -29,37 +29,37 @@ export const UPDATE_TENANT_REGISTER: AxiosRequestConfig = {
 //collection point
 export const GET_ALL_COLLECTIONPOINT: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/collectors/collectionPoint'
+  url: 'api/v1/collectors/collectionPoint'
 }
 
 export const CREATE_COLLECTIONPOINT: AxiosRequestConfig = {
   method: 'post',
-  url: 'api/collectors/collectionPoint'
+  url: 'api/v1/collectors/collectionPoint'
 }
 
 export const UPDATE_COLLECTIONPOINT: AxiosRequestConfig = {
   method: 'put',
-  url: 'api/collectors/collectionPoint'
+  url: 'api/v1/collectors/collectionPoint'
 }
 
 export const GET_RECYC_TYPE: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/collectors/recycType'
+  url: 'api/v1/collectors/recycType'
 }
 
 export const GET_CONTRACT: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/collectors/contract'
+  url: 'api/v1/collectors/contract'
 }
 
 export const GET_ALL_CHECKIN_REQUESTS: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/collectors/checkin'
+  url: 'api/v1/collectors/checkin'
 }
 
 export const UPDATE_CHECK_IN_STATUS: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/collectors/checkin/'
+  url: 'api/v1/collectors/checkin/'
 }
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
