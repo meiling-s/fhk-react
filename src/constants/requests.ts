@@ -89,7 +89,9 @@ export const GET_ALL_WAREHOUSE: AxiosRequestConfig = {
     url: "api/v1/collectors/warehouse",
 };
 
-export const GET_WAREHOUSE_BY_ID= (warehouseId: number) : AxiosRequestConfig =>({
+export const GET_WAREHOUSE_BY_ID = (
+    warehouseId: number
+): AxiosRequestConfig => ({
     method: "get",
     url: `api/v1/collectors/warehouse/${warehouseId}`,
 });
@@ -99,22 +101,39 @@ export const ADD_WAREHOUSE: AxiosRequestConfig = {
     url: "api/v1/collectors/warehouse",
 };
 
-export const UPDATE_WAREHOUSE_BY_ID =  (warehouseId: number) : AxiosRequestConfig =>  ( {
+export const UPDATE_WAREHOUSE_BY_ID = (
+    warehouseId: number
+): AxiosRequestConfig => ({
     method: "put",
     url: `api/v1/collectors/warehouse/${warehouseId}`,
 });
 
-export const UPDATE_RECYCLE_CAPACITY_BY_ID = (warehouseRecycId: number) : AxiosRequestConfig => ({
+export const UPDATE_RECYCLE_CAPACITY_BY_ID = (
+    warehouseRecycId: number
+): AxiosRequestConfig => ({
     method: "put",
     url: `api/v1/collectors/warehouseRecyc/${warehouseRecycId}/status`,
 });
 
-export const UPDATE_WAREHOUSE_STATUS_BY_ID = (warehouseId: number) : AxiosRequestConfig => ({
+export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
+    warehouseId: number
+): AxiosRequestConfig => ({
     method: "put",
     url: `api/v1/collectors/warehouse/${warehouseId}/status`,
 });
 
-// test
+//recycle type
+export const GET_RECYCLE_TYPE: AxiosRequestConfig = {
+    method: "get",
+    url: "api/v1/administrator/recycType",
+};
+
+export const GET_RECYCLE_TYPE_BY_ID = (recycTypeId: string) => ({
+    method: "get",
+    url: `api/v1/administrator/recycType/${recycTypeId}`,
+});
+
+//test
 export const GET_ALL_USERNAME: AxiosRequestConfig = {
     method: "get",
     url: "users",
