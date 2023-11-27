@@ -16,6 +16,7 @@ import {
   editWarehouse,
   getRecycleType
 } from '../APICalls/warehouseManage'
+import { set } from 'date-fns'
 
 interface AddWarehouseProps {
   drawerOpen: boolean
@@ -36,12 +37,23 @@ interface recyleItem {
   recycTypeCapacity: number
 }
 
+interface recyleSubtyeData {
+  recycTypeId: string
+  recyclableNameEng: string
+  recyclableNameSchi: string
+  recyclableNameTchi: string
+  remark: string
+  status: string
+  updatedAt: string
+  updatedBy: string
+}
+
 interface recyleTypeData {
   createdAt : string
   createdBy : string
   description: string
-  recycSubtype: []
-  recycTypeI: string
+  recycSubtype: recyleSubtyeData[]
+  recycTypeId: string
   recyclableNameEng: string
   recyclableNameSchi: string
   recyclableNameTchi: string
@@ -49,13 +61,18 @@ interface recyleTypeData {
   status : string
   updatedAt: string
   updatedBy: string
-  }
-
-
+}
 
 interface recyleTypeOption{
   id: string,
-  label: string
+  recyclableNameEng: string
+  recyclableNameSchi: string
+  recyclableNameTchi: string
+}
+
+interface recyleSubtypeOption {
+  recycTypeId : string,
+  list : recyleSubtyeData[]
 }
 
 interface WarehouseFormData {
@@ -85,9 +102,42 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   rowId
 }) => {
   const { t } = useTranslation()
+  const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
+  const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption[]>([])
+  const [selectedSubType, setSelectedSubType] = useState<recyleSubtypeOption>()
+
+  const getRecyleCategory = async () => {
+    try {
+      const response = await getRecycleType()
+      if (response) {
+        console.log('respons', response.data)
+        const dataReycleType: recyleTypeOption[] = response.data.map((item: recyleTypeData)  => ({
+          id : item.recycTypeId,
+          recyclableNameEng: item.recyclableNameEng,
+          recyclableNameSchi: item.recyclableNameSchi,
+          recyclableNameTchi: item.recyclableNameTchi
+        }))
+
+        const data: recyleSubtypeOption[] = response.data.map((item: recyleTypeData)  => ({
+          recycTypeId : item.recycTypeId,
+          list: item.recycSubtype
+        }))
+
+        console.log("data", data)
+        setRecycleType(dataReycleType)
+        setSubRecycleType(data)
+        
+
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   //mapping data
   useEffect(() => {
+    getRecyleCategory() 
+
     if (action === 'add') {
       resetForm()
     } else if (action === 'edit' || action === 'delete') {
@@ -197,25 +247,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [status, setStatus] = useState(false)
 
   // recyle category field
-  const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
-  const getRecyleCategory = async () => {
-    try {
-      const response = await getRecycleType()
-      if (response) {
-        console.log('getRecyleCategory', response)
-        // const data = response.data.content.map( item: recyleTypeData => ({
-        //    id : item.recycTypeId,
-        //    label: item.recyclableNameEng
-        // }))
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-  getRecyleCategory()
-  // const recycleType = ['請輸入重量', '紙皮', '請輸入重量']
-  // const subType = ['請輸入重量 1', '紙皮 2', '請輸入重量 3']
-
   const initRecyleCategory: recyleItem[] = [
     {
       recycTypeId: '',
@@ -255,6 +286,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     const updatedRecycleCategory = [...recycleCategory]
     updatedRecycleCategory[index].recycTypeId = event.target.value
     setRecycleCategory(updatedRecycleCategory)
+    setSelectedSubType(recycleSubType.find(item => {
+      return item.recycTypeId ==  event.target.value 
+    } ))
   }
 
   const handleChangeSubtype = (
@@ -541,11 +575,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             }}
                           >
                             <MenuItem value="">
-                              <em>{t('add_warehouse_page.recycle_type')}</em>
+                              <em>-</em>
                             </MenuItem>
                             {recycleType.map((item, index) => (
-                              <MenuItem value={item} key={index}>
-                                {item}
+                              <MenuItem value={item.id} key={index}>
+                                {item.recyclableNameEng}
                               </MenuItem>
                             ))}
                           </Select>
@@ -564,11 +598,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             }}
                           >
                             <MenuItem value="">
-                              <em>{t('add_warehouse_page.subtype')}</em>
+                              <em>-</em>
                             </MenuItem>
-                            {subType.map((item, index) => (
-                              <MenuItem value={item} key={index}>
-                                {item}
+                            {selectedSubType?.list?.map((item, index) => (
+                              <MenuItem value={item.recycTypeId} key={index}>
+                                {item.recyclableNameEng}
                               </MenuItem>
                             ))}
                           </Select>
