@@ -159,7 +159,7 @@ const Warehouse: FunctionComponent = () => {
 
   useEffect(() => {
     fetchData()
-    setCheckedRows([])
+   
   }, [action, drawerOpen])
 
   const addDataWarehouse = () => {
@@ -188,11 +188,11 @@ const Warehouse: FunctionComponent = () => {
   const handleCheckAll = (checked: boolean) => {
     console.log('checkedAll', checked)
     if (checked) {
-      setCheckedRows(warehouseItems.map(transformToTableRow)) // Select all rows
+      setCheckedRows(warehouseItems) // Select all rows
     } else {
       setCheckedRows([]) // Unselect all rows
     }
-    console.log(checkedRows, warehouseItems)
+    
   }
 
   // Handle selecting/deselecting individual row
@@ -207,6 +207,7 @@ const Warehouse: FunctionComponent = () => {
         )
       )
     }
+    console.log(checkedRows)
   }
 
   return (
