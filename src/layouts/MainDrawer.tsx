@@ -14,7 +14,8 @@ import {
   PLACE_ICON,
   SHIPPING_CAR_ICON,
   STAFF_ICON,
-  SETTINGS_ICON
+  SETTINGS_ICON,
+  INBOX_OUTLINE_ICON
 } from "../themes/icons";
 import logo_company from "../logo_company.png";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +26,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import '../styles/MainDrawer.css';
+
 
 
 
@@ -50,7 +52,7 @@ function MainDrawer() {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedIndex, setSelectedIndex] = useState<number | 0>();
+  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -64,7 +66,8 @@ function MainDrawer() {
     setSelectedIndex(index);
   };
 
-  var role = "collector";
+
+  var role = "warehouse";
 
   let drawerMenus_collector: DrawerItem[] = [
     { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  setCPDrawer(!CPDrawer), collapse: false, collapseGroup: CPDrawer },
@@ -87,7 +90,7 @@ function MainDrawer() {
 
   let drawerMenus_warehouse: DrawerItem[] = [
     { name: t('recycle_Shipment'), icon: <SHIPPING_CAR_ICON />, onClick: () =>  navigate("/warehouse/shipment"), collapse: false },
-    { name: t('collection_Point'), icon: <PLACE_ICON />, onClick: () =>  navigate("/warehouse/overview"), collapse: false },
+    { name: t('collection_Point'), icon: <INBOX_OUTLINE_ICON />, onClick: () =>  navigate("/warehouse/overview"), collapse: false },
     { name: t('reports'), icon: <DOCUMENT_ICON />,onClick: () =>  navigate("/warehouse/process"), collapse: false },
     { name: t('staff'), icon: <STAFF_ICON />,onClick: () =>  navigate("/warehouse/staff"), collapse: false },
     { name: t('settings'), icon: <SETTINGS_ICON />,onClick: () =>  navigate("/warehouse/settings"), collapse: false },
@@ -157,7 +160,7 @@ function MainDrawer() {
                           color: '#79ca25'
                         },
                       }}
-                      selected={selectedIndex === 4}
+                      selected={selectedIndex === index}
                       onClick={(event) => handleListItemClick(index)}
                 >
                   <ListItemText sx={{ marginLeft: -2 }} primary={drawerMenu.name} />
@@ -166,13 +169,17 @@ function MainDrawer() {
             </Collapse> :
             <ListItem sx={{ marginTop: 2 }} key={drawerMenu.name} onClick={drawerMenu.onClick} disablePadding>
               <ListItemButton
-                    sx={{
-                      '&:hover .MuiSvgIcon-root': {
-                        color: '#79ca25'
-                      },
-                    }}
+              selected={selectedIndex === index}
+              onClick={(event) => handleListItemClick(index)}
+              sx={{
+                '&:hover': {
+                  '.MuiSvgIcon-root': {
+                    color: '#79ca25', // Change color on hover
+                  },
+                },
+              }}
               >
-                <ListItemIcon>{drawerMenu.icon}</ListItemIcon>
+                <ListItemIcon  className={selectedIndex === index ? 'icon-menu-active' : ''}>{drawerMenu.icon}</ListItemIcon>
                 <ListItemText sx={{ marginLeft: -2 }} primary={drawerMenu.name} />
                 {(drawerMenu.collapseGroup!=undefined)&& (drawerMenu.collapseGroup ? <ExpandLess /> : <ExpandMore />)}
               </ListItemButton>

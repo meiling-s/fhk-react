@@ -1,0 +1,17 @@
+/* to declare global style , eg: btn, modal etc style need to be share */
+
+.primary-btn {
+  padding: 8px 30px;
+  color: white;
+  background: #79ca25;
+  border-radius: 20px;
+  border: 1px solid var(--green-pale, #afe397);
+}
+
+.secondary-btn {
+  padding: 8px 30px;
+  color: #afe397;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid var(--green-pale, #afe397);
+}
