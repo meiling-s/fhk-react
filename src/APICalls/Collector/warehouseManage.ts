@@ -5,7 +5,7 @@ import { updateStatus} from '../../interfaces/warehouse';
 
 
 const warehouseAPI = {
-    baseURL: 'http://localhost:8003/'
+    baseURL: 'http://10.166.22.107:8003/'
 }
 
 export const getAllCheckInRequests = async () => {
@@ -13,7 +13,11 @@ export const getAllCheckInRequests = async () => {
     try {
       const response = await axios({
         ...GET_ALL_CHECKIN_REQUESTS,
-        baseURL: warehouseAPI.baseURL
+        baseURL: warehouseAPI.baseURL,
+        // params:{
+        //   page: page,
+        //   size: size
+        // }
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
         // },

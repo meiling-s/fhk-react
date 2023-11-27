@@ -4,7 +4,7 @@ import { CREATE_COLLECTIONPOINT, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT
 import { collectionPoint, createCP, updateCP } from '../../interfaces/collectionPoint';
 
 const collectionPointAPI = {
-    baseURL: 'http://localhost:8003/'
+    baseURL: 'http://10.166.22.107:8003/'
 }
 
 export const getAllCollectionPoint = async () => {

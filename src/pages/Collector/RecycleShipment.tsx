@@ -292,7 +292,6 @@ function ShipmentManage(){
 
     const [checkedShipments, setCheckedShipments] = useState<Shipment[]>([]);
 
-    const [numberOfRequests, setNumberOfRequests] = useState<number>();
 
     useEffect(()=>{
         initShipments()
@@ -403,6 +402,7 @@ function ShipmentManage(){
     };
 
     const handleApproveOnClick = async () => {
+        console.log(checkedShipments);
         const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.checkInId);
         console.log("checkin ids are " + checkInIds);
         const confirmReason: string[] = ["Confirmed"];
@@ -430,16 +430,17 @@ function ShipmentManage(){
     };
 
     function onSelectAllClick(){
-        if(selected.length < shipments.length){
+        if(selected.length < shipments.length){     //if not selecting all, do select all
             const newSelected = shipments.map((shipment) => shipment.poNumber);
             setSelected(newSelected);
             // Trigger the function for each individual checkbox
-            shipments.forEach((shipment) => {
+            console.log(shipments);
+            var selectedShipment: Shipment[] = [];
+            shipments.map((shipment) => {
                 // Only call handleCheck if the shipment is not already checked
-                if (!selected.includes(shipment.poNumber)) {
-                    handleCheck(shipment, true);
-                }
+                selectedShipment.push(shipment);
             });
+            setCheckedShipments(selectedShipment);
         }else{
             setSelected([]);
             // If all checkboxes are deselected, you might also want to trigger a function here
