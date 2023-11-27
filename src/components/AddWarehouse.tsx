@@ -8,6 +8,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Switcher from './FormComponents/CustomSwitch'
+import LabelField from './FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
 import { useTranslation } from 'react-i18next'
 import {
@@ -49,8 +50,8 @@ interface recyleSubtyeData {
 }
 
 interface recyleTypeData {
-  createdAt : string
-  createdBy : string
+  createdAt: string
+  createdBy: string
   description: string
   recycSubtype: recyleSubtyeData[]
   recycTypeId: string
@@ -58,21 +59,21 @@ interface recyleTypeData {
   recyclableNameSchi: string
   recyclableNameTchi: string
   remark: string
-  status : string
+  status: string
   updatedAt: string
   updatedBy: string
 }
 
-interface recyleTypeOption{
-  id: string,
+interface recyleTypeOption {
+  id: string
   recyclableNameEng: string
   recyclableNameSchi: string
   recyclableNameTchi: string
 }
 
 interface recyleSubtypeOption {
-  recycTypeId : string,
-  list : recyleSubtyeData[]
+  recycTypeId: string
+  list: recyleSubtyeData[]
 }
 
 interface WarehouseFormData {
@@ -103,67 +104,37 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 }) => {
   const { t } = useTranslation()
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
-  const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption[]>([])
+  const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption[]>(
+    []
+  )
   const [selectedSubType, setSelectedSubType] = useState<recyleSubtypeOption>()
 
   const getRecyleCategory = async () => {
     try {
       const response = await getRecycleType()
       if (response) {
-        console.log('getRecyleCategory', response.data)
-        const dataReycleType: recyleTypeOption[] = response.data.map((item: recyleTypeData)  => ({
-          id : item.recycTypeId,
-          recyclableNameEng: item.recyclableNameEng,
-          recyclableNameSchi: item.recyclableNameSchi,
-          recyclableNameTchi: item.recyclableNameTchi
-        }))
+        const dataReycleType: recyleTypeOption[] = response.data.map(
+          (item: recyleTypeData) => ({
+            id: item.recycTypeId,
+            recyclableNameEng: item.recyclableNameEng,
+            recyclableNameSchi: item.recyclableNameSchi,
+            recyclableNameTchi: item.recyclableNameTchi
+          })
+        )
 
-        const data: recyleSubtypeOption[] = response.data.map((item: recyleTypeData)  => ({
-          recycTypeId : item.recycTypeId,
-          list: item.recycSubtype
-        }))
-
+        const data: recyleSubtypeOption[] = response.data.map(
+          (item: recyleTypeData) => ({
+            recycTypeId: item.recycTypeId,
+            list: item.recycSubtype
+          })
+        )
         setRecycleType(dataReycleType)
         setSubRecycleType(data)
-        
-
       }
     } catch (error) {
       console.error(error)
     }
   }
-
-  //mapping data
-  useEffect(() => {
-    getRecyleCategory() 
-
-    if (action === 'add') {
-      resetForm()
-    } else if (action === 'edit' || action === 'delete') {
-      const warehouseDatById = async () => {
-        try {
-          const response = await getWarehouseById(rowId)
-          if (response) {
-            console.log(response)
-            const warehouse = response.data
-            setNamesField({
-              warehouseNameTchi: warehouse.warehouseNameTchi,
-              warehouseNameSchi: warehouse.warehouseNameSchi,
-              warehouseNameEng: warehouse.warehouseNameEng
-            })
-            setContractNum([...warehouse.contractNo])
-            setPlace(warehouse.location)
-            setPysicalLocation(warehouse.physicalFlg)
-            setStatus(warehouse.status === 'active')
-            setRecycleCategory([...warehouse.warehouseRecyc])
-          }
-        } catch (error) {
-          console.error(error)
-        }
-      }
-      warehouseDatById()
-    }
-  }, [action])
 
   const resetForm = () => {
     setNamesField({
@@ -178,7 +149,39 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setRecycleCategory([...initRecyleCategory])
   }
 
-  // name field
+  const getWarehousebyId = async () => {
+    try {
+      const response = await getWarehouseById(rowId)
+      if (response) {
+        //mapping data
+        console.log(response)
+        const warehouse = response.data
+        setNamesField({
+          warehouseNameTchi: warehouse.warehouseNameTchi,
+          warehouseNameSchi: warehouse.warehouseNameSchi,
+          warehouseNameEng: warehouse.warehouseNameEng
+        })
+        setContractNum([...warehouse.contractNo])
+        setPlace(warehouse.location)
+        setPysicalLocation(warehouse.physicalFlg)
+        setStatus(warehouse.status === 'active')
+        setRecycleCategory([...warehouse.warehouseRecyc])
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    getRecyleCategory()
+
+    if (action === 'add') {
+      resetForm()
+    } else if (action === 'edit' || action === 'delete') {
+      getWarehousebyId()
+    }
+  }, [action])
+
   const name_fields = [
     {
       field: 'warehouseNameTchi',
@@ -196,42 +199,16 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       placeholder: 'Please type a name'
     }
   ]
-
+  // name fields
   const [nameValue, setNamesField] = useState<nameFields>({
     warehouseNameTchi: '',
     warehouseNameSchi: '',
     warehouseNameEng: ''
   })
 
-  const handleChange = (fieldName: string, value: string) => {
-    setNamesField({ ...nameValue, [fieldName]: value })
-    console.log('nameValue', nameValue)
-  }
-
   // contract field
   const initContractNum: string[] = ['']
   const [contractNum, setContractNum] = useState<string[]>(initContractNum)
-
-  const handleRemoveContact = (indexToRemove: number) => {
-    const updatedContractNum = contractNum.filter(
-      (_, index) => index !== indexToRemove
-    )
-    setContractNum(updatedContractNum)
-  }
-
-  const handleAddContact = () => {
-    const updatedContractNum = [...contractNum, '']
-    setContractNum(updatedContractNum)
-  }
-
-  const handleContactonChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const updatedContacts = [...contractNum]
-    updatedContacts[index] = event.target.value
-    setContractNum(updatedContacts)
-  }
 
   // place field
   const [place, setPlace] = useState('')
@@ -257,6 +234,32 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const [recycleCategory, setRecycleCategory] =
     useState<recyleItem[]>(initRecyleCategory)
+
+  const handleChange = (fieldName: string, value: string) => {
+    setNamesField({ ...nameValue, [fieldName]: value })
+    console.log('nameValue', nameValue)
+  }
+
+  const handleRemoveContact = (indexToRemove: number) => {
+    const updatedContractNum = contractNum.filter(
+      (_, index) => index !== indexToRemove
+    )
+    setContractNum(updatedContractNum)
+  }
+
+  const handleAddContact = () => {
+    const updatedContractNum = [...contractNum, '']
+    setContractNum(updatedContractNum)
+  }
+
+  const handleContactonChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const updatedContacts = [...contractNum]
+    updatedContacts[index] = event.target.value
+    setContractNum(updatedContacts)
+  }
 
   const handleAddRecycleCategory = () => {
     const updatedRecycleCategory = [
@@ -285,9 +288,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     const updatedRecycleCategory = [...recycleCategory]
     updatedRecycleCategory[index].recycTypeId = event.target.value
     setRecycleCategory(updatedRecycleCategory)
-    setSelectedSubType(recycleSubType.find(item => {
-      return item.recycTypeId ==  event.target.value 
-    } ))
+    setSelectedSubType(
+      recycleSubType.find((item) => {
+        return item.recycTypeId == event.target.value
+      })
+    )
   }
 
   const handleChangeSubtype = (
@@ -308,6 +313,28 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       event.target.value
     )
     setRecycleCategory(updatedRecycleCategory)
+  }
+
+  const createWareHouseData = async (addWarehouseForm: any) => {
+    try {
+      const response = await createWarehouse(addWarehouseForm)
+      if (response) {
+        console.log('added', response)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const editWarehouseData = async (addWarehouseForm: any) => {
+    try {
+      const response = await editWarehouse(addWarehouseForm, rowId)
+      if (response) {
+        console.log('edited', response)
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   //submit data
@@ -357,29 +384,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     // MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
     if (action === 'add') {
-      const createWareHouseData = async () => {
-        try {
-          const response = await createWarehouse(addWarehouseForm)
-          if (response) {
-            console.log('added', response)
-          }
-        } catch (error) {
-          console.error(error)
-        }
-      }
-      createWareHouseData()
+      createWareHouseData(addWarehouseForm)
     } else {
-      const editWarehouseData = async () => {
-        try {
-          const response = await editWarehouse(addWarehouseForm, rowId)
-          if (response) {
-            console.log('edited', response)
-          }
-        } catch (error) {
-          console.error(error)
-        }
-      }
-      editWarehouseData()
+      editWarehouseData(addWarehouseForm)
     }
 
     handleDrawerClose()
@@ -413,9 +420,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 key={index + 'name'}
                 className="self-stretch flex flex-col items-start justify-center gap-2"
               >
-                <div className="relative tracking-1px leading-20px text-left">
-                  {item.label}
-                </div>
+                <LabelField label={item.label} mandatory={true} />
                 <FormControl fullWidth variant="standard">
                   <TextField
                     value={nameValue[item.field as keyof nameFields]}
@@ -435,9 +440,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             ))}
             {/* <Switcher  Physical location/> */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
-              <div className="relative tracking-[1px] leading-[20px] text-left">
-                {t('warehouse_page.location')}
-              </div>
+              <LabelField
+                label={t('warehouse_page.location')}
+                mandatory={true}
+              />
               <Switcher
                 onText={t('add_warehouse_page.yes')}
                 offText={t('add_warehouse_page.no')}
@@ -450,9 +456,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             </div>
             {/* contact number */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center text-mini text-black">
-              <div className="relative text-smi tracking-[1px] leading-[20px] text-grey-middle text-left">
-                {t('col.contractNo')}
-              </div>
+              <LabelField label={t('col.contractNo')} mandatory={true} />
               <div className="self-stretch flex flex-col items-start justify-start">
                 <div className="self-stretch ">
                   {contractNum.map((contact, index) => (
@@ -510,9 +514,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             </div>
             {/* Adress field */}
             <div className="self-stretch flex flex-col items-start justify-center gap-[8px]">
-              <div className="relative tracking-[1px] leading-[20px]">
-                {t('warehouse_page.place')}
-              </div>
+              <LabelField label={t('warehouse_page.place')} mandatory={true} />
               <div className="self-stretch flex flex-col items-start justify-center gap-[8px] text-center text-mini text-grey-darker">
                 <FormControl fullWidth variant="standard">
                   <TextField
@@ -534,9 +536,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             </div>
             {/* <Switcher status/> */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
-              <div className="relative tracking-[1px] leading-[20px] text-left">
-                {t('warehouse_page.status')}
-              </div>
+              <LabelField label={t('warehouse_page.status')} mandatory={true} />
               <Switcher
                 onText={t('add_warehouse_page.open')}
                 offText={t('add_warehouse_page.close')}
@@ -549,9 +549,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             </div>
             {/* Recyle category */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px]">
-              <div className="relative tracking-[1px] leading-[20px]">
-                {t('warehouse_page.recyclable_subcategories')}
-              </div>
+              <LabelField
+                label={t('warehouse_page.recyclable_subcategories')}
+                mandatory={true}
+              />
               <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-mini">
                 <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
                   <div className="w-full ">
@@ -600,7 +601,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               <em>-</em>
                             </MenuItem>
                             {selectedSubType?.list?.map((item, index) => (
-                              <MenuItem value={selectedSubType.recycTypeId} key={index}>
+                              <MenuItem
+                                value={selectedSubType.recycTypeId}
+                                key={index}
+                              >
                                 {item.recyclableNameEng}
                               </MenuItem>
                             ))}
