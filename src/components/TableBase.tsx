@@ -188,7 +188,7 @@ const TableBase: React.FC<TableProps> = ({
                 </td>
               ))}
               <td className="px-3 py-0 rounded-tr-lg rounded-br-lg">
-                {item?.status === 'deleted' ? (
+                {item?.status === 'DELETED' ? (
                   <div className="flex justify-around ">
                     <EDIT_OUTLINED_ICON
                       className=" text-grey-light cursor-not-allowed"
