@@ -10,7 +10,11 @@ import MenuItem from '@mui/material/MenuItem'
 import Switcher from './FormComponents/CustomSwitch'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
 import { useTranslation } from 'react-i18next'
-import { createWarehouse, getWarehouseById, editWarehouse } from '../APICalls/warehouseManage'
+import {
+  createWarehouse,
+  getWarehouseById,
+  editWarehouse
+} from '../APICalls/warehouseManage'
 
 interface AddWarehouseProps {
   drawerOpen: boolean
@@ -64,7 +68,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     if (action === 'add') {
       resetForm()
     } else if (action === 'edit' || action === 'delete') {
-      
       const warehouseDatById = async () => {
         try {
           const response = await getWarehouseById(rowId)
@@ -166,7 +169,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   // pysical location field
   const [pysicalLocation, setPysicalLocation] = useState(false)
-  
+
   // status field
   const [status, setStatus] = useState(false)
 
@@ -253,8 +256,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       warehouseRecyc: recycleCategory
     }
 
-    let statusWarehouse = status ? 'ACTIVE': 'INACTIVE'
-    if(action == 'delete') {
+    let statusWarehouse = status ? 'ACTIVE' : 'INACTIVE'
+    if (action == 'delete') {
       statusWarehouse = 'DELETED'
     }
 
@@ -281,7 +284,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
 
     // MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
-    if(action === "add"){
+    if (action === 'add') {
       const createWareHouseData = async () => {
         try {
           const response = await createWarehouse(addWarehouseForm)
@@ -293,7 +296,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         }
       }
       createWareHouseData()
-    }else {
+    } else {
       const editWarehouseData = async () => {
         try {
           const response = await editWarehouse(addWarehouseForm, rowId)
@@ -335,7 +338,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           <div className="self-stretch flex flex-col items-start justify-start pt-[25px] px-[25px] pb-[75px] gap-[25px] text-left text-smi text-grey-middle">
             {name_fields.map((item, index) => (
               <div
-                key={index}
+                key={index + 'name'}
                 className="self-stretch flex flex-col items-start justify-center gap-2"
               >
                 <div className="relative tracking-1px leading-20px text-left">
@@ -366,7 +369,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               <Switcher
                 onText={t('add_warehouse_page.yes')}
                 offText={t('add_warehouse_page.no')}
-                disabled= {action === 'delete'}
+                disabled={action === 'delete'}
                 defaultValue={pysicalLocation}
                 setState={(newValue) => {
                   setPysicalLocation(newValue)
@@ -381,7 +384,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               <div className="self-stretch flex flex-col items-start justify-start">
                 <div className="self-stretch ">
                   {contractNum.map((contact, index) => (
-                    <div className="flex flex-row items-center justify-start gap-[8px] mb-2">
+                    <div
+                      className="flex flex-row items-center justify-start gap-[8px] mb-2"
+                      key={contact + index}
+                    >
                       <FormControl fullWidth variant="standard">
                         <TextField
                           value={contractNum[index]}
@@ -462,7 +468,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               <Switcher
                 onText={t('add_warehouse_page.open')}
                 offText={t('add_warehouse_page.close')}
-                disabled= {action === 'delete'}
+                disabled={action === 'delete'}
                 defaultValue={status}
                 setState={(newValue) => {
                   setStatus(newValue)
@@ -478,7 +484,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 <div className="self-stretch overflow-hidden flex flex-row items-center justify-start gap-[8px]">
                   <div className="w-full ">
                     {recycleCategory.map((item, index) => (
-                      <div className="flex justify-center items-center gap-2 mb-2">
+                      <div
+                        className="flex justify-center items-center gap-2 mb-2"
+                        key={index + 'recyle'}
+                      >
                         <FormControl sx={{ m: 1, width: '100%' }}>
                           <Select
                             value={item.recycTypeId}
