@@ -38,6 +38,11 @@ import CustomItemList, {
 } from "../../components/FormComponents/CustomItemList";
 import RequestForm from "../../components/FormComponents/RequestForm";
 import { FakeDataItem } from "../../interfaces/fakeData";
+import { useLocation } from "react-router-dom";
+import { stringify } from "json5";
+import { useContainer } from "unstated-next";
+import CheckInRequestContext from "../../contexts/CheckInRequestContext";
+import { CheckIn } from "../../interfaces/checkin";
 
 type Shipment = {
   createDate: Date;
@@ -398,6 +403,7 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
 }
 
 function ShipmentManage() {
+    
   const drawerWidth = 246;
 
   const [searchText, setSearchText] = useState<string>("");
@@ -414,11 +420,11 @@ function ShipmentManage() {
 
   const [InviteId, setInviteId] = useState<string>("");
 
-  const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [shipments, setShipments] = useState<CheckIn[]>([]);
 
   // const [companies, setCompanies] = useState<Company[]>([]);
 
-  const [filterShipments, setFilterShipments] = useState<Shipment[]>([]);
+  const [filterShipments, setFilterShipments] = useState<CheckIn[]>([]);
 
   const [company, setCompany] = React.useState("");
 
@@ -426,38 +432,45 @@ function ShipmentManage() {
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const [selectedRow, setSelectedRow] = useState<FakeDataItem[] | null>(null);
+  const [selectedRow, setSelectedRow] = useState<CheckIn>();
+  
 
 
-  useEffect(() => {
-    // initShipments()
-    setShipments(fakeData);
-    setFilterShipments(fakeData);
-  }, []);
+  const { checkInRequest } = useContainer(CheckInRequestContext);
 
-  async function initShipments() {
-    const result = await getAllTenant();
-    const data = result?.data;
-    if (data) {
-      var ships: Shipment[] = [];
-      data.map((ship: any) => {
-        ships.push(
-          createShipment(
-            new Date(ship?.createdAt),
-            ship?.senderCompany,
-            ship?.recipientCompany,
-            ship?.purchaseOrderNumber,
-            false,
-            ship?.tenentLogisticsCompany,
-            ship?.returnAddress,
-            ship?.deliveryAddress
-          )
-        );
-      });
-      setShipments(ships);
-      setFilterShipments(ships);
-    }
-  }
+
+ 
+  
+ 
+//   useEffect(() => {
+//     // initShipments()
+//     setShipments(fakeData);
+//     setFilterShipments(fakeData);
+//   }, []);
+
+//   async function initShipments() {
+//     const result = await getAllTenant();
+//     const data = result?.data;
+//     if (data) {
+//       var ships: Shipment[] = [];
+//       data.map((ship: any) => {
+//         ships.push(
+//           createShipment(
+//             new Date(ship?.createdAt),
+//             ship?.senderCompany,
+//             ship?.recipientCompany,
+//             ship?.purchaseOrderNumber,
+//             false,
+//             ship?.tenentLogisticsCompany,
+//             ship?.returnAddress,
+//             ship?.deliveryAddress
+//           )
+//         );
+//       });
+//       setShipments(ships);
+//       setFilterShipments(ships);
+//     }
+//   }
 
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,
@@ -470,9 +483,9 @@ function ShipmentManage() {
 
   const handleFilterPoNum = (searchWord: string) => {
     if (searchWord != "" && fakeTrigger) {
-      const filteredShipments: Shipment[] = [];
+      const filteredShipments:CheckIn[] = [];
       shipments.map((shipment) => {
-        if (shipment.poNumber.includes(searchWord)) {
+        if (shipment.chkInId.toString().includes(searchWord)) {
           filteredShipments.push(shipment);
         }
       });
@@ -480,7 +493,7 @@ function ShipmentManage() {
         setFilterShipments(filteredShipments);
       }
     } else if (!fakeTrigger) {
-      const filteredShipments: Shipment[] = [];
+      const filteredShipments: CheckIn[] = [];
 
       if (filteredShipments) {
         setFilterShipments(filteredShipments);
@@ -496,9 +509,9 @@ function ShipmentManage() {
     var searchWord = event.target.value;
     console.log(searchWord);
     if (searchWord != "") {
-      const filteredShipments: Shipment[] = [];
-      shipments.map((shipment) => {
-        if (shipment.sender.includes(searchWord)) {
+      const filteredShipments: CheckIn[] = [];
+      checkInRequest?.map((shipment) => {
+        if (shipment.senderAddr.includes(searchWord)) {
           filteredShipments.push(shipment);
         }
       });
@@ -516,9 +529,9 @@ function ShipmentManage() {
     var searchWord = event.target.value;
     console.log(searchWord);
     if (searchWord != "") {
-      const filteredShipments: Shipment[] = [];
+      const filteredShipments: CheckIn[] = [];
       shipments.map((shipment) => {
-        if (shipment.returnAddr.includes(searchWord)) {
+        if (shipment.senderAddr.includes(searchWord)) {
           filteredShipments.push(shipment);
         }
       });
@@ -538,7 +551,7 @@ function ShipmentManage() {
 
   function onSelectAllClick() {
     if (selected.length < shipments.length) {
-      const newSelected = shipments.map((shipment) => shipment.poNumber);
+      const newSelected = shipments.map((shipment) => shipment.logisticName);
       setSelected(newSelected);
     } else {
       setSelected([]);
@@ -566,9 +579,10 @@ function ShipmentManage() {
     }
     setSelected(newSelected);
     setOpen(true);
-    const selectedItem = fakeData.find(item => item.poNumber === id);
-    console.log(selectedItem)
-    setSelectedRow(selectedItem ? [selectedItem] : null);
+   console.log(id)
+    const selectedItem = checkInRequest?.find(item => item.chkInId.toString() ===id);
+    console.log('123456'+selectedItem)
+    setSelectedRow(selectedItem); //
  
   };
 
@@ -618,8 +632,9 @@ function ShipmentManage() {
 
   return (
     <>
+    
       <Modal open={open} onClose={handleClose}>
-        <RequestForm onClose={handleClose} fakedata={selectedRow|| []} />
+        <RequestForm onClose={handleClose} selectedItem={selectedRow} />
       </Modal>
       <Box
         sx={{
@@ -753,8 +768,8 @@ function ShipmentManage() {
                 {" "}
                 <em>任何</em>
               </MenuItem>
-              {fakeData.map((item) => (
-                <MenuItem value={item.sender}>{item.sender}</MenuItem>
+              {checkInRequest?.map((item) => (
+                <MenuItem value={item.logisticName}>{item.logisticName}</MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -789,8 +804,8 @@ function ShipmentManage() {
                 {" "}
                 <em>任何</em>
               </MenuItem>
-              {fakeData.map((item) => (
-                <MenuItem value={item.returnAddr}>{item.returnAddr}</MenuItem>
+              {checkInRequest?.map((item) => (
+                <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -853,7 +868,56 @@ function ShipmentManage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {
+                {checkInRequest?.map((checkIn)=>(
+                     <TableRow
+                        hover
+                        key={checkIn.chkInId}
+                        tabIndex={-1}
+                        role="checkbox"
+                        sx={[localstyles.row]}
+                        onClick={(event) => handleClick(event, checkIn.chkInId.toString())}
+                      >
+                        <TableCell sx={localstyles.bodyCell}>
+                          <Checkbox
+                            color="primary"
+                            checked={selected.includes(checkIn.plateNo)}
+                            inputProps={{
+                              "aria-label": "select all desserts",
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell sx={localstyles.bodyCell}>
+                            {checkIn.createdAt}
+                        </TableCell>
+                        <TableCell sx={localstyles.bodyCell}>
+                          {checkIn.senderName}
+                        </TableCell>
+                        <TableCell sx={localstyles.bodyCell}>
+                          {checkIn.senderAddr}
+                        </TableCell>
+                        <TableCell sx={localstyles.bodyCell}>
+                          {checkIn.logisticName}
+                        </TableCell>
+                        <TableCell sx={localstyles.bodyCell}>
+                          {checkIn.normalFlg ? (
+                            <CheckIcon sx={styles.endAdornmentIcon} />
+                          ) : (
+                            <ClearIcon sx={styles.endAdornmentIcon} />
+                          )}
+                        </TableCell>
+                        <TableCell sx={localstyles.bodyCell}>
+                          {checkIn.logisticName}
+                        </TableCell>
+                        <TableCell sx={localstyles.bodyCell}>
+                          {checkIn.senderAddr}
+                        </TableCell>
+                        <TableCell sx={localstyles.bodyCell}>
+                          {checkIn.senderAddr}
+                        </TableCell>
+                      </TableRow>
+
+                ))}
+              {/* {
                 //filterCompanies.map((company) => {
 
                 filterShipments.map((shipment) => {
@@ -918,7 +982,7 @@ function ShipmentManage() {
                     );
                   }
                 })
-              }
+              } */}
             </TableBody>
           </Table>
         </TableContainer>

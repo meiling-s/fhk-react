@@ -5,26 +5,27 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RecycleCard from "../RecycleCard";
 import { FakeDataItem } from "../../interfaces/fakeData";
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
+import { CheckIn } from "../../interfaces/checkin";
 
 const RequestForm = ({
   onClose,
-  fakedata,
+  selectedItem,
 }: {
-  onClose: () => void;
-  fakedata: FakeDataItem[] | null;
+  onClose?: () => void ;
+  selectedItem?: CheckIn;
 }) => {
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     if (event.target === event.currentTarget) {
       // If the overlay is clicked (not its children), close the modal
-      onClose();
+      onClose && onClose();
     }
   };
 
   return (
     <>
-      {fakedata?.map((data) => (
+      
         <Box
           sx={{
             height: "100vh",
@@ -41,7 +42,7 @@ const RequestForm = ({
                 送入請求
               </Typography>
               <Typography fontSize="15px" color="#979797" letterSpacing="2px">
-                {data.poNumber}
+                {selectedItem?.chkInId}
               </Typography>
               </Box>
               <Box sx={{display:'flex',alignSelf:'center'}}>
@@ -52,7 +53,7 @@ const RequestForm = ({
             </Box>
             <Divider />
             <Stack spacing={2} sx={{ p: 4 }}>
-              {data.stockAdjust && (
+              {selectedItem?.normalFlg && (
                 <Alert
                   icon={<CheckIcon fontSize="inherit" />}
                   severity="success"
@@ -77,7 +78,7 @@ const RequestForm = ({
                   物流公司
                 </Typography>
                 <Typography fontSize="20PX" letterSpacing="2px">
-                  {data.logisticsCompany}
+                  {selectedItem?.logisticName}
                 </Typography>
               </Box>
 
@@ -99,7 +100,7 @@ const RequestForm = ({
                     送出地點
                   </Typography>
                   <Typography fontSize="20PX" letterSpacing="2px">
-                    {data.returnAddr}
+                    {selectedItem?.senderAddr}
                   </Typography>
                 </Box>
                 <Box display="flex" flexDirection="row" sx={{ ml: "150px" }}>
@@ -117,7 +118,7 @@ const RequestForm = ({
                       到達地點
                     </Typography>
                     <Typography fontSize="20PX" letterSpacing="2px">
-                      {data.deliveryAddr}
+                      {selectedItem?.senderAddr}
                     </Typography>
                   </Box>
                 </Box>
@@ -144,7 +145,7 @@ const RequestForm = ({
             </Stack>
           </Box>
         </Box>
-      ))}
+     
     </>
   );
 };

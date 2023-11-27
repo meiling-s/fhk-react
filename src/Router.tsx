@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import MainLayout from './layouts/MainLayout';
@@ -21,13 +21,22 @@ import Staff from './pages/Collector/Staff';
 import Report from './pages/Collector/Report';
 import RecycleShipment from './pages/Collector/RecycleShipment';
 import ProcessRecord from './pages/Collector/Manage/ProcessRecord';
+import RegisterCompany from './pages/TenantRegister/RegisterCompany';
+import RegisterBusiness from './pages/TenantRegister/RegisterBusiness';
+
+
+
+
 
 const Router = () => {
+ 
   return (
     <BrowserRouter>
       <Routes>
-
+      
         <Route path="/" element={<Login />} />
+        <Route path="/register/company/:inviteId" element={<RegisterCompany />}/>
+        <Route path="/register/business/:inviteId" element={<RegisterBusiness />}/>
         <Route path="/register/details/:inviteId" element={<CompanyDetails />}/>
         <Route path="/register/contact" element={<CompanyContact />}/>
         <Route path="/register/result" element={<RegisterResult />}/>
@@ -58,7 +67,7 @@ const Router = () => {
           <Route path="/warehouse/staff" element={<Staff/>}/> 
           <Route path="/warehouse/settings" element={<Settings/>}/> 
         </Route>
-
+  
       </Routes>
     </BrowserRouter>
   );

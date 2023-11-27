@@ -1,5 +1,7 @@
-import { Alert } from '@mui/material';
+import { Alert, Box } from '@mui/material';
 import React, { ChangeEvent, useState } from 'react'
+
+import BackgroundLetterAvatars from '../../components/CustomAvatar';
 
 const Report = () => {
   const [images, setImages] = useState<File[]>([]);
@@ -19,6 +21,16 @@ const Report = () => {
   };
   return (
     <div>
+      <Box>
+      <BackgroundLetterAvatars
+            name='2'
+            size={23}
+            backgroundColor='green'
+            fontColor='white'
+            fontSize="15px"
+            isBold={true}
+          />
+      </Box>
     {showAlert && (
       <Alert severity="error" onClose={() => setShowAlert(false)}>
         You can only upload a maximum of three images.
@@ -28,6 +40,7 @@ const Report = () => {
     {images.map((image, index) => (
       <img key={index} src={URL.createObjectURL(image)} alt={`uploaded-${index}`} />
     ))}
+  
   </div>
   )
 }

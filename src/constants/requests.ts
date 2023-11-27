@@ -82,3 +82,8 @@ export const ADD_SITE_TYPE: AxiosRequestConfig = {
   method: 'post',
   url: 'api/common/siteType'
 }
+
+export const GET_ALL_CHECKIN_REQUESTS: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/collectors/checkin'
+}

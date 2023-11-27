@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { localStorgeKeyName } from '../constants/constant';
-import { CREATE_COLLECTIONPOINT, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT } from '../constants/requests';
+import { CREATE_COLLECTIONPOINT, GET_ALL_CHECKIN_REQUESTS, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT } from '../constants/requests';
 import { collectionPoint, createCP, updateCP } from '../interfaces/collectionPoint';
+import { CheckIn } from '../interfaces/checkin';
 
 const collectionPointAPI = {
-    baseURL: 'http://10.166.22.107:8001/'
+    baseURL: 'http://10.166.22.107:8003/'
 }
 
 export const getAllCollectionPoint = async () => {
@@ -90,6 +91,23 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
       return null;
   }
 
+}
+export const getAllCheckInRequests = async () => {
+ 
+  try {
+    const response = await axios({
+      ...GET_ALL_CHECKIN_REQUESTS,
+      baseURL:collectionPointAPI.baseURL
+      // headers: {
+      //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
+      // },
+    });
+    console.log('Get all check-in request success:', JSON.stringify(response.data));
+    return response
+  } catch (e) {
+    console.error('Get all check-in request failed:', e);
+    return null;
+  }
 }
 
 // export const getAllRecyc = async () => {

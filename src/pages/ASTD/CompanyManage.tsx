@@ -8,6 +8,14 @@ import { generateNumericId } from "../../utils/uuidgenerator";
 import { defaultPath, format } from "../../constants/constant";
 import { styles } from "../../constants/styles"
 import dateFormat from "date-fns/format";
+import CustomField from "../../components/FormComponents/CustomField";
+import CustomTimePicker from "../../components/FormComponents/CustomTimePicker";
+import { timePeriod } from "../../interfaces/collectionPoint";
+import CustomDatePicker from "../../components/FormComponents/CustomDatePicker";
+import dayjs from "dayjs";
+import { openingPeriod } from "../../interfaces/collectionPoint";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 type Company = {
     id: string,
@@ -18,6 +26,7 @@ type Company = {
     createDate: Date,
     accountNum: number
 }
+
 
 function createCompany(
     id: string,
@@ -126,6 +135,7 @@ const Required = () => {
     )
 }
 
+
 function InviteModal({open,onClose,id}: inviteModal){
 
     return(
@@ -224,6 +234,11 @@ function InviteForm({
     const [BRN, setBRN] = useState<string>("");
     const [remark, setRemark] = useState<string>("");
     const [submitable, setSubmitable] = useState<boolean>(false);
+    const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({
+        startDate: dayjs(new Date()),
+        endDate: dayjs(new Date()),
+      });
+  
 
     useEffect(()=>{
         //check if any of these value empty
@@ -236,7 +251,7 @@ function InviteForm({
     },[TChiName,SChiName,EngName,type,BRN])
 
     return(
-
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
         <Modal
             open={open}
             onClose={onClose}
@@ -305,6 +320,14 @@ function InviteForm({
                             onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setBRN(event.target.value)}
                         />
                     </Box>
+                    <Box display='flex' justifyContent='space-between'>
+                      <CustomField label={'有效日期由'} mandatory={true}>
+                        <CustomDatePicker setDate={setOpeningPeriod} showOne={true}/>
+                      </CustomField>
+                      <CustomField label={'至'} mandatory={true}>
+                        <CustomDatePicker setDate={setOpeningPeriod} showOne={true}/>
+                      </CustomField>
+                    </Box>
                     <Box>
                         <Typography sx={localstyles.typo}>備註</Typography>
                         <textarea 
@@ -331,6 +354,7 @@ function InviteForm({
                 </Stack>
             </Box>
         </Modal>
+        </LocalizationProvider>
     );
 }
 
