@@ -1,8 +1,8 @@
 export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
   baseURL: {
-    account: 'http://localhost:8001/',
-    administrator: 'http://localhost:8002/',
-    collector: 'http://localhost:8003/',
+    account: 'http://10.166.22.107:8001/',
+    administrator: 'http://10.166.22.107:8002/',
+    collector: 'http://10.166.22.107:8003/',
   },
   timeout: 100000,
   headers: {

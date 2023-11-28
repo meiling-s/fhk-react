@@ -1,8 +1,7 @@
 import { Box, Button, Checkbox, IconButton, InputAdornment, Modal, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, TextField, Typography } from "@mui/material";
 import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { visuallyHidden } from '@mui/utils';
-import React from "react";
 import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
 import { defaultPath, format, localStorgeKeyName } from "../../constants/constant";

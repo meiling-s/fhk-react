@@ -17,7 +17,7 @@ import { getLocation } from "../../../../APICalls/getLocation";
 import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
 import CustomPeriodSelect from "../../../../components/FormComponents/CustomPeriodSelect";
 import { useNavigate } from "react-router-dom";
-import { createCollectionPoint, findCollectionPointExistByName, findCollectionPointExistByAddress } from "../../../../APICalls/collectionPointManage";
+import { createCollectionPoint, findCollectionPointExistByName, findCollectionPointExistByContractAndAddress } from "../../../../APICalls/collectionPointManage";
 import { formErr, format } from "../../../../constants/constant";
 import { useTranslation } from "react-i18next";
 import { getCommonTypes } from "../../../../APICalls/commonManage";
@@ -217,7 +217,7 @@ function CreateCollectionPoint() {
 
     const checkColPtExist = async (colName: string) => {
         const result = await findCollectionPointExistByName(colName);
-        if(result.data != undefined){
+        if(result && result.data != undefined){
             console.log(result.data);
             return result.data;
         }
@@ -225,8 +225,8 @@ function CreateCollectionPoint() {
     }
 
     const checkAddressUsed = async (address: string) => {
-        const result = await findCollectionPointExistByAddress(address);
-        if(result.data != undefined){
+        const result = await findCollectionPointExistByContractAndAddress(contractNo, address);
+        if(result && result.data != undefined){
             console.log(result.data);
             return result.data;
         }

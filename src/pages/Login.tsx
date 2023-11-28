@@ -25,7 +25,12 @@ const Login = () => {
     });
     if(result){
       console.log(result);
-      switch(loginTo){
+      //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
+      localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
+      localStorage.setItem(localStorgeKeyName.role, loginTo);
+      localStorage.setItem(localStorgeKeyName.username, result?.username || '');
+    }
+    switch(loginTo){
       case "astd":
         navigate("/astd");
         break;
@@ -37,11 +42,6 @@ const Login = () => {
         break;
       default:
         navigate("/collector");
-      }
-      //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
-      localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
-      localStorage.setItem(localStorgeKeyName.role, loginTo);
-      localStorage.setItem(localStorgeKeyName.username, result?.username || '');
     }
     setLogginIn(false);
   };

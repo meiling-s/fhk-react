@@ -42,9 +42,14 @@ export const UPDATE_COLLECTIONPOINT: AxiosRequestConfig = {
   url: 'api/v1/collectors/collectionPoint'
 }
 
-export const FIND_COLLECTIONPOINT_EXIST_BYADDRESS: AxiosRequestConfig = {
+export const FIND_COLLECTIONPOINT_EXIST_BYNAME: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/collectors/collectionPoint/byAddress'
+  url: 'api/v1/collectors/collectionPoint/byName'
+}
+
+export const FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
 }
 
 export const GET_CONTRACT: AxiosRequestConfig = {
