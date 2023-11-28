@@ -89,13 +89,19 @@
         "save": "儲存<",
         "delete": "刪除",
         "type_name": "請輸入名稱", 
-        "place" : "火炭拗背灣街14號",
+        "place_placeholders" : "火炭拗背灣街14號",
         "subtype" : "亞型",
         "recycle_type": "可回收型", 
         "weight": "請輸入重量",
         "yes": "是",
         "no": "否",
         "open": "開放",
-        "close": "關閉"
+        "close": "關閉",
+        "warehouseNameTchi": "繁體中文名稱",
+        "warehouseNameSchi": "简体中文名称",
+        "warehouseNameEng": "English Name",
+        "place": "地點",
+        "contractNum": "合約編號",
+        "warehouseRecyc": "回收物類別"
     }
 }

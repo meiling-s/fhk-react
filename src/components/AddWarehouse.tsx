@@ -1,7 +1,8 @@
-import { FunctionComponent, useCallback, useState, useEffect } from 'react'
+import { FunctionComponent, useCallback, useState, useEffect, Key } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from './RightOverlayForm'
 import TextField from '@mui/material/TextField'
+import { Grid, FormHelperText } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -23,11 +24,7 @@ interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action?: 'add' | 'edit' | 'delete'
-  onSubmitData?: (
-    formData: WarehouseFormData,
-    type: string,
-    id?: number
-  ) => void
+  onSubmitData?: (type: string, id?: number, error?: boolean) => void
   rowId: number
 }
 
@@ -93,6 +90,14 @@ interface nameFields {
   warehouseNameTchi: string
   warehouseNameSchi: string
   warehouseNameEng: string
+}
+
+type FormErrors = {
+  warehouseNameTchi: string
+  warehouseNameSchi: string
+  warehouseNameEng: string
+  place: string
+  contractNum: string
 }
 
 const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
@@ -199,31 +204,19 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       placeholder: 'Please type a name'
     }
   ]
-  // name fields
   const [nameValue, setNamesField] = useState<nameFields>({
+    // name fields
     warehouseNameTchi: '',
     warehouseNameSchi: '',
     warehouseNameEng: ''
   })
-
-  // contract field
-  const initContractNum: string[] = ['']
+  const initContractNum: string[] = [''] // contract field
   const [contractNum, setContractNum] = useState<string[]>(initContractNum)
-
-  // place field
-  const [place, setPlace] = useState('')
-  const handlePlaceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPlace(event.target.value)
-  }
-
-  // pysical location field
-  const [pysicalLocation, setPysicalLocation] = useState(false)
-
-  // status field
-  const [status, setStatus] = useState(false)
-
-  // recyle category field
+  const [place, setPlace] = useState('') // place field
+  const [pysicalLocation, setPysicalLocation] = useState(false) // pysical location field
+  const [status, setStatus] = useState(false) // status field
   const initRecyleCategory: recyleItem[] = [
+    // recyle category field
     {
       recycTypeId: '',
       recycSubtypeId: '',
@@ -231,13 +224,81 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       recycTypeCapacity: 0
     }
   ]
+  const [validation, setValidation] = useState<
+    { field: string; error: string }[]
+  >([])
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
 
   const [recycleCategory, setRecycleCategory] =
     useState<recyleItem[]>(initRecyleCategory)
 
-  const handleChange = (fieldName: string, value: string) => {
+  // validation input text
+  useEffect(() => {
+    const tempV: { field: string; error: string }[] = []
+
+    Object.keys(nameValue).forEach((fieldName) => {
+      nameValue[fieldName as keyof nameFields].trim() === '' &&
+        tempV.push({
+          field: fieldName,
+          error: `${t(`add_warehouse_page.${fieldName}`)} is required`
+        })
+    })
+
+    place.trim() === '' &&
+      tempV.push({
+        field: 'place',
+        error: `${t(`add_warehouse_page.place`)} is required`
+      })
+
+    contractNum.some((value) => value.trim() === '') &&
+      tempV.push({
+        field: 'contractNum',
+        error: `${t(`add_warehouse_page.contractNum`)} is required`
+      })
+
+    const isRecyleUnselected = recycleCategory.every((item) => {
+      return (
+        item.recycTypeId.trim() !== '' ||
+        item.recycSubtypeId.trim() !== '' ||
+        item.recycSubtypeCapacity === 0
+      )
+    })
+
+    console.log('isRecyleUnselected', isRecyleUnselected)
+
+    isRecyleUnselected &&
+      tempV.push({
+        field: 'warehouseRecyc',
+        error: `${t(`add_warehouse_page.recyclable_field`)} is required`
+      })
+
+    setValidation(tempV)
+    console.log(tempV)
+  }, [nameValue, place])
+
+  const checkString = (s: string) => {
+    if (!trySubmited) {
+      //before first submit, don't check the validation
+      return false
+    }
+    return s == ''
+  }
+
+  const checkNumber = (s: number) => {
+    if (!trySubmited) {
+      //before first submit, don't check the validation
+      return false
+    }
+    return s == 0
+  }
+
+  //handle methods
+  const handleNameFields = (fieldName: string, value: string) => {
     setNamesField({ ...nameValue, [fieldName]: value })
-    console.log('nameValue', nameValue)
+  }
+
+  const handlePlaceChange = (fieldName: string, value: string) => {
+    setPlace(value)
   }
 
   const handleRemoveContact = (indexToRemove: number) => {
@@ -338,23 +399,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   //submit data
-  const handleSubmit = () => {
-    // real form data
-    const editWarehouseForm = {
-      id: rowId,
-      warehouseId: rowId,
-      warehouseNameTchi: nameValue.warehouseNameTchi,
-      warehouseNameSchi: nameValue.warehouseNameSchi,
-      warehouseNameEng: nameValue.warehouseNameEng,
-      location: place,
-      physicalFlg: pysicalLocation,
-      contractNo: contractNum,
-      status: 'ACTIVE',
-      createdBy: 'string',
-      updatedBy: 'string',
-      warehouseRecyc: recycleCategory
-    }
-
+  const handleSubmit = async () => {
     let statusWarehouse = status ? 'ACTIVE' : 'INACTIVE'
     if (action == 'delete') {
       statusWarehouse = 'DELETED'
@@ -374,22 +419,42 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       warehouseRecyc: recycleCategory
     }
 
-    if (
-      onSubmitData &&
-      typeof onSubmitData === 'function' &&
-      typeof rowId === 'number'
-    ) {
-      onSubmitData(editWarehouseForm, action, rowId)
-    }
+    const isError = validation.length == 0
+    console.log(isError)
 
-    // MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
-    if (action === 'add') {
-      createWareHouseData(addWarehouseForm)
+    if (validation.length == 0) {
+      action === 'add'
+        ? //MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
+          createWareHouseData(addWarehouseForm)
+        : editWarehouseData(addWarehouseForm)
+      resetForm()
+      if (
+        onSubmitData &&
+        typeof onSubmitData === 'function' &&
+        typeof rowId === 'number'
+      ) {
+        onSubmitData(action, rowId, !isError)
+      }
+      console.log(addWarehouseForm)
+      setValidation([])
     } else {
-      editWarehouseData(addWarehouseForm)
+      console.log(validation)
+      setTrySubmited(true)
+    }
+  }
+
+  const getFormErrorMsg = () => {
+    const errorFields = validation.map((item) =>
+      t(`add_warehouse_page.${item.field}`)
+    )
+
+    if (errorFields.length > 0) {
+      return `${errorFields.join(', ')} ${
+        errorFields.length > 1 ? 'are' : 'is'
+      } required`
     }
 
-    handleDrawerClose()
+    return ''
   }
 
   return (
@@ -414,6 +479,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           style={{ borderTop: '1px solid lightgrey' }}
           className="form-container"
         >
+          {validation.length > 0 && trySubmited && (
+            <Grid item className="pl-6 pt-3">
+              <FormHelperText error={true}>{getFormErrorMsg()}</FormHelperText>
+            </Grid>
+          )}
           <div className="self-stretch flex flex-col items-start justify-start pt-[25px] px-[25px] pb-[75px] gap-[25px] text-left text-smi text-grey-middle">
             {name_fields.map((item, index) => (
               <div
@@ -424,7 +494,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 <FormControl fullWidth variant="standard">
                   <TextField
                     value={nameValue[item.field as keyof nameFields]}
-                    onChange={(e) => handleChange(item.field, e.target.value)}
+                    onChange={(e) =>
+                      handleNameFields(item.field, e.target.value)
+                    }
                     fullWidth
                     placeholder={item.placeholder}
                     id={`fullWidth-${index}`}
@@ -434,6 +506,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                     }}
                     sx={styles.inputState}
                     disabled={action === 'delete'}
+                    error={checkString(
+                      nameValue[item.field as keyof nameFields]
+                    )}
                   />
                 </FormControl>
               </div>
@@ -486,6 +561,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               index
                             )
                           }}
+                          error={checkString(contractNum[index])}
                         />
                       </FormControl>
                       {index === contractNum.length - 1 ? (
@@ -519,10 +595,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 <FormControl fullWidth variant="standard">
                   <TextField
                     value={place}
-                    onChange={handlePlaceChange}
+                    onChange={(e) => handlePlaceChange('place', e.target.value)}
                     fullWidth
                     multiline
-                    placeholder={t('add_warehouse_page.place')}
+                    placeholder={t('add_warehouse_page.place_placeholders')}
                     rows={4}
                     InputLabelProps={{ shrink: false }}
                     InputProps={{
@@ -530,6 +606,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                     }}
                     sx={styles.inputState}
                     disabled={action === 'delete'}
+                    error={checkString(place)}
                   />
                 </FormControl>
               </div>
@@ -573,6 +650,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px' // Adjust the value as needed
                             }}
+                            error={checkString(item.recycTypeId)}
                           >
                             <MenuItem value="">
                               <em>-</em>
@@ -596,6 +674,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px'
                             }}
+                            error={checkString(item.recycSubtypeId)}
                           >
                             <MenuItem value="">
                               <em>-</em>
@@ -637,6 +716,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             }}
                             sx={styles.textField}
                             disabled={action === 'delete'}
+                            error={checkNumber(item.recycSubtypeCapacity)}
                           />
                         </FormControl>
                         {index === recycleCategory.length - 1 ? (

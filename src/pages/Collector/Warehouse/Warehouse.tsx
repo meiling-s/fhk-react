@@ -105,20 +105,21 @@ const Warehouse: FunctionComponent = () => {
     }
   ]
 
-  const handleOnSubmitData = (
-    formData: Warehouse,
-    action: string,
-    id?: number
-  ) => {
+  const handleOnSubmitData = (action: string, id?: number, error?: boolean) => {
+    // if (error) {
+    //   return setDrawerOpen(true)
+    // }
+
     if (action == 'add') {
-  
     }
 
     if (action == 'delete') {
       //real case use delete api base on id
       // const { idRow } = id
       // if (idRow) {
-      const updatedItems = warehouseItems.filter((item) => item.warehouseId != id)
+      const updatedItems = warehouseItems.filter(
+        (item) => item.warehouseId != id
+      )
       setWarehouseItems(updatedItems)
       // }
     }
@@ -127,20 +128,21 @@ const Warehouse: FunctionComponent = () => {
       //real case use put api
       //setWarehouseItems([...warehouseItems, formData])
     }
+    setDrawerOpen(false)
   }
 
   const transformToTableRow = (warehouse: Warehouse): TableRow => {
-   const recyleType = warehouse.warehouseRecyc.map((item: RecyleItem) =>
-   `${item.recycSubtypeId}`
-   )
+    const recyleType = warehouse.warehouseRecyc.map(
+      (item: RecyleItem) => `${item.recycSubtypeId}`
+    )
     return {
-      id:  warehouse.warehouseId,
+      id: warehouse.warehouseId,
       warehouseId: warehouse.warehouseId,
       warehouseNameTchi: warehouse.warehouseNameTchi,
       warehouseNameSchi: warehouse.warehouseNameSchi,
       warehouseNameEng: warehouse.warehouseNameEng,
       location: warehouse.location,
-      physicalFlg:  warehouse.physicalFlg ? "YES" : 'NO',
+      physicalFlg: warehouse.physicalFlg ? 'YES' : 'NO',
       status: warehouse.status,
       contractNo: warehouse.contractNo,
       warehouseRecyc: recyleType
@@ -152,11 +154,14 @@ const Warehouse: FunctionComponent = () => {
       const response = await getAllWarehouse(0, 10)
       if (response) {
         const filteredData = response.data.content
-          .filter((warehouse: Warehouse) => warehouse.status.toLowerCase() !== 'deleted')
+          .filter(
+            (warehouse: Warehouse) =>
+              warehouse.status.toLowerCase() !== 'deleted'
+          )
           .map(transformToTableRow)
-        
-          setWarehouseItems(filteredData)
-        console.log("fetch DATA", response.data.content)
+
+        setWarehouseItems(filteredData)
+        console.log('fetch DATA', response.data.content)
       }
     } catch (error) {
       console.error(error)
@@ -197,7 +202,6 @@ const Warehouse: FunctionComponent = () => {
     } else {
       setCheckedRows([]) // Unselect all rows
     }
-    
   }
 
   // Handle selecting/deselecting individual row
