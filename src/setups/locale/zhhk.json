@@ -48,7 +48,7 @@
     }
   },
   "component": {
-    "routine":{
+    "routine": {
       "everyWeekDay": "逢星期",
       "addPeriod": "新增時段",
       "addDate": "新增日期"
@@ -70,5 +70,45 @@
   "date": "日期",
   "week": "星期",
   "time_Period": "時段",
-  "settings": "設定"
+  "settings": "設定",
+  "top_menu": {
+    "general_settings": "一般設定",
+    "packaging_unit": "包裝單位",
+    "workshop": "工場",
+    "company": "公司",
+    "staff_positions": "員工職位",
+    "denial_reason": "拒絕原因",
+    "add_new": "新增"
+  },
+  "settings_page": {
+    "title": "設定"
+  },
+  "warehouse_page": {
+    "trad_name": "繁體中文名稱",
+    "simp_name": "简体中文名称",
+    "english_name": "English Name",
+    "location": "實體地點",
+    "place": "地點",
+    "status": "狀態",
+    "recyclable_subcategories": "回收物類別"
+  },
+  "add_warehouse_page": {
+    "save": "儲存<",
+    "delete": "刪除",
+    "type_name": "請輸入名稱",
+    "place_placeholders": "火炭拗背灣街14號",
+    "subtype": "亞型",
+    "recycle_type": "可回收型",
+    "weight": "請輸入重量",
+    "yes": "是",
+    "no": "否",
+    "open": "開放",
+    "close": "關閉",
+    "warehouseNameTchi": "繁體中文名稱",
+    "warehouseNameSchi": "简体中文名称",
+    "warehouseNameEng": "English Name",
+    "place": "地點",
+    "contractNum": "合約編號",
+    "warehouseRecyc": "回收物類別"
+  }
 }
