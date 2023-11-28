@@ -15,7 +15,7 @@ import TableBase from '../../../components/TableBase'
 import { useTranslation } from 'react-i18next'
 import {
   getAllWarehouse,
-  createWarehouse
+  getRecycleType
 } from '../../../APICalls/warehouseManage'
 
 interface RecyleItem {
@@ -121,12 +121,12 @@ const Warehouse: FunctionComponent = () => {
     setDrawerOpen(false)
   }
 
-  const getRecycleType = async () => {
+  const getRecycleData = async () => {
     try {
       const response = await getRecycleType
       if (response) {
         const newData = {}
-        console.log("getRecycleType", response)
+        console.log('getRecycleType', response)
         // response.data.content.forEach((item: recyTypeItem ) => {
         //   const {
         //     recycTypeId,
@@ -187,6 +187,7 @@ const Warehouse: FunctionComponent = () => {
   }
 
   useEffect(() => {
+    getRecycleData()
     fetchData()
   }, [action, drawerOpen])
 
