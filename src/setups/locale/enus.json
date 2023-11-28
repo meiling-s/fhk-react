@@ -48,7 +48,7 @@
     }
   },
   "component": {
-    "routine":{
+    "routine": {
       "everyWeekDay": "Every",
       "addPeriod": "Add Period",
       "addDate": "Add Date"
@@ -70,5 +70,46 @@
   "date": "Date",
   "week": "Week",
   "time_Period": "Time period",
-  "settings": "設定"
+  "settings": "Settings",
+  "top_menu": {
+    "general_settings": "General Settings",
+    "packaging_unit": "Packaging Unit",
+    "workshop": "Warehouse",
+    "company": "Company",
+    "staff_positions": "Staff Positions",
+    "denial_reason": "Denial Reason",
+    "add_new": "New"
+  },
+  "settings_page": {
+    "title": "Settings"
+  },
+  "warehouse_page": {
+    "trad_name": "Traditional Name",
+    "simp_name": "Simplified Name",
+    "english_name": "English Name",
+    "location": "Location",
+    "place": "Place",
+    "status": "Status",
+    "recyclable_subcategories": "Recyclable Subcategories"
+  },
+  "add_warehouse_page": {
+    "save": "Save",
+    "delete": "Delete",
+    "type_name": "Please type a name",
+    "recyclable_subcategories": "Recyclable Subcategories",
+    "place_placeholders": "No. 14, Ao Pui Wan Street, Fo Tan",
+    "subtype": "Subtype",
+    "recycle_type": "Recycle Type",
+    "weight": "please input weight",
+    "yes": "Yes",
+    "no": "No",
+    "open": "Open",
+    "close": "Close",
+    "warehouseNameTchi": "Traditional Name",
+    "warehouseNameSchi": "Simplified Name",
+    "warehouseNameEng": "English Name",
+    "place": "Place",
+    "contractNum": "Contract Number",
+    "warehouseRecyc": "回收物類別"
+  }
 }

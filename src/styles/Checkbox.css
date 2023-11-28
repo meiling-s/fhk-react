@@ -1,0 +1,78 @@
+.checkbox .disable-label label {
+  cursor: no-drop;
+}
+
+.checkbox .enable-label label {
+  cursor: pointer;
+}
+
+.checkbox .reverse-label label {
+  text-align: right;
+}
+
+.checkbox input[type='checkbox'] {
+  cursor: pointer;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  appearance: none;
+  border: 1px solid var(--grey-field, #989898);
+  /* border: 2px solid #e1e1e1; */
+  border-radius: 4px;
+  outline: none;
+  background-color: #ffffff;
+  transition: 0.3s;
+}
+
+.checkbox input[type='checkbox']:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--grey-field, #989898);
+  background-color: white;
+  border-radius: 4px;
+  opacity: 1;
+}
+
+.checkbox input[type='checkbox']:checked:before {
+  background: white;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  color: white;
+  /* Replace this URL with your SVG data */
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" viewBox="0 0 16 13" fill="none"><path d="M2 6L6.5 10.5L14 1.5" stroke="%2358C33C" stroke-width="3"/></svg>');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: 13px;
+}
+
+.checkbox input[type='checkbox']:hover:enabled {
+  border: 3px solid #f1eded;
+  box-shadow: 0 0 0 8px #f1eded;
+  border-radius: 8px;
+}
+
+.checkbox input[type='checkbox']:disabled:before {
+  cursor: no-drop;
+  background-color: #f0f0f0;
+  border: 2px solid #e1e1e1;
+}
+
+.checkbox input[type='checkbox']:disabled:checked:before {
+  cursor: no-drop;
+  background: #e1e1e1;
+  border: 2px solid #e1e1e1;
+  /* Replace this URL with your SVG data */
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" viewBox="0 0 16 13" fill="none"><path d="M2 6L6.5 10.5L14 1.5" stroke="%23FFFFFF" stroke-width="3"/></svg>');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: 13px;
+}
