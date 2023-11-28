@@ -69,8 +69,9 @@ interface recyleTypeOption {
 }
 
 interface recyleSubtypeOption {
-  recycTypeId: string
-  list: recyleSubtyeData[]
+  // recycTypeId: string
+  // list: recyleSubtyeData[]
+  [key: string]: recyleSubtyeData[]
 }
 
 interface WarehouseFormData {
@@ -129,157 +130,36 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             recyclableNameTchi: item.recyclableNameTchi
           })
         )
+        console.log(response.data)
 
-        const data: recyleSubtypeOption[] = response.data.map(
-          (item: recyleTypeData) => ({
-            recycTypeId: item.recycTypeId,
-            list: item.recycSubtype
-          })
-        )
+        // const data: recyleSubtypeOption[] = response.data.map(
+        //   (item: recyleTypeData) => ({
+        //     recycTypeId: item.recycTypeId,
+        //     list: item.recycSubtype
+        //   })
+        // )
         setRecycleType(dataReycleType)
-        setSubRecycleType(data)
+        // setSubRecycleType(data)
+        const newData: recyleSubtypeOption = {}
 
-        console.log( response.data)
+        response.data.forEach((item: recyleTypeData) => {
+          if (!newData[item.recycTypeId]) {
+            newData[item.recycTypeId as keyof recyleTypeData] =
+              item.recycSubtype
+          } else {
+            newData[item.recycTypeId] = [
+              ...newData[item.recycTypeId],
+              ...item.recycSubtype
+            ]
+          }
+        })
+
+        setSelectedSubType(newData)
       }
     } catch (error) {
       console.error(error)
     }
   }
-
-//   {
-//     "recycTypeId": "RC00005",
-//     "recyclableNameTchi": "Clothing",
-//     "recyclableNameSchi": "Clothing",
-//     "recyclableNameEng": "Clothing",
-//     "description": "Clothing variant",
-//     "remark": "string",
-//     "status": "ACTIVE",
-//     "createdBy": "string",
-//     "updatedBy": "string",
-//     "recycSubtype": [
-//         {
-//             "recycSubtypeId": "RC00005",
-//             "recyclableNameTchi": "Tshirt",
-//             "recyclableNameSchi": "Tshirt",
-//             "recyclableNameEng": "Tshirt",
-//             "description": "string",
-//             "remark": "string",
-//             "status": "ACTIVE",
-//             "createdBy": "string",
-//             "updatedBy": "string",
-//             "createdAt": "2023-11-27T09:43:46.191362",
-//             "updatedAt": "2023-11-27T09:43:46.199762"
-//         }
-//     ],
-//     "createdAt": "2023-11-27T09:43:46.191354",
-//     "updatedAt": "2023-11-27T09:43:46.205265"
-// },
-// {
-//   "recycTypeId": "RC00001",
-//   "recyclableNameTchi": "塑膠",
-//   "recyclableNameSchi": "塑料",
-//   "recyclableNameEng": "Plastic",
-//   "description": "string",
-//   "remark": "string",
-//   "status": "ACTIVE",
-//   "createdBy": "admin",
-//   "updatedBy": "admin",
-//   "recycSubtype": [
-//       {
-//           "recycSubtypeId": "RSC00001",
-//           "recyclableNameTchi": "膠樽",
-//           "recyclableNameSchi": "胶樽",
-//           "recyclableNameEng": "Plastic bottles",
-//           "description": "",
-//           "remark": "",
-//           "status": "ACTIVE",
-//           "createdBy": "admin",
-//           "updatedBy": "admin",
-//           "createdAt": "2023-11-27T14:47:28.358777",
-//           "updatedAt": "2023-11-27T14:47:28.367801"
-//       },
-//       {
-//           "recycSubtypeId": "RSC00002",
-//           "recyclableNameTchi": "膠杯",
-//           "recyclableNameSchi": "胶杯",
-//           "recyclableNameEng": "Plastic cup",
-//           "description": "",
-//           "remark": "",
-//           "status": "ACTIVE",
-//           "createdBy": "admin",
-//           "updatedBy": "admin",
-//           "createdAt": "2023-11-27T14:47:28.35878",
-//           "updatedAt": "2023-11-27T14:47:28.368465"
-//       },
-//       {
-//           "recycSubtypeId": "RSC00003",
-//           "recyclableNameTchi": "洗衣液樽",
-//           "recyclableNameSchi": "洗衣液樽",
-//           "recyclableNameEng": "Laundry detergent bottle",
-//           "description": "",
-//           "remark": "",
-//           "status": "ACTIVE",
-//           "createdBy": "admin",
-//           "updatedBy": "admin",
-//           "createdAt": "2023-11-27T14:47:28.358783",
-//           "updatedAt": "2023-11-27T14:47:28.369105"
-//       },
-//       {
-//           "recycSubtypeId": "RSC00004",
-//           "recyclableNameTchi": "水管",
-//           "recyclableNameSchi": "水管",
-//           "recyclableNameEng": "Waterpipe",
-//           "description": "",
-//           "remark": "",
-//           "status": "ACTIVE",
-//           "createdBy": "admin",
-//           "updatedBy": "admin",
-//           "createdAt": "2023-11-27T14:47:28.358786",
-//           "updatedAt": "2023-11-27T14:47:28.369692"
-//       },
-//       {
-//           "recycSubtypeId": "RSC00005",
-//           "recyclableNameTchi": "餐盒",
-//           "recyclableNameSchi": "餐盒",
-//           "recyclableNameEng": "Lunch box",
-//           "description": "",
-//           "remark": "",
-//           "status": "ACTIVE",
-//           "createdBy": "admin",
-//           "updatedBy": "admin",
-//           "createdAt": "2023-11-27T14:47:28.358788",
-//           "updatedAt": "2023-11-27T14:47:28.370336"
-//       },
-//       {
-//           "recycSubtypeId": "RSC00006",
-//           "recyclableNameTchi": "餐具",
-//           "recyclableNameSchi": "餐具",
-//           "recyclableNameEng": "Tableware",
-//           "description": "",
-//           "remark": "",
-//           "status": "ACTIVE",
-//           "createdBy": "admin",
-//           "updatedBy": "admin",
-//           "createdAt": "2023-11-27T14:47:28.358791",
-//           "updatedAt": "2023-11-27T14:47:28.370835"
-//       },
-//       {
-//           "recycSubtypeId": "RSC00007",
-//           "recyclableNameTchi": "發泡膠",
-//           "recyclableNameSchi": "发泡胶",
-//           "recyclableNameEng": "Styrofoam",
-//           "description": "",
-//           "remark": "",
-//           "status": "ACTIVE",
-//           "createdBy": "admin",
-//           "updatedBy": "admin",
-//           "createdAt": "2023-11-27T14:47:28.358793",
-//           "updatedAt": "2023-11-27T14:47:28.371302"
-//       }
-//   ],
-//   "createdAt": "2023-11-27T14:47:28.358771",
-//   "updatedAt": "2023-11-27T14:47:28.372773"
-// }
 
   const resetForm = () => {
     setNamesField({
@@ -490,11 +370,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     const updatedRecycleCategory = [...recycleCategory]
     updatedRecycleCategory[index].recycTypeId = event.target.value
     setRecycleCategory(updatedRecycleCategory)
-    setSelectedSubType(
-      recycleSubType.find((item) => {
-        return item.recycTypeId == event.target.value
-      })
-    )
+    // setSelectedSubType(
+    //   recycleSubType.find((item) => {
+    //     return item.recycTypeId == event.target.value
+    //   })
+    // )
   }
 
   const handleChangeSubtype = (
@@ -568,7 +448,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         ? //MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
           createWareHouseData(addWarehouseForm)
         : editWarehouseData(addWarehouseForm)
-      
+
       if (
         onSubmitData &&
         typeof onSubmitData === 'function' &&
@@ -825,10 +705,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               <em>-</em>
                             </MenuItem>
                             {selectedSubType?.list?.map((item, index) => (
-                              <MenuItem
-                                value={item.recycSubtypeId}
-                                key={index}
-                              >
+                              <MenuItem value={item.recycSubtypeId} key={index}>
                                 {currentLanguage === 'zhhk'
                                   ? item.recyclableNameTchi
                                   : currentLanguage === 'zhch'
