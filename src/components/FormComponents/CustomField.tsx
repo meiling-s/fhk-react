@@ -5,16 +5,18 @@ type props = {
     children?: React.ReactNode | React.ReactNode[],
     label: string,
     mandatory?: boolean,
-    key?: string
+    key?: string,
+    className?: string
 }
 function CustomField({
     children,
     label,
     mandatory,
-    key
+    key,
+    className
 }: props) {
   return(
-    <Grid item key={key? key : ""}>
+    <Grid item key={key? key : ""} className={className}>
         <Box sx={{display: "flex", flexDirection: "row"}}>
           <Typography sx={styles.header3}> {label} </Typography>
           {

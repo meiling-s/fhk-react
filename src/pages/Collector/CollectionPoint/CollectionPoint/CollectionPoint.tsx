@@ -9,6 +9,7 @@ import { collectionPoint } from '../../../../interfaces/collectionPoint';
 import { useTranslation } from 'react-i18next';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Position } from '../../../../interfaces/map';
 
 const CollectionPoint = () => {
 
@@ -19,6 +20,7 @@ const CollectionPoint = () => {
   const [colsName, setColsName] = useState<string>('');
   const [colsAddress,setColsAddress] = useState<string>('');
   const [colList, setColList] = useState<collectionPoint[]>([]);
+  const [hoveredCard, setHoveredCard] = useState<Position| null>(null);
 
   const { t } = useTranslation();
 
@@ -74,6 +76,7 @@ const CollectionPoint = () => {
   }
 
   const navigate = useNavigate();
+  console.log(hoveredCard)
   
   return (
     <>
@@ -102,11 +105,11 @@ const CollectionPoint = () => {
             </Button>
           </Box>
           <Box/>
-          <CustomCard collectionPoints ={colList}/>
+          <CustomCard collectionPoints ={colList} hoveredCard = {hoveredCard} setHoveredCard ={setHoveredCard} />
         </Box>
         <Box
           sx={styles.mapRightContainer}>
-          <MyMap collectionPoints ={colList} />
+          <MyMap collectionPoints ={colList}  hoveredCard = {hoveredCard} />
         </Box>
       </Box>
     </>

@@ -36,7 +36,6 @@ const CompanyDetails = () => {
 
   const navigate = useNavigate();
   const { inviteId } = useParams();
-
   const [type, setType] = useState("");
   const [ChiName, setChiName] = useState("");
   const [EngName, setEngName] = useState("");

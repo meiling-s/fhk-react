@@ -5,14 +5,16 @@ type props = {
     onText: string,
     offText: string,
     defaultValue?: boolean,
-    setState: (b: boolean) => void
+    setState: (b: boolean) => void,
+    disabled?: boolean
 }
 
 export default function Switches({
     onText,
     offText,
     defaultValue,
-    setState
+    setState,
+    disabled = false
 }: props) {
     const [onOff, setOnOff] = useState<boolean>((defaultValue!=undefined)? defaultValue : false);
 
@@ -22,7 +24,8 @@ export default function Switches({
     }
   
     return (
-        <Button sx={localstyles.container} onClick={() => handleSwitchChange()}>
+        <Button sx={localstyles.container} onClick={() => handleSwitchChange()} 
+            className={disabled? 'cursor-not-allowed': 'cursor-pointer'} disabled={disabled}>
             <Box sx={[localstyles.switch,{ml: onOff? "5px" : "105px"}]} />
             <Typography sx={localstyles.onOffLabel}>
                 {onText}

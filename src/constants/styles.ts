@@ -1,16 +1,27 @@
-import { layout } from "./constant";
+import { layout } from './constant'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
+// const theme = useTheme()
+// const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
 export const styles = {
     innerScreen: {
         display: "flex",
-        height: "100%",
+        height: '100%',
         ml: `${layout.drawerWidth}px`,
         mt:{lg:layout.appbarHeight,sm:'100px'},
         backgroundColor: "#F4F5F7",
         pl: 4,
         pt: 4
     },
+    mobileScreen:{
+        ml: 0,
+        pl: 0,
+        pt: 0
+    },
     headerSection: {
-        display: "flex",
+        display: "flex",    
         flexDirection: "row",
         alignItems: "center",
         color: "black"
@@ -94,6 +105,14 @@ export const styles = {
         borderRadius: 50,
         fontWeight: "bold"
     },
+    imageContainer:{
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 800,
+     
+    },
     buttonBlack: {
         color: "#000000"
     },
@@ -105,6 +124,42 @@ export const styles = {
         // fontWeight: "bold",
         '&.MuiButton-root:hover':{
             backgroundColor: "#F4F4F4"
+        },
+    loginPageBg: {
+        backgroundImage:
+          'linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)',
+        minHeight: '100vh',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: {
+          sm: 'flex-start',
+          md: 'center'
         }
-    },
+      },
+      loginBox: {
+        paddingX: 4,
+        paddingY: 4,
+        margin: {
+          sm: '0 auto',
+          md: 'auto'
+        },
+        borderRadius: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'white',
+        height: 'fit-content',
+        // width: '20%',
+        minWidth: 300,
+        transition: 'height 0.3s ease-in-out'
+      },
+      labelField: {
+        color: '#717171',
+        fontSize: 14,
+        marginBottom: 1,
+        fontWeight: 900
+      },
+}
+
 }

@@ -1,19 +1,30 @@
-import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../index.css";
 import L, { Icon } from "leaflet";
 import { useEffect, useState } from "react";
 import { collectionPoint } from "../interfaces/collectionPoint";
 import { useNavigate } from "react-router-dom";
+import { Position } from "../interfaces/map";
 
 function MyMap({
   collectionPoints,
-}: { collectionPoints: collectionPoint[] }) {
+  hoveredCard
+}: { collectionPoints: collectionPoint[],hoveredCard:Position|null }) {
 
   const navigate = useNavigate();
 
   const handleMarkerClick = (col: collectionPoint) => {
     navigate("/collector/editCollectionPoint", { state: col })
+  };
+
+  const FlyToMarker = ({ hoveredCard }: { hoveredCard: Position | null }) => {
+    const map = useMap();
+      if (hoveredCard) {
+        const { lat, lon } = hoveredCard;
+        map.flyTo([lat, lon], 16, { duration: 2 });
+      }
+    return null;
   };
   var color: string;
 
@@ -36,13 +47,14 @@ function MyMap({
             color = 'e85141';
             break;
         }
+        var location = JSON.parse("[" + collectionPoint.gpsCode + "]");
 
         return (
           <Marker
             key={Math.random()}
             position={[
-              collectionPoint.gpsCode[0],
-              collectionPoint.gpsCode[1],
+              location[0],
+              location[1],
             ]}
             icon={
               new Icon({
@@ -55,6 +67,7 @@ function MyMap({
             }}
           >
             <Popup>{collectionPoint.address}</Popup>
+            <FlyToMarker hoveredCard={hoveredCard} />
           </Marker>
         );
       })}
