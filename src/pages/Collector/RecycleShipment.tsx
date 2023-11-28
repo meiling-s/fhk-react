@@ -167,15 +167,15 @@ const Required = () => {
 type rejectForm = {
     open: boolean;
     onClose: () => void,
-    checkedShipments:Shipment[]
-
-    
+    checkedShipments:Shipment[],
+    onRejected?: () => void 
 }
 
 function RejectForm({
     open,
     onClose,
-    checkedShipments
+    checkedShipments,
+    onRejected
 }: rejectForm){
 
     const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
@@ -213,7 +213,10 @@ function RejectForm({
                 const result = await updateCheckinStatus(checkInId, statReason);
                 const data = result?.data;
                 if(data){
-                    console.log("updated check-in status: ",data);
+                    console.log("updated check-in status: ", data);
+                    if(onRejected){
+                        onRejected();
+                    }
                 }
             } catch (error) {
                 console.error(`Failed to update check-in status for id ${checkInId}: `, error);
@@ -251,7 +254,7 @@ function RejectForm({
                     >
                         <Button
                             sx={[localstyles.formButton, {m:0.5}]}
-                            onClick={() => {handleConfirmRejectOnClick(rejectReasonId); onClose()}}
+                            onClick={() => {handleConfirmRejectOnClick(rejectReasonId); onClose();}}
                             >
                             確認拒絕
                         </Button>
@@ -422,6 +425,7 @@ function ShipmentManage(){
                 const data = result?.data;
                 if(data){
                     console.log("updated check-in status: ",data);
+                    initShipments();
                 }
             } catch (error) {
                 console.error(`Failed to update check-in status for id ${checkInId}: `, error);
@@ -750,7 +754,12 @@ function ShipmentManage(){
                     </Table>
                 </TableContainer>
                
-                <RejectForm checkedShipments={checkedShipments} open={rejFormModal} onClose={() => setRejFormModal(false)}/>
+                <RejectForm checkedShipments={checkedShipments} open={rejFormModal}
+                    onClose={() => {
+                        setRejFormModal(false)
+                    }}
+                    onRejected={() => initShipments()}
+                    />
 
             </Box>
         </>
