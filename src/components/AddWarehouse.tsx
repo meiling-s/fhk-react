@@ -36,7 +36,7 @@ interface recyleItem {
 }
 
 interface recyleSubtyeData {
-  recycTypeId: string
+  recycSubtypeId: string
   recyclableNameEng: string
   recyclableNameSchi: string
   recyclableNameTchi: string
@@ -185,6 +185,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     if (action === 'add') {
       resetForm()
+      setTrySubmited(false)
     } else if (action === 'edit' || action === 'delete') {
       getWarehousebyId()
     }
@@ -430,7 +431,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         ? //MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
           createWareHouseData(addWarehouseForm)
         : editWarehouseData(addWarehouseForm)
-      resetForm()
+      
       if (
         onSubmitData &&
         typeof onSubmitData === 'function' &&
@@ -688,7 +689,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             </MenuItem>
                             {selectedSubType?.list?.map((item, index) => (
                               <MenuItem
-                                value={selectedSubType.recycTypeId}
+                                value={item.recycSubtypeId}
                                 key={index}
                               >
                                 {currentLanguage === 'zhhk'
