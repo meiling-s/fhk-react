@@ -7,12 +7,25 @@ import { FakeDataItem } from "../../interfaces/fakeData";
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
 import { CheckIn } from "../../interfaces/checkin";
 
+type Shipment = {
+  createDate: Date,
+  sender: string,
+  recipient: string,
+  poNumber: string,
+  stockAdjust: boolean,
+  logisticsCompany: string,
+  returnAddr: string,
+  deliveryAddr: string,
+  status: string,
+  checkInId: number
+}
+
 const RequestForm = ({
   onClose,
   selectedItem,
 }: {
   onClose?: () => void ;
-  selectedItem?: CheckIn;
+  selectedItem?: Shipment;
 }) => {
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -42,7 +55,7 @@ const RequestForm = ({
                 送入請求
               </Typography>
               <Typography fontSize="15px" color="#979797" letterSpacing="2px">
-                {selectedItem?.chkInId}
+                {selectedItem?.poNumber}
               </Typography>
               </Box>
               <Box sx={{display:'flex',alignSelf:'center'}}>
@@ -53,7 +66,7 @@ const RequestForm = ({
             </Box>
             <Divider />
             <Stack spacing={2} sx={{ p: 4 }}>
-              {selectedItem?.normalFlg && (
+              {selectedItem?.stockAdjust && (
                 <Alert
                   icon={<CheckIcon fontSize="inherit" />}
                   severity="success"
@@ -78,7 +91,7 @@ const RequestForm = ({
                   物流公司
                 </Typography>
                 <Typography fontSize="20PX" letterSpacing="2px">
-                  {selectedItem?.logisticName}
+                  {selectedItem?.logisticsCompany}
                 </Typography>
               </Box>
 
@@ -100,7 +113,7 @@ const RequestForm = ({
                     送出地點
                   </Typography>
                   <Typography fontSize="20PX" letterSpacing="2px">
-                    {selectedItem?.senderAddr}
+                    {selectedItem?.returnAddr}
                   </Typography>
                 </Box>
                 <Box display="flex" flexDirection="row" sx={{ ml: "150px" }}>
@@ -118,7 +131,7 @@ const RequestForm = ({
                       到達地點
                     </Typography>
                     <Typography fontSize="20PX" letterSpacing="2px">
-                      {selectedItem?.senderAddr}
+                      {selectedItem?.returnAddr}
                     </Typography>
                   </Box>
                 </Box>

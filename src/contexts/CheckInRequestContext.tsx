@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { getAllCheckInRequests } from "../APICalls/collectionPointManage";
+import { getAllCheckInRequests } from "../APICalls/Collector/warehouseManage";
 import { CheckIn } from "../interfaces/checkin";
 import { createContainer } from 'unstated-next';
 

@@ -1,10 +1,10 @@
 import { layout } from './constant'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-
+ 
 // const theme = useTheme()
 // const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-
+ 
 export const styles = {
     innerScreen: {
         display: "flex",
@@ -111,20 +111,10 @@ export const styles = {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 800,
-     
     },
     buttonBlack: {
         color: "#000000"
     },
-    buttonOutlinedWhite: {
-        borderRadius: "40px",
-        borderColor: "#D1D1D1",
-        backgroundColor: "#FFFFFF",
-        color: "#000000",
-        // fontWeight: "bold",
-        '&.MuiButton-root:hover':{
-            backgroundColor: "#F4F4F4"
-        },
     loginPageBg: {
         backgroundImage:
           'linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)',
@@ -160,6 +150,13 @@ export const styles = {
         marginBottom: 1,
         fontWeight: 900
       },
-}
-
-}
+      buttonOutlinedWhite: {
+        borderRadius: "40px",
+        borderColor: "#D1D1D1",
+        backgroundColor: "#FFFFFF",
+        color: "#000000",
+        // fontWeight: "bold",
+        '&.MuiButton-root:hover':{
+            backgroundColor: "#F4F4F4"
+        }
+}}

@@ -31,7 +31,7 @@ import {
 } from "../themes/icons";
 import BackgroundLetterAvatars from "../components/CustomAvatar";
 import { useNavigate } from "react-router-dom";
-import { localStorgeKeyName } from "../constants/constant";
+import { format, localStorgeKeyName } from "../constants/constant";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -40,24 +40,83 @@ import { getAllCheckInRequests } from "../APICalls/Collector/warehouseManage";
 import { CheckIn } from "../interfaces/checkin";
 import RequestForm from "../components/FormComponents/RequestForm";
 
+type Shipment = {
+  createDate: Date,
+  sender: string,
+  recipient: string,
+  poNumber: string,
+  stockAdjust: boolean,
+  logisticsCompany: string,
+  returnAddr: string,
+  deliveryAddr: string,
+  status: string,
+  checkInId: number
+
+}
+
+function createShipment(
+  createDate: string,
+  sender: string,
+  recipient: string,
+  poNumber: string,
+  stockAdjust: boolean,
+  logisticsCompany: string,
+  returnAddr: string,
+  deliveryAddr: string,
+  status: string,
+  checkInId: number
+): Shipment {
+  var createAt = new Date(createDate)
+  return { createDate: createAt, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr, status, checkInId };
+}
 
 const MainAppBar = () => {
   const [keywords, setKeywords] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [checkInRequest,setCheckInRequest] = useState<CheckIn[]>([])
-  const [selectedItem,setSelectedItem] = useState<CheckIn>()
+  const [checkInRequest,setCheckInRequest] = useState<Shipment[]>([])
+  const [selectedItem,setSelectedItem] = useState<Shipment>()
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const drawerWidth = 246;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [openModal,setOpenModal] =useState<boolean>(false)
+  const [openModal,setOpenModal] =useState<boolean>(false);
+  const [shipments, setShipments] = useState<Shipment[]>([]);
+
+  const [filterShipments, setFilterShipments] = useState<Shipment[]>([]);
 
   const handleLanguageChange = (lng: string) => {
     console.log("change language: ", lng);
     i18n.changeLanguage(lng);
   };
  
+
+  
+  async function initShipments() {
+    const result = await getAllCheckInRequests();
+    const data = result?.data.content;
+    if(data){
+        var ships: Shipment[] = [];
+        data.map((ship: any) => {
+            if(ship.status == "CREATED"){
+            ships.push(
+                createShipment(
+                    ship?.createdAt,
+                    ship?.senderName,
+                    ship?.recipientCompany,
+                    ship?.picoId,
+                    ship?.adjustmentFlg,
+                    ship?.logisticName,
+                    ship?.senderAddr,
+                    ship?.deliveryAddress,
+                    ship?.status,
+                    ship?.chkInId
+            ));}
+        })
+        setShipments(ships);
+        setFilterShipments(ships);
+    }
+}
 
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -76,12 +135,12 @@ const MainAppBar = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
   useEffect(()=>{
-    initCheckInRequest()
-    
+    // initCheckInRequest()
+    initShipments();
    
 },[]);
 
-const handleItemClick = (checkIn:CheckIn) => {
+const handleItemClick = (checkIn:Shipment) => {
   // Store the selected item's content or perform any actions
   setOpenModal(true)
   setSelectedItem(checkIn);
@@ -120,7 +179,7 @@ async function initCheckInRequest() {
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: "flex" }}>
           <IconButton onClick={toggleDrawer}>
-            <Badge badgeContent={checkInRequest.length} color="error">
+            <Badge badgeContent={shipments.length} color="error">
               <NOTIFICATION_ICON />
 
               <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
@@ -134,7 +193,7 @@ async function initCheckInRequest() {
                       通知
                     </Typography>
                     <BackgroundLetterAvatars
-                      name={checkInRequest.length.toString()}
+                      name={shipments.length.toString()}
                       size={23}
                       backgroundColor="red"
                       fontColor="white"
@@ -143,9 +202,9 @@ async function initCheckInRequest() {
                     />
                   </Box>
                   <Divider />
-                  {checkInRequest.map((checkIn)=>(  
+                  {shipments.map((checkIn)=>(  
                     <>
-                  <List key = {checkIn.chkInId}>
+                  <List key = {checkIn.checkInId}>
                     <ListItem onClick={() => handleItemClick(checkIn)}>
                       <ListItemButton >
                         <Stack>
@@ -164,7 +223,7 @@ async function initCheckInRequest() {
                           </Typography>
                         
                           <Typography sx={{ml:'40px',mt:'10px'}}>
-                            2023-11-23
+                          Date
                           </Typography>
                          
                           </Stack>
