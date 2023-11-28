@@ -6,6 +6,13 @@ import RecycleCard from "../RecycleCard";
 import { FakeDataItem } from "../../interfaces/fakeData";
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
 import { CheckIn } from "../../interfaces/checkin";
+import { styles } from "../../constants/styles";
+
+type props = {
+  onClose?: () => void ;
+  selectedItem?: Shipment;
+}
+
 
 type Shipment = {
   createDate: Date,
@@ -23,10 +30,7 @@ type Shipment = {
 const RequestForm = ({
   onClose,
   selectedItem,
-}: {
-  onClose?: () => void ;
-  selectedItem?: Shipment;
-}) => {
+}: props) => {
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -36,8 +40,6 @@ const RequestForm = ({
     }
   };
 
-  console.log(fakedata);
-
   return (
     <>
       
@@ -46,26 +48,19 @@ const RequestForm = ({
           onClick={handleOverlayClick}
         >
           <Box sx={localstyles.container}>
-
             <Box sx={localstyles.header}>
               <Box>
-              <Typography fontSize="25px" fontWeight="bold" letterSpacing="2px">
-                送入請求
-              </Typography>
-              <Typography fontSize="15px" color="#979797" letterSpacing="2px">
-                {selectedItem?.poNumber}
-              </Typography>
+                <Typography sx={styles.header4}>送入請求</Typography>
+                <Typography sx={styles.header3}>{selectedItem?.poNumber}</Typography>
               </Box>
-              
               <Box sx={{display:'flex',alignSelf:'center'}}>
                 <IconButton onClick={onClose}>
                 <KeyboardTabIcon sx={{fontSize:'30px'}}/>
                 </IconButton>
               </Box>
             </Box>
-
             <Divider />
-            <Stack spacing={2} sx={{ p: 4 }}>
+            <Stack spacing={2} sx={localstyles.content}>
               {selectedItem?.stockAdjust && (
                 <Alert
                   icon={<CheckIcon fontSize="inherit" />}
@@ -74,37 +69,15 @@ const RequestForm = ({
                   調整庫存
                 </Alert>
               )}
-              <Box>
+              <Box >
                 <Typography sx={localstyles.typo_header}>
                   運輸資料
                 </Typography>
               </Box>
 
               <Box>
-                <Typography sx={localstyles.typo_fieldTitle}>
-                  寄件公司
-                </Typography>
-                <Typography sx={localstyles.typo_fieldContent}>
-                  {data.sender}
-                </Typography>
-              </Box>
-
-              <Box>
-                <Typography sx={localstyles.typo_fieldTitle}>
-                  收件公司
-                </Typography>
-                <Typography sx={localstyles.typo_fieldContent}>
-                  {data.recipient}
-                </Typography>
-              </Box>
-
-              <Box>
-                <Typography sx={localstyles.typo_fieldTitle}>
-                  物流公司
-                </Typography>
-                <Typography fontSize="20PX" letterSpacing="2px">
-                  {selectedItem?.logisticsCompany}
-                </Typography>
+                <Typography sx={localstyles.typo_fieldTitle}>物流公司</Typography>
+                <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.logisticsCompany}</Typography>
               </Box>
 
               <Typography sx={localstyles.typo_header}>
@@ -112,13 +85,10 @@ const RequestForm = ({
               </Typography>
               <Box display="flex" flexDirection="row">
                 <Box sx={{flex: 1}}>
-                  <Typography sx={localstyles.typo_fieldTitle}>
-                    送出地點
-                  </Typography>
-                  <Typography fontSize="20PX" letterSpacing="2px">
-                    {selectedItem?.returnAddr}
-                  </Typography>
+                  <Typography sx={localstyles.typo_fieldTitle}>送出地點</Typography>
+                  <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.returnAddr}</Typography>
                 </Box>
+
                 <Box sx={{flex: 1, display: "flex", flexDirection: "row"}}>
                   <Box alignSelf="left" sx={{ mr: "35px" }}>
                     <ArrowForwardIcon
@@ -126,18 +96,14 @@ const RequestForm = ({
                     />
                   </Box>
                   <Box>
-                    <Typography sx={localstyles.typo_fieldTitle}>
-                      到達地點
-                    </Typography>
-                    <Typography fontSize="20PX" letterSpacing="2px">
-                      {selectedItem?.returnAddr}
-                    </Typography>
+                    <Typography sx={localstyles.typo_fieldTitle}>到達地點</Typography>
+                    <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.deliveryAddr}</Typography>
                   </Box>
                 </Box>
               </Box>
-              <Typography sx={localstyles.typo_fieldTitle}>
-                回收類別及重量
-              </Typography>
+
+              <Typography sx={localstyles.typo_fieldTitle}>回收類別及重量</Typography>
+
               <RecycleCard
                 name="袋"
                 bgcolor="#e1f4ff"

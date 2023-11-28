@@ -11,7 +11,7 @@ import dateFormat from "date-fns/format";
 import CustomField from "../../components/FormComponents/CustomField";
 import CustomTimePicker from "../../components/FormComponents/CustomTimePicker";
 import { timePeriod } from "../../interfaces/collectionPoint";
-import CustomDatePicker from "../../components/FormComponents/CustomDatePicker";
+import CustomDatePicker2 from "../../components/FormComponents/CustomDatePicker2";
 import dayjs from "dayjs";
 import { openingPeriod } from "../../interfaces/collectionPoint";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -331,10 +331,10 @@ function InviteForm({
                     </Box>
                     <Box display='flex' justifyContent='space-between'>
                       <CustomField label={'有效日期由'} mandatory={true}>
-                        <CustomDatePicker setDate={setOpeningPeriod} showOne={true}/>
+                        <CustomDatePicker2 setDate={setOpeningPeriod} showOne={true}/>
                       </CustomField>
                       <CustomField label={'至'} mandatory={true}>
-                        <CustomDatePicker setDate={setOpeningPeriod} showOne={true}/>
+                        <CustomDatePicker2 setDate={setOpeningPeriod} showOne={true}/>
                       </CustomField>
                     </Box>
                     <Box>
@@ -519,7 +519,9 @@ function CompanyManage(){
             rejectedAt: "2023-10-25T07:14:25.562Z",
             rejectedBy: "string",
             createdBy: "string",
-            updatedBy: "string"
+            updatedBy: "string",
+            effFrmDate: "",
+            effToDate: ""
         });
         if(result!=null){
             console.log(result);
