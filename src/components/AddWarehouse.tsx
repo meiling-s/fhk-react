@@ -103,6 +103,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   rowId
 }) => {
   const { t } = useTranslation()
+  const { i18n } = useTranslation()
+  const currentLanguage = i18n.language
+  
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
   const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption[]>(
     []
@@ -579,7 +582,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             </MenuItem>
                             {recycleType.map((item, index) => (
                               <MenuItem value={item.id} key={index}>
-                                {item.recyclableNameEng}
+                              {
+                                currentLanguage === 'zhhk' 
+                                  ? item.recyclableNameTchi
+                                  : currentLanguage === 'zhch'
+                                  ? item.recyclableNameSchi
+                                  : item.recyclableNameEng
+                              }
                               </MenuItem>
                             ))}
                           </Select>
@@ -605,7 +614,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                 value={selectedSubType.recycTypeId}
                                 key={index}
                               >
-                                {item.recyclableNameEng}
+                                {
+                                  currentLanguage === 'zhhk' 
+                                    ? item.recyclableNameTchi
+                                    : currentLanguage === 'zhch'
+                                    ? item.recyclableNameSchi
+                                    : item.recyclableNameEng
+                                }
                               </MenuItem>
                             ))}
                           </Select>
