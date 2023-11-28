@@ -1,13 +1,21 @@
 import { Box, Button, Checkbox, IconButton, InputAdornment, Modal, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, TextField, Typography } from "@mui/material";
 import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { visuallyHidden } from '@mui/utils';
+import React from "react";
 import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
-import { defaultPath, format, localStorgeKeyName } from "../../constants/constant";
+import { defaultPath, format } from "../../constants/constant";
 import { styles } from "../../constants/styles"
 import dateFormat from "date-fns/format";
+import CustomField from "../../components/FormComponents/CustomField";
+import CustomTimePicker from "../../components/FormComponents/CustomTimePicker";
+import { timePeriod } from "../../interfaces/collectionPoint";
+import CustomDatePicker from "../../components/FormComponents/CustomDatePicker";
 import dayjs from "dayjs";
+import { openingPeriod } from "../../interfaces/collectionPoint";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 type Company = {
     id: string,
@@ -18,6 +26,7 @@ type Company = {
     createDate: Date,
     accountNum: number
 }
+
 
 function createCompany(
     id: string,
@@ -108,6 +117,15 @@ interface HeadCell {
 
   ];
 
+     const fakeData = [
+        {
+            id: "test", cName: "test", eName: "test", status: "test", type: "test", createDate: new Date(), accountNum: 5 
+        },
+        {
+            id: "test2", cName: "test2", eName: "test2", status: "test2", type: "tes2", createDate: new Date(), accountNum: 8 
+        }
+    ]
+
 type inviteModal = {
     open: boolean,
     onClose: () => void,
@@ -125,6 +143,7 @@ const Required = () => {
         </Typography>
     )
 }
+
 
 function InviteModal({open,onClose,id}: inviteModal){
 
@@ -224,6 +243,11 @@ function InviteForm({
     const [BRN, setBRN] = useState<string>("");
     const [remark, setRemark] = useState<string>("");
     const [submitable, setSubmitable] = useState<boolean>(false);
+    const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({
+        startDate: dayjs(new Date()),
+        endDate: dayjs(new Date()),
+      });
+  
 
     useEffect(()=>{
         //check if any of these value empty
@@ -236,7 +260,7 @@ function InviteForm({
     },[TChiName,SChiName,EngName,type,BRN])
 
     return(
-
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
         <Modal
             open={open}
             onClose={onClose}
@@ -305,6 +329,14 @@ function InviteForm({
                             onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setBRN(event.target.value)}
                         />
                     </Box>
+                    <Box display='flex' justifyContent='space-between'>
+                      <CustomField label={'有效日期由'} mandatory={true}>
+                        <CustomDatePicker setDate={setOpeningPeriod} showOne={true}/>
+                      </CustomField>
+                      <CustomField label={'至'} mandatory={true}>
+                        <CustomDatePicker setDate={setOpeningPeriod} showOne={true}/>
+                      </CustomField>
+                    </Box>
                     <Box>
                         <Typography sx={localstyles.typo}>備註</Typography>
                         <textarea 
@@ -331,6 +363,7 @@ function InviteForm({
                 </Stack>
             </Box>
         </Modal>
+        </LocalizationProvider>
     );
 }
 
@@ -357,7 +390,9 @@ function CompanyManage(){
     const [filterCompanies, setFilterCompanies] = useState<Company[]>([]);
 
     useEffect(()=>{
-        initCompanies()
+        //initCompanies()
+        setCompanies(fakeData);
+        setFilterCompanies(fakeData);
     },[]);
 
     async function initCompanies() {
@@ -399,8 +434,7 @@ function CompanyManage(){
                     company.eName.includes(searchWord) ||
                     company.status.includes(searchWord) ||
                     company.type.includes(searchWord) ||
-                    dayjs(new Date()).format(format.dateFormat2).includes(searchWord) ||
-                    //dateFormat(company.createDate,"yyyy/MM/dd HH:mm").includes(searchWord) ||
+                    dateFormat(company.createDate,"yyyy/MM/dd HH:mm").includes(searchWord) ||
                     company.accountNum.toString().includes(searchWord)
                 ){
                     filteredCompanies.push(company);
@@ -461,7 +495,6 @@ function CompanyManage(){
     ) => {
         const randomId = generateNumericId();
         console.log(randomId);
-        const username = localStorage.getItem(localStorgeKeyName.username);
         const result = await createInvitation({
             tenantId: randomId,
             companyNameTchi: TChiName,
@@ -472,23 +505,21 @@ function CompanyManage(){
             brNo: BRNo,
             remark: remark,
             contactNo: "string",
-            email: "",
+            email: "string",
             contactName: "string",
-            brPhoto: [],
-            epdPhoto: [],
+            brPhoto: ["string"],
+            epdPhoto: ["string"],
             decimalPlace: 0,
-            monetaryValue: "",
-            inventoryMethod: "",
+            monetaryValue: "string",
+            inventoryMethod: "string",
             allowImgSize: 0,
             allowImgNum: 0,
-            effFrmDate: dayjs(new Date()).format(format.dateFormat3),
-            effToDate: dayjs(new Date()).format(format.dateFormat3),
             approvedAt: "2023-10-25T07:14:25.562Z",
-            approvedBy: "admin",
+            approvedBy: "string",
             rejectedAt: "2023-10-25T07:14:25.562Z",
-            rejectedBy: "admin",
-            createdBy: username? username : "",
-            updatedBy: username? username : ""
+            rejectedBy: "string",
+            createdBy: "string",
+            updatedBy: "string"
         });
         if(result!=null){
             console.log(result);
@@ -502,7 +533,13 @@ function CompanyManage(){
     return(
         <>
             <Box
-                sx={styles.innerScreen_container}
+                sx={{
+                    width: "100%",
+                    height: "100%",
+                    display:'flex',
+                    flexDirection: 'column',
+                    pr: 4
+                }}
             >
                 <Typography fontSize={20} color='black' fontWeight='bold'>公司</Typography>
                 <Button sx={[styles.buttonFilledGreen,{

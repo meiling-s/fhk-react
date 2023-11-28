@@ -1,17 +1,18 @@
 import axios from 'axios';
-import { CREATE_COLLECTIONPOINT, FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS, FIND_COLLECTIONPOINT_EXIST_BYNAME, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT } from '../constants/requests';
-import { createCP, updateCP } from '../interfaces/collectionPoint';
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
+import { localStorgeKeyName } from '../../constants/constant';
+import { CREATE_COLLECTIONPOINT, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT, GET_ALL_CHECKIN_REQUESTS } from '../../constants/requests';
+import { collectionPoint, createCP, updateCP } from '../../interfaces/collectionPoint';
 
-const request = axios.create({
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-})
+const collectionPointAPI = {
+    baseURL: 'http://10.166.22.107:8003/'
+}
 
 export const getAllCollectionPoint = async () => {
 
     try {
-      const response = await request({
+      const response = await axios({
         ...GET_ALL_COLLECTIONPOINT,
+        baseURL: collectionPointAPI.baseURL
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
         // },
@@ -28,8 +29,9 @@ export const getAllCollectionPoint = async () => {
 export const getCollectionPoint = async (page: number, size: number) => {
 
   try {
-    const response = await request({
+    const response = await axios({
       ...GET_ALL_COLLECTIONPOINT,
+      baseURL: collectionPointAPI.baseURL,
       params:{
         page: page,
         size: size
@@ -50,8 +52,9 @@ export const getCollectionPoint = async (page: number, size: number) => {
 export const createCollectionPoint = async (data: createCP) => {
 
     try{
-        const response = await request({
+        const response = await axios({
             ...CREATE_COLLECTIONPOINT,
+            baseURL: collectionPointAPI.baseURL,
             data: data
             // headers: {
             //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
@@ -72,8 +75,9 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
   axiosConfig.url = UPDATE_COLLECTIONPOINT.url+`/${collectionPointId}`;
 
   try{
-      const response = await request({
+      const response = await axios({
           ...axiosConfig,
+          baseURL: collectionPointAPI.baseURL,
           data: data
           // headers: {
           //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
@@ -88,44 +92,21 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
 
 }
 
-export const findCollectionPointExistByName = async (colName: string) => {
+// export const getAllRecyc = async () => {
 
-  const axiosConfig = Object.assign({},FIND_COLLECTIONPOINT_EXIST_BYNAME);
-  axiosConfig.url = FIND_COLLECTIONPOINT_EXIST_BYNAME.url+`/${colName}`;
+//   try{
+//     const response = await axios({
+//         ...GET_ALL_RECYC,
+//         baseURL: collectionPointAPI.baseURL,
+//         // headers: {
+//         //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
+//         // },
+//     });
+//     console.log('Get all recyc success:', JSON.stringify(response.data));
+//     return response
+//   } catch (e) {
+//     console.error('Get all recyc failed:', e);
+//     return null;
+//   }
 
-  try{
-      const response = await request({
-          ...axiosConfig,
-          // headers: {
-          //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
-          // },
-      });
-      console.log('find collection point exist by name success:', JSON.stringify(response.data));
-      return response;
-  } catch (e) {
-      console.error('find collection point exist by name failed:', e);
-      return null;
-  }
-
-}
-
-export const findCollectionPointExistByContractAndAddress = async (contract: string, address: string) => {
-
-  const axiosConfig = Object.assign({},FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS);
-  axiosConfig.url = FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS.url+`/${contract}`+`/${address}`;
-
-  try{
-      const response = await request({
-          ...axiosConfig,
-          // headers: {
-          //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
-          // },
-      });
-      console.log('find collection point exist by contract and address success:', JSON.stringify(response.data));
-      return response;
-  } catch (e) {
-      console.error('find collection point exist by contract and address failed:', e);
-      return null;
-  }
-
-}
+// }

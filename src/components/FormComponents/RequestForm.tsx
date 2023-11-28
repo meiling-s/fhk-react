@@ -5,24 +5,34 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RecycleCard from "../RecycleCard";
 import { FakeDataItem } from "../../interfaces/fakeData";
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
-import { styles } from "../../constants/styles";
+import { CheckIn } from "../../interfaces/checkin";
 
-type props = {
-  onClose: () => void;
-  fakedata: FakeDataItem[] | null;
+type Shipment = {
+  createDate: Date,
+  sender: string,
+  recipient: string,
+  poNumber: string,
+  stockAdjust: boolean,
+  logisticsCompany: string,
+  returnAddr: string,
+  deliveryAddr: string,
+  status: string,
+  checkInId: number
 }
 
 const RequestForm = ({
   onClose,
-  fakedata,
-}: props ) => {
-
+  selectedItem,
+}: {
+  onClose?: () => void ;
+  selectedItem?: Shipment;
+}) => {
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     if (event.target === event.currentTarget) {
       // If the overlay is clicked (not its children), close the modal
-      onClose();
+      onClose && onClose();
     }
   };
 
@@ -30,7 +40,7 @@ const RequestForm = ({
 
   return (
     <>
-      {fakedata?.map((data) => (
+      
         <Box
           sx={localstyles.modal}
           onClick={handleOverlayClick}
@@ -39,8 +49,12 @@ const RequestForm = ({
 
             <Box sx={localstyles.header}>
               <Box>
-                <Typography sx={styles.header4}>送入請求</Typography>
-                <Typography sx={styles.header3}>{data.poNumber}</Typography>
+              <Typography fontSize="25px" fontWeight="bold" letterSpacing="2px">
+                送入請求
+              </Typography>
+              <Typography fontSize="15px" color="#979797" letterSpacing="2px">
+                {selectedItem?.poNumber}
+              </Typography>
               </Box>
               
               <Box sx={{display:'flex',alignSelf:'center'}}>
@@ -51,9 +65,8 @@ const RequestForm = ({
             </Box>
 
             <Divider />
-            
-            <Stack spacing={2} sx={localstyles.content}>
-              {data.stockAdjust && (
+            <Stack spacing={2} sx={{ p: 4 }}>
+              {selectedItem?.stockAdjust && (
                 <Alert
                   icon={<CheckIcon fontSize="inherit" />}
                   severity="success"
@@ -89,8 +102,8 @@ const RequestForm = ({
                 <Typography sx={localstyles.typo_fieldTitle}>
                   物流公司
                 </Typography>
-                <Typography sx={localstyles.typo_fieldContent}>
-                  {data.logisticsCompany}
+                <Typography fontSize="20PX" letterSpacing="2px">
+                  {selectedItem?.logisticsCompany}
                 </Typography>
               </Box>
 
@@ -102,8 +115,8 @@ const RequestForm = ({
                   <Typography sx={localstyles.typo_fieldTitle}>
                     送出地點
                   </Typography>
-                  <Typography sx={localstyles.typo_fieldContent}>
-                    {data.returnAddr}
+                  <Typography fontSize="20PX" letterSpacing="2px">
+                    {selectedItem?.returnAddr}
                   </Typography>
                 </Box>
                 <Box sx={{flex: 1, display: "flex", flexDirection: "row"}}>
@@ -116,8 +129,8 @@ const RequestForm = ({
                     <Typography sx={localstyles.typo_fieldTitle}>
                       到達地點
                     </Typography>
-                    <Typography sx={localstyles.typo_fieldContent}>
-                      {data.deliveryAddr}
+                    <Typography fontSize="20PX" letterSpacing="2px">
+                      {selectedItem?.returnAddr}
                     </Typography>
                   </Box>
                 </Box>
@@ -144,7 +157,7 @@ const RequestForm = ({
             </Stack>
           </Box>
         </Box>
-      ))}
+     
     </>
   );
 };

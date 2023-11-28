@@ -4,7 +4,7 @@ import CustomCard from '../../../../components/CustomCard';
 import { styles } from '../../../../constants/styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MyMap from '../../../../components/MyMap';
-import { getCollectionPoint } from '../../../../APICalls/collectionPointManage';
+import { getCollectionPoint } from '../../../../APICalls/Collector/collectionPointManage';
 import { collectionPoint } from '../../../../interfaces/collectionPoint';
 import { useTranslation } from 'react-i18next';
 import { ToastContainer, toast } from 'react-toastify';

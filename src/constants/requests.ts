@@ -57,6 +57,15 @@ export const GET_CONTRACT: AxiosRequestConfig = {
   url: 'api/v1/collectors/contract'
 }
 
+export const GET_ALL_CHECKIN_REQUESTS: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/collectors/checkin'
+}
+
+export const UPDATE_CHECK_IN_STATUS: AxiosRequestConfig = {
+  method: 'patch',
+  url: 'api/v1/collectors/checkin/'
+}
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
   method: 'get',
@@ -147,6 +156,7 @@ export const GET_RECYCLE_TYPE_BY_ID = (recycTypeId: string) => ({
   method: "get",
   url: `api/v1/administrator/recycType/${recycTypeId}`,
 });
+
 
 //test
 export const GET_ALL_USERNAME: AxiosRequestConfig = {
