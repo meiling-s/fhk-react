@@ -10,7 +10,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
 import { Box } from '@mui/material'
 import { ADD_ICON } from '../../../themes/icons'
-import AddWarehouse from '../../../components/AddWarehouse'
+import AddWarehouse from './AddWarehouse'
 import TableBase from '../../../components/TableBase'
 import { useTranslation } from 'react-i18next'
 import {
@@ -35,12 +35,15 @@ interface Warehouse {
   physicalFlg: string | boolean
   contractNo: string[]
   status: string
-  // warehouseRecyc: string
   warehouseRecyc: RecyleItem[]
 }
 
 type TableRow = {
   id: number
+  [key: string]: any
+}
+
+type recyTypeItem = {
   [key: string]: any
 }
 
@@ -54,6 +57,7 @@ const Warehouse: FunctionComponent = () => {
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
+  const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
   const headerTitles = [
     {
       type: 'string',
@@ -106,29 +110,43 @@ const Warehouse: FunctionComponent = () => {
   ]
 
   const handleOnSubmitData = (action: string, id?: number, error?: boolean) => {
-    // if (error) {
-    //   return setDrawerOpen(true)
-    // }
-
     if (action == 'add') {
     }
 
     if (action == 'delete') {
-      //real case use delete api base on id
-      // const { idRow } = id
-      // if (idRow) {
-      const updatedItems = warehouseItems.filter(
-        (item) => item.warehouseId != id
-      )
-      setWarehouseItems(updatedItems)
-      // }
     }
 
     if (action == 'edit') {
-      //real case use put api
-      //setWarehouseItems([...warehouseItems, formData])
     }
     setDrawerOpen(false)
+  }
+
+  const getRecycleType = async () => {
+    try {
+      const response = await getRecycleType
+      if (response) {
+        const newData = {}
+        console.log("getRecycleType", response)
+        // response.data.content.forEach((item: recyTypeItem ) => {
+        //   const {
+        //     recycTypeId,
+        //     recyclableNameTchi,
+        //     recyclableNameSchi,
+        //     recyclableNameEng
+        //   } = item
+
+        //   newData[recycTypeId as keyof recyTypeItem] = {
+        //     recyclableNameTchi,
+        //     recyclableNameSchi,
+        //     recyclableNameEng
+        //   }
+        // })
+
+        console.log(' getRecycleType', response)
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const transformToTableRow = (warehouse: Warehouse): TableRow => {

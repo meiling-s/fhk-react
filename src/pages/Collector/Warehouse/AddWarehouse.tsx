@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback, useState, useEffect, Key } from 'react'
 import { useNavigate } from 'react-router-dom'
-import RightOverlayForm from './RightOverlayForm'
+import RightOverlayForm from '../../../components/RightOverlayForm'
 import TextField from '@mui/material/TextField'
 import { Grid, FormHelperText } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
@@ -8,16 +8,16 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import Switcher from './FormComponents/CustomSwitch'
-import LabelField from './FormComponents/CustomField'
-import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../themes/icons'
+import Switcher from '../../../components/FormComponents/CustomSwitch'
+import LabelField from '../../../components/FormComponents/CustomField'
+import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import {
   createWarehouse,
   getWarehouseById,
   editWarehouse,
   getRecycleType
-} from '../APICalls/warehouseManage'
+} from '../../../APICalls/warehouseManage'
 import { set } from 'date-fns'
 
 interface AddWarehouseProps {
@@ -113,9 +113,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const currentLanguage = i18n.language
 
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
-  const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption>(
-    {}
-  )
+  const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption>({})
 
   const getRecyleCategory = async () => {
     try {
@@ -187,8 +185,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   useEffect(() => {
-   
-
     if (action === 'add') {
       resetForm()
       setTrySubmited(false)
@@ -694,15 +690,20 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <MenuItem value="">
                               <em>-</em>
                             </MenuItem>
-                            {recycleSubType[item.recycTypeId]?.map((item, index) => (
-                              <MenuItem value={item.recycSubtypeId} key={index}>
-                                {currentLanguage === 'zhhk'
-                                  ? item.recyclableNameTchi
-                                  : currentLanguage === 'zhch'
-                                  ? item.recyclableNameSchi
-                                  : item.recyclableNameEng}
-                              </MenuItem>
-                            ))}
+                            {recycleSubType[item.recycTypeId]?.map(
+                              (item, index) => (
+                                <MenuItem
+                                  value={item.recycSubtypeId}
+                                  key={index}
+                                >
+                                  {currentLanguage === 'zhhk'
+                                    ? item.recyclableNameTchi
+                                    : currentLanguage === 'zhch'
+                                    ? item.recyclableNameSchi
+                                    : item.recyclableNameEng}
+                                </MenuItem>
+                              )
+                            )}
                           </Select>
                         </FormControl>
                         <FormControl fullWidth variant="standard">
