@@ -36,7 +36,7 @@ interface recyleItem {
 }
 
 interface recyleSubtyeData {
-  recycTypeId: string
+  recycSubtypeId: string
   recyclableNameEng: string
   recyclableNameSchi: string
   recyclableNameTchi: string
@@ -110,7 +110,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const { t } = useTranslation()
   const { i18n } = useTranslation()
   const currentLanguage = i18n.language
-  
+
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
   const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption[]>(
     []
@@ -185,6 +185,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     if (action === 'add') {
       resetForm()
+      setTrySubmited(false)
     } else if (action === 'edit' || action === 'delete') {
       getWarehousebyId()
     }
@@ -261,8 +262,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     const isRecyleUnselected = recycleCategory.every((item) => {
       return (
-        item.recycTypeId.trim() !== '' ||
-        item.recycSubtypeId.trim() !== '' ||
+        item.recycTypeId.trim() !== '' &&
+        item.recycSubtypeId.trim() !== '' &&
         item.recycSubtypeCapacity === 0
       )
     })
@@ -277,7 +278,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     setValidation(tempV)
     console.log(tempV)
-  }, [nameValue, place])
+  }, [nameValue, place, contractNum, recycleCategory])
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -430,7 +431,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         ? //MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
           createWareHouseData(addWarehouseForm)
         : editWarehouseData(addWarehouseForm)
-      resetForm()
+      
       if (
         onSubmitData &&
         typeof onSubmitData === 'function' &&
@@ -660,13 +661,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             </MenuItem>
                             {recycleType.map((item, index) => (
                               <MenuItem value={item.id} key={index}>
-                              {
-                                currentLanguage === 'zhhk' 
+                                {currentLanguage === 'zhhk'
                                   ? item.recyclableNameTchi
                                   : currentLanguage === 'zhch'
                                   ? item.recyclableNameSchi
-                                  : item.recyclableNameEng
-                              }
+                                  : item.recyclableNameEng}
                               </MenuItem>
                             ))}
                           </Select>
@@ -690,16 +689,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             </MenuItem>
                             {selectedSubType?.list?.map((item, index) => (
                               <MenuItem
-                                value={selectedSubType.recycTypeId}
+                                value={item.recycSubtypeId}
                                 key={index}
                               >
-                                {
-                                  currentLanguage === 'zhhk' 
-                                    ? item.recyclableNameTchi
-                                    : currentLanguage === 'zhch'
-                                    ? item.recyclableNameSchi
-                                    : item.recyclableNameEng
-                                }
+                                {currentLanguage === 'zhhk'
+                                  ? item.recyclableNameTchi
+                                  : currentLanguage === 'zhch'
+                                  ? item.recyclableNameSchi
+                                  : item.recyclableNameEng}
                               </MenuItem>
                             ))}
                           </Select>
