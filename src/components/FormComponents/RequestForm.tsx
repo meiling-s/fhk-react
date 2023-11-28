@@ -131,7 +131,7 @@ const RequestForm = ({
                       到達地點
                     </Typography>
                     <Typography fontSize="20PX" letterSpacing="2px">
-                      {selectedItem?.returnAddr}
+                      {selectedItem?.deliveryAddr}
                     </Typography>
                   </Box>
                 </Box>
