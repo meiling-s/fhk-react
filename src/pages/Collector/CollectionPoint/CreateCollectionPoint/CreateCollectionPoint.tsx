@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Box, Button, Collapse, Divider, FormHelperText, Grid, List, ListItemButton, ListItemText, Typography, } from "@mui/material";
+import { Box, Button, Collapse, Divider, FormHelperText, Grid, List, ListItemButton, ListItemText, Typography, Tooltip } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { styles } from "../../../../constants/styles";
@@ -328,6 +328,8 @@ function CreateCollectionPoint() {
                                 value={address ? address : searchText}
                                 error={checkString(address)}
                             />
+                            <Typography sx={styles.header3}>請輸入座數,街名,屋苑等資料</Typography> 
+                            
                             <Box
                                 sx={{
                                     display: "flex",

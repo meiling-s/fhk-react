@@ -128,6 +128,7 @@ const Warehouse: FunctionComponent = () => {
       //real case use put api
       //setWarehouseItems([...warehouseItems, formData])
     }
+    fetchData();
     setDrawerOpen(false)
   }
 
@@ -193,6 +194,7 @@ const Warehouse: FunctionComponent = () => {
 
   const handleDrawerClose = () => {
     setDrawerOpen(false)
+    fetchData();
   }
 
   const handleCheckAll = (checked: boolean) => {

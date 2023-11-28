@@ -46,7 +46,7 @@ function createShipment(
     checkInId: number
 ): Shipment {
     var createAt = new Date(createDate)
-    return { createDate: createAt, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr, status, checkInId };
+    return { createDate: createAt, sender, recipient: "匡智會", poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr: "天水圍天華路65號", status, checkInId };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {

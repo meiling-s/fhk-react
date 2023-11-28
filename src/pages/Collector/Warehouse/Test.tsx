@@ -44,20 +44,22 @@ const Test: FunctionComponent = () => {
     // const [persons, setPersons] = useState<Person[]>([]);
     const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await getAllWarehouse(0, 10);
-                if (response) {
-                    setWarehouses(response.data.content); // Extract the 'data' property
-                    console.log(response.data.content);
-                }
-            } catch (error) {
-                console.error(error);
+    const fetchData = async () => {
+        try {
+            const response = await getAllWarehouse(0, 10);
+            if (response) {
+                setWarehouses(response.data.content); // Extract the 'data' property
+                console.log(response.data.content);
             }
-        };
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
 
         fetchData();
+        
     }, []);
 
     return (
