@@ -110,7 +110,7 @@
     "warehouseNameEng": "English Name",
     "place": "Place",
     "contractNum": "Contract Number",
-    "warehouseRecyc": "回收物類別"
+    "warehouseRecyc": "recyclable type(s)"
   },
   "check_in": {
     "request_check_in": "Request check-in",
