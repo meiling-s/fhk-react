@@ -143,6 +143,10 @@ function CreateCollectionPoint() {
         checkEPD(contractNo);
     }, [contractNo])
 
+    useEffect(() => {
+        setListPlace([]);
+    }, [address])
+
     //validation function
     const checkString = (s: string) => {
         if(!trySubmited){       //before first submit, don't check the validation
@@ -338,7 +342,7 @@ function CreateCollectionPoint() {
                                     borderColor: "black",
                                 }}
                             >
-                                {listPlace && (
+                                {(listPlace && listPlace.length>0) && (
                                     <List key={listPlace[0]?.place_id}>
                                         <ListItemButton
                                             onClick={() => {
