@@ -111,5 +111,30 @@
     "place": "Place",
     "contractNum": "Contract Number",
     "warehouseRecyc": "回收物類別"
+  },
+  "check_in": {
+    "request_check_in": "Request check-in",
+    "approve": "Approve",
+    "reject": "Reject",
+    "search": "Search",
+    "input_po_no": "Please input the pickup order no.",
+    "company": "Company",
+    "any": "Any",
+    "location": "Location",
+    "created_at": "Created at",
+    "sender_company": "Sender company",
+    "receiver_company": "Receiver company",
+    "pickup_order_no": "Pickup order no.",
+    "stock_adjustment": "Stock adjustment",
+    "logistic_company": "Logistic company",
+    "sender_addr": "Sender address",
+    "receiver_addr": "Receiver address",
+    "recyc_loc_info": "Recycling location infomation",
+    "recyclable_type_weight": "Recyclable type & weight",
+    "message": "Message",
+    "confirm_reject": "Are you sure to request the check-in proceed?",
+    "reject_reasons": "Reject reason(s)",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }

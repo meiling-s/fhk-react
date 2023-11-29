@@ -110,5 +110,30 @@
     "place": "地點",
     "contractNum": "合約編號",
     "warehouseRecyc": "回收物類別"
+  },
+  "check_in": {
+    "request_check_in": "送入请求",
+    "approve": "接受",
+    "reject": "拒绝",
+    "search": "搜索",
+    "input_po_no": "输入运单编号",
+    "company": "公司",
+    "any": "任何",
+    "location": "地点",
+    "created_at": "建立日期",
+    "sender_company": "寄件公司",
+    "receiver_company": "收件公司",
+    "pickup_order_no": "运单编号",
+    "stock_adjustment": "调整库存",
+    "logistic_company": "物流公司",
+    "sender_addr": "送出地点",
+    "receiver_addr": "到达地点",
+    "recyc_loc_info": "回收地点资料",
+    "recyclable_type_weight": "回收物类别及重量",
+    "message": "信息",
+    "confirm_reject": "确认拒绝送入请求吗?",
+    "reject_reasons": "拒绝原因(可多选)",
+    "confirm": "确认拒绝",
+    "cancel": "取消"
   }
 }
