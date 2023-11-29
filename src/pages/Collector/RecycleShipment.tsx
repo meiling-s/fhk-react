@@ -17,7 +17,7 @@ import CustomAvatar from "../../components/CustomAvatar";
 import { getAllCheckInRequests, updateCheckinStatus } from "../../APICalls/Collector/warehouseManage";
 import { updateStatus } from "../../interfaces/warehouse";
 import RequestForm from "../../components/FormComponents/RequestForm";
-
+import { useTranslation } from "react-i18next";
 
 type Shipment = {
     createDate: Date,
@@ -78,58 +78,7 @@ interface HeadCell {
     id: keyof Shipment;
     label: string;
     numeric: boolean;
-  }
-  const headCells: readonly HeadCell[] = [
-    {
-        id: 'createDate',
-        numeric: false,
-        disablePadding: false,
-        label: '建立日期',
-    },
-    {
-        id: 'sender',
-        numeric: false,
-        disablePadding: false,
-        label: '寄件公司',
-    },
-    {
-        id: 'recipient',
-        numeric: false,
-        disablePadding: false,
-        label: '收件公司',
-    },
-    {
-        id: 'poNumber',
-        numeric: false,
-        disablePadding: false,
-        label: '運單編號',
-    },
-    {
-        id: 'stockAdjust',
-        numeric: false,
-        disablePadding: false,
-        label: '調整庫存',
-    },
-    {
-        id: 'logisticsCompany',
-        numeric: false,
-        disablePadding: false,
-        label: '物流公司',
-    },
-    {
-        id: 'returnAddr',
-        numeric: false,
-        disablePadding: false,
-        label: '送出地點',
-    },
-    {
-        id: 'deliveryAddr',
-        numeric: false,
-        disablePadding: false,
-        label: '到達地點',
-    }
-
-  ];
+}
 
      const fakeData = [
         {
@@ -177,6 +126,8 @@ function RejectForm({
     checkedShipments,
     onRejected
 }: rejectForm){
+
+    const { t } = useTranslation();
 
     const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
 
@@ -236,11 +187,11 @@ function RejectForm({
                 <Stack spacing={2}>
                     <Box>
                         <Typography id="modal-modal-title" variant="h6" component="h2" sx={{fontWeight: "bold"}}>
-                            確認拒絕送入請求嗎？
+                        {t("check_in.confirm_reject")}
                         </Typography>
                     </Box>  
                     <Box>
-                        <Typography sx={localstyles.typo}>拒絕原因（可多選）<Required/></Typography>
+                        <Typography sx={localstyles.typo}>{t("check_in.reject_reasons")}<Required/></Typography>
 
                         <CustomItemList
                             items={reasons}
@@ -256,13 +207,13 @@ function RejectForm({
                             sx={[localstyles.formButton, {m:0.5}]}
                             onClick={() => {handleConfirmRejectOnClick(rejectReasonId); onClose();}}
                             >
-                            確認拒絕
+                            {t("check_in.confirm")}
                         </Button>
                         <Button
                             sx={[localstyles.cancelButton, {m:0.5}]}
                             onClick={() => onClose()}
                             >
-                            取消
+                            {t("check_in.cancel")}
                         </Button>
                     </Box>
                     
@@ -273,6 +224,8 @@ function RejectForm({
 }
 
 function ShipmentManage(){
+
+    const { t } = useTranslation();
 
     const drawerWidth = 246;
 
@@ -299,6 +252,58 @@ function ShipmentManage(){
     const [open, setOpen] = useState<boolean>(false);
     
     const [selectedRow, setSelectedRow] = useState<Shipment>();
+
+    const headCells: readonly HeadCell[] = [
+        {
+            id: 'createDate',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.created_at"),
+        },
+        {
+            id: 'sender',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.sender_company"),
+        },
+        {
+            id: 'recipient',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.receiver_company"),
+        },
+        {
+            id: 'poNumber',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.pickup_order_no"),
+        },
+        {
+            id: 'stockAdjust',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.pickup_order_no"),
+        },
+        {
+            id: 'logisticsCompany',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.logistic_company"),
+        },
+        {
+            id: 'returnAddr',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.sender_addr"),
+        },
+        {
+            id: 'deliveryAddr',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.receiver_addr"),
+        }
+    
+      ];
 
 
     useEffect(()=>{
@@ -520,7 +525,7 @@ function ShipmentManage(){
                         <ChevronLeftIcon
                             sx={styles.buttonBlack}
                         />
-                        <Typography fontSize={20} color='black' fontWeight='bold'>送入請求</Typography>
+                        <Typography fontSize={20} color='black' fontWeight='bold'>{t("check_in.request_check_in")}</Typography>
                     </Button> 
                     </Grid>
                     <Grid item>
@@ -540,7 +545,7 @@ function ShipmentManage(){
                     }]}
                         variant="outlined"
                         onClick={()=>{handleApproveOnClick()}}
-                        > 接受 
+                        > {t("check_in.approve")}
                     </Button>
                     <Button sx={[styles.buttonOutlinedGreen,{
                         mt: 3,
@@ -550,7 +555,7 @@ function ShipmentManage(){
                     }]}
                         variant="outlined"
                         onClick={()=>setRejFormModal(true)}
-                        > 拒絕
+                        > {t("check_in.reject")}
                     </Button>
                 </Box>
                 <Box>
@@ -577,12 +582,12 @@ function ShipmentManage(){
                             },
                           }
                     }}
-                    label="搜索"
+                    label={t("check_in.search")}
                     InputLabelProps={{
                         style: { color: '#79CA25' },
                         focused: true,
                       }}
-                    placeholder="輸入運單編號"
+                    placeholder={t("input_po_no")}
                     InputProps={{
                         // startAdornment: (
                         //     <InputAdornment position="start">
@@ -616,7 +621,7 @@ function ShipmentManage(){
                             },
                           }
                     }}>
-                <InputLabel id="company-label">寄件公司</InputLabel>
+                <InputLabel id="company-label">{t("check_in.sender_company")}</InputLabel>
                 <Select
                 labelId="company-label"
                 id="company"
@@ -624,7 +629,7 @@ function ShipmentManage(){
                 label="寄件公司"
                 onChange={handleComChange}
                 >
-                    <MenuItem value=""> <em>任何</em></MenuItem>
+                    <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
                         <MenuItem value={item.sender}>{item.sender}</MenuItem>
@@ -649,7 +654,7 @@ function ShipmentManage(){
                             },
                         }
                     }}>
-                <InputLabel id="location-label">送出地點</InputLabel>
+                <InputLabel id="location-label">{t("check_in.sender_addr")}</InputLabel>
                 <Select
                 labelId="location-label"
                 id="location"
@@ -657,7 +662,7 @@ function ShipmentManage(){
                 label="送出地點"
                 onChange={handleLocChange}
                 >
-                <MenuItem value=""> <em>任何</em></MenuItem>
+                <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
                         <MenuItem value={item.returnAddr}>{item.returnAddr}</MenuItem>    
