@@ -17,6 +17,7 @@ import {
   getAllWarehouse,
   getRecycleType
 } from '../../../APICalls/warehouseManage'
+import { set } from 'date-fns'
 
 interface RecyleItem {
   recycTypeId: string
@@ -52,6 +53,8 @@ const Warehouse: FunctionComponent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
   const { t } = useTranslation()
+  const { i18n } = useTranslation()
+  const currentLanguage = i18n.language
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
@@ -123,26 +126,20 @@ const Warehouse: FunctionComponent = () => {
 
   const getRecycleData = async () => {
     try {
-      const response = await getRecycleType
+      const response = await getRecycleType()
       if (response) {
-        const newData = {}
+        const recyTypeData: recyTypeItem = {}
         console.log('getRecycleType', response)
-        // response.data.content.forEach((item: recyTypeItem ) => {
-        //   const {
-        //     recycTypeId,
-        //     recyclableNameTchi,
-        //     recyclableNameSchi,
-        //     recyclableNameEng
-        //   } = item
-
-        //   newData[recycTypeId as keyof recyTypeItem] = {
-        //     recyclableNameTchi,
-        //     recyclableNameSchi,
-        //     recyclableNameEng
-        //   }
-        // })
-
-        console.log(' getRecycleType', response)
+        response.data.forEach((item: recyTypeItem ) => {
+          recyTypeData[item.recycTypeId as keyof  recyTypeItem] =
+          {"recyclableNameEng" : item.recyclableNameEng, 
+           "recyclableNameSchi" :  item.recyclableNameSchi,
+           "recyclableNameTchi": item.recyclableNameTchi
+          }
+        })
+        
+        await setRecyleTypeList(recyTypeData)
+        console.log("finish recyTypeData ", recyTypeData)
       }
     } catch (error) {
       console.error(error)
@@ -150,9 +147,18 @@ const Warehouse: FunctionComponent = () => {
   }
 
   const transformToTableRow = (warehouse: Warehouse): TableRow => {
+    // const nameLang = currentLanguage === 'zhhk' ? "recyclableNameTchi" : currentLanguage === 'zhch'?  "recyclableNameSchi" : "recyclableNameEng"
+    console.log(recyleTypeList)
+
     const recyleType = warehouse.warehouseRecyc.map(
-      (item: RecyleItem) => `${item.recycSubtypeId}`
-    )
+      (item: RecyleItem) =>
+       
+        {
+          console.log(item.recycTypeId)
+          return `${recyleTypeList[item.recycTypeId].recyclableNameEng}`
+        }
+       
+    ).join(", ")
     return {
       id: warehouse.warehouseId,
       warehouseId: warehouse.warehouseId,
@@ -179,17 +185,21 @@ const Warehouse: FunctionComponent = () => {
           .map(transformToTableRow)
 
         setWarehouseItems(filteredData)
-        console.log('fetch DATA', response.data.content)
+        console.log('fetch DATA', filteredData)
       }
     } catch (error) {
       console.error(error)
     }
   }
 
+
   useEffect(() => {
-    getRecycleData()
-    fetchData()
-  }, [action, drawerOpen])
+    const fetchCategoryAndData = async () =>{
+      await getRecycleData()
+      fetchData()
+    }
+    fetchCategoryAndData()
+  }, [action, drawerOpen, currentLanguage])
 
   const addDataWarehouse = () => {
     setDrawerOpen(true)
