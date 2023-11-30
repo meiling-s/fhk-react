@@ -1,5 +1,6 @@
 import Router from './Router';
-import CheckInRequestContext from './contexts/CheckInRequestContext';
+import CheckInRequestContainer from './contexts/CheckInRequestContainer';
+import CommonTypeContainer from './contexts/CommonTypeContainer';
 import axiosSetup from './setups/axiosSetup';
 import './setups/i18n'
 
@@ -7,9 +8,11 @@ function App() {
   axiosSetup();
 
   return (
-    <CheckInRequestContext.Provider>
+    <CommonTypeContainer.Provider>
+    <CheckInRequestContainer.Provider>
       <Router/>
-    </CheckInRequestContext.Provider>
+    </CheckInRequestContainer.Provider>
+    </CommonTypeContainer.Provider>
   );
 }
 

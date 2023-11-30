@@ -6,7 +6,7 @@ interface RecycleCardProps {
     name: string;
   }
 
-const RecycleCard = ({ name, bgcolor,fontcolor,showImage,recycleName,recycleType}: { name: string, bgcolor :string , fontcolor:string,showImage:boolean,recycleName:string,recycleType:string}) => {
+const RecycleCard = ({ name, bgcolor,fontcolor,showImage,recycleName,recycleType,weight}: { name: string, bgcolor :string , fontcolor:string,showImage:boolean,recycleName:string,recycleType:string,weight:number}) => {
     
   const [open, setOpen] = useState<boolean>(false);
 
@@ -15,7 +15,6 @@ const RecycleCard = ({ name, bgcolor,fontcolor,showImage,recycleName,recycleType
     {imageUrl:'https://thanam.com.my/wp-content/uploads/2022/07/newspapers-g19e6b2746_1920.png'},
     {imageUrl:'https://thanam.com.my/wp-content/uploads/2022/07/newspapers-g19e6b2746_1920.png'},
   ];
-  
 
   return (
     <Box
@@ -50,7 +49,7 @@ const RecycleCard = ({ name, bgcolor,fontcolor,showImage,recycleName,recycleType
           <Typography color ='#9f9f9f'>{recycleType} </Typography>
         </Box>
       </Box>
-      <Box alignSelf="center">5kg</Box>
+      <Box alignSelf="center" fontWeight='bold'>{weight} kg</Box>
     </Box>
     {showImage&&(<Stack mt="10px" spacing={3} direction="row">
      {
