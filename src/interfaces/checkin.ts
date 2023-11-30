@@ -3,7 +3,7 @@ export type CheckinDetailPhoto = {
     photo: string;
   }
   
-  type CheckinDetail = {
+export  type CheckinDetail = {
     chkInDtlId: number;
     recycTypeId: string;
     recycSubtypeId: string;
@@ -33,6 +33,7 @@ export type CheckIn = {
     picoId: string;
     signature: string;
     normalFlg: boolean;
+    adjustmentFlg: boolean,
     createdBy: string;
     updatedBy: string;
     checkinDetail: CheckinDetail[];

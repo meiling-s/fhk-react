@@ -22,7 +22,7 @@ import {
   Typography,
   styled,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   LANGUAGE_ICON,
   NOTIFICATION_ICON,
@@ -31,92 +31,40 @@ import {
 } from "../themes/icons";
 import BackgroundLetterAvatars from "../components/CustomAvatar";
 import { useNavigate } from "react-router-dom";
-import { format, localStorgeKeyName } from "../constants/constant";
+import { localStorgeKeyName } from "../constants/constant";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CircleIcon from '@mui/icons-material/Circle';
-import { getAllCheckInRequests } from "../APICalls/Collector/warehouseManage";
 import { CheckIn } from "../interfaces/checkin";
 import RequestForm from "../components/FormComponents/RequestForm";
+import CheckInRequestContext from "../contexts/CheckInRequestContainer";
+import { useContainer } from "unstated-next";
+import { getRecycType } from "../APICalls/commonManage";
+import CommonTypeContainer from "../contexts/CommonTypeContainer";
 
-type Shipment = {
-  createDate: Date,
-  sender: string,
-  recipient: string,
-  poNumber: string,
-  stockAdjust: boolean,
-  logisticsCompany: string,
-  returnAddr: string,
-  deliveryAddr: string,
-  status: string,
-  checkInId: number
-
-}
-
-function createShipment(
-  createDate: string,
-  sender: string,
-  recipient: string,
-  poNumber: string,
-  stockAdjust: boolean,
-  logisticsCompany: string,
-  returnAddr: string,
-  deliveryAddr: string,
-  status: string,
-  checkInId: number
-): Shipment {
-  var createAt = new Date(createDate)
-  return { createDate: createAt, sender, recipient: "匡智會", poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr: "天水圍天華路65號", status, checkInId };
-}
 
 const MainAppBar = () => {
   const [keywords, setKeywords] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [checkInRequest,setCheckInRequest] = useState<Shipment[]>([])
-  const [selectedItem,setSelectedItem] = useState<Shipment>()
+  const [selectedItem,setSelectedItem] = useState<CheckIn>()
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const drawerWidth = 246;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [openModal,setOpenModal] =useState<boolean>(false);
-  const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [openModal,setOpenModal] =useState<boolean>(false)
+  
+  const { checkInRequest } = useContainer(CheckInRequestContext);
 
-  const [filterShipments, setFilterShipments] = useState<Shipment[]>([]);
+  
 
   const handleLanguageChange = (lng: string) => {
     console.log("change language: ", lng);
     i18n.changeLanguage(lng);
   };
  
-
-  
-  async function initShipments() {
-    const result = await getAllCheckInRequests();
-    const data = result?.data.content;
-    if(data){
-        var ships: Shipment[] = [];
-        data.map((ship: any) => {
-            if(ship.status == "CREATED"){
-            ships.push(
-                createShipment(
-                    ship?.createdAt,
-                    ship?.senderName,
-                    ship?.recipientCompany,
-                    ship?.picoId,
-                    ship?.adjustmentFlg,
-                    ship?.logisticName,
-                    ship?.senderAddr,
-                    ship?.deliveryAddress,
-                    ship?.status,
-                    ship?.chkInId
-            ));}
-        })
-        setShipments(ships);
-        setFilterShipments(ships);
-    }
-}
+  //console.log(recycType)
 
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -126,37 +74,24 @@ const MainAppBar = () => {
     setAnchorEl(null);
   };
 
-  const onKeywordsChange = (k: string) => {
-    setKeywords(k);
-  };
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
-  useEffect(()=>{
-    // initCheckInRequest()
-    initShipments();
-   
-},[]);
 
-const handleItemClick = (checkIn:Shipment) => {
+const handleItemClick = (checkIn:CheckIn) => {
   // Store the selected item's content or perform any actions
   setOpenModal(true)
+  console.log(checkIn);
   setSelectedItem(checkIn);
-  // navigate('/collector/shipment', { state: checkIn })
+  
 };
 const handleCloses = () =>{
   setOpenModal(false)
 }
-async function initCheckInRequest() {
-  const result = await getAllCheckInRequests();
-  const data = result?.data.content;
-  if(data && data.length>0){
-      console.log("all checkIn request ",data);
-      setCheckInRequest(data);
-  }
-}
+ 
+
 
   return (
     //<Box flexDirection={"row"} sx={{ flexGrow: 1 }}>
@@ -172,6 +107,7 @@ async function initCheckInRequest() {
         style={{ background: "white" }}
         sx={{ height: { sm: "100px", lg: "64px" } }}
       >
+  
         <Box
           display="flex"
           sx={{ ml: 5, width: { sm: "50%", lg: "20%" } }}
@@ -179,7 +115,7 @@ async function initCheckInRequest() {
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: "flex" }}>
           <IconButton onClick={toggleDrawer}>
-            <Badge badgeContent={shipments.length} color="error">
+            <Badge badgeContent={checkInRequest?.length} color="error">
               <NOTIFICATION_ICON />
 
               <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
@@ -193,7 +129,7 @@ async function initCheckInRequest() {
                       通知
                     </Typography>
                     <BackgroundLetterAvatars
-                      name={shipments.length.toString()}
+                      name={checkInRequest?.length.toString()!}
                       size={23}
                       backgroundColor="red"
                       fontColor="white"
@@ -202,9 +138,9 @@ async function initCheckInRequest() {
                     />
                   </Box>
                   <Divider />
-                  {shipments.map((checkIn)=>(  
+                  {checkInRequest?.map((checkIn)=>(  
                     <>
-                  <List key = {checkIn.checkInId}>
+                  <List key = {checkIn.chkInId}>
                     <ListItem onClick={() => handleItemClick(checkIn)}>
                       <ListItemButton >
                         <Stack>
@@ -223,7 +159,7 @@ async function initCheckInRequest() {
                           </Typography>
                         
                           <Typography sx={{ml:'40px',mt:'10px'}}>
-                          {checkIn.createDate.toString()}
+                            2023-11-23
                           </Typography>
                          
                           </Stack>
@@ -237,7 +173,7 @@ async function initCheckInRequest() {
               </Drawer>
               {selectedItem&&(
                     <Modal open={openModal} onClose={handleCloses} >
-                      <RequestForm onClose={handleCloses}selectedItem={selectedItem}/>
+                      <RequestForm onClose={handleCloses} selectedItem={selectedItem}/>
                     </Modal>
                   )}
             </Badge>

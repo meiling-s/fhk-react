@@ -17,6 +17,10 @@ import CustomAvatar from "../../components/CustomAvatar";
 import { getAllCheckInRequests, updateCheckinStatus } from "../../APICalls/Collector/warehouseManage";
 import { updateStatus } from "../../interfaces/warehouse";
 import RequestForm from "../../components/FormComponents/RequestForm";
+import { CheckIn } from "../../interfaces/checkin";
+import { useContainer } from "unstated-next";
+import CheckInRequestContext from "../../contexts/CheckInRequestContainer";
+
 import { useTranslation } from "react-i18next";
 
 type Shipment = {
@@ -116,7 +120,7 @@ const Required = () => {
 type rejectForm = {
     open: boolean;
     onClose: () => void,
-    checkedShipments:Shipment[],
+    checkedShipments:CheckIn[],
     onRejected?: () => void 
 }
 
@@ -147,7 +151,7 @@ function RejectForm({
     ]
 
     const handleConfirmRejectOnClick = async (rejectReasonId: string[]) => {
-        const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.checkInId);
+        const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.chkInId);
         const rejectReason = rejectReasonId.map(id => {
             const reasonItem = reasons.find(reason => reason.id === id);
             return reasonItem ? reasonItem.name : '';
@@ -239,19 +243,21 @@ function ShipmentManage(){
 
     const [rejFormModal, setRejFormModal] = useState<boolean>(false);
 
-    const [shipments, setShipments] = useState<Shipment[]>([]);
+    const [shipments, setShipments] = useState<CheckIn[]>([]);
 
-    const [filterShipments, setFilterShipments] = useState<Shipment[]>([]);
+    const [filterShipments, setFilterShipments] = useState<CheckIn[]>([]);
     
     const [company, setCompany] = useState('');
 
     const [location, setLocation] = useState('');
 
-    const [checkedShipments, setCheckedShipments] = useState<Shipment[]>([]);
+    const [checkedShipments, setCheckedShipments] = useState<CheckIn[]>([]);
 
     const [open, setOpen] = useState<boolean>(false);
     
-    const [selectedRow, setSelectedRow] = useState<Shipment>();
+    const [selectedRow, setSelectedRow] = useState<CheckIn>();
+    
+    const { checkInRequest } = useContainer(CheckInRequestContext);
 
     const headCells: readonly HeadCell[] = [
         {
@@ -306,38 +312,6 @@ function ShipmentManage(){
       ];
 
 
-    useEffect(()=>{
-        initShipments()
-        // setShipments(fakeData);
-        // setFilterShipments(fakeData);
-    },[]);
-
-    async function initShipments() {
-        const result = await getAllCheckInRequests();
-        const data = result?.data.content;
-        if(data){
-            var ships: Shipment[] = [];
-            data.map((ship: any) => {
-                if(ship.status == "CREATED"){
-                ships.push(
-                    createShipment(
-                        ship?.createdAt,
-                        ship?.senderName,
-                        ship?.recipientCompany,
-                        ship?.picoId,
-                        ship?.adjustmentFlg,
-                        ship?.logisticName,
-                        ship?.senderAddr,
-                        ship?.deliveryAddress,
-                        ship?.status,
-                        ship?.chkInId
-                ));}
-            })
-            setShipments(ships);
-            setFilterShipments(ships);
-        }
-    }
-
     const handleRequestSort = (_event: React.MouseEvent<unknown>, property: string) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -347,9 +321,9 @@ function ShipmentManage(){
     const handleFilterPoNum = (searchWord: string) => {
 
         if(searchWord != ""){
-            const filteredShipments: Shipment[] = [];
+            const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
-                if(shipment.poNumber.includes(searchWord)){
+                if(shipment.picoId.includes(searchWord)){
                     filteredShipments.push(shipment);
                 }
             });
@@ -372,10 +346,10 @@ function ShipmentManage(){
         var searchWord = event.target.value;
         console.log(searchWord);
         if(searchWord != ""){
-            const filteredShipments: Shipment[] = [];
+            const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
                 if(
-                    shipment.sender.includes(searchWord) 
+                    shipment.senderName.includes(searchWord) 
                 ){
                     filteredShipments.push(shipment);
                 }
@@ -395,10 +369,10 @@ function ShipmentManage(){
         var searchWord = event.target.value;
         console.log(searchWord);
         if(searchWord != ""){
-            const filteredShipments: Shipment[] = [];
+            const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
                 if(
-                    shipment.returnAddr.includes(searchWord) 
+                    shipment.senderAddr.includes(searchWord) 
                 ){
                     filteredShipments.push(shipment);
                 }
@@ -416,7 +390,7 @@ function ShipmentManage(){
 
     const handleApproveOnClick = async () => {
         console.log(checkedShipments);
-        const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.checkInId);
+        const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.chkInId);
         console.log("checkin ids are " + checkInIds);
         const confirmReason: string[] = ["Confirmed"];
         const statReason: updateStatus = {
@@ -424,18 +398,19 @@ function ShipmentManage(){
             reason: confirmReason
         }
     
-        const results = await Promise.allSettled(checkInIds.map(async (checkInId) => {
-            try {
-                const result = await updateCheckinStatus(checkInId, statReason);
-                const data = result?.data;
-                if(data){
-                    console.log("updated check-in status: ",data);
-                    initShipments();
-                }
-            } catch (error) {
-                console.error(`Failed to update check-in status for id ${checkInId}: `, error);
-            }
-        }));
+        // const results = await Promise.allSettled(checkInIds.map(async (checkInId) => {
+        //     try {
+        //         const result = await updateCheckinStatus(checkInId, statReason);
+        //         const data = result?.data;
+        //         if(data){
+        //             console.log("updated check-in status: ",data);
+        //             initShipments();
+        //         }
+        //     } catch (error) {
+        //         console.error(`Failed to update check-in status for id ${checkInId}: `, error);
+        //     }
+        // }
+        // ));
     }
 
 
@@ -445,11 +420,11 @@ function ShipmentManage(){
 
     function onSelectAllClick(){
         if(selected.length < shipments.length){     //if not selecting all, do select all
-            const newSelected = shipments.map((shipment) => shipment.poNumber);
+            const newSelected = shipments.map((shipment) => shipment.picoId);
             setSelected(newSelected);
             // Trigger the function for each individual checkbox
             console.log(shipments);
-            var selectedShipment: Shipment[] = [];
+            var selectedShipment: CheckIn[] = [];
             shipments.map((shipment) => {
                 // Only call handleCheck if the shipment is not already checked
                 selectedShipment.push(shipment);
@@ -486,12 +461,12 @@ function ShipmentManage(){
         setSelected(newSelected);
         setOpen(true);
        console.log(id)
-        const selectedItem = shipments?.find(item => item.poNumber.toString() ===id);
+        const selectedItem = checkInRequest?.find(item => item.picoId.toString() ===id);
         console.log('123456'+selectedItem)
         setSelectedRow(selectedItem); //
       };
 
-    const handleCheck = (item: Shipment, isChecked: boolean) => {
+    const handleCheck = (item: CheckIn, isChecked: boolean) => {
         if (isChecked) {
           setCheckedShipments([...checkedShipments, item]);
         } else {
@@ -632,7 +607,7 @@ function ShipmentManage(){
                     <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
-                        <MenuItem value={item.sender}>{item.sender}</MenuItem>
+                        <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>
                     ))}  
                 </Select>
                 </FormControl>
@@ -665,7 +640,7 @@ function ShipmentManage(){
                 <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
-                        <MenuItem value={item.returnAddr}>{item.returnAddr}</MenuItem>    
+                        <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>    
                     ))}
                  </Select>
                  
@@ -723,35 +698,35 @@ function ShipmentManage(){
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {   filterShipments.map((shipment) => {
-                                const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
-                                return (
+                            {   checkInRequest?.map((shipment) => {
+                                // const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
+                                   return (
                                     <TableRow
-                                        hover key={poNumber}
+                                        hover key={shipment.picoId}
                                         tabIndex={-1}
                                         role="checkbox"
                                         sx={[localstyles.row]}
-                                        onClick={(event)=>handleClick(event,poNumber)}
+                                        onClick={(event)=>handleClick(event,shipment.picoId)}
                                         >
                                         <TableCell sx={localstyles.bodyCell}>
                                             <Checkbox
                                                 color="primary"
-                                                checked={selected.includes(poNumber)}
+                                                checked={selected.includes(shipment.picoId)}
                                                 onChange={(e) => handleCheck(shipment, e.target.checked)}
                                                 inputProps={{
                                                     'aria-label': 'select request',
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(createDate,format.dateFormat2)}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{sender}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{recipient}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{poNumber}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{stockAdjust?(<CheckIcon sx={styles.endAdornmentIcon}/>)
+                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat2)}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{'recipient'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoId}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.adjustmentFlg?(<CheckIcon sx={styles.endAdornmentIcon}/>)
                                         :(<ClearIcon sx={styles.endAdornmentIcon}/>)}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{logisticsCompany}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{returnAddr}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{deliveryAddr}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.logisticName}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.senderAddr}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{'deliver'}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -763,7 +738,7 @@ function ShipmentManage(){
                     onClose={() => {
                         setRejFormModal(false)
                     }}
-                    onRejected={() => initShipments()}
+                    // onRejected={() => initShipments()}
                     />
 
             </Box>
