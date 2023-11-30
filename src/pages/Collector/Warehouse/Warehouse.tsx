@@ -10,13 +10,14 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
 import { Box } from '@mui/material'
 import { ADD_ICON } from '../../../themes/icons'
-import AddWarehouse from '../../../components/AddWarehouse'
+import AddWarehouse from './AddWarehouse'
 import TableBase from '../../../components/TableBase'
 import { useTranslation } from 'react-i18next'
 import {
   getAllWarehouse,
-  createWarehouse
+  getRecycleType
 } from '../../../APICalls/warehouseManage'
+import { set } from 'date-fns'
 
 interface RecyleItem {
   recycTypeId: string
@@ -35,7 +36,6 @@ interface Warehouse {
   physicalFlg: string | boolean
   contractNo: string[]
   status: string
-  // warehouseRecyc: string
   warehouseRecyc: RecyleItem[]
 }
 
@@ -44,16 +44,23 @@ type TableRow = {
   [key: string]: any
 }
 
+type recyTypeItem = {
+  [key: string]: any
+}
+
 const Warehouse: FunctionComponent = () => {
   // const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
   const { t } = useTranslation()
+  const { i18n } = useTranslation()
+  const currentLanguage = i18n.language
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
+  const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
   const headerTitles = [
     {
       type: 'string',
@@ -106,47 +113,42 @@ const Warehouse: FunctionComponent = () => {
   ]
 
   const handleOnSubmitData = (action: string, id?: number, error?: boolean) => {
-    // if (error) {
-    //   return setDrawerOpen(true)
-    // }
-
     if (action == 'add') {
     }
 
     if (action == 'delete') {
-      //real case use delete api base on id
-      // const { idRow } = id
-      // if (idRow) {
-      const updatedItems = warehouseItems.filter(
-        (item) => item.warehouseId != id
-      )
-      setWarehouseItems(updatedItems)
-      // }
     }
 
     if (action == 'edit') {
-      //real case use put api
-      //setWarehouseItems([...warehouseItems, formData])
     }
     fetchData();
     setDrawerOpen(false)
   }
 
-  const transformToTableRow = (warehouse: Warehouse): TableRow => {
-    const recyleType = warehouse.warehouseRecyc.map(
-      (item: RecyleItem) => `${item.recycSubtypeId}`
-    )
-    return {
-      id: warehouse.warehouseId,
-      warehouseId: warehouse.warehouseId,
-      warehouseNameTchi: warehouse.warehouseNameTchi,
-      warehouseNameSchi: warehouse.warehouseNameSchi,
-      warehouseNameEng: warehouse.warehouseNameEng,
-      location: warehouse.location,
-      physicalFlg: warehouse.physicalFlg ? 'YES' : 'NO',
-      status: warehouse.status,
-      contractNo: warehouse.contractNo,
-      warehouseRecyc: recyleType
+  const getRecycleData = async () => {
+    try {
+      const response = await getRecycleType()
+      if (response) {
+       
+        let recyTypeData: recyTypeItem = recyleTypeList
+        recyTypeData = response.data.forEach((item: recyTypeItem ) => {
+          recyTypeData[item.recycTypeId as keyof  recyTypeItem] =
+          {recyclableNameEng : item.recyclableNameEng, 
+           recyclableNameSchi :  item.recyclableNameSchi,
+           recyclableNameTchi: item.recyclableNameTchi
+          }
+        })
+        
+        setRecyleTypeList((prevData) => {
+          return {...prevData, recyTypeData}
+        })
+        fetchData()
+        console.log("finish recyTypeData ", recyleTypeList)
+        
+        
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -162,16 +164,46 @@ const Warehouse: FunctionComponent = () => {
           .map(transformToTableRow)
 
         setWarehouseItems(filteredData)
-        console.log('fetch DATA', response.data.content)
+        console.log('fetch DATA', filteredData)
       }
     } catch (error) {
       console.error(error)
     }
   }
 
+
   useEffect(() => {
-    fetchData()
-  }, [action, drawerOpen])
+    const fetchCategoryAndData = async () =>{
+      getRecycleData()
+     
+    }
+    fetchCategoryAndData()
+  }, [action, drawerOpen, currentLanguage])
+
+  const transformToTableRow = (warehouse: Warehouse, recyTypeData: recyTypeItem): TableRow => {
+    const nameLang = currentLanguage === 'zhhk' ? "recyclableNameTchi" : currentLanguage === 'zhch'?  "recyclableNameSchi" : "recyclableNameEng"
+    const recyleType = warehouse.warehouseRecyc.map(
+      (item: RecyleItem) =>
+       
+        {
+          console.log(item.recycTypeId)
+          return `${recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem]}`
+        }
+       
+    ).join(", ")
+    return {
+      id: warehouse.warehouseId,
+      warehouseId: warehouse.warehouseId,
+      warehouseNameTchi: warehouse.warehouseNameTchi,
+      warehouseNameSchi: warehouse.warehouseNameSchi,
+      warehouseNameEng: warehouse.warehouseNameEng,
+      location: warehouse.location,
+      physicalFlg: warehouse.physicalFlg ? 'YES' : 'NO',
+      status: warehouse.status,
+      contractNo: warehouse.contractNo,
+      warehouseRecyc: recyleType
+    }
+  }
 
   const addDataWarehouse = () => {
     setDrawerOpen(true)
