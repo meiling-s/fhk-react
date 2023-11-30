@@ -191,11 +191,11 @@ function RejectForm({
                 <Stack spacing={2}>
                     <Box>
                         <Typography id="modal-modal-title" variant="h6" component="h2" sx={{fontWeight: "bold"}}>
-                        {t("check_in.confirm_reject")}
+                        {t("check_out.confirm_reject")}
                         </Typography>
                     </Box>  
                     <Box>
-                        <Typography sx={localstyles.typo}>{t("check_in.reject_reasons")}<Required/></Typography>
+                        <Typography sx={localstyles.typo}>{t("check_out.reject_reasons")}<Required/></Typography>
 
                         <CustomItemList
                             items={reasons}
@@ -211,13 +211,13 @@ function RejectForm({
                             sx={[localstyles.formButton, {m:0.5}]}
                             onClick={() => {handleConfirmRejectOnClick(rejectReasonId); onClose();}}
                             >
-                            {t("check_in.confirm")}
+                            {t("check_out.confirm")}
                         </Button>
                         <Button
                             sx={[localstyles.cancelButton, {m:0.5}]}
                             onClick={() => onClose()}
                             >
-                            {t("check_in.cancel")}
+                            {t("check_out.cancel")}
                         </Button>
                     </Box>
                     
@@ -264,49 +264,49 @@ function ShipmentManage(){
             id: 'createDate',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.created_at"),
+            label: t("check_out.created_at"),
         },
         {
             id: 'sender',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.sender_company"),
+            label: t("check_out.sender_company"),
         },
         {
             id: 'recipient',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.receiver_company"),
+            label: t("check_out.receiver_company"),
         },
         {
             id: 'poNumber',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.pickup_order_no"),
+            label: t("check_out.pickup_order_no"),
         },
         {
             id: 'stockAdjust',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.pickup_order_no"),
+            label: t("check_out.pickup_order_no"),
         },
         {
             id: 'logisticsCompany',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.logistic_company"),
+            label: t("check_out.logistic_company"),
         },
         {
             id: 'returnAddr',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.sender_addr"),
+            label: t("check_out.sender_addr"),
         },
         {
             id: 'deliveryAddr',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.receiver_addr"),
+            label: t("check_out.receiver_addr"),
         }
     
       ];
@@ -500,13 +500,13 @@ function ShipmentManage(){
                         <ChevronLeftIcon
                             sx={styles.buttonBlack}
                         />
-                        <Typography fontSize={20} color='black' fontWeight='bold'>{t("check_in.request_check_in")}</Typography>
+                        <Typography fontSize={20} color='black' fontWeight='bold'>{t("check_out.request_check_out")}</Typography>
                     </Button> 
                     </Grid>
                     <Grid item>
                         {filterShipments.length>0 && (
                             <CustomAvatar name={filterShipments.length.toString()} 
-                            backgroundColor="#79CA25" fontColor="#FFFFFF" isBold size={20} fontSize="14px"/>
+                            backgroundColor="#6BC7FF" fontColor="#FFFFFF" isBold size={20} fontSize="14px"/>
                         )}
                     
                     </Grid>
@@ -520,7 +520,7 @@ function ShipmentManage(){
                     }]}
                         variant="outlined"
                         onClick={()=>{handleApproveOnClick()}}
-                        > {t("check_in.approve")}
+                        > {t("check_out.approve")}
                     </Button>
                     <Button sx={[styles.buttonOutlinedGreen,{
                         mt: 3,
@@ -530,7 +530,7 @@ function ShipmentManage(){
                     }]}
                         variant="outlined"
                         onClick={()=>setRejFormModal(true)}
-                        > {t("check_in.reject")}
+                        > {t("check_out.reject")}
                     </Button>
                 </Box>
                 <Box>
@@ -557,12 +557,12 @@ function ShipmentManage(){
                             },
                           }
                     }}
-                    label={t("check_in.search")}
+                    label={t("check_out.search")}
                     InputLabelProps={{
                         style: { color: '#79CA25' },
                         focused: true,
                       }}
-                    placeholder={t("check_in.input_po_no")}
+                    placeholder={t("check_out.input_po_no")}
                     InputProps={{
                         // startAdornment: (
                         //     <InputAdornment position="start">
@@ -596,7 +596,7 @@ function ShipmentManage(){
                             },
                           }
                     }}>
-                <InputLabel id="company-label">{t("check_in.sender_company")}</InputLabel>
+                <InputLabel id="company-label">{t("check_out.sender_company")}</InputLabel>
                 <Select
                 labelId="company-label"
                 id="company"
@@ -604,7 +604,7 @@ function ShipmentManage(){
                 label="寄件公司"
                 onChange={handleComChange}
                 >
-                    <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
+                    <MenuItem value=""> <em>{t("check_out.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
                         <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>
@@ -629,7 +629,7 @@ function ShipmentManage(){
                             },
                         }
                     }}>
-                <InputLabel id="location-label">{t("check_in.sender_addr")}</InputLabel>
+                <InputLabel id="location-label">{t("check_out.sender_addr")}</InputLabel>
                 <Select
                 labelId="location-label"
                 id="location"
@@ -637,7 +637,7 @@ function ShipmentManage(){
                 label="送出地點"
                 onChange={handleLocChange}
                 >
-                <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
+                <MenuItem value=""> <em>{t("check_out.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
                         <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>    
