@@ -56,6 +56,7 @@ const MainAppBar = () => {
   const [openModal,setOpenModal] =useState<boolean>(false)
   
   const { checkInRequest } = useContainer(CheckInRequestContext);
+  // const { checkOutRequest } = useContainer(CheckOutRequestContext);
 
   
 
@@ -150,7 +151,7 @@ const handleCloses = () =>{
                         </ListItemIcon>
                        
                         <Typography fontWeight='bold'  sx={{ml:'40px'}}>
-                            送入请求
+                            {t("check_in.request_check_in")}
                           </Typography>
                           </Stack>
                          
@@ -159,7 +160,38 @@ const handleCloses = () =>{
                           </Typography>
                         
                           <Typography sx={{ml:'40px',mt:'10px'}}>
-                            2023-11-23
+                            {checkIn.createdAt.toString()}
+                          </Typography>
+                         
+                          </Stack>
+                      </ListItemButton>
+                    </ListItem>
+                  </List>
+                  <Divider 
+                  />
+                  </>))}
+                  {checkInRequest?.map((checkIn)=>(  
+                    <>
+                  <List key = {checkIn.chkInId}>
+                    <ListItem onClick={() => handleItemClick(checkIn)}>
+                      <ListItemButton >
+                        <Stack>
+                          <Stack spacing={-2} direction='row' alignItems='center'>
+                        <ListItemIcon  style={{color:'red' }}>
+                         <CircleIcon sx={{fontSize:'0.75rem'}} />
+                        </ListItemIcon>
+                       
+                        <Typography fontWeight='bold'  sx={{ml:'40px'}}>
+                            {t("check_out.request_check_out")}
+                          </Typography>
+                          </Stack>
+                         
+                          <Typography sx={{ml:'40px'}}>
+                            你有一个新的送出請求
+                          </Typography>
+                        
+                          <Typography sx={{ml:'40px',mt:'10px'}}>
+                            {checkIn.createdAt.toString()}
                           </Typography>
                          
                           </Stack>

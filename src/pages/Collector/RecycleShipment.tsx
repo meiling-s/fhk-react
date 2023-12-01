@@ -288,7 +288,7 @@ function ShipmentManage(){
             id: 'stockAdjust',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.pickup_order_no"),
+            label: t("check_in.stock_adjustment"),
         },
         {
             id: 'logisticsCompany',
