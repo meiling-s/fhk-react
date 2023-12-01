@@ -25,6 +25,7 @@ import SiteTypeList from "../../../../components/SpecializeComponents/SiteTypeLi
 import { formErr } from "../../../../constants/constant";
 import RoutineSelect from "../../../../components/SpecializeComponents/RoutineSelect";
 import { FormErrorMsg } from "../../../../components/FormComponents/FormErrorMsg";
+import { dayjsToLocalDate, toGpsCode } from "../../../../components/Formatter";
 
 function CreateCollectionPoint() {
 
@@ -199,11 +200,11 @@ function CreateCollectionPoint() {
         if(validation.length == 0){
             const cp: updateCP = {
                 colPointTypeId: colType,
-                effFrmDate: openingPeriod?.startDate.toString(),
-                effToDate: openingPeriod?.endDate.toString(),
+                effFrmDate: dayjsToLocalDate(openingPeriod.startDate),
+                effToDate: dayjsToLocalDate(openingPeriod.endDate),
                 routine: colPtRoutine,
                 address: address,
-                gpsCode: gpsCode,
+                gpsCode: toGpsCode(gpsCode[0],gpsCode[1]),
                 epdFlg: EPDEnable,
                 extraServiceFlg: !serviceType,
                 siteTypeId: siteType,

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { GET_ALL_CHECKIN_REQUESTS, UPDATE_CHECK_IN_STATUS } from '../../constants/requests';
-import { updateCP } from '../../interfaces/collectionPoint';
 import { updateStatus} from '../../interfaces/warehouse';
 
 
