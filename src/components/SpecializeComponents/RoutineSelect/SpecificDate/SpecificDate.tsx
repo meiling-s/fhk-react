@@ -68,7 +68,7 @@ export default function SpecificDate({
             const ST: string[] = date.timePeriod.map((value) => value.startFrom.toString());
             const ET: string[] = date.timePeriod.map((value) => value.endAt.toString());
             const RSD: routineContent = {
-                id: date.date.format(format.dateFormat3),
+                id: date.date.format(format.dateFormat2),
                 startTime: ST,
                 endTime: ET
             }

@@ -50,7 +50,7 @@ function CustomPeriodSelect({
                     maxDate={period.endDate}
                     onChange={(value) => onChangeDate(true,value)}
                     sx={localstyles.datePicker}
-                    format={format.dateFormat3}
+                    format={format.dateFormat2}
                 />
                     <Typography sx={{marginX: 1}}>
                         {t("to")}
@@ -60,7 +60,7 @@ function CustomPeriodSelect({
                     minDate={period.startDate}
                     onChange={(value) => onChangeDate(false,value)}
                     sx={localstyles.datePicker}
-                    format={format.dateFormat3}
+                    format={format.dateFormat2}
                 />
             </Box>
         </>

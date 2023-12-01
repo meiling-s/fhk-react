@@ -1,3 +1,5 @@
+import { gpsCode } from "./dataFormat";
+
 export type CheckinDetailPhoto = {
     sid: number;
     photo: string;
@@ -25,7 +27,7 @@ export type CheckIn = {
     senderName: string;
     senderId: string;
     senderAddr: string;
-    senderAddrGps: number[];
+    senderAddrGps: gpsCode;
     warehouseId: number;
     colId: number;
     status: string;

@@ -69,7 +69,9 @@ export type recycSubType = {
     description: string,
     remark: string,
     status: string,
+    createdAt: string,
     createdBy: string,
+    updatedAt: string,
     updatedBy: string
 }
 
@@ -81,17 +83,9 @@ export type contract = {
     epdFlg: boolean,
     remark: string,
     status: string,
-    createdBy: string,
     createdAt: string,
-    updatedBy: string,
-    updatedAt: string
-}
-
-export type routine = {
-    colId: string,
-    colPtRoutine: colPtRoutine,
-    status: string,
     createdBy: string,
+    updatedAt: string,
     updatedBy: string
 }
 
