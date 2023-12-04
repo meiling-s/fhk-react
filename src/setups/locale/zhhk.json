@@ -137,5 +137,19 @@
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
     "cancel": "取消"
+  },
+  "changePassPage": {
+    "titlePage": "重置密碼",
+    "submitPassword": "完成重置",
+    "username": "登入名稱",
+    "placeholder_username": "例如：chantaiman001",
+    "password": "密碼",
+    "placeholder_password": "請輸入密碼",
+    "new_password": "新密碼",
+    "placeholder_new_password": "請輸入密碼",
+    "helper_new_pass": "密碼至少包含8 個字元，並混用英文字母、數字和符號",
+    "confirm_password": "再次輸入新密碼",
+    "placeholder_confirm_password": "請輸入密碼",
+    "helper_confirm_password": "您的新密碼和確認密碼不匹配"
   }
 }

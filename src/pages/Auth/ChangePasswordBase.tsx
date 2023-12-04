@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { changePassword } from '../../APICalls/changePassword'
 import { localStorgeKeyName } from '../../constants/constant'
 import { styles as constantStyle } from '../../constants/styles'
+import { useTranslation } from 'react-i18next'
 
 interface FormData {
   userName: string
@@ -42,8 +43,9 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   onSuccess
 }) => {
   const navigate = useNavigate()
-  const titlePage = '重置密碼'
-  const submitLabel = '完成重置'
+  const { t } = useTranslation()
+  const titlePage = t('changePassPage.titlePage')
+  const submitLabel = t('changePassPage.submitPassword')
   const [isPassValid, setIsPassValid] = useState<boolean>(false)
   const [isPassIdentical, setIsPassIdentical] = useState<boolean>(false)
   const [erorUpdate, setErrorUpdate] = useState<boolean>(false)
@@ -65,29 +67,29 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   const fields = [
     {
       field: 'userName',
-      label: '登入名稱',
-      placeholder: '例如：chantaiman001'
+      label: t('changePassPage.username'),
+      placeholder: t('changePassPage.placeholder_username')
     },
     {
       field: 'password',
-      label: '密碼',
-      placeholder: '請輸入密碼',
+      label: t('changePassPage.password'),
+      placeholder: t('changePassPage.placeholder_password'),
       type: 'password'
     },
     {
       field: 'newPassword',
-      label: '新密碼',
-      placeholder: '請輸入密碼',
+      label: t('changePassPage.new_password'),
+      placeholder: t('changePassPage.placeholder_new_password'),
       type: 'password',
-      helperText: '密碼至少包含8 個字元，並混用英文字母、數字和符號'
+      helperText: t('changePassPage.helper_new_pass')
     },
 
     {
       field: 'confirmPassword',
-      label: '再次輸入新密碼',
-      placeholder: '請輸入密碼',
+      label: t('changePassPage.confirm_password'),
+      placeholder: t('changePassPage.placeholder_confirm_password'),
       type: 'password',
-      helperText: '您的新密碼和確認密碼不匹配'
+      helperText: t('changePassPage.helper_confirm_password')
     }
   ]
 

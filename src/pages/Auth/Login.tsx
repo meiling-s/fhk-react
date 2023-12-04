@@ -87,12 +87,6 @@ const Login = () => {
     navigate('/forgetPassword')
   }
 
-  const navigateToChangePass = () => {
-    localStorage.setItem(localStorgeKeyName.username, '')
-    localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'false')
-    navigate('/changePassword')
-  }
-
   return (
     <Box sx={constantStyle.loginPageBg}>
       <Box sx={constantStyle.loginBox}>
@@ -180,13 +174,6 @@ const Login = () => {
               onClick={navigateToForgotPassword}
             >
               忘記密碼
-            </Button>
-            <Button
-              sx={{ color: 'grey', textDecoration: 'underline' }}
-              variant="text"
-              onClick={navigateToChangePass}
-            >
-              更改密碼
             </Button>
           </Box>
         </Stack>

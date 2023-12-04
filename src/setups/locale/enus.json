@@ -138,5 +138,19 @@
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
     "cancel": "Cancel"
+  },
+  "changePassPage": {
+    "titlePage": "RESET PASSWORD" ,
+    "submitPassword": "Submit",
+    "username": "Username",
+    "placeholder_username": "example: chantaiman001",
+    "password": "Pasword",
+    "placeholder_password": "Please enter password",
+    "new_password": "New Password",
+    "placeholder_new_password": "Please enter password",
+    "helper_new_pass": "Password must be at least 8 characters long and contain a mix of letters, numbers and symbols",
+    "confirm_password": "Confirmation Password",
+    "placeholder_confirm_password": "Please enter password",
+    "helper_confirm_password": "Your new password and confirm password do not match"
   }
 }

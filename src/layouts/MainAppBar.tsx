@@ -101,6 +101,7 @@ const MainAppBar = () => {
   }
 
   const handlePasswordChangeSuccess = () => {
+    localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'false')
     setShowChangePasswordModal(false)
     setShowSuccessModal(true)
   }
