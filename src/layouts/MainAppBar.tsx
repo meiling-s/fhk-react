@@ -248,14 +248,14 @@ const MainAppBar = () => {
               TransitionComponent={Fade}
               style={{ padding: '16px' }}
             >
-              <MenuItem divider={true} onClick={() => navigate('/')}>
-                <Typography>{t('signOut')}</Typography>
-              </MenuItem>
               <MenuItem
                 divider={true}
                 onClick={() => setShowChangePasswordModal(true)}
               >
                 <Typography>{t('changePassword')}</Typography>
+              </MenuItem>
+              <MenuItem divider={true} onClick={() => navigate('/')}>
+                <Typography>{t('signOut')}</Typography>
               </MenuItem>
             </Menu>
             {/* <Box flexDirection={"column"} sx={{ flex: 3.5, pt: 0.4 }}>

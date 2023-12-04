@@ -16,7 +16,6 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { changePassword } from '../../APICalls/changePassword'
 import { localStorgeKeyName } from '../../constants/constant'
-import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
 
 interface FormData {
@@ -161,13 +160,13 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
         try {
           const response = await changePassword(passData)
           if (response) {
-            if (onSuccess) onSuccess()
-            // if (isFirstLogin) {
-            //   localStorage.removeItem('firstTimeLogin')
-            //   navigate('/warehouse')
-            // } else {
-            //   navigate('/')
-            // }
+            if (onSuccess) return onSuccess()
+            if (isFirstLogin) {
+              localStorage.removeItem('firstTimeLogin')
+              navigate('/warehouse/settings')
+            } else {
+              navigate('/')
+            }
           }
         } catch (error) {
           console.error(error)
