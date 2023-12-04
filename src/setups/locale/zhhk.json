@@ -67,6 +67,8 @@
   "enter_Keyword_To_Search": "輸入關鍵字查詢",
   "account": "帳戶",
   "signOut": "登出",
+  "changePassword": "更改密碼",
+  "changePasswordConfirmation": "您的密碼已成功更改",
   "date": "日期",
   "week": "星期",
   "time_Period": "時段",

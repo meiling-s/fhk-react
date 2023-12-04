@@ -32,8 +32,16 @@ interface ShowPasswordState {
   confirmPassword: boolean
 }
 
-// this page is chenage for first time login
-const ChangePassword = () => {
+type OnSuccessCallback = () => void
+
+interface ChangePasswordBaseProps {
+  onSuccess?: OnSuccessCallback
+}
+
+// this page is for change page if already login
+const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
+  onSuccess
+}) => {
   const navigate = useNavigate()
   const titlePage = '重置密碼'
   const submitLabel = '完成重置'
@@ -153,12 +161,13 @@ const ChangePassword = () => {
         try {
           const response = await changePassword(passData)
           if (response) {
-            if (isFirstLogin) {
-              localStorage.removeItem('firstTimeLogin')
-              navigate('/warehouse')
-            } else {
-              navigate('/')
-            }
+            if (onSuccess) onSuccess()
+            // if (isFirstLogin) {
+            //   localStorage.removeItem('firstTimeLogin')
+            //   navigate('/warehouse')
+            // } else {
+            //   navigate('/')
+            // }
           }
         } catch (error) {
           console.error(error)
@@ -196,105 +205,98 @@ const ChangePassword = () => {
   }
 
   return (
-    <Box sx={constantStyle.loginPageBg}>
-      <Box sx={constantStyle.loginBox}>
-        <Typography
-          sx={{ marginTop: '30px', marginBottom: '30px' }}
-          fontWeight="bold"
-          variant="h6"
-        >
-          {titlePage}
-        </Typography>
-        {erorUpdate && (
-          <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2  mb-2 text-2xs">
-            <WARNING_ICON />
-            {'錯誤，無法重設密碼'}
-          </div>
-        )}
-        <Stack spacing={2}>
-          {fields.map((item, index) => (
-            <Box key={index}>
-              <Typography sx={styles.typo}>{item.label}</Typography>
-              <TextField
-                fullWidth
-                placeholder={item.placeholder}
-                type={
-                  item.type !== 'password'
-                    ? 'text'
-                    : showPassword[item.field as keyof ShowPasswordState]
-                    ? 'text'
-                    : 'password'
-                }
-                onChange={(event) =>
-                  handleInputChange(
-                    item.field as keyof FormData,
-                    event.target.value
-                  )
-                }
-                value={formData[item.field as keyof FormData]}
-                sx={styles.inputState}
-                InputProps={{
-                  sx: styles.textField,
-                  endAdornment:
-                    item.type === 'password' ? (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() =>
-                            handleClickShowPassword(
-                              item.field as keyof ShowPasswordState
-                            )
-                          }
-                        >
-                          {showPassword[
+    <Box sx={constantStyle.loginBox}>
+      <Typography
+        sx={{ marginTop: '30px', marginBottom: '30px' }}
+        fontWeight="bold"
+        variant="h6"
+      >
+        {titlePage}
+      </Typography>
+      {erorUpdate && (
+        <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2  mb-2 text-2xs">
+          <WARNING_ICON />
+          {'錯誤，無法重設密碼'}
+        </div>
+      )}
+      <Stack spacing={2}>
+        {fields.map((item, index) => (
+          <Box key={index}>
+            <Typography sx={styles.typo}>{item.label}</Typography>
+            <TextField
+              fullWidth
+              placeholder={item.placeholder}
+              type={
+                item.type !== 'password'
+                  ? 'text'
+                  : showPassword[item.field as keyof ShowPasswordState]
+                  ? 'text'
+                  : 'password'
+              }
+              onChange={(event) =>
+                handleInputChange(
+                  item.field as keyof FormData,
+                  event.target.value
+                )
+              }
+              value={formData[item.field as keyof FormData]}
+              sx={styles.inputState}
+              InputProps={{
+                sx: styles.textField,
+                endAdornment:
+                  item.type === 'password' ? (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() =>
+                          handleClickShowPassword(
                             item.field as keyof ShowPasswordState
-                          ] ? (
-                            <VISIBILITY_ICON />
-                          ) : (
-                            <VISIBILITY_OFF_ICON />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ) : null
-                }}
-                error={checkString(formData[item.field as keyof FormData])}
-              />
-              {item.field === 'newPassword' && !isPassValid && trySubmited && (
-                <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
+                          )
+                        }
+                      >
+                        {showPassword[item.field as keyof ShowPasswordState] ? (
+                          <VISIBILITY_ICON />
+                        ) : (
+                          <VISIBILITY_OFF_ICON />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ) : null
+              }}
+              error={checkString(formData[item.field as keyof FormData])}
+            />
+            {item.field === 'newPassword' && !isPassValid && trySubmited && (
+              <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
+                <WARNING_ICON />
+                {item.helperText}
+              </div>
+            )}
+            {item.field === 'confirmPassword' &&
+              !isPassIdentical &&
+              trySubmited && (
+                <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2 text-2xs">
                   <WARNING_ICON />
                   {item.helperText}
                 </div>
               )}
-              {item.field === 'confirmPassword' &&
-                !isPassIdentical &&
-                trySubmited && (
-                  <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2 text-2xs">
-                    <WARNING_ICON />
-                    {item.helperText}
-                  </div>
-                )}
-            </Box>
-          ))}
-          <Box>
-            <Button
-              fullWidth
-              onClick={() => submitChangePassword()}
-              sx={{
-                marginTop: '16px',
-                borderRadius: '20px',
-                backgroundColor: '#79ca25',
-                '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
-                height: '40px'
-              }}
-              variant="contained"
-            >
-              {submitLabel}
-            </Button>
           </Box>
-        </Stack>
-      </Box>
-      <div className="sm:mt-4 w-full pt-4 text-center">
-        <CustomCopyrightSection />
-      </div>
+        ))}
+        <Box>
+          <Button
+            fullWidth
+            onClick={() => submitChangePassword()}
+            sx={{
+              marginTop: '16px',
+              borderRadius: '20px',
+              backgroundColor: '#79ca25',
+              '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
+              height: '40px'
+            }}
+            variant="contained"
+          >
+            {submitLabel}
+          </Button>
+        </Box>
+      </Stack>
     </Box>
   )
 }
@@ -325,4 +327,4 @@ let styles = {
   }
 }
 
-export default ChangePassword
+export default ChangePasswordBase

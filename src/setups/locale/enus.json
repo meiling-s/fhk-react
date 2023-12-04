@@ -67,6 +67,8 @@
   "enter_Keyword_To_Search": "Enter keyword to search",
   "account": "Account",
   "signOut": "Sign out",
+  "changePassword": "Change Password",
+  "changePasswordConfirmation": "your password successfully changed",
   "date": "Date",
   "week": "Week",
   "time_Period": "Time period",
