@@ -2,6 +2,7 @@ export const localStorgeKeyName = {
   keycloakToken: 'keycloakToken',
   role: 'userRole',
   username: 'username',
+  firstTimeLogin: 'false'
 };
 
 export const defaultPath = {

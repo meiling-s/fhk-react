@@ -42,23 +42,6 @@ const Login = () => {
     }
   }))
 
-  // Check if firstTimeLogin is not set or set to false initially(only dummy)
-  const simulateFirstTimeLogin = () => {
-    if (localStorage.getItem('firstTimeLogin') !== 'true') {
-      localStorage.setItem('firstTimeLogin', 'true')
-
-      // Renew the first-time login status
-      const renewalTime = 2
-      const renewalInterval = renewalTime * 60 * 1000
-      setTimeout(() => {
-        localStorage.setItem('firstTimeLogin', 'true')
-        simulateFirstTimeLogin()
-      }, renewalInterval)
-    }
-  }
-
-  simulateFirstTimeLogin()
-
   const onLoginButtonClick = async (userName: string, password: string) => {
     const result = await login({
       username: userName,
@@ -75,7 +58,7 @@ const Login = () => {
         result?.access_token || ''
       )
       localStorage.setItem(localStorgeKeyName.username, result?.username || '')
-      localStorage.setItem('firstTimeLogin', 'true')
+      localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
       navigate('/changePassword')
 
       // TODO : if api login already fix first time login , change login
@@ -105,6 +88,8 @@ const Login = () => {
   }
 
   const navigateToChangePass = () => {
+    localStorage.setItem(localStorgeKeyName.username, '')
+    localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'false')
     navigate('/changePassword')
   }
 

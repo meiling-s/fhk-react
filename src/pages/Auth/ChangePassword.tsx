@@ -35,8 +35,8 @@ const ChangePassword = () => {
   const navigate = useNavigate()
   const titlePage = '重置密碼'
   const submitLabel = '完成重置'
-  const [isPassValid, setIsPassValid] = useState<boolean>(true)
-  const [isPassIdentical, setIsPassIdentical] = useState<boolean>(true)
+  const [isPassValid, setIsPassValid] = useState<boolean>(false)
+  const [isPassIdentical, setIsPassIdentical] = useState<boolean>(false)
   const [erorUpdate, setErrorUpdate] = useState<boolean>(false)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<
@@ -82,33 +82,6 @@ const ChangePassword = () => {
     }
   ]
 
-  useEffect(() => {
-    const usernameFromStorage = localStorage.getItem(
-      localStorgeKeyName.username
-    )
-    if (usernameFromStorage) {
-      setFormData((prevData) => ({
-        ...prevData,
-        userName: usernameFromStorage
-      }))
-    }
-  }, [])
-
-  useEffect(() => {
-    const tempV: { field: string; error: string }[] = []
-
-    Object.keys(formData).forEach((fieldName) => {
-      formData[fieldName as keyof FormData].trim() === '' &&
-        tempV.push({
-          field: fieldName,
-          error: `fields is required`
-        })
-    })
-
-    setValidation(tempV)
-    // console.log(tempV)
-  }, [formData])
-
   const checkPassComplexity = (password: string): boolean => {
     const [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar] = [
       /[A-Z]/,
@@ -133,17 +106,44 @@ const ChangePassword = () => {
     )
   }
 
-  const validatePass = () => {
+  useEffect(() => {
+    const username = localStorage.getItem(
+      localStorgeKeyName.username
+    )
+   
+    if (username) {
+      setFormData((prevData) => ({
+        ...prevData,
+        userName: username
+      }))
+    }
+  }, [])
+
+  useEffect(() => {
+    const tempV: { field: string; error: string }[] = []
+
+    Object.keys(formData).forEach((fieldName) => {
+      formData[fieldName as keyof FormData].trim() === '' &&
+        tempV.push({
+          field: fieldName,
+          error: `fields is required`
+        })
+    })
+
+    setValidation(tempV)
+
     const isComplexPassword = checkPassComplexity(formData.newPassword)
     const isPassDiffrent = formData.newPassword != formData.password
-
     setIsPassValid(isComplexPassword && isPassDiffrent)
-    setIsPassIdentical(formData.newPassword === formData.confirmPassword)
-  }
+    setIsPassIdentical(formData.newPassword == formData.confirmPassword)
+  }, [formData, isPassValid, isPassIdentical])
 
   const submitChangePassword = async () => {
-    validatePass()
-    if (!isPassValid && !isPassIdentical && validation.length === 0) {
+    const isFirstLogin: boolean = localStorage.getItem(
+      localStorgeKeyName.firstTimeLogin) === 'true'
+   
+  
+    if (isPassValid && isPassIdentical && validation.length === 0) {
       const passData = {
         username: formData.userName,
         password: formData.password,
@@ -154,11 +154,14 @@ const ChangePassword = () => {
         try {
           const response = await changePassword(passData)
           if (response) {
-            if (response.status == 200) {
-              console.log('reset password', response)
-              localStorage.removeItem('firstTimeLogin')
-              navigate('/asdt')
-            }
+           if(isFirstLogin){
+            localStorage.removeItem('firstTimeLogin')
+            navigate('/warehouse')
+           }else {
+            navigate('/')
+           }
+             
+            
           }
         } catch (error) {
           console.error(error)
@@ -177,9 +180,6 @@ const ChangePassword = () => {
       ...prevState,
       [field]: !prevState[field]
     }))
-    setIsPassValid(true)
-    setIsPassIdentical(true)
-    setErrorUpdate(false)
   }
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -187,6 +187,7 @@ const ChangePassword = () => {
       ...prevData,
       [field]: value
     }))
+    setErrorUpdate(false)
   }
 
   const checkString = (s: string) => {
@@ -233,6 +234,7 @@ const ChangePassword = () => {
                     event.target.value
                   )
                 }
+                value={formData[item.field as keyof FormData]}
                 sx={styles.inputState}
                 InputProps={{
                   sx: styles.textField,
@@ -259,13 +261,13 @@ const ChangePassword = () => {
                 }}
                 error={checkString(formData[item.field as keyof FormData])}
               />
-              {item.field === 'newPassword' && !isPassValid && (
+              {item.field === 'newPassword' && !isPassValid && trySubmited &&(
                 <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
                   <WARNING_ICON />
                   {item.helperText}
                 </div>
               )}
-              {item.field === 'confirmPassword' && !isPassIdentical && (
+              {item.field === 'confirmPassword' && !isPassIdentical && trySubmited  && (
                 <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2 text-2xs">
                   <WARNING_ICON />
                   {item.helperText}
