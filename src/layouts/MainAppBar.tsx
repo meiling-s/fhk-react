@@ -290,11 +290,7 @@ const MainAppBar = () => {
             </Box>
           </Modal>
           {showSuccessModal && (
-            <Modal
-              id="success-modal"
-              open={showSuccessModal}
-              onClose={() => setShowSuccessModal(false)}
-            >
+            <Modal id="success-modal" open={showSuccessModal}>
               <Box sx={modalStyle}>
                 <Typography>{t('changePasswordConfirmation')}</Typography>
                 <Button
