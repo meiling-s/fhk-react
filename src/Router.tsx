@@ -29,6 +29,7 @@ import Staff from "./pages/Collector/Staff";
 import Report from "./pages/Collector/Report";
 import RecycleShipment from "./pages/Collector/RecycleShipment";
 import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
+import PickupOrder from "./pages/Collector/PickupOrder";
 
 const Router = () => {
     return (
@@ -68,6 +69,7 @@ const Router = () => {
                         path="/collector/shipment"
                         element={<RecycleShipment />}
                     />
+                    <Route path="/collector/pickupOrder" element={<PickupOrder/>} />
                     <Route path="/collector/report" element={<Report />} />
                     <Route path="/collector/staff" element={<Staff />} />
                     <Route
