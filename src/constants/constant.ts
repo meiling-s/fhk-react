@@ -18,9 +18,9 @@ export const layout = {
 
 export const format = {
   //format for date-fns
-  dateFormat1: "yyyy/MM/dd",
-  dateFormat2: "yyyy/MM/dd HH:mm",
-  dateFormat3: "YYYY/MM/DD"
+  dateFormat1: "yyyy/MM/dd HH:mm",
+  dateFormat2: "YYYY/MM/DD",
+  dateFormat3: "YYYY-MM-DD"
 }
 
 export const formErr = {

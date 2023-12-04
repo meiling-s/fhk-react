@@ -1,11 +1,12 @@
 
 import { useEffect, useState } from "react";
-import { getAllCheckInRequests } from "../APICalls/Collector/warehouseManage";
-import { CheckIn } from "../interfaces/checkin";
+import { CheckIn, CheckinDetail } from "../interfaces/checkin";
 import { createContainer } from 'unstated-next';
+import { getAllCheckInRequests } from "../APICalls/Collector/warehouseManage";
 
 const  CheckInRequest = () => {
   const [checkInRequest, setCheckInRequest] = useState<CheckIn[]>();
+
   
 
 
@@ -29,6 +30,6 @@ return {
   }
 
 }
-const CheckInRequestContext = createContainer(CheckInRequest);
+const CheckInRequestContainer = createContainer(CheckInRequest);
 
-export default CheckInRequestContext;
+export default CheckInRequestContainer;

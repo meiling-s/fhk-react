@@ -17,7 +17,11 @@ import CustomAvatar from "../../components/CustomAvatar";
 import { getAllCheckInRequests, updateCheckinStatus } from "../../APICalls/Collector/warehouseManage";
 import { updateStatus } from "../../interfaces/warehouse";
 import RequestForm from "../../components/FormComponents/RequestForm";
+import { CheckIn } from "../../interfaces/checkin";
+import { useContainer } from "unstated-next";
+import CheckInRequestContext from "../../contexts/CheckInRequestContainer";
 
+import { useTranslation } from "react-i18next";
 
 type Shipment = {
     createDate: Date,
@@ -78,58 +82,7 @@ interface HeadCell {
     id: keyof Shipment;
     label: string;
     numeric: boolean;
-  }
-  const headCells: readonly HeadCell[] = [
-    {
-        id: 'createDate',
-        numeric: false,
-        disablePadding: false,
-        label: '建立日期',
-    },
-    {
-        id: 'sender',
-        numeric: false,
-        disablePadding: false,
-        label: '寄件公司',
-    },
-    {
-        id: 'recipient',
-        numeric: false,
-        disablePadding: false,
-        label: '收件公司',
-    },
-    {
-        id: 'poNumber',
-        numeric: false,
-        disablePadding: false,
-        label: '運單編號',
-    },
-    {
-        id: 'stockAdjust',
-        numeric: false,
-        disablePadding: false,
-        label: '調整庫存',
-    },
-    {
-        id: 'logisticsCompany',
-        numeric: false,
-        disablePadding: false,
-        label: '物流公司',
-    },
-    {
-        id: 'returnAddr',
-        numeric: false,
-        disablePadding: false,
-        label: '送出地點',
-    },
-    {
-        id: 'deliveryAddr',
-        numeric: false,
-        disablePadding: false,
-        label: '到達地點',
-    }
-
-  ];
+}
 
      const fakeData = [
         {
@@ -167,7 +120,7 @@ const Required = () => {
 type rejectForm = {
     open: boolean;
     onClose: () => void,
-    checkedShipments:Shipment[],
+    checkedShipments:CheckIn[],
     onRejected?: () => void 
 }
 
@@ -177,6 +130,8 @@ function RejectForm({
     checkedShipments,
     onRejected
 }: rejectForm){
+
+    const { t } = useTranslation();
 
     const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
 
@@ -196,7 +151,7 @@ function RejectForm({
     ]
 
     const handleConfirmRejectOnClick = async (rejectReasonId: string[]) => {
-        const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.checkInId);
+        const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.chkInId);
         const rejectReason = rejectReasonId.map(id => {
             const reasonItem = reasons.find(reason => reason.id === id);
             return reasonItem ? reasonItem.name : '';
@@ -236,11 +191,11 @@ function RejectForm({
                 <Stack spacing={2}>
                     <Box>
                         <Typography id="modal-modal-title" variant="h6" component="h2" sx={{fontWeight: "bold"}}>
-                            確認拒絕送入請求嗎？
+                        {t("check_in.confirm_reject")}
                         </Typography>
                     </Box>  
                     <Box>
-                        <Typography sx={localstyles.typo}>拒絕原因（可多選）<Required/></Typography>
+                        <Typography sx={localstyles.typo}>{t("check_in.reject_reasons")}<Required/></Typography>
 
                         <CustomItemList
                             items={reasons}
@@ -256,13 +211,13 @@ function RejectForm({
                             sx={[localstyles.formButton, {m:0.5}]}
                             onClick={() => {handleConfirmRejectOnClick(rejectReasonId); onClose();}}
                             >
-                            確認拒絕
+                            {t("check_in.confirm")}
                         </Button>
                         <Button
                             sx={[localstyles.cancelButton, {m:0.5}]}
                             onClick={() => onClose()}
                             >
-                            取消
+                            {t("check_in.cancel")}
                         </Button>
                     </Box>
                     
@@ -273,6 +228,8 @@ function RejectForm({
 }
 
 function ShipmentManage(){
+
+    const { t } = useTranslation();
 
     const drawerWidth = 246;
 
@@ -286,52 +243,74 @@ function ShipmentManage(){
 
     const [rejFormModal, setRejFormModal] = useState<boolean>(false);
 
-    const [shipments, setShipments] = useState<Shipment[]>([]);
+    const [shipments, setShipments] = useState<CheckIn[]>([]);
 
-    const [filterShipments, setFilterShipments] = useState<Shipment[]>([]);
+    const [filterShipments, setFilterShipments] = useState<CheckIn[]>([]);
     
     const [company, setCompany] = useState('');
 
     const [location, setLocation] = useState('');
 
-    const [checkedShipments, setCheckedShipments] = useState<Shipment[]>([]);
+    const [checkedShipments, setCheckedShipments] = useState<CheckIn[]>([]);
 
     const [open, setOpen] = useState<boolean>(false);
     
-    const [selectedRow, setSelectedRow] = useState<Shipment>();
+    const [selectedRow, setSelectedRow] = useState<CheckIn>();
+    
+    const { checkInRequest } = useContainer(CheckInRequestContext);
 
-
-    useEffect(()=>{
-        initShipments()
-        // setShipments(fakeData);
-        // setFilterShipments(fakeData);
-    },[]);
-
-    async function initShipments() {
-        const result = await getAllCheckInRequests();
-        const data = result?.data.content;
-        if(data){
-            var ships: Shipment[] = [];
-            data.map((ship: any) => {
-                if(ship.status == "CREATED"){
-                ships.push(
-                    createShipment(
-                        ship?.createdAt,
-                        ship?.senderName,
-                        ship?.recipientCompany,
-                        ship?.picoId,
-                        ship?.adjustmentFlg,
-                        ship?.logisticName,
-                        ship?.senderAddr,
-                        ship?.deliveryAddress,
-                        ship?.status,
-                        ship?.chkInId
-                ));}
-            })
-            setShipments(ships);
-            setFilterShipments(ships);
+    const headCells: readonly HeadCell[] = [
+        {
+            id: 'createDate',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.created_at"),
+        },
+        {
+            id: 'sender',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.sender_company"),
+        },
+        {
+            id: 'recipient',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.receiver_company"),
+        },
+        {
+            id: 'poNumber',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.pickup_order_no"),
+        },
+        {
+            id: 'stockAdjust',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.pickup_order_no"),
+        },
+        {
+            id: 'logisticsCompany',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.logistic_company"),
+        },
+        {
+            id: 'returnAddr',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.sender_addr"),
+        },
+        {
+            id: 'deliveryAddr',
+            numeric: false,
+            disablePadding: false,
+            label: t("check_in.receiver_addr"),
         }
-    }
+    
+      ];
+
 
     const handleRequestSort = (_event: React.MouseEvent<unknown>, property: string) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -342,9 +321,9 @@ function ShipmentManage(){
     const handleFilterPoNum = (searchWord: string) => {
 
         if(searchWord != ""){
-            const filteredShipments: Shipment[] = [];
+            const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
-                if(shipment.poNumber.includes(searchWord)){
+                if(shipment.picoId.includes(searchWord)){
                     filteredShipments.push(shipment);
                 }
             });
@@ -367,10 +346,10 @@ function ShipmentManage(){
         var searchWord = event.target.value;
         console.log(searchWord);
         if(searchWord != ""){
-            const filteredShipments: Shipment[] = [];
+            const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
                 if(
-                    shipment.sender.includes(searchWord) 
+                    shipment.senderName.includes(searchWord) 
                 ){
                     filteredShipments.push(shipment);
                 }
@@ -390,10 +369,10 @@ function ShipmentManage(){
         var searchWord = event.target.value;
         console.log(searchWord);
         if(searchWord != ""){
-            const filteredShipments: Shipment[] = [];
+            const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
                 if(
-                    shipment.returnAddr.includes(searchWord) 
+                    shipment.senderAddr.includes(searchWord) 
                 ){
                     filteredShipments.push(shipment);
                 }
@@ -411,7 +390,7 @@ function ShipmentManage(){
 
     const handleApproveOnClick = async () => {
         console.log(checkedShipments);
-        const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.checkInId);
+        const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.chkInId);
         console.log("checkin ids are " + checkInIds);
         const confirmReason: string[] = ["Confirmed"];
         const statReason: updateStatus = {
@@ -419,18 +398,19 @@ function ShipmentManage(){
             reason: confirmReason
         }
     
-        const results = await Promise.allSettled(checkInIds.map(async (checkInId) => {
-            try {
-                const result = await updateCheckinStatus(checkInId, statReason);
-                const data = result?.data;
-                if(data){
-                    console.log("updated check-in status: ",data);
-                    initShipments();
-                }
-            } catch (error) {
-                console.error(`Failed to update check-in status for id ${checkInId}: `, error);
-            }
-        }));
+        // const results = await Promise.allSettled(checkInIds.map(async (checkInId) => {
+        //     try {
+        //         const result = await updateCheckinStatus(checkInId, statReason);
+        //         const data = result?.data;
+        //         if(data){
+        //             console.log("updated check-in status: ",data);
+        //             initShipments();
+        //         }
+        //     } catch (error) {
+        //         console.error(`Failed to update check-in status for id ${checkInId}: `, error);
+        //     }
+        // }
+        // ));
     }
 
 
@@ -440,11 +420,11 @@ function ShipmentManage(){
 
     function onSelectAllClick(){
         if(selected.length < shipments.length){     //if not selecting all, do select all
-            const newSelected = shipments.map((shipment) => shipment.poNumber);
+            const newSelected = shipments.map((shipment) => shipment.picoId);
             setSelected(newSelected);
             // Trigger the function for each individual checkbox
             console.log(shipments);
-            var selectedShipment: Shipment[] = [];
+            var selectedShipment: CheckIn[] = [];
             shipments.map((shipment) => {
                 // Only call handleCheck if the shipment is not already checked
                 selectedShipment.push(shipment);
@@ -481,12 +461,12 @@ function ShipmentManage(){
         setSelected(newSelected);
         setOpen(true);
        console.log(id)
-        const selectedItem = shipments?.find(item => item.poNumber.toString() ===id);
+        const selectedItem = checkInRequest?.find(item => item.picoId.toString() ===id);
         console.log('123456'+selectedItem)
         setSelectedRow(selectedItem); //
       };
 
-    const handleCheck = (item: Shipment, isChecked: boolean) => {
+    const handleCheck = (item: CheckIn, isChecked: boolean) => {
         if (isChecked) {
           setCheckedShipments([...checkedShipments, item]);
         } else {
@@ -520,7 +500,7 @@ function ShipmentManage(){
                         <ChevronLeftIcon
                             sx={styles.buttonBlack}
                         />
-                        <Typography fontSize={20} color='black' fontWeight='bold'>送入請求</Typography>
+                        <Typography fontSize={20} color='black' fontWeight='bold'>{t("check_in.request_check_in")}</Typography>
                     </Button> 
                     </Grid>
                     <Grid item>
@@ -540,7 +520,7 @@ function ShipmentManage(){
                     }]}
                         variant="outlined"
                         onClick={()=>{handleApproveOnClick()}}
-                        > 接受 
+                        > {t("check_in.approve")}
                     </Button>
                     <Button sx={[styles.buttonOutlinedGreen,{
                         mt: 3,
@@ -550,7 +530,7 @@ function ShipmentManage(){
                     }]}
                         variant="outlined"
                         onClick={()=>setRejFormModal(true)}
-                        > 拒絕
+                        > {t("check_in.reject")}
                     </Button>
                 </Box>
                 <Box>
@@ -577,12 +557,12 @@ function ShipmentManage(){
                             },
                           }
                     }}
-                    label="搜索"
+                    label={t("check_in.search")}
                     InputLabelProps={{
                         style: { color: '#79CA25' },
                         focused: true,
                       }}
-                    placeholder="輸入運單編號"
+                    placeholder={t("input_po_no")}
                     InputProps={{
                         // startAdornment: (
                         //     <InputAdornment position="start">
@@ -616,7 +596,7 @@ function ShipmentManage(){
                             },
                           }
                     }}>
-                <InputLabel id="company-label">寄件公司</InputLabel>
+                <InputLabel id="company-label">{t("check_in.sender_company")}</InputLabel>
                 <Select
                 labelId="company-label"
                 id="company"
@@ -624,10 +604,10 @@ function ShipmentManage(){
                 label="寄件公司"
                 onChange={handleComChange}
                 >
-                    <MenuItem value=""> <em>任何</em></MenuItem>
+                    <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
-                        <MenuItem value={item.sender}>{item.sender}</MenuItem>
+                        <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>
                     ))}  
                 </Select>
                 </FormControl>
@@ -649,7 +629,7 @@ function ShipmentManage(){
                             },
                         }
                     }}>
-                <InputLabel id="location-label">送出地點</InputLabel>
+                <InputLabel id="location-label">{t("check_in.sender_addr")}</InputLabel>
                 <Select
                 labelId="location-label"
                 id="location"
@@ -657,10 +637,10 @@ function ShipmentManage(){
                 label="送出地點"
                 onChange={handleLocChange}
                 >
-                <MenuItem value=""> <em>任何</em></MenuItem>
+                <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
-                        <MenuItem value={item.returnAddr}>{item.returnAddr}</MenuItem>    
+                        <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>    
                     ))}
                  </Select>
                  
@@ -718,35 +698,35 @@ function ShipmentManage(){
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {   filterShipments.map((shipment) => {
-                                const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
-                                return (
+                            {   checkInRequest?.map((shipment) => {
+                                // const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
+                                   return (
                                     <TableRow
-                                        hover key={poNumber}
+                                        hover key={shipment.picoId}
                                         tabIndex={-1}
                                         role="checkbox"
                                         sx={[localstyles.row]}
-                                        onClick={(event)=>handleClick(event,poNumber)}
+                                        onClick={(event)=>handleClick(event,shipment.picoId)}
                                         >
                                         <TableCell sx={localstyles.bodyCell}>
                                             <Checkbox
                                                 color="primary"
-                                                checked={selected.includes(poNumber)}
+                                                checked={selected.includes(shipment.picoId)}
                                                 onChange={(e) => handleCheck(shipment, e.target.checked)}
                                                 inputProps={{
                                                     'aria-label': 'select request',
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(createDate,format.dateFormat2)}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{sender}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{recipient}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{poNumber}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{stockAdjust?(<CheckIcon sx={styles.endAdornmentIcon}/>)
+                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat2)}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{'recipient'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoId}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.adjustmentFlg?(<CheckIcon sx={styles.endAdornmentIcon}/>)
                                         :(<ClearIcon sx={styles.endAdornmentIcon}/>)}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{logisticsCompany}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{returnAddr}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{deliveryAddr}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.logisticName}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.senderAddr}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{'deliver'}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -758,7 +738,7 @@ function ShipmentManage(){
                     onClose={() => {
                         setRejFormModal(false)
                     }}
-                    onRejected={() => initShipments()}
+                    // onRejected={() => initShipments()}
                     />
 
             </Box>

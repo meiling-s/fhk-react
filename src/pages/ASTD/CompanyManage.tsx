@@ -16,6 +16,8 @@ import dayjs from "dayjs";
 import { openingPeriod } from "../../interfaces/collectionPoint";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import CustomPeriodSelect from "../../components/FormComponents/CustomPeriodSelect";
+import { dayjsToLocalDateTime } from "../../components/Formatter";
 
 type Company = {
     id: string,
@@ -227,7 +229,7 @@ function InviteModal({open,onClose,id}: inviteModal){
 type inviteForm = {
     open: boolean;
     onClose: () => void,
-    onSubmit: ( TChiName: string, SChiName: string, EngName: string, type: string, BRNo: string, remark: string ) => void
+    onSubmit: ( TChiName: string, SChiName: string, EngName: string, type: string, BRNo: string, remark: string, activePeriod: openingPeriod ) => void
 }
 
 function InviteForm({
@@ -330,12 +332,10 @@ function InviteForm({
                         />
                     </Box>
                     <Box display='flex' justifyContent='space-between'>
-                      <CustomField label={'有效日期由'} mandatory={true}>
-                        <CustomDatePicker2 setDate={setOpeningPeriod} showOne={true}/>
-                      </CustomField>
-                      <CustomField label={'至'} mandatory={true}>
-                        <CustomDatePicker2 setDate={setOpeningPeriod} showOne={true}/>
-                      </CustomField>
+                        <Typography sx={localstyles.typo}>有效日期由</Typography>
+                        <CustomPeriodSelect
+                            setDate={setOpeningPeriod}
+                        />
                     </Box>
                     <Box>
                         <Typography sx={localstyles.typo}>備註</Typography>
@@ -353,7 +353,7 @@ function InviteForm({
                     >
                         <Button
                             disabled={!submitable}
-                            onClick={() => onSubmit(TChiName,SChiName,EngName,type,BRN,remark)}
+                            onClick={() => onSubmit(TChiName,SChiName,EngName,type,BRN,remark,openingPeriod)}
                             sx={localstyles.formButton}
                             >
                             提交
@@ -491,10 +491,11 @@ function CompanyManage(){
         EngName: string, 
         type: string, 
         BRNo: string, 
-        remark: string
+        remark: string,
+        activePeriod: openingPeriod
     ) => {
         const randomId = generateNumericId();
-        console.log(randomId);
+        
         const result = await createInvitation({
             tenantId: randomId,
             companyNameTchi: TChiName,
@@ -514,9 +515,9 @@ function CompanyManage(){
             inventoryMethod: "string",
             allowImgSize: 0,
             allowImgNum: 0,
-            approvedAt: "2023-10-25T07:14:25.562Z",
+            approvedAt: dayjsToLocalDateTime(activePeriod.startDate),
             approvedBy: "string",
-            rejectedAt: "2023-10-25T07:14:25.562Z",
+            rejectedAt: dayjsToLocalDateTime(activePeriod.endDate),
             rejectedBy: "string",
             createdBy: "string",
             updatedBy: "string",
@@ -661,7 +662,7 @@ function CompanyManage(){
                                         <TableCell sx={localstyles.bodyCell}>{eName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{status}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{type}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(createDate,format.dateFormat2)}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(createDate,format.dateFormat1)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{accountNum}</TableCell>
                                     </TableRow>
                                 );

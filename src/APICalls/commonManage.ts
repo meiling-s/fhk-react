@@ -118,3 +118,21 @@ export const getCommonTypes = async () => {
     }
   
 }
+
+export const getRecycType = async () => {
+    
+    var RecycType = []
+    try {
+
+        var response = await request({
+            ...GET_RECYC_TYPE,
+            // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+        });
+        console.log('Get site type success:', JSON.stringify(response.data));
+        RecycType = response.data;
+        return RecycType;
+    }catch (e) {
+        console.error('Get site type failed:', e);
+        return null;
+    }
+}
