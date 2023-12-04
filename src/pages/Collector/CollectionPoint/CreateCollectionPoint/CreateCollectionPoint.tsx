@@ -28,6 +28,7 @@ import ColPointTypeList from "../../../../components/SpecializeComponents/Collec
 import SiteTypeList from "../../../../components/SpecializeComponents/SiteTypeList";
 import RoutineSelect from "../../../../components/SpecializeComponents/RoutineSelect";
 import { FormErrorMsg } from "../../../../components/FormComponents/FormErrorMsg";
+import { dayjsToLocalDate, toGpsCode } from "../../../../components/Formatter";
 
 dayjs.extend(isBetween)
 
@@ -243,11 +244,11 @@ function CreateCollectionPoint() {
             const cp: createCP = {
                 colName: colName,
                 colPointTypeId: colType,
-                effFrmDate: openingPeriod?.startDate.format(format.dateFormat3),
-                effToDate: openingPeriod?.endDate.format(format.dateFormat3),
+                effFrmDate: dayjsToLocalDate(openingPeriod.startDate),
+                effToDate: dayjsToLocalDate(openingPeriod.endDate),
                 routine: colPtRoutine,
                 address: address,
-                gpsCode: gpsCode,
+                gpsCode: toGpsCode(gpsCode[0],gpsCode[1]),
                 epdFlg: EPDFlg,
                 extraServiceFlg: !serviceType,
                 siteTypeId: siteType,

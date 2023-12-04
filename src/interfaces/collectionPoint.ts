@@ -1,6 +1,7 @@
 import dayjs from "dayjs"
 import { il_item } from "../components/FormComponents/CustomItemList"
 import { colPtRoutine, routineContent } from "./common"
+import { gpsCode, time } from "./dataFormat"
 
 export type openingPeriod = {
     startDate: dayjs.Dayjs,
@@ -20,8 +21,8 @@ export type recyclable = {
 export type roster = {
 	rosterId: string,
 	routineType: string,
-    startAt: string,
-    endAt: string,
+    startAt: time,
+    endAt: time,
    	status: string,
 }
 
@@ -35,7 +36,7 @@ export type collectionPoint = {
 	routineType: string,
 	routine: routineContent[],
 	address: string,
-	gpsCode: number[],
+	gpsCode: gpsCode,
 	epdFlg: boolean,
 	extraServiceFlg: boolean,
 	siteTypeId: string,
@@ -46,8 +47,8 @@ export type collectionPoint = {
 	premiseTypeId: string,
 	premiseRemark: string,
 	normalFlg: boolean,
-	createdAt: Date,
-	updatedAt: Date,
+	createdAt: string,
+	updatedAt: string,
 	createdBy: string,
 	updatedBy: string,
 	roster: roster[],
@@ -63,7 +64,7 @@ export type createCP = {        //data for creating Collection Point
 	effToDate: String,
 	routine: colPtRoutine,
 	address: string,
-	gpsCode: number[],
+	gpsCode: gpsCode,
 	epdFlg: boolean,
 	extraServiceFlg: boolean,
 	siteTypeId: string,
@@ -88,7 +89,7 @@ export type updateCP = {        //data for creating Collection Point
 	effToDate: String,
 	routine: colPtRoutine,
 	address: string,
-	gpsCode: number[],
+	gpsCode: gpsCode,
 	epdFlg: boolean,	
 	extraServiceFlg: boolean,
 	siteTypeId: string,
@@ -105,6 +106,3 @@ export type updateCP = {        //data for creating Collection Point
 
 }
 
-export type routine = {
-	
-}

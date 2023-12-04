@@ -10,13 +10,11 @@ import React, { useEffect, useState } from "react";
 import CheckIcon from "@mui/icons-material/Check";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RecycleCard from "../RecycleCard";
-import { FakeDataItem } from "../../interfaces/fakeData";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import { CheckIn, CheckinDetail } from "../../interfaces/checkin";
 import { styles } from "../../constants/styles";
 import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import { useContainer } from "unstated-next";
-import { recycSubType } from "../../interfaces/common";
 import { il_item } from "./CustomItemList";
 import i18n from "../../setups/i18n";
 

@@ -36,7 +36,7 @@ export default function CustomDatePicker({
                     maxDate={maxDate? dayjs(maxDate) : undefined}
                     onChange={(value) => handleDateChange(value)}
                     sx={localstyles.datePicker}
-                    format={format.dateFormat3}
+                    format={format.dateFormat2}
                 />
             </Box>
         </>

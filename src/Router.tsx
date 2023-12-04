@@ -28,6 +28,7 @@ import RegisterStepTwo from "./pages/TenantRegister/RegisterStepTwo";
 import Staff from "./pages/Collector/Staff";
 import Report from "./pages/Collector/Report";
 import RecycleShipment from "./pages/Collector/RecycleShipment";
+import RecycleShipmentCheckOut from "./pages/Collector/RecycleShipmentCheckOut";
 import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
 import PickupOrder from "./pages/Collector/PickupOrder";
 
@@ -70,6 +71,10 @@ const Router = () => {
                         element={<RecycleShipment />}
                     />
                     <Route path="/collector/pickupOrder" element={<PickupOrder/>} />
+                    <Route
+                        path="/collector/shipmentCheckout"
+                        element={<RecycleShipmentCheckOut />}
+                    />
                     <Route path="/collector/report" element={<Report />} />
                     <Route path="/collector/staff" element={<Staff />} />
                     <Route

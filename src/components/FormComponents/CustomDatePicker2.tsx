@@ -51,7 +51,7 @@ function CustomDatePicker({
           maxDate={period.endDate}
           onChange={(value) => onChangeDate(true, value)}
           sx={localstyles.datePicker(showOne!)}
-          format={format.dateFormat3}
+          format={format.dateFormat2}
         />
       ) : (
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -60,7 +60,7 @@ function CustomDatePicker({
             maxDate={period.endDate}
             onChange={(value) => onChangeDate(true, value)}
             sx={localstyles.datePicker(showOne!)}
-            format={format.dateFormat3}
+            format={format.dateFormat2}
           />
           <Typography sx={{ marginX: 1 }}>{t("to")}</Typography>
           <DatePicker
@@ -68,7 +68,7 @@ function CustomDatePicker({
             minDate={period.startDate}
             onChange={(value) => onChangeDate(false, value)}
             sx={localstyles.datePicker(showOne!)}
-            format={format.dateFormat3}
+            format={format.dateFormat2}
           />
         </Box>
       )}
