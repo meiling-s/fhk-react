@@ -7,7 +7,7 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   VISIBILITY_ICON,
   VISIBILITY_OFF_ICON,
@@ -32,14 +32,16 @@ interface ShowPasswordState {
   confirmPassword: boolean
 }
 const ChangePassword = () => {
-    // todo : add key local storage for firstime login
-    // direct to homepage if success
-    // show msg error when failed login
   const navigate = useNavigate()
   const titlePage = '重置密碼'
   const submitLabel = '完成重置'
   const [isPassValid, setIsPassValid] = useState<boolean>(true)
   const [isPassIdentical, setIsPassIdentical] = useState<boolean>(true)
+  const [erorUpdate, setErrorUpdate] = useState<boolean>(false)
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<
+    { field: string; error: string }[]
+  >([]) //validation for required field
   const [formData, setFormData] = useState<FormData>({
     userName: '',
     password: '',
@@ -80,6 +82,33 @@ const ChangePassword = () => {
     }
   ]
 
+  useEffect(() => {
+    const usernameFromStorage = localStorage.getItem(
+      localStorgeKeyName.username
+    )
+    if (usernameFromStorage) {
+      setFormData((prevData) => ({
+        ...prevData,
+        userName: usernameFromStorage
+      }))
+    }
+  }, [])
+
+  useEffect(() => {
+    const tempV: { field: string; error: string }[] = []
+
+    Object.keys(formData).forEach((fieldName) => {
+      formData[fieldName as keyof FormData].trim() === '' &&
+        tempV.push({
+          field: fieldName,
+          error: `fields is required`
+        })
+    })
+
+    setValidation(tempV)
+    // console.log(tempV)
+  }, [formData])
+
   const checkPassComplexity = (password: string): boolean => {
     const [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar] = [
       /[A-Z]/,
@@ -113,11 +142,8 @@ const ChangePassword = () => {
   }
 
   const submitChangePassword = async () => {
-    // localStorage.setItem(localStorgeKeyName.username, result?.username || '')
-    //checkPassRequirment()
     validatePass()
-    if (isPassValid && isPassIdentical) {
-      // call api change pass
+    if (!isPassValid && !isPassIdentical && validation.length === 0) {
       const passData = {
         username: formData.userName,
         password: formData.password,
@@ -128,14 +154,21 @@ const ChangePassword = () => {
         try {
           const response = await changePassword(passData)
           if (response) {
-            console.log('updated', response)
+            if (response.status == 200) {
+              console.log('reset password', response)
+              localStorage.removeItem('firstTimeLogin')
+              navigate('/asdt')
+            }
           }
         } catch (error) {
           console.error(error)
+          setErrorUpdate(true)
         }
       }
       resetPassword(passData)
-      // localStorage.setItem(localStorgeKeyName.username, result?.username || '')
+    } else {
+      setTrySubmited(true)
+      setErrorUpdate(true)
     }
   }
 
@@ -146,6 +179,7 @@ const ChangePassword = () => {
     }))
     setIsPassValid(true)
     setIsPassIdentical(true)
+    setErrorUpdate(false)
   }
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -153,6 +187,14 @@ const ChangePassword = () => {
       ...prevData,
       [field]: value
     }))
+  }
+
+  const checkString = (s: string) => {
+    if (!trySubmited) {
+      //before first submit, don't check the validation
+      return false
+    }
+    return s == ''
   }
 
   return (
@@ -165,6 +207,12 @@ const ChangePassword = () => {
         >
           {titlePage}
         </Typography>
+        {erorUpdate && (
+          <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2  mb-2 text-2xs">
+            <WARNING_ICON />
+            {'錯誤，無法重設密碼'}
+          </div>
+        )}
         <Stack spacing={2}>
           {fields.map((item, index) => (
             <Box key={index}>
@@ -198,7 +246,9 @@ const ChangePassword = () => {
                             )
                           }
                         >
-                          {showPassword ? (
+                          {showPassword[
+                            item.field as keyof ShowPasswordState
+                          ] ? (
                             <VISIBILITY_ICON />
                           ) : (
                             <VISIBILITY_OFF_ICON />
@@ -207,15 +257,16 @@ const ChangePassword = () => {
                       </InputAdornment>
                     ) : null
                 }}
+                error={checkString(formData[item.field as keyof FormData])}
               />
               {item.field === 'newPassword' && !isPassValid && (
-                <div className="bg-[#FDF8F8] p-2 text-red rounded-lg mt-2 text-2xs">
+                <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
                   <WARNING_ICON />
                   {item.helperText}
                 </div>
               )}
               {item.field === 'confirmPassword' && !isPassIdentical && (
-                <div className="bg-[#FDF8F8] p-2 text-red rounded-lg mt-2 text-2xs">
+                <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2 text-2xs">
                   <WARNING_ICON />
                   {item.helperText}
                 </div>

@@ -3,7 +3,7 @@ import { CHANGE_PASSWORD } from '../constants/requests'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 
 const request = axios.create({
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
 })
 
 export const changePassword = async (data: any) => {

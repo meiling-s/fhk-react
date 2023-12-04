@@ -8,7 +8,7 @@ export const LOGIN: AxiosRequestConfig = {
 
 export const CHANGE_PASSWORD: AxiosRequestConfig = {
   method: 'post',
-  url: 'api/v1/collectors/Login/resetPassword'
+  url: 'api/v1/account/resetPassword'
 }
 
 export const ADD_TENANT: AxiosRequestConfig = {
