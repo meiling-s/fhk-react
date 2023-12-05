@@ -1,4 +1,4 @@
-import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, TextField, Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import React, { useState } from "react";
 import { styles } from "../../../constants/styles";
@@ -83,7 +83,7 @@ const CreatePickupOrder = () => {
                 >
                   <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
                   <Typography sx={styles.header1}>
-                    {t("col.createCP")}
+                    建立运单
                   </Typography>
                 </Button>
               </Grid>
@@ -162,7 +162,39 @@ const CreatePickupOrder = () => {
                   <Typography>P012345678</Typography>
                 </CustomField>
               </Grid>
+             
+         
               <Grid item>
+                <Stack direction={'row'} spacing={10}>
+                <Typography sx={localstyles.txtHeader}>
+                    {'运送时间'}
+                    </Typography>
+                    <Typography sx={localstyles.txtHeader}>
+                    {'主类别'}
+                    </Typography>
+                    <Typography sx={localstyles.txtHeader}>
+                    {'次类别'}
+                    </Typography>
+                    <Typography sx={localstyles.txtHeader}>
+                    {'重量'}
+                    </Typography>
+                    <Typography sx={localstyles.txtHeader}>
+                    {'寄件公司'}
+                    </Typography>
+                    <Typography sx={localstyles.txtHeader}>
+                    {'收件公司'}
+                    </Typography>
+                    <Typography sx={localstyles.txtHeader}>
+                    {'回收地点'}
+                    </Typography>
+                    <Typography sx={localstyles.txtHeader}>
+                    {'到达地点'}
+                    </Typography>
+                </Stack>
+                </Grid>
+               
+                
+                <Grid item>
                 <Button
                   type="submit"
                   sx={[styles.buttonFilledGreen, localstyles.localButton]}
@@ -179,6 +211,7 @@ const CreatePickupOrder = () => {
             </Grid>
           </LocalizationProvider>
         </Box>
+       
       </form>
     </>
   );
@@ -276,6 +309,27 @@ let localstyles = {
     fontSize: 18,
     mr: 3,
   },
+  gridContainer: {
+    width: "100%",
+},
+gridRow: {
+    width: "100%",
+    flexDirection: "row",
+    marginY: 1
+},
+dataRow: {
+    backgroundColor: "#FBFBFB",
+    borderRadius: 5,
+    paddingX: 2
+},
+txtHeader: {
+    ...styles.header3,
+    pl: 1
+},
+tableCell: {
+    display: "flex",
+    alignSelf: "center"
+}
 };
 
 export default CreatePickupOrder;

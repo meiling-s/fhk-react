@@ -10,10 +10,21 @@ import { Box, Stack, alpha, styled } from "@mui/system";
 import { t } from "i18next";
 import { useNavigate } from "react-router";
 import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridValueGetterParams } from "@mui/x-data-grid";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 import PickupOrderForm from "../../../components/FormComponents/PickupOrderForm";
 import StatusCard from "../../../components/StatusCard";
+import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+import { PickupOrder } from "../../../interfaces/pickupOrder";
+import { useContainer } from "unstated-next";
+import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
+
+
+
+
+
+
+
 
 
 interface Option {
@@ -22,7 +33,7 @@ interface Option {
 }
 
 
-const PickupOrder = () => {
+const PickupOrders = () => {
   const columns: GridColDef[] = [
     { field: "建立日期", headerName: "建立日期", width: 300 },
     {
@@ -70,21 +81,35 @@ const PickupOrder = () => {
             ),
     },
    
-  ];
-  const rows = [
-    { id:1,建立日期:"2023-10-23", 物流公司: "快捷物流", 运单编号:'P01234523789', 送货日期:'2023-10-25',寄件公司:"a公司",收件公司:"a公司",状态:'处理中',},
-    { id:2,建立日期:"2023-10-24", 物流公司: "顺丰物流", 运单编号:'P01234562789', 送货日期:'2023-10-26',寄件公司:"b公司",收件公司:"a公司",状态:'已拒绝'},
-    { id:3,建立日期:"2023-10-25", 物流公司: "顶级物流", 运单编号:'P012245678239', 送货日期:'2023-10-27',寄件公司:"c公司",收件公司:"c公司",状态:'已完成'},
-    { id:4,建立日期:"2023-10-26", 物流公司: "福建物流", 运单编号:'P012345678339', 送货日期:'2023-10-28',寄件公司:"d公司",收件公司:"d公司",状态:'已取消'},
-    { id:5,建立日期:"2023-10-27", 物流公司: "香港物流", 运单编号:'P012345678339', 送货日期:'2023-10-29',寄件公司:"d公司",收件公司:"d公司",状态:'已完成'},
-  ];
+  ]; 
+
+  
+   const {pickupOrder} = useContainer(CheckInRequestContainer)
+
+  // const rows = [
+  //   { id:1,建立日期:"2023-10-23", 物流公司: "快捷物流", 运单编号:'P01234523789', 送货日期:'2023-10-25',寄件公司:"a公司",收件公司:"a公司",状态:'处理中'},
+  //   { id:2,建立日期:"2023-10-24", 物流公司: "顺丰物流", 运单编号:'P01234562789', 送货日期:'2023-10-26',寄件公司:"b公司",收件公司:"a公司",状态:'已拒绝'},
+  //   { id:3,建立日期:"2023-10-25", 物流公司: "顶级物流", 运单编号:'P012245678239', 送货日期:'2023-10-27',寄件公司:"c公司",收件公司:"c公司",状态:'已完成'},
+  //   { id:4,建立日期:"2023-10-26", 物流公司: "福建物流", 运单编号:'P012345678339', 送货日期:'2023-10-28',寄件公司:"d公司",收件公司:"d公司",状态:'已取消'},
+  //   { id:5,建立日期:"2023-10-27", 物流公司: "香港物流", 运单编号:'P012345678339', 送货日期:'2023-10-29',寄件公司:"d公司",收件公司:"d公司",状态:'已完成'},
+  // ];
+  const rows: Row[] = pickupOrder?.map((item) => ({
+    id: item.picoId,
+    建立日期: item.effToDate, // Convert to string
+    物流公司: item.logisticId,
+    运单编号: item.picoId, // Convert to string
+    送货日期: item.effToDate, // Convert to string
+    寄件公司: item.logisticName,
+    收件公司: item.logisticName,
+    状态: item.status,
+  }))??[] ;
 
   interface Row {
     id: number;
-    建立日期: string;
+    建立日期: Date;
     物流公司: string;
-    运单编号: string;
-    送货日期: string;
+    运单编号: number;
+    送货日期: Date;
     寄件公司: string;
     收件公司: string;
     状态: string;
@@ -135,6 +160,9 @@ const PickupOrder = () => {
     setOpenModal(true);
   };
    
+  useEffect(()=>{
+    getAllPickUpOrder()
+  },[])
   return (
     <Box sx={{ display: "flex", width: "100%", flexDirection: "column" }}>
         <Modal open={openModal} onClose={handleCloses} >
@@ -162,7 +190,7 @@ const PickupOrder = () => {
       <Box />
       <Stack direction='row' mt={3} >
         {searchfield.map((s)=>(
-            <CustomSearchField   label={s.label} width={s.width} options={s.options || []}  />
+            <CustomSearchField  label={s.label} width={s.width} options={s.options || []}  />
         ))}
         
 
@@ -200,4 +228,4 @@ const PickupOrder = () => {
   );
 };
 
-export default PickupOrder;
+export default PickupOrders;

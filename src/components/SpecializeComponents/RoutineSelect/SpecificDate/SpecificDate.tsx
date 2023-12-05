@@ -44,7 +44,7 @@ export default function SpecificDate({
         setSpecificDate(returnRoutineContent(specificDates))
     },[specificDates])
     
-    const toTimePeriod = (st: string[], et: string[]) => {      //start time end time
+    const toTimePeriod = (st: string[], et: string[]) => {      //start time end time   
         const timeP: timePeriod[] = [];
         for(var i = 0; i < Math.min(st.length,et.length); i++){
             timeP.push({startFrom: dayjs(st[i]), endAt: dayjs(et[i])});

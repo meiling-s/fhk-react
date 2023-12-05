@@ -41,3 +41,4 @@ export const REMOVE_CIRCLE_ICON = RemoveCircleOutlineIcon
 export const CAMERA_OUTLINE_ICON = CameraAltOutlinedIcon
 export const INBOX_OUTLINE_ICON = InboxOutlinedIcon
 export const LEFT_ARROW_ICON = ChevronLeftOutlinedIcon
+

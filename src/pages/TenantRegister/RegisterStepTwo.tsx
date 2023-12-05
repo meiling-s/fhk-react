@@ -4,20 +4,20 @@ import {
   Button,
   Stack,
   TextField,
-  Typography,
   Card,
   ButtonBase,
   ImageList,
-  ImageListItem
+  ImageListItem,
+  Typography
 } from '@mui/material'
 import logo_company from '../../logo_company.png'
-import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
 import ImageUploading, { ImageListType } from 'react-images-uploading'
 import { TENANT_REGISTER_CONFIGS } from '../../constants/configs'
 import { getTenantById } from '../../APICalls/tenantManage'
+import {CAMERA_OUTLINE_ICON} from '../../themes/icons'
 
 interface FormValues {
   [key: string]: string

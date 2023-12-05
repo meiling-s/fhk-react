@@ -5,6 +5,7 @@ const StatusCard = ({status}:{status:string}) => {
    
   var bgColor = "";
   var fontColor =''
+  var name = ''
   switch (status) {
     case "处理中":
       bgColor = '#ECF5EE';
@@ -22,9 +23,11 @@ const StatusCard = ({status}:{status:string}) => {
       bgColor = '#FFF0F4';
       fontColor = '#FF4242';
       break;
-    case '已完成':
+    case 'CREATED':
       bgColor = '#6BC7FF';
       fontColor = '#FFFFFF';
+      name ='已完成'
+
       break;
     case '已取消':
       bgColor = '#ACACAC';
@@ -39,7 +42,7 @@ const StatusCard = ({status}:{status:string}) => {
   }
   return (
     <Box bgcolor={bgColor} width="70px" height='20px'p={1} borderRadius='10px'>
-    <Typography fontSize={15} textAlign='center' fontWeight='bold' color={fontColor}>{status}</Typography>
+    <Typography fontSize={15} textAlign='center' fontWeight='bold' color={fontColor}>{name}</Typography>
   </Box>
   )
 }
