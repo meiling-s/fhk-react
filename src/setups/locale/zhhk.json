@@ -139,7 +139,7 @@
     "cancel": "取消"
   },
   "changePassPage": {
-    "titlePage": "重置密碼",
+    "titlePage": "更改密碼",
     "submitPassword": "完成重置",
     "username": "登入名稱",
     "placeholder_username": "例如：chantaiman001",
