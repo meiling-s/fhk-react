@@ -140,7 +140,7 @@
     "cancel": "Cancel"
   },
   "changePassPage": {
-    "titlePage": "RESET PASSWORD" ,
+    "titlePage": "CHANGE PASSWORD",
     "submitPassword": "Submit",
     "username": "Username",
     "placeholder_username": "example: chantaiman001",
