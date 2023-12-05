@@ -265,19 +265,24 @@ function ShipmentManage(){
     const initTable = () => {
         console.log("init",checkInRequest)
         if(checkInRequest){
-            setShipments(checkInRequest);
+            //setShipments(checkInRequest);
             var ships: CheckIn[] = [];
             var i = 0;
             while(i < checkInRequest.length) {
                 if(checkInRequest[i].status == "CREATED"){
-                    ships[i] = checkInRequest[i];
+                    ships.push(checkInRequest[i]);
                 }
                 i++;
             }
+            setShipments(ships);
             setFilterShipments(ships);
             console.log("filtership", ships);
         }        
     }
+
+    useEffect(()=>{
+        console.log("filtered: ",filterShipments);
+    },[filterShipments])
 
     // useEffect(()=>{
     //     initShipments()
@@ -373,7 +378,6 @@ function ShipmentManage(){
 
     const handleFilterPoNum = (searchWord: string) => {
 
-        console.log(shipments)
         //console.log(searchWord)
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
@@ -398,9 +402,9 @@ function ShipmentManage(){
     
 
     const handleComChange = (event: SelectChangeEvent) => {
+
         setCompany(event.target.value);
         var searchWord = event.target.value;
-        console.log(searchWord);
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
@@ -421,9 +425,10 @@ function ShipmentManage(){
     };
     
     const handleLocChange = (event: SelectChangeEvent) => {
+
         setLocation(event.target.value);
         var searchWord = event.target.value;
-        console.log(searchWord);
+        //console.log(searchWord);
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
@@ -445,6 +450,7 @@ function ShipmentManage(){
     };
 
     const handleApproveOnClick = async () => {
+
         console.log(checkedShipments);
         const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.chkInId);
         console.log("checkin ids are " + checkInIds);
@@ -477,7 +483,7 @@ function ShipmentManage(){
 
     function onSelectAllClick(){
         if(selected.length < shipments.length){     //if not selecting all, do select all
-            const newSelected = shipments.map((shipment) => shipment.picoDtlId);
+            const newSelected = shipments.map((shipment) => shipment.chkInId.toString());
             setSelected(newSelected);
             // Trigger the function for each individual checkbox
             console.log(shipments);
@@ -519,10 +525,8 @@ function ShipmentManage(){
         }
         setSelected(newSelected);
         setOpen(true);
-        console.log('motherfuck'+id)
       
-        const selectedItem = checkInRequest?.find(item => item.picoDtlId ===id);
-        console.log('123456'+selectedItem)
+        const selectedItem = checkInRequest?.find(item => item.chkInId.toString() ===id);
         setSelectedRow(selectedItem); //
       };
 
@@ -760,20 +764,22 @@ function ShipmentManage(){
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {   filterShipments?.map((shipment) => {
+                            {   filterShipments.map((shipment) => {
+                                console.log(shipment)
                                 // const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
                                    return (
                                     <TableRow
-                                        hover key={shipment.picoDtlId}
+                                        hover
+                                        key={shipment.chkInId}
                                         tabIndex={-1}
                                         role="checkbox"
                                         sx={[localstyles.row]}
-                                        onClick={(event)=>handleClick(event,shipment.picoDtlId)}
+                                        onClick={(event)=>handleClick(event,shipment.chkInId.toString())}
                                         >
                                         <TableCell sx={localstyles.bodyCell}>
                                             <Checkbox
                                                 color="primary"
-                                                checked={selected.includes(shipment.picoDtlId)}
+                                                checked={selected.includes(shipment.chkInId.toString())}
                                                 onChange={(e) => handleCheck(shipment, e.target.checked)}
                                                 inputProps={{
                                                     'aria-label': 'select request',
