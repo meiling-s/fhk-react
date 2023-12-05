@@ -47,7 +47,7 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   const titlePage = t('changePassPage.titlePage')
   const submitLabel = t('changePassPage.submitPassword')
   const [role, setRole] = useState('')
-  const [isFirstLogin, setFirsLogin] = useState<boolean>(false)
+  const [isFirstLogin, setFirstLogin] = useState<boolean>(false)
   const [isPassValid, setIsPassValid] = useState<boolean>(false)
   const [isPassIdentical, setIsPassIdentical] = useState<boolean>(false)
   const [erorUpdate, setErrorUpdate] = useState<boolean>(false)
@@ -121,7 +121,11 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
 
   useEffect(() => {
     setRole(localStorage.getItem(localStorgeKeyName.role) || '')
-    setFirsLogin(
+    console.log(
+      'First Time Login:',
+      localStorage.getItem(localStorgeKeyName.firstTimeLogin)
+    )
+    setFirstLogin(
       localStorage.getItem(localStorgeKeyName.firstTimeLogin) === 'true'
     )
     const username = localStorage.getItem(localStorgeKeyName.username)
