@@ -72,6 +72,7 @@ const MainAppBar = () => {
 
   const handleClickAvatar = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElAvatar(event.currentTarget)
+    localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'false')
   }
   const handleClose = () => {
     setAnchorEl(null)
