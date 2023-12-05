@@ -73,7 +73,8 @@ function MainDrawer() {
     }
   }, [])
 
-  var role = localStorage.getItem(localStorgeKeyName.role);
+  // var role = localStorage.getItem(localStorgeKeyName.role);
+  var role = 'collector'
 
   let drawerMenus_collector: DrawerItem[] = [
     {
@@ -98,7 +99,7 @@ function MainDrawer() {
     {
       name: t('recycle_Shipment'),
       icon: <SHIPPING_CAR_ICON />,
-      onClick: () => navigate('/collector/shipment'),
+      onClick: () => navigate('/collector/pickupOrder'),
       collapse: false
     },
     {

@@ -46,7 +46,7 @@ export default function RecyclablesList({
     const returnRecycTypes = () => {
         const recycItem: recycItem[] = [];
         //console.log("recycL: ", recycL);
-        recycL.map((re) => {
+        recycL.map((re) => { 
             var reItem: recycItem = {recycType: {name: "", id: ""}, recycSubtype: []};
             var subItem: il_item[] = [];
             var name = "";

@@ -6,19 +6,21 @@ import { useState } from "react";
 import { openingPeriod } from "../../interfaces/collectionPoint";
 import { format } from "../../constants/constant";
 import { useTranslation } from "react-i18next";
+import CustomTextField from "./CustomTextField";
+import CustomField from "./CustomField";
 
 type DatePicker = {
   setDate: (period: openingPeriod) => void;
   defaultStartDate?: Date | string;
   defaultEndDate?: Date | string;
-  showOne?: boolean;
+  pickupOrderForm?: boolean;
 };
 
-function CustomDatePicker({
+function CustomDatePicker2({
   setDate,
   defaultStartDate,
   defaultEndDate,
-  showOne,
+  pickupOrderForm,
 }: DatePicker) {
   const startDate = defaultStartDate ? defaultStartDate : new Date();
   const endDate = defaultEndDate ? defaultEndDate : new Date();
@@ -45,21 +47,38 @@ function CustomDatePicker({
 
   return (
     <>
-      {showOne ? (
-        <DatePicker
-          defaultValue={dayjs(startDate)}
-          maxDate={period.endDate}
-          onChange={(value) => onChangeDate(true, value)}
-          sx={localstyles.datePicker(showOne!)}
-          format={format.dateFormat2}
-        />
+   
+      {pickupOrderForm ? (
+        <Box display={"flex"}>
+      <CustomField label={"运输有效日期由"}>
+       <DatePicker
+         defaultValue={dayjs(startDate)}
+         maxDate={period.endDate}
+         onChange={(value) => onChangeDate(true, value)}
+         sx={localstyles.datePicker(pickupOrderForm!)}
+         format={format.dateFormat2}
+       />
+       </CustomField>
+       <Box ml='15px'>
+       <CustomField label={"至"}>
+       <DatePicker
+         defaultValue={dayjs(endDate)}
+         minDate={period.startDate}
+         onChange={(value) => onChangeDate(false, value)}
+         sx={localstyles.datePicker(pickupOrderForm!)}
+         format={format.dateFormat2}
+       />
+       </CustomField>
+       </Box>
+       </Box>
+     
       ) : (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <DatePicker
             defaultValue={dayjs(startDate)}
             maxDate={period.endDate}
             onChange={(value) => onChangeDate(true, value)}
-            sx={localstyles.datePicker(showOne!)}
+            sx={localstyles.datePicker(pickupOrderForm!)}
             format={format.dateFormat2}
           />
           <Typography sx={{ marginX: 1 }}>{t("to")}</Typography>
@@ -67,7 +86,7 @@ function CustomDatePicker({
             defaultValue={dayjs(endDate)}
             minDate={period.startDate}
             onChange={(value) => onChangeDate(false, value)}
-            sx={localstyles.datePicker(showOne!)}
+            sx={localstyles.datePicker(pickupOrderForm!)}
             format={format.dateFormat2}
           />
         </Box>
@@ -86,4 +105,4 @@ const localstyles = {
     }),
   };
 
-export default CustomDatePicker;
+export default CustomDatePicker2;

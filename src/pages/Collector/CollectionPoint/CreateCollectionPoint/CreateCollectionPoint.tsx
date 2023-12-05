@@ -17,7 +17,7 @@ import { getLocation } from "../../../../APICalls/getLocation";
 import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
 import CustomPeriodSelect from "../../../../components/FormComponents/CustomPeriodSelect";
 import { useNavigate } from "react-router-dom";
-import { createCollectionPoint, findCollectionPointExistByName, findCollectionPointExistByContractAndAddress } from "../../../../APICalls/collectionPointManage";
+
 import { formErr, format } from "../../../../constants/constant";
 import { useTranslation } from "react-i18next";
 import { getCommonTypes } from "../../../../APICalls/commonManage";

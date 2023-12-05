@@ -18,6 +18,7 @@ type props = {
     dbClickSelect?: boolean,
     error?: boolean,
     editable?: boolean
+    value?:string
 }
 function CustomItemList({
     items,
@@ -28,7 +29,8 @@ function CustomItemList({
     setLastSelect,
     dbClickSelect,
     error,
-    editable
+    editable,
+    value
 }: props){
     const [selectSingle, setSelectSingle] = useState<string>("");
     const [selectMulti, setSelectMulti] = useState<string[]>([]);

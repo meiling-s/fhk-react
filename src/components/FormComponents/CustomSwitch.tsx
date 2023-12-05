@@ -7,6 +7,7 @@ type props = {
     setState: (b: boolean) => void,
     defaultValue?: boolean,
     disabled?: boolean
+    value?: string,
 }
 
 export default function Switches({
@@ -14,7 +15,8 @@ export default function Switches({
     offText,
     defaultValue,
     setState,
-    disabled
+    disabled,
+    value
 }: props) {
     const [onOff, setOnOff] = useState<boolean>((defaultValue!=undefined)? defaultValue : false);
 
