@@ -23,6 +23,7 @@
     "@types/uuid": "^9.0.6",
     "axios": "^1.5.1",
     "date-fns": "^2.30.0",
+    "formik": "^2.4.5",
     "i18next": "^23.6.0",
     "image-file-resizer": "^0.0.0",
     "leaflet": "^1.9.4",

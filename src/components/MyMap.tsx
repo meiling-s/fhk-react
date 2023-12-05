@@ -48,7 +48,7 @@ function MyMap({
             break;
         }
         var location = JSON.parse("[" + collectionPoint.gpsCode + "]");
-
+        
         return (
           <Marker
             key={Math.random()}

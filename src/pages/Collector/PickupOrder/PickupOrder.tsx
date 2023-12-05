@@ -11,9 +11,9 @@ import { t } from "i18next";
 import { useNavigate } from "react-router";
 import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridValueGetterParams } from "@mui/x-data-grid";
 import React, { useState } from "react";
-import CustomSearchField from "../../components/TableComponents/CustomSearchField";
-import PickupOrderForm from "../../components/FormComponents/PickupOrderForm";
-import StatusCard from "../../components/StatusCard";
+import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
+import PickupOrderForm from "../../../components/FormComponents/PickupOrderForm";
+import StatusCard from "../../../components/StatusCard";
 
 
 interface Option {
@@ -145,7 +145,7 @@ const PickupOrder = () => {
           查询运单
         </Typography>
         <Button
-          onClick={() => navigate("/collector/createCollectionPoint")}
+          onClick={() => navigate("/collector/createPickupOrder")}
           sx={{
             borderRadius: "20px",
             backgroundColor: "#79ca25",
