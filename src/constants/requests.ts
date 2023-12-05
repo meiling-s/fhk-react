@@ -1,15 +1,20 @@
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig } from 'axios'
 
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
   method: 'post',
-  url: 'api/v1/account/login',
-};
+  url: 'api/v1/account/login'
+}
+
+export const CHANGE_PASSWORD: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/account/resetPassword'
+}
 
 export const ADD_TENANT: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/v1/account/tenant/astd/addTenant',
-};
+  url: 'api/v1/account/tenant/astd/addTenant'
+}
 
 export const GET_ALL_TENANT: AxiosRequestConfig = {
   method: 'get',
@@ -47,10 +52,11 @@ export const FIND_COLLECTIONPOINT_EXIST_BYNAME: AxiosRequestConfig = {
   url: 'api/v1/collectors/collectionPoint/byName'
 }
 
-export const FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS: AxiosRequestConfig = {
-  method: 'get',
-  url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
-}
+export const FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS: AxiosRequestConfig =
+  {
+    method: 'get',
+    url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
+  }
 
 export const GET_CONTRACT: AxiosRequestConfig = {
   method: 'get',
@@ -109,57 +115,56 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
 
 //warehouse
 export const GET_ALL_WAREHOUSE: AxiosRequestConfig = {
-  method: "get",
-  url: "api/v1/collectors/warehouse",
-};
+  method: 'get',
+  url: 'api/v1/collectors/warehouse'
+}
 
 export const GET_WAREHOUSE_BY_ID = (
   warehouseId: number
 ): AxiosRequestConfig => ({
-  method: "get",
-  url: `api/v1/collectors/warehouse/${warehouseId}`,
-});
+  method: 'get',
+  url: `api/v1/collectors/warehouse/${warehouseId}`
+})
 
 export const ADD_WAREHOUSE: AxiosRequestConfig = {
-  method: "post",
-  url: "api/v1/collectors/warehouse",
-};
+  method: 'post',
+  url: 'api/v1/collectors/warehouse'
+}
 
 export const UPDATE_WAREHOUSE_BY_ID = (
   warehouseId: number
 ): AxiosRequestConfig => ({
-  method: "put",
-  url: `api/v1/collectors/warehouse/${warehouseId}`,
-});
+  method: 'put',
+  url: `api/v1/collectors/warehouse/${warehouseId}`
+})
 
 export const UPDATE_RECYCLE_CAPACITY_BY_ID = (
   warehouseRecycId: number
 ): AxiosRequestConfig => ({
-  method: "put",
-  url: `api/v1/collectors/warehouseRecyc/${warehouseRecycId}/status`,
-});
+  method: 'put',
+  url: `api/v1/collectors/warehouseRecyc/${warehouseRecycId}/status`
+})
 
 export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   warehouseId: number
 ): AxiosRequestConfig => ({
-  method: "put",
-  url: `api/v1/collectors/warehouse/${warehouseId}/status`,
-});
+  method: 'put',
+  url: `api/v1/collectors/warehouse/${warehouseId}/status`
+})
 
 //recycle type
 export const GET_RECYCLE_TYPE: AxiosRequestConfig = {
-  method: "get",
-  url: "api/v1/administrator/recycType",
-};
+  method: 'get',
+  url: 'api/v1/administrator/recycType'
+}
 
 export const GET_RECYCLE_TYPE_BY_ID = (recycTypeId: string) => ({
-  method: "get",
-  url: `api/v1/administrator/recycType/${recycTypeId}`,
-});
-
+  method: 'get',
+  url: `api/v1/administrator/recycType/${recycTypeId}`
+})
 
 //test
 export const GET_ALL_USERNAME: AxiosRequestConfig = {
-  method: "get",
-  url: "users",
-};
+  method: 'get',
+  url: 'users'
+}

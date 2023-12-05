@@ -5,6 +5,7 @@ import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/Auth/Login";
 import ForgetPassword from "./pages/Auth/ForgetPassword";
 import ConfirmNewPassword from "./pages/Auth/ConfirmNewPassword";
+import ChangePassword from "./pages/Auth/ChangePassword"
 //ASTD admin
 import CompanyManage from "./pages/ASTD/CompanyManage";
 //collection point
@@ -41,6 +42,11 @@ const Router = () => {
                     path="/confirmNewPassword"
                     element={<ConfirmNewPassword />}
                 />
+                 <Route
+                    path="/changePassword/:idReset?"
+                    element={<ChangePassword />}
+                />
+                
 
                 {/* tenant page */}
                 <Route
