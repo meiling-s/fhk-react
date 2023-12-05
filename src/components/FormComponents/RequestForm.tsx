@@ -46,6 +46,8 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
   
   console.log(recycItem)
 
+  console.log("Selected: ", selectedItem)
+
  // ...
  
 
@@ -124,7 +126,7 @@ useEffect(() => {
             <Box>
               <Typography sx={styles.header4}>送入請求</Typography>
               <Typography sx={styles.header3}>
-                {selectedItem?.picoId}
+                {selectedItem?.picoDtlId}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignSelf: "center" }}>
