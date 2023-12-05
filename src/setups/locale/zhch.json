@@ -73,6 +73,8 @@
   "week": "星期",
   "time_Period": "时段",
   "settings": "设定",
+  "yes": "是",
+  "no": "否",
   "top_menu": {
     "general_settings": "一般设定",
     "packaging_unit": "包装单位",
