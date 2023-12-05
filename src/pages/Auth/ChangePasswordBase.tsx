@@ -263,6 +263,7 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
                     </InputAdornment>
                   ) : null
               }}
+              disabled={item.field === 'userName'}
               error={checkString(formData[item.field as keyof FormData])}
             />
             {item.field === 'newPassword' && !isPassValid && trySubmited && (
