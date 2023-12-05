@@ -46,6 +46,8 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   const { t } = useTranslation()
   const titlePage = t('changePassPage.titlePage')
   const submitLabel = t('changePassPage.submitPassword')
+  const [role, setRole] = useState('')
+  const [isFirstLogin, setFirsLogin] = useState<boolean>(false)
   const [isPassValid, setIsPassValid] = useState<boolean>(false)
   const [isPassIdentical, setIsPassIdentical] = useState<boolean>(false)
   const [erorUpdate, setErrorUpdate] = useState<boolean>(false)
@@ -118,6 +120,10 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   }
 
   useEffect(() => {
+    setRole(localStorage.getItem(localStorgeKeyName.role) || '')
+    setFirsLogin(
+      localStorage.getItem(localStorgeKeyName.firstTimeLogin) === 'true'
+    )
     const username = localStorage.getItem(localStorgeKeyName.username)
 
     if (username) {
@@ -297,6 +303,14 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
           >
             {submitLabel}
           </Button>
+          {isFirstLogin && (
+            <div
+              className="text-gray text-mini mt-4 text-center cursor-pointer"
+              onClick={() => navigate(`/${role}`)}
+            >
+              {t('changePassPage.skip_btn')}
+            </div>
+          )}
         </Box>
       </Stack>
     </Box>

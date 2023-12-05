@@ -59,6 +59,7 @@ const Login = () => {
       )
       localStorage.setItem(localStorgeKeyName.username, result?.username || '')
       localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
+      localStorage.setItem(localStorgeKeyName.role, loginTo)
       navigate('/changePassword')
 
       // TODO : if api login already fix first time login , change login
