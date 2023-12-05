@@ -5,6 +5,7 @@ import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/Auth/Login";
 import ForgetPassword from "./pages/Auth/ForgetPassword";
 import ConfirmNewPassword from "./pages/Auth/ConfirmNewPassword";
+import ChangePassword from "./pages/Auth/ChangePassword"
 //ASTD admin
 import CompanyManage from "./pages/ASTD/CompanyManage";
 //collection point
@@ -34,12 +35,20 @@ import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
 import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
 
 const Router = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/forgetPassword" element={<ForgetPassword />} />
-        <Route path="/confirmNewPassword" element={<ConfirmNewPassword />} />
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/forgetPassword" element={<ForgetPassword />} />
+                <Route
+                    path="/confirmNewPassword"
+                    element={<ConfirmNewPassword />}
+                />
+                 <Route
+                    path="/changePassword/:idReset?"
+                    element={<ChangePassword />}
+                />
+                
 
         {/* tenant page */}
         <Route

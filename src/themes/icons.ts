@@ -18,7 +18,10 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
-import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
+import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined'
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
+import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 
 export const PLACE_ICON = PlaceOutlinedIcon
 export const SHIPPING_CAR_ICON = LocalShippingOutlinedIcon
@@ -41,4 +44,6 @@ export const REMOVE_CIRCLE_ICON = RemoveCircleOutlineIcon
 export const CAMERA_OUTLINE_ICON = CameraAltOutlinedIcon
 export const INBOX_OUTLINE_ICON = InboxOutlinedIcon
 export const LEFT_ARROW_ICON = ChevronLeftOutlinedIcon
-
+export const VISIBILITY_ICON = VisibilityOutlinedIcon
+export const VISIBILITY_OFF_ICON = VisibilityOffOutlinedIcon
+export const WARNING_ICON =  ErrorOutlinedIcon

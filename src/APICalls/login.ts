@@ -16,7 +16,8 @@ export const login = async(item: LoginItem) => {
     if (response.status === 200) {
       return {
         access_token: response.data?.access_token,
-        username: response.data?.username
+        username: response.data?.username,
+        status: response.status
       };
     }
     console.log("Login user Success:", JSON.stringify(response.data));

@@ -48,27 +48,38 @@ const Login = () => {
       password: password,
       realm: 'astd'
     })
-    switch (loginTo) {
-      case 'astd':
-        navigate('/astd')
-        break
-      case 'collector':
-        navigate('/collector')
-        break
-      case 'warehouse':
-        navigate('/warehouse')
-        break
-      default:
-        navigate('/collector')
+
+    if (result?.status == 200) {
+      console.log(
+        `Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`
+      )
+      localStorage.setItem(
+        localStorgeKeyName.keycloakToken,
+        result?.access_token || ''
+      )
+      localStorage.setItem(localStorgeKeyName.username, result?.username || '')
+      localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
+      localStorage.setItem(localStorgeKeyName.role, loginTo)
+      navigate('/changePassword')
+
+      // TODO : if api login already fix first time login , change login
+      // isfirst time ? direct change password
+      // if not ? direct to menu base on user variant
+
+      // switch (loginTo) {
+      //   case 'astd':
+      //     navigate('/astd')
+      //     break
+      //   case 'collector':
+      //     navigate('/collector')
+      //     break
+      //   case 'warehouse':
+      //     navigate('/warehouse')
+      //     break
+      //   default:
+      //     navigate('/collector')
+      // }
     }
-    console.log(
-      `Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`
-    )
-    localStorage.setItem(
-      localStorgeKeyName.keycloakToken,
-      result?.access_token || ''
-    )
-    localStorage.setItem(localStorgeKeyName.username, result?.username || '')
   }
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
