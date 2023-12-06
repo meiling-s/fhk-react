@@ -1,5 +1,5 @@
 import { Box, Button, Divider, IconButton, Stack, Typography } from '@mui/material';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { styles } from '../../constants/styles';
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
@@ -8,9 +8,12 @@ import CustomField from './CustomField';
 import StatusCard from '../StatusCard';
 import theme from '../../themes/palette';
 import PickupOrderCard from '../PickupOrderCard';
+import { PickupOrder, PickupOrderDetail, Row } from '../../interfaces/pickupOrder';
+import CheckInRequestContainer from '../../contexts/CheckInRequestContainer';
+import { useContainer } from 'unstated-next';
 
 
-const PickupOrderForm = ({onClose,selectedRow}:{onClose?: () => void,selectedRow:any}) => {
+const PickupOrderForm = ({onClose,selectedRow}:{onClose?: () => void,selectedRow:Row| null}) => {
 
     const handleOverlayClick = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -30,6 +33,27 @@ const PickupOrderForm = ({onClose,selectedRow}:{onClose?: () => void,selectedRow
         //     { title: '寄件公司名称' },
         //     { title: '已过期操作' },
         //   ];
+     const {pickupOrder} = useContainer(CheckInRequestContainer)
+     const [selectedPickupOrder,setSelectedPickupOrder] = useState<PickupOrder>()
+     const [pickupOrderDetail,setPickUpOrderDetail] = useState<PickupOrderDetail[]>()
+
+     
+     
+    useEffect(()=>{
+      if(selectedRow){
+      
+        const poDetail = pickupOrder?.find((po)=>po.picoId===selectedRow.id)
+      
+        if(poDetail){
+        setSelectedPickupOrder(poDetail)
+        setPickUpOrderDetail(poDetail?.pickupOrderDetail)
+        }
+       }
+    
+     },[selectedRow])
+
+  
+     
          
   return (
     <>
@@ -41,7 +65,7 @@ const PickupOrderForm = ({onClose,selectedRow}:{onClose?: () => void,selectedRow
             <Typography sx={styles.header3}>P01234567</Typography>
           </Box>
           <Box sx={{ display: "flex",ml:'20px' }}>
-             <StatusCard status='已拒绝'/>
+             <StatusCard status={selectedPickupOrder?.status}/>
           </Box>
           <Box sx={{ marginLeft: 'auto'}} >
         <Button variant="outlined" startIcon={<DriveFileRenameOutlineIcon/>} sx={localstyles.button}>修改</Button>
@@ -70,7 +94,7 @@ const PickupOrderForm = ({onClose,selectedRow}:{onClose?: () => void,selectedRow
 
           <CustomField label={'运输类别'}>
            <Typography sx={localstyles.typo_fieldContent}>
-              
+                 
               </Typography>
           </CustomField>
         
@@ -82,24 +106,23 @@ const PickupOrderForm = ({onClose,selectedRow}:{onClose?: () => void,selectedRow
           
           <CustomField label={'车辆类别'}>
            <Typography sx={localstyles.typo_fieldContent}>
-              
+                 
               </Typography>
           </CustomField>
           <CustomField label={'车牌号码'}>
            <Typography sx={localstyles.typo_fieldContent}>
-              
+                  {selectedPickupOrder?.platNo}
               </Typography>
           </CustomField>
           <CustomField label={'联络人号码'}>
            <Typography sx={localstyles.typo_fieldContent}>
-              
+                {selectedPickupOrder?.contactNo}
               </Typography>
           </CustomField>
       
           <CustomField label={'寄件公司名称'}>
            <Typography sx={localstyles.typo_fieldContent}>
-              
-              </Typography>
+           </Typography>
           </CustomField>
           
          
@@ -114,7 +137,7 @@ const PickupOrderForm = ({onClose,selectedRow}:{onClose?: () => void,selectedRow
 
           <Typography sx={localstyles.typo_header}>回收地点资料</Typography>
 
-          <PickupOrderCard/>
+          <PickupOrderCard pickupOrderDetail ={pickupOrderDetail??[]}/>
           
 
           

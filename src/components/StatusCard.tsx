@@ -1,41 +1,47 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
-const StatusCard = ({status}:{status:string}) => {
+const StatusCard = ({status}:{status:string|undefined}) => {
    
   var bgColor = "";
   var fontColor =''
   var name = ''
   switch (status) {
-    case "处理中":
+    case "STARTED":
       bgColor = '#ECF5EE';
       fontColor ='#7CE495';
+      name =  "处理中"
       break;
-    case "已确认":
+    case "CONFIRMED":
       bgColor = '#7CE495';   
       fontColor = '#FFFFFF';
-      break;
-    case '待处理':
-      bgColor = '#E4F6DC';
-      fontColor = '#79CA25';
-      break;
-    case '已拒绝':
-      bgColor = '#FFF0F4';
-      fontColor = '#FF4242';
+      name =  "已确认"
       break;
     case 'CREATED':
+      bgColor = '#E4F6DC';
+      fontColor = '#79CA25';
+      name =  "待处理"
+      break;
+    case 'REJJECTED':
+      bgColor = '#FFF0F4';
+      fontColor = '#FF4242';
+      name =  "已拒绝"
+      break;
+    case 'COMPLETED':
       bgColor = '#6BC7FF';
       fontColor = '#FFFFFF';
       name ='已完成'
 
       break;
-    case '已取消':
+    case 'COLOSED':
       bgColor = '#ACACAC';
       fontColor = '#FFFFFF';
+      name =  "已取消"
       break;
-    case '已逾期':
+    case 'OUTSTANDING':
       bgColor = '#F4F4F4';
       fontColor = '#ACACAC';
+      name =  "已逾期"
       break;
     default:
       break;
