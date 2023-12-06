@@ -14,7 +14,7 @@ import { getLocation } from "../../../../APICalls/getLocation";
 import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
 import CustomPeriodSelect from "../../../../components/FormComponents/CustomPeriodSelect";
 import { useLocation, useNavigate } from "react-router-dom";
-import { updateCollectionPoint } from "../../../../APICalls/Collector/collectionPointManage";
+import { findCollectionPointExistByName, findCollectionPointExistByContractAndAddress, updateCollectionPoint } from "../../../../APICalls/Collector/collectionPointManage";
 import { useTranslation } from "react-i18next";
 import { colPointType, premiseType, recycType, siteType, colPtRoutine, formValidate } from "../../../../interfaces/common";
 import { getCommonTypes } from "../../../../APICalls/commonManage";
@@ -106,7 +106,8 @@ function CreateCollectionPoint() {
         const tempV: formValidate[] = []        //temp validation
         colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
         siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
-        address == "" && tempV.push({ field: "col.address", problem: formErr.empty, type: "error" });
+        address == "" ? tempV.push({ field: "col.address", problem: formErr.empty, type: "error" })
+            : await checkAddressUsed(address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
         (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
             tempV.push({ field: "col.openingDate", problem: formErr.withInColPt_Period, type: "warning" });
         premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
@@ -194,6 +195,24 @@ function CreateCollectionPoint() {
             isBetween = dayjs(contract.frmDate).isBefore(openingPeriod.startDate) && dayjs(contract.toDate).isAfter(openingPeriod.endDate);
         }
         return isBetween;
+    }
+
+    const checkColPtExist = async (colName: string) => {
+        const result = await findCollectionPointExistByName(colName);
+        if(result && result.data != undefined){
+            console.log(result.data);
+            return result.data;
+        }
+        return false;
+    }
+
+    const checkAddressUsed = async (address: string) => {
+        const result = await findCollectionPointExistByContractAndAddress(contractNo, address);
+        if(result && result.data != undefined){
+            console.log(result.data);
+            return result.data;
+        }
+        return false;
     }
 
     const handleSaveOnClick = async () => {

@@ -3,11 +3,7 @@ import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
 import { useEffect, useState } from "react";
 import { visuallyHidden } from '@mui/utils';
 import React from "react";
-import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
-import { generateNumericId } from "../../utils/uuidgenerator";
-import { defaultPath, format } from "../../constants/constant";
 import { styles } from "../../constants/styles"
-import dateFormat from "date-fns/format";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CheckIcon from '@mui/icons-material/Check';
@@ -20,6 +16,8 @@ import RequestForm from "../../components/FormComponents/RequestForm";
 import { CheckIn } from "../../interfaces/checkin";
 import { useContainer } from "unstated-next";
 import CheckInRequestContext from "../../contexts/CheckInRequestContainer";
+import dayjs from "dayjs";
+import { format } from "../../constants/constant"
 
 import { useTranslation } from "react-i18next";
 
@@ -160,7 +158,8 @@ function RejectForm({
         const reason = rejectReason;
         const statReason: updateStatus = {
             status: 'REJECTED',
-            reason: reason
+            reason: reason,
+            updatedBy: "admin"
         }
     
         const results = await Promise.allSettled(checkInIds.map(async (checkInId) => {
@@ -259,6 +258,65 @@ function ShipmentManage(){
     
     const { checkInRequest } = useContainer(CheckInRequestContext);
 
+    useEffect(()=>{
+        initTable();
+    },[checkInRequest])
+
+    const initTable = () => {
+        console.log("init",checkInRequest)
+        if(checkInRequest){
+            //setShipments(checkInRequest);
+            var ships: CheckIn[] = [];
+            var i = 0;
+            while(i < checkInRequest.length) {
+                if(checkInRequest[i].status == "CREATED"){
+                    ships.push(checkInRequest[i]);
+                }
+                i++;
+            }
+            setShipments(ships);
+            setFilterShipments(ships);
+            console.log("filtership", ships);
+        }        
+    }
+
+    useEffect(()=>{
+        console.log("filtered: ",filterShipments);
+    },[filterShipments])
+
+    // useEffect(()=>{
+    //     initShipments()
+    //     // setShipments(fakeData);
+    //     // setFilterShipments(fakeData);
+    // },[]);
+
+    // async function initShipments() {
+    //     const result = await getAllCheckInRequests();
+    //     const data = result?.data.content;
+    //     if(data){
+    //         var ships: Shipment[] = [];
+    //         data.map((ship: any) => {
+    //             if(ship.status == "CREATED"){
+    //             ships.push(
+    //                 createShipment(
+    //                     ship?.createdAt,
+    //                     ship?.senderName,
+    //                     ship?.recipientCompany,
+    //                     ship?.picoId,
+    //                     ship?.adjustmentFlg,
+    //                     ship?.logisticName,
+    //                     ship?.senderAddr,
+    //                     ship?.deliveryAddress,
+    //                     ship?.status,
+    //                     ship?.chkInId
+    //             ));}
+    //         })
+    //         setShipments(ships);
+    //         setFilterShipments(ships);
+    //     }
+    // }
+
+
     const headCells: readonly HeadCell[] = [
         {
             id: 'createDate',
@@ -320,10 +378,12 @@ function ShipmentManage(){
 
     const handleFilterPoNum = (searchWord: string) => {
 
+        //console.log(searchWord)
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
-                if(shipment.picoId.includes(searchWord)){
+                console.log("piconDtlId: ",searchWord,shipment.picoDtlId)
+                if(shipment.picoDtlId.includes(searchWord)){
                     filteredShipments.push(shipment);
                 }
             });
@@ -342,9 +402,9 @@ function ShipmentManage(){
     
 
     const handleComChange = (event: SelectChangeEvent) => {
+
         setCompany(event.target.value);
         var searchWord = event.target.value;
-        console.log(searchWord);
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
@@ -365,9 +425,10 @@ function ShipmentManage(){
     };
     
     const handleLocChange = (event: SelectChangeEvent) => {
+
         setLocation(event.target.value);
         var searchWord = event.target.value;
-        console.log(searchWord);
+        //console.log(searchWord);
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
@@ -389,30 +450,32 @@ function ShipmentManage(){
     };
 
     const handleApproveOnClick = async () => {
+
         console.log(checkedShipments);
         const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.chkInId);
         console.log("checkin ids are " + checkInIds);
         const confirmReason: string[] = ["Confirmed"];
         const statReason: updateStatus = {
             status: 'CONFIRMED',
-            reason: confirmReason
+            reason: confirmReason,
+            updatedBy: "admin"
         }
     
-        // const results = await Promise.allSettled(checkInIds.map(async (checkInId) => {
-        //     try {
-        //         const result = await updateCheckinStatus(checkInId, statReason);
-        //         const data = result?.data;
-        //         if(data){
-        //             console.log("updated check-in status: ",data);
-        //             initShipments();
-        //         }
-        //     } catch (error) {
-        //         console.error(`Failed to update check-in status for id ${checkInId}: `, error);
-        //     }
-        // }
-        // ));
+        const results = await Promise.allSettled(checkInIds.map(async (checkInId) => {
+            try {
+                const result = await updateCheckinStatus(checkInId, statReason);
+                const data = result?.data;
+                if(data){
+                    console.log("updated check-in status: ",data);
+                    // initShipments();
+                    initTable();
+                }
+            } catch (error) {
+                console.error(`Failed to update check-in status for id ${checkInId}: `, error);
+            }
+        }
+        ));
     }
-
 
     const createSortHandler = (property: keyof Shipment) => (event: React.MouseEvent<unknown>) => {
         handleRequestSort(event, property);
@@ -420,7 +483,7 @@ function ShipmentManage(){
 
     function onSelectAllClick(){
         if(selected.length < shipments.length){     //if not selecting all, do select all
-            const newSelected = shipments.map((shipment) => shipment.picoId);
+            const newSelected = shipments.map((shipment) => shipment.chkInId.toString());
             setSelected(newSelected);
             // Trigger the function for each individual checkbox
             console.log(shipments);
@@ -441,7 +504,9 @@ function ShipmentManage(){
             setCheckedShipments([]);
         }
     }
+   
 
+    
     const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
@@ -460,9 +525,8 @@ function ShipmentManage(){
         }
         setSelected(newSelected);
         setOpen(true);
-       console.log(id)
-        const selectedItem = checkInRequest?.find(item => item.picoId.toString() ===id);
-        console.log('123456'+selectedItem)
+      
+        const selectedItem = checkInRequest?.find(item => item.chkInId.toString() ===id);
         setSelectedRow(selectedItem); //
       };
 
@@ -536,7 +600,9 @@ function ShipmentManage(){
                 <Box>
                 <TextField
                     id="searchShipment"
-                    onChange={(event) => handleFilterPoNum(event.target.value)}
+                    onChange={(event) => {
+                        handleFilterPoNum(event.target.value)
+                    }}
                     sx={{
                         mt: 3,
                         m: 1,
@@ -698,35 +764,37 @@ function ShipmentManage(){
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {   checkInRequest?.map((shipment) => {
+                            {   filterShipments.map((shipment) => {
+                                console.log(shipment)
                                 // const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
                                    return (
                                     <TableRow
-                                        hover key={shipment.picoId}
+                                        hover
+                                        key={shipment.chkInId}
                                         tabIndex={-1}
                                         role="checkbox"
                                         sx={[localstyles.row]}
-                                        onClick={(event)=>handleClick(event,shipment.picoId)}
+                                        onClick={(event)=>handleClick(event,shipment.chkInId.toString())}
                                         >
                                         <TableCell sx={localstyles.bodyCell}>
                                             <Checkbox
                                                 color="primary"
-                                                checked={selected.includes(shipment.picoId)}
+                                                checked={selected.includes(shipment.chkInId.toString())}
                                                 onChange={(e) => handleCheck(shipment, e.target.checked)}
                                                 inputProps={{
                                                     'aria-label': 'select request',
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat2)}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{dayjs(new Date(shipment.createdAt)).format(format.dateFormat2)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'recipient'}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoId}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{'匡智會'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoDtlId}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.adjustmentFlg?(<CheckIcon sx={styles.endAdornmentIcon}/>)
                                         :(<ClearIcon sx={styles.endAdornmentIcon}/>)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.logisticName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderAddr}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'deliver'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{'天水圍天華路65號'}</TableCell>
                                     </TableRow>
                                 );
                             })}
