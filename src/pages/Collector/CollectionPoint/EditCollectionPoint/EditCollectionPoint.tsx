@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Autocomplete, Box, Button, Collapse, Divider, Grid, List, ListItemButton, ListItemText, TextField, Typography, } from "@mui/material";
+import { Autocomplete, Box, Button, Collapse, Divider, Grid, List, ListItemButton, ListItemText, TextField, Typography } from "@mui/material";
 import { styles } from "../../../../constants/styles";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CustomField from "../../../../components/FormComponents/CustomField";
@@ -14,7 +14,7 @@ import { getLocation } from "../../../../APICalls/getLocation";
 import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
 import CustomPeriodSelect from "../../../../components/FormComponents/CustomPeriodSelect";
 import { useLocation, useNavigate } from "react-router-dom";
-import { findCollectionPointExistByName, findCollectionPointExistByContractAndAddress, updateCollectionPoint } from "../../../../APICalls/Collector/collectionPointManage";
+import { findCollectionPointExistByName, findCollectionPointExistByContractAndAddress, updateCollectionPoint } from "../../../../APICalls/collectionPointManage";
 import { useTranslation } from "react-i18next";
 import { colPointType, premiseType, recycType, siteType, colPtRoutine, formValidate } from "../../../../interfaces/common";
 import { getCommonTypes } from "../../../../APICalls/commonManage";
