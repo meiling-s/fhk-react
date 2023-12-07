@@ -3,7 +3,11 @@ import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
 import { useEffect, useState } from "react";
 import { visuallyHidden } from '@mui/utils';
 import React from "react";
+import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
+import { generateNumericId } from "../../utils/uuidgenerator";
+import { defaultPath, format } from "../../constants/constant";
 import { styles } from "../../constants/styles"
+import dateFormat from "date-fns/format";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CheckIcon from '@mui/icons-material/Check';
@@ -16,8 +20,6 @@ import RequestForm from "../../components/FormComponents/RequestForm";
 import { CheckIn } from "../../interfaces/checkin";
 import { useContainer } from "unstated-next";
 import CheckInRequestContext from "../../contexts/CheckInRequestContainer";
-import dayjs from "dayjs";
-import { format } from "../../constants/constant"
 
 import { useTranslation } from "react-i18next";
 
@@ -190,11 +192,11 @@ function RejectForm({
                 <Stack spacing={2}>
                     <Box>
                         <Typography id="modal-modal-title" variant="h6" component="h2" sx={{fontWeight: "bold"}}>
-                        {t("check_in.confirm_reject")}
+                        {t("check_out.confirm_reject")}
                         </Typography>
                     </Box>  
                     <Box>
-                        <Typography sx={localstyles.typo}>{t("check_in.reject_reasons")}<Required/></Typography>
+                        <Typography sx={localstyles.typo}>{t("check_out.reject_reasons")}<Required/></Typography>
 
                         <CustomItemList
                             items={reasons}
@@ -210,13 +212,13 @@ function RejectForm({
                             sx={[localstyles.formButton, {m:0.5}]}
                             onClick={() => {handleConfirmRejectOnClick(rejectReasonId); onClose();}}
                             >
-                            {t("check_in.confirm")}
+                            {t("check_out.confirm")}
                         </Button>
                         <Button
                             sx={[localstyles.cancelButton, {m:0.5}]}
                             onClick={() => onClose()}
                             >
-                            {t("check_in.cancel")}
+                            {t("check_out.cancel")}
                         </Button>
                     </Box>
                     
@@ -258,113 +260,54 @@ function ShipmentManage(){
     
     const { checkInRequest } = useContainer(CheckInRequestContext);
 
-    useEffect(()=>{
-        initTable();
-    },[checkInRequest])
-
-    const initTable = () => {
-        console.log("init",checkInRequest)
-        if(checkInRequest){
-            //setShipments(checkInRequest);
-            var ships: CheckIn[] = [];
-            var i = 0;
-            while(i < checkInRequest.length) {
-                if(checkInRequest[i].status == "CREATED"){
-                    ships.push(checkInRequest[i]);
-                }
-                i++;
-            }
-            setShipments(ships);
-            setFilterShipments(ships);
-            console.log("filtership", ships);
-        }        
-    }
-
-    useEffect(()=>{
-        console.log("filtered: ",filterShipments);
-    },[filterShipments])
-
-    // useEffect(()=>{
-    //     initShipments()
-    //     // setShipments(fakeData);
-    //     // setFilterShipments(fakeData);
-    // },[]);
-
-    // async function initShipments() {
-    //     const result = await getAllCheckInRequests();
-    //     const data = result?.data.content;
-    //     if(data){
-    //         var ships: Shipment[] = [];
-    //         data.map((ship: any) => {
-    //             if(ship.status == "CREATED"){
-    //             ships.push(
-    //                 createShipment(
-    //                     ship?.createdAt,
-    //                     ship?.senderName,
-    //                     ship?.recipientCompany,
-    //                     ship?.picoId,
-    //                     ship?.adjustmentFlg,
-    //                     ship?.logisticName,
-    //                     ship?.senderAddr,
-    //                     ship?.deliveryAddress,
-    //                     ship?.status,
-    //                     ship?.chkInId
-    //             ));}
-    //         })
-    //         setShipments(ships);
-    //         setFilterShipments(ships);
-    //     }
-    // }
-
-
     const headCells: readonly HeadCell[] = [
         {
             id: 'createDate',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.created_at"),
+            label: t("check_out.created_at"),
         },
         {
             id: 'sender',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.sender_company"),
+            label: t("check_out.sender_company"),
         },
         {
             id: 'recipient',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.receiver_company"),
+            label: t("check_out.receiver_company"),
         },
         {
             id: 'poNumber',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.pickup_order_no"),
+            label: t("check_out.pickup_order_no"),
         },
         {
             id: 'stockAdjust',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.stock_adjustment"),
+            label: t("check_out.stock_adjustment"),
         },
         {
             id: 'logisticsCompany',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.logistic_company"),
+            label: t("check_out.logistic_company"),
         },
         {
             id: 'returnAddr',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.sender_addr"),
+            label: t("check_out.sender_addr"),
         },
         {
             id: 'deliveryAddr',
             numeric: false,
             disablePadding: false,
-            label: t("check_in.receiver_addr"),
+            label: t("check_out.receiver_addr"),
         }
     
       ];
@@ -378,11 +321,9 @@ function ShipmentManage(){
 
     const handleFilterPoNum = (searchWord: string) => {
 
-        //console.log(searchWord)
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
-                console.log("piconDtlId: ",searchWord,shipment.picoDtlId)
                 if(shipment.picoDtlId.includes(searchWord)){
                     filteredShipments.push(shipment);
                 }
@@ -402,9 +343,9 @@ function ShipmentManage(){
     
 
     const handleComChange = (event: SelectChangeEvent) => {
-
         setCompany(event.target.value);
         var searchWord = event.target.value;
+        console.log(searchWord);
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
@@ -425,10 +366,9 @@ function ShipmentManage(){
     };
     
     const handleLocChange = (event: SelectChangeEvent) => {
-
         setLocation(event.target.value);
         var searchWord = event.target.value;
-        //console.log(searchWord);
+        console.log(searchWord);
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
@@ -450,7 +390,6 @@ function ShipmentManage(){
     };
 
     const handleApproveOnClick = async () => {
-
         console.log(checkedShipments);
         const checkInIds = checkedShipments.map((checkedShipments) => checkedShipments.chkInId);
         console.log("checkin ids are " + checkInIds);
@@ -461,21 +400,21 @@ function ShipmentManage(){
             updatedBy: "admin"
         }
     
-        const results = await Promise.allSettled(checkInIds.map(async (checkInId) => {
-            try {
-                const result = await updateCheckinStatus(checkInId, statReason);
-                const data = result?.data;
-                if(data){
-                    console.log("updated check-in status: ",data);
-                    // initShipments();
-                    initTable();
-                }
-            } catch (error) {
-                console.error(`Failed to update check-in status for id ${checkInId}: `, error);
-            }
-        }
-        ));
+        // const results = await Promise.allSettled(checkInIds.map(async (checkInId) => {
+        //     try {
+        //         const result = await updateCheckinStatus(checkInId, statReason);
+        //         const data = result?.data;
+        //         if(data){
+        //             console.log("updated check-in status: ",data);
+        //             initShipments();
+        //         }
+        //     } catch (error) {
+        //         console.error(`Failed to update check-in status for id ${checkInId}: `, error);
+        //     }
+        // }
+        // ));
     }
+
 
     const createSortHandler = (property: keyof Shipment) => (event: React.MouseEvent<unknown>) => {
         handleRequestSort(event, property);
@@ -483,7 +422,7 @@ function ShipmentManage(){
 
     function onSelectAllClick(){
         if(selected.length < shipments.length){     //if not selecting all, do select all
-            const newSelected = shipments.map((shipment) => shipment.chkInId.toString());
+            const newSelected = shipments.map((shipment) => shipment.picoDtlId);
             setSelected(newSelected);
             // Trigger the function for each individual checkbox
             console.log(shipments);
@@ -504,9 +443,7 @@ function ShipmentManage(){
             setCheckedShipments([]);
         }
     }
-   
 
-    
     const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
@@ -525,8 +462,9 @@ function ShipmentManage(){
         }
         setSelected(newSelected);
         setOpen(true);
-      
-        const selectedItem = checkInRequest?.find(item => item.chkInId.toString() ===id);
+       console.log(id)
+        const selectedItem = checkInRequest?.find(item => item.picoDtlId.toString() ===id);
+        console.log('123456'+selectedItem)
         setSelectedRow(selectedItem); //
       };
 
@@ -564,13 +502,13 @@ function ShipmentManage(){
                         <ChevronLeftIcon
                             sx={styles.buttonBlack}
                         />
-                        <Typography fontSize={20} color='black' fontWeight='bold'>{t("check_in.request_check_in")}</Typography>
+                        <Typography fontSize={20} color='black' fontWeight='bold'>{t("check_out.request_check_out")}</Typography>
                     </Button> 
                     </Grid>
                     <Grid item>
                         {filterShipments.length>0 && (
                             <CustomAvatar name={filterShipments.length.toString()} 
-                            backgroundColor="#79CA25" fontColor="#FFFFFF" isBold size={20} fontSize="14px"/>
+                            backgroundColor="#6BC7FF" fontColor="#FFFFFF" isBold size={20} fontSize="14px"/>
                         )}
                     
                     </Grid>
@@ -584,7 +522,7 @@ function ShipmentManage(){
                     }]}
                         variant="outlined"
                         onClick={()=>{handleApproveOnClick()}}
-                        > {t("check_in.approve")}
+                        > {t("check_out.approve")}
                     </Button>
                     <Button sx={[styles.buttonOutlinedGreen,{
                         mt: 3,
@@ -594,15 +532,13 @@ function ShipmentManage(){
                     }]}
                         variant="outlined"
                         onClick={()=>setRejFormModal(true)}
-                        > {t("check_in.reject")}
+                        > {t("check_out.reject")}
                     </Button>
                 </Box>
                 <Box>
                 <TextField
                     id="searchShipment"
-                    onChange={(event) => {
-                        handleFilterPoNum(event.target.value)
-                    }}
+                    onChange={(event) => handleFilterPoNum(event.target.value)}
                     sx={{
                         mt: 3,
                         m: 1,
@@ -623,12 +559,12 @@ function ShipmentManage(){
                             },
                           }
                     }}
-                    label={t("check_in.search")}
+                    label={t("check_out.search")}
                     InputLabelProps={{
                         style: { color: '#79CA25' },
                         focused: true,
                       }}
-                    placeholder={t("check_in.input_po_no")}
+                    placeholder={t("check_out.input_po_no")}
                     InputProps={{
                         // startAdornment: (
                         //     <InputAdornment position="start">
@@ -662,7 +598,7 @@ function ShipmentManage(){
                             },
                           }
                     }}>
-                <InputLabel id="company-label">{t("check_in.sender_company")}</InputLabel>
+                <InputLabel id="company-label">{t("check_out.sender_company")}</InputLabel>
                 <Select
                 labelId="company-label"
                 id="company"
@@ -670,7 +606,7 @@ function ShipmentManage(){
                 label="寄件公司"
                 onChange={handleComChange}
                 >
-                    <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
+                    <MenuItem value=""> <em>{t("check_out.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
                         <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>
@@ -695,7 +631,7 @@ function ShipmentManage(){
                             },
                         }
                     }}>
-                <InputLabel id="location-label">{t("check_in.sender_addr")}</InputLabel>
+                <InputLabel id="location-label">{t("check_out.sender_addr")}</InputLabel>
                 <Select
                 labelId="location-label"
                 id="location"
@@ -703,7 +639,7 @@ function ShipmentManage(){
                 label="送出地點"
                 onChange={handleLocChange}
                 >
-                <MenuItem value=""> <em>{t("check_in.any")}</em></MenuItem>
+                <MenuItem value=""> <em>{t("check_out.any")}</em></MenuItem>
                 {
                     shipments.map((item) => (
                         <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>    
@@ -764,37 +700,35 @@ function ShipmentManage(){
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {   filterShipments.map((shipment) => {
-                                console.log(shipment)
+                            {   checkInRequest?.map((shipment) => {
                                 // const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
                                    return (
                                     <TableRow
-                                        hover
-                                        key={shipment.chkInId}
+                                        hover key={shipment.picoDtlId}
                                         tabIndex={-1}
                                         role="checkbox"
                                         sx={[localstyles.row]}
-                                        onClick={(event)=>handleClick(event,shipment.chkInId.toString())}
+                                        onClick={(event)=>handleClick(event,shipment.picoDtlId)}
                                         >
                                         <TableCell sx={localstyles.bodyCell}>
                                             <Checkbox
                                                 color="primary"
-                                                checked={selected.includes(shipment.chkInId.toString())}
+                                                checked={selected.includes(shipment.picoDtlId)}
                                                 onChange={(e) => handleCheck(shipment, e.target.checked)}
                                                 inputProps={{
                                                     'aria-label': 'select request',
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{dayjs(new Date(shipment.createdAt)).format(format.dateFormat2)}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat2)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'匡智會'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{'recipient'}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.picoDtlId}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.adjustmentFlg?(<CheckIcon sx={styles.endAdornmentIcon}/>)
                                         :(<ClearIcon sx={styles.endAdornmentIcon}/>)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.logisticName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderAddr}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'天水圍天華路65號'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{'deliver'}</TableCell>
                                     </TableRow>
                                 );
                             })}

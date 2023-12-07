@@ -1,5 +1,5 @@
 export type updateStatus = {
     status: string,
-    reason: string[]
-    
+    reason: string[],
+    updatedBy: string
 }

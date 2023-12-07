@@ -17,7 +17,7 @@ export const styles = {
     },
     innerScreen_container: {
         width: "100%",
-        height: "100%",
+        height: "100vh",
         display: 'flex',
         flexDirection: 'column',
         pr: layout.innerScreen_padding,

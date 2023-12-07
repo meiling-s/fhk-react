@@ -1,7 +1,7 @@
 import dayjs from "dayjs"
 import { il_item } from "../components/FormComponents/CustomItemList"
 import { colPtRoutine, routineContent } from "./common"
-import { gpsCode, time } from "./dataFormat"
+import { gpsCode } from "./dataFormat"
 
 export type openingPeriod = {
     startDate: dayjs.Dayjs,
@@ -21,8 +21,8 @@ export type recyclable = {
 export type roster = {
 	rosterId: string,
 	routineType: string,
-    startAt: time,
-    endAt: time,
+    startAt: string,
+    endAt: string,
    	status: string,
 }
 

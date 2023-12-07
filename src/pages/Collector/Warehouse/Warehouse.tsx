@@ -17,7 +17,6 @@ import {
   getAllWarehouse,
   getRecycleType
 } from '../../../APICalls/warehouseManage'
-import { set } from 'date-fns'
 
 interface RecyleItem {
   recycTypeId: string
@@ -83,19 +82,13 @@ const Warehouse: FunctionComponent = () => {
     {
       type: 'string',
       field: 'location',
-      label: t('warehouse_page.location'),
+      label: t('warehouse_page.place'),
       width: 100
     },
     {
       type: 'string',
       field: 'physicalFlg',
-      label: t('warehouse_page.place'),
-      width: 100
-    },
-    {
-      type: 'string',
-      field: 'contractNo',
-      label: t('warehouse_page.place'),
+      label: t('warehouse_page.location'),
       width: 100
     },
     {
@@ -175,7 +168,6 @@ const Warehouse: FunctionComponent = () => {
   useEffect(() => {
     const fetchCategoryAndData = async () =>{
       getRecycleData()
-     
     }
     fetchCategoryAndData()
   }, [action, drawerOpen, currentLanguage])
@@ -198,7 +190,7 @@ const Warehouse: FunctionComponent = () => {
       warehouseNameSchi: warehouse.warehouseNameSchi,
       warehouseNameEng: warehouse.warehouseNameEng,
       location: warehouse.location,
-      physicalFlg: warehouse.physicalFlg ? 'YES' : 'NO',
+      physicalFlg: warehouse.physicalFlg ? t('yes') : t('no'),
       status: warehouse.status,
       contractNo: warehouse.contractNo,
       warehouseRecyc: recyleType

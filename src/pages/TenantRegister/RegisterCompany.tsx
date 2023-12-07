@@ -2,12 +2,14 @@
 import { Button, TextField, Typography } from '@mui/material'
 import { Box, Stack } from '@mui/system'
 import logo_company from "../../logo_company.png";
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
+import { getTenantById } from '../../APICalls/tenantManage';
 
 
 
 const RegisterCompany = () => {
+const { inviteId } = useParams();
   const navigate = useNavigate();
   const [type, setType] = useState("");
   const [ChiName, setChiName] = useState("");
@@ -16,6 +18,21 @@ const RegisterCompany = () => {
   const onContinueButtonClick = () => {
     navigate("/register/contact");
   };
+  useEffect(()=>{
+    initInviteForm();
+  },[]);
+
+  async function initInviteForm() {
+    console.log('invite id: '+inviteId);
+    if(inviteId){
+      const result = await getTenantById(inviteId);
+      const data = result?.data;
+      setChiName(data?.companyNameTchi);
+      setEngName(data?.companyNameEng);
+      setType(data?.tenantType);
+      console.log(result?.data);
+    }
+  }
   return (
     <Box
       sx={{

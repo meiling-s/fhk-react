@@ -72,6 +72,13 @@ export const UPDATE_CHECK_IN_STATUS: AxiosRequestConfig = {
   method: 'patch',
   url: 'api/v1/collectors/checkin/'
 }
+
+//collector/pickupOrder
+export const GET_ALL_PICK_UP_ORDER: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/collectors/pico'
+}
+
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
   method: 'get',

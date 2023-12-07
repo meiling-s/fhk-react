@@ -15,7 +15,7 @@ function MainLayout() {
   return (
     <>
       <MainDrawer />
-      <MainAppBar />
+      <MainAppBar  />
       <Box sx={isMobile ? styles.mobileScreen : styles.innerScreen}>
         <Outlet />
       </Box>

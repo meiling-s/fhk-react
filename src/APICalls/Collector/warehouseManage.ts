@@ -33,7 +33,7 @@ export const getAllCheckInRequests = async () => {
   export const updateCheckinStatus = async (chkInId: number, data: updateStatus) => {
 
     const axiosConfig = Object.assign({},UPDATE_CHECK_IN_STATUS);
-    axiosConfig.url = UPDATE_CHECK_IN_STATUS.url+`${chkInId}`+ `/status`;
+    axiosConfig.url = UPDATE_CHECK_IN_STATUS.url+ `status/`+`${chkInId}`;
 
     try {
       const response = await axios({

@@ -47,6 +47,7 @@ export type siteType = {
 }
 
 export type recycType = {
+    map(arg0: (e: recycSubType) => void): unknown
     recycTypeId: string,
     recyclableNameEng: string,
     recyclableNameSchi: string,
@@ -69,9 +70,7 @@ export type recycSubType = {
     description: string,
     remark: string,
     status: string,
-    createdAt: string,
     createdBy: string,
-    updatedAt: string,
     updatedBy: string
 }
 
@@ -83,9 +82,17 @@ export type contract = {
     epdFlg: boolean,
     remark: string,
     status: string,
-    createdAt: string,
     createdBy: string,
-    updatedAt: string,
+    createdAt: string,
+    updatedBy: string,
+    updatedAt: string
+}
+
+export type routine = {
+    colId: string,
+    colPtRoutine: colPtRoutine,
+    status: string,
+    createdBy: string,
     updatedBy: string
 }
 

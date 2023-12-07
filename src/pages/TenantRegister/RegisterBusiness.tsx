@@ -23,6 +23,7 @@ const RegisterBusiness = () => {
   const [BRN, setBRN] = useState(""); //brn = Business registration no.
   const [type, setType] = useState("");
   const [BRNImages, setBRNImages] = useState<ImageListType>([]);
+  const [companyLogo,setCompanyLogo] = useState<ImageListType>([])
 
   const ImageToBase64 = (images: ImageListType) => {
     var base64: string[] = [];
@@ -44,6 +45,15 @@ const RegisterBusiness = () => {
     // data for submit
     console.log(imageList, addUpdateIndex);
     setBRNImages(imageList);
+  };
+  
+  const onCompanyLogoChange = (
+    imageList: ImageListType,
+    addUpdateIndex: number[] | undefined
+  ) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setCompanyLogo(imageList);
   };
   const onContinueButtonClick = () => {
     navigate("/register/contact");
@@ -103,8 +113,8 @@ const RegisterBusiness = () => {
           />
           <CustomField label="公司logo">
             <ImageUploadCard
-              Images={BRNImages}
-              onImageChange={onImageChange}
+              Images={companyLogo}
+              onImageChange={onCompanyLogoChange}
               cardHeight={150}
               text='上載圖片'
             />

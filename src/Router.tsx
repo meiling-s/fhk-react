@@ -29,7 +29,10 @@ import RegisterStepTwo from "./pages/TenantRegister/RegisterStepTwo";
 import Staff from "./pages/Collector/Staff";
 import Report from "./pages/Collector/Report";
 import RecycleShipment from "./pages/Collector/RecycleShipment";
+import RecycleShipmentCheckOut from "./pages/Collector/RecycleShipmentCheckOut";
 import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
+import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
+import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
 
 const Router = () => {
     return (
@@ -47,71 +50,50 @@ const Router = () => {
                 />
                 
 
-                {/* tenant page */}
-                <Route
-                    path="/register/details/:inviteId"
-                    element={<CompanyDetails />}
-                />
-                <Route path="/register/contact" element={<CompanyContact />} />
-                <Route path="/register/tenant" element={<TenantRegister />} />
-                <Route
-                    path="/register/firstStep"
-                    element={<RegisterStepOne />}
-                />
-                <Route
-                    path="/register/secondStep"
-                    element={<RegisterStepTwo />}
-                />
-                <Route path="/register/result" element={<RegisterResult />} />
+        {/* tenant page */}
+        <Route
+          path="/register/details/:inviteId"
+          element={<CompanyDetails />}
+        />
+        <Route path="/register/contact" element={<CompanyContact />} />
+        <Route path="/register/tenant" element={<TenantRegister />} />
+        <Route path="/register/firstStep" element={<RegisterStepOne />} />
+        <Route path="/register/secondStep" element={<RegisterStepTwo />} />
+        <Route path="/register/result" element={<RegisterResult />} />
 
-                <Route element={<MainLayout />}>
-                    <Route path="/collector" element={<CollectionPoint />} />
-                    <Route
-                        path="/collector/collectionPoint"
-                        element={<CollectionPoint />}
-                    />
-                    <Route
-                        path="/collector/shipment"
-                        element={<RecycleShipment />}
-                    />
-                    <Route path="/collector/report" element={<Report />} />
-                    <Route path="/collector/staff" element={<Staff />} />
-                    <Route
-                        path="/collector/createCollectionPoint"
-                        element={<CreateCollectionPoint />}
-                    />
-                    <Route
-                        path="/collector/editCollectionPoint"
-                        element={<EditCollectionPoint />}
-                    />
-                </Route>
+        <Route element={<MainLayout />}>
+          <Route path="/collector" element={<CollectionPoint />} />
+          <Route path="/collector/collectionPoint"element={<CollectionPoint />} />
+          <Route path="/collector/shipment" element={<RecycleShipment />} />
+          <Route path="/collector/pickupOrder" element={<PickupOrder />} />
+          <Route path="/collector/createPickupOrder" element={<CreatePickupOrder />} />
+          <Route path="/collector/shipmentCheckout"element={<RecycleShipmentCheckOut />}/>
+          <Route path="/collector/report" element={<Report />} />
+          <Route path="/collector/staff" element={<Staff />} />
+          <Route path="/collector/createCollectionPoint"element={<CreateCollectionPoint />}/>
+          <Route path="/collector/editCollectionPoint" element={<EditCollectionPoint />} />
+        </Route>
 
-                <Route element={<MainLayout />}>
-                    <Route path="/astd" element={<CompanyManage />} />
-                    <Route path="/astd/collectionPoint" element={<></>} />
-                    <Route path="/astd/collectionorder" element={<></>} />
-                    <Route path="/astd/report" element={<></>} />
-                    <Route path="/astd/staff" element={<></>} />
-                </Route>
+        <Route element={<MainLayout />}>
+          <Route path="/astd" element={<CompanyManage />} />
+          <Route path="/astd/collectionPoint" element={<></>} />
+          <Route path="/astd/collectionorder" element={<></>} />
+          <Route path="/astd/report" element={<></>} />
+          <Route path="/astd/staff" element={<></>} />
+        </Route>
 
-                <Route element={<MainLayout />}>
-                    <Route path="/warehouse" element={<RecycleShipment />} />
-                    <Route
-                        path="/warehouse/shipment"
-                        element={<RecycleShipment />}
-                    />
-                    <Route path="/warehouse/overview" element={<Overview />} />
-                    <Route
-                        path="/warehouse/process"
-                        element={<ProcessRecord />}
-                    />
-                    <Route path="/warehouse/staff" element={<Staff />} />
-                    <Route path="/warehouse/settings" element={<Settings />} />
-                    <Route path="/warehouse/test" element={<Test />} />
-                </Route>
-            </Routes>
-        </BrowserRouter>
-    );
+        <Route element={<MainLayout />}>
+          <Route path="/warehouse" element={<RecycleShipment />} />
+          <Route path="/warehouse/shipment" element={<RecycleShipment />} />
+          <Route path="/warehouse/overview" element={<Overview />} />
+          <Route path="/warehouse/process" element={<ProcessRecord />} />
+          <Route path="/warehouse/staff" element={<Staff />} />
+          <Route path="/warehouse/settings" element={<Settings />} />
+          <Route path="/warehouse/test" element={<Test />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 export default Router;

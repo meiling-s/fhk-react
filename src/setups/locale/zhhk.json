@@ -73,6 +73,8 @@
   "week": "星期",
   "time_Period": "時段",
   "settings": "設定",
+  "yes": "是",
+  "no": "否",
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
@@ -152,5 +154,31 @@
     "placeholder_confirm_password": "請輸入密碼",
     "helper_confirm_password": "您的新密碼和確認密碼不匹配",
     "skip_btn": "跳過（暫時用於開發）"
+  },
+  "check_out": {
+    "request_check_out": "送出請求",
+    "approve": "接受",
+    "reject": "拒絕",
+    "search": "搜索",
+    "input_po_no": "輸入運單編號",
+    "company": "公司",
+    "any": "任何",
+    "location": "地點",
+    "created_at": "建立日期",
+    "sender_company": "寄件公司",
+    "receiver_company": "收件公司",
+    "pickup_order_no": "運單編號",
+    "stock_adjustment": "調整庫存",
+    "logistic_company": "物流公司",
+    "sender_addr": "送出地點",
+    "receiver_addr": "到達地點",
+    "deliver_info": "運輸資料",
+    "recyc_loc_info": "回收地點資料",
+    "recyclable_type_weight": "回收物類別及重量",
+    "message": "訊息",
+    "confirm_reject": "確認拒絕送入請求嗎?",
+    "reject_reasons": "拒絕原因(可多選)",
+    "confirm": "確認拒絕",
+    "cancel": "取消"
   }
 }
