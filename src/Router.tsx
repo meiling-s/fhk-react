@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/Auth/Login";
-import ForgetPassword from "./pages/Auth/ForgetPassword";
-import ConfirmNewPassword from "./pages/Auth/ConfirmNewPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
+import ConfirmResetPassword from "./pages/Auth/ConfirmResetPassword";
 import ChangePassword from "./pages/Auth/ChangePassword"
 //ASTD admin
 import CompanyManage from "./pages/ASTD/CompanyManage";
@@ -36,10 +36,10 @@ const Router = () => {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Login />} />
-                <Route path="/forgetPassword" element={<ForgetPassword />} />
+                <Route path="/resetPassword" element={<ResetPassword />} />
                 <Route
                     path="/confirmNewPassword"
-                    element={<ConfirmNewPassword />}
+                    element={<ConfirmResetPassword />}
                 />
                  <Route
                     path="/changePassword/:idReset?"

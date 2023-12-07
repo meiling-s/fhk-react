@@ -47,7 +47,9 @@ const ConfirmNewPassword = () => {
             fullWidth
             onClick={backToLoginPage}
             sx={{
+              width: 'max-content',
               borderRadius: '20px',
+              padding: '8px 50px',
               backgroundColor: '#79ca25',
               '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
               height: '40px'

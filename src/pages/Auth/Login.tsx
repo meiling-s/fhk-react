@@ -85,7 +85,7 @@ const Login = () => {
   const handleClickShowPassword = () => setShowPassword((show) => !show)
 
   const navigateToForgotPassword = () => {
-    navigate('/forgetPassword')
+    navigate('/resetPassword')
   }
 
   return (

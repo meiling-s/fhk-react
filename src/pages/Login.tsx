@@ -18,6 +18,7 @@ const Login = () => {
 
   const onLogin = async () => {
     setLogginIn(true);
+    localStorage.setItem(localStorgeKeyName.role, loginTo);
     const result = await login({
       username: userName,
       password: password,
