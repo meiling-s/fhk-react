@@ -1,4 +1,4 @@
-import { Box, Button, Stack, TextField, Typography } from '@mui/material'
+import { Box, Button, Stack, TextField, Typography, Modal } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import logo_company from '../../logo_company.png'
 import { useNavigate } from 'react-router-dom'
@@ -27,6 +27,7 @@ const ForgetPassword = () => {
     { field: string; error: string }[]
   >([])
   const [erorSubmit, setErorSubmit] = useState<boolean>(false)
+  const [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
     const tempV: { field: string; error: string }[] = []
@@ -62,12 +63,46 @@ const ForgetPassword = () => {
   const submitNewPassword = () => {
     console.log('Submitted:', formValues)
     if (validation.length === 0) {
-      //call api
-      navigate('/confirmNewPassword')
+      //for temporary show notification
+      setShowModal(true)
+
+      //for real case call api and direct to confirm page
+      //navigate('/confirmNewPassword')
     } else {
       setTrySubmited(true)
       setErorSubmit(true)
     }
+  }
+
+  interface ModalNotif {
+    open?: boolean
+    onClose?: () => void
+  }
+
+  const ModalNotification: React.FC<ModalNotif> = ({
+    open = false,
+    onClose
+  }) => {
+    return (
+      <Modal id="success-modal" open={open}>
+        <Box sx={modalStyle}>
+          <Typography>API 尚未準備好</Typography>
+          <Button
+            className="float-right"
+            sx={{
+              borderRadius: '20px',
+              backgroundColor: '#79ca25',
+              '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
+              height: '40px'
+            }}
+            variant="contained"
+            onClick={onClose}
+          >
+            好的
+          </Button>
+        </Box>
+      </Modal>
+    )
   }
 
   return (
@@ -125,6 +160,7 @@ const ForgetPassword = () => {
       <div className="sm:mt-4 w-full pt-4 text-center">
         <CustomCopyrightSection />
       </div>
+      <ModalNotification open={showModal} onClose={() => setShowModal(false)} />
     </Box>
   )
 }
@@ -153,6 +189,18 @@ let styles = {
       }
     }
   }
+}
+
+const modalStyle = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: '8px',
+  boxShadow: 24,
+  p: 4
 }
 
 export default ForgetPassword
