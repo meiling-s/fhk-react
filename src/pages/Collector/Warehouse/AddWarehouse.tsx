@@ -24,7 +24,6 @@ import {
     editWarehouse,
     getRecycleType,
 } from "../../../APICalls/warehouseManage";
-import { set } from "date-fns";
 import { getLocation } from "../../../APICalls/getLocation";
 import { get } from "http";
 

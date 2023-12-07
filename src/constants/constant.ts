@@ -17,7 +17,6 @@ export const layout = {
 }
 
 export const format = {
-  //format for date-fns
   dateFormat1: "YYYY/MM/DD HH:mm",
   dateFormat2: "YYYY/MM/DD",
   dateFormat3: "YYYY-MM-DD",
