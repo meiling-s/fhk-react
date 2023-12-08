@@ -186,8 +186,7 @@ const TableBase: React.FC<TableProps> = ({
                   key={columnIndex}
                   style={
                     columnIndex === header.length - 1 &&
-                    selectedRow?.id === item.id &&
-                    useAction
+                    selectedRow?.id === item.id
                       ? borderRightStyle
                       : selectedRow?.id === item.id
                       ? borderStyle
