@@ -125,9 +125,9 @@ const TableBase: React.FC<TableProps> = ({
 
   return (
     <div className="table-container overflow-y-hidden w-full">
-      <table className="w-[95%] border-separate border-spacing-y-3 rounded-lg">
+      <table className="w-full border-separate border-spacing-y-3 rounded-lg">
         <thead>
-          <tr className="p-2">
+          <tr className="p-2 w-max ">
             {checkboxSelection && (
               <th className="p1">
                 <CustomCheckbox
@@ -142,7 +142,9 @@ const TableBase: React.FC<TableProps> = ({
                 className={`font-bold leading-[20px] text-base text-left p-1`}
                 key={index}
                 style={{
-                  width: headerItem.width ? `${headerItem.width}px` : '120px'
+                  width: headerItem.width
+                    ? `${headerItem.width}px`
+                    : 'max-content'
                 }}
               >
                 {headerItem.label}
@@ -166,7 +168,7 @@ const TableBase: React.FC<TableProps> = ({
             >
               {checkboxSelection && (
                 <td
-                  className={`rounded-tl-lg rounded-bl-lg ${
+                  className={`rounded-tl-lg rounded-bl-lg w-max ${
                     selectedRow?.id === item.id ? 'bg-[#F6FDF2]' : ''
                   }`}
                   style={selectedRow?.id === item.id ? borderLeftStyle : {}}
@@ -214,7 +216,7 @@ const TableBase: React.FC<TableProps> = ({
                       style={{
                         width: headerItem.width
                           ? `${headerItem.width}px`
-                          : '120px'
+                          : 'max-content'
                       }}
                       className="text-left text-smi overflow-hidden text-ellipsis whitespace-nowrap"
                     >

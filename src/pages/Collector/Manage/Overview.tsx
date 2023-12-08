@@ -268,7 +268,7 @@ const Overview: FunctionComponent = () => {
   }
 
   return (
-    <Box className="container-wrapper w-full">
+    <Box className="container-wrapper w-full mr-11">
       <div className="overview-page bg-bg-primary">
         <div className="header-page flex justify-start items-center mb-8">
           <LEFT_ARROW_ICON fontSize="large" />
@@ -285,7 +285,7 @@ const Overview: FunctionComponent = () => {
             {rejectLabel}
           </button>
         </div>
-        <div className="filter-section flex justify-between items-center w-[96%]">
+        <div className="filter-section flex justify-between items-center w-full">
           <TextField
             id="searchShipment"
             onChange={(event) => handleSearch(event.target.value)}
