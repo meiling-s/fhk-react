@@ -36,6 +36,8 @@ type TableProps = {
   checkedRows?: TableRow[]
   onCheckRow?: (checked: boolean, row: TableRow) => void
   useAction?: boolean
+  selectedRow?: TableRow | null
+  onSelectRow?: (row: TableRow | null) => void
 }
 
 const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
@@ -82,7 +84,9 @@ const TableBase: React.FC<TableProps> = ({
   onCheckAll,
   checkedRows,
   onCheckRow,
-  useAction = true
+  useAction = true,
+  selectedRow,
+  onSelectRow
 }) => {
   const sortedRow = dataRow.sort((a, b) => a.id - b.id)
   const handleDelete = (row: TableRow) => {
@@ -106,6 +110,16 @@ const TableBase: React.FC<TableProps> = ({
   const handleCheckRow = (checked: boolean, row: TableRow) => {
     if (onCheckRow) {
       onCheckRow(checked, row)
+    }
+  }
+
+  const handleSelectRow = (row: TableRow) => {
+    if (onSelectRow) {
+      if (selectedRow && selectedRow.id === row.id) {
+        onSelectRow(null)
+      } else {
+        onSelectRow(row)
+      }
     }
   }
 
@@ -148,9 +162,15 @@ const TableBase: React.FC<TableProps> = ({
                   ? 'checked'
                   : ''
               }`}
+              onClick={() => handleSelectRow(item)}
             >
               {checkboxSelection && (
-                <td className="rounded-tl-lg rounded-bl-lg">
+                <td
+                  className={`rounded-tl-lg rounded-bl-lg ${
+                    selectedRow?.id === item.id ? 'bg-[#F6FDF2]' : ''
+                  }`}
+                  style={selectedRow?.id === item.id ? borderLeftStyle : {}}
+                >
                   <CustomCheckbox
                     className="px-3"
                     checked={checkedRows?.some(
@@ -164,7 +184,16 @@ const TableBase: React.FC<TableProps> = ({
               {header.map((headerItem, columnIndex) => (
                 <td
                   key={columnIndex}
-                  className={`py-4 ${
+                  style={
+                    columnIndex === header.length - 1 &&
+                    selectedRow?.id === item.id &&
+                    useAction
+                      ? borderRightStyle
+                      : selectedRow?.id === item.id
+                      ? borderStyle
+                      : {}
+                  }
+                  className={`py-4 cursor-pointer ${
                     columnIndex === header.length - 1
                       ? 'rounded-tr-lg rounded-br-lg'
                       : ''
@@ -230,6 +259,29 @@ const TableBase: React.FC<TableProps> = ({
       </table>
     </div>
   )
+}
+
+const borderStyle: React.CSSProperties = {
+  backgroundColor: '#F6FDF2',
+  borderTop: '1px solid #79CA25',
+  borderBottom: '1px solid #79CA25',
+  transition: '0.3s'
+}
+
+const borderLeftStyle: React.CSSProperties = {
+  borderLeft: '1px solid #79CA25',
+  backgroundColor: '#F6FDF2',
+  borderTop: '1px solid #79CA25',
+  borderBottom: '1px solid #79CA25',
+  transition: '0.3s'
+}
+
+const borderRightStyle: React.CSSProperties = {
+  borderRight: '1px solid #79CA25',
+  backgroundColor: '#F6FDF2',
+  borderTop: '1px solid #79CA25',
+  borderBottom: '1px solid #79CA25',
+  transition: '0.3s'
 }
 
 export default TableBase

@@ -154,9 +154,14 @@ const CheckInDetails: FunctionComponent<CheckInDetailsProps> = ({
                       {item.weight}kg
                     </div>
                   </div>
-                  <div className="images mt-3 grid grid-cols-4 gap-4">
+                  <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
                     {item.img.map((img, index) => (
-                      <img src={img} alt="" key={index} />
+                      <img
+                        src={img}
+                        alt=""
+                        key={index}
+                        className="lg:w-28 sm:w-16"
+                      />
                     ))}
                   </div>
                 </div>

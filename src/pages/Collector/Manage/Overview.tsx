@@ -256,8 +256,15 @@ const Overview: FunctionComponent = () => {
         )
       )
     }
-    setDrawerOpen(true)
     console.log(checkedRows)
+  }
+
+  const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
+
+  const handleSelectRow = (row: TableRow | null) => {
+    setSelectedRow(row)
+    setDrawerOpen(true)
+    // Perform other actions based on the selected row
   }
 
   return (
@@ -344,6 +351,8 @@ const Overview: FunctionComponent = () => {
               onCheckAll={handleCheckAll}
               checkedRows={checkedRows}
               onCheckRow={handleCheckRow}
+              onSelectRow={handleSelectRow}
+              selectedRow={selectedRow}
             />
           </Box>
         </div>
@@ -412,23 +421,19 @@ let styles = {
   modal: {
     position: 'absolute',
     top: '50%',
+    width: '34%',
     left: '50%',
     transform: 'translate(-50%,-50%)',
-    width: '34%',
     height: 'fit-content',
     padding: 4,
     backgroundColor: 'white',
     border: 'none',
-    borderRadius: 5
+    borderRadius: 5,
+
+    '@media (max-width: 768px)': {
+      width: '70%' /* Adjust the width for mobile devices */
+    }
   }
-  // formButton: {
-  //   ...styles.buttonFilledGreen,
-  //   width: '150px'
-  // },
-  // cancelButton: {
-  //   ...styles.buttonOutlinedGreen,
-  //   width: '150px'
-  // }
 }
 
 export default Overview
