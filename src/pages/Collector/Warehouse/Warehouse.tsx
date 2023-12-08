@@ -64,44 +64,37 @@ const Warehouse: FunctionComponent = () => {
     {
       type: 'string',
       field: 'warehouseNameTchi',
-      label: t('warehouse_page.trad_name'),
-      width: 150
+      label: t('warehouse_page.trad_name')
     },
     {
       type: 'string',
       field: 'warehouseNameSchi',
-      label: t('warehouse_page.simp_name'),
-      width: 150
+      label: t('warehouse_page.simp_name')
     },
     {
       type: 'string',
       field: 'warehouseNameEng',
-      label: t('warehouse_page.english_name'),
-      width: 150
+      label: t('warehouse_page.english_name')
     },
     {
       type: 'string',
       field: 'location',
-      label: t('warehouse_page.place'),
-      width: 100
+      label: t('warehouse_page.place')
     },
     {
       type: 'string',
       field: 'physicalFlg',
-      label: t('warehouse_page.location'),
-      width: 100
+      label: t('warehouse_page.location')
     },
     {
       type: 'status',
       field: 'status',
-      label: t('warehouse_page.status'),
-      width: 100
+      label: t('warehouse_page.status')
     },
     {
       type: 'string',
       field: 'warehouseRecyc',
-      label: t('warehouse_page.recyclable_subcategories'),
-      width: 200
+      label: t('warehouse_page.recyclable_subcategories')
     }
   ]
 
@@ -114,7 +107,7 @@ const Warehouse: FunctionComponent = () => {
 
     if (action == 'edit') {
     }
-    fetchData();
+    fetchData()
     setDrawerOpen(false)
   }
 
@@ -122,23 +115,20 @@ const Warehouse: FunctionComponent = () => {
     try {
       const response = await getRecycleType()
       if (response) {
-       
         let recyTypeData: recyTypeItem = recyleTypeList
-        recyTypeData = response.data.forEach((item: recyTypeItem ) => {
-          recyTypeData[item.recycTypeId as keyof  recyTypeItem] =
-          {recyclableNameEng : item.recyclableNameEng, 
-           recyclableNameSchi :  item.recyclableNameSchi,
-           recyclableNameTchi: item.recyclableNameTchi
+        recyTypeData = response.data.forEach((item: recyTypeItem) => {
+          recyTypeData[item.recycTypeId as keyof recyTypeItem] = {
+            recyclableNameEng: item.recyclableNameEng,
+            recyclableNameSchi: item.recyclableNameSchi,
+            recyclableNameTchi: item.recyclableNameTchi
           }
         })
-        
+
         setRecyleTypeList((prevData) => {
-          return {...prevData, recyTypeData}
+          return { ...prevData, recyTypeData }
         })
         fetchData()
-        console.log("finish recyTypeData ", recyleTypeList)
-        
-        
+        console.log('finish recyTypeData ', recyleTypeList)
       }
     } catch (error) {
       console.error(error)
@@ -164,25 +154,31 @@ const Warehouse: FunctionComponent = () => {
     }
   }
 
-
   useEffect(() => {
-    const fetchCategoryAndData = async () =>{
+    const fetchCategoryAndData = async () => {
       getRecycleData()
     }
     fetchCategoryAndData()
   }, [action, drawerOpen, currentLanguage])
 
-  const transformToTableRow = (warehouse: Warehouse, recyTypeData: recyTypeItem): TableRow => {
-    const nameLang = currentLanguage === 'zhhk' ? "recyclableNameTchi" : currentLanguage === 'zhch'?  "recyclableNameSchi" : "recyclableNameEng"
-    const recyleType = warehouse.warehouseRecyc.map(
-      (item: RecyleItem) =>
-       
-        {
-          console.log(item.recycTypeId)
-          return `${recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem]}`
-        }
-       
-    ).join(", ")
+  const transformToTableRow = (
+    warehouse: Warehouse,
+    recyTypeData: recyTypeItem
+  ): TableRow => {
+    const nameLang =
+      currentLanguage === 'zhhk'
+        ? 'recyclableNameTchi'
+        : currentLanguage === 'zhch'
+        ? 'recyclableNameSchi'
+        : 'recyclableNameEng'
+    const recyleType = warehouse.warehouseRecyc
+      .map((item: RecyleItem) => {
+        console.log(item.recycTypeId)
+        return `${
+          recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem]
+        }`
+      })
+      .join(', ')
     return {
       id: warehouse.warehouseId,
       warehouseId: warehouse.warehouseId,
@@ -218,7 +214,7 @@ const Warehouse: FunctionComponent = () => {
 
   const handleDrawerClose = () => {
     setDrawerOpen(false)
-    fetchData();
+    fetchData()
   }
 
   const handleCheckAll = (checked: boolean) => {

@@ -181,5 +181,9 @@
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
     "cancel": "取消"
+  },
+  "mainMenu": {
+    "manage": "管理",
+    "overview": "概覽"
   }
 }

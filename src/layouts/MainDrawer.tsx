@@ -46,6 +46,7 @@ const drawerWidth = 225
 function MainDrawer() {
   const navigate = useNavigate()
   const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
+  const [ManageDrawer, setManageDrawer] = useState<boolean>(false)
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const theme = useTheme()
@@ -73,8 +74,8 @@ function MainDrawer() {
     }
   }, [])
 
-  var role = localStorage.getItem(localStorgeKeyName.role);
-  //var role = 'collector'
+  var role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
+  //var role = 'warehouse'
 
   let drawerMenus_collector: DrawerItem[] = [
     {
@@ -169,10 +170,18 @@ function MainDrawer() {
       collapse: false
     },
     {
-      name: t('collection_Point'),
+      name: t('mainMenu.manage'),
       icon: <INBOX_OUTLINE_ICON />,
+      onClick: () => setManageDrawer(!ManageDrawer),
+      //onClick: () => navigate('/warehouse/overview'),
+      collapse: false,
+      collapseGroup: ManageDrawer
+    },
+    {
+      name: t('mainMenu.overview'),
       onClick: () => navigate('/warehouse/overview'),
-      collapse: false
+      collapse: true,
+      collapseGroup: ManageDrawer
     },
     {
       name: t('reports'),
@@ -196,16 +205,16 @@ function MainDrawer() {
 
   var drawerMenus
 
-  switch(role){
-    case "astd":
-      drawerMenus = drawerMenus_astd;
-      break;
-    case "collector":
-      drawerMenus = drawerMenus_collector;
-      break;
-    case "warehouse":
-      drawerMenus = drawerMenus_warehouse;
-      break;
+  switch (role) {
+    case 'astd':
+      drawerMenus = drawerMenus_astd
+      break
+    case 'collector':
+      drawerMenus = drawerMenus_collector
+      break
+    case 'warehouse':
+      drawerMenus = drawerMenus_warehouse
+      break
     default:
       drawerMenus = drawerMenus_astd
   }

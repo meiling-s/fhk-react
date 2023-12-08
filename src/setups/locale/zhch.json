@@ -181,5 +181,9 @@
     "placeholder_confirm_password": "請輸入密碼",
     "helper_confirm_password": "您的新密碼和確認密碼不匹配",
     "skip_btn": "跳過（暫時用於開發"
+  },
+  "mainMenu": {
+    "manage": "管理",
+    "overview": "概覽"
   }
 }
