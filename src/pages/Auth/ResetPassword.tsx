@@ -27,6 +27,7 @@ const ForgetPassword = () => {
     { field: string; error: string }[]
   >([])
   const [erorSubmit, setErorSubmit] = useState<boolean>(false)
+  const [showModalConfirm, setModalConfirm] = useState<boolean>(false)
   const [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
@@ -64,7 +65,7 @@ const ForgetPassword = () => {
     console.log('Submitted:', formValues)
     if (validation.length === 0) {
       //for temporary show notification
-      setShowModal(true)
+      setModalConfirm(true)
 
       //for real case call api and direct to confirm page
       //navigate('/confirmNewPassword')
@@ -100,6 +101,42 @@ const ForgetPassword = () => {
           >
             好的
           </Button>
+        </Box>
+      </Modal>
+    )
+  }
+
+  interface ModalConfirmation {
+    open?: boolean
+    onClose?: () => void
+  }
+
+  const ModalConfirmation: React.FC<ModalNotif> = ({
+    open = false,
+    onClose
+  }) => {
+    const handleConfirm = () => {
+      if (onClose) onClose()
+      setShowModal(true)
+    }
+    return (
+      <Modal id="success-modal" open={open}>
+        <Box sx={modalStyle}>
+          <Typography>您確定要重設密碼嗎</Typography>
+          <Box sx={{ textAlign: 'right', marginTop: '8px' }}>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={onClose}
+            >
+              不
+            </button>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={handleConfirm}
+            >
+              是的
+            </button>
+          </Box>
         </Box>
       </Modal>
     )
@@ -161,6 +198,10 @@ const ForgetPassword = () => {
         <CustomCopyrightSection />
       </div>
       <ModalNotification open={showModal} onClose={() => setShowModal(false)} />
+      <ModalConfirmation
+        open={showModalConfirm}
+        onClose={() => setModalConfirm(false)}
+      />
     </Box>
   )
 }

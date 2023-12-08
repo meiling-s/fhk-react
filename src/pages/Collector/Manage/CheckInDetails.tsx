@@ -82,6 +82,7 @@ const CheckInDetails: FunctionComponent<CheckInDetailsProps> = ({
             <Box>
               {shippingInfo.map((item, index) => (
                 <div
+                  key={index}
                   className={`wrapper ${
                     index === shippingInfo.length - 1 ? '' : 'mb-6'
                   }`}
