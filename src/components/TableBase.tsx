@@ -35,6 +35,7 @@ type TableProps = {
   onCheckAll?: (checked: boolean) => void
   checkedRows?: TableRow[]
   onCheckRow?: (checked: boolean, row: TableRow) => void
+  useAction?: boolean
 }
 
 const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
@@ -54,18 +55,17 @@ const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
         className={`${
           rowStatus === 'deleted'
             ? 'bg-rose-300 text-rose-800'
-            :   rowStatus === 'inactive'
+            : rowStatus === 'inactive'
             ? 'bg-yellow-100 text-yellow-800'
             : 'bg-green-light text-green-primary'
         } rounded-lg  flex flex-row items-center justify-center py-1 px-[15px]`}
       >
         <div className="relative tracking-[1px] leading-[20px] font-medium">
-          { rowStatus === 'deleted' 
-            ? '刪除' 
-            : rowStatus === 'inactive' 
-            ?'不活跃的'
-            :'已啓用'
-          }
+          {rowStatus === 'deleted'
+            ? '刪除'
+            : rowStatus === 'inactive'
+            ? '不活跃的'
+            : '已啓用'}
         </div>
       </div>
     </div>
@@ -81,9 +81,10 @@ const TableBase: React.FC<TableProps> = ({
   checkAll,
   onCheckAll,
   checkedRows,
-  onCheckRow
+  onCheckRow,
+  useAction = true
 }) => {
-  const sortedRow = dataRow.sort((a,b) => a.id -b.id)
+  const sortedRow = dataRow.sort((a, b) => a.id - b.id)
   const handleDelete = (row: TableRow) => {
     if (onDelete) {
       onDelete('delete', row)
@@ -110,7 +111,7 @@ const TableBase: React.FC<TableProps> = ({
 
   return (
     <div className="table-container overflow-y-hidden w-full">
-      <table className="w-fit border-separate border-spacing-y-3 rounded-lg">
+      <table className="w-[95%] border-separate border-spacing-y-3 rounded-lg">
         <thead>
           <tr className="p-2">
             {checkboxSelection && (
@@ -161,7 +162,14 @@ const TableBase: React.FC<TableProps> = ({
                 </td>
               )}
               {header.map((headerItem, columnIndex) => (
-                <td key={columnIndex} className="py-3">
+                <td
+                  key={columnIndex}
+                  className={`py-4 ${
+                    columnIndex === header.length - 1
+                      ? 'rounded-tr-lg rounded-br-lg'
+                      : ''
+                  }`}
+                >
                   {headerItem.type === 'status' ? (
                     <TableColumnStatus
                       width={
@@ -187,33 +195,35 @@ const TableBase: React.FC<TableProps> = ({
                   )}
                 </td>
               ))}
-              <td className="px-3 py-0 rounded-tr-lg rounded-br-lg">
-                {item?.status === 'DELETED' ? (
-                  <div className="flex justify-around ">
-                    <EDIT_OUTLINED_ICON
-                      className=" text-grey-light cursor-not-allowed"
-                      fontSize="small"
-                    />
-                    <DELETE_OUTLINED_ICON
-                      className="text-grey-light cursor-not-allowed"
-                      fontSize="small"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex justify-around">
-                    <EDIT_OUTLINED_ICON
-                      className="cursor-pointer text-grey-dark mr-2"
-                      fontSize="small"
-                      onClick={() => handleEdit(item)}
-                    />
-                    <DELETE_OUTLINED_ICON
-                      className="cursor-pointer text-grey-dark"
-                      fontSize="small"
-                      onClick={() => handleDelete(item)}
-                    />
-                  </div>
-                )}
-              </td>
+              {useAction && (
+                <td className="px-3 py-0 rounded-tr-lg rounded-br-lg">
+                  {item?.status === 'DELETED' ? (
+                    <div className="flex justify-around ">
+                      <EDIT_OUTLINED_ICON
+                        className=" text-grey-light cursor-not-allowed"
+                        fontSize="small"
+                      />
+                      <DELETE_OUTLINED_ICON
+                        className="text-grey-light cursor-not-allowed"
+                        fontSize="small"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex justify-around">
+                      <EDIT_OUTLINED_ICON
+                        className="cursor-pointer text-grey-dark mr-2"
+                        fontSize="small"
+                        onClick={() => handleEdit(item)}
+                      />
+                      <DELETE_OUTLINED_ICON
+                        className="cursor-pointer text-grey-dark"
+                        fontSize="small"
+                        onClick={() => handleDelete(item)}
+                      />
+                    </div>
+                  )}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

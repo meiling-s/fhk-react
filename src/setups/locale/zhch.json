@@ -138,7 +138,8 @@
     "confirm_reject": "确认拒绝送入请求吗?",
     "reject_reasons": "拒绝原因(可多选)",
     "confirm": "确认拒绝",
-    "cancel": "取消"
+    "cancel": "取消",
+    "search_input": "輸入運單編號"
   },
   "check_out": {
     "request_check_out": "送出请求",

@@ -139,7 +139,8 @@
     "confirm_reject": "Are you sure to request the check-in proceed?",
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "search_input": "Enter the waybill number"
   },
   "check_out": {
     "request_check_out": "Checkout Request",
