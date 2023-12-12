@@ -9,7 +9,7 @@ import {
 import { Box, Stack, alpha, styled } from "@mui/system";
 import { t } from "i18next";
 import { useNavigate } from "react-router";
-import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridToolbar, GridValueGetterParams } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 import PickupOrderForm from "../../../components/FormComponents/PickupOrderForm";
@@ -106,10 +106,10 @@ const PickupOrders = () => {
 
   interface Row {
     id: number;
-    建立日期: Date;
+    建立日期: string;
     物流公司: string;
     运单编号: number;
-    送货日期: Date;
+    送货日期: string;
     寄件公司: string;
     收件公司: string;
     状态: string;
@@ -168,7 +168,7 @@ const PickupOrders = () => {
         <Modal open={openModal} onClose={handleCloses} >
                       <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} />
                     </Modal>
-      <Box sx={{ display: "flex", alignItems: "center",ml:'6    px' }}>
+      <Box sx={{ display: "flex", alignItems: "center",ml:'6px',width:'100%' }}>
         <Typography fontSize={20} color="black" fontWeight="bold">
           查询运单
         </Typography>
@@ -212,9 +212,6 @@ const PickupOrders = () => {
             "& .MuiDataGrid-row": {
                 bgcolor:'white', 
                 borderRadius:'10px',
-               
-               
-                
               },
             '&>.MuiDataGrid-main': {
                 '&>.MuiDataGrid-columnHeaders': {

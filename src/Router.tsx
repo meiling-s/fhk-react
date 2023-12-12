@@ -33,9 +33,11 @@ import RecycleShipmentCheckOut from "./pages/Collector/RecycleShipmentCheckOut";
 import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
 import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
 import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
-import { Box } from "@mui/material";
+import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
+
 
 const Router = () => {
+  
     return (
         <BrowserRouter>
             <Routes>
@@ -68,7 +70,8 @@ const Router = () => {
           <Route path="/collector/collectionPoint"element={<CollectionPoint />} />
           <Route path="/collector/processRecord" element={<></>} />
           <Route path="/collector/pickupOrder" element={<PickupOrder />} />
-          <Route path="/collector/createPickupOrder" element={<CreatePickupOrder />} />
+          <Route path="/collector/createPickupOrder" element={<CreatePickupOrder/>} />
+          <Route path="/collector/editPickupOrder" element={<EditPickupOrder />} />
           <Route path="/collector/shipmentCheckout"element={<RecycleShipmentCheckOut />}/>
           <Route path="/collector/report" element={<Report />} />
           <Route path="/collector/staff" element={<Staff />} />

@@ -4,80 +4,87 @@ import {
   Grid,
   IconButton,
   Modal,
-  Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import React, { useState } from "react";
-import { styles } from "../../../constants/styles";
+import React, { useEffect, useState } from "react";
+import { styles } from "../../constants/styles";
+import CustomField from "./CustomField";
+import CustomSwitch from "./CustomSwitch";
+import CustomDatePicker2 from "./CustomDatePicker2";
+import RoutineSelect from "../SpecializeComponents/RoutineSelect";
+import CustomTextField from "./CustomTextField";
+import CustomItemList, { il_item } from "./CustomItemList";
+import CreateRecycleForm from "./CreateRecycleForm";
+import { useContainer } from "unstated-next";
+import CheckInRequestContainer from "../../contexts/CheckInRequestContainer";
+import {
+  CreatePicoDetail,
+  EditPo,
+  PickupOrder,
+} from "../../interfaces/pickupOrder";
+import { colPtRoutine } from "../../interfaces/common";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { t } from "i18next";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from "react-router-dom";
-import { TYPE } from "react-toastify/dist/utils";
-import CustomField from "../../../components/FormComponents/CustomField";
-import CustomSwitch from "../../../components/FormComponents/CustomSwitch";
-import CustomPeriodSelect from "../../../components/FormComponents/CustomPeriodSelect";
-import { createCP, openingPeriod } from "../../../interfaces/collectionPoint";
-import dayjs from "dayjs";
-import CustomTextField from "../../../components/FormComponents/CustomTextField";
-import { useFormik } from "formik";
-import CustomItemList, {
-  il_item,
-} from "../../../components/FormComponents/CustomItemList";
-import CustomDatePicker2 from "../../../components/FormComponents/CustomDatePicker2";
-
-import {
-  DataGrid,
-  GridColDef,
-  GridRowParams,
-  GridRowSpacingParams,
-} from "@mui/x-data-grid";
-import { CreatePO, CreatePicoDetail, PickupOrder} from "../../../interfaces/pickupOrder";
+import { DataGrid, GridColDef, GridRowSpacingParams } from "@mui/x-data-grid";
 import {
   ADD_CIRCLE_ICON,
-  ADD_ICON,
   DELETE_OUTLINED_ICON,
   EDIT_OUTLINED_ICON,
-} from "../../../themes/icons";
-import theme from "../../../themes/palette";
-import CreateRecycleForm from "../../../components/FormComponents/CreateRecycleForm";
-import { colPtRoutine,} from "../../../interfaces/common";
-import RoutineSelect from "../../../components/SpecializeComponents/RoutineSelect";
-import { TrendingUpRounded } from "@mui/icons-material";
-import { createPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
-import { useContainer } from "unstated-next";
-import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
+} from "../../themes/icons";
+import theme from "../../themes/palette";
+import { t } from "i18next";
+import { useFormik } from "formik";
+import { editPickupOrder } from "../../APICalls/Collector/pickupOrder/pickupOrder";
 
-const CreatePickupOrder = () => {
-  const [openModal,setOpenModal] =useState<boolean>(false)
-  const [addRow,setAddRow] = useState<CreatePicoDetail[]>([])
+const carType: il_item[] = [
+  {
+    id: "1",
+    name: "小型货车",
+  },
+  {
+    id: "2",
+    name: "大型货车",
+  },
+];
+
+const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
   const [editRowId, setEditRowId] = useState<number | null>(null);
   const [colPtRoutine, setColPtRoutine] = useState<colPtRoutine>();
   const [id, setId] = useState<number>(0);
-  const {initPickupOrderRequest} = useContainer(CheckInRequestContainer)
-  const handleCloses = () =>{
-    setOpenModal(false)
-  }
+  const { initPickupOrderRequest } = useContainer(CheckInRequestContainer);
+  const navigate = useNavigate();
+  const handleCloses = () => {
+    setOpenModal(false);
+  };
 
-  
-  console.log('yo'+ JSON.stringify(addRow))
+  console.log("yo" + JSON.stringify(addRow));
   const handleEditRow = (id: number) => {
     setEditRowId(id);
     setOpenModal(true);
   };
   const handleDeleteRow = (id: any) => {
     const updatedRows = addRow.filter((row) => row.id !== id);
-     setAddRow(updatedRows);
-  }
-
+    setAddRow(updatedRows);
+  };
+  const handleHeaderOnClick = () => {
+    console.log("Header click");
+    navigate(-1); //goback to last page
+  };
+  const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
+    return {
+      top: params.isFirstVisible ? 0 : 10,
+    };
+  }, []);
   const columns: GridColDef[] = [
     { field: "time", headerName: "运送时间", width: 150 },
     {
-      field: 'items',
+      field: "items",
       headerName: "主类别",
-      width: 150, 
+      width: 150,
       editable: true,
       valueFormatter: (params) => params.value?.[0].recycTypeId,
     },
@@ -95,7 +102,6 @@ const CreatePickupOrder = () => {
       type: "string",
       width: 150,
       editable: true,
-     
     },
     {
       field: "senderName",
@@ -146,66 +152,59 @@ const CreatePickupOrder = () => {
       ),
     },
   ];
- 
-// type Row = {
-//   id:number,
-//   time:string,
-//   recycType:string,
-//   weight:string,
-//   senderCompany:string,
-//   receiverCompany:string,
-//   recycleAddress:string,
-//   receiverAddress:string,
-// };
-  const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
-    return {
-      top: params.isFirstVisible ? 0 : 10,
-    };
-  }, []);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (selectedPo) {
+      formik.setValues({
+        ...formik.values,
+        picoType: selectedPo.picoType,
+        effFrmDate:selectedPo.effFrmDate,
+        effToDate: selectedPo.effToDate,
+        routineType:selectedPo.routineType,       
+        routine:[],           
+      logisticId: selectedPo.logisticId,       
+      logisticName:selectedPo.logisticName,   
+      vehicleTypeId:selectedPo.vehicleTypeId,  
+      platNo:selectedPo.platNo,            
+      contactNo: selectedPo.contractNo,   
+      status:'CREATED',            
+      reason:selectedPo.reason,            
+      normalFlg: true,       
+      contractNo: selectedPo.contractNo,       
+      updatedBy:'Admin',
+    
+     
+      });
+    }
+  }, [selectedPo]);
 
-  const handleHeaderOnClick = () => {
-    console.log("Header click");
-    navigate(-1); //goback to last page
-  };
-  const carType: il_item[] = [
-    {
-      id: "1",
-      name: "小型货车",
-    },
-    {
-      id: "2",
-      name: "大型货车",
-    },
-  ];
-   
   const formik = useFormik({
     initialValues: {
-      picoType: '',
-      effFrmDate:"2023-12-08",
-      effToDate: "2023-12-08",
-      routineType:'',       
-      routine:[],           
-      logisticId: '',       
-      logisticName:'',   
-      vehicleTypeId:'',  
-      platNo:'',            
-      contactNo: '',   
-      status:'CREATED',            
-      reason:'',            
-      normalFlg: true,       
-      contractNo: '',       
-      createdBy:'Admin', 
-      updatedBy:'Admin',
-      createPicoDetail: addRow
+      picoType: "string",
+      effFrmDate: "2023-12-12",
+      effToDate: "2023-12-12",
+      routineType: "string",
+      routine: ["string"],
+      logisticId: "string",
+      logisticName: "hello",
+      vehicleTypeId: "string",
+      platNo: "string",
+      contactNo: "string",
+      status: "CREATED",
+      reason: "string",
+      normalFlg: true,
+      approvedAt: "2023-12-12T02:17:30.062Z",
+      rejectedAt: "2023-12-12T02:17:30.062Z",
+      approvedBy: "string",
+      rejectedBy: "string",
+      contractNo: "string",
+      updatedBy: "string",
+      pickupOrderDetail: [],
     },
-   
-    onSubmit: async (values:CreatePO) => {
-      // alert(JSON.stringify(values, null, 2));
-      const result = await createPickUpOrder(values);
-      alert(result);
-      
+
+    onSubmit: async (values: EditPo) => {
+      alert(JSON.stringify(values, null, 2));
+      const result = await editPickupOrder(selectedPo.picoId, values);
       const data = result?.data;
       if (data) {
         console.log("all collection point: ", data);
@@ -215,6 +214,8 @@ const CreatePickupOrder = () => {
     }else{
       alert('fail to create pickup order')
     }
+      
+
     },
   });
   return (
@@ -246,7 +247,9 @@ const CreatePickupOrder = () => {
                     onText="常规运输"
                     offText="一次性运输"
                     defaultValue={true}
-                    setState={(value) => formik.setFieldValue("picoType", value)}
+                    setState={(value) =>
+                      formik.setFieldValue("picoType", value)
+                    }
                     value={formik.values.picoType}
                   />
                 </CustomField>
@@ -257,11 +260,9 @@ const CreatePickupOrder = () => {
                   setDate={(values) => formik.setFieldValue("Date", values)}
                 />
               </Grid>
-                        <CustomField label="回收周次" style={{width:"100%"}}>
-                            <RoutineSelect
-                                setRoutine={setColPtRoutine}
-                            />
-                        </CustomField>
+              <CustomField label="回收周次" style={{ width: "100%" }}>
+                <RoutineSelect setRoutine={setColPtRoutine} />
+              </CustomField>
               <Grid item>
                 <CustomField label={"选择物流公司"}>
                   <CustomTextField
@@ -269,15 +270,13 @@ const CreatePickupOrder = () => {
                     placeholder="请输入公司名称"
                     onChange={formik.handleChange}
                     value={formik.values.logisticName}
-                    sx={{width:'400px'}}
-                    
+                    sx={{ width: "400px" }}
                   ></CustomTextField>
                 </CustomField>
               </Grid>
               <Grid item>
                 <CustomField label={"车辆类别"}>
                   <CustomItemList
-                    
                     items={carType}
                     multiSelect={(values) =>
                       formik.setFieldValue("vehicleTypeId", values)
@@ -293,7 +292,7 @@ const CreatePickupOrder = () => {
                     placeholder="请填写车牌号码"
                     onChange={formik.handleChange}
                     value={formik.values.platNo}
-                    sx={{width:'400px'}}
+                    sx={{ width: "400px" }}
                   />
                 </CustomField>
               </Grid>
@@ -304,64 +303,82 @@ const CreatePickupOrder = () => {
                     placeholder="请填写手机号码"
                     onChange={formik.handleChange}
                     value={formik.values.contactNo}
-                    sx={{width:'400px'}}
+                    sx={{ width: "400px" }}
                   />
                 </CustomField>
               </Grid>
               <Grid item>
                 <Box>
-                <CustomField label={"預計回收地點資料"}>
-                  <CustomTextField
-                    id="contractNo"
-                    placeholder="请輸入編號"
-                    onChange={formik.handleChange}
-                    value={formik.values.contractNo}
-                    sx={{width:'400px'}}
-                  />
-                </CustomField>
+                  <CustomField label={"預計回收地點資料"}>
+                    <CustomTextField
+                      id="contractNo"
+                      placeholder="请輸入編號"
+                      onChange={formik.handleChange}
+                      value={formik.values.contractNo}
+                      sx={{ width: "400px" }}
+                    />
+                  </CustomField>
                 </Box>
               </Grid>
-            
-          
-              <Grid item >
-              <CustomField label={"預計回收地點資料"} >
-            
-                <DataGrid
-                  rows={addRow}
-                  hideFooter
-                  columns={columns}
-                  disableRowSelectionOnClick
-                  getRowSpacing={getRowSpacing}
-                  
-                  sx={{
-                    border: "none",
-                    "& .MuiDataGrid-cell": {
-                      border: "none", // Remove the borders from the cells
-                    },
-                    "& .MuiDataGrid-row": {
-                      bgcolor: "white",
-                      borderRadius: "10px",
-                    },
-                    "&>.MuiDataGrid-main": {
-                      "&>.MuiDataGrid-columnHeaders": {
-                        borderBottom: "none",
+
+              <Grid item>
+                <CustomField label={"預計回收地點資料"}>
+                  <DataGrid
+                    rows={addRow}
+                    hideFooter
+                    columns={columns}
+                    disableRowSelectionOnClick
+                    getRowSpacing={getRowSpacing}
+                    sx={{
+                      border: "none",
+                      "& .MuiDataGrid-cell": {
+                        border: "none", // Remove the borders from the cells
                       },
-                    },
-                    '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': {display: 'none' },
-                    '& .MuiDataGrid-overlay':{
-                       display:'none'
-                    }
-                  }}
-                />
-                <Modal  open={openModal} onClose={handleCloses} >
-                  <CreateRecycleForm data={addRow} id={id} setId={setId}setState={setAddRow} onClose={handleCloses} editRowId={editRowId}/>
-                </Modal>
-                
-                 <Button variant="outlined" startIcon={<ADD_CIRCLE_ICON />} onClick={()=>setOpenModal(true)} sx={{height:'40px',width:'100%',mt:'20px',borderColor:theme.palette.primary.main,color:'black',borderRadius:'10px'}}>新增</Button>
-              
-              </CustomField>
-             </Grid>
-             
+                      "& .MuiDataGrid-row": {
+                        bgcolor: "white",
+                        borderRadius: "10px",
+                      },
+                      "&>.MuiDataGrid-main": {
+                        "&>.MuiDataGrid-columnHeaders": {
+                          borderBottom: "none",
+                        },
+                      },
+                      "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
+                        display: "none",
+                      },
+                      "& .MuiDataGrid-overlay": {
+                        display: "none",
+                      },
+                    }}
+                  />
+                  <Modal open={openModal} onClose={handleCloses}>
+                    <CreateRecycleForm
+                      data={addRow}
+                      id={id}
+                      setId={setId}
+                      setState={setAddRow}
+                      onClose={handleCloses}
+                      editRowId={editRowId}
+                    />
+                  </Modal>
+
+                  <Button
+                    variant="outlined"
+                    startIcon={<ADD_CIRCLE_ICON />}
+                    onClick={() => setOpenModal(true)}
+                    sx={{
+                      height: "40px",
+                      width: "100%",
+                      mt: "20px",
+                      borderColor: theme.palette.primary.main,
+                      color: "black",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    新增
+                  </Button>
+                </CustomField>
+              </Grid>
 
               <Grid item>
                 <Button
@@ -384,13 +401,13 @@ const CreatePickupOrder = () => {
     </>
   );
 };
+
 let localstyles = {
   localButton: {
     width: "200px",
     fontSize: 18,
     mr: 3,
   },
-
 };
 
-export default CreatePickupOrder;
+export default PickupOrderCreateForm;

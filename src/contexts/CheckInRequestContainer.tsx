@@ -36,6 +36,7 @@ const CheckInRequest = () => {
   };
   
   return {
+    initPickupOrderRequest,
     checkInRequest,
     pickupOrder
   };
