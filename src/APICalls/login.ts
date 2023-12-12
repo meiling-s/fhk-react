@@ -13,6 +13,7 @@ export const login = async(item: LoginItem) => {
       ...LOGIN,
       data: item,
     });
+    console.log("Login user Success:", JSON.stringify(response.data));
     if (response.status === 200) {
       return {
         access_token: response.data?.access_token,
@@ -20,7 +21,6 @@ export const login = async(item: LoginItem) => {
         status: response.status
       };
     }
-    console.log("Login user Success:", JSON.stringify(response.data));
   } catch (e) {
     console.error('Login user Failed:', e);
   }

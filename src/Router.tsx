@@ -35,6 +35,7 @@ import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
 import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
 import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
 
+
 const Router = () => {
   
     return (
@@ -63,10 +64,11 @@ const Router = () => {
         <Route path="/register/secondStep" element={<RegisterStepTwo />} />
         <Route path="/register/result" element={<RegisterResult />} />
 
+        {/* collector admin */}
         <Route element={<MainLayout />}>
           <Route path="/collector" element={<CollectionPoint />} />
           <Route path="/collector/collectionPoint"element={<CollectionPoint />} />
-          <Route path="/collector/shipment" element={<RecycleShipment />} />
+          <Route path="/collector/processRecord" element={<></>} />
           <Route path="/collector/pickupOrder" element={<PickupOrder />} />
           <Route path="/collector/createPickupOrder" element={<CreatePickupOrder/>} />
           <Route path="/collector/editPickupOrder" element={<EditPickupOrder />} />
@@ -79,10 +81,15 @@ const Router = () => {
 
         <Route element={<MainLayout />}>
           <Route path="/astd" element={<CompanyManage />} />
-          <Route path="/astd/collectionPoint" element={<></>} />
-          <Route path="/astd/collectionorder" element={<></>} />
+          <Route path="/astd/company" element={<CompanyManage />} />
+          <Route path="/astd/notice" element={<></>} />
           <Route path="/astd/report" element={<></>} />
-          <Route path="/astd/staff" element={<></>} />
+          <Route path="/astd/statistics/recyclables" element={<></>} />
+          <Route path="/astd/statistics/convoy" element={<></>} />
+          <Route path="/astd/statistics/recycleCompany" element={<></>} />
+          <Route path="/astd/statistics/recyclePlant" element={<></>} />
+          <Route path="/astd/setting" element={<Settings />} />
+          <Route path="/astd/account" element={<></>} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -91,7 +98,6 @@ const Router = () => {
           <Route path="/warehouse/overview" element={<Overview />} />
           <Route path="/warehouse/process" element={<ProcessRecord />} />
           <Route path="/warehouse/staff" element={<Staff />} />
-          <Route path="/warehouse/settings" element={<Settings />} />
           <Route path="/warehouse/test" element={<Test />} />
         </Route>
       </Routes>

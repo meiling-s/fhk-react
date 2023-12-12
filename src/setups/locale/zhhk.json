@@ -64,6 +64,14 @@
   "recycle_Shipment": "回收運單",
   "reports": "報表",
   "staff": "員工",
+  "noticeTemplate": "通知範本",
+  "statistics": "數據",
+  "recyclables": "回收物",
+  "convoy": "車隊",
+  "recycleCompany": "回收公司",
+  "recyclePlant": "回收廠",
+  "manage": "管理",
+  "overView": "概覽",
   "enter_Keyword_To_Search": "輸入關鍵字查詢",
   "account": "帳戶",
   "signOut": "登出",
@@ -180,5 +188,8 @@
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
     "cancel": "取消"
+  },
+  "login": {
+    "wrongUsernameOrPassword": "錯誤的使用者名稱或密碼"
   }
 }

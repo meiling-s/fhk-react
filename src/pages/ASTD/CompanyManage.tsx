@@ -7,11 +7,6 @@ import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
 import { defaultPath, format } from "../../constants/constant";
 import { styles } from "../../constants/styles"
-import dateFormat from "date-fns/format";
-import CustomField from "../../components/FormComponents/CustomField";
-import CustomTimePicker from "../../components/FormComponents/CustomTimePicker";
-import { timePeriod } from "../../interfaces/collectionPoint";
-import CustomDatePicker2 from "../../components/FormComponents/CustomDatePicker2";
 import dayjs from "dayjs";
 import { openingPeriod } from "../../interfaces/collectionPoint";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -434,7 +429,7 @@ function CompanyManage(){
                     company.eName.includes(searchWord) ||
                     company.status.includes(searchWord) ||
                     company.type.includes(searchWord) ||
-                    dateFormat(company.createDate,"yyyy/MM/dd HH:mm").includes(searchWord) ||
+                    dayjs(company.createDate).format(format.dateFormat1).includes(searchWord) ||
                     company.accountNum.toString().includes(searchWord)
                 ){
                     filteredCompanies.push(company);
@@ -662,7 +657,7 @@ function CompanyManage(){
                                         <TableCell sx={localstyles.bodyCell}>{eName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{status}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{type}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(createDate,format.dateFormat1)}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{dayjs(createDate).format(format.dateFormat1)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{accountNum}</TableCell>
                                     </TableRow>
                                 );
