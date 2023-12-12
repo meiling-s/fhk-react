@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { recycType } from "../../interfaces/common";
 import { useTranslation } from "react-i18next";
 import { recyclable } from "../../interfaces/collectionPoint";
+import { Item } from "../../interfaces/pickupOrder";
 
 type recycItem = {
     recycType: il_item,
@@ -16,13 +17,15 @@ type props = {
     defaultRecycL?: recyclable[],
     recycL: recycType[],
     setState: (s: recyclable[]) => void
+    value?:Item
 }
 
 export default function RecyclablesList({
     showError,
     defaultRecycL,
     recycL,
-    setState
+    setState,
+    value
 }: props){
 
     const [recycTypeList, setRecycTypeList] = useState<string[]>([]);

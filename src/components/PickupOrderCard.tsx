@@ -36,7 +36,7 @@ const PickupOrderCard = ({pickupOrderDetail}:{pickupOrderDetail:PickupOrderDetai
         <Icon sx={{justifySelf:'center',display:'flex',mr:'5px'}}><MonitorWeightOutlinedIcon/></Icon>
           <Typography>重量</Typography>
           </Box>
-          <Typography ml="60px">20Kg</Typography>
+          <Typography ml="60px">20kg</Typography>
         </Box>
         <Box display='flex'>
         <Box display='flex' width={'150px'} >
@@ -53,7 +53,7 @@ const PickupOrderCard = ({pickupOrderDetail}:{pickupOrderDetail:PickupOrderDetai
           <Typography>送出及到达地点</Typography>
           </Box>
           <Box ml={'60px'} width={'400px'}  sx={{ overflowWrap: 'break-word' }}>
-          <Typography   >{pickupOrderDetail[0]?.senderAddr} --- {pickupOrderDetail[0]?.receiverAddr}</Typography>
+          <Typography>{pickupOrderDetail[0]?.senderAddr} --- {pickupOrderDetail[0]?.receiverAddr}</Typography>
           </Box>
         </Box>
         

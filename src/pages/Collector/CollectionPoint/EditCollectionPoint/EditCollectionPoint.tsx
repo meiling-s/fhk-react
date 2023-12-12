@@ -14,7 +14,7 @@ import { getLocation } from "../../../../APICalls/getLocation";
 import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
 import CustomPeriodSelect from "../../../../components/FormComponents/CustomPeriodSelect";
 import { useLocation, useNavigate } from "react-router-dom";
-import { findCollectionPointExistByName, findCollectionPointExistByContractAndAddress, updateCollectionPoint } from "../../../../APICalls/Collector/collectionPointManage";
+
 import { useTranslation } from "react-i18next";
 import { colPointType, premiseType, recycType, siteType, colPtRoutine, formValidate } from "../../../../interfaces/common";
 import { getCommonTypes } from "../../../../APICalls/commonManage";
@@ -101,28 +101,27 @@ function CreateCollectionPoint() {
         }
     }, [debouncedSearchValue]);
 
-    useEffect(() => {
-        //do validation here
-        const tempV: formValidate[] = []        //temp validation
-        colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
-        siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
-        address == "" ? tempV.push({ field: "col.address", problem: formErr.empty, type: "error" })
-            : await checkAddressUsed(address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
-        (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
-            tempV.push({ field: "col.openingDate", problem: formErr.withInColPt_Period, type: "warning" });
-        premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
-        premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty, type: "error" });
-        recyclables.length == 0 && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
-        console.log("num:",staffNum,Number.isNaN(parseInt(staffNum)),staffNum == "")
-        staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty, type: "error" });
-        (Number.isNaN(parseInt(staffNum)) && !(staffNum == ""))
-            ? tempV.push({ field: "col.numOfStaff", problem: formErr.wrongFormat, type: "error" })
-            : (!Number.isNaN(parseInt(staffNum)) && parseInt(staffNum) < 0) && tempV.push({ field: "col.numOfStaff", problem: formErr.numberSmallThanZero, type: "error" });
-        contractNo == "" ? tempV.push({ field: "col.contractNo", problem: formErr.empty, type: "error" })
-            : (!checkContractisEff(contractNo) && !skipValidation.includes("col.contractNo")) && tempV.push({ field: "col.contractNo", problem: formErr.notWithInContractEffDate, type: "warning" });
-        setValidation(tempV);
-        //console.log(tempV);
-    }, [colType, siteType, address, openingPeriod, premiseName, premiseType, status, recyclables, staffNum, contractNo, skipValidation])
+    // useEffect(() => {
+    //     //do validation here
+    //     const tempV: formValidate[] = []        //temp validation
+    //     colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
+    //     siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
+    //     address == "" ? tempV.push({ field: "col.address", problem: formErr.empty, type: "error" }):await checkAddressUsed(address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
+    //     (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
+    //         tempV.push({ field: "col.openingDate", problem: formErr.withInColPt_Period, type: "warning" });
+    //     premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
+    //     premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty, type: "error" });
+    //     recyclables.length == 0 && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
+    //     console.log("num:",staffNum,Number.isNaN(parseInt(staffNum)),staffNum == "")
+    //     staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty, type: "error" });
+    //     (Number.isNaN(parseInt(staffNum)) && !(staffNum == ""))
+    //         ? tempV.push({ field: "col.numOfStaff", problem: formErr.wrongFormat, type: "error" })
+    //         : (!Number.isNaN(parseInt(staffNum)) && parseInt(staffNum) < 0) && tempV.push({ field: "col.numOfStaff", problem: formErr.numberSmallThanZero, type: "error" });
+    //     contractNo == "" ? tempV.push({ field: "col.contractNo", problem: formErr.empty, type: "error" })
+    //         : (!checkContractisEff(contractNo) && !skipValidation.includes("col.contractNo")) && tempV.push({ field: "col.contractNo", problem: formErr.notWithInContractEffDate, type: "warning" });
+    //     setValidation(tempV);
+    //     //console.log(tempV);
+    // }, [colType, siteType, address, openingPeriod, premiseName, premiseType, status, recyclables, staffNum, contractNo, skipValidation])
 
     useEffect(() => {
         checkEPD(contractNo);

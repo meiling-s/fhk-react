@@ -1,28 +1,74 @@
 import React from 'react'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import axios from 'axios'
-import { GET_ALL_PICK_UP_ORDER } from '../../../constants/requests'
+import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
+import { CreatePO, EditPo, PickupOrder } from '../../../interfaces/pickupOrder'
+import { createCP } from '../../../interfaces/collectionPoint'
 
-    const request = axios.create({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-      })
+  const request = axios.create({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+    })
 
-    export const getAllPickUpOrder = async () => {
+  export const getAllPickUpOrder = async () => {
 
-        try {
-          const response = await request({
-            ...GET_ALL_PICK_UP_ORDER
+      try {
+        const response = await request({
+          ...GET_ALL_PICK_UP_ORDER
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
+          // },
+        });
+        console.log('Get all pick up order:', JSON.stringify(response.data));
+        return response
+      } catch (e) {
+        console.error('Get all collection point failed:', e);
+        return null;
+      }
+    
+  }
+
+  export const createPickUpOrder = async (data:CreatePO) => {
+
+    try{
+        const response = await request({
+            ...CREATE_PICK_UP_ORDER,
+            data: data
             // headers: {
             //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
             // },
-          });
-          console.log('Get all pick up order:', JSON.stringify(response.data));
-          return response
-        } catch (e) {
-          console.error('Get all collection point failed:', e);
-          return null;
-        }
-      
+        });
+        console.log('Create pick up order success:', JSON.stringify(response.data));
+        return response
+    } catch (e) {
+        console.error('Create pick up order failed:', e);
+        return null;
     }
-    
+
+}
+
+
+export const editPickupOrder = async (pickupOrderId: number, data:EditPo) => {
+
+  const axiosConfig = Object.assign({},UPDATE_PICK_UP_ORDER_STATUS);
+  axiosConfig.url = UPDATE_PICK_UP_ORDER_STATUS.url+`/${pickupOrderId}`;
+
+  try{
+      const response = await request({
+          ...axiosConfig,
+          data: data
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
+          // },
+      });
+      console.log('Update collection point success:', JSON.stringify(response.data));
+      return response
+  } catch (e) {
+      console.error('Update collection point failed:', e);
+      return null;
+  }
+
+}
+
+
+  
 

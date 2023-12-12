@@ -10,6 +10,9 @@ type props = {
     endAdornment?: JSX.Element,
     error?: boolean,
     className?: string;
+    rows?:number
+    sx?:any
+    
 }
 
 function CustomTextField({
@@ -20,7 +23,10 @@ function CustomTextField({
     onChange,
     endAdornment,
     error,
-    className
+    className,
+    rows,
+    sx
+
 }: props) {
     return(
         <TextField
@@ -28,11 +34,13 @@ function CustomTextField({
             className={className}
             hiddenLabel
             id={id}
+            multiline
             value={value}
+            rows={rows}
             placeholder={placeholder}
             defaultValue={defaultValue? defaultValue : ''}
             onChange={onChange}
-            sx={styles.textField}
+            sx={{...styles.textField,...sx}}
             InputProps={{
                 endAdornment: (
                     <InputAdornment position="end" sx={{height: "100%"}}>

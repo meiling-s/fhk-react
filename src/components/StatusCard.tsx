@@ -33,7 +33,7 @@ const StatusCard = ({status}:{status:string|undefined}) => {
       name ='已完成'
 
       break;
-    case 'COLOSED':
+    case 'CLOSED':
       bgColor = '#ACACAC';
       fontColor = '#FFFFFF';
       name =  "已取消"
