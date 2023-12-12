@@ -43,25 +43,27 @@ import { useContainer } from 'unstated-next'
 import { getRecycType } from '../APICalls/commonManage'
 import CommonTypeContainer from '../contexts/CommonTypeContainer'
 import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
+import { setLanguage } from '../setups/i18n'
 
 const MainAppBar = () => {
-  const [keywords, setKeywords] = useState<string>("");
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [keywords, setKeywords] = useState<string>('')
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [anchorElAvatar, setAnchorElAvatar] = useState<null | HTMLElement>(null)
-  const [selectedItem,setSelectedItem] = useState<CheckIn>()
-  const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
-  const drawerWidth = 246;
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [openModal,setOpenModal] =useState<boolean>(false)
-  
-  const { checkInRequest } = useContainer(CheckInRequestContext);
+  const [selectedItem, setSelectedItem] = useState<CheckIn>()
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
+  const drawerWidth = 246
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const [openModal, setOpenModal] = useState<boolean>(false)
+
+  const { checkInRequest } = useContainer(CheckInRequestContext)
   // const { checkOutRequest } = useContainer(CheckOutRequestContext);
 
   const handleLanguageChange = (lng: string) => {
     console.log('change language: ', lng)
     i18n.changeLanguage(lng)
+    setLanguage(lng)
   }
 
   //console.log(recycType)
@@ -154,66 +156,78 @@ const MainAppBar = () => {
                   <Divider />
                   {checkInRequest?.map((checkIn) => (
                     <>
-                  <List key = {checkIn.chkInId}>
-                    <ListItem onClick={() => handleItemClick(checkIn)}>
-                      <ListItemButton >
-                        <Stack>
-                          <Stack spacing={-2} direction='row' alignItems='center'>
-                        <ListItemIcon  style={{color:'red' }}>
-                         <CircleIcon sx={{fontSize:'0.75rem'}} />
-                        </ListItemIcon>
-                       
-                        <Typography fontWeight='bold'  sx={{ml:'40px'}}>
-                            {t("check_in.request_check_in")}
-                          </Typography>
-                          </Stack>
-                         
-                          <Typography sx={{ml:'40px'}}>
-                            你有一个新的送入请求
-                          </Typography>
-                        
-                          <Typography sx={{ml:'40px',mt:'10px'}}>
-                            {checkIn.createdAt.toString()}
-                          </Typography>
-                         
-                          </Stack>
-                      </ListItemButton>
-                    </ListItem>
-                  </List>
-                  <Divider 
-                  />
-                  </>))}
-                  {checkInRequest?.map((checkIn)=>(  
+                      <List key={checkIn.chkInId}>
+                        <ListItem onClick={() => handleItemClick(checkIn)}>
+                          <ListItemButton>
+                            <Stack>
+                              <Stack
+                                spacing={-2}
+                                direction="row"
+                                alignItems="center"
+                              >
+                                <ListItemIcon style={{ color: 'red' }}>
+                                  <CircleIcon sx={{ fontSize: '0.75rem' }} />
+                                </ListItemIcon>
+
+                                <Typography
+                                  fontWeight="bold"
+                                  sx={{ ml: '40px' }}
+                                >
+                                  {t('check_in.request_check_in')}
+                                </Typography>
+                              </Stack>
+
+                              <Typography sx={{ ml: '40px' }}>
+                                你有一个新的送入请求
+                              </Typography>
+
+                              <Typography sx={{ ml: '40px', mt: '10px' }}>
+                                {checkIn.createdAt.toString()}
+                              </Typography>
+                            </Stack>
+                          </ListItemButton>
+                        </ListItem>
+                      </List>
+                      <Divider />
+                    </>
+                  ))}
+                  {checkInRequest?.map((checkIn) => (
                     <>
-                  <List key = {checkIn.chkInId}>
-                    <ListItem onClick={() => handleItemClick(checkIn)}>
-                      <ListItemButton >
-                        <Stack>
-                          <Stack spacing={-2} direction='row' alignItems='center'>
-                        <ListItemIcon  style={{color:'red' }}>
-                         <CircleIcon sx={{fontSize:'0.75rem'}} />
-                        </ListItemIcon>
-                       
-                        <Typography fontWeight='bold'  sx={{ml:'40px'}}>
-                            {t("check_out.request_check_out")}
-                          </Typography>
-                          </Stack>
-                         
-                          <Typography sx={{ml:'40px'}}>
-                            你有一个新的送出請求
-                          </Typography>
-                        
-                          <Typography sx={{ml:'40px',mt:'10px'}}>
-                            {checkIn.createdAt.toString()}
-                          </Typography>
-                         
-                          </Stack>
-                      </ListItemButton>
-                    </ListItem>
-                  </List>
-                  <Divider 
-                  />
-                  </>))}
+                      <List key={checkIn.chkInId}>
+                        <ListItem onClick={() => handleItemClick(checkIn)}>
+                          <ListItemButton>
+                            <Stack>
+                              <Stack
+                                spacing={-2}
+                                direction="row"
+                                alignItems="center"
+                              >
+                                <ListItemIcon style={{ color: 'red' }}>
+                                  <CircleIcon sx={{ fontSize: '0.75rem' }} />
+                                </ListItemIcon>
+
+                                <Typography
+                                  fontWeight="bold"
+                                  sx={{ ml: '40px' }}
+                                >
+                                  {t('check_out.request_check_out')}
+                                </Typography>
+                              </Stack>
+
+                              <Typography sx={{ ml: '40px' }}>
+                                你有一个新的送出請求
+                              </Typography>
+
+                              <Typography sx={{ ml: '40px', mt: '10px' }}>
+                                {checkIn.createdAt.toString()}
+                              </Typography>
+                            </Stack>
+                          </ListItemButton>
+                        </ListItem>
+                      </List>
+                      <Divider />
+                    </>
+                  ))}
                 </Box>
               </Drawer>
               {selectedItem && (

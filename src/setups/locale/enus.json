@@ -91,7 +91,7 @@
     "trad_name": "Traditional Name",
     "simp_name": "Simplified Name",
     "english_name": "English Name",
-    "location": "Location",
+    "location": "Physical location",
     "place": "Place",
     "status": "Status",
     "recyclable_subcategories": "Recyclable Subcategories"

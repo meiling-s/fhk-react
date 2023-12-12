@@ -194,7 +194,7 @@ const TableBase: React.FC<TableProps> = ({
                       ? borderStyle
                       : {}
                   }
-                  className={`py-4 cursor-pointer ${
+                  className={`py-4 cursor-pointer max-w-xs ${
                     columnIndex === header.length - 1
                       ? 'rounded-tr-lg rounded-br-lg'
                       : ''

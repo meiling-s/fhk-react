@@ -53,7 +53,7 @@ const Warehouse: FunctionComponent = () => {
   const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
   const { t } = useTranslation()
   const { i18n } = useTranslation()
-  const currentLanguage = i18n.language
+  const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
@@ -97,6 +97,10 @@ const Warehouse: FunctionComponent = () => {
       label: t('warehouse_page.recyclable_subcategories')
     }
   ]
+
+  useEffect(() => {
+    i18n.changeLanguage(currentLanguage)
+  }, [i18n, currentLanguage])
 
   const handleOnSubmitData = (action: string, id?: number, error?: boolean) => {
     if (action == 'add') {
