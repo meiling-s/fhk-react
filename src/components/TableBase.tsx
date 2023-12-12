@@ -194,7 +194,7 @@ const TableBase: React.FC<TableProps> = ({
                       ? borderStyle
                       : {}
                   }
-                  className={`py-4 cursor-pointer max-w-xs ${
+                  className={`py-4 cursor-pointer px-2${
                     columnIndex === header.length - 1
                       ? 'rounded-tr-lg rounded-br-lg'
                       : ''
@@ -218,7 +218,7 @@ const TableBase: React.FC<TableProps> = ({
                           ? `${headerItem.width}px`
                           : 'max-content'
                       }}
-                      className="text-left text-smi overflow-hidden text-ellipsis whitespace-nowrap"
+                      className="text-left text-smi max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap"
                     >
                       {item[headerItem.field as string]}
                     </div>
