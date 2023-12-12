@@ -278,7 +278,7 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
                 <CustomField label={"车辆类别"}>
                   <CustomItemList
                     items={carType}
-                    multiSelect={(values) =>
+                    singleSelect={(values) =>
                       formik.setFieldValue("vehicleTypeId", values)
                     }
                     value={formik.values.vehicleTypeId}
