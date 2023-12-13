@@ -1,10 +1,11 @@
+import React, { FunctionComponent, useState, useEffect } from 'react'
 import {
-  FunctionComponent,
-  useCallback,
-  ReactNode,
-  useState,
-  useEffect
-} from 'react'
+  DataGrid,
+  GridColDef,
+  GridRowParams,
+  GridRowSpacingParams,
+  GridValueGetterParams
+} from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
@@ -48,7 +49,6 @@ type recyTypeItem = {
 }
 
 const Warehouse: FunctionComponent = () => {
-  // const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
   const { t } = useTranslation()
@@ -61,43 +61,88 @@ const Warehouse: FunctionComponent = () => {
   const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
   const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
-  const headerTitles = [
+  const columns: GridColDef[] = [
     {
-      type: 'string',
       field: 'warehouseNameTchi',
-      label: t('warehouse_page.trad_name')
+      headerName: t('warehouse_page.trad_name'),
+      width: 150,
+      type: 'string'
     },
     {
-      type: 'string',
       field: 'warehouseNameSchi',
-      label: t('warehouse_page.simp_name')
+      headerName: t('warehouse_page.simp_name'),
+      width: 150,
+      type: 'string'
     },
     {
-      type: 'string',
       field: 'warehouseNameEng',
-      label: t('warehouse_page.english_name')
+      headerName: t('warehouse_page.english_name'),
+      width: 150,
+      type: 'string'
     },
     {
-      type: 'string',
       field: 'location',
-      label: t('warehouse_page.place')
+      headerName: t('warehouse_page.place'),
+      width: 150,
+      type: 'string'
     },
     {
-      type: 'string',
       field: 'physicalFlg',
-      label: t('warehouse_page.location')
+      headerName: t('warehouse_page.location'),
+      width: 120,
+      type: 'string'
     },
     {
-      type: 'status',
       field: 'status',
-      label: t('warehouse_page.status')
+      headerName: t('warehouse_page.status'),
+      width: 120,
+      type: 'string'
     },
     {
-      type: 'string',
       field: 'warehouseRecyc',
-      label: t('warehouse_page.recyclable_subcategories')
+      headerName: t('warehouse_page.recyclable_subcategories'),
+      width: 200,
+      type: 'string'
     }
   ]
+
+  // const headerTitles = [
+  //   {
+  //     type: 'string',
+  //     field: 'warehouseNameTchi',
+  //     label: t('warehouse_page.trad_name')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'warehouseNameSchi',
+  //     label: t('warehouse_page.simp_name')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'warehouseNameEng',
+  //     label: t('warehouse_page.english_name')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'location',
+  //     label: t('warehouse_page.place')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'physicalFlg',
+  //     label: t('warehouse_page.location')
+  //   },
+  //   {
+  //     type: 'status',
+  //     field: 'status',
+  //     label: t('warehouse_page.status')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'warehouseRecyc',
+  //     label: t('warehouse_page.recyclable_subcategories')
+  //   }
+  // ]
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -165,10 +210,7 @@ const Warehouse: FunctionComponent = () => {
     fetchCategoryAndData()
   }, [action, drawerOpen, currentLanguage])
 
-  const transformToTableRow = (
-    warehouse: Warehouse,
-    recyTypeData: recyTypeItem
-  ): TableRow => {
+  const transformToTableRow = (warehouse: Warehouse): TableRow => {
     const nameLang =
       currentLanguage === 'zhhk'
         ? 'recyclableNameTchi'
@@ -210,8 +252,15 @@ const Warehouse: FunctionComponent = () => {
     fetchData()
   }
 
-  const handleSelectRow = (row: TableRow | null) => {
-    setRowId(row?.id || 0)
+  // const handleSelectRow = (row: TableRow | null) => {
+  //   setRowId(row?.id || 0)
+  //   setSelectedRow(row)
+  //   setDrawerOpen(true)
+  //   setAction('edit')
+  // }
+
+  const handleRowClick = (params: GridRowParams) => {
+    const row = params.row as TableRow
     setSelectedRow(row)
     setDrawerOpen(true)
     setAction('edit')
@@ -252,6 +301,12 @@ const Warehouse: FunctionComponent = () => {
     console.log(checkedRows)
   }
 
+  const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
+    return {
+      top: params.isFirstVisible ? 0 : 10
+    }
+  }, [])
+
   return (
     <Box
       sx={{
@@ -267,7 +322,7 @@ const Warehouse: FunctionComponent = () => {
                 className={`settings-container self-stretch flex-1 flex flex-col items-start justify-start pt-[30px] pb-[75px] text-mini text-grey-darker ${
                   isMobile
                     ? 'overflow-auto whitespace-nowrap w-[375px] mx-4 my-0'
-                    : 'px-10'
+                    : ''
                 }`}
               >
                 <div className="self-stretch flex flex-col items-start justify-start gap-[12px] overflow-auto">
@@ -285,7 +340,7 @@ const Warehouse: FunctionComponent = () => {
                       </b>
                     </div>
                   </div>
-                  <Box className="w-full">
+                  {/* <Box className="w-full">
                     <TableBase
                       header={headerTitles}
                       dataRow={warehouseItems}
@@ -296,7 +351,32 @@ const Warehouse: FunctionComponent = () => {
                       checkedRows={checkedRows}
                       onCheckRow={handleCheckRow}
                       onSelectRow={handleSelectRow}
-                     
+                    />
+                  </Box> */}
+                  <Box pr={4} pt={3} sx={{ flexGrow: 1 }}>
+                    <DataGrid
+                      rows={warehouseItems}
+                      hideFooter
+                      columns={columns}
+                      checkboxSelection
+                      disableRowSelectionOnClick
+                      onRowClick={handleRowClick}
+                      getRowSpacing={getRowSpacing}
+                      sx={{
+                        border: 'none',
+                        '& .MuiDataGrid-cell': {
+                          border: 'none' // Remove the borders from the cells
+                        },
+                        '& .MuiDataGrid-row': {
+                          bgcolor: 'white',
+                          borderRadius: '10px'
+                        },
+                        '&>.MuiDataGrid-main': {
+                          '&>.MuiDataGrid-columnHeaders': {
+                            borderBottom: 'none'
+                          }
+                        }
+                      }}
                     />
                   </Box>
                 </div>

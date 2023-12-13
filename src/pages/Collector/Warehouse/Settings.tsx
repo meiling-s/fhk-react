@@ -27,7 +27,7 @@ const Settings: FunctionComponent = () => {
   return (
     <Box className="container-wrapper w-full">
       <div className="settings-page bg-bg-primary">
-        <div className="title font-bold text-3xl px-10 mb-10">{titlePage}</div>
+        <div className="title font-bold text-3xl mb-10">{titlePage}</div>
         <Tabs
           tabs={tabSettings}
           navigate={handleTabChange}
