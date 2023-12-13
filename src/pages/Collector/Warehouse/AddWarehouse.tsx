@@ -281,23 +281,28 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         error: `${t(`add_warehouse_page.contractNum`)} is required`
       })
 
-    const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
-        const seenRecycTypeIds: Record<string, boolean> = {};
+    const isRecycleTypeIdUnique = recycleCategory.every((item, index, arr) => {
+      const filteredArr = arr.filter((i) => i.recycTypeId === item.recycTypeId)
+      return filteredArr.length === 1
+    })
 
+    const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
       return (
         item.recycTypeId.trim() !== '' &&
         item.recycSubtypeId.trim() !== '' &&
-        item.recycSubtypeCapacity === 0 &&
-        (!seenRecycTypeIds[item.recycTypeId] || index === arr.findIndex((i) => i.recycTypeId === item.recycTypeId))
+        item.recycSubtypeCapacity === 0
       )
     })
 
     console.log('isRecyleUnselected', isRecyleUnselected)
 
     isRecyleUnselected &&
+      isRecycleTypeIdUnique &&
       tempV.push({
         field: 'warehouseRecyc',
-        error: `${t(`add_warehouse_page.recyclable_field`)} is required`
+        error: `${t(
+          `add_warehouse_page.recyclable_field`
+        )} is required and can't duplicated`
       })
 
     setValidation(tempV)
