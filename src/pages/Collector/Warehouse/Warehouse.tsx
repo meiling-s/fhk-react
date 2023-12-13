@@ -10,9 +10,14 @@ import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
 import { Box } from '@mui/material'
-import { ADD_ICON } from '../../../themes/icons'
+import {
+  ADD_ICON,
+  EDIT_OUTLINED_ICON,
+  DELETE_OUTLINED_ICON
+} from '../../../themes/icons'
 import AddWarehouse from './AddWarehouse'
 import TableBase from '../../../components/TableBase'
+import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
 import {
   getAllWarehouse,
@@ -65,19 +70,19 @@ const Warehouse: FunctionComponent = () => {
     {
       field: 'warehouseNameTchi',
       headerName: t('warehouse_page.trad_name'),
-      width: 150,
+      width: 120,
       type: 'string'
     },
     {
       field: 'warehouseNameSchi',
       headerName: t('warehouse_page.simp_name'),
-      width: 150,
+      width: 120,
       type: 'string'
     },
     {
       field: 'warehouseNameEng',
       headerName: t('warehouse_page.english_name'),
-      width: 150,
+      width: 120,
       type: 'string'
     },
     {
@@ -96,13 +101,37 @@ const Warehouse: FunctionComponent = () => {
       field: 'status',
       headerName: t('warehouse_page.status'),
       width: 120,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => <StatusLabel status={params.value} />
     },
     {
       field: 'warehouseRecyc',
       headerName: t('warehouse_page.recyclable_subcategories'),
       width: 200,
       type: 'string'
+    },
+    {
+      field: 'actions',
+      headerName: 'actions',
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <EDIT_OUTLINED_ICON
+              fontSize="small"
+              className="cursor-pointer text-grey-dark mr-2"
+              onClick={() => handleEdit(params.row.id)} // Implement your edit logic here
+              style={{ cursor: 'pointer' }}
+            />
+            <DELETE_OUTLINED_ICON
+              fontSize="small"
+              className="cursor-pointer text-grey-dark"
+              onClick={() => handleDelete(params.row.id)} // Implement your delete logic here
+              style={{ cursor: 'pointer' }}
+            />
+          </div>
+        )
+      }
     }
   ]
 
@@ -239,12 +268,37 @@ const Warehouse: FunctionComponent = () => {
     }
   }
 
+  // const dummyRows = [
+  //   {
+  //     id: 1,
+  //     warehouseId: 1,
+  //     warehouseNameTchi: '快捷物流',
+  //     warehouseNameSchi: '快捷物流',
+  //     warehouseNameEng: 'winda',
+  //     location: 'a公司',
+  //     physicalFlg: true,
+  //     status: 'ACTIVE',
+  //     warehouseRecyc: 'Plastic , Glass, Lala'
+  //   },
+  //   {
+  //     id: 2,
+  //     warehouseId: 2,
+  //     warehouseNameTchi: '快捷物流',
+  //     warehouseNameSchi: '快捷物流',
+  //     warehouseNameEng: 'lala',
+  //     location: 'a公司',
+  //     physicalFlg: true,
+  //     status: 'deleted',
+  //     warehouseRecyc: 'Plastic , Glass, Lala'
+  //   }
+  // ]
+
   const addDataWarehouse = () => {
     setDrawerOpen(true)
     setAction('add')
   }
 
-  const handleEdit = (type: string, row: TableRow) => {
+  const handleEdit = (row: TableRow) => {
     setRowId(row.id)
     console.log(row)
     setDrawerOpen(true)
@@ -266,7 +320,7 @@ const Warehouse: FunctionComponent = () => {
     setAction('edit')
   }
 
-  const handleDelete = (type: string, row: TableRow) => {
+  const handleDelete = (row: TableRow) => {
     setDrawerOpen(true)
     setAction('delete')
     setRowId(row.id)
@@ -277,29 +331,29 @@ const Warehouse: FunctionComponent = () => {
     fetchData()
   }
 
-  const handleCheckAll = (checked: boolean) => {
-    console.log('checkedAll', checked)
-    if (checked) {
-      setCheckedRows(warehouseItems) // Select all rows
-    } else {
-      setCheckedRows([]) // Unselect all rows
-    }
-  }
+  // const handleCheckAll = (checked: boolean) => {
+  //   console.log('checkedAll', checked)
+  //   if (checked) {
+  //     setCheckedRows(warehouseItems) // Select all rows
+  //   } else {
+  //     setCheckedRows([]) // Unselect all rows
+  //   }
+  // }
 
   // Handle selecting/deselecting individual row
-  const handleCheckRow = (checked: boolean, row: TableRow) => {
-    console.log('checkedRow', checked, row)
-    if (checked) {
-      setCheckedRows((prev) => [...prev, row])
-    } else {
-      setCheckedRows((prev) =>
-        prev.filter(
-          (existingRow) => JSON.stringify(existingRow) !== JSON.stringify(row)
-        )
-      )
-    }
-    console.log(checkedRows)
-  }
+  // const handleCheckRow = (checked: boolean, row: TableRow) => {
+  //   console.log('checkedRow', checked, row)
+  //   if (checked) {
+  //     setCheckedRows((prev) => [...prev, row])
+  //   } else {
+  //     setCheckedRows((prev) =>
+  //       prev.filter(
+  //         (existingRow) => JSON.stringify(existingRow) !== JSON.stringify(row)
+  //       )
+  //     )
+  //   }
+  //   console.log(checkedRows)
+  // }
 
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
