@@ -133,7 +133,6 @@ const Warehouse: FunctionComponent = () => {
           return { ...prevData, recyTypeData }
         })
         fetchData()
-        console.log('finish recyTypeData ', recyleTypeList)
       }
     } catch (error) {
       console.error(error)
@@ -297,7 +296,7 @@ const Warehouse: FunctionComponent = () => {
                       checkedRows={checkedRows}
                       onCheckRow={handleCheckRow}
                       onSelectRow={handleSelectRow}
-                      selectedRow={selectedRow}
+                     
                     />
                   </Box>
                 </div>
