@@ -60,6 +60,7 @@ const Warehouse: FunctionComponent = () => {
   const [rowId, setRowId] = useState<number>(1)
   const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
   const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
+  const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
   const headerTitles = [
     {
       type: 'string',
@@ -210,6 +211,13 @@ const Warehouse: FunctionComponent = () => {
     fetchData()
   }
 
+  const handleSelectRow = (row: TableRow | null) => {
+    setRowId(row?.id || 0)
+    setSelectedRow(row)
+    setDrawerOpen(true)
+    setAction('edit')
+  }
+
   const handleDelete = (type: string, row: TableRow) => {
     setDrawerOpen(true)
     setAction('delete')
@@ -288,6 +296,8 @@ const Warehouse: FunctionComponent = () => {
                       onCheckAll={handleCheckAll}
                       checkedRows={checkedRows}
                       onCheckRow={handleCheckRow}
+                      onSelectRow={handleSelectRow}
+                      selectedRow={selectedRow}
                     />
                   </Box>
                 </div>
