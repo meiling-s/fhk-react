@@ -70,50 +70,50 @@ const Warehouse: FunctionComponent = () => {
     {
       field: 'warehouseNameTchi',
       headerName: t('warehouse_page.trad_name'),
-      width: 120,
-      type: 'string'
+      width: 200,
+      type: 'string',
+     
     },
     {
       field: 'warehouseNameSchi',
       headerName: t('warehouse_page.simp_name'),
-      width: 120,
+      width: 200,
       type: 'string'
     },
     {
       field: 'warehouseNameEng',
       headerName: t('warehouse_page.english_name'),
-      width: 120,
+      width: 200,
       type: 'string'
     },
     {
       field: 'location',
+      width: 250,
       headerName: t('warehouse_page.place'),
-      width: 150,
       type: 'string'
     },
     {
       field: 'physicalFlg',
       headerName: t('warehouse_page.location'),
-      width: 120,
+      width: 170,
       type: 'string'
     },
     {
       field: 'status',
       headerName: t('warehouse_page.status'),
-      width: 120,
+      width: 150,
       type: 'string',
       renderCell: (params) => <StatusLabel status={params.value} />
     },
     {
       field: 'warehouseRecyc',
       headerName: t('warehouse_page.recyclable_subcategories'),
-      width: 200,
+      width: 300,
       type: 'string'
     },
     {
       field: 'actions',
       headerName: 'actions',
-      sortable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -316,14 +316,15 @@ const Warehouse: FunctionComponent = () => {
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as TableRow
     setSelectedRow(row)
+    setRowId(row.id)
     setDrawerOpen(true)
     setAction('edit')
   }
 
   const handleDelete = (row: TableRow) => {
+    setRowId(row.id)
     setDrawerOpen(true)
     setAction('delete')
-    setRowId(row.id)
   }
 
   const handleDrawerClose = () => {
@@ -379,7 +380,7 @@ const Warehouse: FunctionComponent = () => {
                     : ''
                 }`}
               >
-                <div className="self-stretch flex flex-col items-start justify-start gap-[12px] overflow-auto">
+                <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                   <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-grey-dark">
                     <b className="relative tracking-[0.08em] leading-[28px]">
                       {t('top_menu.workshop')}
@@ -407,7 +408,7 @@ const Warehouse: FunctionComponent = () => {
                       onSelectRow={handleSelectRow}
                     />
                   </Box> */}
-                  <Box pr={4} pt={3} sx={{ flexGrow: 1 }}>
+                  <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
                     <DataGrid
                       rows={warehouseItems}
                       hideFooter
