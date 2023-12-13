@@ -257,6 +257,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       })
   }, [place])
 
+  const isRecycleTypeIdUnique = recycleCategory.every((item, index, arr) => {
+    const filteredArr = arr.filter((i) => i.recycTypeId === item.recycTypeId)
+    return filteredArr.length === 1
+  })
+
   // validation input text
   useEffect(() => {
     const tempV: { field: string; error: string }[] = []
@@ -281,11 +286,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         error: `${t(`add_warehouse_page.contractNum`)} is required`
       })
 
-    const isRecycleTypeIdUnique = recycleCategory.every((item, index, arr) => {
-      const filteredArr = arr.filter((i) => i.recycTypeId === item.recycTypeId)
-      return filteredArr.length === 1
-    })
-
+   
+    const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
       return (
         item.recycTypeId.trim() !== '' &&
@@ -294,16 +296,23 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       )
     })
 
-    console.log('isRecyleUnselected', isRecyleUnselected)
+    console.log('isRecycleTypeIdUnique', isRecycleTypeIdUnique)
 
     isRecyleUnselected &&
-      isRecycleTypeIdUnique &&
       tempV.push({
         field: 'warehouseRecyc',
         error: `${t(
           `add_warehouse_page.recyclable_field`
-        )} is required and can't duplicated`
+        )} is required`
       })
+
+    !isRecyleHaveUniqId &&
+    tempV.push({
+    field: 'warehouseRecyc',
+    error: `${t(
+        `add_warehouse_page.recyclable_field`
+    )} can't duplicated`
+    })
 
     setValidation(tempV)
     console.log(tempV)
@@ -686,7 +695,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px' // Adjust the value as needed
                             }}
-                            error={checkString(item.recycTypeId)}
+                            error={checkString(item.recycTypeId) || !isRecycleTypeIdUnique}
                           >
                             <MenuItem value="">
                               <em>-</em>
