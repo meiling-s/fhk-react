@@ -2,7 +2,7 @@ import { FunctionComponent, useCallback, useState, useEffect, Key } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import TextField from '@mui/material/TextField'
-import { Grid, FormHelperText } from '@mui/material'
+import { Grid, FormHelperText, Autocomplete } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -21,6 +21,7 @@ import {
 import { set } from 'date-fns'
 import { getLocation } from '../../../APICalls/getLocation'
 import { get } from 'http'
+import { getCommonTypes } from '../../../APICalls/commonManage'
 
 interface AddWarehouseProps {
   drawerOpen: boolean
@@ -71,8 +72,6 @@ interface recyleTypeOption {
 }
 
 interface recyleSubtypeOption {
-  // recycTypeId: string
-  // list: recyleSubtyeData[]
   [key: string]: recyleSubtyeData[]
 }
 
@@ -108,10 +107,44 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
   const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption>({})
+  const [contractList, setContractList] = useState<
+    { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
+  >([])
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
   }, [i18n, currentLanguage])
+
+  useEffect(() => {
+    initType()
+  }, [])
+
+  useEffect(() => {
+    initType()
+  }, [])
+
+  const initType = async () => {
+    const result = await getCommonTypes()
+
+    console.log('result: ', result)
+    if (result?.contract) {
+      var conList: {
+        contractNo: string
+        isEpd: boolean
+        frmDate: string
+        toDate: string
+      }[] = []
+      result.contract.map((con) => {
+        conList.push({
+          contractNo: con.contractNo,
+          isEpd: con.epdFlg,
+          frmDate: con.contractFrmDate,
+          toDate: con.contractToDate
+        })
+      })
+      setContractList(conList)
+    }
+  }
 
   const getRecyleCategory = async () => {
     try {
@@ -286,7 +319,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         error: `${t(`add_warehouse_page.contractNum`)} is required`
       })
 
-   
     const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
       return (
@@ -301,18 +333,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     isRecyleUnselected &&
       tempV.push({
         field: 'warehouseRecyc',
-        error: `${t(
-          `add_warehouse_page.recyclable_field`
-        )} is required`
+        error: `${t(`add_warehouse_page.recyclable_field`)} is required`
       })
 
     !isRecyleHaveUniqId &&
-    tempV.push({
-    field: 'warehouseRecyc',
-    error: `${t(
-        `add_warehouse_page.recyclable_field`
-    )} can't duplicated`
-    })
+      tempV.push({
+        field: 'warehouseRecyc',
+        error: `${t(`add_warehouse_page.recyclable_field`)} can't duplicated`
+      })
 
     setValidation(tempV)
     console.log(tempV)
@@ -355,12 +383,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setContractNum(updatedContractNum)
   }
 
-  const handleContactonChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
+  const handleContractChange = (value: string, index: number) => {
     const updatedContacts = [...contractNum]
-    updatedContacts[index] = event.target.value
+    updatedContacts[index] = value
     setContractNum(updatedContacts)
   }
 
@@ -581,7 +606,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                       key={contact + index}
                     >
                       <FormControl fullWidth variant="standard">
-                        <TextField
+                        {/* <TextField
                           value={contractNum[index]}
                           fullWidth
                           placeholder={t('col.enterNo')}
@@ -599,12 +624,40 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               HTMLInputElement | HTMLTextAreaElement
                             >
                           ) => {
-                            handleContactonChange(
+                            handleContractChange(
                               event as React.ChangeEvent<HTMLInputElement>,
                               index
                             )
                           }}
                           error={checkString(contractNum[index])}
+                        /> */}
+                        <Autocomplete
+                          disablePortal
+                          fullWidth
+                          options={contractList.map(
+                            (contract) => contract.contractNo
+                          )}
+                          value={contractNum[index]}
+                          onChange={(_, value) => {
+                            handleContractChange(value || '', index)
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              fullWidth
+                              placeholder={t('col.enterNo')}
+                              InputLabelProps={{
+                                shrink: false
+                              }}
+                              InputProps={{
+                                ...params.InputProps,
+                                sx: styles.textField
+                              }}
+                              sx={styles.inputState}
+                              disabled={action === 'delete'}
+                              error={checkString(contractNum[index])}
+                            />
+                          )}
                         />
                       </FormControl>
                       {index === contractNum.length - 1 ? (
@@ -695,7 +748,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px' // Adjust the value as needed
                             }}
-                            error={checkString(item.recycTypeId) || !isRecycleTypeIdUnique}
+                            error={
+                              checkString(item.recycTypeId) ||
+                              !isRecycleTypeIdUnique
+                            }
                           >
                             <MenuItem value="">
                               <em>-</em>
