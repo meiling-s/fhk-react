@@ -281,11 +281,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         error: `${t(`add_warehouse_page.contractNum`)} is required`
       })
 
-    const isRecyleUnselected = recycleCategory.every((item) => {
+    const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
+        const seenRecycTypeIds: Record<string, boolean> = {};
+
       return (
         item.recycTypeId.trim() !== '' &&
         item.recycSubtypeId.trim() !== '' &&
-        item.recycSubtypeCapacity === 0
+        item.recycSubtypeCapacity === 0 &&
+        (!seenRecycTypeIds[item.recycTypeId] || index === arr.findIndex((i) => i.recycTypeId === item.recycTypeId))
       )
     })
 
