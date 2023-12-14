@@ -218,7 +218,7 @@ const TableBase: React.FC<TableProps> = ({
                           ? `${headerItem.width}px`
                           : 'max-content'
                       }}
-                      className="text-left text-smi max-w-[250px] whitespace-normal"
+                      className="text-left text-smi max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap"
                     >
                       {item[headerItem.field as string]}
                     </div>
