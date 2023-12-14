@@ -99,7 +99,7 @@
     "trad_name": "Traditional Name",
     "simp_name": "Simplified Name",
     "english_name": "English Name",
-    "location": "Physical location",
+    "location": "Location",
     "place": "Place",
     "status": "Status",
     "recyclable_subcategories": "Recyclable Subcategories"
@@ -147,8 +147,7 @@
     "confirm_reject": "Are you sure to request the check-in proceed?",
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
-    "cancel": "Cancel",
-    "search_input": "Enter the waybill number"
+    "cancel": "Cancel"
   },
   "check_out": {
     "request_check_out": "Checkout Request",
@@ -193,9 +192,5 @@
   },
   "login": {
     "wrongUsernameOrPassword": "Wrong username or password"
-  },
-  "mainMenu": {
-    "manage": "Manage",
-    "Overview": "Overview"
-  }  
+  }
 }

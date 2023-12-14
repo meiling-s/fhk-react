@@ -98,7 +98,6 @@ const Router = () => {
           <Route path="/warehouse/overview" element={<Overview />} />
           <Route path="/warehouse/process" element={<ProcessRecord />} />
           <Route path="/warehouse/staff" element={<Staff />} />
-          <Route path="/warehouse/settings" element={<Settings />} />
           <Route path="/warehouse/test" element={<Test />} />
         </Route>
       </Routes>

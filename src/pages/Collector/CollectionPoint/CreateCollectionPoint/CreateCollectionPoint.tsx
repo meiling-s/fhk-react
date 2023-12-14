@@ -117,7 +117,7 @@ function CreateCollectionPoint() {
             colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
             siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
             await address == "" ? tempV.push({ field: "col.address", problem: formErr.empty, type: "error" })
-                : await checkAddressUsed(address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
+                : await checkAddressUsed(contractNo, address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
             await colName == "" ? tempV.push({ field: "col.colName", problem: formErr.empty, type: "error" })
                 : await checkColPtExist(colName) && tempV.push({ field: "col.colName", problem: formErr.hasBeenUsed, type: "error" });
             (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
@@ -230,7 +230,7 @@ function CreateCollectionPoint() {
         return false;
     }
 
-    const checkAddressUsed = async (address: string) => {
+    const checkAddressUsed = async (contractNo: string, address: string) => {
         const result = await findCollectionPointExistByContractAndAddress(contractNo, address);
         if(result && result.data != undefined){
             console.log(result.data);

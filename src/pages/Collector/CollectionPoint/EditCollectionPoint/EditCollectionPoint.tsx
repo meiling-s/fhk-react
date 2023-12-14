@@ -110,7 +110,7 @@ function CreateCollectionPoint() {
             colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
             siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
             address == "" ? tempV.push({ field: "col.address", problem: formErr.empty, type: "error" })
-                : await checkAddressUsed(address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
+                : await checkAddressUsed(contractNo,address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
             (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
                 tempV.push({ field: "col.openingDate", problem: formErr.withInColPt_Period, type: "warning" });
             premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
@@ -179,6 +179,12 @@ function CreateCollectionPoint() {
             case formErr.notWithInContractEffDate:
                 msg = t("form.error.isNotWithInContractEffDate")
                 break;
+            case formErr.alreadyExist:
+                msg = t("form.error.alreadyExist")
+                break;
+            case formErr.hasBeenUsed:
+                msg = t("form.error.hasBeenUsed")
+                break;
         }
         return msg;
     }
@@ -204,21 +210,15 @@ function CreateCollectionPoint() {
         return isBetween;
     }
 
-    const checkColPtExist = async (colName: string) => {
-        const result = await findCollectionPointExistByName(colName);
-        if(result && result.data != undefined){
-            console.log(result.data);
-            return result.data;
+    const checkAddressUsed = async (contractNo: string, address: string) => {
+        if(contractNo != colInfo.contractNo || address != colInfo.address){
+            const result = await findCollectionPointExistByContractAndAddress(contractNo, address);
+            if(result && result.data != undefined){
+                console.log(result.data);
+                return result.data;
+            }
         }
-        return false;
-    }
-
-    const checkAddressUsed = async (address: string) => {
-        const result = await findCollectionPointExistByContractAndAddress(contractNo, address);
-        if(result && result.data != undefined){
-            console.log(result.data);
-            return result.data;
-        }
+        
         return false;
     }
 
