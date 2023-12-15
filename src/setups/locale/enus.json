@@ -186,5 +186,10 @@
   "mainMenu": {
     "manage": "Manage",
     "Overview": "Overview"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "In-Active",
+    "deleted": "Deleted"
   }
 }

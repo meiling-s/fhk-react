@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type TableColumnStatusProps = {
   width?: number
@@ -6,6 +6,7 @@ type TableColumnStatusProps = {
 }
 
 const StatusLabel: React.FC<TableColumnStatusProps> = ({ width, status }) => {
+  const { t } = useTranslation()
   const rowStatus = status?.toLocaleLowerCase()
   return (
     <div
@@ -25,10 +26,10 @@ const StatusLabel: React.FC<TableColumnStatusProps> = ({ width, status }) => {
       >
         <div className="relative tracking-[1px] leading-[20px] font-medium">
           {rowStatus === 'deleted'
-            ? '刪除'
+            ? t('status.deleted')
             : rowStatus === 'inactive'
-            ? '不活跃的'
-            : '已啓用'}
+            ? t('status.inactive')
+            : t('status.active')}
         </div>
       </div>
     </div>

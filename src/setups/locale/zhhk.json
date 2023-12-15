@@ -78,7 +78,7 @@
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
-    "workshop": "工場",
+    "workshop": "仓库",
     "company": "公司",
     "staff_positions": "員工職位",
     "denial_reason": "拒絕原因",
@@ -185,5 +185,10 @@
   "mainMenu": {
     "manage": "管理",
     "overview": "概覽"
+  },
+  "status": {
+    "active": "已啓用",
+    "inactive": "不活跃的",
+    "deleted": "刪除"
   }
 }

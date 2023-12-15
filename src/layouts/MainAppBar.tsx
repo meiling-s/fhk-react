@@ -7,28 +7,19 @@ import {
   Drawer,
   Fade,
   IconButton,
-  InputAdornment,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText,
   Menu,
   MenuItem,
   Modal,
   Stack,
-  TextField,
   Toolbar,
-  Typography,
-  styled
+  Typography
 } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
-import {
-  LANGUAGE_ICON,
-  NOTIFICATION_ICON,
-  RIGHT_ARROW_ICON,
-  SEARCH_ICON
-} from '../themes/icons'
+import { LANGUAGE_ICON, NOTIFICATION_ICON } from '../themes/icons'
 import BackgroundLetterAvatars from '../components/CustomAvatar'
 import { useNavigate } from 'react-router-dom'
 import { localStorgeKeyName } from '../constants/constant'
@@ -65,8 +56,6 @@ const MainAppBar = () => {
     i18n.changeLanguage(lng)
     setLanguage(lng)
   }
-
-  //console.log(recycType)
 
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
