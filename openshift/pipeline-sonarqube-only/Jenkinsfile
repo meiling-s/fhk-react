@@ -6,9 +6,8 @@ def config_Component = "react"
 
 pipeline {
   agent {
-    label 'nodejs-18'
+    label 'maven-java-17'
   }
-  tools {nodejs "NodeJs"}
   stages {
     stage('Manage Source Tag') {
       steps {
@@ -45,7 +44,7 @@ pipeline {
     }
     stage('Code Analysis') {
       steps {
-        container("nodejs-container") {
+        container("java-container") {
           script {
             openshift.withCluster() {
               withCredentials([usernamePassword(credentialsId: "cicd-opaque-sonarqube-auth-secret", usernameVariable: "SONARQUBE_USER", passwordVariable: "SONARQUBE_PWD")]) {
