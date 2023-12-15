@@ -8,6 +8,7 @@ pipeline {
   agent {
     label 'nodejs-18'
   }
+  tools {nodejs "NodeJs"}
   stages {
     stage('Manage Source Tag') {
       steps {
@@ -42,8 +43,6 @@ pipeline {
         }
       }
     }
-
-    tools {nodejs "NodeJs"}
     stage('Code Analysis') {
       steps {
         container("nodejs-container") {
