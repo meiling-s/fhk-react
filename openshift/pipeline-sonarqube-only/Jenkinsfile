@@ -49,10 +49,12 @@ pipeline {
           script {
             openshift.withCluster() {
               withCredentials([usernamePassword(credentialsId: "cicd-opaque-sonarqube-auth-secret", usernameVariable: "SONARQUBE_USER", passwordVariable: "SONARQUBE_PWD")]) {
-                sh "npm set registry http://nexus:8081/repository/npm-group/"
+                def var_ScannerHome = tool 'SonarQubeScanner'
                 def var_SonarProjectKey = "${inputDevProject}-${config_Component}" // e.g. astd-react
-                sh "mkdir /opt/app-root/src/.npm-global"
-                sh "npx sonarqube-scanner sonar:sonar -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=${SONARQUBE_PWD} -Dsonar.projectKey=${var_SonarProjectKey}"
+                sh "${var_ScannerHome}/bin/sonar-scanner \
+                -Dsonar.host.url=http://sonarqube:9000 \
+                -Dsonar.token=${SONARQUBE_PWD} \
+                -Dsonar.projectKey=${var_SonarProjectKey}"
               }
             }
           }
