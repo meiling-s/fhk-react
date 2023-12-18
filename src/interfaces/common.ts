@@ -106,3 +106,8 @@ export type colPtRoutine = {
     routineType: string,
     routineContent: routineContent[]
 }
+
+export type picoRoutine = {
+    routineType: string,
+    routineContent: string[]
+}
