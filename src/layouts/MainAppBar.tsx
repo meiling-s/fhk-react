@@ -124,7 +124,7 @@ const MainAppBar = () => {
               <NOTIFICATION_ICON />
 
               <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
-                <Box width="500px">
+                <Box className="md:w-[500px] w-[100vw]">
                   <Box display="flex" p={4} alignItems="center">
                     <Typography
                       fontSize={20}
