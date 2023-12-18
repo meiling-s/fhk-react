@@ -1,7 +1,7 @@
 import { Box, Button, IconButton } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
 import dayjs from "dayjs"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styles } from "../../constants/styles";
 import { format } from "../../constants/constant";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -15,7 +15,8 @@ type props = {
     setDate?: (date: dayjs.Dayjs) => void,
     setMultiDate?: (date: dayjs.Dayjs[]) => void,
     container_style?: object,
-    dp_style?: object
+    dp_style?: object,
+    allowDuplicateDate?: boolean
 }
 
 export default function CustomDatePicker({
@@ -25,18 +26,30 @@ export default function CustomDatePicker({
     setDate,
     setMultiDate,
     container_style,
-    dp_style
+    dp_style,
+    allowDuplicateDate
 }: props){
 
-    const [dates,setDates] = useState<Date[]>([]);
+    const [dates,setDates] = useState<dayjs.Dayjs[]>([]);
+    const [formattedDates,setFormattedDates] = useState<string[]>([]);
 
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if(setMultiDate != undefined){
+            setMultiDate(dates);
+        }
+        const formatted = dates.map((date) => {
+            return dayjs(date).format(format.dateFormat2)
+        })
+        setFormattedDates(formatted)
+    },[dates])
 
     if(setMultiDate != undefined){        //multi date select
 
         if(defaultDate != undefined && Array.isArray(defaultDate) && defaultDate.length > 0){
             const defDates = defaultDate.map((defDate) => {
-                return new Date(defDate)
+                return dayjs(defDate)
             });
             setDates(defDates)
         }
@@ -47,7 +60,7 @@ export default function CustomDatePicker({
 
                     const date_s = dates.map((d, curIndex) => {
                         if( index == curIndex ){      //if current index = index of modifying item
-                            return value.toDate()
+                            return value
                         }
                         return d
                     })
@@ -57,9 +70,14 @@ export default function CustomDatePicker({
             }
         }
 
+        const checkIfDuplicated = (date: dayjs.Dayjs) => {
+            const duplicate = formattedDates.filter((d) => d == date.format(format.dateFormat2)).length > 1
+            return allowDuplicateDate? false : duplicate
+        }
+
         const addDate = () => {
             const date_s = Object.assign([],dates);
-            date_s.push(new Date());
+            date_s.push(dayjs(new Date()));
             setDates(date_s);
         }
 
@@ -79,6 +97,7 @@ export default function CustomDatePicker({
                         onChange={(value) => handleDateChange(value, index)}
                         sx={{...localstyles.datePicker, ...dp_style}}
                         format={format.dateFormat2}
+                        shouldDisableDate={(date) => checkIfDuplicated(date)}
                     />
                     <IconButton aria-label="addSerivceHr" size="medium" onClick={()=>removeDate(index)}>
                         <RemoveCircleOutlineIcon

@@ -18,6 +18,11 @@ export type recyclable = {
 	recycSubtypeId: string[]
 }
 
+export type singleRecyclable = {
+	recycTypeId: string,
+	recycSubtypeId: string
+}
+
 export type roster = {
 	rosterId: string,
 	routineType: string,

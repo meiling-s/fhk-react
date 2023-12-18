@@ -27,7 +27,7 @@ function CustomItemList({
     multiSelect,
     defaultSelected,
     setLastSelect,
-    dbClickSelect,
+    dbClickSelect,      //double click
     error,
     editable,
     value
