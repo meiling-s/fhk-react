@@ -440,7 +440,7 @@ function CreateCollectionPoint() {
 
   return (
     <>
-      <Box sx={styles.innerScreen_container, {paddingLeft: {xs: 0}}}>
+      <Box sx={styles.innerScreen_container, {paddingLeft: {xs: 0}, width: '100%'}}>
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
           <Grid
             container
@@ -450,10 +450,11 @@ function CreateCollectionPoint() {
               ({ ...styles.gridForm },
               {
                 width: { xs: '100%' },
-                marginTop: { xs: 6 },
+                marginTop: {sm:2, xs: 6 },
                 marginLeft: {
                   xs: 0
-                }
+                },
+                
               })
             }
             className="sm:ml-0 mt-o w-full"
@@ -549,7 +550,7 @@ function CreateCollectionPoint() {
             <CustomField
               label={t('col.startTime')}
               mandatory={true}
-              style={{ width: '100%', widt: '220px' }}
+              style={{ maxWidth: '220px'}}
             >
               <RoutineSelect setRoutine={setColPtRoutine} />
             </CustomField>
