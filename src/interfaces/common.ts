@@ -106,3 +106,18 @@ export type colPtRoutine = {
     routineType: string,
     routineContent: routineContent[]
 }
+
+export type logisticList = {
+    logisticId:       string;
+    logisticNameTchi: string;
+    logisticNameSchi: string;
+    logisticNameEng:  string;
+    brNo:             string;
+    description:      string;
+    remark:           string;
+    status:           string;
+    createdBy:        string;
+    updatedBy:        string;
+    createdAt:        string;
+    updatedAt:        string;
+}

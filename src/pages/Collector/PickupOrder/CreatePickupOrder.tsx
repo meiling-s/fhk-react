@@ -1,190 +1,55 @@
-import {
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  Modal,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import React, { useState } from "react";
-import { styles } from "../../../constants/styles";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { t } from "i18next";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useNavigate } from "react-router-dom";
-import { TYPE } from "react-toastify/dist/utils";
-import CustomField from "../../../components/FormComponents/CustomField";
-import CustomSwitch from "../../../components/FormComponents/CustomSwitch";
-import CustomPeriodSelect from "../../../components/FormComponents/CustomPeriodSelect";
-import { createCP, openingPeriod } from "../../../interfaces/collectionPoint";
-import dayjs from "dayjs";
-import CustomTextField from "../../../components/FormComponents/CustomTextField";
 import { useFormik } from "formik";
-import CustomItemList, {
-  il_item,
-} from "../../../components/FormComponents/CustomItemList";
-import CustomDatePicker2 from "../../../components/FormComponents/CustomDatePicker2";
-
-import {
-  DataGrid,
-  GridColDef,
-  GridRowParams,
-  GridRowSpacingParams,
-} from "@mui/x-data-grid";
-import { CreatePO, CreatePicoDetail, PickupOrder} from "../../../interfaces/pickupOrder";
-import {
-  ADD_CIRCLE_ICON,
-  ADD_ICON,
-  DELETE_OUTLINED_ICON,
-  EDIT_OUTLINED_ICON,
-} from "../../../themes/icons";
-import theme from "../../../themes/palette";
-import CreateRecycleForm from "../../../components/FormComponents/CreateRecycleForm";
-import { colPtRoutine,} from "../../../interfaces/common";
-import RoutineSelect from "../../../components/SpecializeComponents/RoutineSelect";
-import { TrendingUpRounded } from "@mui/icons-material";
-import { createPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+import PickupOrderCreateForm from "../../../components/FormComponents/PickupOrderCreateForm";
+import { createPickUpOrder, getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+import { CreatePO, CreatePicoDetail } from "../../../interfaces/pickupOrder";
+import { useNavigate } from "react-router";
+import { useState } from "react";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
+import * as Yup from 'yup';
+
 
 const CreatePickupOrder = () => {
-  const [openModal,setOpenModal] =useState<boolean>(false)
-  const [addRow,setAddRow] = useState<CreatePicoDetail[]>([])
-  const [editRowId, setEditRowId] = useState<number | null>(null);
-  const [colPtRoutine, setColPtRoutine] = useState<colPtRoutine>();
-  const [id, setId] = useState<number>(0);
-  const {initPickupOrderRequest} = useContainer(CheckInRequestContainer)
-  const handleCloses = () =>{
-    setOpenModal(false)
-  }
+  const navigate = useNavigate();
+  const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
+  const { initPickupOrderRequest } = useContainer(CheckInRequestContainer);
 
   
-  console.log('yo'+ JSON.stringify(addRow))
-  const handleEditRow = (id: number) => {
-    setEditRowId(id);
-    setOpenModal(true);
-  };
-  const handleDeleteRow = (id: any) => {
-    const updatedRows = addRow.filter((row) => row.id !== id);
-     setAddRow(updatedRows);
-  }
+  const validateSchema = Yup.object().shape({
+    picoType: Yup.boolean().required("This field is required"),
+    // effFrmDate:"",
+    // effToDate: "",
+    // routineType:'',       
+    // routine:[],           
+    // logisticId: '',       
+    logisticName:Yup.string().required("This field is required"), 
+    vehicleTypeId:Yup.string().required("This field is required"), 
+    platNo:Yup.string().required("This field is required"),       
+    contactNo:Yup.number().required("This field is required"),
+    // status:'CREATED',            
+    // reason:'',            
+    // normalFlg: true,       
+    contractNo: Yup.string().required("This field is required"),
+    // createdBy:'Admin', 
+    // updatedBy:'Admin',
+    
+    createPicoDetail: Yup.array()
+    .required("This field is required")
+    .test(
+      "has-rows",
+      "At least one Pico Detail is required",
+       (value) => {
+      return value.length > 0 || addRow.length > 0;
+    }
+    ),
 
-  const columns: GridColDef[] = [
-    { field: "time", headerName: "运送时间", width: 150 },
-    {
-      field: 'items',
-      headerName: "主类别",
-      width: 150, 
-      editable: true,
-      valueFormatter: (params) => params.value?.[0].recycTypeId,
-    },
-    {
-      field: "items.recycSubType",
-      headerName: "次类别",
-      type: "string",
-      width: 150,
-      editable: true,
-      valueFormatter: (params) => params.value?.[0].recycSubtypeId?.[0],
-    },
-    {
-      field: "weight",
-      headerName: "重量",
-      type: "string",
-      width: 150,
-      editable: true,
-     
-    },
-    {
-      field: "senderName",
-      headerName: "寄件公司",
-      type: "string",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "receiverName",
-      headerName: "收件公司",
-      type: "string",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "senderAddr",
-      headerName: "回收地点",
-      type: "string",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "receiverAddr",
-      headerName: "到达地点",
-      type: "string",
-      width: 200,
-      editable: true,
-    },
-    {
-      field: "edit",
-      headerName: "",
-      width: 100,
-      renderCell: (params) => (
-        <IconButton>
-          <EDIT_OUTLINED_ICON onClick={() => handleEditRow(params.row.id)} />
-        </IconButton>
-      ),
-    },
-    {
-      field: "delete",
-      headerName: "",
-      width: 100,
-      renderCell: (params) => (
-        <IconButton onClick={() => handleDeleteRow(params.row.id)}>
-          <DELETE_OUTLINED_ICON />
-        </IconButton>
-      ),
-    },
-  ];
+  });
  
-// type Row = {
-//   id:number,
-//   time:string,
-//   recycType:string,
-//   weight:string,
-//   senderCompany:string,
-//   receiverCompany:string,
-//   recycleAddress:string,
-//   receiverAddress:string,
-// };
-  const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
-    return {
-      top: params.isFirstVisible ? 0 : 10,
-    };
-  }, []);
-
-  const navigate = useNavigate();
-
-  const handleHeaderOnClick = () => {
-    console.log("Header click");
-    navigate(-1); //goback to last page
-  };
-  const carType: il_item[] = [
-    {
-      id: "1",
-      name: "小型货车",
-    },
-    {
-      id: "2",
-      name: "大型货车",
-    },
-  ];
-   
-  const formik = useFormik({
+  const createPickupOrder = useFormik({
     initialValues: {
       picoType: '',
-      effFrmDate:"2023-12-08",
-      effToDate: "2023-12-08",
+      effFrmDate:"",
+      effToDate: "",
       routineType:'',       
       routine:[],           
       logisticId: '',       
@@ -198,199 +63,32 @@ const CreatePickupOrder = () => {
       contractNo: '',       
       createdBy:'Admin', 
       updatedBy:'Admin',
-      createPicoDetail: addRow
+      createPicoDetail:[],
     },
-   
+    validationSchema: validateSchema,
     onSubmit: async (values:CreatePO) => {
-      // alert(JSON.stringify(values, null, 2));
-      const result = await createPickUpOrder(values);
-      alert(result);
       
-      const data = result?.data;
-      if (data) {
-        console.log("all collection point: ", data);
-        await initPickupOrderRequest();
-        navigate("/collector/PickupOrder",{ state: "created" });    
+      values.createPicoDetail = addRow
+      console.log(JSON.stringify(values, null, 2))
+      // const result = await createPickUpOrder(values);
+    //   alert(result);
       
-    }else{
-      alert('fail to create pickup order')
-    }
+    //   const data = result?.data;
+    //   if (data) {
+    //     console.log("all collection point: ", data);
+    //     await initPickupOrderRequest();
+    //     navigate("/collector/PickupOrder",{ state: "created" });    
+      
+    // }else{
+    //   alert('fail to create pickup order')
+    // }
     },
   });
-  return (
-    <>
-      <form onSubmit={formik.handleSubmit}>
-        <Box sx={styles.innerScreen_container}>
-          <LocalizationProvider
-            dateAdapter={AdapterDayjs}
-            adapterLocale="zh-cn"
-          >
-            <Grid
-              container
-              direction={"column"}
-              spacing={2.5}
-              sx={{ ...styles.gridForm }}
-            >
-              <Grid item>
-                <Button
-                  sx={[styles.headerSection]}
-                  onClick={handleHeaderOnClick}
-                >
-                  <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
-                  <Typography sx={styles.header1}>建立运单</Typography>
-                </Button>
-              </Grid>
-              <Grid item>
-                <CustomField label={"请选择运输类别"}>
-                  <CustomSwitch
-                    onText="常规运输"
-                    offText="一次性运输"
-                    defaultValue={true}
-                    setState={(value) => formik.setFieldValue("picoType", value)}
-                    value={formik.values.picoType}
-                  />
-                </CustomField>
-              </Grid>
-              <Grid item display="flex">
-                <CustomDatePicker2
-                  pickupOrderForm={true}
-                  setDate={(values) => formik.setFieldValue("Date", values)}
-                />
-              </Grid>
-                        <CustomField label="回收周次" style={{width:"100%"}}>
-                            <RoutineSelect
-                                setRoutine={setColPtRoutine}
-                            />
-                        </CustomField>
-              <Grid item>
-                <CustomField label={"选择物流公司"}>
-                  <CustomTextField
-                    id="logisticName"
-                    placeholder="请输入公司名称"
-                    onChange={formik.handleChange}
-                    value={formik.values.logisticName}
-                    sx={{width:'400px'}}
-                    
-                  ></CustomTextField>
-                </CustomField>
-              </Grid>
-              <Grid item>
-                <CustomField label={"车辆类别"}>
-                  <CustomItemList
-                    
-                    items={carType}
-                    multiSelect={(values) =>
-                      formik.setFieldValue("vehicleTypeId", values)
-                    }
-                    value={formik.values.vehicleTypeId}
-                  />
-                </CustomField>
-              </Grid>
-              <Grid item>
-                <CustomField label={"车牌号码"}>
-                  <CustomTextField
-                    id="platNo"
-                    placeholder="请填写车牌号码"
-                    onChange={formik.handleChange}
-                    value={formik.values.platNo}
-                    sx={{width:'400px'}}
-                  />
-                </CustomField>
-              </Grid>
-              <Grid item>
-                <CustomField label={"联络人号码"}>
-                  <CustomTextField
-                    id="contactNo"
-                    placeholder="请填写手机号码"
-                    onChange={formik.handleChange}
-                    value={formik.values.contactNo}
-                    sx={{width:'400px'}}
-                  />
-                </CustomField>
-              </Grid>
-              <Grid item>
-                <Box>
-                <CustomField label={"預計回收地點資料"}>
-                  <CustomTextField
-                    id="contractNo"
-                    placeholder="请輸入編號"
-                    onChange={formik.handleChange}
-                    value={formik.values.contractNo}
-                    sx={{width:'400px'}}
-                  />
-                </CustomField>
-                </Box>
-              </Grid>
-            
-          
-              <Grid item >
-              <CustomField label={"預計回收地點資料"} >
-            
-                <DataGrid
-                  rows={addRow}
-                  hideFooter
-                  columns={columns}
-                  disableRowSelectionOnClick
-                  getRowSpacing={getRowSpacing}
-                  
-                  sx={{
-                    border: "none",
-                    "& .MuiDataGrid-cell": {
-                      border: "none", // Remove the borders from the cells
-                    },
-                    "& .MuiDataGrid-row": {
-                      bgcolor: "white",
-                      borderRadius: "10px",
-                    },
-                    "&>.MuiDataGrid-main": {
-                      "&>.MuiDataGrid-columnHeaders": {
-                        borderBottom: "none",
-                      },
-                    },
-                    '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': {display: 'none' },
-                    '& .MuiDataGrid-overlay':{
-                       display:'none'
-                    }
-                  }}
-                />
-                <Modal  open={openModal} onClose={handleCloses} >
-                  <CreateRecycleForm data={addRow} id={id} setId={setId}setState={setAddRow} onClose={handleCloses} editRowId={editRowId}/>
-                </Modal>
-                
-                 <Button variant="outlined" startIcon={<ADD_CIRCLE_ICON />} onClick={()=>setOpenModal(true)} sx={{height:'40px',width:'100%',mt:'20px',borderColor:theme.palette.primary.main,color:'black',borderRadius:'10px'}}>新增</Button>
-              
-              </CustomField>
-             </Grid>
-             
 
-              <Grid item>
-                <Button
-                  type="submit"
-                  sx={[styles.buttonFilledGreen, localstyles.localButton]}
-                >
-                  完成
-                </Button>
-                <Button
-                  sx={[styles.buttonOutlinedGreen, localstyles.localButton]}
-                  onClick={handleHeaderOnClick}
-                >
-                  {t("col.cancel")}
-                </Button>
-              </Grid>
-            </Grid>
-          </LocalizationProvider>
-        </Box>
-      </form>
-    </>
+  return (
+     <PickupOrderCreateForm formik={createPickupOrder} title={'建立運單'}  setState={setAddRow} state={addRow} />
   );
 };
-let localstyles = {
-  localButton: {
-    width: "200px",
-    fontSize: 18,
-    mr: 3,
-  },
 
-};
 
 export default CreatePickupOrder;

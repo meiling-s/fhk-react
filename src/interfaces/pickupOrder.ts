@@ -87,6 +87,13 @@ export interface Item {
     picoHisId:    number;
 }
 
+export interface PicoDetail {
+    recycType:    string;
+    recycSubType: string;
+    weight:       number;
+    picoHistory:  null;
+}
+
 export interface Row {
     id: number;
     建立日期: string;
@@ -118,5 +125,5 @@ export interface Row {
     rejectedBy:    string;
     contractNo:    string;
     updatedBy:     string;
-    pickupOrderDetail: string[]
+    
 }

@@ -18,11 +18,13 @@ import PickupOrderCard from "../PickupOrderCard";
 import {
   PickupOrder,
   PickupOrderDetail,
+  PicoDetail,
   Row,
 } from "../../interfaces/pickupOrder";
 import CheckInRequestContainer from "../../contexts/CheckInRequestContainer";
 import { useContainer } from "unstated-next";
 import { useNavigate } from "react-router-dom";
+import { getDtlById } from "../../APICalls/Collector/pickupOrder/pickupOrder";
 
 const PickupOrderForm = ({
   onClose,
@@ -49,8 +51,6 @@ const PickupOrderForm = ({
   const [selectedPickupOrder, setSelectedPickupOrder] = useState<PickupOrder>();
   const [pickupOrderDetail, setPickUpOrderDetail] = useState<PickupOrderDetail[]>();
 
-  console.log(selectedPickupOrder);
-
   useEffect(() => {
     if (selectedRow) {
       const poDetail = pickupOrder?.find((po) => po.picoId === selectedRow.id);
@@ -61,6 +61,8 @@ const PickupOrderForm = ({
       }
     }
   }, [selectedRow]);
+
+ 
 
   
 

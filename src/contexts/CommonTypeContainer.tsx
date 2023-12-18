@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { createContainer } from 'unstated-next';
-import { colPointType, contract, premiseType, recycType, siteType } from '../interfaces/common';
+import { colPointType, contract, logisticList, premiseType, recycType, siteType } from '../interfaces/common';
 import axios from 'axios';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
-import { GET_COLLECTIONPOINT_TYPE, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE } from '../constants/requests';
+import { GET_COLLECTIONPOINT_TYPE, GET_CONTRACT, GET_LOGISTICLIST, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE } from '../constants/requests';
+import { getLogisticlist } from '../APICalls/Collector/pickupOrder/pickupOrder';
 
 const CommonType = () => { 
     const [colPointType,setColPointType] =useState<colPointType[]>()
@@ -11,10 +12,14 @@ const CommonType = () => {
     const [siteType,setSiteType] =useState<siteType[]>()
     const [recycType,setRecycType] =useState<recycType[]>()
     const [contractType,setContractType] =useState<contract[]>()
+    const [logisticList,setLogisticList] = useState<logisticList[]>()
 
     const request = axios.create({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
     })
+
+ 
+
     
 const getColPointType = async () => {
     
@@ -91,11 +96,53 @@ const getSiteType = async () => {
             return null;
         }
     }
+    
+    const getLogisticlist = async () => {
+
+    
+        try {
+      
+            var response = await request({
+                ...GET_LOGISTICLIST,
+                baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
+                // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+            });
+            console.log('Get logistic list success:', JSON.stringify(response.data));
+            
+            const logistic= response.data
+            setLogisticList(logistic)
+        }catch (e) {
+            console.error('Get logistic list failed:', e);
+            return null;
+        }
+      }
+      const getContractList = async () => {
+
+    
+        try {
+      
+            var response = await request({
+                ...GET_CONTRACT,
+                baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
+                // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+            });
+            console.log('Get contract list success:', JSON.stringify(response.data));
+            
+            const contract= response.data
+            setContractType(contract)
+        }catch (e) {
+            console.error('Get contract list failed:', e);
+            return null;
+        }
+      }
+
     useEffect(()=>{
         getColPointType();
         getPremiseType();
         getSiteType();
         getRecycType();
+        getLogisticlist();
+        getContractList();
 },[])
  
 
@@ -103,7 +150,9 @@ const getSiteType = async () => {
     colPointType,
     premiseType,
     siteType,
-    recycType
+    recycType,
+    logisticList,
+    contractType
 
 }
 

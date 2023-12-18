@@ -14,16 +14,10 @@ import React, { useEffect, useState } from "react";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 import PickupOrderForm from "../../../components/FormComponents/PickupOrderForm";
 import StatusCard from "../../../components/StatusCard";
-import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+import { getAllPickUpOrder, getDtlById, getLogisticlist } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
 import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
-
-
-
-
-
-
 
 
 
@@ -31,7 +25,6 @@ interface Option {
   value: string;
   label: string;
 }
-
 
 const PickupOrders = () => {
   const columns: GridColDef[] = [
@@ -125,6 +118,7 @@ const PickupOrders = () => {
     
   ]
   
+ 
   const navigate = useNavigate()
   const [openModal,setOpenModal] =useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
@@ -161,7 +155,8 @@ const PickupOrders = () => {
   };
    
   useEffect(()=>{
-    getAllPickUpOrder()
+    getLogisticlist()
+    
   },[])
   return (
     <Box sx={{ display: "flex", width: "100%", flexDirection: "column" }}>

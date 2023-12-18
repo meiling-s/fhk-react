@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import axios from 'axios'
-import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
+import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
 import { CreatePO, EditPo, PickupOrder } from '../../../interfaces/pickupOrder'
 import { createCP } from '../../../interfaces/collectionPoint'
 
@@ -26,6 +26,27 @@ import { createCP } from '../../../interfaces/collectionPoint'
       }
     
   }
+
+  
+  
+
+  export const getDtlById = async (picoDtlId:number) => {
+    
+      const axiosConfig = Object.assign({},GET_PICK_UP_ORDER_DETAIL);
+      axiosConfig.url = GET_PICK_UP_ORDER_DETAIL.url+`/${picoDtlId}`;
+
+    try {
+      const response = await request({
+        ...axiosConfig,
+      });
+      console.log('Get pick up order detail:', JSON.stringify(response.data));
+      return response.data
+    } catch (e) {
+      console.error('Get pick up order detail::', e);
+      return null;
+    }
+  
+}
 
   export const createPickUpOrder = async (data:CreatePO) => {
 
@@ -68,6 +89,25 @@ export const editPickupOrder = async (pickupOrderId: number, data:EditPo) => {
   }
 
 }
+
+
+export const getLogisticlist = async () => {
+    
+  try {
+
+      var response = await request({
+          ...GET_LOGISTICLIST,
+          // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+      });
+      console.log('Get logistic list success:', JSON.stringify(response.data));
+      
+      return response.data
+  }catch (e) {
+      console.error('Get logistic list failed:', e);
+      return null;
+  }
+}
+
 
 
   
