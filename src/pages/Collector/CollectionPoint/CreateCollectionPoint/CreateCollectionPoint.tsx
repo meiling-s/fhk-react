@@ -676,7 +676,7 @@ function CreateCollectionPoint() {
             <Grid item className="lg:flex sm:block text-center">
               <Button
                 sx={[styles.buttonFilledGreen, localstyles.localButton, 
-                {marginBottom: {xs:2}}]}
+                {marginBottom: {md: 0, xs:2}}]}
                 onClick={() => handleCreateOnClick()}
               >
                 {t('col.create')}
