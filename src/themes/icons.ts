@@ -13,6 +13,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutline'
 import AddIcon from '@mui/icons-material/Add'
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
@@ -38,6 +39,7 @@ export const SETTINGS_ICON = SettingsIcon
 export const EDIT_OUTLINED_ICON = EditOutlinedIcon
 export const DELETE_OUTLINED_ICON = DeleteOutlinedIcon
 export const ADD_ICON = AddIcon
+export const ADD_CIRCLE_FILL_ICON_ = AddCircleIcon
 export const ARROWDOWN_ICON = KeyboardArrowDownIcon
 export const ADD_CIRCLE_ICON = AddCircleOutlineIcon
 export const REMOVE_CIRCLE_ICON = RemoveCircleOutlineIcon

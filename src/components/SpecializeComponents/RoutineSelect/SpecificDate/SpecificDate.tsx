@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import CustomTimePicker from "../../../FormComponents/CustomTimePicker";
 import CustomDatePicker from "../../../FormComponents/CustomDatePicker";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { routineContent } from "../../../../interfaces/common";
 import { format } from "../../../../constants/constant";
@@ -156,17 +157,21 @@ export default function SpecificDate({
                         </Grid>
                         <Grid xs={0.5} sx={localstyles.tableCell} key={date.id+"delete"}>
                             <IconButton onClick={() => handleRemoveDate(date.id)}>
-                                <DeleteOutlineIcon />
+                                <DeleteOutlineIcon className="text-[#ACACAC]" />
                             </IconButton>
                         </Grid>
                     </Grid>
                 )
             }
             <Grid item key={"addDateBtn"} sx={localstyles.gridRow}>
+               
                 <Button
                     sx={{...styles.buttonOutlinedGreen, width: "100%", paddingY: 2, borderRadius: 5}}
                     onClick={() => handleAddDate()}
                     >
+                         <AddCircleIcon
+                    sx={{...styles.endAdornmentIcon, pr: 1}}
+                />
                     {t("component.routine.addDate")}
                 </Button>
             </Grid>
