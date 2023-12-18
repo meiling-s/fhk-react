@@ -1,3 +1,12 @@
+/* 
+Note 1: Pre-installation/Setup done in Jenkins (by Jenkins system admin) in order to have the tool 'SonarQubeScanner' available in stage 'Code Analysis':
+Ref: https://github.com/MatheusIshiyama/jenkins-sonarqube-nodejs
+- (1). Install Plugin 'Sonarqube Scanner' (Manage Jenkins -> System Configuration -> Manage Plugins)
+- (2). Add tool 'Sonarqube Scanner' and name it 'SonarQubeScannerSonarQubeScanner' (Manage Jenkins -> System Configuration -> Tools)
+
+Note 2: The tool command ${var_ScannerHome}/bin/sonar-scanner requires both java (to run such tool) and nodejs (to run the triggered nodejs code analysis process). OKD system admin prepared such a Jenkins agent of node label 'nodejs18-java17', that have a container named 'nodejs-container', in which the command 'sonar-scanner' can be run.
+*/
+
 def inputTagVersion = env.TAG_VERSION.trim()
 def inputTagComment = env.TAG_COMMENT.trim()
 def inputDevProject = env.DEV_PROJECT.trim()
@@ -44,7 +53,7 @@ pipeline {
     }
     stage('Code Analysis') {
       steps {
-        container("nodejs-container") {
+        container("nodejs-java-container") {
           script {
             openshift.withCluster() {
               withCredentials([usernamePassword(credentialsId: "cicd-opaque-sonarqube-auth-secret", usernameVariable: "SONARQUBE_USER", passwordVariable: "SONARQUBE_PWD")]) {
