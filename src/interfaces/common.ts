@@ -121,3 +121,7 @@ export type logisticList = {
     createdAt:        string;
     updatedAt:        string;
 }
+export type picoRoutine = {
+    routineType: string,
+    routineContent: string[]
+}

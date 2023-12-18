@@ -111,6 +111,7 @@ export const findCollectionPointExistByName = async (colName: string) => {
 
 export const findCollectionPointExistByContractAndAddress = async (contract: string, address: string) => {
 
+  console.log("test: ",contract,address)
   const axiosConfig = Object.assign({},FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS);
   axiosConfig.url = FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS.url+`/${contract}`+`/${address}`;
 

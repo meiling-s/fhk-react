@@ -1,0 +1,44 @@
+# Require following resources already setup in project before:
+# secret/basic-auth-code-repo-read-write-secret-react
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: react-sonarqube-only-pipeline 
+    name: react-sonarqube-only-pipeline
+  name: react-sonarqube-only-pipeline 
+  namespace: astd 
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: {}
+  output: {}
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    contextDir: openshift/pipeline-sonarqube-only
+    git:
+      ref: master
+      uri: https://fhkgitlab.fhk.app/bas/as/astd/react.git
+    sourceSecret:
+      name: basic-auth-code-repo-read-write-secret-react
+    type: Git
+  strategy:
+    jenkinsPipelineStrategy:
+      env:
+      - name: DEV_PROJECT
+        value: astd
+      - name: TAG_VERSION
+        value: 1-0-0a
+      - name: TAG_COMMENT
+        value: "(Only use for creating new tag)"
+      jenkinsfilePath: Jenkinsfile
+    type: JenkinsPipeline
+  successfulBuildsHistoryLimit: 5
+  triggers:
+  - github:
+      secret: K7K6mBsi
+    type: GitHub
+  - generic:
+      secret: K7K6mBsi
+    type: Generic

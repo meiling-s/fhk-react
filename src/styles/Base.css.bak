@@ -5,15 +5,13 @@
   color: white;
   background: #79ca25;
   border-radius: 20px;
-  border: 1px solid var(--green-pale, #79ca25);
-  font-weight: bold;
+  border: 1px solid var(--green-pale, #afe397);
 }
 
 .secondary-btn {
   padding: 8px 30px;
-  color: #79ca25;
-  font-weight: bold;
+  color: #afe397;
   background: white;
   border-radius: 20px;
-  border: 1px solid var(--green-pale, #79ca25);
+  border: 1px solid var(--green-pale, #afe397);
 }
