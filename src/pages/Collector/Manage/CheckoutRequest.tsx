@@ -14,11 +14,11 @@ import {
   InputLabel,
   FormControl,
   MenuItem,
-  Select,
   Modal,
   Typography,
   Divider
 } from '@mui/material'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import '../../../styles/Base.css'
 
 import CheckIcon from '@mui/icons-material/Check'
@@ -128,7 +128,7 @@ type TableRow = {
   [key: string]: any
 }
 
-interface CheckoutRequest {
+interface CheckOut {
   id: number
   chkOutId: number
   createdAt: string
@@ -153,9 +153,8 @@ const CheckoutRequest: FunctionComponent = () => {
   const [selectedRow, setSelectedRow] = useState<number>(0)
   const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
   const [company, setCompany] = useState('')
-  const [checkoutRequestItem, setCheckoutRequestItem] = useState<
-    CheckoutRequest[]
-  >([])
+  const [filterCheckOut, setFilterCheckOut] = useState<CheckOut[]>([])
+  const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
   const checkoutHeader: GridColDef[] = [
     {
       field: 'createdAt',
@@ -218,7 +217,7 @@ const CheckoutRequest: FunctionComponent = () => {
     }
   ]
 
-  const transformToTableRow = (item: CheckoutRequest): TableRow => {
+  const transformToTableRow = (item: CheckOut): TableRow => {
     const createdDate = item.createdAt
       ? dayjs(new Date(item.createdAt)).format(format.dateFormat1)
       : '-'
@@ -240,8 +239,8 @@ const CheckoutRequest: FunctionComponent = () => {
     const data = result?.data.content
     if (data && data.length > 0) {
       const checkoutData = data.map(transformToTableRow)
-      setCheckoutRequestItem(checkoutData)
-      console.log(checkoutData)
+      setCheckoutRequest(checkoutData)
+      setFilterCheckOut(checkoutData)
     }
   }
 
@@ -249,14 +248,60 @@ const CheckoutRequest: FunctionComponent = () => {
     getCheckoutRequest()
   }, [])
 
-  const handleSearch = (s: string) => {}
-
-  const handleCompanyChange = (event: any) => {
-    setCompany(event.target.value)
+  const handleSearchByPoNumb = (searchWord: string) => {
+    if (searchWord != '') {
+      const filteredCheckOut: CheckOut[] = []
+      checkOutRequest.map((item) => {
+        //console.log("piconDtlId: ",searchWord, shipment.picoDtlId)
+        if (item.picoId.includes(searchWord)) {
+          filteredCheckOut.push(item)
+        }
+      })
+      if (filteredCheckOut) {
+        setFilterCheckOut(filteredCheckOut)
+      }
+    } else {
+      setFilterCheckOut(checkOutRequest)
+    }
   }
 
-  const handleLocChange = (event: any) => {
+  const handleCompanyChange = (event: SelectChangeEvent) => {
+    setCompany(event.target.value)
+    var searchWord = event.target.value
+    if (searchWord != '') {
+      const filteredCheckOut: CheckOut[] = []
+      checkOutRequest.map((item) => {
+        if (item.logisticName.includes(searchWord)) {
+          filteredCheckOut.push(item)
+        }
+      })
+
+      if (filteredCheckOut) {
+        setFilterCheckOut(filteredCheckOut)
+      }
+    } else {
+      setFilterCheckOut(checkOutRequest)
+    }
+  }
+
+  const handleLocChange = (event: SelectChangeEvent) => {
     setLocation(event.target.value)
+    var searchWord = event.target.value
+    //console.log(searchWord);
+    if (searchWord != '') {
+      const filteredShipments: CheckOut[] = []
+      checkOutRequest.map((item) => {
+        if (item.receiverAddr.includes(searchWord)) {
+          filteredShipments.push(item)
+        }
+      })
+
+      if (filteredShipments) {
+        setFilterCheckOut(filteredShipments)
+      }
+    } else {
+      setFilterCheckOut(checkOutRequest)
+    }
   }
 
   const handleDrawerClose = () => {
@@ -296,7 +341,7 @@ const CheckoutRequest: FunctionComponent = () => {
         <div className="filter-section flex justify-between items-center w-full">
           <TextField
             id="searchShipment"
-            onChange={(event) => handleSearch(event.target.value)}
+            onChange={(event) => handleSearchByPoNumb(event.target.value)}
             sx={styles.inputState}
             label={t('check_in.search')}
             placeholder={t('check_in.search_input')}
@@ -311,9 +356,7 @@ const CheckoutRequest: FunctionComponent = () => {
             }}
           />
           <FormControl sx={styles.dropDown}>
-            <InputLabel id="company-label">
-              {t('check_out.company')}
-            </InputLabel>
+            <InputLabel id="company-label">{t('check_out.company')}</InputLabel>
             <Select
               labelId="company-label"
               id="company"
@@ -324,7 +367,7 @@ const CheckoutRequest: FunctionComponent = () => {
               <MenuItem value="">
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {checkoutRequestItem.map((item) => (
+              {checkOutRequest.map((item) => (
                 <MenuItem value={item.logisticName}>
                   {item.logisticName}
                 </MenuItem>
@@ -345,7 +388,7 @@ const CheckoutRequest: FunctionComponent = () => {
               <MenuItem value="">
                 <em>{t('check_out.any')}</em>
               </MenuItem>
-              {checkoutRequestItem.map((item) => (
+              {checkOutRequest.map((item) => (
                 <MenuItem value={item.receiverAddr}>
                   {item.receiverAddr}
                 </MenuItem>
@@ -356,7 +399,7 @@ const CheckoutRequest: FunctionComponent = () => {
         <div className="table-overview">
           <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
-              rows={checkoutRequestItem}
+              rows={filterCheckOut}
               hideFooter
               columns={checkoutHeader}
               checkboxSelection
