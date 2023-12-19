@@ -190,9 +190,9 @@ const CheckoutRequest: FunctionComponent = () => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
             {params.row.adjustmentFlg ? (
-              <CheckIcon className="color-green" />
+              <CheckIcon className="text-green-primary" />
             ) : (
-              <CloseIcon className="color-red" />
+              <CloseIcon className="text-red" />
             )}
           </div>
         )
@@ -220,7 +220,7 @@ const CheckoutRequest: FunctionComponent = () => {
 
   const transformToTableRow = (item: CheckoutRequest): TableRow => {
     const createdDate = item.createdAt
-      ? dayjs(new Date(item.createdAt)).format(format.dateFormat2)
+      ? dayjs(new Date(item.createdAt)).format(format.dateFormat1)
       : '-'
     return {
       id: item.chkOutId,
@@ -312,7 +312,7 @@ const CheckoutRequest: FunctionComponent = () => {
           />
           <FormControl sx={styles.dropDown}>
             <InputLabel id="company-label">
-              {t('check_in.sender_company')}
+              {t('check_out.company')}
             </InputLabel>
             <Select
               labelId="company-label"
@@ -333,7 +333,7 @@ const CheckoutRequest: FunctionComponent = () => {
           </FormControl>
           <FormControl sx={styles.dropDown}>
             <InputLabel id="location-label">
-              {t('check_in.sender_addr')}
+              {t('check_out.receiver_addr')}
             </InputLabel>
             <Select
               labelId="location-label"
