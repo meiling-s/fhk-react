@@ -40,6 +40,7 @@ import { editPickupOrder } from "../../APICalls/Collector/pickupOrder/pickupOrde
 import { validate } from "uuid";
 import CustomAutoComplete from "./CustomAutoComplete";
 import CommonTypeContainer from "../../contexts/CommonTypeContainer";
+import PicoRoutineSelect from "../SpecializeComponents/PicoRoutineSelect";
 
 const carType: il_item[] = [
   {
@@ -59,12 +60,15 @@ const PickupOrderCreateForm = ({
   setState,
   state,
 
+  
+
 }: {
   selectedPo?: PickupOrder;
   title: string;
   formik: any;
   setState: (val: CreatePicoDetail[]) => void;
   state: CreatePicoDetail[];
+ 
 
 }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -223,8 +227,9 @@ const PickupOrderCreateForm = ({
                 />
               </Grid>
               <CustomField label="回收周次" style={{ width: "100%" }}>
-                <RoutineSelect
+                <PicoRoutineSelect
                   setRoutine={(values) => {
+                    console.log('routine'+JSON.stringify(values))
                     formik.setFieldValue("routineType", values.routineType);
                     formik.setFieldValue("routine", values.routineContent);
                   }}
@@ -267,6 +272,7 @@ const PickupOrderCreateForm = ({
                       formik.setFieldValue("vehicleTypeId", values)
                     }
                     value={formik.values.vehicleTypeId}
+                    defaultSelected={selectedPo?.vehicleTypeId}
                   />
                   <Typography>
                    {

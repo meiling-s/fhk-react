@@ -8,6 +8,7 @@ import { editPickupOrder, getAllPickUpOrder } from '../../../APICalls/Collector/
 import CheckInRequestContainer from '../../../contexts/CheckInRequestContainer';
 import { useContainer } from 'unstated-next';
 
+
 const EditPickupOrder = () => {
     const navigate = useNavigate();
     const {state} = useLocation();
@@ -64,7 +65,7 @@ const EditPickupOrder = () => {
             effFrmDate: poInfo.effFrmDate,
             effToDate: poInfo.effToDate,
             routineType: poInfo.routineType,
-            routine: [],
+            routine: poInfo.routine,
             logisticId: poInfo.logisticId,
             logisticName: poInfo.logisticName,
             vehicleTypeId: poInfo.vehicleTypeId,
@@ -82,6 +83,7 @@ const EditPickupOrder = () => {
           });
         }
       }, [poInfo, updatePickupOrder.setValues]);
+     
   return (
     <PickupOrderCreateForm selectedPo={poInfo} title={'修改運單'} formik={updatePickupOrder}  setState={setAddRow} state={addRow} />
   )

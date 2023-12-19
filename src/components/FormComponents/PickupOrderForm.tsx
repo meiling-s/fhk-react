@@ -122,7 +122,7 @@ const PickupOrderForm = ({
 
             <CustomField label={"运输类别"}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.picoType}
+                {selectedPickupOrder?.picoType?'常規運輸':'一次性運輸'}
               </Typography>
             </CustomField>
 

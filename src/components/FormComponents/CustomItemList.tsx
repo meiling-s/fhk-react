@@ -117,6 +117,7 @@ function CustomItemList({
             {
                 items.map((item) => (
                     <Button
+    
                         variant="outlined"
                         sx={error? localstyles.error : returnTheme(item.id)}
                         onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}

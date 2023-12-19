@@ -190,7 +190,7 @@ const PickupOrders = () => {
         
 
       </Stack>
-      <Box pr={4} pt={3} sx={{ flexGrow: 1 }}>
+      <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
         <DataGrid
           rows={rows}
           hideFooter
@@ -199,6 +199,7 @@ const PickupOrders = () => {
           disableRowSelectionOnClick
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
+          
           sx={{
             border: "none",
             "& .MuiDataGrid-cell": {

@@ -85,7 +85,6 @@ const CreateRecycleForm = ({
     }
   }, [editRow]);
   
-  
   const validateSchema = Yup.object().shape({
     // id: id,
     // senderId: "1",
@@ -99,13 +98,16 @@ const CreateRecycleForm = ({
     // status: "CREATED",
     // createdBy: "ADMIN",
     // updatedBy: "ADMIN",
-    
-    recycType: Yup.string().required("This recycType required"),
-    recycSubType: Yup.string().required("This recycSubType is required"),
-    weight: Yup.number().required("This weight is required"),
-   
+    // items: Yup.object().shape({
+    //   recycType: Yup.string().required("This recycType is required"),
+    //   recycSubType: Yup.string().required("This recycSubType is required"),
+    //   weight: Yup.number().required("This weight is required"),
+    // }),
+
+    // recycType: Yup.string().required("This recycType required"),
+    // recycSubType: Yup.string().required("This recycSubType is required"),
+    // weight: Yup.number().required("This weight is required"),
   });
- 
 
   const formik = useFormik({
     initialValues: {
@@ -133,14 +135,6 @@ const CreateRecycleForm = ({
     onSubmit: (values) => {
       console.log(values);
       alert(JSON.stringify(values, null, 2));
-      // const { recycType, recycSubType, weight, picoHisId} = values;
-      // const items = [{
-      //   recycType: recycType,
-      //   recycSubType: recycSubType,
-      //   weight: weight,
-      //   picoHisId: picoHisId,
-      // }];
-
       const updatedValues: any = {
         ...values,
         id: id + 1,
@@ -256,11 +250,27 @@ const CreateRecycleForm = ({
                     ></CustomTextField>
                   </CustomField>
                 ))}
-                {Object.values(formik.errors).map((error, index) => (
+                {/* {Object.values(formik.errors).map((error, index) => (
                   <Alert key={index} severity="error">
                     {error.toString()}
                   </Alert>
                 ))}
+                {formik.errors.items &&
+                  Object.keys(formik.errors.items).map(
+                    (nestedField, index) =>
+                      formik.errors.items &&
+                      formik.errors.items[
+                        nestedField as keyof typeof formik.errors.items
+                      ] && (
+                        <Alert key={index} severity="error">
+                          {
+                            formik.errors.items[
+                              nestedField as keyof typeof formik.errors.items
+                            ]
+                          }
+                        </Alert>
+                      )
+                  )} */}
               </Stack>
             </Box>
           </Box>
