@@ -142,7 +142,7 @@ export default function SpecificDate({
             </Grid>
             {
                 specificDates.map((date) => 
-                    <Grid container item key={date.id} sx={[localstyles.gridRow,localstyles.dataRow]}>
+                    <Grid container item key={date.id} sx={[localstyles.gridRow,localstyles.dataRow, {display: {md: 'flex', xs: 'block'}}]}>
                         <Grid xs={3} sx={localstyles.tableCell} key={date.id+"datePick"}>
                             <CustomDatePicker
                                 setDate={(d) => handleDatePick(d, date.id)}
@@ -202,5 +202,8 @@ let localstyles = {
     tableCell: {
         display: "flex",
         alignSelf: "center"
+    },
+    tableCellMobile: {
+        display: 'block'
     }
 }

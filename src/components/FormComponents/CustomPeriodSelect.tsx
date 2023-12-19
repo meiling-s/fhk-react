@@ -67,7 +67,7 @@ function CustomPeriodSelect({
 let localstyles = {
   datePicker: {
     ...styles.textField,
-    maxWidth: '150px',
+    maxWidth: '280px',
     '& .MuiIconButton-edgeEnd': {
       color: '#79CA25'
     }
