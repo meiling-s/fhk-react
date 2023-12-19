@@ -8,12 +8,12 @@ import AspectRatio from '@mui/joy/AspectRatio'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import { Box, Stack } from '@mui/material'
 
-interface CheckInDetailsProps {
+interface CheckOutDetailsProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
 }
 
-const CheckInDetails: FunctionComponent<CheckInDetailsProps> = ({
+const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
   drawerOpen = false,
   handleDrawerClose
 }) => {
@@ -195,4 +195,4 @@ const categoryRecyle: React.CSSProperties = {
   color: 'darkblue'
 }
 
-export default CheckInDetails
+export default CheckOutDetails

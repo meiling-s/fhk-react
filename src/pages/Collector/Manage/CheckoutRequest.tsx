@@ -16,24 +16,28 @@ import {
   MenuItem,
   Select,
   Modal,
-  Button,
   Typography,
   Divider
 } from '@mui/material'
 import '../../../styles/Base.css'
+
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
 
 import CustomItemList, {
   il_item
 } from '../../../components/FormComponents/CustomItemList'
 import {
   getAllCheckoutRequest,
-  getCheckoutRequestById,
+  // getCheckoutRequestById,
   updateCheckoutRequestStatus
 } from '../../../APICalls/Collector/checkout'
 import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
-import CheckInDetails from './CheckInDetails'
+import CheckInDetails from './CheckOutDetails'
 
 import { useTranslation } from 'react-i18next'
+import dayjs from 'dayjs'
+import { format } from '../../../constants/constant'
 
 type rejectForm = {
   open: boolean
@@ -142,13 +146,13 @@ const CheckoutRequest: FunctionComponent = () => {
   const titlePage = t('check_in.request_check_in')
   const approveLabel = t('check_in.approve')
   const rejectLabel = t('check_in.reject')
-  const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
-  const [company, setCompany] = useState('')
   const [location, setLocation] = useState('')
   const [rejFormModal, setRejFormModal] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [keyword, setKeyword] = useState('')
   const [selectedRow, setSelectedRow] = useState<number>(0)
+  const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
+  const [company, setCompany] = useState('')
   const [checkoutRequestItem, setCheckoutRequestItem] = useState<
     CheckoutRequest[]
   >([])
@@ -157,7 +161,7 @@ const CheckoutRequest: FunctionComponent = () => {
       field: 'createdAt',
       headerName: t('check_out.created_at'),
       type: 'string',
-      width: 200,
+      width: 200
     },
     {
       field: 'vehicleTypeId',
@@ -169,7 +173,7 @@ const CheckoutRequest: FunctionComponent = () => {
       field: 'receiverName',
       headerName: t('check_in.receiver_company'),
       type: 'string',
-      width: 150,
+      width: 150
     },
     {
       field: 'picoId',
@@ -181,7 +185,18 @@ const CheckoutRequest: FunctionComponent = () => {
       field: 'adjustmentFlg',
       headerName: t('check_out.stock_adjustment'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {params.row.adjustmentFlg ? (
+              <CheckIcon className="color-green" />
+            ) : (
+              <CloseIcon className="color-red" />
+            )}
+          </div>
+        )
+      }
     },
     {
       field: 'logisticName',
@@ -193,7 +208,7 @@ const CheckoutRequest: FunctionComponent = () => {
       field: 'receiverAddr',
       headerName: t('check_in.receiver_addr'),
       type: 'string',
-      width: 200,
+      width: 200
     },
     {
       field: 'receiverAddrGps',
@@ -204,9 +219,12 @@ const CheckoutRequest: FunctionComponent = () => {
   ]
 
   const transformToTableRow = (item: CheckoutRequest): TableRow => {
+    const createdDate = item.createdAt
+      ? dayjs(new Date(item.createdAt)).format(format.dateFormat2)
+      : '-'
     return {
       id: item.chkOutId,
-      createdAt: item.createdAt,
+      createdAt: createdDate,
       vehicleTypeId: item.vehicleTypeId,
       receiverName: item.receiverName,
       picoId: item.picoId,
@@ -221,7 +239,6 @@ const CheckoutRequest: FunctionComponent = () => {
     const result = await getAllCheckoutRequest()
     const data = result?.data.content
     if (data && data.length > 0) {
-      console.log('all checkout request ', data)
       const checkoutData = data.map(transformToTableRow)
       setCheckoutRequestItem(checkoutData)
       console.log(checkoutData)
@@ -245,30 +262,6 @@ const CheckoutRequest: FunctionComponent = () => {
   const handleDrawerClose = () => {
     setDrawerOpen(false)
   }
-
-  // const handleCheckAll = (checked: boolean) => {
-  //   console.log('checkedAll', checked)
-  //   if (checked) {
-  //     setCheckedRows(CheckoutRequestItem) // Select all rows
-  //   } else {
-  //     setCheckedRows([]) // Unselect all rows
-  //   }
-  // }
-
-  // Handle selecting/deselecting individual row
-  // const handleCheckRow = (checked: boolean, row: TableRow) => {
-  //   console.log('checkedRow', checked, row)
-  //   if (checked) {
-  //     setCheckedRows((prev) => [...prev, row])
-  //   } else {
-  //     setCheckedRows((prev) =>
-  //       prev.filter(
-  //         (existingRow) => JSON.stringify(existingRow) !== JSON.stringify(row)
-  //       )
-  //     )
-  //   }
-  //   console.log(checkedRows)
-  // }
 
   const handleSelectRow = (params: GridRowParams) => {
     const row = params.row as TableRow
@@ -325,15 +318,17 @@ const CheckoutRequest: FunctionComponent = () => {
               labelId="company-label"
               id="company"
               value={company}
-              label="寄件公司"
+              label={t('check_out.any')}
               onChange={handleCompanyChange}
             >
               <MenuItem value="">
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {/* {shipments.map((item) => (
-                  <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>
-                ))} */}
+              {checkoutRequestItem.map((item) => (
+                <MenuItem value={item.logisticName}>
+                  {item.logisticName}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl sx={styles.dropDown}>
@@ -344,15 +339,17 @@ const CheckoutRequest: FunctionComponent = () => {
               labelId="location-label"
               id="location"
               value={location}
-              label="送出地點"
+              label={t('check_out.any')}
               onChange={handleLocChange}
             >
               <MenuItem value="">
-                <em>{t('check_in.any')}</em>
+                <em>{t('check_out.any')}</em>
               </MenuItem>
-              {/* {shipments.map((item) => (
-                  <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>
-                ))} */}
+              {checkoutRequestItem.map((item) => (
+                <MenuItem value={item.receiverAddr}>
+                  {item.receiverAddr}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </div>
@@ -383,19 +380,6 @@ const CheckoutRequest: FunctionComponent = () => {
               }}
             />
           </Box>
-          {/* <Box className="w-full">
-            <TableBase
-              header={headerTitles}
-              dataRow={CheckoutRequestItem}
-              useAction={false}
-              checkAll={checkedRows.length === CheckoutRequestItem.length}
-              onCheckAll={handleCheckAll}
-              checkedRows={checkedRows}
-              onCheckRow={handleCheckRow}
-              onSelectRow={handleSelectRow}
-              selectedRow={selectedRow}
-            />
-          </Box> */}
         </div>
       </div>
       <RejectForm
@@ -436,7 +420,7 @@ let styles = {
         borderColor: '#79CA25'
       },
       '& label.Mui-focused': {
-        color: '#79CA25' // Change label color when input is focused
+        color: '#79CA25'
       }
     }
   },
