@@ -159,6 +159,25 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   url: `api/v1/collectors/warehouse/${warehouseId}/status`
 })
 
+export const GET_ALL_CHECKOUT_REQUEST: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/collectors/checkout'
+}
+
+export const GET_CHECKOUT_REQUEST_BY_ID = (
+  chkOutId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkout/${chkOutId}`
+})
+
+export const UPDATE_CHECKOUT_REQUEST_STATUS = (
+  chkOutId: number
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/checkout/status/${chkOutId}`
+})
+
 //recycle type
 export const GET_RECYCLE_TYPE: AxiosRequestConfig = {
   method: 'get',

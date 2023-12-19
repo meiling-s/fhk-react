@@ -166,7 +166,9 @@
     "confirm_reject": "确认拒绝送入请求吗?",
     "reject_reasons": "拒绝原因(可多选)",
     "confirm": "确认拒绝",
-    "cancel": "取消"
+    "cancel": "取消",
+    "shipping_company": "航運公司",
+    "arrival_location": "到達地點"
   },
   "changePassPage": {
     "titlePage": "更改密碼",

@@ -167,7 +167,9 @@
     "confirm_reject": "Are you sure to reject the request?",
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "shipping_company": "Shipping company",
+    "arrival_location": "Arrival Location"
   },
   "changePassPage": {
     "titlePage": "CHANGE PASSWORD",

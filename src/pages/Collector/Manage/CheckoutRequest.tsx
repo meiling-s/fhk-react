@@ -1,5 +1,10 @@
-import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { FunctionComponent, useEffect, useState } from 'react'
+import {
+  DataGrid,
+  GridColDef,
+  GridRowParams,
+  GridRowSpacingParams
+} from '@mui/x-data-grid'
 import {
   Box,
   Stack,
@@ -20,7 +25,11 @@ import '../../../styles/Base.css'
 import CustomItemList, {
   il_item
 } from '../../../components/FormComponents/CustomItemList'
-import TableBase from '../../../components/TableBase'
+import {
+  getAllCheckoutRequest,
+  getCheckoutRequestById,
+  updateCheckoutRequestStatus
+} from '../../../APICalls/Collector/checkout'
 import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
 import CheckInDetails from './CheckInDetails'
 
@@ -115,21 +124,21 @@ type TableRow = {
   [key: string]: any
 }
 
-interface OverviewItem {
+interface CheckoutRequest {
   id: number
-  created: string
-  shipping_company: string
-  receiver: string
-  bill_number: string
-  status_inventory: boolean
-  logistic_company: string
-  delivery_location: string
-  arrived: string
+  chkOutId: number
+  createdAt: string
+  vehicleTypeId: string
+  receiverName: string
+  picoId: string
+  adjustmentFlg: boolean
+  logisticName: string
+  receiverAddr: string
+  receiverAddrGps: string
 }
 
-const Overview: FunctionComponent = () => {
+const CheckoutRequest: FunctionComponent = () => {
   const { t } = useTranslation()
-  // const navigate = useNavigate()
   const titlePage = t('check_in.request_check_in')
   const approveLabel = t('check_in.approve')
   const rejectLabel = t('check_in.reject')
@@ -138,88 +147,93 @@ const Overview: FunctionComponent = () => {
   const [location, setLocation] = useState('')
   const [rejFormModal, setRejFormModal] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const headerTitles = [
-    {
-      type: 'text',
-      field: 'created',
-      label: t('check_in.created_at')
-    },
-    {
-      type: 'text',
-      field: 'shipping_company',
-      label: t('check_in.sender_company')
-    },
-    {
-      type: 'text',
-      field: 'receiver',
-      label: t('check_in.receiver_company')
-    },
-    {
-      type: 'text',
-      field: 'bill_number',
-      label: t('check_in.pickup_order_no')
-    },
-    {
-      type: 'text',
-      field: 'status_inventory',
-      label: '調整庫存'
-    },
-    {
-      type: 'text',
-      field: 'logistic_company',
-      label: t('check_in.logistic_company')
-    },
-    {
-      type: 'text',
-      field: 'delivery_location',
-      label: t('check_in.receiver_addr')
-    },
-    {
-      type: 'text',
-      field: 'arrived',
-      label: '到達地點'
-    }
-  ]
-
   const [keyword, setKeyword] = useState('')
-
-  const initialOverviewItems: OverviewItem[] = [
+  const [selectedRow, setSelectedRow] = useState<number>(0)
+  const [checkoutRequestItem, setCheckoutRequestItem] = useState<
+    CheckoutRequest[]
+  >([])
+  const checkoutHeader: GridColDef[] = [
     {
-      id: 10,
-      created: '2023/09/18 18:00',
-      shipping_company: '寄件公司',
-      receiver: '收件公司',
-      bill_number: 'PO12345678',
-      status_inventory: true,
-      logistic_company: '快捷物流',
-      delivery_location: '送出地點',
-      arrived: '到達地點'
+      field: 'createDate',
+      headerName: t('check_out.created_at'),
+      type: 'string'
     },
     {
-      id: 1,
-      created: '2023/09/18 18:00',
-      shipping_company: '寄件公司',
-      receiver: '收件公司',
-      bill_number: 'PO12345678',
-      status_inventory: true,
-      logistic_company: '快捷物流',
-      delivery_location: '送出地點',
-      arrived: '到達地點'
+      field: 'shipping_company',
+      headerName: t('check_out.shipping_company'),
+      width: 120,
+      type: 'string'
     },
     {
-      id: 2,
-      created: '2023/09/18 18:00',
-      shipping_company: '寄件公司',
-      receiver: '收件公司',
-      bill_number: 'PO12345678',
-      status_inventory: true,
-      logistic_company: '快捷物流',
-      delivery_location: '送出地點',
-      arrived: '到達地點'
+      field: 'recipient',
+      headerName: t('check_in.receiver_company'),
+      type: 'string'
+    },
+    {
+      field: 'poNumber',
+      headerName: t('check_out.pickup_order_no'),
+      width: 150,
+      type: 'string'
+    },
+    {
+      field: 'receiver_company',
+      headerName: t('check_in.receiver_company'),
+      width: 150,
+      type: 'string'
+    },
+    {
+      field: 'stockAdjust',
+      headerName: t('check_out.stock_adjustment'),
+      width: 150,
+      type: 'string'
+    },
+    {
+      field: 'logisticsCompany',
+      headerName: t('check_out.logistic_company'),
+      width: 150,
+      type: 'string'
+    },
+    {
+      field: 'deliveryAddr',
+      headerName: t('check_in.receiver_addr'),
+      type: 'string'
+    },
+    {
+      field: 'arrivalLoc',
+      headerName: t('check_out.arrival_location'),
+      width: 200,
+      type: 'string'
     }
   ]
-  const [overviewItem, setOverviewItem] =
-    useState<OverviewItem[]>(initialOverviewItems)
+
+  const transformToTableRow = (item: CheckoutRequest): TableRow => {
+    return {
+      id: item.chkOutId,
+      createdAt: item.createdAt,
+      vehicleTypeId: item.vehicleTypeId,
+      receiverName: item.receiverName,
+      picoId: item.picoId,
+      adjustmentFlg: item.adjustmentFlg,
+      logisticName: 'logistic comapny',
+      receiverAddr: item.receiverAddr,
+      receiverAddrGps: item.receiverAddrGps
+    }
+  }
+
+  const getCheckoutRequest = async () => {
+    const result = await getAllCheckoutRequest()
+    const data = result?.data.content
+    if (data && data.length > 0) {
+      console.log('all checkout request ', data)
+      const checkoutData = data.map(transformToTableRow)
+      setCheckoutRequestItem(checkoutData)
+      console.log(checkoutData)
+    }
+  }
+
+  useEffect(() => {
+    getCheckoutRequest()
+  }, [])
 
   const handleSearch = (s: string) => {}
 
@@ -235,37 +249,41 @@ const Overview: FunctionComponent = () => {
     setDrawerOpen(false)
   }
 
-  const handleCheckAll = (checked: boolean) => {
-    console.log('checkedAll', checked)
-    if (checked) {
-      setCheckedRows(overviewItem) // Select all rows
-    } else {
-      setCheckedRows([]) // Unselect all rows
-    }
-  }
+  // const handleCheckAll = (checked: boolean) => {
+  //   console.log('checkedAll', checked)
+  //   if (checked) {
+  //     setCheckedRows(CheckoutRequestItem) // Select all rows
+  //   } else {
+  //     setCheckedRows([]) // Unselect all rows
+  //   }
+  // }
 
   // Handle selecting/deselecting individual row
-  const handleCheckRow = (checked: boolean, row: TableRow) => {
-    console.log('checkedRow', checked, row)
-    if (checked) {
-      setCheckedRows((prev) => [...prev, row])
-    } else {
-      setCheckedRows((prev) =>
-        prev.filter(
-          (existingRow) => JSON.stringify(existingRow) !== JSON.stringify(row)
-        )
-      )
-    }
-    console.log(checkedRows)
-  }
+  // const handleCheckRow = (checked: boolean, row: TableRow) => {
+  //   console.log('checkedRow', checked, row)
+  //   if (checked) {
+  //     setCheckedRows((prev) => [...prev, row])
+  //   } else {
+  //     setCheckedRows((prev) =>
+  //       prev.filter(
+  //         (existingRow) => JSON.stringify(existingRow) !== JSON.stringify(row)
+  //       )
+  //     )
+  //   }
+  //   console.log(checkedRows)
+  // }
 
-  const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
-
-  const handleSelectRow = (row: TableRow | null) => {
-    setSelectedRow(row)
+  const handleSelectRow = (params: GridRowParams) => {
+    const row = params.row as TableRow
+    setSelectedRow(row.id)
     setDrawerOpen(true)
-    // Perform other actions based on the selected row
   }
+
+  const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
+    return {
+      top: params.isFirstVisible ? 0 : 10
+    }
+  }, [])
 
   return (
     <Box className="container-wrapper w-full mr-11">
@@ -342,19 +360,45 @@ const Overview: FunctionComponent = () => {
           </FormControl>
         </div>
         <div className="table-overview">
-          <Box className="w-full">
+          <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
+            <DataGrid
+              rows={checkoutRequestItem}
+              hideFooter
+              columns={checkoutHeader}
+              checkboxSelection
+              disableRowSelectionOnClick
+              onRowClick={handleSelectRow}
+              getRowSpacing={getRowSpacing}
+              sx={{
+                border: 'none',
+                '& .MuiDataGrid-cell': {
+                  border: 'none'
+                },
+                '& .MuiDataGrid-row': {
+                  bgcolor: 'white',
+                  borderRadius: '10px'
+                },
+                '&>.MuiDataGrid-main': {
+                  '&>.MuiDataGrid-columnHeaders': {
+                    borderBottom: 'none'
+                  }
+                }
+              }}
+            />
+          </Box>
+          {/* <Box className="w-full">
             <TableBase
               header={headerTitles}
-              dataRow={overviewItem}
+              dataRow={CheckoutRequestItem}
               useAction={false}
-              checkAll={checkedRows.length === overviewItem.length}
+              checkAll={checkedRows.length === CheckoutRequestItem.length}
               onCheckAll={handleCheckAll}
               checkedRows={checkedRows}
               onCheckRow={handleCheckRow}
               onSelectRow={handleSelectRow}
               selectedRow={selectedRow}
             />
-          </Box>
+          </Box> */}
         </div>
       </div>
       <RejectForm
@@ -436,4 +480,4 @@ let styles = {
   }
 }
 
-export default Overview
+export default CheckoutRequest

@@ -181,7 +181,9 @@
     "confirm_reject": "確認拒絕送入請求嗎?",
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
-    "cancel": "取消"
+    "cancel": "取消",
+    "shipping_company": "航運公司",
+    "arrival_location": "到达地点"
   },
   "mainMenu": {
     "manage": "管理",
