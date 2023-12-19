@@ -156,18 +156,20 @@ const CheckoutRequest: FunctionComponent = () => {
     {
       field: 'createdAt',
       headerName: t('check_out.created_at'),
-      type: 'string'
+      type: 'string',
+      width: 200,
     },
     {
       field: 'vehicleTypeId',
       headerName: t('check_out.shipping_company'),
-      width: 120,
+      width: 150,
       type: 'string'
     },
     {
       field: 'receiverName',
       headerName: t('check_in.receiver_company'),
-      type: 'string'
+      type: 'string',
+      width: 150,
     },
     {
       field: 'picoId',
@@ -184,13 +186,14 @@ const CheckoutRequest: FunctionComponent = () => {
     {
       field: 'logisticName',
       headerName: t('check_out.logistic_company'),
-      width: 150,
+      width: 200,
       type: 'string'
     },
     {
       field: 'receiverAddr',
       headerName: t('check_in.receiver_addr'),
-      type: 'string'
+      type: 'string',
+      width: 200,
     },
     {
       field: 'receiverAddrGps',
