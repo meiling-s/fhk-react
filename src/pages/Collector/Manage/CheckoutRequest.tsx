@@ -154,52 +154,46 @@ const CheckoutRequest: FunctionComponent = () => {
   >([])
   const checkoutHeader: GridColDef[] = [
     {
-      field: 'createDate',
+      field: 'createdAt',
       headerName: t('check_out.created_at'),
       type: 'string'
     },
     {
-      field: 'shipping_company',
+      field: 'vehicleTypeId',
       headerName: t('check_out.shipping_company'),
       width: 120,
       type: 'string'
     },
     {
-      field: 'recipient',
+      field: 'receiverName',
       headerName: t('check_in.receiver_company'),
       type: 'string'
     },
     {
-      field: 'poNumber',
+      field: 'picoId',
       headerName: t('check_out.pickup_order_no'),
       width: 150,
       type: 'string'
     },
     {
-      field: 'receiver_company',
-      headerName: t('check_in.receiver_company'),
-      width: 150,
-      type: 'string'
-    },
-    {
-      field: 'stockAdjust',
+      field: 'adjustmentFlg',
       headerName: t('check_out.stock_adjustment'),
       width: 150,
       type: 'string'
     },
     {
-      field: 'logisticsCompany',
+      field: 'logisticName',
       headerName: t('check_out.logistic_company'),
       width: 150,
       type: 'string'
     },
     {
-      field: 'deliveryAddr',
+      field: 'receiverAddr',
       headerName: t('check_in.receiver_addr'),
       type: 'string'
     },
     {
-      field: 'arrivalLoc',
+      field: 'receiverAddrGps',
       headerName: t('check_out.arrival_location'),
       width: 200,
       type: 'string'
@@ -214,7 +208,7 @@ const CheckoutRequest: FunctionComponent = () => {
       receiverName: item.receiverName,
       picoId: item.picoId,
       adjustmentFlg: item.adjustmentFlg,
-      logisticName: 'logistic comapny',
+      logisticName: item.logisticName,
       receiverAddr: item.receiverAddr,
       receiverAddrGps: item.receiverAddrGps
     }
