@@ -87,14 +87,14 @@ const PickupOrders = () => {
   //   { id:4,建立日期:"2023-10-26", 物流公司: "福建物流", 运单编号:'P012345678339', 送货日期:'2023-10-28',寄件公司:"d公司",收件公司:"d公司",状态:'已取消'},
   //   { id:5,建立日期:"2023-10-27", 物流公司: "香港物流", 运单编号:'P012345678339', 送货日期:'2023-10-29',寄件公司:"d公司",收件公司:"d公司",状态:'已完成'},
   // ];
-  const rows: Row[] = pickupOrder?.map((item) => ({
+  const rows: any[] = pickupOrder?.map((item) => ({
     id: item.picoId,
-    建立日期: item.effToDate, // Convert to string
-    物流公司: item.logisticId,
-    运单编号: item.picoId, // Convert to string
-    送货日期: item.effToDate, // Convert to string
-    寄件公司: item.logisticName,
-    收件公司: item.logisticName,
+    建立日期: item.effFrmDate, 
+    物流公司: item.logisticName,
+    运单编号: item.picoId, 
+    送货日期: `${item.effFrmDate} - ${item.effToDate}`,
+    寄件公司: item.pickupOrderDetail[0].senderName,
+    收件公司: item.pickupOrderDetail[0].receiverName,
     状态: item.status,
   }))??[] ;
 

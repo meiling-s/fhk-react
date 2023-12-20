@@ -15,7 +15,7 @@ const EditPickupOrder = () => {
     const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
     const poInfo: PickupOrder = state;
     const { initPickupOrderRequest } = useContainer(CheckInRequestContainer);
-    console.log(poInfo)
+
 
     const updatePickupOrder = useFormik({
         initialValues: {
@@ -57,8 +57,10 @@ const EditPickupOrder = () => {
         }
         },
       });
+      
       useEffect(() => {
         if (poInfo) {
+          console.log('111111111111111')
           console.log('selectedPo:', poInfo);
           updatePickupOrder.setValues({
             picoType: poInfo.picoType,
@@ -82,7 +84,7 @@ const EditPickupOrder = () => {
             updatedBy: "Admin",
           });
         }
-      }, [poInfo, updatePickupOrder.setValues]);
+      }, [poInfo]);
      
   return (
     <PickupOrderCreateForm selectedPo={poInfo} title={'修改運單'} formik={updatePickupOrder}  setState={setAddRow} state={addRow} />

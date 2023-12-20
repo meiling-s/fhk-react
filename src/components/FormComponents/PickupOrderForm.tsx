@@ -33,7 +33,7 @@ const PickupOrderForm = ({
   selectedRow,
 }: {
   onClose?: () => void;
-  selectedRow: Row | null;
+  selectedRow?: Row | null;
 }) => {
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -143,7 +143,7 @@ const PickupOrderForm = ({
 
             <CustomField label={"运输类别"}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.picoType?'常規運輸':'一次性運輸'}
+                {selectedPickupOrder?.picoType === 'AD_HOC' ? '常規運輸' : (selectedPickupOrder?.picoType === 'ROUTINE' ? '一次性運輸' : undefined)}
               </Typography>
             </CustomField>
 
