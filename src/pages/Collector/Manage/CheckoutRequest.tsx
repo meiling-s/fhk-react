@@ -34,19 +34,181 @@ import {
 } from '../../../APICalls/Collector/checkout'
 import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
 import CheckInDetails from './CheckOutDetails'
+import { updateStatus } from '../../../interfaces/warehouse'
 
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
 
-type rejectForm = {
+interface CheckOut {
+  id: number
+  chkOutId: number
+  createdAt: string
+  vehicleTypeId: string
+  receiverName: string
+  picoId: string
+  adjustmentFlg: boolean
+  logisticName: string
+  receiverAddr: string
+  receiverAddrGps: string
+}
+
+type TableRow = {
+  id: number
+  [key: string]: any
+}
+
+type ApproveForm = {
   open: boolean
   onClose: () => void
+  checkedCheckOut: CheckOut[]
+  onApprove?: () => void
+}
 
+type RejectForm = {
+  open: boolean
+  onClose: () => void
   onRejected?: () => void
 }
 
-const RejectForm: React.FC<rejectForm> = ({
+type Confirm = {
+  open: boolean
+  onClose: () => void
+  title?: string
+}
+
+const ConfirmModal: React.FC<Confirm> = ({ open, onClose, title }) => {
+  const { t } = useTranslation()
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={styles.modal}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'medium' }}
+            >
+              {title + t('check_out.success_approve')}
+            </Typography>
+          </Box>
+          <Box sx={{ alignSelf: 'center' }}>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.ok')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
+const ApproveModal: React.FC<ApproveForm> = ({
+  open,
+  onClose,
+  checkedCheckOut,
+  onApprove
+}) => {
+  const { t } = useTranslation()
+  const idsCheckOut: number[] = checkedCheckOut?.map((item) => {
+    return item.id
+  })
+
+  const handleApproveRequest = async () => {
+    const confirmReason: string[] = ['Confirmed']
+    const statReason: updateStatus = {
+      status: 'CONFIRMED',
+      reason: confirmReason,
+      updatedBy: 'admin'
+    }
+
+    const results = await Promise.allSettled(
+      idsCheckOut.map(async (checkOutId) => {
+        try {
+          const result = await updateCheckoutRequestStatus(
+            checkOutId,
+            statReason
+          )
+          const data = result?.data
+          if (data) {
+            console.log('updated check-in status: ', data)
+            if (onApprove) {
+              onApprove()
+            }
+          }
+        } catch (error) {
+          console.error(
+            `Failed to update check-in status for id ${checkOutId}: `,
+            error
+          )
+        }
+      })
+    )
+  }
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={styles.modal}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('check_out.confirm_approve')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box className="flex gap-2 justify-start">
+            {idsCheckOut?.map((id) => (
+              <Typography sx={styles.typo}>{id}</Typography>
+            ))}
+          </Box>
+
+          <Box sx={{ alignSelf: 'center' }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                handleApproveRequest()
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
+const RejectModal: React.FC<RejectForm> = ({
   open,
   onClose,
   // checkedShipments,
@@ -87,13 +249,13 @@ const RejectForm: React.FC<rejectForm> = ({
               component="h2"
               sx={{ fontWeight: 'bold' }}
             >
-              {t('check_in.confirm_reject')}
+              {t('check_out.confirm_reject')}
             </Typography>
           </Box>
           <Divider />
           <Box>
             <Typography sx={styles.typo}>
-              {t('check_in.reject_reasons')}
+              {t('check_out.reject_reasons')}
             </Typography>
 
             <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
@@ -123,35 +285,18 @@ const RejectForm: React.FC<rejectForm> = ({
   )
 }
 
-type TableRow = {
-  id: number
-  [key: string]: any
-}
-
-interface CheckOut {
-  id: number
-  chkOutId: number
-  createdAt: string
-  vehicleTypeId: string
-  receiverName: string
-  picoId: string
-  adjustmentFlg: boolean
-  logisticName: string
-  receiverAddr: string
-  receiverAddrGps: string
-}
-
 const CheckoutRequest: FunctionComponent = () => {
   const { t } = useTranslation()
-  const titlePage = t('check_in.request_check_in')
-  const approveLabel = t('check_in.approve')
-  const rejectLabel = t('check_in.reject')
+  const titlePage = t('check_out.request_check_out')
+  const approveLabel = t('check_out.approve')
+  const rejectLabel = t('check_out.reject')
   const [location, setLocation] = useState('')
-  const [rejFormModal, setRejFormModal] = useState<boolean>(false)
+  const [rejFormModal, setRejectModal] = useState<boolean>(false)
+  const [approveModal, setApproveModal] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [keyword, setKeyword] = useState('')
   const [selectedRow, setSelectedRow] = useState<number>(0)
-  const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
+  const [checkedCheckOut, setCheckedCheckOut] = useState<CheckOut[]>([])
   const [company, setCompany] = useState('')
   const [filterCheckOut, setFilterCheckOut] = useState<CheckOut[]>([])
   const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
@@ -328,12 +473,15 @@ const CheckoutRequest: FunctionComponent = () => {
           <div className="title font-bold text-3xl pl-4 ">{titlePage}</div>
         </div>
         <div className="action-overview mb-8">
-          <button className="primary-btn mr-2 cursor-pointer">
+          <button
+            className="primary-btn mr-2 cursor-pointer"
+            onClick={() => setApproveModal(checkedCheckOut.length > 0)}
+          >
             {approveLabel}
           </button>
           <button
             className="secondary-btn cursor-pointer"
-            onClick={() => setRejFormModal(true)}
+            onClick={() => setRejectModal(checkedCheckOut.length > 0)}
           >
             {rejectLabel}
           </button>
@@ -425,11 +573,19 @@ const CheckoutRequest: FunctionComponent = () => {
           </Box>
         </div>
       </div>
-      <RejectForm
+      <RejectModal
         open={rejFormModal}
         onClose={() => {
-          setRejFormModal(false)
+          setRejectModal(false)
         }}
+        // onRejected={() => initShipments()}
+      />
+      <ApproveModal
+        open={approveModal}
+        onClose={() => {
+          setApproveModal(false)
+        }}
+        checkedCheckOut={checkedCheckOut}
         // onRejected={() => initShipments()}
       />
       <CheckInDetails

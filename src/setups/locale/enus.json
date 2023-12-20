@@ -165,11 +165,14 @@
     "recyclable_type_weight": "Recyclable type & weight",
     "message": "Message",
     "confirm_reject": "Are you sure to reject the request?",
+    "confirm_approve": "Are you sure to approve the request?",
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
     "cancel": "Cancel",
     "shipping_company": "Shipping company",
-    "arrival_location": "Arrival Location"
+    "arrival_location": "Arrival Location",
+    "success_approve": "Checkout request is success",
+    "ok": "Ok"
   },
   "changePassPage": {
     "titlePage": "CHANGE PASSWORD",

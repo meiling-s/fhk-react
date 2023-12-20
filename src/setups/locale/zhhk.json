@@ -179,11 +179,14 @@
     "recyclable_type_weight": "回收物類別及重量",
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
+    "confirm_approve": "您确定批准该请求吗？",
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
     "cancel": "取消",
     "shipping_company": "航運公司",
-    "arrival_location": "到达地点"
+    "arrival_location": "到达地点",
+    "success_approve": "结帐请求成功",
+    "ok": "好的"
   },
   "mainMenu": {
     "manage": "管理",

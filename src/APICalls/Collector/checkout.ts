@@ -44,8 +44,8 @@ export const getCheckoutRequestById = async (chkOutId: number) => {
 }
 
 export const updateCheckoutRequestStatus = async (
-  data: any,
-  chkOutId: number
+  chkOutId: number,
+  data: any
 ) => {
   try {
     const response = await axios({
