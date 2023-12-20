@@ -4,100 +4,134 @@ import CheckIcon from '@mui/icons-material/Check'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ImageIcon from '@mui/icons-material/Image'
 import AspectRatio from '@mui/joy/AspectRatio'
+import {
+  CheckOut,
+  CheckoutDetail,
+  CheckoutDetailPhoto
+} from '../../../interfaces/checkout'
 
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import { Box, Stack } from '@mui/material'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
+import { useContainer } from 'unstated-next'
+
+import dayjs from 'dayjs'
+import { format } from '../../../constants/constant'
+import i18n from '../../../setups/i18n'
+
+type RecycItem = {
+  recycType: il_item
+  recycSubtype: il_item
+  weight: number
+  images: CheckoutDetailPhoto[]
+}
 
 interface CheckOutDetailsProps {
+  selectedCheckOut?: CheckOut
   drawerOpen: boolean
   handleDrawerClose: () => void
 }
 
 const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
+  selectedCheckOut,
   drawerOpen = false,
   handleDrawerClose
 }) => {
   const { t } = useTranslation()
-  const { i18n } = useTranslation()
+  const { recycType } = useContainer(CommonTypeContainer)
+  const [selectedDetail, setSelectedDetail] = useState<
+    CheckoutDetail[] | undefined
+  >([])
+  const [recycItem, setRecycItem] = useState<RecycItem[]>([])
+
+  const poNumber =
+    selectedCheckOut?.picoId != null ? `${selectedCheckOut.picoId}` : ''
   const shippingInfo = [
     {
-      label: '物流公司',
-      value: '物流公司'
+      label: t('check_out.logistic_company'),
+      value: selectedCheckOut?.logisticName
     },
     {
-      label: '寄件公司',
-      value: '寄件公司'
+      label: t('check_out.shipping_company'),
+      value: selectedCheckOut?.logisticName
     },
     {
-      label: '收件公司',
-      value: '收件公司'
+      label: t('check_out.receiver_company'),
+      value: selectedCheckOut?.receiverName
     }
   ]
-  const rycleItem = [
-    {
-      category: '袋',
-      type: '報紙',
-      subtype: '廢紙',
-      weight: '5',
-      img: ['../Image.png', '../Image.png']
-    },
-    {
-      category: '盒',
-      type: '鋁罐',
-      subtype: '金屬',
-      weight: '5',
-      img: ['../Image.png']
-    }
-  ]
+  const updatedDate = selectedCheckOut?.updatedAt
+    ? dayjs(new Date(selectedCheckOut?.updatedAt)).format(format.dateFormat1)
+    : '-'
+  const messageCheckout = `[UserID] ${t(
+    'check_out.approved_on'
+  )} ${updatedDate} ${t('check_out.reason_is')} ${selectedCheckOut?.reason}`
 
-  // {
-  //   "chkOutId": 1,
-  //   "logisticName": "string",
-  //   "logisticId": "string",
-  //   "vehicleTypeId": "string",
-  //   "plateNo": "string",
-  //   "receiverName": "string",
-  //   "receiverId": "string",
-  //   "receiverAddr": "string",
-  //   "receiverAddrGps": [
-  //     0
-  //   ],
-  //   "warehouseId": 0,
-  //   "colId": 0,
-  //   "collectorId": 0,
-  //   "status": "COMPLETED",
-  //   "reason": [
-  //     "string"
-  //   ],
-  //   "picoId": null,
-  //   "signature": "string",
-  //   "normalFlg": true,
-  //   "adjustmentFlg": true,
-  //   "createdBy": "string",
-  //   "updatedBy": "string",
-  //   "checkoutDetail": [
-  //     {
-  //       "chkOutDtlId": 1,
-  //       "recycTypeId": "string",
-  //       "recycSubtypeId": "string",
-  //       "packageTypeId": "string",
-  //       "weight": 0,
-  //       "unitId": "string",
-  //       "itemId": "string",
-  //       "checkoutDetailPhoto": [
-  //         {
-  //           "sid": 1,
-  //           "photo": "string"
-  //         }
-  //       ],
-  //       "pickupOrderHistory": null,
-  //       "createdBy": "string",
-  //       "updatedBy": "string"
-  //     }
-  //   ],
-  //   "createdAt": "2023-12-19T10:09:26.576964",
-  //   "updatedAt": "2023-12-19T10:19:01.799599"
-  // }
+  useEffect(() => {
+    setSelectedDetail(selectedCheckOut?.checkoutDetail)
+  }, [selectedCheckOut])
+
+  useEffect(() => {
+    if (selectedDetail && selectedDetail.length > 0) {
+      const recycItems: RecycItem[] = []
+
+      selectedDetail.forEach((detail) => {
+        const matchingRecycType = recycType?.find(
+          (recyc) => detail.recycTypeId === recyc.recycTypeId
+        )
+
+        if (matchingRecycType) {
+          const matchRecycSubType = matchingRecycType.recycSubtype?.find(
+            (subtype) => subtype.recycSubtypeId === detail.recycSubtypeId
+          )
+          var name = ''
+          switch (i18n.language) {
+            case 'enus':
+              name = matchingRecycType.recyclableNameEng
+              break
+            case 'zhch':
+              name = matchingRecycType.recyclableNameSchi
+              break
+            case 'zhhk':
+              name = matchingRecycType.recyclableNameTchi
+              break
+            default:
+              name = matchingRecycType.recyclableNameTchi
+              break
+          }
+          var subName = ''
+          switch (i18n.language) {
+            case 'enus':
+              subName = matchRecycSubType?.recyclableNameEng ?? ''
+              break
+            case 'zhch':
+              subName = matchRecycSubType?.recyclableNameSchi ?? ''
+              break
+            case 'zhhk':
+              subName = matchRecycSubType?.recyclableNameTchi ?? ''
+              break
+            default:
+              subName = matchRecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+              break
+          }
+          recycItems.push({
+            recycType: {
+              name: name,
+              id: detail.chkOutDtlId.toString()
+            },
+            recycSubtype: {
+              name: subName,
+              id: detail.chkOutDtlId.toString()
+            },
+            weight: detail.weight,
+            images: detail.checkoutDetailPhoto
+          })
+        }
+      })
+      setRecycItem(recycItems)
+    }
+  }, [selectedDetail, recycType])
 
   return (
     <div className="checkin-request-detail">
@@ -108,7 +142,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
         action={'none'}
         headerProps={{
           title: '送入請求',
-          subTitle: 'PO12345678',
+          subTitle: poNumber,
           onCloseHeader: handleDrawerClose
         }}
       >
@@ -120,12 +154,12 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
             <Box>
               <div className="bg-[#FBFBFB] rounded-sm flex items-center gap-2 p-2 adjustmen-inventory">
                 <CheckIcon className="text-[#79CA25]" />
-                調整庫存
+                {t('check_out.stock_adjustment')}
               </div>
             </Box>
             <Box>
               <div className="shiping-information text-base text-[#717171] font-bold">
-                運輸資料
+                {t('check_out.shipping_info')}
               </div>
             </Box>
             <Box>
@@ -140,14 +174,14 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                     {item.label}
                   </div>
                   <div className="shiping-information text-mini text-black font-bold tracking-widest">
-                    {item.label}
+                    {item.value}
                   </div>
                 </div>
               ))}
             </Box>
             <Box>
               <div className="recyle-loc-info shiping-information text-base text-[#717171] tracking-widest font-bold">
-                回收地點資料
+                {t('check_out.recyc_loc_info')}
               </div>
             </Box>
             <Box
@@ -155,21 +189,21 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                 display: 'grid',
                 gridTemplateColumns: '1fr auto 1fr',
                 alignItems: 'center',
-                gap: '10px' // Adjust the gap as needed
+                gap: '10px'
               }}
             >
               <div className="delivery-loc">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  送出地點
+                  {t('check_out.delivery_location')}
                 </div>
                 <div className="text-mini text-black font-bold tracking-widest">
-                  綠在堅城
+                  {selectedCheckOut?.receiverAddr}
                 </div>
               </div>
               <ArrowForwardIcon className="text-gray" />
               <div className="arrived">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  到達地點
+                  {t('check_out.arrival_location')}
                 </div>
                 <div className="text-mini text-black font-bold tracking-widest">
                   火炭
@@ -178,9 +212,9 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
             </Box>
             <Box>
               <div className="recyle-type-weight text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                回收物類別及重量
+                {t('check_out.recyclable_type_weight')}
               </div>
-              {rycleItem.map((item, index) => (
+              {recycItem.map((item, index) => (
                 <div
                   key={index}
                   className="recyle-item px-4 py-3 rounded-xl border border-solid border-[#E2E2E2] mt-2"
@@ -188,14 +222,14 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   <div className="detail flex justify-between items-center">
                     <div className="recyle-type flex items-center gap-2">
                       <div className="category" style={categoryRecyle}>
-                        {item.category}
+                        {item.recycType.name}
                       </div>
                       <div className="type-item">
                         <div className="sub-type text-xs text-black font-bold tracking-widest">
-                          {item.type}
+                          {item.recycType.name}
                         </div>
                         <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
-                          {item.subtype}
+                          {item.recycSubtype.name}
                         </div>
                       </div>
                     </div>
@@ -204,9 +238,9 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                     </div>
                   </div>
                   <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
-                    {item.img.map((img, index) => (
+                    {item.images.map((img, index) => (
                       <img
-                        src={img}
+                        src={img.photo}
                         alt=""
                         key={index}
                         className="lg:w-28 sm:w-16"
@@ -219,10 +253,10 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
             <Box>
               <div className="message">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  訊息
+                  {t('check_out.message')}
                 </div>
                 <div className=" text-sm text-[#717171] font-medium tracking-widest">
-                  [UserID] 核準於 2023/09/24 17:00，原因為 [RejectReason]
+                  {messageCheckout}
                 </div>
               </div>
             </Box>

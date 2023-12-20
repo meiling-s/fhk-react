@@ -172,7 +172,11 @@
     "shipping_company": "Shipping company",
     "arrival_location": "Arrival Location",
     "success_approve": "Checkout request is success",
-    "ok": "Ok"
+    "ok": "Ok",
+    "shipping_info": "Shipping Information",
+    "delivery_location": "Delivery Location",
+    "approved_on": "Approved on",
+    "reason_is": "Reason is"
   },
   "changePassPage": {
     "titlePage": "CHANGE PASSWORD",

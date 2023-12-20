@@ -35,23 +35,24 @@ import {
 import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
 import CheckInDetails from './CheckOutDetails'
 import { updateStatus } from '../../../interfaces/warehouse'
+import { CheckOut } from '../../../interfaces/checkout'
 
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
 
-interface CheckOut {
-  id: number
-  chkOutId: number
-  createdAt: string
-  vehicleTypeId: string
-  receiverName: string
-  picoId: string
-  adjustmentFlg: boolean
-  logisticName: string
-  receiverAddr: string
-  receiverAddrGps: string
-}
+// interface CheckOut {
+//   id: number
+//   chkOutId: number
+//   createdAt: string
+//   vehicleTypeId: string
+//   receiverName: string
+//   picoId: string
+//   adjustmentFlg: boolean
+//   logisticName: string
+//   receiverAddr: string
+//   receiverAddrGps: string
+// }
 
 type TableRow = {
   id: number
@@ -76,6 +77,51 @@ type Confirm = {
   onClose: () => void
   title?: string
 }
+
+// const dummyCheckoutbyId: CheckOut = {
+//   chkOutId: 1,
+//   logisticName: 'string',
+//   logisticId: 'string',
+//   vehicleTypeId: 'string',
+//   plateNo: 'string',
+//   receiverName: 'string',
+//   receiverId: 'string',
+//   receiverAddr: 'string',
+//   receiverAddrGps: [0],
+//   warehouseId: 0,
+//   colId: 0,
+//   collectorId: 0,
+//   status: 'COMPLETED',
+//   reason: ['string'],
+//   picoId: 'null',
+//   signature: 'string',
+//   normalFlg: true,
+//   adjustmentFlg: true,
+//   createdBy: 'string',
+//   updatedBy: 'string',
+//   checkoutDetail: [
+//     {
+//       chkOutDtlId: 1,
+//       recycTypeId: 'string',
+//       recycSubtypeId: 'string',
+//       packageTypeId: 'string',
+//       weight: 0,
+//       unitId: 'string',
+//       itemId: 'string',
+//       checkoutDetailPhoto: [
+//         {
+//           sid: 1,
+//           photo: 'string'
+//         }
+//       ],
+//       pickupOrderHistory: null,
+//       createdBy: 'string',
+//       updatedBy: 'string'
+//     }
+//   ],
+//   createdAt: '2023-12-19T10:09:26.576964',
+//   updatedAt: '2023-12-19T10:19:01.799599'
+// }
 
 const ConfirmModal: React.FC<Confirm> = ({ open, onClose, title }) => {
   const { t } = useTranslation()
@@ -123,7 +169,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
 }) => {
   const { t } = useTranslation()
   const idsCheckOut: number[] = checkedCheckOut?.map((item) => {
-    return item.id
+    return item.chkOutId
   })
 
   const handleApproveRequest = async () => {
@@ -295,7 +341,7 @@ const CheckoutRequest: FunctionComponent = () => {
   const [approveModal, setApproveModal] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [keyword, setKeyword] = useState('')
-  const [selectedRow, setSelectedRow] = useState<number>(0)
+  const [selectedRow, setSelectedRow] = useState<CheckOut>()
   const [checkedCheckOut, setCheckedCheckOut] = useState<CheckOut[]>([])
   const [company, setCompany] = useState('')
   const [filterCheckOut, setFilterCheckOut] = useState<CheckOut[]>([])
@@ -397,7 +443,6 @@ const CheckoutRequest: FunctionComponent = () => {
     if (searchWord != '') {
       const filteredCheckOut: CheckOut[] = []
       checkOutRequest.map((item) => {
-        //console.log("piconDtlId: ",searchWord, shipment.picoDtlId)
         if (item.picoId.includes(searchWord)) {
           filteredCheckOut.push(item)
         }
@@ -455,7 +500,12 @@ const CheckoutRequest: FunctionComponent = () => {
 
   const handleSelectRow = (params: GridRowParams) => {
     const row = params.row as TableRow
-    setSelectedRow(row.id)
+    const selectedItem = checkOutRequest?.find(
+      (item) => item.chkOutId === row.id
+    )
+    setSelectedRow(selectedItem) //
+    // setSelectedRow(row)
+
     setDrawerOpen(true)
   }
 
@@ -591,6 +641,8 @@ const CheckoutRequest: FunctionComponent = () => {
       <CheckInDetails
         drawerOpen={drawerOpen}
         handleDrawerClose={handleDrawerClose}
+        selectedCheckOut={selectedRow}
+        //selectedCheckOut={dummyCheckoutbyId}
       />
     </Box>
   )

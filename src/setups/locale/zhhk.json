@@ -186,7 +186,11 @@
     "shipping_company": "航運公司",
     "arrival_location": "到达地点",
     "success_approve": "结帐请求成功",
-    "ok": "好的"
+    "ok": "好的",
+    "shipping_info": "運輸資料",
+    "delivery_location": "送出地點",
+    "approved_on": "核準於",
+    "reason_is": "原因為"
   },
   "mainMenu": {
     "manage": "管理",
