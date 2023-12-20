@@ -40,3 +40,5 @@ export const toGpsCode = (lat: number, long: number) => {
     const gpsCode: gpsCode = [lat,long];
     return gpsCode
 }
+
+

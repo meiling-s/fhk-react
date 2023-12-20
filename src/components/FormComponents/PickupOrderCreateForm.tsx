@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import React, { useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { styles } from "../../constants/styles";
 import CustomField from "./CustomField";
 import CustomSwitch from "./CustomSwitch";
@@ -37,6 +37,10 @@ import theme from "../../themes/palette";
 import { t } from "i18next";
 import { useFormik } from "formik";
 import { editPickupOrder } from "../../APICalls/Collector/pickupOrder/pickupOrder";
+import { validate } from "uuid";
+import CustomAutoComplete from "./CustomAutoComplete";
+import CommonTypeContainer from "../../contexts/CommonTypeContainer";
+import PicoRoutineSelect from "../SpecializeComponents/PicoRoutineSelect";
 
 const carType: il_item[] = [
   {
@@ -49,26 +53,42 @@ const carType: il_item[] = [
   },
 ];
 
-const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
+const PickupOrderCreateForm = ({
+  selectedPo,
+  title,
+  formik,
+  setState,
+  state,
+
+  
+
+}: {
+  selectedPo?: PickupOrder;
+  title: string;
+  formik: any;
+  setState: (val: CreatePicoDetail[]) => void;
+  state: CreatePicoDetail[];
+ 
+
+}) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
   const [editRowId, setEditRowId] = useState<number | null>(null);
   const [colPtRoutine, setColPtRoutine] = useState<colPtRoutine>();
   const [id, setId] = useState<number>(0);
-  const { initPickupOrderRequest } = useContainer(CheckInRequestContainer);
+  const { logisticList, contractType } = useContainer(CommonTypeContainer);
   const navigate = useNavigate();
   const handleCloses = () => {
     setOpenModal(false);
   };
 
-  console.log("yo" + JSON.stringify(addRow));
+  console.log("yo" + JSON.stringify(state));
   const handleEditRow = (id: number) => {
     setEditRowId(id);
     setOpenModal(true);
   };
   const handleDeleteRow = (id: any) => {
-    const updatedRows = addRow.filter((row) => row.id !== id);
-    setAddRow(updatedRows);
+    const updatedRows = state.filter((row) => row.id !== id);
+    setState(updatedRows);
   };
   const handleHeaderOnClick = () => {
     console.log("Header click");
@@ -80,28 +100,29 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
     };
   }, []);
   const columns: GridColDef[] = [
-    { field: "time", headerName: "运送时间", width: 150 },
+    { field: "pickupAt", headerName: "运送时间", width: 150 },
     {
-      field: "items",
+      field: "recycType",
       headerName: "主类别",
       width: 150,
       editable: true,
-      valueFormatter: (params) => params.value?.[0].recycTypeId,
+      valueGetter: ({ row }) => row.item.recycType
     },
     {
-      field: "items.recycSubType",
+      field: "recycSubType",
       headerName: "次类别",
       type: "string",
       width: 150,
       editable: true,
-      valueFormatter: (params) => params.value?.[0].recycSubtypeId?.[0],
+      valueGetter: ({ row }) => row.item.recycSubType
     },
     {
-      field: "weight",
+      field: "Weight",
       headerName: "重量",
       type: "string",
       width: 150,
       editable: true,
+      valueGetter: ({ row }) => row.item.weight
     },
     {
       field: "senderName",
@@ -153,71 +174,8 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
     },
   ];
 
-  useEffect(() => {
-    if (selectedPo) {
-      formik.setValues({
-        ...formik.values,
-        picoType: selectedPo.picoType,
-        effFrmDate:selectedPo.effFrmDate,
-        effToDate: selectedPo.effToDate,
-        routineType:selectedPo.routineType,       
-        routine:[],           
-      logisticId: selectedPo.logisticId,       
-      logisticName:selectedPo.logisticName,   
-      vehicleTypeId:selectedPo.vehicleTypeId,  
-      platNo:selectedPo.platNo,            
-      contactNo: selectedPo.contractNo,   
-      status:'CREATED',            
-      reason:selectedPo.reason,            
-      normalFlg: true,       
-      contractNo: selectedPo.contractNo,       
-      updatedBy:'Admin',
-    
-     
-      });
-    }
-  }, [selectedPo]);
+  console.log(formik.errors);
 
-  const formik = useFormik({
-    initialValues: {
-      picoType: "string",
-      effFrmDate: "2023-12-12",
-      effToDate: "2023-12-12",
-      routineType: "string",
-      routine: ["string"],
-      logisticId: "string",
-      logisticName: "hello",
-      vehicleTypeId: "string",
-      platNo: "string",
-      contactNo: "string",
-      status: "CREATED",
-      reason: "string",
-      normalFlg: true,
-      approvedAt: "2023-12-12T02:17:30.062Z",
-      rejectedAt: "2023-12-12T02:17:30.062Z",
-      approvedBy: "string",
-      rejectedBy: "string",
-      contractNo: "string",
-      updatedBy: "string",
-      pickupOrderDetail: [],
-    },
-
-    onSubmit: async (values: EditPo) => {
-      alert(JSON.stringify(values, null, 2));
-      const result = await editPickupOrder(selectedPo.picoId, values);
-      const data = result?.data;
-      if (data) {
-        console.log("all collection point: ", data);
-        await initPickupOrderRequest();
-        navigate("/collector/PickupOrder",{ state: "created" });    
-      
-    }else{
-      alert('fail to create pickup order')
-    }
-      
-
-    },
-  });
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
@@ -238,7 +196,7 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
                   onClick={handleHeaderOnClick}
                 >
                   <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
-                  <Typography sx={styles.header1}>建立运单</Typography>
+                  <Typography sx={styles.header1}>{title}</Typography>
                 </Button>
               </Grid>
               <Grid item>
@@ -246,32 +204,70 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
                   <CustomSwitch
                     onText="常规运输"
                     offText="一次性运输"
-                    defaultValue={true}
+                    defaultValue={selectedPo?.picoType === 'AD_HOC' ? true : (selectedPo?.picoType === 'ROUTINE' ? false : undefined)}
                     setState={(value) =>
-                      formik.setFieldValue("picoType", value)
+                      formik.setFieldValue("picoType", value?"AD_HOC":"ROUTINE")
                     }
                     value={formik.values.picoType}
+                    helperText={
+                      formik.errors.picoType && formik.touched.picoType
+                        ? formik.errors.picoType
+                        : ""
+                    }
                   />
                 </CustomField>
               </Grid>
               <Grid item display="flex">
                 <CustomDatePicker2
                   pickupOrderForm={true}
-                  setDate={(values) => formik.setFieldValue("Date", values)}
+                  setDate={(values) => {
+                    formik.setFieldValue("effFrmDate", values.startDate);
+                    formik.setFieldValue("effToDate", values.endDate);
+                  }}
+                  defaultStartDate={selectedPo?.effFrmDate}
+                  defaultEndDate={selectedPo?.effToDate}
                 />
               </Grid>
               <CustomField label="回收周次" style={{ width: "100%" }}>
-                <RoutineSelect setRoutine={setColPtRoutine} />
+                <PicoRoutineSelect
+                  setRoutine={(values) => {
+                    console.log('routine'+JSON.stringify(values))
+                    formik.setFieldValue("routineType", values.routineType);
+                    formik.setFieldValue("routine", values.routineContent);
+                  }}
+                  defaultValue={{
+                    routineType: selectedPo?.routineType ?? "",
+                    routineContent: selectedPo?.routine ?? [],
+                  }}
+                />
               </CustomField>
               <Grid item>
                 <CustomField label={"选择物流公司"}>
-                  <CustomTextField
-                    id="logisticName"
-                    placeholder="请输入公司名称"
-                    onChange={formik.handleChange}
-                    value={formik.values.logisticName}
+                  <CustomAutoComplete
+                    placeholder="請輸入公司名稱"
+                    option={
+                      logisticList?.map((option) => option.logisticNameTchi) ??
+                      []
+                    }
                     sx={{ width: "400px" }}
-                  ></CustomTextField>
+                    onChange={(_: SyntheticEvent, newValue: string | null) =>
+                      formik.setFieldValue("logisticName", newValue)
+                    }
+                    onInputChange={(event: any, newInputValue: string) => {
+                      console.log(newInputValue); // Log the input value
+                      formik.setFieldValue("logisticName", newInputValue); // Update the formik field value if needed
+                    }}
+                    value={formik.values.logisticName}
+                    inputValue={formik.values.logisticName}
+                    error={
+                      formik.errors.logisticName && formik.touched.logisticName
+                    }
+                    helpertext={
+                      formik.errors.logisticName && formik.touched.logisticName
+                        ? formik.errors.logisticName
+                        : ""
+                    }
+                  />
                 </CustomField>
               </Grid>
               <Grid item>
@@ -282,7 +278,14 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
                       formik.setFieldValue("vehicleTypeId", values)
                     }
                     value={formik.values.vehicleTypeId}
+                    defaultSelected={selectedPo?.vehicleTypeId}
                   />
+                  <Typography>
+                   {
+                      formik.errors.vehicleTypeId && formik.touched.vehicleTypeId
+                        ? formik.errors.vehicleTypeId
+                        : ""
+                    }</Typography>
                 </CustomField>
               </Grid>
               <Grid item>
@@ -293,6 +296,12 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
                     onChange={formik.handleChange}
                     value={formik.values.platNo}
                     sx={{ width: "400px" }}
+                    error={formik.errors.platNo && formik.touched.platNo}
+                    helperText={
+                      formik.errors.platNo && formik.touched.platNo
+                        ? formik.errors.platNo
+                        : ""
+                    }
                   />
                 </CustomField>
               </Grid>
@@ -304,18 +313,37 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
                     onChange={formik.handleChange}
                     value={formik.values.contactNo}
                     sx={{ width: "400px" }}
+                    error={formik.errors.contactNo && formik.touched.contactNo}
+                    helperText={
+                      formik.errors.contactNo && formik.touched.contactNo
+                        ? formik.errors.contactNo
+                        : ""
+                    }
                   />
                 </CustomField>
               </Grid>
               <Grid item>
                 <Box>
-                  <CustomField label={"預計回收地點資料"}>
-                    <CustomTextField
-                      id="contractNo"
-                      placeholder="请輸入編號"
-                      onChange={formik.handleChange}
-                      value={formik.values.contractNo}
+                  <CustomField label={"合約編號"}>
+                    <CustomAutoComplete
+                      placeholder="請輸入公司名稱"
+                      option={
+                        contractType?.map((option) => option.contractNo) ?? []
+                      }
                       sx={{ width: "400px" }}
+                      onChange={(_: SyntheticEvent, newValue: string | null) =>
+                        formik.setFieldValue("contractNo", newValue)
+                      }
+                      value={formik.values.contractNo}
+                      error={
+                        formik.errors.contractNo && formik.touched.contractNo
+                      }
+                      helpertext={
+                        formik.errors.contractNo && formik.touched.contractNo
+                          ? formik.errors.contractNo
+                          : ""
+                      }
+                      readOnly={true}
                     />
                   </CustomField>
                 </Box>
@@ -324,7 +352,7 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
               <Grid item>
                 <CustomField label={"預計回收地點資料"}>
                   <DataGrid
-                    rows={addRow}
+                    rows={state}
                     hideFooter
                     columns={columns}
                     disableRowSelectionOnClick
@@ -353,10 +381,10 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
                   />
                   <Modal open={openModal} onClose={handleCloses}>
                     <CreateRecycleForm
-                      data={addRow}
+                      data={state}
                       id={id}
                       setId={setId}
-                      setState={setAddRow}
+                      setState={setState}
                       onClose={handleCloses}
                       editRowId={editRowId}
                     />
@@ -379,6 +407,14 @@ const PickupOrderCreateForm = ({ selectedPo }: { selectedPo: PickupOrder }) => {
                   </Button>
                 </CustomField>
               </Grid>
+              
+              <Typography>
+                    {
+                      formik.errors.createPicoDetail && formik.touched.createPicoDetail
+                        ? formik.errors.createPicoDetail
+                        : ""
+                    }</Typography>
+              
 
               <Grid item>
                 <Button

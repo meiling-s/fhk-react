@@ -13,8 +13,8 @@ export interface PickupOrder {
     status:            string;
     reason:            string;
     normalFlg:         boolean;
-    approvedAt:        Date;
-    rejectedAt:        Date;
+    approvedAt:        string;
+    rejectedAt:        string;
     approvedBy:        string;
     rejectedBy:        string;
     contractNo:        string;
@@ -33,15 +33,25 @@ export interface PickupOrderDetail {
     receiverName:    string;
     receiverAddr:    string;
     receiverAddrGps: number[];
-    pickupAt:        Date;
+    pickupAt:        string;
     status:          string;
     createdBy:       string;
     updatedBy:       string;
-    updatedAt:       Date;
-    createdAt:       Date;
+    updatedAt:       string;
+    createdAt:       string;
     version:         number;
+    item:            PickupOrderItem;
 }
 
+export interface PickupOrderItem {
+    itemId:       number;
+    recycType:    string;
+    recycSubType: string;
+    weight:       number;
+    updatedAt:    string;
+    createdAt:    string;
+    version:      number;
+}
 
 
 export interface CreatePO {
@@ -77,14 +87,22 @@ export interface CreatePicoDetail {
     status:          string;
     createdBy:       string;
     updatedBy:       string;
-    items:           Item;
+    pickupAt:        string;
+    item:           Item;
 }
 
 export interface Item {
     recycType:    string;
     recycSubType: string;
     weight:       number;
-    picoHisId:    number;
+
+}
+
+export interface PicoDetail {
+    recycType:    string;
+    recycSubType: string;
+    weight:       number;
+    picoHistory:  null;
 }
 
 export interface Row {
@@ -118,5 +136,12 @@ export interface Row {
     rejectedBy:    string;
     contractNo:    string;
     updatedBy:     string;
-    pickupOrderDetail: string[]
+    
 }
+
+export interface PoStatus {
+    status:    string;
+    reason:    string;
+    updatedBy: string;
+}
+

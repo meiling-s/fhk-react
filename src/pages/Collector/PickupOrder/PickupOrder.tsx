@@ -14,15 +14,10 @@ import React, { useEffect, useState } from "react";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 import PickupOrderForm from "../../../components/FormComponents/PickupOrderForm";
 import StatusCard from "../../../components/StatusCard";
-import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+
 import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
-
-
-
-
-
 
 
 
@@ -31,7 +26,6 @@ interface Option {
   value: string;
   label: string;
 }
-
 
 const PickupOrders = () => {
   const columns: GridColDef[] = [
@@ -93,14 +87,14 @@ const PickupOrders = () => {
   //   { id:4,建立日期:"2023-10-26", 物流公司: "福建物流", 运单编号:'P012345678339', 送货日期:'2023-10-28',寄件公司:"d公司",收件公司:"d公司",状态:'已取消'},
   //   { id:5,建立日期:"2023-10-27", 物流公司: "香港物流", 运单编号:'P012345678339', 送货日期:'2023-10-29',寄件公司:"d公司",收件公司:"d公司",状态:'已完成'},
   // ];
-  const rows: Row[] = pickupOrder?.map((item) => ({
+  const rows: any[] = pickupOrder?.map((item) => ({
     id: item.picoId,
-    建立日期: item.effToDate, // Convert to string
-    物流公司: item.logisticId,
-    运单编号: item.picoId, // Convert to string
-    送货日期: item.effToDate, // Convert to string
-    寄件公司: item.logisticName,
-    收件公司: item.logisticName,
+    建立日期: item.effFrmDate, 
+    物流公司: item.logisticName,
+    运单编号: item.picoId, 
+    送货日期: `${item.effFrmDate} - ${item.effToDate}`,
+    寄件公司: item.pickupOrderDetail[0].senderName,
+    收件公司: item.pickupOrderDetail[0].receiverName,
     状态: item.status,
   }))??[] ;
 
@@ -125,6 +119,7 @@ const PickupOrders = () => {
     
   ]
   
+ 
   const navigate = useNavigate()
   const [openModal,setOpenModal] =useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
@@ -160,9 +155,6 @@ const PickupOrders = () => {
     setOpenModal(true);
   };
    
-  useEffect(()=>{
-    getAllPickUpOrder()
-  },[])
   return (
     <Box sx={{ display: "flex", width: "100%", flexDirection: "column" }}>
         <Modal open={openModal} onClose={handleCloses} >
@@ -195,7 +187,7 @@ const PickupOrders = () => {
         
 
       </Stack>
-      <Box pr={4} pt={3} sx={{ flexGrow: 1 }}>
+      <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
         <DataGrid
           rows={rows}
           hideFooter
@@ -204,6 +196,7 @@ const PickupOrders = () => {
           disableRowSelectionOnClick
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
+          
           sx={{
             border: "none",
             "& .MuiDataGrid-cell": {

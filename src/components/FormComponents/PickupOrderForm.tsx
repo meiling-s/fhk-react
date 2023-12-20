@@ -18,18 +18,22 @@ import PickupOrderCard from "../PickupOrderCard";
 import {
   PickupOrder,
   PickupOrderDetail,
+  PicoDetail,
+  PoStatus,
   Row,
 } from "../../interfaces/pickupOrder";
 import CheckInRequestContainer from "../../contexts/CheckInRequestContainer";
 import { useContainer } from "unstated-next";
 import { useNavigate } from "react-router-dom";
+import { editPickupOrderStatus, getDtlById } from "../../APICalls/Collector/pickupOrder/pickupOrder";
+import { useFormik } from "formik";
 
 const PickupOrderForm = ({
   onClose,
   selectedRow,
 }: {
   onClose?: () => void;
-  selectedRow: Row | null;
+  selectedRow?: Row | null;
 }) => {
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -45,11 +49,10 @@ const PickupOrderForm = ({
     navigate("/collector/editPickupOrder",{ state: po })
   };
 
-  const { pickupOrder } = useContainer(CheckInRequestContainer);
+  const { pickupOrder,initPickupOrderRequest } = useContainer(CheckInRequestContainer);
   const [selectedPickupOrder, setSelectedPickupOrder] = useState<PickupOrder>();
+  console.log(selectedPickupOrder)
   const [pickupOrderDetail, setPickUpOrderDetail] = useState<PickupOrderDetail[]>();
-
-  console.log(selectedPickupOrder);
 
   useEffect(() => {
     if (selectedRow) {
@@ -61,10 +64,29 @@ const PickupOrderForm = ({
       }
     }
   }, [selectedRow]);
-
   
+  const onDeleteClick = async () => {
+    if (selectedPickupOrder) {
+      const updatePoStatus = {
+        status: 'CLOSED',
+        reason: selectedPickupOrder.reason,
+        updatedBy: selectedPickupOrder.updatedBy
+      };
+      try {
+        const result = await editPickupOrderStatus(selectedPickupOrder.picoId, updatePoStatus);
+        if(result)
+        await initPickupOrderRequest();
+        onClose && onClose();
+        navigate("/collector/PickupOrder");
+      } catch (error) {
+        console.error('Error updating field:', error);
+      }
+    } else {
+      alert('No selected pickup order');
+    }
+  };
 
-  
+    
   return (
     <>
       <Box sx={localstyles.modal} onClick={handleOverlayClick}>
@@ -90,6 +112,7 @@ const PickupOrderForm = ({
                 variant="outlined"
                 startIcon={<DELETE_OUTLINED_ICON />}
                 sx={localstyles.button}
+                onClick={onDeleteClick}
               >
                 删除
               </Button>
@@ -120,7 +143,7 @@ const PickupOrderForm = ({
 
             <CustomField label={"运输类别"}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.picoType}
+                {selectedPickupOrder?.picoType === 'AD_HOC' ? '常規運輸' : (selectedPickupOrder?.picoType === 'ROUTINE' ? '一次性運輸' : undefined)}
               </Typography>
             </CustomField>
 
@@ -132,6 +155,7 @@ const PickupOrderForm = ({
             </CustomField>
             <CustomField label={"回收周次"}>
               <Typography sx={localstyles.typo_fieldContent}>
+          
               {selectedPickupOrder?.routine.map((routineItem) => routineItem).join(' ')}
               </Typography>
             </CustomField>
@@ -154,7 +178,7 @@ const PickupOrderForm = ({
 
             <CustomField label={"寄件公司名称"}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.logisticId}
+                {selectedPickupOrder?.logisticName}
               </Typography>
             </CustomField>
 
