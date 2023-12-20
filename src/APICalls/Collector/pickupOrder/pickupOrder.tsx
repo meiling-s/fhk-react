@@ -2,11 +2,11 @@ import React, { useEffect } from 'react'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import axios from 'axios'
 import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
-import { CreatePO, EditPo, PickupOrder } from '../../../interfaces/pickupOrder'
+import { CreatePO, EditPo, PickupOrder, PoStatus } from '../../../interfaces/pickupOrder'
 import { createCP } from '../../../interfaces/collectionPoint'
 
   const request = axios.create({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
     })
 
   export const getAllPickUpOrder = async () => {
@@ -81,32 +81,41 @@ export const editPickupOrder = async (pickupOrderId: number, data:EditPo) => {
           //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
           // },
       });
-      console.log('Update collection point success:', JSON.stringify(response.data));
+      console.log('Update pickup order success:', JSON.stringify(response.data));
       return response
   } catch (e) {
-      console.error('Update collection point failed:', e);
+      console.error('Update pickup order  failed:', e);
       return null;
   }
 
 }
 
+export const editPickupOrderStatus = async (pickupOrderId: number, data:PoStatus) => {
 
-export const getLogisticlist = async () => {
-    
-  try {
+  const axiosConfig = Object.assign({},UPDATE_PICK_UP_ORDER_STATUS);
+  axiosConfig.url = UPDATE_PICK_UP_ORDER_STATUS.url+`/${pickupOrderId}`;
 
-      var response = await request({
-          ...GET_LOGISTICLIST,
-          // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+  try{
+      const response = await request({
+          ...axiosConfig,
+          data: data
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
+          // },
       });
-      console.log('Get logistic list success:', JSON.stringify(response.data));
-      
-      return response.data
-  }catch (e) {
-      console.error('Get logistic list failed:', e);
+      console.log('Update pickup order status success:', JSON.stringify(response.data));
+      return response
+  } catch (e) {
+      console.error('Update pickup order status failed:', e);
       return null;
   }
+
 }
+
+
+
+
+
 
 
 

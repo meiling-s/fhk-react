@@ -15,6 +15,7 @@ const EditPickupOrder = () => {
     const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
     const poInfo: PickupOrder = state;
     const { initPickupOrderRequest } = useContainer(CheckInRequestContainer);
+    console.log(poInfo)
 
     const updatePickupOrder = useFormik({
         initialValues: {
@@ -37,7 +38,6 @@ const EditPickupOrder = () => {
           rejectedBy: "string",
           contractNo: "",
           updatedBy: "string",
-          
         },
     
         onSubmit: async (values: EditPo) => {
@@ -74,8 +74,8 @@ const EditPickupOrder = () => {
             status: "CREATED",
             reason: poInfo.reason,
             normalFlg: true,
-            approvedAt: poInfo.approvedAt.toString(),
-            rejectedAt: poInfo.rejectedAt.toString(),
+            approvedAt: poInfo.approvedAt,
+            rejectedAt: poInfo.rejectedAt,
             approvedBy: poInfo.approvedBy,
             rejectedBy: poInfo.rejectedBy,
             contractNo: poInfo.contractNo,

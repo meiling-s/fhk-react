@@ -100,13 +100,13 @@ const PickupOrderCreateForm = ({
     };
   }, []);
   const columns: GridColDef[] = [
-    { field: "time", headerName: "运送时间", width: 150 },
+    { field: "pickupAt", headerName: "运送时间", width: 150 },
     {
       field: "recycType",
       headerName: "主类别",
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.items.recycType
+      valueGetter: ({ row }) => row.item.recycType
     },
     {
       field: "recycSubType",
@@ -114,15 +114,15 @@ const PickupOrderCreateForm = ({
       type: "string",
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.items.recycSubType
+      valueGetter: ({ row }) => row.item.recycSubType
     },
     {
-      field: "items.weight",
+      field: "Weight",
       headerName: "重量",
       type: "string",
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.items.weight
+      valueGetter: ({ row }) => row.item.weight
     },
     {
       field: "senderName",
@@ -204,9 +204,9 @@ const PickupOrderCreateForm = ({
                   <CustomSwitch
                     onText="常规运输"
                     offText="一次性运输"
-                    defaultValue={true}
+                    defaultValue={selectedPo?.picoType === 'AD_HOC' ? true : (selectedPo?.picoType === 'ROUTINE' ? false : undefined)}
                     setState={(value) =>
-                      formik.setFieldValue("picoType", value)
+                      formik.setFieldValue("picoType", value?"AD_HOC":"ROUTINE")
                     }
                     value={formik.values.picoType}
                     helperText={
@@ -224,6 +224,8 @@ const PickupOrderCreateForm = ({
                     formik.setFieldValue("effFrmDate", values.startDate);
                     formik.setFieldValue("effToDate", values.endDate);
                   }}
+                  defaultStartDate={selectedPo?.effFrmDate}
+                  defaultEndDate={selectedPo?.effToDate}
                 />
               </Grid>
               <CustomField label="回收周次" style={{ width: "100%" }}>
@@ -232,6 +234,10 @@ const PickupOrderCreateForm = ({
                     console.log('routine'+JSON.stringify(values))
                     formik.setFieldValue("routineType", values.routineType);
                     formik.setFieldValue("routine", values.routineContent);
+                  }}
+                  defaultValue={{
+                    routineType: selectedPo?.routineType ?? "",
+                    routineContent: selectedPo?.routine ?? [],
                   }}
                 />
               </CustomField>

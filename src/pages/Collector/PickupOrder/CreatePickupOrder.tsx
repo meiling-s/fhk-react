@@ -16,7 +16,7 @@ const CreatePickupOrder = () => {
 
   
   const validateSchema = Yup.object().shape({
-    picoType: Yup.boolean().required("This field is required"),
+    picoType: Yup.string().required("This field is required"),
     // effFrmDate:"",
     // effToDate: "",
     // routineType:'',       
@@ -47,7 +47,7 @@ const CreatePickupOrder = () => {
  
   const createPickupOrder = useFormik({
     initialValues: {
-      picoType: '',
+      picoType: 'AD_HOC',
       effFrmDate:"",
       effToDate: "",
       routineType:'',       
@@ -70,18 +70,18 @@ const CreatePickupOrder = () => {
       
       values.createPicoDetail = addRow
       console.log(JSON.stringify(values, null, 2))
-      // const result = await createPickUpOrder(values);
-    //   alert(result);
+      const result = await createPickUpOrder(values);
+      alert(result);
       
-    //   const data = result?.data;
-    //   if (data) {
-    //     console.log("all collection point: ", data);
-    //     await initPickupOrderRequest();
-    //     navigate("/collector/PickupOrder",{ state: "created" });    
+      const data = result?.data;
+      if (data) {
+        console.log("all collection point: ", data);
+        await initPickupOrderRequest();
+        navigate("/collector/PickupOrder",{ state: "created" });    
       
-    // }else{
-    //   alert('fail to create pickup order')
-    // }
+    }else{
+      alert('fail to create pickup order')
+    }
     },
   });
 

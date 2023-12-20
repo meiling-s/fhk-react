@@ -4,7 +4,7 @@ import { colPointType, contract, logisticList, premiseType, recycType, siteType 
 import axios from 'axios';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import { GET_COLLECTIONPOINT_TYPE, GET_CONTRACT, GET_LOGISTICLIST, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE } from '../constants/requests';
-import { getLogisticlist } from '../APICalls/Collector/pickupOrder/pickupOrder';
+
 
 const CommonType = () => { 
     const [colPointType,setColPointType] =useState<colPointType[]>()
@@ -99,7 +99,6 @@ const getSiteType = async () => {
     
     const getLogisticlist = async () => {
 
-    
         try {
       
             var response = await request({
@@ -117,8 +116,7 @@ const getSiteType = async () => {
         }
       }
       const getContractList = async () => {
-
-    
+        
         try {
       
             var response = await request({

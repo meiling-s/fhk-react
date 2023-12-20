@@ -31,6 +31,9 @@ import CustomTextField from "./CustomTextField";
 import { useFormik } from "formik";
 import { CreatePicoDetail } from "../../interfaces/pickupOrder";
 import { Navigate, useNavigate } from "react-router";
+import RecyclablesListSingleSelect from "../SpecializeComponents/RecyclablesListSingleSelect";
+import { dateToLocalTime } from "../Formatter";
+
 
 const CreateRecycleForm = ({
   onClose,
@@ -75,11 +78,12 @@ const CreateRecycleForm = ({
         status: "CREATED",
         createdBy: "ADMIN",
         updatedBy: "ADMIN",
-        items: {
-          recycType: editRow.items.recycType,
-          recycSubType: editRow.items.recycSubType,
-          weight: editRow.items.weight,
-          picoHisId: 1,
+        pickupAt:'',
+        item: {
+          recycType: editRow.item.recycType,
+          recycSubType: editRow.item.recycSubType,
+          weight: editRow.item.weight,
+
         },
       });
     }
@@ -123,11 +127,11 @@ const CreateRecycleForm = ({
       status: "CREATED",
       createdBy: "ADMIN",
       updatedBy: "ADMIN",
-      items: {
+      pickupAt:'',
+      item: {
         recycType: "",
         recycSubType: "",
         weight: 0,
-        picoHisId: 1,
       },
     },
     validationSchema: validateSchema,
@@ -206,32 +210,36 @@ const CreateRecycleForm = ({
                 <CustomField label="運送時間">
                   <TimePicker
                     sx={{ width: "100%" }}
-                    value={formik.values}
-                    onChange={(value) => formik.setFieldValue("time", value)}
+                    value={formik.values.pickupAt}
+                    onChange={(value) =>{
+                      if(value != null)
+
+                        formik.setFieldValue("pickupAt",dateToLocalTime(new Date(value)))}
+                    }
                   />
                 </CustomField>
 
                 <CustomField label={t("col.recycType")} mandatory={true}>
-                  <RecyclablesList
-                    recycL={recycType ?? []}
+                  <RecyclablesListSingleSelect
+                    recycL={recycType??[]}
                     setState={(values) => {
                       formik.setFieldValue(
-                        "items.recycType",
-                        values?.[0]?.recycTypeId
+                        "item.recycType",
+                        values?.recycTypeId
                       );
                       formik.setFieldValue(
-                        "items.recycSubType",
-                        values?.[0]?.recycSubtypeId
+                        "item.recycSubType",
+                        values?.recycSubtypeId
                       );
                     }}
                   />
                 </CustomField>
                 <CustomField label="預計重量">
                   <CustomTextField
-                    id="items.weight"
+                    id="item.weight"
                     placeholder="请輸入重量"
                     onChange={formik.handleChange}
-                    value={formik.values.items.weight}
+                    value={formik.values.item.weight}
                     sx={{ width: "100%" }}
                     endAdornment={
                       <InputAdornment position="end">kg</InputAdornment>

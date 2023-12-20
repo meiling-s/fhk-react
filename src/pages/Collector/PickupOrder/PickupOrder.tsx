@@ -14,10 +14,11 @@ import React, { useEffect, useState } from "react";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 import PickupOrderForm from "../../../components/FormComponents/PickupOrderForm";
 import StatusCard from "../../../components/StatusCard";
-import { getAllPickUpOrder, getDtlById, getLogisticlist } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+
 import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
+
 
 
 
@@ -154,10 +155,6 @@ const PickupOrders = () => {
     setOpenModal(true);
   };
    
-  useEffect(()=>{
-    getLogisticlist()
-    
-  },[])
   return (
     <Box sx={{ display: "flex", width: "100%", flexDirection: "column" }}>
         <Modal open={openModal} onClose={handleCloses} >

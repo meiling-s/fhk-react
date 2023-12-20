@@ -2,7 +2,6 @@ import { Autocomplete, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import Resizer from 'react-image-file-resizer';
 import { logisticList } from '../../interfaces/common';
-import { getLogisticlist } from '../../APICalls/Collector/pickupOrder/pickupOrder';
 import { useContainer } from 'unstated-next';
 import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import CustomAutoComplete from '../../components/FormComponents/CustomAutoComplete';
