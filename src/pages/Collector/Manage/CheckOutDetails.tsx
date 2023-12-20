@@ -50,6 +50,55 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
     }
   ]
 
+  // {
+  //   "chkOutId": 1,
+  //   "logisticName": "string",
+  //   "logisticId": "string",
+  //   "vehicleTypeId": "string",
+  //   "plateNo": "string",
+  //   "receiverName": "string",
+  //   "receiverId": "string",
+  //   "receiverAddr": "string",
+  //   "receiverAddrGps": [
+  //     0
+  //   ],
+  //   "warehouseId": 0,
+  //   "colId": 0,
+  //   "collectorId": 0,
+  //   "status": "COMPLETED",
+  //   "reason": [
+  //     "string"
+  //   ],
+  //   "picoId": null,
+  //   "signature": "string",
+  //   "normalFlg": true,
+  //   "adjustmentFlg": true,
+  //   "createdBy": "string",
+  //   "updatedBy": "string",
+  //   "checkoutDetail": [
+  //     {
+  //       "chkOutDtlId": 1,
+  //       "recycTypeId": "string",
+  //       "recycSubtypeId": "string",
+  //       "packageTypeId": "string",
+  //       "weight": 0,
+  //       "unitId": "string",
+  //       "itemId": "string",
+  //       "checkoutDetailPhoto": [
+  //         {
+  //           "sid": 1,
+  //           "photo": "string"
+  //         }
+  //       ],
+  //       "pickupOrderHistory": null,
+  //       "createdBy": "string",
+  //       "updatedBy": "string"
+  //     }
+  //   ],
+  //   "createdAt": "2023-12-19T10:09:26.576964",
+  //   "updatedAt": "2023-12-19T10:19:01.799599"
+  // }
+
   return (
     <div className="checkin-request-detail">
       <RightOverlayForm
