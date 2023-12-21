@@ -191,7 +191,8 @@
     "shipping_info": "運輸資料",
     "delivery_location": "送出地點",
     "approved_on": "核準於",
-    "reason_is": "原因為"
+    "reason_is": "原因為",
+    "total_checkout": "總的退房要求是"
   },
   "mainMenu": {
     "manage": "管理",

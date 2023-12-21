@@ -31,7 +31,6 @@ import CustomItemList, {
 } from '../../../components/FormComponents/CustomItemList'
 import {
   getAllCheckoutRequest,
-  // getCheckoutRequestById,
   updateCheckoutRequestStatus
 } from '../../../APICalls/Collector/checkout'
 import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
@@ -42,19 +41,6 @@ import { CheckOut } from '../../../interfaces/checkout'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
-
-// interface CheckOut {
-//   id: number
-//   chkOutId: number
-//   createdAt: string
-//   vehicleTypeId: string
-//   receiverName: string
-//   picoId: string
-//   adjustmentFlg: boolean
-//   logisticName: string
-//   receiverAddr: string
-//   receiverAddrGps: string
-// }
 
 type TableRow = {
   id: number
@@ -71,6 +57,7 @@ type ApproveForm = {
 type RejectForm = {
   open: boolean
   onClose: () => void
+  checkedCheckOut: number[]
   onRejected?: () => void
 }
 
@@ -79,51 +66,6 @@ type Confirm = {
   onClose: () => void
   title?: string
 }
-
-// const dummyCheckoutbyId: CheckOut = {
-//   chkOutId: 1,
-//   logisticName: 'string',
-//   logisticId: 'string',
-//   vehicleTypeId: 'string',
-//   plateNo: 'string',
-//   receiverName: 'string',
-//   receiverId: 'string',
-//   receiverAddr: 'string',
-//   receiverAddrGps: [0],
-//   warehouseId: 0,
-//   colId: 0,
-//   collectorId: 0,
-//   status: 'COMPLETED',
-//   reason: ['string'],
-//   picoId: 'null',
-//   signature: 'string',
-//   normalFlg: true,
-//   adjustmentFlg: true,
-//   createdBy: 'string',
-//   updatedBy: 'string',
-//   checkoutDetail: [
-//     {
-//       chkOutDtlId: 1,
-//       recycTypeId: 'string',
-//       recycSubtypeId: 'string',
-//       packageTypeId: 'string',
-//       weight: 0,
-//       unitId: 'string',
-//       itemId: 'string',
-//       checkoutDetailPhoto: [
-//         {
-//           sid: 1,
-//           photo: 'string'
-//         }
-//       ],
-//       pickupOrderHistory: null,
-//       createdBy: 'string',
-//       updatedBy: 'string'
-//     }
-//   ],
-//   createdAt: '2023-12-19T10:09:26.576964',
-//   updatedAt: '2023-12-19T10:19:01.799599'
-// }
 
 const ConfirmModal: React.FC<Confirm> = ({ open, onClose, title }) => {
   const { t } = useTranslation()
@@ -170,10 +112,6 @@ const ApproveModal: React.FC<ApproveForm> = ({
   onApprove
 }) => {
   const { t } = useTranslation()
-  // const idsCheckOut: number[] = checkedCheckOut?.map((item) => {
-  //   return item.chkOutId
-  // })
-
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
     const statReason: updateStatus = {
@@ -224,9 +162,9 @@ const ApproveModal: React.FC<ApproveForm> = ({
           </Box>
           <Divider />
           <Box className="flex gap-2 justify-start">
-            {checkedCheckOut?.map((id) => (
-              <Typography sx={styles.typo}>{id}</Typography>
-            ))}
+            <Typography sx={styles.typo}>
+              {t('check_out.total_checkout') + checkedCheckOut.length}
+            </Typography>
           </Box>
 
           <Box sx={{ alignSelf: 'center' }}>
@@ -256,7 +194,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
 const RejectModal: React.FC<RejectForm> = ({
   open,
   onClose,
-  // checkedShipments,
+  checkedCheckOut,
   onRejected
 }) => {
   const { t } = useTranslation()
@@ -277,6 +215,39 @@ const RejectModal: React.FC<RejectForm> = ({
       name: '原因 3'
     }
   ]
+
+  const handleRejectRequest = async (rejectReasonId: string[]) => {
+    const rejectReason = rejectReasonId.map((id) => {
+      const reasonItem = reasons.find((reason) => reason.id === id)
+      return reasonItem ? reasonItem.name : ''
+    })
+    const reason = rejectReason
+    const statReason: updateStatus = {
+      status: 'REJECTED',
+      reason: reason,
+      updatedBy: 'admin'
+    }
+
+    const results = await Promise.allSettled(
+      checkedCheckOut.map(async (chkOutId) => {
+        try {
+          const result = await updateCheckoutRequestStatus(chkOutId, statReason)
+          const data = result?.data
+          if (data) {
+            console.log('updated check-out status: ', data)
+            if (onRejected) {
+              onRejected()
+            }
+          }
+        } catch (error) {
+          console.error(
+            `Failed to update check-in status for id ${chkOutId}: `,
+            error
+          )
+        }
+      })
+    )
+  }
 
   return (
     <Modal
@@ -302,7 +273,9 @@ const RejectModal: React.FC<RejectForm> = ({
             <Typography sx={styles.typo}>
               {t('check_out.reject_reasons')}
             </Typography>
-
+            <Typography sx={styles.typo}>
+              {t('check_out.total_checkout') + checkedCheckOut.length}
+            </Typography>
             <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
           </Box>
 
@@ -310,6 +283,7 @@ const RejectModal: React.FC<RejectForm> = ({
             <button
               className="primary-btn mr-2 cursor-pointer"
               onClick={() => {
+                handleRejectRequest(rejectReasonId)
                 onClose()
               }}
             >
@@ -339,13 +313,13 @@ const CheckoutRequest: FunctionComponent = () => {
   const [rejFormModal, setRejectModal] = useState<boolean>(false)
   const [approveModal, setApproveModal] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [keyword, setKeyword] = useState('')
   const [selectedRow, setSelectedRow] = useState<CheckOut>()
   const [checkedCheckOut, setCheckedCheckOut] = useState<number[]>([])
   const [company, setCompany] = useState('')
   const [filterCheckOut, setFilterCheckOut] = useState<CheckOut[]>([])
   const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
   const [selectAll, setSelectAll] = useState(false)
+  const [confirmModal, setConfirmModal] = useState(false)
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -363,7 +337,6 @@ const CheckoutRequest: FunctionComponent = () => {
   ) => {
     const checked = event.target.checked
 
-    // Logic to handle individual row selection/deselection
     if (checked) {
       setCheckedCheckOut((prev) => [...prev, chkOutId])
     } else {
@@ -531,7 +504,6 @@ const CheckoutRequest: FunctionComponent = () => {
   const handleLocChange = (event: SelectChangeEvent) => {
     setLocation(event.target.value)
     var searchWord = event.target.value
-    //console.log(searchWord);
     if (searchWord != '') {
       const filteredShipments: CheckOut[] = []
       checkOutRequest.map((item) => {
@@ -559,8 +531,7 @@ const CheckoutRequest: FunctionComponent = () => {
       (item) => item.chkOutId === row.chkOutId
     )
     console.log('selectedItem', selectedItem)
-    setSelectedRow(selectedItem) //
-    // setSelectedRow(row)
+    setSelectedRow(selectedItem)
 
     setDrawerOpen(true)
   }
@@ -684,21 +655,27 @@ const CheckoutRequest: FunctionComponent = () => {
         onClose={() => {
           setRejectModal(false)
         }}
-        // onRejected={() => initShipments()}
+        checkedCheckOut={checkedCheckOut}
+        onRejected={() => getCheckoutRequest()}
       />
       <ApproveModal
         open={approveModal}
         onClose={() => {
           setApproveModal(false)
         }}
+        onApprove={() => setConfirmModal(true)}
         checkedCheckOut={checkedCheckOut}
-        // onRejected={() => initShipments()}
+      />
+      <ConfirmModal
+        open={approveModal}
+        onClose={() => {
+          setConfirmModal(false), getCheckoutRequest()
+        }}
       />
       <CheckInDetails
         drawerOpen={drawerOpen}
         handleDrawerClose={handleDrawerClose}
         selectedCheckOut={selectedRow}
-        //selectedCheckOut={dummyCheckoutbyId}
       />
     </Box>
   )

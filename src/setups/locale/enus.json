@@ -176,7 +176,8 @@
     "shipping_info": "Shipping Information",
     "delivery_location": "Delivery Location",
     "approved_on": "Approved on",
-    "reason_is": "Reason is"
+    "reason_is": "Reason is",
+    "total_checkout": "total check-out request is"
   },
   "changePass": {
     "titlePage": "CHANGE PASSWORD",
