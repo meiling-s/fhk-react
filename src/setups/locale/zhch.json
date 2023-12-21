@@ -68,7 +68,7 @@
   "enter_Keyword_To_Search": "输入关键字查询",
   "account": "帐户",
   "signOut": "登出",
-  "changePassword": "更改密碼",
+  "changePassword": "更改密码",
   "changePasswordConfirmation": "您的密碼已成功更改",
   "date": "日期",
   "week": "星期",
@@ -169,36 +169,42 @@
     "confirm": "确认拒绝",
     "cancel": "取消",
     "shipping_company": "航運公司",
-    "arrival_location": "到達地點",
-    "success_approve": "結帳請求成功",
+    "arrival_location": "到达地点",
+    "success_approve": "结帐请求成功",
     "ok": "好的",
     "shipping_info": "運輸資料",
     "delivery_location": "送出地點",
     "approved_on": "核準於",
     "reason_is": "原因為"
   },
-  "changePassPage": {
-    "titlePage": "更改密碼",
+  "changePass": {
+    "titlePage": "更改密码",
     "submitPassword": "完成重置",
-    "username": "登入名稱",
+    "username": "登入名称",
     "placeholder_username": "例如：chantaiman001",
-    "password": "密碼",
-    "placeholder_password": "請輸入密碼",
-    "new_password": "新密碼",
-    "placeholder_new_password": "請輸入密碼",
-    "helper_new_pass": "密碼至少包含8 個字元，並混用英文字母、數字和符號",
-    "confirm_password": "再次輸入新密碼",
-    "placeholder_confirm_password": "請輸入密碼",
-    "helper_confirm_password": "您的新密碼和確認密碼不匹配",
-    "skip_btn": "跳過（暫時用於開發"
+    "password": "密码",
+    "placeholder_password": "请输入密码",
+    "new_password": "新密码",
+    "placeholder_new_password": "再次输入新密码",
+    "helper_new_pass": "密码至少包含8 个字元，并混用英文字母、数字和符号",
+    "confirm_password": "确认密码",
+    "placeholder_confirm_password": "请输入密码",
+    "helper_confirm_password": "您的新密码和确认密码不匹配",
+    "skip_btn": "跳过（暂时用于开发）",
+    "error": "错误，无法重设密码"
   },
   "mainMenu": {
     "manage": "管理",
-    "overview": "概覽"
+    "overview": "概述"
   },
   "status": {
     "active": "已啓用",
     "inactive": "不活躍的",
     "deleted": "已刪除"
+  },
+  "appBar": {
+    "simplified_cn": "简体中文",
+    "traditional_cn": "繁體中文",
+    "english": "英语"
   }
 }

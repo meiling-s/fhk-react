@@ -248,16 +248,16 @@ const MainAppBar = () => {
               divider={true}
               onClick={() => handleLanguageChange('zhch')}
             >
-              <Typography>簡體中文</Typography>
+              <Typography>{t('appBar.simplified_cn')}</Typography>
             </MenuItem>
             <MenuItem
               divider={true}
               onClick={() => handleLanguageChange('zhhk')}
             >
-              <Typography>繁體中文</Typography>
+              <Typography>{t('appBar.traditional_cn')}</Typography>
             </MenuItem>
             <MenuItem onClick={() => handleLanguageChange('enus')}>
-              <Typography>English</Typography>
+              <Typography>{t('appBar.english')}</Typography>
             </MenuItem>
           </Menu>
           <Box sx={{ display: 'flex', flexDirection: 'row', ml: 3 }}>

@@ -74,8 +74,8 @@ function MainDrawer() {
     }
   }, [])
 
-  var role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
-  //var role = 'warehouse'
+  //var role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
+  var role = 'warehouse'
 
   let drawerMenus_collector: DrawerItem[] = [
     {
@@ -180,6 +180,12 @@ function MainDrawer() {
     {
       name: t('mainMenu.overview'),
       onClick: () => navigate('/warehouse/overview'),
+      collapse: true,
+      collapseGroup: ManageDrawer
+    },
+    {
+      name: t('process_Records'),
+      onClick: () => navigate('/'),
       collapse: true,
       collapseGroup: ManageDrawer
     },
