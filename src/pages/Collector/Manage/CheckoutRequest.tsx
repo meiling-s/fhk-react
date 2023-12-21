@@ -414,6 +414,7 @@ const CheckoutRequest: FunctionComponent = () => {
       : '-'
     return {
       id: item.chkOutId,
+      chkOutId: item.chkOutId,
       createdAt: createdDate,
       vehicleTypeId: item.vehicleTypeId,
       receiverName: item.receiverName,
@@ -421,7 +422,7 @@ const CheckoutRequest: FunctionComponent = () => {
       adjustmentFlg: item.adjustmentFlg,
       logisticName: item.logisticName,
       receiverAddr: item.receiverAddr,
-      receiverAddrGps: item.receiverAddrGps
+      receiverAddrGps: "-"
     }
   }
 
@@ -430,7 +431,7 @@ const CheckoutRequest: FunctionComponent = () => {
     const data = result?.data.content
     if (data && data.length > 0) {
       const checkoutData = data.map(transformToTableRow)
-      setCheckoutRequest(checkoutData)
+      setCheckoutRequest(data)
       setFilterCheckOut(checkoutData)
     }
   }
@@ -499,10 +500,12 @@ const CheckoutRequest: FunctionComponent = () => {
   }
 
   const handleSelectRow = (params: GridRowParams) => {
-    const row = params.row as TableRow
+    const row = params.row 
+    console.log("row", row)
     const selectedItem = checkOutRequest?.find(
-      (item) => item.chkOutId === row.id
+      (item) => item.chkOutId === row.chkOutId
     )
+    console.log("selectedItem", selectedItem)
     setSelectedRow(selectedItem) //
     // setSelectedRow(row)
 

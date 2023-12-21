@@ -222,7 +222,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   <div className="detail flex justify-between items-center">
                     <div className="recyle-type flex items-center gap-2">
                       <div className="category" style={categoryRecyle}>
-                        {item.recycType.name}
+                        {item.recycType.name.charAt(0)}
                       </div>
                       <div className="type-item">
                         <div className="sub-type text-xs text-black font-bold tracking-widest">
@@ -234,7 +234,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                       </div>
                     </div>
                     <div className="weight font-bold font-base">
-                      {item.weight}kg
+                      {item.weight} kg
                     </div>
                   </div>
                   <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
@@ -243,7 +243,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                         src={img.photo}
                         alt=""
                         key={index}
-                        className="lg:w-28 sm:w-16"
+                        className="lg:w-28 sm:w-16 rounded-xl"
                       />
                     ))}
                   </div>
