@@ -28,12 +28,11 @@ import * as Yup from "yup";
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import CustomTextField from "./CustomTextField";
-import { useFormik } from "formik";
+import { ErrorMessage, useFormik } from "formik";
 import { CreatePicoDetail } from "../../interfaces/pickupOrder";
 import { Navigate, useNavigate } from "react-router";
 import RecyclablesListSingleSelect from "../SpecializeComponents/RecyclablesListSingleSelect";
 import { dateToLocalTime } from "../Formatter";
-
 
 const CreateRecycleForm = ({
   onClose,
@@ -78,39 +77,26 @@ const CreateRecycleForm = ({
         status: "CREATED",
         createdBy: "ADMIN",
         updatedBy: "ADMIN",
-        pickupAt:'',
+        pickupAt: "",
         item: {
           recycType: editRow.item.recycType,
           recycSubType: editRow.item.recycSubType,
           weight: editRow.item.weight,
-
         },
       });
     }
   }, [editRow]);
-  
+
   const validateSchema = Yup.object().shape({
-    // id: id,
-    // senderId: "1",
     senderName: Yup.string().required("This sendername is required"),
     senderAddr: Yup.string().required("This senderAddr is required"),
-    // senderAddrGps: [11, 12],
-    // receiverId: "1",
-    receiverName: Yup.string().required("This  receiverName is required"),
+    receiverName: Yup.string().required("This receiverName is required"),
     receiverAddr: Yup.string().required("This receiverAddr is required"),
-    // receiverAddrGps: [11, 12],
-    // status: "CREATED",
-    // createdBy: "ADMIN",
-    // updatedBy: "ADMIN",
-    // items: Yup.object().shape({
-    //   recycType: Yup.string().required("This recycType is required"),
-    //   recycSubType: Yup.string().required("This recycSubType is required"),
-    //   weight: Yup.number().required("This weight is required"),
-    // }),
-
-    // recycType: Yup.string().required("This recycType required"),
-    // recycSubType: Yup.string().required("This recycSubType is required"),
-    // weight: Yup.number().required("This weight is required"),
+    item: Yup.object().shape({
+      recycType: Yup.string().required("This recycType is required"),
+      recycSubType: Yup.string().required("This recycSubType is required"),
+      weight: Yup.number().required("This weight is required"),
+    }),
   });
 
   const formik = useFormik({
@@ -127,7 +113,7 @@ const CreateRecycleForm = ({
       status: "CREATED",
       createdBy: "ADMIN",
       updatedBy: "ADMIN",
-      pickupAt:'',
+      pickupAt: "",
       item: {
         recycType: "",
         recycSubType: "",
@@ -153,17 +139,29 @@ const CreateRecycleForm = ({
   console.log(formik.errors);
 
   const TextFields = [
-    { label: "寄件公司", id: "senderName", value: formik.values.senderName },
+    {
+      label: "寄件公司",
+      id: "senderName",
+      value: formik.values.senderName,
+      error: formik.errors.senderName && formik.touched.senderName,
+    },
     {
       label: "收件公司",
       id: "receiverName",
       value: formik.values.receiverName,
+      error: formik.errors.receiverName && formik.touched.receiverName,
     },
-    { label: "回收地點", id: "senderAddr", value: formik.values.senderAddr },
+    {
+      label: "回收地點",
+      id: "senderAddr",
+      value: formik.values.senderAddr,
+      error: formik.errors.senderAddr && formik.touched.senderAddr,
+    },
     {
       label: "到達地點",
       id: "receiverAddr",
       value: formik.values.receiverAddr,
+      error: formik.errors.receiverAddr && formik.touched.receiverAddr,
     },
   ];
 
@@ -207,21 +205,24 @@ const CreateRecycleForm = ({
               </Box>
               <Divider />
               <Stack spacing={2} sx={localstyles.content}>
-                <CustomField label="運送時間">
+                <CustomField label="運送時間" mandatory>
                   <TimePicker
                     sx={{ width: "100%" }}
                     value={formik.values.pickupAt}
-                    onChange={(value) =>{
-                      if(value != null)
-
-                        formik.setFieldValue("pickupAt",dateToLocalTime(new Date(value)))}
-                    }
+                    onChange={(value) => {
+                      if (value != null)
+                        formik.setFieldValue(
+                          "pickupAt",
+                          dateToLocalTime(new Date(value))
+                        );
+                    }}
                   />
                 </CustomField>
 
-                <CustomField label={t("col.recycType")} mandatory={true}>
+                <CustomField label={t("col.recycType")} mandatory>
                   <RecyclablesListSingleSelect
-                    recycL={recycType??[]}
+                  showError={formik.errors.item?.recycType&&formik.touched.item?.recycType||undefined}
+                    recycL={recycType ?? []}
                     setState={(values) => {
                       formik.setFieldValue(
                         "item.recycType",
@@ -234,12 +235,13 @@ const CreateRecycleForm = ({
                     }}
                   />
                 </CustomField>
-                <CustomField label="預計重量">
+                <CustomField label="預計重量" mandatory>
                   <CustomTextField
                     id="item.weight"
                     placeholder="请輸入重量"
                     onChange={formik.handleChange}
                     value={formik.values.item.weight}
+                    error={formik.errors.item?.weight&&formik.touched.item?.weight||undefined}
                     sx={{ width: "100%" }}
                     endAdornment={
                       <InputAdornment position="end">kg</InputAdornment>
@@ -247,7 +249,7 @@ const CreateRecycleForm = ({
                   ></CustomTextField>
                 </CustomField>
                 {TextFields.map((t) => (
-                  <CustomField label={t.label}>
+                  <CustomField mandatory label={t.label}>
                     <CustomTextField
                       id={t.id}
                       placeholder="请输入地點"
@@ -255,31 +257,22 @@ const CreateRecycleForm = ({
                       onChange={formik.handleChange}
                       value={t.value}
                       sx={{ width: "100%" }}
+                      error={t.error||undefined}
                     ></CustomTextField>
                   </CustomField>
                 ))}
-                {/* {Object.values(formik.errors).map((error, index) => (
-                  <Alert key={index} severity="error">
-                    {error.toString()}
-                  </Alert>
-                ))}
-                {formik.errors.items &&
-                  Object.keys(formik.errors.items).map(
-                    (nestedField, index) =>
-                      formik.errors.items &&
-                      formik.errors.items[
-                        nestedField as keyof typeof formik.errors.items
-                      ] && (
-                        <Alert key={index} severity="error">
-                          {
-                            formik.errors.items[
-                              nestedField as keyof typeof formik.errors.items
-                            ]
-                          }
-                        </Alert>
-                      )
-                  )} */}
+                <Stack spacing={2}>
+                  { formik.errors.pickupAt&&formik.touched.pickupAt&&<Alert severity="error">{formik.errors.pickupAt} </Alert> }
+                  { formik.errors.item?.recycType&&formik.touched.item?.recycType&&<Alert severity="error">{formik.errors.item?.recycType} </Alert> }
+                  { formik.errors.item?.recycSubType&&formik.touched.item?.recycSubType&&<Alert severity="error">{formik.errors.item?.recycSubType} </Alert> }
+                  { formik.errors.item?.weight&&formik.touched.item?.weight&&<Alert severity="error">{formik.errors.item?.weight} </Alert> }
+                  { formik.errors.senderName&&formik.touched.senderName&&<Alert severity="error">{formik.errors.senderName} </Alert> }
+                  { formik.errors.receiverName&&formik.touched.receiverName&&<Alert severity="error">{formik.errors.receiverName} </Alert> }
+                  { formik.errors.senderAddr&&formik.touched.senderAddr&&<Alert severity="error">{formik.errors.senderAddr} </Alert> }
+                  { formik.errors.receiverAddr&&formik.touched.receiverAddr&&<Alert severity="error">{formik.errors.receiverAddr} </Alert> }
+                 </Stack>
               </Stack>
+             
             </Box>
           </Box>
         </LocalizationProvider>

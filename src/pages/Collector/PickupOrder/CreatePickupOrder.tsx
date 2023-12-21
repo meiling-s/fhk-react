@@ -16,23 +16,16 @@ const CreatePickupOrder = () => {
 
   
   const validateSchema = Yup.object().shape({
-    picoType: Yup.string().required("This field is required"),
-    // effFrmDate:"",
-    // effToDate: "",
-    // routineType:'',       
-    // routine:[],           
-    // logisticId: '',       
-    logisticName:Yup.string().required("This field is required"), 
-    vehicleTypeId:Yup.string().required("This field is required"), 
-    platNo:Yup.string().required("This field is required"),       
-    contactNo:Yup.number().required("This field is required"),
-    // status:'CREATED',            
-    // reason:'',            
-    // normalFlg: true,       
-    contractNo: Yup.string().required("This field is required"),
-    // createdBy:'Admin', 
-    // updatedBy:'Admin',
-    
+    picoType: Yup.string().required("This picoType is required"),
+    effFrmDate:Yup.string().required("This effFrmDate is required"),
+    effToDate: Yup.string().required("This effToDate is required"),
+    routineType:Yup.string().required("This routineType is required"),    
+    routine:Yup.array().required('routine is required'),          
+    logisticName:Yup.string().required("This logistic is required"), 
+    vehicleTypeId:Yup.string().required("This vehicleType is required"), 
+    platNo:Yup.string().required("This platNo is required"),       
+    contactNo:Yup.number().required("This contactNo is required"),     
+    contractNo: Yup.string().required("This contractNo is required"),
     createPicoDetail: Yup.array()
     .required("This field is required")
     .test(
@@ -65,17 +58,14 @@ const CreatePickupOrder = () => {
       updatedBy:'Admin',
       createPicoDetail:[],
     },
-    validationSchema: validateSchema,
-    onSubmit: async (values:CreatePO) => {
-      
+    validationSchema: validateSchema,   
+    onSubmit: async (values:CreatePO) => {      
       values.createPicoDetail = addRow
       console.log(JSON.stringify(values, null, 2))
       const result = await createPickUpOrder(values);
-      alert(result);
-      
       const data = result?.data;
       if (data) {
-        console.log("all collection point: ", data);
+        console.log("all pickup order: ", data);
         await initPickupOrderRequest();
         navigate("/collector/PickupOrder",{ state: "created" });    
       

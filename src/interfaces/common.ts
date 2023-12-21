@@ -125,3 +125,18 @@ export type picoRoutine = {
     routineType: string,
     routineContent: string[]
 }
+
+export type vehicleType = {
+    vehicleTypeId:       string;
+    vehicleTypeNameTchi: string;
+    vehicleTypeNameSchi: string;
+    vehicleTypeNameEng:  string;
+    description:         string;
+    remark:              string;
+    status:              string;
+    createdBy:           string;
+    updatedBy:           string;
+    createdAt:           Date;
+    updatedAt:           Date;
+}
+

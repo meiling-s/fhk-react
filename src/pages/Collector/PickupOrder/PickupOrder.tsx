@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { Box, Stack, alpha, styled } from "@mui/system";
 import { t } from "i18next";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridToolbar, GridValueGetterParams } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
@@ -18,6 +18,7 @@ import StatusCard from "../../../components/StatusCard";
 import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
+import { ToastContainer, toast } from "react-toastify";
 
 
 
@@ -75,18 +76,36 @@ const PickupOrders = () => {
             ),
     },
    
-  ]; 
+  ];
 
-  
-   const {pickupOrder} = useContainer(CheckInRequestContainer)
+  const {pickupOrder} = useContainer(CheckInRequestContainer)
+  const location = useLocation();
+  const action: string = location.state;
+  useEffect(() => {
+    if(action){
+      var toastMsg = "";
+      switch(action){
+        case "created":
+          toastMsg = t("回收運單已建立");
+          break;
+        case "updated":
+          toastMsg = t("回收運單已更改");
+          break;
+      }
+      toast.info(toastMsg, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+    navigate(location.pathname, { replace: true });
+  }, []);
 
-  // const rows = [
-  //   { id:1,建立日期:"2023-10-23", 物流公司: "快捷物流", 运单编号:'P01234523789', 送货日期:'2023-10-25',寄件公司:"a公司",收件公司:"a公司",状态:'处理中'},
-  //   { id:2,建立日期:"2023-10-24", 物流公司: "顺丰物流", 运单编号:'P01234562789', 送货日期:'2023-10-26',寄件公司:"b公司",收件公司:"a公司",状态:'已拒绝'},
-  //   { id:3,建立日期:"2023-10-25", 物流公司: "顶级物流", 运单编号:'P012245678239', 送货日期:'2023-10-27',寄件公司:"c公司",收件公司:"c公司",状态:'已完成'},
-  //   { id:4,建立日期:"2023-10-26", 物流公司: "福建物流", 运单编号:'P012345678339', 送货日期:'2023-10-28',寄件公司:"d公司",收件公司:"d公司",状态:'已取消'},
-  //   { id:5,建立日期:"2023-10-27", 物流公司: "香港物流", 运单编号:'P012345678339', 送货日期:'2023-10-29',寄件公司:"d公司",收件公司:"d公司",状态:'已完成'},
-  // ];
   const rows: any[] = pickupOrder?.map((item) => ({
     id: item.picoId,
     建立日期: item.effFrmDate, 
@@ -156,6 +175,8 @@ const PickupOrders = () => {
   };
    
   return (
+    <>
+    <ToastContainer/>
     <Box sx={{ display: "flex", width: "100%", flexDirection: "column" }}>
         <Modal open={openModal} onClose={handleCloses} >
                       <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} />
@@ -215,6 +236,7 @@ const PickupOrders = () => {
         />
       </Box>
     </Box>
+    </>
   );
 };
 
