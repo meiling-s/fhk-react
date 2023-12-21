@@ -78,7 +78,7 @@ const PickupOrderCard = ({
               </Icon>
               <Typography>预计运送时间</Typography>
             </Box>
-            <Typography ml="60px">{podetail.item.createdAt}</Typography>
+            <Typography ml="60px">{podetail.pickupAt}</Typography>
           </Box>
           <Box display="flex">
             <Box display="flex" width={"150px"}>
@@ -87,7 +87,7 @@ const PickupOrderCard = ({
               </Icon>
               <Typography>重量</Typography>
             </Box>
-            <Typography ml="60px">{podetail.item.weight} </Typography>
+            <Typography ml="60px">{podetail.item.weight} kg</Typography>
           </Box>
           <Box display="flex">
             <Box display="flex" width={"150px"}>

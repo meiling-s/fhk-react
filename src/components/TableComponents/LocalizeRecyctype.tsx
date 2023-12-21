@@ -16,7 +16,7 @@ const LocalizeRecyctype = (data: any) => {
 
     data.forEach((detail: any) => {
       const matchingRecycType = recycType?.find(
-        (recyc) => detail.irecycType === recyc.recycTypeId
+        (recyc) => detail.item.recycType === recyc.recycTypeId
       );
 
       if (matchingRecycType) {
