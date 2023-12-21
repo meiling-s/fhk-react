@@ -3,7 +3,7 @@ import { AxiosRequestConfig } from 'axios'
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
   method: 'post',
-  url: 'api/v1/account/login'
+  url: 'api/v1/account/internal'
 }
 
 export const CHANGE_PASSWORD: AxiosRequestConfig = {
