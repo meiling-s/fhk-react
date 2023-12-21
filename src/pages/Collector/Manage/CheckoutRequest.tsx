@@ -3,7 +3,8 @@ import {
   DataGrid,
   GridColDef,
   GridRowParams,
-  GridRowSpacingParams
+  GridRowSpacingParams,
+  GridCellParams
 } from '@mui/x-data-grid'
 import {
   Box,
@@ -16,7 +17,8 @@ import {
   MenuItem,
   Modal,
   Typography,
-  Divider
+  Divider,
+  Checkbox
 } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import '../../../styles/Base.css'
@@ -62,7 +64,7 @@ type TableRow = {
 type ApproveForm = {
   open: boolean
   onClose: () => void
-  checkedCheckOut: CheckOut[]
+  checkedCheckOut: number[]
   onApprove?: () => void
 }
 
@@ -168,9 +170,9 @@ const ApproveModal: React.FC<ApproveForm> = ({
   onApprove
 }) => {
   const { t } = useTranslation()
-  const idsCheckOut: number[] = checkedCheckOut?.map((item) => {
-    return item.chkOutId
-  })
+  // const idsCheckOut: number[] = checkedCheckOut?.map((item) => {
+  //   return item.chkOutId
+  // })
 
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
@@ -181,12 +183,9 @@ const ApproveModal: React.FC<ApproveForm> = ({
     }
 
     const results = await Promise.allSettled(
-      idsCheckOut.map(async (checkOutId) => {
+      checkedCheckOut.map(async (chkOutId) => {
         try {
-          const result = await updateCheckoutRequestStatus(
-            checkOutId,
-            statReason
-          )
+          const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
             console.log('updated check-in status: ', data)
@@ -196,7 +195,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
           }
         } catch (error) {
           console.error(
-            `Failed to update check-in status for id ${checkOutId}: `,
+            `Failed to update check-in status for id ${chkOutId}: `,
             error
           )
         }
@@ -225,7 +224,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
           </Box>
           <Divider />
           <Box className="flex gap-2 justify-start">
-            {idsCheckOut?.map((id) => (
+            {checkedCheckOut?.map((id) => (
               <Typography sx={styles.typo}>{id}</Typography>
             ))}
           </Box>
@@ -342,11 +341,65 @@ const CheckoutRequest: FunctionComponent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [keyword, setKeyword] = useState('')
   const [selectedRow, setSelectedRow] = useState<CheckOut>()
-  const [checkedCheckOut, setCheckedCheckOut] = useState<CheckOut[]>([])
+  const [checkedCheckOut, setCheckedCheckOut] = useState<number[]>([])
   const [company, setCompany] = useState('')
   const [filterCheckOut, setFilterCheckOut] = useState<CheckOut[]>([])
   const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
+  const [selectAll, setSelectAll] = useState(false)
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked
+    setSelectAll(checked)
+    const selectedRows = checked
+      ? filterCheckOut.map((row) => row.chkOutId)
+      : []
+    setCheckedCheckOut(selectedRows)
+    console.log('handleSelectAll', checkedCheckOut)
+  }
+
+  const handleRowCheckboxChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    chkOutId: number
+  ) => {
+    const checked = event.target.checked
+
+    // Logic to handle individual row selection/deselection
+    if (checked) {
+      setCheckedCheckOut((prev) => [...prev, chkOutId])
+    } else {
+      setCheckedCheckOut((prev) => prev.filter((rowId) => rowId !== chkOutId))
+    }
+  }
+
+  const HeaderCheckbox = (
+    <Checkbox
+      checked={selectAll}
+      onChange={handleSelectAll}
+      color="primary"
+      inputProps={{ 'aria-label': 'Select all rows' }}
+    />
+  )
+
+  const checkboxColumn: GridColDef = {
+    field: 'customCheckbox',
+    headerName: 'Select',
+    width: 80,
+    sortable: false,
+    filterable: false,
+    renderHeader: () => HeaderCheckbox,
+    renderCell: (params) => (
+      <Checkbox
+        checked={checkedCheckOut.includes(params.row?.chec)}
+        onChange={(event) =>
+          handleRowCheckboxChange(event, params.row.chkOutId)
+        }
+        color="primary"
+      />
+    )
+  }
+
   const checkoutHeader: GridColDef[] = [
+    checkboxColumn,
     {
       field: 'createdAt',
       headerName: t('check_out.created_at'),
@@ -422,7 +475,7 @@ const CheckoutRequest: FunctionComponent = () => {
       adjustmentFlg: item.adjustmentFlg,
       logisticName: item.logisticName,
       receiverAddr: item.receiverAddr,
-      receiverAddrGps: "-"
+      receiverAddrGps: '-'
     }
   }
 
@@ -500,12 +553,12 @@ const CheckoutRequest: FunctionComponent = () => {
   }
 
   const handleSelectRow = (params: GridRowParams) => {
-    const row = params.row 
-    console.log("row", row)
+    const row = params.row
+    console.log('row', row)
     const selectedItem = checkOutRequest?.find(
       (item) => item.chkOutId === row.chkOutId
     )
-    console.log("selectedItem", selectedItem)
+    console.log('selectedItem', selectedItem)
     setSelectedRow(selectedItem) //
     // setSelectedRow(row)
 
@@ -603,7 +656,7 @@ const CheckoutRequest: FunctionComponent = () => {
               rows={filterCheckOut}
               hideFooter
               columns={checkoutHeader}
-              checkboxSelection
+              checkboxSelection={false}
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
