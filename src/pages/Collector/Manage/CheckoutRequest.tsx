@@ -42,6 +42,7 @@ import { CheckOut } from '../../../interfaces/checkout'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
+import { checkPrime } from 'crypto'
 
 // interface CheckOut {
 //   id: number
@@ -170,10 +171,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
   onApprove
 }) => {
   const { t } = useTranslation()
-  // const idsCheckOut: number[] = checkedCheckOut?.map((item) => {
-  //   return item.chkOutId
-  // })
-
+  
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
     const statReason: updateStatus = {
@@ -339,7 +337,6 @@ const CheckoutRequest: FunctionComponent = () => {
   const [rejFormModal, setRejectModal] = useState<boolean>(false)
   const [approveModal, setApproveModal] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [keyword, setKeyword] = useState('')
   const [selectedRow, setSelectedRow] = useState<CheckOut>()
   const [checkedCheckOut, setCheckedCheckOut] = useState<number[]>([])
   const [company, setCompany] = useState('')
@@ -354,21 +351,26 @@ const CheckoutRequest: FunctionComponent = () => {
       ? filterCheckOut.map((row) => row.chkOutId)
       : []
     setCheckedCheckOut(selectedRows)
-    console.log('handleSelectAll', checkedCheckOut)
+    console.log('handleSelectAll', selectedRows)
   }
 
   const handleRowCheckboxChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     chkOutId: number
   ) => {
+    setDrawerOpen(false)
+    
     const checked = event.target.checked
-
-    // Logic to handle individual row selection/deselection
-    if (checked) {
-      setCheckedCheckOut((prev) => [...prev, chkOutId])
-    } else {
-      setCheckedCheckOut((prev) => prev.filter((rowId) => rowId !== chkOutId))
-    }
+    const updatedChecked = checked
+    ?  [...checkedCheckOut, chkOutId]
+    : checkedCheckOut.filter((rowId) => rowId != chkOutId)
+    setCheckedCheckOut(updatedChecked)
+    console.log(updatedChecked)
+   
+    const allRowsChecked = filterCheckOut.every((row) =>
+      updatedChecked.includes(row.chkOutId) 
+    )
+    setSelectAll(allRowsChecked)
   }
 
   const HeaderCheckbox = (
@@ -389,7 +391,7 @@ const CheckoutRequest: FunctionComponent = () => {
     renderHeader: () => HeaderCheckbox,
     renderCell: (params) => (
       <Checkbox
-        checked={checkedCheckOut.includes(params.row?.chec)}
+        checked={selectAll || checkedCheckOut.includes(params.row?.chkOutId)}
         onChange={(event) =>
           handleRowCheckboxChange(event, params.row.chkOutId)
         }
