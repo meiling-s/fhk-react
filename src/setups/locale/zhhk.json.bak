@@ -24,6 +24,7 @@
     "staffInfo": "員工人數",
     "numOfStaff": "員工數量",
     "enterNumOfStaff": "請輸入人數",
+    "locationData": "地點資料",
     "serviceInfo": "服務資料",
     "contractNo": "合約編號",
     "enterNo": "請輸入編號",
@@ -86,7 +87,7 @@
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
-    "workshop": "工場",
+    "workshop": "倉庫",
     "company": "公司",
     "staff_positions": "員工職位",
     "denial_reason": "拒絕原因",
@@ -146,7 +147,8 @@
     "confirm_reject": "確認拒絕送入請求嗎?",
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
-    "cancel": "取消"
+    "cancel": "取消",
+    "search_input": "輸入運單編號"
   },
   "changePassPage": {
     "titlePage": "更改密碼",
@@ -161,7 +163,8 @@
     "confirm_password": "再次輸入新密碼",
     "placeholder_confirm_password": "請輸入密碼",
     "helper_confirm_password": "您的新密碼和確認密碼不匹配",
-    "skip_btn": "跳過（暫時用於開發）"
+    "skip_btn": "跳過（暫時用於開發）",
+    "error": "錯誤，無法重設密碼"
   },
   "check_out": {
     "request_check_out": "送出請求",
@@ -187,7 +190,15 @@
     "confirm_reject": "確認拒絕送入請求嗎?",
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
-    "cancel": "取消"
+    "cancel": "取消",
+    "shipping_company": "航運公司",
+    "arrival_location": "到達地點",
+    "success_approve": "結帳請求成功",
+    "ok": "好的",
+    "shipping_info": "運輸資料",
+    "delivery_location": "送出地點",
+    "approved_on": "核準於",
+    "reason_is": "原因為"
   },
   "login": {
     "wrongUsernameOrPassword": "錯誤的使用者名稱或密碼"
