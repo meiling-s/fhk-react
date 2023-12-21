@@ -86,7 +86,7 @@ const ConfirmModal: React.FC<Confirm> = ({ open, onClose, title }) => {
               component="h2"
               sx={{ fontWeight: 'medium' }}
             >
-              {title + t('check_out.success_approve')}
+              {t('check_out.success_approve')}
             </Typography>
           </Box>
           <Box sx={{ alignSelf: 'center' }}>
@@ -454,7 +454,8 @@ const CheckoutRequest: FunctionComponent = () => {
       adjustmentFlg: item.adjustmentFlg,
       logisticName: item.logisticName,
       receiverAddr: item.receiverAddr,
-      receiverAddrGps: '-'
+      receiverAddrGps: '-',
+      status: item.status
     }
   }
 
@@ -462,7 +463,7 @@ const CheckoutRequest: FunctionComponent = () => {
     const result = await getAllCheckoutRequest()
     const data = result?.data.content
     if (data && data.length > 0) {
-      const checkoutData = data.map(transformToTableRow)
+      const checkoutData = data.map(transformToTableRow).filter((item:CheckOut) =>item.status === "CREATED")
       setCheckoutRequest(data)
       setFilterCheckOut(checkoutData)
     }
@@ -547,6 +548,11 @@ const CheckoutRequest: FunctionComponent = () => {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
+
+  const resetPage = () => {
+  setCheckedCheckOut([])
+  getAllCheckoutRequest()
+  }
 
   return (
     <Box className="container-wrapper w-full mr-11">
@@ -662,21 +668,21 @@ const CheckoutRequest: FunctionComponent = () => {
           setRejectModal(false)
         }}
         checkedCheckOut={checkedCheckOut}
-        onRejected={() => getCheckoutRequest()}
+        onRejected={() =>{setRejectModal(false); setConfirmModal(true)}}
       />
       <ApproveModal
         open={approveModal}
         onClose={() => {
           setApproveModal(false)
         }}
-        onApprove={() => setConfirmModal(true)}
+        onApprove={() => {setApproveModal(false); setConfirmModal(true)}}
         checkedCheckOut={checkedCheckOut}
       />
       <ConfirmModal
-        open={approveModal}
+        open={confirmModal}
         onClose={() => {
           setConfirmModal(false)
-          getCheckoutRequest()
+          resetPage()
         }}
       />
       <CheckInDetails
