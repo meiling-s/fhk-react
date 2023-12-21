@@ -269,6 +269,7 @@ function MainDrawer() {
           {drawerMenus.map((drawerMenu, index) =>
             drawerMenu.collapse ? (
               <Collapse
+                key={index}
                 sx={[styles.drawerSubItem]}
                 in={drawerMenu.collapseGroup}
                 timeout="auto"
