@@ -93,7 +93,10 @@ export const GET_LOGISTICLIST: AxiosRequestConfig = {
   url: 'api/v1/collectors/logisticlist'
 }
 
-
+export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
+  method: 'patch',
+  url: 'api/v1/administrator/pico'
+}
 export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
   method: 'patch',
   url: 'api/v1/administrator/pico/status'
@@ -138,6 +141,12 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
   method: 'post',
   url: 'api/v1/administrator/recycType'
 }
+
+export const GET_VEHICLE_TYPE: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/administrator/vehicleType'
+}
+
 
 //warehouse
 export const GET_ALL_WAREHOUSE: AxiosRequestConfig = {

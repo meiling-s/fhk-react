@@ -10,6 +10,7 @@ import { useContainer } from 'unstated-next';
 
 
 const EditPickupOrder = () => {
+  
     const navigate = useNavigate();
     const {state} = useLocation();
     const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
@@ -19,7 +20,7 @@ const EditPickupOrder = () => {
 
     const updatePickupOrder = useFormik({
         initialValues: {
-          picoType: "string",
+          picoType: "",
           effFrmDate: "2023-12-12",
           effToDate: "2023-12-12",
           routineType: "string",
@@ -41,26 +42,24 @@ const EditPickupOrder = () => {
         },
     
         onSubmit: async (values: EditPo) => {
-          
+          console.log(JSON.stringify(values,null,2))
           alert(JSON.stringify(values, null, 2));
           
           const result = await editPickupOrder(poInfo.picoId, values);
           
           const data = result?.data;
           if (data) {
-            console.log("all collection point: ", data);
+            console.log("all pickup order: ", data);
             await initPickupOrderRequest();
-            navigate("/collector/PickupOrder",{ state: "created" });    
-          
+            navigate("/collector/PickupOrder",{ state: "updated" });    
         }else{
           alert('fail to edit pickup order')
         }
         },
       });
-      
+
       useEffect(() => {
         if (poInfo) {
-          console.log('111111111111111')
           console.log('selectedPo:', poInfo);
           updatePickupOrder.setValues({
             picoType: poInfo.picoType,
@@ -76,10 +75,10 @@ const EditPickupOrder = () => {
             status: "CREATED",
             reason: poInfo.reason,
             normalFlg: true,
-            approvedAt: poInfo.approvedAt,
-            rejectedAt: poInfo.rejectedAt,
-            approvedBy: poInfo.approvedBy,
-            rejectedBy: poInfo.rejectedBy,
+            approvedAt: "2023-12-12T02:17:30.062Z",
+            rejectedAt: "2023-12-12T02:17:30.062Z",
+            approvedBy: 'ADMIN',
+            rejectedBy: 'ADMIN',
             contractNo: poInfo.contractNo,
             updatedBy: "Admin",
           });

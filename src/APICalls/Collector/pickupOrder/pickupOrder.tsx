@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import axios from 'axios'
-import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
+import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
 import { CreatePO, EditPo, PickupOrder, PoStatus } from '../../../interfaces/pickupOrder'
 import { createCP } from '../../../interfaces/collectionPoint'
 
@@ -70,8 +70,8 @@ import { createCP } from '../../../interfaces/collectionPoint'
 
 export const editPickupOrder = async (pickupOrderId: number, data:EditPo) => {
 
-  const axiosConfig = Object.assign({},UPDATE_PICK_UP_ORDER_STATUS);
-  axiosConfig.url = UPDATE_PICK_UP_ORDER_STATUS.url+`/${pickupOrderId}`;
+  const axiosConfig = Object.assign({},UPDATE_PICK_UP_ORDER);
+  axiosConfig.url = UPDATE_PICK_UP_ORDER.url+`/${pickupOrderId}`;
 
   try{
       const response = await request({

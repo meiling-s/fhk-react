@@ -162,7 +162,8 @@ const PickupOrderForm = ({
 
             <CustomField label={"车辆类别"}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.vehicleTypeId}
+                {selectedPickupOrder?.vehicleTypeId === '1' ? "小型貨車" : selectedPickupOrder?.vehicleTypeId === '2' ? "大型貨車" : ""}
+
               </Typography>
             </CustomField>
             <CustomField label={"车牌号码"}>

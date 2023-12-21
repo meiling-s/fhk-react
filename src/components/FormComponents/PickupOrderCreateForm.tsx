@@ -1,9 +1,11 @@
 import {
+  Alert,
   Box,
   Button,
   Grid,
   IconButton,
   Modal,
+  Stack,
   Typography,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -41,17 +43,8 @@ import { validate } from "uuid";
 import CustomAutoComplete from "./CustomAutoComplete";
 import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import PicoRoutineSelect from "../SpecializeComponents/PicoRoutineSelect";
-
-const carType: il_item[] = [
-  {
-    id: "1",
-    name: "小型货车",
-  },
-  {
-    id: "2",
-    name: "大型货车",
-  },
-];
+import { amET } from "@mui/material/locale";
+import i18n from "../../setups/i18n";
 
 const PickupOrderCreateForm = ({
   selectedPo,
@@ -59,9 +52,7 @@ const PickupOrderCreateForm = ({
   formik,
   setState,
   state,
-
   
-
 }: {
   selectedPo?: PickupOrder;
   title: string;
@@ -69,17 +60,19 @@ const PickupOrderCreateForm = ({
   setState: (val: CreatePicoDetail[]) => void;
   state: CreatePicoDetail[];
  
-
 }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [editRowId, setEditRowId] = useState<number | null>(null);
+  const [vehicle, setVehicle] = useState<il_item[]>();
   const [colPtRoutine, setColPtRoutine] = useState<colPtRoutine>();
   const [id, setId] = useState<number>(0);
-  const { logisticList, contractType } = useContainer(CommonTypeContainer);
+  const { logisticList, contractType, vehicleType } =
+    useContainer(CommonTypeContainer);
   const navigate = useNavigate();
   const handleCloses = () => {
     setOpenModal(false);
   };
+  console.log(vehicleType);
 
   console.log("yo" + JSON.stringify(state));
   const handleEditRow = (id: number) => {
@@ -99,6 +92,34 @@ const PickupOrderCreateForm = ({
       top: params.isFirstVisible ? 0 : 10,
     };
   }, []);
+  useEffect(() => {
+    if(vehicleType){
+    const carType: il_item[] = [];
+    vehicleType?.forEach((vehicle) => {
+      var name = "";
+      switch (i18n.language) {
+        case "enus":
+          name = vehicle.vehicleTypeNameEng;
+          break;
+        case "zhch":
+          name = vehicle.vehicleTypeNameSchi;
+          break;
+        case "zhhk":
+          name = vehicle.vehicleTypeNameTchi;
+          break;
+        default:
+          name = vehicle.vehicleTypeNameTchi; //default fallback language is zhhk
+          break;
+      }
+      const vehicleType: il_item = {
+        id: vehicle.vehicleTypeId,
+        name: name,
+      };
+      carType.push(vehicleType);
+      setVehicle(carType);
+    });
+  }}, [vehicleType]);
+
   const columns: GridColDef[] = [
     { field: "pickupAt", headerName: "运送时间", width: 150 },
     {
@@ -106,7 +127,7 @@ const PickupOrderCreateForm = ({
       headerName: "主类别",
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.item.recycType
+      valueGetter: ({ row }) => row.item.recycType,
     },
     {
       field: "recycSubType",
@@ -114,7 +135,7 @@ const PickupOrderCreateForm = ({
       type: "string",
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.item.recycSubType
+      valueGetter: ({ row }) => row.item.recycSubType,
     },
     {
       field: "Weight",
@@ -122,7 +143,7 @@ const PickupOrderCreateForm = ({
       type: "string",
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.item.weight
+      valueGetter: ({ row }) => row.item.weight,
     },
     {
       field: "senderName",
@@ -200,20 +221,24 @@ const PickupOrderCreateForm = ({
                 </Button>
               </Grid>
               <Grid item>
-                <CustomField label={"请选择运输类别"}>
+                <CustomField label={"请选择运输类别"} mandatory>
                   <CustomSwitch
                     onText="常规运输"
                     offText="一次性运输"
-                    defaultValue={selectedPo?.picoType === 'AD_HOC' ? true : (selectedPo?.picoType === 'ROUTINE' ? false : undefined)}
+                    defaultValue={
+                      selectedPo?.picoType === "AD_HOC"
+                        ? true
+                        : selectedPo?.picoType === "ROUTINE"
+                        ? false
+                        : undefined
+                    }
                     setState={(value) =>
-                      formik.setFieldValue("picoType", value?"AD_HOC":"ROUTINE")
+                      formik.setFieldValue(
+                        "picoType",
+                        value ? "AD_HOC" : "ROUTINE"
+                      )
                     }
                     value={formik.values.picoType}
-                    helperText={
-                      formik.errors.picoType && formik.touched.picoType
-                        ? formik.errors.picoType
-                        : ""
-                    }
                   />
                 </CustomField>
               </Grid>
@@ -224,14 +249,15 @@ const PickupOrderCreateForm = ({
                     formik.setFieldValue("effFrmDate", values.startDate);
                     formik.setFieldValue("effToDate", values.endDate);
                   }}
+                  
                   defaultStartDate={selectedPo?.effFrmDate}
                   defaultEndDate={selectedPo?.effToDate}
                 />
               </Grid>
-              <CustomField label="回收周次" style={{ width: "100%" }}>
+              <CustomField label="回收周次" style={{ width: "100%" }} mandatory>
                 <PicoRoutineSelect
                   setRoutine={(values) => {
-                    console.log('routine'+JSON.stringify(values))
+                    console.log("routine" + JSON.stringify(values));
                     formik.setFieldValue("routineType", values.routineType);
                     formik.setFieldValue("routine", values.routineContent);
                   }}
@@ -242,7 +268,7 @@ const PickupOrderCreateForm = ({
                 />
               </CustomField>
               <Grid item>
-                <CustomField label={"选择物流公司"}>
+                <CustomField label={"选择物流公司"} mandatory> 
                   <CustomAutoComplete
                     placeholder="請輸入公司名稱"
                     option={
@@ -262,34 +288,29 @@ const PickupOrderCreateForm = ({
                     error={
                       formik.errors.logisticName && formik.touched.logisticName
                     }
-                    helpertext={
-                      formik.errors.logisticName && formik.touched.logisticName
-                        ? formik.errors.logisticName
-                        : ""
-                    }
                   />
                 </CustomField>
               </Grid>
               <Grid item>
-                <CustomField label={"车辆类别"}>
-                  <CustomItemList
-                    items={carType}
-                    singleSelect={(values) =>
-                      formik.setFieldValue("vehicleTypeId", values)
-                    }
-                    value={formik.values.vehicleTypeId}
-                    defaultSelected={selectedPo?.vehicleTypeId}
-                  />
-                  <Typography>
-                   {
-                      formik.errors.vehicleTypeId && formik.touched.vehicleTypeId
-                        ? formik.errors.vehicleTypeId
-                        : ""
-                    }</Typography>
+                <CustomField label={"车辆类别"} mandatory>
+                  {vehicle && (
+                    <CustomItemList
+                      items={vehicle}
+                      singleSelect={(values) =>
+                        formik.setFieldValue("vehicleTypeId", values)
+                      }
+                      value={formik.values.vehicleTypeId}
+                      defaultSelected={selectedPo?.vehicleTypeId}
+                      error={
+                        formik.errors.vehicleTypeId &&
+                        formik.touched.vehicleTypeId
+                      }
+                    />
+                  )}
                 </CustomField>
               </Grid>
               <Grid item>
-                <CustomField label={"车牌号码"}>
+                <CustomField label={"车牌号码"} mandatory>
                   <CustomTextField
                     id="platNo"
                     placeholder="请填写车牌号码"
@@ -297,16 +318,11 @@ const PickupOrderCreateForm = ({
                     value={formik.values.platNo}
                     sx={{ width: "400px" }}
                     error={formik.errors.platNo && formik.touched.platNo}
-                    helperText={
-                      formik.errors.platNo && formik.touched.platNo
-                        ? formik.errors.platNo
-                        : ""
-                    }
                   />
                 </CustomField>
               </Grid>
               <Grid item>
-                <CustomField label={"联络人号码"}>
+                <CustomField label={"联络人号码"} mandatory>
                   <CustomTextField
                     id="contactNo"
                     placeholder="请填写手机号码"
@@ -314,17 +330,12 @@ const PickupOrderCreateForm = ({
                     value={formik.values.contactNo}
                     sx={{ width: "400px" }}
                     error={formik.errors.contactNo && formik.touched.contactNo}
-                    helperText={
-                      formik.errors.contactNo && formik.touched.contactNo
-                        ? formik.errors.contactNo
-                        : ""
-                    }
                   />
                 </CustomField>
               </Grid>
               <Grid item>
                 <Box>
-                  <CustomField label={"合約編號"}>
+                  <CustomField label={"合約編號"} mandatory>
                     <CustomAutoComplete
                       placeholder="請輸入公司名稱"
                       option={
@@ -338,19 +349,13 @@ const PickupOrderCreateForm = ({
                       error={
                         formik.errors.contractNo && formik.touched.contractNo
                       }
-                      helpertext={
-                        formik.errors.contractNo && formik.touched.contractNo
-                          ? formik.errors.contractNo
-                          : ""
-                      }
-                      readOnly={true}
                     />
                   </CustomField>
                 </Box>
               </Grid>
 
               <Grid item>
-                <CustomField label={"預計回收地點資料"}>
+                <CustomField label={"預計回收地點資料"} mandatory>
                   <DataGrid
                     rows={state}
                     hideFooter
@@ -407,15 +412,6 @@ const PickupOrderCreateForm = ({
                   </Button>
                 </CustomField>
               </Grid>
-              
-              <Typography>
-                    {
-                      formik.errors.createPicoDetail && formik.touched.createPicoDetail
-                        ? formik.errors.createPicoDetail
-                        : ""
-                    }</Typography>
-              
-
               <Grid item>
                 <Button
                   type="submit"
@@ -431,6 +427,16 @@ const PickupOrderCreateForm = ({
                 </Button>
               </Grid>
             </Grid>
+            <Stack mt={2} spacing={2}>
+  {Object.keys(formik.errors).map((fieldName) =>
+    formik.touched[fieldName] && formik.errors[fieldName] ? (
+      <Alert severity="error" key={fieldName}>
+        {formik.errors[fieldName]}
+      </Alert>
+    ) : null
+  )}
+
+</Stack>
           </LocalizationProvider>
         </Box>
       </form>
