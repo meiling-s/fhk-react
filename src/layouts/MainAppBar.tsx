@@ -135,7 +135,7 @@ const MainAppBar = () => {
               <NOTIFICATION_ICON />
 
               <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
-                <Box width="500px">
+                <Box className="md:w-[500px] w-[100vw]">
                   <Box display="flex" p={4} alignItems="center">
                     <Typography
                       fontSize={20}
@@ -259,16 +259,16 @@ const MainAppBar = () => {
               divider={true}
               onClick={() => handleLanguageChange('zhch')}
             >
-              <Typography>簡體中文</Typography>
+              <Typography>{t('appBar.simplified_cn')}</Typography>
             </MenuItem>
             <MenuItem
               divider={true}
               onClick={() => handleLanguageChange('zhhk')}
             >
-              <Typography>繁體中文</Typography>
+              <Typography>{t('appBar.traditional_cn')}</Typography>
             </MenuItem>
             <MenuItem onClick={() => handleLanguageChange('enus')}>
-              <Typography>English</Typography>
+              <Typography>{t('appBar.english')}</Typography>
             </MenuItem>
           </Menu>
           <Box sx={{ display: 'flex', flexDirection: 'row', ml: 3 }}>
