@@ -169,7 +169,7 @@
     "confirm": "Confirm",
     "cancel": "Cancel"
   },
-  "changePassPage": {
+  "changePass": {
     "titlePage": "CHANGE PASSWORD",
     "submitPassword": "Submit",
     "username": "Username",
@@ -182,15 +182,21 @@
     "confirm_password": "Confirmation Password",
     "placeholder_confirm_password": "Please enter password",
     "helper_confirm_password": "Your new password and confirm password do not match",
-    "skip_btn": "Skip (Temporarily for Development)"
+    "skip_btn": "Skip (Temporarily for Development)",
+    "error": "Error, cannot reset password"
   },
   "mainMenu": {
     "manage": "Manage",
-    "Overview": "Overview"
+    "overview": "Overview"
   },
   "status": {
     "active": "Active",
     "inactive": "In-Active",
     "deleted": "Deleted"
+  },
+  "appBar": {
+    "simplified_cn": "Simplified Chinese",
+    "traditional_cn": "Traditional Chinese",
+    "english": "English"
   }
 }

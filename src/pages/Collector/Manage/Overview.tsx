@@ -162,7 +162,7 @@ const Overview: FunctionComponent = () => {
     {
       type: 'text',
       field: 'status_inventory',
-      label: '調整庫存'
+      label: t('check_in.stock_adjustment')
     },
     {
       type: 'text',
@@ -177,7 +177,7 @@ const Overview: FunctionComponent = () => {
     {
       type: 'text',
       field: 'arrived',
-      label: '到達地點'
+      label: t('check_out.deliver_info')
     }
   ]
 
