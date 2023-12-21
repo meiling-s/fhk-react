@@ -669,7 +669,8 @@ const CheckoutRequest: FunctionComponent = () => {
       <ConfirmModal
         open={approveModal}
         onClose={() => {
-          setConfirmModal(false), getCheckoutRequest()
+          setConfirmModal(false)
+          getCheckoutRequest()
         }}
       />
       <CheckInDetails
