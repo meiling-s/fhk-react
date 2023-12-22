@@ -74,8 +74,8 @@ function MainDrawer() {
     }
   }, [])
 
-  //var role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
-  var role = 'warehouse'
+  var role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
+  //var role = 'warehouse'
 
   let drawerMenus_collector: DrawerItem[] = [
     {

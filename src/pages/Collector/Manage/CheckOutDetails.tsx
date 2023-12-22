@@ -243,7 +243,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                         src={img.photo}
                         alt=""
                         key={index}
-                        className="lg:w-28 sm:w-16 rounded-xl"
+                        className="w-[115px] rounded-xl"
                       />
                     ))}
                   </div>

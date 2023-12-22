@@ -464,7 +464,7 @@ const CheckoutRequest: FunctionComponent = () => {
     const data = result?.data.content
     if (data && data.length > 0) {
       const checkoutData = data.map(transformToTableRow).filter((item:CheckOut) =>item.status === "CREATED")
-      setCheckoutRequest(data)
+      setCheckoutRequest(data.filter((item:CheckOut) =>item.status === "CREATED"))
       setFilterCheckOut(checkoutData)
     }
   }
@@ -475,14 +475,14 @@ const CheckoutRequest: FunctionComponent = () => {
 
   const handleSearchByPoNumb = (searchWord: string) => {
     if (searchWord != '') {
-      const filteredCheckOut: CheckOut[] = []
-      checkOutRequest.map((item) => {
+      const filteredData: CheckOut[] = []
+      filterCheckOut.map((item) => {
         if (item.picoId.includes(searchWord)) {
-          filteredCheckOut.push(item)
+          filteredData.push(item)
         }
       })
-      if (filteredCheckOut) {
-        setFilterCheckOut(filteredCheckOut)
+      if (filteredData) {
+        setFilterCheckOut(filteredData)
       }
     } else {
       setFilterCheckOut(checkOutRequest)
@@ -493,15 +493,15 @@ const CheckoutRequest: FunctionComponent = () => {
     setCompany(event.target.value)
     var searchWord = event.target.value
     if (searchWord != '') {
-      const filteredCheckOut: CheckOut[] = []
-      checkOutRequest.map((item) => {
+      const filteredData: CheckOut[] = []
+      filterCheckOut.map((item) => {
         if (item.logisticName.includes(searchWord)) {
-          filteredCheckOut.push(item)
+          filteredData.push(item)
         }
       })
 
-      if (filteredCheckOut) {
-        setFilterCheckOut(filteredCheckOut)
+      if (filteredData) {
+        setFilterCheckOut(filteredData)
       }
     } else {
       setFilterCheckOut(checkOutRequest)
@@ -512,15 +512,15 @@ const CheckoutRequest: FunctionComponent = () => {
     setLocation(event.target.value)
     var searchWord = event.target.value
     if (searchWord != '') {
-      const filteredShipments: CheckOut[] = []
-      checkOutRequest.map((item) => {
+      const filteredData: CheckOut[] = []
+      filterCheckOut.map((item) => {
         if (item.receiverAddr.includes(searchWord)) {
-          filteredShipments.push(item)
+          filteredData.push(item)
         }
       })
 
-      if (filteredShipments) {
-        setFilterCheckOut(filteredShipments)
+      if (filteredData) {
+        setFilterCheckOut(filteredData)
       }
     } else {
       setFilterCheckOut(checkOutRequest)
@@ -637,6 +637,7 @@ const CheckoutRequest: FunctionComponent = () => {
           <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
               rows={filterCheckOut}
+              getRowId={(row) => row.chkOutId}
               hideFooter
               columns={checkoutHeader}
               checkboxSelection={false}
