@@ -141,7 +141,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
         anchor={'right'}
         action={'none'}
         headerProps={{
-          title: '送入請求',
+          title: t('check_out.request_check_out'),
           subTitle: poNumber,
           onCloseHeader: handleDrawerClose
         }}

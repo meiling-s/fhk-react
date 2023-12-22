@@ -604,7 +604,7 @@ const CheckoutRequest: FunctionComponent = () => {
               <MenuItem value="">
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {checkOutRequest.map((item) => (
+              {filterCheckOut.map((item) => (
                 <MenuItem value={item.logisticName}>
                   {item.logisticName}
                 </MenuItem>
@@ -625,7 +625,7 @@ const CheckoutRequest: FunctionComponent = () => {
               <MenuItem value="">
                 <em>{t('check_out.any')}</em>
               </MenuItem>
-              {checkOutRequest.map((item) => (
+              {filterCheckOut.map((item) => (
                 <MenuItem value={item.receiverAddr}>
                   {item.receiverAddr}
                 </MenuItem>
