@@ -78,6 +78,15 @@ export const GET_ALL_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/collectors/pico'
 }
+export const ADD_PICK_UP_ORDER: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/administrator/pico'
+}
+
+export const UPDATE_PICK_UP_ORDER = (picoId: number): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/pico/${picoId}`
+})
 
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {

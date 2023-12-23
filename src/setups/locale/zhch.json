@@ -207,5 +207,27 @@
     "simplified_cn": "简体中文",
     "traditional_cn": "繁體中文",
     "english": "英语"
+  },
+  "pick_up_order": {
+    "create_pick_up_order": "建立运单",
+    "shipping_info": "運輸資料",
+    "select_shipping_category": "请选择运输类别",
+    "regular_shipping": "常规运输",
+    "one-transport": "一次性运输",
+    "shipping_validity": "运输有效日期由",
+    "to": "至",
+    "choose_logistic": "选择物流公司",
+    "enter_comapy_name": "请输入公司名称",
+    "vehicle_category": "车辆类别",
+    "plat_number": "车牌号码",
+    "enter_plat_number": "请填写车牌号码",
+    "contact_number": "联络人号码",
+    "enter_contact_number": "请填写手机号码",
+    "reason_get_off": "下车原因",
+    "po_number": "参考运单编号",
+    "recyle_loc_info": "预计回收地点资料",
+    "new": "新增",
+    "finish": "完成",
+    "cancel": "取消"
   }
 }

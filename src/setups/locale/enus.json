@@ -208,5 +208,27 @@
     "simplified_cn": "Simplified Chinese",
     "traditional_cn": "Traditional Chinese",
     "english": "English"
+  },
+  "pick_up_order": {
+    "create_pick_up_order": "Create Pick up Order",
+    "shipping_info": "Shipping Information",
+    "select_shipping_category": "Please Select Shipping Category",
+    "regular_shipping" : "Regular Shipping",
+    "one-transport": "One Time Transport",
+    "shipping_validity": "Shipping validity date is given by",
+    "to": "To",
+    "choose_logistic": "Choose a logistics company",
+    "enter_comapy_name": "Please enter company name",
+    "vehicle_category": "Vehicle category",
+    "plat_number": "License plate number",
+    "enter_plat_number": "Please fill in the license plate number",
+    "contact_number": "Contact number",
+    "enter_contact_number" :"please fill in cell phone number",
+    "reason_get_off": "Reason for getting off",
+    "po_number":"Reference waybill number",
+    "recyle_loc_info" : "Estimated recycling location information",
+    "new": "New",
+    "finish": "Finish",
+    "cancel": "Cancel"
   }
 }
