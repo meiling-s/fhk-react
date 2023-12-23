@@ -30,6 +30,7 @@ import CircleIcon from '@mui/icons-material/Circle'
 import { CheckIn } from '../interfaces/checkin'
 import RequestForm from '../components/FormComponents/RequestForm'
 import CheckInRequestContext from '../contexts/CheckInRequestContainer'
+import NotifContainerContext from '../contexts/NotifContainer'
 import { useContainer } from 'unstated-next'
 import { getRecycType } from '../APICalls/commonManage'
 import CommonTypeContainer from '../contexts/CommonTypeContainer'
@@ -49,6 +50,8 @@ const MainAppBar = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
 
   const { checkInRequest } = useContainer(CheckInRequestContext)
+  const { numOfNotif } = useContainer(NotifContainerContext)
+  console.log('numOfNotif', numOfNotif)
   // const { checkOutRequest } = useContainer(CheckOutRequestContext);
 
   const handleLanguageChange = (lng: string) => {

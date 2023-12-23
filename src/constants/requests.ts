@@ -129,6 +129,21 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
   url: 'api/v1/administrator/recycType'
 }
 
+export const GET_NUM_UNREAD_NOTIF = (loginId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/notification/NumOfUnread/${loginId}`
+})
+
+export const GET_NOTIF_BY_USER_ID = (loginId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/notification/unread/${loginId}`
+})
+
+export const UPDATE_FLAG_NOTIF = (notiId: number): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/notification/${notiId}`
+})
+
 //warehouse
 export const GET_ALL_WAREHOUSE: AxiosRequestConfig = {
   method: 'get',
