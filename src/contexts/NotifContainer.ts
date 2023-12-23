@@ -9,12 +9,12 @@ import {
 const Notification = () => {
   const loginId: string = localStorage.getItem('loginId') || 'string' //change key based on fixed key for loginId
   const [numOfNotif, setNumOfNotif] = useState(0)
-  const [userId, setLoginId] = useState(loginId)
+  // const [userId, setLoginId] = useState(loginId)
 
   useEffect(() => {
-    getNumNotif(userId)
+    getNumNotif(loginId)
     // getNotifList()
-  }, [userId])
+  }, [loginId])
 
   const getNumNotif = async (loginId: string) => {
     const result = await getNumUnreadNotif(loginId)
@@ -28,8 +28,8 @@ const Notification = () => {
   // }
 
   return {
-    numOfNotif,
-    setLoginId
+    numOfNotif
+    // setLoginId
   }
 }
 

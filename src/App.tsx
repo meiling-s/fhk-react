@@ -1,23 +1,26 @@
-import { ThemeProvider } from 'styled-components';
-import Router from './Router';
-import CheckInRequestContainer from './contexts/CheckInRequestContainer';
-import CommonTypeContainer from './contexts/CommonTypeContainer';
-import axiosSetup from './setups/axiosSetup';
+import { ThemeProvider } from 'styled-components'
+import Router from './Router'
+import CheckInRequestContainer from './contexts/CheckInRequestContainer'
+import NotifContainerContext from './contexts/NotifContainer'
+import CommonTypeContainer from './contexts/CommonTypeContainer'
+import axiosSetup from './setups/axiosSetup'
 import './setups/i18n'
-import theme from './themes/palette';
+import theme from './themes/palette'
 
 function App() {
-  axiosSetup();
+  axiosSetup()
 
   return (
     <ThemeProvider theme={theme}>
-    <CommonTypeContainer.Provider>
-    <CheckInRequestContainer.Provider>
-      <Router/>
-    </CheckInRequestContainer.Provider>
-    </CommonTypeContainer.Provider>
+      <CommonTypeContainer.Provider>
+        <CheckInRequestContainer.Provider>
+          <NotifContainerContext.Provider>
+            <Router />
+          </NotifContainerContext.Provider>
+        </CheckInRequestContainer.Provider>
+      </CommonTypeContainer.Provider>
     </ThemeProvider>
-  );
+  )
 }
 
-export default App;
+export default App

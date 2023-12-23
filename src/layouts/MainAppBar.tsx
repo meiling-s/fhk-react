@@ -50,8 +50,8 @@ const MainAppBar = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
 
   const { checkInRequest } = useContainer(CheckInRequestContext)
-  const { numOfNotif } = useContainer(NotifContainerContext)
-  console.log('numOfNotif', numOfNotif)
+  const numOfNotif = useContainer(NotifContainerContext)
+  //console.log('numOfNotif', numOfNotif)
   // const { checkOutRequest } = useContainer(CheckOutRequestContext);
 
   const handleLanguageChange = (lng: string) => {
