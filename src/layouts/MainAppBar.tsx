@@ -51,7 +51,7 @@ const MainAppBar = () => {
 
   const { checkInRequest } = useContainer(CheckInRequestContext)
   const numOfNotif = useContainer(NotifContainerContext)
-  //console.log('numOfNotif', numOfNotif)
+  console.log('numOfNotif', numOfNotif)
   // const { checkOutRequest } = useContainer(CheckOutRequestContext);
 
   const handleLanguageChange = (lng: string) => {
@@ -123,7 +123,7 @@ const MainAppBar = () => {
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex' }}>
           <IconButton onClick={toggleDrawer}>
-            <Badge badgeContent={checkInRequest?.length} color="error">
+            <Badge badgeContent={numOfNotif.numOfNotif.toString()} color="error">
               <NOTIFICATION_ICON />
 
               <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
@@ -137,7 +137,7 @@ const MainAppBar = () => {
                       通知
                     </Typography>
                     <BackgroundLetterAvatars
-                      name={checkInRequest?.length.toString()!}
+                      name={numOfNotif.numOfNotif.toString()!}
                       size={23}
                       backgroundColor="red"
                       fontColor="white"
