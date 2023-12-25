@@ -8,8 +8,8 @@ import {
   Stack,
   Typography
 } from '@mui/material'
-
-const { t, i18n } = useTranslation()
+import dayjs from 'dayjs'
+import { format } from '../constants/constant'
 
 type NotifItemProps = {
   key?: number
@@ -26,6 +26,10 @@ const NotifItem: React.FC<NotifItemProps> = ({
   content,
   datetime
 }) => {
+  const createdDate = datetime
+    ? dayjs(new Date(datetime)).format(format.dateFormat1)
+    : '-'
+
   return (
     <List key={key}>
       <ListItem onClick={() => handleItemClick}>
@@ -36,7 +40,6 @@ const NotifItem: React.FC<NotifItemProps> = ({
                 <CircleIcon sx={{ fontSize: '0.75rem' }} />
               </ListItemIcon>
               <Typography fontWeight="bold" sx={{ ml: '40px' }}>
-                {/* {t('check_in.request_check_in')} */}
                 {title}
               </Typography>
             </Stack>
@@ -44,8 +47,7 @@ const NotifItem: React.FC<NotifItemProps> = ({
             <Typography sx={{ ml: '40px' }}>{content}</Typography>
 
             <Typography sx={{ ml: '40px', mt: '10px' }}>
-              {/* {checkIn.createdAt.toString()} */}
-              {datetime}
+              {createdDate}
             </Typography>
           </Stack>
         </ListItemButton>

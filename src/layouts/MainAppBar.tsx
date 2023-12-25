@@ -155,7 +155,7 @@ const MainAppBar = () => {
                       datetime={notif.createdAt}
                     ></NotifItem>
                   ))}
-                  {checkInRequest?.map((checkIn) => (
+                  {/* {checkInRequest?.map((checkIn) => (
                     <>
                       <List key={checkIn.chkInId}>
                         <ListItem onClick={() => handleItemClick(checkIn)}>
@@ -228,7 +228,7 @@ const MainAppBar = () => {
                       </List>
                       <Divider />
                     </>
-                  ))}
+                  ))} */}
                 </Box>
               </Drawer>
               {selectedItem && (
