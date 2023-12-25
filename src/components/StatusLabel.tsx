@@ -6,7 +6,6 @@ type TableColumnStatusProps = {
 }
 
 const StatusLabel: React.FC<TableColumnStatusProps> = ({ width, status }) => {
-  const { t } = useTranslation()
   const rowStatus = status?.toLocaleLowerCase()
   return (
     <div
@@ -26,10 +25,10 @@ const StatusLabel: React.FC<TableColumnStatusProps> = ({ width, status }) => {
       >
         <div className="relative tracking-[1px] leading-[20px] font-medium">
           {rowStatus === 'deleted'
-            ? t('status.deleted')
+            ? '刪除'
             : rowStatus === 'inactive'
-            ? t('status.inactive')
-            : t('status.active')}
+            ? '不活跃的'
+            : '已啓用'}
         </div>
       </div>
     </div>

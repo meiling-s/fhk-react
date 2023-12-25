@@ -29,6 +29,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import CircleIcon from '@mui/icons-material/Circle'
 import { CheckIn } from '../interfaces/checkin'
 import RequestForm from '../components/FormComponents/RequestForm'
+import NotifItem from '../components/NotifItem'
 import CheckInRequestContext from '../contexts/CheckInRequestContainer'
 import NotifContainerContext from '../contexts/NotifContainer'
 import { useContainer } from 'unstated-next'
@@ -50,7 +51,7 @@ const MainAppBar = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
 
   const { checkInRequest } = useContainer(CheckInRequestContext)
-  const numOfNotif = useContainer(NotifContainerContext)
+  const { numOfNotif, notifList } = useContainer(NotifContainerContext)
   console.log('numOfNotif', numOfNotif)
   // const { checkOutRequest } = useContainer(CheckOutRequestContext);
 
@@ -123,7 +124,7 @@ const MainAppBar = () => {
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex' }}>
           <IconButton onClick={toggleDrawer}>
-            <Badge badgeContent={numOfNotif.numOfNotif.toString()} color="error">
+            <Badge badgeContent={numOfNotif.toString()} color="error">
               <NOTIFICATION_ICON />
 
               <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
@@ -137,7 +138,7 @@ const MainAppBar = () => {
                       通知
                     </Typography>
                     <BackgroundLetterAvatars
-                      name={numOfNotif.numOfNotif.toString()!}
+                      name={numOfNotif.toString()!}
                       size={23}
                       backgroundColor="red"
                       fontColor="white"
@@ -146,6 +147,14 @@ const MainAppBar = () => {
                     />
                   </Box>
                   <Divider />
+                  {notifList?.map((notif, index) => (
+                    <NotifItem
+                      key={index}
+                      title={notif.title}
+                      content={notif.content}
+                      datetime={notif.createdAt}
+                    ></NotifItem>
+                  ))}
                   {checkInRequest?.map((checkIn) => (
                     <>
                       <List key={checkIn.chkInId}>

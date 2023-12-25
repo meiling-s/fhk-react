@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createContainer } from 'unstated-next'
+import { Notif } from '../interfaces/notif'
 import {
   getNumUnreadNotif,
   getNotifByUserId,
@@ -9,11 +10,11 @@ import {
 const Notification = () => {
   const loginId: string = localStorage.getItem('loginId') || 'string' //change key based on fixed key for loginId
   const [numOfNotif, setNumOfNotif] = useState(0)
-  // const [userId, setLoginId] = useState(loginId)
+  const [notifList, setNotifList] = useState<Notif[]>([])
 
   useEffect(() => {
     getNumNotif(loginId)
-    // getNotifList()
+    getNotifList(loginId)
   }, [loginId])
 
   const getNumNotif = async (loginId: string) => {
@@ -24,12 +25,17 @@ const Notification = () => {
     }
   }
 
-  // const getNotifList = async (loginId: string) => {
-  // }
+  const getNotifList = async (loginId: string) => {
+    const result = await getNotifByUserId(loginId)
+    const data = result?.data
+    if (data) {
+      setNotifList(data)
+    }
+  }
 
   return {
-    numOfNotif
-    // setLoginId
+    numOfNotif,
+    notifList
   }
 }
 
