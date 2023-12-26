@@ -30,53 +30,6 @@ const CreatePickupOrder = () => {
     navigate(-1) //goback to last page
   }
 
-  // {
-  //   "tenantId": 0,
-  //   "picoType": "AD_HOC",
-  //   "effFrmDate": "2023-12-26",
-  //   "effToDate": "2023-12-26",
-  //   "routineType": "daily",
-  //   "routine": [
-  //     "string"
-  //   ],
-  //   "logisticId": "string",
-  //   "logisticName": "string",
-  //   "vehicleTypeId": "string",
-  //   "platNo": "string",
-  //   "contactNo": "string",
-  //   "status": "CREATED",
-  //   "reason": "string",
-  //   "normalFlg": true,
-  //   "contractNo": "string",
-  //   "createdBy": "string",
-  //   "updatedBy": "string",
-  //   "createPicoDetail": [
-  //     {
-  //       "senderId": "string",
-  //       "senderName": "string",
-  //       "senderAddr": "string",
-  //       "senderAddrGps": [
-  //         0
-  //       ],
-  //       "receiverId": "string",
-  //       "receiverName": "string",
-  //       "receiverAddr": "string",
-  //       "receiverAddrGps": [
-  //         0
-  //       ],
-  //       "pickupAt": "23:59:59",
-  //       "status": "CREATED",
-  //       "createdBy": "string",
-  //       "updatedBy": "string",
-  //       "item": {
-  //         "recycType": "string",
-  //         "recycSubType": "string",
-  //         "weight": 0,
-  //         "picoHisId": 0
-  //       }
-  //     }
-  //   ]
-  // }
   const carType: il_item[] = [
     {
       id: '1',
@@ -110,7 +63,27 @@ const CreatePickupOrder = () => {
       DropOff: ''
     },
     onSubmit: async (values) => {
-      const result = await createPickUpOrder(values)
+      const formData = {
+        tenantId: 0,
+        picoType: 'AD_HOC',
+        effFrmDate: values.Date.startDate,
+        effToDate: values.Date.endDate,
+        routineType: 'daily',
+        routine: ['string'],
+        logisticId: 'string',
+        logisticName: values.logistic,
+        vehicleTypeId: 'string',
+        platNo: values.carNumber,
+        contactNo: values.contactNumber,
+        status: 'CREATED',
+        reason: values.DropOff,
+        normalFlg: true,
+        contractNo: 'string',
+        createdBy: new Date(),
+        updatedBy: 'admin',
+        createPicoDetail: []
+      }
+      const result = await createPickUpOrder(formData)
       const data = result?.data.content
       if (data) {
         navigate('/collector/pickupOrder')

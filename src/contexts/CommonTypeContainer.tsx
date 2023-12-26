@@ -104,7 +104,7 @@ const getSiteType = async () => {
     premiseType,
     siteType,
     recycType
-
+    
 }
 
 }

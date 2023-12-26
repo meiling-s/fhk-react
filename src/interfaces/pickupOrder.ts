@@ -40,4 +40,12 @@ export interface PickupOrderDetail {
     updatedAt:       Date;
     createdAt:       Date;
     version:         number;
+    item:            Item[];
+}
+
+export interface Item {
+    recycType:      string,
+    recycSubType:   string,
+    weight:         number,
+    picoHisId:      number
 }
