@@ -12,16 +12,16 @@ import dayjs from 'dayjs'
 import { format } from '../constants/constant'
 
 type NotifItemProps = {
-  key: number
-  handleItemClick: (id: number) => void
+  notifId: number
+  handleItem: () => void
   title?: string
   content?: string
   datetime?: string
 }
 
 const NotifItem: React.FC<NotifItemProps> = ({
-  key,
-  handleItemClick,
+  notifId,
+  handleItem,
   title,
   content,
   datetime
@@ -30,15 +30,15 @@ const NotifItem: React.FC<NotifItemProps> = ({
     ? dayjs(new Date(datetime)).format(format.dateFormat1)
     : '-'
 
-  const onClickItem = (notifId: number) => {
-    if (handleItemClick) {
-      handleItemClick(notifId)
+  const onClickItem = () => {
+    if (handleItem) {
+      handleItem()
     }
   }
 
   return (
-    <List key={key}>
-      <ListItem onClick={() => onClickItem(key)}>
+    <List key={notifId}>
+      <ListItem onClick={() => onClickItem}>
         <ListItemButton>
           <Stack>
             <Stack spacing={-2} direction="row" alignItems="center">

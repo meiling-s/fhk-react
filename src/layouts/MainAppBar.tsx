@@ -53,7 +53,6 @@ const MainAppBar = () => {
 
   const { checkInRequest } = useContainer(CheckInRequestContext)
   const { numOfNotif, notifList } = useContainer(NotifContainerContext)
-  console.log('numOfNotif', numOfNotif)
   // const { checkOutRequest } = useContainer(CheckOutRequestContext);
 
   const handleLanguageChange = (lng: string) => {
@@ -109,7 +108,7 @@ const MainAppBar = () => {
     const result = await updateFlagNotif(notifId)
     const data = result?.data
     if (data) {
-      toggleDrawer()
+      // toggleDrawer()
     }
   }
 
@@ -165,11 +164,12 @@ const MainAppBar = () => {
                 <Divider />
                 {notifList?.map((notif) => (
                   <NotifItem
-                    key={notif.notiRecordId}
+                 
+                    notifId={notif.notiRecordId}
                     title={notif.title}
                     content={notif.content}
                     datetime={notif.createdAt}
-                    handleItemClick={handleClickNotif}
+                    handleItem={() => handleClickNotif(notif.notiRecordId)}
                   ></NotifItem>
                 ))}
                 {/* {checkInRequest?.map((checkIn) => (
