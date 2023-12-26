@@ -12,8 +12,8 @@ import dayjs from 'dayjs'
 import { format } from '../constants/constant'
 
 type NotifItemProps = {
-  key?: number
-  handleItemClick?: () => void
+  key: number
+  handleItemClick: (id: number) => void
   title?: string
   content?: string
   datetime?: string
@@ -30,9 +30,15 @@ const NotifItem: React.FC<NotifItemProps> = ({
     ? dayjs(new Date(datetime)).format(format.dateFormat1)
     : '-'
 
+  const onClickItem = (notifId: number) => {
+    if (handleItemClick) {
+      handleItemClick(notifId)
+    }
+  }
+
   return (
     <List key={key}>
-      <ListItem onClick={() => handleItemClick}>
+      <ListItem onClick={() => onClickItem(key)}>
         <ListItemButton>
           <Stack>
             <Stack spacing={-2} direction="row" alignItems="center">

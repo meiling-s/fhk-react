@@ -206,7 +206,8 @@
   "appBar": {
     "simplified_cn": "简体中文",
     "traditional_cn": "繁體中文",
-    "english": "英语"
+    "english": "英语",
+    "notify": "通知"
   },
   "pick_up_order": {
     "create_pick_up_order": "建立运单",

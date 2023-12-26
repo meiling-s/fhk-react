@@ -207,7 +207,8 @@
   "appBar": {
     "simplified_cn": "Simplified Chinese",
     "traditional_cn": "Traditional Chinese",
-    "english": "English"
+    "english": "English",
+    "notify": "Notify"
   },
   "pick_up_order": {
     "create_pick_up_order": "Create Pick up Order",

@@ -36,6 +36,7 @@ import { useContainer } from 'unstated-next'
 import { getRecycType } from '../APICalls/commonManage'
 import CommonTypeContainer from '../contexts/CommonTypeContainer'
 import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
+import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
 
 const MainAppBar = () => {
@@ -103,6 +104,15 @@ const MainAppBar = () => {
     setShowSuccessModal(true)
   }
 
+  const handleClickNotif = async (notifId: number) => {
+    console.log('handleClickNotif', notifId)
+    const result = await updateFlagNotif(notifId)
+    const data = result?.data
+    if (data) {
+      toggleDrawer()
+    }
+  }
+
   return (
     //<Box flexDirection={"row"} sx={{ flexGrow: 1 }}>
     <AppBar
@@ -124,19 +134,24 @@ const MainAppBar = () => {
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex' }}>
           <IconButton onClick={toggleDrawer}>
-            <Badge badgeContent={numOfNotif.toString()} color="error">
-              <NOTIFICATION_ICON />
+            {numOfNotif !== 0 && (
+              <Badge badgeContent={numOfNotif.toString()} color="error">
+                <NOTIFICATION_ICON />
+              </Badge>
+            )}
+            {numOfNotif === 0 && <NOTIFICATION_ICON />}
 
-              <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
-                <Box className="md:w-[500px] w-[100vw]">
-                  <Box display="flex" p={4} alignItems="center">
-                    <Typography
-                      fontSize={20}
-                      fontWeight="bold"
-                      sx={{ mr: '10px' }}
-                    >
-                      通知
-                    </Typography>
+            <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
+              <Box className="md:w-[500px] w-[100vw]">
+                <Box display="flex" p={4} alignItems="center">
+                  <Typography
+                    fontSize={20}
+                    fontWeight="bold"
+                    sx={{ mr: '10px' }}
+                  >
+                    {t('appBar.notify')}
+                  </Typography>
+                  {numOfNotif !== 0 && (
                     <BackgroundLetterAvatars
                       name={numOfNotif.toString()!}
                       size={23}
@@ -145,17 +160,19 @@ const MainAppBar = () => {
                       fontSize="15px"
                       isBold={true}
                     />
-                  </Box>
-                  <Divider />
-                  {notifList?.map((notif, index) => (
-                    <NotifItem
-                      key={index}
-                      title={notif.title}
-                      content={notif.content}
-                      datetime={notif.createdAt}
-                    ></NotifItem>
-                  ))}
-                  {/* {checkInRequest?.map((checkIn) => (
+                  )}
+                </Box>
+                <Divider />
+                {notifList?.map((notif) => (
+                  <NotifItem
+                    key={notif.notiRecordId}
+                    title={notif.title}
+                    content={notif.content}
+                    datetime={notif.createdAt}
+                    handleItemClick={handleClickNotif}
+                  ></NotifItem>
+                ))}
+                {/* {checkInRequest?.map((checkIn) => (
                     <>
                       <List key={checkIn.chkInId}>
                         <ListItem onClick={() => handleItemClick(checkIn)}>
@@ -229,17 +246,17 @@ const MainAppBar = () => {
                       <Divider />
                     </>
                   ))} */}
-                </Box>
-              </Drawer>
-              {selectedItem && (
-                <Modal open={openModal} onClose={handleCloses}>
-                  <RequestForm
-                    onClose={handleCloses}
-                    selectedItem={selectedItem}
-                  />
-                </Modal>
-              )}
-            </Badge>
+              </Box>
+            </Drawer>
+            {selectedItem && (
+              <Modal open={openModal} onClose={handleCloses}>
+                <RequestForm
+                  onClose={handleCloses}
+                  selectedItem={selectedItem}
+                />
+              </Modal>
+            )}
+            {/* </Badge> */}
           </IconButton>
           <IconButton
             aria-controls={open ? 'fade-menu' : undefined}
