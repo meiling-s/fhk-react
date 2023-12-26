@@ -33,9 +33,15 @@ const Notification = () => {
     }
   }
 
+  const updateNotifications = async () => {
+    await getNumNotif(loginId)
+    await getNotifList(loginId)
+  }
+
   return {
     numOfNotif,
-    notifList
+    notifList,
+    updateNotifications
   }
 }
 

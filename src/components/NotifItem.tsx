@@ -38,7 +38,7 @@ const NotifItem: React.FC<NotifItemProps> = ({
 
   return (
     <List key={notifId}>
-      <ListItem onClick={() => onClickItem}>
+      <ListItem onClick={onClickItem}>
         <ListItemButton>
           <Stack>
             <Stack spacing={-2} direction="row" alignItems="center">

@@ -52,7 +52,9 @@ const MainAppBar = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
 
   const { checkInRequest } = useContainer(CheckInRequestContext)
-  const { numOfNotif, notifList } = useContainer(NotifContainerContext)
+  const { numOfNotif, notifList, updateNotifications } = useContainer(
+    NotifContainerContext
+  )
   // const { checkOutRequest } = useContainer(CheckOutRequestContext);
 
   const handleLanguageChange = (lng: string) => {
@@ -108,7 +110,7 @@ const MainAppBar = () => {
     const result = await updateFlagNotif(notifId)
     const data = result?.data
     if (data) {
-      // toggleDrawer()
+      await updateNotifications()
     }
   }
 
@@ -164,7 +166,6 @@ const MainAppBar = () => {
                 <Divider />
                 {notifList?.map((notif) => (
                   <NotifItem
-                 
                     notifId={notif.notiRecordId}
                     title={notif.title}
                     content={notif.content}
