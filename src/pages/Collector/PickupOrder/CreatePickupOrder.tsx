@@ -18,6 +18,7 @@ import CustomItemList, {
   il_item
 } from '../../../components/FormComponents/CustomItemList'
 import CustomDatePicker2 from '../../../components/FormComponents/CustomDatePicker2'
+import { createPickUpOrder } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useTranslation } from 'react-i18next'
 
 const CreatePickupOrder = () => {
@@ -60,8 +61,13 @@ const CreatePickupOrder = () => {
       },
       DropOff: ''
     },
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2))
+    onSubmit: async (values) => {
+      const result = await createPickUpOrder(values)
+      const data = result?.data.content
+      if (data) {
+        navigate('/collector/pickupOrder')
+      }
+      //alert(JSON.stringify(values, null, 2))
     }
   })
   return (
