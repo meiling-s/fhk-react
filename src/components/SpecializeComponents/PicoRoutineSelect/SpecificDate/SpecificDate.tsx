@@ -4,6 +4,8 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import CustomDatePicker from "../../../FormComponents/CustomDatePicker";
 import { format } from "../../../../constants/constant";
+import { DEFAULT_ATTRIBUTE } from "@mui/system/cssVars/getInitColorSchemeScript";
+import { Add } from "@mui/icons-material";
 
 type props = {
     setSpecificDate: (RSDs: string[]) => void,
@@ -15,10 +17,14 @@ export default function SpecificDate({
     defaultDates
 }: props){
 
+    console.log('bbbbbbbb'+defaultDates)
+
     const [specificDates, setSpecificDates] = useState<string[]>([]);
+    
+    
+   
 
     const { t } = useTranslation();
-
     useEffect(() => {
         if(defaultDates){
             setSpecificDates(defaultDates)
@@ -31,6 +37,8 @@ export default function SpecificDate({
     useEffect(() => {
         setSpecificDate(specificDates)
     },[specificDates])
+   
+   
 
     const handleDatePick = (day: dayjs.Dayjs[]) => {
         var newSpecificDates = day.map((date) => {

@@ -27,7 +27,7 @@ function CustomItemList({
     multiSelect,
     defaultSelected,
     setLastSelect,
-    dbClickSelect,      //double click
+    dbClickSelect,
     error,
     editable,
     value
@@ -117,7 +117,6 @@ function CustomItemList({
             {
                 items.map((item) => (
                     <Button
-    
                         variant="outlined"
                         sx={error? localstyles.error : returnTheme(item.id)}
                         onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}
