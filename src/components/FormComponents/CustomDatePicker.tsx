@@ -47,16 +47,22 @@ export default function CustomDatePicker({
         })
         setFormattedDates(formatted)
     },[dates])
-
-    if(setMultiDate != undefined){        //multi date select
-
-        if(defaultDate != undefined && Array.isArray(defaultDate) && defaultDate.length > 0){
-            const defDates = defaultDate.map((defDate) => {
-                return dayjs(defDate)
-            });
-            setDates(defDates)
+    
+    useEffect(() => {
+        if(setMultiDate != undefined){
+            if(defaultDate != undefined && Array.isArray(defaultDate) && defaultDate.length > 0){
+                const defDates = defaultDate.map((defDate) => {
+                    return dayjs(defDate)
+                });
+                setDates(defDates)
+            }
         }
 
+    },[])
+
+
+    if(setMultiDate != undefined){        //multi date select
+        
         const handleDateChange = (value: dayjs.Dayjs | null, index: number) => {
             if(value != null){
                 if(index >= 0){
