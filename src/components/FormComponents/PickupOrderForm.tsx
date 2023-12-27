@@ -104,7 +104,7 @@ const PickupOrderForm = ({
                 variant="outlined"
                 startIcon={<DriveFileRenameOutlineIcon />}
                 sx={localstyles.button}
-                onClick={() => selectedPickupOrder&&handleRowClick(selectedPickupOrder)}
+                onClick={() => selectedPickupOrder && handleRowClick(selectedPickupOrder)}
               >
                 修改
               </Button>

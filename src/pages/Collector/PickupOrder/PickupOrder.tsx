@@ -112,8 +112,8 @@ const PickupOrders = () => {
     物流公司: item.logisticName,
     运单编号: item.picoId, 
     送货日期: `${item.effFrmDate} - ${item.effToDate}`,
-    寄件公司: item.pickupOrderDetail[0].senderName,
-    收件公司: item.pickupOrderDetail[0].receiverName,
+    寄件公司: item.pickupOrderDetail[0]?.senderName,
+    收件公司: item.pickupOrderDetail[0]?.receiverName,
     状态: item.status,
   }))??[] ;
 

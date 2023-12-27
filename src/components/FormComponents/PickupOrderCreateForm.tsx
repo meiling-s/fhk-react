@@ -52,19 +52,15 @@ const PickupOrderCreateForm = ({
   formik,
   setState,
   state,
-  
 }: {
   selectedPo?: PickupOrder;
   title: string;
   formik: any;
   setState: (val: CreatePicoDetail[]) => void;
   state: CreatePicoDetail[];
- 
 }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [editRowId, setEditRowId] = useState<number | null>(null);
-  const [vehicle, setVehicle] = useState<il_item[]>();
-  const [colPtRoutine, setColPtRoutine] = useState<colPtRoutine>();
   const [id, setId] = useState<number>(0);
   const { logisticList, contractType, vehicleType } =
     useContainer(CommonTypeContainer);
@@ -92,33 +88,37 @@ const PickupOrderCreateForm = ({
       top: params.isFirstVisible ? 0 : 10,
     };
   }, []);
-  useEffect(() => {
-    if(vehicleType){
-    const carType: il_item[] = [];
-    vehicleType?.forEach((vehicle) => {
-      var name = "";
-      switch (i18n.language) {
-        case "enus":
-          name = vehicle.vehicleTypeNameEng;
-          break;
-        case "zhch":
-          name = vehicle.vehicleTypeNameSchi;
-          break;
-        case "zhhk":
-          name = vehicle.vehicleTypeNameTchi;
-          break;
-        default:
-          name = vehicle.vehicleTypeNameTchi; //default fallback language is zhhk
-          break;
+
+  const getvehicleType=()=>{
+    if (vehicleType) {
+      const carType: il_item[] = [];
+      vehicleType?.forEach((vehicle) => {
+        var name = "";
+        switch (i18n.language) {
+          case "enus":
+            name = vehicle.vehicleTypeNameEng;
+            break;
+          case "zhch":
+            name = vehicle.vehicleTypeNameSchi;
+            break;
+          case "zhhk":
+            name = vehicle.vehicleTypeNameTchi;
+            break;
+          default:
+            name = vehicle.vehicleTypeNameTchi; //default fallback language is zhhk
+            break;
+        }
+        const vehicleType: il_item = {
+          id: vehicle.vehicleTypeId,
+          name: name,
+        };
+        carType.push(vehicleType);
       }
-      const vehicleType: il_item = {
-        id: vehicle.vehicleTypeId,
-        name: name,
-      };
-      carType.push(vehicleType);
-      setVehicle(carType);
-    });
-  }}, [vehicleType]);
+      );
+      return carType
+    }
+  }
+ 
 
   const columns: GridColDef[] = [
     { field: "pickupAt", headerName: "运送时间", width: 150 },
@@ -195,7 +195,7 @@ const PickupOrderCreateForm = ({
     },
   ];
 
-  console.log(formik.errors);
+ 
 
   return (
     <>
@@ -249,7 +249,6 @@ const PickupOrderCreateForm = ({
                     formik.setFieldValue("effFrmDate", values.startDate);
                     formik.setFieldValue("effToDate", values.endDate);
                   }}
-                  
                   defaultStartDate={selectedPo?.effFrmDate}
                   defaultEndDate={selectedPo?.effToDate}
                 />
@@ -268,7 +267,7 @@ const PickupOrderCreateForm = ({
                 />
               </CustomField>
               <Grid item>
-                <CustomField label={"选择物流公司"} mandatory> 
+                <CustomField label={"选择物流公司"} mandatory>
                   <CustomAutoComplete
                     placeholder="請輸入公司名稱"
                     option={
@@ -293,9 +292,9 @@ const PickupOrderCreateForm = ({
               </Grid>
               <Grid item>
                 <CustomField label={"车辆类别"} mandatory>
-                  {vehicle && (
+               
                     <CustomItemList
-                      items={vehicle}
+                      items={getvehicleType()||[]}
                       singleSelect={(values) =>
                         formik.setFieldValue("vehicleTypeId", values)
                       }
@@ -306,7 +305,7 @@ const PickupOrderCreateForm = ({
                         formik.touched.vehicleTypeId
                       }
                     />
-                  )}
+                  
                 </CustomField>
               </Grid>
               <Grid item>
@@ -428,15 +427,14 @@ const PickupOrderCreateForm = ({
               </Grid>
             </Grid>
             <Stack mt={2} spacing={2}>
-  {Object.keys(formik.errors).map((fieldName) =>
-    formik.touched[fieldName] && formik.errors[fieldName] ? (
-      <Alert severity="error" key={fieldName}>
-        {formik.errors[fieldName]}
-      </Alert>
-    ) : null
-  )}
-
-</Stack>
+              {Object.keys(formik.errors).map((fieldName) =>
+                formik.touched[fieldName] && formik.errors[fieldName] ? (
+                  <Alert severity="error" key={fieldName}>
+                    {formik.errors[fieldName]}
+                  </Alert>
+                ) : null
+              )}
+            </Stack>
           </LocalizationProvider>
         </Box>
       </form>

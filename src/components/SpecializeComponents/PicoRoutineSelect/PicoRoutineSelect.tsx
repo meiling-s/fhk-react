@@ -24,6 +24,7 @@ export default function PicoRoutineSelect({
     const [routineContent, setRoutineContent] = useState<string[]>([]);
 
     useEffect(() => {
+       
         if(defaultValue){
             setRouType(defaultValue.routineType)
             setRoutineContent(defaultValue.routineContent)
