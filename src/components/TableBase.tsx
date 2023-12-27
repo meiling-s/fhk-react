@@ -35,6 +35,9 @@ type TableProps = {
   onCheckAll?: (checked: boolean) => void
   checkedRows?: TableRow[]
   onCheckRow?: (checked: boolean, row: TableRow) => void
+  useAction?: boolean
+  selectedRow?: TableRow | null
+  onSelectRow?: (row: TableRow | null) => void
 }
 
 const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
@@ -54,18 +57,17 @@ const TableColumnStatus: React.FC<TableColumnStatusProps> = ({
         className={`${
           rowStatus === 'deleted'
             ? 'bg-rose-300 text-rose-800'
-            :   rowStatus === 'inactive'
+            : rowStatus === 'inactive'
             ? 'bg-yellow-100 text-yellow-800'
             : 'bg-green-light text-green-primary'
         } rounded-lg  flex flex-row items-center justify-center py-1 px-[15px]`}
       >
         <div className="relative tracking-[1px] leading-[20px] font-medium">
-          { rowStatus === 'deleted' 
-            ? '刪除' 
-            : rowStatus === 'inactive' 
-            ?'不活跃的'
-            :'已啓用'
-          }
+          {rowStatus === 'deleted'
+            ? '刪除'
+            : rowStatus === 'inactive'
+            ? '不活跃的'
+            : '已啓用'}
         </div>
       </div>
     </div>
@@ -81,9 +83,12 @@ const TableBase: React.FC<TableProps> = ({
   checkAll,
   onCheckAll,
   checkedRows,
-  onCheckRow
+  onCheckRow,
+  useAction = true,
+  selectedRow,
+  onSelectRow
 }) => {
-  const sortedRow = dataRow.sort((a,b) => a.id -b.id)
+  const sortedRow = dataRow.sort((a, b) => a.id - b.id)
   const handleDelete = (row: TableRow) => {
     if (onDelete) {
       onDelete('delete', row)
@@ -108,11 +113,21 @@ const TableBase: React.FC<TableProps> = ({
     }
   }
 
+  const handleSelectRow = (row: TableRow) => {
+    if (onSelectRow) {
+      if (selectedRow && selectedRow.id === row.id) {
+        onSelectRow(null)
+      } else {
+        onSelectRow(row)
+      }
+    }
+  }
+
   return (
     <div className="table-container overflow-y-hidden w-full">
-      <table className="w-fit border-separate border-spacing-y-3 rounded-lg">
+      <table className="w-full border-separate border-spacing-y-3 rounded-lg">
         <thead>
-          <tr className="p-2">
+          <tr className="p-2 w-max ">
             {checkboxSelection && (
               <th className="p1">
                 <CustomCheckbox
@@ -127,7 +142,9 @@ const TableBase: React.FC<TableProps> = ({
                 className={`font-bold leading-[20px] text-base text-left p-1`}
                 key={index}
                 style={{
-                  width: headerItem.width ? `${headerItem.width}px` : '120px'
+                  width: headerItem.width
+                    ? `${headerItem.width}px`
+                    : 'max-content'
                 }}
               >
                 {headerItem.label}
@@ -147,9 +164,15 @@ const TableBase: React.FC<TableProps> = ({
                   ? 'checked'
                   : ''
               }`}
+              onClick={() => handleSelectRow(item)}
             >
               {checkboxSelection && (
-                <td className="rounded-tl-lg rounded-bl-lg">
+                <td
+                  className={`rounded-tl-lg rounded-bl-lg w-max ${
+                    selectedRow?.id === item.id ? 'bg-[#F6FDF2]' : ''
+                  }`}
+                  style={selectedRow?.id === item.id ? borderLeftStyle : {}}
+                >
                   <CustomCheckbox
                     className="px-3"
                     checked={checkedRows?.some(
@@ -161,7 +184,22 @@ const TableBase: React.FC<TableProps> = ({
                 </td>
               )}
               {header.map((headerItem, columnIndex) => (
-                <td key={columnIndex} className="py-3">
+                <td
+                  key={columnIndex}
+                  style={
+                    columnIndex === header.length - 1 &&
+                    selectedRow?.id === item.id
+                      ? borderRightStyle
+                      : selectedRow?.id === item.id
+                      ? borderStyle
+                      : {}
+                  }
+                  className={`py-4 cursor-pointer px-2${
+                    columnIndex === header.length - 1
+                      ? 'rounded-tr-lg rounded-br-lg'
+                      : ''
+                  }`}
+                >
                   {headerItem.type === 'status' ? (
                     <TableColumnStatus
                       width={
@@ -178,48 +216,73 @@ const TableBase: React.FC<TableProps> = ({
                       style={{
                         width: headerItem.width
                           ? `${headerItem.width}px`
-                          : '120px'
+                          : 'max-content'
                       }}
-                      className="text-left text-smi overflow-hidden text-ellipsis whitespace-nowrap"
+                      className="text-left text-smi max-w-[250px] whitespace-normal"
                     >
                       {item[headerItem.field as string]}
                     </div>
                   )}
                 </td>
               ))}
-              <td className="px-3 py-0 rounded-tr-lg rounded-br-lg">
-                {item?.status === 'DELETED' ? (
-                  <div className="flex justify-around ">
-                    <EDIT_OUTLINED_ICON
-                      className=" text-grey-light cursor-not-allowed"
-                      fontSize="small"
-                    />
-                    <DELETE_OUTLINED_ICON
-                      className="text-grey-light cursor-not-allowed"
-                      fontSize="small"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex justify-around">
-                    <EDIT_OUTLINED_ICON
-                      className="cursor-pointer text-grey-dark mr-2"
-                      fontSize="small"
-                      onClick={() => handleEdit(item)}
-                    />
-                    <DELETE_OUTLINED_ICON
-                      className="cursor-pointer text-grey-dark"
-                      fontSize="small"
-                      onClick={() => handleDelete(item)}
-                    />
-                  </div>
-                )}
-              </td>
+              {useAction && (
+                <td className="px-3 py-0 rounded-tr-lg rounded-br-lg">
+                  {item?.status === 'DELETED' ? (
+                    <div className="flex justify-around ">
+                      <EDIT_OUTLINED_ICON
+                        className=" text-grey-light cursor-not-allowed"
+                        fontSize="small"
+                      />
+                      <DELETE_OUTLINED_ICON
+                        className="text-grey-light cursor-not-allowed"
+                        fontSize="small"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex justify-around">
+                      <EDIT_OUTLINED_ICON
+                        className="cursor-pointer text-grey-dark mr-2"
+                        fontSize="small"
+                        onClick={() => handleEdit(item)}
+                      />
+                      <DELETE_OUTLINED_ICON
+                        className="cursor-pointer text-grey-dark"
+                        fontSize="small"
+                        onClick={() => handleDelete(item)}
+                      />
+                    </div>
+                  )}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
       </table>
     </div>
   )
+}
+
+const borderStyle: React.CSSProperties = {
+  backgroundColor: '#F6FDF2',
+  borderTop: '1px solid #79CA25',
+  borderBottom: '1px solid #79CA25',
+  transition: '0.3s'
+}
+
+const borderLeftStyle: React.CSSProperties = {
+  borderLeft: '1px solid #79CA25',
+  backgroundColor: '#F6FDF2',
+  borderTop: '1px solid #79CA25',
+  borderBottom: '1px solid #79CA25',
+  transition: '0.3s'
+}
+
+const borderRightStyle: React.CSSProperties = {
+  borderRight: '1px solid #79CA25',
+  backgroundColor: '#F6FDF2',
+  borderTop: '1px solid #79CA25',
+  borderBottom: '1px solid #79CA25',
+  transition: '0.3s'
 }
 
 export default TableBase

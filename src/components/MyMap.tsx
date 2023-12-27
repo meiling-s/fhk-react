@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { MapContainer, Marker, TileLayer, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../index.css";
-import L, { Icon } from "leaflet";
+import { Icon } from "leaflet";
 import { useEffect, useState } from "react";
 import { collectionPoint } from "../interfaces/collectionPoint";
 import { useNavigate } from "react-router-dom";

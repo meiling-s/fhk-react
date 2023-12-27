@@ -8,6 +8,7 @@ import LanguageIcon from '@mui/icons-material/Language'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import FolderCopyIcon from '@mui/icons-material/FolderCopy'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import PersonIcon from '@mui/icons-material/Person'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import SettingsIcon from '@mui/icons-material/Settings'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
@@ -22,6 +23,8 @@ import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 export const PLACE_ICON = PlaceOutlinedIcon
 export const SHIPPING_CAR_ICON = LocalShippingOutlinedIcon
@@ -33,6 +36,7 @@ export const LANGUAGE_ICON = LanguageIcon
 export const RIGHT_ARROW_ICON = ChevronRightIcon
 export const FOLDER_ICON = FolderCopyIcon
 export const ADD_PERSON_ICON = PersonAddIcon
+export const PERSON_ICON = PersonIcon
 export const LOCATION_ICON = LocationOnIcon
 export const SETTINGS_ICON = SettingsIcon
 export const EDIT_OUTLINED_ICON = EditOutlinedIcon
@@ -47,3 +51,5 @@ export const LEFT_ARROW_ICON = ChevronLeftOutlinedIcon
 export const VISIBILITY_ICON = VisibilityOutlinedIcon
 export const VISIBILITY_OFF_ICON = VisibilityOffOutlinedIcon
 export const WARNING_ICON =  ErrorOutlinedIcon
+export const TEMPLATE_ICON = SpaceDashboardIcon
+export const STATISTIC_ICON = BarChartIcon

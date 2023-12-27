@@ -43,6 +43,7 @@ import { useContainer } from 'unstated-next'
 import { getRecycType } from '../APICalls/commonManage'
 import CommonTypeContainer from '../contexts/CommonTypeContainer'
 import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
+import { setLanguage } from '../setups/i18n'
 
 const MainAppBar = () => {
   const [keywords, setKeywords] = useState<string>("");
@@ -62,6 +63,7 @@ const MainAppBar = () => {
   const handleLanguageChange = (lng: string) => {
     console.log('change language: ', lng)
     i18n.changeLanguage(lng)
+    setLanguage(lng)
   }
 
   //console.log(recycType)
@@ -133,7 +135,7 @@ const MainAppBar = () => {
               <NOTIFICATION_ICON />
 
               <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
-                <Box width="500px">
+                <Box className="md:w-[500px] w-[100vw]">
                   <Box display="flex" p={4} alignItems="center">
                     <Typography
                       fontSize={20}
@@ -154,66 +156,78 @@ const MainAppBar = () => {
                   <Divider />
                   {checkInRequest?.map((checkIn) => (
                     <>
-                  <List key = {checkIn.chkInId}>
-                    <ListItem onClick={() => handleItemClick(checkIn)}>
-                      <ListItemButton >
-                        <Stack>
-                          <Stack spacing={-2} direction='row' alignItems='center'>
-                        <ListItemIcon  style={{color:'red' }}>
-                         <CircleIcon sx={{fontSize:'0.75rem'}} />
-                        </ListItemIcon>
-                       
-                        <Typography fontWeight='bold'  sx={{ml:'40px'}}>
-                            {t("check_in.request_check_in")}
-                          </Typography>
-                          </Stack>
-                         
-                          <Typography sx={{ml:'40px'}}>
-                            你有一个新的送入请求
-                          </Typography>
-                        
-                          <Typography sx={{ml:'40px',mt:'10px'}}>
-                            {checkIn.createdAt.toString()}
-                          </Typography>
-                         
-                          </Stack>
-                      </ListItemButton>
-                    </ListItem>
-                  </List>
-                  <Divider 
-                  />
-                  </>))}
-                  {checkInRequest?.map((checkIn)=>(  
+                      <List key={checkIn.chkInId}>
+                        <ListItem onClick={() => handleItemClick(checkIn)}>
+                          <ListItemButton>
+                            <Stack>
+                              <Stack
+                                spacing={-2}
+                                direction="row"
+                                alignItems="center"
+                              >
+                                <ListItemIcon style={{ color: 'red' }}>
+                                  <CircleIcon sx={{ fontSize: '0.75rem' }} />
+                                </ListItemIcon>
+
+                                <Typography
+                                  fontWeight="bold"
+                                  sx={{ ml: '40px' }}
+                                >
+                                  {t('check_in.request_check_in')}
+                                </Typography>
+                              </Stack>
+
+                              <Typography sx={{ ml: '40px' }}>
+                                你有一个新的送入请求
+                              </Typography>
+
+                              <Typography sx={{ ml: '40px', mt: '10px' }}>
+                                {checkIn.createdAt.toString()}
+                              </Typography>
+                            </Stack>
+                          </ListItemButton>
+                        </ListItem>
+                      </List>
+                      <Divider />
+                    </>
+                  ))}
+                  {checkInRequest?.map((checkIn) => (
                     <>
-                  <List key = {checkIn.chkInId}>
-                    <ListItem onClick={() => handleItemClick(checkIn)}>
-                      <ListItemButton >
-                        <Stack>
-                          <Stack spacing={-2} direction='row' alignItems='center'>
-                        <ListItemIcon  style={{color:'red' }}>
-                         <CircleIcon sx={{fontSize:'0.75rem'}} />
-                        </ListItemIcon>
-                       
-                        <Typography fontWeight='bold'  sx={{ml:'40px'}}>
-                            {t("check_out.request_check_out")}
-                          </Typography>
-                          </Stack>
-                         
-                          <Typography sx={{ml:'40px'}}>
-                            你有一个新的送出請求
-                          </Typography>
-                        
-                          <Typography sx={{ml:'40px',mt:'10px'}}>
-                            {checkIn.createdAt.toString()}
-                          </Typography>
-                         
-                          </Stack>
-                      </ListItemButton>
-                    </ListItem>
-                  </List>
-                  <Divider 
-                  />
-                  </>))}
+                      <List key={checkIn.chkInId}>
+                        <ListItem onClick={() => handleItemClick(checkIn)}>
+                          <ListItemButton>
+                            <Stack>
+                              <Stack
+                                spacing={-2}
+                                direction="row"
+                                alignItems="center"
+                              >
+                                <ListItemIcon style={{ color: 'red' }}>
+                                  <CircleIcon sx={{ fontSize: '0.75rem' }} />
+                                </ListItemIcon>
+
+                                <Typography
+                                  fontWeight="bold"
+                                  sx={{ ml: '40px' }}
+                                >
+                                  {t('check_out.request_check_out')}
+                                </Typography>
+                              </Stack>
+
+                              <Typography sx={{ ml: '40px' }}>
+                                你有一个新的送出請求
+                              </Typography>
+
+                              <Typography sx={{ ml: '40px', mt: '10px' }}>
+                                {checkIn.createdAt.toString()}
+                              </Typography>
+                            </Stack>
+                          </ListItemButton>
+                        </ListItem>
+                      </List>
+                      <Divider />
+                    </>
+                  ))}
                 </Box>
               </Drawer>
               {selectedItem && (
@@ -245,16 +259,16 @@ const MainAppBar = () => {
               divider={true}
               onClick={() => handleLanguageChange('zhch')}
             >
-              <Typography>簡體中文</Typography>
+              <Typography>{t('appBar.simplified_cn')}</Typography>
             </MenuItem>
             <MenuItem
               divider={true}
               onClick={() => handleLanguageChange('zhhk')}
             >
-              <Typography>繁體中文</Typography>
+              <Typography>{t('appBar.traditional_cn')}</Typography>
             </MenuItem>
             <MenuItem onClick={() => handleLanguageChange('enus')}>
-              <Typography>English</Typography>
+              <Typography>{t('appBar.english')}</Typography>
             </MenuItem>
           </Menu>
           <Box sx={{ display: 'flex', flexDirection: 'row', ml: 3 }}>

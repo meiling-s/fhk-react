@@ -13,7 +13,8 @@ export const styles = {
         mt: { lg: layout.appbarHeight, sm: '100px' },
         backgroundColor: "#F4F5F7",
         pl: layout.innerScreen_padding,
-        pt: layout.innerScreen_padding
+        pt: layout.innerScreen_padding,
+        
     },
     innerScreen_container: {
         width: "100%",
