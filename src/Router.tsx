@@ -13,7 +13,7 @@ import CollectionPoint from "./pages/Collector/CollectionPoint/CollectionPoint/C
 import CreateCollectionPoint from "./pages/Collector/CollectionPoint/CreateCollectionPoint/CreateCollectionPoint";
 import EditCollectionPoint from "./pages/Collector/CollectionPoint/EditCollectionPoint/EditCollectionPoint";
 //warehouse
-import Overview from "./pages/Collector/Manage/Overview";
+import Overview from "./pages/Collector/Manage/CheckoutRequest";
 import Settings from "./pages/Collector/Warehouse/Settings";
 import Test from "./pages/Collector/Warehouse/Test";
 //Tenant Register
