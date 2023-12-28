@@ -65,6 +65,14 @@
   "recycle_Shipment": "Recycle Shipment",
   "reports": "Reports",
   "staff": "Staff",
+  "noticeTemplate": "Notice Template",
+  "statistics": "Statistics",
+  "recyclables": "Recyclables",
+  "convoy": "Convoy",
+  "recycleCompany": "Recycle Company",
+  "recyclePlant": "Recycle Plant",
+  "manage": "Manage",
+  "overView": "Overview",
   "enter_Keyword_To_Search": "Enter keyword to search",
   "account": "Account",
   "signOut": "Sign out",
@@ -198,6 +206,9 @@
     "skip_btn": "Skip (Temporarily for Development)",
     "error": "Error, cannot reset password"
   },
+  "login": {
+    "wrongUsernameOrPassword": "Wrong username or password"
+  },
   "mainMenu": {
     "manage": "Manage",
     "overview": "Overview"
@@ -217,7 +228,7 @@
     "create_pick_up_order": "Create Pick up Order",
     "shipping_info": "Shipping Information",
     "select_shipping_category": "Please Select Shipping Category",
-    "regular_shipping" : "Regular Shipping",
+    "regular_shipping": "Regular Shipping",
     "one-transport": "One Time Transport",
     "shipping_validity": "Shipping validity date is given by",
     "to": "To",
@@ -227,10 +238,10 @@
     "plat_number": "License plate number",
     "enter_plat_number": "Please fill in the license plate number",
     "contact_number": "Contact number",
-    "enter_contact_number" :"please fill in cell phone number",
+    "enter_contact_number": "please fill in cell phone number",
     "reason_get_off": "Reason for getting off",
-    "po_number":"Reference waybill number",
-    "recyle_loc_info" : "Estimated recycling location information",
+    "po_number": "Reference waybill number",
+    "recyle_loc_info": "Estimated recycling location information",
     "new": "New",
     "finish": "Finish",
     "cancel": "Cancel"

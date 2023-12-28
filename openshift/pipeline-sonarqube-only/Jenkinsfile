@@ -1,0 +1,73 @@
+/* 
+Note 1: Pre-installation/Setup done in Jenkins (by Jenkins system admin) in order to have the tool 'SonarQubeScanner' available in stage 'Code Analysis':
+Ref: https://github.com/MatheusIshiyama/jenkins-sonarqube-nodejs
+- (1). Install Plugin 'Sonarqube Scanner' (Manage Jenkins -> System Configuration -> Manage Plugins)
+- (2). Add tool 'Sonarqube Scanner' and name it 'SonarQubeScannerSonarQubeScanner' (Manage Jenkins -> System Configuration -> Tools)
+
+Note 2: The tool command ${var_ScannerHome}/bin/sonar-scanner requires both java (to run such tool) and nodejs (to run the triggered nodejs code analysis process). OKD system admin prepared such a Jenkins agent of node label 'nodejs18-java17', that have a container named 'nodejs-container', in which the command 'sonar-scanner' can be run.
+*/
+
+def inputTagVersion = env.TAG_VERSION.trim()
+def inputTagComment = env.TAG_COMMENT.trim()
+def inputDevProject = env.DEV_PROJECT.trim()
+
+def config_Component = "react" 
+
+pipeline {
+  agent {
+    label 'nodejs18-java17'
+  }
+  stages {
+    stage('Manage Source Tag') {
+      steps {
+        script {
+          openshift.withCluster() {
+            withCredentials([usernamePassword(credentialsId: "${inputDevProject}-basic-auth-code-repo-read-write-secret-react", usernameVariable: "GITLAB_USER", passwordVariable: "GITLAB_PWD")]) {
+              if (inputTagVersion.isEmpty()) {
+                error('Please set non-empty environment variable TAG_VERSION!')
+              }
+              git branch: 'master', url: "https://${GITLAB_USER}:${GITLAB_PWD}@fhkgitlab.fhk.app/bas/as/astd/react.git"
+              sh "git fetch"
+              def gitTag = sh(script:"git tag -l ${inputTagVersion}", returnStdout:true).trim()
+              if (gitTag.isEmpty()) {
+                if (inputTagComment.isEmpty()) {
+                  error('Please set non-empty environment variable TAG_COMMENT for creating new tag!')
+                }
+                echo ("Tag new version ${inputTagVersion} in master. (NOTHING TO DO for sample test of sonarqube only)")
+/* sample test for sonarqube only, skip tag process */
+/*
+                sh("""
+                  git pull origin master
+                  git tag -a ${inputTagVersion} -m '${inputTagComment}'
+                  git push origin ${inputTagVersion}
+                """)
+*/
+              }
+              else {
+                echo ("Tag ${inputTagVersion} already exist. Will build from existing tag.")
+              }
+            }
+          }
+        }
+      }
+    }
+    stage('Code Analysis') {
+      steps {
+        container("nodejs-java-container") {
+          script {
+            openshift.withCluster() {
+              withCredentials([usernamePassword(credentialsId: "cicd-opaque-sonarqube-auth-secret", usernameVariable: "SONARQUBE_USER", passwordVariable: "SONARQUBE_PWD")]) {
+                def var_ScannerHome = tool 'SonarQubeScanner'
+                def var_SonarProjectKey = "${inputDevProject}-${config_Component}" // e.g. astd-react
+                sh "${var_ScannerHome}/bin/sonar-scanner \
+                -Dsonar.host.url=http://sonarqube:9000 \
+                -Dsonar.token=${SONARQUBE_PWD} \
+                -Dsonar.projectKey=${var_SonarProjectKey}"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

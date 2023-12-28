@@ -12,7 +12,6 @@ import {
 // import { useTranslation } from "react-i18next";
 // import { use } from "i18next";
 // import axios from "axios";
-// import { set } from "date-fns";
 import { getAllUsers, getAllWarehouse } from "../../../APICalls/test";
 
 // interface Person {
@@ -24,8 +23,8 @@ import { getAllUsers, getAllWarehouse } from "../../../APICalls/test";
 interface recyclableItem {
     warehouseRecycId: number;
     recycTypeId: string;
-    recycSubtypeId: string;
-    recycSubtypeCapacity: number;
+    recycSubTypeId: string;
+    recycSubTypeCapacity: number;
     recycTypeCapacity: number;
 }
 

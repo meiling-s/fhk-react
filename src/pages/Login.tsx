@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
 import React, { useState } from "react";
 import logo_company from "../logo_company.png";
@@ -7,59 +7,82 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../APICalls/login";
 import { localStorgeKeyName } from "../constants/constant";
 import CustomCopyrightSection from "../components/CustomCopyrightSection";
+import { styles as constantStyle } from '../constants/styles'
 
 const Login = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = React.useState(false);
-  const [loginTo, setLoginTo] = useState("astd");
+  //const [loginTo, setLoginTo] = useState("astd");
   const [loggingIn, setLogginIn] = useState(false);
+  const [warningMsg, setWarningMsg] = useState<string>(" ");
   const navigate = useNavigate();
 
   const onLogin = async () => {
     setLogginIn(true);
-    localStorage.setItem(localStorgeKeyName.role, loginTo);
-    const result = await login({
-      username: userName,
-      password: password,
-      realm: 'astd'
-    });
-    if(result){
-      console.log(result);
-      //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
-      localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
-      localStorage.setItem(localStorgeKeyName.role, loginTo);
-      localStorage.setItem(localStorgeKeyName.username, result?.username || '');
-    }
-    switch(loginTo){
-      case "astd":
-        navigate("/astd");
+    //login for astd testing
+    var realm = '';   //default realm is astd
+    var loginTo = '';
+
+    switch(userName){
+      case 'astd':
+        realm = 'astd';
+        loginTo = 'astd';
         break;
-      case "collector":
-        navigate("/collector");
+      case 'colPt':
+        realm = 'collector';
+        loginTo = 'collector';
         break;
-      case "warehouse":
-        navigate("/warehouse");
+      case 'warehouse':
+        realm = 'collector';
+        loginTo = 'warehouse';
+        break;
+      case 'collectoradmin':
+        realm = 'collector';
+        loginTo = 'collectoradmin';
         break;
       default:
-        navigate("/collector");
+        break;
     }
+
+    if(realm!=''){
+      const result = await login({
+        username: userName,
+        password: password,
+        realm: 'astd'
+      });
+      if(result){
+
+        setWarningMsg(" ");
+        //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
+        localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
+        localStorage.setItem(localStorgeKeyName.role, loginTo);
+        localStorage.setItem(localStorgeKeyName.username, result?.username || '');
+        switch(loginTo){
+          case "astd":
+            navigate("/astd");
+            break;
+          case "collector":
+            navigate("/collector");
+            break;
+          case "warehouse":
+            navigate("/warehouse");
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    
     setLogginIn(false);
+    
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   return (
     <Box
-        sx={{
-            backgroundImage: "linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)",
-            minHeight: "100vh",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-        }}
+        sx={constantStyle.loginPageBg}
         component="form"
         onSubmit={(event) => {
           event.preventDefault();
@@ -67,17 +90,7 @@ const Login = () => {
         }}
       >
         <Box
-          sx={{
-            padding: "40px",
-            margin: "2%",
-            borderRadius: "20px",
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "white",
-            height: "fit-content",
-            width: "20%",
-            minWidth: 300
-          }}
+          sx={constantStyle.loginBox}
         >
         <img src={logo_company} alt="logo_company" style={{ width: "70px" }} />
         <Typography
@@ -122,7 +135,7 @@ const Login = () => {
               }}
             />
           </Box>
-          <FormControl fullWidth>
+          {/*<FormControl fullWidth>
             <InputLabel>Login to (for testing)</InputLabel>
             <Select
               value={loginTo}
@@ -133,7 +146,7 @@ const Login = () => {
               <MenuItem value={"collector"}>Collector</MenuItem>
               <MenuItem value={"warehouse"}>Warehouse</MenuItem>
             </Select>
-          </FormControl>
+            </FormControl>*/}
           <Box>
             <LoadingButton
               fullWidth
@@ -150,6 +163,12 @@ const Login = () => {
               登入
             </LoadingButton>
           </Box>
+          {
+            warningMsg!=" "&&
+              <FormHelperText>
+                {warningMsg}
+              </FormHelperText>
+          }
           <Box>
             <Button
               sx={{ color: "grey", textDecoration: "underline" }}

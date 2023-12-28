@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next'
+import { ReactNode, useState } from 'react'
 
 type TableColumnStatusProps = {
   width?: number

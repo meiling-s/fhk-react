@@ -1,5 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useState } from "react";
+import theme from "../../themes/palette";
+import { red } from "@mui/material/colors";
 
 type props = {
     onText: string,
@@ -8,6 +10,7 @@ type props = {
     defaultValue?: boolean,
     disabled?: boolean
     value?: string,
+    helperText?:any
 }
 
 export default function Switches({
@@ -16,7 +19,9 @@ export default function Switches({
     defaultValue,
     setState,
     disabled,
-    value
+    value,
+    helperText
+    
 }: props) {
     const [onOff, setOnOff] = useState<boolean>((defaultValue!=undefined)? defaultValue : false);
 
@@ -29,6 +34,7 @@ export default function Switches({
     }
   
     return (
+        <>
         <Button sx={localstyles.container} onClick={() => handleSwitchChange()}>
             <Box sx={[disabled? localstyles.switch_disabled : localstyles.switch,{ml: onOff? "5px" : "105px"}]} />
             <Typography sx={localstyles.onOffLabel}>
@@ -38,6 +44,8 @@ export default function Switches({
                 {offText}
             </Typography>
         </Button>
+        {helperText&&<Typography color='red' ml={'15px'} >{helperText}</Typography>}
+        </>
     );
 }
 

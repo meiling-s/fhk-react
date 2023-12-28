@@ -1,4 +1,4 @@
-import { Button, InputAdornment, TextField } from "@mui/material"
+import { Button, InputAdornment, TextField, makeStyles } from "@mui/material"
 import { styles } from "../../constants/styles"
 
 type props = {
@@ -11,6 +11,10 @@ type props = {
     error?: boolean,
     className?: string;
     multiline?: boolean
+    rows?:number
+    sx?:any
+    helperText?:any
+    
 }
 
 function CustomTextField({
@@ -22,8 +26,14 @@ function CustomTextField({
     endAdornment,
     error,
     className,
-    multiline = false
+    multiline = false,
+    rows,
+    sx,
+    helperText
+
 }: props) {
+
+  
     return(
         <TextField
             error={error}
@@ -32,11 +42,12 @@ function CustomTextField({
             id={id}
             value={value}
             multiline={multiline}
-            rows={multiline ? 4 : 1}
+            rows={multiline ? 4 : rows}
             placeholder={placeholder}
             defaultValue={defaultValue? defaultValue : ''}
             onChange={onChange}
-            sx={styles.textField}
+            sx={{...styles.textField,...sx}}
+            helperText={helperText}
             InputProps={{
                 endAdornment: (
                     <InputAdornment position="end" sx={{height: "100%"}}>

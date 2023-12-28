@@ -3,7 +3,8 @@ import {
   DataGrid,
   GridColDef,
   GridRowParams,
-  GridRowSpacingParams
+  GridRowSpacingParams,
+  GridValueGetterParams
 } from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -25,8 +26,8 @@ import {
 
 interface RecyleItem {
   recycTypeId: string
-  recycSubtypeId: string
-  recycSubtypeCapacity: number
+  recycSubTypeId: string
+  recycSubTypeCapacity: number
   recycTypeCapacity: number
 }
 
@@ -69,7 +70,8 @@ const Warehouse: FunctionComponent = () => {
       field: 'warehouseNameTchi',
       headerName: t('warehouse_page.trad_name'),
       width: 200,
-      type: 'string'
+      type: 'string',
+     
     },
     {
       field: 'warehouseNameSchi',
@@ -227,6 +229,31 @@ const Warehouse: FunctionComponent = () => {
     }
   }
 
+  // const dummyRows = [
+  //   {
+  //     id: 1,
+  //     warehouseId: 1,
+  //     warehouseNameTchi: '????',
+  //     warehouseNameSchi: '????',
+  //     warehouseNameEng: 'winda',
+  //     location: 'a??',
+  //     physicalFlg: true,
+  //     status: 'ACTIVE',
+  //     warehouseRecyc: 'Plastic , Glass, Lala'
+  //   },
+  //   {
+  //     id: 2,
+  //     warehouseId: 2,
+  //     warehouseNameTchi: '????',
+  //     warehouseNameSchi: '????',
+  //     warehouseNameEng: 'lala',
+  //     location: 'a??',
+  //     physicalFlg: true,
+  //     status: 'deleted',
+  //     warehouseRecyc: 'Plastic , Glass, Lala'
+  //   }
+  // ]
+
   const addDataWarehouse = () => {
     setDrawerOpen(true)
     setAction('add')
@@ -239,6 +266,13 @@ const Warehouse: FunctionComponent = () => {
     setAction('edit')
     fetchData()
   }
+
+  // const handleSelectRow = (row: TableRow | null) => {
+  //   setRowId(row?.id || 0)
+  //   setSelectedRow(row)
+  //   setDrawerOpen(true)
+  //   setAction('edit')
+  // }
 
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as TableRow
@@ -298,7 +332,6 @@ const Warehouse: FunctionComponent = () => {
                       </b>
                     </div>
                   </div>
-
                   <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
                     <DataGrid
                       rows={warehouseItems}

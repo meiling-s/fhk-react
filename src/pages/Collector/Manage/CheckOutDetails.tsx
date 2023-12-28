@@ -82,8 +82,8 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
         )
 
         if (matchingRecycType) {
-          const matchRecycSubType = matchingRecycType.recycSubtype?.find(
-            (subtype) => subtype.recycSubtypeId === detail.recycSubtypeId
+          const matchRecycSubType = matchingRecycType.recycSubType?.find(
+            (subtype) => subtype.recycSubTypeId === detail.recycSubtypeId
           )
           var name = ''
           switch (i18n.language) {

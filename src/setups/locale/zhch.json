@@ -65,6 +65,14 @@
   "recycle_Shipment": "回收运单",
   "reports": "报表",
   "staff": "员工",
+  "noticeTemplate": "通知范本",
+  "statistics": "数据",
+  "recyclables": "回收物",
+  "convoy": "车队",
+  "recycleCompany": "回收公司",
+  "recyclePlant": "回收厂",
+  "manage": "管理",
+  "overView": "概览",
   "enter_Keyword_To_Search": "输入关键字查询",
   "account": "帐户",
   "signOut": "登出",
@@ -189,17 +197,20 @@
     "password": "密码",
     "placeholder_password": "请输入密码",
     "new_password": "新密码",
-    "placeholder_new_password": "再次输入新密码",
+    "placeholder_new_password": "请输入密码",
     "helper_new_pass": "密码至少包含8 个字元，并混用英文字母、数字和符号",
-    "confirm_password": "确认密码",
+    "confirm_password": "再次输入新密码",
     "placeholder_confirm_password": "请输入密码",
     "helper_confirm_password": "您的新密码和确认密码不匹配",
-    "skip_btn": "跳过（暂时用于开发）",
+    "skip_btn": "跳过（暂时用于开发)",
     "error": "错误，无法重设密码"
+  },
+  "login": {
+    "wrongUsernameOrPassword": "错误的使用者名称或密码"
   },
   "mainMenu": {
     "manage": "管理",
-    "overview": "概述"
+    "overview": "概览"
   },
   "status": {
     "active": "已啓用",

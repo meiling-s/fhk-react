@@ -16,7 +16,10 @@ import {
   SHIPPING_CAR_ICON,
   STAFF_ICON,
   SETTINGS_ICON,
-  INBOX_OUTLINE_ICON
+  INBOX_OUTLINE_ICON,
+  TEMPLATE_ICON,
+  STATISTIC_ICON,
+  PERSON_ICON
 } from '../themes/icons'
 import logo_company from '../logo_company.png'
 import { useNavigate } from 'react-router-dom'
@@ -46,7 +49,8 @@ const drawerWidth = 225
 function MainDrawer() {
   const navigate = useNavigate()
   const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
-  const [ManageDrawer, setManageDrawer] = useState<boolean>(false)
+  const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false)
+  const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false)
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const theme = useTheme()
@@ -74,8 +78,7 @@ function MainDrawer() {
     }
   }, [])
 
-  var role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
-  //var role = 'warehouse'
+  var role = localStorage.getItem(localStorgeKeyName.role)
 
   let drawerMenus_collector: DrawerItem[] = [
     {
@@ -114,12 +117,6 @@ function MainDrawer() {
       icon: <STAFF_ICON />,
       onClick: () => navigate('/collector/staff'),
       collapse: false
-    },
-    {
-      name: t('settings'),
-      icon: <SETTINGS_ICON />,
-      onClick: () => navigate('/warehouse/settings'),
-      collapse: false
     }
   ]
 
@@ -131,15 +128,9 @@ function MainDrawer() {
       collapse: false
     },
     {
-      name: t('collection_Point'),
-      icon: <PLACE_ICON />,
-      onClick: () => navigate('/astd/collectionPoint'),
-      collapse: false
-    },
-    {
-      name: t('recycle_Shipment'),
-      icon: <SHIPPING_CAR_ICON />,
-      onClick: () => navigate('/astd/collectionorder'),
+      name: t('noticeTemplate'),
+      icon: <TEMPLATE_ICON />,
+      onClick: () => navigate('/astd/notice'),
       collapse: false
     },
     {
@@ -149,15 +140,46 @@ function MainDrawer() {
       collapse: false
     },
     {
-      name: t('staff'),
-      icon: <STAFF_ICON />,
-      onClick: () => navigate('/astd/staff'),
-      collapse: false
+      name: t('statistics'),
+      icon: <STATISTIC_ICON />,
+      onClick: () => setASTDStatsDrawer(!ASTDStatsDrawer),
+      collapse: false,
+      collapseGroup: ASTDStatsDrawer
+    },
+    {
+      name: t('recyclables'),
+      onClick: () => navigate('/astd/statistics/recyclables'),
+      collapse: true,
+      collapseGroup: ASTDStatsDrawer
+    },
+    {
+      name: t('convoy'),
+      onClick: () => navigate('/astd/statistics/convoy'),
+      collapse: true,
+      collapseGroup: ASTDStatsDrawer
+    },
+    {
+      name: t('recycleCompany'),
+      onClick: () => navigate('/astd/statistics/recycleCompany'),
+      collapse: true,
+      collapseGroup: ASTDStatsDrawer
+    },
+    {
+      name: t('recyclePlant'),
+      onClick: () => navigate('/astd/statistics/recyclePlant'),
+      collapse: true,
+      collapseGroup: ASTDStatsDrawer
     },
     {
       name: t('settings'),
       icon: <SETTINGS_ICON />,
-      onClick: () => navigate('/warehouse/settings'),
+      onClick: () => navigate('/astd/setting'),
+      collapse: false
+    },
+    {
+      name: t('account'),
+      icon: <PERSON_ICON />,
+      onClick: () => navigate('/astd/account'),
       collapse: false
     }
   ]
@@ -170,46 +192,54 @@ function MainDrawer() {
       collapse: false
     },
     {
-      name: t('mainMenu.manage'),
+      name: t('manage'),
       icon: <INBOX_OUTLINE_ICON />,
-      onClick: () => setManageDrawer(!ManageDrawer),
-      //onClick: () => navigate('/warehouse/overview'),
+      onClick: () => setWHManageDrawer(!WHManageDrawer),
       collapse: false,
-      collapseGroup: ManageDrawer
+      collapseGroup: WHManageDrawer
     },
     {
-      name: t('mainMenu.overview'),
+      name: t('overView'),
       onClick: () => navigate('/warehouse/overview'),
       collapse: true,
-      collapseGroup: ManageDrawer
-    },
-    {
-      name: t('process_Records'),
-      onClick: () => navigate('/'),
-      collapse: true,
-      collapseGroup: ManageDrawer
+      collapseGroup: WHManageDrawer
     },
     {
       name: t('reports'),
-      icon: <DOCUMENT_ICON />,
       onClick: () => navigate('/warehouse/process'),
-      collapse: false
+      collapse: true,
+      collapseGroup: WHManageDrawer
     },
     {
       name: t('staff'),
       icon: <STAFF_ICON />,
       onClick: () => navigate('/warehouse/staff'),
       collapse: false
+    }
+  ]
+
+  let drawerMenus_collectorAdmin: DrawerItem[] = [
+    {
+      name: t('all_Collection_Point'),
+      onClick: () => navigate('/collector/collectionPoint'),
+      collapse: false
+    },
+    {
+      name: t('overView'),
+      onClick: () => navigate('/warehouse/overview'),
+      collapse: false
     },
     {
       name: t('settings'),
       icon: <SETTINGS_ICON />,
-      onClick: () => navigate('/warehouse/settings'),
+      onClick: () => navigate('/astd/setting'),
       collapse: false
     }
   ]
 
   var drawerMenus
+
+  console.log(role)
 
   switch (role) {
     case 'astd':
@@ -220,6 +250,9 @@ function MainDrawer() {
       break
     case 'warehouse':
       drawerMenus = drawerMenus_warehouse
+      break
+    case 'collectoradmin':
+      drawerMenus = drawerMenus_collectorAdmin
       break
     default:
       drawerMenus = drawerMenus_astd

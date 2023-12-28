@@ -3,7 +3,7 @@ import { AxiosRequestConfig } from 'axios'
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
   method: 'post',
-  url: 'api/v1/account/login'
+  url: 'api/v1/account/internal'
 }
 
 export const CHANGE_PASSWORD: AxiosRequestConfig = {
@@ -76,18 +76,40 @@ export const UPDATE_CHECK_IN_STATUS: AxiosRequestConfig = {
 //collector/pickupOrder
 export const GET_ALL_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/collectors/pico'
+  url: 'api/v1/administrator/pico'
+}
+export const GET_PICK_UP_ORDER_DETAIL: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/administrator/pico/details'
 }
 export const ADD_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'post',
   url: 'api/v1/administrator/pico'
 }
 
-export const UPDATE_PICK_UP_ORDER = (picoId: number): AxiosRequestConfig => ({
-  method: 'patch',
-  url: `api/v1/administrator/pico/${picoId}`
-})
+// export const UPDATE_PICK_UP_ORDER = (picoId: number): AxiosRequestConfig => ({
+//   method: 'patch',
+//   url: `api/v1/administrator/pico/${picoId}`
+// })
 
+export const CREATE_PICK_UP_ORDER: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/administrator/pico'
+}
+
+export const GET_LOGISTICLIST: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/collectors/logisticlist'
+}
+
+export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
+  method: 'put',
+  url: 'api/v1/administrator/pico'
+}
+export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
+  method: 'patch',
+  url: 'api/v1/administrator/pico/status'
+}
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
   method: 'get',
@@ -129,11 +151,15 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
   url: 'api/v1/administrator/recycType'
 }
 
+export const GET_VEHICLE_TYPE: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/administrator/vehicleType'
+}
+
 export const GET_NUM_UNREAD_NOTIF = (loginId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/notification/NumOfUnread/${loginId}`
 })
-
 export const GET_NOTIF_BY_USER_ID = (loginId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/notification/unread/${loginId}`

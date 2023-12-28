@@ -15,7 +15,12 @@ export type timePeriod = {
 
 export type recyclable = {
 	recycTypeId: string,
-	recycSubtypeId: string[]
+	recycSubTypeId: string[]
+}
+
+export type singleRecyclable = {
+	recycTypeId: string,
+	recycSubTypeId: string
 }
 
 export type roster = {

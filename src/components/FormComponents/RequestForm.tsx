@@ -20,7 +20,7 @@ import i18n from "../../setups/i18n";
 
 type recycItem = {
   recycType: il_item;
-  recycSubtype: il_item;
+  recycSubType: il_item;
   weight:number
 };
 
@@ -65,8 +65,8 @@ useEffect(() => {
       );
       console.log(matchingRecycType)
       if (matchingRecycType) {
-        const matchRecycSubType = matchingRecycType.recycSubtype?.find(
-          (subtype) => subtype.recycSubtypeId === detail.recycSubtypeId
+        const matchrecycSubType = matchingRecycType.recycSubType?.find(
+          (subtype) => subtype.recycSubTypeId === detail.recycSubTypeId
         );
         var name = "";
         switch(i18n.language){
@@ -86,16 +86,16 @@ useEffect(() => {
         var subName = "";
                 switch(i18n.language){
                     case "enus":
-                        subName = matchRecycSubType?.recyclableNameEng ?? "";
+                        subName = matchrecycSubType?.recyclableNameEng ?? "";
                         break;
                     case "zhch":
-                        subName = matchRecycSubType?.recyclableNameSchi ?? "";
+                        subName = matchrecycSubType?.recyclableNameSchi ?? "";
                         break;
                     case "zhhk":
-                        subName = matchRecycSubType?.recyclableNameTchi ?? "";
+                        subName = matchrecycSubType?.recyclableNameTchi ?? "";
                         break;
                     default:
-                        subName = matchRecycSubType?.recyclableNameTchi ?? "";       //default fallback language is zhhk
+                        subName = matchrecycSubType?.recyclableNameTchi ?? "";       //default fallback language is zhhk
                         break;
                 }
         recycItems.push({
@@ -103,7 +103,7 @@ useEffect(() => {
             name: name,
             id: detail.chkInDtlId.toString(),
           },
-          recycSubtype: {
+          recycSubType: {
             name: subName,
             id: detail.chkInDtlId.toString(),
           },
@@ -202,7 +202,7 @@ useEffect(() => {
                 fontcolor="#66bff6"
                 weight={item.weight}
                 showImage={false}
-                recycleName={item.recycSubtype.name}
+                recycleName={item.recycSubType.name}
                 recycleType={item.recycType.name}
               />
             ))}

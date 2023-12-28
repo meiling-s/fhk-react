@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   IconButton,
   InputAdornment,
   // InputLabel,
@@ -21,13 +22,18 @@ import { login } from '../../APICalls/login'
 import { localStorgeKeyName } from '../../constants/constant'
 import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { useTranslation } from 'react-i18next'
 
 const Login = () => {
   const [userName, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = React.useState(false)
-  const [loginTo, setLoginTo] = useState('astd')
+  //const [loginTo, setLoginTo] = useState('astd')
+  const [loggingIn, setLogginIn] = useState(false);
+  const [warningMsg, setWarningMsg] = useState<string>(" ");
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // overwrite select style
   //todo : make select as component
@@ -43,43 +49,68 @@ const Login = () => {
   }))
 
   const onLoginButtonClick = async (userName: string, password: string) => {
-    const result = await login({
-      username: userName,
-      password: password,
-      realm: 'warehouse'
-    })
+    setLogginIn(true);
+    //login for astd testing
+    var realm = 'astd';   //default realm is astd
+    var loginTo = 'astd';
 
-    if (result?.status == 200) {
-      console.log(
-        `Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`
-      )
-      localStorage.setItem(
-        localStorgeKeyName.keycloakToken,
-        result?.access_token || ''
-      )
-      localStorage.setItem(localStorgeKeyName.username, result?.username || '')
-      localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
-      localStorage.setItem(localStorgeKeyName.role, loginTo)
-      navigate('/changePassword')
-
-      // TODO : if api login already fix first time login , change login
-      // isfirst time ? direct change password
-      // if not ? direct to menu base on user variant
-
-      // switch (loginTo) {
-      //   case 'astd':
-      //     navigate('/astd')
-      //     break
-      //   case 'collector':
-      //     navigate('/collector')
-      //     break
-      //   case 'warehouse':
-      //     navigate('/warehouse')
-      //     break
-      //   default:
-      //     navigate('/collector')
-      // }
+    switch(userName){
+      case 'astd':
+        realm = 'astd';
+        loginTo = 'astd';
+        break;
+      case 'collector':
+        realm = 'collector';
+        loginTo = 'collector';
+        break;
+      case 'warehouse':
+        realm = 'collector';
+        loginTo = 'warehouse';
+        break;
+      case 'collectoradmin':
+        realm = 'collector';
+        loginTo = 'collectoradmin';
+        break;
+      default:
+        break;
     }
+
+    if(realm!=''){
+      const result = await login({ 
+        username: userName,
+        password: password,
+        realm: 'astd'
+      });
+      if(result && result.access_token){
+        setWarningMsg(" ");
+        //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
+        console.log(loginTo)
+        localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
+        localStorage.setItem(localStorgeKeyName.role, loginTo);
+        localStorage.setItem(localStorgeKeyName.username, result?.username || '');
+        switch(loginTo){
+          case "astd":
+            navigate("/astd");
+            break;
+          case "collector":
+            navigate("/collector");
+            break;
+          case "warehouse":
+            navigate("/warehouse");
+            break;
+          case "collectoradmin":
+            navigate("/collector/collectionPoint");
+            break;
+          default:
+            break;
+        }
+      }else{
+        console.log(warningMsg)
+        setWarningMsg(t("login.wrongUsernameOrPassword"));
+      }
+    }
+    
+    setLogginIn(false);
   }
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
@@ -89,8 +120,15 @@ const Login = () => {
   }
 
   return (
-    <Box sx={constantStyle.loginPageBg}>
-      <Box sx={constantStyle.loginBox}>
+    <Box
+        sx={constantStyle.loginPageBg}
+        component="form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onLoginButtonClick(userName, password);
+        }}
+      >
+        <Box sx={constantStyle.loginBox}>
         <img src={logo_company} alt="logo_company" style={{ width: '70px' }} />
         <Typography
           sx={{ marginTop: '30px', marginBottom: '30px' }}
@@ -138,9 +176,8 @@ const Login = () => {
               }}
             />
           </Box>
-          <FormControl fullWidth>
+          {/* <FormControl fullWidth>
             <Typography sx={styles.typo}>Login to (for testing)</Typography>
-            {/* <InputLabel htmlFor="user-option">Login to (for testing)</InputLabel> */}
             <Select
               id="user-option"
               value={loginTo}
@@ -152,22 +189,29 @@ const Login = () => {
               <MenuItem value={'collector'}>Collector</MenuItem>
               <MenuItem value={'warehouse'}>Warehouse</MenuItem>
             </Select>
-          </FormControl>
+          </FormControl> */}
           <Box>
-            <Button
+            <LoadingButton
               fullWidth
-              onClick={() => onLoginButtonClick(userName, password)}
+              loading={loggingIn}
+              type="submit"
               sx={{
-                borderRadius: '20px',
-                backgroundColor: '#79ca25',
-                '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
-                height: '40px'
+                borderRadius: "20px",
+                backgroundColor: "#79ca25",
+                '&.MuiButton-root:hover':{bgcolor: '#79ca25'},
+                height: "40px",
               }}
               variant="contained"
             >
               登入
-            </Button>
+            </LoadingButton>
           </Box>
+          {
+            warningMsg!=" "&&
+              <FormHelperText error>
+                {warningMsg}
+              </FormHelperText>
+          }
           <Box>
             <Button
               sx={{ color: 'grey', textDecoration: 'underline' }}
