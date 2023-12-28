@@ -8,21 +8,17 @@ import {
 } from "@mui/material";
 import { Box, Stack, alpha, styled } from "@mui/system";
 import { t } from "i18next";
-import { useNavigate } from "react-router";
-import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { useLocation, useNavigate } from "react-router";
+import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridToolbar, GridValueGetterParams } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 import PickupOrderForm from "../../../components/FormComponents/PickupOrderForm";
 import StatusCard from "../../../components/StatusCard";
-import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
+
 import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
-
-
-
-
-
+import { ToastContainer, toast } from "react-toastify";
 
 
 
@@ -31,7 +27,6 @@ interface Option {
   value: string;
   label: string;
 }
-
 
 const PickupOrders = () => {
   const columns: GridColDef[] = [
@@ -81,35 +76,53 @@ const PickupOrders = () => {
             ),
     },
    
-  ]; 
+  ];
 
-  
-   const {pickupOrder} = useContainer(CheckInRequestContainer)
+  const {pickupOrder} = useContainer(CheckInRequestContainer)
+  const location = useLocation();
+  const action: string = location.state;
+  useEffect(() => {
+    if(action){
+      var toastMsg = "";
+      switch(action){
+        case "created":
+          toastMsg = t("回收運單已建立");
+          break;
+        case "updated":
+          toastMsg = t("回收運單已更改");
+          break;
+      }
+      toast.info(toastMsg, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+    navigate(location.pathname, { replace: true });
+  }, []);
 
-  // const rows = [
-  //   { id:1,建立日期:"2023-10-23", 物流公司: "快捷物流", 运单编号:'P01234523789', 送货日期:'2023-10-25',寄件公司:"a公司",收件公司:"a公司",状态:'处理中'},
-  //   { id:2,建立日期:"2023-10-24", 物流公司: "顺丰物流", 运单编号:'P01234562789', 送货日期:'2023-10-26',寄件公司:"b公司",收件公司:"a公司",状态:'已拒绝'},
-  //   { id:3,建立日期:"2023-10-25", 物流公司: "顶级物流", 运单编号:'P012245678239', 送货日期:'2023-10-27',寄件公司:"c公司",收件公司:"c公司",状态:'已完成'},
-  //   { id:4,建立日期:"2023-10-26", 物流公司: "福建物流", 运单编号:'P012345678339', 送货日期:'2023-10-28',寄件公司:"d公司",收件公司:"d公司",状态:'已取消'},
-  //   { id:5,建立日期:"2023-10-27", 物流公司: "香港物流", 运单编号:'P012345678339', 送货日期:'2023-10-29',寄件公司:"d公司",收件公司:"d公司",状态:'已完成'},
-  // ];
-  const rows: Row[] = pickupOrder?.map((item) => ({
+  const rows: any[] = pickupOrder?.map((item) => ({
     id: item.picoId,
-    建立日期: item.effToDate, // Convert to string
-    物流公司: item.logisticId,
-    运单编号: item.picoId, // Convert to string
-    送货日期: item.effToDate, // Convert to string
-    寄件公司: item.logisticName,
-    收件公司: item.logisticName,
+    建立日期: item.effFrmDate, 
+    物流公司: item.logisticName,
+    运单编号: item.picoId, 
+    送货日期: `${item.effFrmDate} - ${item.effToDate}`,
+    寄件公司: item.pickupOrderDetail[0]?.senderName,
+    收件公司: item.pickupOrderDetail[0]?.receiverName,
     状态: item.status,
   }))??[] ;
 
   interface Row {
     id: number;
-    建立日期: Date;
+    建立日期: string;
     物流公司: string;
     运单编号: number;
-    送货日期: Date;
+    送货日期: string;
     寄件公司: string;
     收件公司: string;
     状态: string;
@@ -125,6 +138,7 @@ const PickupOrders = () => {
     
   ]
   
+ 
   const navigate = useNavigate()
   const [openModal,setOpenModal] =useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
@@ -160,15 +174,14 @@ const PickupOrders = () => {
     setOpenModal(true);
   };
    
-  useEffect(()=>{
-    getAllPickUpOrder()
-  },[])
   return (
+    <>
+    <ToastContainer/>
     <Box sx={{ display: "flex", width: "100%", flexDirection: "column" }}>
         <Modal open={openModal} onClose={handleCloses} >
                       <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} />
                     </Modal>
-      <Box sx={{ display: "flex", alignItems: "center",ml:'6    px' }}>
+      <Box sx={{ display: "flex", alignItems: "center",ml:'6px',width:'100%' }}>
         <Typography fontSize={20} color="black" fontWeight="bold">
           查询运单
         </Typography>
@@ -195,7 +208,7 @@ const PickupOrders = () => {
         
 
       </Stack>
-      <Box pr={4} pt={3} sx={{ flexGrow: 1 }}>
+      <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
         <DataGrid
           rows={rows}
           hideFooter
@@ -204,6 +217,7 @@ const PickupOrders = () => {
           disableRowSelectionOnClick
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
+          
           sx={{
             border: "none",
             "& .MuiDataGrid-cell": {
@@ -212,9 +226,6 @@ const PickupOrders = () => {
             "& .MuiDataGrid-row": {
                 bgcolor:'white', 
                 borderRadius:'10px',
-               
-               
-                
               },
             '&>.MuiDataGrid-main': {
                 '&>.MuiDataGrid-columnHeaders': {
@@ -225,6 +236,7 @@ const PickupOrders = () => {
         />
       </Box>
     </Box>
+    </>
   );
 };
 

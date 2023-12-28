@@ -8,11 +8,19 @@ const request = axios.create({
 })
 
 export const login = async(item: LoginItem) => {
+
+  const axiosConfig = Object.assign({},LOGIN);
+  axiosConfig.url = LOGIN.url+`/${item.realm}/`+"login";
+
   try {
     const response = await request({
-      ...LOGIN,
-      data: item,
+      ...axiosConfig,
+      data: {
+        username: item.username,
+        password: item.password
+      },
     });
+    console.log("Login user Success:", JSON.stringify(response.data));
     if (response.status === 200) {
       return {
         access_token: response.data?.access_token,
@@ -20,7 +28,6 @@ export const login = async(item: LoginItem) => {
         status: response.status
       };
     }
-    console.log("Login user Success:", JSON.stringify(response.data));
   } catch (e) {
     console.error('Login user Failed:', e);
   }

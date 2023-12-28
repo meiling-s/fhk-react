@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { localStorgeKeyName } from '../../constants/constant';
-import { CREATE_COLLECTIONPOINT, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT, GET_ALL_CHECKIN_REQUESTS } from '../../constants/requests';
+import { CREATE_COLLECTIONPOINT, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT, GET_ALL_CHECKIN_REQUESTS, GET_LOGISTICLIST } from '../../constants/requests';
 import { collectionPoint, createCP, updateCP } from '../../interfaces/collectionPoint';
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 
@@ -88,6 +88,7 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
   }
 
 }
+
 
 
 

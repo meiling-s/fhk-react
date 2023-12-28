@@ -20,6 +20,7 @@
     "close": "Close",
     "colRecycType": "Collection Recyclable Type(s)",
     "recycType": "Recyclable Type(s)",
+    "locationData": "Location Data",
     "category": " category",
     "staffInfo": "Staff Information",
     "numOfStaff": "No. of staff",
@@ -64,6 +65,14 @@
   "recycle_Shipment": "Recycle Shipment",
   "reports": "Reports",
   "staff": "Staff",
+  "noticeTemplate": "Notice Template",
+  "statistics": "Statistics",
+  "recyclables": "Recyclables",
+  "convoy": "Convoy",
+  "recycleCompany": "Recycle Company",
+  "recyclePlant": "Recycle Plant",
+  "manage": "Manage",
+  "overView": "Overview",
   "enter_Keyword_To_Search": "Enter keyword to search",
   "account": "Account",
   "signOut": "Sign out",
@@ -91,7 +100,7 @@
     "trad_name": "Traditional Name",
     "simp_name": "Simplified Name",
     "english_name": "English Name",
-    "location": "Location",
+    "location": "Physical location",
     "place": "Place",
     "status": "Status",
     "recyclable_subcategories": "Recyclable Subcategories"
@@ -139,7 +148,8 @@
     "confirm_reject": "Are you sure to request the check-in proceed?",
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "search_input": "Enter the waybill number"
   },
   "check_out": {
     "request_check_out": "Checkout Request",
@@ -163,11 +173,24 @@
     "recyclable_type_weight": "Recyclable type & weight",
     "message": "Message",
     "confirm_reject": "Are you sure to reject the request?",
+    "confirm_approve": "Are you sure to approve the request?",
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "shipping_company": "Shipping company",
+    "arrival_location": "Arrival Location",
+    "success_approve": "Checkout request is success",
+    "ok": "Ok",
+    "shipping_info": "Shipping Information",
+    "delivery_location": "Delivery Location",
+    "approved_on": "Approved on",
+    "reason_is": "Reason is",
+    "total_checkout": "total check-out request is",
+    "reason_1": "Reason 1",
+    "reason_2": "Reason 2",
+    "reason_3": "Reason 3"
   },
-  "changePassPage": {
+  "changePass": {
     "titlePage": "CHANGE PASSWORD",
     "submitPassword": "Submit",
     "username": "Username",
@@ -180,6 +203,47 @@
     "confirm_password": "Confirmation Password",
     "placeholder_confirm_password": "Please enter password",
     "helper_confirm_password": "Your new password and confirm password do not match",
-    "skip_btn": "Skip (Temporarily for Development)"
+    "skip_btn": "Skip (Temporarily for Development)",
+    "error": "Error, cannot reset password"
+  },
+  "login": {
+    "wrongUsernameOrPassword": "Wrong username or password"
+  },
+  "mainMenu": {
+    "manage": "Manage",
+    "Overview": "Overview"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "In-Active",
+    "deleted": "Deleted"
+  },
+  "appBar": {
+    "simplified_cn": "Simplified Chinese",
+    "traditional_cn": "Traditional Chinese",
+    "english": "English",
+    "notify": "Notify"
+  },
+  "pick_up_order": {
+    "create_pick_up_order": "Create Pick up Order",
+    "shipping_info": "Shipping Information",
+    "select_shipping_category": "Please Select Shipping Category",
+    "regular_shipping" : "Regular Shipping",
+    "one-transport": "One Time Transport",
+    "shipping_validity": "Shipping validity date is given by",
+    "to": "To",
+    "choose_logistic": "Choose a logistics company",
+    "enter_comapy_name": "Please enter company name",
+    "vehicle_category": "Vehicle category",
+    "plat_number": "License plate number",
+    "enter_plat_number": "Please fill in the license plate number",
+    "contact_number": "Contact number",
+    "enter_contact_number" :"please fill in cell phone number",
+    "reason_get_off": "Reason for getting off",
+    "po_number":"Reference waybill number",
+    "recyle_loc_info" : "Estimated recycling location information",
+    "new": "New",
+    "finish": "Finish",
+    "cancel": "Cancel"
   }
 }

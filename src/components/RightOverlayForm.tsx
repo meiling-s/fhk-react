@@ -9,7 +9,7 @@ type HeaderProps = {
   onCloseHeader?: () => void
   onSubmit?: () => void
   onDelete?: () => void
-  action?: 'add' | 'edit' | 'delete'
+  action?: 'add' | 'edit' | 'delete' | 'none'
 }
 
 type RightOverlayFormProps = {
@@ -19,7 +19,7 @@ type RightOverlayFormProps = {
   anchor?: 'left' | 'right'
   showHeader?: boolean
   headerProps?: HeaderProps
-  action?: 'add' | 'edit' | 'delete'
+  action?: 'add' | 'edit' | 'delete' | 'none'
 }
 
 const HeaderSection: React.FC<HeaderProps> = ({
@@ -41,28 +41,31 @@ const HeaderSection: React.FC<HeaderProps> = ({
             {subTitle}
           </div>
         </div>
-        <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
-          <button
-            onClick={onSubmit}
-            disabled={action === 'delete'}
-            className={`${
-              action === 'delete' ? 'cursor-not-allowed' : ''
-            } rounded-6xl bg-green-primary text-white flex flex-row items-center justify-center py-2 px-5 gap-[5px] cursor-pointer border-[1px] border-solid border-green-primary`}
-          >
-            {submitText}
-          </button>
-          <button
-            onClick={onDelete}
-            disabled={action === 'add' || action === 'edit'}
-            className={`${
-              action === 'add' || action === 'edit'
-                ? 'cursor-not-allowed text-gray border-gray'
-                : ''
-            } rounded-6xl  overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] text-green-primary border-[1px] border-solid border-green-pale`}
-          >
-            {cancelText}
-          </button>
-        </div>
+        {action !== 'none' && (
+          <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
+            <button
+              onClick={onSubmit}
+              disabled={action === 'delete'}
+              className={`${
+                action === 'delete' ? 'cursor-not-allowed' : ''
+              } rounded-6xl bg-green-primary text-white flex flex-row items-center justify-center py-2 px-5 gap-[5px] cursor-pointer border-[1px] border-solid border-green-primary`}
+            >
+              {submitText}
+            </button>
+            <button
+              onClick={onDelete}
+              disabled={action === 'add' || action === 'edit'}
+              className={`${
+                action === 'add' || action === 'edit'
+                  ? 'cursor-not-allowed text-gray border-gray'
+                  : ''
+              } rounded-6xl  overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] text-green-primary border-[1px] border-solid border-green-pale`}
+            >
+              {cancelText}
+            </button>
+          </div>
+        )}
+
         <div className="close-icon ml-2 cursor-pointer">
           <img
             className="relative w-6 h-6 overflow-hidden shrink-0"

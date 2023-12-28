@@ -44,3 +44,13 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Deployment on Dev
+### On Linux
+1. `docker save -o react-20231207.tar fhkrepo.fhk.app/astd/react:1-0-0beta-2`
+2. `scp ./react-20231207.tar root@10.166.22.107:/data/web
+3. `podman load --input react-20231207.tar`
+4. Run container:
+```
+podman run -p 3000:3000 --name web -d react:1-0-0beta-2
+```

@@ -52,7 +52,7 @@ export type recycType = {
     recyclableNameEng: string,
     recyclableNameSchi: string,
     recyclableNameTchi: string,
-    recycSubtype: Array<recycSubType>,
+    recycSubType: Array<recycSubType>,
     description: string,
     remark: string,
     status: string,
@@ -63,7 +63,7 @@ export type recycType = {
 }
 
 export type recycSubType = {
-    recycSubtypeId: string,
+    recycSubTypeId: string,
     recyclableNameEng: string,
     recyclableNameSchi: string,
     recyclableNameTchi: string,
@@ -106,3 +106,37 @@ export type colPtRoutine = {
     routineType: string,
     routineContent: routineContent[]
 }
+
+export type logisticList = {
+    logisticId:       string;
+    logisticNameTchi: string;
+    logisticNameSchi: string;
+    logisticNameEng:  string;
+    brNo:             string;
+    description:      string;
+    remark:           string;
+    status:           string;
+    createdBy:        string;
+    updatedBy:        string;
+    createdAt:        string;
+    updatedAt:        string;
+}
+export type picoRoutine = {
+    routineType: string,
+    routineContent: string[]
+}
+
+export type vehicleType = {
+    vehicleTypeId:       string;
+    vehicleTypeNameTchi: string;
+    vehicleTypeNameSchi: string;
+    vehicleTypeNameEng:  string;
+    description:         string;
+    remark:              string;
+    status:              string;
+    createdBy:           string;
+    updatedBy:           string;
+    createdAt:           Date;
+    updatedAt:           Date;
+}
+

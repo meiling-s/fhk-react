@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Autocomplete, Box, Button, Collapse, Divider, Grid, List, ListItemButton, ListItemText, TextField, Typography, } from "@mui/material";
+import { Autocomplete, Box, Button, Collapse, Divider, Grid, List, ListItemButton, ListItemText, TextField, Typography } from "@mui/material";
 import { styles } from "../../../../constants/styles";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CustomField from "../../../../components/FormComponents/CustomField";
@@ -14,7 +14,7 @@ import { getLocation } from "../../../../APICalls/getLocation";
 import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
 import CustomPeriodSelect from "../../../../components/FormComponents/CustomPeriodSelect";
 import { useLocation, useNavigate } from "react-router-dom";
-import { updateCollectionPoint } from "../../../../APICalls/Collector/collectionPointManage";
+import { findCollectionPointExistByName, findCollectionPointExistByContractAndAddress, updateCollectionPoint } from "../../../../APICalls/collectionPointManage";
 import { useTranslation } from "react-i18next";
 import { colPointType, premiseType, recycType, siteType, colPtRoutine, formValidate } from "../../../../interfaces/common";
 import { getCommonTypes } from "../../../../APICalls/commonManage";
@@ -102,25 +102,33 @@ function CreateCollectionPoint() {
     }, [debouncedSearchValue]);
 
     useEffect(() => {
-        //do validation here
-        const tempV: formValidate[] = []        //temp validation
-        colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
-        siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
-        address == "" && tempV.push({ field: "col.address", problem: formErr.empty, type: "error" });
-        (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
-            tempV.push({ field: "col.openingDate", problem: formErr.withInColPt_Period, type: "warning" });
-        premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
-        premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty, type: "error" });
-        recyclables.length == 0 && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
-        console.log("num:",staffNum,Number.isNaN(parseInt(staffNum)),staffNum == "")
-        staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty, type: "error" });
-        (Number.isNaN(parseInt(staffNum)) && !(staffNum == ""))
-            ? tempV.push({ field: "col.numOfStaff", problem: formErr.wrongFormat, type: "error" })
-            : (!Number.isNaN(parseInt(staffNum)) && parseInt(staffNum) < 0) && tempV.push({ field: "col.numOfStaff", problem: formErr.numberSmallThanZero, type: "error" });
-        contractNo == "" ? tempV.push({ field: "col.contractNo", problem: formErr.empty, type: "error" })
-            : (!checkContractisEff(contractNo) && !skipValidation.includes("col.contractNo")) && tempV.push({ field: "col.contractNo", problem: formErr.notWithInContractEffDate, type: "warning" });
-        setValidation(tempV);
-        //console.log(tempV);
+
+        const validate = async () => {
+
+            //do validation here
+            const tempV: formValidate[] = []        //temp validation
+            colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
+            siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
+            address == "" ? tempV.push({ field: "col.address", problem: formErr.empty, type: "error" })
+                : await checkAddressUsed(contractNo,address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
+            (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
+                tempV.push({ field: "col.openingDate", problem: formErr.withInColPt_Period, type: "warning" });
+            premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
+            premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty, type: "error" });
+            recyclables.length == 0 && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
+            console.log("num:",staffNum,Number.isNaN(parseInt(staffNum)),staffNum == "")
+            staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty, type: "error" });
+            (Number.isNaN(parseInt(staffNum)) && !(staffNum == ""))
+                ? tempV.push({ field: "col.numOfStaff", problem: formErr.wrongFormat, type: "error" })
+                : (!Number.isNaN(parseInt(staffNum)) && parseInt(staffNum) < 0) && tempV.push({ field: "col.numOfStaff", problem: formErr.numberSmallThanZero, type: "error" });
+            contractNo == "" ? tempV.push({ field: "col.contractNo", problem: formErr.empty, type: "error" })
+                : (!checkContractisEff(contractNo) && !skipValidation.includes("col.contractNo")) && tempV.push({ field: "col.contractNo", problem: formErr.notWithInContractEffDate, type: "warning" });
+            setValidation(tempV);
+            //console.log(tempV);
+        }
+
+        validate();
+        
     }, [colType, siteType, address, openingPeriod, premiseName, premiseType, status, recyclables, staffNum, contractNo, skipValidation])
 
     useEffect(() => {
@@ -171,6 +179,12 @@ function CreateCollectionPoint() {
             case formErr.notWithInContractEffDate:
                 msg = t("form.error.isNotWithInContractEffDate")
                 break;
+            case formErr.alreadyExist:
+                msg = t("form.error.alreadyExist")
+                break;
+            case formErr.hasBeenUsed:
+                msg = t("form.error.hasBeenUsed")
+                break;
         }
         return msg;
     }
@@ -194,6 +208,18 @@ function CreateCollectionPoint() {
             isBetween = dayjs(contract.frmDate).isBefore(openingPeriod.startDate) && dayjs(contract.toDate).isAfter(openingPeriod.endDate);
         }
         return isBetween;
+    }
+
+    const checkAddressUsed = async (contractNo: string, address: string) => {
+        if(contractNo != colInfo.contractNo || address != colInfo.address){
+            const result = await findCollectionPointExistByContractAndAddress(contractNo, address);
+            if(result && result.data != undefined){
+                console.log(result.data);
+                return result.data;
+            }
+        }
+        
+        return false;
     }
 
     const handleSaveOnClick = async () => {

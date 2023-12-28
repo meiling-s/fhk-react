@@ -1,17 +1,23 @@
+import React, { FunctionComponent, useState, useEffect } from 'react'
 import {
-  FunctionComponent,
-  useCallback,
-  ReactNode,
-  useState,
-  useEffect
-} from 'react'
+  DataGrid,
+  GridColDef,
+  GridRowParams,
+  GridRowSpacingParams,
+  GridValueGetterParams
+} from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
 import { Box } from '@mui/material'
-import { ADD_ICON } from '../../../themes/icons'
+import {
+  ADD_ICON,
+  EDIT_OUTLINED_ICON,
+  DELETE_OUTLINED_ICON
+} from '../../../themes/icons'
 import AddWarehouse from './AddWarehouse'
 import TableBase from '../../../components/TableBase'
+import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
 import {
   getAllWarehouse,
@@ -20,8 +26,8 @@ import {
 
 interface RecyleItem {
   recycTypeId: string
-  recycSubtypeId: string
-  recycSubtypeCapacity: number
+  recycSubTypeId: string
+  recycSubTypeCapacity: number
   recycTypeCapacity: number
 }
 
@@ -48,62 +54,128 @@ type recyTypeItem = {
 }
 
 const Warehouse: FunctionComponent = () => {
-  // const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
   const { t } = useTranslation()
   const { i18n } = useTranslation()
-  const currentLanguage = i18n.language
+  const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
   const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
-  const headerTitles = [
+  const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
+  const columns: GridColDef[] = [
     {
-      type: 'string',
       field: 'warehouseNameTchi',
-      label: t('warehouse_page.trad_name'),
-      width: 150
+      headerName: t('warehouse_page.trad_name'),
+      width: 200,
+      type: 'string',
+     
     },
     {
-      type: 'string',
       field: 'warehouseNameSchi',
-      label: t('warehouse_page.simp_name'),
-      width: 150
+      headerName: t('warehouse_page.simp_name'),
+      width: 200,
+      type: 'string'
     },
     {
-      type: 'string',
       field: 'warehouseNameEng',
-      label: t('warehouse_page.english_name'),
-      width: 150
+      headerName: t('warehouse_page.english_name'),
+      width: 200,
+      type: 'string'
     },
     {
-      type: 'string',
       field: 'location',
-      label: t('warehouse_page.place'),
-      width: 100
+      width: 250,
+      headerName: t('warehouse_page.place'),
+      type: 'string'
     },
     {
-      type: 'string',
       field: 'physicalFlg',
-      label: t('warehouse_page.location'),
-      width: 100
+      headerName: t('warehouse_page.location'),
+      width: 170,
+      type: 'string'
     },
     {
-      type: 'status',
       field: 'status',
-      label: t('warehouse_page.status'),
-      width: 100
+      headerName: t('warehouse_page.status'),
+      width: 150,
+      type: 'string',
+      renderCell: (params) => <StatusLabel status={params.value} />
     },
     {
-      type: 'string',
       field: 'warehouseRecyc',
-      label: t('warehouse_page.recyclable_subcategories'),
-      width: 200
+      headerName: t('warehouse_page.recyclable_subcategories'),
+      width: 300,
+      type: 'string'
+    },
+    {
+      field: 'actions',
+      headerName: 'actions',
+      renderCell: (params) => {
+        return (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <EDIT_OUTLINED_ICON
+              fontSize="small"
+              className="cursor-pointer text-grey-dark mr-2"
+              onClick={() => handleEdit(params.row.id)} // Implement your edit logic here
+              style={{ cursor: 'pointer' }}
+            />
+            <DELETE_OUTLINED_ICON
+              fontSize="small"
+              className="cursor-pointer text-grey-dark"
+              onClick={() => handleDelete(params.row.id)} // Implement your delete logic here
+              style={{ cursor: 'pointer' }}
+            />
+          </div>
+        )
+      }
     }
   ]
+
+  // const headerTitles = [
+  //   {
+  //     type: 'string',
+  //     field: 'warehouseNameTchi',
+  //     label: t('warehouse_page.trad_name')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'warehouseNameSchi',
+  //     label: t('warehouse_page.simp_name')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'warehouseNameEng',
+  //     label: t('warehouse_page.english_name')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'location',
+  //     label: t('warehouse_page.place')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'physicalFlg',
+  //     label: t('warehouse_page.location')
+  //   },
+  //   {
+  //     type: 'status',
+  //     field: 'status',
+  //     label: t('warehouse_page.status')
+  //   },
+  //   {
+  //     type: 'string',
+  //     field: 'warehouseRecyc',
+  //     label: t('warehouse_page.recyclable_subcategories')
+  //   }
+  // ]
+
+  useEffect(() => {
+    i18n.changeLanguage(currentLanguage)
+  }, [i18n, currentLanguage])
 
   const handleOnSubmitData = (action: string, id?: number, error?: boolean) => {
     if (action == 'add') {
@@ -114,7 +186,7 @@ const Warehouse: FunctionComponent = () => {
 
     if (action == 'edit') {
     }
-    fetchData();
+    fetchData()
     setDrawerOpen(false)
   }
 
@@ -122,23 +194,19 @@ const Warehouse: FunctionComponent = () => {
     try {
       const response = await getRecycleType()
       if (response) {
-       
         let recyTypeData: recyTypeItem = recyleTypeList
-        recyTypeData = response.data.forEach((item: recyTypeItem ) => {
-          recyTypeData[item.recycTypeId as keyof  recyTypeItem] =
-          {recyclableNameEng : item.recyclableNameEng, 
-           recyclableNameSchi :  item.recyclableNameSchi,
-           recyclableNameTchi: item.recyclableNameTchi
+        recyTypeData = response.data.forEach((item: recyTypeItem) => {
+          recyTypeData[item.recycTypeId as keyof recyTypeItem] = {
+            recyclableNameEng: item.recyclableNameEng,
+            recyclableNameSchi: item.recyclableNameSchi,
+            recyclableNameTchi: item.recyclableNameTchi
           }
         })
-        
+
         setRecyleTypeList((prevData) => {
-          return {...prevData, recyTypeData}
+          return { ...prevData, recyTypeData }
         })
         fetchData()
-        console.log("finish recyTypeData ", recyleTypeList)
-        
-        
       }
     } catch (error) {
       console.error(error)
@@ -164,25 +232,28 @@ const Warehouse: FunctionComponent = () => {
     }
   }
 
-
   useEffect(() => {
-    const fetchCategoryAndData = async () =>{
+    const fetchCategoryAndData = async () => {
       getRecycleData()
     }
     fetchCategoryAndData()
   }, [action, drawerOpen, currentLanguage])
 
-  const transformToTableRow = (warehouse: Warehouse, recyTypeData: recyTypeItem): TableRow => {
-    const nameLang = currentLanguage === 'zhhk' ? "recyclableNameTchi" : currentLanguage === 'zhch'?  "recyclableNameSchi" : "recyclableNameEng"
-    const recyleType = warehouse.warehouseRecyc.map(
-      (item: RecyleItem) =>
-       
-        {
-          console.log(item.recycTypeId)
-          return `${recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem]}`
-        }
-       
-    ).join(", ")
+  const transformToTableRow = (warehouse: Warehouse): TableRow => {
+    const nameLang =
+      currentLanguage === 'zhhk'
+        ? 'recyclableNameTchi'
+        : currentLanguage === 'zhch'
+        ? 'recyclableNameSchi'
+        : 'recyclableNameEng'
+    const recyleType = warehouse.warehouseRecyc
+      .map((item: RecyleItem) => {
+        console.log(item.recycTypeId)
+        return `${
+          recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem]
+        }`
+      })
+      .join(', ')
     return {
       id: warehouse.warehouseId,
       warehouseId: warehouse.warehouseId,
@@ -197,12 +268,37 @@ const Warehouse: FunctionComponent = () => {
     }
   }
 
+  // const dummyRows = [
+  //   {
+  //     id: 1,
+  //     warehouseId: 1,
+  //     warehouseNameTchi: '????',
+  //     warehouseNameSchi: '????',
+  //     warehouseNameEng: 'winda',
+  //     location: 'a??',
+  //     physicalFlg: true,
+  //     status: 'ACTIVE',
+  //     warehouseRecyc: 'Plastic , Glass, Lala'
+  //   },
+  //   {
+  //     id: 2,
+  //     warehouseId: 2,
+  //     warehouseNameTchi: '????',
+  //     warehouseNameSchi: '????',
+  //     warehouseNameEng: 'lala',
+  //     location: 'a??',
+  //     physicalFlg: true,
+  //     status: 'deleted',
+  //     warehouseRecyc: 'Plastic , Glass, Lala'
+  //   }
+  // ]
+
   const addDataWarehouse = () => {
     setDrawerOpen(true)
     setAction('add')
   }
 
-  const handleEdit = (type: string, row: TableRow) => {
+  const handleEdit = (row: TableRow) => {
     setRowId(row.id)
     console.log(row)
     setDrawerOpen(true)
@@ -210,40 +306,61 @@ const Warehouse: FunctionComponent = () => {
     fetchData()
   }
 
-  const handleDelete = (type: string, row: TableRow) => {
+  // const handleSelectRow = (row: TableRow | null) => {
+  //   setRowId(row?.id || 0)
+  //   setSelectedRow(row)
+  //   setDrawerOpen(true)
+  //   setAction('edit')
+  // }
+
+  const handleRowClick = (params: GridRowParams) => {
+    const row = params.row as TableRow
+    setSelectedRow(row)
+    setRowId(row.id)
+    setDrawerOpen(true)
+    setAction('edit')
+  }
+
+  const handleDelete = (row: TableRow) => {
+    setRowId(row.id)
     setDrawerOpen(true)
     setAction('delete')
-    setRowId(row.id)
   }
 
   const handleDrawerClose = () => {
     setDrawerOpen(false)
-    fetchData();
+    fetchData()
   }
 
-  const handleCheckAll = (checked: boolean) => {
-    console.log('checkedAll', checked)
-    if (checked) {
-      setCheckedRows(warehouseItems) // Select all rows
-    } else {
-      setCheckedRows([]) // Unselect all rows
-    }
-  }
+  // const handleCheckAll = (checked: boolean) => {
+  //   console.log('checkedAll', checked)
+  //   if (checked) {
+  //     setCheckedRows(warehouseItems) // Select all rows
+  //   } else {
+  //     setCheckedRows([]) // Unselect all rows
+  //   }
+  // }
 
   // Handle selecting/deselecting individual row
-  const handleCheckRow = (checked: boolean, row: TableRow) => {
-    console.log('checkedRow', checked, row)
-    if (checked) {
-      setCheckedRows((prev) => [...prev, row])
-    } else {
-      setCheckedRows((prev) =>
-        prev.filter(
-          (existingRow) => JSON.stringify(existingRow) !== JSON.stringify(row)
-        )
-      )
+  // const handleCheckRow = (checked: boolean, row: TableRow) => {
+  //   console.log('checkedRow', checked, row)
+  //   if (checked) {
+  //     setCheckedRows((prev) => [...prev, row])
+  //   } else {
+  //     setCheckedRows((prev) =>
+  //       prev.filter(
+  //         (existingRow) => JSON.stringify(existingRow) !== JSON.stringify(row)
+  //       )
+  //     )
+  //   }
+  //   console.log(checkedRows)
+  // }
+
+  const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
+    return {
+      top: params.isFirstVisible ? 0 : 10
     }
-    console.log(checkedRows)
-  }
+  }, [])
 
   return (
     <Box
@@ -260,10 +377,10 @@ const Warehouse: FunctionComponent = () => {
                 className={`settings-container self-stretch flex-1 flex flex-col items-start justify-start pt-[30px] pb-[75px] text-mini text-grey-darker ${
                   isMobile
                     ? 'overflow-auto whitespace-nowrap w-[375px] mx-4 my-0'
-                    : 'px-10'
+                    : ''
                 }`}
               >
-                <div className="self-stretch flex flex-col items-start justify-start gap-[12px] overflow-auto">
+                <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                   <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-grey-dark">
                     <b className="relative tracking-[0.08em] leading-[28px]">
                       {t('top_menu.workshop')}
@@ -278,7 +395,7 @@ const Warehouse: FunctionComponent = () => {
                       </b>
                     </div>
                   </div>
-                  <Box className="w-full">
+                  {/* <Box className="w-full">
                     <TableBase
                       header={headerTitles}
                       dataRow={warehouseItems}
@@ -288,6 +405,33 @@ const Warehouse: FunctionComponent = () => {
                       onCheckAll={handleCheckAll}
                       checkedRows={checkedRows}
                       onCheckRow={handleCheckRow}
+                      onSelectRow={handleSelectRow}
+                    />
+                  </Box> */}
+                  <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
+                    <DataGrid
+                      rows={warehouseItems}
+                      hideFooter
+                      columns={columns}
+                      checkboxSelection
+                      disableRowSelectionOnClick
+                      onRowClick={handleRowClick}
+                      getRowSpacing={getRowSpacing}
+                      sx={{
+                        border: 'none',
+                        '& .MuiDataGrid-cell': {
+                          border: 'none' // Remove the borders from the cells
+                        },
+                        '& .MuiDataGrid-row': {
+                          bgcolor: 'white',
+                          borderRadius: '10px'
+                        },
+                        '&>.MuiDataGrid-main': {
+                          '&>.MuiDataGrid-columnHeaders': {
+                            borderBottom: 'none'
+                          }
+                        }
+                      }}
                     />
                   </Box>
                 </div>

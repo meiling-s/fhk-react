@@ -3,7 +3,7 @@ import { AxiosRequestConfig } from 'axios'
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
   method: 'post',
-  url: 'api/v1/account/login'
+  url: 'api/v1/account/internal'
 }
 
 export const CHANGE_PASSWORD: AxiosRequestConfig = {
@@ -76,9 +76,31 @@ export const UPDATE_CHECK_IN_STATUS: AxiosRequestConfig = {
 //collector/pickupOrder
 export const GET_ALL_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/collectors/pico'
+  url: 'api/v1/administrator/pico'
+}
+export const GET_PICK_UP_ORDER_DETAIL: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/administrator/pico/details'
 }
 
+export const CREATE_PICK_UP_ORDER: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/administrator/pico'
+}
+
+export const GET_LOGISTICLIST: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/collectors/logisticlist'
+}
+
+export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
+  method: 'put',
+  url: 'api/v1/administrator/pico'
+}
+export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
+  method: 'patch',
+  url: 'api/v1/administrator/pico/status'
+}
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
   method: 'get',
@@ -120,6 +142,25 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
   url: 'api/v1/administrator/recycType'
 }
 
+export const GET_VEHICLE_TYPE: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/administrator/vehicleType'
+}
+
+export const GET_NUM_UNREAD_NOTIF = (loginId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/notification/NumOfUnread/${loginId}`
+})
+export const GET_NOTIF_BY_USER_ID = (loginId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/notification/unread/${loginId}`
+})
+
+export const UPDATE_FLAG_NOTIF = (notiId: number): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/notification/${notiId}`
+})
+
 //warehouse
 export const GET_ALL_WAREHOUSE: AxiosRequestConfig = {
   method: 'get',
@@ -157,6 +198,25 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
 ): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/collectors/warehouse/${warehouseId}/status`
+})
+
+export const GET_ALL_CHECKOUT_REQUEST: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/collectors/checkout'
+}
+
+export const GET_CHECKOUT_REQUEST_BY_ID = (
+  chkOutId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkout/${chkOutId}`
+})
+
+export const UPDATE_CHECKOUT_REQUEST_STATUS = (
+  chkOutId: number
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/checkout/status/${chkOutId}`
 })
 
 //recycle type
