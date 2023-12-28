@@ -6,7 +6,7 @@ import i18n from "../../setups/i18n";
 
 type recycItem = {
   recycType: string;
-  recycSubtype: string;
+  recycSubType: string;
 };
 
 const LocalizeRecyctype = (data: any) => {
@@ -16,12 +16,12 @@ const LocalizeRecyctype = (data: any) => {
 
     data.forEach((detail: any) => {
       const matchingRecycType = recycType?.find(
-        (recyc) => detail.item.recycType === recyc.recycTypeId
+        (recyc) => detail.recycType === recyc.recycTypeId
       );
 
       if (matchingRecycType) {
-        const matchRecycSubType = matchingRecycType.recycSubtype?.find(
-          (subtype) => subtype.recycSubtypeId === detail.item.recycSubType
+        const matchrecycSubType = matchingRecycType.recycSubType?.find(
+          (subtype) => subtype.recycSubTypeId === detail.recycSubType
         );
         var name = "";
         switch (i18n.language) {
@@ -41,21 +41,21 @@ const LocalizeRecyctype = (data: any) => {
         var subName = "";
         switch (i18n.language) {
           case "enus":
-            subName = matchRecycSubType?.recyclableNameEng ?? "";
+            subName = matchrecycSubType?.recyclableNameEng ?? "";
             break;
           case "zhch":
-            subName = matchRecycSubType?.recyclableNameSchi ?? "";
+            subName = matchrecycSubType?.recyclableNameSchi ?? "";
             break;
           case "zhhk":
-            subName = matchRecycSubType?.recyclableNameTchi ?? "";
+            subName = matchrecycSubType?.recyclableNameTchi ?? "";
             break;
           default:
-            subName = matchRecycSubType?.recyclableNameTchi ?? ""; //default fallback language is zhhk
+            subName = matchrecycSubType?.recyclableNameTchi ?? ""; //default fallback language is zhhk
             break;
         }
         recycItems.push({
           recycType: name,
-          recycSubtype: subName,
+          recycSubType: subName,
         });
       }
     });

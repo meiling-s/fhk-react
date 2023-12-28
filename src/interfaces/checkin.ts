@@ -111,7 +111,7 @@ export type CheckinDetailPhoto = {
 export  type CheckinDetail = {
     chkInDtlId: number;
     recycTypeId: string;
-    recycSubtypeId: string;
+    recycSubTypeId: string;
     packageTypeId: string;
     weight: number;
     unitId: string;

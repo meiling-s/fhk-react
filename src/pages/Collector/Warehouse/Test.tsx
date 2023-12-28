@@ -23,8 +23,8 @@ import { getAllUsers, getAllWarehouse } from "../../../APICalls/test";
 interface recyclableItem {
     warehouseRecycId: number;
     recycTypeId: string;
-    recycSubtypeId: string;
-    recycSubtypeCapacity: number;
+    recycSubTypeId: string;
+    recycSubTypeCapacity: number;
     recycTypeCapacity: number;
 }
 

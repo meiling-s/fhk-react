@@ -64,6 +64,7 @@ const CreateRecycleForm = ({
   useEffect(() => {
     if (editRow) {
       // Set the form field values based on the editRow data
+      console.log(editRow)
       formik.setValues({
         id: id,
         senderId: "1",
@@ -78,11 +79,10 @@ const CreateRecycleForm = ({
         createdBy: "ADMIN",
         updatedBy: "ADMIN",
         pickupAt: "",
-        item: {
-          recycType: editRow.item.recycType,
-          recycSubType: editRow.item.recycSubType,
-          weight: editRow.item.weight,
-        },
+        recycType: editRow.recycType,
+        recycSubType: editRow.recycSubType,
+        weight: editRow.weight,
+      
       });
     }
   }, [editRow]);
@@ -92,11 +92,9 @@ const CreateRecycleForm = ({
     senderAddr: Yup.string().required("This senderAddr is required"),
     receiverName: Yup.string().required("This receiverName is required"),
     receiverAddr: Yup.string().required("This receiverAddr is required"),
-    item: Yup.object().shape({
-      recycType: Yup.string().required("This recycType is required"),
-      recycSubType: Yup.string().required("This recycSubType is required"),
-      weight: Yup.number().required("This weight is required"),
-    }),
+    recycType: Yup.string().required("This recycType is required"),
+    recycSubType: Yup.string().required("This recycSubType is required"),
+    weight: Yup.number().required("This weight is required"),
   });
 
   const formik = useFormik({
@@ -114,11 +112,9 @@ const CreateRecycleForm = ({
       createdBy: "ADMIN",
       updatedBy: "ADMIN",
       pickupAt: "",
-      item: {
-        recycType: "",
-        recycSubType: "",
-        weight: 0,
-      },
+      recycType: "",
+      recycSubType: "",
+      weight: 0,
     },
     validationSchema: validateSchema,
 
@@ -221,27 +217,28 @@ const CreateRecycleForm = ({
 
                 <CustomField label={t("col.recycType")} mandatory>
                   <RecyclablesListSingleSelect
-                  showError={formik.errors.item?.recycType&&formik.touched.item?.recycType||undefined}
+                  showError={formik.errors?.recycType&&formik.touched?.recycType||undefined}
                     recycL={recycType ?? []}
                     setState={(values) => {
+
                       formik.setFieldValue(
-                        "item.recycType",
+                        "recycType",
                         values?.recycTypeId
                       );
                       formik.setFieldValue(
-                        "item.recycSubType",
-                        values?.recycSubtypeId
+                        "recycSubType",
+                        values?.recycSubTypeId
                       );
                     }}
                   />
                 </CustomField>
                 <CustomField label="預計重量" mandatory>
                   <CustomTextField
-                    id="item.weight"
+                    id="weight"
                     placeholder="请輸入重量"
                     onChange={formik.handleChange}
-                    value={formik.values.item.weight}
-                    error={formik.errors.item?.weight&&formik.touched.item?.weight||undefined}
+                    value={formik.values.weight}
+                    error={formik.errors?.weight&&formik.touched?.weight||undefined}
                     sx={{ width: "100%" }}
                     endAdornment={
                       <InputAdornment position="end">kg</InputAdornment>
@@ -263,9 +260,9 @@ const CreateRecycleForm = ({
                 ))}
                 <Stack spacing={2}>
                   { formik.errors.pickupAt&&formik.touched.pickupAt&&<Alert severity="error">{formik.errors.pickupAt} </Alert> }
-                  { formik.errors.item?.recycType&&formik.touched.item?.recycType&&<Alert severity="error">{formik.errors.item?.recycType} </Alert> }
-                  { formik.errors.item?.recycSubType&&formik.touched.item?.recycSubType&&<Alert severity="error">{formik.errors.item?.recycSubType} </Alert> }
-                  { formik.errors.item?.weight&&formik.touched.item?.weight&&<Alert severity="error">{formik.errors.item?.weight} </Alert> }
+                  { formik.errors?.recycType&&formik.touched?.recycType&&<Alert severity="error">{formik.errors?.recycType} </Alert> }
+                  { formik.errors?.recycSubType&&formik.touched?.recycSubType&&<Alert severity="error">{formik.errors?.recycSubType} </Alert> }
+                  { formik.errors?.weight&&formik.touched?.weight&&<Alert severity="error">{formik.errors?.weight} </Alert> }
                   { formik.errors.senderName&&formik.touched.senderName&&<Alert severity="error">{formik.errors.senderName} </Alert> }
                   { formik.errors.receiverName&&formik.touched.receiverName&&<Alert severity="error">{formik.errors.receiverName} </Alert> }
                   { formik.errors.senderAddr&&formik.touched.senderAddr&&<Alert severity="error">{formik.errors.senderAddr} </Alert> }

@@ -31,13 +31,13 @@ interface AddWarehouseProps {
 
 interface recyleItem {
   recycTypeId: string
-  recycSubtypeId: string
-  recycSubtypeCapacity: number
+  recycSubTypeId: string
+  recycSubTypeCapacity: number
   recycTypeCapacity: number
 }
 
 interface recyleSubtyeData {
-  recycSubtypeId: string
+  recycSubTypeId: string
   recyclableNameEng: string
   recyclableNameSchi: string
   recyclableNameTchi: string
@@ -51,7 +51,7 @@ interface recyleTypeData {
   createdAt: string
   createdBy: string
   description: string
-  recycSubtype: recyleSubtyeData[]
+  recycSubType: recyleSubtyeData[]
   recycTypeId: string
   recyclableNameEng: string
   recyclableNameSchi: string
@@ -163,11 +163,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         response.data.forEach((item: recyleTypeData) => {
           if (!subTypeMapping[item.recycTypeId]) {
             subTypeMapping[item.recycTypeId as keyof recyleTypeData] =
-              item.recycSubtype
+              item.recycSubType
           } else {
             subTypeMapping[item.recycTypeId] = [
               ...subTypeMapping[item.recycTypeId],
-              ...item.recycSubtype
+              ...item.recycSubType
             ]
           }
         })
@@ -258,8 +258,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     // recyle category field
     {
       recycTypeId: '',
-      recycSubtypeId: '',
-      recycSubtypeCapacity: 0,
+      recycSubTypeId: '',
+      recycSubTypeCapacity: 0,
       recycTypeCapacity: 0
     }
   ]
@@ -323,8 +323,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
       return (
         item.recycTypeId.trim() !== '' &&
-        item.recycSubtypeId.trim() !== '' &&
-        item.recycSubtypeCapacity === 0
+        item.recycSubTypeId.trim() !== '' &&
+        item.recycSubTypeCapacity === 0
       )
     })
 
@@ -394,8 +394,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       ...recycleCategory,
       {
         recycTypeId: '',
-        recycSubtypeId: '',
-        recycSubtypeCapacity: 0,
+        recycSubTypeId: '',
+        recycSubTypeCapacity: 0,
         recycTypeCapacity: 0
       }
     ]
@@ -428,7 +428,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     index: number
   ) => {
     const updatedRecycleCategory = [...recycleCategory]
-    updatedRecycleCategory[index].recycSubtypeId = event.target.value as string
+    updatedRecycleCategory[index].recycSubTypeId = event.target.value as string
     setRecycleCategory(updatedRecycleCategory)
   }
 
@@ -437,7 +437,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     index: number
   ) => {
     const updatedRecycleCategory = [...recycleCategory]
-    updatedRecycleCategory[index].recycSubtypeCapacity = Number(
+    updatedRecycleCategory[index].recycSubTypeCapacity = Number(
       event.target.value
     )
     setRecycleCategory(updatedRecycleCategory)
@@ -769,7 +769,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                         </FormControl>
                         <FormControl sx={{ m: 1, width: '100%' }}>
                           <Select
-                            value={item.recycSubtypeId}
+                            value={item.recycSubTypeId}
                             onChange={(event: SelectChangeEvent<string>) =>
                               handleChangeSubtype(event, index)
                             }
@@ -781,7 +781,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px'
                             }}
-                            error={checkString(item.recycSubtypeId)}
+                            error={checkString(item.recycSubTypeId)}
                           >
                             <MenuItem value="">
                               <em>-</em>
@@ -789,7 +789,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             {recycleSubType[item.recycTypeId]?.map(
                               (item, index) => (
                                 <MenuItem
-                                  value={item.recycSubtypeId}
+                                  value={item.recycSubTypeId}
                                   key={index}
                                 >
                                   {currentLanguage === 'zhhk'
@@ -804,7 +804,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                         </FormControl>
                         <FormControl fullWidth variant="standard">
                           <OutlinedInput
-                            value={item.recycSubtypeCapacity}
+                            value={item.recycSubTypeCapacity}
                             type="number"
                             onChange={(
                               event: React.ChangeEvent<
@@ -829,7 +829,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             }}
                             sx={styles.textField}
                             disabled={action === 'delete'}
-                            error={checkNumber(item.recycSubtypeCapacity)}
+                            error={checkNumber(item.recycSubTypeCapacity)}
                           />
                         </FormControl>
                         {index === recycleCategory.length - 1 ? (

@@ -127,7 +127,7 @@ const PickupOrderCreateForm = ({
       headerName: "主类别",
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.item.recycType,
+      valueGetter: ({ row }) => row.recycType,
     },
     {
       field: "recycSubType",
@@ -135,15 +135,15 @@ const PickupOrderCreateForm = ({
       type: "string",
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.item.recycSubType,
+      // valueGetter: ({ row }) => row.item.recycSubType,
     },
     {
-      field: "Weight",
+      field: "weight",
       headerName: "重量",
       type: "string",
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.item.weight,
+      // valueGetter: ({ row }) => row.item.weight,
     },
     {
       field: "senderName",
