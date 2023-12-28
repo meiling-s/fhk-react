@@ -9,7 +9,7 @@ import { Item } from "../../interfaces/pickupOrder";
 
 type recycItem = {
     recycType: il_item,
-    recycSubtype: il_item[]
+    recycSubType: il_item[]
 }
 
 type props = {
@@ -33,12 +33,11 @@ export default function RecyclablesListSingleSelect({
     const [recycType, setRecycType] = useState<string>("");
     const [subType, setSubType] = useState<string>("");     //selected sub type
     const { t, i18n } = useTranslation();
-
     useEffect(() => {
         //console.log("defaultRecycL:",defaultRecycL);
         if(defaultRecycL){
             setRecycType(defaultRecycL.recycTypeId);
-            setSubType(defaultRecycL.recycSubtypeId);
+            setSubType(defaultRecycL.recycSubTypeId);
         }
     },[])
 
@@ -55,7 +54,7 @@ export default function RecyclablesListSingleSelect({
         const recycItem: recycItem[] = [];
         //console.log("recycL: ", recycL);
         recycL.map((re) => { 
-            var reItem: recycItem = {recycType: {name: "", id: ""}, recycSubtype: []};
+            var reItem: recycItem = {recycType: {name: "", id: ""}, recycSubType: []};
             var subItem: il_item[] = [];
             var name = "";
             switch(i18n.language){
@@ -74,7 +73,7 @@ export default function RecyclablesListSingleSelect({
             }
             reItem.recycType = {name: name, id: re.recycTypeId};
 
-            re.recycSubtype.map((sub) => {
+            re.recycSubType.map((sub) => {
                 var subName = "";
                 switch(i18n.language){
                     case "enus":
@@ -90,9 +89,9 @@ export default function RecyclablesListSingleSelect({
                         subName = sub.recyclableNameTchi;        //default fallback language is zhhk
                         break;
                 }
-                subItem.push({name: subName, id: sub.recycSubtypeId})
+                subItem.push({name: subName, id: sub.recycSubTypeId})
             })
-            reItem.recycSubtype = subItem;
+            reItem.recycSubType = subItem;
 
             recycItem.push(reItem)
         });
@@ -111,7 +110,7 @@ export default function RecyclablesListSingleSelect({
             return recycType.recycType.id === recycId;
         });
         if (item) {
-            const subItems = item.recycSubtype
+            const subItems = item.recycSubType
             return subItems;
         } else {
             return [];
@@ -121,7 +120,7 @@ export default function RecyclablesListSingleSelect({
     const toSingleRecyclable = () => {
         const singleRecyc: singleRecyclable = {
             recycTypeId: recycType,
-            recycSubtypeId: subType
+            recycSubTypeId: subType
         }
         return singleRecyc
     }

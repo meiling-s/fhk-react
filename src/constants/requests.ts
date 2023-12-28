@@ -94,7 +94,7 @@ export const GET_LOGISTICLIST: AxiosRequestConfig = {
 }
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
-  method: 'patch',
+  method: 'put',
   url: 'api/v1/administrator/pico'
 }
 export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {

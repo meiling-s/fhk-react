@@ -26,8 +26,8 @@ import {
 
 interface RecyleItem {
   recycTypeId: string
-  recycSubtypeId: string
-  recycSubtypeCapacity: number
+  recycSubTypeId: string
+  recycSubTypeCapacity: number
   recycTypeCapacity: number
 }
 

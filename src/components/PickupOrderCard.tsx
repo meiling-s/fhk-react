@@ -53,7 +53,7 @@ const PickupOrderCard = ({
                     self.findIndex(
                       (t) =>
                         t.recycType === item.recycType &&
-                        t.recycSubtype === item.recycSubtype
+                        t.recycSubType === item.recycSubType
                     )
                 )
                 .map((a, index) => (
@@ -62,7 +62,7 @@ const PickupOrderCard = ({
                       <Typography>{a.recycType}</Typography>
                     </CustomField>
                     <CustomField label="次类别">
-                      <Typography>{a.recycSubtype}</Typography>
+                      <Typography>{a.recycSubType}</Typography>
                     </CustomField>
                   </Box>
                 ))}
@@ -87,7 +87,7 @@ const PickupOrderCard = ({
               </Icon>
               <Typography>重量</Typography>
             </Box>
-            <Typography ml="60px">{podetail.item.weight} kg</Typography>
+            <Typography ml="60px">{podetail.weight} kg</Typography>
           </Box>
           <Box display="flex">
             <Box display="flex" width={"150px"}>

@@ -40,7 +40,9 @@ export interface PickupOrderDetail {
     updatedAt:       string;
     createdAt:       string;
     version:         number;
-    item:            PickupOrderItem;
+    recycType:    string;
+    recycSubType: string;
+    weight:       number;
 }
 
 export interface PickupOrderItem {
@@ -88,7 +90,10 @@ export interface CreatePicoDetail {
     createdBy:       string;
     updatedBy:       string;
     pickupAt:        string;
-    item:           Item;
+    recycType:    string;
+    recycSubType: string;
+    weight:       number;
+    
 }
 
 export interface Item {
