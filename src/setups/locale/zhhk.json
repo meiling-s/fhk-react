@@ -192,7 +192,10 @@
     "delivery_location": "送出地點",
     "approved_on": "核準於",
     "reason_is": "原因為",
-    "total_checkout": "總的退房要求是"
+    "total_checkout": "總的退房要求是",
+    "reason_1": "原因 1",
+    "reason_2": "原因 2",
+    "reason_3": "原因 3"
   },
   "mainMenu": {
     "manage": "管理",

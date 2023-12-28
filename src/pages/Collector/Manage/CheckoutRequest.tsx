@@ -204,15 +204,15 @@ const RejectModal: React.FC<RejectForm> = ({
   const reasons: il_item[] = [
     {
       id: '1',
-      name: '原因 1'
+      name: t('check_out.reason_1')
     },
     {
       id: '2',
-      name: '原因 2'
+      name: t('check_out.reason_2')
     },
     {
       id: '3',
-      name: '原因 3'
+      name: t('check_out.reason_3')
     }
   ]
 
@@ -336,16 +336,16 @@ const CheckoutRequest: FunctionComponent = () => {
     chkOutId: number
   ) => {
     setDrawerOpen(false)
-    
+
     const checked = event.target.checked
     const updatedChecked = checked
-    ?  [...checkedCheckOut, chkOutId]
-    : checkedCheckOut.filter((rowId) => rowId != chkOutId)
+      ? [...checkedCheckOut, chkOutId]
+      : checkedCheckOut.filter((rowId) => rowId != chkOutId)
     setCheckedCheckOut(updatedChecked)
     console.log(updatedChecked)
-   
+
     const allRowsChecked = filterCheckOut.every((row) =>
-      updatedChecked.includes(row.chkOutId) 
+      updatedChecked.includes(row.chkOutId)
     )
     setSelectAll(allRowsChecked)
   }
@@ -463,8 +463,12 @@ const CheckoutRequest: FunctionComponent = () => {
     const result = await getAllCheckoutRequest()
     const data = result?.data.content
     if (data && data.length > 0) {
-      const checkoutData = data.map(transformToTableRow).filter((item:CheckOut) =>item.status === "CREATED")
-      setCheckoutRequest(data.filter((item:CheckOut) =>item.status === "CREATED"))
+      const checkoutData = data
+        .map(transformToTableRow)
+        .filter((item: CheckOut) => item.status === 'CREATED')
+      setCheckoutRequest(
+        data.filter((item: CheckOut) => item.status === 'CREATED')
+      )
       setFilterCheckOut(checkoutData)
     }
   }
@@ -550,8 +554,8 @@ const CheckoutRequest: FunctionComponent = () => {
   }, [])
 
   const resetPage = () => {
-  setCheckedCheckOut([])
-  getAllCheckoutRequest()
+    setCheckedCheckOut([])
+    getAllCheckoutRequest()
   }
 
   return (
@@ -669,14 +673,20 @@ const CheckoutRequest: FunctionComponent = () => {
           setRejectModal(false)
         }}
         checkedCheckOut={checkedCheckOut}
-        onRejected={() =>{setRejectModal(false); setConfirmModal(true)}}
+        onRejected={() => {
+          setRejectModal(false)
+          setConfirmModal(true)
+        }}
       />
       <ApproveModal
         open={approveModal}
         onClose={() => {
           setApproveModal(false)
         }}
-        onApprove={() => {setApproveModal(false); setConfirmModal(true)}}
+        onApprove={() => {
+          setApproveModal(false)
+          setConfirmModal(true)
+        }}
         checkedCheckOut={checkedCheckOut}
       />
       <ConfirmModal
