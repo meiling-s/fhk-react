@@ -170,6 +170,11 @@ export const UPDATE_FLAG_NOTIF = (notiId: number): AxiosRequestConfig => ({
   url: `api/v1/administrator/notification/${notiId}`
 })
 
+export const CREATE_FORGET_PASSWORD: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/administrator/forgetpassword'
+}
+
 //warehouse
 export const GET_ALL_WAREHOUSE: AxiosRequestConfig = {
   method: 'get',
