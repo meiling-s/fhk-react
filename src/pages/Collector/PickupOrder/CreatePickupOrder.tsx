@@ -7,12 +7,14 @@ import { useState } from "react";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next'
 
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate();
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
   const { initPickupOrderRequest } = useContainer(CheckInRequestContainer);
+  const { t } = useTranslation()
 
   
   const validateSchema = Yup.object().shape({
@@ -40,7 +42,7 @@ const CreatePickupOrder = () => {
  
   const createPickupOrder = useFormik({
     initialValues: {
-      picoType: 'AD_HOC',
+      picoType: 'ROUTINE',
       effFrmDate:"",
       effToDate: "",
       routineType:'',       
@@ -76,7 +78,7 @@ const CreatePickupOrder = () => {
   });
 
   return (
-     <PickupOrderCreateForm formik={createPickupOrder} title={'建立運單'}  setState={setAddRow} state={addRow} />
+     <PickupOrderCreateForm formik={createPickupOrder} title={t('pick_up_order.create_pick_up_order')}  setState={setAddRow} state={addRow} />
   );
 };
 

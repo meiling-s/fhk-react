@@ -228,18 +228,38 @@
     "one-transport": "一次性運輸",
     "shipping_validity": "運輸有效日期由",
     "to": "至",
+    "routine": {
+      "recycling_week": "回收週次",
+      "every_week": "每逢星期",
+      "contract_number": "合約編號",
+      "enter_contract" : "請輸入編號"
+    },
+    "adhoc": {
+      "reason_get_off": "下車原因",
+      "po_number": "參考運單編號"
+    },
     "choose_logistic": "選擇物流公司",
-    "enter_comapy_name": "請輸入公司名稱",
+    "enter_company_name": "請輸入公司名稱",
     "vehicle_category": "車輛類別",
     "plat_number": "車牌號碼",
     "enter_plat_number": "請填寫車牌號碼",
     "contact_number": "聯絡人號碼",
     "enter_contact_number": "請填寫手機號碼",
-    "reason_get_off": "下車原因",
-    "po_number": "參考運單編號",
-    "recyle_loc_info": "z",
+    "recyle_loc_info": "預計回收地點資料",
+    "creation_time": "建立時間",
+    "choose": "選擇",
     "new": "新增",
     "finish": "完成",
-    "cancel": "取消"
+    "cancel": "取消",
+    "detail":{
+      "shipping_time": "運送時間",
+      "main_category": "主類別",
+      "subcategory": "次類別",
+      "weight": "重量",
+      "sender_name": "寄件公司",
+      "receiver": "收件公司",
+      "recycling_location": "回收地點",
+      "arrived": "到達地點"
+    }
   }
 }

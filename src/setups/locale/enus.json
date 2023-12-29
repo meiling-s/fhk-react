@@ -232,18 +232,38 @@
     "one-transport": "One Time Transport",
     "shipping_validity": "Shipping validity date is given by",
     "to": "To",
+    "routine": {
+      "recycling_week": "recycling week",
+      "every_week": "every week",
+      "contract_number": "Contract Number",
+      "enter_contract" : "Please enter number"
+    },
+    "adhoc": {
+      "reason_get_off": "Reason for getting off",
+      "po_number": "Reference PO number"
+    },
     "choose_logistic": "Choose a logistics company",
-    "enter_comapy_name": "Please enter company name",
+    "enter_company_name": "Please enter company name",
     "vehicle_category": "Vehicle category",
     "plat_number": "License plate number",
     "enter_plat_number": "Please fill in the license plate number",
     "contact_number": "Contact number",
     "enter_contact_number": "please fill in cell phone number",
-    "reason_get_off": "Reason for getting off",
-    "po_number": "Reference waybill number",
     "recyle_loc_info": "Estimated recycling location information",
+    "creation_time": "Creation time",
+    "choose": "Choose",
     "new": "New",
     "finish": "Finish",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "detail":{
+      "shipping_time": "Shipping Time",
+      "main_category": "Recyle Type",
+      "subcategory": "Recyle Sub Type",
+      "weight": "Weight",
+      "sender_name" : "Shipping company",
+      "receiver": "receiver",
+      "recycling_location": "Recycling Location",
+      "arrived": "Arrived"
+    }
   }
 }
