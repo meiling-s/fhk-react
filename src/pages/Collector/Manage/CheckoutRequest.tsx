@@ -553,11 +553,11 @@ const CheckoutRequest: FunctionComponent = () => {
     }
   }, [])
 
-  const resetPage = () => {
+  const resetPage = async () => {
+    setConfirmModal(false)
     setCheckedCheckOut([])
-    getAllCheckoutRequest()
+    await getCheckoutRequest()
   }
-
   return (
     <Box className="container-wrapper w-full mr-11">
       <div className="overview-page bg-bg-primary">
@@ -689,13 +689,7 @@ const CheckoutRequest: FunctionComponent = () => {
         }}
         checkedCheckOut={checkedCheckOut}
       />
-      <ConfirmModal
-        open={confirmModal}
-        onClose={() => {
-          setConfirmModal(false)
-          resetPage()
-        }}
-      />
+      <ConfirmModal open={confirmModal} onClose={resetPage} />
       <CheckInDetails
         drawerOpen={drawerOpen}
         handleDrawerClose={handleDrawerClose}
