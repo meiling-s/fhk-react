@@ -260,6 +260,21 @@
       "receiver": "收件公司",
       "recycling_location": "回收地點",
       "arrived": "到達地點"
+    },
+    "recyclForm": {
+      "new" :"新增",
+      "expected_recycling" :"預計回收物",
+      "finish" : "完成",
+      "cancel": "取消",
+      "shipping_time": "運送時間",
+      "recycle_category": "回收物類別",
+      "waste_paper_category": "廢紙類別",
+      "weight": "預計重量",
+      "shipping_company": "寄件公司",
+      "recycling_location": "回收地點",
+      "receiver": "收件公司",
+      "arrived": "到達地點",
+      "placeholder": "請輸入地點"
     }
   }
 }

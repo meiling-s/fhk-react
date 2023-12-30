@@ -264,6 +264,21 @@
       "receiver": "receiver",
       "recycling_location": "Recycling Location",
       "arrived": "Arrived"
+    },
+    "recyclForm": {
+      "new" :"New",
+      "expected_recycling" : "Expected recycling",
+      "finish" : "Finish",
+      "cancel" : "Cancel",
+      "shipping_time": "Shipping Time",
+      "recycle_category": "Recycling category",
+      "waste_paper_category" :"Waste paper category",
+      "weight" :"Estimated weight",
+      "shipping_company": "Shipping company",
+      "receiver": "receiver",
+      "recycling_location": "Recycling Location",
+      "arrived": "Arrived",
+      "placeholder": "Please enter location"
     }
   }
 }

@@ -33,6 +33,9 @@ import { CreatePicoDetail } from "../../interfaces/pickupOrder";
 import { Navigate, useNavigate } from "react-router";
 import RecyclablesListSingleSelect from "../SpecializeComponents/RecyclablesListSingleSelect";
 import { dateToLocalTime } from "../Formatter";
+import { useTranslation } from 'react-i18next'
+import dayjs, { Dayjs } from 'dayjs';
+
 
 const CreateRecycleForm = ({
   onClose,
@@ -52,6 +55,7 @@ const CreateRecycleForm = ({
   const [recyclables, setRecyclables] = useState<recyclable[]>([]);
   const { recycType } = useContainer(CommonTypeContainer);
   const editRow = data.find((row) => row.id === editRowId);
+  const { t } = useTranslation()
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -136,30 +140,35 @@ const CreateRecycleForm = ({
 
   const TextFields = [
     {
-      label: "寄件公司",
+      label: t('pick_up_order.recyclForm.shipping_company'),
+      placeholder: t('pick_up_order.recyclForm.placeholder'),
       id: "senderName",
       value: formik.values.senderName,
       error: formik.errors.senderName && formik.touched.senderName,
     },
     {
-      label: "收件公司",
+      label: t('pick_up_order.recyclForm.receiver'),
+      placeholder: t('pick_up_order.recyclForm.placeholder'),
       id: "receiverName",
       value: formik.values.receiverName,
       error: formik.errors.receiverName && formik.touched.receiverName,
     },
     {
-      label: "回收地點",
+      label: t('pick_up_order.recyclForm.recycling_location'),
+      placeholder: t('pick_up_order.recyclForm.placeholder'),
       id: "senderAddr",
       value: formik.values.senderAddr,
       error: formik.errors.senderAddr && formik.touched.senderAddr,
     },
     {
-      label: "到達地點",
+      label: t('pick_up_order.recyclForm.arrived'),
+      placeholder: t('pick_up_order.recyclForm.placeholder'),
       id: "receiverAddr",
       value: formik.values.receiverAddr,
       error: formik.errors.receiverAddr && formik.touched.receiverAddr,
     },
   ];
+
 
   return (
     <>
@@ -171,8 +180,8 @@ const CreateRecycleForm = ({
                 sx={{ display: "flex", flex: "1", p: 4, alignItems: "center" }}
               >
                 <Box>
-                  <Typography sx={styles.header4}>新增</Typography>
-                  <Typography sx={styles.header3}>預計回收物</Typography>
+                  <Typography sx={styles.header4}>{t('pick_up_order.recyclForm.new')}</Typography>
+                  <Typography sx={styles.header3}>{t('pick_up_order.recyclForm.expected_recycling')}</Typography>
                 </Box>
 
                 <Box sx={{ marginLeft: "auto" }}>
@@ -181,7 +190,7 @@ const CreateRecycleForm = ({
                     sx={localstyles.button}
                     type="submit"
                   >
-                    完成
+                    {t('pick_up_order.recyclForm.finish')}
                   </Button>
                   <Button
                     variant="outlined"
@@ -192,7 +201,7 @@ const CreateRecycleForm = ({
                     }}
                     onClick={() => onClose && onClose()}
                   >
-                    取消
+                    {t('pick_up_order.recyclForm.cancel')}
                   </Button>
                   <IconButton sx={{ ml: "25px" }}>
                     <KeyboardTabIcon sx={{ fontSize: "30px" }} />
@@ -201,7 +210,7 @@ const CreateRecycleForm = ({
               </Box>
               <Divider />
               <Stack spacing={2} sx={localstyles.content}>
-                <CustomField label="運送時間" mandatory>
+                <CustomField label={t('pick_up_order.recyclForm.shipping_time')} mandatory>
                   <TimePicker
                     sx={{ width: "100%" }}
                     value={formik.values.pickupAt}
@@ -232,7 +241,7 @@ const CreateRecycleForm = ({
                     }}
                   />
                 </CustomField>
-                <CustomField label="預計重量" mandatory>
+                <CustomField label={t('pick_up_order.recyclForm.weight')} mandatory>
                   <CustomTextField
                     id="weight"
                     placeholder="请輸入重量"
@@ -249,7 +258,8 @@ const CreateRecycleForm = ({
                   <CustomField mandatory label={t.label}>
                     <CustomTextField
                       id={t.id}
-                      placeholder="请输入地點"
+                      placeholder={t.placeholder}
+                      multiline={true}
                       rows={4}
                       onChange={formik.handleChange}
                       value={t.value}
