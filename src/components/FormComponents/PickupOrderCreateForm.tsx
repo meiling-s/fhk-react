@@ -402,12 +402,12 @@ const PickupOrderCreateForm = ({
                     <CustomItemList
                       items={getvehicleType() || []}
                       singleSelect={(values) =>
-                        formik.setFieldValue('vehicleTypeId', values)
+                        formik.setFieldValue('reason', values)
                       }
-                      value={formik.values.vehicleTypeId}
+                      value={formik.values.reason}
                       defaultSelected={selectedPo?.vehicleTypeId}
                       error={
-                        formik.errors.vehicleTypeId &&
+                        formik.errors.reason &&
                         formik.touched.vehicleTypeId
                       }
                     />
