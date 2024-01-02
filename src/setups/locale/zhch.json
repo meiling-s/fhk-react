@@ -265,10 +265,10 @@
       "arrived": "到达地点"
     },
     "recyclForm": {
-      "new" :"新增",
-      "expected_recycling" :"预计回收物",
-      "finish" : "完成",
-      "cancel" : "取消",
+      "new": "新增",
+      "expected_recycling": "预计回收物",
+      "finish": "完成",
+      "cancel": "取消",
       "shipping_time": "运送时间",
       "recycle_category": "回收物类别",
       "waste_paper_category": "废纸类别",
@@ -277,7 +277,10 @@
       "receiver": "收件公司",
       "recycling_location": "回收地点",
       "arrived": "到达地点",
-      "placeholder": "请输入地点"
-    }
+      "placeholder": "请输入地点",
+      "select_po": "选择运单"
+    },
+    "select_po": "选择取货订单",
+    "search_company_name": "输入发件人公司"
   }
 }

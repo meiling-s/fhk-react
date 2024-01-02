@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   Button,
+  Drawer,
   Grid,
   IconButton,
   Modal,
@@ -44,6 +45,7 @@ import { validate } from 'uuid'
 import CustomAutoComplete from './CustomAutoComplete'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
+import PickupOrderList from '../../components/PickupOrderList'
 import { amET } from '@mui/material/locale'
 import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
@@ -202,10 +204,16 @@ const PickupOrderCreateForm = ({
     }
   ]
 
+  const [openPico, setOpenPico] = useState(false)
+
+  const handleClosePicoList = () => {
+    setOpenPico(false)
+  }
+
   return (
     <>
       <form onSubmit={formik.handleSubmit} className="w-full">
-        <Box sx={[styles.innerScreen_container, {paddingRight: 0}]}>
+        <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
           <LocalizationProvider
             dateAdapter={AdapterDayjs}
             adapterLocale="zh-cn"
@@ -410,7 +418,7 @@ const PickupOrderCreateForm = ({
                 <Grid item>
                   <Button
                     sx={[localstyles.picoIdButton]}
-                    onClick={handleHeaderOnClick}
+                    onClick={() => setOpenPico(true)}
                   >
                     <AddCircleIcon sx={{ ...styles.endAdornmentIcon, pr: 1 }} />
 
@@ -463,6 +471,11 @@ const PickupOrderCreateForm = ({
                       editRowId={editRowId}
                     />
                   </Modal>
+
+                  <PickupOrderList
+                    drawerOpen={openPico}
+                    handleDrawerClose={handleClosePicoList}
+                  ></PickupOrderList>
 
                   <Button
                     variant="outlined"

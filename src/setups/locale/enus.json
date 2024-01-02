@@ -279,6 +279,8 @@
       "recycling_location": "Recycling Location",
       "arrived": "Arrived",
       "placeholder": "Please enter location"
-    }
+    },
+    "select_po"  :"Select Pickup Order",
+    "search_company_name": "Enter sender company"
   }
 }

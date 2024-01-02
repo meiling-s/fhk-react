@@ -232,7 +232,7 @@
       "recycling_week": "回收週次",
       "every_week": "每逢星期",
       "contract_number": "合約編號",
-      "enter_contract" : "請輸入編號"
+      "enter_contract": "請輸入編號"
     },
     "adhoc": {
       "reason_get_off": "下車原因",
@@ -251,7 +251,7 @@
     "new": "新增",
     "finish": "完成",
     "cancel": "取消",
-    "detail":{
+    "detail": {
       "shipping_time": "運送時間",
       "main_category": "主類別",
       "subcategory": "次類別",
@@ -262,9 +262,9 @@
       "arrived": "到達地點"
     },
     "recyclForm": {
-      "new" :"新增",
-      "expected_recycling" :"預計回收物",
-      "finish" : "完成",
+      "new": "新增",
+      "expected_recycling": "預計回收物",
+      "finish": "完成",
       "cancel": "取消",
       "shipping_time": "運送時間",
       "recycle_category": "回收物類別",
@@ -274,7 +274,10 @@
       "recycling_location": "回收地點",
       "receiver": "收件公司",
       "arrived": "到達地點",
-      "placeholder": "請輸入地點"
-    }
+      "placeholder": "請輸入地點",
+      "select_po": "選擇運單"
+    },
+    "select_po": "選擇取貨訂單",
+    "search_company_name": "輸入寄件者公司"
   }
 }
