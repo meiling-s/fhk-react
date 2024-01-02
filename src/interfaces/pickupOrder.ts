@@ -1,3 +1,26 @@
+
+export interface PickupOrderDetail {
+    picoDtlId:       number;
+    senderId:        string;
+    senderName:      string;
+    senderAddr:      string;
+    senderAddrGps:   number[];
+    receiverId:      string;
+    receiverName:    string;
+    receiverAddr:    string;
+    receiverAddrGps: number[];
+    pickupAt:        string;
+    status:          string;
+    createdBy:       string;
+    updatedBy:       string;
+    updatedAt:       string;
+    createdAt:       string;
+    version:         number;
+    recycType:    string;
+    recycSubType: string;
+    weight:       number;
+}
+
 export interface PickupOrder {
     tenantId:         string;
     picoId:            string;
@@ -22,28 +45,6 @@ export interface PickupOrder {
     createdBy:         string;
     updatedBy:         string;
     pickupOrderDetail: PickupOrderDetail[];
-}
-
-export interface PickupOrderDetail {
-    picoDtlId:       number;
-    senderId:        string;
-    senderName:      string;
-    senderAddr:      string;
-    senderAddrGps:   number[];
-    receiverId:      string;
-    receiverName:    string;
-    receiverAddr:    string;
-    receiverAddrGps: number[];
-    pickupAt:        string;
-    status:          string;
-    createdBy:       string;
-    updatedBy:       string;
-    updatedAt:       string;
-    createdAt:       string;
-    version:         number;
-    recycType:    string;
-    recycSubType: string;
-    weight:       number;
 }
 
 export interface PickupOrderItem {
@@ -144,7 +145,7 @@ export interface Row {
     rejectedBy:    string;
     contractNo:    string;
     updatedBy:     string;
-    pickupOrderDetail: PickupOrderDetail[]
+    createPicoDetail: PickupOrderDetail[]
     
 }
 
