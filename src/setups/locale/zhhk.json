@@ -221,7 +221,7 @@
     "notify": "通知"
   },
   "pick_up_order": {
-    "create_pick_up_order": "建立運單",
+    "create_pick_up_order": "建立",
     "edit_pick_up_order": "编辑取件订单",
     "shipping_info": "運輸資料",
     "select_shipping_category": "請選擇運輸類別",
@@ -236,10 +236,10 @@
       "enter_contract": "請輸入編號"
     },
     "adhoc": {
-      "reason_get_off": "下車原因",
+      "reason_get_off": "下單原因",
       "po_number": "參考運單編號"
     },
-    "choose_logistic": "選擇物流公司",
+    "choose_logistic": "物流公司",
     "enter_company_name": "請輸入公司名稱",
     "vehicle_category": "車輛類別",
     "plat_number": "車牌號碼",
@@ -278,7 +278,7 @@
       "placeholder": "請輸入地點",
       "select_po": "選擇運單"
     },
-    "select_po": "選擇取貨訂單",
+    "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司"
   }
 }

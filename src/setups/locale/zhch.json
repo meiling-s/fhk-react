@@ -224,7 +224,7 @@
     "notify": "通知"
   },
   "pick_up_order": {
-    "create_pick_up_order": "建立运单",
+    "create_pick_up_order": "建立",
     "edit_pick_up_order": "编辑取件订单",
     "shipping_info": "運輸資料",
     "select_shipping_category": "请选择运输类别",
@@ -239,15 +239,15 @@
       "enter_contract": "请输入编号"
     },
     "adhoc": {
-      "reason_get_off": "下车原因",
+      "reason_get_off": "下单原因",
       "po_number": "参考运单编号"
     },
-    "choose_logistic": "选择物流公司",
+    "choose_logistic": "物流公司",
     "enter_company_name": "请输入公司名称",
     "vehicle_category": "车辆类别",
     "plat_number": "车牌号码",
     "enter_plat_number": "请填写车牌号码",
-    "contact_number": "联络人号码",
+    "contact_number": "请填写手机号码",
     "enter_contact_number": "请填写手机号码",
     "recyle_loc_info": "预计回收地点资料",
     "creation_time": "建立时间",
@@ -281,7 +281,7 @@
       "placeholder": "请输入地点",
       "select_po": "选择运单"
     },
-    "select_po": "选择取货订单",
+    "select_po": "选择运单",
     "search_company_name": "输入发件人公司"
   }
 }

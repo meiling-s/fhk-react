@@ -225,10 +225,10 @@
     "notify": "Notify"
   },
   "pick_up_order": {
-    "create_pick_up_order": "Create Pickup Order",
+    "create_pick_up_order": "Create",
     "edit_pick_up_order": "Edit Pickup Order",
     "shipping_info": "Shipping Information",
-    "select_shipping_category": "Please Select Shipping Category",
+    "select_shipping_category": "Please select pickup order type",
     "regular_shipping": "Regular Shipping",
     "one-transport": "One Time Transport",
     "shipping_validity": "Shipping validity date is given by",
@@ -236,30 +236,30 @@
     "routine": {
       "recycling_week": "recycling week",
       "every_week": "every week",
-      "contract_number": "Contract Number",
-      "enter_contract" : "Please enter number"
+      "contract_number": "Contract no.",
+      "enter_contract" : "Please input contract no."
     },
     "adhoc": {
-      "reason_get_off": "Reason for getting off",
-      "po_number": "Reference PO number"
+      "reason_get_off": "Ad-hoc reason",
+      "po_number": "Related pickup order"
     },
-    "choose_logistic": "Choose a logistics company",
+    "choose_logistic": "Logistic company",
     "enter_company_name": "Please enter company name",
-    "vehicle_category": "Vehicle category",
-    "plat_number": "License plate number",
-    "enter_plat_number": "Please fill in the license plate number",
-    "contact_number": "Contact number",
-    "enter_contact_number": "please fill in cell phone number",
+    "vehicle_category": "Vehicle type",
+    "plat_number": "Vehicle plate no.",
+    "enter_plat_number": "Please input vehicle plate no.",
+    "contact_number": "Contact no.",
+    "enter_contact_number": "Please input contact no.",
     "recyle_loc_info": "Estimated recycling location information",
     "creation_time": "Creation time",
     "choose": "Choose",
     "new": "New",
-    "finish": "Finish",
+    "finish": "Complete",
     "cancel": "Cancel",
     "detail":{
-      "shipping_time": "Shipping Time",
-      "main_category": "Recyle Type",
-      "subcategory": "Recyle Sub Type",
+      "shipping_time": "Pickup time",
+      "main_category": "Type",
+      "subcategory": "Subtype",
       "weight": "Weight",
       "sender_name" : "Shipping company",
       "receiver": "receiver",
@@ -281,7 +281,7 @@
       "arrived": "Arrived",
       "placeholder": "Please enter location"
     },
-    "select_po"  :"Select Pickup Order",
+    "select_po"  :"Choose pickup order",
     "search_company_name": "Enter sender company"
   }
 }

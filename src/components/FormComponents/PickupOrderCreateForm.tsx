@@ -75,8 +75,7 @@ const PickupOrderCreateForm = ({
   const handleCloses = () => {
     setOpenModal(false)
   }
-  // console.log(vehicleType)
-  // console.log('picoType', formik.values.picoType)
+
   // console.log('yo' + JSON.stringify(state))
   const createdDate = dayjs(new Date()).format(format.dateFormat1)
 
@@ -125,6 +124,20 @@ const PickupOrderCreateForm = ({
       })
       return carType
     }
+  }
+
+  const getReason = () => {
+    const reasons: il_item[] = [
+      {
+        id: '1',
+        name: '壞車'
+      },
+      {
+        id: '2',
+        name: '貨物過剩'
+      },
+    ]
+    return reasons
   }
 
   const columns: GridColDef[] = [
@@ -400,15 +413,14 @@ const PickupOrderCreateForm = ({
                     mandatory
                   >
                     <CustomItemList
-                      items={getvehicleType() || []}
+                      items={getReason() || []}
                       singleSelect={(values) =>
                         formik.setFieldValue('reason', values)
                       }
                       value={formik.values.reason}
                       defaultSelected={selectedPo?.vehicleTypeId}
                       error={
-                        formik.errors.reason &&
-                        formik.touched.vehicleTypeId
+                        formik.errors.reason && formik.touched.vehicleTypeId
                       }
                     />
                   </CustomField>
@@ -416,7 +428,7 @@ const PickupOrderCreateForm = ({
               )}
               {formik.values.picoType == 'AD_HOC' && (
                 <Grid item>
-                  <Typography sx={[styles.header3 ,{marginBottom: 1}]}>
+                  <Typography sx={[styles.header3, { marginBottom: 1 }]}>
                     {t('pick_up_order.adhoc.po_number')}
                   </Typography>
                   <Button
