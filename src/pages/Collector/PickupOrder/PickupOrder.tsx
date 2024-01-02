@@ -118,7 +118,7 @@ const PickupOrders = () => {
   }))??[] ;
 
   interface Row {
-    id: number;
+    id:string;
     建立日期: string;
     物流公司: string;
     运单编号: number;
