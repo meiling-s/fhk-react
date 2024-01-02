@@ -13,15 +13,10 @@ const EditPickupOrder = () => {
   
     const navigate = useNavigate();
     const {state} = useLocation();
-    const [poInfoDetail, setPoInfoDetail] = useState<CreatePicoDetail[]>([]);
+    const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
     const poInfo: PickupOrder = state;
-      const [editRowId, setEditRowId] = useState<number | null>(null);
-    // const poInfoDetail:CreatePicoDetail[] = poInfo.pickupOrderDetail
     const { initPickupOrderRequest } = useContainer(CheckInRequestContainer);
 
-    useEffect(()=>{
-      setPoInfoDetail(poInfo.pickupOrderDetail)
-    },[poInfo])
 
     const updatePickupOrder = useFormik({
         initialValues: {
@@ -44,7 +39,6 @@ const EditPickupOrder = () => {
           rejectedBy: "string",
           contractNo: "",
           updatedBy: "string",
-          createPicoDetail:poInfoDetail
         },
     
         onSubmit: async (values: EditPo) => {
@@ -87,13 +81,12 @@ const EditPickupOrder = () => {
             rejectedBy: 'ADMIN',
             contractNo: poInfo.contractNo,
             updatedBy: "Admin",
-            createPicoDetail:poInfoDetail
           });
         }
       }, [poInfo]);
      
   return (
-    <PickupOrderCreateForm selectedPo={poInfo} title={'修改運單'} formik={updatePickupOrder}  setState={setPoInfoDetail} state={poInfoDetail} editMode={true} />
+    <PickupOrderCreateForm selectedPo={poInfo} title={'修改運單'} formik={updatePickupOrder}  setState={setAddRow} state={addRow} />
   )
 }
 

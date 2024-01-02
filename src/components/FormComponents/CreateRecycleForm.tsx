@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { styles } from "../../constants/styles";
 import { DELETE_OUTLINED_ICON } from "../../themes/icons";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
@@ -34,7 +34,6 @@ import { Navigate, useNavigate } from "react-router";
 import RecyclablesListSingleSelect from "../SpecializeComponents/RecyclablesListSingleSelect";
 import { dateToLocalTime } from "../Formatter";
 
-
 const CreateRecycleForm = ({
   onClose,
   setState,
@@ -42,47 +41,17 @@ const CreateRecycleForm = ({
   data,
   id,
   editRowId,
-  selectedPoDetails,
-  updateRowId,
-  editMode,
-  updateId,
-  initialRow,
-  isEditing,
-  setIsEditing,
-
 }: {
-  onClose: () => void
-  setState: (val: CreatePicoDetail[]) => void
-  data: CreatePicoDetail[]
-  setId: Dispatch<SetStateAction<number>>
-  id: number
+  onClose: () => void;
+  setState: (val: CreatePicoDetail[]) => void;
+  data: CreatePicoDetail[];
+  setId: Dispatch<SetStateAction<number>>;
+  id: number;
   editRowId: number | null;
-  selectedPoDetails?:CreatePicoDetail[]
-  updateRowId:number | null
-  editMode:boolean
-  updateId: number
-  setUpdateId: Dispatch<SetStateAction<number>>
-  initialRow?:CreatePicoDetail
-  isEditing:boolean
-  setIsEditing:React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  
+  const [recyclables, setRecyclables] = useState<recyclable[]>([]);
   const { recycType } = useContainer(CommonTypeContainer);
-  const [editRow,setEditRow] = useState<CreatePicoDetail>()
-  const [updateRow,setUpdateRow] = useState<CreatePicoDetail>()
-
-  
-  useEffect(() => {
-    const editRow = data.find((row) => row.id === editRowId);
-    setEditRow(editRow);
-  }, [editRowId]);
-
-  // console.log(editRow)
-  // useEffect(() => {
-  //   const updateRow = data.find((row)=>row.picoDtlId === updateRowId);
-  //   setUpdateRow(updateRow)
-  // }, [editRowId,updateRowId]);
-  // const updateRow = data.find((row)=>row.picoDtlId === updateRowId);
+  const editRow = data.find((row) => row.id === editRowId);
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -92,7 +61,6 @@ const CreateRecycleForm = ({
       onClose && onClose();
     }
   };
-
   useEffect(() => {
     if (editRow) {
       // Set the form field values based on the editRow data
@@ -114,33 +82,10 @@ const CreateRecycleForm = ({
         recycType: editRow.recycType,
         recycSubType: editRow.recycSubType,
         weight: editRow.weight,
+      
       });
     }
   }, [editRow]);
-
-  useEffect(() => {
-    if (updateRow) {
-      // Set the form field values based on the editRow data
-      formik.setValues({
-        id:id,
-        senderId: "1",
-        senderName: updateRow.senderName,
-        senderAddr: updateRow.senderAddr,
-        senderAddrGps: [11, 12],
-        receiverId: "1",
-        receiverName:updateRow.receiverName,
-        receiverAddr:updateRow.receiverAddr,
-        receiverAddrGps: [11, 12],
-        status: "CREATED",
-        createdBy: "ADMIN",
-        updatedBy: "ADMIN",
-        pickupAt: "",
-        recycType: updateRow.recycType,
-        recycSubType:updateRow.recycSubType,
-        weight: updateRow.weight,
-      });
-    }
-  }, [updateRow]);
 
   const validateSchema = Yup.object().shape({
     senderName: Yup.string().required("This sendername is required"),
@@ -151,13 +96,10 @@ const CreateRecycleForm = ({
     recycSubType: Yup.string().required("This recycSubType is required"),
     weight: Yup.number().required("This weight is required"),
   });
-   
-
-  console.log(JSON.stringify(data)+'qwe')
 
   const formik = useFormik({
     initialValues: {
-      id: editMode?updateId:id,
+      id: id,
       senderId: "1",
       senderName: "",
       senderAddr: "",
@@ -179,27 +121,18 @@ const CreateRecycleForm = ({
     onSubmit: (values) => {
       console.log(values);
       alert(JSON.stringify(values, null, 2));
-      if(isEditing){
-        const updatedData = data.map((row) => {
-          console.log(editRow?.id, row.id);
-          return (row.id === editRow?.id) ? values : row
-        })
-        setState(updatedData);
-      }else{
-        var updatedValues: any = {
-          ...values
-          // items:items,
-        }
-        updatedValues.id = data.length
-        console.log("data: ",data," updatedValues: ",updatedValues)
-        setState([...data, updatedValues]);
-        //setId(id + 1)
-      }
-      onClose && onClose();
-     },
-    }
-  );
+      const updatedValues: any = {
+        ...values,
+        id: id + 1,
+        // items:items,
+      };
 
+      setState([...data, updatedValues]);
+      setId(id + 1);
+      onClose && onClose();
+    },
+  });
+  console.log(formik.errors);
 
   const TextFields = [
     {

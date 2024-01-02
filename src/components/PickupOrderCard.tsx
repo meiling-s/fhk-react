@@ -46,16 +46,26 @@ const PickupOrderCard = ({
         >
           <Box display="flex" justifyContent="space-between">
             <Box>
-           
-                  <Box >
+              {recyc
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex(
+                      (t) =>
+                        t.recycType === item.recycType &&
+                        t.recycSubType === item.recycSubType
+                    )
+                )
+                .map((a, index) => (
+                  <Box key={index}>
                     <CustomField label="主类别">
-                      <Typography>{podetail.recycType}</Typography>
+                      <Typography>{a.recycType}</Typography>
                     </CustomField>
                     <CustomField label="次类别">
-                      <Typography>{podetail.recycSubType}</Typography>
+                      <Typography>{a.recycSubType}</Typography>
                     </CustomField>
                   </Box>
-             
+                ))}
             </Box>
             <Box>
               <StatusCard status={podetail?.status} />

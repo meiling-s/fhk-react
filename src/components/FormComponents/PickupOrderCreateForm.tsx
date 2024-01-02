@@ -45,7 +45,6 @@ import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import PicoRoutineSelect from "../SpecializeComponents/PicoRoutineSelect";
 import { amET } from "@mui/material/locale";
 import i18n from "../../setups/i18n";
-import { v4 as uuidv4 } from 'uuid'
 
 const PickupOrderCreateForm = ({
   selectedPo,
@@ -53,53 +52,32 @@ const PickupOrderCreateForm = ({
   formik,
   setState,
   state,
-  selectedPoDetail,
-  editMode,
- 
-
 }: {
   selectedPo?: PickupOrder;
   title: string;
   formik: any;
   setState: (val: CreatePicoDetail[]) => void;
-
   state: CreatePicoDetail[];
-  selectedPoDetail?:CreatePicoDetail[];
-  editMode:boolean;
- 
-
-
 }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [editRowId, setEditRowId] = useState<number | null>(1);
-  const [updateRowId,setUpdateRowId] = useState<number | null>(1);
+  const [editRowId, setEditRowId] = useState<number | null>(null);
   const [id, setId] = useState<number>(0);
-  const [updateId,setUpdateId] = useState<number>(1)
-  const [initialRow,setInitialRow] = useState<CreatePicoDetail>();
-  const [isEditing,setIsEditing] = useState<boolean>(false)
   const { logisticList, contractType, vehicleType } =
     useContainer(CommonTypeContainer);
   const navigate = useNavigate();
   const handleCloses = () => {
     setOpenModal(false);
   };
-   
+  console.log(vehicleType);
 
-  const handleEditRow = (id:number) => {
-    setIsEditing(true)
+  console.log("yo" + JSON.stringify(state));
+  const handleEditRow = (id: number) => {
     setEditRowId(id);
     setOpenModal(true);
   };
-
   const handleDeleteRow = (id: any) => {
-    if(editMode){  
-      const updateRowsByDetailId = state.filter((row)=>row.picoDtlId!==id)
-      console.log('ben', state.map((a) => a.picoDtlId)+id);
-      setState(updateRowsByDetailId)
-    }else{
-      const updatedRowsById = state.filter((row) => row.id !== id);
-      setState(updatedRowsById)
-    }
+    const updatedRows = state.filter((row) => row.id !== id);
+    setState(updatedRows);
   };
   const handleHeaderOnClick = () => {
     console.log("Header click");
@@ -140,7 +118,7 @@ const PickupOrderCreateForm = ({
       return carType
     }
   }
-
+ 
 
   const columns: GridColDef[] = [
     { field: "pickupAt", headerName: "运送时间", width: 150 },
@@ -201,7 +179,7 @@ const PickupOrderCreateForm = ({
       width: 100,
       renderCell: (params) => (
         <IconButton>
-          <EDIT_OUTLINED_ICON onClick={() => handleEditRow(editMode?params.row.picoDtlId:params.row.id)} />
+          <EDIT_OUTLINED_ICON onClick={() => handleEditRow(params.row.id)} />
         </IconButton>
       ),
     },
@@ -210,8 +188,7 @@ const PickupOrderCreateForm = ({
       headerName: "",
       width: 100,
       renderCell: (params) => (
-   
-        <IconButton onClick={() => handleDeleteRow(editMode?params.row.picoDtlId:params.row.id)}>
+        <IconButton onClick={() => handleDeleteRow(params.row.id)}>
           <DELETE_OUTLINED_ICON />
         </IconButton>
       ),
@@ -406,34 +383,21 @@ const PickupOrderCreateForm = ({
                       },
                     }}
                   />
-                  
-                  <Modal open={openModal} onClose={handleCloses} >
+                  <Modal open={openModal} onClose={handleCloses}>
                     <CreateRecycleForm
                       data={state}
                       id={id}
                       setId={setId}
                       setState={setState}
-                      updateRowId={updateRowId}
                       onClose={handleCloses}
                       editRowId={editRowId}
-                      selectedPoDetails={selectedPoDetail}
-                      editMode={editMode}
-                      updateId= {updateId}
-                      setUpdateId ={setUpdateId}
-                      initialRow = {initialRow}
-                      isEditing = {isEditing}
-                      setIsEditing = {setIsEditing}
                     />
                   </Modal>
 
                   <Button
                     variant="outlined"
                     startIcon={<ADD_CIRCLE_ICON />}
-                    onClick={() => {
-                      setIsEditing(false)
-                      setId(-1)
-                      setOpenModal(true)
-                    }}
+                    onClick={() => setOpenModal(true)}
                     sx={{
                       height: "40px",
                       width: "100%",
