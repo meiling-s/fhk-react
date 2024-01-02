@@ -1,5 +1,5 @@
 export interface PickupOrder {
-    picoId:            string;
+    picoId:            number;
     picoType:          string;
     effFrmDate:        string;
     effToDate:         string;
@@ -57,7 +57,6 @@ export interface PickupOrderItem {
 
 
 export interface CreatePO {
-    tenantId:         string;
     picoType:         string;
     effFrmDate:       string;
     effToDate:        string;
@@ -78,8 +77,7 @@ export interface CreatePO {
 }
 
 export interface CreatePicoDetail {
-    picoDtlId?:      number,
-    id?:             number;
+    id:number;
     senderId:        string;
     senderName:      string;
     senderAddr:      string;
@@ -113,7 +111,7 @@ export interface PicoDetail {
 }
 
 export interface Row {
-    id: string;
+    id: number;
     建立日期: string;
     物流公司: string;
     运单编号: number;
@@ -123,28 +121,27 @@ export interface Row {
     状态: string;
   }
 
- 
-export interface  EditPo {
-    picoType:         string;
-    effFrmDate:       string;
-    effToDate:        string;
-    routineType:      string;
-    routine:          string[];
-    logisticId:       string;
-    logisticName:     string;
-    vehicleTypeId:    string;
-    platNo:           string;
-    contactNo:        string;
-    status:           string;
-    reason:           string;
-    normalFlg:        boolean;
-    approvedAt:       string;
-    rejectedAt:       string;
-    approvedBy:       string;
-    rejectedBy:       string;
-    contractNo:       string;
-    updatedBy:        string;
-    createPicoDetail: CreatePicoDetail[];
+  export interface EditPo {
+    picoType:      string;
+    effFrmDate:    string;
+    effToDate:     string;
+    routineType:   string;
+    routine:       string[];
+    logisticId:    string;
+    logisticName:  string;
+    vehicleTypeId: string;
+    platNo:        string;
+    contactNo:     string;
+    status:        string;
+    reason:        string;
+    normalFlg:     boolean;
+    approvedAt:    string;
+    rejectedAt:    string;
+    approvedBy:    string;
+    rejectedBy:    string;
+    contractNo:    string;
+    updatedBy:     string;
+    
 }
 
 export interface PoStatus {
