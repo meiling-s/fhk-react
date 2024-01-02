@@ -57,6 +57,7 @@ export interface PickupOrderItem {
 
 
 export interface CreatePO {
+    tenantId:         string;
     picoType:         string;
     effFrmDate:       string;
     effToDate:        string;

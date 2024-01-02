@@ -1,4 +1,4 @@
-import {useEffect} from 'react'
+
 import { useFormik } from 'formik'
 import PickupOrderCreateForm from '../../../components/FormComponents/PickupOrderCreateForm'
 import {
@@ -7,7 +7,7 @@ import {
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { CreatePO, CreatePicoDetail } from '../../../interfaces/pickupOrder'
 import { useNavigate } from 'react-router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useContainer } from 'unstated-next'
 import CheckInRequestContainer from '../../../contexts/CheckInRequestContainer'
 import * as Yup from 'yup'
@@ -18,10 +18,7 @@ const CreatePickupOrder = () => {
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
   const { initPickupOrderRequest } = useContainer(CheckInRequestContainer)
   const { t } = useTranslation()
-  const [picoTypeValue , setPicoType] = useState<string>("ROUTINE")
-
-  // const picoTypeeee: string = "lala"
- 
+  const [picoTypeValue , setPicoType] = useState<string>("ROUTINE") 
 
   const validateSchema = Yup.object().shape({
     picoType: Yup.string().required('This picoType is required'),
@@ -45,6 +42,7 @@ const CreatePickupOrder = () => {
  
   const createPickupOrder = useFormik({
     initialValues: {
+      tenantId: "69996",
       picoType: picoTypeValue,
       effFrmDate: '',
       effToDate: '',
