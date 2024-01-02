@@ -158,12 +158,12 @@ export const GET_WAREHOUSE_BY_ID = (
   warehouseId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/warehouse/${warehouseId}`
+  url: `api/v1/collectors/warehouse/warehouse/${warehouseId}`
 })
 
 export const ADD_WAREHOUSE: AxiosRequestConfig = {
   method: 'post',
-  url: 'api/v1/collectors/warehouse'
+  url: 'api/v1/collectors/warehouse/warehouse'
 }
 
 export const UPDATE_WAREHOUSE_BY_ID = (
@@ -184,7 +184,7 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   warehouseId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/collectors/warehouse/${warehouseId}/status`
+  url: `api/v1/collectors/warehouse/warehouse/${warehouseId}/status`
 })
 
 //recycle type
