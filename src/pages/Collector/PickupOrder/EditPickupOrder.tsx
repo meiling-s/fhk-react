@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import CreatePickupOrder from './CreatePickupOrder'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CreatePicoDetail, EditPo, PickupOrder } from '../../../interfaces/pickupOrder';
+import { CreatePicoDetail, EditPo, PickupOrder, PickupOrderDetail } from '../../../interfaces/pickupOrder';
 import PickupOrderCreateForm from '../../../components/FormComponents/PickupOrderCreateForm';
 import { useFormik } from 'formik';
 import { editPickupOrder, getAllPickUpOrder } from '../../../APICalls/Collector/pickupOrder/pickupOrder';
 import CheckInRequestContainer from '../../../contexts/CheckInRequestContainer';
 import { useContainer } from 'unstated-next';
+import { useTranslation } from 'react-i18next'
 
 
 const EditPickupOrder = () => {
-  
+    const { t } = useTranslation()
     const navigate = useNavigate();
     const {state} = useLocation();
     const [addRow, setAddRow] = useState<CreatePicoDetail[]>([]);
@@ -20,6 +21,7 @@ const EditPickupOrder = () => {
 
     const updatePickupOrder = useFormik({
         initialValues: {
+          tenantId: "",
           picoType: "",
           effFrmDate: "2023-12-12",
           effToDate: "2023-12-12",
@@ -39,6 +41,7 @@ const EditPickupOrder = () => {
           rejectedBy: "string",
           contractNo: "",
           updatedBy: "string",
+          pickupOrderDetail: []
         },
     
         onSubmit: async (values: EditPo) => {
@@ -62,6 +65,7 @@ const EditPickupOrder = () => {
         if (poInfo) {
           console.log('selectedPo:', poInfo);
           updatePickupOrder.setValues({
+            tenantId: poInfo.tenantId,
             picoType: poInfo.picoType,
             effFrmDate: poInfo.effFrmDate,
             effToDate: poInfo.effToDate,
@@ -81,12 +85,13 @@ const EditPickupOrder = () => {
             rejectedBy: 'ADMIN',
             contractNo: poInfo.contractNo,
             updatedBy: "Admin",
+            pickupOrderDetail: poInfo?.pickupOrderDetail || [],
           });
         }
       }, [poInfo]);
      
   return (
-    <PickupOrderCreateForm selectedPo={poInfo} title={'修改運單'} formik={updatePickupOrder}  setState={setAddRow} state={addRow} />
+    <PickupOrderCreateForm selectedPo={poInfo} title={t('pick_up_order.edit_pick_up_order')} formik={updatePickupOrder}  setState={setAddRow} state={addRow} />
   )
 }
 

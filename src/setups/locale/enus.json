@@ -225,7 +225,8 @@
     "notify": "Notify"
   },
   "pick_up_order": {
-    "create_pick_up_order": "Create Pick up Order",
+    "create_pick_up_order": "Create Pickup Order",
+    "edit_pick_up_order": "Edit Pickup Order",
     "shipping_info": "Shipping Information",
     "select_shipping_category": "Please Select Shipping Category",
     "regular_shipping": "Regular Shipping",

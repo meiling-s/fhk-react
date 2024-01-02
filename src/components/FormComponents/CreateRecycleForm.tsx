@@ -123,7 +123,7 @@ const CreateRecycleForm = ({
 
     onSubmit: (values) => {
       console.log(values)
-      alert(JSON.stringify(values, null, 2))
+      // alert(JSON.stringify(values, null, 2))
       const updatedValues: any = {
         ...values,
         id: id + 1

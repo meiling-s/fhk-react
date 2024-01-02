@@ -222,6 +222,7 @@
   },
   "pick_up_order": {
     "create_pick_up_order": "建立運單",
+    "edit_pick_up_order": "编辑取件订单",
     "shipping_info": "運輸資料",
     "select_shipping_category": "請選擇運輸類別",
     "regular_shipping": "常規運輸",

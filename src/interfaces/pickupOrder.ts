@@ -1,5 +1,6 @@
 export interface PickupOrder {
-    picoId:            number;
+    tenantId:         string;
+    picoId:            string;
     picoType:          string;
     effFrmDate:        string;
     effToDate:         string;
@@ -123,6 +124,7 @@ export interface Row {
   }
 
   export interface EditPo {
+    tenantId:      string;
     picoType:      string;
     effFrmDate:    string;
     effToDate:     string;
@@ -142,6 +144,7 @@ export interface Row {
     rejectedBy:    string;
     contractNo:    string;
     updatedBy:     string;
+    pickupOrderDetail: PickupOrderDetail[]
     
 }
 

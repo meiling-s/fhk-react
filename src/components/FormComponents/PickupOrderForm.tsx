@@ -62,7 +62,7 @@ const PickupOrderForm = ({
 
   useEffect(() => {
     if (selectedRow) {
-      const poDetail = pickupOrder?.find((po) => po.picoId === selectedRow.id)
+      const poDetail = pickupOrder?.find((po) => po.picoId.includes(selectedRow.id.toString()))
 
       if (poDetail) {
         setSelectedPickupOrder(poDetail)
