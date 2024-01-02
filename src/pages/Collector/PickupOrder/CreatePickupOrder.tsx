@@ -40,6 +40,7 @@ const CreatePickupOrder = () => {
  
   const createPickupOrder = useFormik({
     initialValues: {
+      tenantId: "666666",
       picoType: 'AD_HOC',
       effFrmDate:"",
       effToDate: "",
@@ -76,7 +77,7 @@ const CreatePickupOrder = () => {
   });
 
   return (
-     <PickupOrderCreateForm formik={createPickupOrder} title={'建立運單'}  setState={setAddRow} state={addRow} />
+     <PickupOrderCreateForm formik={createPickupOrder} title={'建立運單'}  setState={setAddRow} state={addRow} editMode={false} />
   );
 };
 
