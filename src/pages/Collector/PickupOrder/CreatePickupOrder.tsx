@@ -1,3 +1,4 @@
+import {useEffect} from 'react'
 import { useFormik } from 'formik'
 import PickupOrderCreateForm from '../../../components/FormComponents/PickupOrderCreateForm'
 import {
@@ -17,18 +18,23 @@ const CreatePickupOrder = () => {
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
   const { initPickupOrderRequest } = useContainer(CheckInRequestContainer)
   const { t } = useTranslation()
+  const [picoTypeValue , setPicoType] = useState<string>("ROUTINE")
+
+  // const picoTypeeee: string = "lala"
+ 
 
   const validateSchema = Yup.object().shape({
     picoType: Yup.string().required('This picoType is required'),
     effFrmDate: Yup.string().required('This effFrmDate is required'),
     effToDate: Yup.string().required('This effToDate is required'),
-    routineType: Yup.string().required('This routineType is required'),
-    routine: Yup.array().required('routine is required'),
+    routineType: picoTypeValue == "ROUTINE" ? Yup.string().required('This routineType is required') : Yup.string(),
+    routine: picoTypeValue == "ROUTINE" ? Yup.array().required('routine is required'): Yup.string(),
     logisticName: Yup.string().required('This logistic is required'),
     vehicleTypeId: Yup.string().required('This vehicleType is required'),
     platNo: Yup.string().required('This platNo is required'),
     contactNo: Yup.number().required('This contactNo is required'),
-    contractNo: Yup.string().required('This contractNo is required'),
+    contractNo: picoTypeValue == "ROUTINE" ? Yup.string().required('This contractNo is required'):Yup.string() ,
+    reason: picoTypeValue == "AD_HOC" ? Yup.string().required('This reason is required'):Yup.string(),
     createPicoDetail: Yup.array()
       .required('This field is required')
       .test('has-rows', 'At least one Pico Detail is required', (value) => {
@@ -36,9 +42,10 @@ const CreatePickupOrder = () => {
       })
   })
 
+ 
   const createPickupOrder = useFormik({
     initialValues: {
-      picoType: 'ROUTINE',
+      picoType: picoTypeValue,
       effFrmDate: '',
       effToDate: '',
       routineType: '',
@@ -71,6 +78,10 @@ const CreatePickupOrder = () => {
       }
     }
   })
+
+  useEffect(() => {
+    setPicoType(createPickupOrder.values.picoType)
+  }, [createPickupOrder.values.picoType]);
 
   return (
     <PickupOrderCreateForm

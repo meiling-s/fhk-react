@@ -75,9 +75,9 @@ const PickupOrderCreateForm = ({
   const handleCloses = () => {
     setOpenModal(false)
   }
-  console.log(vehicleType)
-  console.log('picoType', formik.values.picoType)
-  console.log('yo' + JSON.stringify(state))
+  // console.log(vehicleType)
+  // console.log('picoType', formik.values.picoType)
+  // console.log('yo' + JSON.stringify(state))
   const createdDate = dayjs(new Date()).format(format.dateFormat1)
 
   const handleEditRow = (id: number) => {
@@ -416,6 +416,9 @@ const PickupOrderCreateForm = ({
               )}
               {formik.values.picoType == 'AD_HOC' && (
                 <Grid item>
+                  <Typography sx={[styles.header3 ,{marginBottom: 1}]}>
+                    {t('pick_up_order.adhoc.po_number')}
+                  </Typography>
                   <Button
                     sx={[localstyles.picoIdButton]}
                     onClick={() => setOpenPico(true)}
