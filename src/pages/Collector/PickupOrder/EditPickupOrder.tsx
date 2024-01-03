@@ -67,9 +67,37 @@ const EditPickupOrder = () => {
     }
   })
 
+  const setPickupOrderDetail = () => {
+    const picoDetails: CreatePicoDetail[] =
+      poInfo?.pickupOrderDetail?.map((item) => ({
+        id: item.picoDtlId,
+        picoHisId: item.picoHisId,
+        senderId: item.senderId,
+        senderName: item.senderName,
+        senderAddr: item.senderAddr,
+        senderAddrGps: item.senderAddrGps,
+        receiverId: item.receiverId,
+        receiverName: item.receiverName,
+        receiverAddr: item.receiverAddr,
+        receiverAddrGps: item.receiverAddrGps,
+        status: item.status,
+        createdBy: item.createdBy,
+        updatedBy: item.updatedBy,
+        pickupAt: item.pickupAt,
+        recycType: item.recycType,
+        recycSubType: item.recycSubType,
+        weight: item.weight
+      })) || []
+
+    setAddRow(picoDetails)
+    return picoDetails
+  }
+
   useEffect(() => {
     if (poInfo) {
       console.log('selectedPo:', poInfo)
+      const createPicoDetail: CreatePicoDetail[] = setPickupOrderDetail()
+
       updatePickupOrder.setValues({
         tenantId: poInfo.tenantId,
         picoType: poInfo.picoType,

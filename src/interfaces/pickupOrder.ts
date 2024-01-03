@@ -1,6 +1,7 @@
 
 export interface PickupOrderDetail {
     picoDtlId:       number;
+    picoHisId:       string | null;
     senderId:        string;
     senderName:      string;
     senderAddr:      string;
@@ -146,7 +147,7 @@ export interface Row {
     rejectedBy:    string;
     contractNo:    string;
     updatedBy:     string;
-    createPicoDetail: PickupOrderDetail[]
+    createPicoDetail: CreatePicoDetail[]
     
 }
 

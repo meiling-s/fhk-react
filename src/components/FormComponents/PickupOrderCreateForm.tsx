@@ -232,26 +232,26 @@ const PickupOrderCreateForm = ({
   ) => {
     console.log(pickupOrderDetail)
     setPicoRefId(picoId)
-    // const pickupDetails: CreatePicoDetail = {
-    //   id: id,
-    //   picoHisId: picoRefId,
-    //   senderId: '1',
-    //   senderName: '',
-    //   senderAddr: '',
-    //   senderAddrGps: [11, 12],
-    //   receiverId: '1',
-    //   receiverName: '',
-    //   receiverAddr: '',
-    //   receiverAddrGps: [11, 12],
-    //   status: 'CREATED',
-    //   createdBy: 'ADMIN',
-    //   updatedBy: 'ADMIN',
-    //   pickupAt: '',
-    //   recycType: '',
-    //   recycSubType: '',
-    //   weight: 0
-    // }
-    // setState(pickupDetails)
+    const pickupDetails: CreatePicoDetail = {
+      id: id,
+      picoHisId: picoRefId,
+      senderId: '1',
+      senderName: '',
+      senderAddr: '',
+      senderAddrGps: [11, 12],
+      receiverId: '1',
+      receiverName: '',
+      receiverAddr: '',
+      receiverAddrGps: [11, 12],
+      status: 'CREATED',
+      createdBy: 'ADMIN',
+      updatedBy: 'ADMIN',
+      pickupAt: '',
+      recycType: '',
+      recycSubType: '',
+      weight: 0
+    }
+    setState([...state, pickupDetails])
     setOpenPico(false)
   }
 
