@@ -43,7 +43,8 @@ const CreateRecycleForm = ({
   setId,
   data,
   id,
-  editRowId
+  editRowId,
+  picoHisId
 }: {
   onClose: () => void
   setState: (val: CreatePicoDetail[]) => void
@@ -51,6 +52,7 @@ const CreateRecycleForm = ({
   setId: Dispatch<SetStateAction<number>>
   id: number
   editRowId: number | null
+  picoHisId: string | null
 }) => {
   const [recyclables, setRecyclables] = useState<recyclable[]>([])
   const { recycType } = useContainer(CommonTypeContainer)
@@ -71,6 +73,7 @@ const CreateRecycleForm = ({
       console.log(editRow)
       formik.setValues({
         id: id,
+        picoHisId: picoHisId,
         senderId: '1',
         senderName: editRow.senderName,
         senderAddr: editRow.senderAddr,
@@ -103,6 +106,7 @@ const CreateRecycleForm = ({
   const formik = useFormik({
     initialValues: {
       id: id,
+      picoHisId: picoHisId,
       senderId: '1',
       senderName: '',
       senderAddr: '',

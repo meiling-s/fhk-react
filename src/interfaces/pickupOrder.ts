@@ -81,6 +81,7 @@ export interface CreatePO {
 
 export interface CreatePicoDetail {
     id:number;
+    picoHisId:       string | null;
     senderId:        string;
     senderName:      string;
     senderAddr:      string;
@@ -153,5 +154,18 @@ export interface PoStatus {
     status:    string;
     reason:    string;
     updatedBy: string;
+}
+
+
+export interface PicoRefrenceList {
+    type: string;
+    picoId: number;
+    status: string;
+    effFrmDate: string;
+    effToDate:string
+    routine: string;
+    senderName: string;
+    receiver: string;
+    pickupOrderDetail: PickupOrderDetail;
 }
 

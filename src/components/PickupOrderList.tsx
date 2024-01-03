@@ -12,27 +12,48 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { ReactComponent as Delivery } from '../Delivery.svg'
 import RightOverlayForm from '../components/RightOverlayForm'
-import { PickupOrder, PickupOrderDetail } from '../interfaces/pickupOrder'
+import { PickupOrder, PickupOrderDetail, PicoRefrenceList } from '../interfaces/pickupOrder'
 import { useTranslation } from 'react-i18next'
-import { Padding } from '@mui/icons-material'
+
+
+import { useContainer } from "unstated-next";
+import CheckInRequestContainer from "../contexts/CheckInRequestContainer";
 interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
-  selectPico?: (picoId: number) => void
+  selectPicoDetail?: (pickupOrderDetail: PickupOrderDetail) => void
 }
 
 const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   drawerOpen,
   handleDrawerClose,
-  selectPico
+  selectPicoDetail
 }) => {
   const { t } = useTranslation()
-  const [picoList, setPicoList] = useState<PickupOrderDetail[]>([])
-  const [filteredPico, setFilteredPico] = useState<PickupOrderDetail[]>([])
+  const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
+  const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
+  const {pickupOrder} = useContainer(CheckInRequestContainer)
+
+  const picoDetailList = pickupOrder?.flatMap(item =>
+    item?.pickupOrderDetail.map(detailPico => ({
+      type: item.picoType,
+      picoId: item.picoId,
+      status: detailPico.status,
+      effFrmDate: item.effFrmDate,
+      effToDate: item.effToDate,
+      routine: `${item.routineType}, ${item.routine.join(', ')}`,
+      senderName: detailPico.senderName,
+      receiver: detailPico.receiverName,
+      pickupOrderDetail: detailPico
+      
+    }))
+  ) ?? [];
+
+
 
   const handleSearch = (searchWord: string) => {
     if (searchWord != '') {
-      const filteredData: PickupOrderDetail[] = []
+      const filteredData: PicoRefrenceList[] = []
       filteredPico.map((item) => {
         if (item.senderName.includes(searchWord)) {
           filteredData.push(item)
@@ -46,18 +67,11 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
-  const dummmy = [
-    {
-      type: '快捷物流', //picoType
-      picoId: 'PO12345678',
-      status: '快',
-      startDate: '2023/09/20', //effFrmDate
-      endDate: '2023/09/30', //effToDate
-      routine: '逢星期二、四', //routineType, routine
-      shippingCompany: '收件公司', //createPicoDetail.sender_name
-      reciver: '收件公司' // reciver
+  const handleSelectedPicoId= (pickupOrderDetail : PickupOrderDetail) =>{
+    if(selectPicoDetail){
+      selectPicoDetail(pickupOrderDetail)
     }
-  ]
+  }
 
   return (
     <>
@@ -95,10 +109,11 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                   />
                 </div>
                 <Box>
-                  {dummmy.map((item, index) => (
+                  {picoDetailList.map((item, index) => (
                     <div
                       key={index}
-                      className="card-pico p-4 border border-solid rounded-lg border-grey-line"
+                      onClick={() => handleSelectedPicoId(item.pickupOrderDetail)}
+                      className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer"
                     >
                       <div className="font-bold text-mini mb-2">
                         {item.type}
@@ -108,15 +123,15 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                         <div className="text-smi bg-green-200 text-green-600 px-2 py-3 rounded-[50%]">
                           {item.status}
                         </div>
-                        <div className="text-smi text-[#717171]">{item.startDate}</div>
+                        <div className="text-smi text-[#717171]">{item.effFrmDate}</div>
                         <div className='text-smi text-[#717171]'>{t('pick_up_order.to')}</div>
-                        <div className="text-smi text-[#717171]">{item.startDate}</div>
+                        <div className="text-smi text-[#717171]">{item.effToDate}</div>
                         <div className="text-smi text-[#717171]">{item.routine}</div>
                       </div>
                       <div className="mb- flex items-center gap-2">
                         <div><img src="../Delivery.svg" alt="" /></div>
-                        <div className="text-xs text-[#717171]">{item.shippingCompany}</div>
-                        <div className="text-xs text-[#717171]">{item.reciver}</div>
+                        <div className="text-xs text-[#717171]">{item.senderName}</div>
+                        <div className="text-xs text-[#717171]">{item.receiver}</div>
                       </div>
                     </div>
                   ))}

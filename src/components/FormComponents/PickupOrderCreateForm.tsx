@@ -69,6 +69,7 @@ const PickupOrderCreateForm = ({
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [editRowId, setEditRowId] = useState<number | null>(null)
   const [id, setId] = useState<number>(0)
+  const [picoRefId, setPicoRefId] = useState(null)
   const { logisticList, contractType, vehicleType } =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
@@ -484,6 +485,7 @@ const PickupOrderCreateForm = ({
                       setState={setState}
                       onClose={handleCloses}
                       editRowId={editRowId}
+                      picoHisId={picoRefId}
                     />
                   </Modal>
 
