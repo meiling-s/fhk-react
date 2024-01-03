@@ -36,8 +36,9 @@ export default function RecyclablesListSingleSelect({
     useEffect(() => {
         //console.log("defaultRecycL:",defaultRecycL);
         if(defaultRecycL){
-            setRecycType(defaultRecycL.recycTypeId);
-            setSubType(defaultRecycL.recycSubTypeId);
+            setRecycType(defaultRecycL.recycTypeId)
+            setSubType(defaultRecycL.recycSubTypeId)
+            setCurRecyc(defaultRecycL.recycTypeId)
         }
     },[])
 
@@ -45,10 +46,6 @@ export default function RecyclablesListSingleSelect({
         console.log(toSingleRecyclable());
         setState(toSingleRecyclable());
     },[recycType, subType])
-
-    useEffect(() => {
-        setSubType("");
-    },[recycType])
 
     const returnRecycTypes = () => {
         const recycItem: recycItem[] = [];
@@ -148,7 +145,10 @@ export default function RecyclablesListSingleSelect({
         <>
             <CustomItemList
                 items={returnRecyclables(returnRecycTypes())}
-                singleSelect={setRecycType}
+                singleSelect={(s) => {
+                    setRecycType(s)
+                    setSubType("")
+                }}
                 setLastSelect={setCurRecyc}
                 error={showError && recycType.length == 0}
                 defaultSelected={defaultRecycL? defaultRecycL.recycTypeId : []}
