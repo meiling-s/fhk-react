@@ -69,7 +69,7 @@ const CreatePickupOrder = () => {
       picoType: picoTypeValue,
       effFrmDate: '',
       effToDate: '',
-      routineType: '',
+      routineType: 'daily',
       routine: [],
       logisticId: '',
       logisticName: '',

@@ -254,6 +254,11 @@ const PickupOrderCreateForm = ({
     // setState(pickupDetails)
     setOpenPico(false)
   }
+
+  const resetPicoId = () => {
+    setOpenPico(true) 
+    setPicoRefId('')
+  }
   return (
     <>
       <form onSubmit={formik.handleSubmit} className="w-full">
@@ -331,7 +336,7 @@ const PickupOrderCreateForm = ({
                       formik.setFieldValue('routine', values.routineContent)
                     }}
                     defaultValue={{
-                      routineType: selectedPo?.routineType ?? '',
+                      routineType: selectedPo?.routineType ?? 'daily',
                       routineContent: selectedPo?.routine ?? []
                     }}
                   />
@@ -460,18 +465,19 @@ const PickupOrderCreateForm = ({
               {formik.values.picoType === 'AD_HOC' && (
                 <>
                   <Grid item>
+                  <Typography sx={[styles.header3, { marginBottom: 1 }]}>
+                    {t('pick_up_order.adhoc.po_number')}
+                  </Typography>
                     {picoRefId !== '' ? (
-                      <div className="flex items-center ">
+                      <div className="flex items-center justify-between w-[390px]">
                         <div className="font-bold text-mini">{picoRefId}</div>
-                        <div className="text-mini text-green-400" onClick={() => setOpenPico(true)}>
+                        <div className="text-mini text-green-400 cursor-pointer" onClick={resetPicoId}>
                           {t('pick_up_order.change')}
                         </div>
                       </div>
                     ) : (
                       <div>
-                        <Typography sx={[styles.header3, { marginBottom: 1 }]}>
-                          {t('pick_up_order.adhoc.po_number')}
-                        </Typography>
+                       
                         <Button
                           sx={[localstyles.picoIdButton]}
                           onClick={() => setOpenPico(true)}
