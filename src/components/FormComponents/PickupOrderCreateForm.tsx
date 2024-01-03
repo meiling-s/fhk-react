@@ -232,6 +232,27 @@ const PickupOrderCreateForm = ({
   ) => {
     console.log(pickupOrderDetail)
     setPicoRefId(picoId)
+    // const pickupDetails: CreatePicoDetail = {
+    //   id: id,
+    //   picoHisId: picoRefId,
+    //   senderId: '1',
+    //   senderName: '',
+    //   senderAddr: '',
+    //   senderAddrGps: [11, 12],
+    //   receiverId: '1',
+    //   receiverName: '',
+    //   receiverAddr: '',
+    //   receiverAddrGps: [11, 12],
+    //   status: 'CREATED',
+    //   createdBy: 'ADMIN',
+    //   updatedBy: 'ADMIN',
+    //   pickupAt: '',
+    //   recycType: '',
+    //   recycSubType: '',
+    //   weight: 0
+    // }
+    // setState(pickupDetails)
+    setOpenPico(false)
   }
   return (
     <>
@@ -438,27 +459,31 @@ const PickupOrderCreateForm = ({
               )}
               {formik.values.picoType === 'AD_HOC' && (
                 <>
-                  {picoRefId !== '' ? (
-                    <div>
-                      <div className="bold text-mini">{picoRefId}</div>
-                      <div>{t('pick_up_order.change')}</div>
-                    </div>
-                  ) : (
-                    <Grid item>
-                      <Typography sx={[styles.header3, { marginBottom: 1 }]}>
-                        {t('pick_up_order.adhoc.po_number')}
-                      </Typography>
-                      <Button
-                        sx={[localstyles.picoIdButton]}
-                        onClick={() => setOpenPico(true)}
-                      >
-                        <AddCircleIcon
-                          sx={{ ...styles.endAdornmentIcon, pr: 1 }}
-                        />
-                        {t('pick_up_order.choose')}
-                      </Button>
-                    </Grid>
-                  )}
+                  <Grid item>
+                    {picoRefId !== '' ? (
+                      <div className="flex items-center ">
+                        <div className="font-bold text-mini">{picoRefId}</div>
+                        <div className="text-mini text-green-400" onClick={() => setOpenPico(true)}>
+                          {t('pick_up_order.change')}
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <Typography sx={[styles.header3, { marginBottom: 1 }]}>
+                          {t('pick_up_order.adhoc.po_number')}
+                        </Typography>
+                        <Button
+                          sx={[localstyles.picoIdButton]}
+                          onClick={() => setOpenPico(true)}
+                        >
+                          <AddCircleIcon
+                            sx={{ ...styles.endAdornmentIcon, pr: 1 }}
+                          />
+                          {t('pick_up_order.choose')}
+                        </Button>
+                      </div>
+                    )}
+                  </Grid>
                 </>
               )}
               <Grid item>
