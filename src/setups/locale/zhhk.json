@@ -240,6 +240,14 @@
       "recycling_category" : "回收類別",
       "status": "状态"
     },
+    "card_detail": {
+      "main_category": "主類別",
+      "subcategory": "次類別",
+      "shipping_time": "運送時間",
+      "weight": "重量",
+      "shipping_receiver": "運輸和接收公司",
+      "deliver_location": "交貨和到達地點"
+    },
     "item": {
       "detail": "运单详情",
       "edit": "修改",

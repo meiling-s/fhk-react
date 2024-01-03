@@ -244,6 +244,14 @@
       "recycling_category": "Recycling Category",
       "status": "Status"
     },
+    "card_detail": {
+      "main_category": "Type",
+      "subcategory": "Subtype",
+      "shipping_time": "Estimated shipping time",
+      "weight": "Weight",
+      "shipping_receiver": "Shipping and receiving companies",
+      "deliver_location": "Delivery and arrival locations"
+    },
     "item": {
       "detail": "Pickup Order details",
       "edit": "Edit",
