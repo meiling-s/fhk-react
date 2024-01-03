@@ -159,7 +159,7 @@ export interface PoStatus {
 
 export interface PicoRefrenceList {
     type: string;
-    picoId: number;
+    picoId: string;
     status: string;
     effFrmDate: string;
     effToDate:string

@@ -325,6 +325,7 @@
       "placeholder": "Please enter location"
     },
     "select_po": "Choose pickup order",
-    "search_company_name": "Enter sender company"
+    "search_company_name": "Enter sender company",
+    "change": "Change"
   }
 }

@@ -325,6 +325,7 @@
       "select_po": "选择运单"
     },
     "select_po": "选择运单",
-    "search_company_name": "输入发件人公司"
+    "search_company_name": "输入发件人公司",
+    "change": "更改"
   }
 }

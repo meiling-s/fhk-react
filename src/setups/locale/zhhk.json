@@ -322,6 +322,7 @@
       "select_po": "選擇運單"
     },
     "select_po": "選擇運單",
-    "search_company_name": "輸入寄件者公司"
+    "search_company_name": "輸入寄件者公司",
+    "change": "變更"
   }
 }
