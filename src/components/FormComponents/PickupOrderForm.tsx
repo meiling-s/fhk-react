@@ -30,6 +30,7 @@ import {
   getDtlById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useFormik } from 'formik'
+import { useTranslation } from 'react-i18next'
 
 const PickupOrderForm = ({
   onClose,
@@ -38,6 +39,8 @@ const PickupOrderForm = ({
   onClose?: () => void
   selectedRow?: Row | null
 }) => {
+  const { t } = useTranslation()
+
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -100,7 +103,7 @@ const PickupOrderForm = ({
         <Box sx={localstyles.container}>
           <Box sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}>
             <Box>
-              <Typography sx={styles.header4}>运单详情</Typography>
+              <Typography sx={styles.header4}>{t('pick_up_order.item.detail')}</Typography>
               <Typography sx={styles.header3}>
                 {selectedPickupOrder?.picoId}
               </Typography>
@@ -117,7 +120,7 @@ const PickupOrderForm = ({
                   selectedPickupOrder && handleRowClick(selectedPickupOrder)
                 }
               >
-                修改
+                {t('pick_up_order.item.edit')}
               </Button>
               <Button
                 variant="outlined"
@@ -125,7 +128,7 @@ const PickupOrderForm = ({
                 sx={localstyles.button}
                 onClick={onDeleteClick}
               >
-                删除
+                 {t('pick_up_order.item.delete')}
               </Button>
               <IconButton sx={{ ml: '25px' }} onClick={onClose}>
                 <KeyboardTabIcon sx={{ fontSize: '30px' }} />
@@ -135,16 +138,16 @@ const PickupOrderForm = ({
           <Divider />
           <Stack spacing={2} sx={localstyles.content}>
             <Box>
-              <Typography sx={localstyles.typo_header}>運輸資料</Typography>
+              <Typography sx={localstyles.typo_header}>{t('pick_up_order.item.shipping_info')}</Typography>
             </Box>
 
-            <CustomField label={'建立日期及時間'}>
+            <CustomField label= {t('pick_up_order.item.date_time')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {new Date().toLocaleString()}
               </Typography>
             </CustomField>
 
-            <CustomField label={'运输类别'}>
+            <CustomField label={t('pick_up_order.item.transport_category')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.picoType === 'AD_HOC'
                   ? '常規運輸'
@@ -154,13 +157,13 @@ const PickupOrderForm = ({
               </Typography>
             </CustomField>
 
-            <CustomField label={'运输有效日期'}>
+            <CustomField label={t('pick_up_order.item.shipping_validity')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.effFrmDate} To{' '}
                 {selectedPickupOrder?.effToDate}
               </Typography>
             </CustomField>
-            <CustomField label={'回收周次'}>
+            <CustomField label={t('pick_up_order.item.recycling_week')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.routine
                   .map((routineItem) => routineItem)
@@ -168,7 +171,7 @@ const PickupOrderForm = ({
               </Typography>
             </CustomField>
 
-            <CustomField label={'车辆类别'}>
+            <CustomField label={t('pick_up_order.item.vehicle_category')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.vehicleTypeId === '1'
                   ? '小型貨車'
@@ -177,30 +180,30 @@ const PickupOrderForm = ({
                   : ''}
               </Typography>
             </CustomField>
-            <CustomField label={'车牌号码'}>
+            <CustomField label={t('pick_up_order.item.plat_number')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.platNo}
               </Typography>
             </CustomField>
-            <CustomField label={'联络人号码'}>
+            <CustomField label={t('pick_up_order.item.contact_number')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.contactNo}
               </Typography>
             </CustomField>
 
-            <CustomField label={'寄件公司名称'}>
+            <CustomField label={t('pick_up_order.item.sender_name')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.logisticName}
               </Typography>
             </CustomField>
 
-            <CustomField label={'已过期操作'}>
+            <CustomField label={t('pick_up_order.item.exp_opration')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.normalFlg ? '是' : '否'}
               </Typography>
             </CustomField>
 
-            <Typography sx={localstyles.typo_header}>回收地点资料</Typography>
+            <Typography sx={localstyles.typo_header}>{t('pick_up_order.item.rec_loc_info')}</Typography>
 
             <PickupOrderCard pickupOrderDetail={pickupOrderDetail ?? []} />
           </Stack>

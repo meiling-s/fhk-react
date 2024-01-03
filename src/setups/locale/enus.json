@@ -225,19 +225,54 @@
     "notify": "Notify"
   },
   "pick_up_order": {
+    "enquiry_pickup_order": "Enquiry pickup order",
+    "table": {
+      "created_datetime": "Created datetime",
+      "pico_id": "PO Number",
+      "logistic_company": "Logistic company",
+      "delivery_date": "Delivery date",
+      "sender_company": " Sender company name",
+      "receiver": "Receiver company name",
+      "status": "Status"
+    },
+    "filter": {
+      "search": "Search",
+      "dateby": " Date by",
+      "to": "To",
+      "logistic_company": "Logistic company",
+      "location": "Location",
+      "recycling_category": "Recycling Category",
+      "status": "Status"
+    },
+    "item": {
+      "detail": "Pickup Order details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "shipping_info": "Shipping Information",
+      "date_time": "Creation date and time",
+      "transport_category": "Transport category",
+      "shipping_validity": "Shipping validity date",
+      "recycling_week": "recycling week",
+      "vehicle_category": "Vehicle type",
+      "plat_number": "Vehicle plate no.",
+      "contact_number": "Contact no.",
+      "sender_name": "Shipping company",
+      "exp_opration": "Expired operation",
+      "rec_loc_info": "Recycling location information"
+    },
     "create_pick_up_order": "Create",
     "edit_pick_up_order": "Edit Pickup Order",
     "shipping_info": "Shipping Information",
     "select_shipping_category": "Please select pickup order type",
     "regular_shipping": "Regular Shipping",
     "one-transport": "One Time Transport",
-    "shipping_validity": "Shipping validity date is given by",
+    "shipping_validity": "Shipping validity date",
     "to": "To",
     "routine": {
       "recycling_week": "recycling week",
       "every_week": "every week",
       "contract_number": "Contract no.",
-      "enter_contract" : "Please input contract no."
+      "enter_contract": "Please input contract no."
     },
     "adhoc": {
       "reason_get_off": "Ad-hoc reason",
@@ -256,32 +291,32 @@
     "new": "New",
     "finish": "Complete",
     "cancel": "Cancel",
-    "detail":{
+    "detail": {
       "shipping_time": "Pickup time",
       "main_category": "Type",
       "subcategory": "Subtype",
       "weight": "Weight",
-      "sender_name" : "Shipping company",
+      "sender_name": "Shipping company",
       "receiver": "receiver",
       "recycling_location": "Recycling Location",
       "arrived": "Arrived"
     },
     "recyclForm": {
-      "new" :"New",
-      "expected_recycling" : "Expected recycling",
-      "finish" : "Finish",
-      "cancel" : "Cancel",
+      "new": "New",
+      "expected_recycling": "Expected recycling",
+      "finish": "Finish",
+      "cancel": "Cancel",
       "shipping_time": "Shipping Time",
       "recycle_category": "Recycling category",
-      "waste_paper_category" :"Waste paper category",
-      "weight" :"Estimated weight",
+      "waste_paper_category": "Waste paper category",
+      "weight": "Estimated weight",
       "shipping_company": "Shipping company",
       "receiver": "receiver",
       "recycling_location": "Recycling Location",
       "arrived": "Arrived",
       "placeholder": "Please enter location"
     },
-    "select_po"  :"Choose pickup order",
+    "select_po": "Choose pickup order",
     "search_company_name": "Enter sender company"
   }
 }

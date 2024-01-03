@@ -224,6 +224,41 @@
     "notify": "通知"
   },
   "pick_up_order": {
+    "enquiry_pickup_order": "查询运单",
+    "table" : {
+      "created_datetime": "建立日期",
+      "pico_id" : "运单编号",
+      "logistic_company" :"物流公司",
+      "delivery_date": "送货日期",
+      "sender_company":"寄件公司",
+      "receiver": "收件公司",
+      "status": "状态"
+    },
+    "filter": {
+      "search": "搜索",
+      "dateby": "日期截止",
+      "to": "至",
+      "logistic_company" :"物流公司",
+      "location": "地点",
+      "recycling_category" : "回收类别",
+      "status": "状态"
+    },
+    "item": {
+      "detail": "運單詳情",
+      "edit": "修改",
+      "delete":"修改",
+      "shipping_info": "運輸資料",
+      "date_time": "建立日期及時間",
+      "transport_category": "運輸類別",
+      "shipping_validity": "运输有效日期由",
+      "recycling_week": "回收周次",
+      "vehicle_category": "车辆类别",
+      "plat_number": "车牌号码",
+      "contact_number": "请填写手机号码",
+      "sender_name" : "寄件公司",
+      "exp_opration": "已过期操作",
+      "rec_loc_info": "回收地點資料"
+    },
     "create_pick_up_order": "建立",
     "edit_pick_up_order": "编辑取件订单",
     "shipping_info": "運輸資料",

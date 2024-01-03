@@ -19,7 +19,7 @@ import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
 import { ToastContainer, toast } from "react-toastify";
-
+import { useTranslation } from 'react-i18next'
 
 
 
@@ -29,45 +29,46 @@ interface Option {
 }
 
 const PickupOrders = () => {
+  const { t } = useTranslation()
   const columns: GridColDef[] = [
-    { field: "建立日期", headerName: "建立日期", width: 300 },
+    { field: "建立日期", headerName: t('pick_up_order.table.created_datetime'), width: 300 },
     {
       field: "物流公司",
-      headerName: "物流公司",
+      headerName: t('pick_up_order.table.pico_id'),
       width: 170,
       editable: true,
     },
     {
       field: "运单编号",
-      headerName: "运单编号",
+      headerName: t('pick_up_order.table.logistic_company'),
       type:"string",
       width: 170,
       editable: true,
     },
     {
       field: "送货日期",
-      headerName: "送货日期",
+      headerName: t('pick_up_order.table.delivery_date'),
       type: 'string',
       width: 300,
       editable: true,
     },
     {
         field: "寄件公司",
-        headerName: "寄件公司",
+        headerName: t('pick_up_order.table.sender_company'),
         type: "sring",
         width: 170,
         editable: true,
     },
     {
         field: "收件公司",
-        headerName: "收件公司",
+        headerName: t('pick_up_order.table.receiver'),
         type: "string",
         width: 170,
         editable: true,
     },
     {
         field: "状态",
-        headerName: "状态",
+        headerName: t('pick_up_order.table.status'),
         type: "string",
         width: 170,
         editable: true,
@@ -128,13 +129,13 @@ const PickupOrders = () => {
     状态: string;
   }
   const searchfield = [
-    {label:'搜索',width:'14%',},
-    {label:'日期由',width:'10%',options:getUniqueOptions('建立日期')},
-    {label:'至',width:'10%',options:getUniqueOptions('送货日期')},
-    {label:'物流公司',width:'14%',options:getUniqueOptions('物流公司')},
-    {label:'地点',width:'14%',options:getUniqueOptions('收件公司')},
-    {label:'回收物类别',width:'14%',options:getUniqueOptions('状态')},
-    {label:'状态',width:'14%',options:getUniqueOptions('状态')}
+    {label:t('pick_up_order.filter.search'),width:'14%',},
+    {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('建立日期')},
+    {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('送货日期')},
+    {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('物流公司')},
+    {label:t('pick_up_order.filter.location'),width:'14%',options:getUniqueOptions('收件公司')},
+    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getUniqueOptions('状态')},
+    {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('状态')}
     
   ]
   
@@ -183,7 +184,7 @@ const PickupOrders = () => {
                     </Modal>
       <Box sx={{ display: "flex", alignItems: "center",ml:'6px',width:'100%' }}>
         <Typography fontSize={20} color="black" fontWeight="bold">
-          查询运单
+        {t('pick_up_order.enquiry_pickup_order')}
         </Typography>
         <Button
           onClick={() => navigate("/collector/createPickupOrder")}
