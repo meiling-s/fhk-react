@@ -24,7 +24,8 @@ import CheckInRequestContainer from '../../contexts/CheckInRequestContainer'
 import {
   CreatePicoDetail,
   EditPo,
-  PickupOrder
+  PickupOrder,
+  PickupOrderDetail
 } from '../../interfaces/pickupOrder'
 import { colPtRoutine } from '../../interfaces/common'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -51,6 +52,7 @@ import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
+import { divIcon } from 'leaflet'
 
 const PickupOrderCreateForm = ({
   selectedPo,
@@ -69,7 +71,7 @@ const PickupOrderCreateForm = ({
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [editRowId, setEditRowId] = useState<number | null>(null)
   const [id, setId] = useState<number>(0)
-  const [picoRefId, setPicoRefId] = useState(null)
+  const [picoRefId, setPicoRefId] = useState('')
   const { logisticList, contractType, vehicleType } =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
@@ -136,7 +138,7 @@ const PickupOrderCreateForm = ({
       {
         id: '2',
         name: '貨物過剩'
-      },
+      }
     ]
     return reasons
   }
@@ -224,6 +226,13 @@ const PickupOrderCreateForm = ({
     setOpenPico(false)
   }
 
+  const selectPicoRefrence = (
+    pickupOrderDetail: PickupOrderDetail,
+    picoId: string
+  ) => {
+    console.log(pickupOrderDetail)
+    setPicoRefId(picoId)
+  }
   return (
     <>
       <form onSubmit={formik.handleSubmit} className="w-full">
@@ -427,20 +436,30 @@ const PickupOrderCreateForm = ({
                   </CustomField>
                 </Grid>
               )}
-              {formik.values.picoType == 'AD_HOC' && (
-                <Grid item>
-                  <Typography sx={[styles.header3, { marginBottom: 1 }]}>
-                    {t('pick_up_order.adhoc.po_number')}
-                  </Typography>
-                  <Button
-                    sx={[localstyles.picoIdButton]}
-                    onClick={() => setOpenPico(true)}
-                  >
-                    <AddCircleIcon sx={{ ...styles.endAdornmentIcon, pr: 1 }} />
-
-                    {t('pick_up_order.choose')}
-                  </Button>
-                </Grid>
+              {formik.values.picoType === 'AD_HOC' && (
+                <>
+                  {picoRefId !== '' ? (
+                    <div>
+                      <div className="bold text-mini">{picoRefId}</div>
+                      <div>{t('pick_up_order.change')}</div>
+                    </div>
+                  ) : (
+                    <Grid item>
+                      <Typography sx={[styles.header3, { marginBottom: 1 }]}>
+                        {t('pick_up_order.adhoc.po_number')}
+                      </Typography>
+                      <Button
+                        sx={[localstyles.picoIdButton]}
+                        onClick={() => setOpenPico(true)}
+                      >
+                        <AddCircleIcon
+                          sx={{ ...styles.endAdornmentIcon, pr: 1 }}
+                        />
+                        {t('pick_up_order.choose')}
+                      </Button>
+                    </Grid>
+                  )}
+                </>
               )}
               <Grid item>
                 <Typography sx={styles.header2}>
@@ -492,6 +511,7 @@ const PickupOrderCreateForm = ({
                   <PickupOrderList
                     drawerOpen={openPico}
                     handleDrawerClose={handleClosePicoList}
+                    selectPicoDetail={selectPicoRefrence}
                   ></PickupOrderList>
 
                   <Button
