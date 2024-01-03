@@ -128,7 +128,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                           item.picoId
                         )
                       }
-                      className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer"
+                      className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4"
                     >
                       <div className="font-bold text-mini mb-2">
                         {item.type}
