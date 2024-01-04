@@ -130,16 +130,44 @@ const PickupOrderCreateForm = ({
   }
 
   const getReason = () => {
-    const reasons: il_item[] = [
+    const reasonList = [
       {
-        id: '1',
-        name: '壞車'
+        id : '1',
+        reasonEn : "Broken Car",
+        reasonSchi: "坏车",
+        reasonTchi : "壞車"
       },
       {
-        id: '2',
-        name: '貨物過剩'
+        id : '1',
+        reasonEn : "Surplus of Goods",
+        reasonSchi: "货物过剩",
+        reasonTchi : "貨物過剩"
       }
     ]
+    const reasons: il_item[] = []
+    reasonList.forEach((item) => {
+      var name = ""
+      switch (i18n.language) {
+        case 'enus':
+          name = item.reasonEn
+          break
+        case 'zhch':
+          name = item.reasonSchi
+          break
+        case 'zhhk':
+          name = item.reasonTchi
+          break
+        default:
+          name = item.reasonTchi //default fallback language is zhhk
+          break
+      }
+      const reasonItem: il_item = {
+        id: item.id,
+        name: name
+      }
+      reasons.push(reasonItem)
+
+    })
     return reasons
   }
 

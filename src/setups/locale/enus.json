@@ -216,7 +216,14 @@
   "status": {
     "active": "Active",
     "inactive": "In-Active",
-    "deleted": "Deleted"
+    "deleted": "Deleted",
+    "started": "STARTED",
+    "created": "CREATED",
+    "confirmed" :"CONFIRMED",
+    "rejected" : "REJECTED",
+    "completed": "COMPLETED",
+    "closed": "CLOSED",
+    "outstanding": "OUTSTANDING"
   },
   "appBar": {
     "simplified_cn": "Simplified Chinese",

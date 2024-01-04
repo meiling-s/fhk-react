@@ -212,7 +212,14 @@
   "status": {
     "active": "已啓用",
     "inactive": "不活跃的",
-    "deleted": "刪除"
+    "deleted": "刪除",
+    "started": "開始",
+    "created": "創建",
+    "confirmed" :"已確認",
+    "rejected" : "拒絕",
+    "completed": "已完成",
+    "closed": "已關閉",
+    "outstanding": "傑出"
   },
   "appBar": {
     "simplified_cn": "簡體中文",
