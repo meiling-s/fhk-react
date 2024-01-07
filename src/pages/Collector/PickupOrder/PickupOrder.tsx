@@ -23,7 +23,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 
-
+import i18n from '../../../setups/i18n'
 
 interface Option {
   value: string;
@@ -83,7 +83,7 @@ const PickupOrders = () => {
   ];
 
   const {pickupOrder} = useContainer(CheckInRequestContainer)
-  const recycType = useContainer(CommonTypeContainer)
+  const {recycType} = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
 
   const location = useLocation();
@@ -114,12 +114,36 @@ const PickupOrders = () => {
   }, []);
 
   useEffect(() =>{
-   console.log("recycItem", recycType)
-  }, []);
+   
+   const recycItems: il_item[] = []
+   recycType?.forEach((item) =>{
+    var name = ""
+    switch (i18n.language) {
+      case 'enus':
+        name = item.recyclableNameEng
+        break
+      case 'zhch':
+        name = item.recyclableNameSchi
+        break
+      case 'zhhk':
+        name = item.recyclableNameTchi
+        break
+      default:
+        name = item.recyclableNameTchi
+        break
+    }
+    recycItems.push({
+      name: name,
+      id: item.recycTypeId.toString()
+    })
+   })
+
+   setRecycItem(recycItems)
+  }, [recycType]);
 
   const rows: any[] = pickupOrder?.map((item) => ({
     id: item.picoId,
-    建立日期: item.createdAt, 
+    建立日期: item.effFrmDate, 
     物流公司: item.logisticName,
     运单编号: item.picoId, 
     送货日期: `${item.effFrmDate} - ${item.effToDate}`,
@@ -144,7 +168,7 @@ const PickupOrders = () => {
     {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('送货日期')},
     {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('物流公司')},
     {label:t('pick_up_order.filter.location'),width:'14%',options:getUniqueOptions('收件公司')},
-    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getUniqueOptions('收件公司')},
+    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption()},
     {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('状态')}
     
   ]
@@ -170,6 +194,15 @@ const PickupOrders = () => {
     return options
   }
   console.log(getUniqueOptions('建立日期'))
+
+  function getReycleOption() {
+    const options: Option[] = recycItem.map((item) => ({
+      value: item.id,
+      label: item.name,
+    }));
+  
+    return options;
+  }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10,
