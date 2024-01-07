@@ -18,8 +18,10 @@ import StatusCard from "../../../components/StatusCard";
 import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import { ToastContainer, toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
 
 
 
@@ -30,6 +32,7 @@ interface Option {
 
 const PickupOrders = () => {
   const { t } = useTranslation()
+ 
   const columns: GridColDef[] = [
     { field: "建立日期", headerName: t('pick_up_order.table.created_datetime'), width: 300 },
     {
@@ -80,6 +83,9 @@ const PickupOrders = () => {
   ];
 
   const {pickupOrder} = useContainer(CheckInRequestContainer)
+  const recycType = useContainer(CommonTypeContainer)
+  const [recycItem, setRecycItem] = useState<il_item[]>([])
+
   const location = useLocation();
   const action: string = location.state;
   useEffect(() => {
@@ -107,9 +113,13 @@ const PickupOrders = () => {
     navigate(location.pathname, { replace: true });
   }, []);
 
+  useEffect(() =>{
+   console.log("recycItem", recycType)
+  }, []);
+
   const rows: any[] = pickupOrder?.map((item) => ({
     id: item.picoId,
-    建立日期: item.effFrmDate, 
+    建立日期: item.createdAt, 
     物流公司: item.logisticName,
     运单编号: item.picoId, 
     送货日期: `${item.effFrmDate} - ${item.effToDate}`,
@@ -134,7 +144,7 @@ const PickupOrders = () => {
     {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('送货日期')},
     {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('物流公司')},
     {label:t('pick_up_order.filter.location'),width:'14%',options:getUniqueOptions('收件公司')},
-    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getUniqueOptions('状态')},
+    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getUniqueOptions('收件公司')},
     {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('状态')}
     
   ]
