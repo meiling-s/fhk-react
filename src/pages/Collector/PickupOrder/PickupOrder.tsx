@@ -145,7 +145,12 @@ const PickupOrders = () => {
     if( row.picoType === 'AD_HOC') {
       return `${row.effFrmDate} - ${row.effToDate}`
     } else {
-      return `${row.routineType} - ${row.routine.join(', ')}`
+      if(row.picoType === 'daily'){
+        return "Daily"
+      }else {
+        return `${row.routine.join(', ')}`
+      }
+     
     }
   }
 

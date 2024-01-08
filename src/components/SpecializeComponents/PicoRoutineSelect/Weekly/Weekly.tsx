@@ -79,7 +79,6 @@ export default function Weekly({
                 <CustomItemList
                     items={getWeekDays()}
                     multiSelect={setWeekD}
-                    dbClickSelect={true}
                     defaultSelected={returnDefaultWeekDay()}
                 />
             </CustomField>
