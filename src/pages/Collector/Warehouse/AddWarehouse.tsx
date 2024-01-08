@@ -174,6 +174,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           }
         })
 
+
+
         setRecycleType(dataReycleType)
         setSubRecycleType(subTypeMapping)
       }

@@ -9,6 +9,7 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import { PickupOrderDetail, PicoDetail } from "../interfaces/pickupOrder";
 import { getDtlById } from "../APICalls/Collector/pickupOrder/pickupOrder";
 import LocalizeRecyctype from "./TableComponents/LocalizeRecyctype";
+import { useTranslation } from 'react-i18next'
 
 const PickupOrderCard = ({
   pickupOrderDetail,
@@ -16,7 +17,7 @@ const PickupOrderCard = ({
   pickupOrderDetail: PickupOrderDetail[];
 }) => {
   const [picoitemDetail, setPicoItemDetail] = useState<PicoDetail[]>([]);
-
+  const { t } = useTranslation()
   useEffect(() => {
     const fetchData = async () => {
       const picoDtl: PicoDetail[] = [];
@@ -58,10 +59,10 @@ const PickupOrderCard = ({
                 )
                 .map((a, index) => (
                   <Box key={index}>
-                    <CustomField label="主类别">
+                    <CustomField label={t('pick_up_order.card_detail.main_category')}>
                       <Typography>{a.recycType}</Typography>
                     </CustomField>
-                    <CustomField label="次类别">
+                    <CustomField label={t('pick_up_order.card_detail.subcategory')}>
                       <Typography>{a.recycSubType}</Typography>
                     </CustomField>
                   </Box>
@@ -76,7 +77,7 @@ const PickupOrderCard = ({
               <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px" }}>
                 <AccessTimeIcon />
               </Icon>
-              <Typography>预计运送时间</Typography>
+              <Typography>{t('pick_up_order.card_detail.shipping_time')}</Typography>
             </Box>
             <Typography ml="60px">{podetail.pickupAt}</Typography>
           </Box>
@@ -85,7 +86,7 @@ const PickupOrderCard = ({
               <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px" }}>
                 <MonitorWeightOutlinedIcon />
               </Icon>
-              <Typography>重量</Typography>
+              <Typography>{t('pick_up_order.card_detail.weight')}</Typography>
             </Box>
             <Typography ml="60px">{podetail.weight} kg</Typography>
           </Box>
@@ -94,7 +95,7 @@ const PickupOrderCard = ({
               <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px" }}>
                 <Inventory2OutlinedIcon />
               </Icon>
-              <Typography>寄件及收件公司</Typography>
+              <Typography>{t('pick_up_order.card_detail.shipping_receiver')}</Typography>
             </Box>
             <Box
               ml={"60px"}
@@ -111,7 +112,7 @@ const PickupOrderCard = ({
               <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px" }}>
                 <PlaceOutlinedIcon />
               </Icon>
-              <Typography>送出及到达地点</Typography>
+              <Typography>{t('pick_up_order.card_detail.deliver_location')}</Typography>
             </Box>
             <Box
               ml={"60px"}

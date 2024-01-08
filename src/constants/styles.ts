@@ -13,7 +13,8 @@ export const styles = {
     mt: { lg: layout.appbarHeight, sm: '100px' },
     backgroundColor: '#F4F5F7',
     pl: layout.innerScreen_padding,
-    pt: layout.innerScreen_padding
+    pt: layout.innerScreen_padding,
+    width: '100%'
   },
   innerScreen_container: {
     width: '100%',
@@ -21,7 +22,7 @@ export const styles = {
     display: 'flex',
     flexDirection: 'column',
     pr: layout.innerScreen_padding,
-    pb: layout.innerScreen_padding
+    pb: layout.innerScreen_padding,
   },
   mobileScreen: {
     ml: 0,

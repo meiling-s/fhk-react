@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
 import { WARNING_ICON } from '../../themes/icons'
+import { forgetPassword } from '../../APICalls/forgetPassword'
+import { forgetPasswordForm } from '../../interfaces/forgetPassword'
 
 interface FormValues {
   [key: string]: string
@@ -61,14 +63,23 @@ const ForgetPassword = () => {
     return s == ''
   }
 
-  const submitNewPassword = () => {
+  const submitNewPassword = async () => {
     console.log('Submitted:', formValues)
+    const formData: forgetPasswordForm = {
+      loginId: formValues.username,
+      email: formValues.email,
+      createdBy: formValues.username
+    }
+    console.log('data : ', formData)
     if (validation.length === 0) {
       //for temporary show notification
-      setModalConfirm(true)
+      // setModalConfirm(true)
+      const result = await forgetPassword(formData)
+      const data = result?.data
 
-      //for real case call api and direct to confirm page
-      //navigate('/confirmNewPassword')
+      if (data) {
+        navigate('/confirmNewPassword')
+      }
     } else {
       setTrySubmited(true)
       setErorSubmit(true)

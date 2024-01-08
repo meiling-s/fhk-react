@@ -212,7 +212,14 @@
   "status": {
     "active": "已啓用",
     "inactive": "不活跃的",
-    "deleted": "刪除"
+    "deleted": "刪除",
+    "started": "開始",
+    "created": "創建",
+    "confirmed": "已確認",
+    "rejected": "拒絕",
+    "completed": "已完成",
+    "closed": "已關閉",
+    "outstanding": "傑出"
   },
   "appBar": {
     "simplified_cn": "簡體中文",
@@ -221,25 +228,125 @@
     "notify": "通知"
   },
   "pick_up_order": {
-    "create_pick_up_order": "建立運單",
+    "enquiry_pickup_order": "查詢運單",
+    "table": {
+      "created_datetime": "建立日期",
+      "pico_id": "運單編號",
+      "logistic_company": "物流公司",
+      "delivery_date": "送貨日期",
+      "sender_company": "寄件公司",
+      "receiver": "收件公司",
+      "status": "狀態"
+    },
+    "filter": {
+      "search": "搜尋",
+      "dateby": "日期截止",
+      "to": "至",
+      "logistic_company": "物流公司",
+      "location": "地點",
+      "recycling_category": "回收類別",
+      "status": "状态"
+    },
+    "card_detail": {
+      "main_category": "主類別",
+      "subcategory": "次類別",
+      "shipping_time": "運送時間",
+      "weight": "重量",
+      "shipping_receiver": "運輸和接收公司",
+      "deliver_location": "交貨和到達地點",
+      "van": "小型貨車",
+      "large_truck": "大型貨車",
+      "regular_shipping": "常規運輸",
+      "one-transport": "一次性運輸"
+    },
+    "item": {
+      "detail": "运单详情",
+      "edit": "修改",
+      "delete": "修改",
+      "shipping_info": "運輸資料",
+      "date_time": "建立日期及时间",
+      "transport_category": "运输类别",
+      "shipping_validity": "運輸有效日期由",
+      "recycling_week": "回收週次",
+      "vehicle_category": "車輛類別",
+      "plat_number": "車牌號碼",
+      "contact_number": "聯絡人號碼",
+      "sender_name": "寄件公司",
+      "exp_opration": "已过期操作",
+      "rec_loc_info": "回收地点资料"
+    },
+    "create_pick_up_order": "建立",
+    "edit_pick_up_order": "编辑取件订单",
     "shipping_info": "運輸資料",
     "select_shipping_category": "請選擇運輸類別",
     "regular_shipping": "常規運輸",
     "one-transport": "一次性運輸",
     "shipping_validity": "運輸有效日期由",
     "to": "至",
-    "choose_logistic": "選擇物流公司",
-    "enter_comapy_name": "請輸入公司名稱",
+    "routine": {
+      "recycling_week": "回收週次",
+      "every_week": "每逢星期",
+      "contract_number": "合約編號",
+      "enter_contract": "請輸入編號"
+    },
+    "adhoc": {
+      "reason_get_off": "下單原因",
+      "po_number": "參考運單編號"
+    },
+    "choose_logistic": "物流公司",
+    "enter_company_name": "請輸入公司名稱",
     "vehicle_category": "車輛類別",
     "plat_number": "車牌號碼",
     "enter_plat_number": "請填寫車牌號碼",
     "contact_number": "聯絡人號碼",
     "enter_contact_number": "請填寫手機號碼",
-    "reason_get_off": "下車原因",
-    "po_number": "參考運單編號",
-    "recyle_loc_info": "z",
+    "recyle_loc_info": "預計回收地點資料",
+    "creation_time": "建立時間",
+    "choose": "選擇",
     "new": "新增",
     "finish": "完成",
-    "cancel": "取消"
+    "cancel": "取消",
+    "detail": {
+      "shipping_time": "運送時間",
+      "main_category": "主類別",
+      "subcategory": "次類別",
+      "weight": "重量",
+      "sender_name": "寄件公司",
+      "receiver": "收件公司",
+      "recycling_location": "回收地點",
+      "arrived": "到達地點"
+    },
+    "recyclForm": {
+      "new": "新增",
+      "expected_recycling": "預計回收物",
+      "finish": "完成",
+      "cancel": "取消",
+      "shipping_time": "運送時間",
+      "recycle_category": "回收物類別",
+      "waste_paper_category": "廢紙類別",
+      "weight": "預計重量",
+      "shipping_company": "寄件公司",
+      "recycling_location": "回收地點",
+      "receiver": "收件公司",
+      "arrived": "到達地點",
+      "placeholder": "請輸入地點",
+      "select_po": "選擇運單"
+    },
+    "select_po": "選擇運單",
+    "search_company_name": "輸入寄件者公司",
+    "change": "變更"
+  },
+  "tenant": {
+    "company": "公司",
+    "invite": "邀請",
+    "search": "搜尋",
+    "enter_company_number": "輸入公司編號",
+    "company_number": "公司編號",
+    "company_cn_name": "公司中文名",
+    "company_en_name": "公司英文名",
+    "status": "狀態",
+    "company_category": "公司類別",
+    "created_date": "建立日期",
+    "number_of_acc":"帳戶數量"
   }
 }

@@ -50,7 +50,7 @@ function CustomDatePicker2({
    
       {pickupOrderForm ? (
         <Box display={"flex"}>
-      <CustomField label={"运输有效日期由"} mandatory>
+      <CustomField label={t('pick_up_order.shipping_validity')} mandatory>
        <DatePicker
          defaultValue={dayjs(startDate)}
          maxDate={period.endDate}
@@ -60,7 +60,7 @@ function CustomDatePicker2({
        />
        </CustomField>
        <Box ml='15px'>
-       <CustomField label={"至"} mandatory>
+       <CustomField label={t('pick_up_order.to')} mandatory>
        <DatePicker
          defaultValue={dayjs(endDate)}
          minDate={period.startDate}
