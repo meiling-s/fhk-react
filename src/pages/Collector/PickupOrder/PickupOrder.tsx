@@ -141,12 +141,20 @@ const PickupOrders = () => {
    setRecycItem(recycItems)
   }, [recycType]);
 
+  const getDeliveryDate = (row: PickupOrder) => {
+    if( row.picoType === 'AD_HOC') {
+      return `${row.effFrmDate} - ${row.effToDate}`
+    } else {
+      return `${row.routineType} - ${row.routine.join(', ')}`
+    }
+  }
+
   const rows: any[] = pickupOrder?.map((item) => ({
     id: item.picoId,
     建立日期: item.effFrmDate, 
     物流公司: item.logisticName,
     运单编号: item.picoId, 
-    送货日期: `${item.effFrmDate} - ${item.effToDate}`,
+    送货日期: getDeliveryDate(item),
     寄件公司: item.pickupOrderDetail[0]?.senderName,
     收件公司: item.pickupOrderDetail[0]?.receiverName,
     状态: item.status,
