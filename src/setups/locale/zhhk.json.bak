@@ -188,6 +188,7 @@
     "recyclable_type_weight": "回收物類別及重量",
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
+    "confirm_approve": "您確定批准該請求嗎？",
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
     "cancel": "取消",
@@ -198,7 +199,11 @@
     "shipping_info": "運輸資料",
     "delivery_location": "送出地點",
     "approved_on": "核準於",
-    "reason_is": "原因為"
+    "reason_is": "原因為",
+    "total_checkout": "總的退房要求是",
+    "reason_1": "原因 1",
+    "reason_2": "原因 2",
+    "reason_3": "原因 3"
   },
   "login": {
     "wrongUsernameOrPassword": "錯誤的使用者名稱或密碼"
@@ -206,5 +211,15 @@
   "mainMenu": {
     "manage": "管理",
     "overview": "概覽"
+  },
+  "status": {
+    "active": "已啓用",
+    "inactive": "不活跃的",
+    "deleted": "刪除"
+  },
+  "appBar": {
+    "simplified_cn": "簡體中文",
+    "traditional_cn": "繁體中文",
+    "english": "英語"
   }
 }

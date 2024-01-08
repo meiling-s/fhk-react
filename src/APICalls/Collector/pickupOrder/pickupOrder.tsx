@@ -68,7 +68,7 @@ import { createCP } from '../../../interfaces/collectionPoint'
 }
 
 
-export const editPickupOrder = async (pickupOrderId: number, data:EditPo) => {
+export const editPickupOrder = async (pickupOrderId: string, data:EditPo) => {
 
   const axiosConfig = Object.assign({},UPDATE_PICK_UP_ORDER);
   axiosConfig.url = UPDATE_PICK_UP_ORDER.url+`/${pickupOrderId}`;
@@ -90,7 +90,7 @@ export const editPickupOrder = async (pickupOrderId: number, data:EditPo) => {
 
 }
 
-export const editPickupOrderStatus = async (pickupOrderId: number, data:PoStatus) => {
+export const editPickupOrderStatus = async (pickupOrderId: string, data:PoStatus) => {
 
   const axiosConfig = Object.assign({},UPDATE_PICK_UP_ORDER_STATUS);
   axiosConfig.url = UPDATE_PICK_UP_ORDER_STATUS.url+`/${pickupOrderId}`;
@@ -117,7 +117,4 @@ export const editPickupOrderStatus = async (pickupOrderId: number, data:PoStatus
 
 
 
-
-
-  
 

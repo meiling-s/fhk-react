@@ -1,14 +1,14 @@
-import { ThemeProvider } from 'styled-components'
-import Router from './Router'
-import CheckInRequestContainer from './contexts/CheckInRequestContainer'
+import { ThemeProvider } from 'styled-components';
+import Router from './Router';
+import CheckInRequestContainer from './contexts/CheckInRequestContainer';
 import NotifContainerContext from './contexts/NotifContainer'
-import CommonTypeContainer from './contexts/CommonTypeContainer'
-import axiosSetup from './setups/axiosSetup'
+import CommonTypeContainer from './contexts/CommonTypeContainer';
+import axiosSetup from './setups/axiosSetup';
 import './setups/i18n'
-import theme from './themes/palette'
+import theme from './themes/palette';
 
 function App() {
-  axiosSetup()
+  axiosSetup();
 
   return (
     <ThemeProvider theme={theme}>
@@ -20,7 +20,7 @@ function App() {
         </CheckInRequestContainer.Provider>
       </CommonTypeContainer.Provider>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

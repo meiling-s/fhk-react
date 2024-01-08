@@ -82,15 +82,6 @@ export const GET_PICK_UP_ORDER_DETAIL: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/administrator/pico/details'
 }
-export const ADD_PICK_UP_ORDER: AxiosRequestConfig = {
-  method: 'post',
-  url: 'api/v1/administrator/pico'
-}
-
-// export const UPDATE_PICK_UP_ORDER = (picoId: number): AxiosRequestConfig => ({
-//   method: 'patch',
-//   url: `api/v1/administrator/pico/${picoId}`
-// })
 
 export const CREATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'post',
@@ -156,24 +147,6 @@ export const GET_VEHICLE_TYPE: AxiosRequestConfig = {
   url: 'api/v1/administrator/vehicleType'
 }
 
-export const GET_NUM_UNREAD_NOTIF = (loginId: string): AxiosRequestConfig => ({
-  method: 'get',
-  url: `api/v1/administrator/notification/NumOfUnread/${loginId}`
-})
-export const GET_NOTIF_BY_USER_ID = (loginId: string): AxiosRequestConfig => ({
-  method: 'get',
-  url: `api/v1/administrator/notification/unread/${loginId}`
-})
-
-export const UPDATE_FLAG_NOTIF = (notiId: number): AxiosRequestConfig => ({
-  method: 'patch',
-  url: `api/v1/administrator/notification/${notiId}`
-})
-
-export const CREATE_FORGET_PASSWORD: AxiosRequestConfig = {
-  method: 'post',
-  url: 'api/v1/administrator/forgetpassword'
-}
 
 //warehouse
 export const GET_ALL_WAREHOUSE: AxiosRequestConfig = {
@@ -212,25 +185,6 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
 ): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/collectors/warehouse/${warehouseId}/status`
-})
-
-export const GET_ALL_CHECKOUT_REQUEST: AxiosRequestConfig = {
-  method: 'get',
-  url: 'api/v1/collectors/checkout'
-}
-
-export const GET_CHECKOUT_REQUEST_BY_ID = (
-  chkOutId: number
-): AxiosRequestConfig => ({
-  method: 'get',
-  url: `api/v1/collectors/checkout/${chkOutId}`
-})
-
-export const UPDATE_CHECKOUT_REQUEST_STATUS = (
-  chkOutId: number
-): AxiosRequestConfig => ({
-  method: 'patch',
-  url: `api/v1/collectors/checkout/status/${chkOutId}`
 })
 
 //recycle type

@@ -24,7 +24,7 @@
     "staffInfo": "员工人数",
     "numOfStaff": "员工数量",
     "enterNumOfStaff": "请输入人数",
-    "locationData": "地点资料",
+    "locationData": "地點資料",
     "serviceInfo": "服务资料",
     "contractNo": "合约编号",
     "enterNo": "请输入编号",
@@ -77,7 +77,7 @@
   "account": "帐户",
   "signOut": "登出",
   "changePassword": "更改密码",
-  "changePasswordConfirmation": "您的密码已成功更改",
+  "changePasswordConfirmation": "您的密碼已成功更改",
   "date": "日期",
   "week": "星期",
   "time_Period": "时段",
@@ -87,7 +87,7 @@
   "top_menu": {
     "general_settings": "一般设定",
     "packaging_unit": "包装单位",
-    "workshop": "仓库",
+    "workshop": "倉庫",
     "company": "公司",
     "staff_positions": "员工职位",
     "denial_reason": "拒绝原因",
@@ -100,7 +100,7 @@
     "trad_name": "繁體中文名稱",
     "simp_name": "简体中文名称",
     "english_name": "English Name",
-    "location": "实体地点",
+    "location": "實體地點",
     "place": "地点",
     "status": "状态",
     "recyclable_subcategories": "回收物类別"
@@ -148,7 +148,7 @@
     "reject_reasons": "拒绝原因(可多选)",
     "confirm": "确认拒绝",
     "cancel": "取消",
-    "search_input": "输入运单编号"  
+    "search_input": "輸入運單編號"
   },
   "check_out": {
     "request_check_out": "送出请求",
@@ -172,6 +172,7 @@
     "recyclable_type_weight": "回收物类别及重量",
     "message": "信息",
     "confirm_reject": "确认拒绝送入请求吗?",
+    "confirm_approve": "您確定批准該請求嗎？",
     "reject_reasons": "拒绝原因(可多选)",
     "confirm": "确认拒绝",
     "cancel": "取消",
@@ -182,7 +183,11 @@
     "shipping_info": "運輸資料",
     "delivery_location": "送出地點",
     "approved_on": "核準於",
-    "reason_is": "原因為"
+    "reason_is": "原因為",
+    "total_checkout": "总的退房请求是",
+    "reason_1": "原因 1",
+    "reason_2": "原因 2",
+    "reason_3": "原因 3"
   },
   "changePass": {
     "titlePage": "更改密码",
@@ -210,11 +215,141 @@
   "status": {
     "active": "已啓用",
     "inactive": "不活躍的",
-    "deleted": "已刪除"
+    "deleted": "已刪除",
+    "started": "开始",
+    "created": "创建",
+    "confirmed": "已确认",
+    "rejected": "拒绝",
+    "completed": "已完成",
+    "closed": "已关闭",
+    "outstanding": "杰出"
   },
   "appBar": {
     "simplified_cn": "简体中文",
     "traditional_cn": "繁體中文",
-    "english": "英语"
+    "english": "英语",
+    "notify": "通知"
+  },
+  "pick_up_order": {
+    "enquiry_pickup_order": "查询运单",
+    "table": {
+      "created_datetime": "建立日期",
+      "pico_id": "运单编号",
+      "logistic_company": "物流公司",
+      "delivery_date": "送货日期",
+      "sender_company": "寄件公司",
+      "receiver": "收件公司",
+      "status": "状态"
+    },
+    "filter": {
+      "search": "搜索",
+      "dateby": "日期截止",
+      "to": "至",
+      "logistic_company": "物流公司",
+      "location": "地点",
+      "recycling_category": "回收类别",
+      "status": "状态"
+    },
+    "card_detail": {
+      "main_category": "主类别",
+      "subcategory": "次类别",
+      "shipping_time": "预计运送时间",
+      "weight": "重量",
+      "shipping_receiver": "寄件及收件公司",
+      "deliver_location": "送出及到达地点",
+      "van": "小型货车",
+      "large_truck": "大型货车",
+      "regular_shipping": "常规运输",
+      "one-transport": "一次性运输"
+    },
+    "item": {
+      "detail": "運單詳情",
+      "edit": "修改",
+      "delete": "修改",
+      "shipping_info": "運輸資料",
+      "date_time": "建立日期及時間",
+      "transport_category": "運輸類別",
+      "shipping_validity": "运输有效日期由",
+      "recycling_week": "回收周次",
+      "vehicle_category": "车辆类别",
+      "plat_number": "车牌号码",
+      "contact_number": "请填写手机号码",
+      "sender_name": "寄件公司",
+      "exp_opration": "已过期操作",
+      "rec_loc_info": "回收地點資料"
+    },
+    "create_pick_up_order": "建立",
+    "edit_pick_up_order": "编辑取件订单",
+    "shipping_info": "運輸資料",
+    "select_shipping_category": "请选择运输类别",
+    "regular_shipping": "常规运输",
+    "one-transport": "一次性运输",
+    "shipping_validity": "运输有效日期由",
+    "to": "至",
+    "routine": {
+      "recycling_week": "回收周次",
+      "every_week": "逢星期",
+      "contract_number": "合约编号",
+      "enter_contract": "请输入编号"
+    },
+    "adhoc": {
+      "reason_get_off": "下单原因",
+      "po_number": "参考运单编号"
+    },
+    "choose_logistic": "物流公司",
+    "enter_company_name": "请输入公司名称",
+    "vehicle_category": "车辆类别",
+    "plat_number": "车牌号码",
+    "enter_plat_number": "请填写车牌号码",
+    "contact_number": "请填写手机号码",
+    "enter_contact_number": "请填写手机号码",
+    "recyle_loc_info": "预计回收地点资料",
+    "creation_time": "建立时间",
+    "choose": "选择",
+    "new": "新增",
+    "finish": "完成",
+    "cancel": "取消",
+    "detail": {
+      "shipping_time": "运送时间",
+      "main_category": "主类别",
+      "subcategory": "次类别",
+      "weight": "重量",
+      "sender_name": "寄件公司",
+      "receiver": "收件公司",
+      "recycling_location": "回收地点",
+      "arrived": "到达地点"
+    },
+    "recyclForm": {
+      "new": "新增",
+      "expected_recycling": "预计回收物",
+      "finish": "完成",
+      "cancel": "取消",
+      "shipping_time": "运送时间",
+      "recycle_category": "回收物类别",
+      "waste_paper_category": "废纸类别",
+      "weight": "预计重量",
+      "shipping_company": "寄件公司",
+      "receiver": "收件公司",
+      "recycling_location": "回收地点",
+      "arrived": "到达地点",
+      "placeholder": "请输入地点",
+      "select_po": "选择运单"
+    },
+    "select_po": "选择运单",
+    "search_company_name": "输入发件人公司",
+    "change": "更改"
+  },
+  "tenant": {
+    "company": "公司",
+    "invite": "邀请",
+    "search": "搜索",
+    "enter_company_number": "输入公司编号",
+    "company_number": "公司编号",
+    "company_cn_name": "公司中文名",
+    "company_en_name": "公司英文名",
+    "status": "状态",
+    "company_category": "公司类别",
+    "created_date": "建立日期",
+    "number_of_acc":"帐户数量"
   }
 }

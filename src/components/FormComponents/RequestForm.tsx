@@ -121,7 +121,7 @@ useEffect(() => {
   return (
     <>
       <Box sx={localstyles.modal} onClick={handleOverlayClick}>
-        <Box sx={localstyles.container}>
+        <Box sx={localstyles.container} className="md:w-[500px] w-[100vw]">
           <Box sx={localstyles.header}>
             <Box>
               <Typography sx={styles.header4}>送入請求</Typography>
@@ -224,7 +224,7 @@ let localstyles = {
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    width: "40%",
+    // width: "40%",
     bgcolor: "white",
     overflowY: "scroll",
   },

@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/Auth/Login";
-import ForgetPassword from "./pages/Auth/ForgetPassword";
-import ConfirmNewPassword from "./pages/Auth/ConfirmNewPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
+import ConfirmResetPassword from "./pages/Auth/ConfirmResetPassword";
 import ChangePassword from "./pages/Auth/ChangePassword"
 //ASTD admin
 import CompanyManage from "./pages/ASTD/CompanyManage";
@@ -13,7 +13,7 @@ import CollectionPoint from "./pages/Collector/CollectionPoint/CollectionPoint/C
 import CreateCollectionPoint from "./pages/Collector/CollectionPoint/CreateCollectionPoint/CreateCollectionPoint";
 import EditCollectionPoint from "./pages/Collector/CollectionPoint/EditCollectionPoint/EditCollectionPoint";
 //warehouse
-import Overview from "./pages/Collector/Manage/Overview";
+import Overview from "./pages/Collector/Manage/CheckoutRequest";
 import Settings from "./pages/Collector/Warehouse/Settings";
 import Test from "./pages/Collector/Warehouse/Test";
 //Tenant Register
@@ -42,10 +42,10 @@ const Router = () => {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Login />} />
-                <Route path="/forgetPassword" element={<ForgetPassword />} />
+                <Route path="/resetPassword" element={<ResetPassword />} />
                 <Route
                     path="/confirmNewPassword"
-                    element={<ConfirmNewPassword />}
+                    element={<ConfirmResetPassword />}
                 />
                  <Route
                     path="/changePassword/:idReset?"

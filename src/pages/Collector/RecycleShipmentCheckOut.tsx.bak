@@ -7,7 +7,6 @@ import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
 import { defaultPath, format } from "../../constants/constant";
 import { styles } from "../../constants/styles"
-import dateFormat from "date-fns/format";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CheckIcon from '@mui/icons-material/Check';
@@ -20,8 +19,8 @@ import RequestForm from "../../components/FormComponents/RequestForm";
 import { CheckIn } from "../../interfaces/checkin";
 import { useContainer } from "unstated-next";
 import CheckInRequestContext from "../../contexts/CheckInRequestContainer";
-
 import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
 
 type Shipment = {
     createDate: Date,
@@ -720,7 +719,7 @@ function ShipmentManage(){
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat2)}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{dayjs(new Date(shipment.createdAt)).format(format.dateFormat2)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{'recipient'}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.picoDtlId}</TableCell>
