@@ -215,8 +215,8 @@
     "deleted": "刪除",
     "started": "開始",
     "created": "創建",
-    "confirmed" :"已確認",
-    "rejected" : "拒絕",
+    "confirmed": "已確認",
+    "rejected": "拒絕",
     "completed": "已完成",
     "closed": "已關閉",
     "outstanding": "傑出"
@@ -228,13 +228,13 @@
     "notify": "通知"
   },
   "pick_up_order": {
-    "enquiry_pickup_order" : "查詢運單",
-    "table" : {
+    "enquiry_pickup_order": "查詢運單",
+    "table": {
       "created_datetime": "建立日期",
-      "pico_id" : "運單編號",
-      "logistic_company" :"物流公司",
+      "pico_id": "運單編號",
+      "logistic_company": "物流公司",
       "delivery_date": "送貨日期",
-      "sender_company":"寄件公司",
+      "sender_company": "寄件公司",
       "receiver": "收件公司",
       "status": "狀態"
     },
@@ -242,9 +242,9 @@
       "search": "搜尋",
       "dateby": "日期截止",
       "to": "至",
-      "logistic_company" :"物流公司",
+      "logistic_company": "物流公司",
       "location": "地點",
-      "recycling_category" : "回收類別",
+      "recycling_category": "回收類別",
       "status": "状态"
     },
     "card_detail": {
@@ -253,7 +253,11 @@
       "shipping_time": "運送時間",
       "weight": "重量",
       "shipping_receiver": "運輸和接收公司",
-      "deliver_location": "交貨和到達地點"
+      "deliver_location": "交貨和到達地點",
+      "van": "小型貨車",
+      "large_truck": "大型貨車",
+      "regular_shipping": "常規運輸",
+      "one-transport": "一次性運輸"
     },
     "item": {
       "detail": "运单详情",
@@ -267,7 +271,7 @@
       "vehicle_category": "車輛類別",
       "plat_number": "車牌號碼",
       "contact_number": "聯絡人號碼",
-      "sender_name" : "寄件公司",
+      "sender_name": "寄件公司",
       "exp_opration": "已过期操作",
       "rec_loc_info": "回收地点资料"
     },
@@ -331,5 +335,18 @@
     "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司",
     "change": "變更"
+  },
+  "tenant": {
+    "company": "公司",
+    "invite": "邀請",
+    "search": "搜尋",
+    "enter_company_number": "輸入公司編號",
+    "company_number": "公司編號",
+    "company_cn_name": "公司中文名",
+    "company_en_name": "公司英文名",
+    "status": "狀態",
+    "company_category": "公司類別",
+    "created_date": "建立日期",
+    "number_of_acc":"帳戶數量"
   }
 }

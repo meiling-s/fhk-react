@@ -218,8 +218,8 @@
     "deleted": "已刪除",
     "started": "开始",
     "created": "创建",
-    "confirmed" :"已确认",
-    "rejected" : "拒绝",
+    "confirmed": "已确认",
+    "rejected": "拒绝",
     "completed": "已完成",
     "closed": "已关闭",
     "outstanding": "杰出"
@@ -232,12 +232,12 @@
   },
   "pick_up_order": {
     "enquiry_pickup_order": "查询运单",
-    "table" : {
+    "table": {
       "created_datetime": "建立日期",
-      "pico_id" : "运单编号",
-      "logistic_company" :"物流公司",
+      "pico_id": "运单编号",
+      "logistic_company": "物流公司",
       "delivery_date": "送货日期",
-      "sender_company":"寄件公司",
+      "sender_company": "寄件公司",
       "receiver": "收件公司",
       "status": "状态"
     },
@@ -245,9 +245,9 @@
       "search": "搜索",
       "dateby": "日期截止",
       "to": "至",
-      "logistic_company" :"物流公司",
+      "logistic_company": "物流公司",
       "location": "地点",
-      "recycling_category" : "回收类别",
+      "recycling_category": "回收类别",
       "status": "状态"
     },
     "card_detail": {
@@ -256,12 +256,16 @@
       "shipping_time": "预计运送时间",
       "weight": "重量",
       "shipping_receiver": "寄件及收件公司",
-      "deliver_location": "送出及到达地点"
+      "deliver_location": "送出及到达地点",
+      "van": "小型货车",
+      "large_truck": "大型货车",
+      "regular_shipping": "常规运输",
+      "one-transport": "一次性运输"
     },
     "item": {
       "detail": "運單詳情",
       "edit": "修改",
-      "delete":"修改",
+      "delete": "修改",
       "shipping_info": "運輸資料",
       "date_time": "建立日期及時間",
       "transport_category": "運輸類別",
@@ -270,7 +274,7 @@
       "vehicle_category": "车辆类别",
       "plat_number": "车牌号码",
       "contact_number": "请填写手机号码",
-      "sender_name" : "寄件公司",
+      "sender_name": "寄件公司",
       "exp_opration": "已过期操作",
       "rec_loc_info": "回收地點資料"
     },
@@ -334,5 +338,18 @@
     "select_po": "选择运单",
     "search_company_name": "输入发件人公司",
     "change": "更改"
+  },
+  "tenant": {
+    "company": "公司",
+    "invite": "邀请",
+    "search": "搜索",
+    "enter_company_number": "输入公司编号",
+    "company_number": "公司编号",
+    "company_cn_name": "公司中文名",
+    "company_en_name": "公司英文名",
+    "status": "状态",
+    "company_category": "公司类别",
+    "created_date": "建立日期",
+    "number_of_acc":"帐户数量"
   }
 }

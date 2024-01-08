@@ -150,9 +150,9 @@ const PickupOrderForm = ({
             <CustomField label={t('pick_up_order.item.transport_category')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.picoType === 'AD_HOC'
-                  ? '常規運輸'
+                  ?  t('pick_up_order.card_detail.one-transport')
                   : selectedPickupOrder?.picoType === 'ROUTINE'
-                  ? '一次性運輸'
+                  ?  t('pick_up_order.card_detail.regular_shipping')
                   : undefined}
               </Typography>
             </CustomField>
@@ -174,9 +174,9 @@ const PickupOrderForm = ({
             <CustomField label={t('pick_up_order.item.vehicle_category')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.vehicleTypeId === '1'
-                  ? '小型貨車'
+                  ? t('pick_up_order.card_detail.van')
                   : selectedPickupOrder?.vehicleTypeId === '2'
-                  ? '大型貨車'
+                  ? t('pick_up_order.card_detail.large_truck')
                   : ''}
               </Typography>
             </CustomField>
@@ -199,7 +199,7 @@ const PickupOrderForm = ({
 
             <CustomField label={t('pick_up_order.item.exp_opration')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.normalFlg ? '是' : '否'}
+                {selectedPickupOrder?.normalFlg ? t('yes') : t('no')}
               </Typography>
             </CustomField>
 

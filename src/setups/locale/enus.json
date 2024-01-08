@@ -257,7 +257,11 @@
       "shipping_time": "Estimated shipping time",
       "weight": "Weight",
       "shipping_receiver": "Shipping and receiving companies",
-      "deliver_location": "Delivery and arrival locations"
+      "deliver_location": "Delivery and arrival locations",
+      "van": "Van",
+      "large_truck": "Large Truck",
+      "regular_shipping": "Regular Shipping",
+      "one-transport": "One Time Transport"
     },
     "item": {
       "detail": "Pickup Order details",
@@ -334,5 +338,18 @@
     "select_po": "Choose pickup order",
     "search_company_name": "Enter sender company",
     "change": "Change"
+  },
+  "tenant":{
+    "company" : "Company",
+    "invite": "Invite",
+    "search": "Search",
+    "enter_company_number":"Enter company number",
+    "company_number": "Company Number",
+    "company_cn_name": "Company Chinese name",
+    "company_en_name": "Company English name",
+    "status": "Status",
+    "company_category": "Company Category",
+    "created_date": "Creation date",
+    "number_of_acc":"Number of accounts"
   }
 }
