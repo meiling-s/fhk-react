@@ -17,7 +17,7 @@ export default function SpecificDate({
     defaultDates
 }: props){
 
-    console.log('bbbbbbbb'+defaultDates)
+
 
     const [specificDates, setSpecificDates] = useState<string[]>([]);
     

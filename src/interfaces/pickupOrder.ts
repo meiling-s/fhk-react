@@ -79,7 +79,7 @@ export interface CreatePO {
 
 export interface CreatePicoDetail {
     picoDtlId?:      number,
-    id?:             number;
+    id?:             any;
     senderId:        string;
     senderName:      string;
     senderAddr:      string;

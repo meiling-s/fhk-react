@@ -29,11 +29,11 @@ export default function CustomDatePicker({
     dp_style,
     allowDuplicateDate
 }: props){
-    console.log(defaultDate+'qqqqqqqqq')
+    
     
     const [dates,setDates] = useState<dayjs.Dayjs[]>([]);
     const [formattedDates,setFormattedDates] = useState<string[]>([]);
-    console.log(dates+'111111111111111')
+   
 
 
     const { t } = useTranslation();

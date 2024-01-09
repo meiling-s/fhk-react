@@ -37,7 +37,7 @@ import {
 } from "../../themes/icons";
 import theme from "../../themes/palette";
 import { t } from "i18next";
-import { useFormik } from "formik";
+import { insert, useFormik } from "formik";
 import { editPickupOrder } from "../../APICalls/Collector/pickupOrder/pickupOrder";
 import { validate } from "uuid";
 import CustomAutoComplete from "./CustomAutoComplete";
@@ -71,8 +71,8 @@ const PickupOrderCreateForm = ({
 
 }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [editRowId, setEditRowId] = useState<number | null>(1);
-  const [updateRowId,setUpdateRowId] = useState<number | null>(1);
+  const [editRowId, setEditRowId] = useState<number | null>(null);
+  const [updateRowId,setUpdateRowId] =  useState<number | null>(null);
   const [id, setId] = useState<number>(0);
   const [updateId,setUpdateId] = useState<number>(1)
   const [initialRow,setInitialRow] = useState<CreatePicoDetail>();
@@ -80,23 +80,37 @@ const PickupOrderCreateForm = ({
   const { logisticList, contractType, vehicleType } =
     useContainer(CommonTypeContainer);
   const navigate = useNavigate();
+
   const handleCloses = () => {
+    setIsEditing(false);
+    setEditRowId(null);
+    setUpdateRowId(null);
     setOpenModal(false);
   };
    
-
+ 
   const handleEditRow = (id:number) => {
-    setIsEditing(true)
-    setEditRowId(id);
-    setOpenModal(true);
+    if(editMode){
+      console.log('hello'+id)
+      setIsEditing(true)
+      setUpdateRowId(id)
+      setOpenModal(true)
+    }else{
+      console.log('hello'+id)
+      setIsEditing(true)
+      setEditRowId(id);
+      setOpenModal(true)
+    }
+  ;
   };
-
+ 
   const handleDeleteRow = (id: any) => {
     if(editMode){  
       const updateRowsByDetailId = state.filter((row)=>row.picoDtlId!==id)
       console.log('ben', state.map((a) => a.picoDtlId)+id);
       setState(updateRowsByDetailId)
     }else{
+
       const updatedRowsById = state.filter((row) => row.id !== id);
       setState(updatedRowsById)
     }
@@ -143,6 +157,7 @@ const PickupOrderCreateForm = ({
 
 
   const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 90 },
     { field: "pickupAt", headerName: "运送时间", width: 150 },
     {
       field: "recycType",
@@ -201,7 +216,7 @@ const PickupOrderCreateForm = ({
       width: 100,
       renderCell: (params) => (
         <IconButton>
-          <EDIT_OUTLINED_ICON onClick={() => handleEditRow(editMode?params.row.picoDtlId:params.row.id)} />
+          <EDIT_OUTLINED_ICON onClick={() => handleEditRow(state.indexOf(params.row))} />
         </IconButton>
       ),
     },
@@ -211,7 +226,7 @@ const PickupOrderCreateForm = ({
       width: 100,
       renderCell: (params) => (
    
-        <IconButton onClick={() => handleDeleteRow(editMode?params.row.picoDtlId:params.row.id)}>
+        <IconButton onClick={() => handleDeleteRow(editMode?params.row.id:params.row.id)}>
           <DELETE_OUTLINED_ICON />
         </IconButton>
       ),
@@ -379,7 +394,8 @@ const PickupOrderCreateForm = ({
               <Grid item>
                 <CustomField label={"預計回收地點資料"} mandatory>
                   <DataGrid
-                    rows={state}
+                    // rows={editMode?state.map(row => ({ ...row, id: uuidv4() })) : state}
+                    rows={editMode?state.map((row,index) => ({ ...row, id: index })) : state}
                     hideFooter
                     columns={columns}
                     disableRowSelectionOnClick
@@ -407,10 +423,11 @@ const PickupOrderCreateForm = ({
                     }}
                   />
                   
+                  
                   <Modal open={openModal} onClose={handleCloses} >
                     <CreateRecycleForm
                       data={state}
-                      id={id}
+                      
                       setId={setId}
                       setState={setState}
                       updateRowId={updateRowId}
@@ -430,8 +447,8 @@ const PickupOrderCreateForm = ({
                     variant="outlined"
                     startIcon={<ADD_CIRCLE_ICON />}
                     onClick={() => {
+                      
                       setIsEditing(false)
-                      setId(-1)
                       setOpenModal(true)
                     }}
                     sx={{

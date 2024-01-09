@@ -33,14 +33,33 @@ import { CreatePicoDetail } from "../../interfaces/pickupOrder";
 import { Navigate, useNavigate } from "react-router";
 import RecyclablesListSingleSelect from "../SpecializeComponents/RecyclablesListSingleSelect";
 import { dateToLocalTime } from "../Formatter";
+import { v4 as uuidv4 } from 'uuid';
 
+const initValue = {
+  id: -1,
+  senderId: "1",
+  senderName: "",
+  senderAddr: "",
+  senderAddrGps: [11, 12],
+  receiverId: "1",
+  receiverName: "",
+  receiverAddr: "",
+  receiverAddrGps: [11, 12],
+  status: "CREATED",
+  createdBy: "ADMIN",
+  updatedBy: "ADMIN",
+  pickupAt: "",
+  recycType: "",
+  recycSubType: "", 
+  weight: 0,
+}
 
 const CreateRecycleForm = ({
   onClose,
   setState,
   setId,
   data,
-  id,
+ 
   editRowId,
   selectedPoDetails,
   updateRowId,
@@ -55,7 +74,7 @@ const CreateRecycleForm = ({
   setState: (val: CreatePicoDetail[]) => void
   data: CreatePicoDetail[]
   setId: Dispatch<SetStateAction<number>>
-  id: number
+ 
   editRowId: number | null;
   selectedPoDetails?:CreatePicoDetail[]
   updateRowId:number | null
@@ -73,15 +92,22 @@ const CreateRecycleForm = ({
 
   
   useEffect(() => {
-    const editRow = data.find((row) => row.id === editRowId);
-    setEditRow(editRow);
+    if(editRowId==null){
+      formik.setValues(initValue)
+    }else{
+      const editRow = data.at(editRowId)
+      setEditRow(editRow)
+    }
   }, [editRowId]);
 
-  // console.log(editRow)
-  // useEffect(() => {
-  //   const updateRow = data.find((row)=>row.picoDtlId === updateRowId);
-  //   setUpdateRow(updateRow)
-  // }, [editRowId,updateRowId]);
+  useEffect(() => {
+    if(updateRowId==null){
+      formik.setValues(initValue)
+    }else{
+      const updateRow = data.at(updateRowId)
+      setUpdateRow(updateRow)
+    }
+  }, [updateRowId]);
   // const updateRow = data.find((row)=>row.picoDtlId === updateRowId);
 
   const handleOverlayClick = (
@@ -93,12 +119,15 @@ const CreateRecycleForm = ({
     }
   };
 
+
   useEffect(() => {
     if (editRow) {
       // Set the form field values based on the editRow data
+      const t= data.indexOf(editRow)
+
       console.log(editRow)
       formik.setValues({
-        id: id,
+        id: t,
         senderId: "1",
         senderName: editRow.senderName,
         senderAddr: editRow.senderAddr,
@@ -120,9 +149,13 @@ const CreateRecycleForm = ({
 
   useEffect(() => {
     if (updateRow) {
+  
+      const t= data.indexOf(updateRow)
+
+      console.log(editRow)
       // Set the form field values based on the editRow data
       formik.setValues({
-        id:id,
+        id:t,
         senderId: "1",
         senderName: updateRow.senderName,
         senderAddr: updateRow.senderAddr,
@@ -152,50 +185,54 @@ const CreateRecycleForm = ({
     weight: Yup.number().required("This weight is required"),
   });
    
+  
+  
 
-  console.log(JSON.stringify(data)+'qwe')
+
 
   const formik = useFormik({
-    initialValues: {
-      id: editMode?updateId:id,
-      senderId: "1",
-      senderName: "",
-      senderAddr: "",
-      senderAddrGps: [11, 12],
-      receiverId: "1",
-      receiverName: "",
-      receiverAddr: "",
-      receiverAddrGps: [11, 12],
-      status: "CREATED",
-      createdBy: "ADMIN",
-      updatedBy: "ADMIN",
-      pickupAt: "",
-      recycType: "",
-      recycSubType: "",
-      weight: 0,
-    },
+    initialValues: initValue,
     validationSchema: validateSchema,
-
+  
     onSubmit: (values) => {
       console.log(values);
       alert(JSON.stringify(values, null, 2));
-      if(isEditing){
-        const updatedData = data.map((row) => {
-          console.log(editRow?.id, row.id);
-          return (row.id === editRow?.id) ? values : row
-        })
-        setState(updatedData);
-      }else{
-        var updatedValues: any = {
-          ...values
-          // items:items,
+      if(editMode){
+        if(isEditing){
+          const updatedData = data.map((row) => {
+            return row.id === updateRow?.id ? values : row; 
+          })
+          setState(updatedData); 
+          onClose && onClose(); 
+        }else{
+          const updatedValues = {
+            ...values,
+            id: updateRowId!+1 // Generate a unique id for the new row
+          };
+          setState([...data, updatedValues]);
+          onClose && onClose(); 
         }
-        updatedValues.id = data.length
-        console.log("data: ",data," updatedValues: ",updatedValues)
-        setState([...data, updatedValues]);
-        //setId(id + 1)
+
+      }else{
+        if(isEditing){
+          const updatedData = data.map((row) => {
+            console.log(editRow?.id, row.picoDtlId +'apo');
+            return row.id === editRow?.id ? values  : row; 
+          })
+          setState(updatedData);
+          onClose && onClose();
+        }else{
+          const updatedValues = {
+            ...values,
+            id:uuidv4() // Generate a unique id for the new row
+          };
+          setState([...data, updatedValues]);
+          onClose && onClose();
+        
+        }
       }
-      onClose && onClose();
+    
+      
      },
     }
   );

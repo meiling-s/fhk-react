@@ -46,16 +46,14 @@ const PickupOrderCard = ({
         >
           <Box display="flex" justifyContent="space-between">
             <Box>
-           
-                  <Box >
-                    <CustomField label="主类别">
-                      <Typography>{podetail.recycType}</Typography>
-                    </CustomField>
-                    <CustomField label="次类别">
-                      <Typography>{podetail.recycSubType}</Typography>
-                    </CustomField>
-                  </Box>
-             
+              <Box>
+                <CustomField label="主类别">
+                  <Typography>{podetail.recycType}</Typography>
+                </CustomField>
+                <CustomField label="次类别">
+                  <Typography>{podetail.recycSubType}</Typography>
+                </CustomField>
+              </Box>
             </Box>
             <Box>
               <StatusCard status={podetail?.status} />
