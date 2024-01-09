@@ -3,7 +3,7 @@ import { TimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { timePeriod } from "../../interfaces/collectionPoint";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { styles } from "../../constants/styles";
 import { useTranslation } from "react-i18next";
@@ -112,7 +112,7 @@ function CustomTimePicker({
                         sx={{...styles.buttonOutlinedGreen_2, marginY: 2}}
                         onClick={(event) => addTimePeriod()}
                     >
-                        <AddCircleOutlineIcon
+                        <AddCircleIcon
                             sx={{...styles.endAdornmentIcon, pr: 1}}
                         />
                         {t("component.routine.addPeriod")}

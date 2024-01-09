@@ -38,7 +38,7 @@ const CustomSearchField = ({ label, width, options }: { label: string; width: st
         style: { color: "#79CA25" },
         focused: true,
       }}
-      placeholder={t("input_po_no")}
+      placeholder={t("pick_up_order.filter.search")}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">

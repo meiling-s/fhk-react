@@ -40,20 +40,14 @@ type props = {
   setState: (val: CreatePicoDetail[]) => void
   data: CreatePicoDetail[]
   setId: Dispatch<SetStateAction<number>>
- 
+  picoHisId: string | null
   editRowId: number | null;
-  selectedPoDetails?:CreatePicoDetail[]
-  updateRowId:number | null
-  editMode:boolean
-  updateId: number
-  setUpdateId: Dispatch<SetStateAction<number>>
-  initialRow?:CreatePicoDetail
   isEditing:boolean
-  setIsEditing:React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const initValue = {
   id: -1,
+  picoHisId: '',
   senderId: "1",
   senderName: "",
   senderAddr: "",
@@ -75,16 +69,9 @@ const CreateRecycleForm = ({
   onClose,
   setState,
   data,
-  setId,
-
   editRowId,
-  selectedPoDetails,
-  updateRowId,
-  editMode,
-  updateId,
-  initialRow,
   isEditing,
-  setIsEditing
+  picoHisId
 }: props) => {
   
   const { recycType } = useContainer(CommonTypeContainer);
@@ -139,7 +126,6 @@ const CreateRecycleForm = ({
   useEffect(() => {
     if (editRow) {
       // Set the form field values based on the editRow data
-      const t= data.indexOf(editRow)
 
       console.log(editRow)
 
@@ -147,6 +133,7 @@ const CreateRecycleForm = ({
 
       formik.setValues({
         id: index,
+        picoHisId: picoHisId??'',
         senderId: editRow.senderId,
         senderName: editRow.senderName,
         senderAddr: editRow.senderAddr,
@@ -169,33 +156,6 @@ const CreateRecycleForm = ({
   useEffect(() => {
     console.log("defaultRecyc: ",defaultRecyc)
   },[defaultRecyc])
-
-  // useEffect(() => {
-  //   if (updateRow) {
-
-  //     const index = data.indexOf(updateRow)
-
-  //     // Set the form field values based on the editRow data
-  //     formik.setValues({
-  //       id: index,
-  //       senderId: updateRow.senderId,
-  //       senderName: updateRow.senderName,
-  //       senderAddr: updateRow.senderAddr,
-  //       senderAddrGps: updateRow.senderAddrGps,
-  //       receiverId: updateRow.receiverId,
-  //       receiverName:updateRow.receiverName,
-  //       receiverAddr:updateRow.receiverAddr,
-  //       receiverAddrGps: updateRow.receiverAddrGps,
-  //       status: updateRow.status,
-  //       createdBy: updateRow.createdBy,
-  //       updatedBy: updateRow.updatedBy,
-  //       pickupAt: updateRow.pickupAt,
-  //       recycType: updateRow.recycType,
-  //       recycSubType:updateRow.recycSubType,
-  //       weight: updateRow.weight,
-  //     });
-  //   }
-  // }, [updateRow]);
 
   const validateSchema = Yup.object().shape({
     senderName: Yup.string().required("This sendername is required"),

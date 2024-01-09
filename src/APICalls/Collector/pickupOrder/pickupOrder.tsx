@@ -118,6 +118,3 @@ export const editPickupOrderStatus = async (pickupOrderId: string, data:PoStatus
 
 
 
-
-  
-

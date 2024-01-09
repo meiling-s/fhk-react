@@ -18,10 +18,12 @@ import StatusCard from "../../../components/StatusCard";
 import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
 import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import { ToastContainer, toast } from "react-toastify";
+import { useTranslation } from 'react-i18next'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
 
-
-
+import i18n from '../../../setups/i18n'
 
 interface Option {
   value: string;
@@ -29,45 +31,47 @@ interface Option {
 }
 
 const PickupOrders = () => {
+  const { t } = useTranslation()
+ 
   const columns: GridColDef[] = [
-    { field: "建立日期", headerName: "建立日期", width: 300 },
+    { field: "建立日期", headerName: t('pick_up_order.table.created_datetime'), width: 300 },
     {
       field: "物流公司",
-      headerName: "物流公司",
+      headerName: t('pick_up_order.table.pico_id'),
       width: 170,
       editable: true,
     },
     {
       field: "运单编号",
-      headerName: "运单编号",
+      headerName: t('pick_up_order.table.logistic_company'),
       type:"string",
       width: 170,
       editable: true,
     },
     {
       field: "送货日期",
-      headerName: "送货日期",
+      headerName: t('pick_up_order.table.delivery_date'),
       type: 'string',
       width: 300,
       editable: true,
     },
     {
         field: "寄件公司",
-        headerName: "寄件公司",
+        headerName: t('pick_up_order.table.sender_company'),
         type: "sring",
         width: 170,
         editable: true,
     },
     {
         field: "收件公司",
-        headerName: "收件公司",
+        headerName: t('pick_up_order.table.receiver'),
         type: "string",
         width: 170,
         editable: true,
     },
     {
         field: "状态",
-        headerName: "状态",
+        headerName: t('pick_up_order.table.status'),
         type: "string",
         width: 170,
         editable: true,
@@ -79,6 +83,9 @@ const PickupOrders = () => {
   ];
 
   const {pickupOrder} = useContainer(CheckInRequestContainer)
+  const {recycType} = useContainer(CommonTypeContainer)
+  const [recycItem, setRecycItem] = useState<il_item[]>([])
+
   const location = useLocation();
   const action: string = location.state;
   useEffect(() => {
@@ -106,19 +113,60 @@ const PickupOrders = () => {
     navigate(location.pathname, { replace: true });
   }, []);
 
+  useEffect(() =>{
+   
+   const recycItems: il_item[] = []
+   recycType?.forEach((item) =>{
+    var name = ""
+    switch (i18n.language) {
+      case 'enus':
+        name = item.recyclableNameEng
+        break
+      case 'zhch':
+        name = item.recyclableNameSchi
+        break
+      case 'zhhk':
+        name = item.recyclableNameTchi
+        break
+      default:
+        name = item.recyclableNameTchi
+        break
+    }
+    recycItems.push({
+      name: name,
+      id: item.recycTypeId.toString()
+    })
+   })
+
+   setRecycItem(recycItems)
+  }, [recycType]);
+
+  const getDeliveryDate = (row: PickupOrder) => {
+    if( row.picoType === 'AD_HOC') {
+      return `${row.effFrmDate} - ${row.effToDate}`
+    } else {
+      if(row.routineType === 'daily'){
+        return "Daily"
+      }else {
+        return `${row.routine.join(', ')}`
+      }
+     
+    }
+  }
+
   const rows: any[] = pickupOrder?.map((item) => ({
     id: item.picoId,
     建立日期: item.effFrmDate, 
     物流公司: item.logisticName,
     运单编号: item.picoId, 
-    送货日期: `${item.effFrmDate} - ${item.effToDate}`,
+    送货日期: getDeliveryDate(item),
     寄件公司: item.pickupOrderDetail[0]?.senderName,
     收件公司: item.pickupOrderDetail[0]?.receiverName,
     状态: item.status,
   }))??[] ;
 
   interface Row {
-    id:string;
+    id: number;
     建立日期: string;
     物流公司: string;
     运单编号: number;
@@ -128,13 +176,13 @@ const PickupOrders = () => {
     状态: string;
   }
   const searchfield = [
-    {label:'搜索',width:'14%',},
-    {label:'日期由',width:'10%',options:getUniqueOptions('建立日期')},
-    {label:'至',width:'10%',options:getUniqueOptions('送货日期')},
-    {label:'物流公司',width:'14%',options:getUniqueOptions('物流公司')},
-    {label:'地点',width:'14%',options:getUniqueOptions('收件公司')},
-    {label:'回收物类别',width:'14%',options:getUniqueOptions('状态')},
-    {label:'状态',width:'14%',options:getUniqueOptions('状态')}
+    {label:t('pick_up_order.filter.search'),width:'14%',},
+    {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('建立日期')},
+    {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('送货日期')},
+    {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('物流公司')},
+    {label:t('pick_up_order.filter.location'),width:'14%',options:getUniqueOptions('收件公司')},
+    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption()},
+    {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('状态')}
     
   ]
   
@@ -159,6 +207,15 @@ const PickupOrders = () => {
     return options
   }
   console.log(getUniqueOptions('建立日期'))
+
+  function getReycleOption() {
+    const options: Option[] = recycItem.map((item) => ({
+      value: item.id,
+      label: item.name,
+    }));
+  
+    return options;
+  }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10,
@@ -183,7 +240,7 @@ const PickupOrders = () => {
                     </Modal>
       <Box sx={{ display: "flex", alignItems: "center",ml:'6px',width:'100%' }}>
         <Typography fontSize={20} color="black" fontWeight="bold">
-          查询运单
+        {t('pick_up_order.enquiry_pickup_order')}
         </Typography>
         <Button
           onClick={() => navigate("/collector/createPickupOrder")}

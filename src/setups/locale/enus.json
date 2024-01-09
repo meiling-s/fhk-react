@@ -20,6 +20,7 @@
     "close": "Close",
     "colRecycType": "Collection Recyclable Type(s)",
     "recycType": "Recyclable Type(s)",
+    "locationData": "Location Data",
     "category": " category",
     "staffInfo": "Staff Information",
     "numOfStaff": "No. of staff",
@@ -172,11 +173,24 @@
     "recyclable_type_weight": "Recyclable type & weight",
     "message": "Message",
     "confirm_reject": "Are you sure to reject the request?",
+    "confirm_approve": "Are you sure to approve the request?",
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "shipping_company": "Shipping company",
+    "arrival_location": "Arrival Location",
+    "success_approve": "Checkout request is success",
+    "ok": "Ok",
+    "shipping_info": "Shipping Information",
+    "delivery_location": "Delivery Location",
+    "approved_on": "Approved on",
+    "reason_is": "Reason is",
+    "total_checkout": "total check-out request is",
+    "reason_1": "Reason 1",
+    "reason_2": "Reason 2",
+    "reason_3": "Reason 3"
   },
-  "changePassPage": {
+  "changePass": {
     "titlePage": "CHANGE PASSWORD",
     "submitPassword": "Submit",
     "username": "Username",
@@ -189,13 +203,153 @@
     "confirm_password": "Confirmation Password",
     "placeholder_confirm_password": "Please enter password",
     "helper_confirm_password": "Your new password and confirm password do not match",
-    "skip_btn": "Skip (Temporarily for Development)"
+    "skip_btn": "Skip (Temporarily for Development)",
+    "error": "Error, cannot reset password"
   },
   "login": {
     "wrongUsernameOrPassword": "Wrong username or password"
   },
   "mainMenu": {
     "manage": "Manage",
-    "Overview": "Overview"
-  }  
+    "overview": "Overview"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "In-Active",
+    "deleted": "Deleted",
+    "started": "STARTED",
+    "created": "CREATED",
+    "confirmed" :"CONFIRMED",
+    "rejected" : "REJECTED",
+    "completed": "COMPLETED",
+    "closed": "CLOSED",
+    "outstanding": "OUTSTANDING"
+  },
+  "appBar": {
+    "simplified_cn": "Simplified Chinese",
+    "traditional_cn": "Traditional Chinese",
+    "english": "English",
+    "notify": "Notify"
+  },
+  "pick_up_order": {
+    "enquiry_pickup_order": "Enquiry pickup order",
+    "table": {
+      "created_datetime": "Created datetime",
+      "pico_id": "PO Number",
+      "logistic_company": "Logistic company",
+      "delivery_date": "Delivery date",
+      "sender_company": " Sender company name",
+      "receiver": "Receiver company name",
+      "status": "Status"
+    },
+    "filter": {
+      "search": "Search",
+      "dateby": " Date by",
+      "to": "To",
+      "logistic_company": "Logistic company",
+      "location": "Location",
+      "recycling_category": "Recycling Category",
+      "status": "Status"
+    },
+    "card_detail": {
+      "main_category": "Type",
+      "subcategory": "Subtype",
+      "shipping_time": "Estimated shipping time",
+      "weight": "Weight",
+      "shipping_receiver": "Shipping and receiving companies",
+      "deliver_location": "Delivery and arrival locations",
+      "van": "Van",
+      "large_truck": "Large Truck",
+      "regular_shipping": "Regular Shipping",
+      "one-transport": "One Time Transport"
+    },
+    "item": {
+      "detail": "Pickup Order details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "shipping_info": "Shipping Information",
+      "date_time": "Creation date and time",
+      "transport_category": "Transport category",
+      "shipping_validity": "Shipping validity date",
+      "recycling_week": "recycling week",
+      "vehicle_category": "Vehicle type",
+      "plat_number": "Vehicle plate no.",
+      "contact_number": "Contact no.",
+      "sender_name": "Shipping company",
+      "exp_opration": "Expired operation",
+      "rec_loc_info": "Recycling location information"
+    },
+    "create_pick_up_order": "Create",
+    "edit_pick_up_order": "Edit Pickup Order",
+    "shipping_info": "Shipping Information",
+    "select_shipping_category": "Please select pickup order type",
+    "regular_shipping": "Regular Shipping",
+    "one-transport": "One Time Transport",
+    "shipping_validity": "Shipping validity date",
+    "to": "To",
+    "routine": {
+      "recycling_week": "recycling week",
+      "every_week": "every week",
+      "contract_number": "Contract no.",
+      "enter_contract": "Please input contract no."
+    },
+    "adhoc": {
+      "reason_get_off": "Ad-hoc reason",
+      "po_number": "Related pickup order"
+    },
+    "choose_logistic": "Logistic company",
+    "enter_company_name": "Please enter company name",
+    "vehicle_category": "Vehicle type",
+    "plat_number": "Vehicle plate no.",
+    "enter_plat_number": "Please input vehicle plate no.",
+    "contact_number": "Contact no.",
+    "enter_contact_number": "Please input contact no.",
+    "recyle_loc_info": "Estimated recycling location information",
+    "creation_time": "Creation time",
+    "choose": "Choose",
+    "new": "New",
+    "finish": "Complete",
+    "cancel": "Cancel",
+    "detail": {
+      "shipping_time": "Pickup time",
+      "main_category": "Type",
+      "subcategory": "Subtype",
+      "weight": "Weight",
+      "sender_name": "Shipping company",
+      "receiver": "receiver",
+      "recycling_location": "Recycling Location",
+      "arrived": "Arrived"
+    },
+    "recyclForm": {
+      "new": "New",
+      "expected_recycling": "Expected recycling",
+      "finish": "Finish",
+      "cancel": "Cancel",
+      "shipping_time": "Shipping Time",
+      "recycle_category": "Recycling category",
+      "waste_paper_category": "Waste paper category",
+      "weight": "Estimated weight",
+      "shipping_company": "Shipping company",
+      "receiver": "receiver",
+      "recycling_location": "Recycling Location",
+      "arrived": "Arrived",
+      "placeholder": "Please enter location"
+    },
+    "select_po": "Choose pickup order",
+    "search_company_name": "Enter sender company",
+    "change": "Change"
+  },
+  "tenant":{
+    "company" : "Company",
+    "invite": "Invite",
+    "search": "Search",
+    "enter_company_number":"Enter company number",
+    "company_number": "Company Number",
+    "company_cn_name": "Company Chinese name",
+    "company_en_name": "Company English name",
+    "status": "Status",
+    "company_category": "Company Category",
+    "created_date": "Creation date",
+    "number_of_acc":"Number of accounts"
+  }
 }
