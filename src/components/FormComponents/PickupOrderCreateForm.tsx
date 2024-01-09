@@ -90,31 +90,23 @@ const PickupOrderCreateForm = ({
    
  
   const handleEditRow = (id:number) => {
-    if(editMode){
       console.log('hello'+id)
       setIsEditing(true)
-      setUpdateRowId(id)
+      setEditRowId(id)
       setOpenModal(true)
-    }else{
-      console.log('hello'+id)
-      setIsEditing(true)
-      setEditRowId(id);
-      setOpenModal(true)
-    }
-  ;
   };
  
   const handleDeleteRow = (id: any) => {
-    if(editMode){  
-      const updateRowsByDetailId = state.filter((row)=>row.picoDtlId!==id)
-      console.log('ben', state.map((a) => a.picoDtlId)+id);
-      setState(updateRowsByDetailId)
-    }else{
-
-      const updatedRowsById = state.filter((row) => row.id !== id);
-      setState(updatedRowsById)
-    }
+    
+    var updateDeleteRow = state.filter((row,index)=>index!=id)
+    updateDeleteRow = updateDeleteRow.map((picoDtl,index) => {    //reorder id
+      picoDtl.id = index
+      return picoDtl
+    })
+    console.log("deleting: ",id,state,updateDeleteRow)
+    setState(updateDeleteRow)
   };
+
   const handleHeaderOnClick = () => {
     console.log("Header click");
     navigate(-1); //goback to last page
@@ -122,7 +114,7 @@ const PickupOrderCreateForm = ({
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10,
-    };
+    }
   }, []);
 
   const getvehicleType=()=>{
@@ -216,7 +208,7 @@ const PickupOrderCreateForm = ({
       width: 100,
       renderCell: (params) => (
         <IconButton>
-          <EDIT_OUTLINED_ICON onClick={() => handleEditRow(state.indexOf(params.row))} />
+          <EDIT_OUTLINED_ICON onClick={() => {handleEditRow(params.row.id)}} />
         </IconButton>
       ),
     },
@@ -226,7 +218,7 @@ const PickupOrderCreateForm = ({
       width: 100,
       renderCell: (params) => (
    
-        <IconButton onClick={() => handleDeleteRow(editMode?params.row.id:params.row.id)}>
+        <IconButton onClick={() => handleDeleteRow(params.row.id)}>
           <DELETE_OUTLINED_ICON />
         </IconButton>
       ),
@@ -330,7 +322,6 @@ const PickupOrderCreateForm = ({
               </Grid>
               <Grid item>
                 <CustomField label={"车辆类别"} mandatory>
-               
                     <CustomItemList
                       items={getvehicleType()||[]}
                       singleSelect={(values) =>
@@ -343,9 +334,9 @@ const PickupOrderCreateForm = ({
                         formik.touched.vehicleTypeId
                       }
                     />
-                  
                 </CustomField>
               </Grid>
+              
               <Grid item>
                 <CustomField label={"车牌号码"} mandatory>
                   <CustomTextField
@@ -358,6 +349,7 @@ const PickupOrderCreateForm = ({
                   />
                 </CustomField>
               </Grid>
+
               <Grid item>
                 <CustomField label={"联络人号码"} mandatory>
                   <CustomTextField
@@ -370,6 +362,7 @@ const PickupOrderCreateForm = ({
                   />
                 </CustomField>
               </Grid>
+
               <Grid item>
                 <Box>
                   <CustomField label={"合約編號"} mandatory>
@@ -394,7 +387,6 @@ const PickupOrderCreateForm = ({
               <Grid item>
                 <CustomField label={"預計回收地點資料"} mandatory>
                   <DataGrid
-                    // rows={editMode?state.map(row => ({ ...row, id: uuidv4() })) : state}
                     rows={editMode?state.map((row,index) => ({ ...row, id: index })) : state}
                     hideFooter
                     columns={columns}
