@@ -1,30 +1,7 @@
-export interface PickupOrder {
-    picoId:            number;
-    picoType:          string;
-    effFrmDate:        string;
-    effToDate:         string;
-    routineType:       string;
-    routine:           string[];
-    logisticId:        string;
-    logisticName:      string;
-    vehicleTypeId:     string;
-    platNo:            string;
-    contactNo:         string;
-    status:            string;
-    reason:            string;
-    normalFlg:         boolean;
-    approvedAt:        string;
-    rejectedAt:        string;
-    approvedBy:        string;
-    rejectedBy:        string;
-    contractNo:        string;
-    createdBy:         string;
-    updatedBy:         string;
-    pickupOrderDetail: PickupOrderDetail[];
-}
 
 export interface PickupOrderDetail {
     picoDtlId:       number;
+    picoHisId:       string | null;
     senderId:        string;
     senderName:      string;
     senderAddr:      string;
@@ -45,6 +22,33 @@ export interface PickupOrderDetail {
     weight:       number;
 }
 
+export interface PickupOrder {
+    tenantId:         string;
+    picoId:            string;
+    picoType:          string;
+    effFrmDate:        string;
+    effToDate:         string;
+    routineType:       string;
+    routine:           string[];
+    logisticId:        string;
+    logisticName:      string;
+    vehicleTypeId:     string;
+    platNo:            string;
+    contactNo:         string;
+    status:            string;
+    reason:            string;
+    normalFlg:         boolean;
+    approvedAt:        string;
+    rejectedAt:        string;
+    approvedBy:        string;
+    rejectedBy:        string;
+    contractNo:        string;
+    createdBy:         string;
+    updatedBy:         string;
+    createdAt:         string
+    pickupOrderDetail: PickupOrderDetail[];
+}
+
 export interface PickupOrderItem {
     itemId:       number;
     recycType:    string;
@@ -57,6 +61,7 @@ export interface PickupOrderItem {
 
 
 export interface CreatePO {
+    tenantId:         string;
     picoType:         string;
     effFrmDate:       string;
     effToDate:        string;
@@ -77,7 +82,9 @@ export interface CreatePO {
 }
 
 export interface CreatePicoDetail {
-    id:number;
+    picoDtlId?:      number,
+    id?:             any;
+    picoHisId:       string | null;
     senderId:        string;
     senderName:      string;
     senderAddr:      string;
@@ -122,6 +129,7 @@ export interface Row {
   }
 
   export interface EditPo {
+    tenantId:      string;
     picoType:      string;
     effFrmDate:    string;
     effToDate:     string;
@@ -141,6 +149,7 @@ export interface Row {
     rejectedBy:    string;
     contractNo:    string;
     updatedBy:     string;
+    createPicoDetail: CreatePicoDetail[]
     
 }
 
@@ -148,5 +157,18 @@ export interface PoStatus {
     status:    string;
     reason:    string;
     updatedBy: string;
+}
+
+
+export interface PicoRefrenceList {
+    type: string;
+    picoId: string;
+    status: string;
+    effFrmDate: string;
+    effToDate:string
+    routine: string;
+    senderName: string;
+    receiver: string;
+    pickupOrderDetail: PickupOrderDetail;
 }
 

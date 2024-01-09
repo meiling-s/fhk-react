@@ -38,26 +38,32 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import CircleIcon from '@mui/icons-material/Circle'
 import { CheckIn } from '../interfaces/checkin'
 import RequestForm from '../components/FormComponents/RequestForm'
+import NotifItem from '../components/NotifItem'
 import CheckInRequestContext from '../contexts/CheckInRequestContainer'
+import NotifContainerContext from '../contexts/NotifContainer'
 import { useContainer } from 'unstated-next'
 import { getRecycType } from '../APICalls/commonManage'
 import CommonTypeContainer from '../contexts/CommonTypeContainer'
 import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
+import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
 
 const MainAppBar = () => {
-  const [keywords, setKeywords] = useState<string>("");
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [keywords, setKeywords] = useState<string>('')
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [anchorElAvatar, setAnchorElAvatar] = useState<null | HTMLElement>(null)
-  const [selectedItem,setSelectedItem] = useState<CheckIn>()
-  const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
-  const drawerWidth = 246;
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [openModal,setOpenModal] =useState<boolean>(false)
-  
-  const { checkInRequest } = useContainer(CheckInRequestContext);
+  const [selectedItem, setSelectedItem] = useState<CheckIn>()
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
+  const drawerWidth = 246
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const [openModal, setOpenModal] = useState<boolean>(false)
+
+  const { checkInRequest } = useContainer(CheckInRequestContext)
+  const { numOfNotif, notifList, updateNotifications } = useContainer(
+    NotifContainerContext
+  )
   // const { checkOutRequest } = useContainer(CheckOutRequestContext);
 
   const handleLanguageChange = (lng: string) => {
@@ -110,6 +116,15 @@ const MainAppBar = () => {
     setShowSuccessModal(true)
   }
 
+  const handleClickNotif = async (notifId: number) => {
+    console.log('handleClickNotif', notifId)
+    const result = await updateFlagNotif(notifId)
+    const data = result?.data
+    if (data) {
+      await updateNotifications()
+    }
+  }
+
   return (
     //<Box flexDirection={"row"} sx={{ flexGrow: 1 }}>
     <AppBar
@@ -131,30 +146,45 @@ const MainAppBar = () => {
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex' }}>
           <IconButton onClick={toggleDrawer}>
-            <Badge badgeContent={checkInRequest?.length} color="error">
-              <NOTIFICATION_ICON />
+            {numOfNotif !== 0 && (
+              <Badge badgeContent={numOfNotif.toString()} color="error">
+                <NOTIFICATION_ICON />
+              </Badge>
+            )}
+            {numOfNotif === 0 && <NOTIFICATION_ICON />}
 
-              <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
-                <Box width="500px">
-                  <Box display="flex" p={4} alignItems="center">
-                    <Typography
-                      fontSize={20}
-                      fontWeight="bold"
-                      sx={{ mr: '10px' }}
-                    >
-                      通知
-                    </Typography>
+            <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
+              <Box className="md:w-[500px] w-[100vw]">
+                <Box display="flex" p={4} alignItems="center">
+                  <Typography
+                    fontSize={20}
+                    fontWeight="bold"
+                    sx={{ mr: '10px' }}
+                  >
+                    {t('appBar.notify')}
+                  </Typography>
+                  {numOfNotif !== 0 && (
                     <BackgroundLetterAvatars
-                      name={checkInRequest?.length.toString()!}
+                      name={numOfNotif.toString()!}
                       size={23}
                       backgroundColor="red"
                       fontColor="white"
                       fontSize="15px"
                       isBold={true}
                     />
-                  </Box>
-                  <Divider />
-                  {checkInRequest?.map((checkIn) => (
+                  )}
+                </Box>
+                <Divider />
+                {notifList?.map((notif) => (
+                  <NotifItem
+                    notifId={notif.notiRecordId}
+                    title={notif.title}
+                    content={notif.content}
+                    datetime={notif.createdAt}
+                    handleItem={() => handleClickNotif(notif.notiRecordId)}
+                  ></NotifItem>
+                ))}
+                {/* {checkInRequest?.map((checkIn) => (
                     <>
                       <List key={checkIn.chkInId}>
                         <ListItem onClick={() => handleItemClick(checkIn)}>
@@ -227,18 +257,18 @@ const MainAppBar = () => {
                       </List>
                       <Divider />
                     </>
-                  ))}
-                </Box>
-              </Drawer>
-              {selectedItem && (
-                <Modal open={openModal} onClose={handleCloses}>
-                  <RequestForm
-                    onClose={handleCloses}
-                    selectedItem={selectedItem}
-                  />
-                </Modal>
-              )}
-            </Badge>
+                  ))} */}
+              </Box>
+            </Drawer>
+            {selectedItem && (
+              <Modal open={openModal} onClose={handleCloses}>
+                <RequestForm
+                  onClose={handleCloses}
+                  selectedItem={selectedItem}
+                />
+              </Modal>
+            )}
+            {/* </Badge> */}
           </IconButton>
           <IconButton
             aria-controls={open ? 'fade-menu' : undefined}
@@ -259,16 +289,16 @@ const MainAppBar = () => {
               divider={true}
               onClick={() => handleLanguageChange('zhch')}
             >
-              <Typography>簡體中文</Typography>
+              <Typography>{t('appBar.simplified_cn')}</Typography>
             </MenuItem>
             <MenuItem
               divider={true}
               onClick={() => handleLanguageChange('zhhk')}
             >
-              <Typography>繁體中文</Typography>
+              <Typography>{t('appBar.traditional_cn')}</Typography>
             </MenuItem>
             <MenuItem onClick={() => handleLanguageChange('enus')}>
-              <Typography>English</Typography>
+              <Typography>{t('appBar.english')}</Typography>
             </MenuItem>
           </Menu>
           <Box sx={{ display: 'flex', flexDirection: 'row', ml: 3 }}>

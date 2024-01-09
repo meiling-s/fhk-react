@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { styles } from "../../constants/styles";
 import { DELETE_OUTLINED_ICON } from "../../themes/icons";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
@@ -19,7 +19,7 @@ import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutli
 import theme from "../../themes/palette";
 import CustomField from "./CustomField";
 import CustomTimePicker from "./CustomTimePicker";
-import { recyclable, timePeriod } from "../../interfaces/collectionPoint";
+import { recyclable, singleRecyclable, timePeriod } from "../../interfaces/collectionPoint";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RecyclablesList from "../SpecializeComponents/RecyclablesList";
@@ -33,25 +33,85 @@ import { CreatePicoDetail } from "../../interfaces/pickupOrder";
 import { Navigate, useNavigate } from "react-router";
 import RecyclablesListSingleSelect from "../SpecializeComponents/RecyclablesListSingleSelect";
 import { dateToLocalTime } from "../Formatter";
+import { v4 as uuidv4 } from 'uuid';
+
+type props = {
+  onClose: () => void
+  setState: (val: CreatePicoDetail[]) => void
+  data: CreatePicoDetail[]
+  setId: Dispatch<SetStateAction<number>>
+  picoHisId: string | null
+  editRowId: number | null;
+  isEditing:boolean
+}
+
+const initValue = {
+  id: -1,
+  picoHisId: '',
+  senderId: "1",
+  senderName: "",
+  senderAddr: "",
+  senderAddrGps: [0, 0],
+  receiverId: "1",
+  receiverName: "",
+  receiverAddr: "",
+  receiverAddrGps: [0, 0],
+  status: "CREATED",
+  createdBy: "ADMIN",
+  updatedBy: "ADMIN",
+  pickupAt: "",
+  recycType: "",
+  recycSubType: "",
+  weight: 0
+}
 
 const CreateRecycleForm = ({
   onClose,
   setState,
-  setId,
   data,
-  id,
   editRowId,
-}: {
-  onClose: () => void;
-  setState: (val: CreatePicoDetail[]) => void;
-  data: CreatePicoDetail[];
-  setId: Dispatch<SetStateAction<number>>;
-  id: number;
-  editRowId: number | null;
-}) => {
-  const [recyclables, setRecyclables] = useState<recyclable[]>([]);
+  isEditing,
+  picoHisId
+}: props) => {
+  
   const { recycType } = useContainer(CommonTypeContainer);
-  const editRow = data.find((row) => row.id === editRowId);
+  const [editRow,setEditRow] = useState<CreatePicoDetail>()
+  const [updateRow,setUpdateRow] = useState<CreatePicoDetail>()
+  const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
+
+  const setDefRecyc = (picoDtl: CreatePicoDetail) => {
+    const defRecyc: singleRecyclable = {recycTypeId: picoDtl.recycType, recycSubTypeId: picoDtl.recycSubType}
+    console.log("set def",defRecyc)
+    setDefaultRecyc(defRecyc)
+  }
+
+  useEffect(() => {
+    if(editRowId==null){
+      setDefaultRecyc(undefined)
+      formik.setValues(initValue)
+    }else{
+      const editR = data.at(editRowId)
+      if(editR){
+        setDefRecyc(editR)
+        setEditRow(editR)
+      }
+    }
+  }, [editRowId]);
+
+  // useEffect(() => {
+  //   if(updateRowId==null){
+  //     setDefaultRecyc(undefined)
+  //     formik.setValues(initValue)
+  //   }else{
+  //     const updateR = data.at(updateRowId)
+  //     if(updateR){
+  //       setDefaultRecyc({recycTypeId: updateR.recycType, recycSubTypeId: updateR.recycSubType})
+  //       setUpdateRow(updateR)
+  //     }
+      
+  //   }
+  // }, [updateRowId]);
+  // const updateRow = data.find((row)=>row.picoDtlId === updateRowId);
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -61,31 +121,41 @@ const CreateRecycleForm = ({
       onClose && onClose();
     }
   };
+
+
   useEffect(() => {
     if (editRow) {
       // Set the form field values based on the editRow data
+
       console.log(editRow)
+
+      const index = data.indexOf(editRow)
+
       formik.setValues({
-        id: id,
-        senderId: "1",
+        id: index,
+        picoHisId: picoHisId??'',
+        senderId: editRow.senderId,
         senderName: editRow.senderName,
         senderAddr: editRow.senderAddr,
-        senderAddrGps: [11, 12],
-        receiverId: "1",
+        senderAddrGps: editRow.senderAddrGps,
+        receiverId: editRow.receiverId,
         receiverName: editRow.receiverName,
         receiverAddr: editRow.receiverAddr,
-        receiverAddrGps: [11, 12],
-        status: "CREATED",
-        createdBy: "ADMIN",
-        updatedBy: "ADMIN",
-        pickupAt: "",
+        receiverAddrGps: editRow.receiverAddrGps,
+        status: editRow.status,
+        createdBy: editRow.createdBy,
+        updatedBy: editRow.updatedBy,
+        pickupAt: editRow.pickupAt,
         recycType: editRow.recycType,
         recycSubType: editRow.recycSubType,
         weight: editRow.weight,
-      
       });
     }
   }, [editRow]);
+
+  useEffect(() => {
+    console.log("defaultRecyc: ",defaultRecyc)
+  },[defaultRecyc])
 
   const validateSchema = Yup.object().shape({
     senderName: Yup.string().required("This sendername is required"),
@@ -96,43 +166,34 @@ const CreateRecycleForm = ({
     recycSubType: Yup.string().required("This recycSubType is required"),
     weight: Yup.number().required("This weight is required"),
   });
+   
+  //console.log(JSON.stringify(data)+'qwe')
 
   const formik = useFormik({
-    initialValues: {
-      id: id,
-      senderId: "1",
-      senderName: "",
-      senderAddr: "",
-      senderAddrGps: [11, 12],
-      receiverId: "1",
-      receiverName: "",
-      receiverAddr: "",
-      receiverAddrGps: [11, 12],
-      status: "CREATED",
-      createdBy: "ADMIN",
-      updatedBy: "ADMIN",
-      pickupAt: "",
-      recycType: "",
-      recycSubType: "",
-      weight: 0,
-    },
+    initialValues: initValue,
     validationSchema: validateSchema,
 
-    onSubmit: (values) => {
+    onSubmit: (values, {resetForm}) => {
       console.log(values);
       alert(JSON.stringify(values, null, 2));
-      const updatedValues: any = {
-        ...values,
-        id: id + 1,
-        // items:items,
-      };
-
-      setState([...data, updatedValues]);
-      setId(id + 1);
+      if(isEditing){    //editing row
+        //const {id, ...updateValue} = values
+        const updatedData = data.map((row,id) => {
+          //console.log(id, values.id)
+          return (id === values.id) ? values : row
+        })
+        setState(updatedData);
+      }else{    //creating row
+        var updatedValues: CreatePicoDetail = values
+        updatedValues.id = data.length
+        //console.log("data: ",data," updatedValues: ",updatedValues)
+        setState([...data, updatedValues]);
+      }
+      resetForm()
       onClose && onClose();
-    },
+    }
   });
-  console.log(formik.errors);
+
 
   const TextFields = [
     {
@@ -217,10 +278,9 @@ const CreateRecycleForm = ({
 
                 <CustomField label={t("col.recycType")} mandatory>
                   <RecyclablesListSingleSelect
-                  showError={formik.errors?.recycType&&formik.touched?.recycType||undefined}
+                    showError={formik.errors?.recycType&&formik.touched?.recycType||undefined}
                     recycL={recycType ?? []}
                     setState={(values) => {
-
                       formik.setFieldValue(
                         "recycType",
                         values?.recycTypeId
@@ -230,6 +290,10 @@ const CreateRecycleForm = ({
                         values?.recycSubTypeId
                       );
                     }}
+                    defaultRecycL={
+                      defaultRecyc
+                    }
+                    key={formik.values.id}
                   />
                 </CustomField>
                 <CustomField label="預計重量" mandatory>

@@ -18,7 +18,9 @@ import {
   editWarehouse,
   getRecycleType
 } from '../../../APICalls/warehouseManage'
+import { set } from 'date-fns'
 import { getLocation } from '../../../APICalls/getLocation'
+import { get } from 'http'
 import { getCommonTypes } from '../../../APICalls/commonManage'
 
 interface AddWarehouseProps {
@@ -171,6 +173,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             ]
           }
         })
+
+
 
         setRecycleType(dataReycleType)
         setSubRecycleType(subTypeMapping)

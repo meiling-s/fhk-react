@@ -16,7 +16,7 @@ import {
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
 import AddWarehouse from './AddWarehouse'
-import TableBase from '../../../components/TableBase'
+// import TableBase from '../../../components/TableBase'
 import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
 import {
@@ -55,7 +55,6 @@ type recyTypeItem = {
 
 const Warehouse: FunctionComponent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [checkedRows, setCheckedRows] = useState<TableRow[]>([])
   const { t } = useTranslation()
   const { i18n } = useTranslation()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
@@ -134,44 +133,6 @@ const Warehouse: FunctionComponent = () => {
       }
     }
   ]
-
-  // const headerTitles = [
-  //   {
-  //     type: 'string',
-  //     field: 'warehouseNameTchi',
-  //     label: t('warehouse_page.trad_name')
-  //   },
-  //   {
-  //     type: 'string',
-  //     field: 'warehouseNameSchi',
-  //     label: t('warehouse_page.simp_name')
-  //   },
-  //   {
-  //     type: 'string',
-  //     field: 'warehouseNameEng',
-  //     label: t('warehouse_page.english_name')
-  //   },
-  //   {
-  //     type: 'string',
-  //     field: 'location',
-  //     label: t('warehouse_page.place')
-  //   },
-  //   {
-  //     type: 'string',
-  //     field: 'physicalFlg',
-  //     label: t('warehouse_page.location')
-  //   },
-  //   {
-  //     type: 'status',
-  //     field: 'status',
-  //     label: t('warehouse_page.status')
-  //   },
-  //   {
-  //     type: 'string',
-  //     field: 'warehouseRecyc',
-  //     label: t('warehouse_page.recyclable_subcategories')
-  //   }
-  // ]
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -332,30 +293,6 @@ const Warehouse: FunctionComponent = () => {
     fetchData()
   }
 
-  // const handleCheckAll = (checked: boolean) => {
-  //   console.log('checkedAll', checked)
-  //   if (checked) {
-  //     setCheckedRows(warehouseItems) // Select all rows
-  //   } else {
-  //     setCheckedRows([]) // Unselect all rows
-  //   }
-  // }
-
-  // Handle selecting/deselecting individual row
-  // const handleCheckRow = (checked: boolean, row: TableRow) => {
-  //   console.log('checkedRow', checked, row)
-  //   if (checked) {
-  //     setCheckedRows((prev) => [...prev, row])
-  //   } else {
-  //     setCheckedRows((prev) =>
-  //       prev.filter(
-  //         (existingRow) => JSON.stringify(existingRow) !== JSON.stringify(row)
-  //       )
-  //     )
-  //   }
-  //   console.log(checkedRows)
-  // }
-
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
@@ -395,19 +332,6 @@ const Warehouse: FunctionComponent = () => {
                       </b>
                     </div>
                   </div>
-                  {/* <Box className="w-full">
-                    <TableBase
-                      header={headerTitles}
-                      dataRow={warehouseItems}
-                      onDelete={(type, row) => handleDelete(action, row)}
-                      onEdit={(type, row) => handleEdit(action, row)}
-                      checkAll={checkedRows.length === warehouseItems.length}
-                      onCheckAll={handleCheckAll}
-                      checkedRows={checkedRows}
-                      onCheckRow={handleCheckRow}
-                      onSelectRow={handleSelectRow}
-                    />
-                  </Box> */}
                   <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
                     <DataGrid
                       rows={warehouseItems}
@@ -420,7 +344,7 @@ const Warehouse: FunctionComponent = () => {
                       sx={{
                         border: 'none',
                         '& .MuiDataGrid-cell': {
-                          border: 'none' // Remove the borders from the cells
+                          border: 'none'
                         },
                         '& .MuiDataGrid-row': {
                           bgcolor: 'white',

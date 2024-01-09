@@ -22,6 +22,8 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/uuid": "^9.0.6",
     "axios": "^1.5.1",
+    "date-fns": "^2.30.0",
+    "dayjs": "^1.11.10",
     "formik": "^2.4.5",
     "i18next": "^23.6.0",
     "image-file-resizer": "^0.0.0",
@@ -69,6 +71,6 @@
     ]
   },
   "overrides": {
-	"react-refresh": "0.11.0"
+    "react-refresh": "0.11.0"
   }
 }

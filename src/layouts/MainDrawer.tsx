@@ -78,7 +78,7 @@ function MainDrawer() {
     }
   }, [])
 
-  var role = localStorage.getItem(localStorgeKeyName.role);
+  var role = localStorage.getItem(localStorgeKeyName.role)
 
   let drawerMenus_collector: DrawerItem[] = [
     {
@@ -222,11 +222,11 @@ function MainDrawer() {
     {
       name: t('all_Collection_Point'),
       onClick: () => navigate('/collector/collectionPoint'),
-      collapse: false,
+      collapse: false
     },
     {
       name: t('overView'),
-      onClick: () => navigate('/warehouse/shipment'),
+      onClick: () => navigate('/warehouse/overview'),
       collapse: false
     },
     {
@@ -234,26 +234,26 @@ function MainDrawer() {
       icon: <SETTINGS_ICON />,
       onClick: () => navigate('/astd/setting'),
       collapse: false
-    },
+    }
   ]
 
-  var drawerMenus;
+  var drawerMenus
 
-  console.log(role);
+  console.log(role)
 
-  switch(role){
-    case "astd":
-      drawerMenus = drawerMenus_astd;
-      break;
-    case "collector":
-      drawerMenus = drawerMenus_collector;
-      break;
-    case "warehouse":
-      drawerMenus = drawerMenus_warehouse;
-      break;
-    case "collectoradmin":
-      drawerMenus = drawerMenus_collectorAdmin;
-      break;
+  switch (role) {
+    case 'astd':
+      drawerMenus = drawerMenus_astd
+      break
+    case 'collector':
+      drawerMenus = drawerMenus_collector
+      break
+    case 'warehouse':
+      drawerMenus = drawerMenus_warehouse
+      break
+    case 'collectoradmin':
+      drawerMenus = drawerMenus_collectorAdmin
+      break
     default:
       drawerMenus = drawerMenus_astd
   }
@@ -302,6 +302,7 @@ function MainDrawer() {
           {drawerMenus.map((drawerMenu, index) =>
             drawerMenu.collapse ? (
               <Collapse
+                key={index}
                 sx={[styles.drawerSubItem]}
                 in={drawerMenu.collapseGroup}
                 timeout="auto"

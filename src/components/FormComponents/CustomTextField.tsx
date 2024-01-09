@@ -10,6 +10,7 @@ type props = {
     endAdornment?: JSX.Element,
     error?: boolean,
     className?: string;
+    multiline?: boolean
     rows?:number
     sx?:any
     helperText?:any
@@ -25,6 +26,7 @@ function CustomTextField({
     endAdornment,
     error,
     className,
+    multiline = false,
     rows,
     sx,
     helperText
@@ -38,9 +40,9 @@ function CustomTextField({
             className={className}
             hiddenLabel
             id={id}
-            multiline
             value={value}
-            rows={rows}
+            multiline={multiline}
+            rows={multiline ? 4 : rows}
             placeholder={placeholder}
             defaultValue={defaultValue? defaultValue : ''}
             onChange={onChange}

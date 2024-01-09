@@ -1,8 +1,11 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
+
 
 const StatusCard = ({status}:{status:string|undefined}) => {
-   
+  const { t } = useTranslation()
+
   var bgColor = "";
   var fontColor =''
   var name = ''
@@ -10,38 +13,38 @@ const StatusCard = ({status}:{status:string|undefined}) => {
     case "STARTED":
       bgColor = '#ECF5EE';
       fontColor ='#7CE495';
-      name =  "处理中"
+      name =  t('status.started')
       break;
     case "CONFIRMED":
       bgColor = '#7CE495';   
       fontColor = '#FFFFFF';
-      name =  "已确认"
+      name = t('status.confirmed')
       break;
     case 'CREATED':
       bgColor = '#E4F6DC';
       fontColor = '#79CA25';
-      name =  "待处理"
+      name =  t('status.created')
       break;
-    case 'REJJECTED':
+    case 'REJECTED':
       bgColor = '#FFF0F4';
       fontColor = '#FF4242';
-      name =  "已拒绝"
+      name =  t('status.rejected')
       break;
     case 'COMPLETED':
       bgColor = '#6BC7FF';
       fontColor = '#FFFFFF';
-      name ='已完成'
+      name = t('status.completed')
 
       break;
     case 'CLOSED':
       bgColor = '#ACACAC';
       fontColor = '#FFFFFF';
-      name =  "已取消"
+      name = t('status.closed')
       break;
     case 'OUTSTANDING':
       bgColor = '#F4F4F4';
       fontColor = '#ACACAC';
-      name =  "已逾期"
+      name =  t('status.outstanding')
       break;
     default:
       break;
