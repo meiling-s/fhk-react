@@ -219,7 +219,10 @@
     "rejected": "拒絕",
     "completed": "已完成",
     "closed": "已關閉",
-    "outstanding": "傑出"
+    "outstanding": "傑出",
+    "enable": "啟用",
+    "not_enabled": "未啟用",
+    "terminated": "已終止"
   },
   "appBar": {
     "simplified_cn": "簡體中文",
@@ -347,6 +350,52 @@
     "status": "狀態",
     "company_category": "公司類別",
     "created_date": "建立日期",
-    "number_of_acc":"帳戶數量"
+    "number_of_acc": "帳戶數量",
+    "invite_form": {
+      "company_number": "公司編號 ",
+      "company_category": "公司類別",
+      "company_zh_name": "公司繁體中文名",
+      "company_cn_name": "公司簡體中文名",
+      "company_en_name": "公司英文名",
+      "bussiness_number": "商業登記編號 ",
+      "remark": "備註",
+      "enter_company_number": "請輸入公司編號",
+      "enter_company_category": "請輸入公司類別",
+      "enter_company_zh_name": "請輸入公司繁體中文",
+      "enter_company_cn_name": "請輸入公司中文名稱",
+      "enter_company_en_name": "請輸入公司英文名稱",
+      "enter_bussiness_number": "請輸入商業登記號碼",
+      "enter_remark": "請輸入文字"
+    },
+    "invite_modal": {
+      "invite_company": "邀請公司",
+      "invite_by_email": "以電郵地址邀請",
+      "enter_email": "請輸入電郵地址",
+      "or": "或",
+      "link_invitation": "發送連結邀請",
+      "copy": "複製"
+    },
+    "detail": {
+      "company_category": "公司類別",
+      "company_name_traditional_chinese": "繁體中文公司名稱",
+      "company_name_simplified_chinese": "簡體中文公司名稱",
+      "company_english_name": "公司英文名稱",
+      "business_registration_number": "商業登記號碼",
+      "business_reg_number_picture": "商業登記號碼圖片",
+      "contact_person_name": "聯絡人姓名",
+      "contact_phone_number": "聯絡電話號碼",
+      "epd_contract": "EPD合同",
+      "creation_date": "創建日期",
+      "company_logo": "公司標誌",
+      "remark": "備註",
+      "number_of_accounts": "帳戶數目",
+      "ways_of_entry_and_exit": "進出方式",
+      "number_of_photos_uploaded": "已上載照片數量",
+      "max_photo_upload_capacity": "最大照片上傳容量",
+      "account_status": "帳戶狀態",
+      "reason_for_deactivation": "停用原因",
+      "please_enter_capacity_mb": "請輸入容量（MB）",
+      "please_enter_the_reason": "請輸入原因"
+    }
   }
 }

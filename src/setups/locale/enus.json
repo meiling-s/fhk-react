@@ -219,11 +219,14 @@
     "deleted": "Deleted",
     "started": "STARTED",
     "created": "CREATED",
-    "confirmed" :"CONFIRMED",
-    "rejected" : "REJECTED",
+    "confirmed": "CONFIRMED",
+    "rejected": "REJECTED",
     "completed": "COMPLETED",
     "closed": "CLOSED",
-    "outstanding": "OUTSTANDING"
+    "outstanding": "OUTSTANDING",
+    "enable": "Enable",
+    "not_enabled": "Not Enabled",
+    "terminated": "Terminated"
   },
   "appBar": {
     "simplified_cn": "Simplified Chinese",
@@ -339,17 +342,63 @@
     "search_company_name": "Enter sender company",
     "change": "Change"
   },
-  "tenant":{
-    "company" : "Company",
+  "tenant": {
+    "company": "Company",
     "invite": "Invite",
     "search": "Search",
-    "enter_company_number":"Enter company number",
+    "enter_company_number": "Enter company number",
     "company_number": "Company Number",
     "company_cn_name": "Company Chinese name",
     "company_en_name": "Company English name",
     "status": "Status",
     "company_category": "Company Category",
     "created_date": "Creation date",
-    "number_of_acc":"Number of accounts"
+    "number_of_acc": "Number of accounts",
+    "invite_form": {
+      "company_number": "Company Number",
+      "company_category": "Company Category",
+      "company_zh_name": "Company Traditional Chinese",
+      "company_cn_name": "Company Chinese name",
+      "company_en_name": "Company English name",
+      "bussiness_number": "Business Registration number",
+      "remark" : "Remark",
+      "enter_company_number": "Please enter Company Number",
+      "enter_company_category": "Please enter company category",
+      "enter_company_zh_name": "Please enter Company Traditional Chinese",
+      "enter_company_cn_name": "Please enter Company Chinese name",
+      "enter_company_en_name": "Please enter Company English name",
+      "enter_bussiness_number" : "Please enter business registration number",
+      "enter_remark": "Please enter text"
+    },
+    "invite_modal": {
+      "invite_company": "Invite company",
+      "invite_by_email": "Invite by email address",
+      "enter_email": "Please enter email address",
+      "or": "or",
+      "link_invitation": "Send link invitation",
+      "copy": "copy"
+    },
+    "detail" : {
+      "company_category": "Company Category",
+      "company_name_traditional_chinese": "Company name in traditional Chinese",
+      "company_name_simplified_chinese": "Company name in simplified Chinese",
+      "company_english_name": "Company English name",
+      "business_registration_number": "Business registration number",
+      "business_reg_number_picture": "Business registration number picture",
+      "contact_person_name": "Contact person name",
+      "contact_phone_number": "Contact phone number",
+      "epd_contract": "EPD contract",
+      "creation_date": "Creation date",
+      "company_logo": "Company logo",
+      "remark": "Remark",
+      "number_of_accounts": "Number of accounts",
+      "ways_of_entry_and_exit": "Ways of entry and exit",
+      "number_of_photos_uploaded": "Number of photos uploaded",
+      "max_photo_upload_capacity": "Maximum photo upload capacity",
+      "account_status": "Account status",
+      "reason_for_deactivation": "Reason for deactivation",
+      "please_enter_capacity_mb": "Please enter capacity (MB)",
+      "please_enter_the_reason": "Please enter the reason"
+    }
   }
 }
