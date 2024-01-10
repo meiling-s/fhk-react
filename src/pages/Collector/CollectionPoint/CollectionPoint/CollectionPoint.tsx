@@ -66,14 +66,18 @@ const CollectionPoint = () => {
   return (
     <>
     <ToastContainer/>
-      <Box sx={{display: "flex", width: "100%"}}>
+      <Box sx={{display: "flex", width: "100%", justifyContent: 'space-between',
+          marginTop: {
+            xs: '62px',
+            sm: 0
+          }}}>
         <Box
           sx={{
             width: {sm:'45%',lg:'50%'},
             height: "100%",
           }}
         >
-          <Box sx={{display:'flex',alignItems:'center',mb:'4+-0px'}}>
+          <Box sx={{display:'flex',alignItems:'center',mb:'4+-0px', paddingLeft: {xs: '22px'}}}>
             <Typography fontSize={20} color='black' fontWeight='bold'>{t("collection_Point")}</Typography>
             <Button
               onClick={() => navigate("/collector/createCollectionPoint")}
