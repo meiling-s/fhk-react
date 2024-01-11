@@ -21,13 +21,13 @@ export const createInvitation = async (item: CreateTenant) => {
 
   try {
     const response = await request({
-      ...ADD_TENANT,
-      data: item
-      // headers: {
-      //   Authorization: `Bearer ${localStorage.getItem(
-      //     localStorgeKeyName.keycloakToken
-      //   )}`
-      // }
+      ...ADD_TENANT('collector'),
+      data: item,
+      headers: {
+        //   Authorization: `Bearer ${localStorage.getItem(
+        //     localStorgeKeyName.keycloakToken
+        //   )}`
+      }
     })
     console.log('Insert tenant success:', JSON.stringify(response.data))
     return response

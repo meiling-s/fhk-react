@@ -17,7 +17,7 @@ export const CHANGE_PASSWORD: AxiosRequestConfig = {
 // }
 
 export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
-  method: 'patch',
+  method: 'post',
   url: `api/v1/account/t/addTenant/${realm}`
 })
 
