@@ -463,7 +463,7 @@ function CompanyManage() {
   const [filterCompanies, setFilterCompanies] = useState<Company[]>([])
   const [selectAll, setSelectAll] = useState(false)
   const [openDetail, setOpenDetails] = useState(false)
-  const [selectedTenanId , setSelectedTenantId] = useState(0)
+  const [selectedTenanId, setSelectedTenantId] = useState(0)
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -674,7 +674,7 @@ function CompanyManage() {
   }, [])
 
   const handleSelectRow = (params: GridRowParams) => {
-    setSelectedTenantId(params.row.tenantId)
+    setSelectedTenantId(params.row.id)
     setOpenDetails(true)
   }
 
@@ -692,8 +692,8 @@ function CompanyManage() {
       companyNameEng: formikValues.companyEnName,
       tenantType: 'collector', // hardcode for temporaray
       status: 'CREATED',
-      brNo: formikValues.bussinessNumber ,
-      remark: formikValues.remark ,
+      brNo: formikValues.bussinessNumber,
+      remark: formikValues.remark,
       contactNo: '',
       email: '',
       contactName: '',
