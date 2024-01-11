@@ -380,8 +380,8 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
             </Box>
             <Divider />
             <Box sx={{ paddingX: 3, paddingTop: 3 }}>
-              {TextFields.map((t) => (
-                <Grid item sx={{ marginBottom: 3 }}>
+              {TextFields.map((t, index) => (
+                <Grid item sx={{ marginBottom: 3 }} key={index}>
                   <CustomField mandatory label={t.label}>
                     <CustomTextField
                       id={t.id}

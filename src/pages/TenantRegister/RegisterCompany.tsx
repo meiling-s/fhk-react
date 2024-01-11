@@ -24,14 +24,14 @@ const { inviteId } = useParams();
 
   async function initInviteForm() {
     console.log('invite id: '+inviteId);
-    if(inviteId){
-      const result = await getTenantById(inviteId);
-      const data = result?.data;
-      setChiName(data?.companyNameTchi);
-      setEngName(data?.companyNameEng);
-      setType(data?.tenantType);
-      console.log(result?.data);
-    }
+    // if(inviteId){
+    //   const result = await getTenantById(inviteId);
+    //   const data = result?.data;
+    //   setChiName(data?.companyNameTchi);
+    //   setEngName(data?.companyNameEng);
+    //   setType(data?.tenantType);
+    //   console.log(result?.data);
+    // }
   }
   return (
     <Box

@@ -58,7 +58,7 @@ export const getAllTenant = async () => {
 }
 
 //Don't require Authorization token
-export const getTenantById = async (tenantId: string) => {
+export const getTenantById = async (tenantId: number) => {
   const axiosConfig = GET_TENANT_BY_TENANT_ID
   axiosConfig.url = GET_TENANT_BY_TENANT_ID.url + `/${tenantId}`
 

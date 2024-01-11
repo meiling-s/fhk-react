@@ -54,15 +54,15 @@ const CompanyDetails = () => {
 
   async function initInviteForm() {
     console.log('invite id: '+inviteId);
-    if(inviteId){
-      const result = await getTenantById(inviteId);
-      const data = result?.data;
-      setChiName(data?.companyNameTchi);
-      setEngName(data?.companyNameEng);
-      setBRN(data?.brNo);
-      setType(data?.tenantType);
-      console.log(result?.data);
-    }
+    // if(inviteId){
+    //   const result = await getTenantById());
+    //   const data = result?.data;
+    //   setChiName(data?.companyNameTchi);
+    //   setEngName(data?.companyNameEng);
+    //   setBRN(data?.brNo);
+    //   setType(data?.tenantType);
+    //   console.log(result?.data);
+    // }
   }
 
   const formData = () => {

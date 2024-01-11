@@ -20,6 +20,7 @@ import CustomItemList, {
 } from '../../components/FormComponents/CustomItemList'
 import { useContainer } from 'unstated-next'
 
+import { getTenantById } from '../../APICalls/tenantManage'
 import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 
@@ -71,7 +72,15 @@ const TenantDetails: FunctionComponent<CheckOutDetailsProps> = ({
 
   const setStatus = () => {}
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    getCompanyDetail()
+  }, [])
+
+  const getCompanyDetail = async () =>{
+    const result = await getTenantById(195878)
+    const data = result?.data
+    console.log("getCompanyDetail", data)
+  }
 
   const handleReasonDeact = () => {}
 
