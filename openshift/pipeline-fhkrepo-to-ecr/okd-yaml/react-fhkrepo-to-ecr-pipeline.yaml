@@ -1,0 +1,48 @@
+# Require following resources already setup in project before:
+# secret/basic-auth-code-repo-read-write-secret-react
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: react-fhkrepo-to-ecr-pipeline
+    name: react-fhkrepo-to-ecr-pipeline
+  name: react-fhkrepo-to-ecr-pipeline
+  namespace: astd 
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: {}
+  output: {}
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    contextDir: openshift/pipeline-fhkrepo-to-ecr
+    git:
+      ref: master
+      uri: https://fhkgitlab.fhk.app/bas/as/astd/react.git
+    sourceSecret:
+      name: basic-auth-code-repo-read-write-secret-react
+    type: Git
+  strategy:
+    jenkinsPipelineStrategy:
+      env:
+      - name: AWS_ACCOUNT
+        value: "307426213411"
+      - name: AWS_REGION
+        value: ap-east-1
+      - name: IMAGE_TAG
+        value: null
+      - name: AWS_ACCESS_KEY_ID
+        value: null
+      - name: AWS_SECRET_ACCESS_KEY
+        value: null
+      jenkinsfilePath: Jenkinsfile
+    type: JenkinsPipeline
+  successfulBuildsHistoryLimit: 5
+  triggers:
+  - github:
+      secret: K7K6mBsi
+    type: GitHub
+  - generic:
+      secret: K7K6mBsi
+    type: Generic

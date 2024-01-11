@@ -1,0 +1,76 @@
+// Require following okd resources already setup in project before:
+// secret/opaque-image-repo-push-pull-secret
+
+def config_OkdProject = "astd"
+def config_Project = "astd"
+def config_Component = "react"
+def config_FromRepoServer = "fhkrepo.fhk.app"
+
+def input_AwsAccount = env.AWS_ACCOUNT.trim()
+if (input_AwsAccount.isEmpty()) {
+  error('Please input AWS account (AWS_ACCOUNT)!')
+}
+env.AWS_ACCOUNT = "${input_AwsAccount}"
+
+def input_AwsRegion = env.AWS_REGION.trim()
+if (input_AwsRegion.isEmpty()) {
+  error('Please input AWS region of the ECR (AWS_REGION)!')
+}
+env.AWS_REGION = "${input_AwsRegion}"
+
+def input_ImageTag = env.IMAGE_TAG.trim()
+if (input_ImageTag.isEmpty()) {
+  error('Please input container image tag, e.g. 1-0-0a (IMAGE_TAG)!')
+}
+
+def input_AwsAccessKeyId = env.AWS_ACCESS_KEY_ID.trim()
+if (input_AwsAccessKeyId.isEmpty()) {
+  error('Please input AWS access key id of an AWS user with ECR service access right (AWS_ACCESS_KEY_ID)!')
+}
+env.AWS_ACCESS_KEY_ID = "${input_AwsAccessKeyId}"
+
+def input_AwsSecretAccessKey = env.AWS_SECRET_ACCESS_KEY.trim()
+if (input_AwsSecretAccessKey.isEmpty()) {
+  error('Please input AWS secret access key for the AWS access key id you inputted (AWS_SECRET_ACCESS_KEY)!')
+}
+env.AWS_SECRET_ACCESS_KEY = "${input_AwsSecretAccessKey}"
+
+pipeline {
+  agent {
+    label 'skopeo-and-awscli'
+  }
+  stages {
+    stage('Copy Image to AWS ECR') {
+      steps {
+        script {
+          openshift.withCluster() {
+            withCredentials([usernamePassword(credentialsId: "${config_OkdProject}-opaque-image-repo-push-pull-secret", usernameVariable: "HARBOR_USER", passwordVariable: "HARBOR_PWD")]) {
+              def var_FromImage = "docker://${config_FromRepoServer}/${config_Project}/${config_Component}:${input_ImageTag}"
+//            echo ("From Image: ${var_FromImage}")
+              def var_ToRepoServer = "${env.AWS_ACCOUNT}.dkr.ecr.${env.AWS_REGION}.amazonaws.com"
+              def var_ToImage = "docker://${var_ToRepoServer}/${config_Project}/${config_Component}:${input_ImageTag}"
+//            echo ("To Image: ${var_ToImage}")
+//	      def var_EcrPassword = sh(
+//              script:
+//              """
+//              aws ecr get-login-password --region ${env.AWS_REGION}
+//              """,
+//              returnStdout: true
+//            )
+//            sh("""
+//              echo 'Copying image from ${var_FromImage} to ${var_ToImage}'
+//              skopeo copy ${var_FromImage} ${var_ToImage} --src-creds '${HARBOR_USER}:${HARBOR_PWD}' --dest-creds 'AWS:${var_EcrPassword}' --src-tls-verify=false --dest-tls-verify=false
+//            """)
+              sh("""
+                export REGISTRY_AUTH_FILE=/tmp/auth.json
+                aws ecr get-login-password | skopeo login --username AWS --password-stdin ${var_ToRepoServer}
+                echo 'Copying image from ${var_FromImage} to ${var_ToImage}'
+                skopeo copy ${var_FromImage} ${var_ToImage} --src-creds '${HARBOR_USER}:${HARBOR_PWD}' --src-tls-verify=false
+              """)
+            }
+          }
+        }
+      }
+    }
+  }
+}
