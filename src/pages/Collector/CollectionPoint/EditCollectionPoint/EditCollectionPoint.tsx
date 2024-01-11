@@ -489,7 +489,7 @@ function CreateCollectionPoint() {
                             
                         </CustomField>
                         <Grid item className="lg:flex sm:block text-center">
-                            <Button sx={[styles.buttonFilledGreen, localstyles.localButton]} onClick={() => handleSaveOnClick()}>
+                            <Button sx={[styles.buttonFilledGreen, localstyles.localButton,  {marginBottom: {md: 0, xs:2}}]} onClick={() => handleSaveOnClick()}>
                                 {t("col.save")}
                             </Button>
                             <Button sx={[styles.buttonOutlinedGreen, localstyles.localButton]} onClick={() => handleCancelOnClick()}>
