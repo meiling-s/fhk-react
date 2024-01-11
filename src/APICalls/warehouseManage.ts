@@ -14,11 +14,13 @@ import {
 } from "../constants/requests";
 
 const collectionPointAPI = {
-    baseURL: "http://10.166.22.107:8003/",
+    //baseURL: "http://10.166.22.107:8003/",
+    baseURL: 'http://www.greenhoopapp.com/'
 };
 
 const administratorAPI = {
-    baseURL: "http://10.166.22.107:8002/",
+    //baseURL: "http://10.166.22.107:8002/",
+    baseURL: 'http://www.greenhoopapp.com/'
 };
 
 //get all warehouse

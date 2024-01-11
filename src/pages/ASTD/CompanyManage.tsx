@@ -1,767 +1,926 @@
-import { Box, Button, Checkbox, IconButton, InputAdornment, Modal, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, TextField, Typography } from "@mui/material";
-import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
-import { useEffect, useState } from "react";
-import { visuallyHidden } from '@mui/utils';
-import React from "react";
-import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
-import { generateNumericId } from "../../utils/uuidgenerator";
-import { defaultPath, format } from "../../constants/constant";
-import { styles } from "../../constants/styles"
-import dayjs from "dayjs";
-import { openingPeriod } from "../../interfaces/collectionPoint";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import CustomPeriodSelect from "../../components/FormComponents/CustomPeriodSelect";
-import { dayjsToLocalDateTime } from "../../components/Formatter";
+import {
+  Box,
+  Button,
+  Checkbox,
+  IconButton,
+  InputAdornment,
+  Modal,
+  Stack,
+  TextField,
+  Typography,
+  Grid,
+  Divider
+} from '@mui/material'
+import {
+  DataGrid,
+  GridColDef,
+  GridRowParams,
+  GridRowSpacingParams,
+  GridCellParams
+} from '@mui/x-data-grid'
+import { ADD_PERSON_ICON, SEARCH_ICON } from '../../themes/icons'
+import { useEffect, useState } from 'react'
+import { visuallyHidden } from '@mui/utils'
+import React from 'react'
+import { createInvitation, getAllTenant } from '../../APICalls/tenantManage'
+import { generateNumericId } from '../../utils/uuidgenerator'
+import { defaultPath, format } from '../../constants/constant'
+import { styles } from '../../constants/styles'
+import dayjs from 'dayjs'
+import { openingPeriod } from '../../interfaces/collectionPoint'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import CustomDatePicker2 from '../../components/FormComponents/CustomDatePicker2'
+import CustomField from '../../components/FormComponents/CustomField'
+import CustomTextField from '../../components/FormComponents/CustomTextField'
+import CustomItemList, {
+  il_item
+} from '../../components/FormComponents/CustomItemList'
+import TenantDetails from './TenantDetails'
+import { Company } from '../../interfaces/tenant'
 
-type Company = {
-    id: string,
-    cName: string,
-    eName: string,
-    status: string,
-    type: string,
-    createDate: Date,
-    accountNum: number
-}
-
+import { dayjsToLocalDateTime } from '../../components/Formatter'
+import { useTranslation } from 'react-i18next'
+import { ErrorMessage, useFormik } from 'formik'
+import * as Yup from 'yup'
+import { Padding } from '@mui/icons-material'
+import { type } from 'os'
 
 function createCompany(
-    id: string,
-    cName: string,
-    eName: string,
-    status: string,
-    type: string,
-    createDate: Date,
-    accountNum: number
+  id: string,
+  cName: string,
+  eName: string,
+  status: string,
+  type: string,
+  createDate: Date,
+  accountNum: number
 ): Company {
-    return { id, cName, eName, status, type, createDate, accountNum };
+  return { id, cName, eName, status, type, createDate, accountNum }
 }
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
-  }
-  
-type Order = 'asc' | 'desc';
-
-function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key,
-): (
-    a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string },
-) => number {
-return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Company;
-    label: string;
-    numeric: boolean;
-  }
-  
-  const headCells: readonly HeadCell[] = [
-    {
-        id: 'id',
-        numeric: false,
-        disablePadding: false,
-        label: '公司編號',
-    },
-    {
-        id: 'cName',
-        numeric: false,
-        disablePadding: false,
-        label: '公司中文名',
-    },
-    {
-        id: 'eName',
-        numeric: false,
-        disablePadding: false,
-        label: '公司英文名',
-    },
-    {
-        id: 'status',
-        numeric: false,
-        disablePadding: false,
-        label: '狀態',
-    },
-    {
-        id: 'type',
-        numeric: false,
-        disablePadding: false,
-        label: '公司類別',
-    },
-    {
-        id: 'createDate',
-        numeric: false,
-        disablePadding: false,
-        label: '建立日期',
-    },
-    {
-        id: 'accountNum',
-        numeric: false,
-        disablePadding: false,
-        label: '帳戶數量',
-    }
-
-  ];
-
-     const fakeData = [
-        {
-            id: "test", cName: "test", eName: "test", status: "test", type: "test", createDate: new Date(), accountNum: 5 
-        },
-        {
-            id: "test2", cName: "test2", eName: "test2", status: "test2", type: "tes2", createDate: new Date(), accountNum: 8 
-        }
-    ]
 
 type inviteModal = {
-    open: boolean,
-    onClose: () => void,
-    id: string
+  open: boolean
+  onClose: () => void
+  id: string
 }
 
 const Required = () => {
-    return(
-        <Typography
-            sx={{
-                color: 'red',
-                ml: "5px"
-            }}>
-                *
-        </Typography>
-    )
+  return (
+    <Typography
+      sx={{
+        color: 'red',
+        ml: '5px'
+      }}
+    >
+      *
+    </Typography>
+  )
 }
 
+type rejectModal = {
+  open: boolean
+  onClose: () => void
+  onSubmit: () => void
+}
 
-function InviteModal({open,onClose,id}: inviteModal){
+function RejectModal({ open, onClose, onSubmit }: rejectModal) {
+  const { t } = useTranslation()
+  const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
 
-    return(
-        <Modal
-            open={open}
-            onClose={onClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+  const reasons: il_item[] = [
+    {
+      id: '1',
+      name: t('check_out.reason_1')
+    },
+    {
+      id: '2',
+      name: t('check_out.reason_2')
+    },
+    {
+      id: '3',
+      name: t('check_out.reason_3')
+    }
+  ]
+
+  const handleRejectRequest = () => {}
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h3"
+              sx={{ fontWeight: 'bold' }}
             >
-            <Box sx={localstyles.modal}>
-                <Stack spacing={2}>
-                    <Box>
-                        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{fontWeight: "bold"}}>
-                            邀請公司
-                        </Typography>
-                    </Box>  
-                    <Box>
-                        <Typography sx={localstyles.typo}>以電郵地址邀請<Required/></Typography>
-                        <TextField
-                            fullWidth
-                            placeholder="請輸入電郵地址"
-                            onChange={(event: { target: { value: any; }; }) => {
-                                console.log(event.target.value);
-                            }}
-                            InputProps={{
-                                sx: styles.textField,
-                                endAdornment: (
-                                  <InputAdornment position="end" sx={{height: "100%"}}>
-                                    <Button
-                                        sx={[styles.buttonFilledGreen,{
-                                            width:'90px',
-                                            height: "100%"
-                                        }]}
-                                        variant="outlined"
-                                    >
-                                        發送
-                                    </Button>
-                                  </InputAdornment>
-                                ),
-                            }}
-                        />
-                    </Box>
+              {/* {t('check_out.confirm_reject')} */}
+              Are you sure to reject the T0001 application?
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography sx={localstyles.typo}>
+              {t('check_out.reject_reasons')}
+            </Typography>
+            <Typography sx={localstyles.typo}>
+              {/* {t('check_out.total_checkout') + checkedCheckOut.length} */}
+            </Typography>
+            <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
+          </Box>
 
-                    <Typography variant="h6" component="h2" sx={{fontWeight: "bold"}}>或</Typography>
-                    
-                    <Box>
-                        <Typography sx={localstyles.typo}>發送連結邀請</Typography>
-                        <TextField
-                            fullWidth
-                            value={defaultPath.tenantRegisterPath+id}
-                            onChange={(event: { target: { value: any; }; }) => {
-                                console.log(event.target.value);
-                            }}
-                            InputProps={{
-                                sx: styles.textField,
-                                endAdornment: (
-                                  <InputAdornment position="end" sx={{height: "100%"}}>
-                                    <Button
-                                        onClick={() => navigator.clipboard.writeText(defaultPath.tenantRegisterPath+id)}
-                                        sx={[styles.buttonFilledGreen,{
-                                            width:'90px',
-                                            height: "100%"
-                                        }]}
-                                        variant="outlined"
-                                    >
-                                        複製
-                                    </Button>
-                                  </InputAdornment>
-                                ),
-                            }}
-                        />
-                    </Box>
+          <Box sx={{ alignSelf: 'center', paddingY: 3 }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                handleRejectRequest()
+                onClose()
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_in.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
 
-                </Stack>
-            </Box>
-        </Modal>
-    )
+function InviteModal({ open, onClose, id }: inviteModal) {
+  const { t } = useTranslation()
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('tenant.invite_modal.invite_company')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ paddingX: 3 }}>
+            <Typography sx={localstyles.typo}>
+              {t('tenant.invite_modal.invite_by_email')}
+              <Required />
+            </Typography>
+            <TextField
+              fullWidth
+              placeholder={t('tenant.invite_modal.enter_email')}
+              onChange={(event: { target: { value: any } }) => {
+                console.log(event.target.value)
+              }}
+              InputProps={{
+                sx: styles.textField,
+                endAdornment: (
+                  <InputAdornment position="end" sx={{ height: '100%' }}>
+                    <Button
+                      sx={[
+                        styles.buttonOutlinedGreen,
+                        {
+                          width: '90px',
+                          height: '100%'
+                        }
+                      ]}
+                      variant="outlined"
+                    >
+                      {t('tenant.invite_modal.copy')}
+                    </Button>
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Box>
+          <Box sx={{ paddingX: 3, paddingBottom: 3 }}>
+            <Typography variant="h6" component="h2" sx={{ marginBottom: 2 }}>
+              {t('tenant.invite_modal.or')}
+            </Typography>
+            <Typography sx={localstyles.typo}>
+              {t('tenant.invite_modal.link_invitation')}
+            </Typography>
+            <TextField
+              fullWidth
+              value={defaultPath.tenantRegisterPath + id}
+              onChange={(event: { target: { value: any } }) => {
+                console.log(event.target.value)
+              }}
+              InputProps={{
+                sx: styles.textField,
+                endAdornment: (
+                  <InputAdornment position="end" sx={{ height: '100%' }}>
+                    <Button
+                      onClick={() =>
+                        navigator.clipboard.writeText(
+                          defaultPath.tenantRegisterPath + id
+                        )
+                      }
+                      sx={[
+                        styles.buttonOutlinedGreen,
+                        {
+                          width: '90px',
+                          height: '100%'
+                        }
+                      ]}
+                      variant="outlined"
+                    >
+                      {t('tenant.invite_modal.copy')}
+                    </Button>
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
+type InviteTenant = {
+  companyNumber: string
+  companyCategory: string
+  companyZhName: string
+  companyCnName: string
+  companyEnName: string
+  bussinessNumber: string
+  effFrmDate: string
+  effToDate: string
+  remark: string
 }
 
 type inviteForm = {
-    open: boolean;
-    onClose: () => void,
-    onSubmit: ( TChiName: string, SChiName: string, EngName: string, type: string, BRNo: string, remark: string, activePeriod: openingPeriod ) => void
+  open: boolean
+  onClose: () => void
+  onSubmit: (formikValues: InviteTenant, submitForm: () => void) => void
 }
 
-function InviteForm({
-    open,
-    onClose,
-    onSubmit
-}: inviteForm){
+function InviteForm({ open, onClose, onSubmit }: inviteForm) {
+  const { t } = useTranslation()
+  const [submitable, setSubmitable] = useState<boolean>(false)
 
-    const [TChiName, setTChiName] = useState<string>("");
-    const [SChiName, setSChiName] = useState<string>("");
-    const [EngName, setEngName] = useState<string>("");
-    const [type, setType] = useState<string>("");
-    const [BRN, setBRN] = useState<string>("");
-    const [remark, setRemark] = useState<string>("");
-    const [submitable, setSubmitable] = useState<boolean>(false);
-    const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({
-        startDate: dayjs(new Date()),
-        endDate: dayjs(new Date()),
-      });
-  
+  const validateSchema = Yup.object().shape({})
 
-    useEffect(()=>{
-        //check if any of these value empty
-        if( TChiName && SChiName && EngName && type && BRN ){
-            //should also check if value valid
-            setSubmitable(true);
-        }else{
-            setSubmitable(false);
-        }
-    },[TChiName,SChiName,EngName,type,BRN])
+  const formik = useFormik<InviteTenant>({
+    initialValues: {
+      companyNumber: '',
+      companyCategory: '',
+      companyZhName: '',
+      companyCnName: '',
+      companyEnName: '',
+      bussinessNumber: '',
+      effFrmDate: '',
+      effToDate: '',
+      remark: ''
+    },
+    validationSchema: validateSchema,
 
-    return(
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-        <Modal
-            open={open}
-            onClose={onClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            >
-            <Box sx={localstyles.modal}>
-                <Stack spacing={2}>
-                    <Box>
-                        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{fontWeight: "bold"}}>
-                            邀請公司
-                        </Typography>
-                    </Box>  
-                    <Box>
-                        <Typography sx={localstyles.typo}>公司類別<Required/></Typography>
-                        <TextField
-                            fullWidth
-                            placeholder="請輸入公司類別"
-                            InputProps={ {
-                                sx: styles.textField
-                            }}
-                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setType(event.target.value)}
-                        />
-                    </Box>
-                    <Box>
-                        <Typography sx={localstyles.typo}>公司繁體中文名<Required/></Typography>
-                        <TextField
-                            fullWidth
-                            placeholder="請輸入公司繁體中文名稱"
-                            InputProps={ {
-                                sx: styles.textField
-                            }}
-                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setTChiName(event.target.value)}
-                        />
-                    </Box>
-                    <Box>
-                        <Typography sx={localstyles.typo}>公司簡體中文名<Required/></Typography>
-                        <TextField
-                            fullWidth
-                            placeholder="請輸入公司簡體中文名稱"
-                            InputProps={ {
-                                sx: styles.textField
-                            }}
-                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setSChiName(event.target.value)}
-                        />
-                    </Box>
-                    <Box>
-                        <Typography sx={localstyles.typo}>公司英文名<Required/></Typography>
-                        <TextField
-                            fullWidth
-                            placeholder="請輸入公司英文名稱"
-                            InputProps={ {
-                                sx: styles.textField
-                            }}
-                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setEngName(event.target.value)}
-                        />
-                    </Box>
-                    <Box>
-                        <Typography sx={localstyles.typo}>商業登記編號<Required/></Typography>
-                        <TextField
-                            fullWidth
-                            placeholder="請輸入商業登記編號"
-                            InputProps={ {
-                                sx: styles.textField
-                            }}
-                            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setBRN(event.target.value)}
-                        />
-                    </Box>
-                    <Box display='flex' justifyContent='space-between'>
-                        <Typography sx={localstyles.typo}>有效日期由</Typography>
-                        <CustomPeriodSelect
-                            setDate={setOpeningPeriod}
-                        />
-                    </Box>
-                    <Box>
-                        <Typography sx={localstyles.typo}>備註</Typography>
-                        <textarea 
-                            name="remark"
-                            placeholder="請輸入文字"
-                            style={{...localstyles.textArea,
-                                boxSizing: "border-box"
-                            }}
-                            onChange={(event) => setRemark(event.target.value)}
-                        />
-                    </Box>
-
-                    <Box sx={{ alignSelf: "center" }}
-                    >
-                        <Button
-                            disabled={!submitable}
-                            onClick={() => onSubmit(TChiName,SChiName,EngName,type,BRN,remark,openingPeriod)}
-                            sx={localstyles.formButton}
-                            >
-                            提交
-                        </Button>
-                    </Box>
-                    
-                </Stack>
-            </Box>
-        </Modal>
-        </LocalizationProvider>
-    );
-}
-
-function CompanyManage(){
-
-    const drawerWidth = 246;
-
-    const [searchText, setSearchText] = useState<string>("");
-
-    const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-
-    const [selected, setSelected] = useState<string[]>([]);
-
-    const [orderBy, setOrderBy] = useState<string>('name');
-
-    const [invFormModal, setInvFormModal] = useState<boolean>(false);
-
-    const [invSendModal, setInvSendModal] = useState<boolean>(false);
-
-    const [InviteId, setInviteId] = useState<string>("");
-
-    const [companies, setCompanies] = useState<Company[]>([]);
-
-    const [filterCompanies, setFilterCompanies] = useState<Company[]>([]);
-
-    useEffect(()=>{
-        //initCompanies()
-        setCompanies(fakeData);
-        setFilterCompanies(fakeData);
-    },[]);
-
-    async function initCompanies() {
-        const result = await getAllTenant();
-        const data = result?.data;
-        if(data){
-            var coms: Company[] = [];
-            data.map((com: any) => {
-                coms.push(
-                    createCompany(
-                        com?.tenantId,
-                        com?.companyNameTchi,
-                        com?.companyNameEng,
-                        com?.status,
-                        com?.tenantType,
-                        new Date(com?.createdAt),
-                        0
-                ));
-            })
-            setCompanies(coms);
-            setFilterCompanies(coms);
-        }
+    onSubmit: (values) => {
+      console.log(values)
+      onClose && onClose()
     }
+  })
 
-    const handleRequestSort = (_event: React.MouseEvent<unknown>, property: string) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
+  const TextFields = [
+    {
+      label: t('tenant.invite_form.company_number'),
+      placeholder: t('tenant.invite_form.enter_company_number'),
+      id: 'companyNumber',
+      value: formik.values.companyNumber,
+      error: formik.errors.companyNumber && formik.touched.companyNumber
+    },
+    {
+      label: t('tenant.invite_form.company_category'),
+      placeholder: t('tenant.invite_form.enter_company_category'),
+      id: 'companyCategory',
+      value: formik.values.companyCategory,
+      error: formik.errors.companyCategory && formik.touched.companyCategory
+    },
+    {
+      label: t('tenant.invite_form.company_zh_name'),
+      placeholder: t('tenant.invite_form.enter_company_zh_name'),
+      id: 'companyZhName',
+      value: formik.values.companyZhName,
+      error: formik.errors.companyZhName && formik.touched.companyZhName
+    },
+    {
+      label: t('tenant.invite_form.company_cn_name'),
+      placeholder: t('tenant.invite_form.enter_company_cn_name'),
+      id: 'companyCnName',
+      value: formik.values.companyCnName,
+      error: formik.errors.companyCnName && formik.touched.companyCnName
+    },
+    {
+      label: t('tenant.invite_form.company_en_name'),
+      placeholder: t('tenant.invite_form.enter_company_en_name'),
+      id: 'companyEnName',
+      value: formik.values.companyEnName,
+      error: formik.errors.companyEnName && formik.touched.companyEnName
+    },
+    {
+      label: t('tenant.invite_form.bussiness_number'),
+      placeholder: t('tenant.invite_form.enter_bussiness_number'),
+      id: 'bussinessNumber',
+      value: formik.values.bussinessNumber,
+      error: formik.errors.bussinessNumber && formik.touched.bussinessNumber
+    }
+  ]
 
-    const handleFilterCompanies = (searchWord: string) => {
-
-        if(searchWord != ""){
-            const filteredCompanies: Company[] = [];
-            companies.map((company)=>{
-                if(
-                    company.id.toString().includes(searchWord) ||
-                    company.cName.includes(searchWord) ||
-                    company.eName.includes(searchWord) ||
-                    company.status.includes(searchWord) ||
-                    company.type.includes(searchWord) ||
-                    dayjs(company.createDate).format(format.dateFormat1).includes(searchWord) ||
-                    company.accountNum.toString().includes(searchWord)
-                ){
-                    filteredCompanies.push(company);
-                }
-            });
-
-            if(filteredCompanies){
-                setFilterCompanies(filteredCompanies);
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
+      <Modal
+        open={open}
+        onClose={onClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={[
+            localstyles.modal,
+            {
+              height: '90%',
+              width: '40%',
+              overflowY: 'auto'
             }
-
-        }else{
-            console.log("searchWord empty, don't filter companies")
-            setFilterCompanies(companies);
-        }
-        
-    }
-
-    const createSortHandler = (property: keyof Company) => (event: React.MouseEvent<unknown>) => {
-        handleRequestSort(event, property);
-    };
-
-    function onSelectAllClick(){
-        if(selected.length < companies.length){
-            const newSelected = companies.map((company) => company.id);
-            setSelected(newSelected);
-        }else{
-            setSelected([]);
-        }
-        
-    }
-
-    const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-        const selectedIndex = selected.indexOf(id);
-        let newSelected: string[] = [];
-    
-        if (selectedIndex === -1) {
-          newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-          newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-          newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-          newSelected = newSelected.concat(
-            selected.slice(0, selectedIndex),
-            selected.slice(selectedIndex + 1),
-          );
-        }
-        setSelected(newSelected);
-    };
-
-    const onInviteFormSubmit = async(
-        TChiName: string, 
-        SChiName: string, 
-        EngName: string, 
-        type: string, 
-        BRNo: string, 
-        remark: string,
-        activePeriod: openingPeriod
-    ) => {
-        const randomId = generateNumericId();
-        
-        const result = await createInvitation({
-            tenantId: randomId,
-            companyNameTchi: TChiName,
-            companyNameSchi: SChiName,
-            companyNameEng: EngName,
-            tenantType: type,
-            status: "string",
-            brNo: BRNo,
-            remark: remark,
-            contactNo: "string",
-            email: "string",
-            contactName: "string",
-            brPhoto: ["string"],
-            epdPhoto: ["string"],
-            decimalPlace: 0,
-            monetaryValue: "string",
-            inventoryMethod: "string",
-            allowImgSize: 0,
-            allowImgNum: 0,
-            approvedAt: dayjsToLocalDateTime(activePeriod.startDate),
-            approvedBy: "string",
-            rejectedAt: dayjsToLocalDateTime(activePeriod.endDate),
-            rejectedBy: "string",
-            createdBy: "string",
-            updatedBy: "string",
-            effFrmDate: "",
-            effToDate: ""
-        });
-        if(result!=null){
-            console.log(result);
-            setInviteId(result.data?.tenantId);
-            setInvSendModal(true);
-            setInvFormModal(false);
-        }
-        
-    }
-
-    return(
-        <>
-            <Box
-                sx={{
-                    width: "100%",
-                    height: "100%",
-                    display:'flex',
-                    flexDirection: 'column',
-                    pr: 4
-                }}
-            >
-                <Typography fontSize={20} color='black' fontWeight='bold'>公司</Typography>
-                <Button sx={[styles.buttonFilledGreen,{
-                    mt: 3,
-                    width:'90px',
-                    height: "40px"
-                }]}
-                    variant="outlined"
-                    onClick={()=>setInvFormModal(true)}
-                    >
-                        <ADD_PERSON_ICON/> 邀請
-                </Button>
-                <TextField
-                    id="searchCompany"
-                    onChange={(event) => handleFilterCompanies(event.target.value)}
-                    sx={{
-                        mt: 3,
-                        width: "100%",
-                        bgcolor: "white",
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                              borderColor: '#79CA25',
-                            },
-                            '&:hover fieldset': {
-                              borderColor: '#79CA25',
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: '#79CA25',
-                            },
-                          }
-                    }}
-                    label="搜索"
-                    placeholder="輸入公司編號"
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton onClick={()=>{}}>
-                                    <SEARCH_ICON style={{color: "#79CA25"}}/>
-                                </IconButton>
-                            </InputAdornment>
-                        )
-                    }}
-                />
-                <TableContainer
-                    sx={{
-                        mt: 2
-                    }}>
-                    <Table
-                        sx={localstyles.table}
-                        aria-labelledby="tableTitle"
-                        size='small'
-                    >
-                        <TableHead>
-                            <TableRow
-                                key={"header"}
-                                tabIndex={-1}
-                                sx={[localstyles.headerRow]}>
-                                <TableCell sx={localstyles.headCell}>
-                                    <Checkbox
-                                        color="primary"
-                                        indeterminate={selected.length > 0 && selected.length < companies.length}
-                                        checked={ selected.length > 0 }
-                                        onChange={onSelectAllClick}
-                                        inputProps={{
-                                        'aria-label': 'select all desserts',
-                                        }}
-                                    />
-                                </TableCell>
-                                {headCells.map((headCell) => (
-                                    <TableCell
-                                        key={headCell.id}
-                                        align={headCell.numeric ? 'right' : 'left'}
-                                        padding={headCell.disablePadding ? 'none' : 'normal'}
-                                        sortDirection={orderBy === headCell.id ? order : false}
-                                        sx={localstyles.headCell}
-                                    >
-                                        <TableSortLabel
-                                            active={orderBy === headCell.id}
-                                            direction={orderBy === headCell.id ? order : 'asc'}
-                                            onClick={() => {
-                                                createSortHandler(headCell.id)
-                                            }}
-                                        >
-                                            {headCell.label}
-                                            {orderBy === headCell.id ? (
-                                                <Box component="span" sx={visuallyHidden}>
-                                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                                </Box>
-                                            ) : null}
-                                        </TableSortLabel>
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filterCompanies.map((company) => {
-                                const { id, cName, eName, status, type, createDate, accountNum } = company;
-                                return (
-                                    <TableRow
-                                        hover key={id}
-                                        tabIndex={-1}
-                                        role="checkbox"
-                                        sx={[localstyles.row]}
-                                        onClick={(event)=>handleClick(event,id)}
-                                        >
-                                        <TableCell sx={localstyles.bodyCell}>
-                                            <Checkbox
-                                                color="primary"
-                                                checked={selected.includes(id)}
-                                                inputProps={{
-                                                    'aria-label': 'select all desserts',
-                                                }}
-                                            />
-                                        </TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{id}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{cName}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{eName}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{status}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{type}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{dayjs(createDate).format(format.dateFormat1)}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{accountNum}</TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                
-                <InviteForm open={invFormModal} onClose={() => setInvFormModal(false)} onSubmit={onInviteFormSubmit}/>
-
-                <InviteModal open={invSendModal} onClose={() => setInvSendModal(false)} id={InviteId}/>
+          ]}
+        >
+          <Stack spacing={2}>
+            <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+              <Typography
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+                sx={{ fontWeight: 'bold' }}
+              >
+                {t('tenant.invite_modal.invite_company')}
+              </Typography>
             </Box>
-        </>
-    );
+            <Divider />
+            <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+              {TextFields.map((t, index) => (
+                <Grid item sx={{ marginBottom: 3 }} key={index}>
+                  <CustomField mandatory label={t.label}>
+                    <CustomTextField
+                      id={t.id}
+                      placeholder={t.placeholder}
+                      rows={4}
+                      onChange={formik.handleChange}
+                      value={t.value}
+                      sx={{ width: '100%' }}
+                      error={t.error || undefined}
+                    ></CustomTextField>
+                  </CustomField>
+                </Grid>
+              ))}
+              <Grid item display="flex">
+                <CustomDatePicker2
+                  pickupOrderForm={true}
+                  setDate={(values) => {
+                    formik.setFieldValue('effFrmDate', values.startDate)
+                    formik.setFieldValue('effToDate', values.endDate)
+                  }}
+                  defaultStartDate={new Date()}
+                  defaultEndDate={new Date()}
+                />
+              </Grid>
+            </Box>
+            <Box sx={{ paddingX: 3 }}>
+              <CustomField mandatory label={t('tenant.invite_form.remark')}>
+                <CustomTextField
+                  id={'remark'}
+                  placeholder={t('tenant.invite_form.enter_remark')}
+                  multiline={true}
+                  rows={4}
+                  onChange={formik.handleChange}
+                  value={formik.values.remark}
+                  sx={{ width: '100%' }}
+                  error={
+                    (formik.errors?.remark && formik.touched?.remark) ||
+                    undefined
+                  }
+                ></CustomTextField>
+              </CustomField>
+            </Box>
+
+            <Box sx={{ alignSelf: 'center' }}>
+              <Button
+                disabled={submitable}
+                // onClick={() => onSubmit(formik.handleSubmit)}
+                onClick={() => onSubmit(formik.values, formik.submitForm)}
+                sx={[
+                  styles.buttonFilledGreen,
+                  {
+                    mt: 3,
+                    color: 'white',
+                    width: 'max-content',
+                    height: '40px'
+                  }
+                ]}
+              >
+                提交
+              </Button>
+            </Box>
+          </Stack>
+        </Box>
+      </Modal>
+    </LocalizationProvider>
+  )
+}
+
+function CompanyManage() {
+  const { t } = useTranslation()
+
+  const [searchText, setSearchText] = useState<string>('')
+  const [selected, setSelected] = useState<string[]>([])
+  const [invFormModal, setInvFormModal] = useState<boolean>(false)
+  const [invSendModal, setInvSendModal] = useState<boolean>(false)
+  const [rejectModal, setRejectModal] = useState<boolean>(false)
+  const [InviteId, setInviteId] = useState<string>('')
+  const [companies, setCompanies] = useState<Company[]>([])
+  const [filterCompanies, setFilterCompanies] = useState<Company[]>([])
+  const [selectAll, setSelectAll] = useState(false)
+  const [openDetail, setOpenDetails] = useState(false)
+  const [selectedTenanId, setSelectedTenantId] = useState(0)
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked
+    setSelectAll(checked)
+  }
+
+  const handleRowCheckboxChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {}
+
+  const HeaderCheckbox = (
+    <Checkbox
+      checked={selectAll}
+      onChange={handleSelectAll}
+      color="primary"
+      inputProps={{ 'aria-label': 'Select all rows' }}
+    />
+  )
+
+  const checkboxColumn: GridColDef = {
+    field: 'customCheckbox',
+    headerName: 'Select',
+    width: 80,
+    sortable: false,
+    filterable: false,
+    renderHeader: () => HeaderCheckbox,
+    renderCell: (params) => (
+      <Checkbox
+        checked={selected.includes(params.row.id) || selectAll}
+        onChange={(event) => handleRowCheckboxChange(event, params.row.id)}
+        color="primary"
+      />
+    )
+  }
+
+  const headCells: GridColDef[] = [
+    checkboxColumn,
+    {
+      field: 'id',
+      headerName: t('tenant.company_number'),
+      type: 'string',
+      width: 200
+    },
+    {
+      field: 'cName',
+      headerName: t('tenant.company_cn_name'),
+      width: 150,
+      type: 'string'
+    },
+    {
+      field: 'eName',
+      headerName: t('tenant.company_en_name'),
+      type: 'string',
+      width: 150
+    },
+    {
+      field: 'status',
+      headerName: t('tenant.status'),
+      width: 150,
+      type: 'string'
+    },
+    {
+      field: 'type',
+      headerName: t('tenant.company_category'),
+      width: 150,
+      type: 'string'
+    },
+    {
+      field: 'createDate',
+      headerName: t('tenant.created_date'),
+      width: 150,
+      type: 'string'
+    },
+    {
+      field: 'accountNum',
+      headerName: t('tenant.number_of_acc'),
+      width: 150,
+      type: 'string'
+    },
+    {
+      field: 'action',
+      headerName: '',
+      width: 250,
+      type: 'string',
+      renderCell: (params) => {
+        return (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {params.row.status === 'test' ? (
+              <div>
+                <Button
+                  sx={[
+                    styles.buttonFilledGreen,
+                    {
+                      width: 'max-content',
+                      height: '40px',
+                      marginRight: '8px'
+                    }
+                  ]}
+                  variant="outlined"
+                  onClick={() => setInvFormModal(true)}
+                >
+                  Approve
+                </Button>
+                <Button
+                  sx={[
+                    styles.buttonOutlinedGreen,
+                    {
+                      width: 'max-content',
+                      height: '40px'
+                    }
+                  ]}
+                  variant="outlined"
+                  onClick={() => setInvFormModal(true)}
+                >
+                  Reject
+                </Button>
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        )
+      }
+    }
+  ]
+
+  useEffect(() => {
+    initCompaniesData()
+  }, [])
+
+  async function initCompaniesData() {
+    const result = await getAllTenant()
+    const data = result?.data
+    if (data) {
+      var coms: Company[] = []
+      data.map((com: any) => {
+        coms.push(
+          createCompany(
+            com?.tenantId,
+            com?.companyNameTchi,
+            com?.companyNameEng,
+            com?.status,
+            com?.tenantType,
+            new Date(com?.createdAt),
+            0
+          )
+        )
+      })
+      setCompanies(coms)
+      setFilterCompanies(coms)
+    }
+  }
+
+  const handleFilterCompanies = (searchWord: string) => {
+    if (searchWord != '') {
+      const filteredCompanies: Company[] = []
+      companies.map((company) => {
+        if (
+          company.id.toString().includes(searchWord) ||
+          company.cName.includes(searchWord) ||
+          company.eName.includes(searchWord) ||
+          company.status.includes(searchWord) ||
+          company.type.includes(searchWord) ||
+          dayjs(company.createDate)
+            .format(format.dateFormat1)
+            .includes(searchWord) ||
+          company.accountNum.toString().includes(searchWord)
+        ) {
+          filteredCompanies.push(company)
+        }
+      })
+
+      if (filteredCompanies) {
+        setFilterCompanies(filteredCompanies)
+      }
+    } else {
+      console.log("searchWord empty, don't filter companies")
+      setFilterCompanies(companies)
+    }
+  }
+
+  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+    const selectedIndex = selected.indexOf(id)
+    let newSelected: string[] = []
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id)
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1))
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1))
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      )
+    }
+    setSelected(newSelected)
+  }
+
+  const onRejectModal = () => {}
+
+  const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
+    return {
+      top: params.isFirstVisible ? 0 : 10
+    }
+  }, [])
+
+  const handleSelectRow = (params: GridRowParams) => {
+    setSelectedTenantId(params.row.id)
+    setOpenDetails(true)
+  }
+
+  const handleDrawerClose = () => {
+    setSelectedTenantId(0)
+    setOpenDetails(false)
+  }
+
+  const onInviteFormSubmit = async (
+    formikValues: InviteTenant,
+    submitForm: () => void
+  ) => {
+    const result = await createInvitation({
+      companyNameTchi: formikValues.companyZhName,
+      companyNameSchi: formikValues.companyCnName,
+      companyNameEng: formikValues.companyEnName,
+      tenantType: 'collector', // hardcode for temporaray
+      status: 'CREATED',
+      brNo: formikValues.bussinessNumber,
+      remark: formikValues.remark,
+      contactNo: '',
+      email: '',
+      contactName: '',
+      decimalPlace: 0,
+      monetaryValue: '',
+      inventoryMethod: '',
+      allowImgSize: 0,
+      allowImgNum: 0,
+      effFrmDate: formikValues.effFrmDate,
+      effToDate: formikValues.effToDate,
+      createdBy: 'admin',
+      updatedBy: 'admin'
+    })
+
+    if (result != null) {
+      console.log(result)
+      setInviteId(result?.data?.tenantId)
+      setInvSendModal(true)
+      setInvFormModal(false)
+    }
+  }
+
+  return (
+    <>
+      <Box
+        sx={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          pr: 4
+        }}
+      >
+        <Typography fontSize={20} color="black" fontWeight="bold">
+          {t('tenant.company')}
+        </Typography>
+        {/* <Button
+          sx={[
+            styles.buttonOutlinedGreen,
+            {
+              mt: 3,
+              width: 'max-content',
+              height: '40px'
+            }
+          ]}
+          variant="outlined"
+          onClick={() => setInvFormModal(true)}
+        >
+          <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t('tenant.invite')}
+        </Button> */}
+        <TextField
+          id="searchCompany"
+          onChange={(event) => handleFilterCompanies(event.target.value)}
+          sx={{
+            mt: 3,
+            width: '100%',
+            bgcolor: 'white',
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#79CA25'
+              },
+              '&:hover fieldset': {
+                borderColor: '#79CA25'
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#79CA25'
+              }
+            }
+          }}
+          label={t('tenant.search')}
+          placeholder={t('tenant.enter_company_number')}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => {}}>
+                  <SEARCH_ICON style={{ color: '#79CA25' }} />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
+        <div className="table-tenant">
+          <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
+            <DataGrid
+              rows={filterCompanies}
+              getRowId={(row) => row.id}
+              hideFooter
+              columns={headCells}
+              checkboxSelection={false}
+              disableRowSelectionOnClick
+              onRowClick={handleSelectRow}
+              getRowSpacing={getRowSpacing}
+              sx={{
+                border: 'none',
+                '& .MuiDataGrid-cell': {
+                  border: 'none'
+                },
+                '& .MuiDataGrid-row': {
+                  bgcolor: 'white',
+                  borderRadius: '10px'
+                },
+                '&>.MuiDataGrid-main': {
+                  '&>.MuiDataGrid-columnHeaders': {
+                    borderBottom: 'none'
+                  }
+                }
+              }}
+            />
+          </Box>
+        </div>
+        <InviteForm
+          open={invFormModal}
+          onClose={() => setInvFormModal(false)}
+          onSubmit={onInviteFormSubmit}
+        />
+
+        <InviteModal
+          open={invSendModal}
+          onClose={() => setInvSendModal(false)}
+          id={InviteId}
+        />
+
+        <RejectModal
+          open={rejectModal}
+          onClose={() => setRejectModal(false)}
+          onSubmit={onRejectModal}
+        />
+        {selectedTenanId != 0 && (
+          <TenantDetails
+          drawerOpen={openDetail}
+          handleDrawerClose={handleDrawerClose}
+          tenantId={selectedTenanId}
+          />
+        )
+        }
+       
+      </Box>
+    </>
+  )
 }
 
 let localstyles = {
-    btn_WhiteGreenTheme: {
-        borderRadius: "20px",
-        borderWidth: 1,
-        borderColor: "#79ca25",
-        backgroundColor: "white",
-        color: "#79ca25",
-        fontWeight: "bold",
-        '&.MuiButton-root:hover':{
-            bgcolor: "#F4F4F4",
-            borderColor: "#79ca25"
-        }
-    },
-    table: {
-        minWidth: 750,
-        borderCollapse: 'separate',
-        borderSpacing: '0px 10px'
-    },
-    headerRow: {
-        //backgroundColor: "#97F33B",
-        borderRadius: 10,
-        mb: 1,
-        "th:first-child": {
-            borderRadius: "10px 0 0 10px"
-        },
-        "th:last-child": {
-            borderRadius: "0 10px 10px 0"
-        },
-    },
-    row: {
-        backgroundColor: "#FBFBFB",
-        borderRadius: 10,
-        mb: 1,
-        "td:first-child": {
-            borderRadius: "10px 0 0 10px"
-        },
-        "td:last-child": {
-            borderRadius: "0 10px 10px 0"
-        },
-    },
-    headCell: {
-        border: "none",
-        fontWeight: "bold"
-    },
-    bodyCell: {
-        border: "none"
-    },
-    typo: {
-        color: "grey",
-        fontSize: 14,
-        fontWeight: "bold",
-        display: "flex"
-    },
-    textField: {
-        borderRadius: "10px",
-        fontWeight: "500",
-        "& .MuiOutlinedInput-input": {
-            padding: "10px"
-        }
-    },
-    modal: {
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: 'translate(-50%,-50%)',
-        width: "34%",
-        height: "fit-content",
-        padding: 4,
-        backgroundColor: "white",
-        border: "none",
-        borderRadius: 5
-    },
-    textArea: {
-        width: "100%",
-        height: "100px",
-        padding: "10px",
-        borderColor: "#ACACAC",
-        borderRadius: 5
-    },
-    formButton: {
-        width: "150px",
-        borderRadius: 5,
-        backgroundColor: "#79CA25",
-        color: "white",
-        '&.MuiButton-root:hover':{
-            backgroundColor: "#7AD123",
-        }
+  btn_WhiteGreenTheme: {
+    borderRadius: '20px',
+    borderWidth: 1,
+    borderColor: '#79ca25',
+    backgroundColor: 'white',
+    color: '#79ca25',
+    fontWeight: 'bold',
+    '&.MuiButton-root:hover': {
+      bgcolor: '#F4F4F4',
+      borderColor: '#79ca25'
     }
+  },
+  table: {
+    minWidth: 750,
+    borderCollapse: 'separate',
+    borderSpacing: '0px 10px'
+  },
+  headerRow: {
+    borderRadius: 10,
+    mb: 1,
+    'th:first-child': {
+      borderRadius: '10px 0 0 10px'
+    },
+    'th:last-child': {
+      borderRadius: '0 10px 10px 0'
+    }
+  },
+  row: {
+    backgroundColor: '#FBFBFB',
+    borderRadius: 10,
+    mb: 1,
+    'td:first-child': {
+      borderRadius: '10px 0 0 10px'
+    },
+    'td:last-child': {
+      borderRadius: '0 10px 10px 0'
+    }
+  },
+  headCell: {
+    border: 'none',
+    fontWeight: 'bold'
+  },
+  bodyCell: {
+    border: 'none'
+  },
+  typo: {
+    color: 'grey',
+    fontSize: 14,
+    display: 'flex'
+  },
+  textField: {
+    borderRadius: '10px',
+    fontWeight: '500',
+    '& .MuiOutlinedInput-input': {
+      padding: '10px'
+    }
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: '34%',
+    height: 'fit-content',
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5
+  },
+  textArea: {
+    width: '100%',
+    height: '100px',
+    padding: '10px',
+    borderColor: '#ACACAC',
+    borderRadius: 5
+  },
+  formButton: {
+    width: '150px',
+    borderRadius: 5,
+    backgroundColor: '#79CA25',
+    color: 'white',
+    '&.MuiButton-root:hover': {
+      backgroundColor: '#7AD123'
+    }
+  }
 }
 
-export default CompanyManage;
+export default CompanyManage

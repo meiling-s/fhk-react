@@ -269,9 +269,20 @@ function CreateCollectionPoint() {
     
     return (
         <>
-            <Box sx={styles.innerScreen_container}>
+            <Box sx={styles.innerScreen_container, {paddingLeft: {xs: 0}, width: '100%'}}>
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-                    <Grid container direction={"column"} spacing={2.5} sx={styles.gridForm}>
+                    <Grid 
+                        container direction={"column"} 
+                        spacing={2.5} 
+                        sx={(styles.gridForm, {
+                            width: { xs: '100%' },
+                            marginTop: {sm:2, xs: 6 },
+                            marginLeft: {
+                            xs: 0
+                            },
+                        })}
+                        className="sm:ml-0 mt-o w-full"    
+                        >
                         <Grid item>
                             <Button sx={[styles.headerSection]} onClick={() => handleHeaderOnClick()}>
                                 <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
@@ -477,8 +488,8 @@ function CreateCollectionPoint() {
                             </Typography>
                             
                         </CustomField>
-                        <Grid item>
-                            <Button sx={[styles.buttonFilledGreen, localstyles.localButton]} onClick={() => handleSaveOnClick()}>
+                        <Grid item className="lg:flex sm:block text-center">
+                            <Button sx={[styles.buttonFilledGreen, localstyles.localButton,  {marginBottom: {md: 0, xs:2}}]} onClick={() => handleSaveOnClick()}>
                                 {t("col.save")}
                             </Button>
                             <Button sx={[styles.buttonOutlinedGreen, localstyles.localButton]} onClick={() => handleCancelOnClick()}>

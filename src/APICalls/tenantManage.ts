@@ -1,87 +1,98 @@
-import axios from 'axios';
-import { localStorgeKeyName } from '../constants/constant';
-import { ADD_TENANT, GET_ALL_TENANT, GET_TENANT_BY_TENANT_ID, UPDATE_TENANT_REGISTER } from '../constants/requests';
-import { RegisterItem, Tenant } from '../interfaces/account';
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
+import axios from 'axios'
+import { localStorgeKeyName } from '../constants/constant'
+import {
+  ADD_TENANT,
+  GET_ALL_TENANT,
+  GET_TENANT_BY_TENANT_ID,
+  UPDATE_TENANT_REGISTER
+} from '../constants/requests'
+import { RegisterItem, Tenant } from '../interfaces/account'
+import { CreateTenant } from '../interfaces/tenant'
+import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 
 const request = axios.create({
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
 })
 
-//require Authorization token
-export const createInvitation = async (item: Tenant) => {
-  console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
+export const createInvitation = async (item: CreateTenant) => {
+  console.log(
+    `Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`
+  )
 
   try {
     const response = await request({
-      ...ADD_TENANT,
+      ...ADD_TENANT('collector'),
       data: item,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
-      },
-    });
-    console.log('Insert tenant success:', JSON.stringify(response.data));
+        //   Authorization: `Bearer ${localStorage.getItem(
+        //     localStorgeKeyName.keycloakToken
+        //   )}`
+      }
+    })
+    console.log('Insert tenant success:', JSON.stringify(response.data))
     return response
   } catch (e) {
-    console.error('Insert tenant Failed:', e);
-    return null;
+    console.error('Insert tenant Failed:', e)
+    return null
   }
 }
 
 export const getAllTenant = async () => {
-  
-  console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
+  console.log(
+    `Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`
+  )
 
   try {
     const response = await request({
       ...GET_ALL_TENANT,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
-      },
-    });
-    console.log('Get all tenant success:', JSON.stringify(response.data));
+        // Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
+      }
+    })
+    console.log('Get all tenant success:', JSON.stringify(response.data))
     return response
   } catch (e) {
-    console.error('Get all tenant failed:', e);
-    return null;
+    console.error('Get all tenant failed:', e)
+    return null
   }
-
 }
 
 //Don't require Authorization token
-export const getTenantById = async (tenantId: string) => {
+export const getTenantById = async (tenantId: number) => {
+  const axiosConfig = GET_TENANT_BY_TENANT_ID
+  axiosConfig.url = GET_TENANT_BY_TENANT_ID.url + `/${tenantId}`
 
-  const axiosConfig = GET_TENANT_BY_TENANT_ID;
-  axiosConfig.url = GET_TENANT_BY_TENANT_ID.url+`/${tenantId}`;
-  
   try {
     const response = await request({
       ...axiosConfig
-    });
-    console.log('Get tenant by id success:', JSON.stringify(response.data));
+    })
+    console.log('Get tenant by id success:', JSON.stringify(response.data))
     return response
   } catch (e) {
-    console.error('Get tenant by id failed:', e);
-    return null;
+    console.error('Get tenant by id failed:', e)
+    return null
   }
-
 }
 
-export const updateTenantRegInfo = async (item: RegisterItem, inviteId: string) => {
+export const updateTenantRegInfo = async (
+  item: RegisterItem,
+  inviteId: string
+) => {
+  const axiosConfig = UPDATE_TENANT_REGISTER
+  axiosConfig.url = UPDATE_TENANT_REGISTER.url + `/${inviteId}`
 
-  const axiosConfig = UPDATE_TENANT_REGISTER;
-  axiosConfig.url = UPDATE_TENANT_REGISTER.url+`/${inviteId}`;
-  
   try {
     const response = await request({
       ...axiosConfig,
       data: item
-    });
-    console.log('Tenant register info update success:', JSON.stringify(response.data));
+    })
+    console.log(
+      'Tenant register info update success:',
+      JSON.stringify(response.data)
+    )
     return response
   } catch (e) {
-    console.error('Tenant register info update failed:', e);
-    return null;
+    console.error('Tenant register info update failed:', e)
+    return null
   }
-
 }

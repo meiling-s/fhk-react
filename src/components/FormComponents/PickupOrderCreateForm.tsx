@@ -36,16 +36,15 @@ import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import {
   ADD_CIRCLE_ICON,
   DELETE_OUTLINED_ICON,
-  EDIT_OUTLINED_ICON,
-} from "../../themes/icons";
-
-import { insert, useFormik } from "formik";
-import CustomAutoComplete from "./CustomAutoComplete";
-import CommonTypeContainer from "../../contexts/CommonTypeContainer";
+  EDIT_OUTLINED_ICON
+} from '../../themes/icons'
 import theme from '../../themes/palette'
 import { t, use } from 'i18next'
+import { useFormik } from 'formik'
 import { editPickupOrder } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import { validate } from 'uuid'
+import CustomAutoComplete from './CustomAutoComplete'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
 import PickupOrderList from '../../components/PickupOrderList'
 import { amET } from '@mui/material/locale'
@@ -192,7 +191,6 @@ const PickupOrderCreateForm = ({
   }
 
   const columns: GridColDef[] = [
- 
     {
       field: 'pickupAt',
       headerName: t('pick_up_order.detail.shipping_time'),
@@ -419,20 +417,6 @@ const PickupOrderCreateForm = ({
                 </CustomField>
               </Grid>
               <Grid item>
-                <CustomField label={"车辆类别"} mandatory>
-                    <CustomItemList
-                      items={getvehicleType()||[]}
-                      singleSelect={(values) =>
-                        formik.setFieldValue("vehicleTypeId", values)
-                      }
-                      value={formik.values.vehicleTypeId}
-                      defaultSelected={selectedPo?.vehicleTypeId}
-                      error={
-                        formik.errors.vehicleTypeId &&
-                        formik.touched.vehicleTypeId
-                      }
-                    />
-                      </CustomField>
                 <CustomField
                   label={t('pick_up_order.vehicle_category')}
                   mandatory
@@ -451,7 +435,6 @@ const PickupOrderCreateForm = ({
                   />
                 </CustomField>
               </Grid>
-              
               <Grid item>
                 <CustomField label={t('pick_up_order.plat_number')} mandatory>
                   <CustomTextField
@@ -464,7 +447,6 @@ const PickupOrderCreateForm = ({
                   />
                 </CustomField>
               </Grid>
-
               <Grid item>
                 <CustomField
                   label={t('pick_up_order.contact_number')}
@@ -617,7 +599,6 @@ const PickupOrderCreateForm = ({
                       />
                     }
                     onClick={() => {
-                      
                       setIsEditing(false)
                       setOpenModal(true)
                     }}

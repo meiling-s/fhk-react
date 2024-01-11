@@ -262,7 +262,8 @@ export const styles = {
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
       bgcolor: '#F4F4F4'
-    }
+    },
+    width: 'max-content'
   },
   buttonOutlinedGreen_2: {
     padding: 2,
@@ -285,7 +286,7 @@ export const styles = {
     borderRadius: '12px',
     width: {
       xs: '280px',
-      md: '320px'
+      md: '100%'
     },
     backgroundColor: 'white',
     '& fieldset': {

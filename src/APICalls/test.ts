@@ -9,7 +9,8 @@ import { GET_ALL_USERNAME, GET_ALL_WAREHOUSE } from "../constants/requests";
 // };
 
 const collectionPointAPI = {
-    baseURL: "http://10.166.22.107:8003/",
+    //baseURL: "http://10.166.22.107:8003/",
+    baseURL: 'http://www.greenhoopapp.com/'
 };
 
 export const getAllUsers = async () => {

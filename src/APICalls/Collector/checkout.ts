@@ -7,7 +7,8 @@ import {
 import { updateStatus } from '../../interfaces/warehouse'
 
 const checkoutAPI = {
-  baseURL: 'http://10.166.22.107:8003/'
+  //baseURL: 'http://10.166.22.107:8003/'
+  baseURL: 'http://www.greenhoopapp.com/'
 }
 
 export const getAllCheckoutRequest = async () => {

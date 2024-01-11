@@ -115,9 +115,16 @@ const CustomCard = ({
             onMouseLeave={() => {/*setHoveredCard(null)*/}}
             sx={{
               display: "flex",
-              marginRight: "150px",
+              marginRight: {
+                xs: '100px',
+                sm: '150px'
+              },
               borderRadius: '10px',
               marginTop: '20px',
+              marginLeft: {
+                xs: '22px',
+                sm: 0
+              },
               width: {
                 sm: '80%',
                 lg: '515px'

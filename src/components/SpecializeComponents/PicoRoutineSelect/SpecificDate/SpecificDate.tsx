@@ -17,12 +17,7 @@ export default function SpecificDate({
     defaultDates
 }: props){
 
-
-
     const [specificDates, setSpecificDates] = useState<string[]>([]);
-    
-    
-   
 
     const { t } = useTranslation();
     useEffect(() => {
