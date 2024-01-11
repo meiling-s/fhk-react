@@ -11,19 +11,34 @@ export const CHANGE_PASSWORD: AxiosRequestConfig = {
   url: 'api/v1/account/resetPassword'
 }
 
-export const ADD_TENANT: AxiosRequestConfig = {
+// export const ADD_TENANT: AxiosRequestConfig = {
+//   method: 'patch',
+//   url: 'api/v1/account/tenant/astd/addTenant'
+// }
+
+export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
   method: 'patch',
-  url: 'api/v1/account/tenant/astd/addTenant'
-}
+  url: `api/v1/account/t/addTenant/${realm}`
+})
+
+// export const GET_ALL_TENANT: AxiosRequestConfig = {
+//   method: 'get',
+//   url: 'api/v1/account/tenant/astd/tenant'
+// }
 
 export const GET_ALL_TENANT: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/account/tenant/astd/tenant'
+  url: 'api/v1/account/t/'
 }
+
+// export const GET_TENANT_BY_TENANT_ID: AxiosRequestConfig = {
+//   method: 'get',
+//   url: 'api/v1/account/tenantInvite'
+// }
 
 export const GET_TENANT_BY_TENANT_ID: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/account/tenantInvite'
+  url: 'api/v1/account/t'
 }
 
 export const UPDATE_TENANT_REGISTER: AxiosRequestConfig = {

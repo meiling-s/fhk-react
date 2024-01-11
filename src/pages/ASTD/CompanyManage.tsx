@@ -680,8 +680,8 @@ function CompanyManage() {
   ]
 
   useEffect(() => {
-    //initCompanies()
-    setCompanies(fakeData)
+    initCompanies()
+    //setCompanies(fakeData)
     setFilterCompanies(fakeData)
   }, [])
 
