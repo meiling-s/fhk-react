@@ -16,7 +16,7 @@ export const login = async (item: LoginItem) => {
     const response = await request({
       ...axiosConfig,
       data: {
-        username: item.username,
+        loginId: item.username,
         password: item.password
       }
     })
