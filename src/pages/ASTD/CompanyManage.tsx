@@ -37,22 +37,14 @@ import CustomItemList, {
   il_item
 } from '../../components/FormComponents/CustomItemList'
 import TenantDetails from './TenantDetails'
+import { Company } from '../../interfaces/tenant'
 
 import { dayjsToLocalDateTime } from '../../components/Formatter'
 import { useTranslation } from 'react-i18next'
 import { ErrorMessage, useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Padding } from '@mui/icons-material'
-
-type Company = {
-  id: string
-  cName: string
-  eName: string
-  status: string
-  type: string
-  createDate: Date
-  accountNum: number
-}
+import { type } from 'os'
 
 function createCompany(
   id: string,
@@ -65,58 +57,6 @@ function createCompany(
 ): Company {
   return { id, cName, eName, status, type, createDate, accountNum }
 }
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1
-  }
-  return 0
-}
-
-type Order = 'asc' | 'desc'
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy)
-}
-
-interface HeadCell {
-  disablePadding: boolean
-  id: keyof Company
-  label: string
-  numeric: boolean
-}
-
-const fakeData = [
-  {
-    id: 'test',
-    cName: 'test',
-    eName: 'test',
-    status: '',
-    type: 'test',
-    createDate: new Date(),
-    accountNum: 5
-  },
-  {
-    id: 'test2',
-    cName: 'test2',
-    eName: 'test2',
-    status: 'test2',
-    type: 'tes2',
-    createDate: new Date(),
-    accountNum: 8
-  }
-]
 
 type inviteModal = {
   open: boolean
@@ -320,47 +260,31 @@ function InviteModal({ open, onClose, id }: inviteModal) {
   )
 }
 
+type InviteTenant = {
+  companyNumber: string
+  companyCategory: string
+  companyZhName: string
+  companyCnName: string
+  companyEnName: string
+  bussinessNumber: string
+  effFrmDate: string
+  effToDate: string
+  remark: string
+}
+
 type inviteForm = {
   open: boolean
   onClose: () => void
-  onSubmit: (
-    TChiName: string,
-    SChiName: string,
-    EngName: string,
-    type: string,
-    BRNo: string,
-    remark: string,
-    activePeriod: openingPeriod
-  ) => void
+  onSubmit: (formikValues: InviteTenant, submitForm: () => void) => void
 }
 
 function InviteForm({ open, onClose, onSubmit }: inviteForm) {
   const { t } = useTranslation()
-  const [TChiName, setTChiName] = useState<string>('')
-  const [SChiName, setSChiName] = useState<string>('')
-  const [EngName, setEngName] = useState<string>('')
-  const [type, setType] = useState<string>('')
-  const [BRN, setBRN] = useState<string>('')
-  const [remark, setRemark] = useState<string>('')
   const [submitable, setSubmitable] = useState<boolean>(false)
-  const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({
-    startDate: dayjs(new Date()),
-    endDate: dayjs(new Date())
-  })
-
-  useEffect(() => {
-    //check if any of these value empty
-    if (TChiName && SChiName && EngName && type && BRN) {
-      //should also check if value valid
-      setSubmitable(true)
-    } else {
-      setSubmitable(false)
-    }
-  }, [TChiName, SChiName, EngName, type, BRN])
 
   const validateSchema = Yup.object().shape({})
 
-  const formik = useFormik({
+  const formik = useFormik<InviteTenant>({
     initialValues: {
       companyNumber: '',
       companyCategory: '',
@@ -376,7 +300,6 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
 
     onSubmit: (values) => {
       console.log(values)
-
       onClose && onClose()
     }
   })
@@ -505,17 +428,8 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
             <Box sx={{ alignSelf: 'center' }}>
               <Button
                 disabled={submitable}
-                onClick={() =>
-                  onSubmit(
-                    TChiName,
-                    SChiName,
-                    EngName,
-                    type,
-                    BRN,
-                    remark,
-                    openingPeriod
-                  )
-                }
+                // onClick={() => onSubmit(formik.handleSubmit)}
+                onClick={() => onSubmit(formik.values, formik.submitForm)}
                 sx={[
                   styles.buttonFilledGreen,
                   {
@@ -539,20 +453,11 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
 function CompanyManage() {
   const { t } = useTranslation()
 
-  const drawerWidth = 246
-
   const [searchText, setSearchText] = useState<string>('')
-
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc')
-
   const [selected, setSelected] = useState<string[]>([])
-
-  const [orderBy, setOrderBy] = useState<string>('name')
-
   const [invFormModal, setInvFormModal] = useState<boolean>(false)
-
   const [invSendModal, setInvSendModal] = useState<boolean>(false)
-
+  const [rejectModal, setRejectModal] = useState<boolean>(false)
   const [InviteId, setInviteId] = useState<string>('')
 
   const [companies, setCompanies] = useState<Company[]>([])
@@ -560,7 +465,7 @@ function CompanyManage() {
   const [filterCompanies, setFilterCompanies] = useState<Company[]>([])
 
   const [selectAll, setSelectAll] = useState(false)
-  
+
   const [openDetail, setOpenDetails] = useState(false)
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -650,25 +555,35 @@ function CompanyManage() {
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
-            {params.row.status ? (
+            {params.row.status === 'CREATED' ? (
               <div>
                 <Button
-                  sx={[styles.buttonFilledGreen,  {
-                    width: 'max-content',
-                    height: '40px',
-                    marginRight: '8px'
-                  }]}
+                  sx={[
+                    styles.buttonFilledGreen,
+                    {
+                      width: 'max-content',
+                      height: '40px',
+                      marginRight: '8px'
+                    }
+                  ]}
                   variant="outlined"
                   onClick={() => setInvFormModal(true)}
-                >Approve</Button>
+                >
+                  Approve
+                </Button>
                 <Button
-                  sx={[styles.buttonOutlinedGreen,  {
-                    width: 'max-content',
-                    height: '40px'
-                  }]}
+                  sx={[
+                    styles.buttonOutlinedGreen,
+                    {
+                      width: 'max-content',
+                      height: '40px'
+                    }
+                  ]}
                   variant="outlined"
                   onClick={() => setInvFormModal(true)}
-                >Reject</Button>
+                >
+                  Reject
+                </Button>
               </div>
             ) : (
               <div></div>
@@ -680,12 +595,10 @@ function CompanyManage() {
   ]
 
   useEffect(() => {
-    initCompanies()
-    //setCompanies(fakeData)
-    setFilterCompanies(fakeData)
+    initCompaniesData()
   }, [])
 
-  async function initCompanies() {
+  async function initCompaniesData() {
     const result = await getAllTenant()
     const data = result?.data
     if (data) {
@@ -706,15 +619,6 @@ function CompanyManage() {
       setCompanies(coms)
       setFilterCompanies(coms)
     }
-  }
-
-  const handleRequestSort = (
-    _event: React.MouseEvent<unknown>,
-    property: string
-  ) => {
-    const isAsc = orderBy === property && order === 'asc'
-    setOrder(isAsc ? 'desc' : 'asc')
-    setOrderBy(property)
   }
 
   const handleFilterCompanies = (searchWord: string) => {
@@ -745,20 +649,6 @@ function CompanyManage() {
     }
   }
 
-  const createSortHandler =
-    (property: keyof Company) => (event: React.MouseEvent<unknown>) => {
-      handleRequestSort(event, property)
-    }
-
-  function onSelectAllClick() {
-    if (selected.length < companies.length) {
-      const newSelected = companies.map((company) => company.id)
-      setSelected(newSelected)
-    } else {
-      setSelected([])
-    }
-  }
-
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const selectedIndex = selected.indexOf(id)
     let newSelected: string[] = []
@@ -780,79 +670,6 @@ function CompanyManage() {
 
   const onRejectModal = () => {}
 
-  const onInviteFormSubmit = async (
-    TChiName: string,
-    SChiName: string,
-    EngName: string,
-    type: string,
-    BRNo: string,
-    remark: string,
-    activePeriod: openingPeriod
-  ) => {
-    const randomId = generateNumericId()
-
-    // {
-    //   "companyNameTchi": "string",
-    //   "companyNameSchi": "string",
-    //   "companyNameEng": "string",
-    //   "tenantType": "string",
-    //   "status": "string",
-    //   "brNo": "string",
-    //   "remark": "string",
-    //   "contactNo": "string",
-    //   "email": "string",
-    //   "contactName": "string",
-    //   "decimalPlace": 0,
-    //   "monetaryValue": "string",
-    //   "inventoryMethod": "string",
-    //   "allowImgSize": 0,
-    //   "allowImgNum": 0,
-    //   "effFrmDate": "string",
-    //   "effToDate": "string",
-    //   "createdBy": "string",
-    //   "updatedBy": "string"
-    // }
-
-    // const result = await createInvitation({
-    //   tenantId: randomId,
-    //   companyNameTchi: TChiName,
-    //   companyNameSchi: SChiName,
-    //   companyNameEng: EngName,
-    //   tenantType: type,
-    //   status: 'string',
-    //   brNo: BRNo,
-    //   remark: remark,
-    //   contactNo: 'string',
-    //   email: 'string',
-    //   contactName: 'string',
-    //   brPhoto: ['string'],
-    //   epdPhoto: ['string'],
-    //   decimalPlace: 0,
-    //   monetaryValue: 'string',
-    //   inventoryMethod: 'string',
-    //   allowImgSize: 0,
-    //   allowImgNum: 0,
-    //   approvedAt: dayjsToLocalDateTime(activePeriod.startDate),
-    //   approvedBy: 'string',
-    //   rejectedAt: dayjsToLocalDateTime(activePeriod.endDate),
-    //   rejectedBy: 'string',
-    //   createdBy: 'string',
-    //   updatedBy: 'string',
-    //   effFrmDate: '',
-    //   effToDate: ''
-    // })
-    // // if (result != null) {
-    //   console.log(result)
-    //   //setInviteId(result?.data?.tenantId)
-    //   setInvSendModal(true)
-    //   setInvFormModal(false)
-    //   console.log("setInvSendModal")
-    // // }
-
-    setInvSendModal(true)
-    setInvFormModal(false)
-  }
-
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
@@ -865,6 +682,40 @@ function CompanyManage() {
 
   const handleDrawerClose = () => {
     setOpenDetails(false)
+  }
+
+  const onInviteFormSubmit = async (
+    formikValues: InviteTenant,
+    submitForm: () => void
+  ) => {
+    const result = await createInvitation({
+      companyNameTchi: formikValues.companyZhName,
+      companyNameSchi: formikValues.companyCnName,
+      companyNameEng: formikValues.companyEnName,
+      tenantType: 'collector', // hardcode for temporaray
+      status: 'CREATED',
+      brNo: formikValues.bussinessNumber ,
+      remark: formikValues.remark ,
+      contactNo: '',
+      email: '',
+      contactName: '',
+      decimalPlace: 0,
+      monetaryValue: '',
+      inventoryMethod: '',
+      allowImgSize: 0,
+      allowImgNum: 0,
+      effFrmDate: formikValues.effFrmDate,
+      effToDate: formikValues.effToDate,
+      createdBy: 'admin',
+      updatedBy: 'admin'
+    })
+
+    if (result != null) {
+      console.log(result)
+      setInviteId(result?.data?.tenantId)
+      setInvSendModal(true)
+      setInvFormModal(false)
+    }
   }
 
   return (
@@ -968,15 +819,15 @@ function CompanyManage() {
         />
 
         <RejectModal
-          open={invFormModal}
-          onClose={() => setInvFormModal(false)}
+          open={rejectModal}
+          onClose={() => setRejectModal(false)}
           onSubmit={onRejectModal}
         />
 
-        <TenantDetails 
-        drawerOpen={openDetail}
-        handleDrawerClose={handleDrawerClose} />
-       
+        <TenantDetails
+          drawerOpen={openDetail}
+          handleDrawerClose={handleDrawerClose}
+        />
       </Box>
     </>
   )
@@ -1047,7 +898,6 @@ let localstyles = {
     transform: 'translate(-50%,-50%)',
     width: '34%',
     height: 'fit-content',
-    // padding: 4,
     backgroundColor: 'white',
     border: 'none',
     borderRadius: 5
