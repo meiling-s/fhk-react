@@ -488,7 +488,7 @@ function CreateCollectionPoint() {
                             </Typography>
                             
                         </CustomField>
-                        <Grid item>
+                        <Grid item className="lg:flex sm:block text-center">
                             <Button sx={[styles.buttonFilledGreen, localstyles.localButton]} onClick={() => handleSaveOnClick()}>
                                 {t("col.save")}
                             </Button>
