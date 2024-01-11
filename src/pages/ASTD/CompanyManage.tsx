@@ -459,14 +459,11 @@ function CompanyManage() {
   const [invSendModal, setInvSendModal] = useState<boolean>(false)
   const [rejectModal, setRejectModal] = useState<boolean>(false)
   const [InviteId, setInviteId] = useState<string>('')
-
   const [companies, setCompanies] = useState<Company[]>([])
-
   const [filterCompanies, setFilterCompanies] = useState<Company[]>([])
-
   const [selectAll, setSelectAll] = useState(false)
-
   const [openDetail, setOpenDetails] = useState(false)
+  const [selectedTenanId , setSelectedTenantId] = useState(0)
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -677,6 +674,7 @@ function CompanyManage() {
   }, [])
 
   const handleSelectRow = (params: GridRowParams) => {
+    setSelectedTenantId(params.row.tenantId)
     setOpenDetails(true)
   }
 
@@ -827,6 +825,7 @@ function CompanyManage() {
         <TenantDetails
           drawerOpen={openDetail}
           handleDrawerClose={handleDrawerClose}
+          tenantId={selectedTenanId}
         />
       </Box>
     </>

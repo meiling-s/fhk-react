@@ -21,46 +21,58 @@ import CustomItemList, {
 import { useContainer } from 'unstated-next'
 
 import { getTenantById } from '../../APICalls/tenantManage'
+import { Tenant } from '../../interfaces/account'
 import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 
 interface Company {}
 
-interface CheckOutDetailsProps {
-  selectedTenant?: Company
+interface TenantDetailsProps {
+  tenantId: number
   drawerOpen: boolean
   handleDrawerClose: () => void
 }
 
-const TenantDetails: FunctionComponent<CheckOutDetailsProps> = ({
-  selectedTenant,
+const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
+  tenantId,
   drawerOpen = false,
   handleDrawerClose
 }) => {
   const { t } = useTranslation()
+  const [tenantDetail, setTenantDetails] = useState<Tenant>()
 
-  const poNumber = '343536'
+  const poNumber = tenantId
   const messageCheckout = `[UserID] ${t('check_out.approved_on')} `
+  useEffect(() => {
+    getCompanyDetail()
+  }, [tenantId])
+
+  const getCompanyDetail = async () => {
+    const result = await getTenantById(tenantId)
+    const data = result?.data
+    setTenantDetails(data)
+  }
+
   const mainInfoFields = [
     {
       label: t('tenant.detail.company_category'),
-      value: 'test'
+      value: tenantDetail?.tenantType
     },
     {
       label: t('tenant.detail.company_name_traditional_chinese'),
-      value: 'test'
+      value: tenantDetail?.companyNameTchi
     },
     {
       label: t('tenant.detail.company_name_simplified_chinese'),
-      value: 'test'
+      value: tenantDetail?.companyNameSchi
     },
     {
       label: t('tenant.detail.company_english_name'),
-      value: 'test'
+      value: tenantDetail?.companyNameEng
     },
     {
       label: t('tenant.detail.business_registration_number'),
-      value: 'test'
+      value: tenantDetail?.brNo
     }
   ]
 
@@ -71,16 +83,6 @@ const TenantDetails: FunctionComponent<CheckOutDetailsProps> = ({
   ]
 
   const setStatus = () => {}
-
-  useEffect(() => {
-    getCompanyDetail()
-  }, [])
-
-  const getCompanyDetail = async () =>{
-    const result = await getTenantById(195878)
-    const data = result?.data
-    console.log("getCompanyDetail", data)
-  }
 
   const handleReasonDeact = () => {}
 
@@ -95,7 +97,7 @@ const TenantDetails: FunctionComponent<CheckOutDetailsProps> = ({
         action={'none'}
         headerProps={{
           title: t('check_out.request_check_out'),
-          subTitle: poNumber,
+          subTitle: tenantId.toString(),
           onCloseHeader: handleDrawerClose
         }}
       >
@@ -136,7 +138,7 @@ const TenantDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   {t('tenant.detail.contact_person_name')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  test
+                  {tenantDetail?.contactName}
                 </div>
               </div>
             </Box>
@@ -146,7 +148,7 @@ const TenantDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   {t('tenant.detail.contact_phone_number')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  test
+                  {tenantDetail?.contactNo}
                 </div>
               </div>
             </Box>
@@ -170,7 +172,7 @@ const TenantDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   {t('tenant.detail.creation_date')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  test
+                {tenantDetail?.effFrmDate}
                 </div>
               </div>
             </Box>
@@ -205,7 +207,9 @@ const TenantDetails: FunctionComponent<CheckOutDetailsProps> = ({
                 </div>
                 <div className="items">
                   <FormControl sx={dropDown}>
-                    <InputLabel>{t('tenant.detail.number_of_accounts')}</InputLabel>
+                    <InputLabel>
+                      {t('tenant.detail.number_of_accounts')}
+                    </InputLabel>
                     <Select
                       labelId="company-label"
                       id="company"
@@ -238,7 +242,9 @@ const TenantDetails: FunctionComponent<CheckOutDetailsProps> = ({
                 </div>
                 <div className="items">
                   <FormControl sx={dropDown}>
-                    <InputLabel>{t('tenant.detail.number_of_photos_uploaded')}</InputLabel>
+                    <InputLabel>
+                      {t('tenant.detail.number_of_photos_uploaded')}
+                    </InputLabel>
                     <Select
                       labelId="company-label"
                       id="company"
