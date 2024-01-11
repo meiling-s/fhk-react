@@ -552,7 +552,7 @@ function CompanyManage() {
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
-            {params.row.status === 'CREATED' ? (
+            {params.row.status === 'test' ? (
               <div>
                 <Button
                   sx={[
@@ -679,6 +679,7 @@ function CompanyManage() {
   }
 
   const handleDrawerClose = () => {
+    setSelectedTenantId(0)
     setOpenDetails(false)
   }
 
@@ -730,7 +731,7 @@ function CompanyManage() {
         <Typography fontSize={20} color="black" fontWeight="bold">
           {t('tenant.company')}
         </Typography>
-        <Button
+        {/* <Button
           sx={[
             styles.buttonOutlinedGreen,
             {
@@ -743,7 +744,7 @@ function CompanyManage() {
           onClick={() => setInvFormModal(true)}
         >
           <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t('tenant.invite')}
-        </Button>
+        </Button> */}
         <TextField
           id="searchCompany"
           onChange={(event) => handleFilterCompanies(event.target.value)}
@@ -821,12 +822,15 @@ function CompanyManage() {
           onClose={() => setRejectModal(false)}
           onSubmit={onRejectModal}
         />
-
-        <TenantDetails
+        {selectedTenanId != 0 && (
+          <TenantDetails
           drawerOpen={openDetail}
           handleDrawerClose={handleDrawerClose}
           tenantId={selectedTenanId}
-        />
+          />
+        )
+        }
+       
       </Box>
     </>
   )
