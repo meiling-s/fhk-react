@@ -36,7 +36,7 @@ export const getAllTenant = async () => {
     const response = await request({
       ...GET_ALL_TENANT,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
+       // Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
       },
     });
     console.log('Get all tenant success:', JSON.stringify(response.data));

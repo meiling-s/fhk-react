@@ -28,7 +28,7 @@ export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
 
 export const GET_ALL_TENANT: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/account/t/'
+  url: 'api/v1/account/t'
 }
 
 // export const GET_TENANT_BY_TENANT_ID: AxiosRequestConfig = {

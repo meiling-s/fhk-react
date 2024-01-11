@@ -791,6 +791,28 @@ function CompanyManage() {
   ) => {
     const randomId = generateNumericId()
 
+    // {
+    //   "companyNameTchi": "string",
+    //   "companyNameSchi": "string",
+    //   "companyNameEng": "string",
+    //   "tenantType": "string",
+    //   "status": "string",
+    //   "brNo": "string",
+    //   "remark": "string",
+    //   "contactNo": "string",
+    //   "email": "string",
+    //   "contactName": "string",
+    //   "decimalPlace": 0,
+    //   "monetaryValue": "string",
+    //   "inventoryMethod": "string",
+    //   "allowImgSize": 0,
+    //   "allowImgNum": 0,
+    //   "effFrmDate": "string",
+    //   "effToDate": "string",
+    //   "createdBy": "string",
+    //   "updatedBy": "string"
+    // }
+
     // const result = await createInvitation({
     //   tenantId: randomId,
     //   companyNameTchi: TChiName,
