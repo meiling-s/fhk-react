@@ -95,7 +95,7 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/warehouse" element={<RecycleShipment />} />
           <Route path="/warehouse/shipment" element={<RecycleShipment />} />
-          <Route path="/warehouse/overview" element={<Overview />} />
+          <Route path="/warehouse/checkout" element={<Overview />} />
           <Route path="/warehouse/process" element={<ProcessRecord />} />
           <Route path="/warehouse/staff" element={<Staff />} />
           <Route path="/warehouse/settings" element={<Settings />} />

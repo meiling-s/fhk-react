@@ -212,7 +212,7 @@ function MainDrawer() {
     },
     {
       name: t('overView'),
-      onClick: () => navigate('/warehouse/overview'),
+      onClick: () => navigate('/warehouse/checkout'),
       collapse: true,
       collapseGroup: WHManageDrawer
     },

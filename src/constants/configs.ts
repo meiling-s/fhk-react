@@ -6,9 +6,9 @@ export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
     // account: 'http://10.166.22.250/',
     // administrator: 'http://10.166.22.250/',
     // collector: 'http://10.166.22.250/',
-    account: 'http://www.greenhoopapp.com/',
-    administrator: 'http://www.greenhoopapp.com/',
-    collector: 'http://www.greenhoopapp.com/',
+    account: 'https://www.greenhoopapp.com/',
+    administrator: 'https://www.greenhoopapp.com/',
+    collector: 'https://www.greenhoopapp.com/',
   },
   timeout: 100000,
   headers: {

@@ -200,7 +200,7 @@ function MainDrawer() {
     },
     {
       name: t('overView'),
-      onClick: () => navigate('/warehouse/overview'),
+      onClick: () => navigate('/warehouse/checkout'),
       collapse: true,
       collapseGroup: WHManageDrawer
     },
@@ -225,8 +225,18 @@ function MainDrawer() {
       collapse: false
     },
     {
-      name: t('overView'),
-      onClick: () => navigate('/warehouse/overview'),
+      name: t('check_in.request_check_in'),
+      onClick: () => navigate('/warehouse/shipment'),
+      collapse: false
+    },
+    {
+      name: t('check_out.request_check_out'),
+      onClick: () => navigate('/warehouse/checkout'),
+      collapse: false
+    },
+    {
+      name: t('pick_up_order.enquiry_pickup_order'),
+      onClick: () => navigate('/collector/pickupOrder'),
       collapse: false
     },
     {
