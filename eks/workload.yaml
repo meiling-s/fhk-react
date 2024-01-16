@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: astd
+  name: web-dm
+  labels:
+    name: web
+    owner: fhk
+    component: react
+    env: production
+    version: v1
+spec:
+  replicas: 2 
+  selector:
+    matchLabels:
+      name: web
+      component: react
+  template:
+    metadata:
+      labels:
+        name: web
+        owner: fhk
+        component: react
+        env: production
+        version: v1
+    spec:
+      nodeSelector:
+        intent: apps
+      containers:
+        - name: web-api
+          image: 307426213411.dkr.ecr.ap-east-1.amazonaws.com/astd/react:1-0-0beta-11
+          ports:
+            - name: http
+              containerPort: 3000
+          resources:
+            requests:
+              cpu: 256m 
+              memory: 1024Mi
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              name: account
+              component: api
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+        - labelSelector:
+            matchLabels:
+              name: account 
+              component: api
+          maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
