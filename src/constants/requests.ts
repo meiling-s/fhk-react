@@ -79,15 +79,20 @@ export const GET_CONTRACT: AxiosRequestConfig = {
   url: 'api/v1/collectors/contract'
 }
 
-export const GET_ALL_CHECKIN_REQUESTS: AxiosRequestConfig = {
+export const GET_ALL_CHECKIN_REQUESTS = (
+  table: string
+): AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/collectors/checkin'
-}
+  url: `api/v1/collectors/checkin/${table}`
+})
 
-export const UPDATE_CHECK_IN_STATUS: AxiosRequestConfig = {
+export const UPDATE_CHECK_IN_STATUS = (
+  chkInId: number,
+  table: string
+): AxiosRequestConfig => ({
   method: 'patch',
-  url: 'api/v1/collectors/checkin/'
-}
+  url: `api/v1/collectors/checkin/${table}/status/${chkInId}`
+})
 
 //collector/pickupOrder
 export const GET_ALL_PICK_UP_ORDER: AxiosRequestConfig = {
@@ -192,61 +197,70 @@ export const CREATE_FORGET_PASSWORD: AxiosRequestConfig = {
 }
 
 //warehouse
-export const GET_ALL_WAREHOUSE: AxiosRequestConfig = {
+export const GET_ALL_WAREHOUSE = (table: string): AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/collectors/warehouse'
-}
-
-export const GET_WAREHOUSE_BY_ID = (
-  warehouseId: number
-): AxiosRequestConfig => ({
-  method: 'get',
-  url: `api/v1/collectors/warehouse/${warehouseId}`
+  url: `api/v1/collectors/warehouse/${table}`
 })
 
-export const ADD_WAREHOUSE: AxiosRequestConfig = {
+export const GET_WAREHOUSE_BY_ID = (
+  warehouseId: number,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/warehouse/${table}/${warehouseId}`
+})
+
+export const ADD_WAREHOUSE = (table: string): AxiosRequestConfig => ({
   method: 'post',
-  url: 'api/v1/collectors/warehouse'
-}
+  url: `api/v1/collectors/warehouse/${table}`
+})
 
 export const UPDATE_WAREHOUSE_BY_ID = (
-  warehouseId: number
+  warehouseId: number,
+  table: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/collectors/warehouse/${warehouseId}`
+  url: `api/v1/collectors/warehouse/${table}/${warehouseId}`
 })
 
 export const UPDATE_RECYCLE_CAPACITY_BY_ID = (
-  warehouseRecycId: number
+  warehouseRecycId: number,
+  table: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/collectors/warehouseRecyc/${warehouseRecycId}/status`
+  url: `api/v1/collectors/warehouseRecyc/${table}/${warehouseRecycId}/status`
 })
 
 export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
-  warehouseId: number
+  warehouseId: number,
+  table: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/collectors/warehouse/${warehouseId}/status`
+  url: `api/v1/collectors/warehouse/${table}/${warehouseId}/status`
 })
 
-export const GET_ALL_CHECKOUT_REQUEST: AxiosRequestConfig = {
-  method: 'get',
-  url: 'api/v1/collectors/checkout'
-}
 
-export const GET_CHECKOUT_REQUEST_BY_ID = (
-  chkOutId: number
+export const GET_ALL_CHECKOUT_REQUEST = (
+  table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkout/${chkOutId}`
+  url: `api/v1/collectors/checkout/${table}`
+})
+
+export const GET_CHECKOUT_REQUEST_BY_ID = (
+  chkOutId: number,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkout/${table}/${chkOutId}`
 })
 
 export const UPDATE_CHECKOUT_REQUEST_STATUS = (
-  chkOutId: number
+  chkOutId: number,
+  table: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/collectors/checkout/status/${chkOutId}`
+  url: `api/v1/collectors/checkout/${table}/status/${chkOutId}`
 })
 
 //recycle type

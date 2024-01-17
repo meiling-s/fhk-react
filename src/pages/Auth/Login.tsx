@@ -24,6 +24,7 @@ import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { useTranslation } from 'react-i18next'
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const [userName, setUserName] = useState('')
@@ -88,6 +89,10 @@ const Login = () => {
         localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
         localStorage.setItem(localStorgeKeyName.role, loginTo);
         localStorage.setItem(localStorgeKeyName.username, result?.username || '');
+
+        const decodedToken: any = jwtDecode(result?.access_token);
+        const azpValue = decodedToken.azp;
+        localStorage.setItem(localStorgeKeyName.decodeKeycloack, azpValue || '')
         switch(loginTo){
           case "astd":
             navigate("/astd");
