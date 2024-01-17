@@ -5,21 +5,26 @@ import {
   UPDATE_CHECKOUT_REQUEST_STATUS
 } from '../../constants/requests'
 import { updateStatus } from '../../interfaces/warehouse'
+import {localStorgeKeyName} from  '../../constants/constant'
+import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 
 const checkoutAPI = {
-  //baseURL: 'http://10.166.22.107:8003/'
-  baseURL: 'https://www.greenhoopapp.com/'
+  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 }
+
+const decodeKeycloack =
+  localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
+
+const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken || '')
 
 export const getAllCheckoutRequest = async () => {
   try {
     const response = await axios({
-      ...GET_ALL_CHECKOUT_REQUEST,
-      baseURL: checkoutAPI.baseURL
-      //   params: {
-      //     page: page,
-      //     size: size
-      //   }
+      ...GET_ALL_CHECKOUT_REQUEST(decodeKeycloack),
+      baseURL: checkoutAPI.baseURL,
+      headers: {
+        AuthToken: authToken
+      }
     })
     return response
   } catch (e) {
@@ -30,8 +35,11 @@ export const getAllCheckoutRequest = async () => {
 export const getCheckoutRequestById = async (chkOutId: number) => {
   try {
     const response = await axios({
-      ...GET_CHECKOUT_REQUEST_BY_ID(chkOutId),
-      baseURL: checkoutAPI.baseURL
+      ...GET_CHECKOUT_REQUEST_BY_ID(chkOutId, decodeKeycloack),
+      baseURL: checkoutAPI.baseURL,
+      headers: {
+        AuthToken: authToken
+      }
     })
     console.log(
       'Get all check-out request success:',
@@ -50,9 +58,12 @@ export const updateCheckoutRequestStatus = async (
 ) => {
   try {
     const response = await axios({
-      ...UPDATE_CHECKOUT_REQUEST_STATUS(chkOutId),
+      ...UPDATE_CHECKOUT_REQUEST_STATUS(chkOutId, decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
-      data: data
+      data: data,
+      headers: {
+        AuthToken: authToken
+      }
     })
     return response
   } catch (e) {
