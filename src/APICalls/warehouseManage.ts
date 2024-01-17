@@ -23,6 +23,7 @@ const administratorAPI = {
     baseURL: 'https://www.greenhoopapp.com/'
 };
 
+
 const decodeKeycloack =
   localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
 
@@ -33,7 +34,7 @@ const authToken = localStorage.getItem(
 //get all warehouse
 export const getAllWarehouse = async (page: number, size: number) => {
     try {
-      const response = await request({
+      const response = await axios({
         ...GET_ALL_WAREHOUSE(decodeKeycloack),
         headers: {
           AuthToken: authToken
