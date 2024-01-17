@@ -6,10 +6,10 @@ import {
 } from '../../constants/requests'
 import { updateStatus } from '../../interfaces/warehouse'
 import {localStorgeKeyName} from  '../../constants/constant'
+import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 
 const checkoutAPI = {
-  //baseURL: 'http://10.166.22.107:8003/'
-  baseURL: 'https://www.greenhoopapp.com/'
+  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 }
 
 const decodeKeycloack =

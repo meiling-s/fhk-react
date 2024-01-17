@@ -1,7 +1,7 @@
 import axios from "axios";
 import { localStorgeKeyName } from '../constants/constant';
 // import { RegisterItem, Tenant } from '../interfaces/account';
-// import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
+import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import {
     GET_ALL_WAREHOUSE,
     GET_WAREHOUSE_BY_ID,
@@ -14,14 +14,16 @@ import {
 } from "../constants/requests";
 
 const collectionPointAPI = {
-    //baseURL: "http://10.166.22.107:8003/",
-    baseURL: 'https://www.greenhoopapp.com/'
+    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 };
 
 const administratorAPI = {
-    //baseURL: "http://10.166.22.107:8002/",
-    baseURL: 'https://www.greenhoopapp.com/'
+    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 };
+
+const request = axios.create({
+    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+  })
 
 
 const decodeKeycloack =
@@ -34,7 +36,7 @@ const authToken = localStorage.getItem(
 //get all warehouse
 export const getAllWarehouse = async (page: number, size: number) => {
     try {
-      const response = await axios({
+      const response = await request({
         ...GET_ALL_WAREHOUSE(decodeKeycloack),
         headers: {
           AuthToken: authToken
@@ -51,9 +53,9 @@ export const getAllWarehouse = async (page: number, size: number) => {
   //get warehouse by id
   export const getWarehouseById = async (warehouseId: number) => {
     try {
-      const response = await axios({
+      const response = await request({
         ...GET_WAREHOUSE_BY_ID(warehouseId, decodeKeycloack),
-        baseURL: collectionPointAPI.baseURL,
+        // baseURL: collectionPointAPI.baseURL,
         headers: {
           AuthToken: authToken
         }
