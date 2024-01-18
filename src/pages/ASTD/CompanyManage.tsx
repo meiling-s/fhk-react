@@ -22,12 +22,14 @@ import { ADD_PERSON_ICON, SEARCH_ICON } from '../../themes/icons'
 import { useEffect, useState } from 'react'
 import { visuallyHidden } from '@mui/utils'
 import React from 'react'
-import { createInvitation, getAllTenant } from '../../APICalls/tenantManage'
-import { generateNumericId } from '../../utils/uuidgenerator'
+import {
+  createInvitation,
+  getAllTenant,
+  updateTenantStatus
+} from '../../APICalls/tenantManage'
 import { defaultPath, format } from '../../constants/constant'
 import { styles } from '../../constants/styles'
 import dayjs from 'dayjs'
-import { openingPeriod } from '../../interfaces/collectionPoint'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import CustomDatePicker2 from '../../components/FormComponents/CustomDatePicker2'
@@ -37,17 +39,14 @@ import CustomItemList, {
   il_item
 } from '../../components/FormComponents/CustomItemList'
 import TenantDetails from './TenantDetails'
-import { Company } from '../../interfaces/tenant'
+import { Company, UpdateStatus } from '../../interfaces/tenant'
 
-import { dayjsToLocalDateTime } from '../../components/Formatter'
 import { useTranslation } from 'react-i18next'
 import { ErrorMessage, useFormik } from 'formik'
 import * as Yup from 'yup'
-import { Padding } from '@mui/icons-material'
-import { type } from 'os'
 
 function createCompany(
-  id: string,
+  id: number,
   cName: string,
   eName: string,
   status: string,
@@ -78,31 +77,40 @@ const Required = () => {
 }
 
 type rejectModal = {
+  tenantId: number
   open: boolean
   onClose: () => void
   onSubmit: () => void
 }
 
-function RejectModal({ open, onClose, onSubmit }: rejectModal) {
+function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
   const { t } = useTranslation()
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
 
   const reasons: il_item[] = [
     {
       id: '1',
-      name: t('check_out.reason_1')
+      name: t('tenant.photo_blury')
     },
     {
       id: '2',
-      name: t('check_out.reason_2')
-    },
-    {
-      id: '3',
-      name: t('check_out.reason_3')
+      name: t('tenant.bussniess_error')
     }
   ]
 
-  const handleRejectRequest = () => {}
+  const handleRejectRequest = async () => {
+    const statData: UpdateStatus = {
+      status: 'REJECTED',
+      updatedBy: 'admin'
+    }
+
+    const result = await updateTenantStatus(statData, tenantId)
+    const data = result?.data
+    if (data) {
+      console.log('reject success success')
+      onSubmit()
+    }
+  }
 
   return (
     <Modal
@@ -120,7 +128,6 @@ function RejectModal({ open, onClose, onSubmit }: rejectModal) {
               component="h3"
               sx={{ fontWeight: 'bold' }}
             >
-              {/* {t('check_out.confirm_reject')} */}
               Are you sure to reject the T0001 application?
             </Typography>
           </Box>
@@ -128,9 +135,6 @@ function RejectModal({ open, onClose, onSubmit }: rejectModal) {
           <Box sx={{ paddingX: 3, paddingTop: 3 }}>
             <Typography sx={localstyles.typo}>
               {t('check_out.reject_reasons')}
-            </Typography>
-            <Typography sx={localstyles.typo}>
-              {/* {t('check_out.total_checkout') + checkedCheckOut.length} */}
             </Typography>
             <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
           </Box>
@@ -462,18 +466,54 @@ function CompanyManage() {
   const [companies, setCompanies] = useState<Company[]>([])
   const [filterCompanies, setFilterCompanies] = useState<Company[]>([])
   const [selectAll, setSelectAll] = useState(false)
+  const [checkedCompanies, setCheckedCompanies] = useState<number[]>([])
   const [openDetail, setOpenDetails] = useState(false)
   const [selectedTenanId, setSelectedTenantId] = useState(0)
+  const [rejectedId, setRejectId] = useState(0)
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
     setSelectAll(checked)
+    const selectedRows = checked ? filterCompanies.map((row) => row.id) : []
+    setCheckedCompanies(selectedRows)
   }
 
   const handleRowCheckboxChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    id: number
-  ) => {}
+    tenantId: number
+  ) => {
+    setOpenDetails(false)
+    const checked = event.target.checked
+    const updatedChecked = checked
+      ? [...checkedCompanies, tenantId]
+      : checkedCompanies.filter((rowId) => rowId != tenantId)
+    setCheckedCompanies(updatedChecked)
+
+    const allRowsChecked = filterCompanies.every((row) =>
+      updatedChecked.includes(row.id)
+    )
+  }
+
+  const handleApproveTenant = async (tenantId: number) => {
+    setOpenDetails(false)
+    const statData: UpdateStatus = {
+      status: 'CONFIRMED',
+      updatedBy: 'admin'
+    }
+
+    const result = await updateTenantStatus(statData, tenantId)
+    const data = result?.data
+    if (data) {
+      console.log('approve success')
+      initCompaniesData()
+    }
+    setOpenDetails(false)
+  }
+
+  const handleRejectTenant = (tenantId: number) => {
+    setRejectId(tenantId)
+    setRejectModal(true)
+  }
 
   const HeaderCheckbox = (
     <Checkbox
@@ -552,7 +592,7 @@ function CompanyManage() {
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
-            {params.row.status === 'test' ? (
+            {params.row.status === 'CREATED' ? (
               <div>
                 <Button
                   sx={[
@@ -564,9 +604,9 @@ function CompanyManage() {
                     }
                   ]}
                   variant="outlined"
-                  onClick={() => setInvFormModal(true)}
+                  onClick={() => handleApproveTenant(params.row.id)}
                 >
-                  Approve
+                  {t('check_out.approve')}
                 </Button>
                 <Button
                   sx={[
@@ -577,9 +617,9 @@ function CompanyManage() {
                     }
                   ]}
                   variant="outlined"
-                  onClick={() => setInvFormModal(true)}
+                  onClick={() => handleRejectTenant(params.row.id)}
                 >
-                  Reject
+                  {t('check_out.reject')}
                 </Button>
               </div>
             ) : (
@@ -646,26 +686,10 @@ function CompanyManage() {
     }
   }
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    const selectedIndex = selected.indexOf(id)
-    let newSelected: string[] = []
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id)
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1))
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1))
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      )
-    }
-    setSelected(newSelected)
+  const onRejectModal = () => {
+    initCompaniesData()
+    setOpenDetails(false)
   }
-
-  const onRejectModal = () => {}
 
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
@@ -681,6 +705,11 @@ function CompanyManage() {
   const handleDrawerClose = () => {
     setSelectedTenantId(0)
     setOpenDetails(false)
+  }
+
+  const handleCloseInvite = () => {
+    setInvSendModal(false)
+    initCompaniesData()
   }
 
   const onInviteFormSubmit = async (
@@ -731,7 +760,7 @@ function CompanyManage() {
         <Typography fontSize={20} color="black" fontWeight="bold">
           {t('tenant.company')}
         </Typography>
-        {/* <Button
+        <Button
           sx={[
             styles.buttonOutlinedGreen,
             {
@@ -744,7 +773,7 @@ function CompanyManage() {
           onClick={() => setInvFormModal(true)}
         >
           <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t('tenant.invite')}
-        </Button> */}
+        </Button>
         <TextField
           id="searchCompany"
           onChange={(event) => handleFilterCompanies(event.target.value)}
@@ -813,24 +842,23 @@ function CompanyManage() {
 
         <InviteModal
           open={invSendModal}
-          onClose={() => setInvSendModal(false)}
+          onClose={handleCloseInvite}
           id={InviteId}
         />
 
         <RejectModal
+          tenantId={rejectedId}
           open={rejectModal}
           onClose={() => setRejectModal(false)}
           onSubmit={onRejectModal}
         />
         {selectedTenanId != 0 && (
           <TenantDetails
-          drawerOpen={openDetail}
-          handleDrawerClose={handleDrawerClose}
-          tenantId={selectedTenanId}
+            drawerOpen={openDetail}
+            handleDrawerClose={handleDrawerClose}
+            tenantId={selectedTenanId}
           />
-        )
-        }
-       
+        )}
       </Box>
     </>
   )
