@@ -24,6 +24,11 @@ const CheckInRequest = () => {
     }
   };
 
+  const updateCheckInRequest= async () => {
+    console.log("updateCheckInRequest")
+    await initCheckInRequest
+  }
+
   //pickuporder
   const initPickupOrderRequest = async () => {
     const result = await getAllPickUpOrder();
@@ -38,7 +43,8 @@ const CheckInRequest = () => {
   return {
     initPickupOrderRequest,
     checkInRequest,
-    pickupOrder
+    pickupOrder, 
+    updateCheckInRequest
   };
 };
 
