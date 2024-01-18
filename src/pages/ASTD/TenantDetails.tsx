@@ -41,11 +41,20 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const { t } = useTranslation()
   const [tenantDetail, setTenantDetails] = useState<Tenant>()
 
-  const poNumber = tenantId
-  const messageCheckout = `[UserID] ${t('check_out.approved_on')} `
+  const getDateFormat = (item: string | undefined) => {
+    if (item) {
+      const dateFormatted = dayjs(new Date(item)).format(format.dateFormat1)
+      return dateFormatted
+    } else {
+      return '-'
+    }
+  }
+
+  const approveOn = getDateFormat(tenantDetail?.approvedAt)
+  const messageCheckout = `[UserID] ${t('check_out.approved_on')} ${approveOn} `
   useEffect(() => {
     getCompanyDetail()
-  }, [tenantId])
+  }, [])
 
   const getCompanyDetail = async () => {
     const result = await getTenantById(tenantId)
@@ -80,6 +89,12 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     { id: '1', name: t('status.enable') },
     { id: '2', name: t('status.not_enabled') },
     { id: '3', name: t('status.terminated') }
+  ]
+
+  const ways_of_exits: il_item[] = [
+    { id: '1', name: t('tenant.detail.no_preference') },
+    { id: '2', name: t('tenant.detail.fifo') },
+    { id: '3', name: t('tenant.detail.lifo') }
   ]
 
   const setStatus = () => {}
@@ -124,11 +139,14 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.business_reg_number_picture')}
                 </div>
                 <div className="">
-                  <img
-                    src={'/Image.png'}
-                    alt="logo_company"
-                    style={{ width: '70px' }}
-                  />
+                  {tenantDetail?.brPhoto.map((item, index) => (
+                    <img
+                      key={index}
+                      src={item}
+                      alt="business_reg_number_picture"
+                      style={{ width: '70px' }}
+                    />
+                  ))}
                 </div>
               </div>
             </Box>
@@ -158,11 +176,14 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.epd_contract')}
                 </div>
                 <div className="">
-                  <img
-                    src={'/Image.png'}
-                    alt="logo_company"
-                    style={{ width: '70px' }}
-                  />
+                  {tenantDetail?.epdPhoto.map((item, index) => (
+                    <img
+                      key={index}
+                      src={item}
+                      alt="logo_company"
+                      style={{ width: '70px' }}
+                    />
+                  ))}
                 </div>
               </div>
             </Box>
@@ -172,7 +193,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.creation_date')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                {tenantDetail?.effFrmDate}
+                  {getDateFormat(tenantDetail?.createdAt)}
                 </div>
               </div>
             </Box>
@@ -183,7 +204,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 </div>
                 <div className="">
                   <img
-                    src={'/Image.png'}
+                    src={tenantDetail?.companyLogo}
                     alt="logo_company"
                     style={{ width: '70px' }}
                   />
@@ -213,13 +234,13 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                     <Select
                       labelId="company-label"
                       id="company"
-                      value={2}
+                      value={tenantDetail?.decimalPlace}
                       label={t('check_out.any')}
                       onChange={handleChangeAccount}
                     >
-                      {/* {filterCheckOut.map((item) => ( */}
-                      <MenuItem value={2}>{2}</MenuItem>
-                      {/* ))} */}
+                      <MenuItem value={tenantDetail?.decimalPlace}>
+                        {tenantDetail?.decimalPlace || 0}
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </div>
@@ -231,7 +252,10 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.ways_of_entry_and_exit')}
                 </div>
                 <div className="items">
-                  <CustomItemList items={statuses} singleSelect={setStatus} />
+                  <CustomItemList
+                    items={ways_of_exits}
+                    singleSelect={setStatus}
+                  />
                 </div>
               </div>
             </Box>
@@ -248,13 +272,13 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                     <Select
                       labelId="company-label"
                       id="company"
-                      value={2}
+                      value={tenantDetail?.allowImgNum}
                       label={t('check_out.any')}
                       onChange={handleChangeAccount}
                     >
-                      {/* {filterCheckOut.map((item) => ( */}
-                      <MenuItem value={2}>{2}</MenuItem>
-                      {/* ))} */}
+                      <MenuItem value={tenantDetail?.allowImgNum}>
+                        {tenantDetail?.allowImgNum}
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </div>
@@ -270,7 +294,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   placeholder={t('tenant.detail.please_enter_capacity_mb')}
                   rows={1}
                   onChange={handleReasonDeact}
-                  value={''}
+                  value={tenantDetail?.allowImgSize}
                   sx={{ width: '100%' }}
                 ></CustomTextField>
               </CustomField>

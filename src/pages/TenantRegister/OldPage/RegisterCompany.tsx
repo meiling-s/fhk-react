@@ -4,7 +4,7 @@ import { Box, Stack } from '@mui/system'
 import logo_company from "../../logo_company.png";
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { getTenantById } from '../../APICalls/tenantManage';
+import { getTenantById } from '../../../APICalls/tenantManage';
 
 
 

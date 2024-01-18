@@ -8,6 +8,8 @@ import ConfirmResetPassword from "./pages/Auth/ConfirmResetPassword";
 import ChangePassword from "./pages/Auth/ChangePassword"
 //ASTD admin
 import CompanyManage from "./pages/ASTD/CompanyManage";
+
+
 //collection point
 import CollectionPoint from "./pages/Collector/CollectionPoint/CollectionPoint/CollectionPoint";
 import CreateCollectionPoint from "./pages/Collector/CollectionPoint/CreateCollectionPoint/CreateCollectionPoint";
@@ -15,15 +17,14 @@ import EditCollectionPoint from "./pages/Collector/CollectionPoint/EditCollectio
 //warehouse
 import Overview from "./pages/Collector/Manage/CheckoutRequest";
 import Settings from "./pages/Collector/Warehouse/Settings";
-import Test from "./pages/Collector/Warehouse/Test";
 //Tenant Register
-import CompanyDetails from "./pages/TenantRegister/CompanyDetails";
-import CompanyContact from "./pages/TenantRegister/CompanyContact";
+// import CompanyDetails from "./pages/TenantRegister/CompanyDetails";
+// import CompanyContact from "./pages/TenantRegister/CompanyContact";
 import RegisterResult from "./pages/TenantRegister/RegisterResult";
 //new tenantpage
 import TenantRegister from "./pages/TenantRegister/Register";
-import RegisterStepOne from "./pages/TenantRegister/RegisterStepOne";
-import RegisterStepTwo from "./pages/TenantRegister/RegisterStepTwo";
+// import RegisterStepOne from "./pages/TenantRegister/RegisterStepOne";
+// import RegisterStepTwo from "./pages/TenantRegister/RegisterStepTwo";
 
 //general
 import Staff from "./pages/Collector/Staff";
@@ -54,14 +55,14 @@ const Router = () => {
                 
 
         {/* tenant page */}
-        <Route
+        {/* <Route
           path="/register/details/:inviteId"
           element={<CompanyDetails />}
         />
-        <Route path="/register/contact" element={<CompanyContact />} />
-        <Route path="/register/tenant" element={<TenantRegister />} />
-        <Route path="/register/firstStep" element={<RegisterStepOne />} />
-        <Route path="/register/secondStep" element={<RegisterStepTwo />} />
+        <Route path="/register/contact" element={<CompanyContact />} /> */}
+        <Route path="/register/details/:tenantId" element={<TenantRegister />} />
+        {/* <Route path="/register/firstStep" element={<RegisterStepOne />} />
+        <Route path="/register/secondStep" element={<RegisterStepTwo />} /> */}
         <Route path="/register/result" element={<RegisterResult />} />
 
         {/* collector admin */}
@@ -95,11 +96,10 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/warehouse" element={<RecycleShipment />} />
           <Route path="/warehouse/shipment" element={<RecycleShipment />} />
-          <Route path="/warehouse/checkout" element={<Overview />} />
+          <Route path="/warehouse/overview" element={<Overview />} />
           <Route path="/warehouse/process" element={<ProcessRecord />} />
           <Route path="/warehouse/staff" element={<Staff />} />
           <Route path="/warehouse/settings" element={<Settings />} />
-          <Route path="/warehouse/test" element={<Test />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -10,11 +10,11 @@ import {
 import { Box, Stack } from "@mui/system";
 import React, { useState } from "react";
 import logo_company from "../../logo_company.png";
-import { TENANT_REGISTER_CONFIGS } from "../../constants/configs";
+import { TENANT_REGISTER_CONFIGS } from "../../../constants/configs";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
-import ImageUploadCard from "../../components/FormComponents/ImageUploadCard";
-import CustomField from "../../components/FormComponents/CustomField";
+import ImageUploadCard from "../../../components/FormComponents/ImageUploadCard";
+import CustomField from "../../../components/FormComponents/CustomField";
 import { useNavigate } from "react-router";
 
 const RegisterBusiness = () => {
