@@ -354,6 +354,8 @@
     "company_category": "公司类别",
     "created_date": "建立日期",
     "number_of_acc": "帐户数量",
+    "photo_blury ": "照片模糊",
+    "bussniess_error": "商业编号不匹配",
     "invite_form": {
       "company_number": "公司编号 ",
       "enter_company": "",
@@ -399,7 +401,10 @@
       "account_status": "账户状态",
       "reason_for_deactivation": "停用原因",
       "please_enter_capacity_mb": "请输入容量（MB）",
-      "please_enter_the_reason": "请输入原因"
+      "please_enter_the_reason": "请输入原因",
+      "no_preference": "无特别偏好",
+      "fifo": "先进先出（FIFO）",
+      "lifo": "后进先出（LIFO）"
     }
   }
 }

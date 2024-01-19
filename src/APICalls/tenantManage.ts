@@ -4,10 +4,11 @@ import {
   ADD_TENANT,
   GET_ALL_TENANT,
   GET_TENANT_BY_TENANT_ID,
-  UPDATE_TENANT_REGISTER
+  UPDATE_TENANT_REGISTER,
+  UPDATE_TENANT_STATUS
 } from '../constants/requests'
 import { RegisterItem, Tenant } from '../interfaces/account'
-import { CreateTenant } from '../interfaces/tenant'
+import { CreateTenant, UpdateStatus } from '../interfaces/tenant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 
 const request = axios.create({
@@ -23,11 +24,7 @@ export const createInvitation = async (item: CreateTenant) => {
     const response = await request({
       ...ADD_TENANT('collector'),
       data: item,
-      headers: {
-        //   Authorization: `Bearer ${localStorage.getItem(
-        //     localStorgeKeyName.keycloakToken
-        //   )}`
-      }
+      headers: {}
     })
     console.log('Insert tenant success:', JSON.stringify(response.data))
     return response
@@ -45,9 +42,7 @@ export const getAllTenant = async () => {
   try {
     const response = await request({
       ...GET_ALL_TENANT,
-      headers: {
-        // Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
-      }
+      headers: {}
     })
     console.log('Get all tenant success:', JSON.stringify(response.data))
     return response
@@ -59,12 +54,10 @@ export const getAllTenant = async () => {
 
 //Don't require Authorization token
 export const getTenantById = async (tenantId: number) => {
-  const axiosConfig = GET_TENANT_BY_TENANT_ID
-  axiosConfig.url = GET_TENANT_BY_TENANT_ID.url + `/${tenantId}`
-
   try {
     const response = await request({
-      ...axiosConfig
+      ...GET_TENANT_BY_TENANT_ID(tenantId),
+      headers: {}
     })
     console.log('Get tenant by id success:', JSON.stringify(response.data))
     return response
@@ -76,14 +69,14 @@ export const getTenantById = async (tenantId: number) => {
 
 export const updateTenantRegInfo = async (
   item: RegisterItem,
-  inviteId: string
+  tenantId: number
 ) => {
-  const axiosConfig = UPDATE_TENANT_REGISTER
-  axiosConfig.url = UPDATE_TENANT_REGISTER.url + `/${inviteId}`
+  // const axiosConfig = UPDATE_TENANT_REGISTER
+  // axiosConfig.url = UPDATE_TENANT_REGISTER.url + `/${tenantId}`
 
   try {
     const response = await request({
-      ...axiosConfig,
+      ...UPDATE_TENANT_REGISTER(tenantId),
       data: item
     })
     console.log(
@@ -93,6 +86,26 @@ export const updateTenantRegInfo = async (
     return response
   } catch (e) {
     console.error('Tenant register info update failed:', e)
+    return null
+  }
+}
+
+export const updateTenantStatus = async (
+  item: UpdateStatus,
+  tenantId: number
+) => {
+  try {
+    const response = await request({
+      ...UPDATE_TENANT_STATUS(tenantId),
+      data: item
+    })
+    console.log(
+      'Tenant register status update success:',
+      JSON.stringify(response.data)
+    )
+    return response
+  } catch (e) {
+    console.error('Tenant register status update failed:', e)
     return null
   }
 }

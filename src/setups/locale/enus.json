@@ -354,6 +354,8 @@
     "company_category": "Company Category",
     "created_date": "Creation date",
     "number_of_acc": "Number of accounts",
+    "photo_blury": "Photo is blurry",
+    "bussniess_error": "Business number does not match",
     "invite_form": {
       "company_number": "Company Number",
       "company_category": "Company Category",
@@ -361,13 +363,13 @@
       "company_cn_name": "Company Chinese name",
       "company_en_name": "Company English name",
       "bussiness_number": "Business Registration number",
-      "remark" : "Remark",
+      "remark": "Remark",
       "enter_company_number": "Please enter Company Number",
       "enter_company_category": "Please enter company category",
       "enter_company_zh_name": "Please enter Company Traditional Chinese",
       "enter_company_cn_name": "Please enter Company Chinese name",
       "enter_company_en_name": "Please enter Company English name",
-      "enter_bussiness_number" : "Please enter business registration number",
+      "enter_bussiness_number": "Please enter business registration number",
       "enter_remark": "Please enter text"
     },
     "invite_modal": {
@@ -378,7 +380,7 @@
       "link_invitation": "Send link invitation",
       "copy": "copy"
     },
-    "detail" : {
+    "detail": {
       "company_category": "Company Category",
       "company_name_traditional_chinese": "Company name in traditional Chinese",
       "company_name_simplified_chinese": "Company name in simplified Chinese",
@@ -398,7 +400,10 @@
       "account_status": "Account status",
       "reason_for_deactivation": "Reason for deactivation",
       "please_enter_capacity_mb": "Please enter capacity (MB)",
-      "please_enter_the_reason": "Please enter the reason"
+      "please_enter_the_reason": "Please enter the reason",
+      "no_preference": "No preference",
+      "fifo": "First in first out (FIFO)",
+      "lifo": "Last in, first out (LIFO)"
     }
   }
 }

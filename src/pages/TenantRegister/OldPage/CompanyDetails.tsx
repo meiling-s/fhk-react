@@ -12,12 +12,12 @@ import {
 import logo_company from "../../logo_company.png";
 import { useNavigate, useParams } from "react-router-dom";
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
-import CustomCopyrightSection from "../../components/CustomCopyrightSection";
+import CustomCopyrightSection from "../../../components/CustomCopyrightSection";
 import { useEffect, useState } from "react";
-import { getTenantById } from "../../APICalls/tenantManage";
-import { RegisterItem } from "../../interfaces/account";
+import { getTenantById } from "../../../APICalls/tenantManage";
+import { RegisterItem } from "../../../interfaces/account";
 import ImageUploading, { ImageListType } from "react-images-uploading";
-import { TENANT_REGISTER_CONFIGS } from "../../constants/configs";
+import { TENANT_REGISTER_CONFIGS } from "../../../constants/configs";
   
 const ImageToBase64 = (images: ImageListType) => {
   var base64: string[] = [];

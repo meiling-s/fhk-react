@@ -12,13 +12,13 @@ import {
 import logo_company from "../../logo_company.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
-import CustomCopyrightSection from "../../components/CustomCopyrightSection";
-import { RegisterItem } from "../../interfaces/account";
+import CustomCopyrightSection from "../../../components/CustomCopyrightSection";
+import { RegisterItem } from "../../../interfaces/account";
 import { useEffect, useState } from "react";
-import { updateTenantRegInfo } from "../../APICalls/tenantManage";
+import { updateTenantRegInfo } from "../../../APICalls/tenantManage";
 
 import ImageUploading, { ImageListType } from 'react-images-uploading';
-import { TENANT_REGISTER_CONFIGS } from "../../constants/configs";
+import { TENANT_REGISTER_CONFIGS } from "../../../constants/configs";
 
 const ImageToBase64 = (images: ImageListType) => {
   var base64: string[] = [];
@@ -44,17 +44,17 @@ const TenantRegisterForm2 = () => {
   const [EPDImages, setEPDImages] = useState<ImageListType>([]);
 
   const onRegisterButtonClick = async () => {
-    const registerInfo: RegisterItem = {
-      contactName: contactName,
-      contactNo: contactNo,
-      BRNImages: BRNImages,
-      EPDImages: ImageToBase64(EPDImages)
-    };
-    const result = updateTenantRegInfo(registerInfo,inviteId);
-    if(result!=null){
-      console.log("result: ",result);
-      navigate("/register/result");
-    }
+    // const registerInfo: RegisterItem = {
+    //   contactName: contactName,
+    //   contactNo: contactNo,
+    //   BRNImages: BRNImages,
+    //   EPDImages: ImageToBase64(EPDImages)
+    // };
+    // const result = updateTenantRegInfo(registerInfo,inviteId);
+    // if(result!=null){
+    //   console.log("result: ",result);
+    //   navigate("/register/result");
+    // }
   };
 
   const onImageChange = (imageList: ImageListType, addUpdateIndex: number[]|undefined) => {

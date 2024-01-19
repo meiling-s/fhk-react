@@ -1,7 +1,7 @@
 import { type } from 'os'
 
 export type Company = {
-  id: string
+  id: number
   cName: string
   eName: string
   status: string
@@ -29,5 +29,10 @@ export type CreateTenant = {
   effFrmDate: string
   effToDate: string
   createdBy: string
+  updatedBy: string
+}
+
+export type UpdateStatus = {
+  status: string
   updatedBy: string
 }

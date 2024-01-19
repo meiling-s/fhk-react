@@ -37,15 +37,25 @@ export const GET_ALL_TENANT: AxiosRequestConfig = {
 //   url: 'api/v1/account/tenantInvite'
 // }
 
-export const GET_TENANT_BY_TENANT_ID: AxiosRequestConfig = {
-  method: 'get',
-  url: 'api/v1/account/t'
-}
+export const UPDATE_TENANT_REGISTER = (
+  tenantId: number
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/account/t/updateInfo/${tenantId}`
+})
 
-export const UPDATE_TENANT_REGISTER: AxiosRequestConfig = {
+export const GET_TENANT_BY_TENANT_ID = (
+  tenantId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/t/${tenantId}`
+})
+
+export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: 'api/v1/account/tenantInvite'
-}
+  url: `api/v1/account/t/status/${tenantId}`
+})
+
 
 //collection point
 export const GET_ALL_COLLECTIONPOINT: AxiosRequestConfig = {
