@@ -9,9 +9,12 @@ import {
   ImageList,
   ImageListItem
 } from '@mui/material'
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import ImageUploading, { ImageListType } from 'react-images-uploading'
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import ImageUploading, {
+  ImageListType,
+  ImageType
+} from 'react-images-uploading'
 
 import logo_company from '../../logo_company.png'
 import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
@@ -19,13 +22,11 @@ import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
 import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import CustomField from '../../components/FormComponents/CustomField'
 import CustomTextField from '../../components/FormComponents/CustomTextField'
+import { getTenantById, updateTenantRegInfo } from '../../APICalls/tenantManage'
 
 import { styles as constantStyle } from '../../constants/styles'
+import { Tenant, RegisterItem } from '../../interfaces/account'
 import { TENANT_REGISTER_CONFIGS } from '../../constants/configs'
-
-import * as Yup from 'yup'
-import { ErrorMessage, useFormik } from 'formik'
-import { useTranslation } from 'react-i18next'
 
 interface FormValues {
   [key: string]: string
@@ -37,7 +38,6 @@ const ImageToBase64 = (images: ImageListType) => {
     if (image['data_url']) {
       var imageBase64: string = image['data_url'].toString()
       imageBase64 = imageBase64.split(',')[1]
-      //   console.log('dataURL: ', imageBase64)
       base64.push(imageBase64)
     }
   })
@@ -48,29 +48,22 @@ const RegisterTenant = () => {
   const navigate = useNavigate()
   const titlePage = '登記'
   const submitLabel = ' 繼續'
-  const { t } = useTranslation()
+  const { tenantId } = useParams()
+  const [tenantIdNumber, setTenantIdNumber] = useState(null)
   const [firstForm, showFirstForm] = useState(true)
   const [secondForm, showSecondForm] = useState(false)
   const [thirdForm, showThirdForm] = useState(false)
-
-  const validateSchema = Yup.object().shape({})
-
   const [formValues, setFormValues] = useState<FormValues>({
     company_category: '',
     company_cn_name: '',
-    company_en_name: ''
-  })
-  const [secondFormValues, setSecondFormValues] = useState<FormValues>({
-    company_category: ''
-  })
-
-  const [thirdFormValue, setThirdFormValues] = useState<FormValues>({
+    company_en_name: '',
+    company_number: '',
     contact_person: '',
     contact_person_number: ''
   })
-  const [EDPImages, setEDPImages] = useState<ImageListType>([])
   const [BRNImages, setBRNImages] = useState<ImageListType>([])
-  const [logoImages, setLogoImages] = useState<ImageListType>([])
+  const [EPDImages, setEDPImages] = useState<ImageListType>([])
+  const [logoImage, setLogoImage] = useState<string | ImageType[]>([])
 
   const firstFormFields = [
     {
@@ -89,7 +82,6 @@ const RegisterTenant = () => {
       placeholder: 'Collector Company'
     }
   ]
-
   const secondformFields = [
     {
       name: 'company_number',
@@ -110,7 +102,6 @@ const RegisterTenant = () => {
       type: 'image'
     }
   ]
-
   const thirdFormFields = [
     {
       name: 'contact_person',
@@ -132,23 +123,28 @@ const RegisterTenant = () => {
     }
   ]
 
-  const onChangeFirstForm = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    setFormValues((prevState) => ({
-      ...prevState,
-      [name]: value
-    }))
+  useEffect(() => {
+    initRegisterForm()
+  }, [])
+
+  async function initRegisterForm() {
+    if (tenantId) {
+      const result = await getTenantById(parseInt(tenantId))
+      const data = result?.data
+      console.log('initRegisterForm', data)
+      setTenantIdNumber(data?.tenantId)
+      setFormValues({
+        company_category: data?.tenantType,
+        company_cn_name: data?.companyNameTchi,
+        company_en_name: data?.companyNameEng,
+        company_number: data?.brNo
+      })
+      setEDPImages(data?.EPDImages)
+      console.log(result?.data)
+    }
   }
 
-  const onChangeSecondForm = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    setFormValues((prevState) => ({
-      ...prevState,
-      [name]: value
-    }))
-  }
-
-  const onChangeThirdForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeTextInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setFormValues((prevState) => ({
       ...prevState,
@@ -174,19 +170,35 @@ const RegisterTenant = () => {
     if (fieldType === 'company_image') {
       setBRNImages(imageList)
     } else if (fieldType === 'company_logo') {
-      setLogoImages(imageList)
+      const firstImage = imageList.length > 0 ? imageList[0].data_url : ''
+      setLogoImage(firstImage)
+    } else if (fieldType === 'edp_contract') {
+      setEDPImages(imageList)
     }
     console.log(imageList, addUpdateIndex)
   }
 
   const registerTenant = () => {
-    const formData = {
-      ...formValues,
-      company_image: ImageToBase64(BRNImages),
-      company_logo: ImageToBase64(logoImages)
+    if (tenantIdNumber) {
+      const registerInfo: RegisterItem = {
+        contactName: formValues.contact_person,
+        contactNo: formValues.contact_person_number,
+        // brImages: ImageToBase64(BRNImages),
+        // companyLogo: Array.isArray(logoImage)
+        //   ? logoImage[0]?.data_url || ''
+        //   : logoImage,
+        // epdImages: ImageToBase64(EPDImages)
+        brImages: ['string'],
+        companyLogo: 'string',
+        epdImages: ['string']
+      }
+
+      const result = updateTenantRegInfo(registerInfo, tenantIdNumber)
+      if (result != null) {
+        console.log('result: ', result)
+        navigate('/register/result')
+      }
     }
-    console.log('Submitted:', formData)
-    navigate('/register/result')
   }
 
   const FirstFormContent = ({}) => {
@@ -200,8 +212,8 @@ const RegisterTenant = () => {
                   id={field.label}
                   placeholder={field.placeholder}
                   rows={1}
-                  onChange={onChangeFirstForm}
-                  value={''}
+                  onChange={onChangeTextInput}
+                  value={formValues[field.name]}
                   sx={{ width: '100%' }}
                 ></CustomTextField>
               </CustomField>
@@ -235,12 +247,20 @@ const RegisterTenant = () => {
                 <ImageUploading
                   multiple
                   value={
-                    field.name === 'company_image' ? BRNImages : logoImages
+                    field.name === 'company_image'
+                      ? BRNImages
+                      : typeof logoImage === 'string'
+                      ? [{ data_url: logoImage }]
+                      : logoImage
                   }
                   onChange={(imageList, addUpdateIndex) =>
                     onImageChange(imageList, addUpdateIndex, field.name)
                   }
-                  maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
+                  maxNumber={
+                    field.name === 'company_image'
+                      ? TENANT_REGISTER_CONFIGS.maxBRNImages
+                      : 1
+                  }
                   maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
                   dataURLKey="data_url"
                 >
@@ -288,7 +308,7 @@ const RegisterTenant = () => {
                     id={field.label}
                     placeholder={field.placeholder}
                     rows={1}
-                    onChange={onChangeThirdForm}
+                    onChange={onChangeTextInput}
                     value={formValues[field.name]}
                     sx={{ width: '100%' }}
                   ></CustomTextField>
@@ -318,7 +338,7 @@ const RegisterTenant = () => {
             {field.type === 'image' ? (
               <ImageUploading
                 multiple
-                value={EDPImages}
+                value={EPDImages}
                 onChange={(imageList, addUpdateIndex) =>
                   onImageChange(imageList, addUpdateIndex, field.name)
                 }
@@ -368,7 +388,7 @@ const RegisterTenant = () => {
                 InputProps={{
                   sx: styles.textField
                 }}
-                onChange={onChangeThirdForm}
+                onChange={onChangeTextInput}
               />
             )}
           </Box>
@@ -422,7 +442,7 @@ let styles = {
   image: {
     aspectRatio: '1/1',
     width: '80px',
-    borderRadius: 2,
+    borderRadius: 2
   },
   cardImg: {
     borderRadius: 2,
