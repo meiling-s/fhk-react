@@ -3,9 +3,9 @@ import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
 import { useEffect, useState } from "react";
 import { visuallyHidden } from '@mui/utils';
 import React from "react";
-import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
+import { createInvitation, getAllTenant, getTenantById } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
-import { defaultPath, format } from "../../constants/constant";
+import { defaultPath, format, localStorgeKeyName } from "../../constants/constant";
 import { styles } from "../../constants/styles"
 import dateFormat from "date-fns/format";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -22,6 +22,7 @@ import { useContainer } from "unstated-next";
 import CheckInRequestContext from "../../contexts/CheckInRequestContainer";
 
 import { useTranslation } from "react-i18next";
+import { Tenant } from "../../interfaces/account";
 
 type Shipment = {
     createDate: Date,
@@ -50,7 +51,7 @@ function createShipment(
     checkInId: number
 ): Shipment {
     var createAt = new Date(createDate)
-    return { createDate: createAt, sender, recipient: "匡智會", poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr: "天水圍天華路65號", status, checkInId };
+    return { createDate: createAt, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr, status, checkInId };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -259,6 +260,31 @@ function ShipmentManage(){
     const [selectedRow, setSelectedRow] = useState<CheckIn>();
     
     const { checkInRequest } = useContainer(CheckInRequestContext);
+
+    const [tenant, setTenant] = useState<Tenant>();
+
+    var tenantId = 0;
+
+    const initGetTenantByIdRequest = async (tenantId: number) => {
+        const result = await getTenantById(tenantId);
+        const data = result?.data;
+        console.log("pickup order content: ", data);
+        if (data && data.length > 0) {
+          console.log("all pickup orders ", data);
+          setTenant(data);
+        }
+      };
+
+    const regex = /\d{6}/;
+    const extractNum = localStorage.getItem(localStorgeKeyName.decodeKeycloack)?.match(regex)
+    if (extractNum) {
+       tenantId = parseInt(extractNum[0]);
+    }
+
+    useEffect(() => {
+        // initGetTenantByIdRequest(tenantId);
+        initGetTenantByIdRequest(tenantId);
+    },[])
 
     const headCells: readonly HeadCell[] = [
         {
@@ -722,7 +748,7 @@ function ShipmentManage(){
                                         </TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat2)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'recipient'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{tenant?.companyNameEng}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.picoDtlId}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.adjustmentFlg?(<CheckIcon sx={styles.endAdornmentIcon}/>)
                                         :(<ClearIcon sx={styles.endAdornmentIcon}/>)}</TableCell>
