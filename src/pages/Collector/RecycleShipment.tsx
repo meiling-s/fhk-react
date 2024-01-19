@@ -256,21 +256,23 @@ function ShipmentManage(){
     
     const [selectedRow, setSelectedRow] = useState<CheckIn>();
     
-    const { checkInRequest } = useContainer(CheckInRequestContext);
+    const { checkInRequest, updateCheckInRequest } = useContainer(CheckInRequestContext);
 
     useEffect(()=>{
         initTable();
     },[checkInRequest])
 
-    const initTable = () => {
+    const initTable = async  () => {
         console.log("init",checkInRequest)
-        if(checkInRequest){
+        const result = await getAllCheckInRequests();
+        const data = result?.data.content;
+        if(data){
             //setShipments(checkInRequest);
             var ships: CheckIn[] = [];
             var i = 0;
-            while(i < checkInRequest.length) {
-                if(checkInRequest[i].status == "CREATED"){
-                    ships.push(checkInRequest[i]);
+            while(i < data.length) {
+                if(data[i].status == "CREATED"){
+                    ships.push(data[i]);
                 }
                 i++;
             }
@@ -284,11 +286,6 @@ function ShipmentManage(){
         console.log("filtered: ",filterShipments);
     },[filterShipments])
 
-    // useEffect(()=>{
-    //     initShipments()
-    //     // setShipments(fakeData);
-    //     // setFilterShipments(fakeData);
-    // },[]);
 
     // async function initShipments() {
     //     const result = await getAllCheckInRequests();
@@ -468,13 +465,21 @@ function ShipmentManage(){
                 if(data){
                     console.log("updated check-in status: ",data);
                     // initShipments();
-                    initTable();
+                   
                 }
             } catch (error) {
                 console.error(`Failed to update check-in status for id ${checkInId}: `, error);
             }
         }
         ));
+
+        setSelected([])
+        initTable();
+    }
+
+    const onRejectCheckin = () =>{
+        setSelected([])
+        initTable();
     }
 
     const createSortHandler = (property: keyof Shipment) => (event: React.MouseEvent<unknown>) => {
@@ -765,7 +770,6 @@ function ShipmentManage(){
                         </TableHead>
                         <TableBody>
                             {   filterShipments.map((shipment) => {
-                                console.log(shipment)
                                 // const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
                                    return (
                                     <TableRow
@@ -806,7 +810,7 @@ function ShipmentManage(){
                     onClose={() => {
                         setRejFormModal(false)
                     }}
-                    // onRejected={() => initShipments()}
+                    onRejected={onRejectCheckin}
                     />
 
             </Box>
