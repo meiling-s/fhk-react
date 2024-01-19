@@ -14,7 +14,7 @@ export type CheckinHeader = {
   colId: number;
   status: string;
   reason: string[];
-  picoDtlId: string;
+  picoId: string;
   signature: string;
   normalFlg: boolean;
   adjustmentFlg: boolean,
@@ -137,7 +137,7 @@ export type CheckIn = {
     colId: number;
     status: string;
     reason: string[];
-    picoDtlId: string;
+    picoId: string;
     signature: string;
     normalFlg: boolean;
     adjustmentFlg: boolean,

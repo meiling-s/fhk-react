@@ -350,7 +350,7 @@ function ShipmentManage(){
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
-                if(shipment.picoDtlId.includes(searchWord)){
+                if(shipment.picoId.includes(searchWord)){
                     filteredShipments.push(shipment);
                 }
             });
@@ -448,7 +448,7 @@ function ShipmentManage(){
 
     function onSelectAllClick(){
         if(selected.length < shipments.length){     //if not selecting all, do select all
-            const newSelected = shipments.map((shipment) => shipment.picoDtlId);
+            const newSelected = shipments.map((shipment) => shipment.picoId);
             setSelected(newSelected);
             // Trigger the function for each individual checkbox
             console.log(shipments);
@@ -489,7 +489,7 @@ function ShipmentManage(){
         setSelected(newSelected);
         setOpen(true);
        console.log(id)
-        const selectedItem = checkInRequest?.find(item => item.picoDtlId.toString() ===id);
+        const selectedItem = checkInRequest?.find(item => item.picoId ===id);
         console.log('123456'+selectedItem)
         setSelectedRow(selectedItem); //
       };
@@ -730,16 +730,16 @@ function ShipmentManage(){
                                 // const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
                                    return (
                                     <TableRow
-                                        hover key={shipment.picoDtlId}
+                                        hover key={shipment.picoId}
                                         tabIndex={-1}
                                         role="checkbox"
                                         sx={[localstyles.row]}
-                                        onClick={(event)=>handleClick(event,shipment.picoDtlId)}
+                                        onClick={(event)=>handleClick(event,shipment.picoId)}
                                         >
                                         <TableCell sx={localstyles.bodyCell}>
                                             <Checkbox
                                                 color="primary"
-                                                checked={selected.includes(shipment.picoDtlId)}
+                                                checked={selected.includes(shipment.picoId)}
                                                 onChange={(e) => handleCheck(shipment, e.target.checked)}
                                                 inputProps={{
                                                     'aria-label': 'select request',
@@ -749,12 +749,12 @@ function ShipmentManage(){
                                         <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat2)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{tenant?.companyNameEng}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoDtlId}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoId}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.adjustmentFlg?(<CheckIcon sx={styles.endAdornmentIcon}/>)
                                         :(<ClearIcon sx={styles.endAdornmentIcon}/>)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.logisticName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderAddr}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'deliver'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{''}</TableCell>
                                     </TableRow>
                                 );
                             })}
