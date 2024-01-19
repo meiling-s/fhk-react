@@ -68,9 +68,9 @@ const Login = () => {
         realm = 'collector';
         loginTo = 'warehouse';
         break;
-      case 'collector_admin':
+      case 'collectoradmin':
         realm = 'collector';
-        loginTo = 'collector_admin';
+        loginTo = 'collectoradmin';
         break;
       default:
         break;
@@ -103,7 +103,7 @@ const Login = () => {
           case "warehouse":
             navigate("/warehouse");
             break;
-          case "collector_admin":
+          case "collectoradmin":
             navigate("/collector/collectionPoint");
             break;
           default:

@@ -11,6 +11,7 @@ import { useContainer } from 'unstated-next'
 import CheckInRequestContainer from '../../../contexts/CheckInRequestContainer'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
+import { localStorgeKeyName } from '../../../constants/constant'
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
@@ -19,17 +20,12 @@ const CreatePickupOrder = () => {
   const { t } = useTranslation()
   const [picoTypeValue, setPicoType] = useState<string>('ROUTINE')
 
-  function generateTenantId(length: number) {
-    const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    let result = ''
+  function getTenantId() {
 
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length)
-      result += characters.charAt(randomIndex)
-    }
+    const decodeKeycloack = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
+    const tenantId = decodeKeycloack.substring("company".length);
 
-    return result
+    return tenantId
   }
 
   const validateSchema = Yup.object().shape({
@@ -65,7 +61,7 @@ const CreatePickupOrder = () => {
 
   const createPickupOrder = useFormik({
     initialValues: {
-      tenantId: generateTenantId(6),
+      tenantId: getTenantId(),
       picoType: picoTypeValue,
       effFrmDate: '',
       effToDate: '',

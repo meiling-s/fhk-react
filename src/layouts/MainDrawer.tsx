@@ -261,7 +261,7 @@ function MainDrawer() {
     case 'warehouse':
       drawerMenus = drawerMenus_warehouse
       break
-    case 'collector_admin':
+    case 'collectoradmin':
       drawerMenus = drawerMenus_collectorAdmin
       break
     default:
