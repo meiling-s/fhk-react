@@ -200,7 +200,7 @@ function MainDrawer() {
     },
     {
       name: t('overView'),
-      onClick: () => navigate('/warehouse/checkout'),
+      onClick: () => navigate('/warehouse/overview'),
       collapse: true,
       collapseGroup: WHManageDrawer
     },
@@ -231,7 +231,7 @@ function MainDrawer() {
     },
     {
       name: t('check_out.request_check_out'),
-      onClick: () => navigate('/warehouse/checkout'),
+      onClick: () => navigate('/warehouse/overview'),
       collapse: false
     },
     {

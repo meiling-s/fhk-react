@@ -163,7 +163,7 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
 
     if (isPassValid && isPassIdentical && validation.length === 0) {
       const passData = {
-        username: formData.userName,
+        loginId: formData.userName,
         password: formData.password,
         newPassword: formData.newPassword
       }
