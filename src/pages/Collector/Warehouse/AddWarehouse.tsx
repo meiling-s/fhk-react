@@ -297,7 +297,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }, [place])
 
   const isRecycleTypeIdUnique = recycleCategory.every((item, index, arr) => {
-    const filteredArr = arr.filter((i) => i.recycTypeId === item.recycTypeId)
+    const filteredArr = arr.filter((i) => 
+      (i.recycTypeId === item.recycTypeId))
+    return filteredArr.length === 1
+  })
+
+  const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
+    const filteredArr = arr.filter((i) => 
+      (i.recycSubTypeId === item.recycSubTypeId))
     return filteredArr.length === 1
   })
 
@@ -339,13 +346,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     isRecyleUnselected &&
       tempV.push({
         field: 'warehouseRecyc',
-        error: `${t(`add_warehouse_page.recyclable_field`)} is required`
+        error: `${t(`add_warehouse_page.warehouseRecyc`)} ${t('add_warehouse_page.shouldNotEmpty')}`
       })
 
-    !isRecyleHaveUniqId &&
+    !isRecyleHaveUniqId && !isRecycleSubUnique &&
       tempV.push({
         field: 'warehouseRecyc',
-        error: `${t(`add_warehouse_page.recyclable_field`)} can't duplicated`
+        error: `${t(`add_warehouse_page.warehouseRecyc`)} can't duplicated`
       })
 
     setValidation(tempV)
@@ -422,11 +429,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     const updatedRecycleCategory = [...recycleCategory]
     updatedRecycleCategory[index].recycTypeId = event.target.value
     setRecycleCategory(updatedRecycleCategory)
-    // setSelectedSubType(
-    //   recycleSubType.find((item) => {
-    //     return item.recycTypeId == event.target.value
-    //   })
-    // )
   }
 
   const handleChangeSubtype = (
@@ -520,22 +522,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
-  const getFormErrorMsg = () => {
-    const errorFields = validation.map((item) =>
-      t(`add_warehouse_page.${item.field}`)
-    )
-
-    if (errorFields.length > 0) {
+  const getFormErrorMsg = () => { 
       const errorList: string[] = []
-      errorFields.map(item =>{
-        errorList.push(`${item} ${t('add_warehouse_page.shouldNotEmpty')}`)
+      validation.map(item =>{
+        errorList.push(`${item.error}`)
       })
       setErrorMsgList(errorList)
-      // return `${errorFields.join(', ')} ${
-      //   errorFields.length > 1 ? 'are' : 'is'
-      // } required`
-    }
-
+ 
     return ''
   }
 
@@ -790,7 +783,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px'
                             }}
-                            error={checkString(item.recycSubTypeId)}
+                            error={checkString(item.recycSubTypeId) ||
+                              !isRecycleSubUnique}
                           >
                             <MenuItem value="">
                               <em>-</em>
