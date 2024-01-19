@@ -123,7 +123,8 @@
     "warehouseNameEng": "English Name",
     "place": "Place",
     "contractNum": "Contract Number",
-    "warehouseRecyc": "recyclable type(s)"
+    "warehouseRecyc": "recyclable type(s)",
+    "shouldNotEmpty": "should not empty"
   },
   "check_in": {
     "request_check_in": "Request check-in",

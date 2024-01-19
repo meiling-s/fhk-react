@@ -22,6 +22,7 @@ import { set } from 'date-fns'
 import { getLocation } from '../../../APICalls/getLocation'
 import { get } from 'http'
 import { getCommonTypes } from '../../../APICalls/commonManage'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 
 interface AddWarehouseProps {
   drawerOpen: boolean
@@ -106,6 +107,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const { t } = useTranslation()
   const { i18n } = useTranslation()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
+  const [errorMsgList, setErrorMsgList] = useState<string[]>([])
 
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
   const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption>({})
@@ -257,7 +259,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [contractNum, setContractNum] = useState<string[]>(initContractNum)
   const [place, setPlace] = useState('') // place field
   const [pysicalLocation, setPysicalLocation] = useState(false) // pysical location field
-  const [status, setStatus] = useState(false) // status field
+  const [status, setStatus] = useState(true) // status field
   const initRecyleCategory: recyleItem[] = [
     // recyle category field
     {
@@ -307,21 +309,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       nameValue[fieldName as keyof nameFields].trim() === '' &&
         tempV.push({
           field: fieldName,
-          error: `${t(`add_warehouse_page.${fieldName}`)} is required`
+          error: `${t(`add_warehouse_page.${fieldName}`)} ${t('add_warehouse_page.shouldNotEmpty')}`
         })
     })
 
     place.trim() === '' &&
       tempV.push({
         field: 'place',
-        error: `${t(`add_warehouse_page.place`)} is required`
+        error: `${t(`add_warehouse_page.place`)} ${t('add_warehouse_page.shouldNotEmpty')}`
       })
 
-    contractNum.some((value) => value.trim() === '') &&
-      tempV.push({
-        field: 'contractNum',
-        error: `${t(`add_warehouse_page.contractNum`)} is required`
-      })
+    // contractNum.some((value) => value.trim() === '') &&
+    //   tempV.push({
+    //     field: 'contractNum',
+    //     error: `${t(`add_warehouse_page.contractNum`)} is required`
+    //   })
 
     const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
@@ -440,12 +442,16 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     event: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
-    const updatedRecycleCategory = [...recycleCategory]
-    updatedRecycleCategory[index].recycSubTypeCapacity = Number(
-      event.target.value
-    )
-    setRecycleCategory(updatedRecycleCategory)
-  }
+    if(Number(event.target.value) >= 0) {
+      const updatedRecycleCategory = [...recycleCategory]
+      updatedRecycleCategory[index].recycSubTypeCapacity = Number(
+        event.target.value
+      )
+      setRecycleCategory(updatedRecycleCategory)
+    }
+    }
+   
+   
 
   const createWareHouseData = async (addWarehouseForm: any) => {
     try {
@@ -491,6 +497,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
 
     const isError = validation.length == 0
+    getFormErrorMsg()
 
     if (validation.length == 0) {
       action === 'add'
@@ -519,9 +526,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     )
 
     if (errorFields.length > 0) {
-      return `${errorFields.join(', ')} ${
-        errorFields.length > 1 ? 'are' : 'is'
-      } required`
+      const errorList: string[] = []
+      errorFields.map(item =>{
+        errorList.push(`${item} ${t('add_warehouse_page.shouldNotEmpty')}`)
+      })
+      setErrorMsgList(errorList)
+      // return `${errorFields.join(', ')} ${
+      //   errorFields.length > 1 ? 'are' : 'is'
+      // } required`
     }
 
     return ''
@@ -549,11 +561,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           style={{ borderTop: '1px solid lightgrey' }}
           className="form-container"
         >
-          {validation.length > 0 && trySubmited && (
-            <Grid item className="pl-6 pt-3">
-              <FormHelperText error={true}>{getFormErrorMsg()}</FormHelperText>
-            </Grid>
-          )}
           <div className="self-stretch flex flex-col items-start justify-start pt-[25px] px-[25px] pb-[75px] gap-[25px] text-left text-smi text-grey-middle">
             {name_fields.map((item, index) => (
               <div
@@ -587,7 +594,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField
                 label={t('warehouse_page.location')}
-                mandatory={true}
               />
               <Switcher
                 onText={t('add_warehouse_page.yes')}
@@ -601,7 +607,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             </div>
             {/* contact number */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center text-mini text-black">
-              <LabelField label={t('col.contractNo')} mandatory={true} />
+              <LabelField label={t('col.contractNo')} />
               <div className="self-stretch flex flex-col items-start justify-start">
                 <div className="self-stretch ">
                   {contractNum.map((contact, index) => (
@@ -659,7 +665,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               }}
                               sx={styles.inputState}
                               disabled={action === 'delete'}
-                              error={checkString(contractNum[index])}
                             />
                           )}
                         />
@@ -713,7 +718,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             </div>
             {/* <Switcher status/> */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
-              <LabelField label={t('warehouse_page.status')} mandatory={true} />
+              <LabelField label={t('warehouse_page.status')}/>
               <Switcher
                 onText={t('add_warehouse_page.open')}
                 offText={t('add_warehouse_page.close')}
@@ -861,6 +866,16 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 </div>
               </div>
             </div>
+            {/* error msg */}
+            {validation.length > 0 && trySubmited && (
+            <Grid item className="pt-3 w-full">
+              {errorMsgList?.map((item, index) => (
+                <div className='bg-[#F7BCC6] text-red p-2 rounded-xl mb-2'>
+                   <FormHelperText error={true}>{item}</FormHelperText>
+                </div>         
+              ) ) }         
+            </Grid>
+          )}
           </div>
         </div>
       </RightOverlayForm>

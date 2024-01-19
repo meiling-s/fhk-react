@@ -122,7 +122,8 @@
     "warehouseNameEng": "English Name",
     "place": "地點",
     "contractNum": "合約編號",
-    "warehouseRecyc": "回收物類別"
+    "warehouseRecyc": "回收物類別",
+    "shouldNotEmpty": "不應為空"
   },
   "check_in": {
     "request_check_in": "送入請求",
