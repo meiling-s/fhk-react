@@ -2,7 +2,7 @@ import { FunctionComponent, useCallback, useState, useEffect, Key } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import TextField from '@mui/material/TextField'
-import { Grid, FormHelperText, Autocomplete } from '@mui/material'
+import { Grid, FormHelperText, Autocomplete, Modal, Box, Stack, Divider, Typography } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -73,8 +73,6 @@ interface recyleTypeOption {
 }
 
 interface recyleSubtypeOption {
-  // recycTypeId: string
-  // list: recyleSubtyeData[]
   [key: string]: recyleSubtyeData[]
 }
 
@@ -108,6 +106,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const { i18n } = useTranslation()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
   const [errorMsgList, setErrorMsgList] = useState<string[]>([])
+  const [openDelete , setOpenDelete] = useState<boolean>(false)
 
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
   const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption>({})
@@ -129,8 +128,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const initType = async () => {
     const result = await getCommonTypes()
-
-    console.log('result: ', result)
     if (result?.contract) {
       var conList: {
         contractNo: string
@@ -195,7 +192,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setContractNum([...initContractNum])
     setPlace('')
     setPysicalLocation(false)
-    setStatus(false)
+    setStatus(true)
     setRecycleCategory([...initRecyleCategory])
   }
 
@@ -220,6 +217,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       console.error(error)
     }
   }
+
+  useEffect(() => {
+    if (action === 'add') {
+      resetForm()
+      setTrySubmited(false)
+    }
+  }, [])
+
 
   useEffect(() => {
     if (action === 'add') {
@@ -532,6 +537,71 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     return ''
   }
 
+  const handleDelete  = () => {
+    setOpenDelete(true)
+  }
+
+  const onDeleteModal = () => {
+    handleSubmit()
+    setOpenDelete(false)
+  }
+
+  type DeleteModalProps = {
+    open: boolean
+    onClose: () => void
+    onDelete: () => void
+  }
+
+  const DeleteModal: React.FC<DeleteModalProps> = ({
+    open,
+    onClose,
+    onDelete
+  }) => {
+    const { t } = useTranslation()  
+    return (
+      <Modal
+        open={open}
+        onClose={onClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styles.modal}>
+          <Stack spacing={2}>
+            <Box>
+              <Typography
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+                sx={{ fontWeight: 'bold' }}
+              >
+                {t('check_out.confirm_approve')}
+              </Typography>
+            </Box>
+            <Divider />
+            <Box sx={{ alignSelf: 'center' }}>
+              <button
+                className="primary-btn mr-2 cursor-pointer"
+                onClick={() => {
+                  onDelete()
+                }}
+              >
+                {t('check_in.confirm')}
+              </button>
+              <button
+                className="secondary-btn mr-2 cursor-pointer"
+                onClick={() => {
+                  onClose()
+                }}
+              >
+                {t('check_out.cancel')}
+              </button>
+            </Box>
+          </Stack>
+        </Box>
+      </Modal>
+    )
+  }
+
   return (
     <div className="add-warehouse">
       <RightOverlayForm
@@ -546,7 +616,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleSubmit
+          onDelete: handleDelete
         }}
       >
         {/* form warehouse */}
@@ -609,37 +679,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                       key={contact + index}
                     >
                       <FormControl fullWidth variant="standard">
-                        {/* <TextField
-                          value={contractNum[index]}
-                          fullWidth
-                          placeholder={t('col.enterNo')}
-                          id="fullWidth"
-                          InputLabelProps={{
-                            shrink: false
-                          }}
-                          InputProps={{
-                            sx: styles.textField
-                          }}
-                          sx={styles.inputState}
-                          disabled={action === 'delete'}
-                          onChange={(
-                            event: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            handleContractChange(
-                              event as React.ChangeEvent<HTMLInputElement>,
-                              index
-                            )
-                          }}
-                          error={checkString(contractNum[index])}
-                        /> */}
                         <Autocomplete
                           disablePortal
                           fullWidth
-                          options={contractList.map(
-                            (contract) => contract.contractNo
-                          )}
+                          options={contractList
+                            .filter((contract) => !contractNum.includes(contract.contractNo))
+                            .map((contract)=> contract.contractNo)}
                           value={contractNum[index]}
                           onChange={(_, value) => {
                             handleContractChange(value || '', index)
@@ -870,6 +915,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               ) ) }         
             </Grid>
           )}
+          <DeleteModal
+            open={openDelete}
+            onClose={() => {
+              setOpenDelete(false)
+            }}
+            onDelete={onDeleteModal} />
           </div>
         </div>
       </RightOverlayForm>
@@ -908,6 +959,22 @@ let styles = {
   dropDown: {
     '& .MuiOutlinedInput-root-MuiSelect-root': {
       borderRadius: '10px'
+    }
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    width: '34%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    height: 'fit-content',
+    padding: 4,
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5,
+
+    '@media (max-width: 768px)': {
+      width: '70%' /* Adjust the width for mobile devices */
     }
   }
 }
