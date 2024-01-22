@@ -9,7 +9,7 @@ import {
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
-import { Box } from '@mui/material'
+import { Box , Pagination} from '@mui/material'
 import {
   ADD_ICON,
   EDIT_OUTLINED_ICON,
@@ -65,6 +65,10 @@ const Warehouse: FunctionComponent = () => {
   const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
   const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
+  const [page, setPage] = useState(1)
+  const pageSize = 10 // change page size lower to testing
+  const [totalData , setTotalData] = useState<number>(0)
+
   const columns: GridColDef[] = [
     {
       field: 'warehouseNameTchi',
@@ -176,7 +180,7 @@ const Warehouse: FunctionComponent = () => {
 
   const fetchData = async () => {
     try {
-      const response = await getAllWarehouse(0, 10)
+      const response = await getAllWarehouse(page -1, pageSize)
       if (response) {
         const filteredData = response.data.content
           .filter(
@@ -186,6 +190,7 @@ const Warehouse: FunctionComponent = () => {
           .map(transformToTableRow)
 
         setWarehouseItems(filteredData)
+        setTotalData(response.data.totalPages)
         console.log('fetch DATA', filteredData)
       }
     } catch (error) {
@@ -198,7 +203,7 @@ const Warehouse: FunctionComponent = () => {
       getRecycleData()
     }
     fetchCategoryAndData()
-  }, [action, drawerOpen, currentLanguage])
+  }, [action, drawerOpen, currentLanguage, page])
 
   const transformToTableRow = (warehouse: Warehouse): TableRow => {
     const nameLang =
@@ -229,31 +234,6 @@ const Warehouse: FunctionComponent = () => {
     }
   }
 
-  // const dummyRows = [
-  //   {
-  //     id: 1,
-  //     warehouseId: 1,
-  //     warehouseNameTchi: '????',
-  //     warehouseNameSchi: '????',
-  //     warehouseNameEng: 'winda',
-  //     location: 'a??',
-  //     physicalFlg: true,
-  //     status: 'ACTIVE',
-  //     warehouseRecyc: 'Plastic , Glass, Lala'
-  //   },
-  //   {
-  //     id: 2,
-  //     warehouseId: 2,
-  //     warehouseNameTchi: '????',
-  //     warehouseNameSchi: '????',
-  //     warehouseNameEng: 'lala',
-  //     location: 'a??',
-  //     physicalFlg: true,
-  //     status: 'deleted',
-  //     warehouseRecyc: 'Plastic , Glass, Lala'
-  //   }
-  // ]
-
   const addDataWarehouse = () => {
     setDrawerOpen(true)
     setAction('add')
@@ -266,13 +246,6 @@ const Warehouse: FunctionComponent = () => {
     setAction('edit')
     fetchData()
   }
-
-  // const handleSelectRow = (row: TableRow | null) => {
-  //   setRowId(row?.id || 0)
-  //   setSelectedRow(row)
-  //   setDrawerOpen(true)
-  //   setAction('edit')
-  // }
 
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as TableRow
@@ -356,6 +329,13 @@ const Warehouse: FunctionComponent = () => {
                           }
                         }
                       }}
+                    />
+                    <Pagination
+                      count={Math.ceil(totalData)}
+                      page={page}
+                      onChange={(_, newPage) => {
+                        setPage(newPage) 
+                        }}
                     />
                   </Box>
                 </div>
