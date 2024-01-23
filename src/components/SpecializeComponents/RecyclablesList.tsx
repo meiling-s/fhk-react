@@ -17,7 +17,8 @@ type props = {
     defaultRecycL?: recyclable[],
     recycL: recycType[],
     setState: (s: recyclable[]) => void
-    value?:Item
+    value?:Item,
+    subTypeRequired?: boolean
 }
 
 export default function RecyclablesList({
@@ -25,7 +26,8 @@ export default function RecyclablesList({
     defaultRecycL,
     recycL,
     setState,
-    value
+    value,
+    subTypeRequired = false
 }: props){
 
     const [recycTypeList, setRecycTypeList] = useState<string[]>([]);
@@ -223,7 +225,7 @@ export default function RecyclablesList({
                 defaultSelected={defaultRecycL? recyclables_getRecycTypes(defaultRecycL) : []}
             />
             <Collapse sx={{mt: 1}} in={curRecyc != " " && recycTypeList.length > 0} unmountOnExit>
-                <CustomField label={curRecyc == " " ? "" : getNameFromRecycId(curRecyc) + t("col.category")}>
+                <CustomField label={curRecyc == " " ? "" : getNameFromRecycId(curRecyc) + t("col.category")} mandatory={subTypeRequired}>
                     <CustomItemList
                         items={returnSubRecyclables(curRecyc)}
                         multiSelect={selectSubRecyc}

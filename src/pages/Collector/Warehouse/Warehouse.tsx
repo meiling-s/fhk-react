@@ -66,7 +66,7 @@ const Warehouse: FunctionComponent = () => {
   const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
   const [page, setPage] = useState(1)
-  const pageSize = 10 // change page size lower to testing
+  const pageSize = 10 // change page size lowerg to testing
   const [totalData , setTotalData] = useState<number>(0)
 
   const columns: GridColDef[] = [

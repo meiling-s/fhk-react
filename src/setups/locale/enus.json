@@ -13,7 +13,7 @@
     "startTime": "Start time",
     "premiseName": "Premise name",
     "premiseType": "Premise type",
-    "premiseRemark": "Remark",
+    "premiseRemark": "Others Remark",
     "enterText": "Enter text",
     "status": "Status",
     "open": "Open",
@@ -45,7 +45,8 @@
       "withInColPt_Period": " is still effective but status has been set to CLOSED",
       "isNotWithInContractEffDate": " effective date does not cover the collection point effective date",
       "hasBeenUsed": " has been used",
-      "alreadyExist": " already exist"
+      "alreadyExist": " already exist",
+      "timeCantDuplicate": "time can't duplicate"
     }
   },
   "component": {

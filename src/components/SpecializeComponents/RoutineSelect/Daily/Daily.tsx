@@ -8,12 +8,14 @@ import dayjs from "dayjs";
 
 type props = {
     setDaily: (RDs: routineContent[]) => void
-    defaultTime?: routineContent[]
+    defaultTime?: routineContent[],
+    required?: boolean
 }
 
 export default function Daily({
     setDaily,
-    defaultTime
+    defaultTime,
+    required = false
 }: props){
 
     const [period, setPeriod] = useState<timePeriod[]>([]);
@@ -53,7 +55,7 @@ export default function Daily({
     }
 
     return(
-        <CustomField label={t("time_Period")}>
+        <CustomField label={t("time_Period")} mandatory={required}>
             <CustomTimePicker
                 multiple={true}
                 setTime={setPeriod}

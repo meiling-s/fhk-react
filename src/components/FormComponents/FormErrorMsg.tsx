@@ -25,7 +25,7 @@ export function FormErrorMsg({
                 {field}
                 </Typography>
                 <Typography sx={warning? localstyles.txtErrorMsg_warning :localstyles.txtErrorMsg}>
-                    {errorMsg}
+                     {errorMsg}
                 </Typography>
             </Box>
             
@@ -53,7 +53,8 @@ let localstyles = {
     },
     txtField: {
         fontWeight: "bold",
-        color: "red"
+        color: "red",
+        marginRight: "8px"
     },
     txtErrorMsg: {
         color: "red"
@@ -70,7 +71,8 @@ let localstyles = {
     },
     txtField_warning: {
         fontWeight: "bold",
-        color: "#ec942c"
+        color: "#ec942c",
+        marginRight: "8px"
     },
     txtErrorMsg_warning: {
         color: "#ec942c"

@@ -13,7 +13,7 @@
     "startTime": "服务时间",
     "premiseName": "房屋或埸所名称",
     "premiseType": "房屋或埸所类别",
-    "premiseRemark": "备注",
+    "premiseRemark": "其他备注",
     "enterText": "请输入文字",
     "status": "开放状态",
     "open": "开放",
@@ -45,7 +45,8 @@
       "withInColPt_Period": " 仍然有效，但开放状态已设定为关闭",
       "isNotWithInContractEffDate": "生效时间不完全覆盖回收点开放日期",
       "hasBeenUsed": " 已被使用",
-      "alreadyExist": "已经存在"
+      "alreadyExist": "已经存在",
+      "timeCantDuplicate": "时间不能重复"
     }
   },
   "component": {
