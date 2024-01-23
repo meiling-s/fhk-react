@@ -1,0 +1,70 @@
+def config_EksCluster = "astd_uat"
+
+def input_AwsAccount = env.AWS_ACCOUNT.trim()
+if (input_AwsAccount.isEmpty()) {
+  error('Please input AWS account (AWS_ACCOUNT)!')
+}
+env.AWS_ACCOUNT = "${input_AwsAccount}"
+
+def input_AwsRegion = env.AWS_REGION.trim()
+if (input_AwsRegion.isEmpty()) {
+  error('Please input AWS region (AWS_REGION)!')
+}
+env.AWS_REGION = "${input_AwsRegion}"
+
+def input_IamRole = env.IAM_ROLE.trim()
+if (input_IamRole.isEmpty()) {
+  error('Please input IAM Role that you can assume which is having necessary EKS k8s permission to apply your k8s workload!')
+}
+
+def input_WorkloadYaml = env.WORKLOAD_YAML.trim()
+if (input_WorkloadYaml.isEmpty()) {
+  error('Please input workload yaml file to apply k8s workload!')
+}
+
+def input_AwsAccessKeyId = env.AWS_ACCESS_KEY_ID.trim()
+if (input_AwsAccessKeyId.isEmpty()) {
+  error('Please input AWS access key id of an AWS user that can assume the IAM role (AWS_ACCESS_KEY_ID)!')
+}
+env.AWS_ACCESS_KEY_ID = "${input_AwsAccessKeyId}"
+
+def input_AwsSecretAccessKey = env.AWS_SECRET_ACCESS_KEY.trim()
+if (input_AwsSecretAccessKey.isEmpty()) {
+  error('Please input AWS secret access key for the AWS access key id you inputted (AWS_SECRET_ACCESS_KEY)!')
+}
+env.AWS_SECRET_ACCESS_KEY = "${input_AwsSecretAccessKey}"
+
+pipeline {
+  agent {
+    label 'awscli-kubectl'
+  }
+  stages {
+    stage('Deploy to EKS') {
+      steps {
+        container("awscli-kubectl-container") {
+          script {
+            sh("""
+              export IAM_USER=\$(cut -d '/' -f2- <<< \$(aws sts get-caller-identity --query 'Arn' --output text))
+              export KUBECONFIG=/tmp/kubeconfig
+              export AWS_CONFIG_FILE=/tmp/awsconfig
+              export AWS_SHARED_CREDENTIALS_FILE=/tmp/awscredentials
+              aws configure set profile.assume.region ${env.AWS_REGION}
+              aws configure set profile.assume.output json
+              aws sts assume-role \
+                  --role-arn arn:aws:iam::${env.AWS_ACCOUNT}:role/${input_IamRole} \
+                  --role-session-name \${IAM_USER} \
+                  --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
+                  --output text \
+              | xargs printf "\n[assume]\naws_access_key_id = %s\naws_secret_access_key = %s\naws_session_token = %s\n" >> /tmp/awscredentials
+              aws sts get-caller-identity --profile assume
+              aws eks update-kubeconfig --name ${config_EksCluster} --profile assume
+              export AWS_ACCESS_KEY_ID=
+              export AWS_SECRET_ACCESS_KEY=
+              kubectl apply -f ${input_WorkloadYaml}
+            """)
+          }
+        }
+      }
+    }
+  }
+}
