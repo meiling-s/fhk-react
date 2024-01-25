@@ -36,13 +36,20 @@ import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
 import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
 import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
 
+import AuthGuard from "./components/Guards/AuthGuard";
+import AutoLogout from "./components/AutoLogout";
+
 
 const Router = () => {
   
     return (
         <BrowserRouter>
+         
             <Routes>
-                <Route path="/" element={<Login />} />
+            <Route path="/" element={<Login />} />
+            <Route element={<AutoLogout />}>
+            <Route element={<AuthGuard />}>
+                
                 <Route path="/resetPassword" element={<ResetPassword />} />
                 <Route
                     path="/confirmNewPassword"
@@ -101,6 +108,10 @@ const Router = () => {
           <Route path="/warehouse/staff" element={<Staff />} />
           <Route path="/warehouse/settings" element={<Settings />} />
         </Route>
+
+        </Route>
+        </Route>
+      
       </Routes>
     </BrowserRouter>
   );
