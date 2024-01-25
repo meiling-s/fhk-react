@@ -41,6 +41,14 @@ const Login = () => {
         realm = 'collector';
         loginTo = 'collectoradmin';
         break;
+      case 'ckadm01':
+        realm = 'collector';
+        loginTo = 'collectoradmin';
+        break;
+      case 'oriontadmin':
+        realm = 'collector';
+        loginTo = 'collectoradmin';
+        break;
       default:
         break;
     }
