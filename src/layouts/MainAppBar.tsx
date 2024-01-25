@@ -98,6 +98,10 @@ const MainAppBar = () => {
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false)
   }
+  const handleLogout = () => {
+    localStorage.clear()
+    navigate('/')
+  }
 
   const handlePasswordChangeSuccess = () => {
     localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'false')
@@ -315,7 +319,7 @@ const MainAppBar = () => {
               >
                 <Typography>{t('changePassword')}</Typography>
               </MenuItem>
-              <MenuItem divider={true} onClick={() => navigate('/')}>
+              <MenuItem divider={true} onClick={() => handleLogout()}>
                 <Typography>{t('signOut')}</Typography>
               </MenuItem>
             </Menu>

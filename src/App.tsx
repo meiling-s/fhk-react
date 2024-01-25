@@ -7,10 +7,14 @@ import axiosSetup from './setups/axiosSetup'
 import './setups/i18n'
 import theme from './themes/palette'
 
+
+
+
 function App() {
   axiosSetup()
 
   return (
+
     <ThemeProvider theme={theme}>
       <CommonTypeContainer.Provider>
         <CheckInRequestContainer.Provider>
@@ -20,6 +24,7 @@ function App() {
         </CheckInRequestContainer.Provider>
       </CommonTypeContainer.Provider>
     </ThemeProvider>
+  
   )
 }
 
