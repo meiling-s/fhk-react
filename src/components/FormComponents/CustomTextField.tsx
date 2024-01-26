@@ -13,7 +13,8 @@ type props = {
     multiline?: boolean
     rows?:number
     sx?:any
-    helperText?:any
+    helperText?:any,
+    disabled?: boolean
     
 }
 
@@ -29,7 +30,8 @@ function CustomTextField({
     multiline = false,
     rows,
     sx,
-    helperText
+    helperText,
+    disabled  =false,
 
 }: props) {
 
@@ -48,13 +50,14 @@ function CustomTextField({
             onChange={onChange}
             sx={{...styles.textField,...sx}}
             helperText={helperText}
+            disabled={disabled}
             InputProps={{
                 endAdornment: (
                     <InputAdornment position="end" sx={{height: "100%"}}>
                         {endAdornment&& endAdornment}
                     </InputAdornment>
                 ),
-                sx: styles.inputProps
+                sx: [styles.inputProps, {cursor: disabled ? 'no-drop' : ""}]
             }}
         />
     )

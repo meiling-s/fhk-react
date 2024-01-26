@@ -101,6 +101,35 @@ function CreateCollectionPoint() {
         }
     }, [debouncedSearchValue]);
 
+    
+    const checkRecyclable = (items : recyclable) =>{
+        return items.every(item => item.recycSubTypeId.length > 0)
+    }
+
+    const checkTimePeriod = () =>{
+        return colPtRoutine?.routineContent.every(item =>
+           item.startTime.length > 0 && item.endTime.length > 0 )
+      }
+
+      const checkTimeNotDuplicate = () =>{
+    
+        const isvalid = colPtRoutine?.routineContent.every( item => {
+          for (let index=0; index < item.startTime.length; index++){
+    
+            const currPair = item.startTime[index] + item.endTime[index]
+            const nextPair = item.startTime[index + 1] + item.endTime[index + 1]
+    
+            if(currPair === nextPair) {
+              return false
+            }
+          }
+          return true
+        })
+    
+        return isvalid
+        
+      }
+
     useEffect(() => {
 
         const validate = async () => {
@@ -113,15 +142,18 @@ function CreateCollectionPoint() {
                 : await checkAddressUsed(contractNo,address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
             (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
                 tempV.push({ field: "col.openingDate", problem: formErr.withInColPt_Period, type: "warning" });
+            (colPtRoutine?.routineType == "" ) && tempV.push({ field: "col.startTime", problem: formErr.empty, type: "error" });
+            (colPtRoutine?.routineContent.length == 0 || !checkTimePeriod() || !checkTimeNotDuplicate()) && tempV.push({ field: "time_Period", problem: formErr.empty, type: "error" });
             premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
             premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty, type: "error" });
-            recyclables.length == 0 && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
+            premiseRemark == "" && tempV.push({ field: "col.premiseRemark", problem: formErr.empty, type: "error" });
+            (recyclables.length == 0 || !checkRecyclable(recyclables)) && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
             console.log("num:",staffNum,Number.isNaN(parseInt(staffNum)),staffNum == "")
             staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty, type: "error" });
             (Number.isNaN(parseInt(staffNum)) && !(staffNum == ""))
                 ? tempV.push({ field: "col.numOfStaff", problem: formErr.wrongFormat, type: "error" })
                 : (!Number.isNaN(parseInt(staffNum)) && parseInt(staffNum) < 0) && tempV.push({ field: "col.numOfStaff", problem: formErr.numberSmallThanZero, type: "error" });
-            contractNo == "" ? tempV.push({ field: "col.contractNo", problem: formErr.empty, type: "error" })
+            contractNo == "" ? tempV.push({ field: "col.contractNo", problem: formErr.empty, type: "warning" })
                 : (!checkContractisEff(contractNo) && !skipValidation.includes("col.contractNo")) && tempV.push({ field: "col.contractNo", problem: formErr.notWithInContractEffDate, type: "warning" });
             setValidation(tempV);
             //console.log(tempV);
@@ -129,7 +161,20 @@ function CreateCollectionPoint() {
 
         validate();
         
-    }, [colType, siteType, address, openingPeriod, premiseName, premiseType, status, recyclables, staffNum, contractNo, skipValidation])
+    }, [
+        colType, 
+        siteType, 
+        colPtRoutine,
+        address, 
+        openingPeriod, 
+        premiseName, 
+        premiseType,
+        premiseRemark, 
+        status, 
+        recyclables, 
+        staffNum, 
+        contractNo, 
+        skipValidation])
 
     useEffect(() => {
         checkEPD(contractNo);
@@ -359,12 +404,18 @@ function CreateCollectionPoint() {
                         <CustomField label={t("col.startTime")} mandatory={true} style={{width:"100%"}}>
                             <RoutineSelect
                                 setRoutine={setColPtRoutine}
+                                requiredTimePeriod={true}
                                 defaultValue={{
                                     routineType: colInfo.routineType,
                                     routineContent: colInfo.routine
                                 }}
                             />
                         </CustomField>
+                        {
+                            !checkTimeNotDuplicate() && (
+                                <div className="ml-5 text-red text-sm">{t('form.error.timeCantDuplicate')}</div>
+                            )
+                        }
 
                         <CustomField label={t("col.premiseName")} mandatory={true}>
                             <CustomTextField
@@ -387,16 +438,18 @@ function CreateCollectionPoint() {
                         </CustomField>
 
                         <Grid item>
-                            <Collapse in={premiseType == "PT00010"} >
-                                <CustomField label={t("col.premiseRemark")}>
+                            {/* <Collapse in={premiseType == "PT00010"} > */}
+                                <CustomField label={t("col.premiseRemark")} mandatory={true}>
                                     <CustomTextField
                                         id="premiseRemark"
+                                        disabled={true}
                                         placeholder={t("col.enterText")}
                                         onChange={(event) => setPremiseRemark(event.target.value)}
                                         defaultValue={colInfo.premiseRemark}
+                                        error={checkString(premiseName)}
                                     />
                                 </CustomField>
-                            </Collapse>
+                            {/* </Collapse> */}
                         </Grid>
                         
 
@@ -420,6 +473,7 @@ function CreateCollectionPoint() {
                         <CustomField label={t("col.recycType")} mandatory={true}>
                             <RecyclablesList
                                 recycL={typeList.recyc}
+                                subTypeRequired={true}
                                 setState={setRecyclables}
                                 defaultRecycL={colInfo.colPtRecyc}
                             />
@@ -454,7 +508,7 @@ function CreateCollectionPoint() {
                             <Typography sx={styles.header2}>{t("col.serviceInfo")}</Typography>
                         </Grid>
 
-                        <CustomField label={t("col.contractNo")} mandatory={true}>
+                        <CustomField label={t("col.contractNo")}>
                         <Autocomplete
                             disablePortal
                             id="contractNo"
@@ -472,7 +526,6 @@ function CreateCollectionPoint() {
                                     {...params}
                                     placeholder={t("col.enterNo")}
                                     sx={[styles.textField, {width: 250}]}
-                                    error={checkString(contractNo)}
                                     InputProps={{
                                         ...params.InputProps,
                                         sx: styles.inputProps

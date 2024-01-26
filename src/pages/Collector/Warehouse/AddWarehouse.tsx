@@ -2,7 +2,7 @@ import { FunctionComponent, useCallback, useState, useEffect, Key } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import TextField from '@mui/material/TextField'
-import { Grid, FormHelperText, Autocomplete } from '@mui/material'
+import { Grid, FormHelperText, Autocomplete, Modal, Box, Stack, Divider, Typography } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -22,6 +22,7 @@ import { set } from 'date-fns'
 import { getLocation } from '../../../APICalls/getLocation'
 import { get } from 'http'
 import { getCommonTypes } from '../../../APICalls/commonManage'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 
 interface AddWarehouseProps {
   drawerOpen: boolean
@@ -72,8 +73,6 @@ interface recyleTypeOption {
 }
 
 interface recyleSubtypeOption {
-  // recycTypeId: string
-  // list: recyleSubtyeData[]
   [key: string]: recyleSubtyeData[]
 }
 
@@ -106,6 +105,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const { t } = useTranslation()
   const { i18n } = useTranslation()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
+  const [errorMsgList, setErrorMsgList] = useState<string[]>([])
+  const [openDelete , setOpenDelete] = useState<boolean>(false)
 
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
   const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption>({})
@@ -127,8 +128,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const initType = async () => {
     const result = await getCommonTypes()
-
-    console.log('result: ', result)
     if (result?.contract) {
       var conList: {
         contractNo: string
@@ -193,7 +192,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setContractNum([...initContractNum])
     setPlace('')
     setPysicalLocation(false)
-    setStatus(false)
+    setStatus(true)
     setRecycleCategory([...initRecyleCategory])
   }
 
@@ -218,6 +217,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       console.error(error)
     }
   }
+
+  useEffect(() => {
+    if (action === 'add') {
+      resetForm()
+      setTrySubmited(false)
+    }
+  }, [])
+
 
   useEffect(() => {
     if (action === 'add') {
@@ -257,7 +264,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [contractNum, setContractNum] = useState<string[]>(initContractNum)
   const [place, setPlace] = useState('') // place field
   const [pysicalLocation, setPysicalLocation] = useState(false) // pysical location field
-  const [status, setStatus] = useState(false) // status field
+  const [status, setStatus] = useState(true) // status field
   const initRecyleCategory: recyleItem[] = [
     // recyle category field
     {
@@ -295,7 +302,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }, [place])
 
   const isRecycleTypeIdUnique = recycleCategory.every((item, index, arr) => {
-    const filteredArr = arr.filter((i) => i.recycTypeId === item.recycTypeId)
+    const filteredArr = arr.filter((i) => 
+      (i.recycTypeId === item.recycTypeId))
+    return filteredArr.length === 1
+  })
+
+  const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
+    const filteredArr = arr.filter((i) => 
+      (i.recycSubTypeId === item.recycSubTypeId))
     return filteredArr.length === 1
   })
 
@@ -307,21 +321,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       nameValue[fieldName as keyof nameFields].trim() === '' &&
         tempV.push({
           field: fieldName,
-          error: `${t(`add_warehouse_page.${fieldName}`)} is required`
+          error: `${t(`add_warehouse_page.${fieldName}`)} ${t('add_warehouse_page.shouldNotEmpty')}`
         })
     })
 
     place.trim() === '' &&
       tempV.push({
         field: 'place',
-        error: `${t(`add_warehouse_page.place`)} is required`
+        error: `${t(`add_warehouse_page.place`)} ${t('add_warehouse_page.shouldNotEmpty')}`
       })
 
-    contractNum.some((value) => value.trim() === '') &&
-      tempV.push({
-        field: 'contractNum',
-        error: `${t(`add_warehouse_page.contractNum`)} is required`
-      })
+    // contractNum.some((value) => value.trim() === '') &&
+    //   tempV.push({
+    //     field: 'contractNum',
+    //     error: `${t(`add_warehouse_page.contractNum`)} is required`
+    //   })
 
     const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
@@ -337,13 +351,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     isRecyleUnselected &&
       tempV.push({
         field: 'warehouseRecyc',
-        error: `${t(`add_warehouse_page.recyclable_field`)} is required`
+        error: `${t(`add_warehouse_page.warehouseRecyc`)} ${t('add_warehouse_page.shouldNotEmpty')}`
       })
 
-    !isRecyleHaveUniqId &&
+    !isRecyleHaveUniqId && !isRecycleSubUnique &&
       tempV.push({
         field: 'warehouseRecyc',
-        error: `${t(`add_warehouse_page.recyclable_field`)} can't duplicated`
+        error: `${t(`add_warehouse_page.warehouseRecyc`)} can't duplicated`
       })
 
     setValidation(tempV)
@@ -420,11 +434,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     const updatedRecycleCategory = [...recycleCategory]
     updatedRecycleCategory[index].recycTypeId = event.target.value
     setRecycleCategory(updatedRecycleCategory)
-    // setSelectedSubType(
-    //   recycleSubType.find((item) => {
-    //     return item.recycTypeId == event.target.value
-    //   })
-    // )
   }
 
   const handleChangeSubtype = (
@@ -440,12 +449,16 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     event: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
-    const updatedRecycleCategory = [...recycleCategory]
-    updatedRecycleCategory[index].recycSubTypeCapacity = Number(
-      event.target.value
-    )
-    setRecycleCategory(updatedRecycleCategory)
-  }
+    if(Number(event.target.value) >= 0) {
+      const updatedRecycleCategory = [...recycleCategory]
+      updatedRecycleCategory[index].recycSubTypeCapacity = Number(
+        event.target.value
+      )
+      setRecycleCategory(updatedRecycleCategory)
+    }
+    }
+   
+   
 
   const createWareHouseData = async (addWarehouseForm: any) => {
     try {
@@ -491,6 +504,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
 
     const isError = validation.length == 0
+    getFormErrorMsg()
 
     if (validation.length == 0) {
       action === 'add'
@@ -513,18 +527,79 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
-  const getFormErrorMsg = () => {
-    const errorFields = validation.map((item) =>
-      t(`add_warehouse_page.${item.field}`)
-    )
-
-    if (errorFields.length > 0) {
-      return `${errorFields.join(', ')} ${
-        errorFields.length > 1 ? 'are' : 'is'
-      } required`
-    }
-
+  const getFormErrorMsg = () => { 
+      const errorList: string[] = []
+      validation.map(item =>{
+        errorList.push(`${item.error}`)
+      })
+      setErrorMsgList(errorList)
+ 
     return ''
+  }
+
+  const handleDelete  = () => {
+    setOpenDelete(true)
+  }
+
+  const onDeleteModal = () => {
+    handleSubmit()
+    setOpenDelete(false)
+  }
+
+  type DeleteModalProps = {
+    open: boolean
+    onClose: () => void
+    onDelete: () => void
+  }
+
+  const DeleteModal: React.FC<DeleteModalProps> = ({
+    open,
+    onClose,
+    onDelete
+  }) => {
+    const { t } = useTranslation()  
+    return (
+      <Modal
+        open={open}
+        onClose={onClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styles.modal}>
+          <Stack spacing={2}>
+            <Box>
+              <Typography
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+                sx={{ fontWeight: 'bold' }}
+              >
+                {t('check_out.confirm_approve')}
+              </Typography>
+            </Box>
+            <Divider />
+            <Box sx={{ alignSelf: 'center' }}>
+              <button
+                className="primary-btn mr-2 cursor-pointer"
+                onClick={() => {
+                  onDelete()
+                }}
+              >
+                {t('check_in.confirm')}
+              </button>
+              <button
+                className="secondary-btn mr-2 cursor-pointer"
+                onClick={() => {
+                  onClose()
+                }}
+              >
+                {t('check_out.cancel')}
+              </button>
+            </Box>
+          </Stack>
+        </Box>
+      </Modal>
+    )
   }
 
   return (
@@ -541,7 +616,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleSubmit
+          onDelete: handleDelete
         }}
       >
         {/* form warehouse */}
@@ -549,11 +624,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           style={{ borderTop: '1px solid lightgrey' }}
           className="form-container"
         >
-          {validation.length > 0 && trySubmited && (
-            <Grid item className="pl-6 pt-3">
-              <FormHelperText error={true}>{getFormErrorMsg()}</FormHelperText>
-            </Grid>
-          )}
           <div className="self-stretch flex flex-col items-start justify-start pt-[25px] px-[25px] pb-[75px] gap-[25px] text-left text-smi text-grey-middle">
             {name_fields.map((item, index) => (
               <div
@@ -587,7 +657,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField
                 label={t('warehouse_page.location')}
-                mandatory={true}
               />
               <Switcher
                 onText={t('add_warehouse_page.yes')}
@@ -601,7 +670,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             </div>
             {/* contact number */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center text-mini text-black">
-              <LabelField label={t('col.contractNo')} mandatory={true} />
+              <LabelField label={t('col.contractNo')} />
               <div className="self-stretch flex flex-col items-start justify-start">
                 <div className="self-stretch ">
                   {contractNum.map((contact, index) => (
@@ -610,37 +679,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                       key={contact + index}
                     >
                       <FormControl fullWidth variant="standard">
-                        {/* <TextField
-                          value={contractNum[index]}
-                          fullWidth
-                          placeholder={t('col.enterNo')}
-                          id="fullWidth"
-                          InputLabelProps={{
-                            shrink: false
-                          }}
-                          InputProps={{
-                            sx: styles.textField
-                          }}
-                          sx={styles.inputState}
-                          disabled={action === 'delete'}
-                          onChange={(
-                            event: React.ChangeEvent<
-                              HTMLInputElement | HTMLTextAreaElement
-                            >
-                          ) => {
-                            handleContractChange(
-                              event as React.ChangeEvent<HTMLInputElement>,
-                              index
-                            )
-                          }}
-                          error={checkString(contractNum[index])}
-                        /> */}
                         <Autocomplete
                           disablePortal
                           fullWidth
-                          options={contractList.map(
-                            (contract) => contract.contractNo
-                          )}
+                          options={contractList
+                            .filter((contract) => !contractNum.includes(contract.contractNo))
+                            .map((contract)=> contract.contractNo)}
                           value={contractNum[index]}
                           onChange={(_, value) => {
                             handleContractChange(value || '', index)
@@ -659,7 +703,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               }}
                               sx={styles.inputState}
                               disabled={action === 'delete'}
-                              error={checkString(contractNum[index])}
                             />
                           )}
                         />
@@ -713,7 +756,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             </div>
             {/* <Switcher status/> */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
-              <LabelField label={t('warehouse_page.status')} mandatory={true} />
+              <LabelField label={t('warehouse_page.status')}/>
               <Switcher
                 onText={t('add_warehouse_page.open')}
                 offText={t('add_warehouse_page.close')}
@@ -785,7 +828,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px'
                             }}
-                            error={checkString(item.recycSubTypeId)}
+                            error={checkString(item.recycSubTypeId) ||
+                              !isRecycleSubUnique}
                           >
                             <MenuItem value="">
                               <em>-</em>
@@ -861,6 +905,22 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 </div>
               </div>
             </div>
+            {/* error msg */}
+            {validation.length > 0 && trySubmited && (
+            <Grid item className="pt-3 w-full">
+              {errorMsgList?.map((item, index) => (
+                <div className='bg-[#F7BCC6] text-red p-2 rounded-xl mb-2'>
+                   <FormHelperText error={true}>{item}</FormHelperText>
+                </div>         
+              ) ) }         
+            </Grid>
+          )}
+          <DeleteModal
+            open={openDelete}
+            onClose={() => {
+              setOpenDelete(false)
+            }}
+            onDelete={onDeleteModal} />
           </div>
         </div>
       </RightOverlayForm>
@@ -899,6 +959,22 @@ let styles = {
   dropDown: {
     '& .MuiOutlinedInput-root-MuiSelect-root': {
       borderRadius: '10px'
+    }
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    width: '34%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    height: 'fit-content',
+    padding: 4,
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5,
+
+    '@media (max-width: 768px)': {
+      width: '70%' /* Adjust the width for mobile devices */
     }
   }
 }
