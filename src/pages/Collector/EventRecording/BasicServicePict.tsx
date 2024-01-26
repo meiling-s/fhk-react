@@ -20,24 +20,23 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import CustomField from '../../../components/FormComponents/CustomField'
-import CustomDatePicker from '../../../components/FormComponents/CustomDatePicker'
-import SpecificDate from '../../../components/SpecializeComponents/PicoRoutineSelect/SpecificDate/SpecificDate'
-
 import { styles } from '../../../constants/styles'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
 
-import { TENANT_REGISTER_CONFIGS } from '../../../constants/configs'
+import { EVENT_RECORDING } from '../../../constants/configs'
+import { ServiceInfo, photoService } from '../../../interfaces/serviceInfo'
+import { createServiceInfo } from '../../../APICalls/serviceInfo'
 import dayjs, { Dayjs } from 'dayjs'
+import { ToastContainer, toast } from "react-toastify";
+import { number } from 'yup'
 
 const BasicServicePicture = () => {
   const { t } = useTranslation()
-
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs('2022-04-17'))
-  const [endDate, setEnddate] = useState<Dayjs | null>(dayjs('2022-04-17'))
+  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs('2024-01-01'))
+  const [endDate, setEnddate] = useState<Dayjs | null>(dayjs('2024-01-01'))
   const [place, setPlace] = useState<string>('')
-  const [numberOfPeople, setNumberOfPeople] = useState<string>('')
-  const [EPDImages, setEDPImages] = useState<ImageListType>([])
-
+  const [numberOfPeople, setNumberOfPeople] = useState<string>('0')
+  const [serviceImages, setServiceImages] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
 
   const ImageToBase64 = (images: ImageListType) => {
@@ -52,24 +51,62 @@ const BasicServicePicture = () => {
     return base64
   }
 
-  const submitServiceInfo = () => {
-    const formData = {
-      startDate: startDate,
-      endDate: endDate,
-      place: place,
-      numberOfPeople: numberOfPeople,
-      EPDImages: ImageToBase64(EPDImages)
+  const submitServiceInfo = async () => {
+    const imgList: photoService[] = ImageToBase64(serviceImages).map((item) =>{
+      return { photo: item }
+    })
+    const formData: ServiceInfo = {
+      serviceId: 1,
+      address: place,
+      addressGps: [
+        0
+      ],
+      serviceName: "SRV00001",
+      participants: "string",
+      startAt: "2024-01-26T12:37:31.581Z",
+      endAt: "2024-01-26T12:37:31.581Z",
+      photo: imgList,
+      numberOfVisitor: parseInt(numberOfPeople),
+      createdBy: "admin",
+      updatedBy: "admin"
     }
 
-    console.log('formData', formData)
+    const result = await createServiceInfo(formData)
+    let toastMsg = ""
+    if(result) {
+      toastMsg = "event recording created"
+      console.log('succes create service info', formData)
+      toast.info(toastMsg, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      resetData()
+    } else {
+      toastMsg = "failed created event recording"
+      toast.error(toastMsg, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   }
 
   const onImageChange = (
     imageList: ImageListType,
     addUpdateIndex: number[] | undefined
   ) => {
-    setEDPImages(imageList)
-
+    setServiceImages(imageList)
     console.log(imageList, addUpdateIndex)
   }
 
@@ -82,8 +119,15 @@ const BasicServicePicture = () => {
     return s == ''
   }
 
+  const resetData = () => {
+    setPlace('')
+    setNumberOfPeople('0')
+    setServiceImages([])
+  }
+
   return (
     <Box className="container-wrapper w-full">
+      <ToastContainer></ToastContainer>
       <div className="settings-page bg-bg-primary max-w-sm">
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
           <Grid
@@ -132,12 +176,12 @@ const BasicServicePicture = () => {
                 error={checkString(place)}
               />
             </CustomField>
-            <CustomField label={t('col.premiseName')}>
+            <CustomField label={'人數'}>
               <CustomTextField
                 id="numberOfPeople"
-                placeholder={t('col.enterName')}
+                placeholder={'請輸入人數'}
                 onChange={(event) => setNumberOfPeople(event.target.value)}
-                error={checkString(numberOfPeople)}
+
               />
             </CustomField>
             <Grid item>
@@ -146,12 +190,12 @@ const BasicServicePicture = () => {
                 <Typography sx={styles.labelField}>{'圖片'}</Typography>
                 <ImageUploading
                   multiple
-                  value={EPDImages}
+                  value={serviceImages}
                   onChange={(imageList, addUpdateIndex) =>
                     onImageChange(imageList, addUpdateIndex)
                   }
-                  maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
-                  maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
+                  maxNumber={EVENT_RECORDING.maxImageNumber}
+                  maxFileSize={EVENT_RECORDING.maxImageSize}
                   dataURLKey="data_url"
                 >
                   {({ imageList, onImageUpload }) => (
