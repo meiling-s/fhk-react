@@ -21,76 +21,116 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import CustomField from '../../../components/FormComponents/CustomField'
-import CustomDatePicker from '../../../components/FormComponents/CustomDatePicker'
-import SpecificDate from '../../../components/SpecializeComponents/PicoRoutineSelect/SpecificDate/SpecificDate'
 
 import { styles } from '../../../constants/styles'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
 
 import { TENANT_REGISTER_CONFIGS } from '../../../constants/configs'
 import dayjs, { Dayjs } from 'dayjs'
+import { Field } from 'formik'
+import { createServiceInfo } from '../../../APICalls/serviceInfo'
+import { ServiceInfo, photoService } from '../../../interfaces/serviceInfo'
+import { ToastContainer, toast } from 'react-toastify'
+
+type ServiceId = 'SRV00002' | 'SRV00003' | 'SRV00004' | 'SRV00005'
+type ServiceData = Record<
+  ServiceId,
+  {
+    startDate: Dayjs | null
+    endDate: Dayjs | null
+    place: string
+    numberOfPeople: number
+    photoImage: ImageListType
+  }
+>
 
 const AdditionalServicePict: FunctionComponent = () => {
   const { t } = useTranslation()
-  // const [startDate, setStartDate] = useState<Dayjs | null>(dayjs('2022-04-17'))
-  // const [endDate, setEnddate] = useState<Dayjs | null>(dayjs('2022-04-17'))
-  // const [place, setPlace] = useState<string>('')
-  // const [numberOfPeople, setNumberOfPeople] = useState<string>('')
-  // const [EPDImages, setEDPImages] = useState<ImageListType>([])
-
-  interface Item {
-    startDate: Dayjs | null
-    endDate: Dayjs | null
-    place: string
-    numberOfPeople: string
-    // Add other fields as needed
-  }
-
-  const [dataArray, setDataArray] = useState<Item[]>([])
-
-  const data: Array<{
-    startDate: Dayjs | null
-    endDate: Dayjs | null
-    place: string
-    numberOfPeople: string
-    EPDImages: ImageListType
-  }> = [
-    {
-      startDate: dayjs('2022-04-17'),
-      endDate: dayjs('2022-04-18'),
-      place: 'Location 1',
-      numberOfPeople: '5',
-      EPDImages: []
+  const [serviceData, setServiceData] = useState<ServiceData>({
+    SRV00002: {
+      startDate: dayjs('2023-01-01'),
+      endDate: dayjs('2023-01-01'),
+      place: '',
+      numberOfPeople: 0,
+      photoImage: []
     },
-    {
-      startDate: dayjs('2022-04-19'),
-      endDate: dayjs('2022-04-20'),
-      place: 'Location 2',
-      numberOfPeople: '8',
-      EPDImages: []
+    SRV00003: {
+      startDate: dayjs('2023-01-01'),
+      endDate: dayjs('2023-01-01'),
+      place: '',
+      numberOfPeople: 0,
+      photoImage: []
     },
-    {
-      startDate: dayjs('2022-04-19'),
-      endDate: dayjs('2022-04-20'),
-      place: 'Location 2',
-      numberOfPeople: '8',
-      EPDImages: []
+    SRV00004: {
+      startDate: dayjs('2023-01-01'),
+      endDate: dayjs('2023-01-01'),
+      place: '',
+      numberOfPeople: 0,
+      photoImage: []
+    },
+    SRV00005: {
+      startDate: dayjs('2023-01-01'),
+      endDate: dayjs('2023-01-01'),
+      place: '',
+      numberOfPeople: 0,
+      photoImage: []
     }
-    // Add more data sets as needed
-  ]
-
-  const [trySubmited, setTrySubmited] = useState<boolean>(false)
-
-  const submitServiceInfo = () => {}
+  })
 
   const onImageChange = (
     imageList: ImageListType,
-    addUpdateIndex: number[] | undefined
+    addUpdateIndex: number[] | undefined,
+    serviceId: ServiceId
   ) => {
-    //setEDPImages(imageList)
-
-    console.log(imageList, addUpdateIndex)
+    setServiceData((prevData) => ({
+      ...prevData,
+      [serviceId]: { ...prevData[serviceId], photoImage: imageList }
+    }))
+    console.log(`Updated image list for ${serviceId}:`, imageList)
   }
+
+  const updateData = (serviceId: ServiceId, property: string, value: any) => {
+    setServiceData((prevData) => ({
+      ...prevData,
+      [serviceId]: {
+        ...prevData[serviceId],
+        [property]: value
+      }
+    }))
+  }
+
+  const ImageToBase64 = (images: ImageListType) => {
+    var base64: string[] = []
+    images.map((image) => {
+      if (image['data_url']) {
+        var imageBase64: string = image['data_url'].toString()
+        imageBase64 = imageBase64.split(',')[1]
+        base64.push(imageBase64)
+      }
+    })
+    return base64
+  }
+
+  const AdditionalService = [
+    {
+      serviceId: 'SRV00002',
+      label: '回收點'
+    },
+    {
+      serviceId: 'SRV00003',
+      label: '其他回收地點'
+    },
+    {
+      serviceId: 'SRV00004',
+      label: '社區回收地點'
+    },
+    {
+      serviceId: 'SRV00005',
+      label: '宣傳及教育活動地點'
+    }
+  ]
+
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
 
   //validation function
   const checkString = (s: string) => {
@@ -101,22 +141,55 @@ const AdditionalServicePict: FunctionComponent = () => {
     return s == ''
   }
 
-  const updateData = (index: number, field: keyof Item, value: any) => {
-    setDataArray((prevData) => {
-      const newData = [...prevData]
-      newData[index] = {
-        ...newData[index],
-        [field]: value
+  const submitServiceInfo = async () => {
+    let itemData = 0
+    for (const key of Object.keys(serviceData) as ServiceId[]) {
+      const serviceItem = serviceData[key]
+      const imgList: photoService[] = ImageToBase64(serviceItem.photoImage).map(
+        (item) => {
+          return { photo: item }
+        }
+      )
+
+      const formData: ServiceInfo = {
+        serviceId: 3,
+        address: serviceItem.place,
+        addressGps: [0],
+        serviceName: key,
+        participants: 'string',
+        startAt: '2024-01-26T12:37:31.581Z',
+        endAt: '2024-01-26T12:37:31.581Z',
+        photo: imgList,
+        numberOfVisitor: serviceItem.numberOfPeople,
+        createdBy: 'admin',
+        updatedBy: 'admin'
       }
-      return newData
-    })
+      const result = await createServiceInfo(formData)
+      if (result) itemData++
+    }
+
+    if (itemData === 4) {
+      console.log('itemData', itemData)
+      const toastMsg = 'created additional service success'
+      toast.info(toastMsg, {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light'
+      })
+    }
   }
 
   return (
     <Box className="container-wrapper w-full">
+      <ToastContainer></ToastContainer>
       <div className="settings-page bg-bg-primary">
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-          {data.map((item, index) => (
+          {AdditionalService.map((item, index) => (
             <Grid
               container
               direction={'column'}
@@ -150,11 +223,11 @@ const AdditionalServicePict: FunctionComponent = () => {
                   <Typography sx={styles.header3}>{'日期及時間'}</Typography>
                   <Box sx={{ ...localstyles.DateItem }}>
                     <DatePicker
-                      value={item.startDate}
-                      onChange={(newValue: any) => {
-                        // Assuming you have a function to update the item's start date
-                        updateData(index, 'startDate', newValue)
-                      }}
+                      value={
+                        serviceData[item.serviceId as keyof ServiceData]
+                          .startDate
+                      }
+                      //onChange={(newValue: any) => setStartDate(newValue)}
                       sx={{ ...localstyles.datePicker }}
                     />
                   </Box>
@@ -163,11 +236,10 @@ const AdditionalServicePict: FunctionComponent = () => {
                   <Typography sx={styles.header3}>{'至'}</Typography>
                   <Box sx={{ ...localstyles.DateItem }}>
                     <DatePicker
-                      value={item.endDate}
-                      onChange={(newValue: any) => {
-                        // Assuming you have a function to update the item's end date
-                        updateData(index, 'endDate', newValue)
-                      }}
+                      value={
+                        serviceData[item.serviceId as keyof ServiceData].endDate
+                      }
+                      //onChange={(newValue: any) => setStartDate(newValue)}
                       sx={{ ...localstyles.datePicker }}
                     />
                   </Box>
@@ -178,22 +250,34 @@ const AdditionalServicePict: FunctionComponent = () => {
                     placeholder={'請輸入地點'}
                     onChange={(event) => {
                       // Assuming you have a function to update the item's place
-                      updateData(index, 'place', event.target.value)
+                      updateData(
+                        item.serviceId as ServiceId,
+                        'place',
+                        event.target.value
+                      )
                     }}
                     multiline={true}
-                    value={item.place}
-                    error={checkString(item.place)}
+                    value={
+                      serviceData[item.serviceId as keyof ServiceData].place
+                    }
                   />
                 </CustomField>
-                <CustomField label={t('col.premiseName')}>
+                <CustomField label={'人數'}>
                   <CustomTextField
                     id="numberOfPeople"
-                    placeholder={t('col.enterName')}
+                    placeholder={'請輸入人數'}
                     onChange={(event) => {
                       // Assuming you have a function to update the item's number of people
-                      updateData(index, 'numberOfPeople', event.target.value)
+                      updateData(
+                        item.serviceId as ServiceId,
+                        'numberOfPeople',
+                        parseInt(event.target.value, 10) || 0
+                      )
                     }}
-                    error={checkString(item.numberOfPeople)}
+                    value={
+                      serviceData[item.serviceId as keyof ServiceData]
+                        .numberOfPeople
+                    }
                   />
                 </CustomField>
                 <Grid item>
@@ -202,9 +286,16 @@ const AdditionalServicePict: FunctionComponent = () => {
                     <Typography sx={styles.labelField}>{'圖片'}</Typography>
                     <ImageUploading
                       multiple
-                      value={item.EPDImages}
+                      value={
+                        serviceData[item.serviceId as keyof ServiceData]
+                          .photoImage
+                      }
                       onChange={(imageList, addUpdateIndex) =>
-                        onImageChange(imageList, addUpdateIndex)
+                        onImageChange(
+                          imageList,
+                          addUpdateIndex,
+                          item.serviceId as ServiceId
+                        )
                       }
                       maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
                       maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
@@ -253,7 +344,7 @@ const AdditionalServicePict: FunctionComponent = () => {
               sx={[
                 styles.buttonFilledGreen,
                 localstyles.localButton,
-                { marginBottom: { md: 0, xs: 2 } }
+                { marginBottom: { md: 0, xs: 2 }, marginTop: 2 }
               ]}
               onClick={() => submitServiceInfo()}
             >
