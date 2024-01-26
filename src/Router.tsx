@@ -48,7 +48,7 @@ const Router = () => {
             <Routes>
             <Route path="/" element={<Login />} />
             <Route element={<AutoLogout />}>
-            {/* <Route element={<AuthGuard />}> */}
+            <Route element={<AuthGuard />}>
                 
                 <Route path="/resetPassword" element={<ResetPassword />} />
                 <Route
@@ -110,7 +110,7 @@ const Router = () => {
         </Route>
 
         </Route>
-        {/* </Route> */}
+        </Route>
       
       </Routes>
     </BrowserRouter>
