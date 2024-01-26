@@ -11,7 +11,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { styles } from "../../constants/styles";
 import { DELETE_OUTLINED_ICON } from "../../themes/icons";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
@@ -19,7 +26,11 @@ import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutli
 import theme from "../../themes/palette";
 import CustomField from "./CustomField";
 import CustomTimePicker from "./CustomTimePicker";
-import { recyclable, singleRecyclable, timePeriod } from "../../interfaces/collectionPoint";
+import {
+  recyclable,
+  singleRecyclable,
+  timePeriod,
+} from "../../interfaces/collectionPoint";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RecyclablesList from "../SpecializeComponents/RecyclablesList";
@@ -33,21 +44,23 @@ import { CreatePicoDetail } from "../../interfaces/pickupOrder";
 import { Navigate, useNavigate } from "react-router";
 import RecyclablesListSingleSelect from "../SpecializeComponents/RecyclablesListSingleSelect";
 import { dateToLocalTime } from "../Formatter";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import { collectorList, manuList } from "../../interfaces/common";
+import CustomAutoComplete from "./CustomAutoComplete";
 
 type props = {
-  onClose: () => void
-  setState: (val: CreatePicoDetail[]) => void
-  data: CreatePicoDetail[]
-  setId: Dispatch<SetStateAction<number>>
-  picoHisId: string | null
+  onClose: () => void;
+  setState: (val: CreatePicoDetail[]) => void;
+  data: CreatePicoDetail[];
+  setId: Dispatch<SetStateAction<number>>;
+  picoHisId: string | null;
   editRowId: number | null;
-  isEditing:boolean
-}
-
+  isEditing: boolean;
+};
+type CombinedType = manuList[] | collectorList[];
 const initValue = {
   id: -1,
-  picoHisId: '',
+  picoHisId: "",
   senderId: "1",
   senderName: "",
   senderAddr: "",
@@ -62,8 +75,8 @@ const initValue = {
   pickupAt: "",
   recycType: "",
   recycSubType: "",
-  weight: 0
-}
+  weight: 0,
+};
 
 const CreateRecycleForm = ({
   onClose,
@@ -71,29 +84,33 @@ const CreateRecycleForm = ({
   data,
   editRowId,
   isEditing,
-  picoHisId
+  picoHisId,
 }: props) => {
-  
-  const { recycType } = useContainer(CommonTypeContainer);
-  const [editRow,setEditRow] = useState<CreatePicoDetail>()
-  const [updateRow,setUpdateRow] = useState<CreatePicoDetail>()
-  const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
+  const { recycType, manuList, collectorList } =
+    useContainer(CommonTypeContainer);
+  const [editRow, setEditRow] = useState<CreatePicoDetail>();
+  const [updateRow, setUpdateRow] = useState<CreatePicoDetail>();
+  const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>();
+ 
 
   const setDefRecyc = (picoDtl: CreatePicoDetail) => {
-    const defRecyc: singleRecyclable = {recycTypeId: picoDtl.recycType, recycSubTypeId: picoDtl.recycSubType}
-    console.log("set def",defRecyc)
-    setDefaultRecyc(defRecyc)
-  }
+    const defRecyc: singleRecyclable = {
+      recycTypeId: picoDtl.recycType,
+      recycSubTypeId: picoDtl.recycSubType,
+    };
+    console.log("set def", defRecyc);
+    setDefaultRecyc(defRecyc);
+  };
 
   useEffect(() => {
-    if(editRowId==null){
-      setDefaultRecyc(undefined)
-      formik.setValues(initValue)
-    }else{
-      const editR = data.at(editRowId)
-      if(editR){
-        setDefRecyc(editR)
-        setEditRow(editR)
+    if (editRowId == null) {
+      setDefaultRecyc(undefined);
+      formik.setValues(initValue);
+    } else {
+      const editR = data.at(editRowId);
+      if (editR) {
+        setDefRecyc(editR);
+        setEditRow(editR);
       }
     }
   }, [editRowId]);
@@ -108,7 +125,7 @@ const CreateRecycleForm = ({
   //       setDefaultRecyc({recycTypeId: updateR.recycType, recycSubTypeId: updateR.recycSubType})
   //       setUpdateRow(updateR)
   //     }
-      
+
   //   }
   // }, [updateRowId]);
   // const updateRow = data.find((row)=>row.picoDtlId === updateRowId);
@@ -122,18 +139,17 @@ const CreateRecycleForm = ({
     }
   };
 
-
   useEffect(() => {
     if (editRow) {
       // Set the form field values based on the editRow data
 
-      console.log(editRow)
+      console.log(editRow);
 
-      const index = data.indexOf(editRow)
+      const index = data.indexOf(editRow);
 
       formik.setValues({
         id: index,
-        picoHisId: picoHisId??'',
+        picoHisId: picoHisId ?? "",
         senderId: editRow.senderId,
         senderName: editRow.senderName,
         senderAddr: editRow.senderAddr,
@@ -154,8 +170,8 @@ const CreateRecycleForm = ({
   }, [editRow]);
 
   useEffect(() => {
-    console.log("defaultRecyc: ",defaultRecyc)
-  },[defaultRecyc])
+    console.log("defaultRecyc: ", defaultRecyc);
+  }, [defaultRecyc]);
 
   const validateSchema = Yup.object().shape({
     senderName: Yup.string().required("This sendername is required"),
@@ -166,34 +182,35 @@ const CreateRecycleForm = ({
     recycSubType: Yup.string().required("This recycSubType is required"),
     weight: Yup.number().required("This weight is required"),
   });
-   
+
   //console.log(JSON.stringify(data)+'qwe')
 
   const formik = useFormik({
     initialValues: initValue,
     validationSchema: validateSchema,
 
-    onSubmit: (values, {resetForm}) => {
+    onSubmit: (values, { resetForm }) => {
       console.log(values);
       alert(JSON.stringify(values, null, 2));
-      if(isEditing){    //editing row
+      if (isEditing) {
+        //editing row
         //const {id, ...updateValue} = values
-        const updatedData = data.map((row,id) => {
+        const updatedData = data.map((row, id) => {
           //console.log(id, values.id)
-          return (id === values.id) ? values : row
-        })
+          return id === values.id ? values : row;
+        });
         setState(updatedData);
-      }else{    //creating row
-        var updatedValues: CreatePicoDetail = values
-        updatedValues.id = data.length
+      } else {
+        //creating row
+        var updatedValues: CreatePicoDetail = values;
+        updatedValues.id = data.length;
         //console.log("data: ",data," updatedValues: ",updatedValues)
         setState([...data, updatedValues]);
       }
-      resetForm()
+      resetForm();
       onClose && onClose();
-    }
+    },
   });
-
 
   const TextFields = [
     {
@@ -278,21 +295,19 @@ const CreateRecycleForm = ({
 
                 <CustomField label={t("col.recycType")} mandatory>
                   <RecyclablesListSingleSelect
-                    showError={formik.errors?.recycType&&formik.touched?.recycType||undefined}
+                    showError={
+                      (formik.errors?.recycType && formik.touched?.recycType) ||
+                      undefined
+                    }
                     recycL={recycType ?? []}
                     setState={(values) => {
-                      formik.setFieldValue(
-                        "recycType",
-                        values?.recycTypeId
-                      );
+                      formik.setFieldValue("recycType", values?.recycTypeId);
                       formik.setFieldValue(
                         "recycSubType",
                         values?.recycSubTypeId
                       );
                     }}
-                    defaultRecycL={
-                      defaultRecyc
-                    }
+                    defaultRecycL={defaultRecyc}
                     key={formik.values.id}
                   />
                 </CustomField>
@@ -302,7 +317,10 @@ const CreateRecycleForm = ({
                     placeholder="请輸入重量"
                     onChange={formik.handleChange}
                     value={formik.values.weight}
-                    error={formik.errors?.weight&&formik.touched?.weight||undefined}
+                    error={
+                      (formik.errors?.weight && formik.touched?.weight) ||
+                      undefined
+                    }
                     sx={{ width: "100%" }}
                     endAdornment={
                       <InputAdornment position="end">kg</InputAdornment>
@@ -311,29 +329,75 @@ const CreateRecycleForm = ({
                 </CustomField>
                 {TextFields.map((t) => (
                   <CustomField mandatory label={t.label}>
-                    <CustomTextField
-                      id={t.id}
-                      placeholder="请输入地點"
-                      rows={4}
-                      onChange={formik.handleChange}
-                      value={t.value}
-                      sx={{ width: "100%" }}
-                      error={t.error||undefined}
-                    ></CustomTextField>
+                    {t.id === "senderName" ||t.id ===  "receiverName"? (
+                      <CustomAutoComplete
+                        placeholder={""}
+                        option={[
+                          ...(collectorList?.map((option) => option.collectorNameTchi) ?? []),
+                          ...(manuList?.map((option) => option.manufacturerNameTchi) ?? [])
+                        ]}
+                        sx={{ width: "400px" }}
+                        onChange={(
+                          _: SyntheticEvent,
+                          newValue: string | null
+                        ) => formik.setFieldValue(t.id, newValue)}
+                        onInputChange={(event: any, newInputValue: string) => {
+                          console.log(newInputValue); // Log the input value
+                          formik.setFieldValue(t.id, newInputValue); // Update the formik field value if needed
+                        }}
+                        value={t.value}
+                        inputValue={t.value}
+                        error={t.error || undefined}
+                      />
+                    ) : (
+                      <CustomTextField
+                        id={t.id}
+                        placeholder="请输入地點"
+                        rows={4}
+                        onChange={formik.handleChange}
+                        value={t.value}
+                        sx={{ width: "100%" }}
+                        error={t.error || undefined}
+                      />
+                    )}
                   </CustomField>
                 ))}
                 <Stack spacing={2}>
-                  { formik.errors.pickupAt&&formik.touched.pickupAt&&<Alert severity="error">{formik.errors.pickupAt} </Alert> }
-                  { formik.errors?.recycType&&formik.touched?.recycType&&<Alert severity="error">{formik.errors?.recycType} </Alert> }
-                  { formik.errors?.recycSubType&&formik.touched?.recycSubType&&<Alert severity="error">{formik.errors?.recycSubType} </Alert> }
-                  { formik.errors?.weight&&formik.touched?.weight&&<Alert severity="error">{formik.errors?.weight} </Alert> }
-                  { formik.errors.senderName&&formik.touched.senderName&&<Alert severity="error">{formik.errors.senderName} </Alert> }
-                  { formik.errors.receiverName&&formik.touched.receiverName&&<Alert severity="error">{formik.errors.receiverName} </Alert> }
-                  { formik.errors.senderAddr&&formik.touched.senderAddr&&<Alert severity="error">{formik.errors.senderAddr} </Alert> }
-                  { formik.errors.receiverAddr&&formik.touched.receiverAddr&&<Alert severity="error">{formik.errors.receiverAddr} </Alert> }
-                 </Stack>
+                  {formik.errors.pickupAt && formik.touched.pickupAt && (
+                    <Alert severity="error">{formik.errors.pickupAt} </Alert>
+                  )}
+                  {formik.errors?.recycType && formik.touched?.recycType && (
+                    <Alert severity="error">{formik.errors?.recycType} </Alert>
+                  )}
+                  {formik.errors?.recycSubType &&
+                    formik.touched?.recycSubType && (
+                      <Alert severity="error">
+                        {formik.errors?.recycSubType}{" "}
+                      </Alert>
+                    )}
+                  {formik.errors?.weight && formik.touched?.weight && (
+                    <Alert severity="error">{formik.errors?.weight} </Alert>
+                  )}
+                  {formik.errors.senderName && formik.touched.senderName && (
+                    <Alert severity="error">{formik.errors.senderName} </Alert>
+                  )}
+                  {formik.errors.receiverName &&
+                    formik.touched.receiverName && (
+                      <Alert severity="error">
+                        {formik.errors.receiverName}{" "}
+                      </Alert>
+                    )}
+                  {formik.errors.senderAddr && formik.touched.senderAddr && (
+                    <Alert severity="error">{formik.errors.senderAddr} </Alert>
+                  )}
+                  {formik.errors.receiverAddr &&
+                    formik.touched.receiverAddr && (
+                      <Alert severity="error">
+                        {formik.errors.receiverAddr}{" "}
+                      </Alert>
+                    )}
+                </Stack>
               </Stack>
-             
             </Box>
           </Box>
         </LocalizationProvider>

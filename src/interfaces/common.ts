@@ -121,6 +121,37 @@ export type logisticList = {
     createdAt:        string;
     updatedAt:        string;
 }
+export type manuList = {
+    manufacturerId:       string;
+    manufacturerNameTchi: string;
+    manufacturerNameSchi: string;
+    manufacturerNameEng:  string;
+    brNo:                 string;
+    description:          string;
+    remark:               string;
+    status:               string;
+    createdBy:            string;
+    updatedBy:            string;
+    createdAt:            string;
+    updatedAt:            string;
+}
+
+export type collectorList = {
+    collectorId:       string;
+    collectorNameTchi: string;
+    collectorNameSchi: string;
+    collectorNameEng:  string;
+    brNo:              string;
+    description:       string;
+    remark:            string;
+    status:            string;
+    createdBy:         string;
+    updatedBy:         string;
+    createdAt:         string;
+    updatedAt:         string;
+}
+
+
 export type picoRoutine = {
     routineType: string,
     routineContent: string[]
@@ -136,7 +167,7 @@ export type vehicleType = {
     status:              string;
     createdBy:           string;
     updatedBy:           string;
-    createdAt:           Date;
-    updatedAt:           Date;
+    createdAt:           string;
+    updatedAt:           string;
 }
 
