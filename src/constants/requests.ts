@@ -132,6 +132,14 @@ export const GET_LOGISTICLIST: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/collectors/logisticlist'
 }
+export const GET_COLLECTORLIST: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/collectors/collectorlist'
+}
+export const GET_MANULIST: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/collectors/manulist'
+}
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',
