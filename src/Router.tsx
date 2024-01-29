@@ -28,7 +28,8 @@ import TenantRegister from "./pages/TenantRegister/Register";
 
 //general
 import Staff from "./pages/Collector/Staff";
-import Report from "./pages/Collector/Report";
+//import Report from "./pages/Collector/Report";
+import Report from "./pages/Collector/EventRecording/Report";
 import RecycleShipment from "./pages/Collector/RecycleShipment";
 import RecycleShipmentCheckOut from "./pages/Collector/RecycleShipmentCheckOut";
 import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
