@@ -38,6 +38,10 @@ export const getAllWarehouse = async (page: number, size: number) => {
     try {
       const response = await request({
         ...GET_ALL_WAREHOUSE(decodeKeycloack),
+        params: {
+          page: page,
+          size: size
+        },
         headers: {
           AuthToken: authToken
         }

@@ -299,6 +299,9 @@ export const styles = {
     },
     '&:focus-within fieldset, &:focus-visible fieldset': {
       borderColor: '#79CA25 !important'
+    },
+    '.Mui-disabled' : {
+      cursor: 'no-drop'
     }
   },
   endAdornmentIcon: {

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { createContainer } from 'unstated-next';
-import { colPointType, contract, logisticList, premiseType, recycType, siteType, vehicleType } from '../interfaces/common';
+import { colPointType, collectorList, contract, logisticList, manuList, premiseType, recycType, siteType, vehicleType } from '../interfaces/common';
 import axios from 'axios';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
-import { GET_COLLECTIONPOINT_TYPE, GET_CONTRACT, GET_LOGISTICLIST, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_VEHICLE_TYPE } from '../constants/requests';
+import { GET_COLLECTIONPOINT_TYPE, GET_COLLECTORLIST, GET_CONTRACT, GET_LOGISTICLIST, GET_MANULIST, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_VEHICLE_TYPE } from '../constants/requests';
 
 
 const CommonType = () => { 
@@ -13,6 +13,8 @@ const CommonType = () => {
     const [recycType,setRecycType] =useState<recycType[]>()
     const [contractType,setContractType] =useState<contract[]>()
     const [logisticList,setLogisticList] = useState<logisticList[]>()
+    const [manuList,setManuList] = useState<manuList[]>()
+    const [collectorList,setCollectorList] = useState<collectorList[]>()
     const [vehicleType,setVehicleType] = useState<vehicleType[]>()
     const request = axios.create({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
@@ -115,7 +117,45 @@ const getSiteType = async () => {
             return null;
         }
       }
-      const getContractList = async () => {
+         
+    const getManuList = async () => {
+
+        try {
+
+            var response = await request({
+                ...GET_MANULIST,
+                baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
+                // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+            });
+            console.log('Get manu list success:', JSON.stringify(response.data));
+            
+            const manu= response.data
+            setManuList(manu)
+        }catch (e) {
+            console.error('Get manu list failed:', e);
+            return null;
+        }
+      }
+      const getCollectorList = async () => {
+
+        try {
+
+            var response = await request({
+                ...GET_COLLECTORLIST,
+                baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
+                // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+            });
+            console.log('Get collector list success:', JSON.stringify(response.data));
+            
+            const collector= response.data
+            setCollectorList(collector)
+        }catch (e) {
+            console.error('Get collector list failed:', e);
+            return null;
+        }
+      }
+
+    const getContractList = async () => {
 
         try {
       
@@ -161,6 +201,8 @@ const getSiteType = async () => {
         getLogisticlist();
         getContractList();
         getvehicleType();
+        getCollectorList();
+        getManuList();
 },[])
  
 
@@ -171,7 +213,9 @@ const getSiteType = async () => {
     recycType,
     logisticList,
     contractType,
-    vehicleType
+    vehicleType,
+    collectorList,
+    manuList
 
 }
 

@@ -54,9 +54,9 @@ const HeaderSection: React.FC<HeaderProps> = ({
             </button>
             <button
               onClick={onDelete}
-              disabled={action === 'add' || action === 'edit'}
+              disabled={action === 'add'}
               className={`${
-                action === 'add' || action === 'edit'
+                action === 'add' 
                   ? 'cursor-not-allowed text-gray border-gray'
                   : ''
               } rounded-6xl  overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] text-green-primary border-[1px] border-solid border-green-pale`}
