@@ -25,7 +25,11 @@ export const login = async (item: LoginItem) => {
       return {
         access_token: response.data?.access_token,
         username: response.data?.username,
-        status: response.status
+        status: response.status,
+        // 20240129 add function list daniel keung start
+        functionList: response.data?.functionList,
+        realm: response.data?.realm,
+        // 20240129 add function list daniel keung end
       }
     }
   } catch (e) {

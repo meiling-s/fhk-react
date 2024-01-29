@@ -3,8 +3,11 @@ export const localStorgeKeyName = {
   role: 'userRole',
   username: 'username',
   firstTimeLogin: 'false',
-  decodeKeycloack: 'decodeKeycloack'
-};
+  decodeKeycloack: 'decodeKeycloack',
+  // 20240129 add function list daniel keung start 
+  functionList: 'functionList',
+  // 20240129 add function list daniel keung end
+}
 
 export const defaultPath = {
   origin: window.location.protocol+'://'+window.location.hostname+':'+window.location.port,
