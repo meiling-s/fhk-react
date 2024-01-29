@@ -79,8 +79,63 @@ function MainDrawer() {
   }, [])
 
   var role = localStorage.getItem(localStorgeKeyName.role)
+  
+  interface func {
+    [key: string]: object;
+  }
 
-  let drawerMenus_collector: DrawerItem[] = [
+  // 20240129 add function list daniel keung start 
+  const defaultFunctionList: func[] = [{
+    "Tenant management": {
+      name: t('all_Collection_Point'),
+      onClick: () => navigate('/collector/collectionPoint'),
+      collapse: false
+    },
+    "Collection point": {
+      name: t('all_Collection_Point'),
+      onClick: () => navigate('/collector/collectionPoint'),
+      collapse: false
+    },
+    "Pickup order": {
+      name: t('pick_up_order.enquiry_pickup_order'),
+      onClick: () => navigate('/collector/pickupOrder'),
+      collapse: false
+    },
+    "Request check-in": {
+      name: t('check_in.request_check_in'),
+      onClick: () => navigate('/warehouse/shipment'),
+      collapse: false
+    },
+    "Request checkout": {
+      name: t('check_out.request_check_out'),
+      onClick: () => navigate('/warehouse/overview'),
+      collapse: false
+    },
+    "Warehouse": {
+      name: t('settings'),
+      icon: <SETTINGS_ICON />,
+      onClick: () => navigate('/astd/setting'),
+      collapse: false
+    },
+    "Vehicles": {
+      name: t('all_Collection_Point'),
+      onClick: () => navigate('/collector/collectionPoint'),
+      collapse: false
+    },
+    "Reports": {
+      name: t('all_Collection_Point'),
+      onClick: () => navigate('/collector/collectionPoint'),
+      collapse: false
+    },
+    "Inventory": {
+      name: t('all_Collection_Point'),
+      onClick: () => navigate('/collector/collectionPoint'),
+      collapse: false
+    },
+  }]
+  // 20240129 add function list daniel keung end 
+  // 20240129 add function list daniel keung start
+/*   let drawerMenus_collector: DrawerItem[] = [
     {
       name: t('collection_Point'),
       icon: <PLACE_ICON />,
@@ -245,13 +300,25 @@ function MainDrawer() {
       onClick: () => navigate('/astd/setting'),
       collapse: false
     }
-  ]
-
-  var drawerMenus
-
+  ] */
+  // 20240129 add function list daniel keung end
+  // 20240129 add function list daniel keung start 
+  var drawerMenus;
+  let drawerMenusTmp: DrawerItem[] = [];
+  var functionListTmp = JSON.parse(localStorage.getItem(localStorgeKeyName.functionList)||"[]");
+  if(functionListTmp){
+    for (var functionItem of functionListTmp) {
+      for (let deKey in defaultFunctionList[0]) {
+        if(functionItem == deKey){
+          drawerMenusTmp.push(defaultFunctionList[0][deKey] as DrawerItem)
+        }
+      }
+    }
+  }
+  // 20240129 add function list daniel keung end 
   console.log(role)
-
-  switch (role) {
+  // 20240129 add function list daniel keung start
+/*   switch (role) {
     case 'astd':
       drawerMenus = drawerMenus_astd
       break
@@ -264,10 +331,19 @@ function MainDrawer() {
     case 'collectoradmin':
       drawerMenus = drawerMenus_collectorAdmin
       break
+    case 'ckadm01':
+      drawerMenus = drawerMenus_collectorAdmin
+      break
+    case 'oriontadmin':
+      drawerMenus = drawerMenus_collectorAdmin
+      break
     default:
       drawerMenus = drawerMenus_astd
-  }
-
+  } */
+  // 20240129 add function list daniel keung end
+  // 20240129 add function list daniel keung start
+  drawerMenus = drawerMenusTmp;
+  // 20240129 add function list daniel keung end 
   return (
     <>
       {isMobile ? (

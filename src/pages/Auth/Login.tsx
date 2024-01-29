@@ -93,14 +93,18 @@ const Login = () => {
       if(result && result.access_token){
         setWarningMsg(" ");
         //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
-        console.log(loginTo)
         localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
         localStorage.setItem(localStorgeKeyName.role, loginTo);
         localStorage.setItem(localStorgeKeyName.username, result?.username || '');
-
+        // 20240129 add function list daniel keung start
+        localStorage.setItem(localStorgeKeyName.functionList, JSON.stringify(result?.functionList));
+        // 20240129 add function list daniel keung end
         const decodedToken: any = jwtDecode(result?.access_token);
         const azpValue = decodedToken.azp;
         localStorage.setItem(localStorgeKeyName.decodeKeycloack, azpValue || '')
+        // 20240129 add function list daniel keung start
+        loginTo = result?.realm
+        // 20240129 add function list daniel keung end
         switch(loginTo){
           case "astd":
             navigate("/astd");
