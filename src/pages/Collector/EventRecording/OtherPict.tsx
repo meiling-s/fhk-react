@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   Grid,
@@ -18,75 +18,48 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-
-import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import CustomField from '../../../components/FormComponents/CustomField'
-import CustomDatePicker from '../../../components/FormComponents/CustomDatePicker'
-import SpecificDate from '../../../components/SpecializeComponents/PicoRoutineSelect/SpecificDate/SpecificDate'
-
+import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 import { styles } from '../../../constants/styles'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
 
 import { TENANT_REGISTER_CONFIGS } from '../../../constants/configs'
 import dayjs, { Dayjs } from 'dayjs'
-import { ErrorMessage, useFormik } from 'formik'
-import { object } from 'yup'
 import { createServiceInfo } from '../../../APICalls/serviceInfo'
 import { ServiceInfo, photoService } from '../../../interfaces/serviceInfo'
-import { ToastContainer, toast } from "react-toastify";
-
-
+import { ToastContainer, toast } from 'react-toastify'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
+import { formValidate } from '../../../interfaces/common'
+import { formErr } from '../../../constants/constant'
+import { format } from '../../../constants/constant'
 
 type ServiceId = 'SRV00006' | 'SRV00007' | 'SRV00008'
 type ServiceData = Record<
   ServiceId,
-  { startDate: Dayjs | null; photoImage: ImageListType }
+  { startDate: dayjs.Dayjs; photoImage: ImageListType }
 >
 
-const OtherPict: FunctionComponent = () => {
+const OtherPict = () => {
   const { t } = useTranslation()
   const [serviceData, setServiceData] = useState<ServiceData>({
-    SRV00006: { startDate: dayjs('2023-01-01'), photoImage: [] },
-    SRV00007: { startDate: dayjs('2023-01-01'), photoImage: [] },
-    SRV00008: { startDate: dayjs('2023-01-01'), photoImage: [] }
+    SRV00006: { startDate: dayjs(), photoImage: [] },
+    SRV00007: { startDate: dayjs(), photoImage: [] },
+    SRV00008: { startDate: dayjs(), photoImage: [] }
   })
 
-  const onImageChange = (
-    imageList: ImageListType,
-    addUpdateIndex: number[] | undefined,
-    serviceId: ServiceId
-  ) => {
-    setServiceData((prevData) => ({
-      ...prevData,
-      [serviceId]: { ...prevData[serviceId], photoImage: imageList }
-    }))
-
-    // Handle additional logic if needed
-    console.log(`Updated image list for ${serviceId}:`, imageList)
-  }
-
-  const updateStartDate = (serviceId: ServiceId, startDate: Dayjs | null) => {
-    setServiceData((prevData) => ({
-      ...prevData,
-      [serviceId]: {
-        ...prevData[serviceId],
-        startDate: startDate ? dayjs(startDate) : null
-      }
-    }))
-  }
-
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<formValidate[]>([])
   const serviceOthersField = [
     {
       serviceId: 'SRV00006',
-      label: '已上傳到Facebook的圖片'
+      label: t('report.picturesUploadedToFacebook')
     },
     {
       serviceId: 'SRV00007',
-      label: '已呈交回收商的受管制的廢棄電氣和電子設備 (REE)（連日期'
+      label: t('report.regulatedWEEESubmittedToRecyclers')
     },
     {
       serviceId: 'SRV00008',
-      label: '已呈交回收商的螢光燈和燈管（連日期）'
+      label: t('report.fluorescentLampsSubmittedToRecyclers')
     }
   ]
 
@@ -102,51 +75,147 @@ const OtherPict: FunctionComponent = () => {
     return base64
   }
 
+  const onImageChange = (
+    imageList: ImageListType,
+    addUpdateIndex: number[] | undefined,
+    serviceId: ServiceId
+  ) => {
+    setServiceData((prevData) => ({
+      ...prevData,
+      [serviceId]: { ...prevData[serviceId], photoImage: imageList }
+    }))
+  }
+
+  const updateDateTime = (
+    serviceId: ServiceId,
+    property: string,
+    value: dayjs.Dayjs
+  ) => {
+    setServiceData((prevData) => ({
+      ...prevData,
+      [serviceId]: {
+        ...prevData[serviceId],
+        [property]: value
+      }
+    }))
+  }
+
+  useEffect(() => {
+    const validate = async () => {
+      const tempV = []
+
+      for (const key in serviceData) {
+        if (serviceData.hasOwnProperty(key)) {
+          const entry = serviceData[key as ServiceId]
+
+          // Validate startDate
+          if (entry.startDate?.toString() == '') {
+            tempV.push({
+              field: `${key} ${t('report.dateAndTime')}`,
+              problem: formErr.empty,
+              type: 'error'
+            })
+          }
+
+          // Validate photoImage
+          if (
+            !Array.isArray(entry.photoImage) ||
+            entry.photoImage.length === 0
+          ) {
+            tempV.push({
+              field: `${key} ${t('report.picture')}`,
+              problem: formErr.empty,
+              type: 'error'
+            })
+          }
+        }
+      }
+
+      setValidation(tempV)
+    }
+
+    validate()
+  }, [serviceData])
+
+  const formattedDate = (dateData: dayjs.Dayjs) => {
+    return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+  }
+
+  const resetServiceData = () => {
+    setServiceData({
+      SRV00006: { startDate: dayjs(), photoImage: [] },
+      SRV00007: { startDate: dayjs(), photoImage: [] },
+      SRV00008: { startDate: dayjs(), photoImage: [] }
+    })
+  }
 
   const submitServiceInfo = async () => {
     let itemData = 0
-    for (const key of Object.keys(serviceData) as ServiceId[]){
-      const serviceItem = serviceData[key]
-      const imgList: photoService[] = ImageToBase64(serviceItem.photoImage).map((item) =>{
-        return { photo: item }
-      })
+    if (validation.length == 0) {
+      for (const key of Object.keys(serviceData) as ServiceId[]) {
+        const serviceItem = serviceData[key]
+        const imgList: photoService[] = ImageToBase64(
+          serviceItem.photoImage
+        ).map((item) => {
+          return { photo: item }
+        })
 
-      const formData: ServiceInfo = {
-        serviceId: 2,
-        address: "",
-        addressGps: [
-          0
-        ],
-        serviceName: key,
-        participants: "string",
-        startAt: "2024-01-26T12:37:31.581Z",
-        endAt: "2024-01-26T12:37:31.581Z",
-        photo: imgList,
-        numberOfVisitor: 0,
-        createdBy: "admin",
-        updatedBy: "admin"
+        const formData: ServiceInfo = {
+          serviceId: 2,
+          address: '',
+          addressGps: [0],
+          serviceName: key,
+          participants: 'string',
+          startAt: formattedDate(serviceItem.startDate),
+          endAt: formattedDate(serviceItem.startDate),
+          photo: imgList,
+          numberOfVisitor: 0,
+          createdBy: 'admin',
+          updatedBy: 'admin'
+        }
+        const result = await createServiceInfo(formData)
+        if (result) itemData++
       }
-      const result = await createServiceInfo(formData)
-      if (result) itemData++
+
+      if (itemData === 3) {
+        console.log('itemData', itemData)
+        setTrySubmited(false)
+        resetServiceData()
+        const toastMsg = 'created other service success'
+        toast.info(toastMsg, {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light'
+        })
+      }
+    } else {
+      setTrySubmited(true)
     }
+  }
 
-    if(itemData === 3){
-      console.log("itemData", itemData)
-      const toastMsg = "created other service success"
-      toast.info(toastMsg, {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+  const returnErrorMsg = (error: string) => {
+    var msg = ''
+    console.log(error)
+    switch (error) {
+      case formErr.empty:
+        msg = t('form.error.shouldNotBeEmpty')
+        break
+      case formErr.wrongFormat:
+        msg = t('form.error.isInWrongFormat')
+        break
+      case formErr.numberSmallThanZero:
+        msg = t('form.error.shouldNotSmallerThanZero')
+        break
+      case formErr.wrongFormat:
+        msg = t('form.error.isInWrongFormat')
+        break
     }
-
-    
-
+    return msg
   }
 
   return (
@@ -156,6 +225,7 @@ const OtherPict: FunctionComponent = () => {
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
           {serviceOthersField.map((item, index) => (
             <Grid
+              key={index}
               container
               direction={'column'}
               spacing={2.5}
@@ -173,22 +243,50 @@ const OtherPict: FunctionComponent = () => {
               </Grid>
               <Grid item>
                 <Typography sx={[styles.header3, { marginBottom: 2 }]}>
-                  {'日期及時間'}
+                  {t('report.dateAndTime')}
                 </Typography>
-                <Box sx={{ ...localstyles.DateItem }}>
-                  <DatePicker
-                    value={
-                      serviceData[item.serviceId as keyof ServiceData].startDate
-                    }
-                    //onChange={(newValue: any) => setStartDate(newValue)}
-                    sx={{ ...localstyles.datePicker }}
-                  />
+                <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <Box sx={{ ...localstyles.DateItem }}>
+                    <DatePicker
+                      defaultValue={dayjs(
+                        serviceData[item.serviceId as keyof ServiceData]
+                          .startDate
+                      )}
+                      format={format.dateFormat2}
+                      onChange={(value) =>
+                        updateDateTime(
+                          item.serviceId as ServiceId,
+                          'startDate',
+                          value!!
+                        )
+                      }
+                      sx={{ ...localstyles.datePicker }}
+                    />
+                  </Box>
+                  <Box sx={{ ...localstyles.timePeriodItem }}>
+                    <TimePicker
+                      value={
+                        serviceData[item.serviceId as keyof ServiceData]
+                          .startDate
+                      }
+                      onChange={(value) =>
+                        updateDateTime(
+                          item.serviceId as ServiceId,
+                          'endDate',
+                          value!!
+                        )
+                      }
+                      sx={{ ...localstyles.timePicker }}
+                    />
+                  </Box>
                 </Box>
               </Grid>
               <Grid item>
                 {/* image field */}
-                <Box key={'圖片'}>
-                  <Typography sx={styles.labelField}>{'圖片'}</Typography>
+                <Box key={t('report.picture') + index}>
+                  <Typography sx={styles.labelField}>
+                    {t('report.picture')}
+                  </Typography>
                   <ImageUploading
                     multiple
                     value={
@@ -208,7 +306,14 @@ const OtherPict: FunctionComponent = () => {
                   >
                     {({ imageList, onImageUpload }) => (
                       <Box className="box">
-                        <Card sx={localstyles.cardImg}>
+                        <Card
+                          sx={{
+                            ...localstyles.cardImg,
+                            ...(trySubmited &&
+                              imageList.length === 0 &&
+                              localstyles.imgError)
+                          }}
+                        >
                           <ButtonBase
                             sx={localstyles.btnBase}
                             onClick={(event) => onImageUpload()}
@@ -217,7 +322,7 @@ const OtherPict: FunctionComponent = () => {
                             <Typography
                               sx={[styles.labelField, { fontWeight: 'bold' }]}
                             >
-                              {'上載圖片'}
+                              {t('report.uploadPictures')}
                             </Typography>
                           </ButtonBase>
                         </Card>
@@ -240,6 +345,17 @@ const OtherPict: FunctionComponent = () => {
               </Grid>
             </Grid>
           ))}
+          <Grid item sx={{ width: '100%' }}>
+            {trySubmited &&
+              validation.map((val, index) => (
+                <FormErrorMsg
+                  key={index}
+                  field={t(val.field)}
+                  errorMsg={returnErrorMsg(val.problem)}
+                  type={val.type}
+                />
+              ))}
+          </Grid>
           <Grid item className="lg:flex sm:block text-center">
             <Button
               sx={[
@@ -312,6 +428,33 @@ const localstyles = {
     display: 'flex',
     height: 'fit-content',
     alignItems: 'center'
+  },
+  imgError: {
+    border: '1px solid red'
+  },
+  timePicker: {
+    width: '100%',
+    borderRadius: 5,
+    backgroundColor: 'white',
+    '& fieldset': {
+      borderWidth: 0
+    },
+    '& input': {
+      paddingX: 0
+    },
+    '& .MuiIconButton-edgeEnd': {
+      color: '#79CA25'
+    }
+  },
+  timePeriodItem: {
+    display: 'flex',
+    height: 'fit-content',
+    paddingX: 2,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    border: 2,
+    borderRadius: 3,
+    borderColor: '#E2E2E2'
   }
 }
 

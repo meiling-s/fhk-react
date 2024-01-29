@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Grid,
@@ -16,7 +16,8 @@ import ImageUploading, {
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DatePicker } from '@mui/x-date-pickers'
+import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import CustomField from '../../../components/FormComponents/CustomField'
@@ -27,17 +28,21 @@ import { EVENT_RECORDING } from '../../../constants/configs'
 import { ServiceInfo, photoService } from '../../../interfaces/serviceInfo'
 import { createServiceInfo } from '../../../APICalls/serviceInfo'
 import dayjs, { Dayjs } from 'dayjs'
-import { ToastContainer, toast } from "react-toastify";
-import { number } from 'yup'
+import { ToastContainer, toast } from 'react-toastify'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
+import { formValidate } from '../../../interfaces/common'
+import { formErr } from '../../../constants/constant'
+import { format } from '../../../constants/constant'
 
 const BasicServicePicture = () => {
   const { t } = useTranslation()
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs('2024-01-01'))
-  const [endDate, setEnddate] = useState<Dayjs | null>(dayjs('2024-01-01'))
+  const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
+  const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
   const [place, setPlace] = useState<string>('')
-  const [numberOfPeople, setNumberOfPeople] = useState<string>('0')
+  const [numberOfPeople, setNumberOfPeople] = useState<string>('')
   const [serviceImages, setServiceImages] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<formValidate[]>([])
 
   const ImageToBase64 = (images: ImageListType) => {
     var base64: string[] = []
@@ -51,55 +56,127 @@ const BasicServicePicture = () => {
     return base64
   }
 
-  const submitServiceInfo = async () => {
-    const imgList: photoService[] = ImageToBase64(serviceImages).map((item) =>{
-      return { photo: item }
-    })
-    const formData: ServiceInfo = {
-      serviceId: 1,
-      address: place,
-      addressGps: [
-        0
-      ],
-      serviceName: "SRV00001",
-      participants: "string",
-      startAt: "2024-01-26T12:37:31.581Z",
-      endAt: "2024-01-26T12:37:31.581Z",
-      photo: imgList,
-      numberOfVisitor: parseInt(numberOfPeople),
-      createdBy: "admin",
-      updatedBy: "admin"
+  const resetData = () => {
+    setPlace('')
+    setNumberOfPeople('')
+    setServiceImages([])
+  }
+
+  useEffect(() => {
+    const validate = async () => {
+      //do validation here
+      const tempV: formValidate[] = []
+      startDate?.toString() == '' &&
+        tempV.push({
+          field: t('report.dateAndTime'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      endDate?.toString() == '' &&
+        tempV.push({
+          field: t('report.to'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      place?.toString() == '' &&
+        tempV.push({
+          field: t('report.address'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      Number.isNaN(parseInt(numberOfPeople)) && !(numberOfPeople == '')
+        ? tempV.push({
+            field: t('report.numberOfPeople'),
+            problem: formErr.wrongFormat,
+            type: 'error'
+          })
+        : !Number.isNaN(parseInt(numberOfPeople)) &&
+          parseInt(numberOfPeople) < 0 &&
+          tempV.push({
+            field: t('report.numberOfPeople'),
+            problem: formErr.numberSmallThanZero,
+            type: 'error'
+          })
+      serviceImages.length == 0 &&
+        tempV.push({
+          field: t('report.picture'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      setValidation(tempV)
     }
 
-    const result = await createServiceInfo(formData)
-    let toastMsg = ""
-    if(result) {
-      toastMsg = "event recording created"
-      console.log('succes create service info', formData)
-      toast.info(toastMsg, {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      resetData()
+    validate()
+  }, [startDate, endDate, place, serviceImages])
+
+  const formattedDate = (dateData: dayjs.Dayjs) => {
+    return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+  }
+
+  const submitServiceInfo = async () => {
+    console.log(formattedDate(startDate))
+    console.log(formattedDate(endDate))
+    if (validation.length == 0) {
+      const imgList: photoService[] = ImageToBase64(serviceImages).map(
+        (item) => {
+          return { photo: item }
+        }
+      )
+
+      const formData: ServiceInfo = {
+        serviceId: 1,
+        address: place,
+        addressGps: [0],
+        serviceName: 'SRV00001',
+        participants: 'string',
+        startAt: formattedDate(startDate),
+        endAt: formattedDate(endDate),
+        photo: imgList,
+        numberOfVisitor: parseInt(numberOfPeople),
+        createdBy: 'admin',
+        updatedBy: 'admin'
+      }
+
+      const result = await createServiceInfo(formData)
+      if (result) {
+        showSuccessToast()
+        setTrySubmited(false)
+        
+      } else {
+        showErrorToast()
+      }
     } else {
-      toastMsg = "failed created event recording"
-      toast.error(toastMsg, {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      setTrySubmited(true)
     }
+    resetData()
+  }
+
+  const showErrorToast = () => {
+    const toastMsg = 'failed created event recording'
+    toast.error(toastMsg, {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light'
+    })
+  }
+
+  const showSuccessToast = () => {
+    const toastMsg = 'event recording created'
+    toast.info(toastMsg, {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light'
+    })
   }
 
   const onImageChange = (
@@ -110,7 +187,6 @@ const BasicServicePicture = () => {
     console.log(imageList, addUpdateIndex)
   }
 
-  //validation function
   const checkString = (s: string) => {
     if (!trySubmited) {
       //before first submit, don't check the validation
@@ -119,10 +195,35 @@ const BasicServicePicture = () => {
     return s == ''
   }
 
-  const resetData = () => {
-    setPlace('')
-    setNumberOfPeople('0')
-    setServiceImages([])
+  const checkNumber = (n: string) => {
+    if (!trySubmited) {
+      return false
+    }
+    return (
+      Number.isNaN(parseInt(n)) ||
+      n == '' ||
+      (!Number.isNaN(parseInt(n)) && parseInt(n) < 0)
+    )
+  }
+
+  const returnErrorMsg = (error: string) => {
+    var msg = ''
+    console.log(error)
+    switch (error) {
+      case formErr.empty:
+        msg = t('form.error.shouldNotBeEmpty')
+        break
+      case formErr.wrongFormat:
+        msg = t('form.error.isInWrongFormat')
+        break
+      case formErr.numberSmallThanZero:
+        msg = t('form.error.shouldNotSmallerThanZero')
+        break
+      case formErr.wrongFormat:
+        msg = t('form.error.isInWrongFormat')
+        break
+    }
+    return msg
   }
 
   return (
@@ -144,50 +245,75 @@ const BasicServicePicture = () => {
             className="sm:ml-0 mt-o w-full"
           >
             <Grid item>
-              <Typography sx={styles.header2}>{'回收點'}</Typography>
+              <Typography sx={styles.header2}>
+                {t('report.collectionPoints')}
+              </Typography>
             </Grid>
             <Grid item>
-              <Typography sx={styles.header3}>{'日期及時間'}</Typography>
-              <Box sx={{ ...localstyles.DateItem }}>
-                <DatePicker
-                  value={startDate}
-                  onChange={(newValue: any) => setStartDate(newValue)}
-                  sx={{ ...localstyles.datePicker }}
-                />
+              <Typography sx={styles.header3}>
+                {t('report.dateAndTime')}
+              </Typography>
+              <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Box sx={{ ...localstyles.DateItem }}>
+                  <DatePicker
+                    defaultValue={dayjs(startDate)}
+                    format={format.dateFormat2}
+                    onChange={(value) => setStartDate(value!!)}
+                    sx={{ ...localstyles.datePicker }}
+                  />
+                </Box>
+                <Box sx={{ ...localstyles.timePeriodItem }}>
+                  <TimePicker
+                    value={startDate}
+                    onChange={(value) => setStartDate(value!!)}
+                    sx={{ ...localstyles.timePicker }}
+                  />
+                </Box>
               </Box>
             </Grid>
             <Grid item>
-              <Typography sx={styles.header3}>{'至'}</Typography>
-              <Box sx={{ ...localstyles.DateItem }}>
-                <DatePicker
-                  value={endDate}
-                  onChange={(newValue: any) => setEnddate(newValue)}
-                  sx={{ ...localstyles.datePicker }}
-                />
+              <Typography sx={styles.header3}>{t('report.to')}</Typography>
+              <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Box sx={{ ...localstyles.DateItem }}>
+                  <DatePicker
+                    defaultValue={dayjs(endDate)}
+                    format={format.dateFormat2}
+                    onChange={(value) => setEndDate(value!!)}
+                    sx={{ ...localstyles.datePicker }}
+                  />
+                </Box>
+                <Box sx={{ ...localstyles.timePeriodItem }}>
+                  <TimePicker
+                    value={endDate}
+                    onChange={(value) => setEndDate(value!!)}
+                    sx={{ ...localstyles.timePicker }}
+                  />
+                </Box>
               </Box>
             </Grid>
-            <CustomField label={'地點'}>
+            <CustomField label={t('report.address')}>
               <CustomTextField
                 id="place"
-                placeholder={'請輸入地點'}
+                placeholder={t('report.pleaseEnterAddress')}
                 onChange={(event) => setPlace(event.target.value)}
                 multiline={true}
-                value={place}
                 error={checkString(place)}
               />
             </CustomField>
-            <CustomField label={'人數'}>
+            <CustomField label={t('report.numberOfPeople')}>
               <CustomTextField
                 id="numberOfPeople"
-                placeholder={'請輸入人數'}
+                placeholder={t('report.pleaseEnterNumberOfPeople')}
                 onChange={(event) => setNumberOfPeople(event.target.value)}
-
+                error={checkNumber(numberOfPeople)}
               />
             </CustomField>
             <Grid item>
               {/* image field */}
-              <Box key={'圖片'}>
-                <Typography sx={styles.labelField}>{'圖片'}</Typography>
+              <Box key={t('report.picture')}>
+                <Typography sx={styles.labelField}>
+                  {t('report.picture')}
+                </Typography>
                 <ImageUploading
                   multiple
                   value={serviceImages}
@@ -200,7 +326,14 @@ const BasicServicePicture = () => {
                 >
                   {({ imageList, onImageUpload }) => (
                     <Box className="box">
-                      <Card sx={localstyles.cardImg}>
+                      <Card
+                        sx={{
+                          ...localstyles.cardImg,
+                          ...(trySubmited &&
+                            imageList.length === 0 &&
+                            localstyles.imgError)
+                        }}
+                      >
                         <ButtonBase
                           sx={localstyles.btnBase}
                           onClick={(event) => onImageUpload()}
@@ -209,7 +342,7 @@ const BasicServicePicture = () => {
                           <Typography
                             sx={[styles.labelField, { fontWeight: 'bold' }]}
                           >
-                            {'上載圖片'}
+                            {t('report.uploadPictures')}
                           </Typography>
                         </ButtonBase>
                       </Card>
@@ -229,6 +362,17 @@ const BasicServicePicture = () => {
                   )}
                 </ImageUploading>
               </Box>
+              <Grid item sx={{ width: '100%' }}>
+                {trySubmited &&
+                  validation.map((val, index) => (
+                    <FormErrorMsg
+                      key={index}
+                      field={t(val.field)}
+                      errorMsg={returnErrorMsg(val.problem)}
+                      type={val.type}
+                    />
+                  ))}
+              </Grid>
             </Grid>
             <Grid item className="lg:flex sm:block text-center">
               <Button
@@ -237,13 +381,12 @@ const BasicServicePicture = () => {
                   localstyles.localButton,
                   {
                     marginBottom: { md: 0, xs: 2 },
-                    marginTop: 2,
-                    marginLeft: 2
+                    marginTop: 2
                   }
                 ]}
                 onClick={() => submitServiceInfo()}
               >
-                {t('col.create')}
+                {t('report.save')}
               </Button>
             </Grid>
           </Grid>
@@ -307,6 +450,33 @@ const localstyles = {
     display: 'flex',
     height: 'fit-content',
     alignItems: 'center'
+  },
+  imgError: {
+    border: '1px solid red'
+  },
+  timePicker: {
+    width: '100%',
+    borderRadius: 5,
+    backgroundColor: 'white',
+    '& fieldset': {
+      borderWidth: 0
+    },
+    '& input': {
+      paddingX: 0
+    },
+    '& .MuiIconButton-edgeEnd': {
+      color: '#79CA25'
+    }
+  },
+  timePeriodItem: {
+    display: 'flex',
+    height: 'fit-content',
+    paddingX: 2,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    border: 2,
+    borderRadius: 3,
+    borderColor: '#E2E2E2'
   }
 }
 

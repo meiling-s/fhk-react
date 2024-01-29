@@ -8,7 +8,6 @@ import AdditionalServicePict from './AdditionalServicePict'
 import OtherPict from './OtherPict'
 
 const Report: FunctionComponent = () => {
-  // const navigate = useNavigate()
   const { t } = useTranslation()
   const [selectedTab, setSelectedTab] = useState(0)
   const handleTabChange = (value: number, label: string) => {
@@ -16,14 +15,11 @@ const Report: FunctionComponent = () => {
     setSelectedTab(value)
   }
 
-  const titlePage = '報表'
+  const titlePage = t('report.report')
   const tabSettings = [
-    // t('top_menu.general_settings'),
-    // t('top_menu.packaging_unit'),
-    // t('top_menu.workshop')
-    '基本服務圖片',
-    '額外服務圖片',
-    '其他圖片'
+    t('report.basicServicePictures'),
+    t('report.additionalServicePictures'),
+    t('report.otherPictures')
   ]
 
   return (

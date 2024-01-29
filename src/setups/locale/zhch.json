@@ -408,5 +408,32 @@
       "fifo": "先进先出（FIFO）",
       "lifo": "后进先出（LIFO）"
     }
+  },
+  "report": {
+    "report": "报表",
+    "basicServicePictures": "基本服务图片",
+    "additionalServicePictures": "额外服务图片",
+    "otherPictures": "其他图片",
+    "collectionPoints": "回收点",
+    "dateAndTime": "日期及时间",
+    "to": "至",
+    "address": "地点",
+    "pleaseEnterAddress": "请输入地点",
+    "numberOfPeople": "人数",
+    "pleaseEnterNumberOfPeople": "请输入人数",
+    "picture": "图片",
+    "uploadPictures": "上载图片",
+    "save": "储存",
+    "otherCollectionPoint": "其他回收地点",
+    "communityCollectionPoint": "社区回收地点",
+    "promotionalAndEducationalEventLocations": "宣传及教育活动地点",
+    "eventName": "活动名称",
+    "pleaseEnterEventName": "请输入活动名称",
+    "targetParticipants": "活动对象",
+    "pleaseEnterTargetParticipants": "请输入活动对象",
+    "picturesUploadedToFacebook": "已上传到Facebook的图片",
+    "shareDate": "分享日期",
+    "regulatedWEEESubmittedToRecyclers": "已呈交回收商的受管制的废弃电气和电子设备 (REE)（连日期）",
+    "fluorescentLampsSubmittedToRecyclers": "已呈交回收商的荧光灯和灯管（连日期）"
   }
 }
