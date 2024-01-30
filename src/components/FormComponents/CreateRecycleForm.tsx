@@ -191,7 +191,7 @@ const CreateRecycleForm = ({
 
     onSubmit: (values, { resetForm }) => {
       console.log(values);
-      alert(JSON.stringify(values, null, 2));
+      // alert(JSON.stringify(values, null, 2));
       if (isEditing) {
         //editing row
         //const {id, ...updateValue} = values
