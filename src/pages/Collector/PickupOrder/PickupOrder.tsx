@@ -268,13 +268,19 @@ const PickupOrders = () => {
       <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
         <DataGrid
           rows={rows}
-          hideFooter
           columns={columns}
           checkboxSelection
           disableRowSelectionOnClick
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
-          
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
+            },
+          }}
+        
           sx={{
             border: "none",
             "& .MuiDataGrid-cell": {
