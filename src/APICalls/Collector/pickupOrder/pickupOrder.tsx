@@ -9,14 +9,15 @@ import { createCP } from '../../../interfaces/collectionPoint'
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
     })
 
-  export const getAllPickUpOrder = async () => {
+  export const getAllPickUpOrder = async (page: number, size: number) => {
 
       try {
         const response = await request({
-          ...GET_ALL_PICK_UP_ORDER
-          // headers: {
-          //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
-          // },
+          ...GET_ALL_PICK_UP_ORDER,
+          params: {
+            page: page,
+            size: size
+          },
         });
         console.log('Get all pick up order:', JSON.stringify(response.data));
         return response
