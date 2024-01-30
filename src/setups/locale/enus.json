@@ -407,5 +407,32 @@
       "fifo": "First in first out (FIFO)",
       "lifo": "Last in, first out (LIFO)"
     }
+  },
+  "report": {
+    "report": "Report",
+    "basicServicePictures": "Basic service pictures",
+    "additionalServicePictures": "Additional service pictures",
+    "otherPictures": "Other pictures",
+    "collectionPoints": "Collection points",
+    "dateAndTime": "Date and time",
+    "to": "to",
+    "address": "Address",
+    "pleaseEnterAddress": "Please enter address",
+    "numberOfPeople": "Number of people",
+    "pleaseEnterNumberOfPeople": "Please enter number of people",
+    "picture": "Picture",
+    "uploadPictures": "Upload pictures",
+    "save": "Save",
+    "otherCollectionPoint": "Other collection point",
+    "communityCollectionPoint": "Community collection point",
+    "promotionalAndEducationalEventLocations": "Promotional and educational event locations",
+    "eventName": "Event name",
+    "pleaseEnterEventName": "Please enter event name",
+    "targetParticipants": "Target participants",
+    "pleaseEnterTargetParticipants": "Please enter target participants",
+    "picturesUploadedToFacebook": "Pictures uploaded to Facebook",
+    "shareDate": "Share date",
+    "regulatedWEEESubmittedToRecyclers": "Regulated waste electrical and electronic equipment (REE) submitted to recyclers (with date)",
+    "fluorescentLampsSubmittedToRecyclers": "Fluorescent lamps and tubes submitted to recyclers (with date)"
   }
 }

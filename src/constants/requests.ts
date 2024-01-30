@@ -297,3 +297,9 @@ export const GET_ALL_USERNAME: AxiosRequestConfig = {
   method: 'get',
   url: 'users'
 }
+
+//service info
+export const CREATE_SERVICE_INFO: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/collectors/serviceInfo'
+}
