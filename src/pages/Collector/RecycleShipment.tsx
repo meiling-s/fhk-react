@@ -17,9 +17,11 @@ import { CheckIn } from "../../interfaces/checkin";
 import { useContainer } from "unstated-next";
 import CheckInRequestContext from "../../contexts/CheckInRequestContainer";
 import dayjs from "dayjs";
-import { format } from "../../constants/constant"
+import { format, localStorgeKeyName } from "../../constants/constant"
 
 import { useTranslation } from "react-i18next";
+import { getTenantById } from "../../APICalls/tenantManage";
+import { Tenant } from "../../interfaces/account";
 
 type Shipment = {
     createDate: Date,
@@ -48,7 +50,7 @@ function createShipment(
     checkInId: number
 ): Shipment {
     var createAt = new Date(createDate)
-    return { createDate: createAt, sender, recipient: "匡智會", poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr: "天水圍天華路65號", status, checkInId };
+    return { createDate: createAt, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr, status, checkInId };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -258,6 +260,31 @@ function ShipmentManage(){
     
     const { checkInRequest, updateCheckInRequest } = useContainer(CheckInRequestContext);
 
+    const [tenant, setTenant] = useState<Tenant>();
+
+    var tenantId = 0;
+
+    const initGetTenantByIdRequest = async (tenantId: number) => {
+        const result = await getTenantById(tenantId);
+        const data = result?.data;
+        console.log("pickup order content: ", data);
+        if (data && data.length > 0) {
+          console.log("all pickup orders ", data);
+          setTenant(data);
+        }
+      };
+
+    const regex = /\d{6}/;
+    const extractNum = localStorage.getItem(localStorgeKeyName.decodeKeycloack)?.match(regex)
+    if (extractNum) {
+       tenantId = parseInt(extractNum[0]);
+    }
+
+    useEffect(() => {
+        // initGetTenantByIdRequest(tenantId);
+        initGetTenantByIdRequest(tenantId);
+    },[])
+
     useEffect(()=>{
         initTable();
     },[checkInRequest])
@@ -279,7 +306,8 @@ function ShipmentManage(){
             setShipments(ships);
             setFilterShipments(ships);
             console.log("filtership", ships);
-        }        
+        }
+        
     }
 
     useEffect(()=>{
@@ -379,8 +407,8 @@ function ShipmentManage(){
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
-                console.log("piconDtlId: ",searchWord,shipment.picoDtlId)
-                if(shipment.picoDtlId.includes(searchWord)){
+                console.log("piconDtlId: ",searchWord,shipment.picoId)
+                if(shipment.picoId.includes(searchWord)){
                     filteredShipments.push(shipment);
                 }
             });
@@ -792,13 +820,13 @@ function ShipmentManage(){
                                         </TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{dayjs(new Date(shipment.createdAt)).format(format.dateFormat2)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'匡智會'}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoDtlId}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{tenant?.companyNameEng}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoId}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.adjustmentFlg?(<CheckIcon sx={styles.endAdornmentIcon}/>)
                                         :(<ClearIcon sx={styles.endAdornmentIcon}/>)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.logisticName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderAddr}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'天水圍天華路65號'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{''}</TableCell>
                                     </TableRow>
                                 );
                             })}

@@ -3,9 +3,9 @@ import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
 import { useEffect, useState } from "react";
 import { visuallyHidden } from '@mui/utils';
 import React from "react";
-import { createInvitation, getAllTenant } from "../../APICalls/tenantManage";
+import { createInvitation, getAllTenant, getTenantById } from "../../APICalls/tenantManage";
 import { generateNumericId } from "../../utils/uuidgenerator";
-import { defaultPath, format } from "../../constants/constant";
+import { defaultPath, format, localStorgeKeyName } from "../../constants/constant";
 import { styles } from "../../constants/styles"
 import dateFormat from "date-fns/format";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -22,6 +22,7 @@ import { useContainer } from "unstated-next";
 import CheckInRequestContext from "../../contexts/CheckInRequestContainer";
 
 import { useTranslation } from "react-i18next";
+import { Tenant } from "../../interfaces/account";
 
 type Shipment = {
     createDate: Date,
@@ -50,7 +51,7 @@ function createShipment(
     checkInId: number
 ): Shipment {
     var createAt = new Date(createDate)
-    return { createDate: createAt, sender, recipient: "匡智會", poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr: "天水圍天華路65號", status, checkInId };
+    return { createDate: createAt, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr, status, checkInId };
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -260,6 +261,31 @@ function ShipmentManage(){
     
     const { checkInRequest } = useContainer(CheckInRequestContext);
 
+    const [tenant, setTenant] = useState<Tenant>();
+
+    var tenantId = 0;
+
+    const initGetTenantByIdRequest = async (tenantId: number) => {
+        const result = await getTenantById(tenantId);
+        const data = result?.data;
+        console.log("pickup order content: ", data);
+        if (data && data.length > 0) {
+          console.log("all pickup orders ", data);
+          setTenant(data);
+        }
+      };
+
+    const regex = /\d{6}/;
+    const extractNum = localStorage.getItem(localStorgeKeyName.decodeKeycloack)?.match(regex)
+    if (extractNum) {
+       tenantId = parseInt(extractNum[0]);
+    }
+
+    useEffect(() => {
+        // initGetTenantByIdRequest(tenantId);
+        initGetTenantByIdRequest(tenantId);
+    },[])
+
     const headCells: readonly HeadCell[] = [
         {
             id: 'createDate',
@@ -324,7 +350,7 @@ function ShipmentManage(){
         if(searchWord != ""){
             const filteredShipments: CheckIn[] = [];
             shipments.map((shipment)=>{
-                if(shipment.picoDtlId.includes(searchWord)){
+                if(shipment.picoId.includes(searchWord)){
                     filteredShipments.push(shipment);
                 }
             });
@@ -422,7 +448,7 @@ function ShipmentManage(){
 
     function onSelectAllClick(){
         if(selected.length < shipments.length){     //if not selecting all, do select all
-            const newSelected = shipments.map((shipment) => shipment.picoDtlId);
+            const newSelected = shipments.map((shipment) => shipment.picoId);
             setSelected(newSelected);
             // Trigger the function for each individual checkbox
             console.log(shipments);
@@ -463,7 +489,7 @@ function ShipmentManage(){
         setSelected(newSelected);
         setOpen(true);
        console.log(id)
-        const selectedItem = checkInRequest?.find(item => item.picoDtlId.toString() ===id);
+        const selectedItem = checkInRequest?.find(item => item.picoId ===id);
         console.log('123456'+selectedItem)
         setSelectedRow(selectedItem); //
       };
@@ -704,16 +730,16 @@ function ShipmentManage(){
                                 // const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
                                    return (
                                     <TableRow
-                                        hover key={shipment.picoDtlId}
+                                        hover key={shipment.picoId}
                                         tabIndex={-1}
                                         role="checkbox"
                                         sx={[localstyles.row]}
-                                        onClick={(event)=>handleClick(event,shipment.picoDtlId)}
+                                        onClick={(event)=>handleClick(event,shipment.picoId)}
                                         >
                                         <TableCell sx={localstyles.bodyCell}>
                                             <Checkbox
                                                 color="primary"
-                                                checked={selected.includes(shipment.picoDtlId)}
+                                                checked={selected.includes(shipment.picoId)}
                                                 onChange={(e) => handleCheck(shipment, e.target.checked)}
                                                 inputProps={{
                                                     'aria-label': 'select request',
@@ -722,13 +748,13 @@ function ShipmentManage(){
                                         </TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat2)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'recipient'}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoDtlId}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{tenant?.companyNameEng}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{shipment.picoId}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.adjustmentFlg?(<CheckIcon sx={styles.endAdornmentIcon}/>)
                                         :(<ClearIcon sx={styles.endAdornmentIcon}/>)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.logisticName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderAddr}</TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{'deliver'}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{''}</TableCell>
                                     </TableRow>
                                 );
                             })}

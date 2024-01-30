@@ -126,7 +126,7 @@ useEffect(() => {
             <Box>
               <Typography sx={styles.header4}>送入請求</Typography>
               <Typography sx={styles.header3}>
-                {selectedItem?.picoDtlId}
+                {selectedItem?.picoId}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignSelf: "center" }}>
