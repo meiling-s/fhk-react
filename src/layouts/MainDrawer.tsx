@@ -123,8 +123,8 @@ function MainDrawer() {
       collapse: false
     },
     "Reports": {
-      name: t('all_Collection_Point'),
-      onClick: () => navigate('/collector/collectionPoint'),
+      name: t('reports'),
+      onClick: () => navigate('/collector/report'),
       collapse: false
     },
     "Inventory": {
