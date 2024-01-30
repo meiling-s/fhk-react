@@ -39,15 +39,6 @@ spec:
       topologySpreadConstraints:
         - labelSelector:
             matchLabels:
-              name: account
-              component: api
-          maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: ScheduleAnyway
-          matchLabelKeys:
-            - pod-template-hash
-        - labelSelector:
-            matchLabels:
               name: account 
               component: api
           maxSkew: 1
@@ -55,3 +46,4 @@ spec:
           whenUnsatisfiable: DoNotSchedule
           matchLabelKeys:
             - pod-template-hash
+          minDomains: 2
