@@ -74,12 +74,16 @@ const PickupOrderCreateForm = ({
   const [updateRowId,setUpdateRowId] =  useState<number | null>(null);
   const [id, setId] = useState<number>(0);
   const [picoRefId, setPicoRefId] = useState('')
-  const [updateId,setUpdateId] = useState<number>(1)
-  const [initialRow,setInitialRow] = useState<CreatePicoDetail>();
   const [isEditing,setIsEditing] = useState<boolean>(false)
   const { logisticList, contractType, vehicleType } =
     useContainer(CommonTypeContainer);
   const navigate = useNavigate();
+  const unexpiredContracts = contractType?.filter(contract =>{
+    const currentDate = new Date();
+    const contractDate = new Date(contract.contractToDate)
+    return contractDate>currentDate
+  })
+  
 
   const handleCloses = () => {
     setIsEditing(false);
@@ -472,7 +476,7 @@ const PickupOrderCreateForm = ({
                       <CustomAutoComplete
                         placeholder={t('pick_up_order.routine.enter_contract')}
                         option={
-                          contractType?.map((option) => option.contractNo) ?? []
+                          unexpiredContracts?.map((option) => option.contractNo) ?? []
                         }
                         sx={{ width: '400px' }}
                         onChange={(
