@@ -404,5 +404,32 @@
       "fifo": "先進先出（FIFO）",
       "lifo": "後進先出（LIFO）"
     }
+  },
+  "report": {
+    "report": "報表",
+    "basicServicePictures": "基本服務圖片",
+    "additionalServicePictures": "額外服務圖片",
+    "otherPictures": "其他圖片",
+    "collectionPoints": "回收點",
+    "dateAndTime": "日期及時間",
+    "to": "至",
+    "address": "地點",
+    "pleaseEnterAddress": "請輸入地點",
+    "numberOfPeople": "人數",
+    "pleaseEnterNumberOfPeople": "請輸入人數",
+    "picture": "圖片",
+    "uploadPictures": "上載圖片",
+    "save": "儲存",
+    "otherCollectionPoint": "其他回收地點",
+    "communityCollectionPoint": "社區回收地點",
+    "promotionalAndEducationalEventLocations": "宣傳及教育活動地點",
+    "eventName": "活動名稱",
+    "pleaseEnterEventName": "請輸入活動名稱",
+    "targetParticipants": "活動對象",
+    "pleaseEnterTargetParticipants": "請輸入活動對象",
+    "picturesUploadedToFacebook": "已上傳到Facebook的圖片",
+    "shareDate": "分享日期",
+    "regulatedWEEESubmittedToRecyclers": "已呈交回收商的受管制的廢棄電氣和電子設備 (REE)（連日期）",
+    "fluorescentLampsSubmittedToRecyclers": "已呈交回收商的螢光燈和燈管（連日期）"
   }
 }

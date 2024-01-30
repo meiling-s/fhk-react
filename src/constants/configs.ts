@@ -2,10 +2,10 @@ export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
   baseURL: {
     // account: 'http://10.166.22.107:8001/',
     // administrator: 'http://10.166.22.107:8002/',
-    // collector: 'http://localhost:8003/',
-    account: 'https://www.greenhoopapp.com/',
-    administrator: 'https://www.greenhoopapp.com/',
-    collector: 'https://www.greenhoopapp.com/',
+    // collector: 'http://10.166.22.107:8003/',
+    account: 'http://10.166.22.250/',
+    administrator: 'http://10.166.22.250/',
+    collector: 'http://10.166.22.250/',
     // account: 'https://www.greenhoopapp.com/',
     // administrator: 'https://www.greenhoopapp.com/',
     // collector: 'https://www.greenhoopapp.com/',
@@ -28,4 +28,9 @@ export const TENANT_REGISTER_CONFIGS = Object.freeze({
   maxBRNImages: 3,
   maxEPDImages: 3,
   maxImageSize: 3 * 1000 * 1000   //In bytes, MB contains 1000 KB, 1 KB contains 1000 bytes
+})
+
+export const EVENT_RECORDING = Object.freeze({
+  maxImageNumber: 5,
+  maxImageSize: 1 * 1000 * 1000   //In bytes, MB contains 1000 KB, 1 KB contains 1000 bytes
 })
