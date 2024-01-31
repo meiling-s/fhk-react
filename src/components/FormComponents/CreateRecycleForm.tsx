@@ -300,6 +300,7 @@ const CreateRecycleForm = ({
                       undefined
                     }
                     recycL={recycType ?? []}
+                    
                     setState={(values) => {
                       formik.setFieldValue("recycType", values?.recycTypeId);
                       formik.setFieldValue(

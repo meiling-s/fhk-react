@@ -115,7 +115,7 @@ function MainDrawer() {
     "Request checkout": {
       name: t('check_out.request_check_out'),
       icon:<LogoutIcon/>,
-      onClick: () => navigate('/warehouse/overview'),
+      onClick: () => navigate('/warehouse/checkout'),
       collapse: false
     },
     "Warehouse": {

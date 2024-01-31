@@ -58,14 +58,14 @@ const EditPickupOrder = () => {
       alert(JSON.stringify(result, null, 2))
          console.log((JSON.stringify(result, null, 2)))
 
-      // const data = result?.data
-      // if (data) {
-      //   console.log('all pickup order: ', data)
-      //   await initPickupOrderRequest()
-      //   navigate('/collector/PickupOrder', { state: 'updated' })
-      // } else {
-      //   alert('fail to edit pickup order')
-      // }
+      const data = result?.data
+      if (data) {
+        console.log('all pickup order: ', data)
+        await initPickupOrderRequest()
+        navigate('/collector/PickupOrder', { state: 'updated' })
+      } else {
+        alert('fail to edit pickup order')
+      }
     }
   })
 
