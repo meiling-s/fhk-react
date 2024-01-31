@@ -37,13 +37,13 @@ const PickupOrders = () => {
     { field: "建立日期", headerName: t('pick_up_order.table.created_datetime'), width: 300 },
     {
       field: "物流公司",
-      headerName: t('pick_up_order.table.pico_id'),
+      headerName: t('pick_up_order.table.logistic_company'),
       width: 170,
       editable: true,
     },
     {
       field: "运单编号",
-      headerName: t('pick_up_order.table.logistic_company'),
+      headerName: t('pick_up_order.table.pico_id'),
       type:"string",
       width: 170,
       editable: true,

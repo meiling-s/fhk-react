@@ -25,12 +25,14 @@ import logo_company from '../logo_company.png'
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { Collapse, createTheme } from '@mui/material'
-import { ExpandLess, ExpandMore } from '@mui/icons-material'
+import { ExpandLess, ExpandMore, Login } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import '../styles/MainDrawer.css'
 import { localStorgeKeyName } from '../constants/constant'
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 type MainDrawer = {
   role: string
@@ -88,26 +90,31 @@ function MainDrawer() {
   const defaultFunctionList: func[] = [{
     "Tenant management": {
       name: t('all_Collection_Point'),
+     
       onClick: () => navigate('/collector/collectionPoint'),
       collapse: false
     },
     "Collection point": {
       name: t('all_Collection_Point'),
+      icon:<PLACE_ICON/>,
       onClick: () => navigate('/collector/collectionPoint'),
       collapse: false
     },
     "Pickup order": {
       name: t('pick_up_order.enquiry_pickup_order'),
+      icon:<SHIPPING_CAR_ICON/>,
       onClick: () => navigate('/collector/pickupOrder'),
       collapse: false
     },
     "Request check-in": {
       name: t('check_in.request_check_in'),
+      icon:<LoginIcon/>,
       onClick: () => navigate('/warehouse/shipment'),
       collapse: false
     },
     "Request checkout": {
       name: t('check_out.request_check_out'),
+      icon:<LogoutIcon/>,
       onClick: () => navigate('/warehouse/overview'),
       collapse: false
     },
@@ -124,6 +131,7 @@ function MainDrawer() {
     },
     "Reports": {
       name: t('reports'),
+      icon: <DOCUMENT_ICON />,
       onClick: () => navigate('/collector/report'),
       collapse: false
     },

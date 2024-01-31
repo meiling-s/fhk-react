@@ -46,7 +46,7 @@ const CreatePickupOrder = () => {
     contactNo: Yup.number().required('This contactNo is required'),
     contractNo:
       picoTypeValue == 'ROUTINE'
-        ? Yup.string().required('This contractNo is required')
+        ? Yup.string().required('This contractNo is invalid')
         : Yup.string(),
     reason:
       picoTypeValue == 'AD_HOC'
