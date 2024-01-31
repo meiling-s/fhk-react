@@ -47,6 +47,7 @@ import { dateToLocalTime } from "../Formatter";
 import { v4 as uuidv4 } from "uuid";
 import { collectorList, manuList } from "../../interfaces/common";
 import CustomAutoComplete from "./CustomAutoComplete";
+import i18n from "../../setups/i18n";
 
 type props = {
   onClose: () => void;
@@ -91,9 +92,11 @@ const CreateRecycleForm = ({
   const [editRow, setEditRow] = useState<CreatePicoDetail>();
   const [updateRow, setUpdateRow] = useState<CreatePicoDetail>();
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>();
+  const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
  
 
   const setDefRecyc = (picoDtl: CreatePicoDetail) => {
+    
     const defRecyc: singleRecyclable = {
       recycTypeId: picoDtl.recycType,
       recycSubTypeId: picoDtl.recycSubType,
@@ -101,7 +104,7 @@ const CreateRecycleForm = ({
     console.log("set def", defRecyc);
     setDefaultRecyc(defRecyc);
   };
-
+  
   useEffect(() => {
     if (editRowId == null) {
       setDefaultRecyc(undefined);
@@ -302,7 +305,7 @@ const CreateRecycleForm = ({
                     recycL={recycType ?? []}
                     
                     setState={(values) => {
-                      formik.setFieldValue("recycType", values?.recycTypeId);
+                      formik.setFieldValue("recycType", values?.recycTypeId );
                       formik.setFieldValue(
                         "recycSubType",
                         values?.recycSubTypeId
