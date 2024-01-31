@@ -99,7 +99,7 @@
   },
   "warehouse_page": {
     "trad_name": "繁體中文名稱",
-    "simp_name": "簡體中文名稱",
+    "simp_name": "简体中文名稱",
     "english_name": "English Name",
     "location": "實體地點",
     "place": "地點",
@@ -119,7 +119,7 @@
     "open": "開放",
     "close": "關閉",
     "warehouseNameTchi": "繁體中文名稱",
-    "warehouseNameSchi": "簡體中文名稱",
+    "warehouseNameSchi": "简体中文名稱",
     "warehouseNameEng": "English Name",
     "place": "地點",
     "contractNum": "合約編號",

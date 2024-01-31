@@ -24,6 +24,7 @@ export const format = {
   dateFormat1: "YYYY/MM/DD HH:mm",
   dateFormat2: "YYYY/MM/DD",
   dateFormat3: "YYYY-MM-DD",
+  dateFormat4:"yyyy/MM/dd",
   timeFormat: "HH:mm:ss"
 }
 
