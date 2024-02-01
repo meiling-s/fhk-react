@@ -434,5 +434,12 @@
     "shareDate": "Share date",
     "regulatedWEEESubmittedToRecyclers": "Regulated waste electrical and electronic equipment (REE) submitted to recyclers (with date)",
     "fluorescentLampsSubmittedToRecyclers": "Fluorescent lamps and tubes submitted to recyclers (with date)"
+  },
+  "vehicle": {
+    "vehicle": "Vehicle",
+    "serviceType": "Service type",
+    "vehicleType": "Vehicle type",
+    "licensePlate": "License plate",
+    "picture": "Picture"
   }
 }

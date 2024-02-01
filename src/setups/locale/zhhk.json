@@ -431,5 +431,12 @@
     "shareDate": "分享日期",
     "regulatedWEEESubmittedToRecyclers": "已呈交回收商的受管制的廢棄電氣和電子設備 (REE)（連日期）",
     "fluorescentLampsSubmittedToRecyclers": "已呈交回收商的螢光燈和燈管（連日期）"
+  },
+  "vehicle": {
+    "vehicle": "車輛",
+    "serviceType": "服務類型",
+    "vehicleType": "車輛類型",
+    "licensePlate": "車牌號碼",
+    "picture": "圖片"
   }
 }

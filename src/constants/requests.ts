@@ -303,3 +303,24 @@ export const CREATE_SERVICE_INFO: AxiosRequestConfig = {
   method: 'post',
   url: 'api/v1/collectors/serviceInfo'
 }
+
+//vehicle 
+export const CREATE_VEHICLE = (table: string) : AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/collectors/vehicle/${table}`
+})
+
+export const GET_VEHICLE = (table: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/vehicle/${table}`
+})
+
+export const DELETE_VEHICLE = (table: string, vehicleId: number ) : AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/vehicle/${table}/${vehicleId}/status`
+})
+
+export const EDIT_VEHICLE = (table: string, vehicleId: number ) : AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/collectors/vehicle/${table}/${vehicleId}`
+})

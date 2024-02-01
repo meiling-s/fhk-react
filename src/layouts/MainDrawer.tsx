@@ -118,8 +118,8 @@ function MainDrawer() {
       collapse: false
     },
     "Vehicles": {
-      name: t('all_Collection_Point'),
-      onClick: () => navigate('/collector/collectionPoint'),
+      name: t('vehicle.vehicle'),
+      onClick: () => navigate('/warehouse/setting'),
       collapse: false
     },
     "Reports": {
