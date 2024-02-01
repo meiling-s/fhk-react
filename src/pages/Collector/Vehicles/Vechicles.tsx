@@ -112,11 +112,17 @@ const Vehicle: FunctionComponent = () => {
       headerName: t('vehicle.picture'),
       width: 600,
       renderCell: (params) => {
+         
         return (
           <div style={{ display: 'flex', gap: '8px' }}>{
-            params.row.photo.map((item: string) =>(
-              <img key={item} className='w-[30px] h-[30px]' src={item} alt="" />
-            ))
+            params.row.photo.map((item: string) =>{
+              const format = item.startsWith("data:image/png") ? 'png' : 'jpeg'
+              const imgdata = `data:image/${format};base64,${item}`
+              return (
+                <img key={item} className='w-[30px] h-[30px]' src={imgdata} alt="" />
+              )
+            }  
+            )
           }
           </div>
         )
