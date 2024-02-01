@@ -73,18 +73,22 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     setSelectedVehicle({id: selectedItem.vehicleTypeId, name: selectedItem.vehicleName})
     setLicensePlate(selectedItem.plateNo)
 
-    const imageList = selectedItem.photo.map((url, index)=>({
+    const imageList: any = selectedItem.photo.map((url: string, index: number)=>{
 
-      dataURL: `data:image/jpeg;base64,${url}`,
-      file : {
-        name: `image${index + 1}`,
-        size: 0,
-        type: 'image/jpeg'
-      }
+      const format = url.startsWith("data:image/png") ? 'png' : 'jpeg'
+      const imgdata = `data:image/${format};base64,${url}`
 
-    }))
+      return ({
+        data_url: imgdata,
+        file : {
+          name: `image${index + 1}`,
+          size: 0,
+          type: 'image/jpeg'
+        }
+      })
+    })
 
-    //setPictures(imageList)
+    setPictures(imageList)
     }
   }
 
