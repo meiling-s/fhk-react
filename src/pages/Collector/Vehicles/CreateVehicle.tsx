@@ -54,22 +54,34 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   selectedItem
 }) => {
   const { t } = useTranslation()
-  const [serviceType, setServiceType] = useState(['Basic', "Additional"])
-  const [selectedService, setSelectedService] = useState('Basic')
+  const serviceList: il_item[] = [
+    {
+      id: 'basic',
+      name: 'basic'
+    },
+    {
+      id: 'additional',
+      name: 'additional'
+    }
+  ]
+  const [serviceType, setServiceType] = useState<il_item[]>(serviceList)
+  const [selectedService, setSelectedService] = useState<il_item>( {
+    id: 'basic',
+    name: t('vehicle.basic')
+  },)
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const [selectedVehicle, setSelectedVehicle] = useState<il_item>({id: '1', name: "Van"})
   const [licensePlate, setLicensePlate] = useState('')
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
- 
-
   const {vehicleType } = useContainer(CommonTypeContainer);
 
 
   const mappingData = () => {
     if(selectedItem != null){
-    setSelectedService(selectedItem.serviceType)
+    const service = serviceType.find((item) => item.id == selectedItem.serviceType.toLocaleLowerCase()) 
+    setSelectedService(service || serviceType[0])
     setSelectedVehicle({id: selectedItem.vehicleTypeId, name: selectedItem.vehicleName})
     setLicensePlate(selectedItem.plateNo)
 
@@ -93,7 +105,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   }
 
   useEffect(() => {
-    console.log(action)
+    getserviceList()
+    getVehicles()
     if(action !== 'add'){
       mappingData()
     } else {
@@ -101,37 +114,42 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
   }, [drawerOpen])
 
-  useState(() => {
-   if (vehicleType) {
-    const carType: il_item[] = []
-    vehicleType?.forEach((vehicle) => {
-      var name = ''
-      switch (i18n.language) {
-        case 'enus':
-          name = vehicle.vehicleTypeNameEng
-          break
-        case 'zhch':
-          name = vehicle.vehicleTypeNameSchi
-          break
-        case 'zhhk':
-          name = vehicle.vehicleTypeNameTchi
-          break
-        default:
-          name = vehicle.vehicleTypeNameTchi 
-          break
-      }
-      const vehicleType: il_item = {
-        id: vehicle.vehicleTypeId,
-        name: name
-      }
-      carType.push(vehicleType)
-    })
-    setVehicleType(carType)
+  const getserviceList = () => {
+
   }
-  })
+
+  const getVehicles = () => {
+    if (vehicleType) {
+        const carType: il_item[] = []
+        vehicleType?.forEach((vehicle) => {
+          var name = ''
+          switch (i18n.language) {
+            case 'enus':
+              name = vehicle.vehicleTypeNameEng
+              break
+            case 'zhch':
+              name = vehicle.vehicleTypeNameSchi
+              break
+            case 'zhhk':
+              name = vehicle.vehicleTypeNameTchi
+              break
+            default:
+              name = vehicle.vehicleTypeNameTchi 
+              break
+          }
+          const vehicleType: il_item = {
+            id: vehicle.vehicleTypeId,
+            name: name
+          }
+          carType.push(vehicleType)
+        })
+        setVehicleType(carType)
+        console.log("carType", carType)
+        }
+  }
 
   const resetData = () => {
-    setSelectedService('Basic')
+    setSelectedService(serviceType[0])
     setSelectedVehicle({id: '1', name: "Van"})
     setLicensePlate('')
     setPictures([])
@@ -200,7 +218,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       vehicleTypeId: selectedVehicle.id,
       vehicleName: selectedVehicle.name,
       plateNo: licensePlate,
-      serviceType: selectedService,
+      serviceType: selectedService.id,
       photo:  ImageToBase64(pictures),
       status: "ACTIVE",
       createdBy: "admin",
@@ -307,20 +325,26 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 <Select
                   labelId="serviceType"
                   id="serviceType"
-                  value={selectedService}
+                  value={selectedService.id}
                   sx={{
                     borderRadius: '12px'
                   }}
                   disabled={action === 'delete'}
                   label={t('vehicle.serviceType')}
-                  onChange={(event) => setSelectedService(event.target.value)}
-                  error={checkString(selectedService)}
+                  //onChange={(event) => setSelectedService(event.target.value)}
+                  onChange={(event: SelectChangeEvent<string>) => {
+                    const selectedValue = serviceType.find(item => item.id === event.target.value);
+                    if (selectedValue) {
+                      setSelectedService(selectedValue);
+                    }
+                  }}
+                  
                 >
                   <MenuItem value="">
                     <em>{t('check_in.any')}</em>
                   </MenuItem>
                   {serviceType.map((item, index) => (
-                    <MenuItem key={index} value={item}>{item}</MenuItem>
+                    <MenuItem key={index} value={item.id}>{t(`vehicle.${item.name}`)}</MenuItem>
                   ))}
                 </Select>
               </FormControl>

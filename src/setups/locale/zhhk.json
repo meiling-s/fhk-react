@@ -437,6 +437,9 @@
     "serviceType": "服務類型",
     "vehicleType": "車輛類型",
     "licensePlate": "車牌號碼",
-    "picture": "圖片"
+    "picture": "圖片",
+    "basic": "基本的",
+    "additional":"額外的"
   }
 }
+

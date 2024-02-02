@@ -440,6 +440,8 @@
     "serviceType": "Service type",
     "vehicleType": "Vehicle type",
     "licensePlate": "License plate",
-    "picture": "Picture"
+    "picture": "Picture",
+    "basic": "Basic",
+    "additional":"Additional"
   }
 }
