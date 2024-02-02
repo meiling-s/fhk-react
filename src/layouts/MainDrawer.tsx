@@ -118,15 +118,10 @@ function MainDrawer() {
       onClick: () => navigate('/warehouse/checkout'),
       collapse: false
     },
-    "Warehouse": {
+    "Settings": {
       name: t('settings'),
       icon: <SETTINGS_ICON />,
       onClick: () => navigate('/astd/setting'),
-      collapse: false
-    },
-    "Vehicles": {
-      name: t('vehicle.vehicle'),
-      onClick: () => navigate('/warehouse/setting'),
       collapse: false
     },
     "Reports": {
