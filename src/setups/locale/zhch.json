@@ -442,8 +442,8 @@
     "vehicleType": "车辆类型",
     "licensePlate": "车牌号码",
     "picture": "图片",
-    "basic": "基本的",
-    "additional":"额外的"
+    "basic": "基本",
+    "additional":"额外"
   }
 }
 
