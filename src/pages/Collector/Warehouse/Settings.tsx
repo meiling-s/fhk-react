@@ -2,6 +2,7 @@ import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Tabs from '../../../components/Tabs'
 import Warehouse from './Warehouse'
+import Vehicle from '../Vehicles/Vechicles'
 import { Box } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 
@@ -19,7 +20,7 @@ const Settings: FunctionComponent = () => {
     t('top_menu.general_settings'),
     t('top_menu.packaging_unit'),
     t('top_menu.workshop'),
-    t('top_menu.company'),
+    t('vehicle.vehicle'),
     t('top_menu.staff_positions'),
     t('top_menu.denial_reason')
   ]
@@ -37,6 +38,8 @@ const Settings: FunctionComponent = () => {
         {/* rendering content base on tab index */}
         {selectedTab === 2 ? (
           <Warehouse />
+        ) : selectedTab === 3 ? (
+          <Vehicle />
         ) : (
           <div className="p-4 text-center">content not available</div>
         )}

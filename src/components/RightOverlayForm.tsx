@@ -47,8 +47,8 @@ const HeaderSection: React.FC<HeaderProps> = ({
               onClick={onSubmit}
               disabled={action === 'delete'}
               className={`${
-                action === 'delete' ? 'cursor-not-allowed' : ''
-              } rounded-6xl bg-green-primary text-white flex flex-row items-center justify-center py-2 px-5 gap-[5px] cursor-pointer border-[1px] border-solid border-green-primary`}
+                action === 'delete' ? 'cursor-not-allowed  bg-green-primary border-gray' : ' bg-green-primary cursor-pointer'
+              } rounded-6xl flex flex-row items-center  text-white justify-center py-2 px-5 gap-[5px] border-[1px] border-solid border-green-primary`}
             >
               {submitText}
             </button>
@@ -58,7 +58,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
               className={`${
                 action === 'add' 
                   ? 'cursor-not-allowed text-gray border-gray'
-                  : ''
+                  : 'cursor-pointer'
               } rounded-6xl  overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] text-green-primary border-[1px] border-solid border-green-pale`}
             >
               {cancelText}
