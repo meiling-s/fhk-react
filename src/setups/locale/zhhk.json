@@ -438,8 +438,8 @@
     "vehicleType": "車輛類型",
     "licensePlate": "車牌號碼",
     "picture": "圖片",
-    "basic": "基本的",
-    "additional":"額外的"
+    "basic": "基本",
+    "additional":"額外"
   }
 }
 
