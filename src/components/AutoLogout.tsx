@@ -9,7 +9,7 @@ const AutoLogout = () => {
   
   useEffect(() => {
     const checkInactivity = () => {
-      const inactivityPeriod = 10 *60 *1000; // 10 seconds
+      const inactivityPeriod = 100 *60 *1000; // 10 seconds
       const currentTime = Date.now();
       const inactivityTime = currentTime - lastActivityTime;
 
