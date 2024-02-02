@@ -54,7 +54,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   selectedItem
 }) => {
   const { t } = useTranslation()
-  const [serviceType, setServiceType] = useState(['Basic', "Additional"])
+  const [serviceType, setServiceType] = useState(['基本', "額外"])
   const [selectedService, setSelectedService] = useState('Basic')
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const [selectedVehicle, setSelectedVehicle] = useState<il_item>({id: '1', name: "Van"})
