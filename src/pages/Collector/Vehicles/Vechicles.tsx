@@ -93,7 +93,12 @@ const Vehicle: FunctionComponent = () => {
       field: 'serviceType',
       headerName: t('vehicle.serviceType'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return (
+          <div>{t(`vehicle.${params.row.serviceType.toLowerCase()}`)}</div>
+        )
+      }
     },
     {
       field: 'vehicleName',
@@ -110,7 +115,7 @@ const Vehicle: FunctionComponent = () => {
     {
       field: 'photo',
       headerName: t('vehicle.picture'),
-      width: 600,
+      width: 300,
       renderCell: (params) => {
          
         return (
@@ -131,7 +136,7 @@ const Vehicle: FunctionComponent = () => {
 
     {
       field: 'edit',
-      headerName: 'edit',
+      headerName: '',
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -147,7 +152,7 @@ const Vehicle: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: 'delete',
+      headerName: '',
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
