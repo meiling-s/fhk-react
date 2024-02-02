@@ -231,8 +231,8 @@
     "terminated": "Terminated"
   },
   "appBar": {
-    "simplified_cn": "Simplified Chinese",
-    "traditional_cn": "Traditional Chinese",
+    "simplified_cn": "简体中文",
+    "traditional_cn": "繁體中文",
     "english": "English",
     "notify": "Notify"
   },

@@ -22,14 +22,14 @@ function CustomDatePicker2({
   defaultEndDate,
   pickupOrderForm,
 }: DatePicker) {
-  const startDate = defaultStartDate ? defaultStartDate : new Date();
-  const endDate = defaultEndDate ? defaultEndDate : new Date();
-
-  const [period, setPeriod] = useState<openingPeriod>({
+  const startDate = defaultStartDate? new Date(defaultStartDate): new Date();
+  const endDate = defaultEndDate ? new Date(defaultEndDate) : new Date();
+  
+  const [period, setPeriod] = useState<any>({
     startDate: dayjs(startDate),
     endDate: dayjs(endDate),
   });
-
+ console.log(period)
   const { t } = useTranslation();
 
   const onChangeDate = (start: boolean, value: dayjs.Dayjs | null) => {

@@ -51,10 +51,12 @@ const EditPickupOrder = () => {
     },
 
     onSubmit: async (values: EditPo) => {
-      console.log(JSON.stringify(values, null, 2))
-      //alert(JSON.stringify(values, null, 2))
+      // console.log(JSON.stringify(values, null, 2))
+      alert(JSON.stringify(values, null, 2))
       values.createPicoDetail = addRow
       const result = await editPickupOrder(poInfo.picoId, values)
+      alert(JSON.stringify(result, null, 2))
+         console.log((JSON.stringify(result, null, 2)))
 
       const data = result?.data
       if (data) {

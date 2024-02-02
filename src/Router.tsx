@@ -40,6 +40,7 @@ import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
 
 import AuthGuard from "./components/Guards/AuthGuard";
 import AutoLogout from "./components/AutoLogout";
+import ShipmentManage from "./pages/Collector/RecycleShipment";
 
 
 const Router = () => {
@@ -105,7 +106,7 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/warehouse" element={<RecycleShipment />} />
           <Route path="/warehouse/shipment" element={<RecycleShipment />} />
-          <Route path="/warehouse/checkout" element={<Overview />} />
+          <Route path="/warehouse/checkout" element={<RecycleShipmentCheckOut />} />
           <Route path="/warehouse/process" element={<ProcessRecord />} />
           <Route path="/warehouse/staff" element={<Staff />} />
           <Route path="/warehouse/settings" element={<Settings />} />
