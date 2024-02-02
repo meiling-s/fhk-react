@@ -74,13 +74,17 @@ const PickupOrderCreateForm = ({
   const [updateRowId,setUpdateRowId] =  useState<number | null>(null);
   const [id, setId] = useState<number>(0);
   const [picoRefId, setPicoRefId] = useState('')
-  const [updateId,setUpdateId] = useState<number>(1)
-  const [initialRow,setInitialRow] = useState<CreatePicoDetail>();
   const [isEditing,setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType } =
+  const { logisticList, contractType, vehicleType, recycType} =
     useContainer(CommonTypeContainer);
   const navigate = useNavigate();
-
+  const unexpiredContracts = contractType?.filter(contract =>{
+    const currentDate = new Date();
+    const contractDate = new Date(contract.contractToDate)
+    return contractDate>currentDate
+  })
+  
+ 
   const handleCloses = () => {
     setIsEditing(false);
     setEditRowId(null);
@@ -147,7 +151,7 @@ const PickupOrderCreateForm = ({
       return carType
     }
   }
-
+  
   const getReason = () => {
     const reasonList = [
       {
@@ -201,14 +205,62 @@ const PickupOrderCreateForm = ({
       headerName: t('pick_up_order.detail.main_category'),
       width: 150,
       editable: true,
-      valueGetter: ({ row }) => row.recycType
-    },
+      valueGetter: ({ row }) =>{
+        const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
+        if(matchingRecycType){
+          var name = "";
+          switch(i18n.language){
+              case "enus":
+                  name = matchingRecycType.recyclableNameEng;
+                  break;
+              case "zhch":
+                  name = matchingRecycType.recyclableNameSchi;
+                  break;
+              case "zhhk":
+                  name = matchingRecycType.recyclableNameTchi;
+                  break;
+              default:
+                  name = matchingRecycType.recyclableNameTchi;        //default fallback language is zhhk
+                  break;
+          }
+          return name
+        }
+    }
+  },
     {
       field: 'recycSubType',
       headerName: t('pick_up_order.detail.subcategory'),
       type: 'string',
       width: 150,
-      editable: true
+      editable: true,
+      valueGetter: ({ row }) =>{
+        const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
+        if(matchingRecycType){
+          const matchrecycSubType = matchingRecycType.recycSubType?.find(
+            (subtype) => subtype.recycSubTypeId === row.recycSubType
+          )
+          if(matchrecycSubType){
+            var subName = "";
+            switch(i18n.language){
+                case "enus":
+                    subName = matchrecycSubType?.recyclableNameEng ?? "";
+                    break;
+                case "zhch":
+                    subName = matchrecycSubType?.recyclableNameSchi ?? "";
+                    break;
+                case "zhhk":
+                    subName = matchrecycSubType?.recyclableNameTchi ?? "";
+                    break;
+                default:
+                    subName = matchrecycSubType?.recyclableNameTchi ?? "";       //default fallback language is zhhk
+                    break;
+            }
+
+          return subName
+          }
+  
+        }
+    }
     },
     {
       field: 'weight',
@@ -472,7 +524,7 @@ const PickupOrderCreateForm = ({
                       <CustomAutoComplete
                         placeholder={t('pick_up_order.routine.enter_contract')}
                         option={
-                          contractType?.map((option) => option.contractNo) ?? []
+                          unexpiredContracts?.map((option) => option.contractNo) ?? []
                         }
                         sx={{ width: '400px' }}
                         onChange={(

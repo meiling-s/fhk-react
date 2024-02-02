@@ -46,7 +46,7 @@ const CreatePickupOrder = () => {
     contactNo: Yup.number().required('This contactNo is required'),
     contractNo:
       picoTypeValue == 'ROUTINE'
-        ? Yup.string().required('This contractNo is required')
+        ? Yup.string().required('This contractNo is invalid')
         : Yup.string(),
     reason:
       picoTypeValue == 'AD_HOC'
@@ -58,13 +58,13 @@ const CreatePickupOrder = () => {
         return value.length > 0 || addRow.length > 0
       })
   })
-
+  const currentDate = new Date().toISOString()
   const createPickupOrder = useFormik({
     initialValues: {
       tenantId: getTenantId(),
       picoType: picoTypeValue,
-      effFrmDate: '',
-      effToDate: '',
+      effFrmDate: currentDate,
+      effToDate: currentDate,
       routineType: 'daily',
       routine: [],
       logisticId: '',
@@ -83,6 +83,7 @@ const CreatePickupOrder = () => {
     validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow
+      alert(JSON.stringify(values, null, 2))
       console.log(JSON.stringify(values, null, 2))
       const result = await createPickUpOrder(values)
       const data = result?.data

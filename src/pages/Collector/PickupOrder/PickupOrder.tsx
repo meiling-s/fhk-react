@@ -37,13 +37,13 @@ const PickupOrders = () => {
     { field: "建立日期", headerName: t('pick_up_order.table.created_datetime'), width: 300 },
     {
       field: "物流公司",
-      headerName: t('pick_up_order.table.pico_id'),
+      headerName: t('pick_up_order.table.logistic_company'),
       width: 170,
       editable: true,
     },
     {
       field: "运单编号",
-      headerName: t('pick_up_order.table.logistic_company'),
+      headerName: t('pick_up_order.table.pico_id'),
       type:"string",
       width: 170,
       editable: true,
@@ -154,7 +154,7 @@ const PickupOrders = () => {
     }
   }
 
-  const rows: any[] = pickupOrder?.map((item) => ({
+  const rows: any[] =(pickupOrder?.map((item) => ({
     id: item.picoId,
     建立日期: item.effFrmDate, 
     物流公司: item.logisticName,
@@ -163,7 +163,7 @@ const PickupOrders = () => {
     寄件公司: item.pickupOrderDetail[0]?.senderName,
     收件公司: item.pickupOrderDetail[0]?.receiverName,
     状态: item.status,
-  }))??[] ;
+  }))??[]).filter((item) => item.状态 !== 'CLOSED');
 
   interface Row {
     id: number;
@@ -268,13 +268,19 @@ const PickupOrders = () => {
       <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
         <DataGrid
           rows={rows}
-          hideFooter
           columns={columns}
           checkboxSelection
           disableRowSelectionOnClick
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
-          
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
+            },
+          }}
+        
           sx={{
             border: "none",
             "& .MuiDataGrid-cell": {

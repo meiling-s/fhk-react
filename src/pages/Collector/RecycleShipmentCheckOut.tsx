@@ -746,7 +746,7 @@ function ShipmentManage(){
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat2)}</TableCell>
+                                        <TableCell sx={localstyles.bodyCell}>{dateFormat(new Date(shipment.createdAt),format.dateFormat4)}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.senderName}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{tenant?.companyNameEng}</TableCell>
                                         <TableCell sx={localstyles.bodyCell}>{shipment.picoId}</TableCell>

@@ -88,7 +88,7 @@
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
-    "workshop": "仓库",
+    "workshop": "倉庫",
     "company": "公司",
     "staff_positions": "員工職位",
     "denial_reason": "拒絕原因",
@@ -99,9 +99,9 @@
   },
   "warehouse_page": {
     "trad_name": "繁體中文名稱",
-    "simp_name": "简体中文名称",
+    "simp_name": "简体中文名稱",
     "english_name": "English Name",
-    "location": "实体地点",
+    "location": "實體地點",
     "place": "地點",
     "status": "狀態",
     "recyclable_subcategories": "回收物類別"
@@ -119,7 +119,7 @@
     "open": "開放",
     "close": "關閉",
     "warehouseNameTchi": "繁體中文名稱",
-    "warehouseNameSchi": "简体中文名称",
+    "warehouseNameSchi": "简体中文名稱",
     "warehouseNameEng": "English Name",
     "place": "地點",
     "contractNum": "合約編號",
@@ -190,7 +190,7 @@
     "recyclable_type_weight": "回收物類別及重量",
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
-    "confirm_approve": "您确定批准该请求吗？",
+    "confirm_approve": "您確定批準該請求嗎？",
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
     "cancel": "取消",
@@ -213,7 +213,7 @@
   },
   "status": {
     "active": "已啓用",
-    "inactive": "不活跃的",
+    "inactive": "不活躍的",
     "deleted": "刪除",
     "started": "開始",
     "created": "創建",
@@ -227,9 +227,9 @@
     "terminated": "已終止"
   },
   "appBar": {
-    "simplified_cn": "簡體中文",
+    "simplified_cn": "简体中文",
     "traditional_cn": "繁體中文",
-    "english": "英語",
+    "english": "English",
     "notify": "通知"
   },
   "pick_up_order": {
@@ -250,7 +250,7 @@
       "logistic_company": "物流公司",
       "location": "地點",
       "recycling_category": "回收類別",
-      "status": "状态"
+      "status": "狀態"
     },
     "card_detail": {
       "main_category": "主類別",
@@ -265,23 +265,23 @@
       "one-transport": "一次性運輸"
     },
     "item": {
-      "detail": "运单详情",
+      "detail": "運單詳情",
       "edit": "修改",
       "delete": "修改",
       "shipping_info": "運輸資料",
-      "date_time": "建立日期及时间",
-      "transport_category": "运输类别",
+      "date_time": "建立日期及時間",
+      "transport_category": "運輸類別",
       "shipping_validity": "運輸有效日期由",
       "recycling_week": "回收週次",
       "vehicle_category": "車輛類別",
       "plat_number": "車牌號碼",
       "contact_number": "聯絡人號碼",
       "sender_name": "寄件公司",
-      "exp_opration": "已过期操作",
-      "rec_loc_info": "回收地点资料"
+      "exp_opration": "已過期操作",
+      "rec_loc_info": "回收地點資料"
     },
     "create_pick_up_order": "建立",
-    "edit_pick_up_order": "编辑取件订单",
+    "edit_pick_up_order": "編輯取件訂單",
     "shipping_info": "運輸資料",
     "select_shipping_category": "請選擇運輸類別",
     "regular_shipping": "常規運輸",
