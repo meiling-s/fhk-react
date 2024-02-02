@@ -119,7 +119,7 @@ function MainDrawer() {
     },
     "Vehicles": {
       name: t('vehicle.vehicle'),
-      onClick: () => navigate('/warehouse/setting'),
+      onClick: () => navigate('/warehouse/settings/vehicle'),
       collapse: false
     },
     "Reports": {

@@ -17,6 +17,7 @@ import EditCollectionPoint from "./pages/Collector/CollectionPoint/EditCollectio
 //warehouse
 import Overview from "./pages/Collector/Manage/CheckoutRequest";
 import Settings from "./pages/Collector/Warehouse/Settings";
+import Vehicles from "./pages/Collector/Vehicles/Vechicles"
 //Tenant Register
 // import CompanyDetails from "./pages/TenantRegister/CompanyDetails";
 // import CompanyContact from "./pages/TenantRegister/CompanyContact";
@@ -108,6 +109,8 @@ const Router = () => {
           <Route path="/warehouse/process" element={<ProcessRecord />} />
           <Route path="/warehouse/staff" element={<Staff />} />
           <Route path="/warehouse/settings" element={<Settings />} />
+          <Route path="/warehouse/settings/vehicle" element={<Vehicles />} />
+          
         </Route>
 
         </Route>
