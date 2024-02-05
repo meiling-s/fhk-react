@@ -444,6 +444,17 @@
     "picture": "图片",
     "basic": "基本",
     "additional":"额外"
+  },
+  "inventory": {
+    "inventory": "存货",
+    "recyclingInformation": "回收信息",
+    "date": "日期",
+    "recyleType": "子类别",
+    "recyleSubType": "子类别",
+    "package": "包装",
+    "recyclingNumber": "回收编号",
+    "inventoryLocation": "库存位置",
+    "weight": "重量"
   }
 }
 

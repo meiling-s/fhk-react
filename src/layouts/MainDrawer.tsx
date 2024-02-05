@@ -131,8 +131,8 @@ function MainDrawer() {
       collapse: false
     },
     "Inventory": {
-      name: t('all_Collection_Point'),
-      onClick: () => navigate('/collector/collectionPoint'),
+      name: t('inventory.inventory'),
+      onClick: () => navigate('/collector/inventory'),
       collapse: false
     },
   }]
