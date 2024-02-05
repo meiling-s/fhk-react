@@ -149,6 +149,10 @@ export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
   method: 'patch',
   url: 'api/v1/administrator/pico/status'
 }
+export const UPDATE_PICK_UP_ORDER_DETAIL_STATUS: AxiosRequestConfig = {
+  method: 'patch',
+  url: 'api/v1/administrator/pico/detail/status'
+}
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
   method: 'get',
