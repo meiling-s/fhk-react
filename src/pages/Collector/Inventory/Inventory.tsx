@@ -21,10 +21,6 @@ import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 
-type TableRow = {
-  id: number
-  [key: string]: any
-}
 interface Option {
   value: string
   label: string
@@ -79,15 +75,17 @@ const Inventory: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const {recycType} = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<recycItem[]>([])
-  const [currentRecyId, setCurRecycId] = useState<string>("")
+  const [currentRecyName, setCurRecycName] = useState<string>("")
+  const [currentSubName, setCurrentSubName] = useState<string>("")
+  const [searchkey, setSerchKey] = useState<string>("")
 
   useEffect(() =>{ 
-    const fetchData = async () => {
-      //await mappingRecyleItem()
-      initInventory()
-    }
-    fetchData()
+    mappingRecyleItem()
    }, [recycType]);
+
+   useEffect(() =>{ 
+    if(recycItem.length > 0) initInventory() //init dat when recyleitem done mapping
+   }, [recycItem]);
 
   const mappingRecyleItem = () => {
     const recyleMapping: recycItem[] = []
@@ -132,7 +130,6 @@ const Inventory: FunctionComponent = () => {
        subItem.push({name: subName, id: sub.recycSubTypeId})
      })
      reItem.recycSubType = subItem;
-
      recyleMapping.push(reItem)
    })
    setRecycItem(recyleMapping)
@@ -140,19 +137,16 @@ const Inventory: FunctionComponent = () => {
   }
 
   const initInventory = async () => {
-    await mappingRecyleItem()
     const result = await getAllInventory(page - 1, pageSize)
     const data = result?.data
-    console.log("in init recyle data",recycItem)
-    console.log("initVehicleList", data)
     if(data) {
-      var vehicleMapping: InventoryItem[] = []
+      var inventoryMapping: InventoryItem[] = []
       data.content.map((item: any) => {
         const recy = recycItem.find((re) => re.recycType.id === item.recycTypeId)
         const recyName = recy ? recy.recycType.name : "-"
         const subType = recy ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId) : null
         const subName = subType ? subType.name : "-"
-        vehicleMapping.push(
+        inventoryMapping.push(
           createInventory(
             item?.itemId,
             item?.warehouseId,
@@ -170,7 +164,8 @@ const Inventory: FunctionComponent = () => {
           )
         )
       })
-      setInventory(vehicleMapping)
+      setInventory(inventoryMapping)
+      setFilteredInventory(inventoryMapping)
       setTotalData(data.totalPages)
     }
   }
@@ -231,18 +226,17 @@ const Inventory: FunctionComponent = () => {
   ]
 
   const getSubTypeOption = () => {
-    // if(currentRecyId) {
-    //   const options: Option[] = recycItem.map((item) => {
-    //     if(item.recycType.name == currentRecyId) {
-    //       options.push(item.recycSubType))
-    //     }
-    //   }
-       
-    
-    //   return options;
-    // } else {
-    //   getUniqueOptions("recycSubTypeId")
-    // }
+    if(currentRecyName) {
+      const filteredOption = recycItem.filter((item) => item.recycType.name == currentRecyName)
+      
+      const options: Option[] = filteredOption.flatMap(item => item.recycSubType.map((sub) => ({
+        value: sub.id,
+        label: sub.name
+      })))
+      return options;
+    } else {
+      getUniqueOptions("recycSubTypeId")
+    }
   }
 
   const searchfield = [
@@ -256,7 +250,7 @@ const Inventory: FunctionComponent = () => {
     {
       label: t('inventory.recyleSubType'),
       width: '15%',
-      options: getSubTypeOption(),
+      options: getUniqueOptions("recycSubTypeId"),
       field: "recycSubTypeId"
     },
     {
@@ -292,9 +286,24 @@ const Inventory: FunctionComponent = () => {
 
   const handleSearch = (label: string, value: string) => {
     if(label == 'recycTypeId'){
-      setCurRecycId(value)
+      setCurRecycName(value)
+      const filtered:InventoryItem[] = inventoryList.filter(item => item.recycTypeId == value)
+      if (filtered) {
+        setFilteredInventory(filtered)
+      } else {
+        setFilteredInventory(inventoryList)
+      }
+    } 
+
+    if(label == "recycSubTypeId"){
+      setCurrentSubName(value)
+      const filtered:InventoryItem[] = inventoryList.filter(item => item.recycSubTypeId == value)
+      if (filtered) {
+        setFilteredInventory(filtered)
+      } else {
+        setFilteredInventory(inventoryList)
+      }
     }
-    console.log("hanlde search", label, value)
   }
 
   return (
@@ -335,7 +344,7 @@ const Inventory: FunctionComponent = () => {
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
-              rows={inventoryList}
+              rows={filteredInventory}
               getRowId={(row) => row.itemId}
               hideFooter
               columns={columns}
