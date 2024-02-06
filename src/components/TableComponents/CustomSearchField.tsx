@@ -1,5 +1,5 @@
 import { IconButton, InputAdornment, MenuItem, TextField } from "@mui/material";
-import React from "react";
+import React, {useState} from "react";
 import { SEARCH_ICON } from "../../themes/icons";
 import { t } from "i18next";
 
@@ -8,8 +8,30 @@ interface Option {
   label: string;
 }
 
-const CustomSearchField = ({ label, width, options }: { label: string; width: string; options?: Option[] }) => {
+const CustomSearchField = ({ label, width, options, onChange, field }: { 
+  label: string; 
+  width: string; 
+  options?: Option[]; 
+  onChange?: (labelField: string, value: string) => void;
+  field?: string
+}) => {
   const hasOptions = options && options.length>0
+  const [selectedValue, setSelectedValue] = useState<string>("")
+  const handleChange = (event: React.ChangeEvent<{value: any}>) => {
+    const newValue = event.target.value as string
+    setSelectedValue(newValue)
+
+    // if(options) {
+    //   const selectedOpt = options?.find((item) => item.value == newValue) 
+      
+    // }
+
+    if(onChange ){
+      onChange(field ? field : label, newValue)
+    }
+
+
+  }
   return (
     <TextField
       sx={{
@@ -38,6 +60,7 @@ const CustomSearchField = ({ label, width, options }: { label: string; width: st
         style: { color: "#79CA25" },
         focused: true,
       }}
+      value={selectedValue}
       placeholder={t("pick_up_order.filter.search")}
       InputProps={{
         endAdornment: (
@@ -51,6 +74,7 @@ const CustomSearchField = ({ label, width, options }: { label: string; width: st
       ),
     }}
       select={hasOptions}
+      onChange={handleChange}
     >
       {hasOptions &&options.map((option) => (
         <MenuItem key={option.value} value={option.value}>

@@ -129,12 +129,62 @@ const Inventory: FunctionComponent = () => {
     })
     setRecycItem(recyleMapping)
     console.log("recycItem",recyleMapping )
+    setDummyData()
    }, [recycType]);
 
 
   useEffect(() => {
-    initInventory()
+    //initInventory()
+
+    //setDummyData()
   }, [])
+
+  const harcodeData = [
+    {
+      "itemId": 1,
+      "warehouseId": 2,
+      "recycTypeId": "RC00007",
+      "recycSubTypeId": "RSC00045",
+      "packageTypeId": "string",
+      "weight": 0,
+      "unitId": "string",
+      "status": "ACTIVE",
+      "createdBy": "string",
+      "updatedBy": "string",
+      "inventoryDetail": [
+      ],
+      "createdAt": "2024-02-05T15:53:10.445Z",
+      "updatedAt": "2024-02-05T15:53:10.445Z"
+  }
+  ]
+
+  const setDummyData = () => {
+    const dummy: InventoryItem[] = []
+    harcodeData.map((item) => {
+      const recy = recycItem.find((re) => re.recycType.id === item.recycTypeId)
+      const recyName = recy ? recy.recycType.name : "-"
+      const subType = recy ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId) : null
+      const subName = subType ? subType.name : "-"
+      console.log("recy", subName)
+      const recySub = ""
+      dummy.push( createInventory(
+        item?.itemId,
+        item?.warehouseId,
+        recyName,
+        subName,
+        item?.packageTypeId,
+        item?.weight,
+        item?.unitId,
+        item?.status,
+        item?.updatedBy,
+        item?.createdBy,
+        item?.inventoryDetail,
+        item?.createdAt,
+        item?.updatedAt,
+      ))
+    })
+    setInventory(dummy)
+  }
 
   const initInventory = async () => {
     const result = await getAllInventory(page - 1, pageSize)
@@ -185,26 +235,12 @@ const Inventory: FunctionComponent = () => {
       headerName: t('inventory.recyleType'),
       width: 200,
       type: 'string',
-      // renderCell: (params) => {
-      //   const recyName = recycItem.find((item) => item.recycType.id === params.row.recycTypeId)
-      //   return (
-      //   <div>{recyName?.recycType.name}</div>
-      //   )
-      // }
     },
     {
       field: 'recycSubTypeId',
       headerName: t('inventory.recyleSubType'),
       width: 200,
       type: 'string',
-      renderCell: (params) => {
-        const recy = recycItem.find((item) => item.recycType.id === params.row.recycTypeId)
-        const subName = recy ? recy.recycSubType.find((sub) => sub.id == params.row.recycSubTypeId) : null
-        console.log(subName)
-        return (
-        <div>{subName?.name}</div>
-        )
-      }
     },
     {
       field: 'packageTypeId',
@@ -238,34 +274,41 @@ const Inventory: FunctionComponent = () => {
     }
   ]
 
+  const getSubTypeOption = () => {
+    // if(currentRecyId) {
+    //   const options: Option[] = recycItem.map((item) => {
+    //     if(item.recycType.name == currentRecyId) {
+    //       options.push(item.recycSubType))
+    //     }
+    //   }
+       
+    
+    //   return options;
+    // } else {
+    //   getUniqueOptions("recycSubTypeId")
+    // }
+  }
+
   const searchfield = [
     { label: t('pick_up_order.filter.search'), width: '14%' },
     {
       label: t('inventory.recyleType'),
       width: '15%',
-      options: getReycleOption()
+      options: getUniqueOptions("recycTypeId"),
+      field: "recycTypeId"
     },
     {
       label: t('inventory.recyleSubType'),
       width: '15%',
-      options: getUniqueOptions('recycSubTypeId')
+      options: getSubTypeOption(),
+      field: "recycSubTypeId"
     },
     {
       label: t('inventory.inventoryLocation'),
       width: '15%',
-      //options: getUniqueOptions('inventoryLocation')
+      field: "location"
     }
   ]
-  
-  function getReycleOption() {
-    const options: Option[] = recycItem.map((item) => ({
-      value: item.recycType.id,
-      label: item.recycType.name,
-    }));
-    console.log("option", options)
-  
-    return options;
-  }
 
   function getUniqueOptions(propertyName: keyof InventoryItem) {
     const optionMap = new Map();
@@ -290,6 +333,13 @@ const Inventory: FunctionComponent = () => {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
+
+  const handleSearch = (label: string, value: string) => {
+    if(label == 'recycTypeId'){
+      setCurRecycId(value)
+    }
+    console.log("hanlde search", label, value)
+  }
 
   return (
     <>
@@ -317,10 +367,12 @@ const Inventory: FunctionComponent = () => {
         <Stack direction="row" mt={3}>
           {searchfield.map((s, index) => (
             <CustomSearchField
-            key={index}
+              key={index}
               label={s.label}
+              field={s.field}
               width={s.width}
               options={s.options || []}
+              onChange={handleSearch}
             />
           ))}
         </Stack>
