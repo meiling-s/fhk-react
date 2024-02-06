@@ -3,20 +3,27 @@ import { GET_ALL_CHECKIN_REQUESTS, UPDATE_CHECK_IN_STATUS } from '../../constant
 import { updateStatus} from '../../interfaces/warehouse';
 import {localStorgeKeyName} from '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
+import { useEffect } from 'react';
+import { de } from 'date-fns/locale';
  
 
 const warehouseAPI = {
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 }
 
-const decodeKeycloack =
-  localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
+const decodeKeycloack = localStorage.getItem(localStorgeKeyName.decodeKeycloack)  || ''
+  
 
-const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken || '')
+const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken  )|| ''
+console.log('alan'+decodeKeycloack)
+
 
 export const getAllCheckInRequests = async () => {
   try {
+   
+
     const response = await axios({
+      
       ...GET_ALL_CHECKIN_REQUESTS(decodeKeycloack),
       baseURL: warehouseAPI.baseURL,
       headers: {

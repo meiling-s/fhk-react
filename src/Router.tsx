@@ -32,7 +32,7 @@ import Staff from "./pages/Collector/Staff";
 //import Report from "./pages/Collector/Report";
 import Report from "./pages/Collector/EventRecording/Report";
 import RecycleShipment from "./pages/Collector/RecycleShipment";
-import RecycleShipmentCheckOut from "./pages/Collector/RecycleShipmentCheckOut";
+
 import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
 import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
 import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
@@ -40,7 +40,8 @@ import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
 
 import AuthGuard from "./components/Guards/AuthGuard";
 import AutoLogout from "./components/AutoLogout";
-import ShipmentManage from "./pages/Collector/RecycleShipment";
+
+import CheckoutRequest from "./pages/Collector/Manage/CheckoutRequest";
 
 
 const Router = () => {
@@ -50,6 +51,7 @@ const Router = () => {
          
             <Routes>
             <Route path="/" element={<Login />} />
+            
             <Route element={<AutoLogout />}>
             <Route element={<AuthGuard />}>
                 
@@ -83,7 +85,6 @@ const Router = () => {
           <Route path="/collector/pickupOrder" element={<PickupOrder />} />
           <Route path="/collector/createPickupOrder" element={<CreatePickupOrder/>} />
           <Route path="/collector/editPickupOrder" element={<EditPickupOrder />} />
-          <Route path="/collector/shipmentCheckout"element={<RecycleShipmentCheckOut />}/>
           <Route path="/collector/report" element={<Report />} />
           <Route path="/collector/staff" element={<Staff />} />
           <Route path="/collector/createCollectionPoint"element={<CreateCollectionPoint />}/>
@@ -106,7 +107,7 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/warehouse" element={<RecycleShipment />} />
           <Route path="/warehouse/shipment" element={<RecycleShipment />} />
-          <Route path="/warehouse/checkout" element={<RecycleShipmentCheckOut />} />
+          <Route path="/warehouse/checkout" element={<CheckoutRequest />} />
           <Route path="/warehouse/process" element={<ProcessRecord />} />
           <Route path="/warehouse/staff" element={<Staff />} />
           <Route path="/warehouse/settings" element={<Settings />} />

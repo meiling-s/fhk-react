@@ -17,13 +17,13 @@ import StatusCard from "../../../components/StatusCard";
 
 import { PickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
-import CheckInRequestContainer from "../../../contexts/CheckInRequestContainer";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import { ToastContainer, toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 
 import i18n from '../../../setups/i18n'
+import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
 
 interface Option {
   value: string;
@@ -81,37 +81,49 @@ const PickupOrders = () => {
     },
    
   ];
+ 
 
-  const {pickupOrder} = useContainer(CheckInRequestContainer)
+  // const {pickupOrder} = useContainer(CheckInRequestContainer)
   const {recycType} = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
-
   const location = useLocation();
   const action: string = location.state;
-  useEffect(() => {
-    if(action){
-      var toastMsg = "";
-      switch(action){
-        case "created":
-          toastMsg = t("回收運單已建立");
-          break;
-        case "updated":
-          toastMsg = t("回收運單已更改");
-          break;
+  const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
+
+  const initPickupOrderRequest = async () => {
+    const result = await getAllPickUpOrder();
+    const data = result?.data.content;
+    console.log("pickup order content: ", data);
+    if (data && data.length > 0) {
+      setPickupOrder(data);
+    }}
+ 
+    useEffect(() => {
+      initPickupOrderRequest();
+     
+      if(action){
+        var toastMsg = "";
+        switch(action){
+          case "created":
+            toastMsg = t("回收運單已建立");
+            break;
+          case "updated":
+            toastMsg = t("回收運單已更改");
+            break;
+        }
+        toast.info(toastMsg, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       }
-      toast.info(toastMsg, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
-    navigate(location.pathname, { replace: true });
-  }, []);
+      navigate(location.pathname, { replace: true });
+    }, []);
 
   useEffect(() =>{
    
@@ -236,7 +248,7 @@ const PickupOrders = () => {
     <ToastContainer/>
     <Box sx={{ display: "flex", width: "100%", flexDirection: "column" }}>
         <Modal open={openModal} onClose={handleCloses} >
-                      <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} />
+                      <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} pickupOrder={pickupOrder} initPickupOrderRequest={initPickupOrderRequest} />
                     </Modal>
       <Box sx={{ display: "flex", alignItems: "center",ml:'6px',width:'100%' }}>
         <Typography fontSize={20} color="black" fontWeight="bold">

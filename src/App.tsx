@@ -1,6 +1,5 @@
 import { ThemeProvider } from 'styled-components'
 import Router from './Router'
-import CheckInRequestContainer from './contexts/CheckInRequestContainer'
 import NotifContainerContext from './contexts/NotifContainer'
 import CommonTypeContainer from './contexts/CommonTypeContainer'
 import axiosSetup from './setups/axiosSetup'
@@ -17,11 +16,9 @@ function App() {
 
     <ThemeProvider theme={theme}>
       <CommonTypeContainer.Provider>
-        <CheckInRequestContainer.Provider>
           <NotifContainerContext.Provider>
             <Router />
           </NotifContainerContext.Provider>
-        </CheckInRequestContainer.Provider>
       </CommonTypeContainer.Provider>
     </ThemeProvider>
   
