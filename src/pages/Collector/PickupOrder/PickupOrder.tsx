@@ -5,6 +5,7 @@ import {
   TextField,
   TextFieldProps,
   Typography,
+  Pagination
 } from "@mui/material";
 import { Box, Stack, alpha, styled } from "@mui/system";
 import { t } from "i18next";
@@ -21,9 +22,9 @@ import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import { ToastContainer, toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
+import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
 
 import i18n from '../../../setups/i18n'
-import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
 
 interface Option {
   value: string;
@@ -32,7 +33,10 @@ interface Option {
 
 const PickupOrders = () => {
   const { t } = useTranslation()
- 
+  const [page, setPage] = useState(1)
+  const pageSize = 10 
+  const [totalData , setTotalData] = useState<number>(0)
+
   const columns: GridColDef[] = [
     { field: "建立日期", headerName: t('pick_up_order.table.created_datetime'), width: 300 },
     {
@@ -91,11 +95,13 @@ const PickupOrders = () => {
   const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
 
   const initPickupOrderRequest = async () => {
-    const result = await getAllPickUpOrder();
+    const result = await getAllPickUpOrder(page - 1, pageSize);
     const data = result?.data.content;
     console.log("pickup order content: ", data);
     if (data && data.length > 0) {
       setPickupOrder(data);
+
+      setTotalData( result.data.totalPages)
     }}
  
     useEffect(() => {
@@ -123,7 +129,7 @@ const PickupOrders = () => {
         });
       }
       navigate(location.pathname, { replace: true });
-    }, []);
+    }, [page]);
 
   useEffect(() =>{
    
@@ -175,7 +181,8 @@ const PickupOrders = () => {
     寄件公司: item.pickupOrderDetail[0]?.senderName,
     收件公司: item.pickupOrderDetail[0]?.receiverName,
     状态: item.status,
-  }))??[]).filter((item) => item.状态 !== 'CLOSED');
+  }))??[])
+  // }))??[]).filter((item) => item.状态 !== 'CLOSED');
 
   interface Row {
     id: number;
@@ -285,14 +292,7 @@ const PickupOrders = () => {
           disableRowSelectionOnClick
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
-            },
-          }}
-        
+          hideFooter
           sx={{
             border: "none",
             "& .MuiDataGrid-cell": {
@@ -309,6 +309,14 @@ const PickupOrders = () => {
         
           }}
         />
+        <Pagination
+            count={Math.ceil(totalData)}
+            page={page}
+            onChange={(_, newPage) => {
+              setPage(newPage) 
+              }}
+        />
+        
       </Box>
     </Box>
     </>
