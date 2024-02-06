@@ -100,6 +100,8 @@ const PickupOrders = () => {
     console.log("pickup order content: ", data);
     if (data && data.length > 0) {
       setPickupOrder(data);
+
+      setTotalData( result.data.totalPages)
     }}
  
     useEffect(() => {
@@ -127,7 +129,7 @@ const PickupOrders = () => {
         });
       }
       navigate(location.pathname, { replace: true });
-    }, []);
+    }, [page]);
 
   useEffect(() =>{
    
@@ -179,7 +181,8 @@ const PickupOrders = () => {
     寄件公司: item.pickupOrderDetail[0]?.senderName,
     收件公司: item.pickupOrderDetail[0]?.receiverName,
     状态: item.status,
-  }))??[]).filter((item) => item.状态 !== 'CLOSED');
+  }))??[])
+  // }))??[]).filter((item) => item.状态 !== 'CLOSED');
 
   interface Row {
     id: number;
