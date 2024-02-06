@@ -41,7 +41,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
 
     const initPickupOrderRequest = async () => {
-    const result = await getAllPickUpOrder();
+    const result = await getAllPickUpOrder(0, 10);
     const data = result?.data.content;
     console.log("pickup order content: ", data);
     if (data && data.length > 0) {

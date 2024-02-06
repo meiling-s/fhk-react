@@ -180,7 +180,7 @@ const Warehouse: FunctionComponent = () => {
 
   const fetchData = async () => {
     try {
-      const response = await getAllWarehouse(page -1, pageSize)
+      const response = await getAllWarehouse(page - 1, pageSize)
       if (response) {
         const filteredData = response.data.content
           .filter(
