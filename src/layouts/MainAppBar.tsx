@@ -7,10 +7,6 @@ import {
   Drawer,
   Fade,
   IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
   Menu,
   MenuItem,
   Modal,
@@ -26,21 +22,17 @@ import { localStorgeKeyName } from '../constants/constant'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import CircleIcon from '@mui/icons-material/Circle'
 import { CheckIn } from '../interfaces/checkin'
 import RequestForm from '../components/FormComponents/RequestForm'
 import NotifItem from '../components/NotifItem'
-import CheckInRequestContext from '../contexts/CheckInRequestContainer'
 import NotifContainerContext from '../contexts/NotifContainer'
 import { useContainer } from 'unstated-next'
-import { getRecycType } from '../APICalls/commonManage'
-import CommonTypeContainer from '../contexts/CommonTypeContainer'
 import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
 import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
+import { getAllCheckInRequests } from '../APICalls/Collector/warehouseManage'
 
 const MainAppBar = () => {
-  const [keywords, setKeywords] = useState<string>('')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [anchorElAvatar, setAnchorElAvatar] = useState<null | HTMLElement>(null)
   const [selectedItem, setSelectedItem] = useState<CheckIn>()
@@ -50,12 +42,10 @@ const MainAppBar = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [openModal, setOpenModal] = useState<boolean>(false)
-
-  const { checkInRequest } = useContainer(CheckInRequestContext)
   const { numOfNotif, notifList, updateNotifications } = useContainer(
     NotifContainerContext
   )
-  // const { checkOutRequest } = useContainer(CheckOutRequestContext);
+ 
 
   const handleLanguageChange = (lng: string) => {
     console.log('change language: ', lng)
@@ -99,7 +89,7 @@ const MainAppBar = () => {
     setShowSuccessModal(false)
   }
   const handleLogout = () => {
-    localStorage.clear()
+    // localStorage.clear()
     navigate('/')
   }
 
@@ -177,80 +167,6 @@ const MainAppBar = () => {
                     handleItem={() => handleClickNotif(notif.notiRecordId)}
                   ></NotifItem>
                 ))}
-                {/* {checkInRequest?.map((checkIn) => (
-                    <>
-                      <List key={checkIn.chkInId}>
-                        <ListItem onClick={() => handleItemClick(checkIn)}>
-                          <ListItemButton>
-                            <Stack>
-                              <Stack
-                                spacing={-2}
-                                direction="row"
-                                alignItems="center"
-                              >
-                                <ListItemIcon style={{ color: 'red' }}>
-                                  <CircleIcon sx={{ fontSize: '0.75rem' }} />
-                                </ListItemIcon>
-
-                                <Typography
-                                  fontWeight="bold"
-                                  sx={{ ml: '40px' }}
-                                >
-                                  {t('check_in.request_check_in')}
-                                </Typography>
-                              </Stack>
-
-                              <Typography sx={{ ml: '40px' }}>
-                                你有一个新的送入请求
-                              </Typography>
-
-                              <Typography sx={{ ml: '40px', mt: '10px' }}>
-                                {checkIn.createdAt.toString()}
-                              </Typography>
-                            </Stack>
-                          </ListItemButton>
-                        </ListItem>
-                      </List>
-                      <Divider />
-                    </>
-                  ))}
-                  {checkInRequest?.map((checkIn) => (
-                    <>
-                      <List key={checkIn.chkInId}>
-                        <ListItem onClick={() => handleItemClick(checkIn)}>
-                          <ListItemButton>
-                            <Stack>
-                              <Stack
-                                spacing={-2}
-                                direction="row"
-                                alignItems="center"
-                              >
-                                <ListItemIcon style={{ color: 'red' }}>
-                                  <CircleIcon sx={{ fontSize: '0.75rem' }} />
-                                </ListItemIcon>
-
-                                <Typography
-                                  fontWeight="bold"
-                                  sx={{ ml: '40px' }}
-                                >
-                                  {t('check_out.request_check_out')}
-                                </Typography>
-                              </Stack>
-
-                              <Typography sx={{ ml: '40px' }}>
-                                你有一个新的送出請求
-                              </Typography>
-
-                              <Typography sx={{ ml: '40px', mt: '10px' }}>
-                                {checkIn.createdAt.toString()}
-                              </Typography>
-                            </Stack>
-                          </ListItemButton>
-                        </ListItem>
-                      </List>
-                      <Divider />
-                    </>
-                  ))} */}
               </Box>
             </Drawer>
             {selectedItem && (

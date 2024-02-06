@@ -4,11 +4,10 @@ import {
   createPickUpOrder,
   getAllPickUpOrder
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import { CreatePO, CreatePicoDetail } from '../../../interfaces/pickupOrder'
+import { CreatePO, CreatePicoDetail, PickupOrder } from '../../../interfaces/pickupOrder'
 import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import { useContainer } from 'unstated-next'
-import CheckInRequestContainer from '../../../contexts/CheckInRequestContainer'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { localStorgeKeyName } from '../../../constants/constant'
@@ -16,9 +15,10 @@ import { localStorgeKeyName } from '../../../constants/constant'
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
-  const { initPickupOrderRequest } = useContainer(CheckInRequestContainer)
   const { t } = useTranslation()
   const [picoTypeValue, setPicoType] = useState<string>('ROUTINE')
+  
+ 
 
   function getTenantId() {
 
@@ -89,7 +89,6 @@ const CreatePickupOrder = () => {
       const data = result?.data
       if (data) {
         console.log('all pickup order: ', data)
-        await initPickupOrderRequest()
         navigate('/collector/PickupOrder', { state: 'created' })
       } else {
         alert('fail to create pickup order')
@@ -113,3 +112,4 @@ const CreatePickupOrder = () => {
 }
 
 export default CreatePickupOrder
+ 

@@ -13,7 +13,6 @@ import {
   editPickupOrder,
   getAllPickUpOrder
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import CheckInRequestContainer from '../../../contexts/CheckInRequestContainer'
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
 
@@ -23,7 +22,7 @@ const EditPickupOrder = () => {
   const { state } = useLocation()
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
   const poInfo: PickupOrder = state
-  const { initPickupOrderRequest } = useContainer(CheckInRequestContainer)
+  
 
   const updatePickupOrder = useFormik({
     initialValues: {
@@ -38,7 +37,7 @@ const EditPickupOrder = () => {
       vehicleTypeId: 'string',
       platNo: 'string',
       contactNo: 'string',
-      status: 'CREATED',
+      status: "CREATED",
       reason: 'string',
       normalFlg: true,
       approvedAt: '2023-12-12T02:17:30.062Z',
@@ -55,13 +54,12 @@ const EditPickupOrder = () => {
       alert(JSON.stringify(values, null, 2))
       values.createPicoDetail = addRow
       const result = await editPickupOrder(poInfo.picoId, values)
-      alert(JSON.stringify(result, null, 2))
+      // alert(JSON.stringify(result, null, 2))
          console.log((JSON.stringify(result, null, 2)))
 
       const data = result?.data
       if (data) {
         console.log('all pickup order: ', data)
-        await initPickupOrderRequest()
         navigate('/collector/PickupOrder', { state: 'updated' })
       } else {
         alert('fail to edit pickup order')

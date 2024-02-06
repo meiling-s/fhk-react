@@ -20,7 +20,7 @@ import {
 import { useTranslation } from 'react-i18next'
 
 import { useContainer } from 'unstated-next'
-import CheckInRequestContainer from '../contexts/CheckInRequestContainer'
+import { getAllPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
 interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
@@ -38,7 +38,19 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   const { t } = useTranslation()
   const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
   const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
-  const { pickupOrder } = useContainer(CheckInRequestContainer)
+  const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
+
+    const initPickupOrderRequest = async () => {
+    const result = await getAllPickUpOrder();
+    const data = result?.data.content;
+    console.log("pickup order content: ", data);
+    if (data && data.length > 0) {
+      setPickupOrder(data);
+    }}
+ 
+    useEffect(() => {
+      initPickupOrderRequest();
+    }, []);
 
   const picoDetailList =
     pickupOrder?.flatMap((item) =>

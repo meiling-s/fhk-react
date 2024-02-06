@@ -24,6 +24,7 @@ const CollectionPoint = () => {
   useEffect(() => {
 
     initCollectionPoint();
+  
 
     if(action){
       var toastMsg = "";
