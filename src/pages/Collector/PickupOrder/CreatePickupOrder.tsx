@@ -83,7 +83,7 @@ const CreatePickupOrder = () => {
     validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow
-      alert(JSON.stringify(values, null, 2))
+      //alert(JSON.stringify(values, null, 2))
       console.log(JSON.stringify(values, null, 2))
       const result = await createPickUpOrder(values)
       const data = result?.data
