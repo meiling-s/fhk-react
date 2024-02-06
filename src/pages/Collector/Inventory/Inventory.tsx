@@ -17,6 +17,8 @@ import { getAllInventory } from '../../../APICalls/Collector/inventory'
 import { format } from "../../../constants/constant";
 import dayjs from 'dayjs'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import { PickupOrder } from '../../../interfaces/pickupOrder'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
@@ -44,7 +46,8 @@ function createInventory(
   updatedBy: string,
   inventoryDetail: InvDetails[],
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  location: string
 ): InventoryItem {
   return {
     itemId,
@@ -59,7 +62,8 @@ function createInventory(
     updatedBy,
     inventoryDetail,
     createdAt,
-    updatedAt
+    updatedAt,
+    location
   }
 }
 
@@ -75,9 +79,8 @@ const Inventory: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const {recycType} = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<recycItem[]>([])
-  const [currentRecyName, setCurRecycName] = useState<string>("")
-  const [currentSubName, setCurrentSubName] = useState<string>("")
-  const [searchkey, setSerchKey] = useState<string>("")
+  const [picoList, setPicoList] = useState<PickupOrder[]>([])
+  const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([])
 
   useEffect(() =>{ 
     mappingRecyleItem()
@@ -133,19 +136,56 @@ const Inventory: FunctionComponent = () => {
      recyleMapping.push(reItem)
    })
    setRecycItem(recyleMapping)
-   console.log("recycItem",recyleMapping )
+  }
+
+  const getAllPickupOrder = async (data: InventoryItem[]) => {
+    const picoData: PickupOrder[] = []
+    for (let index=0; index < data.length; index++){
+      const item = data[index]
+      for (let index=0; index < item.inventoryDetail.length; index++){
+        const invDetail = item.inventoryDetail[index]
+        const result = await getPicoById(invDetail.sourcePicoId)
+        if(result?.data) {
+          picoData.push(result.data)
+        }
+      }
+      
+    }
+
+    setPicoList(picoData)
+    return picoData
   }
 
   const initInventory = async () => {
     const result = await getAllInventory(page - 1, pageSize)
     const data = result?.data
+   
     if(data) {
+      const picoData = await getAllPickupOrder(data.content)
       var inventoryMapping: InventoryItem[] = []
       data.content.map((item: any) => {
+
         const recy = recycItem.find((re) => re.recycType.id === item.recycTypeId)
         const recyName = recy ? recy.recycType.name : "-"
         const subType = recy ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId) : null
         const subName = subType ? subType.name : "-"
+
+        let selectedPico: PickupOrder[] = []
+        let location: string[] = []
+
+        item.inventoryDetail?.map((invDetail: InvDetails ) =>{
+          selectedPico =  picoData.filter(pico => pico.picoId == invDetail.sourcePicoId)
+        })
+
+       
+
+        if(selectedPico.length > 0) {
+          selectedPico.map(pico =>{
+            pico.pickupOrderDetail.map(picoDetail => {
+              location.push(picoDetail.senderAddr)
+            })
+          })
+        }
         inventoryMapping.push(
           createInventory(
             item?.itemId,
@@ -161,6 +201,7 @@ const Inventory: FunctionComponent = () => {
             item?.inventoryDetail,
             item?.createdAt,
             item?.updatedAt,
+            location?.join(', ')
           )
         )
       })
@@ -206,13 +247,10 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'inventoryLocation',
+      field: 'location',
       headerName: t('inventory.inventoryLocation'),
       width: 200,
-      type: 'string',
-      renderCell: (params) => {
-        return <div>-</div>
-      }
+      type: 'string'
     },
     {
       field: 'weight',
@@ -224,20 +262,6 @@ const Inventory: FunctionComponent = () => {
       }
     }
   ]
-
-  const getSubTypeOption = () => {
-    if(currentRecyName) {
-      const filteredOption = recycItem.filter((item) => item.recycType.name == currentRecyName)
-      
-      const options: Option[] = filteredOption.flatMap(item => item.recycSubType.map((sub) => ({
-        value: sub.id,
-        label: sub.name
-      })))
-      return options;
-    } else {
-      getUniqueOptions("recycSubTypeId")
-    }
-  }
 
   const searchfield = [
     { label: t('pick_up_order.filter.search'), width: '14%' },
@@ -273,8 +297,16 @@ const Inventory: FunctionComponent = () => {
   }
 
   const handleSelectRow = (params: GridRowParams) => {
-    const selectedInv = inventoryList.find((item) => item.itemId == params.row.itemId)
+    const selectedInv:InventoryItem = inventoryList.find((item) => item.itemId == params.row.itemId)
+    let selectedPicoList: PickupOrder[] = []
+    selectedInv.inventoryDetail?.forEach(item => {
+      const pico = picoList.find(pico => pico.picoId == item.sourcePicoId)
+      if(pico) {
+        selectedPicoList.push(pico)
+      }
+    })
     setSelectedRow(selectedInv)
+    setSelectedPico(selectedPicoList)
     setDrawerOpen(true)
   }
 
@@ -286,7 +318,6 @@ const Inventory: FunctionComponent = () => {
 
   const handleSearch = (label: string, value: string) => {
     if(label == 'recycTypeId'){
-      setCurRecycName(value)
       const filtered:InventoryItem[] = inventoryList.filter(item => item.recycTypeId == value)
       if (filtered) {
         setFilteredInventory(filtered)
@@ -296,7 +327,6 @@ const Inventory: FunctionComponent = () => {
     } 
 
     if(label == "recycSubTypeId"){
-      setCurrentSubName(value)
       const filtered:InventoryItem[] = inventoryList.filter(item => item.recycSubTypeId == value)
       if (filtered) {
         setFilteredInventory(filtered)
@@ -380,6 +410,7 @@ const Inventory: FunctionComponent = () => {
             drawerOpen={drawerOpen}
             handleDrawerClose={() => setDrawerOpen(false)}
             selectedRow={selectedRow}
+            selectedPico={selectedPico}
           />
         </div>
       </Box>

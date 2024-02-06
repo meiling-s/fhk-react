@@ -109,6 +109,12 @@ export const GET_ALL_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/administrator/pico'
 }
+
+export const GET_PICK_UP_ORDER_BY_ID = (picoId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/pico/${picoId}`
+})
+
 export const GET_PICK_UP_ORDER_DETAIL: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/administrator/pico/details'

@@ -1,6 +1,6 @@
 export type InventoryDetail = {
     itemDtlId: number
-    sourcePicoId: number
+    sourcePicoId: string
     sourcePicoDtlId: number
 }
 
@@ -18,4 +18,5 @@ export type InventoryItem = {
     inventoryDetail: InventoryDetail[],
     createdAt: string
     updatedAt: string
+    location: string
 }

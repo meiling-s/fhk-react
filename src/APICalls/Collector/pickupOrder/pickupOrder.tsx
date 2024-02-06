@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import axios from 'axios'
-import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_DETAIL_STATUS, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
+import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_PICK_UP_ORDER_BY_ID, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_DETAIL_STATUS, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
 import { CreatePO, EditPo, PickupOrder, PoDtlStatus, PoStatus } from '../../../interfaces/pickupOrder'
 import { createCP } from '../../../interfaces/collectionPoint'
 
@@ -26,6 +26,19 @@ import { createCP } from '../../../interfaces/collectionPoint'
         return null;
       }
     
+  }
+
+  export const getPicoById = async (picoId: string) => {
+    try {
+      const response = await request({
+        ...GET_PICK_UP_ORDER_BY_ID(picoId)
+      })
+      
+      return response
+    } catch (e) {
+      console.error('Get all vehicle failed:', e)
+      return null
+    }
   }
 
   

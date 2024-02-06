@@ -16,22 +16,36 @@ import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined'
 import { InventoryItem, InventoryDetail as InvDetails} from '../../../interfaces/inventory'
 import { format } from "../../../constants/constant";
 import dayjs from 'dayjs'
+import { dateToLocalDate, dayjsToLocalDate } from '../../../components/Formatter'
 
 import { useTranslation } from 'react-i18next'
+import { PickupOrder } from '../../../interfaces/pickupOrder'
 
 interface InventoryDetailProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   selectedRow?: InventoryItem | null
+  selectedPico?: PickupOrder[] | null
 }
 
 const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   drawerOpen,
   handleDrawerClose,
-  selectedRow
+  selectedRow,
+  selectedPico
 }) => {
   const { t } = useTranslation()
-  console.log("selectedRow", selectedRow)
+  const getPicoDtl = (picoId: string, dtlId: number) => {
+    if(selectedPico) {
+    const pico = selectedPico.find((pico) => pico.picoId == picoId)
+    if(pico) {
+      const picoDetail = pico.pickupOrderDetail.find((dtl) => dtl.picoDtlId == dtlId)
+      return picoDetail
+      }
+    }
+    return null
+    
+  }
   const fieldItem = [
     {
       label: t('inventory.date'),
@@ -51,7 +65,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
     },
     {
       label: t('inventory.inventoryLocation'),
-      value: '-'
+      value: selectedRow?.location
     },
     {
       label: t('inventory.weight'),
@@ -70,8 +84,8 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
           anchor={'right'}
           action={'none'}
           headerProps={{
-            title: t('top_menu.add_new'),
-            subTitle: t('vehicle.vehicleType'),
+            title: t('inventory.inventory'),
+            subTitle: selectedRow?.unitId,
             onCloseHeader: handleDrawerClose
           }}
         >
@@ -115,47 +129,60 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                 </Box>
               </Grid>
               <Grid item>
-                <Box sx={{ ...localStyle.card, borderColor: '#ACACAC' }}>
-                  <div className="header flex items-center gap-2">
-                    <div className="font-bold text-base">Shipping ccompany</div>
-                    <ArrowForwardOutlinedIcon className="text-grey-darker" />
-                    <div className="font-bold text-base">Receiver</div>
-                  </div>
-                  <div className="text-sm text-grey-darker mb-4">
-                    PO263783893
-                  </div>
-                  <div className="logistic flex items-center gap-2 mb-2">
-                    <LocalShippingOutlinedIcon
-                      fontSize="small"
-                      className="text-gray"
-                    />
-                    <div className="text-sm text-grey-darker">
-                      Fast Logistic
-                    </div>
-                  </div>
-                  <div className="shiping-loc flex items-center gap-2 mb-2">
-                    <LocationOnOutlinedIcon
-                      className="text-gray"
-                      fontSize="small"
-                    />
-                    <div className="flex items-center gap-2">
-                      <div className="text-sm text-grey-darker">
-                        Deliver loc
+                {selectedRow?.inventoryDetail?.map((item, index) => {
+                  const pico = selectedPico?.find((p) => p.picoId ==  item.sourcePicoId)
+                  const picoDtl = getPicoDtl(item.sourcePicoId, item.sourcePicoDtlId)
+                  let createdDate = ""
+                  if(picoDtl) {
+                    createdDate = dayjs(new Date(picoDtl.createdAt)).format(format.dateFormat1)
+                  }
+                  
+                  return picoDtl ? (
+                    <Box key={index} sx={{ ...localStyle.card, borderColor: '#ACACAC' }}>
+                      <div className="header flex items-center gap-2">
+                        <div className="font-bold text-base">{picoDtl.senderName}</div>
+                        <ArrowForwardOutlinedIcon className="text-grey-darker" />
+                        <div className="font-bold text-base">{picoDtl.receiverName}</div>
                       </div>
-                      <ArrowForwardOutlinedIcon
-                        fontSize="small"
-                        className="text-gray"
-                      />
-                      <div className="text-sm text-grey-darker">
-                        Arrival loc
+                      <div className="text-sm text-grey-darker mb-4">
+                        {item.sourcePicoId}
                       </div>
-                    </div>
-                  </div>
-                  <div className="bg-[#F4F4F4] text-green-primary text-2xs p-2 rounded-lg">
-                    Handed over to [driver’s name, license plate number] at
-                    18:00 on 2023/09/20
-                  </div>
-                </Box>
+                      <div className="logistic flex items-center gap-2 mb-2">
+                        <LocalShippingOutlinedIcon
+                          fontSize="small"
+                          className="text-gray"
+                        />
+                        <div className="text-sm text-grey-darker">
+                          {pico?.routineType}
+                        </div>
+                      </div>
+                      <div className="shiping-loc flex items-center gap-2 mb-2">
+                        <LocationOnOutlinedIcon
+                          className="text-gray"
+                          fontSize="small"
+                        />
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm text-grey-darker">
+                            {picoDtl.senderAddr}
+                          </div>
+                          <ArrowForwardOutlinedIcon
+                            fontSize="small"
+                            className="text-gray"
+                          />
+                          <div className="text-sm text-grey-darker">
+                            {picoDtl.receiverAddr}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-[#F4F4F4] text-green-primary text-xs p-2 rounded-lg">
+                        { `Handed over to [${pico?.logisticName}, ${pico?.platNo}] at
+                        ${createdDate}`}
+                      </div>
+                    </Box>
+                  ) : null
+
+                })}
+              
               </Grid>
             </Grid>
           </Box>
@@ -175,7 +202,8 @@ let localStyle = {
     borderRadius: '10px',
     padding: 2,
     borderWidth: '1px',
-    borderStyle: 'solid'
+    borderStyle: 'solid',
+    marginBottom: 2
   }
 }
 export default InventoryDetail
