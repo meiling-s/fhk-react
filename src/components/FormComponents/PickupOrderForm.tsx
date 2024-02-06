@@ -22,10 +22,10 @@ import {
   PoStatus,
   Row
 } from '../../interfaces/pickupOrder'
-import CheckInRequestContainer from '../../contexts/CheckInRequestContainer'
 import { useContainer } from 'unstated-next'
 import { useNavigate } from 'react-router-dom'
 import {
+  editPickupOrderDetailStatus,
   editPickupOrderStatus,
   getDtlById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
@@ -34,10 +34,15 @@ import { useTranslation } from 'react-i18next'
 
 const PickupOrderForm = ({
   onClose,
-  selectedRow
+  selectedRow,
+  pickupOrder,
+  initPickupOrderRequest
+
 }: {
   onClose?: () => void
   selectedRow?: Row | null
+  pickupOrder?: PickupOrder[]|null
+  initPickupOrderRequest: () => void
 }) => {
   const { t } = useTranslation()
 
@@ -55,9 +60,9 @@ const PickupOrderForm = ({
     navigate('/collector/editPickupOrder', { state: po })
   }
 
-  const { pickupOrder, initPickupOrderRequest } = useContainer(
-    CheckInRequestContainer
-  )
+  // const { pickupOrder, initPickupOrderRequest } = useContainer(
+  //   CheckInRequestContainer
+  // )
   const [selectedPickupOrder, setSelectedPickupOrder] = useState<PickupOrder>()
   console.log(selectedPickupOrder)
   const [pickupOrderDetail, setPickUpOrderDetail] =
@@ -81,12 +86,22 @@ const PickupOrderForm = ({
         reason: selectedPickupOrder.reason,
         updatedBy: selectedPickupOrder.updatedBy
       }
+      const updatePoDtlStatus = {
+        status: 'CLOSED',
+        updatedBy: selectedPickupOrder.updatedBy
+      }
       try {
         const result = await editPickupOrderStatus(
           selectedPickupOrder.picoId,
           updatePoStatus
         )
-        if (result) await initPickupOrderRequest()
+        if (result) {
+          const detailUpdatePromises = selectedPickupOrder.pickupOrderDetail.map(detail => 
+            editPickupOrderDetailStatus(detail.picoDtlId.toString(), updatePoDtlStatus)
+          );
+          await Promise.all(detailUpdatePromises);
+          await initPickupOrderRequest()
+        }
         onClose && onClose()
         navigate('/collector/PickupOrder')
       } catch (error) {

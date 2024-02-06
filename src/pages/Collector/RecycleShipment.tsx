@@ -15,7 +15,6 @@ import { updateStatus } from "../../interfaces/warehouse";
 import RequestForm from "../../components/FormComponents/RequestForm";
 import { CheckIn } from "../../interfaces/checkin";
 import { useContainer } from "unstated-next";
-import CheckInRequestContext from "../../contexts/CheckInRequestContainer";
 import dayjs from "dayjs";
 import { format, localStorgeKeyName } from "../../constants/constant"
 
@@ -257,10 +256,27 @@ function ShipmentManage(){
     const [open, setOpen] = useState<boolean>(false);
     
     const [selectedRow, setSelectedRow] = useState<CheckIn>();
-    
-    const { checkInRequest, updateCheckInRequest } = useContainer(CheckInRequestContext);
 
     const [tenant, setTenant] = useState<Tenant>();
+
+    const [checkInRequest, setCheckInRequest] = useState<CheckIn[]>();
+    // const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
+  
+    useEffect(() => {
+      initCheckInRequest();
+      // initPickupOrderRequest();
+    }, []);
+   
+    const initCheckInRequest = async () => {
+      const result = await getAllCheckInRequests();
+      const data = result?.data.content;
+      console.log("checkin request content: ", data);
+      if (data && data.length > 0) {
+        console.log("all checkIn request ", data);
+        setCheckInRequest(data);
+      }
+    };
+  
 
     var tenantId = 0;
 
@@ -295,10 +311,11 @@ function ShipmentManage(){
         const data = result?.data.content;
         if(data){
             //setShipments(checkInRequest);
+            console.log(JSON.stringify(data)+'allll')
             var ships: CheckIn[] = [];
             var i = 0;
             while(i < data.length) {
-                if(data[i].status == "CREATED"){
+                if(data[i].status == "CONFIRMED"){
                     ships.push(data[i]);
                 }
                 i++;
@@ -309,6 +326,7 @@ function ShipmentManage(){
         }
         
     }
+
 
     useEffect(()=>{
         console.log("filtered: ",filterShipments);

@@ -77,7 +77,7 @@ const Login = () => {
             navigate("/astd");
             break;
           case "collector":
-            navigate("/collector");8;
+            navigate("/collector");
             break;
           case "warehouse":
             navigate("/warehouse");
