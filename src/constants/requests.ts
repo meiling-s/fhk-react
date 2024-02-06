@@ -309,10 +309,10 @@ export const GET_ALL_USERNAME: AxiosRequestConfig = {
 }
 
 //service info
-export const CREATE_SERVICE_INFO: AxiosRequestConfig = {
+export const CREATE_SERVICE_INFO = (table: string): AxiosRequestConfig => ({
   method: 'post',
-  url: 'api/v1/collectors/serviceInfo'
-}
+  url: `api/v1/collectors/serviceInfo/${table}`
+})
 
 //vehicle 
 export const CREATE_VEHICLE = (table: string) : AxiosRequestConfig => ({
