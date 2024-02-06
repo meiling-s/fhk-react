@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import axios from 'axios'
-import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
-import { CreatePO, EditPo, PickupOrder, PoStatus } from '../../../interfaces/pickupOrder'
+import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_DETAIL_STATUS, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
+import { CreatePO, EditPo, PickupOrder, PoDtlStatus, PoStatus } from '../../../interfaces/pickupOrder'
 import { createCP } from '../../../interfaces/collectionPoint'
 
   const request = axios.create({
@@ -107,6 +107,28 @@ export const editPickupOrderStatus = async (pickupOrderId: string, data:PoStatus
       return response
   } catch (e) {
       console.error('Update pickup order status failed:', e);
+      return null;
+  }
+
+}
+
+export const editPickupOrderDetailStatus = async (pickupOrderDtlId: string, data:PoDtlStatus) => {
+
+  const axiosConfig = Object.assign({},UPDATE_PICK_UP_ORDER_DETAIL_STATUS);
+  axiosConfig.url = UPDATE_PICK_UP_ORDER_DETAIL_STATUS.url+`/${pickupOrderDtlId}`;
+
+  try{
+      const response = await request({
+          ...axiosConfig,
+          data: data
+          // headers: {
+          //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
+          // },
+      });
+      console.log('Update pickup order detail status success:', JSON.stringify(response.data));
+      return response
+  } catch (e) {
+      console.error('Update pickup order detail status failed:', e);
       return null;
   }
 

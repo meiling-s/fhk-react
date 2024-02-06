@@ -25,6 +25,7 @@ import {
 import { useContainer } from 'unstated-next'
 import { useNavigate } from 'react-router-dom'
 import {
+  editPickupOrderDetailStatus,
   editPickupOrderStatus,
   getDtlById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
@@ -85,12 +86,22 @@ const PickupOrderForm = ({
         reason: selectedPickupOrder.reason,
         updatedBy: selectedPickupOrder.updatedBy
       }
+      const updatePoDtlStatus = {
+        status: 'CLOSED',
+        updatedBy: selectedPickupOrder.updatedBy
+      }
       try {
         const result = await editPickupOrderStatus(
           selectedPickupOrder.picoId,
           updatePoStatus
         )
-        if (result) await initPickupOrderRequest()
+        if (result) {
+          const detailUpdatePromises = selectedPickupOrder.pickupOrderDetail.map(detail => 
+            editPickupOrderDetailStatus(detail.picoDtlId.toString(), updatePoDtlStatus)
+          );
+          await Promise.all(detailUpdatePromises);
+          await initPickupOrderRequest()
+        }
         onClose && onClose()
         navigate('/collector/PickupOrder')
       } catch (error) {

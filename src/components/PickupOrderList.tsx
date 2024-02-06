@@ -132,13 +132,15 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                 </div>
                 <Box>
                   {picoDetailList.map((item, index) => (
+                    (item.status == "CREATED") ?
                     <div
                       key={index}
-                      onClick={() =>
+                      onClick={() => {
                         handleSelectedPicoId(
                           item.pickupOrderDetail,
                           item.picoId
-                        )
+                        );
+                        console.log(item.status)}
                       }
                       className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4"
                     >
@@ -177,6 +179,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                         </div>
                       </div>
                     </div>
+                    : <></>
                   ))}
                 </Box>
               </Box>

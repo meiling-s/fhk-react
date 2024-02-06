@@ -159,6 +159,11 @@ export interface PoStatus {
     updatedBy: string;
 }
 
+export interface PoDtlStatus {
+    status:    string;
+    updatedBy: string;
+}
+
 
 export interface PicoRefrenceList {
     type: string;
