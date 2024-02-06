@@ -181,8 +181,8 @@ const PickupOrders = () => {
     寄件公司: item.pickupOrderDetail[0]?.senderName,
     收件公司: item.pickupOrderDetail[0]?.receiverName,
     状态: item.status,
-  }))??[])
-  // }))??[]).filter((item) => item.状态 !== 'CLOSED');
+  //}))??[])
+  }))??[]).filter((item) => item.状态 !== 'CLOSED');
 
   interface Row {
     id: number;
