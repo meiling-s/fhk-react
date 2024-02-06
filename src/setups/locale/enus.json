@@ -443,5 +443,16 @@
     "picture": "Picture",
     "basic": "Basic",
     "additional":"Additional"
+  },
+  "inventory": {
+    "inventory": "Inventory",
+    "recyclingInformation": "Recycling Information",
+    "date": "Date",
+    "recyleType": "Recyclable Type",
+    "recyleSubType": "Recyclable Sub-Type",
+    "package": "Package",
+    "recyclingNumber": "Recycling Number",
+    "inventoryLocation": "Inventory Location",
+    "weight": "Weight"
   }
 }

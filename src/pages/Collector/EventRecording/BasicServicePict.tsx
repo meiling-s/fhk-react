@@ -25,7 +25,7 @@ import { styles } from '../../../constants/styles'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
 
 import { EVENT_RECORDING } from '../../../constants/configs'
-import { ServiceInfo, photoService } from '../../../interfaces/serviceInfo'
+import { ServiceInfo } from '../../../interfaces/serviceInfo'
 import { createServiceInfo } from '../../../APICalls/serviceInfo'
 import dayjs, { Dayjs } from 'dayjs'
 import { ToastContainer, toast } from 'react-toastify'
@@ -117,21 +117,21 @@ const BasicServicePicture = () => {
     console.log(formattedDate(startDate))
     console.log(formattedDate(endDate))
     if (validation.length == 0) {
-      const imgList: photoService[] = ImageToBase64(serviceImages).map(
+      const imgList: string[] = ImageToBase64(serviceImages).map(
         (item) => {
-          return { photo: item }
+          return item 
         }
       )
 
       const formData: ServiceInfo = {
-        serviceId: 1,
+        serviceId: 0,
         address: place,
         addressGps: [0],
         serviceName: 'SRV00001',
         participants: 'string',
         startAt: formattedDate(startDate),
         endAt: formattedDate(endDate),
-        photo: imgList,
+        photo: ImageToBase64(serviceImages),
         numberOfVisitor: parseInt(numberOfPeople),
         createdBy: 'admin',
         updatedBy: 'admin'

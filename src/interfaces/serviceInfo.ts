@@ -1,10 +1,6 @@
 import { gpsCode } from "./dataFormat"
 import dayjs from "dayjs"
 
-export type photoService = {
-    photo : string
-}
-
 export type ServiceInfo = {
     serviceId: number
     address: string
@@ -13,7 +9,7 @@ export type ServiceInfo = {
     participants: string,
     startAt: string
     endAt: string
-    photo: photoService[]
+    photo: string[]
     numberOfVisitor: number,
     createdBy: string
     updatedBy: string

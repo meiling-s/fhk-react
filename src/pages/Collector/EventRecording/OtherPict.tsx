@@ -25,7 +25,7 @@ import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
 import { TENANT_REGISTER_CONFIGS } from '../../../constants/configs'
 import dayjs, { Dayjs } from 'dayjs'
 import { createServiceInfo } from '../../../APICalls/serviceInfo'
-import { ServiceInfo, photoService } from '../../../interfaces/serviceInfo'
+import { ServiceInfo } from '../../../interfaces/serviceInfo'
 import { ToastContainer, toast } from 'react-toastify'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
@@ -154,10 +154,10 @@ const OtherPict = () => {
     if (validation.length == 0) {
       for (const key of Object.keys(serviceData) as ServiceId[]) {
         const serviceItem = serviceData[key]
-        const imgList: photoService[] = ImageToBase64(
+        const imgList: string[] = ImageToBase64(
           serviceItem.photoImage
         ).map((item) => {
-          return { photo: item }
+          return item 
         })
 
         const formData: ServiceInfo = {

@@ -109,6 +109,12 @@ export const GET_ALL_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/administrator/pico'
 }
+
+export const GET_PICK_UP_ORDER_BY_ID = (picoId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/pico/${picoId}`
+})
+
 export const GET_PICK_UP_ORDER_DETAIL: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/administrator/pico/details'
@@ -303,10 +309,10 @@ export const GET_ALL_USERNAME: AxiosRequestConfig = {
 }
 
 //service info
-export const CREATE_SERVICE_INFO: AxiosRequestConfig = {
+export const CREATE_SERVICE_INFO = (table: string): AxiosRequestConfig => ({
   method: 'post',
-  url: 'api/v1/collectors/serviceInfo'
-}
+  url: `api/v1/collectors/serviceInfo/${table}`
+})
 
 //vehicle 
 export const CREATE_VEHICLE = (table: string) : AxiosRequestConfig => ({
@@ -327,4 +333,10 @@ export const DELETE_VEHICLE = (table: string, vehicleId: number ) : AxiosRequest
 export const EDIT_VEHICLE = (table: string, vehicleId: number ) : AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/collectors/vehicle/${table}/${vehicleId}`
+})
+
+//inventory
+export const GET_INVENTORY = (table: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/inventory/${table}`
 })

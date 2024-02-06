@@ -37,6 +37,7 @@ import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
 import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
 import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
 import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
+import Inventory from "./pages/Collector/Inventory/Inventory";
 
 import AuthGuard from "./components/Guards/AuthGuard";
 import AutoLogout from "./components/AutoLogout";
@@ -89,6 +90,7 @@ const Router = () => {
           <Route path="/collector/staff" element={<Staff />} />
           <Route path="/collector/createCollectionPoint"element={<CreateCollectionPoint />}/>
           <Route path="/collector/editCollectionPoint" element={<EditCollectionPoint />} />
+          <Route path="/collector/inventory" element={<Inventory />} />
         </Route>
 
         <Route element={<MainLayout />}>
