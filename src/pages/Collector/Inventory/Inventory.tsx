@@ -81,127 +81,83 @@ const Inventory: FunctionComponent = () => {
   const [recycItem, setRecycItem] = useState<recycItem[]>([])
   const [currentRecyId, setCurRecycId] = useState<string>("")
 
-  useEffect(() =>{
-    const recyleMapping: recycItem[] = []
-     recycType?.forEach((re) =>{
-      var reItem: recycItem = {recycType: {name: "", id: ""}, recycSubType: []};
-      var subItem: il_item[] = [];
-     var name = ""
-     switch (i18n.language) {
-       case 'enus':
-         name = re.recyclableNameEng
-         break
-       case 'zhch':
-         name = re.recyclableNameSchi
-         break
-       case 'zhhk':
-         name = re.recyclableNameTchi
-         break
-       default:
-         name = re.recyclableNameTchi
-         break
-     }
-    reItem.recycType = {name: name, id: re.recycTypeId};
-
-      re.recycSubType.map((sub) => {
-        var subName = "";
-        switch(i18n.language){
-            case "enus":
-                subName = sub.recyclableNameEng;
-                break;
-            case "zhch":
-                subName = sub.recyclableNameSchi;
-                break;
-            case "zhhk":
-                subName = sub.recyclableNameTchi;
-                break;
-            default:
-                subName = sub.recyclableNameTchi;      
-                break;
-        }
-
-        reItem.recycSubType = subItem;
-        subItem.push({name: subName, id: sub.recycSubTypeId})
-      })
-      reItem.recycSubType = subItem;
-
-      recyleMapping.push(reItem)
-    })
-    setRecycItem(recyleMapping)
-    console.log("recycItem",recyleMapping )
-    setDummyData()
+  useEffect(() =>{ 
+    const fetchData = async () => {
+      //await mappingRecyleItem()
+      initInventory()
+    }
+    fetchData()
    }, [recycType]);
 
+  const mappingRecyleItem = () => {
+    const recyleMapping: recycItem[] = []
+    recycType?.forEach((re) =>{
+     var reItem: recycItem = {recycType: {name: "", id: ""}, recycSubType: []};
+     var subItem: il_item[] = [];
+    var name = ""
+    switch (i18n.language) {
+      case 'enus':
+        name = re.recyclableNameEng
+        break
+      case 'zhch':
+        name = re.recyclableNameSchi
+        break
+      case 'zhhk':
+        name = re.recyclableNameTchi
+        break
+      default:
+        name = re.recyclableNameTchi
+        break
+    }
+   reItem.recycType = {name: name, id: re.recycTypeId};
 
-  useEffect(() => {
-    //initInventory()
+     re.recycSubType.map((sub) => {
+       var subName = "";
+       switch(i18n.language){
+           case "enus":
+               subName = sub.recyclableNameEng;
+               break;
+           case "zhch":
+               subName = sub.recyclableNameSchi;
+               break;
+           case "zhhk":
+               subName = sub.recyclableNameTchi;
+               break;
+           default:
+               subName = sub.recyclableNameTchi;      
+               break;
+       }
 
-    //setDummyData()
-  }, [])
+       reItem.recycSubType = subItem;
+       subItem.push({name: subName, id: sub.recycSubTypeId})
+     })
+     reItem.recycSubType = subItem;
 
-  const harcodeData = [
-    {
-      "itemId": 1,
-      "warehouseId": 2,
-      "recycTypeId": "RC00007",
-      "recycSubTypeId": "RSC00045",
-      "packageTypeId": "string",
-      "weight": 0,
-      "unitId": "string",
-      "status": "ACTIVE",
-      "createdBy": "string",
-      "updatedBy": "string",
-      "inventoryDetail": [
-      ],
-      "createdAt": "2024-02-05T15:53:10.445Z",
-      "updatedAt": "2024-02-05T15:53:10.445Z"
-  }
-  ]
-
-  const setDummyData = () => {
-    const dummy: InventoryItem[] = []
-    harcodeData.map((item) => {
-      const recy = recycItem.find((re) => re.recycType.id === item.recycTypeId)
-      const recyName = recy ? recy.recycType.name : "-"
-      const subType = recy ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId) : null
-      const subName = subType ? subType.name : "-"
-      console.log("recy", subName)
-      const recySub = ""
-      dummy.push( createInventory(
-        item?.itemId,
-        item?.warehouseId,
-        recyName,
-        subName,
-        item?.packageTypeId,
-        item?.weight,
-        item?.unitId,
-        item?.status,
-        item?.updatedBy,
-        item?.createdBy,
-        item?.inventoryDetail,
-        item?.createdAt,
-        item?.updatedAt,
-      ))
-    })
-    setInventory(dummy)
+     recyleMapping.push(reItem)
+   })
+   setRecycItem(recyleMapping)
+   console.log("recycItem",recyleMapping )
   }
 
   const initInventory = async () => {
+    await mappingRecyleItem()
     const result = await getAllInventory(page - 1, pageSize)
     const data = result?.data
+    console.log("in init recyle data",recycItem)
     console.log("initVehicleList", data)
     if(data) {
       var vehicleMapping: InventoryItem[] = []
       data.content.map((item: any) => {
-        const recy = recycItem.find((re) => re.recycType.id === item.recycSubTypeId)
-        const recySub = ""
+        const recy = recycItem.find((re) => re.recycType.id === item.recycTypeId)
+        const recyName = recy ? recy.recycType.name : "-"
+        const subType = recy ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId) : null
+        const subName = subType ? subType.name : "-"
         vehicleMapping.push(
           createInventory(
             item?.itemId,
             item?.warehouseId,
-            // item?.recycTypeId,
-            recy?.recycType.name || "-",
-            item?.recycSubTypeId,
+            recyName,
+            subName,
             item?.packageTypeId,
             item?.weight,
             item?.unitId,
