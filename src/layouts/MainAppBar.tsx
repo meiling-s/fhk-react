@@ -30,7 +30,6 @@ import { useContainer } from 'unstated-next'
 import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
 import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
-import { getAllCheckInRequests } from '../APICalls/Collector/warehouseManage'
 
 const MainAppBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -89,7 +88,8 @@ const MainAppBar = () => {
     setShowSuccessModal(false)
   }
   const handleLogout = () => {
-    // localStorage.clear()
+    console.log("on logout")
+    localStorage.clear()
     navigate('/')
   }
 

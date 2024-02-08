@@ -2,16 +2,18 @@ import axios from 'axios'
 import { CREATE_SERVICE_INFO } from '../constants/requests'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import { localStorgeKeyName } from '../constants/constant';
+import { returnApiToken } from '../utils/utils';
 
 const request = axios.create({
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
 })
 
-const tenantId =
-  localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
 
 export const createServiceInfo = async (data: any) => {
   try {
+
+    const tenantId = returnApiToken().decodeKeycloack
+
     const response = await request({
       ...CREATE_SERVICE_INFO(tenantId),
       data: data

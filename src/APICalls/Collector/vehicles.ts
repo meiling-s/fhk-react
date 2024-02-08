@@ -5,30 +5,25 @@ import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import {
    GET_VEHICLE, CREATE_VEHICLE, DELETE_VEHICLE, EDIT_VEHICLE
 } from "../../constants/requests";
+import { returnApiToken } from "../../utils/utils";
 
 const request = axios.create({
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
   })
 
-
-const decodeKeycloack =
-  localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
-
-const authToken = localStorage.getItem(
-  localStorgeKeyName.keycloakToken || ''
-)
-
 //get all warehouse
 export const getAllVehicles = async (page: number, size: number) => {
     try {
+      const token = returnApiToken()
+
       const response = await request({
-        ...GET_VEHICLE(decodeKeycloack),
+        ...GET_VEHICLE(token.decodeKeycloack),
         params: {
           page: page,
           size: size
         },
         headers: {
-          AuthToken: authToken
+          AuthToken: token.authToken
         }
       })
       
@@ -41,11 +36,13 @@ export const getAllVehicles = async (page: number, size: number) => {
   //create warehouse
   export const createVehicles = async (data: CreateVehicle) => {
     try {
+      const token = returnApiToken()
+
       const response = await request({
-        ...CREATE_VEHICLE(decodeKeycloack),
+        ...CREATE_VEHICLE(token.decodeKeycloack),
         data: data,
         headers: {
-          AuthToken: authToken
+          AuthToken: token.authToken
         }
       })
       return response
@@ -57,11 +54,13 @@ export const getAllVehicles = async (page: number, size: number) => {
 
   export const editVehicle = async (data: CreateVehicle, vehicleId: number) => {
     try {
+      const token = returnApiToken()
+
       const response = await request({
-        ...EDIT_VEHICLE(decodeKeycloack, vehicleId),
+        ...EDIT_VEHICLE(token.decodeKeycloack, vehicleId),
         data: data,
         headers: {
-          AuthToken: authToken,
+          AuthToken: token.authToken,
           'Content-Type': 'application/json'
         }
       })
@@ -75,11 +74,13 @@ export const getAllVehicles = async (page: number, size: number) => {
   //edit vehicle status
   export const deleteVehicle = async (data: string, vehicleId: number) => {
     try {
+      const token = returnApiToken()
+
       const response = await request({
-        ...DELETE_VEHICLE(decodeKeycloack, vehicleId),
+        ...DELETE_VEHICLE(token.decodeKeycloack, vehicleId),
         data: data,
         headers: {
-          AuthToken: authToken,
+          AuthToken: token.authToken,
           'Content-Type': 'application/json'
         }
       })

@@ -11,6 +11,7 @@ import { useContainer } from 'unstated-next'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { localStorgeKeyName } from '../../../constants/constant'
+import { returnApiToken } from '../../../utils/utils'
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
@@ -22,8 +23,7 @@ const CreatePickupOrder = () => {
 
   function getTenantId() {
 
-    const decodeKeycloack = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
-    const tenantId = decodeKeycloack.substring("company".length);
+    const tenantId = returnApiToken().decodeKeycloack.substring("company".length);
 
     return tenantId
   }

@@ -4,26 +4,23 @@ import {
   GET_CHECKOUT_REQUEST_BY_ID,
   UPDATE_CHECKOUT_REQUEST_STATUS
 } from '../../constants/requests'
-import { updateStatus } from '../../interfaces/warehouse'
 import {localStorgeKeyName} from  '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
+import { returnApiToken } from '../../utils/utils';
 
 const checkoutAPI = {
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 }
 
-const decodeKeycloack =
-  localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
-
-const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken || '')
-
 export const getAllCheckoutRequest = async () => {
   try {
+    const token = returnApiToken()
+
     const response = await axios({
-      ...GET_ALL_CHECKOUT_REQUEST(decodeKeycloack),
+      ...GET_ALL_CHECKOUT_REQUEST(token.decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
       headers: {
-        AuthToken: authToken
+        AuthToken: token.authToken
       }
     })
     return response
@@ -34,11 +31,13 @@ export const getAllCheckoutRequest = async () => {
 }
 export const getCheckoutRequestById = async (chkOutId: number) => {
   try {
+    const token = returnApiToken()
+
     const response = await axios({
-      ...GET_CHECKOUT_REQUEST_BY_ID(chkOutId, decodeKeycloack),
+      ...GET_CHECKOUT_REQUEST_BY_ID(chkOutId, token.decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
       headers: {
-        AuthToken: authToken
+        AuthToken: token.authToken
       }
     })
     console.log(
@@ -57,12 +56,14 @@ export const updateCheckoutRequestStatus = async (
   data: any
 ) => {
   try {
+    const token = returnApiToken()
+
     const response = await axios({
-      ...UPDATE_CHECKOUT_REQUEST_STATUS(chkOutId, decodeKeycloack),
+      ...UPDATE_CHECKOUT_REQUEST_STATUS(chkOutId, token.decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
       data: data,
       headers: {
-        AuthToken: authToken
+        AuthToken: token.authToken
       }
     })
     return response

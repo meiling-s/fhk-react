@@ -1,5 +1,5 @@
 import { Box, Button, Card, CardContent, Typography } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import React from 'react'
 import { styles } from '../../constants/styles'

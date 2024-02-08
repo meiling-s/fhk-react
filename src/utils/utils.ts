@@ -1,6 +1,12 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr } from '../constants/constant'
+import { formErr, localStorgeKeyName } from '../constants/constant'
 import { useTranslation } from 'react-i18next'
+
+export const returnApiToken = () => {
+  const decodeKeycloack = localStorage.getItem(localStorgeKeyName.decodeKeycloack)  || ''
+  const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken  )|| ''
+  return {decodeKeycloack: decodeKeycloack, authToken: authToken}
+}
 
 export const ImageToBase64 = (images: ImageListType) => {
   var base64: string[] = []

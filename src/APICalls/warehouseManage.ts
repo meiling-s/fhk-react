@@ -12,6 +12,7 @@ import {
     GET_RECYCLE_TYPE,
     GET_RECYCLE_TYPE_BY_ID,
 } from "../constants/requests";
+import { returnApiToken } from "../utils/utils";
 
 const collectionPointAPI = {
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
@@ -25,25 +26,20 @@ const request = axios.create({
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
   })
 
-
-const decodeKeycloack =
-  localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
-
-const authToken = localStorage.getItem(
-  localStorgeKeyName.keycloakToken || ''
-)
-
 //get all warehouse
 export const getAllWarehouse = async (page: number, size: number) => {
     try {
+
+      const token = returnApiToken()
+      
       const response = await request({
-        ...GET_ALL_WAREHOUSE(decodeKeycloack),
+        ...GET_ALL_WAREHOUSE(token.decodeKeycloack),
         params: {
           page: page,
           size: size
         },
         headers: {
-          AuthToken: authToken
+          AuthToken: token.authToken
         }
       })
       
@@ -57,11 +53,13 @@ export const getAllWarehouse = async (page: number, size: number) => {
   //get warehouse by id
   export const getWarehouseById = async (warehouseId: number) => {
     try {
+      const token = returnApiToken()
+
       const response = await request({
-        ...GET_WAREHOUSE_BY_ID(warehouseId, decodeKeycloack),
+        ...GET_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
         // baseURL: collectionPointAPI.baseURL,
         headers: {
-          AuthToken: authToken
+          AuthToken: token.authToken
         }
       })
       return response
@@ -74,12 +72,14 @@ export const getAllWarehouse = async (page: number, size: number) => {
   //create warehouse
   export const createWarehouse = async (data: any) => {
     try {
+      const token = returnApiToken()
+
       const response = await axios({
-        ...ADD_WAREHOUSE(decodeKeycloack),
+        ...ADD_WAREHOUSE(token.decodeKeycloack),
         baseURL: collectionPointAPI.baseURL,
         data: data,
         headers: {
-          AuthToken: authToken
+          AuthToken: token.authToken
         }
       })
       return response
@@ -92,12 +92,14 @@ export const getAllWarehouse = async (page: number, size: number) => {
   //edit warehouse
   export const editWarehouse = async (data: any, warehouseId: number) => {
     try {
+      const token = returnApiToken()
+
       const response = await axios({
-        ...UPDATE_WAREHOUSE_BY_ID(warehouseId, decodeKeycloack),
+        ...UPDATE_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
         baseURL: collectionPointAPI.baseURL,
         data: data,
         headers: {
-          AuthToken: authToken
+          AuthToken: token.authToken
         }
       })
       return response
@@ -113,12 +115,14 @@ export const getAllWarehouse = async (page: number, size: number) => {
     warehouseRecycId: number
   ) => {
     try {
+      const token = returnApiToken()
+
       const response = await axios({
-        ...UPDATE_RECYCLE_CAPACITY_BY_ID(warehouseRecycId, decodeKeycloack),
+        ...UPDATE_RECYCLE_CAPACITY_BY_ID(warehouseRecycId, token.decodeKeycloack),
         baseURL: collectionPointAPI.baseURL,
         data: data,
         headers: {
-          AuthToken: authToken
+          AuthToken: token.authToken
         }
       })
       return response
@@ -131,12 +135,14 @@ export const getAllWarehouse = async (page: number, size: number) => {
   //edit warehouse status by id
   export const editWarehouseStatus = async (data: any, warehouseId: number) => {
     try {
+      const token = returnApiToken()
+
       const response = await axios({
-        ...UPDATE_WAREHOUSE_STATUS_BY_ID(warehouseId, decodeKeycloack),
+        ...UPDATE_WAREHOUSE_STATUS_BY_ID(warehouseId, token.decodeKeycloack),
         baseURL: collectionPointAPI.baseURL,
         data: data,
         headers: {
-          AuthToken: authToken
+          AuthToken: token.authToken
         }
       })
       return response
