@@ -44,6 +44,7 @@ import { Company, UpdateStatus } from '../../interfaces/tenant'
 import { useTranslation } from 'react-i18next'
 import { ErrorMessage, useFormik } from 'formik'
 import * as Yup from 'yup'
+import { useNavigate } from 'react-router-dom'
 
 function createCompany(
   id: number,
@@ -467,9 +468,11 @@ function CompanyManage() {
   const [filterCompanies, setFilterCompanies] = useState<Company[]>([])
   const [selectAll, setSelectAll] = useState(false)
   const [checkedCompanies, setCheckedCompanies] = useState<number[]>([])
-  const [openDetail, setOpenDetails] = useState(false)
+  const [openDetail, setOpenDetails] = useState<boolean>(false)
   const [selectedTenanId, setSelectedTenantId] = useState(0)
   const [rejectedId, setRejectId] = useState(0)
+  
+ 
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -604,7 +607,10 @@ function CompanyManage() {
                     }
                   ]}
                   variant="outlined"
-                  onClick={() => handleApproveTenant(params.row.id)}
+                  onClick={(event) => {
+                    handleApproveTenant(params.row.id)
+                    event.stopPropagation();
+                  }}
                 >
                   {t('check_out.approve')}
                 </Button>
@@ -617,7 +623,10 @@ function CompanyManage() {
                     }
                   ]}
                   variant="outlined"
-                  onClick={() => handleRejectTenant(params.row.id)}
+                  onClick={(event) => {
+                    handleRejectTenant(params.row.id);
+                    event.stopPropagation(); // Prevent event bubbling
+                  }}
                 >
                   {t('check_out.reject')}
                 </Button>
@@ -699,6 +708,7 @@ function CompanyManage() {
 
   const handleSelectRow = (params: GridRowParams) => {
     setSelectedTenantId(params.row.id)
+    console.log('clicked')
     setOpenDetails(true)
   }
 
