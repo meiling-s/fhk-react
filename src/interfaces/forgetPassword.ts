@@ -1,5 +1,5 @@
 export type forgetPasswordForm = {
   loginId: string
-  email: string
+  contactNo: string
   createdBy: string
 }

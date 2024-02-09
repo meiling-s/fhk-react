@@ -67,7 +67,7 @@ const ForgetPassword = () => {
     console.log('Submitted:', formValues)
     const formData: forgetPasswordForm = {
       loginId: formValues.username,
-      email: formValues.email,
+      contactNo: formValues.email,
       createdBy: formValues.username
     }
     console.log('data : ', formData)
