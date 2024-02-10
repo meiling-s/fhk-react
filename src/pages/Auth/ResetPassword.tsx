@@ -9,7 +9,7 @@ import { forgetPassword } from '../../APICalls/forgetPassword'
 import { forgetPasswordForm } from '../../interfaces/forgetPassword'
 
 interface FormValues {
-  [key: string]: string
+  [key: string]: string  
 }
 
 const ForgetPassword = () => {
@@ -18,11 +18,11 @@ const ForgetPassword = () => {
   const submitBtn = '發送'
   const [formValues, setFormValues] = useState<FormValues>({
     username: '',
-    email: ''
+    contactNo: ''
   })
   const formFields = [
     { name: 'username', label: '登入名稱', placeholder: '請輸入登入名稱' },
-    { name: 'email', label: '電郵地址', placeholder: '請輸入電郵地址' }
+    { name: 'contactNo', label: '聯絡電話', placeholder: '請輸入聯絡電話' }
   ]
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<
@@ -34,14 +34,23 @@ const ForgetPassword = () => {
 
   useEffect(() => {
     const tempV: { field: string; error: string }[] = []
-
-    Object.keys(formValues).forEach((fieldName) => {
-      formValues[fieldName as keyof FormValues].trim() === '' &&
-        tempV.push({
-          field: fieldName,
-          error: `fields is required`
-        })
+    formValues?.username.trim() === '' && tempV.push({
+        field: '登入名稱',
+        error: `欄位為必填項`
     })
+
+    Number.isNaN(parseInt(formValues?.contactNo)) && tempV.push({
+      field: '電郵地址',
+      error: `欄位為必填項`
+  })
+
+    // Object.keys(formValues).forEach((fieldName) => {
+    //   formValues[fieldName as keyof FormValues].trim() === '' &&
+    //     tempV.push({
+    //       field: fieldName,
+    //       error: `fields is required`
+    //     })
+    // })
 
     setValidation(tempV)
   }, [formValues])
@@ -66,16 +75,16 @@ const ForgetPassword = () => {
   const submitNewPassword = async () => {
     console.log('Submitted:', formValues)
     const formData: forgetPasswordForm = {
-      loginId: formValues.username,
-      contactNo: formValues.email,
+      loginId: 'collectoradmin',
+      contactNo: 5645435,
       createdBy: formValues.username
     }
+
     console.log('data : ', formData)
     if (validation.length === 0) {
-      //for temporary show notification
-      // setModalConfirm(true)
       const result = await forgetPassword(formData)
       const data = result?.data
+
 
       if (data) {
         navigate('/confirmNewPassword')

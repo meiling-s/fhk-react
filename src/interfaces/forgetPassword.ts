@@ -1,5 +1,5 @@
 export type forgetPasswordForm = {
   loginId: string
-  contactNo: string
+  contactNo: number | null
   createdBy: string
 }
