@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ReactNode } from 'react'
 import Drawer from '@mui/material/Drawer'
+import StatusCard from './StatusCard'
 
 type HeaderProps = {
   title?: string
@@ -9,7 +10,8 @@ type HeaderProps = {
   onCloseHeader?: () => void
   onSubmit?: () => void
   onDelete?: () => void
-  action?: 'add' | 'edit' | 'delete' | 'none'
+  action?: 'add' | 'edit' | 'delete' | 'none',
+  statusLabel?: string
 }
 
 type RightOverlayFormProps = {
@@ -19,7 +21,7 @@ type RightOverlayFormProps = {
   anchor?: 'left' | 'right'
   showHeader?: boolean
   headerProps?: HeaderProps
-  action?: 'add' | 'edit' | 'delete' | 'none'
+  action?: 'add' | 'edit' | 'delete' | 'none',
 }
 
 const HeaderSection: React.FC<HeaderProps> = ({
@@ -30,17 +32,24 @@ const HeaderSection: React.FC<HeaderProps> = ({
   onCloseHeader,
   onSubmit,
   onDelete,
-  action = 'add'
+  action = 'add',
+  statusLabel
 }) => {
   return (
     <div className="header-section">
-      <div className="flex flex-row items-center justify-start p-[25px] gap-[25px">
+      <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
+        <div className='flex items-center gap-2'>
         <div className="flex-1 flex flex-col items-start justify-start">
           <b className="leading-[28px]">{title}</b>
           <div className="text-smi tracking-[1px] leading-[20px] text-grey-dark text-left">
             {subTitle}
           </div>
         </div>
+        {statusLabel && (
+          <StatusCard status={statusLabel} />
+        )}
+        </div>
+        <div className='right-action flex items-center'>
         {action !== 'none' && (
           <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
             <button
@@ -74,6 +83,9 @@ const HeaderSection: React.FC<HeaderProps> = ({
             onClick={onCloseHeader}
           />
         </div>
+        </div>
+        
+       
       </div>
     </div>
   )

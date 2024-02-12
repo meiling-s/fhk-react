@@ -451,6 +451,37 @@
     "recyclingNumber": "回收編號",
     "inventoryLocation": "庫存位置",
     "weight": "重量"
+  },
+  "processRecord": {
+    "processing": "處理中",
+    "confirmed": "已確認",
+    "pending": "待處理",
+    "rejected": "已拒絕",
+    "completed": "已完成",
+    "cancelled": "已取消",
+    "overdue": "逾期",
+    "processingRecords": "處理記錄",
+    "search": "搜索",
+    "enterProcessingNumber": "輸入處理編號",
+    "processingName": "處理名稱",
+    "any": "任何",
+    "location": "地點",
+    "creationDate": "建立日期",
+    "handleName": "處理名稱",
+    "processingNumb": "处理编号",
+    "processingLocation": "處理編號",
+    "handler": "經手人",
+    "status": "狀態",
+    "detail": {
+      "processingData": "處理數據",
+      "recyclingInformation": "回收信息",
+      "categoryAndWeightOfRecyclablesBeforeProcessing": "處理前可回收物品的類別和重量",
+      "typeAndWeightOfProcessedRecyclates": "處理後可回收物品的類型和重量"
+    },
+    "create": {
+      "modifyRecycl": "修改回收物資料",
+      "recycNum": "回收物編號"
+    }
   }
 }
 
