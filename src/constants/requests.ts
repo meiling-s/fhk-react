@@ -58,10 +58,10 @@ export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
 
 
 //collection point
-export const GET_ALL_COLLECTIONPOINT: AxiosRequestConfig = {
+export const GET_ALL_COLLECTIONPOINT = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/collectors/collectionPoint'
-}
+  url:  `api/v1/collectors/collectionPoint/${tenantId}`
+})
 
 export const CREATE_COLLECTIONPOINT: AxiosRequestConfig = {
   method: 'post',
@@ -84,10 +84,10 @@ export const FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS: AxiosRequestConfig =
     url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
   }
 
-export const GET_CONTRACT: AxiosRequestConfig = {
+export const GET_CONTRACT = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/collectors/contract'
-}
+  url: `api/v1/collectors/contract/${tenantId}`
+})
 
 export const GET_ALL_CHECKIN_REQUESTS = (
   table: string
@@ -105,9 +105,9 @@ export const UPDATE_CHECK_IN_STATUS = (
 })
 
 //collector/pickupOrder
-export const GET_ALL_PICK_UP_ORDER: AxiosRequestConfig = {
+export const GET_ALL_PICK_UP_ORDER : AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/administrator/pico'
+  url: `api/v1/administrator/pico`
 }
 
 export const GET_PICK_UP_ORDER_BY_ID = (picoId: string): AxiosRequestConfig => ({
@@ -134,18 +134,20 @@ export const CREATE_PICK_UP_ORDER: AxiosRequestConfig = {
   url: 'api/v1/administrator/pico'
 }
 
-export const GET_LOGISTICLIST: AxiosRequestConfig = {
+export const GET_LOGISTICLIST = (table: string) : AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/collectors/logisticlist'
-}
-export const GET_COLLECTORLIST: AxiosRequestConfig = {
+  url: `api/v1/collectors/logisticlist/${table}`
+})
+
+export const GET_COLLECTORLIST = (table: string) : AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/collectors/collectorlist'
-}
-export const GET_MANULIST: AxiosRequestConfig = {
+  url: `api/v1/collectors/collectorlist/${table}`
+})
+
+export const GET_MANULIST = (table: string): AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/collectors/manulist'
-}
+  url: `api/v1/collectors/manulist/${table}`
+})
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',

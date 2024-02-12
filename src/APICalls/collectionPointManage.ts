@@ -2,16 +2,19 @@ import axios from 'axios';
 import { CREATE_COLLECTIONPOINT, FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS, FIND_COLLECTIONPOINT_EXIST_BYNAME, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT } from '../constants/requests';
 import { createCP, updateCP } from '../interfaces/collectionPoint';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
+import { returnApiToken } from '../utils/utils';
 
 const request = axios.create({
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 })
 
+const token = returnApiToken()
+
 export const getAllCollectionPoint = async () => {
 
     try {
       const response = await request({
-        ...GET_ALL_COLLECTIONPOINT,
+        ...GET_ALL_COLLECTIONPOINT(token.tenantId),
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
         // },
@@ -29,7 +32,7 @@ export const getCollectionPoint = async (page: number, size: number) => {
 
   try {
     const response = await request({
-      ...GET_ALL_COLLECTIONPOINT,
+      ...GET_ALL_COLLECTIONPOINT(token.tenantId),
       params:{
         page: page,
         size: size

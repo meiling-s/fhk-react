@@ -3,16 +3,19 @@ import { localStorgeKeyName } from '../../constants/constant';
 import { CREATE_COLLECTIONPOINT, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT, GET_ALL_CHECKIN_REQUESTS, GET_LOGISTICLIST } from '../../constants/requests';
 import { collectionPoint, createCP, updateCP } from '../../interfaces/collectionPoint';
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
+import { returnApiToken } from '../../utils/utils';
 
 const request = axios.create({
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 })
 
+const token = returnApiToken()
+
 export const getAllCollectionPoint = async () => {
 
     try {
       const response = await request({
-        ...GET_ALL_COLLECTIONPOINT
+        ...GET_ALL_COLLECTIONPOINT(token.tenantId)
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
         // },
@@ -30,7 +33,7 @@ export const getCollectionPoint = async (page: number, size: number) => {
 
   try {
     const response = await request({
-      ...GET_ALL_COLLECTIONPOINT,
+      ...GET_ALL_COLLECTIONPOINT(token.tenantId),
       params:{
         page: page,
         size: size

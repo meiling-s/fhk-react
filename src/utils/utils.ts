@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next'
 export const returnApiToken = () => {
   const decodeKeycloack = localStorage.getItem(localStorgeKeyName.decodeKeycloack)  || ''
   const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken  )|| ''
-  return {decodeKeycloack: decodeKeycloack, authToken: authToken}
+  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId  )|| ''
+  return {decodeKeycloack: decodeKeycloack, authToken: authToken, tenantId: tenantId}
 }
 
 export const ImageToBase64 = (images: ImageListType) => {

@@ -4,7 +4,7 @@ import { colPointType, collectorList, contract, logisticList, manuList, premiseT
 import axios from 'axios';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import { GET_COLLECTIONPOINT_TYPE, GET_COLLECTORLIST, GET_CONTRACT, GET_LOGISTICLIST, GET_MANULIST, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_VEHICLE_TYPE } from '../constants/requests';
-
+import { returnApiToken } from '../utils/utils';
 
 const CommonType = () => { 
     const [colPointType,setColPointType] =useState<colPointType[]>()
@@ -19,6 +19,7 @@ const CommonType = () => {
     const request = axios.create({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
     })
+    const token = returnApiToken()
 
  
 
@@ -104,7 +105,7 @@ const getSiteType = async () => {
         try {
       
             var response = await request({
-                ...GET_LOGISTICLIST,
+                ...GET_LOGISTICLIST(token.decodeKeycloack),
                 baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
@@ -123,7 +124,7 @@ const getSiteType = async () => {
         try {
 
             var response = await request({
-                ...GET_MANULIST,
+                ...GET_MANULIST(token.decodeKeycloack),
                 baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
@@ -141,7 +142,7 @@ const getSiteType = async () => {
         try {
 
             var response = await request({
-                ...GET_COLLECTORLIST,
+                ...GET_COLLECTORLIST(token.decodeKeycloack),
                 baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
@@ -156,11 +157,11 @@ const getSiteType = async () => {
       }
 
     const getContractList = async () => {
-
+        const tenantId = token.tenantId
         try {
       
             var response = await request({
-                ...GET_CONTRACT,
+                ...GET_CONTRACT(tenantId),
                 baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
