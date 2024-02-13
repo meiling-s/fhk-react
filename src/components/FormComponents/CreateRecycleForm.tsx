@@ -178,9 +178,19 @@ const CreateRecycleForm = ({
 
   const validateSchema = Yup.object().shape({
     senderName: Yup.string().required("This sendername is required"),
-    senderAddr: Yup.string().required("This senderAddr is required"),
+    senderAddr: Yup.string()
+    .required("This senderAddr is required")
+    .notOneOf(
+      [Yup.ref('receiverAddr')],
+      'Sender address cannot be the same as receiver address'
+    ),
     receiverName: Yup.string().required("This receiverName is required"),
-    receiverAddr: Yup.string().required("This receiverAddr is required"),
+    receiverAddr: Yup.string()
+    .required("This receiverAddr is required")
+    .notOneOf(
+      [Yup.ref('senderAddr')],
+      'Receiver address cannot be the same as sender address'
+    ),
     recycType: Yup.string().required("This recycType is required"),
     recycSubType: Yup.string().required("This recycSubType is required"),
     weight: Yup.number().required("This weight is required"),
