@@ -196,17 +196,17 @@ const ProcessRecord: FunctionComponent = () => {
   ]
 
   const searchfield = [
-    { label: t('pick_up_order.filter.search'), width: '100%' },
+    { label: t('pick_up_order.filter.search'), width: '20%' },
     {
       label: t('processRecord.handleName'),
-      width: '100%',
+      width: '20%',
       //options: [],
       options: getUniqueOptions('handleName'),
       field: 'recycTypeId'
     },
     {
       label: t('processRecord.location'),
-      width: '100%',
+      width: '20%',
       //options: [],
       options: getUniqueOptions('disposalLoc'),
       field: 'recycSubTypeId'
