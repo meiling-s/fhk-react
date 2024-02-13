@@ -14,6 +14,7 @@ import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { styles } from '../../constants/styles'
 import CustomField from './CustomField'
 import CustomSwitch from './CustomSwitch'
+import StatusCard from '../StatusCard'
 import CustomDatePicker2 from './CustomDatePicker2'
 import RoutineSelect from '../SpecializeComponents/RoutineSelect'
 import CustomTextField from './CustomTextField'
@@ -384,6 +385,22 @@ const PickupOrderCreateForm = ({
                   {t('pick_up_order.shipping_info')}
                 </Typography>
               </Grid>
+              {selectedPo && (
+                <Grid item> 
+                  <Grid item>
+                  <CustomField label={t('pick_up_order.table.pico_id')}>
+                    <Typography sx={styles.header2}>
+                      {selectedPo.picoId}
+                    </Typography>
+                  </CustomField>
+                  </Grid>
+                  <Grid item sx={{marginTop: 2}}>
+                    <CustomField label={t('pick_up_order.table.status')}>
+                    <StatusCard  status={selectedPo.status}/>
+                    </CustomField>
+                  </Grid>
+                </Grid>
+              )}
               <Grid item>
                 <CustomField
                   label={t('pick_up_order.select_shipping_category')}
