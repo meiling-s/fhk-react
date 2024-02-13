@@ -30,26 +30,33 @@ import {
   import { il_item } from '../../../components/FormComponents/CustomItemList'
   import { EVENT_RECORDING } from '../../../constants/configs'
   import { ImageToBase64 } from '../../../utils/utils'
+  import { generateNumericId } from '../../../utils/uuidgenerator'
   
-  interface EditProcessRecordProps {
-    drawerOpen: boolean
-    handleDrawerClose: () => void
-    onCreateRecycle: (data: createRecyclable) => void
-  }
   
+
   type createRecyclable = {
     id: number
+    newData: true,
     poNum: string
     recycTypeId: string
     recycSubTypeId: string
     weight: string
     imagesList: string[]
   }
+  interface EditProcessRecordProps {
+    drawerOpen: boolean
+    handleDrawerClose: () => void
+    onCreateRecycle: (data: createRecyclable) => void
+    editedData: createRecyclable | null
+  }
+  
+
   
   const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
     drawerOpen,
     handleDrawerClose,
-    onCreateRecycle
+    onCreateRecycle,
+    editedData
   }) => {
     const { t } = useTranslation()
     const [weight, setWeight] = useState('0')
@@ -65,7 +72,8 @@ import {
   
     const onSaveData = () => {
       const data: createRecyclable = {
-        id: 1,
+        id: editedData? editedData.id : generateNumericId(),
+        newData: true,
         poNum: 'RC020220',
         recycTypeId: recycTypeId,
         recycSubTypeId: recycSubTypeId,
@@ -113,7 +121,7 @@ import {
                 spacing={4}
                 sx={{
                   width: { xs: '100%' },
-                  marginTop: { sm: 2, xs: 6 },
+                  marginTop: { sm: 2, xs: 2 },
                   marginLeft: {
                     xs: 0
                   },
@@ -142,7 +150,7 @@ import {
                 <Grid item>
                   <CustomField label={t('processRecord.create.recycNum')}>
                     <Typography sx={localStyle.textField}>
-                      {'RC12345678'}
+                      {editedData ? editedData.poNum : 'RC029939993'}
                     </Typography>
                   </CustomField>
                 </Grid>

@@ -200,15 +200,15 @@ const ProcessRecord: FunctionComponent = () => {
     {
       label: t('processRecord.handleName'),
       width: '100%',
-      options: [],
-      //options: getUniqueOptions('handleName'),
+      //options: [],
+      options: getUniqueOptions('handleName'),
       field: 'recycTypeId'
     },
     {
       label: t('processRecord.location'),
       width: '100%',
-      options: [],
-      //options: getUniqueOptions('disposalLoc'),
+      //options: [],
+      options: getUniqueOptions('disposalLoc'),
       field: 'recycSubTypeId'
     }
   ]
@@ -259,25 +259,38 @@ const ProcessRecord: FunctionComponent = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '16px',
-            marginY: 4
+            marginY: {
+                sm: 4, xs: 6
+            },
+            marginLeft: {
+                xs: 3
+            },
+            marginBottom: {
+                xs: 0
+            }
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('processRecord.processingRecords')}
           </Typography>
         </Box>
-        <Stack direction="row" mt={3}>
+        <Box sx={{
+            display:{
+                sm: 'flex', xs: 'block'
+            },
+
+        }} mt={3}>
           {searchfield.map((s, index) => (
             <CustomSearchField
               key={index}
               label={s.label}
-              //   field={s.field}
+              field={s.field}
               width={s.width}
               options={s.options || []}
-              //   onChange={handleSearch}
+              onChange={handleSearch}
             />
           ))}
-        </Stack>
+        </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid

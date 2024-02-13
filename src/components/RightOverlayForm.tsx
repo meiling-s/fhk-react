@@ -38,15 +38,16 @@ const HeaderSection: React.FC<HeaderProps> = ({
   return (
     <div className="header-section">
       <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
-        <div className='flex items-center gap-2'>
-        <div className="flex-1 flex flex-col items-start justify-start">
-          <b className="leading-[28px]">{title}</b>
-          <div className="text-smi tracking-[1px] leading-[20px] text-grey-dark text-left">
+        <div className='md:flex items-center gap-2 sm:block'>
+        <div className="flex-1 flex flex-col items-start justify-start sm:mb-2">
+          <b className="md:text-sm sm:text-xs">{title}</b>
+          <div className="md:text-smi sm:text-2xs text-grey-dark text-left">
             {subTitle}
           </div>
         </div>
         {statusLabel && (
           <StatusCard status={statusLabel} />
+          
         )}
         </div>
         <div className='right-action flex items-center'>
