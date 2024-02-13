@@ -160,7 +160,7 @@ const PickupOrderCreateForm = ({
         reasonTchi : "壞車"
       },
       {
-        id : '1',
+        id : '2',
         reasonEn : "Surplus of Goods",
         reasonSchi: "货物过剩",
         reasonTchi : "貨物過剩"
