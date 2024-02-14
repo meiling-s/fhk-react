@@ -72,11 +72,18 @@ const ForgetPassword = () => {
     return s == ''
   }
 
+  const checkNumber = (n: string) => { 
+    if(!trySubmited){
+        return false;
+    }
+    return Number.isNaN(parseInt(n)) || n == "" || (!Number.isNaN(parseInt(n)) && parseInt(n) < 0);
+}
+
   const submitNewPassword = async () => {
     console.log('Submitted:', formValues)
     const formData: forgetPasswordForm = {
-      loginId: 'collectoradmin',
-      contactNo: 5645435,
+      loginId: formValues.username,
+      contactNo: parseInt(formValues.contactNo),
       createdBy: formValues.username
     }
 
@@ -85,9 +92,13 @@ const ForgetPassword = () => {
       const result = await forgetPassword(formData)
       const data = result?.data
 
+      console.log("data", data)
 
       if (data) {
         navigate('/confirmNewPassword')
+      } else{
+        setTrySubmited(true)
+        setErorSubmit(true)
       }
     } else {
       setTrySubmited(true)
@@ -176,7 +187,7 @@ const ForgetPassword = () => {
         {erorSubmit && (
           <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2  mb-2 text-2xs">
             <WARNING_ICON />
-            {'欄位為必填項'}
+            {'請輸入正確的使用者名稱或聯絡電話'}
           </div>
         )}
         <Stack spacing={4}>
@@ -191,9 +202,13 @@ const ForgetPassword = () => {
                 InputProps={{
                   sx: styles.textField
                 }}
+                type={field.name == 'contactNo' ? 'number' : 'text'}
                 sx={styles.inputState}
                 onChange={handleInputChange}
-                error={checkString(formValues[field.name as keyof FormValues])}
+                error={field.name == 'username' ? 
+                checkString(formValues[field.name as keyof FormValues]):
+                checkNumber(formValues[field.name as keyof FormValues])
+              }
               />
             </Box>
           ))}
