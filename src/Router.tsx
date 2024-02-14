@@ -54,13 +54,12 @@ const Router = () => {
             <Route path="/" element={<Login />} />
             
             <Route element={<AutoLogout />}>
-            <Route element={<AuthGuard />}>
-                
-                <Route path="/resetPassword" element={<ResetPassword />} />
-                <Route
+            <Route path="/resetPassword" element={<ResetPassword />} />
+            <Route
                     path="/confirmNewPassword"
                     element={<ConfirmResetPassword />}
                 />
+            <Route element={<AuthGuard />}>
                  <Route
                     path="/changePassword/:idReset?"
                     element={<ChangePassword />}
