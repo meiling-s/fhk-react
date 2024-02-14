@@ -3,10 +3,13 @@ import { localStorgeKeyName } from '../constants/constant';
 import { GET_COLLECTIONPOINT_TYPE, GET_CONTRACT, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE } from '../constants/requests';
 import { colPointType, contract, premiseType, recycType, siteType } from '../interfaces/common';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
+import { returnApiToken } from '../utils/utils';
 
 const request = axios.create({
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
 })
+
+const token = returnApiToken()
 
 export const getColPointType = async () => {
 
@@ -101,9 +104,10 @@ export const getCommonTypes = async () => {
         });
         //console.log('Get recyc type success:', JSON.stringify(response.data));
         types.recyc = response.data;
+        const tenantId = token.tenantId
 
         response = await request({
-            ...GET_CONTRACT,
+            ...GET_CONTRACT(tenantId),
             baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });

@@ -4,10 +4,13 @@ import axios from 'axios'
 import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_PICK_UP_ORDER_BY_ID, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_DETAIL_STATUS, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
 import { CreatePO, EditPo, PickupOrder, PoDtlStatus, PoStatus } from '../../../interfaces/pickupOrder'
 import { createCP } from '../../../interfaces/collectionPoint'
+import { returnApiToken } from '../../../utils/utils';
 
   const request = axios.create({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
     })
+  
+  const token = returnApiToken()
 
   export const getAllPickUpOrder = async (page: number, size: number) => {
 

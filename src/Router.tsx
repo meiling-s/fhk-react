@@ -33,7 +33,8 @@ import Staff from "./pages/Collector/Staff";
 import Report from "./pages/Collector/EventRecording/Report";
 import RecycleShipment from "./pages/Collector/RecycleShipment";
 
-import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
+//import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
+import ProcessRecord from "./pages/Collector/ProcessRecord/ProcessRecord";
 import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
 import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
 import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
@@ -81,7 +82,7 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/collector" element={<CollectionPoint />} />
           <Route path="/collector/collectionPoint"element={<CollectionPoint />} />
-          <Route path="/collector/processRecord" element={<></>} />
+          <Route path="/collector/processRecord" element={<ProcessRecord />} />
           <Route path="/collector/pickupOrder" element={<PickupOrder />} />
           <Route path="/collector/createPickupOrder" element={<CreatePickupOrder/>} />
           <Route path="/collector/editPickupOrder" element={<EditPickupOrder />} />
