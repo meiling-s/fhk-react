@@ -6,6 +6,7 @@ import {
   Grid,
   IconButton,
   Modal,
+  Divider,
   Stack,
   Typography
 } from '@mui/material'
@@ -54,6 +55,67 @@ import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 import { divIcon } from 'leaflet'
 
+
+
+type DeleteModalProps = {
+  open: boolean
+  selectedRecycLoc: CreatePicoDetail
+  onClose: () => void
+  onDelete: () => void
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({
+  open,
+  selectedRecycLoc,
+  onClose,
+  onDelete
+}) => {
+  const { t } = useTranslation()  
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={styles.modal}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('check_out.confirm_approve')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ alignSelf: 'center' }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onDelete()
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
+
 const PickupOrderCreateForm = ({
   selectedPo,
   title,
@@ -70,6 +132,7 @@ const PickupOrderCreateForm = ({
   editMode:boolean
 }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openDelete , setOpenDelete] = useState<boolean>(false);
   const [editRowId, setEditRowId] = useState<number | null>(null);
   const [updateRowId,setUpdateRowId] =  useState<number | null>(null);
   const [id, setId] = useState<number>(0);
@@ -194,6 +257,13 @@ const PickupOrderCreateForm = ({
     return reasons
   }
 
+  const onDeleteModal = () => {
+
+
+  }
+
+
+
   const columns: GridColDef[] = [
     {
       field: 'pickupAt',
@@ -312,6 +382,9 @@ const PickupOrderCreateForm = ({
       headerName: '',
       width: 100,
       renderCell: (params) => (
+        // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
+        //   <DELETE_OUTLINED_ICON />
+        // </IconButton>
         <IconButton onClick={() => handleDeleteRow(params.row.id)}>
           <DELETE_OUTLINED_ICON />
         </IconButton>
@@ -712,6 +785,13 @@ const PickupOrderCreateForm = ({
                 ) : null
               )}
             </Stack>
+            <DeleteModal
+              open={openDelete}
+              selectedId={recycbleLocId}
+              onClose={() => {
+                setOpenDelete(false)
+              }}
+              onDelete={onDeleteModal} />
           </LocalizationProvider>
         </Box>
       </form>
