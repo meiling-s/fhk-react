@@ -460,5 +460,36 @@
     "recyclingNumber": "Recycling Number",
     "inventoryLocation": "Inventory Location",
     "weight": "Weight"
+  },
+  "processRecord": {
+    "processing": "Processing",
+    "confirmed": "Confirmed",
+    "pending": "Pending",
+    "rejected": "Rejected",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "overdue": "Overdue",
+    "processingRecords": "Processing Records",
+    "search": "Search",
+    "enterProcessingNumber": "Enter Processing Number",
+    "processingName": "Processing Name",
+    "any": "Any",
+    "location": "Location",
+    "creationDate": "Creation Date",
+    "handleName": "Handle name",
+    "processingNumb": "Processing number",
+    "processingLocation": "Processing Location",
+    "handler": "Handler",
+    "status": "Status",
+    "detail": {
+      "processingData": "Processing Data",
+      "recyclingInformation": "Recycling Information",
+      "categoryAndWeightOfRecyclablesBeforeProcessing": "Category and Weight of Recyclables Before Processing",
+      "typeAndWeightOfProcessedRecyclates": "Type and Weight of Processed Recyclates"
+    },
+    "create": {
+      "modifyRecycl": "Modify recycling information",
+      "recycNum": "Recycling number"
+    }
   }
 }

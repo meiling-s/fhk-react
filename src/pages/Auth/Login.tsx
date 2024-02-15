@@ -103,6 +103,8 @@ const Login = () => {
         const azpValue = decodedToken.azp;
         localStorage.setItem(localStorgeKeyName.decodeKeycloack, azpValue || '')
         // 20240129 add function list daniel keung start
+        const tenantID = azpValue.substring(7)
+        localStorage.setItem(localStorgeKeyName.tenantId, tenantID || '')
         loginTo = result?.realm
         // 20240129 add function list daniel keung end
         switch(loginTo){

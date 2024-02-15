@@ -7,6 +7,7 @@ export const localStorgeKeyName = {
   // 20240129 add function list daniel keung start 
   functionList: 'functionList',
   // 20240129 add function list daniel keung end
+  tenantId: 'tenantId'
 }
 
 export const defaultPath = {

@@ -9,7 +9,7 @@ import { forgetPassword } from '../../APICalls/forgetPassword'
 import { forgetPasswordForm } from '../../interfaces/forgetPassword'
 
 interface FormValues {
-  [key: string]: string
+  [key: string]: string  
 }
 
 const ForgetPassword = () => {
@@ -18,11 +18,11 @@ const ForgetPassword = () => {
   const submitBtn = '發送'
   const [formValues, setFormValues] = useState<FormValues>({
     username: '',
-    email: ''
+    contactNo: ''
   })
   const formFields = [
     { name: 'username', label: '登入名稱', placeholder: '請輸入登入名稱' },
-    { name: 'email', label: '電郵地址', placeholder: '請輸入電郵地址' }
+    { name: 'contactNo', label: '聯絡電話', placeholder: '請輸入聯絡電話' }
   ]
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<
@@ -34,14 +34,23 @@ const ForgetPassword = () => {
 
   useEffect(() => {
     const tempV: { field: string; error: string }[] = []
-
-    Object.keys(formValues).forEach((fieldName) => {
-      formValues[fieldName as keyof FormValues].trim() === '' &&
-        tempV.push({
-          field: fieldName,
-          error: `fields is required`
-        })
+    formValues?.username.trim() === '' && tempV.push({
+        field: '登入名稱',
+        error: `欄位為必填項`
     })
+
+    Number.isNaN(parseInt(formValues?.contactNo)) && tempV.push({
+      field: '電郵地址',
+      error: `欄位為必填項`
+  })
+
+    // Object.keys(formValues).forEach((fieldName) => {
+    //   formValues[fieldName as keyof FormValues].trim() === '' &&
+    //     tempV.push({
+    //       field: fieldName,
+    //       error: `fields is required`
+    //     })
+    // })
 
     setValidation(tempV)
   }, [formValues])
@@ -63,22 +72,33 @@ const ForgetPassword = () => {
     return s == ''
   }
 
+  const checkNumber = (n: string) => { 
+    if(!trySubmited){
+        return false;
+    }
+    return Number.isNaN(parseInt(n)) || n == "" || (!Number.isNaN(parseInt(n)) && parseInt(n) < 0);
+}
+
   const submitNewPassword = async () => {
     console.log('Submitted:', formValues)
     const formData: forgetPasswordForm = {
       loginId: formValues.username,
-      email: formValues.email,
+      contactNo: parseInt(formValues.contactNo),
       createdBy: formValues.username
     }
+
     console.log('data : ', formData)
     if (validation.length === 0) {
-      //for temporary show notification
-      // setModalConfirm(true)
       const result = await forgetPassword(formData)
       const data = result?.data
 
+      console.log("data", data)
+
       if (data) {
         navigate('/confirmNewPassword')
+      } else{
+        setTrySubmited(true)
+        setErorSubmit(true)
       }
     } else {
       setTrySubmited(true)
@@ -167,7 +187,7 @@ const ForgetPassword = () => {
         {erorSubmit && (
           <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2  mb-2 text-2xs">
             <WARNING_ICON />
-            {'欄位為必填項'}
+            {'請輸入正確的使用者名稱或聯絡電話'}
           </div>
         )}
         <Stack spacing={4}>
@@ -182,9 +202,13 @@ const ForgetPassword = () => {
                 InputProps={{
                   sx: styles.textField
                 }}
+                type={field.name == 'contactNo' ? 'number' : 'text'}
                 sx={styles.inputState}
                 onChange={handleInputChange}
-                error={checkString(formValues[field.name as keyof FormValues])}
+                error={field.name == 'username' ? 
+                checkString(formValues[field.name as keyof FormValues]):
+                checkNumber(formValues[field.name as keyof FormValues])
+              }
               />
             </Box>
           ))}
