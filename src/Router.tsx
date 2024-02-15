@@ -54,7 +54,7 @@ const Router = () => {
             <Routes>
             <Route path="/" element={<Login />} />
             <Route
-                    path="/changePassword?"
+                    path="/changePassword"
                     element={<ChangePassword />}
                 />
             
