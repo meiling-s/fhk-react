@@ -52,6 +52,10 @@ const Router = () => {
          
             <Routes>
             <Route path="/" element={<Login />} />
+            <Route
+                    path="/changePassword?"
+                    element={<ChangePassword />}
+                />
             
             <Route element={<AutoLogout />}>
             <Route element={<AuthGuard />}>
@@ -60,10 +64,6 @@ const Router = () => {
                 <Route
                     path="/confirmNewPassword"
                     element={<ConfirmResetPassword />}
-                />
-                 <Route
-                    path="/changePassword/:idReset?"
-                    element={<ChangePassword />}
                 />
                 
 
