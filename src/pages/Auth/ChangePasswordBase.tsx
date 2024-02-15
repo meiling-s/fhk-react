@@ -83,7 +83,7 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
       label: t('changePass.new_password'),
       placeholder: t('changePass.placeholder_new_password'),
       type: 'password',
-      helperText: t('changePass.helper_new_pass')
+      helperText: t('login.err_msg_002')
     },
 
     {
