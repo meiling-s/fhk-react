@@ -48,6 +48,8 @@ import { v4 as uuidv4 } from "uuid";
 import { collectorList, manuList } from "../../interfaces/common";
 import CustomAutoComplete from "./CustomAutoComplete";
 import i18n from "../../setups/i18n";
+import dayjs, { Dayjs } from 'dayjs';
+import { format } from '../../constants/constant'
 
 type props = {
   onClose: () => void;
@@ -252,6 +254,9 @@ const CreateRecycleForm = ({
     },
   ];
 
+  const initialTime = "2024-02-10T09:00:00"; // Example initial time string
+const parsedDate = new Date(initialTime); // Parse the string into a Date object
+
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
@@ -295,11 +300,13 @@ const CreateRecycleForm = ({
                 <CustomField label="運送時間" mandatory>
                   <TimePicker
                     sx={{ width: "100%" }}
-                    value={formik.values.pickupAt}
+                    value={formik.values.pickupAt? formik.values.pickupAt: null}
                     onChange={(value) => {
                       if (value != null)
+                      
                         formik.setFieldValue(
                           "pickupAt",
+                          
                           dateToLocalTime(new Date(value))
                         );
                     }}
@@ -350,7 +357,7 @@ const CreateRecycleForm = ({
                           ...(collectorList?.map((option) => option.collectorNameTchi) ?? []),
                           ...(manuList?.map((option) => option.manufacturerNameTchi) ?? [])
                         ]}
-                        sx={{ width: "400px" }}
+                        sx={{ width: "100%" }}
                         onChange={(
                           _: SyntheticEvent,
                           newValue: string | null
