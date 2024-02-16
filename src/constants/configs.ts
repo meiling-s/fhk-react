@@ -6,7 +6,7 @@ export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
     account: 'http://10.166.22.250/',
     administrator: 'http://10.166.22.250/',
     collector: 'http://10.166.22.250/',
-    // account: 'hgit ttps://www.greenhoopapp.com/',
+    // account: 'https://www.greenhoopapp.com/',
     // administrator: 'https://www.greenhoopapp.com/',
     // collector: 'https://www.greenhoopapp.com/',
   },

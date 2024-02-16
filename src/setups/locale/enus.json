@@ -244,6 +244,7 @@
   },
   "pick_up_order": {
     "enquiry_pickup_order": "Enquiry pickup order",
+    "delete_msg": "are you sure want delete this item ?",
     "table": {
       "created_datetime": "Created datetime",
       "pico_id": "PO Number",

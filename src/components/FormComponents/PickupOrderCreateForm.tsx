@@ -6,6 +6,7 @@ import {
   Grid,
   IconButton,
   Modal,
+  Divider,
   Stack,
   Typography
 } from '@mui/material'
@@ -14,6 +15,7 @@ import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { styles } from '../../constants/styles'
 import CustomField from './CustomField'
 import CustomSwitch from './CustomSwitch'
+import StatusCard from '../StatusCard'
 import CustomDatePicker2 from './CustomDatePicker2'
 import RoutineSelect from '../SpecializeComponents/RoutineSelect'
 import CustomTextField from './CustomTextField'
@@ -53,6 +55,67 @@ import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 import { divIcon } from 'leaflet'
 
+
+
+type DeleteModalProps = {
+  open: boolean
+  selectedRecycLoc?: CreatePicoDetail | null
+  onClose: () => void
+  onDelete: (id: number) => void
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({
+  open,
+  selectedRecycLoc,
+  onClose,
+  onDelete
+}) => {
+  const { t } = useTranslation()  
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box  sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('pick_up_order.delete_msg')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onDelete(selectedRecycLoc?.id)
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
+
 const PickupOrderCreateForm = ({
   selectedPo,
   title,
@@ -69,6 +132,7 @@ const PickupOrderCreateForm = ({
   editMode:boolean
 }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openDelete , setOpenDelete] = useState<boolean>(false);
   const [editRowId, setEditRowId] = useState<number | null>(null);
   const [updateRowId,setUpdateRowId] =  useState<number | null>(null);
   const [id, setId] = useState<number>(0);
@@ -82,6 +146,7 @@ const PickupOrderCreateForm = ({
     const contractDate = new Date(contract.contractToDate)
     return contractDate>currentDate
   })
+  const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(null)
   
  
   const handleCloses = () => {
@@ -160,7 +225,7 @@ const PickupOrderCreateForm = ({
         reasonTchi : "壞車"
       },
       {
-        id : '1',
+        id : '2',
         reasonEn : "Surplus of Goods",
         reasonSchi: "货物过剩",
         reasonTchi : "貨物過剩"
@@ -192,6 +257,13 @@ const PickupOrderCreateForm = ({
     })
     return reasons
   }
+
+  const onDeleteModal = (id: number) => {
+    handleDeleteRow(id)
+    setOpenDelete(false)
+  }
+
+
 
   const columns: GridColDef[] = [
     {
@@ -311,7 +383,10 @@ const PickupOrderCreateForm = ({
       headerName: '',
       width: 100,
       renderCell: (params) => (
-        <IconButton onClick={() => handleDeleteRow(params.row.id)}>
+        // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
+        //   <DELETE_OUTLINED_ICON />
+        // </IconButton>
+        <IconButton onClick={() =>{ setOpenDelete(true); setRecycbleLocId(params.row)}}>
           <DELETE_OUTLINED_ICON />
         </IconButton>
       )
@@ -384,6 +459,22 @@ const PickupOrderCreateForm = ({
                   {t('pick_up_order.shipping_info')}
                 </Typography>
               </Grid>
+              {selectedPo && (
+                <Grid item> 
+                  <Grid item>
+                  <CustomField label={t('pick_up_order.table.pico_id')}>
+                    <Typography sx={styles.header2}>
+                      {selectedPo.picoId}
+                    </Typography>
+                  </CustomField>
+                  </Grid>
+                  <Grid item sx={{marginTop: 2}}>
+                    <CustomField label={t('pick_up_order.table.status')}>
+                    <StatusCard  status={selectedPo.status}/>
+                    </CustomField>
+                  </Grid>
+                </Grid>
+              )}
               <Grid item>
                 <CustomField
                   label={t('pick_up_order.select_shipping_category')}
@@ -451,7 +542,7 @@ const PickupOrderCreateForm = ({
                       logisticList?.map((option) => option.logisticNameTchi) ??
                       []
                     }
-                    sx={{ width: '400px' }}
+                    sx={{ width: '100%' }}
                     onChange={(_: SyntheticEvent, newValue: string | null) =>
                       formik.setFieldValue('logisticName', newValue)
                     }
@@ -695,6 +786,13 @@ const PickupOrderCreateForm = ({
                 ) : null
               )}
             </Stack>
+            <DeleteModal
+              open={openDelete}
+              selectedRecycLoc={recycbleLocId}
+              onClose={() => {
+                setOpenDelete(false)
+              }}
+              onDelete={onDeleteModal} />
           </LocalizationProvider>
         </Box>
       </form>
@@ -721,7 +819,18 @@ let localstyles = {
     '&.MuiButton-root:hover': {
       bgcolor: '#F4F4F4'
     }
-  }
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: '34%',
+    height: 'fit-content',
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5
+  },
 }
 
 export default PickupOrderCreateForm
