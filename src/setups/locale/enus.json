@@ -209,8 +209,14 @@
     "error": "Error, cannot reset password"
   },
   "login": {
-    "wrongUsernameOrPassword": "Wrong username or password"
-  },
+    "wrongUsernameOrPassword": "Wrong username or password",
+    "err_msg_001": "Please input the correct username or password",
+    "err_msg_002": "At least eight characters with mixed-case alphabetic characters, numerals and special characters.",
+    "err_msg_005": "Account is abnormal. Please try again and contact administratorif this problem persists.",
+    "err_msg_006": "Please try later.",
+    "err_msg_007": "Login failed over 5 times. Your account is locked.",
+    "err_msg_008": "That username is taken. Try another."
+      },
   "mainMenu": {
     "manage": "Manage",
     "overview": "Overview"

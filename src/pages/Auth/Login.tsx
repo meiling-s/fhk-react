@@ -124,8 +124,13 @@ const Login = () => {
             break;
         }
       }else{
-        console.log(warningMsg)
-        setWarningMsg(t("login.wrongUsernameOrPassword"));
+        const errCode = result
+        if(errCode == '004') {
+          //navigate to reset pass firsttime login
+          localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
+          return navigate('/changePassword')  
+        }
+        setWarningMsg(t(`login.err_msg_${errCode}`));
       }
     }
     
