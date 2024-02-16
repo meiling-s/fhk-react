@@ -78,7 +78,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={styles.modal}>
+      <Box>
         <Stack spacing={2}>
           <Box>
             <Typography
@@ -785,13 +785,13 @@ const PickupOrderCreateForm = ({
                 ) : null
               )}
             </Stack>
-            <DeleteModal
+            {/* <DeleteModal
               open={openDelete}
               selectedId={recycbleLocId}
               onClose={() => {
                 setOpenDelete(false)
               }}
-              onDelete={onDeleteModal} />
+              onDelete={onDeleteModal} /> */}
           </LocalizationProvider>
         </Box>
       </form>
