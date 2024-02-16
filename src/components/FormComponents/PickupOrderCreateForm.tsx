@@ -59,9 +59,9 @@ import { divIcon } from 'leaflet'
 
 type DeleteModalProps = {
   open: boolean
-  selectedRecycLoc: CreatePicoDetail
+  selectedRecycLoc?: CreatePicoDetail | null
   onClose: () => void
-  onDelete: () => void
+  onDelete: (id: number) => void
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
@@ -78,24 +78,24 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box>
+      <Box sx={localstyles.modal}>
         <Stack spacing={2}>
-          <Box>
+          <Box  sx={{ paddingX: 3, paddingTop: 3 }}>
             <Typography
               id="modal-modal-title"
               variant="h6"
               component="h2"
               sx={{ fontWeight: 'bold' }}
             >
-              {t('check_out.confirm_approve')}
+              {t('pick_up_order.delete_msg')}
             </Typography>
           </Box>
           <Divider />
-          <Box sx={{ alignSelf: 'center' }}>
+          <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
             <button
               className="primary-btn mr-2 cursor-pointer"
               onClick={() => {
-                onDelete()
+                onDelete(selectedRecycLoc?.id)
               }}
             >
               {t('check_in.confirm')}
@@ -146,6 +146,7 @@ const PickupOrderCreateForm = ({
     const contractDate = new Date(contract.contractToDate)
     return contractDate>currentDate
   })
+  const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(null)
   
  
   const handleCloses = () => {
@@ -257,9 +258,9 @@ const PickupOrderCreateForm = ({
     return reasons
   }
 
-  const onDeleteModal = () => {
-
-
+  const onDeleteModal = (id: number) => {
+    handleDeleteRow(id)
+    setOpenDelete(false)
   }
 
 
@@ -385,7 +386,7 @@ const PickupOrderCreateForm = ({
         // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
         //   <DELETE_OUTLINED_ICON />
         // </IconButton>
-        <IconButton onClick={() => handleDeleteRow(params.row.id)}>
+        <IconButton onClick={() =>{ setOpenDelete(true); setRecycbleLocId(params.row)}}>
           <DELETE_OUTLINED_ICON />
         </IconButton>
       )
@@ -785,13 +786,13 @@ const PickupOrderCreateForm = ({
                 ) : null
               )}
             </Stack>
-            {/* <DeleteModal
+            <DeleteModal
               open={openDelete}
-              selectedId={recycbleLocId}
+              selectedRecycLoc={recycbleLocId}
               onClose={() => {
                 setOpenDelete(false)
               }}
-              onDelete={onDeleteModal} /> */}
+              onDelete={onDeleteModal} />
           </LocalizationProvider>
         </Box>
       </form>
@@ -818,7 +819,18 @@ let localstyles = {
     '&.MuiButton-root:hover': {
       bgcolor: '#F4F4F4'
     }
-  }
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: '34%',
+    height: 'fit-content',
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5
+  },
 }
 
 export default PickupOrderCreateForm

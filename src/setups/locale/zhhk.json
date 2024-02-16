@@ -242,6 +242,7 @@
   },
   "pick_up_order": {
     "enquiry_pickup_order": "查詢運單",
+    "delete_msg": "您確定要刪除此項目嗎 ?",
     "table": {
       "created_datetime": "建立日期",
       "pico_id": "運單編號",
