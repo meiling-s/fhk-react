@@ -143,7 +143,7 @@ const Vehicle: FunctionComponent = () => {
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              onClick={() => handleAction(params, 'edit')}
+              onClick={(event) => {event.stopPropagation();  handleAction(params, 'edit')}}
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -159,7 +159,7 @@ const Vehicle: FunctionComponent = () => {
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              onClick={() => handleAction(params, 'delete')}
+              onClick={(event) => {event.stopPropagation(); handleAction(params, 'delete')}}
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -176,7 +176,10 @@ const Vehicle: FunctionComponent = () => {
   }
 
   const handleSelectRow = (params: GridRowParams) => {
-    
+    setAction('edit')
+    setRowId(params.row.id)
+    setSelectedRow(params.row)
+    setDrawerOpen(true) 
   }
 
   const showErrorToast = (msg: string) => {
@@ -265,7 +268,6 @@ const Vehicle: FunctionComponent = () => {
               hideFooter
               columns={columns}
               checkboxSelection
-              disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               sx={{
