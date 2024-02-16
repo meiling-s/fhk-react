@@ -53,6 +53,10 @@ const Router = () => {
          
             <Routes>
             <Route path="/" element={<Login />} />
+            <Route
+                    path="/changePassword"
+                    element={<ChangePassword />}
+                />
             
             <Route element={<AutoLogout />}>
             <Route path="/resetPassword" element={<ResetPassword />} />

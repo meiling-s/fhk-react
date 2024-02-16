@@ -2,7 +2,7 @@ export const localStorgeKeyName = {
   keycloakToken: 'keycloakToken',
   role: 'userRole',
   username: 'username',
-  firstTimeLogin: 'false',
+  firstTimeLogin: 'firstTimeLogin',
   decodeKeycloack: 'decodeKeycloack',
   // 20240129 add function list daniel keung start 
   functionList: 'functionList',
