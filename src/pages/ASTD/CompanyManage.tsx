@@ -42,7 +42,7 @@ import TenantDetails from './TenantDetails'
 import { Company, UpdateStatus } from '../../interfaces/tenant'
 
 import { useTranslation } from 'react-i18next'
-import { ErrorMessage, useFormik } from 'formik'
+import { ErrorMessage, useFormik, validateYupSchema } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 
@@ -281,18 +281,25 @@ type inviteForm = {
   open: boolean
   onClose: () => void
   onSubmit: (formikValues: InviteTenant, submitForm: () => void) => void
+  
 }
 
-function InviteForm({ open, onClose, onSubmit }: inviteForm) {
+function InviteForm({ open, onClose, onSubmit}: inviteForm) {
   const { t } = useTranslation()
   const [submitable, setSubmitable] = useState<boolean>(false)
 
-  const validateSchema = Yup.object().shape({})
+  const validateSchema = Yup.object().shape({
+    companyNumber: Yup.string().required('This companyNumber is required'),
+    companyCategory :Yup.string().required('This companyNumber is required')
+    
+    
+  })
+
 
   const formik = useFormik<InviteTenant>({
     initialValues: {
       companyNumber: '',
-      companyCategory: '',
+      companyCategory: '',  
       companyZhName: '',
       companyCnName: '',
       companyEnName: '',
@@ -315,7 +322,7 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
       placeholder: t('tenant.invite_form.enter_company_number'),
       id: 'companyNumber',
       value: formik.values.companyNumber,
-      error: formik.errors.companyNumber && formik.touched.companyNumber
+      error:formik.errors.companyNumber && formik.touched.companyNumber,
     },
     {
       label: t('tenant.invite_form.company_category'),
@@ -355,6 +362,7 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
   ]
 
   return (
+
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
       <Modal
         open={open}
@@ -434,7 +442,11 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
               <Button
                 disabled={submitable}
                 // onClick={() => onSubmit(formik.handleSubmit)}
-                onClick={() => onSubmit(formik.values, formik.submitForm)}
+                onClick={async () => {
+                  await onSubmit(formik.values, formik.submitForm);
+                  formik.resetForm(); // Reset the form after the onSubmit function completes
+                }}
+                
                 sx={[
                   styles.buttonFilledGreen,
                   {
@@ -452,6 +464,8 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
         </Box>
       </Modal>
     </LocalizationProvider>
+ 
+ 
   )
 }
 
@@ -471,6 +485,9 @@ function CompanyManage() {
   const [openDetail, setOpenDetails] = useState<boolean>(false)
   const [selectedTenanId, setSelectedTenantId] = useState(0)
   const [rejectedId, setRejectId] = useState(0)
+  
+ 
+
   
  
 
@@ -510,12 +527,14 @@ function CompanyManage() {
       console.log('approve success')
       initCompaniesData()
     }
+    window.location.reload()
     setOpenDetails(false)
   }
 
   const handleRejectTenant = (tenantId: number) => {
     setRejectId(tenantId)
     setRejectModal(true)
+    
   }
 
   const HeaderCheckbox = (
@@ -622,7 +641,7 @@ function CompanyManage() {
                       height: '40px'
                     }
                   ]}
-                  variant="outlined"
+                  variant="outlined"  
                   onClick={(event) => {
                     handleRejectTenant(params.row.id);
                     event.stopPropagation(); // Prevent event bubbling
@@ -848,6 +867,7 @@ function CompanyManage() {
           open={invFormModal}
           onClose={() => setInvFormModal(false)}
           onSubmit={onInviteFormSubmit}
+        
         />
 
         <InviteModal
