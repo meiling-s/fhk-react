@@ -30,17 +30,14 @@ export const getAllCollectionPoint = async () => {
 }
 
 export const getCollectionPoint = async (page: number, size: number) => {
-
+  const auth = returnApiToken()
   try {
     const response = await request({
-      ...GET_ALL_COLLECTIONPOINT(token.tenantId),
+      ...GET_ALL_COLLECTIONPOINT(auth.tenantId),
       params:{
         page: page,
         size: size
       }
-      // headers: {
-      //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
-      // },
     });
     console.log('Get all collection point success:', JSON.stringify(response.data));
     return response
