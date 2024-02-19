@@ -104,10 +104,10 @@ export const getCommonTypes = async () => {
         });
         //console.log('Get recyc type success:', JSON.stringify(response.data));
         types.recyc = response.data;
-        const tenantId = token.tenantId
+        const auth = returnApiToken()
 
         response = await request({
-            ...GET_CONTRACT(tenantId),
+            ...GET_CONTRACT(auth.tenantId),
             baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });

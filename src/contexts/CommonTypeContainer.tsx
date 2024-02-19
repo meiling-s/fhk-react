@@ -19,7 +19,7 @@ const CommonType = () => {
     const request = axios.create({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
     })
-    const token = returnApiToken()
+    
 
  
 
@@ -101,6 +101,7 @@ const getSiteType = async () => {
     }
     
     const getLogisticlist = async () => {
+        const token = returnApiToken()
 
         try {
       
@@ -120,7 +121,7 @@ const getSiteType = async () => {
       }
          
     const getManuList = async () => {
-
+        const token = returnApiToken()
         try {
 
             var response = await request({
@@ -138,7 +139,7 @@ const getSiteType = async () => {
         }
       }
       const getCollectorList = async () => {
-
+        const token = returnApiToken()
         try {
 
             var response = await request({
@@ -157,11 +158,11 @@ const getSiteType = async () => {
       }
 
     const getContractList = async () => {
-        const tenantId = token.tenantId
+        const token = returnApiToken()
         try {
       
             var response = await request({
-                ...GET_CONTRACT(tenantId),
+                ...GET_CONTRACT(token.tenantId),
                 baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
