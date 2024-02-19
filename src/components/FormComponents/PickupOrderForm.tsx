@@ -15,6 +15,8 @@ import CustomField from './CustomField'
 import StatusCard from '../StatusCard'
 import theme from '../../themes/palette'
 import PickupOrderCard from '../PickupOrderCard'
+import { format } from "../../constants/constant";
+import dayjs from 'dayjs'
 import {
   PickupOrder,
   PickupOrderDetail,
@@ -158,7 +160,7 @@ const PickupOrderForm = ({
 
             <CustomField label= {t('pick_up_order.item.date_time')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {new Date().toLocaleString()}
+                {selectedPickupOrder?.createdAt ? dayjs(new Date(selectedPickupOrder?.createdAt)).format(format.dateFormat1): ''}
               </Typography>
             </CustomField>
 
