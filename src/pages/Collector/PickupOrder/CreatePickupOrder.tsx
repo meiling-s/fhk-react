@@ -2,15 +2,12 @@ import { useFormik } from 'formik'
 import PickupOrderCreateForm from '../../../components/FormComponents/PickupOrderCreateForm'
 import {
   createPickUpOrder,
-  getAllPickUpOrder
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { CreatePO, CreatePicoDetail, PickupOrder } from '../../../interfaces/pickupOrder'
 import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
-import { useContainer } from 'unstated-next'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { localStorgeKeyName } from '../../../constants/constant'
 import { returnApiToken } from '../../../utils/utils'
 
 const CreatePickupOrder = () => {

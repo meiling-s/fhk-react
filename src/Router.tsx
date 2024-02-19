@@ -64,7 +64,7 @@ const Router = () => {
                     path="/confirmNewPassword"
                     element={<ConfirmResetPassword />}
                 />
-            <Route element={<AuthGuard />}>
+            {/* <Route element={<AuthGuard />}> */}
                  <Route
                     path="/changePassword/:idReset?"
                     element={<ChangePassword />}
@@ -81,7 +81,7 @@ const Router = () => {
         {/* <Route path="/register/firstStep" element={<RegisterStepOne />} />
         <Route path="/register/secondStep" element={<RegisterStepTwo />} /> */}
         <Route path="/register/result" element={<RegisterResult />} />
-
+        
         {/* collector admin */}
         <Route element={<MainLayout />}>
           <Route path="/collector" element={<CollectionPoint />} />
@@ -122,7 +122,7 @@ const Router = () => {
         </Route>
 
         </Route>
-        </Route>
+        {/* </Route> */}
       
       </Routes>
     </BrowserRouter>

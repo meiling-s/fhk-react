@@ -433,7 +433,7 @@ const PickupOrderCreateForm = ({
   }
   return (
     <>
-      <form onSubmit={formik.handleSubmit} className="w-full">
+      <form onSubmit={formik.handleSubmit}>
         <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
           <LocalizationProvider
             dateAdapter={AdapterDayjs}
