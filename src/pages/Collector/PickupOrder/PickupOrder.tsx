@@ -25,6 +25,8 @@ import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
 
 import i18n from '../../../setups/i18n'
+import { format } from "../../../constants/constant";
+import dayjs from 'dayjs'
 
 interface Option {
   value: string;
@@ -172,9 +174,15 @@ const PickupOrders = () => {
     }
   }
 
+  const getFormatDate = (data: string) => {
+    const formattedDate = dayjs(data).format(format.dateFormat1)
+  
+    return formattedDate
+  }
+
   const rows: any[] =(pickupOrder?.map((item) => ({
     id: item.picoId,
-    建立日期: item.effFrmDate, 
+    建立日期: getFormatDate(item.createdAt),
     物流公司: item.logisticName,
     运单编号: item.picoId, 
     送货日期: getDeliveryDate(item),

@@ -731,6 +731,7 @@ const PickupOrderCreateForm = ({
                     drawerOpen={openPico}
                     handleDrawerClose={handleClosePicoList}
                     selectPicoDetail={selectPicoRefrence}
+                    picoId={selectedPo?.picoId}
                   ></PickupOrderList>
 
                   <Button
