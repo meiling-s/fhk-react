@@ -28,17 +28,20 @@ interface AddWarehouseProps {
     pickupOrderDetail: PickupOrderDetail,
     picoId: string
   ) => void
+  picoId?: string
 }
 
 const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   drawerOpen,
   handleDrawerClose,
-  selectPicoDetail
+  selectPicoDetail,
+  picoId
 }) => {
   const { t } = useTranslation()
   const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
   const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
   const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
+  console.log("selectPicoDetail", picoId)
 
     const initPickupOrderRequest = async () => {
     const result = await getAllPickUpOrder(0, 10);
@@ -65,7 +68,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
         receiver: detailPico.receiverName,
         pickupOrderDetail: detailPico
       }))
-    ) ?? []
+    )?.filter((picoDetail) => picoDetail.picoId !== picoId) ?? []
 
   // setPicoList(picoDetailList)
   // setFilteredPico(picoList)
