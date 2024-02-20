@@ -95,20 +95,20 @@ const PickupOrders = () => {
   const location = useLocation();
   const action: string = location.state;
   const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
-
+  const [rows, setRows] = useState<Row[]>([])
+  const [filteredPico , setFilteredPico] = useState<Row[]>([])
+  
   const initPickupOrderRequest = async () => {
     const result = await getAllPickUpOrder(page - 1, pageSize);
     const data = result?.data.content;
     console.log("pickup order content: ", data);
     if (data && data.length > 0) {
       setPickupOrder(data);
-
       setTotalData( result.data.totalPages)
     }}
  
     useEffect(() => {
       initPickupOrderRequest();
-     
       if(action){
         var toastMsg = "";
         switch(action){
@@ -180,17 +180,26 @@ const PickupOrders = () => {
     return formattedDate
   }
 
-  const rows: any[] =(pickupOrder?.map((item) => ({
-    id: item.picoId,
-    createdAt: getFormatDate(item.createdAt),
-    logisticCompany: item.logisticName,
-    picoId: item.picoId, 
-    deliveryDate: getDeliveryDate(item),
-    senderCompany: item.pickupOrderDetail[0]?.senderName,
-    receiver: item.pickupOrderDetail[0]?.receiverName,
-    status: item.status,
-  //}))??[])
-  }))??[]).filter((item) => item.status !== 'CLOSED');
+  useEffect (() => {
+  // const mappingData = () => {
+    const tempRows: any[] =(pickupOrder?.map((item) => ({
+      id: item.picoId,
+      createdAt: getFormatDate(item.createdAt),
+      logisticCompany: item.logisticName,
+      picoId: item.picoId, 
+      deliveryDate: getDeliveryDate(item),
+      senderCompany: item.pickupOrderDetail[0]?.senderName,
+      receiver: item.pickupOrderDetail[0]?.receiverName,
+      status: item.status,
+      recyType: item.pickupOrderDetail.map(item => {return item.recycType})
+    //}))??[])
+    }))??[]).filter((item) => item.status !== 'CLOSED');
+    setRows(tempRows)
+    setFilteredPico(tempRows)
+  // }
+  },[pickupOrder])
+
+ 
 
   interface Row {
     id: number;
@@ -201,6 +210,7 @@ const PickupOrders = () => {
     senderCompany: string;
     receiver: string;
     status: string;
+    recyType: string[];
   }
   const searchfield = [
     {label:t('pick_up_order.filter.search'),width:'14%', field: 'search'},
@@ -208,7 +218,7 @@ const PickupOrders = () => {
     {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('deliveryDate'), field:"deliveryDate"},
     {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticCompany"},
     {label:t('pick_up_order.filter.location'),width:'14%',options:getUniqueOptions('senderCompany'), field:"senderCompany"},
-    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"收件公司"},
+    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recyType"},
     {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('status'), field:"status"}
     
   ]
@@ -227,13 +237,16 @@ const PickupOrders = () => {
       optionMap.set(row[propertyName], row[propertyName]);
     });
   
-    const options: Option[] = Array.from(optionMap.values()).map((option) => ({
+    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
       value: option,
       label: option,
     }));
+    options.push({
+      value: '',
+      label: "any",
+    })
     return options
   }
-  //console.log(getUniqueOptions('建立日期'))
 
   function getReycleOption() {
     const options: Option[] = recycItem.map((item) => ({
@@ -259,8 +272,20 @@ const PickupOrders = () => {
   };
 
   const handleSearch = (label: string, value: string) => {
-    console.log("label" , label, value)
-    const filteredData = []
+    if(label == 'recyType'){
+      const filteredData = rows?.filter((item) => item.recyType.includes(value))
+      if (filteredData) setFilteredPico(filteredData) ; setFilteredPico(rows)
+    } 
+
+    const filteredData = rows?.filter((item: any) => item[label] == value)
+    console.log("data" , rows)
+    if (filteredData.length != 0) {
+      setFilteredPico(filteredData)
+    } else {
+     
+      setFilteredPico(rows)
+    }
+    
   }
    
   return (
@@ -304,7 +329,7 @@ const PickupOrders = () => {
       </Stack>
       <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
         <DataGrid
-          rows={rows}
+          rows={filteredPico}
           columns={columns}
           checkboxSelection
           disableRowSelectionOnClick

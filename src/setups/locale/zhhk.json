@@ -46,7 +46,8 @@
       "isNotWithInContractEffDate": "生效時間不完全覆蓋回收點開放日期",
       "hasBeenUsed": "已被使用",
       "alreadyExist": "已經存在",
-      "timeCantDuplicate": "時間不能重複"
+      "timeCantDuplicate": "時間不能重複",
+      "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息"
     }
   },
   "component": {

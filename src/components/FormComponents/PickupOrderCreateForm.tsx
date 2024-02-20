@@ -542,7 +542,7 @@ const PickupOrderCreateForm = ({
                       logisticList?.map((option) => option.logisticNameTchi) ??
                       []
                     }
-                    sx={{ width: '100%' }}
+                    sx={{ width: '400px' }}
                     onChange={(_: SyntheticEvent, newValue: string | null) =>
                       formik.setFieldValue('logisticName', newValue)
                     }
