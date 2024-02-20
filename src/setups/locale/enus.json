@@ -46,7 +46,8 @@
       "isNotWithInContractEffDate": " effective date does not cover the collection point effective date",
       "hasBeenUsed": " has been used",
       "alreadyExist": " already exist",
-      "timeCantDuplicate": "time can't duplicate"
+      "timeCantDuplicate": "time can't duplicate",
+      "exceedsMaxLength":"should not exceed 100 characters"
     }
   },
   "component": {
@@ -456,7 +457,7 @@
     "recyclingInformation": "Recycling information",
     "date": "Date",
     "recyleType": "Recyclable type",
-    "recyleSubType": "Recyclable Sub-type",
+    "recyleSubType": "Recyclable sub-type",
     "package": "Package",
     "recyclingNumber": "Recycling number",
     "inventoryLocation": "Inventory location",
@@ -491,6 +492,12 @@
     "create": {
       "modifyRecycl": "Modify recycling information",
       "recycNum": "Recycling number"
+    },
+    "tenantType":{
+      "collector": "Collector",
+      "logistic": "Logistic",
+      "Manufacturer":"Manufacturer",
+      "Customer":"Customer"
     }
   }
 }

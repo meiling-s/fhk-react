@@ -1,7 +1,7 @@
 import axios from 'axios';
  
 const GEOCODING_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json?";
-const API_KEY = "AIzaSyAMP8qUxbhEYGxwF9veifN7ciMUZcZOPsg"
+const API_KEY = "AIzaSyD_wBiPzySlPwqbmhitaGdtPLONC5mKHak"
  
 export const getLocation = async(searchValue: string) => {
   const language = /[^\x00-\x7F]/.test(searchValue) ? 'zh-CN' : 'en';

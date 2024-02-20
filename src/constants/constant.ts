@@ -36,5 +36,6 @@ export const formErr = {
   withInColPt_Period: "withIn_ColPt_EffectivePeriod",
   notWithInContractEffDate: "isNotWithIn_ContractEffDate",
   alreadyExist: "alreadyExist",
-  hasBeenUsed: "hasBeenUsed"
+  hasBeenUsed: "hasBeenUsed",
+  exceedsMaxLength:"exceedsMaxLength"
 }
