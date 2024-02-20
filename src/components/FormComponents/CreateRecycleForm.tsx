@@ -103,7 +103,7 @@ const CreateRecycleForm = ({
       recycTypeId: picoDtl.recycType,
       recycSubTypeId: picoDtl.recycSubType,
     };
-    console.log("set def", defRecyc);
+    //console.log("set def", defRecyc);
     setDefaultRecyc(defRecyc);
   };
   
@@ -178,27 +178,40 @@ const CreateRecycleForm = ({
     console.log("defaultRecyc: ", defaultRecyc);
   }, [defaultRecyc]);
 
-  const validateSchema = Yup.object().shape({
-    senderName: Yup.string().required("This sendername is required"),
-    senderAddr: Yup.string()
-    .required("This senderAddr is required")
-    .notOneOf(
-      [Yup.ref('receiverAddr')],
-      'Sender address cannot be the same as receiver address'
-    ),
-    receiverName: Yup.string().required("This receiverName is required"),
-    receiverAddr: Yup.string()
-    .required("This receiverAddr is required")
-    .notOneOf(
-      [Yup.ref('senderAddr')],
-      'Receiver address cannot be the same as sender address'
-    ),
-    recycType: Yup.string().required("This recycType is required"),
-    recycSubType: Yup.string().required("This recycSubType is required"),
-    weight: Yup.number().required("This weight is required"),
+  const validateSchema = Yup.lazy((values) => {
+    const prevData = data
+    return Yup.object().shape({
+      pickupAt: Yup.string()
+      .test('not-in-prev-data', 'Pickup time already exists in previous data', function (value) {
+        return !prevData.some(item => item.pickupAt === value);
+      }),
+      senderName: Yup.string().required("This sendername is required"),
+      senderAddr: Yup.string()
+        .required("This senderAddr is required")
+        .test('not-same-as-receiver', 'Sender address cannot be the same as receiver address', function (value) {
+          const receiverAddr = values.receiverAddr;
+          return value !== receiverAddr;
+        })
+        .test('not-in-prev-data', 'Sender address already exists in previous data', function (value) {
+          return !prevData.some(item => item.senderAddr === value);
+        }),
+      receiverName: Yup.string().required("This receiverName is required"),
+      receiverAddr: Yup.string()
+        .required("This receiverAddr is required")
+        .test('not-same-as-sender', 'Receiver address cannot be the same as sender address', function (value) {
+          const senderAddr = values.senderAddr;
+          return value !== senderAddr;
+        })
+        .test('not-in-prev-data', 'Receiver address already exists in previous data', function (value) {
+          return !prevData.some(item => item.receiverAddr === value);
+        }),
+      recycType: Yup.string().required("This recycType is required"),
+      recycSubType: Yup.string().required("This recycSubType is required"),
+      weight: Yup.number().required("This weight is required"),
+    });
   });
 
-  //console.log(JSON.stringify(data)+'qwe')
+  //console.log(JSON.stringify(data)+'qwesss')
 
   const formik = useFormik({
     initialValues: initValue,
