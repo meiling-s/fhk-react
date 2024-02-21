@@ -68,6 +68,8 @@ export default function RoutineSelect({
         })
         return routineT
     }
+
+    console.log("rouType", rouType)
     
     return(
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
@@ -76,36 +78,25 @@ export default function RoutineSelect({
                 singleSelect={setRouType}
                 defaultSelected={defaultValue? defaultValue.routineType : undefined}
             />
-            <Box sx={{marginTop: 2}}>
-
-                {requiredTimePeriod ? 
-                    ( 
+           
+           <Box sx={{marginTop: 2}}>
+               {
+                    rouType == "daily"?
                         <Daily
                             setDaily={setRoutineContent}
-                            required={true}
                             defaultTime={defaultValue?.routineType == routineType[0].id? defaultValue.routineContent : undefined}
                         />
-                    )
-                        : 
-
-                    (
-                        rouType == "daily"?
-                            <Daily
-                                setDaily={setRoutineContent}
-                                defaultTime={defaultValue?.routineType == routineType[0].id? defaultValue.routineContent : undefined}
-                            />
-                        :   rouType == "weekly"?
-                            <Weekly
-                                setWeekly={setRoutineContent}
-                                defaultWeek={defaultValue?.routineType == routineType[1].id? defaultValue.routineContent : undefined}
-                            />
-                        :   rouType == "specificDate"&&
-                            <SpecificDate
-                                setSpecificDate={setRoutineContent}
-                                defaultDates={defaultValue?.routineType == routineType[2].id? defaultValue.routineContent : undefined}
-                            />
-                    )
-                }
+                    :   rouType == "weekly"?
+                        <Weekly
+                            setWeekly={setRoutineContent}
+                            defaultWeek={defaultValue?.routineType == routineType[1].id? defaultValue.routineContent : undefined}
+                        />
+                    :   rouType == "specificDate"&&
+                        <SpecificDate
+                            setSpecificDate={setRoutineContent}
+                            defaultDates={defaultValue?.routineType == routineType[2].id? defaultValue.routineContent : undefined}
+                        />
+                } 
             </Box>
         </LocalizationProvider>
     )
