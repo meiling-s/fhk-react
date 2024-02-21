@@ -26,6 +26,7 @@ import { formErr } from "../../../../constants/constant";
 import RoutineSelect from "../../../../components/SpecializeComponents/RoutineSelect";
 import { FormErrorMsg } from "../../../../components/FormComponents/FormErrorMsg";
 import { dayjsToLocalDate, toGpsCode } from "../../../../components/Formatter";
+import { localStorgeKeyName } from "../../../../constants/constant";
 
 function CreateCollectionPoint() {
 
@@ -268,6 +269,8 @@ function CreateCollectionPoint() {
     }
 
     const handleSaveOnClick = async () => {
+        const loginId = localStorage.getItem(localStorgeKeyName.username)
+
         if(validation.length == 0){
             const cp: updateCP = {
                 colPointTypeId: colType,
@@ -286,7 +289,7 @@ function CreateCollectionPoint() {
                 premiseTypeId: premiseType,
                 premiseRemark: premiseRemark,
                 normalFlg: true,
-                updatedBy: "colAdmin",
+                updatedBy: loginId,
                 colPtRecyc: recyclables,
                 roster: []
             }

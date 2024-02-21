@@ -40,43 +40,43 @@ const PickupOrders = () => {
   const [totalData , setTotalData] = useState<number>(0)
 
   const columns: GridColDef[] = [
-    { field: "建立日期", headerName: t('pick_up_order.table.created_datetime'), width: 300 },
+    { field: "createdAt", headerName: t('pick_up_order.table.created_datetime'), width: 300 },
     {
-      field: "物流公司",
+      field: "logisticCompany",
       headerName: t('pick_up_order.table.logistic_company'),
       width: 170,
       editable: true,
     },
     {
-      field: "运单编号",
+      field: "picoId",
       headerName: t('pick_up_order.table.pico_id'),
       type:"string",
       width: 170,
       editable: true,
     },
     {
-      field: "送货日期",
+      field: "deliveryDate",
       headerName: t('pick_up_order.table.delivery_date'),
       type: 'string',
       width: 300,
       editable: true,
     },
     {
-        field: "寄件公司",
+        field: "senderCompany",
         headerName: t('pick_up_order.table.sender_company'),
         type: "sring",
         width: 170,
         editable: true,
     },
     {
-        field: "收件公司",
+        field: "receiver",
         headerName: t('pick_up_order.table.receiver'),
         type: "string",
         width: 170,
         editable: true,
     },
     {
-        field: "状态",
+        field: "status",
         headerName: t('pick_up_order.table.status'),
         type: "string",
         width: 170,
@@ -95,20 +95,20 @@ const PickupOrders = () => {
   const location = useLocation();
   const action: string = location.state;
   const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
-
+  const [rows, setRows] = useState<Row[]>([])
+  const [filteredPico , setFilteredPico] = useState<Row[]>([])
+  
   const initPickupOrderRequest = async () => {
     const result = await getAllPickUpOrder(page - 1, pageSize);
     const data = result?.data.content;
     console.log("pickup order content: ", data);
     if (data && data.length > 0) {
       setPickupOrder(data);
-
       setTotalData( result.data.totalPages)
     }}
  
     useEffect(() => {
       initPickupOrderRequest();
-     
       if(action){
         var toastMsg = "";
         switch(action){
@@ -180,36 +180,46 @@ const PickupOrders = () => {
     return formattedDate
   }
 
-  const rows: any[] =(pickupOrder?.map((item) => ({
-    id: item.picoId,
-    建立日期: getFormatDate(item.createdAt),
-    物流公司: item.logisticName,
-    运单编号: item.picoId, 
-    送货日期: getDeliveryDate(item),
-    寄件公司: item.pickupOrderDetail[0]?.senderName,
-    收件公司: item.pickupOrderDetail[0]?.receiverName,
-    状态: item.status,
-  //}))??[])
-  }))??[]).filter((item) => item.状态 !== 'CLOSED');
+  useEffect (() => {
+  // const mappingData = () => {
+    const tempRows: any[] =(pickupOrder?.map((item) => ({
+      id: item.picoId,
+      createdAt: getFormatDate(item.createdAt),
+      logisticCompany: item.logisticName,
+      picoId: item.picoId, 
+      deliveryDate: getDeliveryDate(item),
+      senderCompany: item.pickupOrderDetail[0]?.senderName,
+      receiver: item.pickupOrderDetail[0]?.receiverName,
+      status: item.status,
+      recyType: item.pickupOrderDetail.map(item => {return item.recycType})
+    //}))??[])
+    }))??[]).filter((item) => item.status !== 'CLOSED');
+    setRows(tempRows)
+    setFilteredPico(tempRows)
+  // }
+  },[pickupOrder])
+
+ 
 
   interface Row {
     id: number;
-    建立日期: string;
-    物流公司: string;
-    运单编号: number;
-    送货日期: string;
-    寄件公司: string;
-    收件公司: string;
-    状态: string;
+    createdAt: string;
+    logisticCompany: string;
+    picoId: number;
+    deliveryDate: string;
+    senderCompany: string;
+    receiver: string;
+    status: string;
+    recyType: string[];
   }
   const searchfield = [
-    {label:t('pick_up_order.filter.search'),width:'14%',},
-    {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('建立日期')},
-    {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('送货日期')},
-    {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('物流公司')},
-    {label:t('pick_up_order.filter.location'),width:'14%',options:getUniqueOptions('收件公司')},
-    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption()},
-    {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('状态')}
+    {label:t('pick_up_order.filter.search'),width:'14%', field: 'search'},
+    {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('createdAt'), field:"createdAt"},
+    {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('deliveryDate'), field:"deliveryDate"},
+    {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticCompany"},
+    {label:t('pick_up_order.filter.location'),width:'14%',options:getUniqueOptions('senderCompany'), field:"senderCompany"},
+    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recyType"},
+    {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('status'), field:"status"}
     
   ]
   
@@ -227,13 +237,16 @@ const PickupOrders = () => {
       optionMap.set(row[propertyName], row[propertyName]);
     });
   
-    const options: Option[] = Array.from(optionMap.values()).map((option) => ({
+    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
       value: option,
       label: option,
     }));
+    options.push({
+      value: '',
+      label: "any",
+    })
     return options
   }
-  console.log(getUniqueOptions('建立日期'))
 
   function getReycleOption() {
     const options: Option[] = recycItem.map((item) => ({
@@ -257,6 +270,23 @@ const PickupOrders = () => {
     setSelectedRow(row);
     setOpenModal(true);
   };
+
+  const handleSearch = (label: string, value: string) => {
+    if(label == 'recyType'){
+      const filteredData = rows?.filter((item) => item.recyType.includes(value))
+      if (filteredData) setFilteredPico(filteredData) ; setFilteredPico(rows)
+    } 
+
+    const filteredData = rows?.filter((item: any) => item[label] == value)
+    console.log("data" , rows)
+    if (filteredData.length != 0) {
+      setFilteredPico(filteredData)
+    } else {
+     
+      setFilteredPico(rows)
+    }
+    
+  }
    
   return (
     <>
@@ -287,14 +317,19 @@ const PickupOrders = () => {
       <Box />
       <Stack direction='row' mt={3} >
         {searchfield.map((s)=>(
-            <CustomSearchField  label={s.label} width={s.width} options={s.options || []}  />
+            <CustomSearchField  
+            label={s.label} 
+            width={s.width} 
+            field={s.field}
+            options={s.options || []} 
+            onChange={handleSearch} />
         ))}
         
 
       </Stack>
       <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
         <DataGrid
-          rows={rows}
+          rows={filteredPico}
           columns={columns}
           checkboxSelection
           disableRowSelectionOnClick

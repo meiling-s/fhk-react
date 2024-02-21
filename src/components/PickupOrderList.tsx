@@ -41,7 +41,6 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
   const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
   const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
-  console.log("selectPicoDetail", picoId)
 
     const initPickupOrderRequest = async () => {
     const result = await getAllPickUpOrder(0, 10);
@@ -55,23 +54,25 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       initPickupOrderRequest();
     }, []);
 
-  const picoDetailList =
-    pickupOrder?.flatMap((item) =>
-      item?.pickupOrderDetail.map((detailPico) => ({
-        type: item.picoType,
-        picoId: item.picoId,
-        status: detailPico.status,
-        effFrmDate: item.effFrmDate,
-        effToDate: item.effToDate,
-        routine: `${item.routineType}, ${item.routine.join(', ')}`,
-        senderName: detailPico.senderName,
-        receiver: detailPico.receiverName,
-        pickupOrderDetail: detailPico
-      }))
-    )?.filter((picoDetail) => picoDetail.picoId !== picoId) ?? []
-
-  // setPicoList(picoDetailList)
-  // setFilteredPico(picoList)
+    useEffect(() => {
+      const picoDetailList =
+      pickupOrder?.flatMap((item) =>
+        item?.pickupOrderDetail.map((detailPico) => ({
+          type: item.picoType,
+          picoId: item.picoId,
+          status: detailPico.status,
+          effFrmDate: item.effFrmDate,
+          effToDate: item.effToDate,
+          routine: `${item.routineType}, ${item.routine.join(', ')}`,
+          senderName: detailPico.senderName,
+          receiver: detailPico.receiverName,
+          pickupOrderDetail: detailPico
+        }))
+      )?.filter((picoDetail) => picoDetail.picoId !== picoId) ?? [];
+      setPicoList(picoDetailList)
+      setFilteredPico(picoDetailList)
+     
+    }, [drawerOpen]);
 
   const handleSearch = (searchWord: string) => {
     if (searchWord != '') {
@@ -134,8 +135,8 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                   />
                 </div>
                 <Box>
-                  {picoDetailList.map((item, index) => (
-                    (item.status == "CREATED") ?
+                  {filteredPico.map((item, index) => (
+                    (item.status != "CLOSED") ?
                     <div
                       key={index}
                       onClick={() => {

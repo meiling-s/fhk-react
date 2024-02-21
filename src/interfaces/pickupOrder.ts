@@ -119,13 +119,13 @@ export interface PicoDetail {
 
 export interface Row {
     id: number;
-    建立日期: string;
-    物流公司: string;
-    运单编号: number;
-    送货日期: string;
-    寄件公司: string;
-    收件公司: string;
-    状态: string;
+    createdAt: string;
+    logisticCompany: string;
+    picoId: number;
+    deliveryDate: string;
+    senderCompany: string;
+    receiver: string;
+    status: string;
   }
 
   export interface EditPo {

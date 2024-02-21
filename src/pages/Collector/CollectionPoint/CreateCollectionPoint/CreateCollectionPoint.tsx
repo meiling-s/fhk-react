@@ -36,6 +36,7 @@ import ColPointTypeList from '../../../../components/SpecializeComponents/Collec
 import SiteTypeList from '../../../../components/SpecializeComponents/SiteTypeList'
 import RoutineSelect from '../../../../components/SpecializeComponents/RoutineSelect'
 import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg'
+import { localStorgeKeyName } from "../../../../constants/constant";
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 
 dayjs.extend(isBetween)
@@ -322,6 +323,8 @@ function CreateCollectionPoint() {
 
   const handleCreateOnClick = async () => {
     console.log("colPtRoutine", colPtRoutine)
+    const loginId = localStorage.getItem(localStorgeKeyName.username)
+
     if (validation.length == 0) {
       const cp: createCP = {
         colName: colName,
@@ -341,8 +344,8 @@ function CreateCollectionPoint() {
         premiseTypeId: premiseType,
         premiseRemark: premiseRemark,
         normalFlg: true,
-        createdBy: 'colAdmin',
-        updatedBy: 'colAdmin',
+        createdBy: loginId,
+        updatedBy: loginId,
         colPtRecyc: recyclables,
         roster: []
       }

@@ -25,8 +25,19 @@ const CreatePickupOrder = () => {
     return tenantId
   }
 
+  const getErrorMsg = (field: string, type: string) => {
+    switch (type) {
+      case 'empty':
+        return field + ' ' + t('form.error.shouldNotBeEmpty')
+      case 'atLeastOnePicoExist':
+        return field + ' ' + t('form.error.atLeastOnePicoExist')
+      case 'isInWrongFormat':
+        return field + ' ' + t('form.error.isInWrongFormat')
+      }
+  }
+
   const validateSchema = Yup.object().shape({
-    picoType: Yup.string().required('This picoType is required'),
+    // picoType: Yup.string().required(getErrorMsg(t('pick_up_order.select_shipping_category'), 'empty')),
     effFrmDate: Yup.string().required('This effFrmDate is required'),
     effToDate: Yup.string().required('This effToDate is required'),
     routineType:
@@ -37,21 +48,21 @@ const CreatePickupOrder = () => {
       picoTypeValue == 'ROUTINE'
         ? Yup.array().required('routine is required')
         : Yup.array(),
-    logisticName: Yup.string().required('This logistic is required'),
-    vehicleTypeId: Yup.string().required('This vehicleType is required'),
-    platNo: Yup.string().required('This platNo is required'),
-    contactNo: Yup.number().required('This contactNo is required'),
+    logisticName: Yup.string().required(getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')),
+    vehicleTypeId: Yup.string().required(getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')),
+    platNo: Yup.string().required(getErrorMsg(t('pick_up_order.plat_number'), 'empty')),
+    contactNo: Yup.number().required(getErrorMsg(t('pick_up_order.contact_number'), 'empty')),
     contractNo:
       picoTypeValue == 'ROUTINE'
-        ? Yup.string().required('This contractNo is invalid')
+        ? Yup.string().required(getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty'))
         : Yup.string(),
     reason:
       picoTypeValue == 'AD_HOC'
-        ? Yup.string().required('This reason is required')
+        ? Yup.string().required(getErrorMsg(t('pick_up_order.adhoc.reason_get_off'), 'isInWrongFormat'))
         : Yup.string(),
     createPicoDetail: Yup.array()
-      .required('This field is required')
-      .test('has-rows', 'At least one Pico Detail is required', (value) => {
+      .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
+      .test('has-rows', (getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))!!, (value) => {
         return value.length > 0 || addRow.length > 0
       })
   })

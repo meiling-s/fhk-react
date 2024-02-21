@@ -47,6 +47,7 @@
       "hasBeenUsed": "已被使用",
       "alreadyExist": "已經存在",
       "timeCantDuplicate": "時間不能重複",
+      "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength":"不可超過一百個字符"
     }
   },

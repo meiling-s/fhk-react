@@ -404,26 +404,26 @@ const PickupOrderCreateForm = ({
     picoId: string
   ) => {
     setPicoRefId(picoId)
-    const pickupDetails: CreatePicoDetail = {
-      id: picodetail.picoDtlId,
-      picoHisId: picoRefId,
-      senderId: picodetail.senderId,
-      senderName: picodetail.senderName,
-      senderAddr: picodetail.senderAddr,
-      senderAddrGps: [11, 12],
-      receiverId: picodetail.receiverId,
-      receiverName: picodetail.receiverName,
-      receiverAddr: picodetail.receiverAddr,
-      receiverAddrGps: [11, 12],
-      status: 'CREATED',
-      createdBy: 'ADMIN',
-      updatedBy: 'ADMIN',
-      pickupAt: picodetail.pickupAt,
-      recycType: picodetail.recycType,
-      recycSubType: picodetail.recycSubType,
-      weight: picodetail.weight
-    }
-    setState([...state, pickupDetails])
+    // const pickupDetails: CreatePicoDetail = {
+    //   id: picodetail.picoDtlId,
+    //   picoHisId: picoRefId,
+    //   senderId: picodetail.senderId,
+    //   senderName: picodetail.senderName,
+    //   senderAddr: picodetail.senderAddr,
+    //   senderAddrGps: [11, 12],
+    //   receiverId: picodetail.receiverId,
+    //   receiverName: picodetail.receiverName,
+    //   receiverAddr: picodetail.receiverAddr,
+    //   receiverAddrGps: [11, 12],
+    //   status: 'CREATED',
+    //   createdBy: 'ADMIN',
+    //   updatedBy: 'ADMIN',
+    //   pickupAt: picodetail.pickupAt,
+    //   recycType: picodetail.recycType,
+    //   recycSubType: picodetail.recycSubType,
+    //   weight: picodetail.weight
+    // }
+    // setState([...state, pickupDetails])
     setOpenPico(false)
   }
 
@@ -542,7 +542,7 @@ const PickupOrderCreateForm = ({
                       logisticList?.map((option) => option.logisticNameTchi) ??
                       []
                     }
-                    sx={{ width: '100%' }}
+                    sx={{ width: '400px' }}
                     onChange={(_: SyntheticEvent, newValue: string | null) =>
                       formik.setFieldValue('logisticName', newValue)
                     }

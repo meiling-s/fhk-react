@@ -47,6 +47,7 @@
       "hasBeenUsed": " has been used",
       "alreadyExist": " already exist",
       "timeCantDuplicate": "time can't duplicate",
+      "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength":"should not exceed 100 characters"
     }
   },
