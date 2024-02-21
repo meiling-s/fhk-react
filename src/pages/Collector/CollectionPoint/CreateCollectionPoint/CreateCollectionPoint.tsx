@@ -324,9 +324,11 @@ function CreateCollectionPoint() {
   const handleCreateOnClick = async () => {
     console.log("colPtRoutine", colPtRoutine)
     const loginId = localStorage.getItem(localStorgeKeyName.username)
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
 
     if (validation.length == 0) {
       const cp: createCP = {
+        tenantId: tenantId,
         colName: colName,
         colPointTypeId: colType,
         effFrmDate: dayjsToLocalDate(openingPeriod.startDate),
