@@ -13,10 +13,10 @@ import { returnApiToken } from '../../../utils/utils';
   const token = returnApiToken()
 
   export const getAllPickUpOrder = async (page: number, size: number) => {
-
+      const auth = returnApiToken()
       try {
         const response = await request({
-          ...GET_ALL_PICK_UP_ORDER,
+          ...GET_ALL_PICK_UP_ORDER(auth.tenantId),
           params: {
             page: page,
             size: size

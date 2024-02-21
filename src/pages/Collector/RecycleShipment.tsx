@@ -370,9 +370,9 @@ function ShipmentManage() {
       var ships: CheckIn[] = [];
       var i = 0;
       while (i < data.length) {
-        if (data[i].status == "CONFIRMED") {
+        //if (data[i].status == "CONFIRMED") {
           ships.push(data[i]);
-        }
+       // }
         i++;
       }
       setShipments(ships);
