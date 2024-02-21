@@ -32,7 +32,7 @@ export default function RoutineSelect({
             setRoutineContent(defaultValue.routineContent)
         }
     },[])
-
+    
     useEffect(() => {
         setRoutine(returnColPtRoutine(rouType, routineContent));
     },[rouType, routineContent])

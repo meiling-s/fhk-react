@@ -1,5 +1,5 @@
 import { Box, Button, IconButton, Typography } from '@mui/material'
-import { TimePicker } from '@mui/x-date-pickers'
+import { PickersLocaleText, TimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { timePeriod } from '../../interfaces/collectionPoint'
@@ -8,6 +8,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import { styles } from '../../constants/styles'
 import { useTranslation } from 'react-i18next'
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker'
+import i18n from '../../setups/i18n'
 
 type timePicker = {
   multiple: boolean
@@ -15,6 +16,25 @@ type timePicker = {
   setTime: (timePeriod: timePeriod[]) => void
   defaultTime?: timePeriod[]
 }
+const localeTexts = {
+  en: {
+    okButtonLabel: 'OK',
+    cancelButtonLabel: 'Cancel',
+    toolbarTitle: 'Select Time',
+  },
+  zhch: {
+    okButtonLabel: '确定',
+    cancelButtonLabel: '取消',
+    toolbarTitle: '选择时间',
+  },
+  zhhk: {
+    okButtonLabel: '確定',
+    cancelButtonLabel: '取消',
+    toolbarTitle: '選擇時間',
+  },
+  // Add more language translations as needed
+};
+
 
 function CustomTimePicker({
   multiple,
@@ -30,6 +50,7 @@ function CustomTimePicker({
     defaultTime ? defaultTime : []
   )
   const [errorMessages, setErrorMessages] = useState<string[]>([])
+  const [language, setLanguage] = useState({});
 
   const { t } = useTranslation()
 
@@ -42,6 +63,23 @@ function CustomTimePicker({
       addTimePeriod()
     }
   }, [])
+
+useEffect(() => {
+  switch (i18n.language) {
+    case 'enus':
+      setLanguage(localeTexts.en); // Update language state
+      break;
+    case 'zhch':
+      setLanguage(localeTexts.zhch); // Update language state
+      break;
+    case 'zhhk':
+      setLanguage(localeTexts.zhhk); // Update language state
+      break;
+    default:
+      setLanguage(localeTexts.zhhk); // Update language state
+      break;
+  }
+}, [i18n.language]);
 
   const handleTimePeriodChange = (
     start: boolean,
@@ -108,13 +146,16 @@ function CustomTimePicker({
     return (
       <Box>
         <Box sx={localstyles.timePeriodItem}>
+
           <MobileTimePicker
+            localeText={language}
             defaultValue={startTime}
             onChange={(value) => handleTimePeriodChange(true, value, index)}
             sx={localstyles.timePicker}
           />
           <Typography sx={localstyles.txtStyle_to}>{t('to')}</Typography>
           <MobileTimePicker
+            localeText={language}
             defaultValue={endTime}
             onChange={(value) => handleTimePeriodChange(false, value, index)}
             sx={localstyles.timePicker}
@@ -166,6 +207,7 @@ function CustomTimePicker({
             defaultValue={tempTP.endAt}
             onChange={(value) => handleTimePeriodChange(false, value, 0)}
             sx={localstyles.timePicker}
+            
           />
         </Box>
       </Box>

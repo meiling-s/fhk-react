@@ -41,6 +41,7 @@ import { CheckOut } from '../../../interfaces/checkout'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
+import { styles } from '../../../constants/styles'
 
 type TableRow = {
   id: number
@@ -77,7 +78,7 @@ const ConfirmModal: React.FC<Confirm> = ({ open, onClose, title }) => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={styles.modal}>
+      <Box sx={localstyles.modal}>
         <Stack spacing={2}>
           <Box>
             <Typography
@@ -148,7 +149,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={styles.modal}>
+      <Box sx={localstyles.modal}>
         <Stack spacing={2}>
           <Box>
             <Typography
@@ -162,7 +163,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
           </Box>
           <Divider />
           <Box className="flex gap-2 justify-start">
-            <Typography sx={styles.typo}>
+            <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedCheckOut.length}
             </Typography>
           </Box>
@@ -256,7 +257,7 @@ const RejectModal: React.FC<RejectForm> = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={styles.modal}>
+      <Box sx={localstyles.modal}>
         <Stack spacing={2}>
           <Box>
             <Typography
@@ -270,10 +271,10 @@ const RejectModal: React.FC<RejectForm> = ({
           </Box>
           <Divider />
           <Box>
-            <Typography sx={styles.typo}>
+            <Typography sx={localstyles.typo}>
               {t('check_out.reject_reasons')}
             </Typography>
-            <Typography sx={styles.typo}>
+            <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedCheckOut.length}
             </Typography>
             <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
@@ -583,7 +584,7 @@ const CheckoutRequest: FunctionComponent = () => {
           <TextField
             id="searchShipment"
             onChange={(event) => handleSearchByPoNumb(event.target.value)}
-            sx={styles.inputState}
+            sx={localstyles.inputState}
             label={t('check_in.search')}
             placeholder={t('check_in.search_input')}
             InputProps={{
@@ -596,13 +597,13 @@ const CheckoutRequest: FunctionComponent = () => {
               )
             }}
           />
-          <FormControl sx={styles.dropDown}>
-            <InputLabel id="company-label">{t('check_out.company')}</InputLabel>
+          <FormControl sx={localstyles.dropDown}>
+            <InputLabel id="company-label"  sx={styles.textFieldLabel} >{t('check_out.company')}</InputLabel>
             <Select
               labelId="company-label"
               id="company"
               value={company}
-              label={t('check_out.any')}
+              label={t('check_out.company')}
               onChange={handleCompanyChange}
             >
               <MenuItem value="">
@@ -615,15 +616,15 @@ const CheckoutRequest: FunctionComponent = () => {
               ))}
             </Select>
           </FormControl>
-          <FormControl sx={styles.dropDown}>
-            <InputLabel id="location-label">
+          <FormControl sx={localstyles.dropDown}>
+            <InputLabel id="location-label"  sx={styles.textFieldLabel}>
               {t('check_out.receiver_addr')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t('check_out.any')}
+              label={t('check_out.receiver_addr')}
               onChange={handleLocChange}
             >
               <MenuItem value="">
@@ -699,7 +700,7 @@ const CheckoutRequest: FunctionComponent = () => {
   )
 }
 
-let styles = {
+let localstyles = {
   typo: {
     color: 'grey',
     fontSize: 14

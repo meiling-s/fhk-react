@@ -375,6 +375,12 @@ export const styles = {
     '&.MuiButton-root:hover': {
       backgroundColor: '#F4F4F4'
     }
-  }
+  },
+  textFieldLabel: {
+    color: "#79CA25",
+    "&.Mui-focused": {
+      color: "#79CA25",
+    },
+  },
 }
 

@@ -47,7 +47,8 @@
       "hasBeenUsed": " 已被使用",
       "alreadyExist": "已经存在",
       "timeCantDuplicate": "时间不能重复",
-      "atLeastOnePicoExist": "至少需要一个 Pico 详细信息"
+      "atLeastOnePicoExist": "至少需要一个 Pico 详细信息",
+      "exceedsMaxLength":"不可超过一百个字符"
     }
   },
   "component": {
@@ -493,6 +494,12 @@
     "create": {
       "modifyRecycl": "修改回收物资料",
       "recycNum": "回收物编号"
+    },
+    "tenantType":{
+      "collector": "",
+      "logistic": "",
+      "Manufacturer":"",
+      "Customer":""
     }
   }
 }

@@ -170,6 +170,7 @@ function CreateCollectionPoint() {
             const tempV: formValidate[] = []        //temp validation
             colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
             siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
+            premiseName.length > 100 && tempV.push({ field: "col.premiseName", problem: formErr.exceedsMaxLength, type: "error" });
             await address == "" ? tempV.push({ field: "col.address", problem: formErr.empty, type: "error" })
                 : await checkAddressUsed(contractNo, address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
             await colName == "" ? tempV.push({ field: "col.colName", problem: formErr.empty, type: "error" })
@@ -271,6 +272,9 @@ function CreateCollectionPoint() {
         break
       case formErr.hasBeenUsed:
         msg = t('form.error.hasBeenUsed')
+        break
+      case formErr.exceedsMaxLength:
+        msg = t('form.error.exceedsMaxLength')
         break
     }
     return msg
