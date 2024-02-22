@@ -14,6 +14,7 @@ import {
   IconButton,
   InputLabel,
   FormControl,
+  Pagination,
   MenuItem,
   Modal,
   Typography,
@@ -321,6 +322,9 @@ const CheckoutRequest: FunctionComponent = () => {
   const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
   const [selectAll, setSelectAll] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false)
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [totalData, setTotalData] = useState<number>(0)
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -461,7 +465,7 @@ const CheckoutRequest: FunctionComponent = () => {
   }
 
   const getCheckoutRequest = async () => {
-    const result = await getAllCheckoutRequest()
+    const result = await getAllCheckoutRequest(page - 1, pageSize)
     const data = result?.data.content
     if (data && data.length > 0) {
       const checkoutData = data
@@ -471,12 +475,13 @@ const CheckoutRequest: FunctionComponent = () => {
         data.filter((item: CheckOut) => item.status === 'CREATED')
       )
       setFilterCheckOut(checkoutData)
+      setTotalData(result?.data.totalPages)
     }
   }
 
   useEffect(() => {
     getCheckoutRequest()
-  }, [])
+  }, [page])
 
   const handleSearchByPoNumb = (searchWord: string) => {
     if (searchWord != '') {
@@ -663,6 +668,14 @@ const CheckoutRequest: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 }
+              }}
+            />
+             <Pagination
+              className="mt-4"
+              count={Math.ceil(totalData)}
+              page={page}
+              onChange={(_, newPage) => {
+                setPage(newPage)
               }}
             />
           </Box>

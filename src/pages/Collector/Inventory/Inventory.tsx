@@ -88,7 +88,7 @@ const Inventory: FunctionComponent = () => {
 
    useEffect(() =>{ 
     if(recycItem.length > 0) initInventory() //init dat when recyleitem done mapping
-   }, [recycItem]);
+   }, [recycItem, page]);
 
   const mappingRecyleItem = () => {
     const recyleMapping: recycItem[] = []

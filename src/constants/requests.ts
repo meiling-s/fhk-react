@@ -107,7 +107,7 @@ export const UPDATE_CHECK_IN_STATUS = (
 //collector/pickupOrder
 export const GET_ALL_PICK_UP_ORDER = (tenantId: string) : AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/administrator/pico/t/${tenantId}`
+  url: `api/v1/administrator/pico/search/${tenantId}`
 })
 
 export const GET_PICK_UP_ORDER_BY_ID = (picoId: string): AxiosRequestConfig => ({

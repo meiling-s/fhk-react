@@ -12,13 +12,17 @@ const checkoutAPI = {
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 }
 
-export const getAllCheckoutRequest = async () => {
+export const getAllCheckoutRequest = async (page: number, size: number) => {
   try {
     const token = returnApiToken()
 
     const response = await axios({
       ...GET_ALL_CHECKOUT_REQUEST(token.decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
+      params: {
+        page: page,
+        size: size
+      },
       headers: {
         AuthToken: token.authToken
       }
