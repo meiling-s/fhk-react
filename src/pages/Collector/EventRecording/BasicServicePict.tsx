@@ -33,6 +33,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
+import { localStorgeKeyName } from "../../../constants/constant";
 
 const BasicServicePicture = () => {
   const { t } = useTranslation()
@@ -43,6 +44,7 @@ const BasicServicePicture = () => {
   const [serviceImages, setServiceImages] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+  const loginId = localStorage.getItem(localStorgeKeyName.username)
 
   const ImageToBase64 = (images: ImageListType) => {
     var base64: string[] = []
@@ -133,8 +135,8 @@ const BasicServicePicture = () => {
         endAt: formattedDate(endDate),
         photo: ImageToBase64(serviceImages),
         numberOfVisitor: parseInt(numberOfPeople),
-        createdBy: 'admin',
-        updatedBy: 'admin'
+        createdBy: loginId || 'admin',
+        updatedBy: loginId || 'admin'
       }
 
       const result = await createServiceInfo(formData)

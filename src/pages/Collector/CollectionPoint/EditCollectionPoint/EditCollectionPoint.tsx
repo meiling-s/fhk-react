@@ -272,7 +272,7 @@ function CreateCollectionPoint() {
     }
 
     const handleSaveOnClick = async () => {
-        const loginId = localStorage.getItem(localStorgeKeyName.username)
+        const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
 
         if(validation.length == 0){
             const cp: updateCP = {

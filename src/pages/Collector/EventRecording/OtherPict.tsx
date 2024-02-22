@@ -31,13 +31,14 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
+import { localStorgeKeyName } from "../../../constants/constant";
 
 type ServiceId = 'SRV00006' | 'SRV00007' | 'SRV00008'
 type ServiceData = Record<
   ServiceId,
   { startDate: dayjs.Dayjs; photoImage: ImageListType }
 >
-
+const loginId = localStorage.getItem(localStorgeKeyName.username) || 'admin'
 const OtherPict = () => {
   const { t } = useTranslation()
   const [serviceData, setServiceData] = useState<ServiceData>({
@@ -170,8 +171,8 @@ const OtherPict = () => {
           endAt: formattedDate(serviceItem.startDate),
           photo: imgList,
           numberOfVisitor: 0,
-          createdBy: 'admin',
-          updatedBy: 'admin'
+          createdBy: loginId,
+          updatedBy: loginId
         }
         const result = await createServiceInfo(formData)
         if (result) itemData++

@@ -42,6 +42,7 @@ import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
 import { styles } from '../../../constants/styles'
+import { localStorgeKeyName } from "../../../constants/constant";
 
 type TableRow = {
   id: number
@@ -113,12 +114,13 @@ const ApproveModal: React.FC<ApproveForm> = ({
   onApprove
 }) => {
   const { t } = useTranslation()
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
     const statReason: updateStatus = {
       status: 'CONFIRMED',
       reason: confirmReason,
-      updatedBy: 'admin'
+      updatedBy: loginId
     }
 
     const results = await Promise.allSettled(
@@ -222,11 +224,12 @@ const RejectModal: React.FC<RejectForm> = ({
       const reasonItem = reasons.find((reason) => reason.id === id)
       return reasonItem ? reasonItem.name : ''
     })
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
     const reason = rejectReason
     const statReason: updateStatus = {
       status: 'REJECTED',
       reason: reason,
-      updatedBy: 'admin'
+      updatedBy: loginId
     }
 
     const results = await Promise.allSettled(

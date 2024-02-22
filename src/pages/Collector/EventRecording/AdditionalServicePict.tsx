@@ -37,8 +37,10 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
+import { localStorgeKeyName } from "../../../constants/constant";
 
 type ServiceId = 'SRV00002' | 'SRV00003' | 'SRV00004' | 'SRV00005'
+const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
 type ServiceData = Record<
   ServiceId,
   {
@@ -292,8 +294,8 @@ const AdditionalServicePict = () => {
           endAt: formattedDate(serviceItem.endDate),
           photo: imgList,
           numberOfVisitor: parseInt(serviceItem.numberOfPeople),
-          createdBy: 'admin',
-          updatedBy: 'admin'
+          createdBy: loginId,
+          updatedBy: loginId
         }
         const result = await createServiceInfo(formData)
         if (result) itemData++
