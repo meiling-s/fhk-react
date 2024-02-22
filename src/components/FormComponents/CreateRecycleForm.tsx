@@ -50,6 +50,7 @@ import CustomAutoComplete from "./CustomAutoComplete";
 import i18n from "../../setups/i18n";
 import dayjs, { Dayjs } from 'dayjs';
 import { format } from '../../constants/constant'
+import { localStorgeKeyName } from "../../constants/constant";
 
 type props = {
   onClose: () => void;
@@ -61,6 +62,8 @@ type props = {
   isEditing: boolean;
 };
 type CombinedType = manuList[] | collectorList[];
+const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+
 const initValue = {
   id: -1,
   picoHisId: "",
@@ -73,8 +76,8 @@ const initValue = {
   receiverAddr: "",
   receiverAddrGps: [0, 0],
   status: "CREATED",
-  createdBy: "ADMIN",
-  updatedBy: "ADMIN",
+  createdBy: loginId,
+  updatedBy: loginId,
   pickupAt: "",
   recycType: "",
   recycSubType: "",

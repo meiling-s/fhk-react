@@ -15,6 +15,7 @@ import {
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
+import { localStorgeKeyName } from "../../../constants/constant";
 
 const EditPickupOrder = () => {
   const { t } = useTranslation()
@@ -22,7 +23,7 @@ const EditPickupOrder = () => {
   const { state } = useLocation()
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
   const poInfo: PickupOrder = state
-  
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
 
   const updatePickupOrder = useFormik({
     initialValues: {
@@ -45,7 +46,7 @@ const EditPickupOrder = () => {
       approvedBy: 'string',
       rejectedBy: 'string',
       contractNo: '',
-      updatedBy: 'string',
+      updatedBy: loginId,
       createPicoDetail: []
     },
 
@@ -115,10 +116,10 @@ const EditPickupOrder = () => {
         normalFlg: true,
         approvedAt: '2023-12-12T02:17:30.062Z',
         rejectedAt: '2023-12-12T02:17:30.062Z',
-        approvedBy: 'ADMIN',
-        rejectedBy: 'ADMIN',
+        approvedBy: loginId,
+        rejectedBy: loginId,
         contractNo: poInfo.contractNo,
-        updatedBy: 'Admin',
+        updatedBy: loginId,
         createPicoDetail: []
       })
     }

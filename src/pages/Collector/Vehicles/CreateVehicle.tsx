@@ -33,7 +33,7 @@ import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { createVehicles as addVehicle, deleteVehicle, editVehicle } from '../../../APICalls/Collector/vehicles'
-
+import { localStorgeKeyName } from "../../../constants/constant";
 import i18n from '../../../setups/i18n'
 
 interface CreateVehicleProps {
@@ -214,6 +214,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   }, [selectedService, selectedVehicle, licensePlate, pictures])
 
   const handleSubmit = () => {
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+
     const formData: CreateVehicleForm = {
       vehicleTypeId: selectedVehicle.id,
       vehicleName: selectedVehicle.name,
@@ -221,8 +223,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       serviceType: selectedService.id,
       photo:  ImageToBase64(pictures),
       status: "ACTIVE",
-      createdBy: "admin",
-      updatedBy: "admin"
+      createdBy: loginId,
+      updatedBy: loginId
     }
     console.log("iamge", ImageToBase64(pictures))
     if (action == 'add') {
