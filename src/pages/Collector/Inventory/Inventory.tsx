@@ -264,7 +264,7 @@ const Inventory: FunctionComponent = () => {
   ]
 
   const searchfield = [
-    { label: t('pick_up_order.filter.search'), width: '14%' },
+    { label: t('pick_up_order.filter.search'), width: '14%' , field: "search"},
     {
       label: t('inventory.recyleType'),
       width: '15%',
@@ -328,6 +328,18 @@ const Inventory: FunctionComponent = () => {
 
     if(label == "recycSubTypeId"){
       const filtered:InventoryItem[] = inventoryList.filter(item => item.recycSubTypeId == value)
+      if (filtered) {
+        setFilteredInventory(filtered)
+      } else {
+        setFilteredInventory(inventoryList)
+      }
+    }
+
+    if(label == "search"){
+      console.log(label, value)
+      if(value == "") return setFilteredInventory(inventoryList)
+
+      const filtered:InventoryItem[] = inventoryList.filter(item => item.packageTypeId == value)
       if (filtered) {
         setFilteredInventory(filtered)
       } else {
