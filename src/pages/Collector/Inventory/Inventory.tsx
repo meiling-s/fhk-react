@@ -198,7 +198,7 @@ const Inventory: FunctionComponent = () => {
             item?.status,
             item?.updatedBy,
             item?.createdBy,
-            item?.inventoryDetail,
+            item?.inventoryDetail || '-',
             item?.createdAt,
             item?.updatedAt,
             location?.join(', ')

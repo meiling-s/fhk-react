@@ -340,5 +340,5 @@ export const EDIT_VEHICLE = (table: string, vehicleId: number ) : AxiosRequestCo
 //inventory
 export const GET_INVENTORY = (table: string) : AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/inventory/${table}`
+  url: `api/v1/collectors/inventory/${table}/searching`
 })
