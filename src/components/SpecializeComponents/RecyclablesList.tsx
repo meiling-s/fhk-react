@@ -40,6 +40,7 @@ export default function RecyclablesList({
         if(defaultRecycL){
             setRecycTypeList(recyclables_getRecycTypes(defaultRecycL));
             setSubTypeList(recyclables_getSubTypes(defaultRecycL));
+            
         }
     },[])
 
@@ -108,6 +109,7 @@ export default function RecyclablesList({
         const item: recycItem | undefined = returnRecycTypes().find((recycType) => {
             return recycType.recycType.id === recycId;
         });
+        console.log("returnSubRecyclables", item, recycId)
         if (item) {
             const subItems = item.recycSubType
             return subItems;
