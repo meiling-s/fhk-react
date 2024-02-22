@@ -170,6 +170,7 @@ export default function RecyclablesList({
 
     const recyclables_getRecycTypes = (recycs: recyclable[]) => {
         const reTypes: string[] = recycs.map((recyc) => {
+            console.log("reTypes", recyc.recycTypeId)
             return recyc.recycTypeId;
         });
         return reTypes;
@@ -229,26 +230,14 @@ export default function RecyclablesList({
                 defaultSelected={defaultRecycL? recyclables_getRecycTypes(defaultRecycL) : []}
             />
             <Collapse sx={{mt: 1}} in={recycTypeList.length > 0} unmountOnExit>
-                {
-                    recycTypeList.map((item)=>(
-                        <CustomField label={getNameFromRecycId(item) + t("col.category")} mandatory={subTypeRequired}>
-                        <CustomItemList
-                            items={returnSubRecyclables(item)}
-                            multiSelect={selectSubRecyc}
-                            defaultSelected={subTypeList}
-                            dbClickSelect={true}
-                        />
-                    </CustomField>
-                    ))
-                }
-                {/* <CustomField label={curRecyc == " " ? "" : getNameFromRecycId(curRecyc) + t("col.category")} mandatory={subTypeRequired}>
+                <CustomField label={curRecyc == " " ? getNameFromRecycId(recycTypeList[0]) : getNameFromRecycId(curRecyc) + t("col.category")} mandatory={subTypeRequired}>
                     <CustomItemList
-                        items={returnSubRecyclables(curRecyc)}
+                        items={returnSubRecyclables(curRecyc == " " ?recycTypeList[0] :curRecyc )}
                         multiSelect={selectSubRecyc}
                         defaultSelected={subTypeList}
                         dbClickSelect={true}
                     />
-                </CustomField> */}
+                </CustomField>
             </Collapse>
         </>
         
