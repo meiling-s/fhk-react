@@ -15,7 +15,7 @@ const CheckInRequest = () => {
   }, []);
  
   const initCheckInRequest = async () => {
-    const result = await getAllCheckInRequests();
+    const result = await getAllCheckInRequests(0, 10);
     const data = result?.data.content;
     console.log("checkin request content: ", data);
     if (data && data.length > 0) {

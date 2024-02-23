@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useContainer } from 'unstated-next'
 import { getAllPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
+import { queryPickupOrder } from '../interfaces/pickupOrder'
 interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
@@ -41,9 +42,19 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
   const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
   const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
+  const [query, setQuery] = useState<queryPickupOrder>({
+    picoId: '',
+    effFromDate: '',
+    effToDate: '',
+    logisticName: '',
+    recycType: '',
+    receiverAddr: '',
+    status: 0
+  });
+  
 
     const initPickupOrderRequest = async () => {
-    const result = await getAllPickUpOrder(0, 10);
+    const result = await getAllPickUpOrder(0, 10, query);
     const data = result?.data.content;
     console.log("pickup order content: ", data);
     if (data && data.length > 0) {

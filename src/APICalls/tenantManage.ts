@@ -10,6 +10,7 @@ import {
 import { RegisterItem, Tenant } from '../interfaces/account'
 import { CreateTenant, UpdateStatus } from '../interfaces/tenant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
+import { returnApiToken } from '../utils/utils'
 
 const request = axios.create({
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
@@ -34,14 +35,16 @@ export const createInvitation = async (item: CreateTenant) => {
   }
 }
 
-export const getAllTenant = async () => {
-  console.log(
-    `Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`
-  )
-
+export const getAllTenant = async (page: number, size: number, tenantId?: string ) => {
+  const token = returnApiToken()
   try {
     const response = await request({
-      ...GET_ALL_TENANT,
+      ...GET_ALL_TENANT(token.tenantId),
+      params: {
+        page: page,
+        size: size,
+        tenantId: token.tenantId
+      },
       headers: {}
     })
     console.log('Get all tenant success:', JSON.stringify(response.data))

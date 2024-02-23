@@ -177,3 +177,12 @@ export interface PicoRefrenceList {
     pickupOrderDetail: PickupOrderDetail;
 }
 
+export type queryPickupOrder = {
+    picoId: string;
+    effFromDate: string;
+    effToDate: string;
+    logisticName: string;
+    recycType: string;
+    receiverAddr: string;
+    status: number
+  }

@@ -5,6 +5,7 @@ import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_PICK_UP_ORDER_BY_ID, G
 import { CreatePO, EditPo, PickupOrder, PoDtlStatus, PoStatus } from '../../../interfaces/pickupOrder'
 import { createCP } from '../../../interfaces/collectionPoint'
 import { returnApiToken } from '../../../utils/utils';
+import { queryPickupOrder } from '../../../interfaces/pickupOrder'
 
   const request = axios.create({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
@@ -12,14 +13,22 @@ import { returnApiToken } from '../../../utils/utils';
   
   const token = returnApiToken()
 
-  export const getAllPickUpOrder = async (page: number, size: number) => {
+  export const getAllPickUpOrder = async (page: number, size: number, query?: queryPickupOrder) => {
       const auth = returnApiToken()
       try {
         const response = await request({
           ...GET_ALL_PICK_UP_ORDER(auth.tenantId),
           params: {
             page: page,
-            size: size
+            size: size,
+            tenanId: auth.tenantId,
+            picoId: query?.picoId,
+            effFromDate: query?.effFromDate,
+            effToDate: query?.effToDate,
+            logisticName: query?.logisticName,
+            recycType: query?.recycType,
+            receiverAddr: query?.receiverAddr,
+            status: query?.status
           },
         });
         console.log('Get all pick up order:', JSON.stringify(response.data));

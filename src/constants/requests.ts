@@ -27,10 +27,10 @@ export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
 //   url: 'api/v1/account/tenant/astd/tenant'
 // }
 
-export const GET_ALL_TENANT: AxiosRequestConfig = {
+export const GET_ALL_TENANT = (tenantId: string) : AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/account/t'
-}
+  url: `api/v1/account/t/searching/${tenantId}`
+})
 
 // export const GET_TENANT_BY_TENANT_ID: AxiosRequestConfig = {
 //   method: 'get',
@@ -93,8 +93,9 @@ export const GET_ALL_CHECKIN_REQUESTS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkin/${table}`
+  url: `api/v1/collectors/checkinrequest/searching/${table}`
 })
+
 
 export const UPDATE_CHECK_IN_STATUS = (
   chkInId: number,
@@ -107,7 +108,7 @@ export const UPDATE_CHECK_IN_STATUS = (
 //collector/pickupOrder
 export const GET_ALL_PICK_UP_ORDER = (tenantId: string) : AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/administrator/pico/t/${tenantId}`
+  url: `api/v1/administrator/pico/search/${tenantId}`
 })
 
 export const GET_PICK_UP_ORDER_BY_ID = (picoId: string): AxiosRequestConfig => ({
@@ -274,7 +275,7 @@ export const GET_ALL_CHECKOUT_REQUEST = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkout/${table}`
+  url: `api/v1/collectors/checkoutrequest/searching/${table}`
 })
 
 export const GET_CHECKOUT_REQUEST_BY_ID = (
@@ -340,5 +341,5 @@ export const EDIT_VEHICLE = (table: string, vehicleId: number ) : AxiosRequestCo
 //inventory
 export const GET_INVENTORY = (table: string) : AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/inventory/${table}`
+  url: `api/v1/collectors/inventory/${table}/searching`
 })

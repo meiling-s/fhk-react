@@ -4,21 +4,30 @@ import { updateStatus} from '../../interfaces/warehouse';
 import {localStorgeKeyName} from '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import { returnApiToken } from '../../utils/utils';
+import { queryCheckIn } from '../../interfaces/checkin';
 
 const warehouseAPI = {
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 }
 
-export const getAllCheckInRequests = async () => {
+export const getAllCheckInRequests = async (page: number, size: number, query?: queryCheckIn ) => {
   try {
     const token = returnApiToken()
 
     const response = await axios({
       ...GET_ALL_CHECKIN_REQUESTS(token.decodeKeycloack),
       baseURL: warehouseAPI.baseURL,
-      headers: {
-        AuthToken: token.authToken
+      params:{
+        page: page,
+        size: size,
+        table: token.decodeKeycloack,
+        picoId: query?.picoId,
+        senderName: query?.senderName,
+        senderAddr: query?.senderAddr
       }
+      // headers: {
+      //   AuthToken: token.authToken
+      // }
     })
     return response
   } catch (e) {

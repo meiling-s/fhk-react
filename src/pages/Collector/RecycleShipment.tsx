@@ -19,11 +19,19 @@ import {
   TableSortLabel,
   TextField,
   Typography,
+  Pagination,
   makeStyles,
 } from "@mui/material";
+import {
+  DataGrid,
+  GridColDef,
+  GridRowParams,
+  GridRowSpacingParams,
+  GridCellParams
+} from '@mui/x-data-grid'
+import CloseIcon from '@mui/icons-material/Close'
 import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
 import { useEffect, useState } from "react";
-import { visuallyHidden } from "@mui/utils";
 import React from "react";
 import { styles } from "../../constants/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -46,102 +54,7 @@ import dayjs from "dayjs";
 import { format, localStorgeKeyName } from "../../constants/constant";
 
 import { useTranslation } from "react-i18next";
-import { getTenantById } from "../../APICalls/tenantManage";
-import { Tenant } from "../../interfaces/account";
-
-type Shipment = {
-  createDate: Date;
-  sender: string;
-  recipient: string;
-  poNumber: string;
-  stockAdjust: boolean;
-  logisticsCompany: string;
-  returnAddr: string;
-  deliveryAddr: string;
-  status: string;
-  checkInId: number;
-};
-
-function createShipment(
-  createDate: string,
-  sender: string,
-  recipient: string,
-  poNumber: string,
-  stockAdjust: boolean,
-  logisticsCompany: string,
-  returnAddr: string,
-  deliveryAddr: string,
-  status: string,
-  checkInId: number
-): Shipment {
-  var createAt = new Date(createDate);
-  return {
-    createDate: createAt,
-    sender,
-    recipient,
-    poNumber,
-    stockAdjust,
-    logisticsCompany,
-    returnAddr,
-    deliveryAddr,
-    status,
-    checkInId,
-  };
-}
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-type Order = "asc" | "desc";
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-interface HeadCell {
-  disablePadding: boolean;
-  id: keyof Shipment;
-  label: string;
-  numeric: boolean;
-}
-
-const fakeData = [
-  {
-    createDate: new Date(),
-    sender: "A company",
-    recipient: "B company",
-    poNumber: "PO7834123",
-    stockAdjust: true,
-    logisticsCompany: "C Logistics",
-    deliveryAddr: "旺角亞皆老街8號",
-    returnAddr: "觀塘偉業街1851號Suite J , 7/FHang Seng Ind. Bldg",
-  },
-  {
-    createDate: new Date(),
-    sender: "C company",
-    recipient: "D company",
-    poNumber: "PO7834124",
-    stockAdjust: false,
-    logisticsCompany: "E Logistics",
-    deliveryAddr: "旺角亞皆老街8號",
-    returnAddr: "荃灣橫龍街68號",
-  },
-];
+import { queryCheckIn } from "../../interfaces/checkin";
 
 type inviteModal = {
   open: boolean;
@@ -282,255 +195,217 @@ function RejectForm({
   );
 }
 
+type TableRow = {
+  id: number
+  [key: string]: any
+}
+
 function ShipmentManage() {
   const { t } = useTranslation();
 
   const drawerWidth = 246;
-
-  const [searchText, setSearchText] = useState<string>("");
-
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
-
   const [selected, setSelected] = useState<string[]>([]);
-
-  const [orderBy, setOrderBy] = useState<string>("name");
-
   const [rejFormModal, setRejFormModal] = useState<boolean>(false);
-
   const [shipments, setShipments] = useState<CheckIn[]>([]);
-
   const [filterShipments, setFilterShipments] = useState<CheckIn[]>([]);
-
   const [company, setCompany] = useState("");
-
   const [location, setLocation] = useState("");
-
   const [checkedShipments, setCheckedShipments] = useState<CheckIn[]>([]);
-
   const [open, setOpen] = useState<boolean>(false);
-
   const [selectedRow, setSelectedRow] = useState<CheckIn>();
-
-  const [tenant, setTenant] = useState<Tenant>();
-
   const [checkInRequest, setCheckInRequest] = useState<CheckIn[]>();
-  // const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [totalData, setTotalData] = useState<number>(0)
+  const [query, setQuery] = useState<queryCheckIn>({
+    picoId: "", 
+    senderName: "",
+    senderAddr: "",
+  })
 
   useEffect(() => {
     initCheckInRequest();
-    // initPickupOrderRequest();
-  }, []);
+  }, [page, query]);
 
-  const initCheckInRequest = async () => {
-    const result = await getAllCheckInRequests();
-    const data = result?.data.content;
-    console.log("checkin request content: ", data);
-    if (data && data.length > 0) {
-      console.log("all checkIn request ", data);
-      setCheckInRequest(data);
+  const transformToTableRow = (item: CheckIn): TableRow => {
+    const createdDate = item.createdAt
+      ? dayjs(new Date(item.createdAt)).format(format.dateFormat1)
+      : '-'
+    return {
+      id: item.chkInId,
+      chkInId: item.chkInId,
+      createdAt: createdDate,
+      senderName: item.senderName ,
+      recipientCompany: "-",
+      picoId: item.picoId,
+      adjustmentFlg: item.adjustmentFlg,
+      logisticName: item.logisticName,
+      senderAddr: item.senderAddr ,
+      deliveryAddress: "-",
+      status: item.status,
     }
-  };
-
-  var tenantId = 0;
-
-  const initGetTenantByIdRequest = async (tenantId: number) => {
-    const result = await getTenantById(tenantId);
-    const data = result?.data;
-    console.log("pickup order content: ", data);
-    if (data && data.length > 0) {
-      console.log("all pickup orders ", data);
-      setTenant(data);
-    }
-  };
-
-  const regex = /\d{6}/;
-  const extractNum = localStorage
-    .getItem(localStorgeKeyName.decodeKeycloack)
-    ?.match(regex);
-  if (extractNum) {
-    tenantId = parseInt(extractNum[0]);
   }
 
-  useEffect(() => {
-    // initGetTenantByIdRequest(tenantId);
-    initGetTenantByIdRequest(tenantId);
-  }, []);
-
-  useEffect(() => {
-    initTable();
-  }, [checkInRequest]);
-
-  const initTable = async () => {
-    console.log("init", checkInRequest);
-    const result = await getAllCheckInRequests();
+  const initCheckInRequest = async () => {
+    const result = await getAllCheckInRequests(page - 1, pageSize, query);
     const data = result?.data.content;
-    if (data) {
-      //setShipments(checkInRequest);
-      console.log(JSON.stringify(data) + "allll");
-      var ships: CheckIn[] = [];
-      var i = 0;
-      while (i < data.length) {
-        //if (data[i].status == "CONFIRMED") {
-          ships.push(data[i]);
-       // }
-        i++;
-      }
-      setShipments(ships);
-      setFilterShipments(ships);
-      console.log("filtership", ships);
+    if (data && data.length > 0) {  
+      const checkinData = data.map(transformToTableRow)
+      setCheckInRequest(data);
+      setFilterShipments(checkinData)
+    } else {
+      setFilterShipments([])
     }
+    setTotalData(result?.data.totalPages)
   };
-
-  useEffect(() => {
-    console.log("filtered: ", filterShipments);
-  }, [filterShipments]);
-
-  // async function initShipments() {
-  //     const result = await getAllCheckInRequests();
-  //     const data = result?.data.content;
-  //     if(data){
-  //         var ships: Shipment[] = [];
-  //         data.map((ship: any) => {
-  //             if(ship.status == "CREATED"){
-  //             ships.push(
-  //                 createShipment(
-  //                     ship?.createdAt,
-  //                     ship?.senderName,
-  //                     ship?.recipientCompany,
-  //                     ship?.picoId,
-  //                     ship?.adjustmentFlg,
-  //                     ship?.logisticName,
-  //                     ship?.senderAddr,
-  //                     ship?.deliveryAddress,
-  //                     ship?.status,
-  //                     ship?.chkInId
-  //             ));}
-  //         })
-  //         setShipments(ships);
-  //         setFilterShipments(ships);
-  //     }
+ 
+  // const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const checked = event.target.checked
+  //   setSelectAll(checked)
+  //   const selectedRows = checked
+  //     ? filterCheckOut.map((row) => row.chkOutId)
+  //     : []
+  //   setCheckedCheckOut(selectedRows)
+  //   console.log('handleSelectAll', selectedRows)
   // }
 
-  const headCells: readonly HeadCell[] = [
+  // const handleRowCheckboxChange = (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  //   chkOutId: number
+  // ) => {
+  //   setDrawerOpen(false)
+
+  //   const checked = event.target.checked
+  //   const updatedChecked = checked
+  //     ? [...checkedCheckOut, chkOutId]
+  //     : checkedCheckOut.filter((rowId) => rowId != chkOutId)
+  //   setCheckedCheckOut(updatedChecked)
+  //   console.log(updatedChecked)
+
+  //   const allRowsChecked = filterCheckOut.every((row) =>
+  //     updatedChecked.includes(row.chkOutId)
+  //   )
+  //   setSelectAll(allRowsChecked)
+  // }
+
+  // const HeaderCheckbox = (
+  //   <Checkbox
+  //     checked={selectAll}
+  //     onChange={handleSelectAll}
+  //     color="primary"
+  //     inputProps={{ 'aria-label': 'Select all rows' }}
+  //   />
+  // )
+
+  // const checkboxColumn: GridColDef = {
+  //   field: 'customCheckbox',
+  //   headerName: 'Select',
+  //   width: 80,
+  //   sortable: false,
+  //   filterable: false,
+  //   renderHeader: () => HeaderCheckbox,
+  //   renderCell: (params) => (
+  //     <Checkbox
+  //       checked={selectAll || checkInRequest.includes(params.row?.id)}
+  //       onChange={(event) =>
+  //         //handleRowCheckboxChange(event, params.row.chkOutId)
+  //       }
+  //       color="primary"
+  //     />
+  //   )
+  // }
+  
+  const headCells: GridColDef[] = [
+   // checkboxColumn,
     {
-      id: "createDate",
-      numeric: false,
-      disablePadding: false,
-      label: t("check_in.created_at"),
+      field: "createdAt",
+      type: 'string',
+      headerName: t("check_in.created_at"),
+      width: 150
     },
     {
-      id: "sender",
-      numeric: false,
-      disablePadding: false,
-      label: t("check_in.sender_company"),
+      field: "senderName",
+      type: 'string',
+      headerName: t("check_in.sender_company"),
+      width: 200
     },
     {
-      id: "recipient",
-      numeric: false,
-      disablePadding: false,
-      label: t("check_in.receiver_company"),
+      field: "recipientCompany",
+      type: 'string',
+      headerName: t("check_in.receiver_company"),
+      width: 200
     },
     {
-      id: "poNumber",
-      numeric: false,
-      disablePadding: false,
-      label: t("check_in.pickup_order_no"),
+      field: "picoId",
+      type: 'string',
+      headerName: t("check_in.pickup_order_no"),
+      width: 200
     },
     {
-      id: "stockAdjust",
-      numeric: false,
-      disablePadding: false,
-      label: t("check_in.stock_adjustment"),
+      field: 'adjustmentFlg',
+      headerName: t('check_in.stock_adjustment'),
+      width: 150,
+      type: 'string',
+      renderCell: (params) => {
+        return (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {params.row.adjustmentFlg ? (
+              <CheckIcon className="text-green-primary" />
+            ) : (
+              <CloseIcon className="text-red" />
+            )}
+          </div>
+        )
+      }
     },
     {
-      id: "logisticsCompany",
-      numeric: false,
-      disablePadding: false,
-      label: t("check_in.logistic_company"),
+      field: "logisticName",
+      type: 'string',
+      headerName: t("check_in.logistic_company"),
+      width: 200
     },
     {
-      id: "returnAddr",
-      numeric: false,
-      disablePadding: false,
-      label: t("check_in.sender_addr"),
+      field: "senderAddr",
+      type: 'string',
+      headerName: t("check_in.sender_addr"),
+      width: 200
     },
     {
-      id: "deliveryAddr",
-      numeric: false,
-      disablePadding: false,
-      label: t("check_in.receiver_addr"),
+      field: "deliveryAddress",
+      type: 'string',
+      headerName: t("check_in.receiver_addr"),
+      width: 200
+    },
+    {
+      field: "status",
+      type: 'string',
+      headerName: t("check_in.receiver_addr"),
+      width: 200
     },
   ];
 
-  const handleRequestSort = (
-    _event: React.MouseEvent<unknown>,
-    property: string
-  ) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
+  const updateQuery = (newQuery: Partial<queryCheckIn>) => {
+    setQuery({ ...query, ...newQuery });
   };
 
   const handleFilterPoNum = (searchWord: string) => {
-    //console.log(searchWord)
-    if (searchWord != "") {
-      const filteredShipments: CheckIn[] = [];
-      shipments.map((shipment) => {
-        console.log("piconDtlId: ", searchWord, shipment.picoId);
-        if (shipment.picoId.includes(searchWord)) {
-          filteredShipments.push(shipment);
-        }
-      });
-      if (filteredShipments) {
-        setFilterShipments(filteredShipments);
-      }
-    } else {
-      console.log("searchWord empty, don't filter shipments");
-      setFilterShipments(shipments);
-    }
+    updateQuery({picoId: searchWord})
   };
 
   const handleComChange = (event: SelectChangeEvent) => {
     setCompany(event.target.value);
     var searchWord = event.target.value;
-    if (searchWord != "") {
-      const filteredShipments: CheckIn[] = [];
-      shipments.map((shipment) => {
-        if (shipment.senderName.includes(searchWord)) {
-          filteredShipments.push(shipment);
-        }
-      });
-
-      if (filteredShipments) {
-        setFilterShipments(filteredShipments);
-      }
-    } else {
-      setFilterShipments(shipments);
-    }
+    updateQuery({senderName: searchWord})
   };
 
   const handleLocChange = (event: SelectChangeEvent) => {
     setLocation(event.target.value);
     var searchWord = event.target.value;
-    //console.log(searchWord);
-    if (searchWord != "") {
-      const filteredShipments: CheckIn[] = [];
-      shipments.map((shipment) => {
-        if (shipment.senderAddr.includes(searchWord)) {
-          filteredShipments.push(shipment);
-        }
-      });
-
-      if (filteredShipments) {
-        setFilterShipments(filteredShipments);
-      }
-    } else {
-      setFilterShipments(shipments);
-    }
+    updateQuery({senderAddr: searchWord})
   };
 
   const handleApproveOnClick = async () => {
-    console.log(checkedShipments);
+    // console.log(checkedShipments);
     const checkInIds = checkedShipments.map(
       (checkedShipments) => checkedShipments.chkInId
     );
@@ -561,18 +436,13 @@ function ShipmentManage() {
     );
 
     setSelected([]);
-    initTable();
+    // initTable();
   };
 
   const onRejectCheckin = () => {
     setSelected([]);
-    initTable();
+    //initTable();
   };
-
-  const createSortHandler =
-    (property: keyof Shipment) => (event: React.MouseEvent<unknown>) => {
-      handleRequestSort(event, property);
-    };
 
   function onSelectAllClick() {
     if (selected.length < shipments.length) {
@@ -601,31 +471,6 @@ function ShipmentManage() {
     }
   }
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-    setOpen(true);
-
-    const selectedItem = checkInRequest?.find(
-      (item) => item.chkInId.toString() === id
-    );
-    setSelectedRow(selectedItem); //
-  };
-
   const handleCheck = (item: CheckIn, isChecked: boolean) => {
     if (isChecked) {
       setCheckedShipments([...checkedShipments, item]);
@@ -638,12 +483,26 @@ function ShipmentManage() {
     setOpen(false);
   };
 
+  const handleSelectRow = (params: GridRowParams) =>{
+    setOpen(true);
+   
+    const selectedItem = filterShipments?.find(
+      (item) => item.chkInId === params.row.chkInId
+    );
+    setSelectedRow(selectedItem); 
+  }
+
+  const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
+    return {
+      top: params.isFirstVisible ? 0 : 10
+    }
+  }, [])
+
   return (
     <>
       <Modal open={open} onClose={handleClose}>
         <RequestForm onClose={handleClose} selectedItem={selectedRow} />
       </Modal>
-
       <Box
         sx={{
           width: "100%",
@@ -661,18 +520,6 @@ function ShipmentManage() {
                 {t("check_in.request_check_in")}
               </Typography>
             </Button>
-          </Grid>
-          <Grid item>
-            {filterShipments.length > 0 && (
-              <CustomAvatar
-                name={filterShipments.length.toString()}
-                backgroundColor="#79CA25"
-                fontColor="#FFFFFF"
-                isBold
-                size={20}
-                fontSize="14px"
-              />
-            )}
           </Grid>
         </Grid>
         <Box>
@@ -744,11 +591,6 @@ function ShipmentManage() {
             }}
             placeholder={t("check_in.input_po_no")}
             InputProps={{
-              // startAdornment: (
-              //     <InputAdornment position="start">
-              //         <Typography>搜索</Typography>
-              //     </InputAdornment>
-              // ),
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => {}}>
@@ -794,8 +636,8 @@ function ShipmentManage() {
                 {" "}
                 <em>{t("check_in.any")}</em>
               </MenuItem>
-              {shipments.map((item) => (
-                <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>
+              {checkInRequest?.map((item, index) => (
+                <MenuItem key={index} value={item.senderAddr}>{item.senderAddr}</MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -835,130 +677,49 @@ function ShipmentManage() {
                 {" "}
                 <em>{t("check_in.any")}</em>
               </MenuItem>
-              {shipments.map((item) => (
-                <MenuItem value={item.senderAddr}>{item.senderAddr}</MenuItem>
+              {checkInRequest?.map((item, index) => (
+                <MenuItem key={index} value={item.senderAddr}>{item.senderAddr}</MenuItem>
               ))}
             </Select>
           </FormControl>
         </Box>
-        <TableContainer
-          sx={{
-            mt: 2,
-          }}
-        >
-          <Table
-            sx={localstyles.table}
-            aria-labelledby="tableTitle"
-            size="small"
-          >
-            <TableHead>
-              <TableRow
-                key={"header"}
-                tabIndex={-1}
-                sx={[localstyles.headerRow]}
-              >
-                <TableCell sx={localstyles.headCell}>
-                  <Checkbox
-                    color="primary"
-                    indeterminate={
-                      selected.length > 0 && selected.length < shipments.length
-                    }
-                    checked={selected.length > 0}
-                    onChange={onSelectAllClick}
-                    inputProps={{
-                      "aria-label": "select all desserts",
-                    }}
-                  />
-                </TableCell>
-                {headCells.map((headCell) => (
-                  <TableCell
-                    key={headCell.id}
-                    align={headCell.numeric ? "right" : "left"}
-                    padding={headCell.disablePadding ? "none" : "normal"}
-                    sortDirection={orderBy === headCell.id ? order : false}
-                    sx={localstyles.headCell}
-                  >
-                    <TableSortLabel
-                      active={orderBy === headCell.id}
-                      direction={orderBy === headCell.id ? order : "asc"}
-                      onClick={() => {
-                        createSortHandler(headCell.id);
-                      }}
-                    >
-                      {headCell.label}
-                      {orderBy === headCell.id ? (
-                        <Box component="span" sx={visuallyHidden}>
-                          {order === "desc"
-                            ? "sorted descending"
-                            : "sorted ascending"}
-                        </Box>
-                      ) : null}
-                    </TableSortLabel>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filterShipments.map((shipment) => {
-                // const { createDate, sender, recipient, poNumber, stockAdjust, logisticsCompany, returnAddr, deliveryAddr } = shipment;
-                return (
-                  <TableRow
-                    hover
-                    key={shipment.chkInId}
-                    tabIndex={-1}
-                    role="checkbox"
-                    sx={[localstyles.row]}
-                    onClick={(event) =>
-                      handleClick(event, shipment.chkInId.toString())
-                    }
-                  >
-                    <TableCell sx={localstyles.bodyCell}>
-                      <Checkbox
-                        color="primary"
-                        checked={selected.includes(shipment.chkInId.toString())}
-                        onChange={(e) =>
-                          handleCheck(shipment, e.target.checked)
-                        }
-                        inputProps={{
-                          "aria-label": "select request",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell sx={localstyles.bodyCell}>
-                      {dayjs(new Date(shipment.createdAt)).format(
-                        format.dateFormat2
-                      )}
-                    </TableCell>
-                    <TableCell sx={localstyles.bodyCell}>
-                      {shipment.senderName}
-                    </TableCell>
-                    <TableCell sx={localstyles.bodyCell}>
-                      {tenant?.companyNameEng}
-                    </TableCell>
-                    <TableCell sx={localstyles.bodyCell}>
-                      {shipment.picoId}
-                    </TableCell>
-                    <TableCell sx={localstyles.bodyCell}>
-                      {shipment.adjustmentFlg ? (
-                        <CheckIcon sx={styles.endAdornmentIcon} />
-                      ) : (
-                        <ClearIcon sx={styles.endAdornmentIcon} />
-                      )}
-                    </TableCell>
-                    <TableCell sx={localstyles.bodyCell}>
-                      {shipment.logisticName}
-                    </TableCell>
-                    <TableCell sx={localstyles.bodyCell}>
-                      {shipment.senderAddr}
-                    </TableCell>
-                    <TableCell sx={localstyles.bodyCell}>{""}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
+        <div className="table-overview">
+          <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
+            <DataGrid
+              rows={filterShipments}
+              getRowId={(row) => row.chkInId}
+              hideFooter
+              columns={headCells}
+              checkboxSelection={false}
+              disableRowSelectionOnClick
+              onRowClick={handleSelectRow}
+              getRowSpacing={getRowSpacing}
+              sx={{
+                border: 'none',
+                '& .MuiDataGrid-cell': {
+                  border: 'none'
+                },
+                '& .MuiDataGrid-row': {
+                  bgcolor: 'white',
+                  borderRadius: '10px'
+                },
+                '&>.MuiDataGrid-main': {
+                  '&>.MuiDataGrid-columnHeaders': {
+                    borderBottom: 'none'
+                  }
+                }
+              }}
+            />
+             <Pagination
+              className="mt-4"
+              count={Math.ceil(totalData)}
+              page={page}
+              onChange={(_, newPage) => {
+                setPage(newPage)
+              }}
+            />
+          </Box>
+        </div>
         <RejectForm
           checkedShipments={checkedShipments}
           open={rejFormModal}

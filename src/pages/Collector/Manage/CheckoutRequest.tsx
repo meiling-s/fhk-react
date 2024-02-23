@@ -14,6 +14,7 @@ import {
   IconButton,
   InputLabel,
   FormControl,
+  Pagination,
   MenuItem,
   Modal,
   Typography,
@@ -42,6 +43,7 @@ import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
 import { styles } from '../../../constants/styles'
+import { queryCheckout } from '../../../interfaces/checkout'
 import { localStorgeKeyName } from "../../../constants/constant";
 
 type TableRow = {
@@ -324,6 +326,14 @@ const CheckoutRequest: FunctionComponent = () => {
   const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
   const [selectAll, setSelectAll] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false)
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [totalData, setTotalData] = useState<number>(0)
+  const [query, setQuery] = useState<queryCheckout>({
+    picoId: "", 
+    receiverName: "",
+    receiverAddr: "",
+  });
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -464,7 +474,7 @@ const CheckoutRequest: FunctionComponent = () => {
   }
 
   const getCheckoutRequest = async () => {
-    const result = await getAllCheckoutRequest()
+    const result = await getAllCheckoutRequest(page - 1, pageSize, query)
     const data = result?.data.content
     if (data && data.length > 0) {
       const checkoutData = data
@@ -474,65 +484,35 @@ const CheckoutRequest: FunctionComponent = () => {
         data.filter((item: CheckOut) => item.status === 'CREATED')
       )
       setFilterCheckOut(checkoutData)
+    } else {
+      setFilterCheckOut([])
     }
+    setTotalData(result?.data.totalPages)
   }
 
   useEffect(() => {
     getCheckoutRequest()
-  }, [])
+  }, [page, query.picoId, query.receiverName, query.receiverName])
+
+  const updateQuery = (newQuery: Partial<queryCheckout>) => {
+    setQuery({ ...query, ...newQuery });
+  };
 
   const handleSearchByPoNumb = (searchWord: string) => {
-    if (searchWord != '') {
-      const filteredData: CheckOut[] = []
-      filterCheckOut.map((item) => {
-        if (item.picoId.includes(searchWord)) {
-          filteredData.push(item)
-        }
-      })
-      if (filteredData) {
-        setFilterCheckOut(filteredData)
-      }
-    } else {
-      setFilterCheckOut(checkOutRequest)
-    }
+    updateQuery({picoId: searchWord})
   }
 
   const handleCompanyChange = (event: SelectChangeEvent) => {
+    console.log("company", event.target.value)
     setCompany(event.target.value)
-    var searchWord = event.target.value
-    if (searchWord != '') {
-      const filteredData: CheckOut[] = []
-      filterCheckOut.map((item) => {
-        if (item.logisticName.includes(searchWord)) {
-          filteredData.push(item)
-        }
-      })
-
-      if (filteredData) {
-        setFilterCheckOut(filteredData)
-      }
-    } else {
-      setFilterCheckOut(checkOutRequest)
-    }
+    var searchWord =  event.target.value
+    updateQuery({receiverName: searchWord})
   }
 
   const handleLocChange = (event: SelectChangeEvent) => {
     setLocation(event.target.value)
     var searchWord = event.target.value
-    if (searchWord != '') {
-      const filteredData: CheckOut[] = []
-      filterCheckOut.map((item) => {
-        if (item.receiverAddr.includes(searchWord)) {
-          filteredData.push(item)
-        }
-      })
-
-      if (filteredData) {
-        setFilterCheckOut(filteredData)
-      }
-    } else {
-      setFilterCheckOut(checkOutRequest)
-    }
+    updateQuery({receiverAddr: searchWord})
   }
 
   const handleDrawerClose = () => {
@@ -545,7 +525,7 @@ const CheckoutRequest: FunctionComponent = () => {
     const selectedItem = checkOutRequest?.find(
       (item) => item.chkOutId === row.chkOutId
     )
-    console.log('selectedItem', selectedItem)
+    //console.log('selectedItem', selectedItem)
     setSelectedRow(selectedItem)
 
     setDrawerOpen(true)
@@ -613,8 +593,8 @@ const CheckoutRequest: FunctionComponent = () => {
                 <em>{t('check_in.any')}</em>
               </MenuItem>
               {filterCheckOut.map((item, index) => (
-                <MenuItem key={index} value={item.logisticName}>
-                  {item.logisticName}
+                <MenuItem key={index} value={item.receiverName}>
+                  {item.receiverName}
                 </MenuItem>
               ))}
             </Select>
@@ -666,6 +646,14 @@ const CheckoutRequest: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 }
+              }}
+            />
+             <Pagination
+              className="mt-4"
+              count={Math.ceil(totalData)}
+              page={page}
+              onChange={(_, newPage) => {
+                setPage(newPage)
               }}
             />
           </Box>
