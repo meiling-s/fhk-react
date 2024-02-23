@@ -148,4 +148,10 @@ export type CheckIn = {
     updatedAt: string;
   }
   
+  export type queryCheckIn = {
+    picoId: string, 
+    senderName: string
+    senderAddr: string
+  }
+  
 

@@ -93,8 +93,9 @@ export const GET_ALL_CHECKIN_REQUESTS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkin/${table}`
+  url: `api/v1/collectors/checkinrequest/searching/${table}`
 })
+
 
 export const UPDATE_CHECK_IN_STATUS = (
   chkInId: number,
