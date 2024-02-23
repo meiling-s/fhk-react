@@ -346,7 +346,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       )
     })
 
-    console.log('isRecycleTypeIdUnique', isRecycleTypeIdUnique)
+    //console.log('isRecycleTypeIdUnique', isRecycleTypeIdUnique)
 
     isRecyleUnselected &&
       tempV.push({
@@ -361,7 +361,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       })
 
     setValidation(tempV)
-    console.log(tempV)
+    //console.log(tempV)
   }, [nameValue, place, contractNum, recycleCategory])
 
   const checkString = (s: string) => {

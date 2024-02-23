@@ -44,7 +44,12 @@ export const getAllWarehouse = async (page: number, size: number) => {
       })
       
       return response
-    } catch (e) {
+    } catch (e: any) {
+      if (e.response.status == '401') {
+        //return 401 if token already invalid
+        const unauthorized = e.response.status 
+        return unauthorized
+      }
       console.error('Get all warehouse failed:', e)
       return null
     }
