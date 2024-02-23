@@ -6,13 +6,14 @@ import {
 } from '../../constants/requests'
 import {localStorgeKeyName} from  '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
+import { queryCheckout } from '../../interfaces/checkout'
 import { returnApiToken } from '../../utils/utils';
 
 const checkoutAPI = {
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 }
 
-export const getAllCheckoutRequest = async (page: number, size: number) => {
+export const getAllCheckoutRequest = async (page: number, size: number, query: queryCheckout ) => {
   try {
     const token = returnApiToken()
 
@@ -21,11 +22,15 @@ export const getAllCheckoutRequest = async (page: number, size: number) => {
       baseURL: checkoutAPI.baseURL,
       params: {
         page: page,
-        size: size
+        size: size,
+        table: token.decodeKeycloack,
+        picoId: query.picoId,
+        receiverName: query.receiverName,
+        receiverAddr: query.receiverAddr
       },
-      headers: {
-        AuthToken: token.authToken
-      }
+      // headers: {
+      //   AuthToken: token.authToken
+      // }
     })
     return response
   } catch (e) {

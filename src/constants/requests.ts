@@ -274,7 +274,7 @@ export const GET_ALL_CHECKOUT_REQUEST = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkout/${table}`
+  url: `api/v1/collectors/checkoutrequest/searching/${table}`
 })
 
 export const GET_CHECKOUT_REQUEST_BY_ID = (

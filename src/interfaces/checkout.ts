@@ -56,3 +56,10 @@ export type CheckOut = {
   createdAt: string
   updatedAt: string
 }
+
+export type queryCheckout = {
+  picoId: string, 
+  receiverName: string,
+  receiverAddr: string
+
+}
