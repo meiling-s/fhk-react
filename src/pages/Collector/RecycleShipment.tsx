@@ -10,24 +10,16 @@ import {
   MenuItem,
   Modal,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
-  TableSortLabel,
   TextField,
   Typography,
   Pagination,
-  makeStyles,
 } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridCellParams
 } from '@mui/x-data-grid'
 import CloseIcon from '@mui/icons-material/Close'
 import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
@@ -38,6 +30,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CheckIcon from "@mui/icons-material/Check";
 import { ClearIcon } from "@mui/x-date-pickers";
+import { useNavigate } from 'react-router-dom'
 import CustomItemList, {
   il_item,
 } from "../../components/FormComponents/CustomItemList";
@@ -202,7 +195,7 @@ type TableRow = {
 
 function ShipmentManage() {
   const { t } = useTranslation();
-
+  const navigate = useNavigate()
   const drawerWidth = 246;
   const [selected, setSelected] = useState<string[]>([]);
   const [rejFormModal, setRejFormModal] = useState<boolean>(false);
@@ -248,15 +241,21 @@ function ShipmentManage() {
 
   const initCheckInRequest = async () => {
     const result = await getAllCheckInRequests(page - 1, pageSize, query);
-    const data = result?.data.content;
-    if (data && data.length > 0) {  
-      const checkinData = data.map(transformToTableRow)
-      setCheckInRequest(data);
-      setFilterShipments(checkinData)
+    if (result == '401') {
+       // direct to login if sttUS 401
+       localStorage.clear()
+       navigate('/')
     } else {
-      setFilterShipments([])
+      const data = result?.data.content;
+      if (data && data.length > 0) {  
+        const checkinData = data.map(transformToTableRow)
+        setCheckInRequest(data);
+        setFilterShipments(checkinData)
+      } else {
+        setFilterShipments([])
+      }
+      setTotalData(result?.data.totalPages)
     }
-    setTotalData(result?.data.totalPages)
   };
  
   // const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {

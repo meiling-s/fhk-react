@@ -38,7 +38,7 @@ import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
 import CheckInDetails from './CheckOutDetails'
 import { updateStatus } from '../../../interfaces/warehouse'
 import { CheckOut } from '../../../interfaces/checkout'
-
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
@@ -325,6 +325,7 @@ const CheckoutRequest: FunctionComponent = () => {
   const [filterCheckOut, setFilterCheckOut] = useState<CheckOut[]>([])
   const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
   const [selectAll, setSelectAll] = useState(false)
+  const navigate = useNavigate()
   const [confirmModal, setConfirmModal] = useState(false)
   const [page, setPage] = useState(1)
   const pageSize = 10
@@ -475,19 +476,26 @@ const CheckoutRequest: FunctionComponent = () => {
 
   const getCheckoutRequest = async () => {
     const result = await getAllCheckoutRequest(page - 1, pageSize, query)
-    const data = result?.data.content
-    if (data && data.length > 0) {
-      const checkoutData = data
-        .map(transformToTableRow)
-        .filter((item: CheckOut) => item.status === 'CREATED')
-      setCheckoutRequest(
-        data.filter((item: CheckOut) => item.status === 'CREATED')
-      )
-      setFilterCheckOut(checkoutData)
+
+    if(result == '401') {
+       // direct to login if sttUS 401
+       localStorage.clear()
+       navigate('/')
     } else {
-      setFilterCheckOut([])
+      const data = result?.data.content
+      if (data && data.length > 0) {
+        const checkoutData = data
+          .map(transformToTableRow)
+          .filter((item: CheckOut) => item.status === 'CREATED')
+        setCheckoutRequest(
+          data.filter((item: CheckOut) => item.status === 'CREATED')
+        )
+        setFilterCheckOut(checkoutData)
+      } else {
+        setFilterCheckOut([])
+      }
+      setTotalData(result?.data.totalPages)
     }
-    setTotalData(result?.data.totalPages)
   }
 
   useEffect(() => {

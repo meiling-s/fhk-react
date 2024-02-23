@@ -184,10 +184,9 @@ const Warehouse: FunctionComponent = () => {
     try {
       const response = await getAllWarehouse(page - 1, pageSize)
       if (response == '401') {
-        //console.log("direct to login", response)
+        // direct to login if sttUS 401
         localStorage.clear()
         navigate('/')
-       
       } else {
         const filteredData = response.data.content
         .filter(
