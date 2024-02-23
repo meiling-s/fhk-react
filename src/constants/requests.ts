@@ -27,10 +27,10 @@ export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
 //   url: 'api/v1/account/tenant/astd/tenant'
 // }
 
-export const GET_ALL_TENANT: AxiosRequestConfig = {
+export const GET_ALL_TENANT = (tenantId: string) : AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/account/t'
-}
+  url: `api/v1/account/t/searching/${tenantId}`
+})
 
 // export const GET_TENANT_BY_TENANT_ID: AxiosRequestConfig = {
 //   method: 'get',

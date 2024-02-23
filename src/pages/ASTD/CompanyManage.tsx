@@ -10,6 +10,7 @@ import {
   Typography,
   Grid,
   Divider,
+  Pagination
 } from "@mui/material";
 import {
   DataGrid,
@@ -501,6 +502,9 @@ function CompanyManage() {
   const [openDetail, setOpenDetails] = useState<boolean>(false);
   const [selectedTenanId, setSelectedTenantId] = useState(0);
   const [rejectedId, setRejectId] = useState(0);
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [totalData, setTotalData] = useState<number>(0)
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
@@ -674,8 +678,8 @@ function CompanyManage() {
   }, []);
 
   async function initCompaniesData() {
-    const result = await getAllTenant();
-    const data = result?.data;
+    const result = await getAllTenant(page-1, pageSize);
+    const data = result?.data.content;
     if (data.length > 0) {
       var coms: Company[] = [];
       data.map((com: any) => {
@@ -694,6 +698,7 @@ function CompanyManage() {
       setCompanies(coms);
       setFilterCompanies(coms);
     }
+    setTotalData(result?.data.totalPages)
   }
 
   const handleFilterCompanies = (searchWord: string) => {
@@ -869,6 +874,14 @@ function CompanyManage() {
                     borderBottom: "none",
                   },
                 },
+              }}
+            />
+             <Pagination
+              className="mt-4"
+              count={Math.ceil(totalData)}
+              page={page}
+              onChange={(_, newPage) => {
+                setPage(newPage)
               }}
             />
           </Box>
