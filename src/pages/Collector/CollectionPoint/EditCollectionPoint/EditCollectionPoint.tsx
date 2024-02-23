@@ -32,6 +32,7 @@ function CreateCollectionPoint() {
 
     const {state} = useLocation();
     const colInfo: collectionPoint = state;
+    console.log("colInfo", colInfo)
 
     const [colType, setCOLType] = useState<string>(colInfo.colPointTypeId);
     const [address, setAddress] = useState<string>(colInfo.address);
@@ -103,9 +104,11 @@ function CreateCollectionPoint() {
     }, [debouncedSearchValue]);
 
     
-    const checkRecyclable = (items : recyclable) =>{
-        return items.every(item => item.recycSubTypeId.length > 0)
-    }
+    // const checkRecyclable = (items : recyclable) =>{
+    //     console.log("items", recyclables)
+    //     //return true
+    //     return recyclables.every(item => item.recycSubTypeId.length > 0)
+    // }
 
     const checkTimePeriod = () =>{
         return colPtRoutine?.routineContent.every(item =>
@@ -148,7 +151,8 @@ function CreateCollectionPoint() {
             premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
             premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty, type: "error" });
             premiseRemark == "" && tempV.push({ field: "col.premiseRemark", problem: formErr.empty, type: "error" });
-            (recyclables.length == 0 || !checkRecyclable(recyclables)) && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
+            (recyclables.length == 0) && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
+            //(!checkRecyclable(recyclables)) && tempV.push({ field: "inventory.recyleSubType", problem: formErr.empty, type: "error" });
             console.log("num:",staffNum,Number.isNaN(parseInt(staffNum)),staffNum == "")
             staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty, type: "error" });
             (Number.isNaN(parseInt(staffNum)) && !(staffNum == ""))
@@ -269,7 +273,7 @@ function CreateCollectionPoint() {
     }
 
     const handleSaveOnClick = async () => {
-        const loginId = localStorage.getItem(localStorgeKeyName.username)
+        const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
 
         if(validation.length == 0){
             const cp: updateCP = {
@@ -297,8 +301,9 @@ function CreateCollectionPoint() {
             const data = result?.data;
             if(data){
                 console.log("updated collection point: ",data);
+                navigate("/collector/collectionPoint",{ state: "updated" }); 
             }
-            navigate("/collector/collectionPoint",{ state: "updated" });       //goback to last page
+            
         }else{
             console.log(validation)
             setTrySubmited(true);

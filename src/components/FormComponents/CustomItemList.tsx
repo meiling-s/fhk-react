@@ -76,6 +76,7 @@ function CustomItemList({
             }
         }
         if(setLastSelect){
+            console.log("selectAction", selectAction)
             setLastSelect(selectAction? select : " ");
             setLS(selectAction? select : " ");
         }

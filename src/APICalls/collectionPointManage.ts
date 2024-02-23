@@ -70,9 +70,10 @@ export const createCollectionPoint = async (data: createCP) => {
 }
 
 export const updateCollectionPoint = async (collectionPointId: string, data: updateCP) => {
-
+  const auth = returnApiToken()
+  const tenantId = auth.tenantId
   const axiosConfig = Object.assign({},UPDATE_COLLECTIONPOINT);
-  axiosConfig.url = UPDATE_COLLECTIONPOINT.url+`/${collectionPointId}`;
+  axiosConfig.url = UPDATE_COLLECTIONPOINT.url+`/${tenantId}/${collectionPointId}`;
 
   try{
       const response = await request({
