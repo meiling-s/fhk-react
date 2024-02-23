@@ -16,14 +16,13 @@ import CustomSearchField from "../../../components/TableComponents/CustomSearchF
 import PickupOrderForm from "../../../components/FormComponents/PickupOrderForm";
 import StatusCard from "../../../components/StatusCard";
 
-import { PickupOrder } from "../../../interfaces/pickupOrder";
+import { PickupOrder, queryPickupOrder } from "../../../interfaces/pickupOrder";
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import { ToastContainer, toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
-
 import i18n from '../../../setups/i18n'
 import { format } from "../../../constants/constant";
 import dayjs from 'dayjs'
@@ -97,15 +96,27 @@ const PickupOrders = () => {
   const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
   const [rows, setRows] = useState<Row[]>([])
   const [filteredPico , setFilteredPico] = useState<Row[]>([])
+  const [query, setQuery] = useState<queryPickupOrder>({
+    picoId: '',
+    effFromDate: '',
+    effToDate: '',
+    logisticName: '',
+    recycType: '',
+    receiverAddr: '',
+    status: 0
+  });
   
   const initPickupOrderRequest = async () => {
-    const result = await getAllPickUpOrder(page - 1, pageSize);
+    const result = await getAllPickUpOrder(page - 1, pageSize, query);
     const data = result?.data.content;
     console.log("pickup order content: ", data);
     if (data && data.length > 0) {
       setPickupOrder(data);
-      setTotalData( result.data.totalPages)
-    }}
+    } else {
+      setPickupOrder([])
+    }
+    setTotalData( result?.data.totalPages)
+  }
  
     useEffect(() => {
       initPickupOrderRequest();
@@ -131,7 +142,7 @@ const PickupOrders = () => {
         });
       }
       navigate(location.pathname, { replace: true });
-    }, [page]);
+    }, [page, query]);
 
   useEffect(() =>{
    
@@ -188,7 +199,7 @@ const PickupOrders = () => {
       logisticCompany: item.logisticName,
       picoId: item.picoId, 
       deliveryDate: getDeliveryDate(item),
-      senderCompany: item.pickupOrderDetail[0]?.senderName,
+      senderCompany: item.pickupOrderDetail[0]?.receiverAddr,
       receiver: item.pickupOrderDetail[0]?.receiverName,
       status: item.status,
       recyType: item.pickupOrderDetail.map(item => {return item.recycType})
@@ -213,12 +224,12 @@ const PickupOrders = () => {
     recyType: string[];
   }
   const searchfield = [
-    {label:t('pick_up_order.filter.search'),width:'14%', field: 'search'},
-    {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('createdAt'), field:"createdAt"},
-    {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('deliveryDate'), field:"deliveryDate"},
-    {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticCompany"},
-    {label:t('pick_up_order.filter.location'),width:'14%',options:getUniqueOptions('senderCompany'), field:"senderCompany"},
-    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recyType"},
+    {label:t('pick_up_order.filter.search'),width:'14%', field: 'picoId'},
+    {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('createdAt'), field:"effFromDate"},
+    {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('deliveryDate'), field:"effToDate"},
+    {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticName"},
+    {label:t('pick_up_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderCompany'), field:"receiverAddr"},
+    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recycType"},
     {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('status'), field:"status"}
     
   ]
@@ -271,19 +282,26 @@ const PickupOrders = () => {
     setOpenModal(true);
   };
 
-  const handleSearch = (label: string, value: string) => {
-    if(label == 'recyType'){
-      const filteredData = rows?.filter((item) => item.recyType.includes(value))
-      if (filteredData) setFilteredPico(filteredData) ; setFilteredPico(rows)
-    } 
+  
+  const updateQuery = (newQuery: Partial<queryPickupOrder>) => {
+    setQuery({ ...query, ...newQuery });
+  }
 
-    const filteredData = rows?.filter((item: any) => item[label] == value)
-    console.log("data" , rows)
-    if (filteredData.length != 0) {
-      setFilteredPico(filteredData)
+  const handleSearch = (keyName: string, value: string) => {
+    if(keyName == 'status') {
+      const statusMapping: { [key: string]: number } = {
+        CREATED: 0,
+        STARTED: 1,
+        CONFIRMED: 2,
+        REJECTED: 3,
+        COMPLETED: 4,
+        CLOSED: 5,
+        OUTSTANDING: 6
+      };
+      const mappedStatus = statusMapping[value];
+      updateQuery({ ...query, [keyName]: mappedStatus });
     } else {
-     
-      setFilteredPico(rows)
+      updateQuery({[keyName]: value})
     }
     
   }

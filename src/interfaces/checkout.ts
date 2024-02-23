@@ -61,5 +61,4 @@ export type queryCheckout = {
   picoId: string, 
   receiverName: string,
   receiverAddr: string
-
 }

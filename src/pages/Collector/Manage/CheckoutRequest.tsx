@@ -327,7 +327,7 @@ const CheckoutRequest: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [query, setQuery] = useState<queryCheckout>({
-    picoId: "", // Initialize with default values or leave them empty
+    picoId: "", 
     receiverName: "",
     receiverAddr: "",
   });

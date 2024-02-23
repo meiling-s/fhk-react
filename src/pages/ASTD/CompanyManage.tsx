@@ -676,7 +676,7 @@ function CompanyManage() {
   async function initCompaniesData() {
     const result = await getAllTenant();
     const data = result?.data;
-    if (data) {
+    if (data.length > 0) {
       var coms: Company[] = [];
       data.map((com: any) => {
         coms.push(
