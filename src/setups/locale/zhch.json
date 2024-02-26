@@ -48,7 +48,8 @@
       "alreadyExist": "已经存在",
       "timeCantDuplicate": "时间不能重复",
       "atLeastOnePicoExist": "至少需要一个 Pico 详细信息",
-      "exceedsMaxLength":"不可超过一百个字符"
+      "exceedsMaxLength":"不可超过一百个字符",
+      "minMoreOneImgUploded": "至少需要上传2张车辆图片"
     }
   },
   "component": {

@@ -37,6 +37,9 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
       case formErr.wrongFormat:
         msg = t('form.error.isInWrongFormat');
         break;
+      case formErr.minMoreOneImgUploded:
+        msg = t('form.error.minMoreOneImgUploded');
+        break;
     }
     return msg;
   };

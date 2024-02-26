@@ -207,6 +207,13 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      pictures.length < 2 &&
+        tempV.push({
+          field: t('vehicle.picture'),
+          problem: formErr.minMoreOneImgUploded,
+          type: 'error'
+        })
+      console.log("tempV", tempV, pictures.length)
       setValidation(tempV)
     }
 
@@ -420,7 +427,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                         sx={{
                           ...localstyles.cardImg,
                           ...(trySubmited &&
-                            imageList.length === 0 &&
+                            (imageList.length === 0 || imageList.length < 2) &&
                             localstyles.imgError)
                         }}
                       >

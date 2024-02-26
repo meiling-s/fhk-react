@@ -37,5 +37,6 @@ export const formErr = {
   notWithInContractEffDate: "isNotWithIn_ContractEffDate",
   alreadyExist: "alreadyExist",
   hasBeenUsed: "hasBeenUsed",
-  exceedsMaxLength:"exceedsMaxLength"
+  exceedsMaxLength:"exceedsMaxLength",
+  minMoreOneImgUploded: "minMoreOneImgUploded"
 }
