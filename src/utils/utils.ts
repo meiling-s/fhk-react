@@ -40,6 +40,9 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
       case formErr.minMoreOneImgUploded:
         msg = t('form.error.minMoreOneImgUploded');
         break;
+      case formErr.alreadyExist:
+        msg = t('form.error.alreadyExist');
+        break;
     }
     return msg;
   };

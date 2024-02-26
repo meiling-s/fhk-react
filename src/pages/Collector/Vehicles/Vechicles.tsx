@@ -54,6 +54,7 @@ const Vehicle: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
+  const [plateList, setPlateList] = useState<string[]>([])
 
   useEffect(() => {
     initVehicleList()
@@ -82,6 +83,9 @@ const Vehicle: FunctionComponent = () => {
             item?.updatedAt
           )
         )
+
+        //mappping plate list
+        plateList.push(item?.plateNo)
       })
       setVehicleList(vehicleMapping)
       setTotalData(data.totalPages)
@@ -304,6 +308,7 @@ const Vehicle: FunctionComponent = () => {
             rowId={rowId}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}
+            plateListExist={plateList}
           />
         )}
       </Box>

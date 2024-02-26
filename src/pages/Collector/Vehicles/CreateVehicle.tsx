@@ -43,6 +43,7 @@ interface CreateVehicleProps {
   onSubmitData: (type: string, msg: string) => void
   rowId?: number,
   selectedItem?: Vehicle | null
+  plateListExist?: string[]
 }
 
 const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
@@ -51,7 +52,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   action,
   onSubmitData,
   rowId,
-  selectedItem
+  selectedItem,
+  plateListExist
 }) => {
   const { t } = useTranslation()
   const serviceList: il_item[] = [
@@ -199,6 +201,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         tempV.push({
           field: t('vehicle.licensePlate'),
           problem: formErr.empty,
+          type: 'error'
+        })
+        plateListExist?.includes(licensePlate) &&
+        tempV.push({
+          field: t('vehicle.licensePlate'),
+          problem: formErr.alreadyExist,
           type: 'error'
         })
       pictures.length == 0 &&
