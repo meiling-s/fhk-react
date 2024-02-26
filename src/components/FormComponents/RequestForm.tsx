@@ -17,6 +17,10 @@ import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import { useContainer } from "unstated-next";
 import { il_item } from "./CustomItemList";
 import i18n from "../../setups/i18n";
+import { useTranslation } from "react-i18next";
+import dayjs from 'dayjs'
+import { format } from '../../constants/constant'
+import { localStorgeKeyName } from "../../constants/constant";
 
 type recycItem = {
   recycType: il_item;
@@ -39,6 +43,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
     }
   };
   const { recycType } = useContainer(CommonTypeContainer);
+  const { t } = useTranslation()
 
   const [selectedDetail, setSelectedDetail] = useState<CheckinDetail[] | undefined>([]);
 
@@ -117,6 +122,16 @@ useEffect(() => {
   }
 }, [selectedDetail, recycType]);
 
+const updatedDate = selectedItem?.updatedAt
+? dayjs(new Date(selectedItem?.updatedAt)).format(format.dateFormat1)
+: '-'
+
+const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+
+const messageCheckin = `[${loginId}] ${t(
+  'check_out.approved_on'
+)} ${updatedDate} ${t('check_out.reason_is')} ${selectedItem?.reason}`
+
 
   return (
     <>
@@ -124,7 +139,7 @@ useEffect(() => {
         <Box sx={localstyles.container} className="md:w-[500px] w-[100vw]">
           <Box sx={localstyles.header}>
             <Box>
-              <Typography sx={styles.header4}>送入請求</Typography>
+              <Typography sx={styles.header4}>{t('check_in.request_check_in')}</Typography>
               <Typography sx={styles.header3}>
                 {selectedItem?.picoId}
               </Typography>
@@ -139,37 +154,37 @@ useEffect(() => {
           <Stack spacing={2} sx={localstyles.content}>
             {selectedItem?.adjustmentFlg && (
               <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                調整庫存
+                {t('check_in.stock_adjustment')}
               </Alert>
             )}
             <Box>
-              <Typography sx={localstyles.typo_header}>運輸資料</Typography>
+              <Typography sx={localstyles.typo_header}>{t('check_in.stock_adjustment')}</Typography>
             </Box>
 
             <Box>
-              <Typography sx={localstyles.typo_fieldTitle}>寄件公司</Typography>
+              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.sender_company')}</Typography>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedItem?.senderName}
               </Typography>
             </Box>
 
             <Box>
-              <Typography sx={localstyles.typo_fieldTitle}>收件公司</Typography>
-              <Typography sx={localstyles.typo_fieldContent}></Typography>
+              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.receiver_company')}</Typography>
+              <Typography sx={localstyles.typo_fieldContent}>-</Typography>
             </Box>
 
             <Box>
-              <Typography sx={localstyles.typo_fieldTitle}>物流公司</Typography>
+              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.logistic_company')}</Typography>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedItem?.logisticName}
               </Typography>
             </Box>
 
-            <Typography sx={localstyles.typo_header}>回收地點資料</Typography>
+            <Typography sx={localstyles.typo_header}>{t('check_in.recyc_loc_info')}</Typography>
             <Box display="flex" flexDirection="row">
               <Box sx={{ flex: 1 }}>
                 <Typography sx={localstyles.typo_fieldTitle}>
-                  送出地點
+                {t('check_in.sender_addr')}
                 </Typography>
                 <Typography sx={localstyles.typo_fieldContent}>
                   {selectedItem?.senderAddr}
@@ -184,15 +199,15 @@ useEffect(() => {
                 </Box>
                 <Box>
                   <Typography sx={localstyles.typo_fieldTitle}>
-                    到達地點
+                  {t('check_in.receiver_addr')}
                   </Typography>
-                  <Typography sx={localstyles.typo_fieldContent}></Typography>
+                  <Typography sx={localstyles.typo_fieldContent}>-</Typography>
                 </Box>
               </Box>
             </Box>
 
             <Typography sx={localstyles.typo_fieldTitle}>
-              回收類別及重量
+            {t('check_in.recyclable_type_weight')}
             </Typography>
             {recycItem.map((item, index) => (
               <RecycleCard
@@ -206,7 +221,18 @@ useEffect(() => {
                 recycleType={item.recycType.name}
               />
             ))}
+             <Box>
+              <div className="message">
+                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
+                  {t('check_out.message')}
+                </div>
+                <div className=" text-sm text-[#717171] font-medium tracking-widest">
+                  {messageCheckin}
+                </div>
+              </div>
+            </Box>
           </Stack>
+         
         </Box>
       </Box>
     </>

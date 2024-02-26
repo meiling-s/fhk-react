@@ -19,6 +19,7 @@ import { useContainer } from 'unstated-next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
+import { localStorgeKeyName } from '../../../constants/constant'
 
 type RecycItem = {
   recycType: il_item
@@ -61,10 +62,13 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
       value: selectedCheckOut?.receiverName
     }
   ]
+
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+
   const updatedDate = selectedCheckOut?.updatedAt
     ? dayjs(new Date(selectedCheckOut?.updatedAt)).format(format.dateFormat1)
     : '-'
-  const messageCheckout = `[UserID] ${t(
+  const messageCheckout = `[${loginId}] ${t(
     'check_out.approved_on'
   )} ${updatedDate} ${t('check_out.reason_is')} ${selectedCheckOut?.reason}`
 
