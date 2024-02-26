@@ -469,8 +469,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
               </Box>
               <div className="note">
                 <p className="text-sm text-gray">
-                  *the photo should exhibit the overview, tail lift, car plate
-                  and collecting operation of the vehicle.
+                {t('vehicle.imgNote')}
                 </p>
               </div>
               <Grid item sx={{ width: '100%' }}>

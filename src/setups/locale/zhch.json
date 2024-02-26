@@ -452,7 +452,8 @@
     "licensePlate": "车牌号码",
     "picture": "图片",
     "basic": "基本",
-    "additional":"额外"
+    "additional":"额外",
+    "imgNote": "*照片应展示车辆概况、举升尾板、车牌及采集操作情况。"
   },
   "inventory": {
     "inventory": "存货",

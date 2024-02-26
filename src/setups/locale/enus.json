@@ -451,7 +451,8 @@
     "licensePlate": "License plate",
     "picture": "Picture",
     "basic": "Basic",
-    "additional":"Additional"
+    "additional":"Additional",
+    "imgNote": "*the photo should exhibit the overview, tail lift, car plate and collecting operation of the vehicle."
   },
   "inventory": {
     "inventory": "Inventory",

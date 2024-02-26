@@ -450,7 +450,8 @@
     "licensePlate": "車牌號碼",
     "picture": "圖片",
     "basic": "基本",
-    "additional":"額外"
+    "additional":"額外",
+    "imgNote": "*照片應展示車輛概況、舉升尾板、車牌及採集操作。"
   },
   "inventory": {
     "inventory": "存貨",
