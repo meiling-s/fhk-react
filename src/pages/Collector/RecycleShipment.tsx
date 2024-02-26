@@ -10,24 +10,17 @@ import {
   MenuItem,
   Modal,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
-  TableSortLabel,
   TextField,
   Typography,
   Pagination,
-  makeStyles,
+  Divider
 } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridCellParams
 } from '@mui/x-data-grid'
 import CloseIcon from '@mui/icons-material/Close'
 import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
@@ -38,6 +31,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CheckIcon from "@mui/icons-material/Check";
 import { ClearIcon } from "@mui/x-date-pickers";
+import { useNavigate } from 'react-router-dom'
 import CustomItemList, {
   il_item,
 } from "../../components/FormComponents/CustomItemList";
@@ -56,12 +50,6 @@ import { format, localStorgeKeyName } from "../../constants/constant";
 import { useTranslation } from "react-i18next";
 import { queryCheckIn } from "../../interfaces/checkin";
 
-type inviteModal = {
-  open: boolean;
-  onClose: () => void;
-  id: string;
-};
-
 const Required = () => {
   return (
     <Typography
@@ -74,11 +62,54 @@ const Required = () => {
     </Typography>
   );
 };
+type Confirm = {
+  open: boolean
+  onClose: () => void
+  title?: string
+}
+
+const ConfirmModal: React.FC<Confirm> = ({ open, onClose, title }) => {
+  const { t } = useTranslation()
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'medium' }}
+            >
+              {t('check_out.success_approve')}
+            </Typography>
+          </Box>
+          <Box sx={{ alignSelf: 'center' }}>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.ok')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
 
 type rejectForm = {
   open: boolean;
   onClose: () => void;
-  checkedShipments: CheckIn[];
+  checkedShipments: number[];
   onRejected?: () => void;
 };
 
@@ -94,28 +125,25 @@ function RejectForm({
 
   const reasons: il_item[] = [
     {
-      id: "1",
-      name: "原因 1",
+      id: '1',
+      name: t('check_out.reason_1')
     },
     {
-      id: "2",
-      name: "原因 2",
+      id: '2',
+      name: t('check_out.reason_2')
     },
     {
-      id: "3",
-      name: "原因 3",
-    },
+      id: '3',
+      name: t('check_out.reason_3')
+    }
   ];
 
   const handleConfirmRejectOnClick = async (rejectReasonId: string[]) => {
-    const checkInIds = checkedShipments.map(
-      (checkedShipments) => checkedShipments.chkInId
-    );
     const rejectReason = rejectReasonId.map((id) => {
       const reasonItem = reasons.find((reason) => reason.id === id);
       return reasonItem ? reasonItem.name : "";
     });
-    console.log("checkin ids are " + checkInIds);
+    console.log("checkin ids are " + checkedShipments);
     const reason = rejectReason;
     const statReason: updateStatus = {
       status: "REJECTED",
@@ -124,7 +152,7 @@ function RejectForm({
     };
 
     const results = await Promise.allSettled(
-      checkInIds.map(async (checkInId) => {
+      checkedShipments.map(async (checkInId) => {
         try {
           const result = await updateCheckinStatus(checkInId, statReason);
           const data = result?.data;
@@ -160,7 +188,7 @@ function RejectForm({
               component="h2"
               sx={{ fontWeight: "bold" }}
             >
-              {t("check_in.confirm_reject")}
+               {t('check_out.confirm_reject')}
             </Typography>
           </Box>
           <Box>
@@ -168,7 +196,9 @@ function RejectForm({
               {t("check_in.reject_reasons")}
               <Required />
             </Typography>
-
+            <Typography sx={localstyles.typo}>
+              {t('check_out.total_checkout') + checkedShipments.length}
+            </Typography>
             <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
           </Box>
 
@@ -195,6 +225,100 @@ function RejectForm({
   );
 }
 
+type ApproveForm = {
+  open: boolean
+  onClose: () => void
+  checkedCheckIn: number[]
+  onApprove?: () => void
+}
+
+const ApproveModal: React.FC<ApproveForm> = ({
+  open,
+  onClose,
+  checkedCheckIn,
+  onApprove
+}) => {
+  const { t } = useTranslation()
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+  const handleApproveRequest = async () => {
+    const confirmReason: string[] = ['Confirmed']
+    const statReason: updateStatus = {
+      status: 'CONFIRMED',
+      reason: confirmReason,
+      updatedBy: loginId
+    }
+
+    const results = await Promise.allSettled(
+      checkedCheckIn.map(async (checkInId) => {
+        try {
+          const result = await updateCheckinStatus(checkInId, statReason)
+          const data = result?.data
+          if (data) {
+            console.log('updated check-in status: ', data)
+            if (onApprove) {
+              onApprove()
+            }
+          }
+        } catch (error) {
+          console.error(
+            `Failed to update check-in status for id ${checkInId}: `,
+            error
+          )
+        }
+      })
+    )
+  }
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('check_out.confirm_approve')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box className="flex gap-2 justify-start">
+            <Typography sx={localstyles.typo}>
+              {t('check_out.total_checkout') + checkedCheckIn.length}
+            </Typography>
+          </Box>
+
+          <Box sx={{ alignSelf: 'center' }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                handleApproveRequest()
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
 type TableRow = {
   id: number
   [key: string]: any
@@ -202,19 +326,22 @@ type TableRow = {
 
 function ShipmentManage() {
   const { t } = useTranslation();
-
+  const navigate = useNavigate()
   const drawerWidth = 246;
-  const [selected, setSelected] = useState<string[]>([]);
-  const [rejFormModal, setRejFormModal] = useState<boolean>(false);
+  const [selectedCheckin, setSelectedCheckin] = useState<number[]>([]);
   const [shipments, setShipments] = useState<CheckIn[]>([]);
   const [filterShipments, setFilterShipments] = useState<CheckIn[]>([]);
+  const [rejFormModal, setRejectModal] = useState<boolean>(false)
+  const [approveModal, setApproveModal] = useState<boolean>(false)
   const [company, setCompany] = useState("");
   const [location, setLocation] = useState("");
   const [checkedShipments, setCheckedShipments] = useState<CheckIn[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [selectAll, setSelectAll] = useState(false)
   const [selectedRow, setSelectedRow] = useState<CheckIn>();
   const [checkInRequest, setCheckInRequest] = useState<CheckIn[]>();
   const [page, setPage] = useState(1)
+  const [confirmModal, setConfirmModal] = useState(false)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [query, setQuery] = useState<queryCheckIn>({
@@ -248,75 +375,80 @@ function ShipmentManage() {
 
   const initCheckInRequest = async () => {
     const result = await getAllCheckInRequests(page - 1, pageSize, query);
-    const data = result?.data.content;
-    if (data && data.length > 0) {  
-      const checkinData = data.map(transformToTableRow)
-      setCheckInRequest(data);
-      setFilterShipments(checkinData)
+    if (result == '401') {
+       // direct to login if sttUS 401
+       localStorage.clear()
+       navigate('/')
     } else {
-      setFilterShipments([])
+      const data = result?.data.content;
+      if (data && data.length > 0) {  
+        const checkinData = data.map(transformToTableRow)
+        setCheckInRequest(data);
+        setFilterShipments(checkinData)
+      } else {
+        setFilterShipments([])
+      }
+      setTotalData(result?.data.totalPages)
     }
-    setTotalData(result?.data.totalPages)
   };
  
-  // const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const checked = event.target.checked
-  //   setSelectAll(checked)
-  //   const selectedRows = checked
-  //     ? filterCheckOut.map((row) => row.chkOutId)
-  //     : []
-  //   setCheckedCheckOut(selectedRows)
-  //   console.log('handleSelectAll', selectedRows)
-  // }
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked
+    setSelectAll(checked)
+    const selectedRows = checked
+      ? filterShipments.map((row) => row.chkInId)
+      : []
+      setSelectedCheckin(selectedRows)
+  }
 
-  // const handleRowCheckboxChange = (
-  //   event: React.ChangeEvent<HTMLInputElement>,
-  //   chkOutId: number
-  // ) => {
-  //   setDrawerOpen(false)
+  const handleRowCheckboxChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    chkInId: number
+  ) => {
+    setOpen(false)
 
-  //   const checked = event.target.checked
-  //   const updatedChecked = checked
-  //     ? [...checkedCheckOut, chkOutId]
-  //     : checkedCheckOut.filter((rowId) => rowId != chkOutId)
-  //   setCheckedCheckOut(updatedChecked)
-  //   console.log(updatedChecked)
+    const checked = event.target.checked
+    const updatedChecked = checked
+      ? [...selectedCheckin, chkInId]
+      : selectedCheckin.filter((rowId) => rowId != chkInId)
+      setSelectedCheckin(updatedChecked)
+    console.log(updatedChecked)
 
-  //   const allRowsChecked = filterCheckOut.every((row) =>
-  //     updatedChecked.includes(row.chkOutId)
-  //   )
-  //   setSelectAll(allRowsChecked)
-  // }
+    const allRowsChecked = filterShipments.every((row) =>
+      updatedChecked.includes(row.chkInId)
+    )
+    setSelectAll(allRowsChecked)
+  }
 
-  // const HeaderCheckbox = (
-  //   <Checkbox
-  //     checked={selectAll}
-  //     onChange={handleSelectAll}
-  //     color="primary"
-  //     inputProps={{ 'aria-label': 'Select all rows' }}
-  //   />
-  // )
+  const HeaderCheckbox = (
+    <Checkbox
+      checked={selectAll}
+      onChange={handleSelectAll}
+      color="primary"
+      inputProps={{ 'aria-label': 'Select all rows' }}
+    />
+  )
 
-  // const checkboxColumn: GridColDef = {
-  //   field: 'customCheckbox',
-  //   headerName: 'Select',
-  //   width: 80,
-  //   sortable: false,
-  //   filterable: false,
-  //   renderHeader: () => HeaderCheckbox,
-  //   renderCell: (params) => (
-  //     <Checkbox
-  //       checked={selectAll || checkInRequest.includes(params.row?.id)}
-  //       onChange={(event) =>
-  //         //handleRowCheckboxChange(event, params.row.chkOutId)
-  //       }
-  //       color="primary"
-  //     />
-  //   )
-  // }
+  const checkboxColumn: GridColDef = {
+    field: 'customCheckbox',
+    headerName: 'Select',
+    width: 80,
+    sortable: false,
+    filterable: false,
+    renderHeader: () => HeaderCheckbox,
+    renderCell: (params) => (
+      <Checkbox
+        checked={selectAll || selectedCheckin?.includes(params.row?.chkInId)}
+        onChange={(event) =>
+          handleRowCheckboxChange(event, params.row.chkInId)
+        }
+        color="primary"
+      />
+    )
+  }
   
   const headCells: GridColDef[] = [
-   // checkboxColumn,
+    checkboxColumn,
     {
       field: "createdAt",
       type: 'string',
@@ -404,80 +536,51 @@ function ShipmentManage() {
     updateQuery({senderAddr: searchWord})
   };
 
-  const handleApproveOnClick = async () => {
-    // console.log(checkedShipments);
-    const checkInIds = checkedShipments.map(
-      (checkedShipments) => checkedShipments.chkInId
-    );
-    console.log("checkin ids are " + checkInIds);
-    const confirmReason: string[] = ["Confirmed"];
-    const statReason: updateStatus = {
-      status: "CONFIRMED",
-      reason: confirmReason,
-      updatedBy: "admin",
-    };
+  // const handleApproveOnClick = async () => {
+  //   // console.log(checkedShipments);
+  //   const checkInIds = checkedShipments.map(
+  //     (checkedShipments) => checkedShipments.chkInId
+  //   );
+  //   console.log("checkin ids are " + checkInIds);
+  //   const confirmReason: string[] = ["Confirmed"];
+  //   const statReason: updateStatus = {
+  //     status: "CONFIRMED",
+  //     reason: confirmReason,
+  //     updatedBy: "admin",
+  //   };
 
-    const results = await Promise.allSettled(
-      checkInIds.map(async (checkInId) => {
-        try {
-          const result = await updateCheckinStatus(checkInId, statReason);
-          const data = result?.data;
-          if (data) {
-            console.log("updated check-in status: ", data);
-            // initShipments();
-          }
-        } catch (error) {
-          console.error(
-            `Failed to update check-in status for id ${checkInId}: `,
-            error
-          );
-        }
-      })
-    );
+  //   const results = await Promise.allSettled(
+  //     checkInIds.map(async (checkInId) => {
+  //       try {
+  //         const result = await updateCheckinStatus(checkInId, statReason);
+  //         const data = result?.data;
+  //         if (data) {
+  //           console.log("updated check-in status: ", data);
+  //           // initShipments();
+  //         }
+  //       } catch (error) {
+  //         console.error(
+  //           `Failed to update check-in status for id ${checkInId}: `,
+  //           error
+  //         );
+  //       }
+  //     })
+  //   );
 
-    setSelected([]);
-    // initTable();
-  };
+  //   setSelectedCheckin([]);
+  //   // initTable();
+  // };
 
   const onRejectCheckin = () => {
-    setSelected([]);
-    //initTable();
+    setRejectModal(false)
+    setConfirmModal(true)
   };
 
-  function onSelectAllClick() {
-    if (selected.length < shipments.length) {
-      //if not selecting all, do select all
-      const newSelected = shipments.map((shipment) =>
-        shipment.chkInId.toString()
-      );
-      setSelected(newSelected);
-      // Trigger the function for each individual checkbox
-      console.log(shipments);
-      var selectedShipment: CheckIn[] = [];
-      shipments.map((shipment) => {
-        // Only call handleCheck if the shipment is not already checked
-        selectedShipment.push(shipment);
-      });
-      setCheckedShipments(selectedShipment);
-    } else {
-      setSelected([]);
-      // If all checkboxes are deselected, you might also want to trigger a function here
-      checkedShipments.forEach((shipment) => {
-        // Call handleCheck for the shipment
-        handleCheck(shipment, false);
-      });
-      // Clear the checkedShipments array
-      setCheckedShipments([]);
-    }
+  const resetPage = async () => {
+    setConfirmModal(false)
+    setSelectedCheckin([])
+    initCheckInRequest()
   }
-
-  const handleCheck = (item: CheckIn, isChecked: boolean) => {
-    if (isChecked) {
-      setCheckedShipments([...checkedShipments, item]);
-    } else {
-      setCheckedShipments(checkedShipments.filter((i) => i !== item));
-    }
-  };
 
   const handleClose = () => {
     setOpen(false);
@@ -535,7 +638,8 @@ function ShipmentManage() {
             ]}
             variant="outlined"
             onClick={() => {
-              handleApproveOnClick();
+              //handleApproveOnClick();
+              setApproveModal(selectedCheckin.length > 0)
             }}
           >
             {" "}
@@ -552,7 +656,7 @@ function ShipmentManage() {
               },
             ]}
             variant="outlined"
-            onClick={() => setRejFormModal(true)}
+            onClick={() => setRejectModal(selectedCheckin.length > 0)}
           >
             {" "}
             {t("check_in.reject")}
@@ -721,13 +825,26 @@ function ShipmentManage() {
           </Box>
         </div>
         <RejectForm
-          checkedShipments={checkedShipments}
+          checkedShipments={selectedCheckin}
           open={rejFormModal}
           onClose={() => {
-            setRejFormModal(false);
+            setRejectModal(false);
           }}
           onRejected={onRejectCheckin}
         />
+       
+      <ApproveModal
+        open={approveModal}
+        onClose={() => {
+          setApproveModal(false)
+        }}
+        onApprove={() => {
+          setApproveModal(false)
+          setConfirmModal(true)
+        }}
+        checkedCheckIn={selectedCheckin}
+      />
+      <ConfirmModal open={confirmModal} onClose={resetPage} />
       </Box>
     </>
   );
