@@ -13,6 +13,7 @@ import {
   InputAdornment,
   IconButton,
   InputLabel,
+  Button,
   FormControl,
   Pagination,
   MenuItem,
@@ -38,7 +39,7 @@ import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
 import CheckInDetails from './CheckOutDetails'
 import { updateStatus } from '../../../interfaces/warehouse'
 import { CheckOut } from '../../../interfaces/checkout'
-import { useNavigate } from 'react-router-dom'
+
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
@@ -325,7 +326,6 @@ const CheckoutRequest: FunctionComponent = () => {
   const [filterCheckOut, setFilterCheckOut] = useState<CheckOut[]>([])
   const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
   const [selectAll, setSelectAll] = useState(false)
-  const navigate = useNavigate()
   const [confirmModal, setConfirmModal] = useState(false)
   const [page, setPage] = useState(1)
   const pageSize = 10
@@ -476,26 +476,19 @@ const CheckoutRequest: FunctionComponent = () => {
 
   const getCheckoutRequest = async () => {
     const result = await getAllCheckoutRequest(page - 1, pageSize, query)
-
-    if(result == '401') {
-       // direct to login if sttUS 401
-       localStorage.clear()
-       navigate('/')
+    const data = result?.data.content
+    if (data && data.length > 0) {
+      const checkoutData = data
+        .map(transformToTableRow)
+        .filter((item: CheckOut) => item.status === 'CREATED')
+      setCheckoutRequest(
+        data.filter((item: CheckOut) => item.status === 'CREATED')
+      )
+      setFilterCheckOut(checkoutData)
     } else {
-      const data = result?.data.content
-      if (data && data.length > 0) {
-        const checkoutData = data
-          .map(transformToTableRow)
-          .filter((item: CheckOut) => item.status === 'CREATED')
-        setCheckoutRequest(
-          data.filter((item: CheckOut) => item.status === 'CREATED')
-        )
-        setFilterCheckOut(checkoutData)
-      } else {
-        setFilterCheckOut([])
-      }
-      setTotalData(result?.data.totalPages)
+      setFilterCheckOut([])
     }
+    setTotalData(result?.data.totalPages)
   }
 
   useEffect(() => {
@@ -553,23 +546,41 @@ const CheckoutRequest: FunctionComponent = () => {
   return (
     <Box className="container-wrapper w-full mr-11">
       <div className="overview-page bg-bg-primary">
-        <div className="header-page flex justify-start items-center mb-8">
+        <div className="header-page flex justify-start items-center mb-4">
           <LEFT_ARROW_ICON fontSize="large" />
           <div className="title font-bold text-3xl pl-4 ">{titlePage}</div>
         </div>
-        <div className="action-overview mb-8">
-          <button
-            className="primary-btn mr-2 cursor-pointer"
+        <div className="action-overview mb-2">
+          <Button
+            sx={[
+              styles.buttonFilledGreen,
+              {
+                mt: 3,
+                width: "90px",
+                height: "40px",
+                m: 0.5,
+              },
+            ]}
+            variant="outlined"
             onClick={() => setApproveModal(checkedCheckOut.length > 0)}
           >
             {approveLabel}
-          </button>
-          <button
-            className="secondary-btn cursor-pointer"
+          </Button>
+          <Button
+            sx={[
+              styles.buttonOutlinedGreen,
+              {
+                mt: 3,
+                width: "90px",
+                height: "40px",
+                m: 0.5,
+              },
+            ]}
+            variant="outlined"
             onClick={() => setRejectModal(checkedCheckOut.length > 0)}
           >
             {rejectLabel}
-          </button>
+          </Button>
         </div>
         <div className="filter-section flex justify-between items-center w-full">
           <TextField

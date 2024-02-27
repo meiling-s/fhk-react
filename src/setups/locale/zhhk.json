@@ -48,7 +48,8 @@
       "alreadyExist": "已經存在",
       "timeCantDuplicate": "時間不能重複",
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
-      "exceedsMaxLength":"不可超過一百個字符"
+      "exceedsMaxLength":"不可超過一百個字符",
+      "minMoreOneImgUploded": "至少需要上傳2張車輛圖片"
     }
   },
   "component": {
@@ -450,7 +451,8 @@
     "licensePlate": "車牌號碼",
     "picture": "圖片",
     "basic": "基本",
-    "additional":"額外"
+    "additional":"額外",
+    "imgNote": "*照片應展示車輛概況、舉升尾板、車牌及採集操作。"
   },
   "inventory": {
     "inventory": "存貨",

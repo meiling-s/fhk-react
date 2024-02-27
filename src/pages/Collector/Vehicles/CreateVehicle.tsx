@@ -43,6 +43,7 @@ interface CreateVehicleProps {
   onSubmitData: (type: string, msg: string) => void
   rowId?: number,
   selectedItem?: Vehicle | null
+  plateListExist?: string[]
 }
 
 const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
@@ -51,7 +52,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   action,
   onSubmitData,
   rowId,
-  selectedItem
+  selectedItem,
+  plateListExist
 }) => {
   const { t } = useTranslation()
   const serviceList: il_item[] = [
@@ -201,12 +203,25 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+        plateListExist?.includes(licensePlate) &&
+        tempV.push({
+          field: t('vehicle.licensePlate'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
       pictures.length == 0 &&
         tempV.push({
           field: t('vehicle.picture'),
           problem: formErr.empty,
           type: 'error'
         })
+      pictures.length < 2 &&
+        tempV.push({
+          field: t('vehicle.picture'),
+          problem: formErr.minMoreOneImgUploded,
+          type: 'error'
+        })
+      console.log("tempV", tempV, pictures.length)
       setValidation(tempV)
     }
 
@@ -420,7 +435,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                         sx={{
                           ...localstyles.cardImg,
                           ...(trySubmited &&
-                            imageList.length === 0 &&
+                            (imageList.length === 0 || imageList.length < 2) &&
                             localstyles.imgError)
                         }}
                       >
@@ -469,8 +484,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
               </Box>
               <div className="note">
                 <p className="text-sm text-gray">
-                  *the photo should exhibit the overview, tail lift, car plate
-                  and collecting operation of the vehicle.
+                {t('vehicle.imgNote')}
                 </p>
               </div>
               <Grid item sx={{ width: '100%' }}>

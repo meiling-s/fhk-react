@@ -468,11 +468,6 @@ const PickupOrderCreateForm = ({
                     </Typography>
                   </CustomField>
                   </Grid>
-                  <Grid item sx={{marginTop: 2}}>
-                    <CustomField label={t('pick_up_order.table.status')}>
-                    <StatusCard  status={selectedPo.status}/>
-                    </CustomField>
-                  </Grid>
                 </Grid>
               )}
               <Grid item>
