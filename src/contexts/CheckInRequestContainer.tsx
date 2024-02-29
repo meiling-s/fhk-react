@@ -17,15 +17,15 @@ const CheckInRequest = () => {
   const initCheckInRequest = async () => {
     const result = await getAllCheckInRequests(0, 10);
     const data = result?.data.content;
-    console.log("checkin request content: ", data);
+    // console.log("checkin request content: ", data);
     if (data && data.length > 0) {
-      console.log("all checkIn request ", data);
+      // console.log("all checkIn request ", data);
       setCheckInRequest(data);
     }
   };
 
   const updateCheckInRequest= async () => {
-    console.log("updateCheckInRequest")
+    // console.log("updateCheckInRequest")
     await initCheckInRequest
   }
 
@@ -33,7 +33,7 @@ const CheckInRequest = () => {
   const initPickupOrderRequest = async () => {
     const result = await getAllPickUpOrder(0, 10);
     const data = result?.data.content;
-    console.log("pickup order content: ", data);
+    // console.log("pickup order content: ", data);
     if (data && data.length > 0) {
       console.log("all pickup orders ", data);
       setPickupOrder(data);
