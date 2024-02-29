@@ -2,7 +2,7 @@ import axios from "axios";
 import { AXIOS_DEFAULT_CONFIGS } from "../constants/configs";
 
 const axiosSetup = () => {
-  console.log('axiosSetup completed');
+  // console.log('axiosSetup completed');
   axios.defaults.timeout = AXIOS_DEFAULT_CONFIGS.timeout;
   axios.defaults.headers.post['Content-Type'] = AXIOS_DEFAULT_CONFIGS.headers.post['Conetent-Type'];
 };

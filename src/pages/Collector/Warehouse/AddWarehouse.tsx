@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useState, useEffect, Key } from 'react'
+import { FunctionComponent, useCallback, useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import TextField from '@mui/material/TextField'
@@ -113,7 +113,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [contractList, setContractList] = useState<
     { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
   >([])
-
+  const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
+  const [status, setStatus] = useState(true) // status field
+  const isInitialRender = useRef(true); // Add this line
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
   }, [i18n, currentLanguage])
@@ -184,6 +186,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const resetForm = () => {
+    console.log('reset form')
     setNamesField({
       warehouseNameTchi: '',
       warehouseNameSchi: '',
@@ -191,7 +194,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     })
     setContractNum([...initContractNum])
     setPlace('')
-    setPysicalLocation(false)
+    setPysicalLocation(true)
     setStatus(true)
     setRecycleCategory([...initRecyleCategory])
   }
@@ -210,7 +213,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         setContractNum([...warehouse.contractNo])
         setPlace(warehouse.location)
         setPysicalLocation(warehouse.physicalFlg)
-        setStatus(warehouse.status === 'active')
+        setStatus(warehouse.status === 'ACTIVE')
         setRecycleCategory([...warehouse.warehouseRecyc])
       }
     } catch (error) {
@@ -218,22 +221,18 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
-  useEffect(() => {
-    if (action === 'add') {
-      resetForm()
-      setTrySubmited(false)
-    }
-  }, [])
-
 
   useEffect(() => {
-    if (action === 'add') {
-      resetForm()
-      setTrySubmited(false)
-    } else if (action === 'edit' || action === 'delete') {
-      getWarehousebyId()
-    }
-
+    console.log('action', action)
+   
+      if (action === 'add') {
+        resetForm()
+        setTrySubmited(false)
+      } else if (action === 'edit' || action === 'delete') {
+        getWarehousebyId()
+      }
+ 
+    console.log('physicalFlg', pysicalLocation)
     getRecyleCategory()
   }, [action, handleDrawerClose])
 
@@ -263,8 +262,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const initContractNum: string[] = [''] // contract field
   const [contractNum, setContractNum] = useState<string[]>(initContractNum)
   const [place, setPlace] = useState('') // place field
-  const [pysicalLocation, setPysicalLocation] = useState(false) // pysical location field
-  const [status, setStatus] = useState(true) // status field
+  
   const initRecyleCategory: recyleItem[] = [
     // recyle category field
     {
@@ -484,10 +482,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   //submit data
   const handleSubmit = async () => {
+    
     let statusWarehouse = status ? 'ACTIVE' : 'INACTIVE'
     if (action == 'delete') {
       statusWarehouse = 'DELETED'
-    }
+    } 
+    
 
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
@@ -502,6 +502,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       updatedBy: 'string',
       warehouseRecyc: recycleCategory
     }
+    console.log("addWarehouseForm", addWarehouseForm)
 
     const isError = validation.length == 0
     getFormErrorMsg()
