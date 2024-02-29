@@ -189,10 +189,10 @@ const Warehouse: FunctionComponent = () => {
         navigate('/')
       } else {
         const filteredData = response.data.content
-        .filter(
-          (warehouse: Warehouse) =>
-            warehouse.status.toLowerCase() !== 'deleted'
-        )
+        // .filter(
+        //   (warehouse: Warehouse) =>
+        //     warehouse.status.toLowerCase() !== 'deleted'
+        // )
         .map(transformToTableRow)
 
       setWarehouseItems(filteredData)

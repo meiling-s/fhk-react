@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import theme from "../../themes/palette";
 import { red } from "@mui/material/colors";
 
@@ -24,7 +24,11 @@ export default function Switches({
     
 }: props) {
     const [onOff, setOnOff] = useState<boolean>((defaultValue!=undefined)? defaultValue : false);
-
+    useEffect(() => {
+        if (defaultValue !== undefined) {
+            setOnOff(defaultValue);
+        }
+    }, [defaultValue]);
     const handleSwitchChange = () => {
         if(disabled){
             return;
