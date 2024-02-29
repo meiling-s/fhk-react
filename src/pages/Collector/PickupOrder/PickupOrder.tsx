@@ -50,7 +50,7 @@ const PickupOrders = () => {
       field: "picoId",
       headerName: t('pick_up_order.table.pico_id'),
       type:"string",
-      width: 170,
+      width: 200,
       editable: true,
     },
     {
