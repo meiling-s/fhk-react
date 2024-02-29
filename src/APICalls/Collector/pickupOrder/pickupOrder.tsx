@@ -31,10 +31,10 @@ import { queryPickupOrder } from '../../../interfaces/pickupOrder'
             status: query?.status
           },
         });
-        console.log('Get all pick up order:', JSON.stringify(response.data));
+        // console.log('Get all pick up order:', JSON.stringify(response.data));
         return response
       } catch (e) {
-        console.error('Get all collection point failed:', e);
+        // console.error('Get all collection point failed:', e);
         return null;
       }
     
@@ -48,7 +48,7 @@ import { queryPickupOrder } from '../../../interfaces/pickupOrder'
       
       return response
     } catch (e) {
-      console.error('Get all vehicle failed:', e)
+      // console.error('Get all vehicle failed:', e)
       return null
     }
   }
@@ -65,10 +65,10 @@ import { queryPickupOrder } from '../../../interfaces/pickupOrder'
       const response = await request({
         ...axiosConfig,
       });
-      console.log('Get pick up order detail:', JSON.stringify(response.data));
+      // console.log('Get pick up order detail:', JSON.stringify(response.data));
       return response.data
     } catch (e) {
-      console.error('Get pick up order detail::', e);
+      // console.error('Get pick up order detail::', e);
       return null;
     }
   
@@ -84,10 +84,10 @@ import { queryPickupOrder } from '../../../interfaces/pickupOrder'
             //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
             // },
         });
-        console.log('Create pick up order success:', JSON.stringify(response.data));
+        // console.log('Create pick up order success:', JSON.stringify(response.data));
         return response
     } catch (e) {
-        console.error('Create pick up order failed:', e);
+        // console.error('Create pick up order failed:', e);
         return null;
     }
 
@@ -107,10 +107,10 @@ export const editPickupOrder = async (pickupOrderId: string, data:EditPo) => {
           //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
           // },
       });
-      console.log('Update pickup order success:', JSON.stringify(response.data));
+      // console.log('Update pickup order success:', JSON.stringify(response.data));
       return response
   } catch (e) {
-      console.error('Update pickup order  failed:', e);
+      // console.error('Update pickup order  failed:', e);
       return null;
   }
 
@@ -129,10 +129,10 @@ export const editPickupOrderStatus = async (pickupOrderId: string, data:PoStatus
           //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
           // },
       });
-      console.log('Update pickup order status success:', JSON.stringify(response.data));
+      // console.log('Update pickup order status success:', JSON.stringify(response.data));
       return response
   } catch (e) {
-      console.error('Update pickup order status failed:', e);
+      // console.error('Update pickup order status failed:', e);
       return null;
   }
 
@@ -151,10 +151,10 @@ export const editPickupOrderDetailStatus = async (pickupOrderDtlId: string, data
           //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
           // },
       });
-      console.log('Update pickup order detail status success:', JSON.stringify(response.data));
+      // console.log('Update pickup order detail status success:', JSON.stringify(response.data));
       return response
   } catch (e) {
-      console.error('Update pickup order detail status failed:', e);
+      // console.error('Update pickup order detail status failed:', e);
       return null;
   }
 

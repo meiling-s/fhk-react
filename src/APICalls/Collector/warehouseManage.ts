@@ -36,7 +36,7 @@ export const getAllCheckInRequests = async (page: number, size: number, query?: 
       const unauthorized = e.response.status 
       return unauthorized
     }
-    console.error('Get all check-in request failed:', e)
+    // console.error('Get all check-in request failed:', e)
     return null
   }
 }
@@ -59,7 +59,7 @@ export const updateCheckinStatus = async (
     })
     return response
   } catch (e) {
-    console.error('Update check-in request status failed:', e)
+    // console.error('Update check-in request status failed:', e)
     return null
   }
 }

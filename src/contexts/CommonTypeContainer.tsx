@@ -38,7 +38,7 @@ const getColPointType = async () => {
             setColPointType(colPointType)
     
         }catch (e) {
-            console.error('Get collection point type failed:', e);
+            // console.error('Get collection point type failed:', e);
             return null;
         }
     }
@@ -52,11 +52,11 @@ const getPremiseType = async () => {
                 ...GET_PREMISE_TYPE,
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
-            console.log('Get premise type success:', JSON.stringify(response.data));
+            // console.log('Get premise type success:', JSON.stringify(response.data));
             premiseType = response.data;
             setPremiseType(premiseType)
         }catch (e) {
-            console.error('Get premise type failed:', e);
+            // console.error('Get premise type failed:', e);
             return null;
         }
     }
@@ -70,11 +70,11 @@ const getSiteType = async () => {
                 ...GET_SITE_TYPE,
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
-            console.log('Get site type success:', JSON.stringify(response.data));
+            // console.log('Get site type success:', JSON.stringify(response.data));
             siteType = response.data;
             setSiteType(siteType)
         }catch (e) {
-            console.error('Get site type failed:', e);
+            // console.error('Get site type failed:', e);
             return null;
         }
     }
