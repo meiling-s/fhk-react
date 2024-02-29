@@ -107,6 +107,9 @@ const PickupOrders = () => {
   });
   
   const initPickupOrderRequest = async () => {
+    setPickupOrder([])
+    setTotalData(0)
+
     const result = await getAllPickUpOrder(page - 1, pageSize, query);
     const data = result?.data.content;
     console.log("pickup order content: ", data);
