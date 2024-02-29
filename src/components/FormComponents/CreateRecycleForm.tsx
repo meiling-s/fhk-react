@@ -182,7 +182,14 @@ const CreateRecycleForm = ({
   }, [defaultRecyc]);
 
   const validateSchema = Yup.lazy((values) => {
-    const prevData = data
+    let prevData:CreatePicoDetail[] = []
+    if(editRow) {
+      prevData = data.filter(item => item.id != editRow.id)
+    } else{
+      prevData = data
+    }
+   
+    console.log("prevData", prevData)
     return Yup.object().shape({
       pickupAt: Yup.string()
       .test('not-in-prev-data', 'Pickup time already exists in previous data', function (value) {
