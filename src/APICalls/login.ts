@@ -44,7 +44,7 @@ export const login = async (item: LoginItem) => {
       const response = e.response.data.message
       const errMsgString = removeNonJsonChar(response)
       const errMsgJSON = JSON.parse(errMsgString);
-      debugger;
+      //debugger;
       if(errMsgJSON.message){
         const errSecondInnerString = removeNonJsonChar(errMsgJSON.message)
         const result = JSON.parse(errSecondInnerString);

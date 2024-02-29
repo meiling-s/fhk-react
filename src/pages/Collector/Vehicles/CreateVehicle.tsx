@@ -123,9 +123,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     getserviceList()
     getVehicles()
     getListedPlate()
+    setValidation([])
     if(action !== 'add'){
       mappingData()
     } else {
+      setTrySubmited(false)
       resetData()
     }
   }, [drawerOpen])
@@ -169,6 +171,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     setSelectedVehicle({id: '1', name: "Van"})
     setLicensePlate('')
     setPictures([])
+    setValidation([])
   }
   
 
@@ -236,7 +239,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.minMoreOneImgUploded,
           type: 'error'
         })
-      console.log("tempV", tempV, pictures.length)
+      console.log("tempV", tempV)
       setValidation(tempV)
     }
 
@@ -274,7 +277,6 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       }else{
         onSubmitData("error", "Failed created data")
       }
-      
     } else {
       setTrySubmited(true)
     }
