@@ -43,7 +43,7 @@ interface CreateVehicleProps {
   onSubmitData: (type: string, msg: string) => void
   rowId?: number,
   selectedItem?: Vehicle | null
-  plateListExist?: string[]
+  plateListExist: string[]
 }
 
 const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
@@ -78,6 +78,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const {vehicleType } = useContainer(CommonTypeContainer);
+  const [listedPlate, setListedPlate] = useState<string[]>([])
 
 
   const mappingData = () => {
@@ -106,9 +107,22 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
   }
 
+  const getListedPlate = () => {
+    let plate: string[] = []
+    if(selectedItem != null && plateListExist != undefined) {
+      plate = plateListExist.filter(item => item != selectedItem.plateNo)
+    } else {
+      setListedPlate(plateListExist)
+    }
+    setListedPlate(plate)
+  } 
+
+
+
   useEffect(() => {
     getserviceList()
     getVehicles()
+    getListedPlate()
     if(action !== 'add'){
       mappingData()
     } else {
@@ -203,7 +217,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
-        plateListExist?.includes(licensePlate) &&
+        console.log("listedPlate", listedPlate)
+        listedPlate?.includes(licensePlate) &&
         tempV.push({
           field: t('vehicle.licensePlate'),
           problem: formErr.alreadyExist,
