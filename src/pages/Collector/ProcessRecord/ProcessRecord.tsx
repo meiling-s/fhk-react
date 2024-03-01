@@ -15,7 +15,12 @@ import EditProcessRecord from './EditProcesRecord'
 import { format } from '../../../constants/constant'
 import dayjs from 'dayjs'
 import StatusCard from '../../../components/StatusCard'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import {
+  ProcessOut,
+  processOutImage,
+  ProcessOutItem
+} from '../../../interfaces/processRecords'
+import { getAllProcessRecord } from '../../../APICalls/Collector/processRecords'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
@@ -26,22 +31,24 @@ interface Option {
 }
 
 function createProcessRecord(
-  id: number,
-  handleName: number,
-  processingNum: string,
-  disposalLoc: string,
-  handler: number,
-  condition: string,
-  createdAt: string
-): any {
+  processOutId: number,
+  status: string,
+  processInId: number,
+  createdBy: string,
+  updatedBy: string,
+  processoutDetail: ProcessOutItem[],
+  createdAt: string,
+  updatedAt: string
+): ProcessOut {
   return {
-    id,
-    handleName,
-    processingNum,
-    disposalLoc,
-    handler,
-    condition,
-    createdAt
+    processOutId,
+    status,
+    processInId,
+    createdBy,
+    updatedBy,
+    processoutDetail,
+    createdAt,
+    updatedAt
   }
 }
 
@@ -52,99 +59,42 @@ const ProcessRecord: FunctionComponent = () => {
   const [filteredProcessRecords, setFilteredProcessRecords] = useState<any[]>(
     []
   )
-  const [selectedRow, setSelectedRow] = useState<any | null>(null)
-  const [rowId, setRowId] = useState<number>(1)
+  const [selectedRow, setSelectedRow] = useState<ProcessOut | null>(null)
+  const [selectedProcessOutId, setProcessOutId] = useState<number>(1)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
 
   useEffect(() => {
     initProcessRecord()
-  }, [])
-
-  const dummyRecord = [
-    {
-      id: 1,
-      createdAt: '2023/09/18 18:00',
-      handleName: 'Classification and weight',
-      processingNum: 'PI12345678',
-      disposalLoc: 'Disposal location',
-      handler: 'Chen Dawen',
-      condition: 'processing'
-    },
-    {
-      id: 2,
-      createdAt: '2023/09/18 18:00',
-      handleName: 'Classification and weight',
-      processingNum: 'PI12345678',
-      disposalLoc: 'Disposal location',
-      handler: 'Chen Dawen',
-      condition: 'confirmed'
-    },
-    {
-      id: 3,
-      createdAt: '2023/09/18 18:00',
-      handleName: 'Classification and weight',
-      processingNum: 'PI12345678',
-      disposalLoc: 'Disposal location',
-      handler: 'Chen Dawen',
-      condition: 'pending'
-    },
-    {
-      id: 4,
-      createdAt: '2023/09/18 18:00',
-      handleName: 'Classification and weight',
-      processingNum: 'PI12345678',
-      disposalLoc: 'Disposal location',
-      handler: 'Chen Dawen',
-      condition: 'rejected'
-    },
-    {
-      id: 5,
-      createdAt: '2023/09/18 18:00',
-      handleName: 'Classification and weight',
-      processingNum: 'PI12345678',
-      disposalLoc: 'Disposal location',
-      handler: 'Chen Dawen',
-      condition: 'completed'
-    },
-    {
-      id: 6,
-      createdAt: '2023/09/18 18:00',
-      handleName: 'Classification and weight',
-      processingNum: 'PI12345678',
-      disposalLoc: 'Disposal location',
-      handler: 'Chen Dawen',
-      condition: 'cancelled'
-    },
-    {
-      id: 7,
-      createdAt: '2023/09/18 18:00',
-      handleName: 'Classification and weight',
-      processingNum: 'PI12345678',
-      disposalLoc: 'Disposal location',
-      handler: 'Chen Dawen',
-      condition: 'overdue'
-    }
-  ]
+  }, [page, drawerEditOpen])
 
   const initProcessRecord = async () => {
-    var recordsMapping: any[] = []
-    dummyRecord.map((item: any) => {
-      recordsMapping.push(
-        createProcessRecord(
-          item?.id,
-          item?.handleName,
-          item?.processingNum,
-          item?.disposalLoc,
-          item?.handler,
-          item?.condition,
-          item?.createdAt
+    setTotalData(0)
+    setProcesRecords([])
+    const result = await getAllProcessRecord(page - 1, pageSize)
+    const data = result?.data
+    if (data) {
+      var recordsMapping: any[] = []
+      data?.content.map((item: any) => {
+        recordsMapping.push(
+          createProcessRecord(
+            item?.processOutId,
+            item?.status,
+            item?.processInId,
+            item?.createdBy,
+            item?.updatedBy,
+            item?.processoutDetail,
+            item?.createdAt,
+            item?.updatedAt
+          )
         )
-      )
-    })
-    setProcesRecords(recordsMapping)
-    // setTotalData(data.totalPages)
+      })
+      setTotalData(data.totalPages)
+      console.log('initProcessRecord', recordsMapping)
+      setProcesRecords(recordsMapping)
+      setFilteredProcessRecords(recordsMapping)
+    }
   }
 
   const columns: GridColDef[] = [
@@ -161,13 +111,13 @@ const ProcessRecord: FunctionComponent = () => {
       }
     },
     {
-      field: 'handleName',
+      field: 'createdBy',
       headerName: t('processRecord.handleName'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'processingNum',
+      field: 'processInId',
       headerName: t('processRecord.processingNumb'),
       width: 200,
       type: 'string'
@@ -176,38 +126,39 @@ const ProcessRecord: FunctionComponent = () => {
       field: 'disposalLoc',
       headerName: t('processRecord.processingLocation'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return '-'
+      }
     },
     {
-      field: 'handler',
+      field: '',
       headerName: t('processRecord.handler'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'condition',
+      field: 'status',
       headerName: t('processRecord.status'),
       width: 200,
       type: 'string',
       renderCell: (params) => {
-        return <StatusCard status={params.row.condition.toLowerCase()} />
+        return <StatusCard status={params.row.status} />
       }
     }
   ]
 
   const searchfield = [
-    { label: t('pick_up_order.filter.search'), width: '20%' },
+    { label: t('pick_up_order.filter.search'), field: 'search', width: '20%' },
     {
       label: t('processRecord.handleName'),
       width: '20%',
-      //options: [],
-      options: getUniqueOptions('handleName'),
+      options: getUniqueOptions('createdBy'),
       field: 'recycTypeId'
     },
     {
       label: t('processRecord.location'),
       width: '20%',
-      //options: [],
       options: getUniqueOptions('disposalLoc'),
       field: 'recycSubTypeId'
     }
@@ -226,10 +177,10 @@ const ProcessRecord: FunctionComponent = () => {
   }
 
   const handleSelectRow = (params: GridRowParams) => {
-    const selectedInv = procesRecords.find(
-      (item) => item.itemId == params.row.itemId
+    const selectedProcessOut = procesRecords.find(
+      (item) => item.processOutId == params.row.processOutId
     )
-    setSelectedRow(selectedInv)
+    setSelectedRow(selectedProcessOut)
     setDrawerEditOpen(true)
   }
 
@@ -241,6 +192,24 @@ const ProcessRecord: FunctionComponent = () => {
 
   const handleSearch = (label: string, value: string) => {
     console.log('hanlde search', label, value)
+    if (label == 'search') {
+      if (value == '') return setFilteredProcessRecords(procesRecords)
+      const filtered: ProcessOut[] = procesRecords.filter(
+        (item) => item.processInId == value
+      )
+      filtered
+        ? setFilteredProcessRecords(filtered)
+        : setFilteredProcessRecords(procesRecords)
+    }
+
+    if (label == 'createdBy') {
+      const filtered: ProcessOut[] = procesRecords.filter(
+        (item) => item.createdBy == value
+      )
+      filtered
+        ? setFilteredProcessRecords(filtered)
+        : setFilteredProcessRecords(procesRecords)
+    }
   }
 
   return (
@@ -260,13 +229,14 @@ const ProcessRecord: FunctionComponent = () => {
             alignItems: 'center',
             gap: '16px',
             marginY: {
-                sm: 4, xs: 6
+              sm: 4,
+              xs: 6
             },
             marginLeft: {
-                xs: 3
+              xs: 3
             },
             marginBottom: {
-                xs: 0
+              xs: 0
             }
           }}
         >
@@ -274,12 +244,15 @@ const ProcessRecord: FunctionComponent = () => {
             {t('processRecord.processingRecords')}
           </Typography>
         </Box>
-        <Box sx={{
-            display:{
-                sm: 'flex', xs: 'block'
-            },
-
-        }} mt={3}>
+        <Box
+          sx={{
+            display: {
+              sm: 'flex',
+              xs: 'block'
+            }
+          }}
+          mt={3}
+        >
           {searchfield.map((s, index) => (
             <CustomSearchField
               key={index}
@@ -294,8 +267,8 @@ const ProcessRecord: FunctionComponent = () => {
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
-              rows={procesRecords}
-              getRowId={(row) => row.id}
+              rows={filteredProcessRecords}
+              getRowId={(row) => row.processOutId}
               hideFooter
               columns={columns}
               checkboxSelection={false}

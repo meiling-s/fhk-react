@@ -487,6 +487,7 @@
     "processingLocation": "处理地点",
     "handler": "经手人",
     "status": "状态",
+    "categoryWeight": "处理前的回收物类别及重量",
     "detail": {
       "processingData": "处理数据",
       "recyclingInformation": "回收信息",

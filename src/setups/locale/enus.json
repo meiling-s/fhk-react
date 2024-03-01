@@ -486,6 +486,7 @@
     "processingLocation": "Processing location",
     "handler": "Handler",
     "status": "Status",
+    "categoryWeight": "Category and weight of recyclables before processing",
     "detail": {
       "processingData": "Processing data",
       "recyclingInformation": "Recycling information",
