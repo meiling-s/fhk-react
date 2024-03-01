@@ -198,6 +198,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
       }
     )
 
+    const result = mappingRecyName(data.recycTypeId, data.recycSubTypeId)
+
     const existingItemIndex = recycItem.findIndex(
       (item) => item.itemId === data.itemId
     )
@@ -208,6 +210,14 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
         const updatedItems = [...prevItems]
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
+          recycType: {
+            name: result ? result.name : '',
+            id: result ? data.recycTypeId : ''
+          },
+          recycSubtype: {
+            name: result ? result.name : '',
+            id: result ? data.recycSubTypeId : ''
+          },
           weight: data.weight,
           images: imgList
         }
@@ -215,7 +225,6 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
       })
     } else {
       // If the item with the same ID doesn't exist, add it to the array
-      const result = mappingRecyName(data.recycTypeId, data.recycSubTypeId)
       setRecycItem((prevItems: any) => [
         ...prevItems,
         {
