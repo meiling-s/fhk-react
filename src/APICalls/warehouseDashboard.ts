@@ -16,19 +16,13 @@ const request = axios.create({
 })
 
 export const getCapacityWarehouse = async (
-  page: number,
-  size: number,
   warehouseId: number
 ) => {
   try {
     const token = returnApiToken()
 
     const response = await request({
-      ...GET_CAPACITY_WAREHOUSE(token.decodeKeycloack, warehouseId),
-      params: {
-        page: page,
-        size: size
-      }
+      ...GET_CAPACITY_WAREHOUSE(token.decodeKeycloack, warehouseId)
     })
 
     return response

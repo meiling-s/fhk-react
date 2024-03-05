@@ -18,7 +18,7 @@ import EditCollectionPoint from "./pages/Collector/CollectionPoint/EditCollectio
 import Overview from "./pages/Collector/Manage/CheckoutRequest";
 import Settings from "./pages/Collector/Warehouse/Settings";
 import Vehicles from "./pages/Collector/Vehicles/Vechicles";
-import WarehouseDashboard from "./pages/Collector/WarehouseDashboard/warehouseDashboard";
+import WarehouseDashboard from "./pages/Collector/Warehouse/WarehouseDashboard";
 //Tenant Register
 // import CompanyDetails from "./pages/TenantRegister/CompanyDetails";
 // import CompanyContact from "./pages/TenantRegister/CompanyContact";

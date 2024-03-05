@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
+import { FunctionComponent, useCallback, ReactNode, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Box,
@@ -8,6 +8,7 @@ import {
   Select,
   MenuItem
 } from '@mui/material'
+import { SelectChangeEvent } from "@mui/material/Select";
 import {
   DataGrid,
   GridColDef,
@@ -18,81 +19,182 @@ import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ProgressLine from '../../../components/ProgressLine'
+import StatusCard from '../../../components/StatusCard';
+import { il_item } from '../../../components/FormComponents/CustomItemList'
+
+import { format } from '../../../constants/constant'
+import dayjs from 'dayjs'
 
 import {
   getCapacityWarehouse,
   getCapacityWarehouseSubtype,
+  getCheckInWarehouse,
   getCheckOutWarehouse,
   getCheckInOutWarehouse
 } from '../../../APICalls/warehouseDashboard'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
+import { CheckInOutWarehouse } from '../../../interfaces/warehouse'
 
 import { useTranslation } from 'react-i18next'
+
+function createCheckInOutWarehouse(
+  id: number,
+  createdAt: string,
+  status: string,
+  senderName: string,
+  receiverName: string,
+  picoId: string,
+  adjustmentFlg: true,
+  logisticName: string,
+  senderAddr: string,
+  receiverAddr: string,
+): CheckInOutWarehouse {
+  return { id, createdAt, status, senderName, receiverName, picoId, adjustmentFlg, logisticName, senderAddr, receiverAddr }
+}
 
 const WarehouseDashboard: FunctionComponent = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
 
-  const [capacity, setCapacity] = useState<number>(500)
+  const [capacity, setCapacity] = useState<number>(0)
   const [totalCapacity, setTotalCapacity] = useState<number>(1000)
+  const [warehouseList, setWarehouseList] = useState<il_item[]>([])
+  const [checkIn, setCheckIn] = useState<number>(0)
+  const [checkOut, setCheckOut] = useState<number>(0)
   const subTypeItem = [{ name: 'aas' }, { name: 'cddd' }, { name: 'ffd' }]
-  const [selectedWarehouse, setSelectedWarehouse] = useState<{
-    id: number
-    name: string
-  }>({ id: 0, name: 'Warehouse 1' })
-  const [checkInOut, setCheckInOut] = useState([
-    {
-      id: '0',
-      createdAt: '2023/09/18 18:00',
-      status: 'CREATED',
-      shippingCompany: 'aaaaa',
-      receiver: 'ASTD',
-      pico: 'PO12345678',
-      adjustmentFlg: true,
-      logisticComp: 'BBBB',
-      deliverLoc: 'Hongkong , Penang oat 90',
-      receiverAddr: 'Kwon siam road'
+  const [selectedWarehouse, setSelectedWarehouse] = useState<il_item | null>(null)
+  const [checkInOut, setCheckInOut] = useState<CheckInOutWarehouse[]>([])
+
+  useEffect(()=>{
+    initWarehouse()
+  }, [])
+
+  useEffect(()=> {
+      initCapacity()
+      initCheckIn()
+      initCheckOut()
+      initCheckInOut()
+    
+  }, [selectedWarehouse])
+
+  const initWarehouse = async () => {
+    const result = await getAllWarehouse(0, 20)
+    if(result == '401') {
+      localStorage.clear()
+      navigate('/')
+    } else if(result) {
+
+      let capacityTotal = 0
+      let warehouse: il_item[] = []
+      const data = result.data.content
+      data.forEach((item: any) => {
+
+        item.warehouseRecyc?.forEach((recy: any) => {
+          capacityTotal += recy.recycSubTypeCapacity; 
+        });
+
+        warehouse.push({
+          id: item.warehouseId,
+          name: item.warehouseNameTchi
+        })
+
+      });
+
+      setWarehouseList(warehouse)
+      if(warehouse.length > 0 ) setSelectedWarehouse(warehouse[0])
+      setTotalCapacity(capacityTotal)
     }
-  ])
+  }
+
+  const initCapacity = async () => {
+    if(selectedWarehouse){
+      const result = await getCapacityWarehouse(parseInt(selectedWarehouse.id))
+      if(result) setCapacity(result.data)    
+    }
+  }
+
+  const initCheckIn = async () => {
+    if(selectedWarehouse){
+    const result = await getCheckInWarehouse(parseInt(selectedWarehouse.id))
+      if(result) setCheckIn(result.data)
+    }
+  }
+
+  const initCheckOut = async () => {
+    if(selectedWarehouse){
+    const result = await getCheckOutWarehouse(parseInt(selectedWarehouse.id))
+      if(result) setCheckOut(result.data)
+    }
+  }
+
+  const initCheckInOut = async () => {
+    if(selectedWarehouse){
+    const result = await getCheckInOutWarehouse(1)
+    if(result){
+      const data = result.data
+      let checkinoutMapping :CheckInOutWarehouse[] = []
+      data.map((item: any, index: number)=> {
+        checkinoutMapping.push(
+          createCheckInOutWarehouse(
+            item?.chkInId || index +  item?.chkInId,
+            item?.createdAt,
+            item?.status,
+            item?.senderName,
+            item?.receiverName,
+            item?.picoId,
+            item?.adjustmentFlg,
+            item?.logisticName,
+            item?.senderAddr,
+            item?.receiverAddr,
+          )
+        )
+      })
+
+      setCheckInOut(checkinoutMapping)
+    }
+    }
+  }
 
   const columns: GridColDef[] = [
     {
       field: 'createdAt',
       headerName: t('check_out.created_at'),
-      width: 150,
+      width: 120,
       type: 'string',
       renderCell: (params) => {
-        // const dateFormatted = dayjs(new Date(params.row.createdAt)).format(
-        //   format.dateFormat1
-        // )
-        return <div>{'dateFormatted'}</div>
+        const dateFormatted = dayjs(new Date(params.row.createdAt)).format(
+          format.dateFormat1
+        )
+        return <div>{dateFormatted}</div>
       }
     },
     {
       field: 'status',
       headerName: t('col.status'),
-      width: 75,
-      type: 'string'
+      width: 150,
+      type: 'string',
+      renderCell: (params) => {
+        return <StatusCard status={params.row.status} />
+      }
     },
     {
-      field: 'shippingCompany',
+      field: 'senderName',
       headerName: t('check_out.shipping_company'),
       width: 100,
       type: 'string'
     },
     {
-      field: 'receiver',
+      field: 'receiverName',
       headerName: t('check_in.receiver_company'),
       width: 100,
       type: 'string'
     },
     {
-      field: 'pico',
+      field: 'picoId',
       headerName: t('check_out.pickup_order_no'),
-      width: 150,
+      width: 200,
       type: 'string'
     },
     {
@@ -113,7 +215,7 @@ const WarehouseDashboard: FunctionComponent = () => {
       }
     },
     {
-      field: 'deliverLoc',
+      field: 'senderAddr',
       headerName: t('inventory.inventoryLocation'),
       width: 125,
       type: 'string'
@@ -132,7 +234,13 @@ const WarehouseDashboard: FunctionComponent = () => {
     }
   ]
 
-  const onChangeWarehouse = () => {}
+  const onChangeWarehouse = (event: SelectChangeEvent) => {
+    const warehouseId = event.target.value
+    const selectedWarehouse = warehouseList.find(item => item.id == warehouseId )
+    if(selectedWarehouse){
+      setSelectedWarehouse(selectedWarehouse)
+    }
+  }
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
@@ -145,15 +253,18 @@ const WarehouseDashboard: FunctionComponent = () => {
       <Box sx={{ marginBottom: 2 }}>
         <FormControl sx={dropDownStyle}>
           <Select
-            labelId="company-label"
-            id="company"
-            value={selectedWarehouse.id}
+            id="warehouse"
+            placeholder='Select warehouse'
+            value={selectedWarehouse?.id || ""}
             label={t('check_out.any')}
             onChange={onChangeWarehouse}
-          >
-            <MenuItem value={selectedWarehouse.id}>
-              {selectedWarehouse.name}
+          >{
+            warehouseList?.map((item, index) => (
+            <MenuItem value={item?.id} key={index}>
+                {item?.name}
             </MenuItem>
+            ))
+          }   
           </Select>
         </FormControl>
       </Box>
@@ -189,8 +300,8 @@ const WarehouseDashboard: FunctionComponent = () => {
               ></ProgressLine>
             </Box>
 
-            <Typography fontSize={14} color="green" fontWeight="light">
-              {'尚有大量空間'}
+            <Typography fontSize={14} color={(capacity/totalCapacity) * 100 > 70 ? 'red' : 'green'} fontWeight="light">
+              {(capacity/totalCapacity) * 100 < 70 ? '尚有大量空間' : 'full'}
             </Typography>
           </Box>
           <Box
@@ -216,7 +327,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               <div className="text-sm font-bold mb-4">送入請求</div>
               <div className="flex gap-1 items-baseline">
                 <Typography fontSize={22} color="white" fontWeight="bold">
-                  2
+                  {checkIn}
                 </Typography>
                 <Typography fontSize={11} color="white" fontWeight="bold">
                   送入請求
@@ -242,7 +353,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               <div className="text-sm font-bold mb-4">送入請求</div>
               <div className="flex gap-1 items-baseline">
                 <Typography fontSize={22} color="white" fontWeight="bold">
-                  2
+                {checkOut}
                 </Typography>
                 <Typography fontSize={11} color="white" fontWeight="bold">
                   送入請求
@@ -270,7 +381,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               fontSize={13}
               color="gray"
               fontWeight="light"
-              onClick={() => navigate('collector/inventory')}
+              onClick={() => navigate('/collector/inventory')}
             >
               全部
             </Typography>

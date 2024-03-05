@@ -406,5 +406,6 @@ export const GET_CHECK_IN_OUT_WAREHOUSE = (
   warehouseId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkinout/${table}/${warehouseId}`
+ // url: `api/v1/collectors/checkinout/${table}/${warehouseId}`
+ url: `api/v1/collectors/checkinout/{table}/{warehouseId}?table=company861341&warehouseId=1`
 })
