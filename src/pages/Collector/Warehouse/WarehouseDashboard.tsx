@@ -34,10 +34,13 @@ import {
   getCheckOutWarehouse,
   getCheckInOutWarehouse
 } from '../../../APICalls/warehouseDashboard'
-import { getAllWarehouse } from '../../../APICalls/warehouseManage'
+import { getAllWarehouse, getWarehouseById } from '../../../APICalls/warehouseManage'
 import { CheckInOutWarehouse } from '../../../interfaces/warehouse'
 
 import { useTranslation } from 'react-i18next'
+import i18n from '../../../setups/i18n'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { useContainer } from 'unstated-next'
 
 function createCheckInOutWarehouse(
   id: number,
@@ -54,18 +57,27 @@ function createCheckInOutWarehouse(
   return { id, createdAt, status, senderName, receiverName, picoId, adjustmentFlg, logisticName, senderAddr, receiverAddr }
 }
 
+interface warehouseSubtype {
+  subTypeId: string
+  subtypeName: string
+  capacity:number
+}
+
 const WarehouseDashboard: FunctionComponent = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { recycType } = useContainer(CommonTypeContainer)
 
   const [capacity, setCapacity] = useState<number>(0)
   const [totalCapacity, setTotalCapacity] = useState<number>(1000)
   const [warehouseList, setWarehouseList] = useState<il_item[]>([])
   const [checkIn, setCheckIn] = useState<number>(0)
   const [checkOut, setCheckOut] = useState<number>(0)
-  const subTypeItem = [{ name: 'aas' }, { name: 'cddd' }, { name: 'ffd' }]
   const [selectedWarehouse, setSelectedWarehouse] = useState<il_item | null>(null)
+  const [warehouseSubtype, setWarehouseSubtype] = useState<warehouseSubtype[]>([])
+  const [subtypeCapacity, setSubtypeCapacity] = useState<number>(0)
   const [checkInOut, setCheckInOut] = useState<CheckInOutWarehouse[]>([])
+  const colorList = ['#E1F4FF', '#F6F1DC', ]
 
   useEffect(()=>{
     initWarehouse()
@@ -75,9 +87,10 @@ const WarehouseDashboard: FunctionComponent = () => {
       initCapacity()
       initCheckIn()
       initCheckOut()
+      initWarehouseSubType()
       initCheckInOut()
     
-  }, [selectedWarehouse])
+  }, [selectedWarehouse, i18n.language])
 
   const initWarehouse = async () => {
     const result = await getAllWarehouse(0, 20)
@@ -126,6 +139,74 @@ const WarehouseDashboard: FunctionComponent = () => {
     if(selectedWarehouse){
     const result = await getCheckOutWarehouse(parseInt(selectedWarehouse.id))
       if(result) setCheckOut(result.data)
+    }
+  }
+
+  const mappingRecyName = (recycTypeId: string, recycSubTypeId: string) => {
+    const matchingRecycType = recycType?.find(
+      (recyc) => recycTypeId === recyc.recycTypeId
+    )
+
+    if (matchingRecycType) {
+      const matchRecycSubType = matchingRecycType.recycSubType?.find(
+        (subtype) => subtype.recycSubTypeId === recycSubTypeId
+      )
+      var name = ''
+      switch (i18n.language) {
+        case 'enus':
+          name = matchingRecycType.recyclableNameEng
+          break
+        case 'zhch':
+          name = matchingRecycType.recyclableNameSchi
+          break
+        case 'zhhk':
+          name = matchingRecycType.recyclableNameTchi
+          break
+        default:
+          name = matchingRecycType.recyclableNameTchi
+          break
+      }
+      var subName = ''
+      switch (i18n.language) {
+        case 'enus':
+          subName = matchRecycSubType?.recyclableNameEng ?? ''
+          break
+        case 'zhch':
+          subName = matchRecycSubType?.recyclableNameSchi ?? ''
+          break
+        case 'zhhk':
+          subName = matchRecycSubType?.recyclableNameTchi ?? ''
+          break
+        default:
+          subName = matchRecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+          break
+      }
+
+      return { name, subName }
+    }
+  }
+
+  const initWarehouseSubType = async () => {
+    if(selectedWarehouse) {
+      const result = await getWarehouseById(parseInt(selectedWarehouse.id))
+      if(result) {
+        const data = result.data
+        let subtypeWarehouse: warehouseSubtype[] = []
+        let totalSubtype = 0
+        data?.warehouseRecyc.forEach((item: any)=>{
+          const recyItem = mappingRecyName(item.recycTypeId , item.recycSubTypeId)
+          subtypeWarehouse.push({
+            subTypeId: item.recycSubTypeId,
+            subtypeName: recyItem ? recyItem.subName : "-",
+            capacity: item.recycSubTypeCapacity
+          })
+
+          totalSubtype += item.recycSubTypeCapacity
+        })
+
+        setWarehouseSubtype(subtypeWarehouse)
+        setSubtypeCapacity(totalSubtype)
+      }
     }
   }
 
@@ -248,8 +329,17 @@ const WarehouseDashboard: FunctionComponent = () => {
     }
   }, [])
 
+  const generateRandomPastelColor = () => {
+    const r = Math.floor(Math.random() * 156) + 100; // Red component (100-255)
+    const g = Math.floor(Math.random() * 156) + 100; // Green component (100-255)
+    const b = Math.floor(Math.random() * 156) + 100; // Blue component (100-255)
+    const color = `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`;
+  
+    return color;
+  };
+
   return (
-    <Box className="container-wrapper w-[1113px] mt-4">
+    <Box className="container-wrapper w-[1283px] mt-4">
       <Box sx={{ marginBottom: 2 }}>
         <FormControl sx={dropDownStyle}>
           <Select
@@ -282,7 +372,7 @@ const WarehouseDashboard: FunctionComponent = () => {
         >
           <Box className={'total-capacity'} sx={{ flexGrow: 1 }}>
             <Typography fontSize={16} color="gray" fontWeight="light">
-              {'現時容量'}
+              {t('warehouseDashboard.currentCapacity')}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
               <Typography fontSize={22} color="black" fontWeight="bold">
@@ -301,7 +391,7 @@ const WarehouseDashboard: FunctionComponent = () => {
             </Box>
 
             <Typography fontSize={14} color={(capacity/totalCapacity) * 100 > 70 ? 'red' : 'green'} fontWeight="light">
-              {(capacity/totalCapacity) * 100 < 70 ? '尚有大量空間' : 'full'}
+              {(capacity/totalCapacity) * 100 < 70 ? t('warehouseDashboard.thereStillEnoughSpace') :  t('warehouseDashboard.noMoreRoom')}
             </Typography>
           </Box>
           <Box
@@ -324,13 +414,13 @@ const WarehouseDashboard: FunctionComponent = () => {
                 fontSize="small"
                 className="bg-[#7FC738] rounded-[50%] p-1"
               />
-              <div className="text-sm font-bold mb-4">送入請求</div>
+              <div className="text-sm font-bold mb-4">{t('warehouseDashboard.sendRequest')}</div>
               <div className="flex gap-1 items-baseline">
                 <Typography fontSize={22} color="white" fontWeight="bold">
                   {checkIn}
                 </Typography>
                 <Typography fontSize={11} color="white" fontWeight="bold">
-                  送入請求
+                  {t('warehouseDashboard.toBeConfirmed')}
                 </Typography>
               </div>
             </Card>
@@ -350,13 +440,13 @@ const WarehouseDashboard: FunctionComponent = () => {
                 fontSize="small"
                 className="bg-[#6BC7FF] rounded-[50%] p-1"
               />
-              <div className="text-sm font-bold mb-4">送入請求</div>
+              <div className="text-sm font-bold mb-4">{t('warehouseDashboard.sendRequest')}</div>
               <div className="flex gap-1 items-baseline">
                 <Typography fontSize={22} color="white" fontWeight="bold">
                 {checkOut}
                 </Typography>
                 <Typography fontSize={11} color="white" fontWeight="bold">
-                  送入請求
+                  {t('warehouseDashboard.toBeConfirmed')}
                 </Typography>
               </div>
             </Card>
@@ -372,7 +462,7 @@ const WarehouseDashboard: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="#535353" fontWeight="bold">
-            現時容量
+            {t('warehouseDashboard.recyclingInformation')}
           </Typography>
           <Box
             sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
@@ -383,7 +473,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               fontWeight="light"
               onClick={() => navigate('/collector/inventory')}
             >
-              全部
+              {t('warehouseDashboard.all')}
             </Typography>
             <ChevronRightIcon
               fontSize="small"
@@ -392,27 +482,31 @@ const WarehouseDashboard: FunctionComponent = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 2 }}>
-          {subTypeItem.map((item) => (
+          {warehouseSubtype.map((item) => (
             <Card
+              key={item.subTypeId}
               sx={{
                 borderRadius: 2,
                 backgroundColor: 'white',
                 padding: 2,
                 boxShadow: 'none',
                 color: 'white',
-                width: '110px'
+                width: '110px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: "space-between"
               }}
             >
-              <div className="circle-color w-[30px] h-[30px] rounded-[50px] bg-slate-400"></div>
-              <div className="text-sm font-bold text-black mt-2 mb-10">
-                廢紙
+              <div className="circle-color w-[30px] h-[30px] rounded-[50px]" style={{background: generateRandomPastelColor()}}></div>
+              <div className="text-sm font-bold text-black mt-2 mb-10 min-h-12">
+               {item.subtypeName}
               </div>
               <div className="flex items-baseline">
-                <div className="text-3xl font-bold text-black">500</div>
-                <div className="text-2xs font-bold text-black ">/500kg</div>
+                <div className="text-3xl font-bold text-black">{item.capacity}</div>
+                <div className="text-2xs font-bold text-black ">/{subtypeCapacity}kg</div>
               </div>
               <Box sx={{ marginTop: 1 }}>
-                <ProgressLine value={20} total={100}></ProgressLine>
+                <ProgressLine value={item.capacity} total={subtypeCapacity}></ProgressLine>
               </Box>
             </Card>
           ))}
@@ -427,11 +521,11 @@ const WarehouseDashboard: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="#535353" fontWeight="bold">
-            最近出入記錄
+          {t('warehouseDashboard.recentEntryAndExitRecords')}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography fontSize={13} color="gray" fontWeight="light">
-              全部
+            {t('warehouseDashboard.all')}
             </Typography>
             <ChevronRightIcon
               fontSize="small"
@@ -446,7 +540,6 @@ const WarehouseDashboard: FunctionComponent = () => {
             hideFooter
             columns={columns}
             checkboxSelection={false}
-            //onRowClick={handleSelectRow}
             getRowSpacing={getRowSpacing}
             sx={{
               border: 'none',

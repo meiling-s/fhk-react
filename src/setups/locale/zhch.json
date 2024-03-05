@@ -505,6 +505,16 @@
       "Manufacturer":"",
       "Customer":""
     }
+  },
+  "warehouseDashboard" : {
+    "currentCapacity": "电流容量",
+    "thereStillEnoughSpace": "还有足够的空间",
+    "noMoreRoom": "没有房间了",
+    "all": "全部",
+    "sendRequest": "送入请求",
+    "toBeConfirmed": "待确认",
+    "recyclingInformation": "回收信息",
+    "recentEntryAndExitRecords": "最近出入记录"
   }
 }
 

@@ -504,5 +504,15 @@
       "Manufacturer":"Manufacturer",
       "Customer":"Customer"
     }
+  },
+  "warehouseDashboard" : {
+    "currentCapacity": "Current capacity",
+    "thereStillEnoughSpace": "There's still enough space",
+    "noMoreRoom": "No more room",
+    "all": "all",
+    "sendRequest": "Send request",
+    "toBeConfirmed": "to be confirmed",
+    "recyclingInformation": "Recycling information",
+    "recentEntryAndExitRecords": "Recent entry and exit records"
   }
 }
