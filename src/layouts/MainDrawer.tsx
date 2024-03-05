@@ -135,6 +135,12 @@ function MainDrawer() {
       onClick: () => navigate('/collector/inventory'),
       collapse: false
     },
+    "Process out recyclables":{
+      name: t('processRecord.processingRecords'),
+      icon: <DOCUMENT_ICON />,
+      onClick: () => navigate('/collector/processRecord'),
+      collapse: false
+    }
   }]
   // 20240129 add function list daniel keung end 
   // 20240129 add function list daniel keung start

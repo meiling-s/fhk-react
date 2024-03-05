@@ -39,17 +39,20 @@ export const login = async (item: LoginItem) => {
       
   } catch (e: any) {
     if (e.response) {
-      console.error('Login user Failed with msg:', e.response.data);
+      console.error('Login user Failed with msg 1:', e.response.data);
       //handling error msg 
       const response = e.response.data.message
       const errMsgString = removeNonJsonChar(response)
       const errMsgJSON = JSON.parse(errMsgString);
-      //debugger;
       if(errMsgJSON.message){
         const errSecondInnerString = removeNonJsonChar(errMsgJSON.message)
-        const result = JSON.parse(errSecondInnerString);
-        return result.errorCode 
-        
+        try {
+          const result = JSON.parse(errSecondInnerString);
+          return result.errorCode 
+        } catch(error){
+          return e.response.data.status
+        }
+       
       }else {
         return errMsgJSON.errorCode
       }

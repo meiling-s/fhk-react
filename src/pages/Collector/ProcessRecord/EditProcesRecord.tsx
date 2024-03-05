@@ -2,19 +2,42 @@ import { Box, Grid, Divider, Typography, Button } from '@mui/material'
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import { styles } from '../../../constants/styles'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
-
+import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined'
+import { DELETE_OUTLINED_ICON } from '../../../themes/icons'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import EditRecyclableForm from './EditRecyclableForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import theme from '../../../themes/palette'
-
+import {
+  ProcessOut,
+  processOutImage,
+  ProcessOutItem,
+  CreateRecyclable
+} from '../../../interfaces/processRecords'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
+import dayjs from 'dayjs'
+import { format } from '../../../constants/constant'
 import { useTranslation } from 'react-i18next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { useContainer } from 'unstated-next'
+import i18n from '../../../setups/i18n'
+import { localStorgeKeyName } from '../../../constants/constant'
+import { createProcessRecordItem } from '../../../APICalls/Collector/processRecords'
+import { ImageToBase64 } from '../../../utils/utils'
+
+type RecycItem = {
+  itemId: number
+  processOutId: number
+  recycType: il_item
+  recycSubtype: il_item
+  weight: number
+  images: string[]
+}
 
 interface EditProcessRecordProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
-  selectedRow?: any | null
+  selectedRow?: ProcessOut | null
 }
 
 const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
@@ -23,16 +46,25 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   selectedRow
 }) => {
   const { t } = useTranslation()
+  const { recycType } = useContainer(CommonTypeContainer)
   const [drawerRecyclable, setDrawerRecyclable] = useState(false)
-  const [recycData, setRecycData] = useState<any>({})
+  const [action, setAction] = useState<
+    'none' | 'add' | 'edit' | 'delete' | undefined
+  >('add')
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+
+  const [recycItem, setRecycItem] = useState<RecycItem[]>([])
+  const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
   const fieldItem = [
     {
       label: t('processRecord.creationDate'),
-      value: '2023/09/20 6:00pm'
+      value: selectedRow?.createdAt
+        ? dayjs(new Date(selectedRow?.createdAt)).format(format.dateFormat1)
+        : '-'
     },
     {
       label: t('processRecord.handleName'),
-      value: '分類及磅重'
+      value: selectedRow?.createdBy
     },
     {
       label: t('processRecord.processingLocation'),
@@ -40,90 +72,185 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     },
     {
       label: t('processRecord.handler'),
-      value: '陳大文'
+      value: '-'
     }
   ]
 
-  const [rycleItem, setRycleItem] = useState([
-    {
-      id: 1 ,
-      category: '盒',
-      newData: false,
-      type: '報紙',
-      subtype: '廢紙 | RC12345678',
-      weight: '5',
-      img: ['../Image.png', '../Image.png']
-    },
-    {
-      id: 2,
-      category: '盒',
-      newData: false,
-      type: '報紙',
-      subtype: '廢紙 | RC12345678',
-      weight: '5'
-      //   img: ['../Image.png']
+  const mappingRecyName = (recycTypeId: string, recycSubTypeId: string) => {
+    const matchingRecycType = recycType?.find(
+      (recyc) => recycTypeId === recyc.recycTypeId
+    )
+
+    if (matchingRecycType) {
+      const matchRecycSubType = matchingRecycType.recycSubType?.find(
+        (subtype) => subtype.recycSubTypeId === recycSubTypeId
+      )
+      var name = ''
+      switch (i18n.language) {
+        case 'enus':
+          name = matchingRecycType.recyclableNameEng
+          break
+        case 'zhch':
+          name = matchingRecycType.recyclableNameSchi
+          break
+        case 'zhhk':
+          name = matchingRecycType.recyclableNameTchi
+          break
+        default:
+          name = matchingRecycType.recyclableNameTchi
+          break
+      }
+      var subName = ''
+      switch (i18n.language) {
+        case 'enus':
+          subName = matchRecycSubType?.recyclableNameEng ?? ''
+          break
+        case 'zhch':
+          subName = matchRecycSubType?.recyclableNameSchi ?? ''
+          break
+        case 'zhhk':
+          subName = matchRecycSubType?.recyclableNameTchi ?? ''
+          break
+        default:
+          subName = matchRecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+          break
+      }
+
+      return { name, subName }
     }
-  ])
+  }
 
-  const onSaveData = () => {}
+  useEffect(() => {
+    if (selectedRow && selectedRow?.processoutDetail?.length > 0) {
+      const recycItems: RecycItem[] = []
 
-//   const handleCreateRecyc = (data: any) => {
-//     console.log('handleCreateRecyc', data)
-//     const imgList = data.imagesList.map((item: string) => {
-//       const format = item.startsWith('data:image/png') ? 'png' : 'jpeg'
-//       return `data:image/${format};base64,${item}`
-//     })
-//     setRycleItem((prevItems) => [
-//       ...prevItems,
-//       {
-//         category: '盒',
-//         newData: data.newData,
-//         type: '報紙',
-//         subtype: '廢紙 | RC12345678',
-//         weight: data.weight,
-//         img: imgList
-//       }
-//     ])
-//   }
+      selectedRow.processoutDetail.forEach((detail: ProcessOutItem) => {
+        const result = mappingRecyName(
+          detail.recycTypeId,
+          detail.recycSubTypeId
+        )
+        if (result) {
+          const { name, subName } = result
+          recycItems.push({
+            itemId: detail.itemId,
+            processOutId: detail.processOutDtlId,
+            recycType: {
+              name: name,
+              id: detail.recycTypeId
+            },
+            recycSubtype: {
+              name: subName,
+              id: detail.recycSubTypeId
+            },
+            weight: detail.weight,
+            images: detail.processoutDetailPhoto.map((item) => {
+              return `data:image/jpeg;base64,${item.photo}`
+            })
+          })
+        }
+      })
+      setRecycItem(recycItems)
+    }
+  }, [selectedRow, recycType])
 
-const handleCreateRecyc = (data: any) => {
-    console.log('handleCreateRecyc', data)
-    const imgList = data.imagesList.map((item: string) => {
-      const format = item.startsWith('data:image/png') ? 'png' : 'jpeg'
-      return `data:image/${format};base64,${item}`
-    })
-  
-    const existingItemIndex = rycleItem.findIndex((item) => item.id === data.id);
-  
+  const onSaveData = async () => {
+    const newItem = recycItem.filter((item) => item.processOutId == 0)
+
+    if (newItem.length > 0) {
+      const createItemsProcessOut: CreateRecyclable[] = newItem.map((item) => {
+        const imgItems: processOutImage[] = item.images.map((item, idx) => {
+          return {
+            sid: idx,
+            photo: item.split(',')[1] // change data again to base64
+          }
+        })
+
+        return {
+          itemId: item.itemId,
+          recycTypeId: item.recycType.id,
+          recycSubTypeId: item.recycSubtype.id,
+          packageTypeId: '',
+          weight: item.weight,
+          unitId: 'kg',
+          processoutDetailPhoto: imgItems,
+          createdBy: loginId,
+          updatedBy: loginId
+        }
+      })
+
+      console.log('createItemsProcessOut', createItemsProcessOut)
+
+      const result = await createProcessRecordItem(
+        createItemsProcessOut,
+        selectedRow!!.processOutId
+      )
+
+      if (result) {
+        handleDrawerClose()
+      }
+    }
+  }
+
+  const handleCreateRecyc = (data: CreateRecyclable) => {
+    const imgList: string[] = data.processoutDetailPhoto.map(
+      (item: processOutImage) => {
+        return `data:image/jpeg;base64,${item.photo}`
+      }
+    )
+
+    const result = mappingRecyName(data.recycTypeId, data.recycSubTypeId)
+
+    const existingItemIndex = recycItem.findIndex(
+      (item) => item.itemId === data.itemId
+    )
+
     if (existingItemIndex !== -1) {
       // If the item with the same ID exists, update it
-      setRycleItem((prevItems) => {
-        const updatedItems = [...prevItems];
+      setRecycItem((prevItems) => {
+        const updatedItems = [...prevItems]
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
-          newData: data.newData,
+          recycType: {
+            name: result ? result.name : '',
+            id: result ? data.recycTypeId : ''
+          },
+          recycSubtype: {
+            name: result ? result.name : '',
+            id: result ? data.recycSubTypeId : ''
+          },
           weight: data.weight,
-          img: imgList
-        };
-        return updatedItems;
-      });
+          images: imgList
+        }
+        return updatedItems
+      })
     } else {
       // If the item with the same ID doesn't exist, add it to the array
-      setRycleItem((prevItems) => [
+      setRecycItem((prevItems: any) => [
         ...prevItems,
         {
-          id: data.id,
-          category: '盒',
-          newData: data.newData,
-          type: '報紙',
-          subtype: '廢紙 | RC12345678',
+          itemId: data.itemId,
+          processOutId: 0,
+          recycType: {
+            name: result ? result.name : '',
+            id: result ? data.recycTypeId : ''
+          },
+          recycSubtype: {
+            name: result ? result.name : '',
+            id: result ? data.recycSubTypeId : ''
+          },
           weight: data.weight,
-          img: imgList
+          images: imgList
         }
-      ]);
+      ])
     }
-  };
-  
+    setSelectedItem(null)
+  }
+
+  const handleDeleteItem = (itemId: number) => {
+    const updatedRecycItem = recycItem.filter((item) => item.itemId !== itemId)
+    setRecycItem(updatedRecycItem)
+    setSelectedItem(null)
+  }
 
   return (
     <>
@@ -135,13 +262,13 @@ const handleCreateRecyc = (data: any) => {
           action={'edit'}
           headerProps={{
             title: t('processRecord.processingRecords'),
-            subTitle: 'RC029939993',
+            subTitle: selectedRow?.processOutId.toString(),
             onSubmit: onSaveData,
             onDelete: handleDrawerClose,
             onCloseHeader: handleDrawerClose,
             submitText: t('col.save'),
             cancelText: t('col.cancel'),
-            statusLabel:'processing'
+            statusLabel: selectedRow?.status
           }}
         >
           <Divider />
@@ -186,9 +313,9 @@ const handleCreateRecyc = (data: any) => {
               <Grid item>
                 <Box>
                   <div className="recyle-type-weight text-[13px] text-[#ACACAC] font-normal tracking-widest mb-4">
-                    處理前的回收物類別及重量
+                    {t('processRecord.categoryWeight')}
                   </div>
-                  {rycleItem.map((item, index) => (
+                  {recycItem?.map((item, index) => (
                     <div
                       key={index}
                       className="recyle-item px-4 py-2 rounded-xl border border-solid border-[#E2E2E2] mt-4"
@@ -196,37 +323,48 @@ const handleCreateRecyc = (data: any) => {
                       <div className="detail flex justify-between items-center">
                         <div className="recyle-type flex items-center gap-2">
                           <div className="category" style={categoryRecyle}>
-                            {item.category}
+                            {item.recycType.name.charAt(0)}
                           </div>
                           <div className="type-item">
                             <div className="sub-type text-xs text-black font-bold tracking-widest">
-                              {item.type}
+                              {item.recycType.name}
                             </div>
                             <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
-                              {item.subtype}
+                              {item.recycSubtype.name}
                             </div>
                           </div>
                         </div>
-                        <div className='right action flex items-center gap-2'>
-                        <div className="weight font-bold font-base">
-                          {item.weight}kg
+                        <div className="right action flex items-center gap-2">
+                          <div className="weight font-bold font-base">
+                            {item.weight}kg
+                          </div>
+                          {item.processOutId == 0 && (
+                            <Box>
+                              <DriveFileRenameOutlineOutlinedIcon
+                                onClick={() => {
+                                  setSelectedItem(item)
+                                  setAction('edit')
+                                  setDrawerRecyclable(true)
+                                }}
+                                fontSize="small"
+                                className="text-gray cursor-pointer"
+                              />
+                              <DELETE_OUTLINED_ICON
+                                onClick={() => {
+                                  setSelectedItem(item)
+                                  setAction('delete')
+                                  setDrawerRecyclable(true)
+                                }}
+                                fontSize="small"
+                                className="text-gray cursor-pointer"
+                              ></DELETE_OUTLINED_ICON>
+                            </Box>
+                          )}
                         </div>
-                        {
-                            item.newData && (
-                                <DriveFileRenameOutlineOutlinedIcon
-                                 onClick={() =>{
-                                     setRecycData(item) 
-                                     setDrawerRecyclable(true)}}
-                                 fontSize='small' 
-                                 className='text-gray cursor-pointer'/>
-                            )
-                        }
-                        </div>
-                        
                       </div>
-                      {item.img && (
+                      {item.images.length != 0 && (
                         <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
-                          {item.img.map((img, index) => (
+                          {item.images.map((img, index) => (
                             <img
                               src={img}
                               alt=""
@@ -243,7 +381,10 @@ const handleCreateRecyc = (data: any) => {
               <Grid item>
                 <Button
                   variant="outlined"
-                  onClick={() => setDrawerRecyclable(true)}
+                  onClick={() => {
+                    setDrawerRecyclable(true)
+                    setAction('add')
+                  }}
                   sx={{
                     padding: '32px',
                     width: '100%',
@@ -266,7 +407,10 @@ const handleCreateRecyc = (data: any) => {
             drawerOpen={drawerRecyclable}
             handleDrawerClose={() => setDrawerRecyclable(false)}
             onCreateRecycle={handleCreateRecyc}
-            editedData={recycData}
+            onDeleteItem={handleDeleteItem}
+            editedData={selectedItem}
+            processOut={selectedRow}
+            action={action}
           />
         </RightOverlayForm>
       </div>
