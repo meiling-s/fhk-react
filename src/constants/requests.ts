@@ -343,3 +343,25 @@ export const GET_INVENTORY = (table: string) : AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/inventory/${table}/searching`
 })
+
+//process records
+export const GET_PROCESS_OUT = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/processout/${table}`
+})
+
+export const CREATE_PROCESS_OUT_ITEM = (
+  table: string,
+  processOutId: number
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/collectors/processout/${table}/items/${processOutId}`
+})
+
+export const DELETE_PROCESS_OUT_ITEM = (
+  table: string,
+  processOutId: number
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/processout/${table}/delete/${processOutId}`
+})
