@@ -505,6 +505,7 @@
     }
   },
   "warehouseDashboard" : {
+    "warehouse": "倉庫",
     "currentCapacity": "電流容量",
     "thereStillEnoughSpace": "還有足夠的空間",
     "noMoreRoom": "沒有房間了",

@@ -506,6 +506,7 @@
     }
   },
   "warehouseDashboard" : {
+    "warehouse": "Warehouse",
     "currentCapacity": "Current capacity",
     "thereStillEnoughSpace": "There's still enough space",
     "noMoreRoom": "No more room",

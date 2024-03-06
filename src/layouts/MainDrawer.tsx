@@ -33,7 +33,7 @@ import '../styles/MainDrawer.css'
 import { localStorgeKeyName } from '../constants/constant'
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import InventoryIcon from '@mui/icons-material/Inventory';
 type MainDrawer = {
   role: string
 }
@@ -104,6 +104,12 @@ function MainDrawer() {
       name: t('pick_up_order.enquiry_pickup_order'),
       icon:<SHIPPING_CAR_ICON/>,
       onClick: () => navigate('/collector/pickupOrder'),
+      collapse: false
+    },
+    'warehouse dashboard':{
+      name: t('warehouseDashboard.warehouse'),
+      icon:<InventoryIcon/>,
+      onClick: () => navigate('/warehouse'),
       collapse: false
     },
     "Request check-in": {
