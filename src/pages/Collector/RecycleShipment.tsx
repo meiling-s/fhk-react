@@ -46,7 +46,7 @@ import { CheckIn } from "../../interfaces/checkin";
 import { useContainer } from "unstated-next";
 import dayjs from "dayjs";
 import { format, localStorgeKeyName } from "../../constants/constant";
-
+import { displayCreatedDate } from '../../utils/utils'
 import { useTranslation } from "react-i18next";
 import { queryCheckIn } from "../../interfaces/checkin";
 
@@ -355,13 +355,10 @@ function ShipmentManage() {
   }, [page, query]);
 
   const transformToTableRow = (item: CheckIn): TableRow => {
-    const createdDate = item.createdAt
-      ? dayjs(new Date(item.createdAt)).format(format.dateFormat1)
-      : '-'
     return {
       id: item.chkInId,
       chkInId: item.chkInId,
-      createdAt: createdDate,
+      createdAt: displayCreatedDate(item.createdAt) || "-",
       senderName: item.senderName ,
       recipientCompany: "-",
       picoId: item.picoId,
