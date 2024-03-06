@@ -365,3 +365,46 @@ export const DELETE_PROCESS_OUT_ITEM = (
   method: 'patch',
   url: `api/v1/collectors/processout/${table}/delete/${processOutId}`
 })
+
+// WAREHOUSE DASHBOARD
+
+export const GET_CAPACITY_WAREHOUSE = (
+  table: string,
+  warehouseId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/warehousecapacity/${table}/${warehouseId}`
+})
+
+export const GET_CAPACITY_WAREHOUSE_SUBTYPE_ITEM = (
+  table: string,
+  warehouseId: number,
+  recySubTypeId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/itemcapacity/${table}/${warehouseId}/${recySubTypeId}`
+})
+
+export const GET_CHECKIN_WAREHOUSE = (
+  table: string,
+  warehouseId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/numofcheckinreq/${table}/${warehouseId}`
+})
+
+export const GET_CHECKOUT_WAREHOUSE = (
+  table: string,
+  warehouseId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/numofcheckoutreq/${table}/${warehouseId}`
+})
+
+export const GET_CHECK_IN_OUT_WAREHOUSE = (
+  table: string,
+  warehouseId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkinout/${table}/${warehouseId}`
+})

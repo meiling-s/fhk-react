@@ -503,6 +503,17 @@
       "Manufacturer":"",
       "Customer":""
     }
+  },
+  "warehouseDashboard" : {
+    "warehouse": "倉庫",
+    "currentCapacity": "電流容量",
+    "thereStillEnoughSpace": "還有足夠的空間",
+    "noMoreRoom": "沒有房間了",
+    "all": "全部",
+    "sendRequest": "送入請求",
+    "toBeConfirmed": "待確認",
+    "recyclingInformation": "回收物資料",
+    "recentEntryAndExitRecords": "最近出入記錄"
   }
 }
 

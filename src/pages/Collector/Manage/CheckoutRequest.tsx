@@ -24,6 +24,7 @@ import {
 } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import '../../../styles/Base.css'
+import { useNavigate } from 'react-router-dom'
 
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
@@ -313,6 +314,8 @@ const RejectModal: React.FC<RejectForm> = ({
 
 const CheckoutRequest: FunctionComponent = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+
   const titlePage = t('check_out.request_check_out')
   const approveLabel = t('check_out.approve')
   const rejectLabel = t('check_out.reject')
@@ -546,7 +549,8 @@ const CheckoutRequest: FunctionComponent = () => {
   return (
     <Box className="container-wrapper w-full mr-11">
       <div className="overview-page bg-bg-primary">
-        <div className="header-page flex justify-start items-center mb-4">
+        <div className="header-page flex justify-start items-center mb-4 cursor-pointer"
+          onClick={() => navigate('/warehouse')}>
           <LEFT_ARROW_ICON fontSize="large" />
           <div className="title font-bold text-3xl pl-4 ">{titlePage}</div>
         </div>
