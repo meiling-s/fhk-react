@@ -617,7 +617,7 @@ function ShipmentManage() {
       >
         <Grid container alignItems="center">
           <Grid item>
-            <Button aria-label="back" size="small">
+            <Button aria-label="back" size="small" sx={{cursor: 'pointer'}} onClick={() => navigate('/warehouse')}>
               <ChevronLeftIcon sx={styles.buttonBlack} />
               <Typography fontSize={20} color="black" fontWeight="bold">
                 {t("check_in.request_check_in")}
