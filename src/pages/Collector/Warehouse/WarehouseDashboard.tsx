@@ -81,7 +81,7 @@ const WarehouseDashboard: FunctionComponent = () => {
 
   useEffect(()=>{
     initWarehouse()
-  }, [])
+  }, [i18n.language])
 
   useEffect(()=> {
       initCapacity()
@@ -107,6 +107,22 @@ const WarehouseDashboard: FunctionComponent = () => {
         item.warehouseRecyc?.forEach((recy: any) => {
           capacityTotal += recy.recycSubTypeCapacity; 
         });
+
+        var warehouseName = ''
+        switch (i18n.language) {
+          case 'enus':
+            warehouseName = item.warehouseNameTchi
+            break
+          case 'zhch':
+            warehouseName = item.warehouseNameSchi
+            break
+          case 'zhhk':
+            warehouseName = item.warehouseNameEng
+            break
+          default:
+            warehouseName = item.warehouseNameTchi
+            break
+        }
 
         warehouse.push({
           id: item.warehouseId,
@@ -212,7 +228,7 @@ const WarehouseDashboard: FunctionComponent = () => {
 
   const initCheckInOut = async () => {
     if(selectedWarehouse){
-    const result = await getCheckInOutWarehouse(1)
+    const result = await getCheckInOutWarehouse(parseInt(selectedWarehouse.id))
     if(result){
       const data = result.data
       let checkinoutMapping :CheckInOutWarehouse[] = []
