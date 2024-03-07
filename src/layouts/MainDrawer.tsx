@@ -106,7 +106,7 @@ function MainDrawer() {
       onClick: () => navigate('/collector/pickupOrder'),
       collapse: false
     },
-    'warehouse dashboard':{
+    'Warehouse dashboard':{
       name: t('warehouseDashboard.warehouse'),
       icon:<InventoryIcon/>,
       onClick: () => navigate('/warehouse'),
