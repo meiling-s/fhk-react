@@ -126,7 +126,7 @@ const WarehouseDashboard: FunctionComponent = () => {
 
         warehouse.push({
           id: item.warehouseId,
-          name: item.warehouseNameTchi
+          name: warehouseName
         })
 
       });
