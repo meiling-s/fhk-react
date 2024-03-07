@@ -32,6 +32,7 @@ import { Staff } from '../../../interfaces/staff'
 import { getStaffList } from '../../../APICalls/staff'
 
 import { useTranslation } from 'react-i18next'
+import { displayCreatedDate } from '../../../utils/utils'
 
 function createStaff(
   staffId: string,
@@ -162,7 +163,10 @@ const StaffManagement: FunctionComponent = () => {
       field: 'updatedAt',
       headerName: t('staffManagement.lastLogin'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return (displayCreatedDate(params.row.updatedAt))
+      }
     },
     {
       field: 'edit',
