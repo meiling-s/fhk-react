@@ -47,6 +47,7 @@ import { ErrorMessage, useFormik, validateYupSchema } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import CustomAutoComplete from "../../components/FormComponents/CustomAutoComplete";
+import { returnApiToken } from '../../utils/utils';
 
 function createCompany(
   id: number,
@@ -268,6 +269,7 @@ function InviteModal({ open, onClose, id }: inviteModal) {
 }
 
 type InviteTenant = {
+  tenantId: number;
   companyNumber: string;
   companyCategory: string;
   companyZhName: string;
@@ -296,6 +298,7 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
 
   const formik = useFormik<InviteTenant>({
     initialValues: {
+      tenantId: 0,
       companyNumber: "",
       companyCategory: "",
       companyZhName: "",
@@ -760,7 +763,9 @@ function CompanyManage() {
     formikValues: InviteTenant,
     submitForm: () => void
   ) => {
+    const auth = returnApiToken()
     const result = await createInvitation({
+      tenantId: parseInt(auth.tenantId),
       companyNameTchi: formikValues.companyZhName,
       companyNameSchi: formikValues.companyCnName,
       companyNameEng: formikValues.companyEnName,

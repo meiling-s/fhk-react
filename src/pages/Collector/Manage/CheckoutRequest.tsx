@@ -47,6 +47,7 @@ import { format } from '../../../constants/constant'
 import { styles } from '../../../constants/styles'
 import { queryCheckout } from '../../../interfaces/checkout'
 import { localStorgeKeyName } from "../../../constants/constant";
+import { displayCreatedDate } from '../../../utils/utils'
 
 type TableRow = {
   id: number
@@ -459,13 +460,10 @@ const CheckoutRequest: FunctionComponent = () => {
   ]
 
   const transformToTableRow = (item: CheckOut): TableRow => {
-    const createdDate = item.createdAt
-      ? dayjs(new Date(item.createdAt)).format(format.dateFormat1)
-      : '-'
     return {
       id: item.chkOutId,
       chkOutId: item.chkOutId,
-      createdAt: createdDate,
+      createdAt: displayCreatedDate(item.createdAt) || "-",
       vehicleTypeId: item.vehicleTypeId,
       receiverName: item.receiverName,
       picoId: item.picoId,

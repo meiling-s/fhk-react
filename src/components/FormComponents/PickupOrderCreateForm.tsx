@@ -431,6 +431,7 @@ const PickupOrderCreateForm = ({
     setOpenPico(true) 
     setPicoRefId('')
   }
+  
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
@@ -633,13 +634,15 @@ const PickupOrderCreateForm = ({
                   >
                     <CustomItemList
                       items={getReason() || []}
-                      singleSelect={(values) =>
+                      singleSelect={(values) =>{
+                        console.log("values",values);
                         formik.setFieldValue('reason', values)
                       }
+                      }
                       value={formik.values.reason}
-                      defaultSelected={selectedPo?.vehicleTypeId}
+                      defaultSelected={selectedPo?.reason}
                       error={
-                        formik.errors.reason && formik.touched.vehicleTypeId
+                        formik.errors.reason && formik.touched.reason
                       }
                     />
                   </CustomField>
