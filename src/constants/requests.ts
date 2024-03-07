@@ -415,10 +415,10 @@ export const GET_STAFF = (tenantId: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/staff/${tenantId}`
 })
 
-export const CREATE_STAFF = (): AxiosRequestConfig => ({
+export const CREATE_STAFF:AxiosRequestConfig = {
   method: 'post',
-  url: `api/v1/collectors/staff`
-})
+  url: 'api/v1/collectors/staff'
+}
 
 export const EDIT_STAFF = (
   tenantId: string,

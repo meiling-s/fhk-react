@@ -251,8 +251,9 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   const handleCreateVehicle = async (staffData: CreateStaff) => {
     if (validation.length === 0) {
       const result = await createStaff(staffData)
-      console.log('result', result)
-      if (result) {
+      console.log('result', result?.data)
+      if (result?.data) {
+        console.log('result2', result?.data)
         onSubmitData('success', 'Success created data')
         resetFormData()
         handleDrawerClose()

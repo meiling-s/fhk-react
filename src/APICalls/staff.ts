@@ -42,6 +42,7 @@ export const createStaff = async (data: any) => {
       ...CREATE_STAFF,
       data: data
     })
+    console.log("response", createStaff)
     return response
   } catch (e) {
     console.error('Create a staff failed:', e)
