@@ -516,6 +516,26 @@
     "toBeConfirmed": "待确认",
     "recyclingInformation": "回收信息",
     "recentEntryAndExitRecords": "最近出入记录"
+  },
+  "staffManagement": {
+    "staff": "员工",
+    "list": "列表",
+    "schedule": "日程",
+    "addNewEmployees": "新增员工",
+    "employeeId": "员工编号",
+    "enterEmployeeNumber": "输入员工编号",
+    "employeeName": "员工姓名",
+    "enterEmployeeName": "输入员工姓名",
+    "employeeChineseName": "中文 员工繁体中文姓名",
+    "employeeChineseCn": "员工中文简体中文姓名",
+    "position": "职位",
+    "loginName": "登录名",
+    "contactNumber": "联系电话",
+    "lastLogin": "最后登录",
+    "email": "电子邮件",
+    "enterName": "请输入姓名",
+    "enterContactNo": "请输入联系电话",
+    "enterEmail": "请输入电子邮件地址"
   }
 }
 
