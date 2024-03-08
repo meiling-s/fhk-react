@@ -408,3 +408,8 @@ export const GET_CHECK_IN_OUT_WAREHOUSE = (
   method: 'get',
   url: `api/v1/collectors/checkinout/${table}/${warehouseId}`
 })
+
+export const GET_ALL_USER_ACCOUNT = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: 'api/v1/administrator/userAccount'
+})
