@@ -40,6 +40,7 @@ import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
 import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
 import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
 import Inventory from "./pages/Collector/Inventory/Inventory";
+import StaffManagement from './pages/Collector/StaffManagement/StaffManagement'
 
 import AuthGuard from "./components/Guards/AuthGuard";
 import AutoLogout from "./components/AutoLogout";
@@ -116,7 +117,7 @@ const Router = () => {
           <Route path="/warehouse/shipment" element={<RecycleShipment />} />
           <Route path="/warehouse/checkout" element={<CheckoutRequest />} />
           <Route path="/warehouse/process" element={<ProcessRecord />} />
-          <Route path="/warehouse/staff" element={<Staff />} />
+          <Route path="/warehouse/staff" element={<StaffManagement />} />
           <Route path="/warehouse/settings" element={<Settings />} />
           <Route path="/warehouse/settings/vehicle" element={<Vehicles />} />
           
