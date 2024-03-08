@@ -16,9 +16,10 @@ export type Staff = {
     createdAt: string
     updatedAt: string
   }
+
+  
   
   export type CreateStaff = {
-    staffId: string
     tenantId: string
     staffNameTchi: string
     staffNameSchi: string
