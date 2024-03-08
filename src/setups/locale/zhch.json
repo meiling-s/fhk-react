@@ -248,6 +248,7 @@
   "pick_up_order": {
     "enquiry_pickup_order": "查询运单",
     "delete_msg": "您确定要删除此项目吗 ?",
+    "out_of_date_range": "具体日期超出“发货有效期”范围",
     "table": {
       "created_datetime": "建立日期",
       "pico_id": "运单编号",
