@@ -191,7 +191,7 @@ export const getAllUserAccount = async () => {
     try {
         const response = await axios({
             ...GET_ALL_USER_ACCOUNT,
-            baseURL: collectionPointAPI.baseURL,
+            baseURL: administratorAPI.baseURL,
         });
         return response;
     } catch (e) {

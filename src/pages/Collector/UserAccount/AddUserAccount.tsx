@@ -2,7 +2,7 @@ import { FunctionComponent, useCallback, useState, useEffect, useRef } from 'rea
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import TextField from '@mui/material/TextField'
-import { Grid, FormHelperText, Autocomplete, Modal, Box, Stack, Divider, Typography, Button } from '@mui/material'
+import { Grid, FormHelperText, Autocomplete, Modal, Box, Stack, Divider, Typography, Button, InputLabel } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -21,7 +21,7 @@ import {
 import { set } from 'date-fns'
 import { getLocation } from '../../../APICalls/getLocation'
 import { get } from 'http'
-import { getCommonTypes } from '../../../APICalls/commonManage'
+import { getCommonTypes, getUserGroup } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from "../../../components/FormComponents/CustomField";
 import ColPointTypeList from '../../../components/SpecializeComponents/CollectionPointTypeList'
@@ -34,6 +34,7 @@ import {
     formValidate
   } from '../../../interfaces/common'
 import CustomItemList, { il_item } from "../../../../src/components/FormComponents/CustomItemList";
+import axios from "axios";
 
 interface AddUserAccount {
     loginId: string
@@ -146,6 +147,7 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
   const [contractList, setContractList] = useState<
     { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
   >([])
+  const [userGroup, setUserGroup] = useState({ roleName: '', groupId: null });
   const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
   const [status, setStatus] = useState(true) // status field
   const isInitialRender = useRef(true); // Add this line
@@ -157,16 +159,15 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
     recyc: recycType[]
   }>({ colPoint: [], premise: [], site: [], recyc: [] })
 
+  const [chosenUserGroup, setChosenUserGroup] = useState<number>(4)
+
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
   }, [i18n, currentLanguage])
 
   useEffect(() => {
     initType()
-  }, [])
-
-  useEffect(() => {
-    initType()
+    fecthDataUserGroup()
   }, [])
 
   const initType = async () => {
@@ -187,6 +188,16 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
         })
       })
       setContractList(conList)
+    }
+  }
+
+  async function fecthDataUserGroup() {
+    try {
+      const response = await axios.get('http://10.166.22.250/api/v1/administrator/userGroup/t/861341');
+      const data = response.data[0]; // Assuming the API response structure
+      setUserGroup({ roleName: data.roleName, groupId: data.groupId });
+    } catch (error) {
+      console.error("fetchDataUserGroup ERROR", error);
     }
   }
 
@@ -288,11 +299,6 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
       label: '登入名稱',
       placeholder: '請輸入名稱'
     },
-    // {
-    //   field: 'warehouseNameEng',
-    //   label: t('warehouse_page.english_name'),
-    //   placeholder: 'Please type a name'
-    // }
   ]
   const [nameValue, setNamesField] = useState<nameFields>({
     // name fields
@@ -465,6 +471,10 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
     )
     setRecycleCategory(updatedRecycleCategory)
   }
+
+  // const handleChange = (event: SelectChangeEvent) => {
+  //   setChosenUserGroup(event.target.value);
+  // };
 
   const handleChangeRecycleType = (
     event: SelectChangeEvent<string>,
@@ -645,8 +655,6 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
     )
   }
 
-  console.log('theLoginId >>> ', theLoginId)
-
   const activityItems = () => {
     const colList: il_item[] = [
       {
@@ -689,11 +697,12 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
         >
           <div className="self-stretch flex flex-col items-start justify-start pt-[25px] px-[25px] pb-[75px] gap-[25px] text-left text-smi text-grey-middle">
             {name_fields.map((item, index) => (
+              // staffid & loginId
               <div
                 key={index + 'name'}
                 className="self-stretch flex flex-col items-start justify-center gap-2"
               >
-                <LabelField label={item.label} mandatory={true} />
+                <LabelField label={item.label} mandatory={index === 0 ? false : true} />
                 <FormControl fullWidth variant="standard">
                   <TextField
                     value={nameValue[item.field as keyof nameFields]}
@@ -717,9 +726,9 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
               </div>
             ))}
 
-            {/* contact number */}
+            {/* usergroup */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center text-mini text-black">
-              <LabelField label='用戶群組' />
+              <LabelField label='用戶群組' mandatory={true} />
               <div className="self-stretch flex flex-col items-start justify-start">
                 <div className="self-stretch ">
                   {contractNum.map((contact, index) => (
@@ -727,54 +736,19 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
                       className="flex flex-row items-center justify-start gap-[8px] mb-2"
                       key={contact + index}
                     >
-                      <FormControl fullWidth variant="standard">
-                        <Autocomplete
-                          disablePortal
-                          fullWidth
-                          options={contractList
-                            .filter((contract) => !contractNum.includes(contract.contractNo))
-                            .map((contract)=> contract.contractNo)}
-                          value={contractNum[index]}
-                          onChange={(_, value) => {
-                            handleContractChange(value || '', index)
-                          }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              fullWidth
-                              placeholder='請選擇群組'
-                              InputLabelProps={{
-                                shrink: false
-                              }}
-                              InputProps={{
-                                ...params.InputProps,
-                                sx: styles.textField
-                              }}
-                              sx={styles.inputState}
-                              disabled={action === 'delete'}
-                            />
-                          )}
-                        />
+                      <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} size="small">
+                        <InputLabel id="demo-simple-select-label">請選擇群組</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          // value={age}
+                          label="用戶群組"
+                          // onChange={handleChange}
+                        >
+                          <MenuItem value={'4'}>{userGroup.roleName}</MenuItem>
+                        </Select>
                       </FormControl>
-                      {index === contractNum.length - 1 ? (
-                        <ADD_CIRCLE_ICON
-                          fontSize="small"
-                          className="text-green-primary cursor-pointer"
-                          onClick={handleAddContact}
-                        />
-                      ) : (
-                        index !== contractNum.length - 1 && (
-                          <REMOVE_CIRCLE_ICON
-                            fontSize="small"
-                            className={`text-grey-light ${
-                              contractNum.length === 1
-                                ? 'cursor-not-allowed'
-                                : 'cursor-pointer'
-                            } `}
-                            onClick={() => handleRemoveContact(index)}
-                          />
-                        )
-                      )}
+                      
                     </div>
                   ))}
                 </div>
@@ -798,16 +772,11 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
             </div>
 
             <CustomField label='狀態' mandatory={true}>
-              {/* <ColPointTypeList
-                setState={setCOLType}
-                colPointTypes={typeList.colPoint}
-                error={checkString(colType)}
-              /> */}
               <CustomItemList
                 items={activityItems()}
-                singleSelect={(selectedItem) => console.log(selectedItem)}
+                singleSelect={(selectedItem) => console.log("THE SELECTED ITEM", selectedItem)}
                 editable={true}
-                defaultSelected={"Hello"}
+                defaultSelected={"3"}
               />
             </CustomField>
             

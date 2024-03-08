@@ -413,3 +413,8 @@ export const GET_ALL_USER_ACCOUNT = (): AxiosRequestConfig => ({
   method: 'get',
   url: 'api/v1/administrator/userAccount'
 })
+
+export const GET_USER_GROUP = (table: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userGroup/t/${table}`
+})
