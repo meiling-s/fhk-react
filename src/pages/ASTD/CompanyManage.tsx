@@ -296,19 +296,21 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
     companyCategory: Yup.string().required("This companyNumber is required"),
   });
 
+  const initialValues = {
+    tenantId: 0,
+    companyNumber: "",
+    companyCategory: "",
+    companyZhName: "",
+    companyCnName: "",
+    companyEnName: "",
+    bussinessNumber: "",
+    effFrmDate: "",
+    effToDate: "",
+    remark: "",
+  }
+
   const formik = useFormik<InviteTenant>({
-    initialValues: {
-      tenantId: 0,
-      companyNumber: "",
-      companyCategory: "",
-      companyZhName: "",
-      companyCnName: "",
-      companyEnName: "",
-      bussinessNumber: "",
-      effFrmDate: "",
-      effToDate: "",
-      remark: "",
-    },
+    initialValues,
     validationSchema: validateSchema,
 
     onSubmit: (values) => {
@@ -316,6 +318,13 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
       onClose && onClose();
     },
   });
+
+  useEffect(() => {
+    if (open) {
+      formik.resetForm();
+    }
+  }, [open]);
+  
 
   const TextFields = [
     {
