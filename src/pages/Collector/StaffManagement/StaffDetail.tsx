@@ -215,17 +215,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     })
   }
 
-  //remove this when api post fixed
-  function pickRandomNumber() {
-    const randomNumber = Math.random()
-    const scaledNumber = randomNumber * 100
-    const pickedNumber = Math.ceil(scaledNumber)
-    return pickedNumber
-  }
-
   const handleSubmit = () => {
     const staffData: CreateStaff = {
-      staffId: `STF0000${pickRandomNumber()}`,
       tenantId: tenantId.toString(),
       staffNameTchi: formData.staffNameTchi,
       staffNameSchi: formData.staffNameSchi,
