@@ -8,7 +8,7 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
+import Switches from '../../../components/FormComponents/CustomSwitch'
 import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
@@ -16,12 +16,12 @@ import {
   createWarehouse,
   getWarehouseById,
   editWarehouse,
-  getRecycleType
+  getRecycleType,
 } from '../../../APICalls/warehouseManage'
 import { set } from 'date-fns'
 import { getLocation } from '../../../APICalls/getLocation'
 import { get } from 'http'
-import { getCommonTypes, getUserGroup } from '../../../APICalls/commonManage'
+import { getCommonTypes, getUserGroup, addTheUserAccount } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from "../../../components/FormComponents/CustomField";
 import ColPointTypeList from '../../../components/SpecializeComponents/CollectionPointTypeList'
@@ -35,6 +35,7 @@ import {
   } from '../../../interfaces/common'
 import CustomItemList, { il_item } from "../../../../src/components/FormComponents/CustomItemList";
 import axios from "axios";
+import { returnApiToken } from '../../../utils/utils'
 
 interface AddUserAccount {
     loginId: string
@@ -64,6 +65,7 @@ interface AddWarehouseProps {
   action?: 'add' | 'edit' | 'delete'
   onSubmitData?: (type: string, id?: number, error?: boolean) => void
   theLoginId: string
+  rowId: number
 }
 
 interface recyleItem {
@@ -124,9 +126,42 @@ interface WarehouseFormData {
 }
 
 interface nameFields {
-  warehouseNameTchi: string
-  warehouseNameSchi: string
-  warehouseNameEng: string
+  // warehouseNameTchi: string
+  // warehouseNameSchi: string
+  // warehouseNameEng: string
+  staffId: string
+  loginId: string
+}
+
+interface DropdownOption {
+  groupId: number;
+  roleName: string;
+}
+
+interface UserAccount {
+  loginId: string
+  tenantId: string
+  realm: string
+  password: string
+  staffId: string
+  userGroup: 
+  {
+    groupId: number
+    tenantId: string
+    roleName: string
+    status: string
+    createdBy: string
+    updatedBy: string
+    updatedAt: string
+    createdAt:string
+    version: number
+  }
+  status: string,
+  lastLoginDatetime: string
+  createdBy: string
+  updatedBy: string
+  updatedAt: string
+  createdAt: string
 }
 
 const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
@@ -134,6 +169,7 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
   handleDrawerClose,
   action = 'add',
   onSubmitData,
+  rowId,
   theLoginId
 }) => {
   const { t } = useTranslation()
@@ -159,7 +195,15 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
     recyc: recycType[]
   }>({ colPoint: [], premise: [], site: [], recyc: [] })
 
+  const [staffId, setStaffId] = useState<string>('')
+  const [loginId, setLoginId] = useState<string>('')
   const [chosenUserGroup, setChosenUserGroup] = useState<number>(4)
+  const [chosenState, setChosenState] = useState<string>('')
+  const [options, setOptions] = useState<DropdownOption[]>([]);
+  const [selectedOption, setSelectedOption] = useState<string>('');
+  const [userAccountItems, setUserAccountItems] = useState<UserAccount[]>([])
+
+  const token = returnApiToken()
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -168,6 +212,7 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
   useEffect(() => {
     initType()
     fecthDataUserGroup()
+    fetchDataUserAccount()
   }, [])
 
   const initType = async () => {
@@ -194,10 +239,24 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
   async function fecthDataUserGroup() {
     try {
       const response = await axios.get('http://10.166.22.250/api/v1/administrator/userGroup/t/861341');
-      const data = response.data[0]; // Assuming the API response structure
-      setUserGroup({ roleName: data.roleName, groupId: data.groupId });
+      const data = response.data;
+      setOptions(data);
     } catch (error) {
       console.error("fetchDataUserGroup ERROR", error);
+    }
+  }
+
+  async function fetchDataUserAccount() {
+    try {
+      const response = await axios.get('http://10.166.22.250/api/v1/administrator/userAccount/windatest1');
+      // const userAccountData = response.data
+      const userAccountData = response.data.map( (item: UserAccount) => ({
+        ...item,
+      }));
+      console.log("!!! >> ", theLoginId);
+      setUserAccountItems(userAccountData)
+    } catch (error) {
+      console.error("fetchDataUserAccount ERROR", error);
     }
   }
 
@@ -227,8 +286,6 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
           }
         })
 
-
-
         setRecycleType(dataReycleType)
         setSubRecycleType(subTypeMapping)
       }
@@ -240,9 +297,11 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
   const resetForm = () => {
     console.log('reset form')
     setNamesField({
-      warehouseNameTchi: '',
-      warehouseNameSchi: '',
-      warehouseNameEng: ''
+      // warehouseNameTchi: '',
+      // warehouseNameSchi: '',
+      // warehouseNameEng: ''
+      staffId: '',
+      loginId: ''
     })
     setContractNum([...initContractNum])
     setPlace('')
@@ -290,21 +349,23 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
 
   const name_fields = [
     {
-      field: 'warehouseNameTchi',
+      field: 'staffId',
       label: '以編號新增',
       placeholder: '請輸入編號'
     },
     {
-      field: 'warehouseNameSchi',
+      field: 'loginId',
       label: '登入名稱',
       placeholder: '請輸入名稱'
     },
   ]
   const [nameValue, setNamesField] = useState<nameFields>({
     // name fields
-    warehouseNameTchi: '',
-    warehouseNameSchi: '',
-    warehouseNameEng: ''
+    // warehouseNameTchi: '',
+    // warehouseNameSchi: '',
+    // warehouseNameEng: ''
+    staffId: '',
+    loginId: ''
   })
   const initContractNum: string[] = [''] // contract field
   const [contractNum, setContractNum] = useState<string[]>(initContractNum)
@@ -362,19 +423,19 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
   useEffect(() => {
     const tempV: { field: string; error: string }[] = []
 
-    Object.keys(nameValue).forEach((fieldName) => {
-      nameValue[fieldName as keyof nameFields].trim() === '' &&
-        tempV.push({
-          field: fieldName,
-          error: `${t(`add_warehouse_page.${fieldName}`)} ${t('add_warehouse_page.shouldNotEmpty')}`
-        })
-    })
+    // Object.keys(nameValue).forEach((fieldName) => {
+    //   nameValue[fieldName as keyof nameFields].trim() === '' &&
+    //     tempV.push({
+    //       field: fieldName,
+    //       error: `${t(`add_warehouse_page.${fieldName}`)} ${t('add_warehouse_page.shouldNotEmpty')}`
+    //     })
+    // })
 
-    place.trim() === '' &&
-      tempV.push({
-        field: 'place',
-        error: `${t(`add_warehouse_page.place`)} ${t('add_warehouse_page.shouldNotEmpty')}`
-      })
+    // place.trim() === '' &&
+    //   tempV.push({
+    //     field: 'place',
+    //     error: `${t(`add_warehouse_page.place`)} ${t('add_warehouse_page.shouldNotEmpty')}`
+    //   })
 
     // contractNum.some((value) => value.trim() === '') &&
     //   tempV.push({
@@ -426,6 +487,18 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
   }
 
   //handle methods
+  const handleChangeStaffId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStaffId(event.target.value);
+  };
+
+  const handleChangeLoginId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginId(event.target.value);
+  };
+
+  const handleChangeUserGroup = (event: SelectChangeEvent<string>) => {
+    setSelectedOption(event.target.value);
+  };
+
   const handleNameFields = (fieldName: string, value: string) => {
     setNamesField({ ...nameValue, [fieldName]: value })
   }
@@ -516,20 +589,31 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
         console.log('added', response)
       }
     } catch (error) {
+      console.error('Cannot add the user account', error)
+    }
+  }
+
+  const addTheUserAccountData = async (addTheUserAccountForm: any) => {
+    try {
+      const response = await addTheUserAccount(addTheUserAccountForm)
+      if (response) {
+        console.log('added', response)
+      }
+    } catch (error) {
       console.error(error)
     }
   }
 
-//   const editWarehouseData = async (addWarehouseForm: any) => {
-//     try {
-//       const response = await editWarehouse(addWarehouseForm, rowId)
-//       if (response) {
-//         console.log('edited', response)
-//       }
-//     } catch (error) {
-//       console.error(error)
-//     }
-//   }
+  const editWarehouseData = async (addWarehouseForm: any) => {
+    try {
+      const response = await editWarehouse(addWarehouseForm, rowId)
+      if (response) {
+        console.log('edited', response)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   //submit data
   const handleSubmit = async () => {
@@ -541,9 +625,9 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
     
 
     const addWarehouseForm = {
-      warehouseNameTchi: nameValue.warehouseNameTchi,
-      warehouseNameSchi: nameValue.warehouseNameSchi,
-      warehouseNameEng: nameValue.warehouseNameEng,
+      // warehouseNameTchi: nameValue.warehouseNameTchi,
+      // warehouseNameSchi: nameValue.warehouseNameSchi,
+      // warehouseNameEng: nameValue.warehouseNameEng,
       location: place,
       locationGps: locationGps,
       physicalFlg: pysicalLocation,
@@ -555,28 +639,61 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
     }
     console.log("addWarehouseForm", addWarehouseForm)
 
+    let theStatusState = ''
+    if (chosenState === '1') {
+      theStatusState = 'ACTIVE'
+    } else if (chosenState === '2') {
+      theStatusState = 'INACTIVE'
+    } else {
+      theStatusState = 'INACTIVE'
+    }
+
+    const addTheUserAccountForm = {
+      loginId: loginId,
+      realm: "admin",
+      tenantId: token.tenantId,
+      staffId: staffId,
+      groupId: selectedOption,
+      status: theStatusState,
+      createdBy: "admin",
+      updatedBy: "admin",
+      firstName: "wistkey",
+      lastName: "dev",
+      sex: "Male",
+      email: "wistkeydev@mail.com",
+      role: [
+        "ADMIN"
+      ],
+      phoneNumber: "1234123",
+      actions: [
+        "UPDATE_PASSWORD"
+      ]
+    }
+    console.log("addTheUserAccountForm", addTheUserAccountForm)
+
     const isError = validation.length == 0
     getFormErrorMsg()
 
-    // if (validation.length == 0) {
-    //   action === 'add'
-    //     ? //MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
-    //       createWareHouseData(addWarehouseForm)
-    //     : editWarehouseData(addWarehouseForm)
+    if (validation.length == 0) {
+      action === 'add'
+        ? //MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
+          // createWareHouseData(addWarehouseForm)
+          addTheUserAccountData(addTheUserAccount)
+        : editWarehouseData(addWarehouseForm)
 
-    //   if (
-    //     onSubmitData &&
-    //     typeof onSubmitData === 'function' &&
-    //     typeof rowId === 'number'
-    //   ) {
-    //     onSubmitData(action, rowId, !isError)
-    //   }
-    //   console.log(addWarehouseForm)
-    //   setValidation([])
-    // } else {
-    //   console.log(validation)
-    //   setTrySubmited(true)
-    // }
+      if (
+        onSubmitData &&
+        typeof onSubmitData === 'function' &&
+        typeof rowId === 'number'
+      ) {
+        onSubmitData(action, rowId, !isError)
+      }
+      console.log(addWarehouseForm)
+      setValidation([])
+    } else {
+      console.log(validation)
+      setTrySubmited(true)
+    }
   }
 
   const getFormErrorMsg = () => { 
@@ -611,6 +728,11 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
     onDelete
   }) => {
     const { t } = useTranslation()  
+
+
+    console.log("THE DATA >> ", userAccountItems)
+
+
     return (
       <Modal
         open={open}
@@ -696,7 +818,7 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
           className="form-container"
         >
           <div className="self-stretch flex flex-col items-start justify-start pt-[25px] px-[25px] pb-[75px] gap-[25px] text-left text-smi text-grey-middle">
-            {name_fields.map((item, index) => (
+            {/* {name_fields.map((item, index) => (
               // staffid & loginId
               <div
                 key={index + 'name'}
@@ -724,9 +846,27 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
                   />
                 </FormControl>
               </div>
-            ))}
+            ))} */}
 
-            {/* usergroup */}
+            <LabelField label='以編號新增' mandatory={false} />
+            <TextField 
+              id="outlined-basic"
+              label="請輸入編號"
+              variant="outlined"
+              value={staffId}
+              onChange={handleChangeStaffId}
+            />
+
+            <LabelField label='登入名稱' mandatory={true} />
+            <TextField 
+              id="outlined-basic"
+              label="請輸入名稱"
+              variant="outlined"
+              value={loginId}
+              onChange={handleChangeLoginId}
+            />
+
+            {/* usergroup
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center text-mini text-black">
               <LabelField label='用戶群組' mandatory={true} />
               <div className="self-stretch flex flex-col items-start justify-start">
@@ -753,14 +893,33 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
                   ))}
                 </div>
               </div>
-            </div>
+            </div> */}
+
+            <LabelField label='用戶群組' mandatory={true} />
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">請選擇群組</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={selectedOption}
+                label="Option"
+                onChange={handleChangeUserGroup}
+              >
+                {options.map((option) => (
+                  <MenuItem key={option.groupId} value={option.groupId}>
+                    {option.roleName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             {/* <Switcher  Physical location/> */}
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField
                 label='是否批核者'
+                mandatory={true}
               />
-              <Switcher
+              <Switches
                 onText='是'
                 offText='否'
                 disabled={action === 'delete'}
@@ -774,9 +933,12 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
             <CustomField label='狀態' mandatory={true}>
               <CustomItemList
                 items={activityItems()}
-                singleSelect={(selectedItem) => console.log("THE SELECTED ITEM", selectedItem)}
+                singleSelect={(selectedItem) => {
+                  console.log("THE SELECTED ITEM", selectedItem)
+                  setChosenState(selectedItem)
+                }}
                 editable={true}
-                defaultSelected={"3"}
+                defaultSelected={"1"}
               />
             </CustomField>
             

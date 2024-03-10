@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { localStorgeKeyName } from '../constants/constant';
-import { GET_COLLECTIONPOINT_TYPE, GET_CONTRACT, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_USER_GROUP } from '../constants/requests';
+import { GET_COLLECTIONPOINT_TYPE, GET_CONTRACT, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_USER_GROUP, ADD_USER_ACCOUNT } from '../constants/requests';
 import { colPointType, contract, premiseType, recycType, siteType } from '../interfaces/common';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import { returnApiToken } from '../utils/utils';
@@ -41,6 +41,22 @@ export const getUserGroup = async () => {
         return userGroup;
     }catch (e) {
         console.error('Get user group data failed:', e);
+        return null;
+    }
+}
+
+export const addTheUserAccount = async (data: any) => {
+    var userAccount = [];
+    try {
+        var response = await request({
+            ...ADD_USER_ACCOUNT,
+            data: data,
+        });
+        console.log('Add user account success:', JSON.stringify(response.data));
+        userAccount = response.data;
+        return userAccount;
+    }catch (e) {
+        console.error('Add user account data failed:', e);
         return null;
     }
 }

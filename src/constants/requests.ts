@@ -409,12 +409,20 @@ export const GET_CHECK_IN_OUT_WAREHOUSE = (
   url: `api/v1/collectors/checkinout/${table}/${warehouseId}`
 })
 
-export const GET_ALL_USER_ACCOUNT = (): AxiosRequestConfig => ({
+// USER ACCOUNT AND GROUP
+export const GET_ALL_USER_ACCOUNT = (
+  table: string
+) : AxiosRequestConfig => ({
   method: 'get',
-  url: 'api/v1/administrator/userAccount'
+  url: `api/v1/administrator/userAccount/t/${table}`
 })
 
 export const GET_USER_GROUP = (table: string) : AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/userGroup/t/${table}`
 })
+
+export const ADD_USER_ACCOUNT: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/administrator/register'
+}

@@ -290,8 +290,8 @@ const UserAccount: FunctionComponent = () => {
   }
 
   const handleEdit = (row: TableRow) => {
+    setRowId(row.id)
     setTheLoginId(row.loginId)
-    // setRowId(row.id)
    // console.log(row)
     setDrawerOpen(true)
     setAction('edit')
@@ -302,15 +302,15 @@ const UserAccount: FunctionComponent = () => {
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as TableRow
     setSelectedRow(row)
+    setRowId(row.id)
     setTheLoginId(row.loginId)
-    // setRowId(row.id)
     setDrawerOpen(true)
     setAction('edit')
   }
 
   const handleDelete = (row: TableRow) => {
+    setRowId(row.id)
     setTheLoginId(row.loginId)
-    // setRowId(row.id)
     setDrawerOpen(true)
     setAction('delete')
   }
@@ -326,6 +326,8 @@ const UserAccount: FunctionComponent = () => {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
+
+  console.log('LOGIN ID >> ', theLoginId)
 
   return (
     <Box
@@ -403,6 +405,7 @@ const UserAccount: FunctionComponent = () => {
             handleDrawerClose={handleDrawerClose}
             action={action}
             onSubmitData={handleOnSubmitData}
+            rowId={rowId}
             theLoginId={theLoginId}
           ></AddUserAccount>
         </div>
