@@ -508,11 +508,13 @@
   },
   "warehouseDashboard" : {
     "warehouse": "Warehouse",
-    "currentCapacity": "Current capacity",
+    "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
     "noMoreRoom": "No more room",
     "all": "all",
     "sendRequest": "Send request",
+    "check-in": "Check-in request",
+    "check-out": "Check-out request",
     "toBeConfirmed": "to be confirmed",
     "recyclingInformation": "Recycling information",
     "recentEntryAndExitRecords": "Recent entry and exit records"

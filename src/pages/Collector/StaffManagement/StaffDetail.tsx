@@ -364,32 +364,46 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                 </Grid>
               ) : item.type == 'autocomplete' ? (
                 <CustomField label={item.label} mandatory>
-                  <Autocomplete
-                    disablePortal
-                    id="contractNo"
-                    defaultValue={selectedLoginId}
-                    options={loginIdList.map((login) => login.name)}
-                    onChange={(event, value) => {
-                      if (value) {
-                        handleFieldChange(item.field as keyof FormValues, value)
-                        setSelectedLoginId(value)
-                      }
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder={item.placeholder}
-                        sx={[styles.textField, { width: 320 }]}
-                        InputProps={{
-                          ...params.InputProps,
-                          sx: styles.inputProps,
-                          readOnly: true
-                        }}
-                        disabled={action == 'delete'}
-                        error={checkString(selectedLoginId)}
-                      />
-                    )}
-                  />
+                  {action === 'add' ? (
+                    <Autocomplete
+                      disablePortal
+                      id="contractNo"
+                      defaultValue={selectedLoginId}
+                      options={loginIdList.map((login) => login.name)}
+                      onChange={(event, value) => {
+                        if (value) {
+                          handleFieldChange(item.field as keyof FormValues, value)
+                          setSelectedLoginId(value)
+                        }
+                      }}
+                      value={selectedLoginId}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder={item.placeholder}
+                          sx={[styles.textField, { width: 320 }]}
+                          InputProps={{
+                            ...params.InputProps,
+                            sx: styles.inputProps,
+                            
+                          }}
+                          disabled={action != 'add'}
+                          error={checkString(selectedLoginId)}
+                        />
+                      )}
+                    />
+                  ) : (
+                    <TextField
+                      placeholder={item.placeholder}
+                      sx={[styles.textField, { width: 320 }]}
+                      InputProps={{
+                        readOnly: true,
+                        sx: styles.inputProps,
+                      }}
+                      disabled={true}
+                      value={selectedLoginId}
+                    />
+                  )}
                 </CustomField>
               ) : (
                 <CustomField label={t('staffManagement.position')} mandatory>

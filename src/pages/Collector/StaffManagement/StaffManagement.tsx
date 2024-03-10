@@ -343,7 +343,7 @@ const StaffManagement: FunctionComponent = () => {
           <TextField
             id="staffId"
             onChange={(event) => onChangeSearch(event.target.value)}
-            sx={localstyles.inputState}
+            sx={[localstyles.inputState, {width: '450px'}]}
             label={t('staffManagement.employeeId')}
             placeholder={t('staffManagement.enterEmployeeNumber')}
             InputProps={{
@@ -359,7 +359,7 @@ const StaffManagement: FunctionComponent = () => {
           <TextField
             id="staffName"
             onChange={(event) => onChangeSearch(event.target.value)}
-            sx={localstyles.inputState}
+            sx={[localstyles.inputState,{ width : '450px'}]}
             label={t('staffManagement.employeeName')}
             placeholder={t('staffManagement.enterEmployeeName')}
             InputProps={{

@@ -430,7 +430,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                 fontSize="small"
                 className="bg-[#7FC738] rounded-[50%] p-1"
               />
-              <div className="text-sm font-bold mb-4">{t('warehouseDashboard.sendRequest')}</div>
+              <div className="text-sm font-bold mb-4">{t('warehouseDashboard.check-in')}</div>
               <div className="flex gap-1 items-baseline">
                 <Typography fontSize={22} color="white" fontWeight="bold">
                   {checkIn}
@@ -456,7 +456,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                 fontSize="small"
                 className="bg-[#6BC7FF] rounded-[50%] p-1"
               />
-              <div className="text-sm font-bold mb-4">{t('warehouseDashboard.sendRequest')}</div>
+              <div className="text-sm font-bold mb-4">{t('warehouseDashboard.check-out')}</div>
               <div className="flex gap-1 items-baseline">
                 <Typography fontSize={22} color="white" fontWeight="bold">
                 {checkOut}
@@ -482,12 +482,13 @@ const WarehouseDashboard: FunctionComponent = () => {
           </Typography>
           <Box
             sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            onClick={() => navigate('/collector/inventory')}
           >
             <Typography
               fontSize={13}
               color="gray"
               fontWeight="light"
-              onClick={() => navigate('/collector/inventory')}
+              
             >
               {t('warehouseDashboard.all')}
             </Typography>

@@ -509,11 +509,13 @@
   },
   "warehouseDashboard" : {
     "warehouse": "仓库",
-    "currentCapacity": "电流容量",
+    "currentCapacity": "现时容量",
     "thereStillEnoughSpace": "还有足够的空间",
     "noMoreRoom": "没有房间了",
     "all": "全部",
     "sendRequest": "送入请求",
+    "check-in": "送入请求",
+    "check-out": "送出请求",
     "toBeConfirmed": "待确认",
     "recyclingInformation": "回收信息",
     "recentEntryAndExitRecords": "最近出入记录"
