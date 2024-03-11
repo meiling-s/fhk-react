@@ -1,6 +1,6 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName } from '../constants/constant'
-import { useTranslation } from 'react-i18next'
+import { formErr, localStorgeKeyName, format } from '../constants/constant'
+import dayjs from 'dayjs'
 
 export const returnApiToken = () => {
   const decodeKeycloack = localStorage.getItem(localStorgeKeyName.decodeKeycloack)  || ''
@@ -47,3 +47,12 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
     }
     return msg;
   };
+
+
+export const displayCreatedDate = (valueDate : string) =>{
+    const utcOffset = 8 * 60 * 60 * 1000; // UTC+8 in milliseconds
+    const dateWithOffset = new Date(valueDate).getTime() + utcOffset;
+    const formattedDate = dayjs(dateWithOffset).format(format.dateFormat1);
+
+    return formattedDate
+  }

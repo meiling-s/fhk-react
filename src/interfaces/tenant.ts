@@ -11,6 +11,7 @@ export type Company = {
 }
 
 export type CreateTenant = {
+  tenantId: number
   companyNameTchi: string
   companyNameSchi: string
   companyNameEng: string
