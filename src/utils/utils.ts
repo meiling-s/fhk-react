@@ -6,7 +6,8 @@ export const returnApiToken = () => {
   const decodeKeycloack = localStorage.getItem(localStorgeKeyName.decodeKeycloack)  || ''
   const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken  )|| ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId  )|| ''
-  return {decodeKeycloack: decodeKeycloack, authToken: authToken, tenantId: tenantId}
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+  return {decodeKeycloack: decodeKeycloack, authToken: authToken, tenantId: tenantId, loginId: loginId}
 }
 
 export const ImageToBase64 = (images: ImageListType) => {

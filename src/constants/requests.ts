@@ -408,3 +408,33 @@ export const GET_CHECK_IN_OUT_WAREHOUSE = (
   method: 'get',
   url: `api/v1/collectors/checkinout/${table}/${warehouseId}`
 })
+
+export const GET_USER_GROUP = (tenantId: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userGroup/t/${tenantId}`
+})
+
+export const GET_USER_ACCOUNT = (loginId: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userAccount/${loginId}`
+})
+
+export const GET_FUNCTION = () : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/function`
+})
+
+export const CREATE_USER_GROUP = () : AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/administrator/userGroup`
+})
+
+export const EDIT_USER_GROUP = (userGroupId: number) : AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/userGroup/${userGroupId}`
+})
+
+export const DELETE_USER_GROUP = (userGroupId: number) : AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/userGroup/status/${userGroupId}`
+})
