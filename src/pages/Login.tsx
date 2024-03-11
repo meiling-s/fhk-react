@@ -60,6 +60,7 @@ const Login = () => {
         realm: 'astd'
       });
       console.log("test login test out 1");
+      console.log('result', result)
       if(result){
         console.log("test login test out 2");
         setWarningMsg(" ");
