@@ -5,6 +5,7 @@ import Warehouse from './Warehouse'
 import Vehicle from '../Vehicles/Vechicles'
 import { Box } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import UserAccount from '../UserAccount/UserAccount'
 
 const Settings: FunctionComponent = () => {
   // const navigate = useNavigate()
@@ -22,7 +23,8 @@ const Settings: FunctionComponent = () => {
     t('top_menu.workshop'),
     t('vehicle.vehicle'),
     t('top_menu.staff_positions'),
-    t('top_menu.denial_reason')
+    t('top_menu.denial_reason'),
+    '用戶'
   ]
 
   return (
@@ -40,6 +42,8 @@ const Settings: FunctionComponent = () => {
           <Warehouse />
         ) : selectedTab === 3 ? (
           <Vehicle />
+        ) : selectedTab === 6 ? (
+          <UserAccount />
         ) : (
           <div className="p-4 text-center">content not available</div>
         )}
