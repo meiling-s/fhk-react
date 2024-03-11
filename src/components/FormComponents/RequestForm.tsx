@@ -180,7 +180,7 @@ const messageCheckin = `[${loginId}] ${t(
               </Typography>
             </Box>
 
-            <Typography sx={localstyles.typo_header}>{t('check_in.recyc_loc_info')}</Typography>
+            <Typography sx={localstyles.typo_header}>{t('check_in.recyc_loc_info')} ddsfds</Typography>
             <Box display="flex" flexDirection="row">
               <Box sx={{ flex: 1 }}>
                 <Typography sx={localstyles.typo_fieldTitle}>

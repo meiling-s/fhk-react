@@ -248,6 +248,7 @@
   "pick_up_order": {
     "enquiry_pickup_order": "查询运单",
     "delete_msg": "您确定要删除此项目吗 ?",
+    "out_of_date_range": "具体日期超出“发货有效期”范围",
     "table": {
       "created_datetime": "建立日期",
       "pico_id": "运单编号",
@@ -508,14 +509,36 @@
   },
   "warehouseDashboard" : {
     "warehouse": "仓库",
-    "currentCapacity": "电流容量",
+    "currentCapacity": "现时容量",
     "thereStillEnoughSpace": "还有足够的空间",
     "noMoreRoom": "没有房间了",
     "all": "全部",
     "sendRequest": "送入请求",
+    "check-in": "送入请求",
+    "check-out": "送出请求",
     "toBeConfirmed": "待确认",
     "recyclingInformation": "回收信息",
     "recentEntryAndExitRecords": "最近出入记录"
+  },
+  "staffManagement": {
+    "staff": "员工",
+    "list": "列表",
+    "schedule": "日程",
+    "addNewEmployees": "新增员工",
+    "employeeId": "员工编号",
+    "enterEmployeeNumber": "输入员工编号",
+    "employeeName": "员工姓名",
+    "enterEmployeeName": "输入员工姓名",
+    "employeeChineseName": "中文 员工繁体中文姓名",
+    "employeeChineseCn": "员工中文简体中文姓名",
+    "position": "职位",
+    "loginName": "登录名",
+    "contactNumber": "联系电话",
+    "lastLogin": "最后登录",
+    "email": "电子邮件",
+    "enterName": "请输入姓名",
+    "enterContactNo": "请输入联系电话",
+    "enterEmail": "请输入电子邮件地址"
   }
 }
 
