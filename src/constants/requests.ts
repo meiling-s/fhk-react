@@ -438,3 +438,20 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/stafftitle/${table}`
 })
 
+// USER ACCOUNT AND GROUP
+export const GET_ALL_USER_ACCOUNT = (
+  table: string
+) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userAccount/t/${table}`
+})
+
+export const GET_USER_GROUP = (table: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userGroup/t/${table}`
+})
+
+export const ADD_USER_ACCOUNT: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/administrator/register'
+}
