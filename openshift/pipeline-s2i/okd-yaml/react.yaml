@@ -1,0 +1,44 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    build: react
+  name: react
+  namespace: astd
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    pushSecret:
+      name: dockerconfigjson-image-repo-push-pull-secret
+    to:
+      kind: DockerImage
+      name: fhkrepo.fhk.app/astd/react:latest
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    git:
+      uri: https://fhkgitlab.fhk.app/bas/as/astd/react.git
+      ref: 0-0-0a
+    sourceSecret:
+      name: basic-auth-code-repo-read-write-secret-react
+    type: Git 
+  strategy:
+    sourceStrategy:
+      env:
+        - name: "NPM_MIRROR"
+          value: "http://nexus-cicd.apps.ocp4.devops.fhk.hk/repository/npm-group/"
+      from:
+        kind: ImageStreamTag
+        name: my-local-base-nodejs:16-latest
+        namespace: openshift
+    type: Source
+  successfulBuildsHistoryLimit: 5
+  triggers:
+  - github:
+      secret: ys9MhIDZ5AbT3t7LJ-e2
+    type: GitHub
+  - generic:
+      secret: 9-EqwidvGUXo0wIhJTK8
+    type: Generic
