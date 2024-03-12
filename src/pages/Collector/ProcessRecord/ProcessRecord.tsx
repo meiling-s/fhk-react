@@ -149,7 +149,7 @@ const ProcessRecord: FunctionComponent = () => {
   ]
 
   const searchfield = [
-    { label: t('pick_up_order.filter.search'), field: 'search', width: '20%' },
+    { label: t('processRecord.enterProcessingNumber'), field: 'search', width: '20%' },
     {
       label: t('processRecord.handleName'),
       width: '20%',
@@ -173,6 +173,11 @@ const ProcessRecord: FunctionComponent = () => {
       value: option,
       label: option
     }))
+
+    options.push({
+      value: "",
+      label: t('check_in.any')
+    })
     return options
   }
 
@@ -195,7 +200,7 @@ const ProcessRecord: FunctionComponent = () => {
     if (label == 'search') {
       if (value == '') return setFilteredProcessRecords(procesRecords)
       const filtered: ProcessOut[] = procesRecords.filter(
-        (item) => item.processInId == value
+        (item) => item.processOutId == value
       )
       filtered
         ? setFilteredProcessRecords(filtered)

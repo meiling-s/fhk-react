@@ -505,7 +505,13 @@
       "logistic": "",
       "Manufacturer":"",
       "Customer":""
-    }
+    },
+    "createProcessOutSuccess": "建立處理流程成功",
+    "createProcessOutFailed": "建立處理流程失敗",
+    "editProcessOutSuccess": "編輯處理流程成功",
+    "editProcessOutFailed": "編輯處理流程失敗",
+    "deleteProcessOutSuccess": "刪除處理流程成功",
+    "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard" : {
     "warehouse": "仓库",

@@ -27,6 +27,7 @@ import { createProcessRecordItem,
   deleteProcessOutItem, 
   getProcessRecordDetail, 
 deleteProcessOutRecord} from '../../../APICalls/Collector/processRecords'
+import { displayCreatedDate } from '../../../utils/utils'
 import { ToastContainer, toast } from 'react-toastify'
 
 type RecycItem = {
@@ -65,7 +66,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     {
       label: t('processRecord.creationDate'),
       value: selectedRow?.createdAt
-        ? dayjs(new Date(selectedRow?.createdAt)).format(format.dateFormat1)
+        ? displayCreatedDate(selectedRow?.createdAt)
         : '-'
     },
     {
@@ -239,9 +240,9 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   
     if (result) {
       setReloadData(true);
-      showSuccessToast('創建流程，細節成功')
+      showSuccessToast(t('processRecord.createProcessOutSuccess'))
     } else {
-      showErrorToast('建立流程詳細資訊失敗')
+      showErrorToast(t('processRecord.createProcessOutFailed'))
     }
     setSelectedItem(null)
   }
@@ -252,9 +253,9 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   
     if (response) {
       setReloadData(true);
-      showSuccessToast("更新流程細節成功")
+      showSuccessToast(t('processRecord.editProcessOutSuccess'))
     } else {
-      showErrorToast("更新流程詳細資訊失敗")
+      showErrorToast(t('processRecord.editProcessOutFailed'))
     }
   }
 
@@ -262,9 +263,9 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     const result = await deleteProcessOutItem('INACTIVE', processOutDtlId)
     if(result) {
       setReloadData(true);
-      showSuccessToast("刪除流程詳細資訊成功")
+      showSuccessToast(t('processRecord.deleteProcessOutSuccess'))
     } else {
-      showErrorToast("刪除進程詳細資料失敗")
+      showErrorToast(t('processRecord.deleteProcessOutFailed'))
     } 
     setSelectedItem(null)
   }
