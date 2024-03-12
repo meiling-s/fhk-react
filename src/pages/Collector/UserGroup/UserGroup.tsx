@@ -63,14 +63,12 @@ const UserGroup: FunctionComponent = () => {
   const initFunctionList = async () => {
     const result = await getAllFunction()
     const data = result?.data
-    console.log("initFunctionList", data)
     setFunctionList(data);
   }
 
   const initVehicleList = async () => {
     const result = await getAllUserGroup(page - 1, pageSize)
     const data = result?.data
-    console.log("initUserGroupList", data)
     if(data) {
       var vehicleMapping: UserGroupItem[] = []
       data.map((item: any) => {
@@ -239,7 +237,7 @@ const UserGroup: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            帳號
+            {t('staffManagement.userGroup')}
           </Typography>
           <Button
             sx={[

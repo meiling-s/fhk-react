@@ -524,6 +524,7 @@
   "staffManagement": {
     "staff": "员工",
     "list": "列表",
+    "userGroup": "用戶群組",
     "schedule": "日程",
     "addNewEmployees": "新增员工",
     "employeeId": "员工编号",

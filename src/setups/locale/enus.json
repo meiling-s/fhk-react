@@ -523,6 +523,7 @@
   "staffManagement": {
     "staff": "Staff",
     "list": "List",
+    "userGroup": "User Group",
     "schedule": "Schedule",
     "addNewEmployees": "Add New Employees",
     "employeeId": "Employee ID",

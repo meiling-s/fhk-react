@@ -522,6 +522,7 @@
   "staffManagement": {
     "staff": "員工",
     "list": "列表",
+    "userGroup": "用戶群組",
     "schedule": "日程",
     "addNewEmployees": "新增員工",
     "employeeId": "員工編號",

@@ -154,12 +154,6 @@ function MainDrawer() {
       onClick: () => navigate('/warehouse/staff'),
       collapse: false
     },
-    "User group":{
-      name: t('processRecord.userGroup'),
-      icon: <DOCUMENT_ICON />,
-      onClick: () => navigate('/collector/userGroup'),
-      collapse: false
-    },
   }]
   // 20240129 add function list daniel keung end 
   // 20240129 add function list daniel keung start

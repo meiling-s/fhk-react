@@ -98,7 +98,6 @@ const Router = () => {
           <Route path="/collector/createCollectionPoint"element={<CreateCollectionPoint />}/>
           <Route path="/collector/editCollectionPoint" element={<EditCollectionPoint />} />
           <Route path="/collector/inventory" element={<Inventory />} />
-          <Route path="/collector/userGroup" element={<UserGroup />} />
         </Route>
 
         <Route element={<MainLayout />}>
