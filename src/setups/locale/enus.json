@@ -476,6 +476,7 @@
     "cancelled": "Cancelled",
     "overdue": "Overdue",
     "processingRecords": "Processing records",
+    "userGroup": "User group",
     "search": "Search",
     "enterProcessingNumber": "Enter processing number",
     "processingName": "Processing name",
