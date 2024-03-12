@@ -350,6 +350,12 @@ export const GET_PROCESS_OUT = (table: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/processout/${table}`
 })
 
+export const GET_PROCESS_OUT_DETAIL = (table: string, processOutId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/processout/${table}/${processOutId}`
+})
+
+
 export const CREATE_PROCESS_OUT_ITEM = (
   table: string,
   processOutId: number
@@ -358,13 +364,31 @@ export const CREATE_PROCESS_OUT_ITEM = (
   url: `api/v1/collectors/processout/${table}/items/${processOutId}`
 })
 
-export const DELETE_PROCESS_OUT_ITEM = (
+export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
+  table: string,
+  processOutDtlId: number
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/collectors/processout/${table}/processout/${processOutDtlId}`
+})
+
+export const DELETE_PROCESS_OUT_RECORD = (
   table: string,
   processOutId: number
 ): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/collectors/processout/${table}/delete/${processOutId}`
 })
+
+
+export const DELETE_PROCESS_OUT_DETAIL_ITEM = (
+  table: string,
+  processOutDtlId: number
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/processoutDetail/${table}/${processOutDtlId}/status`
+})
+
 
 // WAREHOUSE DASHBOARD
 

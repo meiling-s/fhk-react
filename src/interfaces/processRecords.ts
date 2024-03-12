@@ -33,10 +33,9 @@ export type processOutImage = {
     recycSubTypeId: string
     packageTypeId: string
     weight: number
+    status: string
     unitId: string
     processoutDetailPhoto: processOutImage[]
     createdBy: string
     updatedBy: string
   }
-  
-  

@@ -24,6 +24,7 @@ import { getAllProcessRecord } from '../../../APICalls/Collector/processRecords'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
+import { displayCreatedDate } from '../../../utils/utils'
 
 interface Option {
   value: string
@@ -104,9 +105,8 @@ const ProcessRecord: FunctionComponent = () => {
       width: 200,
       type: 'string',
       renderCell: (params) => {
-        const dateFormatted = dayjs(new Date(params.row.createdAt)).format(
-          format.dateFormat1
-        )
+        const dateFormatted = displayCreatedDate(params.row.createdAt)
+        
         return <div>{dateFormatted}</div>
       }
     },
@@ -117,7 +117,7 @@ const ProcessRecord: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'processInId',
+      field: 'processOutId',
       headerName: t('processRecord.processingNumb'),
       width: 200,
       type: 'string'
