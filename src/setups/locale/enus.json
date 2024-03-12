@@ -249,6 +249,7 @@
   "pick_up_order": {
     "enquiry_pickup_order": "Enquiry pickup order",
     "delete_msg": "are you sure want delete this item ?",
+    "out_of_date_range" : "Specific Date is out of range of the Shipping validity date",
     "table": {
       "created_datetime": "Created datetime",
       "pico_id": "PO number",
@@ -508,13 +509,35 @@
   },
   "warehouseDashboard" : {
     "warehouse": "Warehouse",
-    "currentCapacity": "Current capacity",
+    "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
     "noMoreRoom": "No more room",
     "all": "all",
     "sendRequest": "Send request",
+    "check-in": "Check-in request",
+    "check-out": "Check-out request",
     "toBeConfirmed": "to be confirmed",
     "recyclingInformation": "Recycling information",
     "recentEntryAndExitRecords": "Recent entry and exit records"
+  },
+  "staffManagement": {
+    "staff": "Staff",
+    "list": "List",
+    "schedule": "Schedule",
+    "addNewEmployees": "Add New Employees",
+    "employeeId": "Employee ID",
+    "enterEmployeeNumber": "Enter Employee Number",
+    "employeeName": "Employee Name",
+    "enterEmployeeName": "Enter Employee Name",
+    "employeeChineseName": "Chinese Traditional Chinese name of the employee",
+    "employeeChineseCn": "Employee's Chinese Simplified Chinese name",
+    "position": "Position",
+    "loginName": "Login Name",
+    "contactNumber": "Contact Number",
+    "lastLogin": "Last Login",
+    "email": "Email",
+    "enterName": "Please enter name",
+    "enterContactNo": "please enter contact no",
+    "enterEmail": "please enter email address"
   }
 }

@@ -26,6 +26,7 @@ import { getAllPickUpOrder } from "../../../APICalls/Collector/pickupOrder/picku
 import i18n from '../../../setups/i18n'
 import { format } from "../../../constants/constant";
 import dayjs from 'dayjs'
+import { displayCreatedDate } from '../../../utils/utils'
 
 interface Option {
   value: string;
@@ -188,17 +189,11 @@ const PickupOrders = () => {
     }
   }
 
-  const getFormatDate = (data: string) => {
-    const formattedDate = dayjs(data).format(format.dateFormat1)
-  
-    return formattedDate
-  }
-
   useEffect (() => {
   // const mappingData = () => {
     const tempRows: any[] =(pickupOrder?.map((item) => ({
       id: item.picoId,
-      createdAt: getFormatDate(item.createdAt),
+      createdAt: displayCreatedDate(item.createdAt),
       logisticCompany: item.logisticName,
       picoId: item.picoId, 
       deliveryDate: getDeliveryDate(item),

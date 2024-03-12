@@ -1,4 +1,4 @@
-import { useFormik } from 'formik'
+import { Formik, useFormik } from 'formik'
 import PickupOrderCreateForm from '../../../components/FormComponents/PickupOrderCreateForm'
 import {
   createPickUpOrder,
@@ -36,6 +36,10 @@ const CreatePickupOrder = () => {
       }
   }
 
+  // const checkSpesificDate = () =>{
+  //   if()
+  // }
+
   const validateSchema = Yup.object().shape({
     // picoType: Yup.string().required(getErrorMsg(t('pick_up_order.select_shipping_category'), 'empty')),
     effFrmDate: Yup.string().required('This effFrmDate is required'),
@@ -44,10 +48,15 @@ const CreatePickupOrder = () => {
       picoTypeValue == 'ROUTINE'
         ? Yup.string().required('This routineType is required')
         : Yup.string(),
-    routine:
-      picoTypeValue == 'ROUTINE'
-        ? Yup.array().required('routine is required')
-        : Yup.array(),
+        
+    routine: Yup.array()
+      .required('routine is required')
+      .test('is-in-range', t('pick_up_order.out_of_date_range'), function (value) {
+        const { effFrmDate, effToDate } = this.parent;
+        if (!effFrmDate || !effToDate) return true;
+        if (!value) return true;
+        const datesInRange = value.every(date => date >= effFrmDate && date <= effToDate);
+        return datesInRange }),
     logisticName: Yup.string().required(getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')),
     vehicleTypeId: Yup.string().required(getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')),
     platNo: Yup.string().required(getErrorMsg(t('pick_up_order.plat_number'), 'empty')),

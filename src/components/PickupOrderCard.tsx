@@ -33,6 +33,7 @@ const PickupOrderCard = ({
   }, [pickupOrderDetail]);
 
   const recyc = LocalizeRecyctype(pickupOrderDetail);
+  console.log(pickupOrderDetail);
   console.log(recyc);
 
   return (
@@ -47,7 +48,7 @@ const PickupOrderCard = ({
         >
           <Box display="flex" justifyContent="space-between">
             <Box>
-              {recyc
+              {/* {recyc
                 ?.filter(
                   (item, index, self) =>
                     index ===
@@ -57,16 +58,19 @@ const PickupOrderCard = ({
                         t.recycSubType === item.recycSubType
                     )
                 )
-                .map((a, index) => (
-                  <Box key={index}>
-                    <CustomField label={t('pick_up_order.card_detail.main_category')}>
-                      <Typography>{a.recycType}</Typography>
-                    </CustomField>
-                    <CustomField label={t('pick_up_order.card_detail.subcategory')}>
-                      <Typography>{a.recycSubType}</Typography>
-                    </CustomField>
-                  </Box>
-                ))}
+                .map((a, index) => ( */}
+                {recyc && (
+                   <Box key={index}>
+                   <CustomField label={t('pick_up_order.card_detail.main_category')}>
+                     <Typography>{recyc[index].recycType}</Typography>
+                   </CustomField>
+                   <CustomField label={t('pick_up_order.card_detail.subcategory')}>
+                     <Typography>{recyc[index].recycSubType}</Typography>
+                   </CustomField>
+                 </Box>
+                )}
+                 
+                {/* ))} */}
             </Box>
             <Box>
               <StatusCard status={podetail?.status} />

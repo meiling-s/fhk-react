@@ -247,6 +247,7 @@
   "pick_up_order": {
     "enquiry_pickup_order": "查詢運單",
     "delete_msg": "您確定要刪除此項目嗎 ?",
+    "out_of_date_range": "具體日期超出「出貨有效期限」範圍",
     "table": {
       "created_datetime": "建立日期",
       "pico_id": "運單編號",
@@ -507,14 +508,36 @@
   },
   "warehouseDashboard" : {
     "warehouse": "倉庫",
-    "currentCapacity": "電流容量",
+    "currentCapacity": "現時容量",
     "thereStillEnoughSpace": "還有足夠的空間",
     "noMoreRoom": "沒有房間了",
     "all": "全部",
     "sendRequest": "送入請求",
+    "check-in": "送入請求",
+    "check-out": "送出請求",
     "toBeConfirmed": "待確認",
     "recyclingInformation": "回收物資料",
     "recentEntryAndExitRecords": "最近出入記錄"
+  },
+  "staffManagement": {
+    "staff": "員工",
+    "list": "列表",
+    "schedule": "日程",
+    "addNewEmployees": "新增員工",
+    "employeeId": "員工編號",
+    "enterEmployeeNumber": "輸入員工編號",
+    "employeeName": "員工姓名",
+    "enterEmployeeName": "輸入員工姓名",
+    "employeeChineseName": "中文 員工繁體中文姓名",
+    "employeeChineseCn": "員工中文簡體中文姓名",
+    "position": "職位",
+    "loginName": "登錄名",
+    "contactNumber": "聯繫電話",
+    "lastLogin": "最後登錄",
+    "email": "電子郵件",
+    "enterName": "請輸入姓名",
+    "enterContactNo": "請輸入聯絡電話",
+    "enterEmail": "請輸入電子郵件地址"
   }
 }
 

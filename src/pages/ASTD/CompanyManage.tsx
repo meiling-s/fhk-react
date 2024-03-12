@@ -47,6 +47,7 @@ import { ErrorMessage, useFormik, validateYupSchema } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import CustomAutoComplete from "../../components/FormComponents/CustomAutoComplete";
+import { returnApiToken } from '../../utils/utils';
 
 function createCompany(
   id: number,
@@ -268,6 +269,7 @@ function InviteModal({ open, onClose, id }: inviteModal) {
 }
 
 type InviteTenant = {
+  tenantId: number;
   companyNumber: string;
   companyCategory: string;
   companyZhName: string;
@@ -294,18 +296,21 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
     companyCategory: Yup.string().required("This companyNumber is required"),
   });
 
+  const initialValues = {
+    tenantId: 0,
+    companyNumber: "",
+    companyCategory: "",
+    companyZhName: "",
+    companyCnName: "",
+    companyEnName: "",
+    bussinessNumber: "",
+    effFrmDate: "",
+    effToDate: "",
+    remark: "",
+  }
+
   const formik = useFormik<InviteTenant>({
-    initialValues: {
-      companyNumber: "",
-      companyCategory: "",
-      companyZhName: "",
-      companyCnName: "",
-      companyEnName: "",
-      bussinessNumber: "",
-      effFrmDate: "",
-      effToDate: "",
-      remark: "",
-    },
+    initialValues,
     validationSchema: validateSchema,
 
     onSubmit: (values) => {
@@ -313,6 +318,13 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
       onClose && onClose();
     },
   });
+
+  useEffect(() => {
+    if (open) {
+      formik.resetForm();
+    }
+  }, [open]);
+  
 
   const TextFields = [
     {
@@ -760,7 +772,9 @@ function CompanyManage() {
     formikValues: InviteTenant,
     submitForm: () => void
   ) => {
+    const auth = returnApiToken()
     const result = await createInvitation({
+      tenantId: parseInt(auth.tenantId),
       companyNameTchi: formikValues.companyZhName,
       companyNameSchi: formikValues.companyCnName,
       companyNameEng: formikValues.companyEnName,

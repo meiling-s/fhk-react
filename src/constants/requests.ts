@@ -438,3 +438,32 @@ export const DELETE_USER_GROUP = (userGroupId: number) : AxiosRequestConfig => (
   method: 'patch',
   url: `api/v1/administrator/userGroup/status/${userGroupId}`
 })
+
+//STAFF MANAGEMENT
+export const GET_STAFF = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/staff/${tenantId}`
+})
+
+export const CREATE_STAFF:AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/collectors/staff'
+}
+
+export const EDIT_STAFF = (
+  tenantId: string,
+  staffId: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/staff/${tenantId}/${staffId}`
+})
+
+export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userAccount/t/${tenantId}`
+})
+
+export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/stafftitle/${table}`
+})
