@@ -376,13 +376,12 @@ export const GET_CAPACITY_WAREHOUSE = (
   url: `api/v1/collectors/warehousecapacity/${table}/${warehouseId}`
 })
 
-export const GET_CAPACITY_WAREHOUSE_SUBTYPE_ITEM = (
+export const GET_WEIGHT_BY_SUBTYPE_ID= (
   table: string,
-  warehouseId: number,
-  recySubTypeId: string
+  warehouseId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/itemcapacity/${table}/${warehouseId}/${recySubTypeId}`
+  url: `api/v1/collectors/inventory/${table}/getweightbysubtype/${warehouseId}`
 })
 
 export const GET_CHECKIN_WAREHOUSE = (
