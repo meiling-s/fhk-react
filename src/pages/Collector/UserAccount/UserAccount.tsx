@@ -4,8 +4,6 @@ import {
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridValueGetterParams,
-  GridColumnHeaderParams
 } from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -27,6 +25,7 @@ import {
 } from '../../../APICalls/userAccount'
 import { UserAccount as UserAccountItem} from '../../../interfaces/userAccount'
 import UserAccountDetails from './UserAccountDetails'
+import StatusCard from '../../../components/StatusCard'
 
 interface RecyleItem {
   recycTypeId: string
@@ -116,7 +115,7 @@ const UserAccount: FunctionComponent = () => {
       headerName: t('userAccount.isItAReviewer'),
       type: 'string',
       valueGetter: () => {
-        return '是'
+        return t('yes')
       }
     },
     {
@@ -124,7 +123,7 @@ const UserAccount: FunctionComponent = () => {
       headerName: t('userAccount.status'),
       width: 300,
       type: 'string',
-      renderCell: (params) => <StatusLabel status={params.row?.status} />
+      renderCell: (params) => <StatusCard status={params.row?.status} />
     },
     {
       field: 'actions',
@@ -173,7 +172,7 @@ const UserAccount: FunctionComponent = () => {
 
   useEffect(() => {
     fetchDataUserAccount()
-  }, [action, drawerOpen, currentLanguage, page])
+  }, [action, drawerOpen, currentLanguage, page, i18n, currentLanguage])
 
 
   const addDataWarehouse = () => {
@@ -244,7 +243,7 @@ const UserAccount: FunctionComponent = () => {
                 <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                   <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-grey-dark">
                     <b className="relative tracking-[0.08em] leading-[28px]">
-                      用戶
+                      {t('userAccount.user')}
                     </b>
                     <div
                       className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi text-green-primary border-[1px] border-solid border-green-pale"
