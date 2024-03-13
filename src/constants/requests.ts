@@ -503,3 +503,24 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/stafftitle/${table}`
 })
+
+//USER ACCOUNT API
+export const GET_USER_ACCOUNT_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userAccount/t/${tenantId}`
+})
+
+export const CREATE_USER_ACCOUNT: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/administrator/register`
+}
+
+export const UPDATE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/userAccount/${loginId}`
+})
+
+export const DELETE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/userAccount/status/${loginId}`
+})

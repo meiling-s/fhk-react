@@ -31,14 +31,14 @@ export const getColPointType = async () => {
 }
 
 export const getUserGroup = async () => {
-    var userGroup = [];
+    const token = returnApiToken()
     try {
         var response = await request({
-            ...GET_USER_GROUP,
+            ...GET_USER_GROUP(token.tenantId),
         });
         //console.log('Get collection point type success:', JSON.stringify(response.data));
-        userGroup = response.data;
-        return userGroup;
+        
+        return response.data;
     }catch (e) {
         console.error('Get user group data failed:', e);
         return null;
