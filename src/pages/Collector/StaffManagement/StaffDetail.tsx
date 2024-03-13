@@ -200,13 +200,11 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
             type: 'error'
           })
       })
-      console.log(formData)
-      console.log("tempV",tempV)
       setValidation(tempV)
     }
 
     validate()
-  }, [formData])
+  }, [formData.loginId, formData.staffNameTchi, formData.staffNameEng, formData.staffNameSchi, formData.contactNo, formData.email, formData.titleId ])
 
   const handleFieldChange = (field: keyof FormValues, value: string) => {
     setFormData({
@@ -270,7 +268,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       salutation: 'salutation',
       updatedBy: loginName
     }
-    if (validation.length === 0) {
+    console.log("handleEditVehicle",validation.length )
+    if (validation.length == 0) {
       if (selectedItem != null) {
         const result = await editStaff(editData, selectedItem.staffId)
         if (result) {
@@ -278,9 +277,9 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
           resetFormData()
           handleDrawerClose()
         }
-      } else {
-        setTrySubmited(true)
-      }
+      } 
+    } else {
+      setTrySubmited(true)
     }
   }
 

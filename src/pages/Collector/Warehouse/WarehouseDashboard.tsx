@@ -29,7 +29,7 @@ import dayjs from 'dayjs'
 
 import {
   getCapacityWarehouse,
-  getCapacityWarehouseSubtype,
+  getWeightbySubtype,
   getCheckInWarehouse,
   getCheckOutWarehouse,
   getCheckInOutWarehouse
@@ -60,24 +60,27 @@ function createCheckInOutWarehouse(
 interface warehouseSubtype {
   subTypeId: string
   subtypeName: string
+  weight: number
   capacity:number
 }
+
+type RecycSubTypeCapacity = {
+  [recycsubtypeId: string]: number;
+};
 
 const WarehouseDashboard: FunctionComponent = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const { recycType } = useContainer(CommonTypeContainer)
 
-  const [capacity, setCapacity] = useState<number>(0)
+  const [currentCapacity, setCurrentCapacity] = useState<number>(0)
   const [totalCapacity, setTotalCapacity] = useState<number>(1000)
   const [warehouseList, setWarehouseList] = useState<il_item[]>([])
   const [checkIn, setCheckIn] = useState<number>(0)
   const [checkOut, setCheckOut] = useState<number>(0)
   const [selectedWarehouse, setSelectedWarehouse] = useState<il_item | null>(null)
   const [warehouseSubtype, setWarehouseSubtype] = useState<warehouseSubtype[]>([])
-  const [subtypeCapacity, setSubtypeCapacity] = useState<number>(0)
   const [checkInOut, setCheckInOut] = useState<CheckInOutWarehouse[]>([])
-  const colorList = ['#E1F4FF', '#F6F1DC', ]
 
   useEffect(()=>{
     initWarehouse()
@@ -137,10 +140,29 @@ const WarehouseDashboard: FunctionComponent = () => {
     }
   }
 
+  const getWeightSubtypeWarehouse = async () => {
+    //init weight for each subtype also calculate current subtype
+    if(selectedWarehouse){
+      const result = await getWeightbySubtype(parseInt(selectedWarehouse.id))
+      if(result) {
+        const data = result.data
+        //get weigt subtype
+        //set current capacity warehouse
+        var currCapacityWarehouse = 0
+        Object.keys(data).forEach((item) => {
+          currCapacityWarehouse += data[item]
+        })
+        setCurrentCapacity(currCapacityWarehouse)
+        return result.data
+      }
+    }
+   
+  }
+
   const initCapacity = async () => {
     if(selectedWarehouse){
       const result = await getCapacityWarehouse(parseInt(selectedWarehouse.id))
-      if(result) setCapacity(result.data)    
+      if(result) setTotalCapacity(result.data)    
     }
   }
 
@@ -204,24 +226,25 @@ const WarehouseDashboard: FunctionComponent = () => {
 
   const initWarehouseSubType = async () => {
     if(selectedWarehouse) {
+      const weightSubtype = await getWeightSubtypeWarehouse()
       const result = await getWarehouseById(parseInt(selectedWarehouse.id))
+
       if(result) {
         const data = result.data
-        let subtypeWarehouse: warehouseSubtype[] = []
-        let totalSubtype = 0
+        let subtypeWarehouse: warehouseSubtype[] = []   
         data?.warehouseRecyc.forEach((item: any)=>{
           const recyItem = mappingRecyName(item.recycTypeId , item.recycSubTypeId)
+          var subTypeWeight = item.recycSubTypeId in weightSubtype ? weightSubtype[item.recycSubTypeId] : 0;
+          
           subtypeWarehouse.push({
             subTypeId: item.recycSubTypeId,
             subtypeName: recyItem ? recyItem.subName : "-",
+            weight: subTypeWeight,
             capacity: item.recycSubTypeCapacity
           })
-
-          totalSubtype += item.recycSubTypeCapacity
         })
-
         setWarehouseSubtype(subtypeWarehouse)
-        setSubtypeCapacity(totalSubtype)
+
       }
     }
   }
@@ -392,7 +415,7 @@ const WarehouseDashboard: FunctionComponent = () => {
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
               <Typography fontSize={22} color="black" fontWeight="bold">
-                {capacity}
+                {currentCapacity}
               </Typography>
               <Typography fontSize={13} color="black" fontWeight="bold">
                 /{totalCapacity}kg
@@ -401,13 +424,13 @@ const WarehouseDashboard: FunctionComponent = () => {
 
             <Box sx={{ marginTop: 3, marginBottom: 2 }}>
               <ProgressLine
-                value={capacity}
+                value={currentCapacity}
                 total={totalCapacity}
               ></ProgressLine>
             </Box>
 
-            <Typography fontSize={14} color={(capacity/totalCapacity) * 100 > 70 ? 'red' : 'green'} fontWeight="light">
-              {(capacity/totalCapacity) * 100 < 70 ? t('warehouseDashboard.thereStillEnoughSpace') :  t('warehouseDashboard.noMoreRoom')}
+            <Typography fontSize={14} color={(currentCapacity/totalCapacity) * 100 > 70 ? 'red' : 'green'} fontWeight="light">
+              {(currentCapacity/totalCapacity) * 100 < 70 ? t('warehouseDashboard.thereStillEnoughSpace') :  t('warehouseDashboard.noMoreRoom')}
             </Typography>
           </Box>
           <Box
@@ -519,11 +542,11 @@ const WarehouseDashboard: FunctionComponent = () => {
                {item.subtypeName}
               </div>
               <div className="flex items-baseline">
-                <div className="text-3xl font-bold text-black">{item.capacity}</div>
-                <div className="text-2xs font-bold text-black ">/{subtypeCapacity}kg</div>
+                <div className="text-3xl font-bold text-black">{item.weight}</div>
+                <div className="text-2xs font-bold text-black ">/{item.capacity}kg</div>
               </div>
               <Box sx={{ marginTop: 1 }}>
-                <ProgressLine value={item.capacity} total={subtypeCapacity}></ProgressLine>
+                <ProgressLine value={item.weight} total={item.capacity}></ProgressLine>
               </Box>
             </Card>
           ))}

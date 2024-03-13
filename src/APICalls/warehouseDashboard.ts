@@ -4,7 +4,7 @@ import { localStorgeKeyName } from '../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
   GET_CAPACITY_WAREHOUSE,
-  GET_CAPACITY_WAREHOUSE_SUBTYPE_ITEM,
+  GET_WEIGHT_BY_SUBTYPE_ID,
   GET_CHECKIN_WAREHOUSE,
   GET_CHECKOUT_WAREHOUSE,
   GET_CHECK_IN_OUT_WAREHOUSE
@@ -32,24 +32,25 @@ export const getCapacityWarehouse = async (
   }
 }
 
-export const getCapacityWarehouseSubtype = async (
-  warehouseId: number,
-  recySubTypeId: string
+export const getWeightbySubtype = async (
+  warehouseId: number
 ) => {
   try {
     const token = returnApiToken()
 
     const response = await request({
-      ...GET_CAPACITY_WAREHOUSE_SUBTYPE_ITEM(
+      ...GET_WEIGHT_BY_SUBTYPE_ID(
         token.decodeKeycloack,
-        warehouseId,
-        recySubTypeId
-      )
+        warehouseId
+      ),
+      headers: {
+        AuthToken: token.authToken
+      }
     })
 
     return response
   } catch (e) {
-    console.error(`Get capacity warehouse subtype ${recySubTypeId} failed:`, e)
+    console.error(`Get capacity warehouse subtype ${warehouseId} failed:`, e)
     return null
   }
 }

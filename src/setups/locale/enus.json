@@ -504,7 +504,13 @@
       "logistic": "Logistic",
       "Manufacturer":"Manufacturer",
       "Customer":"Customer"
-    }
+    },
+    "createProcessOutSuccess": "Create process out success",
+    "createProcessOutFailed": "Create process out failed",
+    "editProcessOutSuccess": "Edit process out success",
+    "editProcessOutFailed": "Edit process out failed",
+    "deleteProcessOutSuccess": "Delete process out success",
+    "deleteProcessOutFailed": "Delete process out failed"
   },
   "warehouseDashboard" : {
     "warehouse": "Warehouse",

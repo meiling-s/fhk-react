@@ -8,7 +8,7 @@ type progressLineProps = {
 }
 
 const ProgressLine: React.FC<progressLineProps> = ({ value, total, color }) => {
-  const percentage = (value / total) * 100
+  const percentage = value > total ? 100 : (value / total) * 100
   const colorIndicator = percentage > 70 ? '#FF4242' : '#79CA25'
 
   return (

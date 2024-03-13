@@ -24,6 +24,7 @@ import { getAllProcessRecord } from '../../../APICalls/Collector/processRecords'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
+import { displayCreatedDate } from '../../../utils/utils'
 
 interface Option {
   value: string
@@ -104,9 +105,8 @@ const ProcessRecord: FunctionComponent = () => {
       width: 200,
       type: 'string',
       renderCell: (params) => {
-        const dateFormatted = dayjs(new Date(params.row.createdAt)).format(
-          format.dateFormat1
-        )
+        const dateFormatted = displayCreatedDate(params.row.createdAt)
+        
         return <div>{dateFormatted}</div>
       }
     },
@@ -117,7 +117,7 @@ const ProcessRecord: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'processInId',
+      field: 'processOutId',
       headerName: t('processRecord.processingNumb'),
       width: 200,
       type: 'string'
@@ -149,7 +149,7 @@ const ProcessRecord: FunctionComponent = () => {
   ]
 
   const searchfield = [
-    { label: t('pick_up_order.filter.search'), field: 'search', width: '20%' },
+    { label: t('processRecord.enterProcessingNumber'), field: 'search', width: '20%' },
     {
       label: t('processRecord.handleName'),
       width: '20%',
@@ -173,6 +173,11 @@ const ProcessRecord: FunctionComponent = () => {
       value: option,
       label: option
     }))
+
+    options.push({
+      value: "",
+      label: t('check_in.any')
+    })
     return options
   }
 
@@ -195,7 +200,7 @@ const ProcessRecord: FunctionComponent = () => {
     if (label == 'search') {
       if (value == '') return setFilteredProcessRecords(procesRecords)
       const filtered: ProcessOut[] = procesRecords.filter(
-        (item) => item.processInId == value
+        (item) => item.processOutId == value
       )
       filtered
         ? setFilteredProcessRecords(filtered)
