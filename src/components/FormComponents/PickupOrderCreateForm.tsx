@@ -645,31 +645,31 @@ const PickupOrderCreateForm = ({
                       />
                     </CustomField> */}
                      <CustomField label={t('col.contractNo')}>
-              <Autocomplete
-                disablePortal
-                id="contractNo"
-                sx={{width: 400}}
-                options={unexpiredContracts?.map((contract) => contract.contractNo) || []}
-                onChange={(event, value) => {
-                  console.log(value)
-                  if (value) {
-                    //setContractNo(value)
-                    formik.setFieldValue('contractNo', value);
-                  }
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder={t('col.enterNo')}
-                    sx={[styles.textField, { width: 400 }]}
-                    InputProps={{
-                      ...params.InputProps,
-                      sx: styles.inputProps
-                    }}
-                  />
-                )}
-              />
-            </CustomField>
+                        <Autocomplete
+                          disablePortal
+                          id="contractNo"
+                          sx={{width: 400}}
+                          defaultValue={formik.values.contractNo}
+                          options={unexpiredContracts?.map((contract) => contract.contractNo) || []}
+                          onChange={(event, value) => {
+                            console.log(value)
+                            if (value) {
+                              formik.setFieldValue('contractNo', value);
+                            }
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              placeholder={t('col.enterNo')}
+                              sx={[styles.textField, { width: 400 }]}
+                              InputProps={{
+                                ...params.InputProps,
+                                sx: styles.inputProps
+                              }}
+                            />
+                          )}
+                        />
+                      </CustomField>
                   </Box>
                 </Grid>
               )}
