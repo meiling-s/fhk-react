@@ -38,11 +38,8 @@ const isTokenExpired = () => {
     if (authToken() === '') return false;
     const decodedToken = parseJwtToken(authToken(), 1);
     const currentTime = Date.now() / 1000;
-    console.log('token有效期改成10秒，測試refreshToken')
-    console.log('過期時間戳： ' + decodedToken.exp)
-    console.log('當前時間戳：' + (currentTime + 35942))
 
-    return decodedToken.exp < currentTime + 35942;
+    return decodedToken.exp < currentTime;
 }
 
 const getNewToken = async () => {
