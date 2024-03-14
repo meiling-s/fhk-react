@@ -1,6 +1,3 @@
-import axios from "axios";
-import { localStorgeKeyName } from '../constants/constant';
-// import { RegisterItem, Tenant } from '../interfaces/account';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import {
     GET_ALL_WAREHOUSE,
@@ -13,6 +10,7 @@ import {
     GET_RECYCLE_TYPE_BY_ID,
 } from "../constants/requests";
 import { returnApiToken } from "../utils/utils";
+import axiosInstance from '../constants/axiosInstance'
 
 const collectionPointAPI = {
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
@@ -22,25 +20,19 @@ const administratorAPI = {
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 };
 
-const request = axios.create({
-    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-  })
-
 //get all warehouse
 export const getAllWarehouse = async (page: number, size: number) => {
     try {
 
       const token = returnApiToken()
       
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...GET_ALL_WAREHOUSE(token.decodeKeycloack),
         params: {
           page: page,
           size: size
         },
-        headers: {
-          AuthToken: token.authToken
-        }
       })
       
       return response
@@ -60,12 +52,10 @@ export const getAllWarehouse = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...GET_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
         // baseURL: collectionPointAPI.baseURL,
-        headers: {
-          AuthToken: token.authToken
-        }
       })
       return response
     } catch (e) {
@@ -79,13 +69,10 @@ export const getAllWarehouse = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await axios({
+      const response = await axiosInstance({
         ...ADD_WAREHOUSE(token.decodeKeycloack),
         baseURL: collectionPointAPI.baseURL,
         data: data,
-        headers: {
-          AuthToken: token.authToken
-        }
       })
       return response
     } catch (e) {
@@ -99,13 +86,10 @@ export const getAllWarehouse = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await axios({
+      const response = await axiosInstance({
         ...UPDATE_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
         baseURL: collectionPointAPI.baseURL,
         data: data,
-        headers: {
-          AuthToken: token.authToken
-        }
       })
       return response
     } catch (e) {
@@ -122,13 +106,10 @@ export const getAllWarehouse = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await axios({
+      const response = await axiosInstance({
         ...UPDATE_RECYCLE_CAPACITY_BY_ID(warehouseRecycId, token.decodeKeycloack),
         baseURL: collectionPointAPI.baseURL,
         data: data,
-        headers: {
-          AuthToken: token.authToken
-        }
       })
       return response
     } catch (e) {
@@ -142,13 +123,10 @@ export const getAllWarehouse = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await axios({
+      const response = await axiosInstance({
         ...UPDATE_WAREHOUSE_STATUS_BY_ID(warehouseId, token.decodeKeycloack),
         baseURL: collectionPointAPI.baseURL,
         data: data,
-        headers: {
-          AuthToken: token.authToken
-        }
       })
       return response
     } catch (e) {
@@ -160,7 +138,7 @@ export const getAllWarehouse = async (page: number, size: number) => {
 //get recycle type
 export const getRecycleType = async () => {
     try {
-        const response = await axios({
+        const response = await axiosInstance({
             ...GET_RECYCLE_TYPE,
             baseURL: administratorAPI.baseURL,
         });
@@ -174,7 +152,7 @@ export const getRecycleType = async () => {
 //get recycle type by id
 export const getRecycleTypeById = async (recycTypeId: string) => {
     try {
-        const response = await axios({
+        const response = await axiosInstance({
             ...GET_RECYCLE_TYPE_BY_ID(recycTypeId),
             baseURL: administratorAPI.baseURL,
         });

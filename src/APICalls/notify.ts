@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axiosInstance from '../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
   GET_NUM_UNREAD_NOTIF,
@@ -12,7 +12,7 @@ const administratorAPI = {
 
 export const getNumUnreadNotif = async (loginId: string) => {
   try {
-    const response = await axios({
+    const response = await axiosInstance({
       ...GET_NUM_UNREAD_NOTIF(loginId),
       baseURL: administratorAPI.baseURL
     })
@@ -25,7 +25,7 @@ export const getNumUnreadNotif = async (loginId: string) => {
 
 export const getNotifByUserId = async (loginId: string) => {
   try {
-    const response = await axios({
+    const response = await axiosInstance({
       ...GET_NOTIF_BY_USER_ID(loginId),
       baseURL: administratorAPI.baseURL
     })
@@ -38,7 +38,7 @@ export const getNotifByUserId = async (loginId: string) => {
 
 export const updateFlagNotif = async (notiId: number) => {
   try {
-    const response = await axios({
+    const response = await axiosInstance({
       ...UPDATE_FLAG_NOTIF(notiId),
       baseURL: administratorAPI.baseURL
     })

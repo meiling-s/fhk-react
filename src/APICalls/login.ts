@@ -1,11 +1,7 @@
-import axios from 'axios'
 import { LOGIN } from '../constants/requests'
+import axiosInstance from '../constants/axiosInstance'
 import { LoginItem } from '../interfaces/account'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
-
-const request = axios.create({
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
-})
 
 const removeNonJsonChar = (dataString:  string) => {
   return dataString.substring(dataString.indexOf('{'), dataString.lastIndexOf('}') + 1);
@@ -17,7 +13,8 @@ export const login = async (item: LoginItem) => {
   axiosConfig.url = LOGIN.url
 
   try {
-    const response = await request({
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
       ...axiosConfig,
       data: {
         loginId: item.username,
@@ -28,6 +25,7 @@ export const login = async (item: LoginItem) => {
     if (response.status === 200) {
       return {
         access_token: response.data?.access_token,
+        refresh_token: response.data?.refresh_token,
         username: response.data?.username,
         status: response.status,
         // 20240129 add function list daniel keung start

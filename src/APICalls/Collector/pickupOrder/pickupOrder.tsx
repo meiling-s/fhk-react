@@ -1,22 +1,16 @@
-import React, { useEffect } from 'react'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
-import axios from 'axios'
-import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_PICK_UP_ORDER_BY_ID, GET_LOGISTICLIST, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_DETAIL_STATUS, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
-import { CreatePO, EditPo, PickupOrder, PoDtlStatus, PoStatus } from '../../../interfaces/pickupOrder'
-import { createCP } from '../../../interfaces/collectionPoint'
+import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_PICK_UP_ORDER_BY_ID, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_DETAIL_STATUS, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
+import { CreatePO, EditPo, PoDtlStatus, PoStatus } from '../../../interfaces/pickupOrder'
 import { returnApiToken } from '../../../utils/utils';
 import { queryPickupOrder } from '../../../interfaces/pickupOrder'
+import axiosInstance from '../../../constants/axiosInstance'
 
-  const request = axios.create({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
-    })
-  
-  const token = returnApiToken()
 
   export const getAllPickUpOrder = async (page: number, size: number, query?: queryPickupOrder) => {
       const auth = returnApiToken()
       try {
-        const response = await request({
+        const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
           ...GET_ALL_PICK_UP_ORDER(auth.tenantId),
           params: {
             page: page,
@@ -42,7 +36,8 @@ import { queryPickupOrder } from '../../../interfaces/pickupOrder'
 
   export const getPicoById = async (picoId: string) => {
     try {
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
         ...GET_PICK_UP_ORDER_BY_ID(picoId)
       })
       
@@ -62,7 +57,8 @@ import { queryPickupOrder } from '../../../interfaces/pickupOrder'
       axiosConfig.url = GET_PICK_UP_ORDER_DETAIL.url+`/${picoDtlId}`;
 
     try {
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
         ...axiosConfig,
       });
       // console.log('Get pick up order detail:', JSON.stringify(response.data));
@@ -77,7 +73,8 @@ import { queryPickupOrder } from '../../../interfaces/pickupOrder'
   export const createPickUpOrder = async (data:CreatePO) => {
 
     try{
-        const response = await request({
+        const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
             ...CREATE_PICK_UP_ORDER,
             data: data
             // headers: {
@@ -100,7 +97,8 @@ export const editPickupOrder = async (pickupOrderId: string, data:EditPo) => {
   axiosConfig.url = UPDATE_PICK_UP_ORDER.url+`/${pickupOrderId}`;
 
   try{
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
           ...axiosConfig,
           data: data
           // headers: {
@@ -122,7 +120,8 @@ export const editPickupOrderStatus = async (pickupOrderId: string, data:PoStatus
   axiosConfig.url = UPDATE_PICK_UP_ORDER_STATUS.url+`/${pickupOrderId}`;
 
   try{
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
           ...axiosConfig,
           data: data
           // headers: {
@@ -144,7 +143,8 @@ export const editPickupOrderDetailStatus = async (pickupOrderDtlId: string, data
   axiosConfig.url = UPDATE_PICK_UP_ORDER_DETAIL_STATUS.url+`/${pickupOrderDtlId}`;
 
   try{
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
           ...axiosConfig,
           data: data
           // headers: {

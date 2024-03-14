@@ -1,22 +1,18 @@
-import axios from "axios";
-import { localStorgeKeyName } from '../../constants/constant';
 import { CreateVehicle } from "../../interfaces/vehicles";
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import {
    GET_VEHICLE, CREATE_VEHICLE, DELETE_VEHICLE, EDIT_VEHICLE
 } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
-
-const request = axios.create({
-    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-  })
+import axiosInstance from '../../constants/axiosInstance'
 
 //get all warehouse
 export const getAllVehicles = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...GET_VEHICLE(token.decodeKeycloack),
         params: {
           page: page,
@@ -38,7 +34,8 @@ export const getAllVehicles = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...CREATE_VEHICLE(token.decodeKeycloack),
         data: data,
         headers: {
@@ -56,7 +53,8 @@ export const getAllVehicles = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...EDIT_VEHICLE(token.decodeKeycloack, vehicleId),
         data: data,
         headers: {
@@ -76,7 +74,8 @@ export const getAllVehicles = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...DELETE_VEHICLE(token.decodeKeycloack, vehicleId),
         data: data,
         headers: {

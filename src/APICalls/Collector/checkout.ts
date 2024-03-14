@@ -1,10 +1,9 @@
-import axios from 'axios'
+import axiosInstance from '../../constants/axiosInstance'
 import {
   GET_ALL_CHECKOUT_REQUEST,
   GET_CHECKOUT_REQUEST_BY_ID,
   UPDATE_CHECKOUT_REQUEST_STATUS
 } from '../../constants/requests'
-import {localStorgeKeyName} from  '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import { queryCheckout } from '../../interfaces/checkout'
 import { returnApiToken } from '../../utils/utils';
@@ -17,7 +16,7 @@ export const getAllCheckoutRequest = async (page: number, size: number, query: q
   try {
     const token = returnApiToken()
 
-    const response = await axios({
+    const response = await axiosInstance({
       ...GET_ALL_CHECKOUT_REQUEST(token.decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
       params: {
@@ -47,7 +46,7 @@ export const getCheckoutRequestById = async (chkOutId: number) => {
   try {
     const token = returnApiToken()
 
-    const response = await axios({
+    const response = await axiosInstance({
       ...GET_CHECKOUT_REQUEST_BY_ID(chkOutId, token.decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
       headers: {
@@ -72,7 +71,7 @@ export const updateCheckoutRequestStatus = async (
   try {
     const token = returnApiToken()
 
-    const response = await axios({
+    const response = await axiosInstance({
       ...UPDATE_CHECKOUT_REQUEST_STATUS(chkOutId, token.decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
       data: data,

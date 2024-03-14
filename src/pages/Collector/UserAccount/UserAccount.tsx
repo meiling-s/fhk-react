@@ -29,7 +29,7 @@ import {
 import {
   getAllUserAccount
 } from '../../../APICalls/userAccount'
-import axios from "axios";
+import axiosInstance from '../../../constants/axiosInstance'
 
 interface RecyleItem {
   recycTypeId: string
@@ -235,7 +235,7 @@ const UserAccount: FunctionComponent = () => {
 
   async function fetchDataUserAccount() {
     try {
-      const response = await axios.get('http://10.166.22.250/api/v1/administrator/userAccount');
+      const response = await axiosInstance.get('http://10.166.22.250/api/v1/administrator/userAccount');
       // const userAccountData = response.data
       const userAccountData = response.data.map( (item: UserAccount) => ({
         ...item,

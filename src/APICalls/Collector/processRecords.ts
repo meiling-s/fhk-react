@@ -1,6 +1,3 @@
-import axios from 'axios'
-import { localStorgeKeyName } from '../../constants/constant'
-// import { CreateVehicle } from "../../interfaces/vehicles";
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import {
   GET_PROCESS_OUT,
@@ -11,17 +8,14 @@ import {
   DELETE_PROCESS_OUT_RECORD
 } from '../../constants/requests'
 import { returnApiToken } from '../../utils/utils'
-
-const request = axios.create({
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-})
-
+import axiosInstance from '../../constants/axiosInstance'
 
 export const getAllProcessRecord = async (page: number, size: number) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_PROCESS_OUT(token.decodeKeycloack),
       params: {
         page: page,
@@ -40,7 +34,8 @@ export const getProcessRecordDetail = async (processOutId: number) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_PROCESS_OUT_DETAIL(token.decodeKeycloack, processOutId )
       
     })
@@ -60,7 +55,8 @@ export const createProcessRecordItem = async (
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...CREATE_PROCESS_OUT_ITEM(token.decodeKeycloack, processOutDtlId),
       data: data
     })
@@ -79,7 +75,8 @@ export const editProcessRecordItem = async (
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...EDIT_PROCESS_OUT_DETAIL_ITEM(token.decodeKeycloack, processOutDtlId),
       data: data,
     })
@@ -97,7 +94,8 @@ export const deleteProcessOutRecord = async (
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...DELETE_PROCESS_OUT_RECORD(token.decodeKeycloack, processOutId)
     })
 
@@ -115,7 +113,8 @@ export const deleteProcessOutItem = async (
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...DELETE_PROCESS_OUT_DETAIL_ITEM(token.decodeKeycloack, processOutDtlId),
       data: data,
       headers: {
