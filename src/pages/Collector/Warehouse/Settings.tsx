@@ -24,7 +24,7 @@ const Settings: FunctionComponent = () => {
     t('vehicle.vehicle'),
     t('top_menu.staff_positions'),
     t('top_menu.denial_reason'),
-    '用戶'
+    t('userAccount.user')
   ]
 
   return (
