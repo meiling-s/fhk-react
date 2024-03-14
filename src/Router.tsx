@@ -40,7 +40,7 @@ import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
 import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
 import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
 import Inventory from "./pages/Collector/Inventory/Inventory";
-import StaffManagement from './pages/Collector/StaffManagement/StaffManagement'
+import StaffManagement from './pages/Collector/StaffManagement/StaffParent'
 
 import AuthGuard from "./components/Guards/AuthGuard";
 import AutoLogout from "./components/AutoLogout";

@@ -545,6 +545,10 @@
     "enterName": "请输入姓名",
     "enterContactNo": "请输入联系电话",
     "enterEmail": "请输入电子邮件地址"
+  },
+  "roster": {
+    "addSchedule": "Add Schedule",
+    "schedule": "Schedule"
   }
 }
 

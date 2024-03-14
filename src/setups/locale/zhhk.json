@@ -543,6 +543,10 @@
     "enterName": "請輸入姓名",
     "enterContactNo": "請輸入聯絡電話",
     "enterEmail": "請輸入電子郵件地址"
+  },
+  "roster": {
+    "addSchedule": "新增日程",
+    "schedule": "行程"
   }
 }
 
