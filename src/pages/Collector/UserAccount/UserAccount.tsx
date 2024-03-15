@@ -164,7 +164,7 @@ const UserAccount: FunctionComponent = () => {
 
   async function fetchDataUserAccount() {
     const result = await getAllUserAccount()
-    if(result){
+    if(result?.data){
       setUserAccountItems(result.data)
       console.log("fetchDataUserAccount >> ", result.data);
     }
