@@ -5,6 +5,8 @@ import {
   Drawer,
   Grid,
   IconButton,
+  Autocomplete,
+  TextField,
   Modal,
   Divider,
   Stack,
@@ -603,7 +605,7 @@ const PickupOrderCreateForm = ({
               {formik.values.picoType == 'ROUTINE' && (
                 <Grid item>
                   <Box>
-                    <CustomField
+                    {/* <CustomField
                       label={t('pick_up_order.routine.contract_number')}
                       mandatory
                     >
@@ -616,13 +618,58 @@ const PickupOrderCreateForm = ({
                         onChange={(
                           _: SyntheticEvent,
                           newValue: string | null
-                        ) => formik.setFieldValue('contractNo', newValue)}
+                        ) =>{
+                          if (newValue) {
+                            // Check if newValue exists in the options
+                            const isValidOption = unexpiredContracts?.some(
+                              (option) => option.contractNo === newValue
+                            );
+                            if (isValidOption) {
+                              formik.setFieldValue('contractNo', newValue);
+                            } else {
+                              formik.setFieldValue('contractNo', "");
+                              // Handle invalid input, e.g., display a message
+                              console.log('Invalid contract number:', newValue);
+                            }
+                          }
+                          else {
+                            // If newValue is null, keep the field value empty
+                            formik.setFieldValue('contractNo', '');
+                          }
+                        }
+                        }
                         value={formik.values.contractNo}
                         error={
                           formik.errors.contractNo && formik.touched.contractNo
                         }
                       />
-                    </CustomField>
+                    </CustomField> */}
+                     <CustomField label={t('col.contractNo')}>
+                        <Autocomplete
+                          disablePortal
+                          id="contractNo"
+                          sx={{width: 400}}
+                          defaultValue={formik.values.contractNo}
+                          options={unexpiredContracts?.map((contract) => contract.contractNo) || []}
+                          onChange={(event, value) => {
+                            console.log(value)
+                            if (value) {
+                              formik.setFieldValue('contractNo', value);
+                            }
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              placeholder={t('col.enterNo')}
+                              sx={[styles.textField, { width: 400 }]}
+                              InputProps={{
+                                ...params.InputProps,
+                                sx: styles.inputProps
+                              }}
+                            />
+                          )}
+                        />
+                      </CustomField>
                   </Box>
                 </Grid>
               )}

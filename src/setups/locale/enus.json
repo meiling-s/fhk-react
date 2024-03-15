@@ -544,5 +544,33 @@
     "enterName": "Please enter name",
     "enterContactNo": "please enter contact no",
     "enterEmail": "please enter email address"
+  },
+  "roster": {
+    "addSchedule": "Add Schedule",
+    "schedule": "Schedule"
+  },
+  "userAccount": {
+    "new": "New",
+    "user": "User",
+    "addByNumber": "Add by Number",
+    "loginName": "Login Name",
+    "emailAddress": "Email Address",
+    "userGroup": "User Group",
+    "isItAReviewer": "Is it a Reviewer",
+    "status": "State",
+    "pleaseEnterNumber": "Please enter number",
+    "pleaseEnterName": "Please enter name",
+    "pleaseEnterEmailAddress": "Please enter email address",
+    "active": "Active",
+    "inactive": "Inactive",
+    "suspend": "Suspended",
+    "deleted": "Deleted",
+    "staffId": "Staff Id",
+    "successCreatedUser": "Success created user",
+    "failedCreatedUser": "Failed created user",
+    "successEditUser": "Success edit user",
+    "failedEditUser": "Failed edit user",
+    "successDeleteUser": "Success delete user",
+    "failedDeleteUser": "Failed delete user"
   }
 }

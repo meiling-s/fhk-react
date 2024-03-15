@@ -27,15 +27,15 @@ export const getColPointType = async () => {
 }
 
 export const getUserGroup = async () => {
-    var userGroup = [];
+    const token = returnApiToken()
     try {
         var response = await axiosInstance({
             baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
             ...GET_USER_GROUP,
         });
         //console.log('Get collection point type success:', JSON.stringify(response.data));
-        userGroup = response.data;
-        return userGroup;
+        
+        return response.data;
     }catch (e) {
         console.error('Get user group data failed:', e);
         return null;
