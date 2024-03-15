@@ -14,7 +14,8 @@ import {
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridRenderCellParams
+  GridRenderCellParams,
+  GridSortDirection, GridSortItem 
 } from '@mui/x-data-grid'
 import {
   ADD_ICON,
@@ -212,6 +213,14 @@ const StaffManagement: FunctionComponent = () => {
     }
   ]
 
+  const sortModel: GridSortItem[] = [
+    {
+      field: 'staffId',
+      sort: 'asc',
+    },
+  ];
+  
+
   const handleAction = (
     params: GridRenderCellParams,
     action: 'add' | 'edit' | 'delete'
@@ -381,6 +390,7 @@ const StaffManagement: FunctionComponent = () => {
               hideFooter
               columns={columns}
               checkboxSelection
+              sortModel={sortModel}
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               sx={{
