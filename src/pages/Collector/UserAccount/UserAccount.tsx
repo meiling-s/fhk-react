@@ -109,15 +109,15 @@ const UserAccount: FunctionComponent = () => {
       type: 'string',
       valueGetter: (params) => params.row?.userGroup.roleName
     },
-    {
-      field: '是',
-      width: 150,
-      headerName: t('userAccount.isItAReviewer'),
-      type: 'string',
-      valueGetter: () => {
-        return t('yes')
-      }
-    },
+    // {
+    //   field: '是',
+    //   width: 150,
+    //   headerName: t('userAccount.isItAReviewer'),
+    //   type: 'string',
+    //   valueGetter: () => {
+    //     return t('yes')
+    //   }
+    // },
     {
       field: 'status',
       headerName: t('userAccount.status'),

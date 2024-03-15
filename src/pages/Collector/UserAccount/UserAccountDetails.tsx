@@ -64,7 +64,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const [email, setEmail] = useState<string>("")
   const [userGroup, setUserGroup] = useState<number>(0);
   const [userGroupList, setUserGroupList] = useState<DropdownOption[]>([])
-  const [isApprover , setApprover] = useState<boolean>(false)
+  // const [isApprover , setApprover] = useState<boolean>(false)
   const [userStatus, setUserStatus] = useState<string>('ACTIVE')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
@@ -394,7 +394,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField
                 label={t('userAccount.isItAReviewer')}
@@ -410,7 +410,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 }}
               />
             </div>
-            </Grid> 
+            </Grid>  */}
             <CustomField label={t('userAccount.status')} mandatory={true}>
               <CustomItemList
                 items={statusList()}
