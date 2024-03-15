@@ -33,6 +33,9 @@ export const getAllWarehouse = async (page: number, size: number) => {
           page: page,
           size: size
         },
+        headers: {
+          'AuthToken': token.authToken
+        }
       })
       
       return response
@@ -55,6 +58,9 @@ export const getAllWarehouse = async (page: number, size: number) => {
       const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...GET_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
+        headers: {
+          'AuthToken': token.authToken
+        }
         // baseURL: collectionPointAPI.baseURL,
       })
       return response
