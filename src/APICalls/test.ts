@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from '../constants/axiosInstance';
 // import { localStorgeKeyName } from '../constants/constant';
 import { GET_ALL_USERNAME, GET_ALL_WAREHOUSE } from "../constants/requests";
 // import { RegisterItem, Tenant } from '../interfaces/account';
@@ -15,7 +15,7 @@ const collectionPointAPI = {
 
 export const getAllUsers = async () => {
     try {
-        const response = await axios({
+        const response = await axiosInstance({
             ...GET_ALL_USERNAME,
             baseURL: collectionPointAPI.baseURL,
         });
@@ -28,7 +28,7 @@ export const getAllUsers = async () => {
 
 export const getAllWarehouse = async (page: number, size: number) => {
     try {
-        const response = await axios({
+        const response = await axiosInstance({
             ...GET_ALL_WAREHOUSE,
             baseURL: collectionPointAPI.baseURL,
             params: {
@@ -47,7 +47,7 @@ export const getAllWarehouse = async (page: number, size: number) => {
 // axiosConfig.url = GET_TENANT_BY_TENANT_ID.url+`/${tenantId}`;
 
 // try {
-//     const response = await axios({
+//     const response = await axiosInstance({
 //     ...axiosConfig
 //     });
 //     console.log('Get tenant by id success:', JSON.stringify(response.data));
@@ -58,7 +58,7 @@ export const getAllWarehouse = async (page: number, size: number) => {
 // }
 
 // try {
-//     const response = await axios({
+//     const response = await axiosInstance({
 //       ...GET_ALL_COLLECTIONPOINT,
 //       baseURL: collectionPointAPI.baseURL,
 //       params:{

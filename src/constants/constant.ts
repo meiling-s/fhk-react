@@ -1,5 +1,6 @@
 export const localStorgeKeyName = {
   keycloakToken: 'keycloakToken',
+  refreshToken: 'refreshToken',
   role: 'userRole',
   username: 'username',
   firstTimeLogin: 'firstTimeLogin',

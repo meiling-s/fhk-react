@@ -1,6 +1,3 @@
-import axios from "axios";
-import { localStorgeKeyName } from '../constants/constant';
-// import { RegisterItem, Tenant } from '../interfaces/account';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import {
   GET_USER_ACCOUNT_LIST,
@@ -9,6 +6,7 @@ import {
   DELETE_USER_ACCOUNT
 } from "../constants/requests";
 import { returnApiToken } from "../utils/utils";
+import axiosInstance from '../constants/axiosInstance'
 
 const collectionPointAPI = {
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
@@ -18,9 +16,6 @@ const administratorAPI = {
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 };
 
-const request = axios.create({
-    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-  })
 
 // get all the user account
 export const getAllUserAccount = async () => {

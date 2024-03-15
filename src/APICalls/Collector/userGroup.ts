@@ -1,5 +1,3 @@
-import axios from "axios";
-import { localStorgeKeyName } from '../../constants/constant';
 import { CreateVehicle } from "../../interfaces/vehicles";
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import {
@@ -7,17 +5,15 @@ import {
 } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import { CreateUserGroupProps, DeleteUserGroupProps, EditUserGroupProps } from "../../interfaces/userGroup";
-
-const request = axios.create({
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-})
+import axiosInstance from '../../constants/axiosInstance'
 
 //get all warehouse
 export const getUserAccount = async () => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_USER_ACCOUNT(token.loginId),
       headers: {
         AuthToken: token.authToken
@@ -37,7 +33,8 @@ export const getAllUserGroup = async (page: number, size: number) => {
     // const userAccount = await getUserAccount();
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_USER_GROUP(token.tenantId),
       params: {
@@ -62,7 +59,8 @@ export const getAllFunction = async () => {
     // const userAccount = await getUserAccount();
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_FUNCTION(),
       headers: {
@@ -83,7 +81,8 @@ export const createUserGroup = async (data: CreateUserGroupProps) => {
     // const userAccount = await getUserAccount();
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...CREATE_USER_GROUP(),
       data: data,
@@ -105,7 +104,8 @@ export const editUserGroup = async (data: EditUserGroupProps, groupId: number) =
     // const userAccount = await getUserAccount();
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...EDIT_USER_GROUP(groupId),
       data: data,
       headers: {
@@ -126,7 +126,8 @@ export const deleteUserGroup = async (data: DeleteUserGroupProps, groupId: numbe
     // const userAccount = await getUserAccount();
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...DELETE_USER_GROUP(groupId),
       data: data,
       headers: {
@@ -146,7 +147,8 @@ export const createVehicles = async (data: CreateVehicle) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...CREATE_VEHICLE(token.decodeKeycloack),
       data: data,
       headers: {
@@ -164,7 +166,8 @@ export const editVehicle = async (data: CreateVehicle, vehicleId: number) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...EDIT_VEHICLE(token.decodeKeycloack, vehicleId),
       data: data,
       headers: {
@@ -184,7 +187,8 @@ export const deleteVehicle = async (data: string, vehicleId: number) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...DELETE_VEHICLE(token.decodeKeycloack, vehicleId),
       data: data,
       headers: {

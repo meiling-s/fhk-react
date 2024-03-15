@@ -1,6 +1,3 @@
-import axios from 'axios'
-import { localStorgeKeyName } from '../constants/constant'
-// import { CreateVehicle } from "../../interfaces/vehicles";
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
   GET_CAPACITY_WAREHOUSE,
@@ -10,10 +7,7 @@ import {
   GET_CHECK_IN_OUT_WAREHOUSE
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
-
-const request = axios.create({
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-})
+import axiosInstance from '../constants/axiosInstance'
 
 export const getCapacityWarehouse = async (
   warehouseId: number
@@ -21,7 +15,8 @@ export const getCapacityWarehouse = async (
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_CAPACITY_WAREHOUSE(token.decodeKeycloack, warehouseId)
     })
 
@@ -38,7 +33,8 @@ export const getWeightbySubtype = async (
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_WEIGHT_BY_SUBTYPE_ID(
         token.decodeKeycloack,
         warehouseId
@@ -59,7 +55,8 @@ export const getCheckInWarehouse = async (warehouseId: number) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_CHECKIN_WAREHOUSE(token.decodeKeycloack, warehouseId)
     })
 
@@ -74,7 +71,8 @@ export const getCheckOutWarehouse = async (warehouseId: number) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_CHECKOUT_WAREHOUSE(token.decodeKeycloack, warehouseId)
     })
 
@@ -89,7 +87,8 @@ export const getCheckInOutWarehouse = async (warehouseId: number) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_CHECK_IN_OUT_WAREHOUSE(token.decodeKeycloack, warehouseId)
     })
 
