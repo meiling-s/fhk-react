@@ -17,7 +17,7 @@ export const getRosterList = async () => {
       ...GET_ROSTER_LIST(token.tenantId),
       params: {
         page: 0,
-        size: 20 // change size as needed
+        size: 100 // change size as needed
       }
     })
 
