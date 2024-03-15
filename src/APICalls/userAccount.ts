@@ -8,20 +8,12 @@ import {
 import { returnApiToken } from "../utils/utils";
 import axiosInstance from '../constants/axiosInstance'
 
-const collectionPointAPI = {
-    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-};
-
-const administratorAPI = {
-    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-};
-
-
 // get all the user account
 export const getAllUserAccount = async () => {
   const token = returnApiToken()
     try {
-        const response = await request({
+        const response = await axiosInstance({
+            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
             ...GET_USER_ACCOUNT_LIST(token.tenantId),
         });
         return response;
@@ -33,7 +25,8 @@ export const getAllUserAccount = async () => {
 
 export const postUserAccount = async (data: any) => {
     try {
-        const response = await request({
+        const response = await axiosInstance({
+            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
             ...CREATE_USER_ACCOUNT,
             data: data
         });
@@ -47,7 +40,8 @@ export const postUserAccount = async (data: any) => {
 export const updateUserAccount = async (loginId: string, data: any) => {
   const token = returnApiToken()
     try {
-        const response = await request({
+        const response = await axiosInstance({
+            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
             ...UPDATE_USER_ACCOUNT(loginId),
             data: data
         });
@@ -61,7 +55,8 @@ export const updateUserAccount = async (loginId: string, data: any) => {
 export const deleteUserAccount = async (loginId: string, data: any) => {
   const token = returnApiToken()
     try {
-        const response = await request({
+        const response = await axiosInstance({
+            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
             ...DELETE_USER_ACCOUNT(loginId),
             data: data
         });
