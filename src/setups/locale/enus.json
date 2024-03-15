@@ -545,6 +545,10 @@
     "enterContactNo": "please enter contact no",
     "enterEmail": "please enter email address"
   },
+  "roster": {
+    "addSchedule": "Add Schedule",
+    "schedule": "Schedule"
+  },
   "userAccount": {
     "new": "New",
     "user": "User",

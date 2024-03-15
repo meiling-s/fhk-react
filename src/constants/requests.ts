@@ -504,6 +504,13 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/stafftitle/${table}`
 })
 
+
+//API roster
+export const GET_ROSTER_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/roster/${tenantId}`
+})
+
 //USER ACCOUNT API
 export const GET_USER_ACCOUNT_LIST = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',

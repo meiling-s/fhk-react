@@ -76,8 +76,8 @@ function createStaff(
 const StaffManagement: FunctionComponent = () => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [selectedTab, setSelectedTab] = useState(0)
-  const tabStaff = [t('staffManagement.list'), t('staffManagement.schedule')]
+  // const [selectedTab, setSelectedTab] = useState(0)
+  // const tabStaff = [t('staffManagement.list'), t('staffManagement.schedule')]
   const [staffList, setStaffList] = useState<Staff[]>([])
   const [filteredStaff, setFillteredStaff] = useState<Staff[]>([])
   const [selectedRow, setSelectedRow] = useState<Staff | null>(null)
@@ -250,7 +250,7 @@ const StaffManagement: FunctionComponent = () => {
     })
   }
 
-  const handleTabChange = () => {}
+  // const handleTabChange = () => {}
 
   const showSuccessToast = (msg: string) => {
     toast.info(msg, {
@@ -313,19 +313,19 @@ const StaffManagement: FunctionComponent = () => {
         }}
       >
         <ToastContainer></ToastContainer>
-        <Box>
+        {/* <Box>
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('staffManagement.staff')}
           </Typography>
-        </Box>
-        <Box>
+        </Box> */}
+        {/* <Box>
           <Tabs
             tabs={tabStaff}
             navigate={handleTabChange}
             selectedProp={selectedTab}
             className="lg:px-10 sm:px-4 bg-bg-primary"
           />
-        </Box>
+        </Box> */}
         <Box
           sx={{
             marginY: 4
