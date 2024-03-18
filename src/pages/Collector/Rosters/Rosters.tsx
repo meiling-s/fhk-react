@@ -115,8 +115,13 @@ const Rosters: FunctionComponent = () => {
                 </div>
                 {item.roster.map((rosterItem, indexRoster) => (
                   <div
-                    className="roster-item mb-6 w-[225px] bg-white rounded-2xl p-6"
+                    className="roster-item mb-6 w-[225px] bg-white rounded-2xl p-6 cursor-pointer"
                     key={indexRoster + rosterItem.rosterId}
+                    onClick={() => {
+                      setDrawerOpen(true)
+                      setSelectedRoster(rosterItem)
+                      setAction('edit')
+                    }}
                   >
                     <div className="text-[#717171] text-[18px] font-bold">
                       {formattedTime(rosterItem.startAt)}-
@@ -149,7 +154,8 @@ const Rosters: FunctionComponent = () => {
                     ))}
                   </div>
                 ))}
-                <div className="add-roster text-center flex justify-center items-center gap-2 cursor-pointer">
+                <div className="add-roster text-center flex justify-center items-center gap-2 cursor-pointer"
+                 onClick={() => addNewRoster(item)}>
                   <ADD_ICON fontSize="small" className="text-[#717171]" />
                   <div className="text-[#717171] text-smi font-bold">
                     {t('roster.addSchedule')}
