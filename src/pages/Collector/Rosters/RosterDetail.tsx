@@ -163,22 +163,22 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     setValidation([])
   }
 
-  const checkString = (s: string) => {
-    if (!trySubmited) {
-      return false
-    }
-    return s == ''
-  }
-
   useEffect(() => {
     const validate = async () => {
       const tempV: formValidate[] = []
+
+      selectedStaff.every(staffId => staffId.trim() == '') && 
+      tempV.push({
+        field: t('roster.staff'),
+        problem: formErr.empty,
+        type: 'error'
+      })
 
       setValidation(tempV)
     }
 
     validate()
-  }, [])
+  }, [selectedStaff])
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
     return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
@@ -233,6 +233,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
         const rosterId = result.data.rosterId
         addStaff(rosterId)
       } else {
+        setTrySubmited(true)
         showErrorToast(t('roster.errorCreatedRoster'))
         onSubmitData('error', 'Failed created data')
       }
@@ -444,6 +445,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                       onChange={(event: SelectChangeEvent<string>) => {
                         handleStaffChange(event.target.value, index)
                       }}
+                      error={trySubmited && (selectedStaff.length == 0)}
                     >
                       {staffList?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
