@@ -511,6 +511,37 @@ export const GET_ROSTER_LIST = (tenantId: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/roster/${tenantId}`
 })
 
+export const CREATE_ROSTER: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/collectors/roster`
+}
+
+export const ADD_STAFF_ROSTER = (
+  tenantId: string,
+  rosterId: number,
+  staffId: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/roster/addStaff/${tenantId}/${rosterId}/${staffId}`
+})
+
+export const UPDATE_ROSTER = (
+  tenantId: string,
+  rosterId: number
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/collectors/roster/${tenantId}/${rosterId}`
+})
+
+export const CANCEL_ROSTER = (
+  tenantId: string,
+  rosterId: number
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/roster/cancel/${tenantId}/${rosterId}`
+})
+
+
 //USER ACCOUNT API
 export const GET_USER_ACCOUNT_LIST = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',

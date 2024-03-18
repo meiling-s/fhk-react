@@ -547,8 +547,20 @@
     "enterEmail": "请输入电子邮件地址"
   },
   "roster": {
-    "addSchedule": "Add Schedule",
-    "schedule": "Schedule"
+    "addSchedule": "添加日程",
+    "schedule": "日程",
+    "addOrChange": "添加/更改",
+    "date": "日期",
+    "otherDates": "其他日期",
+    "timeBy": "按时间",
+    "to": "至",
+    "recyclingPoint": "回收点",
+    "workWeek": "工作周",
+    "once": "一次",
+    "everyday": "每天",
+    "weekly": "每周",
+    "staff": "员工",
+    "pleaseSelectAnEmployee": "请选择一个员工"
   },
   "userAccount": {
     "new": "新增",

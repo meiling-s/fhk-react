@@ -547,7 +547,19 @@
   },
   "roster": {
     "addSchedule": "Add Schedule",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "addOrChange": "Add / Change",
+    "date": "Date",
+    "otherDates": "Other Dates",
+    "timeBy": "Time By",
+    "to": "To",
+    "recyclingPoint": "Recycling Point",
+    "workWeek": "Work Week",
+    "once": "Once",
+    "everyday": "Every Day",
+    "weekly": "Weekly",
+    "staff": "Staff",
+    "pleaseSelectAnEmployee": "Please select an employee"
   },
   "userAccount": {
     "new": "New",
@@ -572,5 +584,5 @@
     "failedEditUser": "Failed edit user",
     "successDeleteUser": "Success delete user",
     "failedDeleteUser": "Failed delete user"
-  }
+  }  
 }

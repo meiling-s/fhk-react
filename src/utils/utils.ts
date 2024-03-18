@@ -56,3 +56,11 @@ export const displayCreatedDate = (valueDate : string) =>{
 
     return formattedDate
   }
+
+  export const displayLocalDate = (valueDate: string) => {
+    const utcOffset = 8 * 60 * 60 * 1000 // UTC+8 in milliseconds
+    const dateWithOffset = new Date(valueDate).getTime() + utcOffset
+    const formattedDate = dayjs(dateWithOffset).format(format.dateFormat2)
+  
+    return formattedDate
+  }

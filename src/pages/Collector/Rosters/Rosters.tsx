@@ -9,6 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { format } from '../../../constants/constant'
 import { useTranslation } from 'react-i18next'
+import RosterDetail from './RosterDetail'
 
 import { getRosterList } from '../../../APICalls/roster'
 import { GroupedRoster, Roster } from '../../../interfaces/roster'
@@ -20,6 +21,11 @@ const Rosters: FunctionComponent = () => {
 
   const [filterDate, setFilterDate] = useState<dayjs.Dayjs>(dayjs())
   const [groupedRoster, setGroupedRoster] = useState<GroupedRoster[]>([])
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
+  const [selectedRoster, setSelectedRoster] = useState<Roster | null>(null)
+  const [selectedRosterDate, setRosterDate] = useState<string>('')
+  const [rosterColId, setRosterColId] = useState<number | null>(null)
 
   useEffect(() => {
     initRosterData()
@@ -33,22 +39,24 @@ const Rosters: FunctionComponent = () => {
       //maaping data roster
       const groupedRoster = rosterRawData.reduce(
         (grouped: any, item: Roster) => {
-          console.log('grouped', grouped)
+         
           const collectionId = item.collectionPoint.colId
           const collectionName = item.collectionPoint.colName
           const rosterItem = item
 
-          const existingCollection = grouped.find(
-            (group: any) => group.collectionId === collectionId
-          )
-          if (existingCollection) {
-            existingCollection.roster.push(rosterItem)
-          } else {
-            grouped.push({
-              collectionId,
-              collectionName,
-              roster: [rosterItem]
-            })
+          if (rosterItem.status != 'CANCELLED') {
+            const existingCollection = grouped.find(
+              (group: any) => group.collectionId === collectionId
+            )
+            if (existingCollection) {
+              existingCollection.roster.push(rosterItem)
+            } else {
+              grouped.push({
+                collectionId,
+                collectionName,
+                roster: [rosterItem]
+              })
+            }
           }
 
           return grouped
@@ -63,6 +71,26 @@ const Rosters: FunctionComponent = () => {
     const dateObject = dayjs(value)
     return dateObject.format('HH:mm')
   }
+
+  const onSubmitData = (type: string, msg: string) => {
+    setSelectedRoster(null)
+    setRosterColId(null)
+    setRosterDate('')
+    initRosterData()
+  }
+
+  const addNewRoster = (item: GroupedRoster) => {
+    setAction('add')
+    setRosterColId(item.collectionId)
+    if (item.roster.length > 0) {
+      const startDate = item.roster[0].startAt
+      setRosterDate(startDate)
+    } else {
+      setRosterDate(dayjs().toString())
+    }
+    setDrawerOpen(true)
+  }
+
   return (
     <>
       <Box className="container-wrapper w-full">
@@ -129,6 +157,15 @@ const Rosters: FunctionComponent = () => {
                 </div>
               </Box>
             ))}
+             <RosterDetail
+              drawerOpen={drawerOpen}
+              handleDrawerClose={() => setDrawerOpen(false)}
+              action={action}
+              onSubmitData={onSubmitData}
+              selectedRoster={selectedRoster}
+              selectedDate={selectedRosterDate}
+              rosterColId={rosterColId}
+            />
           </Box>
         </LocalizationProvider>
       </Box>
