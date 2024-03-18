@@ -558,7 +558,13 @@
     "everyday": "每天",
     "weekly": "每週",
     "staff": "員工",
-    "pleaseSelectAnEmployee": "請選擇一位員工"
+    "pleaseSelectAnEmployee": "請選擇一位員工",
+    "successCreatedRoster": "成功建立排班",
+    "errorCreatedRoster": "建立排班時出錯",
+    "successEditRoster": "成功編輯排班",
+    "errorEditRoster": "編輯排班時出錯",
+    "successDeletedRoster": "成功刪除排班",
+    "errorDeletedRoster": "刪除排班時出錯"
   },
   "userAccount": {
     "new": "新增",

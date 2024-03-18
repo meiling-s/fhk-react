@@ -1,6 +1,7 @@
 import { ImageListType } from 'react-images-uploading'
 import { formErr, localStorgeKeyName, format } from '../constants/constant'
 import dayjs from 'dayjs'
+import { toast } from 'react-toastify'
 
 export const returnApiToken = () => {
   const decodeKeycloack = localStorage.getItem(localStorgeKeyName.decodeKeycloack)  || ''
@@ -63,4 +64,30 @@ export const displayCreatedDate = (valueDate : string) =>{
     const formattedDate = dayjs(dateWithOffset).format(format.dateFormat2)
   
     return formattedDate
+  }
+
+  export const showErrorToast = (msg: string) => {
+    toast.error(msg, {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light'
+    })
+  }
+
+  export const showSuccessToast = (msg: string) => {
+    toast.info(msg, {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light'
+    })
   }

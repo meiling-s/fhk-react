@@ -559,7 +559,13 @@
     "everyday": "Every Day",
     "weekly": "Weekly",
     "staff": "Staff",
-    "pleaseSelectAnEmployee": "Please select an employee"
+    "pleaseSelectAnEmployee": "Please select an employee",
+    "successCreatedRoster": "Success created roster",
+    "errorCreatedRoster": "Error created roster",
+    "successEditRoster": "Success edit roster",
+    "errorEditRoster": "Error edit roster",
+    "successDeletedRoster": "Success deleted roster",
+    "errorDeletedRoster": "Error deleted roster"
   },
   "userAccount": {
     "new": "New",

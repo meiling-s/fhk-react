@@ -22,9 +22,9 @@ import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-
+import { ToastContainer, toast } from 'react-toastify'
 import { styles } from '../../../constants/styles'
-import { displayLocalDate } from '../../../utils/utils'
+import { displayLocalDate, showErrorToast, showSuccessToast } from '../../../utils/utils'
 
 import { formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
@@ -192,7 +192,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     }
   }
 
-  const addOrUpdateStaff = async (rosterId: number) => {
+  const addStaff = async (rosterId: number) => {
     let allResponseSuccess = true
 
     for (const key in selectedStaff) {
@@ -206,9 +206,11 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
 
     if (allResponseSuccess) {
       onSubmitData('success', 'Success created data')
+      showSuccessToast(t('roster.successCreatedRoster'))
       resetFormData()
       handleDrawerClose()
     } else {
+      showErrorToast(t('roster.errorCreatedRoster'))
       onSubmitData('error', 'Some data creation failed') // Inform user about failure
     }
   }
@@ -229,8 +231,9 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
 
       if (result) {
         const rosterId = result.data.rosterId
-        addOrUpdateStaff(rosterId)
+        addStaff(rosterId)
       } else {
+        showErrorToast(t('roster.errorCreatedRoster'))
         onSubmitData('error', 'Failed created data')
       }
     } else {
@@ -253,12 +256,17 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
         const result = await updateRoster(updateForm, selectedRoster.rosterId)
         if (result) {
           const rosterId = result.data.rosterId
-          addOrUpdateStaff(rosterId)
+          onSubmitData('success', 'Success edit data')
+          showSuccessToast(t('roster.successEditRoster'))
+          resetFormData()
+          handleDrawerClose()
         } else {
           onSubmitData('error', 'Failed edit data')
+          showErrorToast(t('roster.errorEditRoster'))
         }
       } else {
         setTrySubmited(true)
+        showErrorToast(t('roster.errorEditRoster'))
       }
     }
   }
@@ -274,8 +282,10 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
         onSubmitData('success', 'Success created data')
         resetFormData()
         handleDrawerClose()
+        showSuccessToast(t('roster.successDeletedRoster'))
       } else {
         onSubmitData('error', 'Failed created data')
+        showErrorToast(t('roster.errorDeletedRoster'))
       }
     }
   }
@@ -300,7 +310,8 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }
 
   return (
-    <div className="add-vehicle">
+    <div className="roster-details">
+        <ToastContainer></ToastContainer>
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
