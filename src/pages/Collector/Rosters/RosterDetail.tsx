@@ -150,7 +150,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       setEndDate(dayjs(selectedRoster.startAt))
       setSelectedColPoint(selectedRoster.collectionPoint.colId.toString())
       setRoutineType(selectedRoster.routineType)
-      setSelectedStaff(staffIdList)
+      setSelectedStaff(staffIdList.length > 0 ? staffIdList : initStaff)
     }
   }
 
