@@ -98,7 +98,7 @@ const UserGroup: FunctionComponent = () => {
   const columns: GridColDef[] = [
     {
       field: 'roleName',
-      headerName: '群組名稱',
+      headerName: t('userGroup.groupName'),
       width: 200,
       type: 'string',
       // renderCell: (params) => {
@@ -109,13 +109,13 @@ const UserGroup: FunctionComponent = () => {
     },
     {
       field: 'status',
-      headerName: '簡介',
+      headerName: t('userGroup.introduction'),
       width: 200,
       type: 'string'
     },
     {
       field: 'functions',
-      headerName: '可用功能',
+      headerName: t('userGroup.availableFeatures'),
       width: 200,
       type: 'string',
       renderCell: (params) => {

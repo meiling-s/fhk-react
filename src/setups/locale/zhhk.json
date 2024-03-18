@@ -539,6 +539,14 @@
     "enterName": "請輸入姓名",
     "enterContactNo": "請輸入聯絡電話",
     "enterEmail": "請輸入電子郵件地址"
+  },
+  "userGroup": {
+    "title": "用戶群組",
+    "groupName": "群組名稱",
+    "introduction": "簡介",
+    "availableFeatures": "可用功能",
+    "pleaseEnterName": "請輸入名稱",
+    "pleaseEnterText": "請輸入文字"
   }
 }
 

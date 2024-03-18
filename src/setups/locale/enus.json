@@ -540,5 +540,13 @@
     "enterName": "Please enter name",
     "enterContactNo": "please enter contact no",
     "enterEmail": "please enter email address"
+  },
+  "userGroup": {
+    "title": "User Group",
+    "groupName": "Group name",
+    "introduction": "Introduction",
+    "availableFeatures": "Available Features",
+    "pleaseEnterName": "Please enter name",
+    "pleaseEnterText": "Please enter text"
   }
 }

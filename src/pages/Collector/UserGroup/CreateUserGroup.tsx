@@ -80,7 +80,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const {vehicleType } = useContainer(CommonTypeContainer);
   const [listedPlate, setListedPlate] = useState<string[]>([])
   const [roleName, setRoleName] = useState('')
   const [realm, setRealm] = useState('')
@@ -185,8 +184,10 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       }
       handleCreateUserGroup(formData)
     } else {
+      console.log(functions)
       const formData: EditUserGroupProps = {
         functions: functions,
+        roleName: roleName,
         updatedBy:  token.loginId,
         status: "ACTIVE",
       }
@@ -210,6 +211,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   }
 
   const handleEditUserGroup = async (formData: EditUserGroupProps) => {
+    console.log(formData)
     if (validation.length === 0) {
       
       if(selectedItem != null){
@@ -253,7 +255,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         action={action}
         headerProps={{
           title: t('top_menu.add_new'),
-          subTitle: t('vehicle.vehicleType'),
+          subTitle: t('userGroup.title'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
@@ -277,27 +279,27 @@ const CreateUserGroup: FunctionComponent<Props> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            <CustomField label="群組名稱">
+            <CustomField label={t('userGroup.groupName')}>
               <CustomTextField
                 id="roleName"
                 value={roleName}
                 disabled={action === 'delete'}
-                placeholder={'請輸入名稱'}
+                placeholder={t('userGroup.pleaseEnterName')}
                 onChange={(event) => setRoleName(event.target.value)}
                 error={checkString(roleName)}
               />
             </CustomField>
-            <CustomField label="簡介">
+            <CustomField label={t('userGroup.introduction')}>
               <CustomTextField
                 id="realm"
                 value={realm}
                 disabled={action === 'delete'}
-                placeholder={'請輸入文字'}
+                placeholder={t('userGroup.pleaseEnterText')}
                 onChange={(event) => setRealm(event.target.value)}
                 error={checkString(realm)}
               />
             </CustomField>
-            <CustomField label="簡介">
+            <CustomField label={t('userGroup.availableFeatures')}>
               {functionList.map((item: Functions, key) => (
                 <FunctionList
                   key={key}

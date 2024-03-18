@@ -35,6 +35,7 @@ export type CreateUserGroupProps = {
 }
 
 export type EditUserGroupProps = {
+    roleName: string
     functions: number[]
     updatedBy: string
     status: string
