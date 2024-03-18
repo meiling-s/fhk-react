@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
 
+
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
   method: 'post',
@@ -523,4 +524,29 @@ export const UPDATE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
 export const DELETE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/userAccount/status/${loginId}`
+})
+
+export const GET_CHECKIN_CHECKOUT_LIST = (table:string, picoId:string, page:number, size:number, ):AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkinout/searching/${table}`,
+  params: {
+    picoId: picoId ?? '',
+    page,
+    size
+  }
+})
+
+export const GET_CHECKIN_BY_ID = (table:string, chkInId:number):AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkin/${table}/${chkInId}`,
+})
+
+export const GET_CHECKOUT_BY_ID = (table:string, chkOutId:number):AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkout/${table}/${chkOutId}`,
+})
+
+export const GET_ALL_RECYCLE_TYPE = ():AxiosRequestConfig => ({
+  method: 'get',
+  url: 'api/v1/administrator/recycType'
 })

@@ -47,6 +47,7 @@ import AutoLogout from "./components/AutoLogout";
 
 import CheckoutRequest from "./pages/Collector/Manage/CheckoutRequest";
 import UserGroup from "./pages/Collector/UserGroup/UserGroup";
+import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 
 
 const Router = () => {
@@ -99,6 +100,8 @@ const Router = () => {
           <Route path="/collector/editCollectionPoint" element={<EditCollectionPoint />} />
           <Route path="/collector/inventory" element={<Inventory />} />
           <Route path="/collector/userGroup" element={<UserGroup />} />
+          <Route path="/collector/checkInAndCheckout" element={<CheckInAndCheckOut />} />
+
         </Route>
 
         <Route element={<MainLayout />}>
