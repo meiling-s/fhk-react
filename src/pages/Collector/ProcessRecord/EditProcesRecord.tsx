@@ -249,7 +249,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
 
   const handleEditRecyc = async (data: CreateRecyclable, processOutDtlId: number) =>{
     const editItemsProcessOut:CreateRecyclable = constractForm(data)
-    const response = await editProcessRecordItem(editItemsProcessOut, processOutDtlId)
+    const response = await editProcessRecordItem(editItemsProcessOut,  selectedRow!!.processOutId, processOutDtlId)
   
     if (response) {
       setReloadData(true);

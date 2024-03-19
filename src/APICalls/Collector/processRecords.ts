@@ -70,6 +70,7 @@ export const createProcessRecordItem = async (
 
 export const editProcessRecordItem = async (
   data: any,
+  processOutId: number,
   processOutDtlId: number
 ) => {
   try {
@@ -77,7 +78,7 @@ export const editProcessRecordItem = async (
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...EDIT_PROCESS_OUT_DETAIL_ITEM(token.decodeKeycloack, processOutDtlId),
+      ...EDIT_PROCESS_OUT_DETAIL_ITEM(token.decodeKeycloack, processOutId, processOutDtlId),
       data: data,
     })
 
