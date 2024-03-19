@@ -104,7 +104,7 @@ import { returnApiToken } from "../../../utils/utils";
             <div
               className={`px-4 py-2 rounded-full ${params.row.chkInId ? 'bg-green-primary' : 'bg-blue-primary'} text-white font-bold`}
             >
-              {params.row.chkInId ? '送入' : '出貨'}
+              {params.row.chkInId ? t('checkinandcheckout.send_in') : t('checkinandcheckout.ship')}
             </div>
           ) : null;
         },
@@ -400,10 +400,10 @@ import { returnApiToken } from "../../../utils/utils";
                 </MenuItem>
                 <MenuItem value="out">
                   {" "}
-                  出貨
+                  {t('ship')}
                 </MenuItem>
                 <MenuItem value="in">
-                送入
+                {t('checkinandcheckout.send_in')}
                 </MenuItem>
               
               </Select>

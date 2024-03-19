@@ -584,7 +584,13 @@
     "company": "公司",
     "place": "地點",
     "search_placeholder": "輸入運單編號",
-    "any": "任何"
+    "any": "任何",
+    "send_in": "送入",
+    "ship": "出貨",
+    "send_request": "送出請求",
+    "shipping_info": "運輸資料",
+    "recyle_loc_info": "預計回收地點資料",    
+    "recyc_loc_info": "回收地點資料"
   }
 }
 

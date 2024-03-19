@@ -5,6 +5,7 @@ import { AXIOS_DEFAULT_CONFIGS } from "../../../constants/configs";
 import { GET_ALL_RECYCLE_TYPE } from "../../../constants/requests";
 import { useEffect, useState } from "react";
 import { returnApiToken } from "../../../utils/utils";
+import { useTranslation } from "react-i18next";
 
 const request = axios.create({
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
@@ -78,6 +79,7 @@ function packageBgColor(packaging: string){
 function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
 
   const [recycType, setRecycType] = useState([])
+  const {t} = useTranslation();
 
   useEffect(() => {
     if (data) {
@@ -122,7 +124,7 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
         anchor={"right"}
         action={"none"}
         headerProps={{
-          title: "送出請求",
+          title: t('checkinandcheckout.send_request'),
           subTitle: data?.picoId,
           onCloseHeader: () => setIsShow(false),
         }}
@@ -147,30 +149,30 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
                   stroke-linejoin="round"
                 />
               </svg>
-              <p className="text-grey-dark">調整庫存</p>
+              <p className="text-grey-dark">{t('checkinandcheckout.adjust_inventory')}</p>
             </div>
             <div className="flex flex-col gap-y-4">
-              <p className="text-grey-dark font-bold">運輸資料</p>
+              <p className="text-grey-dark font-bold">{t('checkinandcheckout.shipping_info')}</p>
               <div className="flex flex-col">
-                <p className="text-gray-middle text-smi m-0">寄件公司</p>
+                <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.shipping_company')}</p>
                 <p className="text-black font-bold">{data?.senderName}</p>
               </div>
 
               <div className="flex flex-col">
-                <p className="text-gray-middle text-smi m-0">收件公司</p>
+                <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.receiver')}</p>
                 <p className="text-black font-bold">{data?.receiverName}</p>
               </div>
 
               <div className="flex flex-col">
-                <p className="text-gray-middle text-smi m-0">物流公司</p>
+                <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.logistics_company')}</p>
                 <p className="text-black font-bold">{data?.logisticName}</p>
               </div>
 
-              <p className="text-grey-dark font-bold">回收地點資料</p>
+              <p className="text-grey-dark font-bold">{t('checkinandcheckout.recyle_loc_info')}</p>
 
               <div className="flex">
                 <div className="flex flex-col flex-1">
-                  <p className="text-gray-middle text-smi m-0">送出地點</p>
+                  <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.delivery_location')}</p>
                   <p className="text-black font-bold">{data?.senderAddr}</p>
                 </div>
                 <svg
@@ -188,13 +190,13 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
                   />
                 </svg>
                 <div className="flex flex-col flex-1 ml-6">
-                  <p className="text-gray-middle text-smi m-0">到達地點</p>
+                  <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.arrived')}</p>
                   <p className="text-black font-bold">{data?.receiverAddr}</p>
                 </div>
               </div>
 
               <div className="flex flex-col gap-4">
-                <p className="text-grey-dark text-smi -mb-1">回收地點資料</p>
+                <p className="text-grey-dark text-smi -mb-1">{t('checkinandcheckout.recyc_loc_info')}</p>
                 {data?.checkinDetail?.map((detail:any) => {
                   return (
                     <div className="flex px-4 py-2 border border-solid border-grey-line rounded-xl items-center justify-between">
