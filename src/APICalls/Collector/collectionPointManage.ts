@@ -1,20 +1,16 @@
-import axios from 'axios';
-import { localStorgeKeyName } from '../../constants/constant';
-import { CREATE_COLLECTIONPOINT, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT, GET_LOGISTICLIST } from '../../constants/requests';
-import { collectionPoint, createCP, updateCP } from '../../interfaces/collectionPoint';
+import { CREATE_COLLECTIONPOINT, GET_ALL_COLLECTIONPOINT, UPDATE_COLLECTIONPOINT } from '../../constants/requests';
+import { createCP, updateCP } from '../../interfaces/collectionPoint';
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import { returnApiToken } from '../../utils/utils';
-
-const request = axios.create({
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-})
+import axiosInstance from '../../constants/axiosInstance'
 
 const token = returnApiToken()
 
 export const getAllCollectionPoint = async () => {
 
     try {
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...GET_ALL_COLLECTIONPOINT(token.tenantId)
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
@@ -32,7 +28,8 @@ export const getAllCollectionPoint = async () => {
 export const getCollectionPoint = async (page: number, size: number) => {
   const auth = returnApiToken()
   try {
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_ALL_COLLECTIONPOINT(auth.tenantId),
       params:{
         page: page,
@@ -51,7 +48,8 @@ export const getCollectionPoint = async (page: number, size: number) => {
 export const createCollectionPoint = async (data: createCP) => {
 
     try{
-        const response = await request({
+        const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
             ...CREATE_COLLECTIONPOINT,
             data: data
             // headers: {
@@ -74,7 +72,8 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
   axiosConfig.url = UPDATE_COLLECTIONPOINT.url+`/${tenantId}/${collectionPointId}`;
 
   try{
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
           ...axiosConfig,
           data: data
           // headers: {
@@ -96,7 +95,8 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
 // export const getAllRecyc = async () => {
 
 //   try{
-//     const response = await request({
+//     const response = await axiosInstance({
+//        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
 //         ...GET_ALL_RECYC,
 //         
 //         // headers: {

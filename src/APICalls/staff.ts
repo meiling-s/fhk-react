@@ -1,5 +1,3 @@
-import axios from 'axios'
-import { localStorgeKeyName } from '../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
   GET_STAFF,
@@ -9,17 +7,15 @@ import {
   GET_TITLE_LIST
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
-
-const request = axios.create({
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-})
+import axiosInstance from '../constants/axiosInstance'
 
 //get all staff
 export const getStaffList = async (page: number, size: number) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_STAFF(token.tenantId),
       params: {
         page: page,
@@ -38,7 +34,8 @@ export const createStaff = async (data: any) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...CREATE_STAFF,
       data: data
     })
@@ -55,7 +52,8 @@ export const editStaff = async (data: any, staffId: string) => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...EDIT_STAFF(token.tenantId, staffId),
       data: data
     })
@@ -71,7 +69,8 @@ export const getLoginIdList = async () => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_LOGINID_LIST(token.tenantId),
       params: {
         page: 0,
@@ -91,7 +90,8 @@ export const getStaffTitle = async () => {
   try {
     const token = returnApiToken()
 
-    const response = await request({
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_TITLE_LIST(token.decodeKeycloack),
       params: {
         page: 0,

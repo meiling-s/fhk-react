@@ -1,6 +1,7 @@
 import { Button } from "@mui/joy";
 import { SetStateAction, useEffect, useState } from "react";
 import { Functions } from "../../../interfaces/userGroup";
+import i18next from "i18next";
 
 export default function FunctionList({
     key,
@@ -44,7 +45,9 @@ export default function FunctionList({
                 setSelected(!selected);
             }}
         >
-            {item.functionNameTChi}
+            {i18next.language === 'enus' && item.functionNameEng}
+            {i18next.language === 'zhch' && item.functionNameSChi}
+            {i18next.language === 'zhhk' && item.functionNameTChi}
         </Button>
     )
 }

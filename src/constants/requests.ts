@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
 
+
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
   method: 'post',
@@ -444,7 +445,6 @@ export const ADD_USER_ACCOUNT: AxiosRequestConfig = {
   method: 'post',
   url: 'api/v1/administrator/register'
 }
-
 export const GET_USER_GROUP = (tenantId: string) : AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/userGroup/t/${tenantId}`
@@ -504,6 +504,53 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/stafftitle/${table}`
 })
 
+
+//API roster
+export const GET_ROSTER_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/roster/${tenantId}`
+})
+
+export const CREATE_ROSTER: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/collectors/roster`
+}
+
+export const ADD_STAFF_ROSTER = (
+  tenantId: string,
+  rosterId: number,
+  staffId: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/roster/addStaff/${tenantId}/${rosterId}/${staffId}`
+})
+
+export const DELETE_STAFF_ROSTER = (
+  tenantId: string,
+  rosterId: number,
+  staffId: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/roster/deleteStaff/${tenantId}/${rosterId}/${staffId}`
+})
+
+export const UPDATE_ROSTER = (
+  tenantId: string,
+  rosterId: number
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/collectors/roster/${tenantId}/${rosterId}`
+})
+
+export const CANCEL_ROSTER = (
+  tenantId: string,
+  rosterId: number
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/roster/cancel/${tenantId}/${rosterId}`
+})
+
+
 //USER ACCOUNT API
 export const GET_USER_ACCOUNT_LIST = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
@@ -523,4 +570,29 @@ export const UPDATE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
 export const DELETE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/userAccount/status/${loginId}`
+})
+
+export const GET_CHECKIN_CHECKOUT_LIST = (table:string, picoId:string, page:number, size:number, ):AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkinout/searching/${table}`,
+  params: {
+    picoId: picoId ?? '',
+    page,
+    size
+  }
+})
+
+export const GET_CHECKIN_BY_ID = (table:string, chkInId:number):AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkin/${table}/${chkInId}`,
+})
+
+export const GET_CHECKOUT_BY_ID = (table:string, chkOutId:number):AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkout/${table}/${chkOutId}`,
+})
+
+export const GET_ALL_RECYCLE_TYPE = ():AxiosRequestConfig => ({
+  method: 'get',
+  url: 'api/v1/administrator/recycType'
 })

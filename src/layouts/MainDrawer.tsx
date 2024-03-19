@@ -153,7 +153,7 @@ function MainDrawer() {
       icon: <AccountBoxOutlinedIcon />,
       onClick: () => navigate('/warehouse/staff'),
       collapse: false
-    }
+    },
   }]
   // 20240129 add function list daniel keung end 
   // 20240129 add function list daniel keung start

@@ -34,7 +34,7 @@ import {
     formValidate
   } from '../../../interfaces/common'
 import CustomItemList, { il_item } from "../../../../src/components/FormComponents/CustomItemList";
-import axios from "axios";
+import axiosInstance from '../../../constants/axiosInstance'
 import { returnApiToken } from '../../../utils/utils'
 
 interface AddUserAccount {
@@ -238,7 +238,7 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
 
   async function fecthDataUserGroup() {
     try {
-      const response = await axios.get('http://10.166.22.250/api/v1/administrator/userGroup/t/861341');
+      const response = await axiosInstance.get('http://10.166.22.250/api/v1/administrator/userGroup/t/861341');
       const data = response.data;
       setOptions(data);
     } catch (error) {
@@ -248,7 +248,7 @@ const AddUserAccount: FunctionComponent<AddWarehouseProps> = ({
 
   async function fetchDataUserAccount() {
     try {
-      const response = await axios.get('http://10.166.22.250/api/v1/administrator/userAccount/windatest1');
+      const response = await axiosInstance.get('http://10.166.22.250/api/v1/administrator/userAccount/windatest1');
       // const userAccountData = response.data
       const userAccountData = response.data.map( (item: UserAccount) => ({
         ...item,

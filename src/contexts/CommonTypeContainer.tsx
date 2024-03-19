@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createContainer } from 'unstated-next';
 import { colPointType, collectorList, contract, logisticList, manuList, premiseType, recycType, siteType, vehicleType } from '../interfaces/common';
-import axios from 'axios';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import { GET_COLLECTIONPOINT_TYPE, GET_COLLECTORLIST, GET_CONTRACT, GET_LOGISTICLIST, GET_MANULIST, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_VEHICLE_TYPE } from '../constants/requests';
 import { returnApiToken } from '../utils/utils';
+import axiosInstance from '../constants/axiosInstance'
 
 const CommonType = () => { 
     const [colPointType,setColPointType] =useState<colPointType[]>()
@@ -16,20 +16,14 @@ const CommonType = () => {
     const [manuList,setManuList] = useState<manuList[]>()
     const [collectorList,setCollectorList] = useState<collectorList[]>()
     const [vehicleType,setVehicleType] = useState<vehicleType[]>()
-    const request = axios.create({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
-    })
-    
 
- 
-
-    
 const getColPointType = async () => {
     
         var colPointType = [];
         try {
             
-            var response = await request({
+            var response = await axiosInstance({
+                baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
                 ...GET_COLLECTIONPOINT_TYPE,
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
@@ -48,7 +42,8 @@ const getPremiseType = async () => {
         var premiseType = [];
         try {
     
-            var response = await request({
+            var response = await axiosInstance({
+                baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
                 ...GET_PREMISE_TYPE,
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
@@ -66,7 +61,8 @@ const getSiteType = async () => {
         var siteType = []
         try {
     
-            var response = await request({
+            var response = await axiosInstance({
+                baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
                 ...GET_SITE_TYPE,
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
@@ -87,7 +83,8 @@ const getSiteType = async () => {
         var RecycType = []
         try {
     
-            var response = await request({
+            var response = await axiosInstance({
+                baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
                 ...GET_RECYC_TYPE,
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });
@@ -105,7 +102,7 @@ const getSiteType = async () => {
 
         try {
       
-            var response = await request({
+            var response = await axiosInstance({
                 ...GET_LOGISTICLIST(token.decodeKeycloack),
                 baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
@@ -124,7 +121,7 @@ const getSiteType = async () => {
         const token = returnApiToken()
         try {
 
-            var response = await request({
+            var response = await axiosInstance({
                 ...GET_MANULIST(token.decodeKeycloack),
                 baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
@@ -142,7 +139,7 @@ const getSiteType = async () => {
         const token = returnApiToken()
         try {
 
-            var response = await request({
+            var response = await axiosInstance({
                 ...GET_COLLECTORLIST(token.decodeKeycloack),
                 baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
@@ -161,7 +158,7 @@ const getSiteType = async () => {
         const token = returnApiToken()
         try {
       
-            var response = await request({
+            var response = await axiosInstance({
                 ...GET_CONTRACT(token.tenantId),
                 baseURL:AXIOS_DEFAULT_CONFIGS.baseURL.collector
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
@@ -179,7 +176,8 @@ const getSiteType = async () => {
 
         try {
       
-            var response = await request({
+            var response = await axiosInstance({
+                baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
                 ...GET_VEHICLE_TYPE,
                 // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
             });

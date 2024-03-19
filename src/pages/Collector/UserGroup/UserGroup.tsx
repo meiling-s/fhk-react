@@ -30,6 +30,7 @@ function createUserGroup(
   groupId: number,
   tenantId: string,
   roleName: string,
+  description: string,
   status: string,
   createdBy: string,
   createdAt: string,
@@ -38,47 +39,45 @@ function createUserGroup(
   userAccount: object[],
   functions: Functions[],
 ): UserGroupItem {
-  return { groupId, tenantId, roleName, status, createdBy, createdAt, updatedBy, updatedAt, userAccount, functions  }
+  return { groupId, tenantId, roleName, description, status, createdBy, createdAt, updatedBy, updatedAt, userAccount, functions  }
 }
 
 
 const UserGroup: FunctionComponent = () => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [vehicleList, setVehicleList] = useState<UserGroupItem[]>([])
+  const [userGroupList, setUserGroupList] = useState<UserGroupItem[]>([])
   const [selectedRow, setSelectedRow] = useState<UserGroupItem | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const [plateList, setPlateList] = useState<string[]>([])
   const [functionList, setFunctionList] = useState<Functions[]>([])
 
   useEffect(() => {
     initFunctionList()
-    initVehicleList()
+    initUserGroupList()
   }, [])
 
   const initFunctionList = async () => {
     const result = await getAllFunction()
     const data = result?.data
-    console.log("initFunctionList", data)
     setFunctionList(data);
   }
 
-  const initVehicleList = async () => {
+  const initUserGroupList = async () => {
     const result = await getAllUserGroup(page - 1, pageSize)
     const data = result?.data
-    console.log("initUserGroupList", data)
     if(data) {
-      var vehicleMapping: UserGroupItem[] = []
+      var userGroupMapping: UserGroupItem[] = []
       data.map((item: any) => {
-        vehicleMapping.push(
+        userGroupMapping.push(
           createUserGroup(
             item?.groupId,
             item?.tenantId,
             item?.roleName,
+            item?.description,
             item?.status,
             item?.createdBy,
             item?.createdAt,
@@ -88,11 +87,8 @@ const UserGroup: FunctionComponent = () => {
             item?.functions
           )
         )
-
-        //mappping plate list
-        plateList.push(item?.plateNo)
       })
-      setVehicleList(vehicleMapping)
+      setUserGroupList(userGroupMapping)
       setTotalData(data.totalPages)
     }
   }
@@ -100,7 +96,7 @@ const UserGroup: FunctionComponent = () => {
   const columns: GridColDef[] = [
     {
       field: 'roleName',
-      headerName: '群組名稱',
+      headerName: t('userGroup.groupName'),
       width: 200,
       type: 'string',
       // renderCell: (params) => {
@@ -110,15 +106,15 @@ const UserGroup: FunctionComponent = () => {
       // }
     },
     {
-      field: 'status',
-      headerName: '簡介',
+      field: 'description',
+      headerName: t('userGroup.description'),
       width: 200,
       type: 'string'
     },
     {
       field: 'functions',
-      headerName: '可用功能',
-      width: 200,
+      headerName: t('userGroup.availableFeatures'),
+      width: 600,
       type: 'string',
       renderCell: (params) => {
         return (
@@ -204,7 +200,7 @@ const UserGroup: FunctionComponent = () => {
   }
 
   const onSubmitData = (type: string, msg: string) =>{
-    initVehicleList()
+    initUserGroupList()
     if(type == 'success') {
       showSuccessToast(msg)
     } else {
@@ -239,7 +235,7 @@ const UserGroup: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            帳號
+            {t('staffManagement.userGroup')}
           </Typography>
           <Button
             sx={[
@@ -258,7 +254,7 @@ const UserGroup: FunctionComponent = () => {
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
-              rows={vehicleList}
+              rows={userGroupList}
               getRowId={(row) => row.groupId}
               hideFooter
               columns={columns}
@@ -294,13 +290,15 @@ const UserGroup: FunctionComponent = () => {
         {rowId != 0 && (
           <CreateUserGroup
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             action={action}
             rowId={rowId}
             selectedItem={selectedRow}
             functionList={functionList}
             onSubmitData={onSubmitData}
-            plateListExist={plateList}
           />
         )}
       </Box>

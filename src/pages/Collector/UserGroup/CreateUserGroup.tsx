@@ -44,7 +44,6 @@ interface Props {
   onSubmitData: (type: string, msg: string) => void
   rowId?: number,
   selectedItem?: UserGroup | null
-  plateListExist: string[]
   functionList: Functions[]
 }
 
@@ -55,7 +54,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   onSubmitData,
   rowId,
   selectedItem,
-  plateListExist,
   functionList
 }) => {
   const { t } = useTranslation()
@@ -74,18 +72,13 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     id: 'basic',
     name: t('vehicle.basic')
   },)
-  const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
-  const [selectedVehicle, setSelectedVehicle] = useState<il_item>({id: '1', name: "Van"})
-  const [licensePlate, setLicensePlate] = useState('')
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const {vehicleType } = useContainer(CommonTypeContainer);
-  const [listedPlate, setListedPlate] = useState<string[]>([])
   const [roleName, setRoleName] = useState('')
   const [realm, setRealm] = useState('')
+  const [description, setDescription] = useState('')
   const [functions, setFunctions] = useState<number[]>([])
-
 
   const mappingData = () => {
     if(selectedItem != null) {
@@ -94,18 +87,9 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       selectedItem.functions.forEach(item => {
         setFunctions(prev => ([...prev, item.functionId]))
       })
+      setDescription(selectedItem.description)
     }
   }
-
-  const getListedPlate = () => {
-    let plate: string[] = []
-    if(selectedItem != null && plateListExist != undefined) {
-      // plate = plateListExist.filter(item => item != selectedItem.plateNo)
-    } else {
-      setListedPlate(plateListExist)
-    }
-    setListedPlate(plate)
-  } 
 
   useEffect(() => {
     setValidation([])
@@ -121,22 +105,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     setRealm('')
     setRoleName('')
     setFunctions([])
+    setDescription('')
     setValidation([])
-  }
-  
-
-  const onImageChange = (
-    imageList: ImageListType,
-    addUpdateIndex: number[] | undefined
-  ) => {
-    setPictures(imageList)
-  }
-
-  const removeImage = (index: number) => {
-    // Remove the image at the specified index
-    const newPictures = [...pictures]
-    newPictures.splice(index, 1)
-    setPictures(newPictures)
   }
   
 
@@ -164,12 +134,18 @@ const CreateUserGroup: FunctionComponent<Props> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      description?.toString() == '' &&
+        tempV.push({
+          field: 'description',
+          problem: formErr.empty,
+          type: 'error'
+        })
       console.log("tempV", tempV)
       setValidation(tempV)
     }
 
     validate()
-  }, [realm, roleName])
+  }, [realm, roleName, description])
 
   const handleSubmit = () => {
     const token = returnApiToken()
@@ -179,6 +155,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         realm: realm,
         tenantId: token.tenantId,
         roleName: roleName,
+        description: description,
         functions: functions,
         createdBy:  token.loginId,
         status: "ACTIVE",
@@ -187,6 +164,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     } else {
       const formData: EditUserGroupProps = {
         functions: functions,
+        roleName: roleName,
+        description: description,
         updatedBy:  token.loginId,
         status: "ACTIVE",
       }
@@ -253,7 +232,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         action={action}
         headerProps={{
           title: t('top_menu.add_new'),
-          subTitle: t('vehicle.vehicleType'),
+          subTitle: t('userGroup.title'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
@@ -277,27 +256,37 @@ const CreateUserGroup: FunctionComponent<Props> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            <CustomField label="群組名稱">
+            <CustomField label={t('userGroup.groupName')}>
               <CustomTextField
                 id="roleName"
                 value={roleName}
                 disabled={action === 'delete'}
-                placeholder={'請輸入名稱'}
+                placeholder={t('userGroup.pleaseEnterName')}
                 onChange={(event) => setRoleName(event.target.value)}
                 error={checkString(roleName)}
               />
             </CustomField>
-            <CustomField label="簡介">
+            <CustomField label={t('userGroup.introduction')}>
               <CustomTextField
                 id="realm"
                 value={realm}
-                disabled={action === 'delete'}
-                placeholder={'請輸入文字'}
+                disabled={action === 'delete' || action === 'edit'}
+                placeholder={t('userGroup.pleaseEnterText')}
                 onChange={(event) => setRealm(event.target.value)}
                 error={checkString(realm)}
               />
             </CustomField>
-            <CustomField label="簡介">
+            <CustomField label={t('userGroup.description')}>
+              <CustomTextField
+                id="description"
+                value={description}
+                disabled={action === 'delete'}
+                placeholder={t('userGroup.pleaseEnterText')}
+                onChange={(event) => setDescription(event.target.value)}
+                error={checkString(description)}
+              />
+            </CustomField>
+            <CustomField label={t('userGroup.availableFeatures')}>
               {functionList.map((item: Functions, key) => (
                 <FunctionList
                   key={key}

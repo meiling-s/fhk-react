@@ -231,13 +231,13 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     }
 
     if (action == 'add') {
-      handleCreateVehicle(staffData)
+      handleCreateStaff(staffData)
     } else {
-      handleEditVehicle()
+      handleEditStaff()
     }
   }
 
-  const handleCreateVehicle = async (staffData: CreateStaff) => {
+  const handleCreateStaff = async (staffData: CreateStaff) => {
     if (validation.length === 0) {
       const result = await createStaff(staffData)
       console.log('result', result?.data)
@@ -255,7 +255,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     }
   }
 
-  const handleEditVehicle = async () => {
+  const handleEditStaff = async () => {
     const editData: EditStaff = {
       staffNameTchi: formData.staffNameTchi,
       staffNameSchi: formData.staffNameSchi,
@@ -269,7 +269,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       salutation: 'salutation',
       updatedBy: loginName
     }
-    console.log("handleEditVehicle",validation.length )
+    console.log("handleEditStaff",validation.length )
     if (validation.length == 0) {
       if (selectedItem != null) {
         const result = await editStaff(editData, selectedItem.staffId)

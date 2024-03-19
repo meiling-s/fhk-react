@@ -118,7 +118,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const getUserGroupList = async () => {
     const result = await getUserGroup()
     const groupList: DropdownOption[]= []
-    if(result) {
+    if(result?.data) {
         result.map((item: any) =>{
             
             groupList.push({
