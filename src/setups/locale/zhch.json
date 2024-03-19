@@ -549,8 +549,26 @@
     "enterEmail": "请输入电子邮件地址"
   },
   "roster": {
-    "addSchedule": "Add Schedule",
-    "schedule": "Schedule"
+    "addSchedule": "添加日程",
+    "schedule": "日程",
+    "addOrChange": "添加/更改",
+    "date": "日期",
+    "otherDates": "其他日期",
+    "timeBy": "按时间",
+    "to": "至",
+    "recyclingPoint": "回收点",
+    "workWeek": "工作周",
+    "once": "一次",
+    "everyday": "每天",
+    "weekly": "每周",
+    "staff": "员工",
+    "pleaseSelectAnEmployee": "请选择一个员工",
+    "successCreatedRoster": "成功创建排班",
+    "errorCreatedRoster": "创建排班时出错",
+    "successEditRoster": "成功编辑排班",
+    "errorEditRoster": "编辑排班时出错",
+    "successDeletedRoster": "成功删除排班",
+    "errorDeletedRoster": "删除排班时出错"
   },
   "userAccount": {
     "new": "新增",

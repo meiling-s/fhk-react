@@ -548,7 +548,25 @@
   },
   "roster": {
     "addSchedule": "新增日程",
-    "schedule": "行程"
+    "schedule": "行程",
+    "addOrChange": "新增/更改",
+    "date": "日期",
+    "otherDates": "其他日期",
+    "timeBy": "按時間",
+    "to": "至",
+    "recyclingPoint": "回收點",
+    "workWeek": "工作週",
+    "once": "一次",
+    "everyday": "每天",
+    "weekly": "每週",
+    "staff": "員工",
+    "pleaseSelectAnEmployee": "請選擇一位員工",
+    "successCreatedRoster": "成功建立排班",
+    "errorCreatedRoster": "建立排班時出錯",
+    "successEditRoster": "成功編輯排班",
+    "errorEditRoster": "編輯排班時出錯",
+    "successDeletedRoster": "成功刪除排班",
+    "errorDeletedRoster": "刪除排班時出錯"
   },
   "userAccount": {
     "new": "新增",
