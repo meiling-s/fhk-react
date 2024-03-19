@@ -23,6 +23,11 @@ module.exports = {
         "bg-light": "#fbfbfb",
         "bg-primary": "#f4f5f7",
         "grey-field1": "#f4f4f4",
+        "blue-primary": "#6BC7FF",
+        'blue-light': '#E1F4FF',
+        'blue-middle': '#36ABF3',
+        'gold-light': '#F6F1DC',
+        'gold-primary': '#ABAD30'
       },
       spacing: {},
       fontFamily: {

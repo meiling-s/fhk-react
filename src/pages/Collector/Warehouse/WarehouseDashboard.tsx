@@ -228,13 +228,17 @@ const WarehouseDashboard: FunctionComponent = () => {
     if(selectedWarehouse) {
       const weightSubtype = await getWeightSubtypeWarehouse()
       const result = await getWarehouseById(parseInt(selectedWarehouse.id))
+      console.log("weightSubtype",weightSubtype)
 
       if(result) {
         const data = result.data
         let subtypeWarehouse: warehouseSubtype[] = []   
+        var subTypeWeight = 0
         data?.warehouseRecyc.forEach((item: any)=>{
           const recyItem = mappingRecyName(item.recycTypeId , item.recycSubTypeId)
-          var subTypeWeight = item.recycSubTypeId in weightSubtype ? weightSubtype[item.recycSubTypeId] : 0;
+          if(subTypeWeight) {
+            subTypeWeight = item.recycSubTypeId in weightSubtype ? weightSubtype[item.recycSubTypeId] : 0;
+          }
           
           subtypeWarehouse.push({
             subTypeId: item.recycSubTypeId,

@@ -590,5 +590,29 @@
     "failedEditUser": "Failed edit user",
     "successDeleteUser": "Success delete user",
     "failedDeleteUser": "Failed delete user"
-  }  
+  },
+  "checkinandcheckout": {
+    "checkinandcheckout": "Check-in and Check-out",
+    "title": "Entry and exit records",
+    "creation_date": "Creaton Date",
+    "outin": "Out/In",
+    "shipping_company": "Sender Name",
+    "receiver": "Receiver",
+    "waybill_number": "Waybill Number",
+    "adjust_inventory": "Adjust Inventory",
+    "logistics_company": "Logistic Name",
+    "delivery_location": "Sender Address",
+    "arrived": "Receiver Address",
+    "search": "Search",
+    "company": "Company",
+    "place": "Delivery Location",
+    "search_placeholder": "Enter the waybill number",
+    "any": "Any",
+    "send_in": "Send In",
+    "ship": "Ship",
+    "send_request": "Send Request",
+    "shipping_info": "Shipping information",
+    "recyle_loc_info": "Estimated recycling location information",    
+    "recyc_loc_info": "Recycling location information"
+  }
 }
