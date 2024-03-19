@@ -526,6 +526,15 @@ export const ADD_STAFF_ROSTER = (
   url: `api/v1/collectors/roster/addStaff/${tenantId}/${rosterId}/${staffId}`
 })
 
+export const DELETE_STAFF_ROSTER = (
+  tenantId: string,
+  rosterId: number,
+  staffId: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/roster/deleteStaff/${tenantId}/${rosterId}/${staffId}`
+})
+
 export const UPDATE_ROSTER = (
   tenantId: string,
   rosterId: number

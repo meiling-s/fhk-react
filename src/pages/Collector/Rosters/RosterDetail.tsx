@@ -34,6 +34,7 @@ import { getCollectionPoint } from '../../../APICalls/collectionPointManage'
 import {
   createRoster,
   addRosterStaff,
+  deleteRosterStaff,
   updateRoster,
   cancelRoster
 } from '../../../APICalls/roster'
@@ -161,6 +162,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     setEndDate(dayjs())
     setSelectedStaff(initStaff)
     setValidation([])
+    setTrySubmited(false)
   }
 
   useEffect(() => {
@@ -192,7 +194,31 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     }
   }
 
-  const addStaff = async (rosterId: number) => {
+  const deleteStaff = async (rosterId: number) => {
+    let allResponseSuccess = true
+    if(selectedRoster!.staff.length > 0){
+    
+    for (const key in selectedRoster!.staff) {
+      const staffId = selectedRoster!.staff[key].staffId
+      const response = await deleteRosterStaff(rosterId, staffId)
+      if (!response) {
+        allResponseSuccess = false
+        break
+      }
+    }
+  }
+
+    if (allResponseSuccess) {
+      addStaff(rosterId, 'edit')
+    } else {
+      showErrorToast(t('roster.errorCreatedRoster'))
+      onSubmitData('error', 'Some data creation failed') 
+    }
+  }
+
+
+
+  const addStaff = async (rosterId: number, type: string) => {
     let allResponseSuccess = true
 
     for (const key in selectedStaff) {
@@ -206,12 +232,12 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
 
     if (allResponseSuccess) {
       onSubmitData('success', 'Success created data')
-      showSuccessToast(t('roster.successCreatedRoster'))
       resetFormData()
       handleDrawerClose()
+      type == 'create' ? showSuccessToast(t('roster.successCreatedRoster')) : showSuccessToast(t('roster.successEditRoster'));
     } else {
       showErrorToast(t('roster.errorCreatedRoster'))
-      onSubmitData('error', 'Some data creation failed') // Inform user about failure
+      onSubmitData('error', 'Some data creation failed') 
     }
   }
 
@@ -231,7 +257,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
 
       if (result) {
         const rosterId = result.data.rosterId
-        addStaff(rosterId)
+        addStaff(rosterId, 'create')
       } else {
         setTrySubmited(true)
         showErrorToast(t('roster.errorCreatedRoster'))
@@ -257,10 +283,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
         const result = await updateRoster(updateForm, selectedRoster.rosterId)
         if (result) {
           const rosterId = result.data.rosterId
-          onSubmitData('success', 'Success edit data')
-          showSuccessToast(t('roster.successEditRoster'))
-          resetFormData()
-          handleDrawerClose()
+          deleteStaff(rosterId)
         } else {
           onSubmitData('error', 'Failed edit data')
           showErrorToast(t('roster.errorEditRoster'))

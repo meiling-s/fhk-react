@@ -5,16 +5,12 @@ import {
   GET_ROSTER_LIST,
   CREATE_ROSTER,
   ADD_STAFF_ROSTER,
+  DELETE_STAFF_ROSTER,
   UPDATE_ROSTER,
   CANCEL_ROSTER
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
-
-
-// const request = axios.create({
-//   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-// })
 
 //get all roster by tenant
 export const getRosterList = async () => {
@@ -65,6 +61,22 @@ export const addRosterStaff = async (rosterId: any, staffId: string) => {
     return response
   } catch (e) {
     console.error('add roster staff failed:', e)
+    return null
+  }
+}
+
+export const deleteRosterStaff = async (rosterId: any, staffId: string) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      ...DELETE_STAFF_ROSTER(token.tenantId, rosterId, staffId)
+    })
+
+    return response
+  } catch (e) {
+    console.error('delete roster staff failed:', e)
     return null
   }
 }
