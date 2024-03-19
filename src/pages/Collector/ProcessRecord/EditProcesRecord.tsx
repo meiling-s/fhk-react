@@ -235,7 +235,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const handleCreateRecyc = async (data: CreateRecyclable) => {
-    const createItemsProcessOut:CreateRecyclable = constractForm(data)
+    const createItemsProcessOut:CreateRecyclable[] = [constractForm(data)]
     const result = await createProcessRecordItem(createItemsProcessOut, selectedRow!!.processOutId)
   
     if (result) {

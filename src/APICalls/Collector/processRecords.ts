@@ -50,14 +50,14 @@ export const getProcessRecordDetail = async (processOutId: number) => {
 
 export const createProcessRecordItem = async (
   data: any,
-  processOutDtlId: number
+  processOutId: number
 ) => {
   try {
     const token = returnApiToken()
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_PROCESS_OUT_ITEM(token.decodeKeycloack, processOutDtlId),
+      ...CREATE_PROCESS_OUT_ITEM(token.decodeKeycloack, processOutId),
       data: data
     })
 
