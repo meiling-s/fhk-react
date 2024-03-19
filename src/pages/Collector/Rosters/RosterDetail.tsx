@@ -498,8 +498,8 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                   )}
                 </Box>
               ))}
-            </Grid>
-            {trySubmited &&
+              <Grid item>
+              {trySubmited &&
               validation.map((val, index) => (
                 <FormErrorMsg
                   key={index}
@@ -508,6 +508,8 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                   type={val.type}
                 />
               ))}
+              </Grid>
+            </Grid>
           </Grid>
         </Box>
       </RightOverlayForm>
