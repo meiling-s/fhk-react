@@ -145,7 +145,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     }
 
     validate()
-  }, [realm, roleName])
+  }, [realm, roleName, description])
 
   const handleSubmit = () => {
     const token = returnApiToken()
