@@ -323,15 +323,15 @@ const StaffManagement: FunctionComponent = () => {
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('staffManagement.staff')}
           </Typography>
-        </Box> */}
-        {/* <Box>
+        </Box>
+        <Box>
           <Tabs
             tabs={tabStaff}
             navigate={handleTabChange}
             selectedProp={selectedTab}
             className="lg:px-10 sm:px-4 bg-bg-primary"
           />
-        </Box>
+        </Box> */}
         {selectedTab === 0 && (
           <>
             <Box
