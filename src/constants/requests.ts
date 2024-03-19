@@ -445,7 +445,6 @@ export const ADD_USER_ACCOUNT: AxiosRequestConfig = {
   method: 'post',
   url: 'api/v1/administrator/register'
 }
-
 export const GET_USER_GROUP = (tenantId: string) : AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/userGroup/t/${tenantId}`

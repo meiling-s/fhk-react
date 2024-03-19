@@ -478,6 +478,7 @@
     "cancelled": "已取消",
     "overdue": "逾期",
     "processingRecords": "处理记录",
+    "userGroup": "帳號",
     "search": "搜索",
     "enterProcessingNumber": "输入处理编号",
     "processingName": "处理名称",
@@ -529,6 +530,7 @@
   "staffManagement": {
     "staff": "员工",
     "list": "列表",
+    "userGroup": "用戶群組",
     "schedule": "日程",
     "addNewEmployees": "新增员工",
     "employeeId": "员工编号",
@@ -573,6 +575,15 @@
     "failedEditUser": "编辑用户失败",
     "successDeleteUser": "成功删除用户",
     "failedDeleteUser": "删除用户失败"
+  },
+  "userGroup": {
+    "title": "用戶群組",
+    "groupName": "群組名稱",
+    "introduction": "簡介",
+    "description": "描述",
+    "availableFeatures": "可用功能",
+    "pleaseEnterName": "請輸入名稱",
+    "pleaseEnterText": "請輸入文字"
   }
 }
 

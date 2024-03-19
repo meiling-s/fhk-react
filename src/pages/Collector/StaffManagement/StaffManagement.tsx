@@ -34,6 +34,7 @@ import { getStaffList } from '../../../APICalls/staff'
 
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../../utils/utils'
+import UserGroup from '../UserGroup/UserGroup'
 
 function createStaff(
   staffId: string,
@@ -78,6 +79,8 @@ const StaffManagement: FunctionComponent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   // const [selectedTab, setSelectedTab] = useState(0)
   // const tabStaff = [t('staffManagement.list'), t('staffManagement.schedule')]
+  const [selectedTab, setSelectedTab] = useState(0)
+  const tabStaff = [t('staffManagement.list'), t('staffManagement.userGroup')]
   const [staffList, setStaffList] = useState<Staff[]>([])
   const [filteredStaff, setFillteredStaff] = useState<Staff[]>([])
   const [selectedRow, setSelectedRow] = useState<Staff | null>(null)
@@ -251,6 +254,9 @@ const StaffManagement: FunctionComponent = () => {
   }
 
   // const handleTabChange = () => {}
+  const handleTabChange = (tab: number) => {
+    setSelectedTab(tab)
+  }
 
   const showSuccessToast = (msg: string) => {
     toast.info(msg, {
@@ -317,8 +323,8 @@ const StaffManagement: FunctionComponent = () => {
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('staffManagement.staff')}
           </Typography>
-        </Box> */}
-        {/* <Box>
+        </Box>
+        <Box>
           <Tabs
             tabs={tabStaff}
             navigate={handleTabChange}
@@ -326,108 +332,112 @@ const StaffManagement: FunctionComponent = () => {
             className="lg:px-10 sm:px-4 bg-bg-primary"
           />
         </Box> */}
-        <Box
-          sx={{
-            marginY: 4
-          }}
-        >
-          <Button
-            sx={[
-              styles.buttonOutlinedGreen,
-              {
-                width: 'max-content',
-                height: '40px'
-              }
-            ]}
-            variant="outlined"
-            onClick={() => {
-              setDrawerOpen(true)
-              setAction('add')
-            }}
-          >
-            <ADD_ICON /> {t('staffManagement.addNewEmployees')}
-          </Button>
-        </Box>
-        <Box sx={{ display: 'flex', gap: '8px', maxWidth: '1460px' }}>
-          <TextField
-            id="staffId"
-            onChange={(event) => onChangeSearch(event.target.value)}
-            sx={[localstyles.inputState, {width: '450px'}]}
-            label={t('staffManagement.employeeId')}
-            placeholder={t('staffManagement.enterEmployeeNumber')}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: '#79CA25' }} />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
-          <TextField
-            id="staffName"
-            onChange={(event) => onChangeSearch(event.target.value)}
-            sx={[localstyles.inputState,{ width : '450px'}]}
-            label={t('staffManagement.employeeName')}
-            placeholder={t('staffManagement.enterEmployeeName')}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: '#79CA25' }} />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
-        </Box>
-        <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
-            <DataGrid
-              rows={filteredStaff}
-              getRowId={(row) => row.staffId}
-              hideFooter
-              columns={columns}
-              checkboxSelection
-              sortModel={sortModel}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
+        {selectedTab === 0 && (
+          <>
+            <Box
               sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+                marginY: 4
+              }}
+            >
+              <Button
+                sx={[
+                  styles.buttonOutlinedGreen,
+                  {
+                    width: 'max-content',
+                    height: '40px'
                   }
-                }
-              }}
+                ]}
+                variant="outlined"
+                onClick={() => {
+                  setDrawerOpen(true)
+                  setAction('add')
+                }}
+              >
+                <ADD_ICON /> {t('staffManagement.addNewEmployees')}
+              </Button>
+            </Box>
+            <Box sx={{ display: 'flex', gap: '8px', maxWidth: '1460px' }}>
+              <TextField
+                id="staffId"
+                onChange={(event) => onChangeSearch(event.target.value)}
+                sx={[localstyles.inputState, {width: '450px'}]}
+                label={t('staffManagement.employeeId')}
+                placeholder={t('staffManagement.enterEmployeeNumber')}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => {}}>
+                        <SEARCH_ICON style={{ color: '#79CA25' }} />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+              <TextField
+                id="staffName"
+                onChange={(event) => onChangeSearch(event.target.value)}
+                sx={[localstyles.inputState,{ width : '450px'}]}
+                label={t('staffManagement.employeeName')}
+                placeholder={t('staffManagement.enterEmployeeName')}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => {}}>
+                        <SEARCH_ICON style={{ color: '#79CA25' }} />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </Box>
+            <div className="table-vehicle">
+              <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
+                <DataGrid
+                  rows={filteredStaff}
+                  getRowId={(row) => row.staffId}
+                  hideFooter
+                  columns={columns}
+                  checkboxSelection
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            </div>
+            {/* {selectedRow != null && ( */}
+            <StaffDetail
+              drawerOpen={drawerOpen}
+              handleDrawerClose={() => setDrawerOpen(false)}
+              action={action}
+              selectedItem={selectedRow}
+              onSubmitData={onSubmitData}
             />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
-          </Box>
-        </div>
-        {/* {selectedRow != null && ( */}
-        <StaffDetail
-          drawerOpen={drawerOpen}
-          handleDrawerClose={() => setDrawerOpen(false)}
-          action={action}
-          selectedItem={selectedRow}
-          onSubmitData={onSubmitData}
-        />
-        {/* )} */}
+            {/* )} */}
+          </>
+        )}
+        {selectedTab === 1 && <UserGroup />}
       </Box>
     </>
   )

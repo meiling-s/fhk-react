@@ -476,6 +476,7 @@
     "cancelled": "已取消",
     "overdue": "逾期",
     "processingRecords": "處理記錄",
+    "userGroup": "帳號",
     "search": "搜索",
     "enterProcessingNumber": "輸入處理編號",
     "processingName": "處理名稱",
@@ -527,6 +528,7 @@
   "staffManagement": {
     "staff": "員工",
     "list": "列表",
+    "userGroup": "用戶群組",
     "schedule": "日程",
     "addNewEmployees": "新增員工",
     "employeeId": "員工編號",
@@ -595,6 +597,15 @@
     "shipping_info": "運輸資料",
     "recyle_loc_info": "預計回收地點資料",    
     "recyc_loc_info": "回收地點資料"
+  },
+  "userGroup": {
+    "title": "用戶群組",
+    "groupName": "群組名稱",
+    "introduction": "簡介",
+    "description": "描述",
+    "availableFeatures": "可用功能",
+    "pleaseEnterName": "請輸入名稱",
+    "pleaseEnterText": "請輸入文字"
   }
 }
 

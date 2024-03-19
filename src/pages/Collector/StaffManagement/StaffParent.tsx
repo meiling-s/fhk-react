@@ -5,6 +5,7 @@ import { Box, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import StaffManagement from './StaffManagement'
 import Rosters from '../Rosters/Rosters'
+import UserGroup from '../UserGroup/UserGroup'
 
 const Settings: FunctionComponent = () => {
   // const navigate = useNavigate()
@@ -18,7 +19,8 @@ const Settings: FunctionComponent = () => {
   const titlePage = t('settings_page.title')
   const tabSettings = [
     t('staffManagement.list'),
-     t('staffManagement.schedule')
+    t('staffManagement.schedule'),
+    t('staffManagement.userGroup'),
   ]
 
   return (
@@ -40,7 +42,9 @@ const Settings: FunctionComponent = () => {
           <StaffManagement />
         ) : selectedTab === 1 ? (
           <Rosters />
-        ): (
+        ) : selectedTab === 2 ? (
+          <UserGroup />
+        ) : (
             <div></div>
         )}
       </div>

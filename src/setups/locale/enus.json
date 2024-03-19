@@ -477,6 +477,7 @@
     "cancelled": "Cancelled",
     "overdue": "Overdue",
     "processingRecords": "Processing records",
+    "userGroup": "User group",
     "search": "Search",
     "enterProcessingNumber": "Enter processing number",
     "processingName": "Processing name",
@@ -528,6 +529,7 @@
   "staffManagement": {
     "staff": "Staff",
     "list": "List",
+    "userGroup": "User Group",
     "schedule": "Schedule",
     "addNewEmployees": "Add New Employees",
     "employeeId": "Employee ID",
@@ -596,5 +598,14 @@
     "shipping_info": "Shipping information",
     "recyle_loc_info": "Estimated recycling location information",    
     "recyc_loc_info": "Recycling location information"
+  },
+  "userGroup": {
+    "title": "User Group",
+    "groupName": "Group name",
+    "introduction": "Introduction",
+    "description": "Description",
+    "availableFeatures": "Available Features",
+    "pleaseEnterName": "Please enter name",
+    "pleaseEnterText": "Please enter text"
   }
 }
