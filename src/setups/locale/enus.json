@@ -505,7 +505,13 @@
       "logistic": "Logistic",
       "Manufacturer":"Manufacturer",
       "Customer":"Customer"
-    }
+    },
+    "createProcessOutSuccess": "Create process out success",
+    "createProcessOutFailed": "Create process out failed",
+    "editProcessOutSuccess": "Edit process out success",
+    "editProcessOutFailed": "Edit process out failed",
+    "deleteProcessOutSuccess": "Delete process out success",
+    "deleteProcessOutFailed": "Delete process out failed"
   },
   "warehouseDashboard" : {
     "warehouse": "Warehouse",
@@ -540,6 +546,58 @@
     "enterName": "Please enter name",
     "enterContactNo": "please enter contact no",
     "enterEmail": "please enter email address"
+  },
+  "roster": {
+    "addSchedule": "Add Schedule",
+    "schedule": "Schedule"
+  },
+  "userAccount": {
+    "new": "New",
+    "user": "User",
+    "addByNumber": "Add by Number",
+    "loginName": "Login Name",
+    "emailAddress": "Email Address",
+    "userGroup": "User Group",
+    "isItAReviewer": "Is it a Reviewer",
+    "status": "State",
+    "pleaseEnterNumber": "Please enter number",
+    "pleaseEnterName": "Please enter name",
+    "pleaseEnterEmailAddress": "Please enter email address",
+    "active": "Active",
+    "inactive": "Inactive",
+    "suspend": "Suspended",
+    "deleted": "Deleted",
+    "staffId": "Staff Id",
+    "successCreatedUser": "Success created user",
+    "failedCreatedUser": "Failed created user",
+    "successEditUser": "Success edit user",
+    "failedEditUser": "Failed edit user",
+    "successDeleteUser": "Success delete user",
+    "failedDeleteUser": "Failed delete user"
+  },
+  "checkinandcheckout": {
+    "checkinandcheckout": "Check-in and Check-out",
+    "title": "Entry and exit records",
+    "creation_date": "Creaton Date",
+    "outin": "Out/In",
+    "shipping_company": "Sender Name",
+    "receiver": "Receiver",
+    "waybill_number": "Waybill Number",
+    "adjust_inventory": "Adjust Inventory",
+    "logistics_company": "Logistic Name",
+    "delivery_location": "Sender Address",
+    "arrived": "Receiver Address",
+    "search": "Search",
+    "company": "Company",
+    "place": "Delivery Location",
+    "search_placeholder": "Enter the waybill number",
+    "any": "Any",
+    "send_in": "Send In",
+    "ship": "Ship",
+    "send_request": "Send Request",
+    "shipping_info": "Shipping information",
+    "recyle_loc_info": "Estimated recycling location information",    
+    "recyc_loc_info": "Recycling location information"
   },
   "userGroup": {
     "title": "User Group",

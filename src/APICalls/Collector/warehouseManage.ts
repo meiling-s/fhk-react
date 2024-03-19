@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../../constants/axiosInstance'
 import { GET_ALL_CHECKIN_REQUESTS, UPDATE_CHECK_IN_STATUS } from '../../constants/requests';
 import { updateStatus} from '../../interfaces/warehouse';
 import {localStorgeKeyName} from '../../constants/constant'
@@ -14,7 +14,7 @@ export const getAllCheckInRequests = async (page: number, size: number, query?: 
   try {
     const token = returnApiToken()
 
-    const response = await axios({
+    const response = await axiosInstance({
       ...GET_ALL_CHECKIN_REQUESTS(token.decodeKeycloack),
       baseURL: warehouseAPI.baseURL,
       params:{
@@ -49,7 +49,7 @@ export const updateCheckinStatus = async (
   const token = returnApiToken()
  
   try {
-    const response = await axios({
+    const response = await axiosInstance({
       ...UPDATE_CHECK_IN_STATUS(chkInId, token.decodeKeycloack),
       baseURL: warehouseAPI.baseURL,
       data: data,

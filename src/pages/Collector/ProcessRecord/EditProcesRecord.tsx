@@ -12,7 +12,7 @@ import {
   ProcessOut,
   processOutImage,
   ProcessOutItem,
-  CreateRecyclable
+  CreateRecyclable,
 } from '../../../interfaces/processRecords'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import dayjs from 'dayjs'
@@ -22,12 +22,17 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import i18n from '../../../setups/i18n'
 import { localStorgeKeyName } from '../../../constants/constant'
-import { createProcessRecordItem } from '../../../APICalls/Collector/processRecords'
-import { ImageToBase64 } from '../../../utils/utils'
+import { createProcessRecordItem, 
+  editProcessRecordItem, 
+  deleteProcessOutItem, 
+  getProcessRecordDetail, 
+deleteProcessOutRecord} from '../../../APICalls/Collector/processRecords'
+import { displayCreatedDate } from '../../../utils/utils'
+import { ToastContainer, toast } from 'react-toastify'
 
 type RecycItem = {
   itemId: number
-  processOutId: number
+  processOutDtlId: number
   recycType: il_item
   recycSubtype: il_item
   weight: number
@@ -52,6 +57,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     'none' | 'add' | 'edit' | 'delete' | undefined
   >('add')
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  const [reloadData, setReloadData] = useState(false);
+
 
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
@@ -59,7 +66,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     {
       label: t('processRecord.creationDate'),
       value: selectedRow?.createdAt
-        ? dayjs(new Date(selectedRow?.createdAt)).format(format.dateFormat1)
+        ? displayCreatedDate(selectedRow?.createdAt)
         : '-'
     },
     {
@@ -120,146 +127,170 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     }
   }
 
-  useEffect(() => {
-    if (selectedRow && selectedRow?.processoutDetail?.length > 0) {
-      const recycItems: RecycItem[] = []
+  const showErrorToast = (toastMsg: string) => {
+    toast.error(toastMsg, {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light'
+    })
+  }
 
-      selectedRow.processoutDetail.forEach((detail: ProcessOutItem) => {
-        const result = mappingRecyName(
-          detail.recycTypeId,
-          detail.recycSubTypeId
-        )
-        if (result) {
-          const { name, subName } = result
-          recycItems.push({
-            itemId: detail.itemId,
-            processOutId: detail.processOutDtlId,
-            recycType: {
-              name: name,
-              id: detail.recycTypeId
-            },
-            recycSubtype: {
-              name: subName,
-              id: detail.recycSubTypeId
-            },
-            weight: detail.weight,
-            images: detail.processoutDetailPhoto.map((item) => {
-              return `data:image/jpeg;base64,${item.photo}`
-            })
-          })
-        }
-      })
-      setRecycItem(recycItems)
+  const showSuccessToast = (toastMsg : string) => {
+    toast.info(toastMsg, {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light'
+    })
+  }
+
+  const getProcessDetail = async () => {
+    if(selectedRow ){
+      const result = await getProcessRecordDetail(selectedRow?.processOutId)
+      if(result) {
+        return result.data
+      } else {
+        return null
+      }
     }
-  }, [selectedRow, recycType])
+  }
 
-  const onSaveData = async () => {
-    const newItem = recycItem.filter((item) => item.processOutId == 0)
-
-    if (newItem.length > 0) {
-      const createItemsProcessOut: CreateRecyclable[] = newItem.map((item) => {
-        const imgItems: processOutImage[] = item.images.map((item, idx) => {
-          return {
-            sid: idx,
-            photo: item.split(',')[1] // change data again to base64
+  useEffect(() => {
+    const getDetail = async () => {
+       const processOut = await getProcessDetail();
+      if (selectedRow && processOut ) {
+      
+        const recycItems: RecycItem[] = []
+  
+        processOut.processoutDetail.forEach((detail: ProcessOutItem) => {
+          const result = mappingRecyName(
+            detail.recycTypeId,
+            detail.recycSubTypeId
+          )
+          if (result) {
+            const { name, subName } = result
+            recycItems.push({
+              itemId: detail.itemId,
+              processOutDtlId: detail.processOutDtlId,
+              recycType: {
+                name: name,
+                id: detail.recycTypeId
+              },
+              recycSubtype: {
+                name: subName,
+                id: detail.recycSubTypeId
+              },
+              weight: detail.weight,
+              images: detail.processoutDetailPhoto.map((item) => {
+                return `data:image/jpeg;base64,${item.photo}`
+              })
+            })
           }
         })
-
-        return {
-          itemId: item.itemId,
-          recycTypeId: item.recycType.id,
-          recycSubTypeId: item.recycSubtype.id,
-          packageTypeId: '',
-          weight: item.weight,
-          unitId: 'kg',
-          processoutDetailPhoto: imgItems,
-          createdBy: loginId,
-          updatedBy: loginId
-        }
-      })
-
-      console.log('createItemsProcessOut', createItemsProcessOut)
-
-      const result = await createProcessRecordItem(
-        createItemsProcessOut,
-        selectedRow!!.processOutId
-      )
-
-      if (result) {
-        handleDrawerClose()
+        setRecycItem(recycItems)
+        setReloadData(false);
       }
-    }
+    };
+    getDetail();
+
+   
+  }, [selectedRow, recycType, reloadData])
+
+  const onSaveData = async () => {
+   
   }
 
-  const handleCreateRecyc = (data: CreateRecyclable) => {
-    const imgList: string[] = data.processoutDetailPhoto.map(
-      (item: processOutImage) => {
-        return `data:image/jpeg;base64,${item.photo}`
+  const constractForm = (data: CreateRecyclable) => {
+    const imgItems: processOutImage[] =  data.processoutDetailPhoto.map((item, idx) => {
+      return {
+        sid: idx,
+        photo: item.photo
       }
-    )
+    })
 
-    const result = mappingRecyName(data.recycTypeId, data.recycSubTypeId)
+    const createItemsProcessOut: CreateRecyclable = {
+      itemId: data.itemId,
+      recycTypeId: data.recycTypeId,
+      recycSubTypeId: data.recycSubTypeId,
+      packageTypeId: '',
+      weight: data.weight,
+      unitId: 'kg',
+      status: data.status,
+      processoutDetailPhoto: imgItems,
+      createdBy: loginId,
+      updatedBy: loginId
+    }
 
-    const existingItemIndex = recycItem.findIndex(
-      (item) => item.itemId === data.itemId
-    )
+    return createItemsProcessOut
 
-    if (existingItemIndex !== -1) {
-      // If the item with the same ID exists, update it
-      setRecycItem((prevItems) => {
-        const updatedItems = [...prevItems]
-        updatedItems[existingItemIndex] = {
-          ...updatedItems[existingItemIndex],
-          recycType: {
-            name: result ? result.name : '',
-            id: result ? data.recycTypeId : ''
-          },
-          recycSubtype: {
-            name: result ? result.name : '',
-            id: result ? data.recycSubTypeId : ''
-          },
-          weight: data.weight,
-          images: imgList
-        }
-        return updatedItems
-      })
+  }
+
+  const handleCreateRecyc = async (data: CreateRecyclable) => {
+    const createItemsProcessOut:CreateRecyclable = constractForm(data)
+    const result = await createProcessRecordItem(createItemsProcessOut, selectedRow!!.processOutId)
+  
+    if (result) {
+      setReloadData(true);
+      showSuccessToast(t('processRecord.createProcessOutSuccess'))
     } else {
-      // If the item with the same ID doesn't exist, add it to the array
-      setRecycItem((prevItems: any) => [
-        ...prevItems,
-        {
-          itemId: data.itemId,
-          processOutId: 0,
-          recycType: {
-            name: result ? result.name : '',
-            id: result ? data.recycTypeId : ''
-          },
-          recycSubtype: {
-            name: result ? result.name : '',
-            id: result ? data.recycSubTypeId : ''
-          },
-          weight: data.weight,
-          images: imgList
-        }
-      ])
+      showErrorToast(t('processRecord.createProcessOutFailed'))
     }
     setSelectedItem(null)
   }
 
-  const handleDeleteItem = (itemId: number) => {
-    const updatedRecycItem = recycItem.filter((item) => item.itemId !== itemId)
-    setRecycItem(updatedRecycItem)
+  const handleEditRecyc = async (data: CreateRecyclable, processOutDtlId: number) =>{
+    const editItemsProcessOut:CreateRecyclable = constractForm(data)
+    const response = await editProcessRecordItem(editItemsProcessOut, processOutDtlId)
+  
+    if (response) {
+      setReloadData(true);
+      showSuccessToast(t('processRecord.editProcessOutSuccess'))
+    } else {
+      showErrorToast(t('processRecord.editProcessOutFailed'))
+    }
+  }
+
+  const handleDeleteRecyc = async (processOutDtlId: number) => {
+    const result = await deleteProcessOutItem('INACTIVE', processOutDtlId)
+    if(result) {
+      setReloadData(true);
+      showSuccessToast(t('processRecord.deleteProcessOutSuccess'))
+    } else {
+      showErrorToast(t('processRecord.deleteProcessOutFailed'))
+    } 
     setSelectedItem(null)
+  }
+
+  const handleDeleteProcessOut = async () => {
+    if(selectedRow){
+      const result = await deleteProcessOutRecord(selectedRow.processOutId)
+      if(result){
+        handleDrawerClose()
+        showSuccessToast("刪除進程成功")
+      } else {
+        showErrorToast("刪除進程失敗")
+      } 
+    }
   }
 
   return (
     <>
       <div className="detail-inventory">
+      <ToastContainer></ToastContainer>
         <RightOverlayForm
           open={drawerOpen}
           onClose={handleDrawerClose}
           anchor={'right'}
-          action={'edit'}
+          action={'none'}
           headerProps={{
             title: t('processRecord.processingRecords'),
             subTitle: selectedRow?.processOutId.toString(),
@@ -267,7 +298,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
             onDelete: handleDrawerClose,
             onCloseHeader: handleDrawerClose,
             submitText: t('col.save'),
-            cancelText: t('col.cancel'),
+            cancelText: t('add_warehouse_page.delete'),
             statusLabel: selectedRow?.status
           }}
         >
@@ -338,7 +369,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                           <div className="weight font-bold font-base">
                             {item.weight}kg
                           </div>
-                          {item.processOutId == 0 && (
+                          {/* {item.processOutId == 0 && ( */}
                             <Box>
                               <DriveFileRenameOutlineOutlinedIcon
                                 onClick={() => {
@@ -359,7 +390,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                                 className="text-gray cursor-pointer"
                               ></DELETE_OUTLINED_ICON>
                             </Box>
-                          )}
+                          {/* )} */}
                         </div>
                       </div>
                       {item.images.length != 0 && (
@@ -407,7 +438,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
             drawerOpen={drawerRecyclable}
             handleDrawerClose={() => setDrawerRecyclable(false)}
             onCreateRecycle={handleCreateRecyc}
-            onDeleteItem={handleDeleteItem}
+            onDeleteItem={handleDeleteRecyc}
+            onEditRecycle={handleEditRecyc}
             editedData={selectedItem}
             processOut={selectedRow}
             action={action}

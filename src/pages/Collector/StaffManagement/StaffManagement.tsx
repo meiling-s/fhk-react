@@ -14,7 +14,8 @@ import {
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridRenderCellParams
+  GridRenderCellParams,
+  GridSortDirection, GridSortItem 
 } from '@mui/x-data-grid'
 import {
   ADD_ICON,
@@ -76,6 +77,8 @@ function createStaff(
 const StaffManagement: FunctionComponent = () => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  // const [selectedTab, setSelectedTab] = useState(0)
+  // const tabStaff = [t('staffManagement.list'), t('staffManagement.schedule')]
   const [selectedTab, setSelectedTab] = useState(0)
   const tabStaff = [t('staffManagement.list'), t('staffManagement.userGroup')]
   const [staffList, setStaffList] = useState<Staff[]>([])
@@ -213,6 +216,14 @@ const StaffManagement: FunctionComponent = () => {
     }
   ]
 
+  const sortModel: GridSortItem[] = [
+    {
+      field: 'staffId',
+      sort: 'asc',
+    },
+  ];
+  
+
   const handleAction = (
     params: GridRenderCellParams,
     action: 'add' | 'edit' | 'delete'
@@ -242,6 +253,7 @@ const StaffManagement: FunctionComponent = () => {
     })
   }
 
+  // const handleTabChange = () => {}
   const handleTabChange = (tab: number) => {
     setSelectedTab(tab)
   }
@@ -307,12 +319,12 @@ const StaffManagement: FunctionComponent = () => {
         }}
       >
         <ToastContainer></ToastContainer>
-        <Box>
+        {/* <Box>
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('staffManagement.staff')}
           </Typography>
-        </Box>
-        <Box>
+        </Box> */}
+        {/* <Box>
           <Tabs
             tabs={tabStaff}
             navigate={handleTabChange}

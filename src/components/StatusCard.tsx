@@ -24,6 +24,11 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       fontColor = '#79CA25'
       name = t('status.created')
       break
+    case 'ACTIVE':
+      bgColor = '#E4F6DC'
+      fontColor = '#79CA25'
+      name = t('status.active')
+      break
     case 'REJECTED':
       bgColor = '#FFF0F4'
       fontColor = '#FF4242'

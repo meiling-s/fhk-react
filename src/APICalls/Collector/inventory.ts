@@ -1,20 +1,15 @@
-import axios from "axios";
-import { localStorgeKeyName } from '../../constants/constant';
-// import { CreateVehicle } from "../../interfaces/vehicles";
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import { GET_INVENTORY } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
-
-const request = axios.create({
-    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-  })
+import axiosInstance from '../../constants/axiosInstance'
 
 //get all inventory
 export const getAllInventory = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
 
-      const response = await request({
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...GET_INVENTORY(token.decodeKeycloack),
         params: {
           page: page,

@@ -94,6 +94,7 @@ const Login = () => {
         setWarningMsg(" ");
         //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
         localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
+        localStorage.setItem(localStorgeKeyName.refreshToken, result?.refresh_token || '');
         localStorage.setItem(localStorgeKeyName.role, loginTo);
         localStorage.setItem(localStorgeKeyName.username, result?.username || '');
         // 20240129 add function list daniel keung start

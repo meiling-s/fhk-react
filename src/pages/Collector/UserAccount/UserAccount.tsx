@@ -4,13 +4,11 @@ import {
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridValueGetterParams,
-  GridColumnHeaderParams
 } from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
-import { Box , Pagination} from '@mui/material'
+import { Box } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import {
   ADD_ICON,
@@ -23,13 +21,11 @@ import AddUserAccount from '../UserAccount/AddUserAccount'
 import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
 import {
-  getAllWarehouse,
-  getRecycleType
-} from '../../../APICalls/warehouseManage'
-import {
   getAllUserAccount
 } from '../../../APICalls/userAccount'
-import axios from "axios";
+import { UserAccount as UserAccountItem} from '../../../interfaces/userAccount'
+import UserAccountDetails from './UserAccountDetails'
+import StatusCard from '../../../components/StatusCard'
 
 interface RecyleItem {
   recycTypeId: string
@@ -38,44 +34,31 @@ interface RecyleItem {
   recycTypeCapacity: number
 }
 
-interface Warehouse {
-  id: number
-  warehouseId: number
-  warehouseNameTchi: string
-  warehouseNameSchi: string
-  warehouseNameEng: string
-  location: string
-  physicalFlg: string | boolean
-  contractNo: string[]
-  status: string
-  warehouseRecyc: RecyleItem[]
-}
-
-interface UserAccount {
-  loginId: string
-  tenantId: string
-  realm: string
-  password: string
-  staffId: string
-  userGroup: 
-  {
-    groupId: number
-    tenantId: string
-    roleName: string
-    status: string
-    createdBy: string
-    updatedBy: string
-    updatedAt: string
-    createdAt:string
-    version: number
-  }
-  status: string,
-  lastLoginDatetime: string
-  createdBy: string
-  updatedBy: string
-  updatedAt: string
-  createdAt: string
-}
+// interface UserAccount {
+//   loginId: string
+//   tenantId: string
+//   realm: string
+//   password: string
+//   staffId: string
+//   userGroup: 
+//   {
+//     groupId: number
+//     tenantId: string
+//     roleName: string
+//     status: string
+//     createdBy: string
+//     updatedBy: string
+//     updatedAt: string
+//     createdAt:string
+//     version: number
+//   }
+//   status: string,
+//   lastLoginDatetime: string
+//   createdBy: string
+//   updatedBy: string
+//   updatedAt: string
+//   createdAt: string
+// }
 
 type TableRow = {
   id: number
@@ -96,32 +79,32 @@ const UserAccount: FunctionComponent = () => {
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [theLoginId, setTheLoginId] = useState<string>('')
-  const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
-  const [userAccountItems, setUserAccountItems] = useState<UserAccount[]>([])
+  const [userAccountItems, setUserAccountItems] = useState<UserAccountItem[]>([])
   const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
   const [page, setPage] = useState(1)
   const pageSize = 10 // change page size lowerg to testing
   const [totalData , setTotalData] = useState<number>(0)
+  const [selectedAccount, setSelectedAccount] = useState<UserAccountItem | null>(null)
   const navigate = useNavigate()
 
   const columns: GridColDef[] = [
     {
       field: 'loginId',
-      headerName: '登入名稱',
+      headerName: t('userAccount.loginName'),
       width: 150,
       type: 'string',
      
     },
     {
       field: 'staffId',
-      headerName: '員工名稱',
+      headerName:  t('userAccount.staffId'),
       width: 150,
       type: 'string',
     },
     {
       field: 'userGroup',
-      headerName: '用戶群組',
+      headerName:  t('userAccount.userGroup'),
       width: 250,
       type: 'string',
       valueGetter: (params) => params.row?.userGroup.roleName
@@ -129,22 +112,22 @@ const UserAccount: FunctionComponent = () => {
     {
       field: '是',
       width: 150,
-      headerName: '是否批核者',
+      headerName: t('userAccount.isItAReviewer'),
       type: 'string',
       valueGetter: () => {
-        return '是'
+        return t('yes')
       }
     },
     {
       field: 'status',
-      headerName: '狀態',
+      headerName: t('userAccount.status'),
       width: 300,
       type: 'string',
-      renderCell: (params) => <StatusLabel status={params.row?.status} />
+      renderCell: (params) => <StatusCard status={params.row?.status} />
     },
     {
       field: 'actions',
-      headerName: 'actions',
+      headerName: '',
       width: 300,
       renderCell: (params) => {
         return (
@@ -152,13 +135,17 @@ const UserAccount: FunctionComponent = () => {
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              onClick={() => handleEdit(params.row.loginId)} // Implement your edit logic here
+              onClick={(event) => {
+                event.stopPropagation();
+                handleEdit(params.row.loginId)}} // Implement your edit logic here
               style={{ cursor: 'pointer' }}
             />
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              onClick={() => handleDelete(params.row.loginId)} // Implement your delete logic here
+              onClick={(event) =>{ 
+                event.stopPropagation();
+                handleDelete(params.row.loginId)}} // Implement your delete logic here
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -171,148 +158,54 @@ const UserAccount: FunctionComponent = () => {
     i18n.changeLanguage(currentLanguage)
   }, [i18n, currentLanguage])
 
-  const handleOnSubmitData = (action: string, id?: number, error?: boolean) => {
-    if (action == 'add') {
-    }
-
-    if (action == 'delete') {
-    }
-
-    if (action == 'edit') {
-    }
-    // fetchData()
-    fetchDataUserAccount()
-    setDrawerOpen(false)
+  const handleOnSubmitData = () => {
+   
   }
-
-  const getRecycleData = async () => {
-    try {
-      const response = await getRecycleType()
-      if (response) {
-        let recyTypeData: recyTypeItem = recyleTypeList
-        recyTypeData = response.data.forEach((item: recyTypeItem) => {
-          recyTypeData[item.recycTypeId as keyof recyTypeItem] = {
-            recyclableNameEng: item.recyclableNameEng,
-            recyclableNameSchi: item.recyclableNameSchi,
-            recyclableNameTchi: item.recyclableNameTchi
-          }
-        })
-
-        setRecyleTypeList((prevData) => {
-          return { ...prevData, recyTypeData }
-        })
-        // fetchData()
-        fetchDataUserAccount()
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await getAllWarehouse(page - 1, pageSize)
-  //     if (response == '401') {
-  //       // direct to login if sttUS 401
-  //       localStorage.clear()
-  //       navigate('/')
-  //     } else {
-  //       const filteredData = response.data.content
-  //       // .filter(
-  //       //   (warehouse: Warehouse) =>
-  //       //     warehouse.status.toLowerCase() !== 'deleted'
-  //       // )
-  //       .map(transformToTableRow)
-
-  //     setWarehouseItems(filteredData)
-  //     setTotalData(response.data.totalPages)
-  //     console.log('fetch DATA', filteredData)
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
 
   async function fetchDataUserAccount() {
-    try {
-      const response = await axios.get('http://10.166.22.250/api/v1/administrator/userAccount');
-      // const userAccountData = response.data
-      const userAccountData = response.data.map( (item: UserAccount) => ({
-        ...item,
-        id: item.loginId, // Assuming `loginId` is unique
-      }));
-      console.log("fetchDataUserAccount >> ", userAccountData);
-      setUserAccountItems(userAccountData)
-    } catch (error) {
-      console.error("fetchDataUserAccount ERROR", error);
+    const result = await getAllUserAccount()
+    if(result?.data){
+      setUserAccountItems(result.data)
+      console.log("fetchDataUserAccount >> ", result.data);
     }
   }
 
   useEffect(() => {
-    const fetchCategoryAndData = async () => {
-      getRecycleData()
-    }
-    fetchCategoryAndData()
-  }, [action, drawerOpen, currentLanguage, page])
+    fetchDataUserAccount()
+  }, [action, drawerOpen, currentLanguage, page, i18n, currentLanguage])
 
-  const transformToTableRow = (warehouse: Warehouse): TableRow => {
-    const nameLang =
-      currentLanguage === 'zhhk'
-        ? 'recyclableNameTchi'
-        : currentLanguage === 'zhch'
-        ? 'recyclableNameSchi'
-        : 'recyclableNameEng'
-    const recyleType = warehouse.warehouseRecyc
-      .map((item: RecyleItem) => {
-        //console.log(item.recycTypeId)
-        return `${
-          recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem]
-        }`
-      })
-      .join(', ')
-    return {
-      id: warehouse.warehouseId,
-      warehouseId: warehouse.warehouseId,
-      warehouseNameTchi: warehouse.warehouseNameTchi,
-      warehouseNameSchi: warehouse.warehouseNameSchi,
-      warehouseNameEng: warehouse.warehouseNameEng,
-      location: warehouse.location,
-      physicalFlg: warehouse.physicalFlg ? t('yes') : t('no'),
-      status: warehouse.status,
-      contractNo: warehouse.contractNo,
-      warehouseRecyc: recyleType
-    }
-  }
 
   const addDataWarehouse = () => {
     setDrawerOpen(true)
     setAction('add')
   }
 
-  const handleEdit = (row: TableRow) => {
-    setRowId(row.id)
-    setTheLoginId(row.loginId)
-   // console.log(row)
+  const handleEdit = (rowId: string) => {
     setDrawerOpen(true)
     setAction('edit')
-    // fetchData()
-    fetchDataUserAccount()
+    const selectedItem = userAccountItems.find(item => item.loginId == rowId)
+    if(selectedItem) {
+      setSelectedAccount(selectedItem)
+    }
   }
 
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as TableRow
-    setSelectedRow(row)
-    setRowId(row.id)
-    setTheLoginId(row.loginId)
     setDrawerOpen(true)
     setAction('edit')
+    const selectedItem = userAccountItems.find(item => item.loginId == row.loginId)
+    if(selectedItem) {
+      setSelectedAccount(selectedItem)
+    }
   }
 
-  const handleDelete = (row: TableRow) => {
-    setRowId(row.id)
-    setTheLoginId(row.loginId)
+  const handleDelete = (rowId: string) => {
     setDrawerOpen(true)
     setAction('delete')
+    const selectedItem = userAccountItems.find(item => item.loginId == rowId)
+    if(selectedItem) {
+      setSelectedAccount(selectedItem)
+    }
   }
 
   const handleDrawerClose = () => {
@@ -350,7 +243,7 @@ const UserAccount: FunctionComponent = () => {
                 <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                   <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-grey-dark">
                     <b className="relative tracking-[0.08em] leading-[28px]">
-                      用戶
+                      {t('userAccount.user')}
                     </b>
                     <div
                       className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi text-green-primary border-[1px] border-solid border-green-pale"
@@ -365,6 +258,7 @@ const UserAccount: FunctionComponent = () => {
                   <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
                     <DataGrid
                       rows={userAccountItems}
+                      getRowId={(row) => row.loginId}
                       hideFooter
                       columns={columns}
                       checkboxSelection
@@ -387,27 +281,19 @@ const UserAccount: FunctionComponent = () => {
                         }
                       }}
                     />
-                    {/* <Pagination
-                      count={Math.ceil(totalData)}
-                      page={page}
-                      onChange={(_, newPage) => {
-                        setPage(newPage) 
-                        }}
-                    /> */}
                   </Box>
                 </div>
               </div>
             </div>
           </div>
-          {/* right drawer */}
-          <AddUserAccount
-            drawerOpen={drawerOpen}
-            handleDrawerClose={handleDrawerClose}
-            action={action}
-            onSubmitData={handleOnSubmitData}
-            rowId={rowId}
-            theLoginId={theLoginId}
-          ></AddUserAccount>
+          <UserAccountDetails
+           drawerOpen={drawerOpen}
+           handleDrawerClose={handleDrawerClose}
+           selectedItem={selectedAccount}
+           action={action}
+           onSubmitData={handleOnSubmitData}
+           rowId={rowId}
+           />
         </div>
       </div>
     </Box>

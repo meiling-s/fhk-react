@@ -45,6 +45,7 @@ type createRecyclable = {
   packageTypeId: string
   weight: number
   unitId: string
+  status: string
   processoutDetailPhoto: processOutImage[]
   createdBy: string
   updatedBy: string
@@ -52,7 +53,7 @@ type createRecyclable = {
 
 type RecycItem = {
   itemId: number
-  processOutId: number
+  processOutDtlId: number
   recycType: il_item
   recycSubtype: il_item
   weight: number
@@ -62,6 +63,7 @@ interface EditProcessRecordProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   onCreateRecycle: (data: createRecyclable) => void
+  onEditRecycle: (data: createRecyclable, processOutDtlId: number ) => void
   onDeleteItem: (itemId: number) => void
   editedData: RecycItem | null
   processOut?: ProcessOut | null
@@ -72,6 +74,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   drawerOpen,
   handleDrawerClose,
   onCreateRecycle,
+  onEditRecycle,
   onDeleteItem,
   editedData,
   processOut,
@@ -166,20 +169,20 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       }
     )
 
-    console.log('onSaveData', imgItems)
     const data: createRecyclable = {
-      itemId: editedData ? editedData.itemId : generateNumericId(),
+      itemId: editedData ? editedData.processOutDtlId : generateNumericId(),
       recycTypeId: recycTypeId,
       recycSubTypeId: recycSubTypeId,
       packageTypeId: '',
       weight: parseInt(weight),
       unitId: 'kg',
+      status: "ACTIVE",
       processoutDetailPhoto: imgItems,
       createdBy: loginId,
       updatedBy: loginId
     }
     if (validation.length === 0) {
-      onCreateRecycle(data)
+      action == 'add' ? onCreateRecycle(data) : onEditRecycle(data, editedData!!.processOutDtlId)
       resetData()
       handleDrawerClose()
     } else {
@@ -189,7 +192,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
 
   const onHandleDelete = () => {
     if (editedData != null) {
-      onDeleteItem(editedData.itemId)
+      onDeleteItem(editedData.processOutDtlId)
       resetData()
       handleDrawerClose()
     }

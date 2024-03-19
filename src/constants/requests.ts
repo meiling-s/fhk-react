@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
 
+
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
   method: 'post',
@@ -350,6 +351,12 @@ export const GET_PROCESS_OUT = (table: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/processout/${table}`
 })
 
+export const GET_PROCESS_OUT_DETAIL = (table: string, processOutId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/processout/${table}/${processOutId}`
+})
+
+
 export const CREATE_PROCESS_OUT_ITEM = (
   table: string,
   processOutId: number
@@ -358,13 +365,31 @@ export const CREATE_PROCESS_OUT_ITEM = (
   url: `api/v1/collectors/processout/${table}/items/${processOutId}`
 })
 
-export const DELETE_PROCESS_OUT_ITEM = (
+export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
+  table: string,
+  processOutDtlId: number
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/collectors/processout/${table}/processout/${processOutDtlId}`
+})
+
+export const DELETE_PROCESS_OUT_RECORD = (
   table: string,
   processOutId: number
 ): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/collectors/processout/${table}/delete/${processOutId}`
 })
+
+
+export const DELETE_PROCESS_OUT_DETAIL_ITEM = (
+  table: string,
+  processOutDtlId: number
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/collectors/processoutDetail/${table}/${processOutDtlId}/status`
+})
+
 
 // WAREHOUSE DASHBOARD
 
@@ -376,13 +401,12 @@ export const GET_CAPACITY_WAREHOUSE = (
   url: `api/v1/collectors/warehousecapacity/${table}/${warehouseId}`
 })
 
-export const GET_CAPACITY_WAREHOUSE_SUBTYPE_ITEM = (
+export const GET_WEIGHT_BY_SUBTYPE_ID= (
   table: string,
-  warehouseId: number,
-  recySubTypeId: string
+  warehouseId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/itemcapacity/${table}/${warehouseId}/${recySubTypeId}`
+  url: `api/v1/collectors/inventory/${table}/getweightbysubtype/${warehouseId}`
 })
 
 export const GET_CHECKIN_WAREHOUSE = (
@@ -478,4 +502,57 @@ export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
 export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/stafftitle/${table}`
+})
+
+
+//API roster
+export const GET_ROSTER_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/roster/${tenantId}`
+})
+
+//USER ACCOUNT API
+export const GET_USER_ACCOUNT_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userAccount/t/${tenantId}`
+})
+
+export const CREATE_USER_ACCOUNT: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/administrator/register`
+}
+
+export const UPDATE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/userAccount/${loginId}`
+})
+
+export const DELETE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/userAccount/status/${loginId}`
+})
+
+export const GET_CHECKIN_CHECKOUT_LIST = (table:string, picoId:string, page:number, size:number, ):AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkinout/searching/${table}`,
+  params: {
+    picoId: picoId ?? '',
+    page,
+    size
+  }
+})
+
+export const GET_CHECKIN_BY_ID = (table:string, chkInId:number):AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkin/${table}/${chkInId}`,
+})
+
+export const GET_CHECKOUT_BY_ID = (table:string, chkOutId:number):AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/checkout/${table}/${chkOutId}`,
+})
+
+export const GET_ALL_RECYCLE_TYPE = ():AxiosRequestConfig => ({
+  method: 'get',
+  url: 'api/v1/administrator/recycType'
 })

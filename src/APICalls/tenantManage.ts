@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { localStorgeKeyName } from '../constants/constant'
 import {
   ADD_TENANT,
@@ -7,14 +6,12 @@ import {
   UPDATE_TENANT_REGISTER,
   UPDATE_TENANT_STATUS
 } from '../constants/requests'
-import { RegisterItem, Tenant } from '../interfaces/account'
+import { RegisterItem } from '../interfaces/account'
 import { CreateTenant, UpdateStatus } from '../interfaces/tenant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import { returnApiToken } from '../utils/utils'
+import axiosInstance from '../constants/axiosInstance'
 
-const request = axios.create({
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
-})
 
 export const createInvitation = async (item: CreateTenant) => {
   console.log(
@@ -22,7 +19,8 @@ export const createInvitation = async (item: CreateTenant) => {
   )
 
   try {
-    const response = await request({
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
       ...ADD_TENANT('collector'),
       data: item,
       headers: {}
@@ -38,7 +36,8 @@ export const createInvitation = async (item: CreateTenant) => {
 export const getAllTenant = async (page: number, size: number, tenantId?: string ) => {
   const token = returnApiToken()
   try {
-    const response = await request({
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
       ...GET_ALL_TENANT(token.tenantId),
       params: {
         page: page,
@@ -58,7 +57,8 @@ export const getAllTenant = async (page: number, size: number, tenantId?: string
 //Don't require Authorization token
 export const getTenantById = async (tenantId: number) => {
   try {
-    const response = await request({
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
       ...GET_TENANT_BY_TENANT_ID(tenantId),
       headers: {}
     })
@@ -78,7 +78,8 @@ export const updateTenantRegInfo = async (
   // axiosConfig.url = UPDATE_TENANT_REGISTER.url + `/${tenantId}`
 
   try {
-    const response = await request({
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
       ...UPDATE_TENANT_REGISTER(tenantId),
       data: item
     })
@@ -98,7 +99,8 @@ export const updateTenantStatus = async (
   tenantId: number
 ) => {
   try {
-    const response = await request({
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
       ...UPDATE_TENANT_STATUS(tenantId),
       data: item
     })

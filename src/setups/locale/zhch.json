@@ -506,13 +506,19 @@
       "logistic": "",
       "Manufacturer":"",
       "Customer":""
-    }
+    },
+    "createProcessOutSuccess": "建立處理流程成功",
+    "createProcessOutFailed": "建立處理流程失敗",
+    "editProcessOutSuccess": "編輯處理流程成功",
+    "editProcessOutFailed": "編輯處理流程失敗",
+    "deleteProcessOutSuccess": "刪除處理流程成功",
+    "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard" : {
     "warehouse": "仓库",
     "currentCapacity": "现时容量",
     "thereStillEnoughSpace": "还有足够的空间",
-    "noMoreRoom": "没有房间了",
+    "noMoreRoom": "没有空间了",
     "all": "全部",
     "sendRequest": "送入请求",
     "check-in": "送入请求",
@@ -541,6 +547,34 @@
     "enterName": "请输入姓名",
     "enterContactNo": "请输入联系电话",
     "enterEmail": "请输入电子邮件地址"
+  },
+  "roster": {
+    "addSchedule": "Add Schedule",
+    "schedule": "Schedule"
+  },
+  "userAccount": {
+    "new": "新增",
+    "user": "用户",
+    "addByNumber": "按编号添加",
+    "loginName": "登录名",
+    "emailAddress": "电子邮箱地址",
+    "userGroup": "用户组",
+    "isItAReviewer": "是否为审核者",
+    "status": "状态",
+    "pleaseEnterNumber": "请输入编号",
+    "pleaseEnterName": "请输入名称",
+    "pleaseEnterEmailAddress": "请输入电子邮箱地址",
+    "active": "激活",
+    "inactive": "未激活",
+    "suspend": "暂停",
+    "deleted": "已删除",
+    "staffId": "员工编号",
+    "successCreatedUser": "成功创建用户",
+    "failedCreatedUser": "创建用户失败",
+    "successEditUser": "成功编辑用户",
+    "failedEditUser": "编辑用户失败",
+    "successDeleteUser": "成功删除用户",
+    "failedDeleteUser": "删除用户失败"
   },
   "userGroup": {
     "title": "用戶群組",
