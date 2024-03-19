@@ -2,6 +2,7 @@ export type UserGroup = {
     groupId: number
     tenantId: string
     roleName: string
+    description: string
     status: string
     createdBy: string
     createdAt: string
@@ -29,6 +30,7 @@ export type CreateUserGroupProps = {
     realm: string
     tenantId: string
     roleName: string
+    description: string
     functions: number[]
     createdBy: string
     status: string
@@ -36,6 +38,7 @@ export type CreateUserGroupProps = {
 
 export type EditUserGroupProps = {
     roleName: string
+    description: string
     functions: number[]
     updatedBy: string
     status: string

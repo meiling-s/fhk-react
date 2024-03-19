@@ -545,6 +545,7 @@
     "title": "User Group",
     "groupName": "Group name",
     "introduction": "Introduction",
+    "description": "Description",
     "availableFeatures": "Available Features",
     "pleaseEnterName": "Please enter name",
     "pleaseEnterText": "Please enter text"
