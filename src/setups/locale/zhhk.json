@@ -571,6 +571,30 @@
     "failedEditUser": "編輯用戶失敗",
     "successDeleteUser": "成功刪除用戶",
     "failedDeleteUser": "刪除用戶失敗"
+  },
+  "checkinandcheckout": {
+    "checkinandcheckout": "概覽",
+    "title": "出入記錄",
+    "creation_date": "建立日期",
+    "outin": "出/入",
+    "shipping_company": "寄件公司",
+    "receiver": "收件公司",
+    "waybill_number": "運單編號",
+    "adjust_inventory": "調整庫存",
+    "logistics_company": "物流公司",
+    "delivery_location": "送出地點",
+    "arrived": "到達地點",
+    "search": "搜索",
+    "company": "公司",
+    "place": "地點",
+    "search_placeholder": "輸入運單編號",
+    "any": "任何",
+    "send_in": "送入",
+    "ship": "出貨",
+    "send_request": "送出請求",
+    "shipping_info": "運輸資料",
+    "recyle_loc_info": "預計回收地點資料",    
+    "recyc_loc_info": "回收地點資料"
   }
 }
 
