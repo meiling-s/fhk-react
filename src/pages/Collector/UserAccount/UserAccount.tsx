@@ -15,8 +15,7 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
-import AddWarehouse from '../Warehouse/AddWarehouse'
-import AddUserAccount from '../UserAccount/AddUserAccount'
+
 // import TableBase from '../../../components/TableBase'
 import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'

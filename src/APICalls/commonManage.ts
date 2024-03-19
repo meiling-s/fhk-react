@@ -31,7 +31,7 @@ export const getUserGroup = async () => {
     try {
         var response = await axiosInstance({
             baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
-            ...GET_USER_GROUP,
+            ...GET_USER_GROUP(token.tenantId),
         });
         //console.log('Get collection point type success:', JSON.stringify(response.data));
         

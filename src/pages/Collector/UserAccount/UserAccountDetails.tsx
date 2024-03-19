@@ -84,11 +84,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
       {
         name:t('userAccount.suspend'),
         id: "SUSPEND"
-      },
-      {
-        name: t('userAccount.deleted'),
-        id: "DELETED"
-      },
+      }
     ]
     return colList
   };
@@ -117,8 +113,9 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   const getUserGroupList = async () => {
     const result = await getUserGroup()
+    console.log("groupList", result)
     const groupList: DropdownOption[]= []
-    if(result?.data) {
+    if(result) {
         result.map((item: any) =>{
             
             groupList.push({
@@ -127,6 +124,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             })
         })
         setUserGroupList(groupList)
+       
         if(groupList.length> 0) setUserGroup(groupList[0].groupId)
     }
   }
