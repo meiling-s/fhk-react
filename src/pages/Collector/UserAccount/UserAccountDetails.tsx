@@ -59,9 +59,10 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   selectedItem
 }) => {
   const { t } = useTranslation()
-  const [contactNo, setContactNo] = useState<string>("")
+  const [staffId, setStaffId] = useState<string>("")
   const [loginId, setLoginId] = useState<string>("")
   const [email, setEmail] = useState<string>("")
+  const [contactNo, setContactNo] = useState<string>("")
   const [userGroup, setUserGroup] = useState<number>(0);
   const [userGroupList, setUserGroupList] = useState<DropdownOption[]>([])
   // const [isApprover , setApprover] = useState<boolean>(false)
@@ -113,7 +114,6 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   const getUserGroupList = async () => {
     const result = await getUserGroup()
-    console.log("groupList", result)
     const groupList: DropdownOption[]= []
     if(result) {
         result.map((item: any) =>{
@@ -160,7 +160,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         })
         contactNo?.toString() == ''  &&
         tempV.push({
-            field: t('userAccount.addByNumber'),
+            field: t('staffManagement.contactNumber'),
             problem: formErr.empty,
             type: 'error'
         })
@@ -215,7 +215,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         loginId: loginId,
         realm: "collector",
         tenantId: tenantId,
-        staffId: "",
+        staffId: staffId,
         groupId: userGroup,
         status: 'ACTIVE',
         createdBy: logginUser,
@@ -323,13 +323,12 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           >
             {
                 action == 'add' && (
-                    <CustomField label={t('userAccount.addByNumber')} mandatory>
+                    <CustomField label={t('userAccount.addByNumber')}>
                     <CustomTextField
-                      id="contactNo"
-                      value={contactNo}
+                      id="staffId"
+                      value={staffId}
                       placeholder={t('userAccount.pleaseEnterNumber')}
-                      onChange={(event) => setContactNo(event.target.value)}
-                      error={checkString(contactNo)}
+                      onChange={(event) => setStaffId(event.target.value)}
                     />
                   </CustomField>
                 )
@@ -346,15 +345,29 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             </CustomField>
             {
                 action == 'add' && (
-                    <CustomField label={t('userAccount.emailAddress')} mandatory>
+                  <Grid item>
+                    <Grid item sx={{marginBottom: '16px'}}>
+                      <CustomField label={t('userAccount.emailAddress')} mandatory>
+                      <CustomTextField
+                        id="email"
+                        value={email}
+                        placeholder={t('userAccount.pleaseEnterEmailAddress')}
+                        onChange={(event) => setEmail(event.target.value)}
+                        error={checkString(contactNo)}
+                      />
+                    </CustomField>
+                    </Grid>
+                   
+                  <CustomField label={t('staffManagement.contactNumber')} mandatory>
                     <CustomTextField
-                      id="email"
-                      value={email}
-                      placeholder={t('userAccount.pleaseEnterEmailAddress')}
-                      onChange={(event) => setEmail(event.target.value)}
+                      id="contactNo"
+                      value={contactNo}
+                      placeholder={t('staffManagement.enterContactNo')}
+                      onChange={(event) => setContactNo(event.target.value)}
                       error={checkString(contactNo)}
                     />
                   </CustomField>
+                  </Grid>
                 )
             }
             <Grid item>
