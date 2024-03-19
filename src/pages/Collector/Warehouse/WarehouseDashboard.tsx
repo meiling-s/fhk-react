@@ -97,10 +97,11 @@ const WarehouseDashboard: FunctionComponent = () => {
 
   const initWarehouse = async () => {
     const result = await getAllWarehouse(0, 20)
-    if(result == '401') {
-      localStorage.clear()
-      navigate('/')
-    } else if(result) {
+    // if(result == '401') {
+    //   localStorage.clear()
+    //   navigate('/')
+    // } else
+     if(result) {
 
       let capacityTotal = 0
       let warehouse: il_item[] = []

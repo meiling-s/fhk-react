@@ -183,11 +183,12 @@ const Warehouse: FunctionComponent = () => {
   const fetchData = async () => {
     try {
       const response = await getAllWarehouse(page - 1, pageSize)
-      if (response == '401') {
-        // direct to login if sttUS 401
-        localStorage.clear()
-        navigate('/')
-      } else {
+      // if (response == '401') {
+      //   // direct to login if sttUS 401
+      //   localStorage.clear()
+      //   navigate('/')
+      // } else
+      if(response) {
         const filteredData = response.data.content
         // .filter(
         //   (warehouse: Warehouse) =>

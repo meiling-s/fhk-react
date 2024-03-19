@@ -40,12 +40,14 @@ export const getAllWarehouse = async (page: number, size: number) => {
       
       return response
     } catch (e: any) {
-      if (e.response.status == '401') {
-        //return 401 if token already invalid
-        const unauthorized = e.response.status 
-        return unauthorized
-      }
       console.error('Get all warehouse failed:', e)
+
+      const errCode = e?.response.status
+      if(errCode === 401 ){
+        localStorage.clear();
+        window.location.href = '/';
+      }
+      
       return null
     }
   }
@@ -64,8 +66,8 @@ export const getAllWarehouse = async (page: number, size: number) => {
         // baseURL: collectionPointAPI.baseURL,
       })
       return response
-    } catch (e) {
-      console.error('Get a warehouse failed:', e)
+    } catch (e: any ) {
+      console.error('Get a warehouse failed:', e)     
       return null
     }
   }

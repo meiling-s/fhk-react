@@ -1,11 +1,14 @@
 import axios from "axios";
 import { localStorgeKeyName } from '../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
+import { returnApiToken } from "../utils/utils";
 
 
 
 const authToken = () => {
-    return localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
+   return localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
+    // const token = returnApiToken()
+    // return token.authToken
 };
 const refreshToken = () => {
     return localStorage.getItem(localStorgeKeyName.refreshToken) || ''
@@ -13,7 +16,7 @@ const refreshToken = () => {
 
 const axiosInstance = axios.create({
     headers: {
-        AuthToken: authToken()
+        'AuthToken': authToken()
     },
 })
 
