@@ -619,6 +619,8 @@
   },
   "userGroup": {
     "title": "User Group",
+    "change": "Change",
+    "delete": "Delete",
     "groupName": "Group name",
     "introduction": "Introduction",
     "description": "Description",

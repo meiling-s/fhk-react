@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useEffect } from 'react'
+import { FunctionComponent, useState, useEffect, useMemo } from 'react'
 import {
   Box,
   Divider,
@@ -67,12 +67,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       name: 'additional'
     }
   ]
-  const [serviceType, setServiceType] = useState<il_item[]>(serviceList)
-  const [selectedService, setSelectedService] = useState<il_item>( {
-    id: 'basic',
-    name: t('vehicle.basic')
-  },)
-  const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [roleName, setRoleName] = useState('')
@@ -84,9 +78,11 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     if(selectedItem != null) {
       setRealm('collector')
       setRoleName(selectedItem.roleName)
+      let newFunctions: number[] = [];
       selectedItem.functions.forEach(item => {
-        setFunctions(prev => ([...prev, item.functionId]))
+        newFunctions.push(item.functionId);
       })
+      setFunctions(newFunctions);
       setDescription(selectedItem.description)
     }
   }
@@ -122,12 +118,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     const validate = async () => {
       //do validation here
       const tempV: formValidate[] = []
-      realm?.toString() == '' &&
-        tempV.push({
-          field: 'realm',
-          problem: formErr.empty,
-          type: 'error'
-        })
       roleName?.toString() == '' &&
         tempV.push({
           field: 'roleName',
@@ -145,14 +135,14 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     }
 
     validate()
-  }, [realm, roleName, description])
+  }, [roleName, description])
 
   const handleSubmit = () => {
     const token = returnApiToken()
 
     if (action == 'add') {
       const formData: CreateUserGroupProps = {
-        realm: realm,
+        realm: 'collector',
         tenantId: token.tenantId,
         roleName: roleName,
         description: description,
@@ -204,6 +194,21 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     }
   }
 
+  const titleName = useMemo(() => {
+    switch (action) {
+      case "add":
+        return t('top_menu.add_new');
+
+      case "edit":
+        return t('userGroup.change');
+
+      case "delete":
+        return t('userGroup.delete');
+    }
+
+    return ""
+  }, [action])
+
   const handleDelete = async () => {
     const token = returnApiToken()
     const status = 'DELETED'
@@ -231,7 +236,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: t('top_menu.add_new'),
+          title: titleName,
           subTitle: t('userGroup.title'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
@@ -266,16 +271,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                 error={checkString(roleName)}
               />
             </CustomField>
-            <CustomField label={t('userGroup.introduction')}>
-              <CustomTextField
-                id="realm"
-                value={realm}
-                disabled={action === 'delete' || action === 'edit'}
-                placeholder={t('userGroup.pleaseEnterText')}
-                onChange={(event) => setRealm(event.target.value)}
-                error={checkString(realm)}
-              />
-            </CustomField>
             <CustomField label={t('userGroup.description')}>
               <CustomTextField
                 id="description"
@@ -292,6 +287,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                   key={key}
                   item={item}
                   functions={functions}
+                  disabled={action === 'delete'}
                   setFunctions={setFunctions}
                 />
               ))}
