@@ -14,6 +14,7 @@ type DatePicker = {
   defaultStartDate?: Date | string;
   defaultEndDate?: Date | string;
   pickupOrderForm?: boolean;
+  iconColor?: string
 };
 
 function CustomDatePicker2({
@@ -21,6 +22,7 @@ function CustomDatePicker2({
   defaultStartDate,
   defaultEndDate,
   pickupOrderForm,
+  iconColor
 }: DatePicker) {
   const startDate = defaultStartDate? new Date(defaultStartDate): new Date();
   const endDate = defaultEndDate ? new Date(defaultEndDate) : new Date();
@@ -44,6 +46,16 @@ function CustomDatePicker2({
       setDate(peri);
     }
   };
+
+  const localstyles = {
+    datePicker: (showOne: boolean) => ({
+      ...styles.textField,
+      width: showOne ? '310px' : '150px',
+      '& .MuiIconButton-edgeEnd': {
+        color: iconColor ? iconColor : '#79CA25'
+      }
+    })
+  }
 
   return (
     <>
@@ -94,15 +106,5 @@ function CustomDatePicker2({
     </>
   );
 }
-
-const localstyles = {
-    datePicker: (showOne: boolean) => ({
-      ...styles.textField,
-      width: showOne ? "310px" : "150px",
-      "& .MuiIconButton-edgeEnd": {
-        color: "#79CA25",
-      },
-    }),
-  };
 
 export default CustomDatePicker2;

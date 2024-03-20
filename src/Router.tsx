@@ -49,6 +49,9 @@ import CheckoutRequest from "./pages/Collector/Manage/CheckoutRequest";
 import UserGroup from "./pages/Collector/UserGroup/UserGroup";
 import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 
+//astd
+import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
+
 
 const Router = () => {
   
@@ -115,6 +118,7 @@ const Router = () => {
           <Route path="/astd/statistics/recyclePlant" element={<></>} />
           <Route path="/astd/setting" element={<Settings />} />
           <Route path="/astd/account" element={<></>} />
+          <Route path="/astd/CreatePicoLogistic" element={<CreatePicoLogistic />} />
         </Route>
 
         <Route element={<MainLayout />}>
