@@ -235,7 +235,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const handleCreateRecyc = async (data: CreateRecyclable) => {
-    const createItemsProcessOut:CreateRecyclable = constractForm(data)
+    const createItemsProcessOut:CreateRecyclable[] = [constractForm(data)]
     const result = await createProcessRecordItem(createItemsProcessOut, selectedRow!!.processOutId)
   
     if (result) {
@@ -249,7 +249,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
 
   const handleEditRecyc = async (data: CreateRecyclable, processOutDtlId: number) =>{
     const editItemsProcessOut:CreateRecyclable = constractForm(data)
-    const response = await editProcessRecordItem(editItemsProcessOut, processOutDtlId)
+    const response = await editProcessRecordItem(editItemsProcessOut,  selectedRow!!.processOutId, processOutDtlId)
   
     if (response) {
       setReloadData(true);
@@ -257,6 +257,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     } else {
       showErrorToast(t('processRecord.editProcessOutFailed'))
     }
+
+    setSelectedItem(null)
   }
 
   const handleDeleteRecyc = async (processOutDtlId: number) => {

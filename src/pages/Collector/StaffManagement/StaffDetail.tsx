@@ -247,6 +247,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         resetFormData()
         handleDrawerClose()
       } else {
+        setTrySubmited(true)
         onSubmitData('error', 'Failed created data')
       }
     } else {

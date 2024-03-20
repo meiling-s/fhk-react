@@ -367,11 +367,13 @@ export const CREATE_PROCESS_OUT_ITEM = (
 
 export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
   table: string,
+  processOutId: number,
   processOutDtlId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/collectors/processout/${table}/processout/${processOutDtlId}`
+  url: `api/v1/collectors/processout/${table}/processout/${processOutId}/proecessoutDtl/${processOutDtlId}`
 })
+
 
 export const DELETE_PROCESS_OUT_RECORD = (
   table: string,

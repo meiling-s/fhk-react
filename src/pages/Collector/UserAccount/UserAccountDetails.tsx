@@ -59,12 +59,13 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   selectedItem
 }) => {
   const { t } = useTranslation()
-  const [contactNo, setContactNo] = useState<string>("")
+  const [staffId, setStaffId] = useState<string>("")
   const [loginId, setLoginId] = useState<string>("")
   const [email, setEmail] = useState<string>("")
+  const [contactNo, setContactNo] = useState<string>("")
   const [userGroup, setUserGroup] = useState<number>(0);
   const [userGroupList, setUserGroupList] = useState<DropdownOption[]>([])
-  const [isApprover , setApprover] = useState<boolean>(false)
+  // const [isApprover , setApprover] = useState<boolean>(false)
   const [userStatus, setUserStatus] = useState<string>('ACTIVE')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
@@ -84,11 +85,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
       {
         name:t('userAccount.suspend'),
         id: "SUSPEND"
-      },
-      {
-        name: t('userAccount.deleted'),
-        id: "DELETED"
-      },
+      }
     ]
     return colList
   };
@@ -118,7 +115,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const getUserGroupList = async () => {
     const result = await getUserGroup()
     const groupList: DropdownOption[]= []
-    if(result?.data) {
+    if(result) {
         result.map((item: any) =>{
             
             groupList.push({
@@ -127,6 +124,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             })
         })
         setUserGroupList(groupList)
+       
         if(groupList.length> 0) setUserGroup(groupList[0].groupId)
     }
   }
@@ -162,7 +160,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         })
         contactNo?.toString() == ''  &&
         tempV.push({
-            field: t('userAccount.addByNumber'),
+            field: t('staffManagement.contactNumber'),
             problem: formErr.empty,
             type: 'error'
         })
@@ -217,7 +215,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         loginId: loginId,
         realm: "collector",
         tenantId: tenantId,
-        staffId: "",
+        staffId: staffId,
         groupId: userGroup,
         status: 'ACTIVE',
         createdBy: logginUser,
@@ -325,13 +323,12 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           >
             {
                 action == 'add' && (
-                    <CustomField label={t('userAccount.addByNumber')} mandatory>
+                    <CustomField label={t('userAccount.addByNumber')}>
                     <CustomTextField
-                      id="contactNo"
-                      value={contactNo}
+                      id="staffId"
+                      value={staffId}
                       placeholder={t('userAccount.pleaseEnterNumber')}
-                      onChange={(event) => setContactNo(event.target.value)}
-                      error={checkString(contactNo)}
+                      onChange={(event) => setStaffId(event.target.value)}
                     />
                   </CustomField>
                 )
@@ -348,15 +345,29 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             </CustomField>
             {
                 action == 'add' && (
-                    <CustomField label={t('userAccount.emailAddress')} mandatory>
+                  <Grid item>
+                    <Grid item sx={{marginBottom: '16px'}}>
+                      <CustomField label={t('userAccount.emailAddress')} mandatory>
+                      <CustomTextField
+                        id="email"
+                        value={email}
+                        placeholder={t('userAccount.pleaseEnterEmailAddress')}
+                        onChange={(event) => setEmail(event.target.value)}
+                        error={checkString(contactNo)}
+                      />
+                    </CustomField>
+                    </Grid>
+                   
+                  <CustomField label={t('staffManagement.contactNumber')} mandatory>
                     <CustomTextField
-                      id="email"
-                      value={email}
-                      placeholder={t('userAccount.pleaseEnterEmailAddress')}
-                      onChange={(event) => setEmail(event.target.value)}
+                      id="contactNo"
+                      value={contactNo}
+                      placeholder={t('staffManagement.enterContactNo')}
+                      onChange={(event) => setContactNo(event.target.value)}
                       error={checkString(contactNo)}
                     />
                   </CustomField>
+                  </Grid>
                 )
             }
             <Grid item>
@@ -394,7 +405,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField
                 label={t('userAccount.isItAReviewer')}
@@ -410,7 +421,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 }}
               />
             </div>
-            </Grid> 
+            </Grid>  */}
             <CustomField label={t('userAccount.status')} mandatory={true}>
               <CustomItemList
                 items={statusList()}
