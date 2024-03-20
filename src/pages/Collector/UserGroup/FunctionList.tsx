@@ -7,11 +7,13 @@ export default function FunctionList({
     key,
     item,
     functions,
+    disabled,
     setFunctions
 }: {
     key: number,
     item: Functions,
     functions: number[],
+    disabled: boolean,
     setFunctions: (value: SetStateAction<number[]>) => void
 }) {
     const [selected, setSelected] = useState(false)
@@ -32,6 +34,7 @@ export default function FunctionList({
             color="success" 
             variant={selected ? 'soft' : 'outlined'}
             style={{borderRadius: 50, margin: 4}}
+            disabled={disabled}
             onClick={() => {
                 const index = functions?.indexOf(item.functionId);
                 let newValue = functions

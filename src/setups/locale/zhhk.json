@@ -618,6 +618,8 @@
   },
   "userGroup": {
     "title": "用戶群組",
+    "change": "更改",
+    "delete": "刪除",
     "groupName": "群組名稱",
     "introduction": "簡介",
     "description": "描述",
