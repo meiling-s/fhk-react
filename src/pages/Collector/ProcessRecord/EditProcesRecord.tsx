@@ -257,6 +257,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     } else {
       showErrorToast(t('processRecord.editProcessOutFailed'))
     }
+
+    setSelectedItem(null)
   }
 
   const handleDeleteRecyc = async (processOutDtlId: number) => {
