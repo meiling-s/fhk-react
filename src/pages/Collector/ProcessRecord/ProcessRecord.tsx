@@ -203,13 +203,13 @@ const ProcessRecord: FunctionComponent = () => {
       label: t('processRecord.handleName'),
       width: '20%',
       options: getUniqueOptions('createdBy'),
-      field: 'recycTypeId'
+      field: 'createdBy'
     },
     {
       label: t('processRecord.location'),
       width: '20%',
-      options: getUniqueOptions('disposalLoc'),
-      field: 'recycSubTypeId'
+      options: getUniqueOptions('address'),
+      field: 'address'
     }
   ]
 
@@ -259,6 +259,15 @@ const ProcessRecord: FunctionComponent = () => {
     if (label == 'createdBy') {
       const filtered: ProcessOut[] = procesRecords.filter(
         (item) => item.createdBy == value
+      )
+      filtered
+        ? setFilteredProcessRecords(filtered)
+        : setFilteredProcessRecords(procesRecords)
+    }
+
+    if (label == 'adress') {
+      const filtered: ProcessOut[] = procesRecords.filter(
+        (item) => item.address == value
       )
       filtered
         ? setFilteredProcessRecords(filtered)
