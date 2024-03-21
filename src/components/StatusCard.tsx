@@ -50,6 +50,16 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       fontColor = '#ACACAC'
       name = t('status.outstanding')
       break
+    case 'SUSPEND':
+      bgColor = '#ACACAC'
+      fontColor = '#F4F4F4'
+      name = t('status.suspend')
+      break 
+    case 'INACTIVE':
+      bgColor = '#F4F4F4'
+      fontColor = '#ACACAC'
+      name = t('status.inactive')
+      break
     // proccess records status
     case 'processing':
       bgColor = '#E1F4FF'
