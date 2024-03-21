@@ -236,7 +236,8 @@
     "outstanding": "傑出",
     "enable": "啟用",
     "not_enabled": "未啟用",
-    "terminated": "已終止"
+    "terminated": "已終止",
+    "suspend": "暫停"
   },
   "appBar": {
     "simplified_cn": "简体中文",

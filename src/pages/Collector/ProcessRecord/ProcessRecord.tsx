@@ -111,7 +111,7 @@ const ProcessRecord: FunctionComponent = () => {
       }
     },
     {
-      field: 'createdBy',
+      field: '',
       headerName: t('processRecord.handleName'),
       width: 200,
       type: 'string'
@@ -123,16 +123,16 @@ const ProcessRecord: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'disposalLoc',
+      field: '',
       headerName: t('processRecord.processingLocation'),
       width: 200,
       type: 'string',
-      renderCell: (params) => {
-        return '-'
-      }
+      // renderCell: (params) => {
+      //   return '-'
+      // }
     },
     {
-      field: '',
+      field: 'createdBy',
       headerName: t('processRecord.handler'),
       width: 200,
       type: 'string'

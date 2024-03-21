@@ -238,7 +238,8 @@
     "outstanding": "Outstanding",
     "enable": "Enable",
     "not_enabled": "Not enabled",
-    "terminated": "Terminated"
+    "terminated": "Terminated",
+    "suspend": "Suspended"
   },
   "appBar": {
     "simplified_cn": "简体中文",
