@@ -71,15 +71,15 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     },
     {
       label: t('processRecord.handleName'),
-      value: selectedRow?.createdBy
+      value: ''
     },
     {
       label: t('processRecord.processingLocation'),
-      value: '處理地點'
+      value: ''
     },
     {
       label: t('processRecord.handler'),
-      value: '-'
+      value: selectedRow?.createdBy
     }
   ]
 
