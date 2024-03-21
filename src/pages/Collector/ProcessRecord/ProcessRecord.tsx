@@ -21,10 +21,12 @@ import {
   ProcessOutItem
 } from '../../../interfaces/processRecords'
 import { getAllProcessRecord , getProcessIn} from '../../../APICalls/Collector/processRecords'
-import { PackageType } from '../../../interfaces/common'
+
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
+import { ProcessType } from '../../../interfaces/common'
+
 
 interface Option {
   value: string
@@ -68,7 +70,7 @@ const ProcessRecord: FunctionComponent = () => {
   )
   const [selectedRow, setSelectedRow] = useState<ProcessOut | null>(null)
   const [selectedProcessOutId, setProcessOutId] = useState<number>(1)
-  const {packageType} = useContainer(CommonTypeContainer)
+  const {processType} = useContainer(CommonTypeContainer)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
@@ -95,7 +97,7 @@ const ProcessRecord: FunctionComponent = () => {
       var recordsMapping: any[] = []
       await Promise.all(data.content.map(async (item: any) => {
         const processIn: any = await getProcessInDetail(item.processInId); // Await here
-        const packageName = mappingPackageName( processIn?.processTypeId)
+        const processName = mappingProcessName( processIn?.processTypeId)
         recordsMapping.push(
           createProcessRecord(
             item?.processOutId,
@@ -108,7 +110,7 @@ const ProcessRecord: FunctionComponent = () => {
             item?.updatedAt,
             processIn ? processIn?.address : "-",
             processIn ? processIn?.processTypeId : null,
-            packageName || ''
+            processName || ''
           )
         );
       }));
@@ -119,23 +121,23 @@ const ProcessRecord: FunctionComponent = () => {
     }
   }
 
-  const mappingPackageName = (packageTypeId: string) => {
-   const  matchingPackage = packageType?.find((item: PackageType)=> item.packageTypeId == packageTypeId)
+  const mappingProcessName = (processTypeId: string) => {
+   const  matchingProcess = processType?.find((item: ProcessType)=> item.processTypeId == processTypeId)
 
-   if(matchingPackage) {
+   if(matchingProcess) {
    var name = ""
    switch (i18n.language) {
     case 'enus':
-      name = matchingPackage.packageTypeNameEng
+      name = matchingProcess.processTypeNameEng
       break
     case 'zhch':
-      name = matchingPackage.packageTypeNameSchi
+      name = matchingProcess.processTypeNameSchi
       break
     case 'zhhk':
-      name = matchingPackage.packageTypeNameTchi
+      name = matchingProcess.processTypeNameTchi
       break
     default:
-      name = matchingPackage.packageTypeNameTchi
+      name = matchingProcess.processTypeNameTchi
       break
     }
     return name
@@ -160,9 +162,9 @@ const ProcessRecord: FunctionComponent = () => {
       width: 200,
       type: 'string',
       renderCell: (params) => {
-        const packageName = mappingPackageName(params.row.packageTypeId)
+        const processName = mappingProcessName(params.row.packageTypeId)
         
-        return <div>{packageName}</div>
+        return <div>{processName}</div>
       }
     },
     {

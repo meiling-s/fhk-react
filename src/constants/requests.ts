@@ -356,10 +356,10 @@ export const GET_PROCESS_IN_BY_ID = (table: string, processInId: number): AxiosR
   url: `api/v1/collectors/processin/${table}/${processInId}`
 })
 
-export const GET_PACKAGE_LIST : AxiosRequestConfig = {
+export const GET_PROCESS_LIST : AxiosRequestConfig = ({
   method: 'get',
-  url: `api/v1/administrator/PackageType`
-}
+  url: `api/v1/administrator/ProcessType`
+})
 
 export const GET_PROCESS_OUT_DETAIL = (table: string, processOutId: number): AxiosRequestConfig => ({
   method: 'get',
