@@ -58,10 +58,10 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   >('add')
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const [reloadData, setReloadData] = useState(false);
-
-
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
+
+
   const fieldItem = [
     {
       label: t('processRecord.creationDate'),
@@ -71,11 +71,11 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     },
     {
       label: t('processRecord.handleName'),
-      value: ''
+      value: selectedRow?.packageName
     },
     {
       label: t('processRecord.processingLocation'),
-      value: ''
+      value: selectedRow?.address
     },
     {
       label: t('processRecord.handler'),
@@ -221,7 +221,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
       itemId: data.itemId,
       recycTypeId: data.recycTypeId,
       recycSubTypeId: data.recycSubTypeId,
-      packageTypeId: '',
+      packageTypeId: selectedRow?.packageTypeId || "",
       weight: data.weight,
       unitId: 'kg',
       status: data.status,

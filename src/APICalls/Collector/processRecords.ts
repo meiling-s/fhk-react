@@ -1,6 +1,7 @@
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import {
   GET_PROCESS_OUT,
+  GET_PROCESS_IN_BY_ID,
   GET_PROCESS_OUT_DETAIL,
   CREATE_PROCESS_OUT_ITEM,
   EDIT_PROCESS_OUT_DETAIL_ITEM,
@@ -37,6 +38,24 @@ export const getProcessRecordDetail = async (processOutId: number) => {
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...GET_PROCESS_OUT_DETAIL(token.decodeKeycloack, processOutId )
+      
+    })
+
+    return response
+  } catch (e) {
+    console.error('Get process record detail failed:', e)
+    return null
+  }
+}
+
+
+export const getProcessIn = async (processInId: number) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      ...GET_PROCESS_IN_BY_ID(token.decodeKeycloack, processInId )
       
     })
 
@@ -129,3 +148,4 @@ export const deleteProcessOutItem = async (
     return null
   }
 }
+

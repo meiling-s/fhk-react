@@ -171,3 +171,19 @@ export type vehicleType = {
     updatedAt:           string;
 }
 
+export type PackageType = {
+    
+    packageTypeId:string
+    packageTypeNameTchi: string
+    packageTypeNameSchi: string
+    packageTypeNameEng: string
+    packageTypeLimit: number
+    description: string
+    remark: string
+    status: string
+    createdBy:string
+    updatedBy: string
+    createdAt: string
+    updatedAt: string    
+}
+
