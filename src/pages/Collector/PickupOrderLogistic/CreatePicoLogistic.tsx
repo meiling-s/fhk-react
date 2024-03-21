@@ -3,8 +3,7 @@ import PickupOrderFormLogistic from '../../../components/FormComponents/PickupOr
 import { createPickUpOrder } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import {
   CreatePO,
-  CreatePicoDetail,
-  PickupOrder
+  CreatePicoDetail
 } from '../../../interfaces/pickupOrder'
 import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
@@ -122,7 +121,6 @@ const CreatePicoLogistic = () => {
     validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow
-      // console.log(JSON.stringify(values, null, 2))
       const result = await createPickUpOrder(values)
       const data = result?.data
       if (data) {

@@ -12,12 +12,18 @@ type recycItem = {
     recycSubType: il_item[]
 }
 
+export type itemList = {
+    bgColor: string
+    borderColor: string
+}
+
 type props = {
     showError?: boolean,
     defaultRecycL?: singleRecyclable,
     recycL: recycType[],
     setState: (s: singleRecyclable) => void
     value?:Item
+    itemColor?: itemList
 }
 
 export default function RecyclablesListSingleSelect({
@@ -25,7 +31,8 @@ export default function RecyclablesListSingleSelect({
     defaultRecycL,
     recycL,
     setState,
-    value
+    value, 
+    itemColor
 }: props){
 
     
@@ -149,6 +156,7 @@ export default function RecyclablesListSingleSelect({
                     setRecycType(s)
                     setSubType("")
                 }}
+                itemColor={itemColor? itemColor: null}
                 setLastSelect={setCurRecyc}
                 error={showError && recycType.length == 0}
                 defaultSelected={defaultRecycL? defaultRecycL.recycTypeId : []}
@@ -159,6 +167,7 @@ export default function RecyclablesListSingleSelect({
                         items={returnSubRecyclables(curRecyc)}
                         singleSelect={setSubType}
                         defaultSelected={subType}
+                        itemColor={itemColor? itemColor: null}
                     />
                 </CustomField>
             </Collapse>

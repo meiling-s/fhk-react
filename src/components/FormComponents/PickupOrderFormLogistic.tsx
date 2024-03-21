@@ -20,7 +20,7 @@ import {
   import CustomDatePicker2 from './CustomDatePicker2'
   import CustomTextField from './CustomTextField'
   import CustomItemList, { il_item } from './CustomItemList'
-  import CreateRecycleForm from './CreateRecycleForm'
+  import CreateRecycleFormLogistic from './CreateRecycleFormLogistic'
   import { useContainer } from 'unstated-next'
   import {
     CreatePicoDetail,
@@ -36,9 +36,7 @@ import {
   import { DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON } from '../../themes/icons'
   import theme from '../../themes/palette'
   import { t, use } from 'i18next'
-  import { useFormik } from 'formik'
-  import { editPickupOrder } from '../../APICalls/Collector/pickupOrder/pickupOrder'
-  import { validate } from 'uuid'
+
   import CustomAutoComplete from './CustomAutoComplete'
   import CommonTypeContainer from '../../contexts/CommonTypeContainer'
   import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
@@ -540,6 +538,7 @@ import {
                       }
                       value={formik.values.vehicleTypeId}
                       defaultSelected={selectedPo?.vehicleTypeId}
+                      itemColor={{bgColor: '#ECF5EE', borderColor: '#63D884'}}
                       error={
                         formik.errors.vehicleTypeId &&
                         formik.touched.vehicleTypeId
@@ -623,6 +622,7 @@ import {
                           formik.setFieldValue('reason', values)
                         }}
                         value={formik.values.reason}
+                        itemColor={{bgColor: '#ECF5EE', borderColor: '#63D884'}}
                         defaultSelected={selectedPo?.reason}
                         error={formik.errors.reason && formik.touched.reason}
                       />
@@ -701,7 +701,7 @@ import {
                       }}
                     />
                     <Modal open={openModal} onClose={handleCloses}>
-                      <CreateRecycleForm
+                      <CreateRecycleFormLogistic
                         data={state}
                         setId={setId}
                         setState={setState}
