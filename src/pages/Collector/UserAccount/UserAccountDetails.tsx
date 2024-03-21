@@ -93,7 +93,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const mappingData = () => {
     console.log("selectedItem", selectedItem)
    if(selectedItem) {
-    const selectedStatus = selectedItem.status == 'ACTIVE' ? "ACTIVE" : "INACTIVE" ?  'INACTIVE' : 'TERMINATED'
+    const selectedStatus = selectedItem.status == 'ACTIVE' ? "ACTIVE" : "SUSPEND" ?  'SUSPEND' : 'INACTIVE'
     setLoginId(selectedItem.loginId)
     setUserGroup(selectedItem.userGroup.groupId)
     setUserStatus(selectedStatus)
@@ -296,7 +296,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: selectedItem?.loginId ? selectedItem?.loginId : t('top_menu.add_new'),
+          title: action == 'add' ? t('top_menu.add_new') : selectedItem?.loginId,
           subTitle: t('userAccount.user'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
