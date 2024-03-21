@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { createContainer } from 'unstated-next';
-import { colPointType, collectorList, contract, logisticList, manuList, premiseType, recycType, siteType, vehicleType } from '../interfaces/common';
+import { colPointType, collectorList, contract, logisticList, manuList, premiseType, recycType, siteType, vehicleType, PackageType } from '../interfaces/common';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
-import { GET_COLLECTIONPOINT_TYPE, GET_COLLECTORLIST, GET_CONTRACT, GET_LOGISTICLIST, GET_MANULIST, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_VEHICLE_TYPE } from '../constants/requests';
+import { GET_COLLECTIONPOINT_TYPE, GET_COLLECTORLIST, GET_CONTRACT, GET_LOGISTICLIST, GET_MANULIST, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_VEHICLE_TYPE, GET_PACKAGE_LIST } from '../constants/requests';
 import { returnApiToken } from '../utils/utils';
 import axiosInstance from '../constants/axiosInstance'
+import { AnyARecord } from 'dns';
 
 const CommonType = () => { 
     const [colPointType,setColPointType] =useState<colPointType[]>()
@@ -16,6 +17,7 @@ const CommonType = () => {
     const [manuList,setManuList] = useState<manuList[]>()
     const [collectorList,setCollectorList] = useState<collectorList[]>()
     const [vehicleType,setVehicleType] = useState<vehicleType[]>()
+    const [packageType,setPackageType] = useState<PackageType[]>()
 
 const getColPointType = async () => {
     
@@ -190,6 +192,24 @@ const getSiteType = async () => {
             return null;
         }
       }
+
+    const getPackageList = async () => {
+        try {
+          
+          const response = await axiosInstance({
+              baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+            ...GET_PACKAGE_LIST
+            
+          })
+      
+          const packageList = response.data
+          setPackageType(packageList)
+          
+        } catch (e) {
+          console.error('Get package record failed:', e)
+          return null
+        }
+      }
     
       
 
@@ -203,6 +223,7 @@ const getSiteType = async () => {
         getvehicleType();
         getCollectorList();
         getManuList();
+        getPackageList();
 },[])
  
 
@@ -215,7 +236,8 @@ const getSiteType = async () => {
     contractType,
     vehicleType,
     collectorList,
-    manuList
+    manuList,
+    packageType
 
 }
 

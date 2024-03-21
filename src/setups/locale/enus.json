@@ -238,7 +238,8 @@
     "outstanding": "Outstanding",
     "enable": "Enable",
     "not_enabled": "Not enabled",
-    "terminated": "Terminated"
+    "terminated": "Terminated",
+    "suspend": "Suspended"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -483,11 +484,11 @@
     "processingName": "Processing name",
     "any": "Any",
     "location": "Location",
-    "creationDate": "Creation date",
-    "handleName": "Handle name",
-    "processingNumb": "Processing number",
-    "processingLocation": "Processing location",
-    "handler": "Handler",
+    "creationDate": "Created at",
+    "handleName": "Process type name",
+    "processingNumb": "Process Id",
+    "processingLocation": "Process address",
+    "handler": "Handled by",
     "status": "Status",
     "categoryWeight": "Category and weight of recyclables before processing",
     "detail": {
@@ -619,6 +620,8 @@
   },
   "userGroup": {
     "title": "User Group",
+    "change": "Change",
+    "delete": "Delete",
     "groupName": "Group name",
     "introduction": "Introduction",
     "description": "Description",

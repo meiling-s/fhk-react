@@ -236,7 +236,8 @@
     "outstanding": "傑出",
     "enable": "啟用",
     "not_enabled": "未啟用",
-    "terminated": "已終止"
+    "terminated": "已終止",
+    "suspend": "暫停"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -484,8 +485,8 @@
     "location": "地點",
     "creationDate": "建立日期",
     "handleName": "處理名稱",
-    "processingNumb": "处理编号",
-    "processingLocation": "處理編號",
+    "processingNumb": "處理編號",
+    "processingLocation": "處理地點",
     "handler": "經手人",
     "status": "狀態",
     "categoryWeight": "处理前的回收物类别及重量",
@@ -618,6 +619,8 @@
   },
   "userGroup": {
     "title": "用戶群組",
+    "change": "更改",
+    "delete": "刪除",
     "groupName": "群組名稱",
     "introduction": "簡介",
     "description": "描述",

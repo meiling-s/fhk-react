@@ -20,6 +20,7 @@ import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
 import { getAllFunction, getAllUserGroup } from '../../../APICalls/Collector/userGroup'
+import { IconButton } from '@mui/joy'
 
 type TableRow = {
   id: number
@@ -130,14 +131,15 @@ const UserGroup: FunctionComponent = () => {
       headerName: '',
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <Button
+            onClick={(event) => {event.stopPropagation();  handleAction(params, 'edit')}}
+          >
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              onClick={(event) => {event.stopPropagation();  handleAction(params, 'edit')}}
               style={{ cursor: 'pointer' }}
             />
-          </div>
+          </Button>
         )
       }
     },
@@ -146,14 +148,15 @@ const UserGroup: FunctionComponent = () => {
       headerName: '',
       renderCell: (params) => {
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <Button
+            onClick={(event) => {event.stopPropagation(); handleAction(params, 'delete')}}
+          >
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              onClick={(event) => {event.stopPropagation(); handleAction(params, 'delete')}}
               style={{ cursor: 'pointer' }}
             />
-          </div>
+          </Button>
         )
       }
     }
