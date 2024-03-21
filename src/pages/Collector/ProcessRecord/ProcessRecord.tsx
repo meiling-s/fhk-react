@@ -75,7 +75,7 @@ const ProcessRecord: FunctionComponent = () => {
 
   useEffect(() => {
     initProcessRecord()
-  }, [page, drawerEditOpen, i18n.language])
+  }, [page])
 
 
   const getProcessInDetail = async (processInId: number) =>{

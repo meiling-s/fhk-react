@@ -29,6 +29,7 @@ import { createProcessRecordItem,
 deleteProcessOutRecord} from '../../../APICalls/Collector/processRecords'
 import { displayCreatedDate } from '../../../utils/utils'
 import { ToastContainer, toast } from 'react-toastify'
+import { PackageType } from '../../../interfaces/common'
 
 type RecycItem = {
   itemId: number
@@ -60,7 +61,30 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   const [reloadData, setReloadData] = useState(false);
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
+  const {packageType} = useContainer(CommonTypeContainer)
 
+  const mappingPackageName = (packageTypeId: string) => {
+    const  matchingPackage = packageType?.find((item: PackageType)=> item.packageTypeId == packageTypeId)
+ 
+    if(matchingPackage) {
+    var name = ""
+    switch (i18n.language) {
+     case 'enus':
+       name = matchingPackage.packageTypeNameEng
+       break
+     case 'zhch':
+       name = matchingPackage.packageTypeNameSchi
+       break
+     case 'zhhk':
+       name = matchingPackage.packageTypeNameTchi
+       break
+     default:
+       name = matchingPackage.packageTypeNameTchi
+       break
+     }
+     return name
+   }
+   }
 
   const fieldItem = [
     {
@@ -71,7 +95,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     },
     {
       label: t('processRecord.handleName'),
-      value: selectedRow?.packageName
+      value: selectedRow?.packageTypeId ? mappingPackageName(selectedRow.packageTypeId) : selectedRow?.packageName
     },
     {
       label: t('processRecord.processingLocation'),
