@@ -351,6 +351,16 @@ export const GET_PROCESS_OUT = (table: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/processout/${table}`
 })
 
+export const GET_PROCESS_IN_BY_ID = (table: string, processInId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/processin/${table}/${processInId}`
+})
+
+export const GET_PACKAGE_LIST : AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/PackageType`
+}
+
 export const GET_PROCESS_OUT_DETAIL = (table: string, processOutId: number): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/processout/${table}/${processOutId}`

@@ -316,8 +316,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: t('top_menu.add_new'),
-          subTitle: selectedItem?.staffId,
+          title: action == 'add' ? t('top_menu.add_new') : selectedItem?.staffNameTchi,
+          subTitle: action == 'add' ? '' : selectedItem?.staffId,
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,

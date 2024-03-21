@@ -25,6 +25,9 @@ export type processOutImage = {
     processoutDetail: ProcessOutItem[]
     createdAt: string
     updatedAt: string
+    address: string
+    packageTypeId: string
+    packageName: string
   }
   
   export type CreateRecyclable = {

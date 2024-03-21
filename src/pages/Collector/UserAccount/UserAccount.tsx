@@ -158,7 +158,7 @@ const UserAccount: FunctionComponent = () => {
   }, [i18n, currentLanguage])
 
   const handleOnSubmitData = () => {
-   
+    setSelectedAccount(null)
   }
 
   async function fetchDataUserAccount() {
