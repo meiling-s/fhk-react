@@ -201,7 +201,7 @@ const getSiteType = async () => {
             ...GET_PROCESS_LIST
             
           })
-          console.log(response+"pppppp")
+       
       
           const processList = response.data
           setProcessType(processList)

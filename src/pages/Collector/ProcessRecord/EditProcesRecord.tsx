@@ -63,7 +63,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
   const {processType} = useContainer(CommonTypeContainer)
 
-  console.log(processType+'11111111111')
+
 
   const mappingProcessName = (processTypeId: string) => {
     
