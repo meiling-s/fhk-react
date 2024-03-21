@@ -224,16 +224,20 @@
     "err_msg_500": "取得授權資料失敗。"  
   },
   "status": {
-    "active": "已啓用",
-    "inactive": "不活躍的",
-    "deleted": "刪除",
-    "started": "開始",
-    "created": "創建",
+    "active": "已啟用",
+    "inactive": "已停用",
+    "deleted": "已刪除",
+    "started": "處理中",
+    "created": "待處理",
     "confirmed": "已確認",
-    "rejected": "拒絕",
+    "rejected": "已拒絕",
     "completed": "已完成",
-    "closed": "已關閉",
-    "outstanding": "傑出",
+    "closed": "已取消",
+    "outstanding": "已逾期",
+    "suspend": "已暫停",
+    "DENY": "不接受",
+    "success": "成功",
+    "failed": "失敗",
     "enable": "啟用",
     "not_enabled": "未啟用",
     "terminated": "已終止"
@@ -255,7 +259,11 @@
       "delivery_date": "送貨日期",
       "sender_company": "寄件公司",
       "receiver": "收件公司",
-      "status": "狀態"
+      "status": "狀態",
+      "operation": "操作",
+      "approve": "接受",
+      "reject": "拒絕",
+      "create_job_order": "建立工作運單"
     },
     "filter": {
       "search": "搜尋",
@@ -281,7 +289,7 @@
     "item": {
       "detail": "運單詳情",
       "edit": "修改",
-      "delete": "修改",
+      "delete": "刪除",
       "shipping_info": "運輸資料",
       "date_time": "建立日期及時間",
       "transport_category": "運輸類別",
@@ -353,7 +361,11 @@
     },
     "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司",
-    "change": "變更"
+    "change": "變更",
+    "confirm_approve": "確認接受",
+    "confirm_reject": "確認拒絕",
+    "confirm_approve_title": "確認接受嗎？",
+    "confirm_reject_title": "確認拒絕嗎？"
   },
   "tenant": {
     "company": "公司",

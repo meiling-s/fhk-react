@@ -80,10 +80,13 @@ const Login = () => {
         realm = 'collector';
         loginTo = 'collectoradmin';
         break;
+      case 'logisticAdmin1':
+        realm = 'logistic';
+        loginTo = 'logisticadmin';
+        break;
       default:
         break;
     }
-
     if(realm!=''){
       const result = await login({ 
         username: userName,
@@ -120,6 +123,9 @@ const Login = () => {
             break;
           case "collectoradmin":
             navigate("/collector/collectionPoint");
+            break;
+          case "logistic":
+            navigate("/logistic/pickupOrder");
             break;
           default:
             break;

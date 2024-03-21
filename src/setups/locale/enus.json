@@ -227,15 +227,19 @@
   },
   "status": {
     "active": "Active",
-    "inactive": "In-active",
+    "inactive": "Inactive",
     "deleted": "Deleted",
-    "started": "Startd",
+    "started": "Started",
     "created": "Created",
     "confirmed": "Confirmed",
     "rejected": "Rejected",
     "completed": "Completed",
     "closed": "Closed",
     "outstanding": "Outstanding",
+    "suspend": "Suspend",
+    "DENY": "Deny",
+    "success": "Success",
+    "failed": "Failed",
     "enable": "Enable",
     "not_enabled": "Not enabled",
     "terminated": "Terminated"
@@ -257,7 +261,11 @@
       "delivery_date": "Delivery date",
       "sender_company": " Sender company name",
       "receiver": "Receiver company name",
-      "status": "Status"
+      "status": "Status",
+      "operation": "Operation",
+      "approve": "Approve",
+      "reject": "Reject",
+      "create_job_order": "Create Job Order"
     },
     "filter": {
       "search": "Search",
@@ -354,7 +362,11 @@
     },
     "select_po": "Choose pickup order",
     "search_company_name": "Enter sender company",
-    "change": "Change"
+    "change": "Change",
+    "confirm_approve": "Confirm approve",
+    "confirm_reject": "Confirm reject",
+    "confirm_approve_title": "Confirm approve?",
+    "confirm_reject_title": "Confirm reject?"
   },
   "tenant": {
     "company": "Company",

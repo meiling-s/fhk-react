@@ -13,38 +13,35 @@ import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutli
 import { DELETE_OUTLINED_ICON } from '../../themes/icons'
 import CustomField from './CustomField'
 import StatusCard from '../StatusCard'
-import theme from '../../themes/palette'
 import PickupOrderCard from '../PickupOrderCard'
 
 import {
   PickupOrder,
   PickupOrderDetail,
-  PicoDetail,
-  PoStatus,
   Row
 } from '../../interfaces/pickupOrder'
-import { useContainer } from 'unstated-next'
 import { useNavigate } from 'react-router-dom'
 import {
   editPickupOrderDetailStatus,
   editPickupOrderStatus,
-  getDtlById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
-import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../utils/utils'
+import CustomButton from './CustomButton'
+import { localStorgeKeyName } from '../../constants/constant'
 
 const PickupOrderForm = ({
   onClose,
   selectedRow,
   pickupOrder,
-  initPickupOrderRequest
-
+  initPickupOrderRequest,
+  navigateToJobOrder
 }: {
   onClose?: () => void
   selectedRow?: Row | null
   pickupOrder?: PickupOrder[]|null
   initPickupOrderRequest: () => void
+  navigateToJobOrder: () => void;
 }) => {
   const { t } = useTranslation()
 
@@ -113,6 +110,7 @@ const PickupOrderForm = ({
       alert('No selected pickup order')
     }
   }
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   return (
     <>
@@ -129,24 +127,34 @@ const PickupOrderForm = ({
               <StatusCard status={selectedPickupOrder?.status} />
             </Box>
             <Box sx={{ marginLeft: 'auto' }}>
-              <Button
-                variant="outlined"
-                startIcon={<DriveFileRenameOutlineIcon />}
-                sx={localstyles.button}
-                onClick={() =>
-                  selectedPickupOrder && handleRowClick(selectedPickupOrder)
-                }
-              >
-                {t('pick_up_order.item.edit')}
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={<DELETE_OUTLINED_ICON />}
-                sx={localstyles.button}
-                onClick={onDeleteClick}
-              >
-                 {t('pick_up_order.item.delete')}
-              </Button>
+              {
+                role === 'logisticadmin' && selectedRow && ['STARTED', 'OUSTANDING'].includes(selectedRow.status) ? (
+                  <CustomButton text={t('pick_up_order.table.create_job_order')} onClick={() => {
+                    navigateToJobOrder()
+                  }}></CustomButton>
+                ) : role !== 'logisticadmin' ? (
+                  <>
+                    <Button
+                      variant="outlined"
+                      startIcon={<DriveFileRenameOutlineIcon />}
+                      sx={localstyles.button}
+                      onClick={() =>
+                        selectedPickupOrder && handleRowClick(selectedPickupOrder)
+                      }
+                    >
+                      {t('pick_up_order.item.edit')}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      startIcon={<DELETE_OUTLINED_ICON />}
+                      sx={localstyles.button}
+                      onClick={onDeleteClick}
+                    >
+                      {t('pick_up_order.item.delete')}
+                    </Button>
+                  </>
+                ) : null
+              }
               <IconButton sx={{ ml: '25px' }} onClick={onClose}>
                 <KeyboardTabIcon sx={{ fontSize: '30px' }} />
               </IconButton>
@@ -267,20 +275,22 @@ let localstyles = {
     p: 4
   },
   typo_header: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-    color: '#858585',
-    letterSpacing: '2px',
+    fontSize: '16px',
+    fontWeight: '700',
+    color: '#717171',
+    letterSpacing: '1px',
     mt: '10px'
   },
   typo_fieldTitle: {
-    fontSize: '15px',
+    fontSize: '13px',
     color: '#ACACAC',
-    letterSpacing: '2px'
+    letterSpacing: '1px',
   },
   typo_fieldContent: {
-    fontSize: '17PX',
-    letterSpacing: '2px'
+    fontSize: '15px',
+    fontWeight: '700',
+    letterSpacing: '0.5px',
+    marginTop: '2px'
   }
 }
 

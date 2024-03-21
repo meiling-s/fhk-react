@@ -596,3 +596,29 @@ export const GET_ALL_RECYCLE_TYPE = ():AxiosRequestConfig => ({
   method: 'get',
   url: 'api/v1/administrator/recycType'
 })
+
+
+//logistics pickup order
+export const GET_ALL_LOGISTICS_PICK_UP_ORDER = (tenantId: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/pico/search/logistic/${tenantId}`
+})
+
+
+//get all status
+export const GET_ALL_STATUS = () : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/statusGroup`
+})
+
+//get status detail
+export const GET_STATUS_DETAIL = (status: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/statusGroup/${status}`
+})
+
+//get reason list
+export const GET_ALL_REASON = (tenantId: string, functionId: string | number) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/reason/${tenantId}/${functionId}`
+})
