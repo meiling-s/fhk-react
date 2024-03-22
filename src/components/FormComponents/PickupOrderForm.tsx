@@ -33,6 +33,7 @@ import {
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../utils/utils'
+import path from 'path'
 
 const PickupOrderForm = ({
   onClose,
@@ -60,6 +61,9 @@ const PickupOrderForm = ({
 
   const handleRowClick = (po: PickupOrder) => {
     navigate('/collector/editPickupOrder', { state: po })
+
+    //temporary change path
+    //navigate('/astd/editPicoLogistic', { state: po })
   }
 
   // const { pickupOrder, initPickupOrderRequest } = useContainer(
