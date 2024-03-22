@@ -29,9 +29,9 @@ import { createProcessRecordItem,
 deleteProcessOutRecord} from '../../../APICalls/Collector/processRecords'
 import { displayCreatedDate } from '../../../utils/utils'
 import { ToastContainer, toast } from 'react-toastify'
-import { PackageType } from '../../../interfaces/common'
+import { ProcessType } from '../../../interfaces/common'
 
-type RecycItem = {
+type RecycItem = {  
   itemId: number
   processOutDtlId: number
   recycType: il_item
@@ -61,25 +61,28 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   const [reloadData, setReloadData] = useState(false);
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
-  const {packageType} = useContainer(CommonTypeContainer)
+  const {processType} = useContainer(CommonTypeContainer)
 
-  const mappingPackageName = (packageTypeId: string) => {
-    const  matchingPackage = packageType?.find((item: PackageType)=> item.packageTypeId == packageTypeId)
+
+
+  const mappingProcessName = (processTypeId: string) => {
+    
+    const  matchingProcess = processType?.find((item: ProcessType)=> item.processTypeId == processTypeId)
  
-    if(matchingPackage) {
+    if(matchingProcess) {
     var name = ""
     switch (i18n.language) {
      case 'enus':
-       name = matchingPackage.packageTypeNameEng
+       name = matchingProcess.processTypeNameEng
        break
      case 'zhch':
-       name = matchingPackage.packageTypeNameSchi
+       name = matchingProcess.processTypeNameSchi
        break
      case 'zhhk':
-       name = matchingPackage.packageTypeNameTchi
+       name = matchingProcess.processTypeNameTchi
        break
      default:
-       name = matchingPackage.packageTypeNameTchi
+       name = matchingProcess.processTypeNameTchi
        break
      }
      return name
@@ -95,7 +98,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     },
     {
       label: t('processRecord.handleName'),
-      value: selectedRow?.packageTypeId ? mappingPackageName(selectedRow.packageTypeId) : selectedRow?.packageName
+      value: selectedRow?.packageTypeId ? mappingProcessName(selectedRow.packageTypeId) : selectedRow?.packageName
     },
     {
       label: t('processRecord.processingLocation'),
