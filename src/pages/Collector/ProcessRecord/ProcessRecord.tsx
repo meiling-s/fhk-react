@@ -9,8 +9,8 @@ import {
 } from '@mui/x-data-grid'
 import { styles } from '../../../constants/styles'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
 import EditProcessRecord from './EditProcesRecord'
 import { format } from '../../../constants/constant'
 import dayjs from 'dayjs'
@@ -20,11 +20,13 @@ import {
   processOutImage,
   ProcessOutItem
 } from '../../../interfaces/processRecords'
-import { getAllProcessRecord } from '../../../APICalls/Collector/processRecords'
+import { getAllProcessRecord , getProcessIn} from '../../../APICalls/Collector/processRecords'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
+import { ProcessType } from '../../../interfaces/common'
+
 
 interface Option {
   value: string
@@ -39,7 +41,10 @@ function createProcessRecord(
   updatedBy: string,
   processoutDetail: ProcessOutItem[],
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  address: string,
+  packageTypeId: string,
+  packageName: string
 ): ProcessOut {
   return {
     processOutId,
@@ -49,7 +54,10 @@ function createProcessRecord(
     updatedBy,
     processoutDetail,
     createdAt,
-    updatedAt
+    updatedAt,
+    address,
+    packageTypeId,
+    packageName,
   }
 }
 
@@ -62,13 +70,23 @@ const ProcessRecord: FunctionComponent = () => {
   )
   const [selectedRow, setSelectedRow] = useState<ProcessOut | null>(null)
   const [selectedProcessOutId, setProcessOutId] = useState<number>(1)
+  const {processType} = useContainer(CommonTypeContainer)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
 
   useEffect(() => {
     initProcessRecord()
-  }, [page, drawerEditOpen])
+  }, [page])
+
+
+  const getProcessInDetail = async (processInId: number) =>{
+    const result = await getProcessIn(processInId)
+    if (result) {
+      console.log("getProcessInDetail",result)
+      return result.data
+    }
+  }
 
   const initProcessRecord = async () => {
     setTotalData(0)
@@ -77,7 +95,9 @@ const ProcessRecord: FunctionComponent = () => {
     const data = result?.data
     if (data) {
       var recordsMapping: any[] = []
-      data?.content.map((item: any) => {
+      await Promise.all(data.content.map(async (item: any) => {
+        const processIn: any = await getProcessInDetail(item.processInId); // Await here
+        const processName = mappingProcessName( processIn?.processTypeId)
         recordsMapping.push(
           createProcessRecord(
             item?.processOutId,
@@ -87,15 +107,41 @@ const ProcessRecord: FunctionComponent = () => {
             item?.updatedBy,
             item?.processoutDetail,
             item?.createdAt,
-            item?.updatedAt
+            item?.updatedAt,
+            processIn ? processIn?.address : "-",
+            processIn ? processIn?.processTypeId : null,
+            processName || ''
           )
-        )
-      })
+        );
+      }));
+
       setTotalData(data.totalPages)
-      console.log('initProcessRecord', recordsMapping)
       setProcesRecords(recordsMapping)
       setFilteredProcessRecords(recordsMapping)
     }
+  }
+
+  const mappingProcessName = (processTypeId: string) => {
+   const  matchingProcess = processType?.find((item: ProcessType)=> item.processTypeId == processTypeId)
+
+   if(matchingProcess) {
+   var name = ""
+   switch (i18n.language) {
+    case 'enus':
+      name = matchingProcess.processTypeNameEng
+      break
+    case 'zhch':
+      name = matchingProcess.processTypeNameSchi
+      break
+    case 'zhhk':
+      name = matchingProcess.processTypeNameTchi
+      break
+    default:
+      name = matchingProcess.processTypeNameTchi
+      break
+    }
+    return name
+  }
   }
 
   const columns: GridColDef[] = [
@@ -111,10 +157,15 @@ const ProcessRecord: FunctionComponent = () => {
       }
     },
     {
-      field: 'createdBy',
+      field: 'packageTypeId',
       headerName: t('processRecord.handleName'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        const processName = mappingProcessName(params.row.packageTypeId)
+        
+        return <div>{processName}</div>
+      }
     },
     {
       field: 'processOutId',
@@ -123,16 +174,16 @@ const ProcessRecord: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'disposalLoc',
+      field: 'address',
       headerName: t('processRecord.processingLocation'),
       width: 200,
       type: 'string',
-      renderCell: (params) => {
-        return '-'
-      }
+      // renderCell: (params) => {
+      //   return '-'
+      // }
     },
     {
-      field: '',
+      field: 'createdBy',
       headerName: t('processRecord.handler'),
       width: 200,
       type: 'string'
@@ -154,13 +205,13 @@ const ProcessRecord: FunctionComponent = () => {
       label: t('processRecord.handleName'),
       width: '20%',
       options: getUniqueOptions('createdBy'),
-      field: 'recycTypeId'
+      field: 'createdBy'
     },
     {
       label: t('processRecord.location'),
       width: '20%',
-      options: getUniqueOptions('disposalLoc'),
-      field: 'recycSubTypeId'
+      options: getUniqueOptions('address'),
+      field: 'address'
     }
   ]
 
@@ -210,6 +261,15 @@ const ProcessRecord: FunctionComponent = () => {
     if (label == 'createdBy') {
       const filtered: ProcessOut[] = procesRecords.filter(
         (item) => item.createdBy == value
+      )
+      filtered
+        ? setFilteredProcessRecords(filtered)
+        : setFilteredProcessRecords(procesRecords)
+    }
+
+    if (label == 'adress') {
+      const filtered: ProcessOut[] = procesRecords.filter(
+        (item) => item.address == value
       )
       filtered
         ? setFilteredProcessRecords(filtered)

@@ -29,8 +29,9 @@ import { createProcessRecordItem,
 deleteProcessOutRecord} from '../../../APICalls/Collector/processRecords'
 import { displayCreatedDate } from '../../../utils/utils'
 import { ToastContainer, toast } from 'react-toastify'
+import { ProcessType } from '../../../interfaces/common'
 
-type RecycItem = {
+type RecycItem = {  
   itemId: number
   processOutDtlId: number
   recycType: il_item
@@ -58,10 +59,36 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   >('add')
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const [reloadData, setReloadData] = useState(false);
-
-
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
+  const {processType} = useContainer(CommonTypeContainer)
+
+
+
+  const mappingProcessName = (processTypeId: string) => {
+    
+    const  matchingProcess = processType?.find((item: ProcessType)=> item.processTypeId == processTypeId)
+ 
+    if(matchingProcess) {
+    var name = ""
+    switch (i18n.language) {
+     case 'enus':
+       name = matchingProcess.processTypeNameEng
+       break
+     case 'zhch':
+       name = matchingProcess.processTypeNameSchi
+       break
+     case 'zhhk':
+       name = matchingProcess.processTypeNameTchi
+       break
+     default:
+       name = matchingProcess.processTypeNameTchi
+       break
+     }
+     return name
+   }
+   }
+
   const fieldItem = [
     {
       label: t('processRecord.creationDate'),
@@ -71,15 +98,15 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     },
     {
       label: t('processRecord.handleName'),
-      value: selectedRow?.createdBy
+      value: selectedRow?.packageTypeId ? mappingProcessName(selectedRow.packageTypeId) : selectedRow?.packageName
     },
     {
       label: t('processRecord.processingLocation'),
-      value: '處理地點'
+      value: selectedRow?.address
     },
     {
       label: t('processRecord.handler'),
-      value: '-'
+      value: selectedRow?.createdBy
     }
   ]
 
@@ -221,7 +248,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
       itemId: data.itemId,
       recycTypeId: data.recycTypeId,
       recycSubTypeId: data.recycSubTypeId,
-      packageTypeId: '',
+      packageTypeId: selectedRow?.packageTypeId || "",
       weight: data.weight,
       unitId: 'kg',
       status: data.status,
@@ -235,7 +262,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const handleCreateRecyc = async (data: CreateRecyclable) => {
-    const createItemsProcessOut:CreateRecyclable = constractForm(data)
+    const createItemsProcessOut:CreateRecyclable[] = [constractForm(data)]
     const result = await createProcessRecordItem(createItemsProcessOut, selectedRow!!.processOutId)
   
     if (result) {
@@ -249,7 +276,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
 
   const handleEditRecyc = async (data: CreateRecyclable, processOutDtlId: number) =>{
     const editItemsProcessOut:CreateRecyclable = constractForm(data)
-    const response = await editProcessRecordItem(editItemsProcessOut, processOutDtlId)
+    const response = await editProcessRecordItem(editItemsProcessOut,  selectedRow!!.processOutId, processOutDtlId)
   
     if (response) {
       setReloadData(true);
@@ -257,6 +284,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     } else {
       showErrorToast(t('processRecord.editProcessOutFailed'))
     }
+
+    setSelectedItem(null)
   }
 
   const handleDeleteRecyc = async (processOutDtlId: number) => {

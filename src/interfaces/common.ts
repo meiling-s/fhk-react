@@ -171,3 +171,19 @@ export type vehicleType = {
     updatedAt:           string;
 }
 
+export type ProcessType = {
+    
+    processTypeId:string
+    processTypeNameTchi: string
+    processTypeNameSchi: string
+    processTypeNameEng: string
+    processTypeLimit: number
+    description: string
+    remark: string
+    status: string
+    createdBy:string
+    updatedBy: string
+    createdAt: string
+    updatedAt: string    
+}
+

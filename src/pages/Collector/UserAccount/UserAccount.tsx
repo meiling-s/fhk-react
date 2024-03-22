@@ -15,8 +15,7 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
-import AddWarehouse from '../Warehouse/AddWarehouse'
-import AddUserAccount from '../UserAccount/AddUserAccount'
+
 // import TableBase from '../../../components/TableBase'
 import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
@@ -109,15 +108,15 @@ const UserAccount: FunctionComponent = () => {
       type: 'string',
       valueGetter: (params) => params.row?.userGroup.roleName
     },
-    {
-      field: '是',
-      width: 150,
-      headerName: t('userAccount.isItAReviewer'),
-      type: 'string',
-      valueGetter: () => {
-        return t('yes')
-      }
-    },
+    // {
+    //   field: '是',
+    //   width: 150,
+    //   headerName: t('userAccount.isItAReviewer'),
+    //   type: 'string',
+    //   valueGetter: () => {
+    //     return t('yes')
+    //   }
+    // },
     {
       field: 'status',
       headerName: t('userAccount.status'),
@@ -159,7 +158,7 @@ const UserAccount: FunctionComponent = () => {
   }, [i18n, currentLanguage])
 
   const handleOnSubmitData = () => {
-   
+    setSelectedAccount(null)
   }
 
   async function fetchDataUserAccount() {
