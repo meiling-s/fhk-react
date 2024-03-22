@@ -369,7 +369,10 @@
     "confirm_approve": "确认接受",
     "confirm_reject": "确认拒绝",
     "confirm_approve_title": "确认接受吗？",
-    "confirm_reject_title": "确认拒绝吗？"
+    "confirm_reject_title": "确认拒绝吗？",
+    "approved_success": "接受成功",
+    "rejected_success": "拒绝成功",
+    "reject_reasons": "拒绝原因"
   },
   "tenant": {
     "company": "公司",

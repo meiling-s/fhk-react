@@ -47,7 +47,7 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
         updatePoStatus
       )
       if (result) {
-        toast.info('Approved successfully', {
+        toast.info(t('pick_up_order.approved_success'), {
           position: "top-center",
           autoClose: 3000,
           hideProgressBar: true,
@@ -151,7 +151,7 @@ function RejectForm({
           updatePoStatus
         )
         if (result) {
-          toast.info('Rejected successfully', {
+          toast.info(t('pick_up_order.rejected_success'), {
             position: "top-center",
             autoClose: 3000,
             hideProgressBar: true,
@@ -189,7 +189,7 @@ function RejectForm({
           </Box>
           <Box>
             <Typography sx={localstyles.typo}>
-              {t("check_in.reject_reasons")}
+              {t("pick_up_order.reject_reasons")}
               <Required />
             </Typography>
             <CustomItemList items={reasonList} singleSelect={setRejectReasonId} />
@@ -473,6 +473,7 @@ const PickupOrders = () => {
 
   interface Row {
     id: number;
+    tenantId: string;
     createdAt: string;
     logisticCompany: string;
     picoId: number;
@@ -570,7 +571,10 @@ const PickupOrders = () => {
         {t('pick_up_order.enquiry_pickup_order')}
         </Typography>
         <Button
-          onClick={() => navigate("/logistics/createPickupOrder")}
+          onClick={() => {
+            const routeName = role === 'logisticadmin' ? 'logistics' : 'collector'
+            navigate(`/${routeName}/createPickupOrder`)
+          }}
           sx={{
             borderRadius: "20px",
             backgroundColor: "#79ca25",

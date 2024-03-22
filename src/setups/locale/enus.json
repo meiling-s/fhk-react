@@ -369,7 +369,10 @@
     "confirm_approve": "Confirm approve",
     "confirm_reject": "Confirm reject",
     "confirm_approve_title": "Confirm approve?",
-    "confirm_reject_title": "Confirm reject?"
+    "confirm_reject_title": "Confirm reject?",
+    "approved_success": "Approved successfully",
+    "rejected_success": "Rejected successfully",
+    "reject_reasons": "Reasons for rejection"
   },
   "tenant": {
     "company": "Company",

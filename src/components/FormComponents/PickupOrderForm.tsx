@@ -38,12 +38,14 @@ const PickupOrderForm = ({
   navigateToJobOrder
 }: {
   onClose?: () => void
-  selectedRow?: Row | null
+  selectedRow?: Row | null | undefined
   pickupOrder?: PickupOrder[]|null
   initPickupOrderRequest: () => void
   navigateToJobOrder: () => void;
 }) => {
   const { t } = useTranslation()
+  const role = localStorage.getItem(localStorgeKeyName.role)
+  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -56,7 +58,8 @@ const PickupOrderForm = ({
   const navigate = useNavigate()
 
   const handleRowClick = (po: PickupOrder) => {
-    navigate('/collector/editPickupOrder', { state: po })
+    const routeName = role === 'logisticadmin' ? 'logistics' : 'collector'
+    navigate(`/${routeName}/editPickupOrder`, { state: po })
   }
 
   // const { pickupOrder, initPickupOrderRequest } = useContainer(
@@ -110,7 +113,6 @@ const PickupOrderForm = ({
       alert('No selected pickup order')
     }
   }
-  const role = localStorage.getItem(localStorgeKeyName.role)
 
   return (
     <>
@@ -128,10 +130,21 @@ const PickupOrderForm = ({
             </Box>
             <Box sx={{ marginLeft: 'auto' }}>
               {
-                role === 'logisticadmin' && selectedRow && ['STARTED', 'OUSTANDING'].includes(selectedRow.status) ? (
+                role === 'logisticadmin' && selectedRow && ['STARTED', 'OUTSTANDING'].includes(selectedRow.status) ? (
                   <CustomButton text={t('pick_up_order.table.create_job_order')} onClick={() => {
                     navigateToJobOrder()
                   }}></CustomButton>
+                ) : role === 'logisticadmin' && selectedRow && selectedRow.status === 'CREATED' && selectedRow?.tenantId === tenantId ? (
+                  <Button
+                      variant="outlined"
+                      startIcon={<DriveFileRenameOutlineIcon />}
+                      sx={localstyles.button}
+                      onClick={() =>
+                        selectedPickupOrder && handleRowClick(selectedPickupOrder)
+                      }
+                    >
+                      {t('pick_up_order.item.edit')}
+                    </Button>
                 ) : role !== 'logisticadmin' ? (
                   <>
                     <Button
