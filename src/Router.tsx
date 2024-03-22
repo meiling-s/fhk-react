@@ -128,7 +128,10 @@ const Router = () => {
           <Route path="/warehouse/staff" element={<StaffManagement />} />
           <Route path="/warehouse/settings" element={<Settings />} />
           <Route path="/warehouse/settings/vehicle" element={<Vehicles />} />
-          
+        </Route>
+
+        <Route element={<MainLayout />}>
+          <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
         </Route>
 
         <Route element={<MainLayout />}>

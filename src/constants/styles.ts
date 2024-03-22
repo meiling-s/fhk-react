@@ -49,13 +49,13 @@ export const styles = {
     color: '#717171'
   },
   header3: {
-    fontSize: 16,
+    fontSize: 13,
     color: '#ACACAC'
   },
   header4: {
-    fontSize: 20,
+    fontSize: 18,
     color: 'black',
-    fontWeight: 'bold'
+    fontWeight: '700'
   },
   formDataText: {
     fontSize: 18,
