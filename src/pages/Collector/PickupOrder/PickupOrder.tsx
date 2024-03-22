@@ -230,7 +230,8 @@ const PickupOrders = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10 
   const [totalData , setTotalData] = useState<number>(0)
-  const defaultColumns: GridColDef[] = [
+  const [showOperationColumn, setShowOperationColumn] = useState<Boolean>(false)
+  const columns: GridColDef[] = [
     { field: "createdAt", headerName: t('pick_up_order.table.created_datetime'), width: 150 },
     {
       field: "logisticCompany",
@@ -276,9 +277,22 @@ const PickupOrders = () => {
         <StatusCard status={params.value}/>
       ),
     },
+    showOperationColumn && {
+      field: "operation",
+      headerName: t('pick_up_order.table.operation'),
+      type: "string",
+      width: 220,
+      editable: true,
+      renderCell: (params) => (
+        <TableOperation
+          row={params.row}
+          onApprove={showApproveModal}
+          onReject={showRejectModal}
+          navigateToJobOrder={navigateToJobOrder}
+        />
+      ),
+    },
   ];
-  const [columns, setColumns] = useState<GridColDef[]>(defaultColumns)
-
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
   const {recycType} = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
@@ -363,27 +377,12 @@ const PickupOrders = () => {
   }
   
   useEffect(() => {
-    if (role === 'logisticadmin') {
-      setColumns([
-        ...columns,
-        {
-          field: "operation",
-          headerName: t('pick_up_order.table.operation'),
-          type: "string",
-          width: 220,
-          editable: true,
-          renderCell: (params) => (
-            <TableOperation
-              row={params.row}
-              onApprove={showApproveModal}
-              onReject={showRejectModal}
-              navigateToJobOrder={navigateToJobOrder}
-            />
-          ),
-        },
-      ])
-    }
-  }, [role, setColumns])
+    setShowOperationColumn(role === 'logisticadmin')
+  }, [role, columns, i18n.language])
+
+  useEffect(()=>{
+    initPickupOrderRequest()
+  }, [i18n.language])
 
   useEffect(() => {
     initPickupOrderRequest();
@@ -392,10 +391,10 @@ const PickupOrders = () => {
       var toastMsg = "";
       switch(action){
         case "created":
-          toastMsg = t("回收運單已建立");
+          toastMsg = t("pick_up_order.created_pickup_order");
           break;
         case "updated":
-          toastMsg = t("回收運單已更改");
+          toastMsg = t("pick_up_order.changed_pickup_order");
           break;
       }
       toast.info(toastMsg, {
@@ -571,7 +570,7 @@ const PickupOrders = () => {
         {t('pick_up_order.enquiry_pickup_order')}
         </Typography>
         <Button
-          onClick={() => navigate("/collector/createPickupOrder")}
+          onClick={() => navigate("/logistics/createPickupOrder")}
           sx={{
             borderRadius: "20px",
             backgroundColor: "#79ca25",
@@ -596,8 +595,6 @@ const PickupOrders = () => {
             options={s.options || []} 
             onChange={handleSearch} />
         ))}
-        
-
       </Stack>
       <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
         <DataGrid

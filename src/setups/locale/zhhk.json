@@ -253,6 +253,8 @@
     "enquiry_pickup_order": "查詢運單",
     "delete_msg": "您確定要刪除此項目嗎 ?",
     "out_of_date_range": "具體日期超出「出貨有效期限」範圍",
+    "created_pickup_order": "回收運單已建立",
+    "changed_pickup_order": "回收運單已更改",
     "table": {
       "created_datetime": "建立日期",
       "pico_id": "運單編號",
