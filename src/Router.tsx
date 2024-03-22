@@ -118,8 +118,6 @@ const Router = () => {
           <Route path="/astd/statistics/recyclePlant" element={<></>} />
           <Route path="/astd/setting" element={<Settings />} />
           <Route path="/astd/account" element={<></>} />
-          <Route path="/astd/createPicoLogistic" element={<CreatePicoLogistic />} />
-          <Route path="/astd/editPicoLogistic" element={<EditPicoLogistic />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -133,6 +131,11 @@ const Router = () => {
           
         </Route>
 
+        <Route element={<MainLayout />}>
+        <Route path="/logistics/createPickupOrder" element={<CreatePicoLogistic />} />
+          <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic />} />
+        </Route>
+
         </Route>
         {/* </Route> */}
       
@@ -142,3 +145,5 @@ const Router = () => {
 };
 
 export default Router;
+
+
