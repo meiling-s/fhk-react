@@ -124,13 +124,19 @@ const Warehouse: FunctionComponent = () => {
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              onClick={() => handleEdit(params.row.id)} // Implement your edit logic here
+              onClick={(event) => {
+                event.stopPropagation()
+                handleEdit(params.row.id)
+              }} // Implement your edit logic here
               style={{ cursor: 'pointer' }}
             />
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              onClick={() => handleDelete(params.row.id)} // Implement your delete logic here
+              onClick={(event) => {
+                event.stopPropagation()
+                handleDelete(params.row.id)
+              }} // Implement your delete logic here
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -163,9 +169,9 @@ const Warehouse: FunctionComponent = () => {
         let recyTypeData: recyTypeItem = recyleTypeList
         recyTypeData = response.data.forEach((item: recyTypeItem) => {
           recyTypeData[item.recycTypeId as keyof recyTypeItem] = {
-            recyclableNameEng: item.recyclableNameEng,
-            recyclableNameSchi: item.recyclableNameSchi,
-            recyclableNameTchi: item.recyclableNameTchi
+            recyclableNameEng: item.recyclableNameEng || '-',
+            recyclableNameSchi: item.recyclableNameSchi || '-',
+            recyclableNameTchi: item.recyclableNameTchi || '-'
           }
         })
 
@@ -208,12 +214,12 @@ const Warehouse: FunctionComponent = () => {
         : currentLanguage === 'zhch'
         ? 'recyclableNameSchi'
         : 'recyclableNameEng'
+
     const recyleType = warehouse.warehouseRecyc
       .map((item: RecyleItem) => {
-        //console.log(item.recycTypeId)
-        return `${
-          recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem]
-        }`
+        const data =
+          recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem] || ''
+        return `${data ? data : '-'}`
       })
       .join(', ')
     return {
@@ -235,9 +241,8 @@ const Warehouse: FunctionComponent = () => {
     setAction('add')
   }
 
-  const handleEdit = (row: TableRow) => {
-    setRowId(row.id)
-    // console.log(row)
+  const handleEdit = (row: number) => {
+    setRowId(row)
     setDrawerOpen(true)
     setAction('edit')
     fetchData()
@@ -246,15 +251,18 @@ const Warehouse: FunctionComponent = () => {
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as TableRow
     setSelectedRow(row)
+
     setRowId(row.id)
     setDrawerOpen(true)
     setAction('edit')
   }
 
-  const handleDelete = (row: TableRow) => {
-    setRowId(row.id)
+  const handleDelete = (row: number) => {
+    setRowId(row)
+    console.log('handledelete', row)
     setDrawerOpen(true)
     setAction('delete')
+    fetchData()
   }
 
   const handleDrawerClose = () => {
