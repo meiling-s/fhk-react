@@ -3,8 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   CreatePicoDetail,
   EditPo,
-  PickupOrder,
-  PickupOrderDetail
+  PickupOrder
 } from '../../../interfaces/pickupOrder'
 import PickupOrderFormLogistic from '../../../components/FormComponents/PickupOrderFormLogistic'
 import { useFormik } from 'formik'
@@ -35,21 +34,7 @@ const EditPicoLogistic = () => {
   const validateSchema = Yup.object().shape({
     effFrmDate: Yup.string().required('This effFrmDate is required'),
     effToDate: Yup.string().required('This effToDate is required'),
-    routine: Yup.array()
-      .required('routine is required')
-      .test(
-        'is-in-range',
-        t('pick_up_order.out_of_date_range'),
-        function (value) {
-          const { effFrmDate, effToDate } = this.parent
-          if (!effFrmDate || !effToDate) return true
-          if (!value) return true
-          const datesInRange = value.every(
-            (date) => date >= effFrmDate && date <= effToDate
-          )
-          return datesInRange
-        }
-      ),
+    routine: Yup.array().required('routine is required'),
     logisticName: Yup.string().required(
       getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
     ),
@@ -107,7 +92,7 @@ const EditPicoLogistic = () => {
       const data = result?.data
       if (data) {
         console.log('all pickup order: ', data)
-        navigate('/collector/PickupOrder', { state: 'updated' })
+        navigate('/logistic/pickupOrder', { state: 'updated' })
       } else {
         alert('fail to edit pickup order')
       }

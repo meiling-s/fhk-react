@@ -20,10 +20,7 @@ import React, {
   useState
 } from 'react'
 import { styles } from '../../constants/styles'
-import { DELETE_OUTLINED_ICON } from '../../themes/icons'
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab'
-import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
-import theme from '../../themes/palette'
 import CustomField from './CustomField'
 import CustomTimePicker from './CustomTimePicker'
 import {
@@ -31,8 +28,9 @@ import {
   singleRecyclable,
   timePeriod
 } from '../../interfaces/collectionPoint'
-import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers'
+import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 import RecyclablesList from '../SpecializeComponents/RecyclablesList'
 import { t } from 'i18next'
 import * as Yup from 'yup'
@@ -60,7 +58,7 @@ type props = {
   editRowId: number | null
   isEditing: boolean
 }
-type CombinedType = manuList[] | collectorList[]
+
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 
 const initValue = {
@@ -94,7 +92,6 @@ const CreateRecycleFormLogistic = ({
   const { recycType, manuList, collectorList } =
     useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<CreatePicoDetail>()
-  const [updateRow, setUpdateRow] = useState<CreatePicoDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
 
@@ -222,8 +219,6 @@ const CreateRecycleFormLogistic = ({
     })
   })
 
-  //console.log(JSON.stringify(data)+'qwesss')
-
   const formik = useFormik({
     initialValues: initValue,
     validationSchema: validateSchema,
@@ -276,8 +271,20 @@ const CreateRecycleFormLogistic = ({
     }
   ]
 
-  const initialTime = '2024-02-10T09:00:00' // Example initial time string
-  const parsedDate = new Date(initialTime) // Parse the string into a Date object
+  //convert PickupAt
+  const initialTime: dayjs.Dayjs = dayjs()
+
+  const formatTimePickAt = (timeValue: string) => {
+    const times = timeValue.split(':')
+    return initialTime
+      .hour(Number(times[0]))
+      .minute(Number(times[1]))
+      .second(Number(times[2]))
+  }
+
+  const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
+    return pickupAtValue.format('HH:mm:ss')
+  }
 
   return (
     <>
@@ -292,7 +299,7 @@ const CreateRecycleFormLogistic = ({
                   <Typography sx={styles.header4}>
                     {editRow
                       ? t('pick_up_order.item.edit')
-                      : t('add_warehouse_page.new')}
+                      : t('pick_up_order.recyclForm.new')}
                   </Typography>
                   <Typography sx={styles.header3}>
                     {t('pick_up_order.recyclForm.expected_recycling')}
@@ -332,15 +339,14 @@ const CreateRecycleFormLogistic = ({
                   <TimePicker
                     sx={{ width: '100%' }}
                     value={
-                      formik.values.pickupAt ? formik.values.pickupAt : null
+                      formik.values.pickupAt
+                        ? formatTimePickAt(formik.values.pickupAt)
+                        : initialTime
                     }
                     onChange={(value) => {
-                      if (value != null)
-                        formik.setFieldValue(
-                          'pickupAt',
-
-                          dateToLocalTime(new Date(value))
-                        )
+                      if (value != null) {
+                        formik.setFieldValue('pickupAt', formattedTime(value))
+                      }
                     }}
                   />
                 </CustomField>

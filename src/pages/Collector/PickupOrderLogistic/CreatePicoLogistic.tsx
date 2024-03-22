@@ -1,10 +1,7 @@
 import { Formik, useFormik } from 'formik'
 import PickupOrderFormLogistic from '../../../components/FormComponents/PickupOrderFormLogistic'
 import { createPickUpOrder } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import {
-  CreatePO,
-  CreatePicoDetail
-} from '../../../interfaces/pickupOrder'
+import { CreatePO, CreatePicoDetail } from '../../../interfaces/pickupOrder'
 import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import * as Yup from 'yup'
@@ -125,7 +122,7 @@ const CreatePicoLogistic = () => {
       const data = result?.data
       if (data) {
         console.log('all pickup order: ', data)
-        navigate('/collector/PickupOrder', { state: 'created' })
+        navigate('/logistic/pickupOrder', { state: 'created' })
       } else {
         alert('fail to create pickup order')
       }
