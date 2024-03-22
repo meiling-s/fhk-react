@@ -49,6 +49,8 @@ import CheckoutRequest from "./pages/Collector/Manage/CheckoutRequest";
 import UserGroup from "./pages/Collector/UserGroup/UserGroup";
 import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 
+import LogisticAccount from './pages/Logistic/Account'
+
 
 const Router = () => {
   
@@ -126,6 +128,10 @@ const Router = () => {
           <Route path="/warehouse/settings" element={<Settings />} />
           <Route path="/warehouse/settings/vehicle" element={<Vehicles />} />
           
+        </Route>
+
+        <Route element={<MainLayout />}>
+          <Route path="/logistics/account" element={<LogisticAccount />} />
         </Route>
 
         </Route>
