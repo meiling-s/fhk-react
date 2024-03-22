@@ -10,6 +10,7 @@ import { useFormik } from 'formik'
 import { editPickupOrder } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useTranslation } from 'react-i18next'
 import { localStorgeKeyName } from '../../../constants/constant'
+import { showErrorToast } from '../../../utils/utils'
 import * as Yup from 'yup'
 
 const EditPicoLogistic = () => {
@@ -94,7 +95,8 @@ const EditPicoLogistic = () => {
         console.log('all pickup order: ', data)
         navigate('/logistic/pickupOrder', { state: 'updated' })
       } else {
-        alert('fail to edit pickup order')
+        //alert('fail to edit pickup order')
+        showErrorToast(t('fail to create pickup order'))
       }
     }
   })
