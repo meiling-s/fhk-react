@@ -79,7 +79,10 @@ export const createWarehouse = async (data: any) => {
     const response = await axiosInstance({
       ...ADD_WAREHOUSE(token.decodeKeycloack),
       baseURL: collectionPointAPI.baseURL,
-      data: data
+      data: data,
+      headers: {
+        AuthToken: token.authToken
+      }
     })
     return response
   } catch (e) {
@@ -96,7 +99,10 @@ export const editWarehouse = async (data: any, warehouseId: number) => {
     const response = await axiosInstance({
       ...UPDATE_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
       baseURL: collectionPointAPI.baseURL,
-      data: data
+      data: data,
+      headers: {
+        AuthToken: token.authToken
+      }
     })
     return response
   } catch (e) {

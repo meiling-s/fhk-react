@@ -180,29 +180,29 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     return s == ''
   }
 
-  useEffect(() => {
-    const validate = async () => {
-      const tempV: formValidate[] = []
-      const fieldMapping: FormValues = {
-        loginId: t('staffManagement.loginName'),
-        staffNameTchi: t('staffManagement.employeeChineseName'),
-        staffNameSchi: t('staffManagement.employeeChineseName'),
-        staffNameEng: 'Staff English Name',
-        titleId: t('staffManagement.position'),
-        contactNo: t('staffManagement.contactNumber'),
-        email: t('staffManagement.email')
-      }
-      Object.keys(formData).forEach((fieldName) => {
-        formData[fieldName as keyof FormValues].trim() === '' &&
-          tempV.push({
-            field: fieldMapping[fieldName as keyof FormValues],
-            problem: formErr.empty,
-            type: 'error'
-          })
-      })
-      setValidation(tempV)
+  const validate = async () => {
+    const tempV: formValidate[] = []
+    const fieldMapping: FormValues = {
+      loginId: t('staffManagement.loginName'),
+      staffNameTchi: t('staffManagement.employeeChineseName'),
+      staffNameSchi: t('staffManagement.employeeChineseName'),
+      staffNameEng: 'Staff English Name',
+      titleId: t('staffManagement.position'),
+      contactNo: t('staffManagement.contactNumber'),
+      email: t('staffManagement.email')
     }
+    Object.keys(formData).forEach((fieldName) => {
+      formData[fieldName as keyof FormValues].trim() === '' &&
+        tempV.push({
+          field: fieldMapping[fieldName as keyof FormValues],
+          problem: formErr.empty,
+          type: 'error'
+        })
+    })
+    setValidation(tempV)
+  }
 
+  useEffect(() => {
     validate()
   }, [formData.loginId, formData.staffNameTchi, formData.staffNameEng, formData.staffNameSchi, formData.contactNo, formData.email, formData.titleId ])
 
@@ -238,6 +238,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleCreateStaff = async (staffData: CreateStaff) => {
+    validate()
     if (validation.length === 0) {
       const result = await createStaff(staffData)
       console.log('result', result?.data)

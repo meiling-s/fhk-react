@@ -171,13 +171,13 @@ export type vehicleType = {
     updatedAt:           string;
 }
 
-export type PackageType = {
+export type ProcessType = {
     
-    packageTypeId:string
-    packageTypeNameTchi: string
-    packageTypeNameSchi: string
-    packageTypeNameEng: string
-    packageTypeLimit: number
+    processTypeId:string
+    processTypeNameTchi: string
+    processTypeNameSchi: string
+    processTypeNameEng: string
+    processTypeLimit: number
     description: string
     remark: string
     status: string
