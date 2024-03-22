@@ -9,7 +9,7 @@ import {
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
-import { Box , Pagination} from '@mui/material'
+import { Box, Pagination } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import {
   ADD_ICON,
@@ -68,7 +68,7 @@ const Warehouse: FunctionComponent = () => {
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
   const [page, setPage] = useState(1)
   const pageSize = 10 // change page size lowerg to testing
-  const [totalData , setTotalData] = useState<number>(0)
+  const [totalData, setTotalData] = useState<number>(0)
   const navigate = useNavigate()
 
   const columns: GridColDef[] = [
@@ -76,8 +76,7 @@ const Warehouse: FunctionComponent = () => {
       field: 'warehouseNameTchi',
       headerName: t('warehouse_page.trad_name'),
       width: 200,
-      type: 'string',
-     
+      type: 'string'
     },
     {
       field: 'warehouseNameSchi',
@@ -183,22 +182,12 @@ const Warehouse: FunctionComponent = () => {
   const fetchData = async () => {
     try {
       const response = await getAllWarehouse(page - 1, pageSize)
-      // if (response == '401') {
-      //   // direct to login if sttUS 401
-      //   localStorage.clear()
-      //   navigate('/')
-      // } else
-      if(response) {
-        const filteredData = response.data.content
-        // .filter(
-        //   (warehouse: Warehouse) =>
-        //     warehouse.status.toLowerCase() !== 'deleted'
-        // )
-        .map(transformToTableRow)
+      if (response) {
+        const filteredData = response.data.content.map(transformToTableRow)
 
-      setWarehouseItems(filteredData)
-      setTotalData(response.data.totalPages)
-      console.log('fetch DATA', filteredData)
+        setWarehouseItems(filteredData)
+        setTotalData(response.data.totalPages)
+        console.log('fetch DATA', filteredData)
       }
     } catch (error) {
       console.error(error)
@@ -248,7 +237,7 @@ const Warehouse: FunctionComponent = () => {
 
   const handleEdit = (row: TableRow) => {
     setRowId(row.id)
-   // console.log(row)
+    // console.log(row)
     setDrawerOpen(true)
     setAction('edit')
     fetchData()
@@ -341,8 +330,8 @@ const Warehouse: FunctionComponent = () => {
                       count={Math.ceil(totalData)}
                       page={page}
                       onChange={(_, newPage) => {
-                        setPage(newPage) 
-                        }}
+                        setPage(newPage)
+                      }}
                     />
                   </Box>
                 </div>
