@@ -227,15 +227,19 @@
   },
   "status": {
     "active": "Active",
-    "inactive": "In-active",
+    "inactive": "Inactive",
     "deleted": "Deleted",
-    "started": "Startd",
+    "started": "Started",
     "created": "Created",
     "confirmed": "Confirmed",
     "rejected": "Rejected",
     "completed": "Completed",
     "closed": "Closed",
     "outstanding": "Outstanding",
+    "suspend": "Suspend",
+    "DENY": "Deny",
+    "success": "Success",
+    "failed": "Failed",
     "enable": "Enable",
     "not_enabled": "Not enabled",
     "terminated": "Terminated",
@@ -251,6 +255,8 @@
     "enquiry_pickup_order": "Enquiry pickup order",
     "delete_msg": "are you sure want delete this item ?",
     "out_of_date_range": "Specific Date is out of range of the Shipping validity date",
+    "created_pickup_order": "Pickup order has been created",
+    "changed_pickup_order": "Pickup order has been changed",
     "table": {
       "created_datetime": "Created datetime",
       "pico_id": "PO number",
@@ -258,7 +264,11 @@
       "delivery_date": "Delivery date",
       "sender_company": " Sender company name",
       "receiver": "Receiver company name",
-      "status": "Status"
+      "status": "Status",
+      "operation": "Operation",
+      "approve": "Approve",
+      "reject": "Reject",
+      "create_job_order": "Create Job Order"
     },
     "filter": {
       "search": "Search",
@@ -355,7 +365,14 @@
     },
     "select_po": "Choose pickup order",
     "search_company_name": "Enter sender company",
-    "change": "Change"
+    "change": "Change",
+    "confirm_approve": "Confirm approve",
+    "confirm_reject": "Confirm reject",
+    "confirm_approve_title": "Confirm approve?",
+    "confirm_reject_title": "Confirm reject?",
+    "approved_success": "Approved successfully",
+    "rejected_success": "Rejected successfully",
+    "reject_reasons": "Reasons for rejection"
   },
   "tenant": {
     "company": "Company",

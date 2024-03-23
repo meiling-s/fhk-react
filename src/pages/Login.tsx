@@ -10,7 +10,7 @@ import CustomCopyrightSection from "../components/CustomCopyrightSection";
 import { styles as constantStyle } from '../constants/styles'
 
 const Login = () => {
-  const [userName, setUserName] = useState("");
+    const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   //const [loginTo, setLoginTo] = useState("astd");
@@ -48,6 +48,10 @@ const Login = () => {
       case 'oriontadmin':
         realm = 'collector';
         loginTo = 'collectoradmin';
+        break;
+      case 'logisticAdmin1':
+        realm = 'logistic';
+        loginTo = 'logisticadmin';
         break;
       default:
         break;
