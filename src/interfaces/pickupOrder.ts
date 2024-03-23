@@ -186,3 +186,40 @@ export type queryPickupOrder = {
     receiverAddr: string;
     status: number
   }
+
+export interface OrderJobHeader {
+    picoId: string;
+    receiverName: string;
+    effFrmDate: string;
+    effToDate: string;
+    setupDate: string;
+}
+
+export interface AssignJobDriver {
+    picoId: string;
+    picoDtlId: number;
+    plateNo: string;
+    senderId: string;
+    senderName: string;
+    senderAddr: string
+    senderAddrGps: number[];
+    receiverId: string;
+    receiverName: string;
+    receiverAddr: string;
+    receiverAddrGps: number[];
+    recycType: string;
+    recycSubType: string;
+    weight: number;
+    vehicleId: string;
+    driverId: string;
+    contractNo: string;
+    pickupAt: string;
+    createdBy: string;
+    effFrmDate:  string,
+    effToDate:  string  
+}
+
+export interface AssignJobField {
+    vehicleId: string;
+    driverId: string;
+}

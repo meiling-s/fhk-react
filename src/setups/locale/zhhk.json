@@ -627,6 +627,28 @@
     "availableFeatures": "可用功能",
     "pleaseEnterName": "請輸入名稱",
     "pleaseEnterText": "請輸入文字"
+  },
+  "jobOrder": {
+    "job_order_menu": "工作運單",
+    "create_work_waybill" : "建立工作運單",
+    "shipping_information" : "運輸資料",
+    "corresponding_waybill" : "對應運單",
+    "shipping_validity_date_from" : "運輸有效日期由",
+    "shipping_validity_date_to": "至",
+    "shipping_company_name" : "寄件公司名稱",
+    "recycling_location_information": "回收地點資料",
+    "main_category" : "主類別",
+    "subcategory" : "次類別",
+    "estimated_shipping_time" : "預計運送時間",
+    "weight": "重量",
+    "shipping_and_receiving_companies": "寄件及收件公司",
+    "delivery_and_arrival_locations": "送出及到達地點",
+    "setup_time" : "建立時間",
+    "finish": "完成",
+    "cancel": "取消",
+    "driver": "司機",
+    "plat_number": "車牌號碼",
+    "assign_driver": "指派司機"
   }
 }
 

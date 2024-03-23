@@ -80,6 +80,10 @@ const Login = () => {
         realm = 'collector';
         loginTo = 'collectoradmin';
         break;
+      case 'logisticAdmin1':
+        realm = 'logistic';
+        loginTo = 'logisticadmin';
+        break;
       default:
         break;
     }
@@ -120,6 +124,9 @@ const Login = () => {
             break;
           case "collectoradmin":
             navigate("/collector/collectionPoint");
+            break;
+          case "logistic":
+            navigate("/logistic");
             break;
           default:
             break;
