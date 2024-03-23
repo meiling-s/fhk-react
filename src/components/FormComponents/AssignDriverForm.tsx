@@ -43,7 +43,7 @@ const AssignDriver = ({
   isEdit
 }: props) => {
   
-  const [assignField, setAssignField] = useState<AssignJobField>({ driverId: '', vehicleId: ''})
+  const [assignField, setAssignField] = useState<AssignJobField>({ driverId: '', vehicleId: 0})
   const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -52,7 +52,7 @@ const AssignDriver = ({
       setAssignField(prev=> {
         return{
           ...prev,
-          driverId: '', vehicleId: ''
+          driverId: '', vehicleId: 0
         }
       })
       onClose && onClose();
@@ -80,7 +80,7 @@ const AssignDriver = ({
   }, [isEdit])
  
   const onHandleAssign = () => {
-    if(assignField.driverId === '' || assignField.vehicleId === '' ){
+    if(assignField.driverId === '' || assignField.vehicleId === 0 ){
       return
     }
     
@@ -88,7 +88,7 @@ const AssignDriver = ({
       if(index === editRowId){
         return{
           ...item,
-          pickupAt: startDate.toString(),
+          pickupAt: new Date(startDate.format()).toISOString(),
           vehicleId: assignField.vehicleId,
           driverId: assignField.driverId
         }
@@ -213,6 +213,7 @@ const AssignDriver = ({
                         <TimePicker
                             sx={{ width: "50%%" }}
                             value={dayjs(startDate)}
+                            format="HH:mm:s"
                             onChange={(value) => setStartDate(value!!)}
                         />
                       </div>
@@ -252,7 +253,7 @@ const AssignDriver = ({
                         id="plat_number"
                         sx={{width: '100%'}}
                         value={assignField.vehicleId}
-                        options={['AB 1234 CD', 'AB 1235 CD', 'AB 1236 CD']}
+                        options={[1,2,3,4,5,6,7]}
                         onChange={(event, value) => {
                           if (value) {
                             onChangeField('vehicleId', value)

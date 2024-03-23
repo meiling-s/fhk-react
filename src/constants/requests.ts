@@ -608,3 +608,13 @@ export const GET_ALL_RECYCLE_TYPE = ():AxiosRequestConfig => ({
   method: 'get',
   url: 'api/v1/administrator/recycType'
 })
+
+export const ASSIGN_DRIVER = (table: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `/api/v1/logistic/jo/${table}`
+})
+
+export const REJECT_DRIVER = (table: string, id: any): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `/api/v1/logistic/jo/${table}/status/${id}`
+})

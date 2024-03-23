@@ -28,6 +28,7 @@ import { DatePicker } from '@mui/x-date-pickers'
 import { format } from '../../constants/constant'
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined'; 
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined'; 
+import { rejectDriver, assignDriver } from '../../APICalls/jobOrder'
 
 const JobOrder = () => {
 const [openModal, setOpenModal] = useState<boolean>(false);
@@ -35,7 +36,7 @@ const [orderDetail, setOrderDetail] = useState<OrderJobHeader>({picoId: "", rece
 const [pickupOrderDetail, setPickupOrderDetail] = useState<AssignJobDriver[]>([])
 const [id, setId] = useState<number>(0);
 const { picoId } = useParams()
-const urlParams = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
 const [isEdit, setIsEdit] = useState(false);
 
 const { t } = useTranslation();
@@ -45,7 +46,7 @@ const handleCloses = () => {
     setOpenModal(false);
 };
 
-console.log('pickupOrderDetail', pickupOrderDetail)
+
 const getPicoById = async (picoId: string) => {
     try {
         const response = await axiosInstance({
@@ -74,6 +75,7 @@ const getPicoById = async (picoId: string) => {
                 contractNo: response?.data?.contractNo ?? '',
                 pickupAt: item?.pickupAt ?? '',
                 createdBy: item?.createdBy ?? '',
+                status: item?.driverId ? 'assigned' : ''
             }
         })
 
@@ -111,11 +113,15 @@ const onHandleEdit = (index : number) => {
 const handleDelete = (index: number) => {
     const ids = pickupOrderDetail.map((item, indexItem) => {
         if(indexItem === index) {
+            let status = '';
+            if(item.status === 'assigned'){
+                status = 'REJECTED'
+            }
             return{
                 ...item,
-                pickupAt: '',
-                vehicleId: '',
-                driverId: ''
+                vehicleId: 0,
+                driverId: '',
+                status: status
             }
         } else {
             return item
@@ -123,6 +129,17 @@ const handleDelete = (index: number) => {
     })
 
     setPickupOrderDetail(ids)
+}
+
+const onHandleSubmitOrder = async () => {
+    for(let order of pickupOrderDetail){
+       if(order?.status === 'REJECTED'){
+        const response = await rejectDriver({status: 'REJECTED', reason: [], updatedBy: order.createdBy}, order.picoDtlId);
+       } else {
+        const response  =  await assignDriver(order);
+       }
+       
+    }
 }
 
 return (
@@ -286,12 +303,13 @@ return (
                     <Button
                     type="submit"
                     sx={[styles.buttonFilledGreen, localstyles.localButton]}
+                    onClick={onHandleSubmitOrder}
                     >
                     {t('jobOrder.finish')}
                     </Button>
                     <Button
                     sx={[styles.buttonOutlinedGreen, localstyles.localButton]}
-                    // onClick={handleHeaderOnClick}
+                   
                     >
                     {t('jobOrder.cancel')}
                     </Button>

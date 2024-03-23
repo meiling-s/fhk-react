@@ -210,16 +210,23 @@ export interface AssignJobDriver {
     recycType: string;
     recycSubType: string;
     weight: number;
-    vehicleId: string;
+    vehicleId: number;
     driverId: string;
     contractNo: string;
     pickupAt: string;
     createdBy: string;
     effFrmDate:  string,
-    effToDate:  string  
+    effToDate:  string,
+    status: string  
 }
 
 export interface AssignJobField {
-    vehicleId: string;
+    vehicleId: number;
     driverId: string;
+}
+
+export interface RejectJobDriver {
+    status: string;
+    reason: string[];
+    updatedBy: string;
 }
