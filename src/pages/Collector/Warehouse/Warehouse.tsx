@@ -9,7 +9,7 @@ import {
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
-import { Box , Pagination} from '@mui/material'
+import { Box, Pagination } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import {
   ADD_ICON,
@@ -68,7 +68,7 @@ const Warehouse: FunctionComponent = () => {
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
   const [page, setPage] = useState(1)
   const pageSize = 10 // change page size lowerg to testing
-  const [totalData , setTotalData] = useState<number>(0)
+  const [totalData, setTotalData] = useState<number>(0)
   const navigate = useNavigate()
 
   const columns: GridColDef[] = [
@@ -76,8 +76,7 @@ const Warehouse: FunctionComponent = () => {
       field: 'warehouseNameTchi',
       headerName: t('warehouse_page.trad_name'),
       width: 200,
-      type: 'string',
-     
+      type: 'string'
     },
     {
       field: 'warehouseNameSchi',
@@ -125,13 +124,19 @@ const Warehouse: FunctionComponent = () => {
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              onClick={() => handleEdit(params.row.id)} // Implement your edit logic here
+              onClick={(event) => {
+                event.stopPropagation()
+                handleEdit(params.row.id)
+              }} // Implement your edit logic here
               style={{ cursor: 'pointer' }}
             />
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              onClick={() => handleDelete(params.row.id)} // Implement your delete logic here
+              onClick={(event) => {
+                event.stopPropagation()
+                handleDelete(params.row.id)
+              }} // Implement your delete logic here
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -164,9 +169,9 @@ const Warehouse: FunctionComponent = () => {
         let recyTypeData: recyTypeItem = recyleTypeList
         recyTypeData = response.data.forEach((item: recyTypeItem) => {
           recyTypeData[item.recycTypeId as keyof recyTypeItem] = {
-            recyclableNameEng: item.recyclableNameEng,
-            recyclableNameSchi: item.recyclableNameSchi,
-            recyclableNameTchi: item.recyclableNameTchi
+            recyclableNameEng: item.recyclableNameEng || '-',
+            recyclableNameSchi: item.recyclableNameSchi || '-',
+            recyclableNameTchi: item.recyclableNameTchi || '-'
           }
         })
 
@@ -183,22 +188,12 @@ const Warehouse: FunctionComponent = () => {
   const fetchData = async () => {
     try {
       const response = await getAllWarehouse(page - 1, pageSize)
-      // if (response == '401') {
-      //   // direct to login if sttUS 401
-      //   localStorage.clear()
-      //   navigate('/')
-      // } else
-      if(response) {
-        const filteredData = response.data.content
-        // .filter(
-        //   (warehouse: Warehouse) =>
-        //     warehouse.status.toLowerCase() !== 'deleted'
-        // )
-        .map(transformToTableRow)
+      if (response) {
+        const filteredData = response.data.content.map(transformToTableRow)
 
-      setWarehouseItems(filteredData)
-      setTotalData(response.data.totalPages)
-      console.log('fetch DATA', filteredData)
+        setWarehouseItems(filteredData)
+        setTotalData(response.data.totalPages)
+        console.log('fetch DATA', filteredData)
       }
     } catch (error) {
       console.error(error)
@@ -219,12 +214,12 @@ const Warehouse: FunctionComponent = () => {
         : currentLanguage === 'zhch'
         ? 'recyclableNameSchi'
         : 'recyclableNameEng'
+
     const recyleType = warehouse.warehouseRecyc
       .map((item: RecyleItem) => {
-        //console.log(item.recycTypeId)
-        return `${
-          recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem]
-        }`
+        const data =
+          recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem] || ''
+        return `${data ? data : '-'}`
       })
       .join(', ')
     return {
@@ -246,9 +241,8 @@ const Warehouse: FunctionComponent = () => {
     setAction('add')
   }
 
-  const handleEdit = (row: TableRow) => {
-    setRowId(row.id)
-   // console.log(row)
+  const handleEdit = (row: number) => {
+    setRowId(row)
     setDrawerOpen(true)
     setAction('edit')
     fetchData()
@@ -257,15 +251,18 @@ const Warehouse: FunctionComponent = () => {
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as TableRow
     setSelectedRow(row)
+
     setRowId(row.id)
     setDrawerOpen(true)
     setAction('edit')
   }
 
-  const handleDelete = (row: TableRow) => {
-    setRowId(row.id)
+  const handleDelete = (row: number) => {
+    setRowId(row)
+    console.log('handledelete', row)
     setDrawerOpen(true)
     setAction('delete')
+    fetchData()
   }
 
   const handleDrawerClose = () => {
@@ -341,8 +338,8 @@ const Warehouse: FunctionComponent = () => {
                       count={Math.ceil(totalData)}
                       page={page}
                       onChange={(_, newPage) => {
-                        setPage(newPage) 
-                        }}
+                        setPage(newPage)
+                      }}
                     />
                   </Box>
                 </div>

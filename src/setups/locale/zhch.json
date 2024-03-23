@@ -48,7 +48,7 @@
       "alreadyExist": "已经存在",
       "timeCantDuplicate": "时间不能重复",
       "atLeastOnePicoExist": "至少需要一个 Pico 详细信息",
-      "exceedsMaxLength":"不可超过一百个字符",
+      "exceedsMaxLength": "不可超过一百个字符",
       "minMoreOneImgUploded": "至少需要上传2张车辆图片"
     }
   },
@@ -473,7 +473,7 @@
     "licensePlate": "车牌号码",
     "picture": "图片",
     "basic": "基本",
-    "additional":"额外",
+    "additional": "额外",
     "imgNote": "*照片应展示车辆概况、举升尾板、车牌及采集操作情况。"
   },
   "inventory": {
@@ -519,11 +519,11 @@
       "modifyRecycl": "修改回收物资料",
       "recycNum": "回收物编号"
     },
-    "tenantType":{
+    "tenantType": {
       "collector": "",
       "logistic": "",
-      "Manufacturer":"",
-      "Customer":""
+      "Manufacturer": "",
+      "Customer": ""
     },
     "createProcessOutSuccess": "建立處理流程成功",
     "createProcessOutFailed": "建立處理流程失敗",
@@ -532,7 +532,7 @@
     "deleteProcessOutSuccess": "刪除處理流程成功",
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
-  "warehouseDashboard" : {
+  "warehouseDashboard": {
     "warehouse": "仓库",
     "currentCapacity": "现时容量",
     "thereStillEnoughSpace": "还有足够的空间",
@@ -622,8 +622,13 @@
     "availableFeatures": "可用功能",
     "pleaseEnterName": "請輸入名稱",
     "pleaseEnterText": "請輸入文字"
+  },
+  "notify": {
+    "successCreated": "成功已创造",
+    "errorCreated": "创建错误",
+    "SuccessEdited": "成功编辑",
+    "errorEdited": "错误已编辑",
+    "successDeleted": "删除成功",
+    "errorDeleted": "错误删除"
   }
 }
-
-
-

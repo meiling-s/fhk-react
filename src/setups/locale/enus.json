@@ -48,7 +48,7 @@
       "alreadyExist": " already exist",
       "timeCantDuplicate": "time can't duplicate",
       "atLeastOnePicoExist": "At least one Pico Detail is required",
-      "exceedsMaxLength":"should not exceed 100 characters",
+      "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded"
     }
   },
@@ -220,7 +220,7 @@
     "err_msg_007": "Login failed over 5 times. Your account is locked.",
     "err_msg_008": "That username is taken. Try another.",
     "err_msg_500": "Failed to obtain authorization data."
-      },
+  },
   "mainMenu": {
     "manage": "Manage",
     "overview": "Overview"
@@ -254,7 +254,7 @@
   "pick_up_order": {
     "enquiry_pickup_order": "Enquiry pickup order",
     "delete_msg": "are you sure want delete this item ?",
-    "out_of_date_range" : "Specific Date is out of range of the Shipping validity date",
+    "out_of_date_range": "Specific Date is out of range of the Shipping validity date",
     "created_pickup_order": "Pickup order has been created",
     "changed_pickup_order": "Pickup order has been changed",
     "table": {
@@ -472,7 +472,7 @@
     "licensePlate": "License plate",
     "picture": "Picture",
     "basic": "Basic",
-    "additional":"Additional",
+    "additional": "Additional",
     "imgNote": "*the photo should exhibit the overview, tail lift, car plate and collecting operation of the vehicle."
   },
   "inventory": {
@@ -518,11 +518,11 @@
       "modifyRecycl": "Modify recycling information",
       "recycNum": "Recycling number"
     },
-    "tenantType":{
+    "tenantType": {
       "collector": "Collector",
       "logistic": "Logistic",
-      "Manufacturer":"Manufacturer",
-      "Customer":"Customer"
+      "Manufacturer": "Manufacturer",
+      "Customer": "Customer"
     },
     "createProcessOutSuccess": "Create process out success",
     "createProcessOutFailed": "Create process out failed",
@@ -531,7 +531,7 @@
     "deleteProcessOutSuccess": "Delete process out success",
     "deleteProcessOutFailed": "Delete process out failed"
   },
-  "warehouseDashboard" : {
+  "warehouseDashboard": {
     "warehouse": "Warehouse",
     "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
@@ -632,7 +632,7 @@
     "ship": "Ship",
     "send_request": "Send Request",
     "shipping_info": "Shipping information",
-    "recyle_loc_info": "Estimated recycling location information",    
+    "recyle_loc_info": "Estimated recycling location information",
     "recyc_loc_info": "Recycling location information"
   },
   "userGroup": {
@@ -645,5 +645,13 @@
     "availableFeatures": "Available Features",
     "pleaseEnterName": "Please enter name",
     "pleaseEnterText": "Please enter text"
+  },
+  "notify": {
+    "successCreated": "Success Created",
+    "errorCreated": "Error Created",
+    "SuccessEdited": "Success Edited",
+    "errorEdited": "Error Edited",
+    "successDeleted": "Success Deleted",
+    "errorDeleted": "Error deleted"
   }
 }
