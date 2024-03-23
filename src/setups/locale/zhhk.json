@@ -48,7 +48,7 @@
       "alreadyExist": "已經存在",
       "timeCantDuplicate": "時間不能重複",
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
-      "exceedsMaxLength":"不可超過一百個字符",
+      "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片"
     }
   },
@@ -214,14 +214,14 @@
     "manage": "管理",
     "overview": "概述"
   },
-  "login":{
+  "login": {
     "err_msg_001": "請輸入正確的使用者名稱或密碼",
     "err_msg_002": "至少八個字符，其中包含大小寫混合的字母字符、數字和特殊字符。",
     "err_msg_005": "帳號異常。請再次登入及如果此問題繼續存在，請聯繫管理員。",
     "err_msg_006": "請再次嘗試登入及如果此問題繼續存在，請聯繫管理員。",
     "err_msg_007": "連續登入失敗5次。 你的帳戶已版鎖定。",
     "err_msg_008": "帳號不存在。",
-    "err_msg_500": "取得授權資料失敗。"  
+    "err_msg_500": "取得授權資料失敗。"
   },
   "status": {
     "active": "已啟用",
@@ -471,7 +471,7 @@
     "licensePlate": "車牌號碼",
     "picture": "圖片",
     "basic": "基本",
-    "additional":"額外",
+    "additional": "額外",
     "imgNote": "*照片應展示車輛概況、舉升尾板、車牌及採集操作。"
   },
   "inventory": {
@@ -517,11 +517,11 @@
       "modifyRecycl": "修改回收物資料",
       "recycNum": "回收物編號"
     },
-    "tenantType":{
+    "tenantType": {
       "collector": "",
       "logistic": "",
-      "Manufacturer":"",
-      "Customer":""
+      "Manufacturer": "",
+      "Customer": ""
     },
     "createProcessOutSuccess": "建立處理流程成功",
     "createProcessOutFailed": "建立處理流程失敗",
@@ -530,7 +530,7 @@
     "deleteProcessOutSuccess": "刪除處理流程成功",
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
-  "warehouseDashboard" : {
+  "warehouseDashboard": {
     "warehouse": "倉庫",
     "currentCapacity": "現時容量",
     "thereStillEnoughSpace": "還有足夠的空間",
@@ -631,7 +631,7 @@
     "ship": "出貨",
     "send_request": "送出請求",
     "shipping_info": "運輸資料",
-    "recyle_loc_info": "預計回收地點資料",    
+    "recyle_loc_info": "預計回收地點資料",
     "recyc_loc_info": "回收地點資料"
   },
   "userGroup": {
@@ -644,6 +644,13 @@
     "availableFeatures": "可用功能",
     "pleaseEnterName": "請輸入名稱",
     "pleaseEnterText": "請輸入文字"
+  },
+  "notify": {
+    "successCreated": "成功已创造",
+    "errorCreated": "创建错误",
+    "SuccessEdited": "成功编辑",
+    "errorEdited": "错误已编辑",
+    "successDeleted": "删除成功",
+    "errorDeleted": "错误删除"
   }
 }
-
