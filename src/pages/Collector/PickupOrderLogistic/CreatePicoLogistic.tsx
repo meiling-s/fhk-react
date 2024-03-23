@@ -6,7 +6,11 @@ import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { returnApiToken, showErrorToast } from '../../../utils/utils'
+import {
+  returnApiToken,
+  showErrorToast,
+  showSuccessToast
+} from '../../../utils/utils'
 
 const CreatePicoLogistic = () => {
   const navigate = useNavigate()
@@ -124,7 +128,7 @@ const CreatePicoLogistic = () => {
         console.log('all pickup order: ', data)
         navigate('/logistic/pickupOrder', { state: 'created' })
       } else {
-        showErrorToast(t('fail to create pickup order'))
+        showErrorToast('fail to create pickup order')
         //alert('fail to create pickup order')
       }
     }
