@@ -1,6 +1,5 @@
 import { AxiosRequestConfig } from 'axios'
 
-
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
   method: 'post',
@@ -28,7 +27,7 @@ export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
 //   url: 'api/v1/account/tenant/astd/tenant'
 // }
 
-export const GET_ALL_TENANT = (tenantId: string) : AxiosRequestConfig => ({
+export const GET_ALL_TENANT = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/account/t/searching/${tenantId}`
 })
@@ -57,11 +56,12 @@ export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   url: `api/v1/account/t/status/${tenantId}`
 })
 
-
 //collection point
-export const GET_ALL_COLLECTIONPOINT = (tenantId: string): AxiosRequestConfig => ({
+export const GET_ALL_COLLECTIONPOINT = (
+  tenantId: string
+): AxiosRequestConfig => ({
   method: 'get',
-  url:  `api/v1/collectors/collectionPoint/${tenantId}`
+  url: `api/v1/collectors/collectionPoint/${tenantId}`
 })
 
 export const CREATE_COLLECTIONPOINT: AxiosRequestConfig = {
@@ -97,7 +97,6 @@ export const GET_ALL_CHECKIN_REQUESTS = (
   url: `api/v1/collectors/checkinrequest/searching/${table}`
 })
 
-
 export const UPDATE_CHECK_IN_STATUS = (
   chkInId: number,
   table: string
@@ -107,12 +106,16 @@ export const UPDATE_CHECK_IN_STATUS = (
 })
 
 //collector/pickupOrder
-export const GET_ALL_PICK_UP_ORDER = (tenantId: string) : AxiosRequestConfig => ({
+export const GET_ALL_PICK_UP_ORDER = (
+  tenantId: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/pico/search/${tenantId}`
 })
 
-export const GET_PICK_UP_ORDER_BY_ID = (picoId: string): AxiosRequestConfig => ({
+export const GET_PICK_UP_ORDER_BY_ID = (
+  picoId: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/pico/${picoId}`
 })
@@ -136,12 +139,12 @@ export const CREATE_PICK_UP_ORDER: AxiosRequestConfig = {
   url: 'api/v1/administrator/pico'
 }
 
-export const GET_LOGISTICLIST = (table: string) : AxiosRequestConfig => ({
+export const GET_LOGISTICLIST = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/logisticlist/${table}`
 })
 
-export const GET_COLLECTORLIST = (table: string) : AxiosRequestConfig => ({
+export const GET_COLLECTORLIST = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/collectorlist/${table}`
 })
@@ -271,7 +274,6 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   url: `api/v1/collectors/warehouse/${table}/${warehouseId}/status`
 })
 
-
 export const GET_ALL_CHECKOUT_REQUEST = (
   table: string
 ): AxiosRequestConfig => ({
@@ -318,29 +320,35 @@ export const CREATE_SERVICE_INFO = (table: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/serviceInfo/${table}`
 })
 
-//vehicle 
-export const CREATE_VEHICLE = (table: string) : AxiosRequestConfig => ({
+//vehicle
+export const CREATE_VEHICLE = (table: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/collectors/vehicle/${table}`
 })
 
-export const GET_VEHICLE = (table: string) : AxiosRequestConfig => ({
+export const GET_VEHICLE = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/vehicle/${table}`
 })
 
-export const DELETE_VEHICLE = (table: string, vehicleId: number ) : AxiosRequestConfig => ({
+export const DELETE_VEHICLE = (
+  table: string,
+  vehicleId: number
+): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/collectors/vehicle/${table}/${vehicleId}/status`
 })
 
-export const EDIT_VEHICLE = (table: string, vehicleId: number ) : AxiosRequestConfig => ({
+export const EDIT_VEHICLE = (
+  table: string,
+  vehicleId: number
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/collectors/vehicle/${table}/${vehicleId}`
 })
 
 //inventory
-export const GET_INVENTORY = (table: string) : AxiosRequestConfig => ({
+export const GET_INVENTORY = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/inventory/${table}/searching`
 })
@@ -351,21 +359,26 @@ export const GET_PROCESS_OUT = (table: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/processout/${table}`
 })
 
-export const GET_PROCESS_IN_BY_ID = (table: string, processInId: number): AxiosRequestConfig => ({
+export const GET_PROCESS_IN_BY_ID = (
+  table: string,
+  processInId: number
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/processin/${table}/${processInId}`
 })
 
-export const GET_PROCESS_LIST : AxiosRequestConfig = ({
+export const GET_PROCESS_LIST: AxiosRequestConfig = {
   method: 'get',
   url: `api/v1/administrator/ProcessType`
-})
+}
 
-export const GET_PROCESS_OUT_DETAIL = (table: string, processOutId: number): AxiosRequestConfig => ({
+export const GET_PROCESS_OUT_DETAIL = (
+  table: string,
+  processOutId: number
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/processout/${table}/${processOutId}`
 })
-
 
 export const CREATE_PROCESS_OUT_ITEM = (
   table: string,
@@ -384,7 +397,6 @@ export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
   url: `api/v1/collectors/processout/${table}/processout/${processOutId}/proecessoutDtl/${processOutDtlId}`
 })
 
-
 export const DELETE_PROCESS_OUT_RECORD = (
   table: string,
   processOutId: number
@@ -393,7 +405,6 @@ export const DELETE_PROCESS_OUT_RECORD = (
   url: `api/v1/collectors/processout/${table}/delete/${processOutId}`
 })
 
-
 export const DELETE_PROCESS_OUT_DETAIL_ITEM = (
   table: string,
   processOutDtlId: number
@@ -401,7 +412,6 @@ export const DELETE_PROCESS_OUT_DETAIL_ITEM = (
   method: 'patch',
   url: `api/v1/collectors/processoutDetail/${table}/${processOutDtlId}/status`
 })
-
 
 // WAREHOUSE DASHBOARD
 
@@ -413,7 +423,7 @@ export const GET_CAPACITY_WAREHOUSE = (
   url: `api/v1/collectors/warehousecapacity/${table}/${warehouseId}`
 })
 
-export const GET_WEIGHT_BY_SUBTYPE_ID= (
+export const GET_WEIGHT_BY_SUBTYPE_ID = (
   table: string,
   warehouseId: number
 ): AxiosRequestConfig => ({
@@ -446,9 +456,7 @@ export const GET_CHECK_IN_OUT_WAREHOUSE = (
 })
 
 // USER ACCOUNT AND GROUP
-export const GET_ALL_USER_ACCOUNT = (
-  table: string
-) : AxiosRequestConfig => ({
+export const GET_ALL_USER_ACCOUNT = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/userAccount/t/${table}`
 })
@@ -457,32 +465,32 @@ export const ADD_USER_ACCOUNT: AxiosRequestConfig = {
   method: 'post',
   url: 'api/v1/administrator/register'
 }
-export const GET_USER_GROUP = (tenantId: string) : AxiosRequestConfig => ({
+export const GET_USER_GROUP = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/userGroup/t/${tenantId}`
 })
 
-export const GET_USER_ACCOUNT = (loginId: string) : AxiosRequestConfig => ({
+export const GET_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/userAccount/${loginId}`
 })
 
-export const GET_FUNCTION = () : AxiosRequestConfig => ({
+export const GET_FUNCTION = (): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/function`
 })
 
-export const CREATE_USER_GROUP = () : AxiosRequestConfig => ({
+export const CREATE_USER_GROUP = (): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/userGroup`
 })
 
-export const EDIT_USER_GROUP = (userGroupId: number) : AxiosRequestConfig => ({
+export const EDIT_USER_GROUP = (userGroupId: number): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/userGroup/${userGroupId}`
 })
 
-export const DELETE_USER_GROUP = (userGroupId: number) : AxiosRequestConfig => ({
+export const DELETE_USER_GROUP = (userGroupId: number): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/userGroup/status/${userGroupId}`
 })
@@ -493,7 +501,7 @@ export const GET_STAFF = (tenantId: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/staff/${tenantId}`
 })
 
-export const CREATE_STAFF:AxiosRequestConfig = {
+export const CREATE_STAFF: AxiosRequestConfig = {
   method: 'post',
   url: 'api/v1/collectors/staff'
 }
@@ -515,7 +523,6 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/stafftitle/${table}`
 })
-
 
 //API roster
 export const GET_ROSTER_LIST = (tenantId: string): AxiosRequestConfig => ({
@@ -562,9 +569,10 @@ export const CANCEL_ROSTER = (
   url: `api/v1/collectors/roster/cancel/${tenantId}/${rosterId}`
 })
 
-
 //USER ACCOUNT API
-export const GET_USER_ACCOUNT_LIST = (tenantId: string): AxiosRequestConfig => ({
+export const GET_USER_ACCOUNT_LIST = (
+  tenantId: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/userAccount/t/${tenantId}`
 })
@@ -584,7 +592,12 @@ export const DELETE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/userAccount/status/${loginId}`
 })
 
-export const GET_CHECKIN_CHECKOUT_LIST = (table:string, picoId:string, page:number, size:number, ):AxiosRequestConfig => ({
+export const GET_CHECKIN_CHECKOUT_LIST = (
+  table: string,
+  picoId: string,
+  page: number,
+  size: number
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/checkinout/searching/${table}`,
   params: {
@@ -594,43 +607,67 @@ export const GET_CHECKIN_CHECKOUT_LIST = (table:string, picoId:string, page:numb
   }
 })
 
-export const GET_CHECKIN_BY_ID = (table:string, chkInId:number):AxiosRequestConfig => ({
+export const GET_CHECKIN_BY_ID = (
+  table: string,
+  chkInId: number
+): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkin/${table}/${chkInId}`,
+  url: `api/v1/collectors/checkin/${table}/${chkInId}`
 })
 
-export const GET_CHECKOUT_BY_ID = (table:string, chkOutId:number):AxiosRequestConfig => ({
+export const GET_CHECKOUT_BY_ID = (
+  table: string,
+  chkOutId: number
+): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkout/${table}/${chkOutId}`,
+  url: `api/v1/collectors/checkout/${table}/${chkOutId}`
 })
 
-export const GET_ALL_RECYCLE_TYPE = ():AxiosRequestConfig => ({
+export const GET_ALL_RECYCLE_TYPE = (): AxiosRequestConfig => ({
   method: 'get',
   url: 'api/v1/administrator/recycType'
 })
 
-
 //logistics pickup order
-export const GET_ALL_LOGISTICS_PICK_UP_ORDER = (tenantId: string) : AxiosRequestConfig => ({
+export const GET_ALL_LOGISTICS_PICK_UP_ORDER = (
+  tenantId: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/pico/search/logistic/${tenantId}`
 })
 
-
 //get all status
-export const GET_ALL_STATUS = () : AxiosRequestConfig => ({
+export const GET_ALL_STATUS = (): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/statusGroup`
 })
 
 //get status detail
-export const GET_STATUS_DETAIL = (status: string) : AxiosRequestConfig => ({
+export const GET_STATUS_DETAIL = (status: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/statusGroup/${status}`
 })
 
 //get reason list
-export const GET_ALL_REASON = (tenantId: string, functionId: string | number) : AxiosRequestConfig => ({
+export const GET_ALL_REASON = (
+  tenantId: string,
+  functionId: string | number
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/reason/${tenantId}/${functionId}`
+})
+
+// get logistic , contract, vehicle for logistic admin
+export const GET_CONTRACT_LOGISTIC = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/contract/${tenantId}`
+})
+
+export const GET_LOGISTICLIST_LOGISTIC = (
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/logisticlist/${table}`
 })

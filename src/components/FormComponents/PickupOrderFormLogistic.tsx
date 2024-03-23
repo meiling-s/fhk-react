@@ -127,10 +127,10 @@ const PickupOrderFormLogistic = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType, recycType } =
+  const { logisticAdminList, contractLogistic, vehicleType, recycType } =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
-  const unexpiredContracts = contractType?.filter((contract) => {
+  const unexpiredContracts = contractLogistic?.filter((contract) => {
     const currentDate = new Date()
     const contractDate = new Date(contract.contractToDate)
     return contractDate > currentDate
@@ -507,8 +507,9 @@ const PickupOrderFormLogistic = ({
                   <CustomAutoComplete
                     placeholder={t('pick_up_order.enter_company_name')}
                     option={
-                      logisticList?.map((option) => option.logisticNameTchi) ??
-                      []
+                      logisticAdminList?.map(
+                        (option) => option.logisticNameTchi
+                      ) ?? []
                     }
                     sx={{ width: '400px' }}
                     onChange={(_: SyntheticEvent, newValue: string | null) =>

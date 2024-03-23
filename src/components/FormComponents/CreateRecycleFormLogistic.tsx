@@ -60,6 +60,11 @@ type props = {
 }
 
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+const initialTime: dayjs.Dayjs = dayjs()
+
+const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
+  return pickupAtValue.format('HH:mm:ss')
+}
 
 const initValue = {
   id: -1,
@@ -75,7 +80,7 @@ const initValue = {
   status: 'CREATED',
   createdBy: loginId,
   updatedBy: loginId,
-  pickupAt: '',
+  pickupAt: formattedTime(initialTime),
   recycType: '',
   recycSubType: '',
   weight: 0
@@ -168,7 +173,6 @@ const CreateRecycleFormLogistic = ({
       prevData = data
     }
 
-    console.log('prevData', prevData)
     return Yup.object().shape({
       pickupAt: Yup.string().test(
         'not-in-prev-data',
@@ -272,7 +276,6 @@ const CreateRecycleFormLogistic = ({
   ]
 
   //convert PickupAt
-  const initialTime: dayjs.Dayjs = dayjs()
 
   const formatTimePickAt = (timeValue: string) => {
     const times = timeValue.split(':')
@@ -280,10 +283,6 @@ const CreateRecycleFormLogistic = ({
       .hour(Number(times[0]))
       .minute(Number(times[1]))
       .second(Number(times[2]))
-  }
-
-  const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
-    return pickupAtValue.format('HH:mm:ss')
   }
 
   return (
@@ -338,11 +337,7 @@ const CreateRecycleFormLogistic = ({
                 >
                   <TimePicker
                     sx={{ width: '100%' }}
-                    value={
-                      formik.values.pickupAt
-                        ? formatTimePickAt(formik.values.pickupAt)
-                        : initialTime
-                    }
+                    value={formatTimePickAt(formik.values.pickupAt)}
                     onChange={(value) => {
                       if (value != null) {
                         formik.setFieldValue('pickupAt', formattedTime(value))
