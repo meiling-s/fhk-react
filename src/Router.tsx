@@ -48,6 +48,7 @@ import AutoLogout from "./components/AutoLogout";
 import CheckoutRequest from "./pages/Collector/Manage/CheckoutRequest";
 import UserGroup from "./pages/Collector/UserGroup/UserGroup";
 import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
+import JobOrder from "./pages/Logistic/JobOrder";
 
 //astd
 import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
@@ -134,6 +135,7 @@ const Router = () => {
 
         <Route element={<MainLayout />}>
           <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
+          <Route path="/logistic/pickupOrder/:picoId" element={<JobOrder />} />  
         </Route>
 
         </Route>
