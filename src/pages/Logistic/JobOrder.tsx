@@ -40,12 +40,14 @@ const { picoId } = useParams()
 const params = new URLSearchParams(window.location.search);
 const [isEdit, setIsEdit] = useState(false);
 const navigate = useNavigate();
+const [isActive, setIsActive] = useState(false)
 
 const { t } = useTranslation();
 
 const handleCloses = () => {
     setId(0);
     setOpenModal(false);
+    setIsActive(false)
 };
 
 
@@ -104,6 +106,7 @@ useEffect( () => {
 const onHandleAssign = (index : number) => {
     setOpenModal(true)
     setId(index)
+    setIsActive(true)
 }
 
 const onHandleEdit = (index : number) => {
@@ -253,7 +256,7 @@ return (
                     <p className='font-semibold text-[#717171]'> {t('jobOrder.recycling_location_information')}</p>
                     {
                         pickupOrderDetail.map((item: AssignJobDriver, index) => {
-                            return <div className={`flex flex-col rounded-sm px-[15px] py-[18px] w-[450px] bg-white`}>
+                            return <div className={`flex flex-col rounded-sm px-[15px] py-[18px] w-[450px] ${isActive && index === id ? 'bg-[#F4FBF6]' : ' bg-white'}`}>
                             <div className='flex justify-start flex-col'>
                                 <label className='font-bold text-[#717171]'> {t('jobOrder.main_category')}</label>
                                 <p className='font-semibold text-black'>{item.recycType}</p>
@@ -300,7 +303,7 @@ return (
                             </div>
 
                             {
-                                !item.driverId && !item.plateNo ? <div className='flex flex-col items-center justify-center h-[113px] rounded-md w-full border border-solid border-[#8AF3A3]'>
+                                !item.driverId && !item.plateNo ? <div className={`flex flex-col items-center justify-center h-[113px] rounded-md w-full border border-solid ${isActive && index == id ? 'bg-white': 'border-[#8AF3A3]'}`}>
                                     <AddCircleIcon 
                                         fontSize='large' 
                                         className='text-[#7CE495] hover:cursor-pointer' 
