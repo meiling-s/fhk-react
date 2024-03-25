@@ -26,10 +26,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { format } from '../../constants/constant'
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined'; 
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined'; 
 import { rejectDriver, assignDriver } from '../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
+import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../themes/icons'
 
 const JobOrder = () => {
 const [openModal, setOpenModal] = useState<boolean>(false);
@@ -113,6 +112,7 @@ const onHandleEdit = (index : number) => {
     setOpenModal(true)
     setId(index)
     setIsEdit(true)
+    setIsActive(true)
 }
 
 const handleDelete = (index: number) => {
@@ -312,24 +312,24 @@ return (
                                     <label htmlFor="" className='font-semibold'>{t('jobOrder.assign_driver')}</label>
                                 </div> : 
                                     <div className='flex items-center justify-between p-2  border border-solid border-[#8AF3A3] rounded-md'>
-                                    <div className='flex items-center justify-center gap-x-1'>
+                                    <div className='flex items-center justify-center gap-x-2'>
                                         <div className='flex items-center justify-center border border-[#7CE495] rounded-2xl h-[25px] w-[25px] p-1 bg-[#7CE495]'>
                                             <label className='text-white font-bold'>DR</label>
                                         </div>
                                         <div className='flex flex-col'>
-                                            <label className='label-0'>{item.driverId}</label>
-                                            <label className='label-0'>{item.vehicleId}</label>
+                                            <label className='label-0 text-[#535353] text-[15px]'>{item.driverId}</label>
+                                            <label className='label-0 text-[#535353] text-[15px]'>{item.vehicleId}</label>
                                         </div>
                                     </div>
                                     <div className='flex  gap-x-1'>
-                                        <DriveFileRenameOutlineOutlinedIcon 
-                                            fontSize='medium'
-                                            className='hover:cursor-pointer'
+                                        <EDIT_OUTLINED_ICON 
+                                            fontSize='small'
+                                            className='hover:cursor-pointer text-grey-light'
                                             onClick={() => onHandleEdit(index)}
                                         />
-                                        <DeleteForeverOutlinedIcon 
-                                            fontSize='medium'
-                                            className='hover:cursor-pointer'
+                                        <DELETE_OUTLINED_ICON 
+                                            fontSize='small'
+                                            className='hover:cursor-pointer text-grey-light'
                                             onClick={() => handleDelete(index)}
                                         />
                                     </div>
