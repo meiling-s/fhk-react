@@ -653,5 +653,8 @@
     "errorEdited": "Error Edited",
     "successDeleted": "Success Deleted",
     "errorDeleted": "Error deleted"
+  },
+  "job_order": {
+    "enquiry_job_order": "Job Order"
   }
 }

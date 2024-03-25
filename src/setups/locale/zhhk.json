@@ -652,5 +652,8 @@
     "errorEdited": "错误已编辑",
     "successDeleted": "删除成功",
     "errorDeleted": "错误删除"
+  },
+  "job_order": {
+    "enquiry_job_order": "工作運單"
   }
 }
