@@ -147,7 +147,7 @@ const PickupOrderFormLogistic = ({
   }
 
   const handleEditRow = (id: number) => {
-    console.log('hello' + id)
+    //console.log('hello' + id)
     setIsEditing(true)
     setEditRowId(id)
     setOpenModal(true)
@@ -160,14 +160,14 @@ const PickupOrderFormLogistic = ({
       picoDtl.id = index
       return picoDtl
     })
-    console.log('deleting: ', id, state, updateDeleteRow)
+    //console.log('deleting: ', id, state, updateDeleteRow)
     setState(updateDeleteRow)
   }
 
   const createdDate = dayjs(new Date()).format(format.dateFormat1)
 
   const handleHeaderOnClick = () => {
-    console.log('Header click')
+    // console.log('Header click')
     navigate(-1) //goback to last page
   }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
@@ -395,6 +395,7 @@ const PickupOrderFormLogistic = ({
     picoId: string
   ) => {
     setPicoRefId(picoId)
+    formik.setFieldValue('refPicoId', picoId)
     setOpenPico(false)
   }
 
@@ -487,7 +488,7 @@ const PickupOrderFormLogistic = ({
                 >
                   <PicoRoutineSelect
                     setRoutine={(values) => {
-                      console.log('routine' + JSON.stringify(values))
+                      //.log('routine' + JSON.stringify(values))
                       formik.setFieldValue('routineType', values.routineType)
                       formik.setFieldValue('routine', values.routineContent)
                     }}
@@ -516,7 +517,7 @@ const PickupOrderFormLogistic = ({
                       formik.setFieldValue('logisticName', newValue)
                     }
                     onInputChange={(event: any, newInputValue: string) => {
-                      console.log(newInputValue) // Log the input value
+                      // console.log(newInputValue) // Log the input value
                       formik.setFieldValue('logisticName', newInputValue) // Update the formik field value if needed
                     }}
                     value={formik.values.logisticName}
@@ -589,7 +590,7 @@ const PickupOrderFormLogistic = ({
                           ) || []
                         }
                         onChange={(event, value) => {
-                          console.log(value)
+                          // console.log(value)
                           if (value) {
                             formik.setFieldValue('contractNo', value)
                           }
@@ -619,7 +620,7 @@ const PickupOrderFormLogistic = ({
                     <CustomItemList
                       items={getReason() || []}
                       singleSelect={(values) => {
-                        console.log('values', values)
+                        //console.log('values', values)
                         formik.setFieldValue('reason', values)
                       }}
                       value={formik.values.reason}
@@ -636,9 +637,11 @@ const PickupOrderFormLogistic = ({
                     <Typography sx={[styles.header3, { marginBottom: 1 }]}>
                       {t('pick_up_order.adhoc.po_number')}
                     </Typography>
-                    {picoRefId !== '' ? (
+                    {formik.values.refPicoId !== '' || formik.values.refPicoId ? (
                       <div className="flex items-center justify-between w-[390px]">
-                        <div className="font-bold text-mini">{picoRefId}</div>
+                        <div className="font-bold text-mini">
+                          {formik.values.refPicoId}
+                        </div>
                         <div
                           className="text-mini text-green-400 cursor-pointer"
                           onClick={resetPicoId}

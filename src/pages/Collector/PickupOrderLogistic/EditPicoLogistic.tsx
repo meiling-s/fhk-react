@@ -81,6 +81,7 @@ const EditPicoLogistic = () => {
       rejectedBy: 'string',
       contractNo: '',
       updatedBy: loginId,
+      refPicoId: '',
       createPicoDetail: []
     },
     validationSchema: validateSchema,
@@ -153,6 +154,7 @@ const EditPicoLogistic = () => {
         rejectedBy: loginId,
         contractNo: poInfo.contractNo,
         updatedBy: loginId,
+        refPicoId: poInfo.refPicoId,
         createPicoDetail: []
       })
     }

@@ -57,8 +57,6 @@ import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 import { divIcon } from 'leaflet'
 
-
-
 type DeleteModalProps = {
   open: boolean
   selectedRecycLoc?: CreatePicoDetail | null
@@ -72,7 +70,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   onClose,
   onDelete
 }) => {
-  const { t } = useTranslation()  
+  const { t } = useTranslation()
   return (
     <Modal
       open={open}
@@ -82,7 +80,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
     >
       <Box sx={localstyles.modal}>
         <Stack spacing={2}>
-          <Box  sx={{ paddingX: 3, paddingTop: 3 }}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
             <Typography
               id="modal-modal-title"
               variant="h6"
@@ -117,7 +115,6 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   )
 }
 
-
 const PickupOrderCreateForm = ({
   selectedPo,
   title,
@@ -131,50 +128,51 @@ const PickupOrderCreateForm = ({
   formik: any
   setState: (val: CreatePicoDetail[]) => void
   state: CreatePicoDetail[]
-  editMode:boolean
+  editMode: boolean
 }) => {
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [openDelete , setOpenDelete] = useState<boolean>(false);
-  const [editRowId, setEditRowId] = useState<number | null>(null);
-  const [updateRowId,setUpdateRowId] =  useState<number | null>(null);
-  const [id, setId] = useState<number>(0);
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
+  const [editRowId, setEditRowId] = useState<number | null>(null)
+  const [updateRowId, setUpdateRowId] = useState<number | null>(null)
+  const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
-  const [isEditing,setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType, recycType} =
-    useContainer(CommonTypeContainer);
-  const navigate = useNavigate();
-  const unexpiredContracts = contractType?.filter(contract =>{
-    const currentDate = new Date();
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const { logisticList, contractType, vehicleType, recycType } =
+    useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
+  const unexpiredContracts = contractType?.filter((contract) => {
+    const currentDate = new Date()
     const contractDate = new Date(contract.contractToDate)
-    return contractDate>currentDate
+    return contractDate > currentDate
   })
-  const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(null)
-  
- 
+  const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
+    null
+  )
+
   const handleCloses = () => {
-    setIsEditing(false);
-    setEditRowId(null);
-    setUpdateRowId(null);
-    setOpenModal(false);
-  };
-   
-  const handleEditRow = (id:number) => {
-      console.log('hello'+id)
-      setIsEditing(true)
-      setEditRowId(id)
-      setOpenModal(true)
-  };
- 
+    setIsEditing(false)
+    setEditRowId(null)
+    setUpdateRowId(null)
+    setOpenModal(false)
+  }
+
+  const handleEditRow = (id: number) => {
+    console.log('hello' + id)
+    setIsEditing(true)
+    setEditRowId(id)
+    setOpenModal(true)
+  }
+
   const handleDeleteRow = (id: any) => {
-    
-    var updateDeleteRow = state.filter((row,index)=>index!=id)
-    updateDeleteRow = updateDeleteRow.map((picoDtl,index) => {    //reorder id
+    var updateDeleteRow = state.filter((row, index) => index != id)
+    updateDeleteRow = updateDeleteRow.map((picoDtl, index) => {
+      //reorder id
       picoDtl.id = index
       return picoDtl
     })
-    console.log("deleting: ",id,state,updateDeleteRow)
+    console.log('deleting: ', id, state, updateDeleteRow)
     setState(updateDeleteRow)
-  };
+  }
 
   // console.log('yo' + JSON.stringify(state))
   const createdDate = dayjs(new Date()).format(format.dateFormat1)
@@ -217,25 +215,25 @@ const PickupOrderCreateForm = ({
       return carType
     }
   }
-  
+
   const getReason = () => {
     const reasonList = [
       {
-        id : '1',
-        reasonEn : "Broken Car",
-        reasonSchi: "坏车",
-        reasonTchi : "壞車"
+        id: '1',
+        reasonEn: 'Broken Car',
+        reasonSchi: '坏车',
+        reasonTchi: '壞車'
       },
       {
-        id : '2',
-        reasonEn : "Surplus of Goods",
-        reasonSchi: "货物过剩",
-        reasonTchi : "貨物過剩"
+        id: '2',
+        reasonEn: 'Surplus of Goods',
+        reasonSchi: '货物过剩',
+        reasonTchi: '貨物過剩'
       }
     ]
     const reasons: il_item[] = []
     reasonList.forEach((item) => {
-      var name = ""
+      var name = ''
       switch (i18n.language) {
         case 'enus':
           name = item.reasonEn
@@ -255,7 +253,6 @@ const PickupOrderCreateForm = ({
         name: name
       }
       reasons.push(reasonItem)
-
     })
     return reasons
   }
@@ -264,8 +261,6 @@ const PickupOrderCreateForm = ({
     handleDeleteRow(id)
     setOpenDelete(false)
   }
-
-
 
   const columns: GridColDef[] = [
     {
@@ -278,62 +273,65 @@ const PickupOrderCreateForm = ({
       headerName: t('pick_up_order.detail.main_category'),
       width: 150,
       editable: true,
-      valueGetter: ({ row }) =>{
-        const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
-        if(matchingRecycType){
-          var name = "";
-          switch(i18n.language){
-              case "enus":
-                  name = matchingRecycType.recyclableNameEng;
-                  break;
-              case "zhch":
-                  name = matchingRecycType.recyclableNameSchi;
-                  break;
-              case "zhhk":
-                  name = matchingRecycType.recyclableNameTchi;
-                  break;
-              default:
-                  name = matchingRecycType.recyclableNameTchi;        //default fallback language is zhhk
-                  break;
+      valueGetter: ({ row }) => {
+        const matchingRecycType = recycType?.find(
+          (item) => item.recycTypeId === row.recycType
+        )
+        if (matchingRecycType) {
+          var name = ''
+          switch (i18n.language) {
+            case 'enus':
+              name = matchingRecycType.recyclableNameEng
+              break
+            case 'zhch':
+              name = matchingRecycType.recyclableNameSchi
+              break
+            case 'zhhk':
+              name = matchingRecycType.recyclableNameTchi
+              break
+            default:
+              name = matchingRecycType.recyclableNameTchi //default fallback language is zhhk
+              break
           }
           return name
         }
-    }
-  },
+      }
+    },
     {
       field: 'recycSubType',
       headerName: t('pick_up_order.detail.subcategory'),
       type: 'string',
       width: 150,
       editable: true,
-      valueGetter: ({ row }) =>{
-        const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
-        if(matchingRecycType){
+      valueGetter: ({ row }) => {
+        const matchingRecycType = recycType?.find(
+          (item) => item.recycTypeId === row.recycType
+        )
+        if (matchingRecycType) {
           const matchrecycSubType = matchingRecycType.recycSubType?.find(
             (subtype) => subtype.recycSubTypeId === row.recycSubType
           )
-          if(matchrecycSubType){
-            var subName = "";
-            switch(i18n.language){
-                case "enus":
-                    subName = matchrecycSubType?.recyclableNameEng ?? "";
-                    break;
-                case "zhch":
-                    subName = matchrecycSubType?.recyclableNameSchi ?? "";
-                    break;
-                case "zhhk":
-                    subName = matchrecycSubType?.recyclableNameTchi ?? "";
-                    break;
-                default:
-                    subName = matchrecycSubType?.recyclableNameTchi ?? "";       //default fallback language is zhhk
-                    break;
+          if (matchrecycSubType) {
+            var subName = ''
+            switch (i18n.language) {
+              case 'enus':
+                subName = matchrecycSubType?.recyclableNameEng ?? ''
+                break
+              case 'zhch':
+                subName = matchrecycSubType?.recyclableNameSchi ?? ''
+                break
+              case 'zhhk':
+                subName = matchrecycSubType?.recyclableNameTchi ?? ''
+                break
+              default:
+                subName = matchrecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+                break
             }
 
-          return subName
+            return subName
           }
-  
         }
-    }
+      }
     },
     {
       field: 'weight',
@@ -388,7 +386,12 @@ const PickupOrderCreateForm = ({
         // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
         //   <DELETE_OUTLINED_ICON />
         // </IconButton>
-        <IconButton onClick={() =>{ setOpenDelete(true); setRecycbleLocId(params.row)}}>
+        <IconButton
+          onClick={() => {
+            setOpenDelete(true)
+            setRecycbleLocId(params.row)
+          }}
+        >
           <DELETE_OUTLINED_ICON />
         </IconButton>
       )
@@ -406,34 +409,15 @@ const PickupOrderCreateForm = ({
     picoId: string
   ) => {
     setPicoRefId(picoId)
-    // const pickupDetails: CreatePicoDetail = {
-    //   id: picodetail.picoDtlId,
-    //   picoHisId: picoRefId,
-    //   senderId: picodetail.senderId,
-    //   senderName: picodetail.senderName,
-    //   senderAddr: picodetail.senderAddr,
-    //   senderAddrGps: [11, 12],
-    //   receiverId: picodetail.receiverId,
-    //   receiverName: picodetail.receiverName,
-    //   receiverAddr: picodetail.receiverAddr,
-    //   receiverAddrGps: [11, 12],
-    //   status: 'CREATED',
-    //   createdBy: 'ADMIN',
-    //   updatedBy: 'ADMIN',
-    //   pickupAt: picodetail.pickupAt,
-    //   recycType: picodetail.recycType,
-    //   recycSubType: picodetail.recycSubType,
-    //   weight: picodetail.weight
-    // }
-    // setState([...state, pickupDetails])
+    formik.setFieldValue('refPicoId', picoId)
     setOpenPico(false)
   }
 
   const resetPicoId = () => {
-    setOpenPico(true) 
+    setOpenPico(true)
     setPicoRefId('')
   }
-  
+
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
@@ -463,13 +447,13 @@ const PickupOrderCreateForm = ({
                 </Typography>
               </Grid>
               {selectedPo && (
-                <Grid item> 
+                <Grid item>
                   <Grid item>
-                  <CustomField label={t('pick_up_order.table.pico_id')}>
-                    <Typography sx={styles.header2}>
-                      {selectedPo.picoId}
-                    </Typography>
-                  </CustomField>
+                    <CustomField label={t('pick_up_order.table.pico_id')}>
+                      <Typography sx={styles.header2}>
+                        {selectedPo.picoId}
+                      </Typography>
+                    </CustomField>
                   </Grid>
                 </Grid>
               )}
@@ -644,32 +628,36 @@ const PickupOrderCreateForm = ({
                         }
                       />
                     </CustomField> */}
-                     <CustomField label={t('col.contractNo')}>
-                        <Autocomplete
-                          disablePortal
-                          id="contractNo"
-                          sx={{width: 400}}
-                          defaultValue={formik.values.contractNo}
-                          options={unexpiredContracts?.map((contract) => contract.contractNo) || []}
-                          onChange={(event, value) => {
-                            console.log(value)
-                            if (value) {
-                              formik.setFieldValue('contractNo', value);
-                            }
-                          }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              placeholder={t('col.enterNo')}
-                              sx={[styles.textField, { width: 400 }]}
-                              InputProps={{
-                                ...params.InputProps,
-                                sx: styles.inputProps
-                              }}
-                            />
-                          )}
-                        />
-                      </CustomField>
+                    <CustomField label={t('col.contractNo')}>
+                      <Autocomplete
+                        disablePortal
+                        id="contractNo"
+                        sx={{ width: 400 }}
+                        defaultValue={formik.values.contractNo}
+                        options={
+                          unexpiredContracts?.map(
+                            (contract) => contract.contractNo
+                          ) || []
+                        }
+                        onChange={(event, value) => {
+                          console.log(value)
+                          if (value) {
+                            formik.setFieldValue('contractNo', value)
+                          }
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={t('col.enterNo')}
+                            sx={[styles.textField, { width: 400 }]}
+                            InputProps={{
+                              ...params.InputProps,
+                              sx: styles.inputProps
+                            }}
+                          />
+                        )}
+                      />
+                    </CustomField>
                   </Box>
                 </Grid>
               )}
@@ -681,16 +669,13 @@ const PickupOrderCreateForm = ({
                   >
                     <CustomItemList
                       items={getReason() || []}
-                      singleSelect={(values) =>{
-                        console.log("values",values);
+                      singleSelect={(values) => {
+                        console.log('values', values)
                         formik.setFieldValue('reason', values)
-                      }
-                      }
+                      }}
                       value={formik.values.reason}
                       defaultSelected={selectedPo?.reason}
-                      error={
-                        formik.errors.reason && formik.touched.reason
-                      }
+                      error={formik.errors.reason && formik.touched.reason}
                     />
                   </CustomField>
                 </Grid>
@@ -698,19 +683,24 @@ const PickupOrderCreateForm = ({
               {formik.values.picoType === 'AD_HOC' && (
                 <>
                   <Grid item>
-                  <Typography sx={[styles.header3, { marginBottom: 1 }]}>
-                    {t('pick_up_order.adhoc.po_number')}
-                  </Typography>
-                    {picoRefId !== '' ? (
+                    <Typography sx={[styles.header3, { marginBottom: 1 }]}>
+                      {t('pick_up_order.adhoc.po_number')}
+                    </Typography>
+                    {formik.values.refPicoId !== '' ||
+                    formik.values.refPicoId ? (
                       <div className="flex items-center justify-between w-[390px]">
-                        <div className="font-bold text-mini">{picoRefId}</div>
-                        <div className="text-mini text-green-400 cursor-pointer" onClick={resetPicoId}>
+                        <div className="font-bold text-mini">
+                          {formik.values.refPicoId}
+                        </div>
+                        <div
+                          className="text-mini text-green-400 cursor-pointer"
+                          onClick={resetPicoId}
+                        >
                           {t('pick_up_order.change')}
                         </div>
                       </div>
                     ) : (
                       <div>
-                       
                         <Button
                           sx={[localstyles.picoIdButton]}
                           onClick={() => setOpenPico(true)}
@@ -733,7 +723,11 @@ const PickupOrderCreateForm = ({
               <Grid item>
                 <CustomField label={''}>
                   <DataGrid
-                    rows={editMode?state.map((row,index) => ({ ...row, id: index })) : state}
+                    rows={
+                      editMode
+                        ? state.map((row, index) => ({ ...row, id: index }))
+                        : state
+                    }
                     hideFooter
                     columns={columns}
                     disableRowSelectionOnClick
@@ -838,7 +832,8 @@ const PickupOrderCreateForm = ({
               onClose={() => {
                 setOpenDelete(false)
               }}
-              onDelete={onDeleteModal} />
+              onDelete={onDeleteModal}
+            />
           </LocalizationProvider>
         </Box>
       </form>
@@ -876,7 +871,7 @@ let localstyles = {
     backgroundColor: 'white',
     border: 'none',
     borderRadius: 5
-  },
+  }
 }
 
 export default PickupOrderCreateForm

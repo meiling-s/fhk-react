@@ -1,9 +1,11 @@
 import { Formik, useFormik } from 'formik'
 import PickupOrderCreateForm from '../../../components/FormComponents/PickupOrderCreateForm'
+import { createPickUpOrder } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import {
-  createPickUpOrder,
-} from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import { CreatePO, CreatePicoDetail, PickupOrder } from '../../../interfaces/pickupOrder'
+  CreatePO,
+  CreatePicoDetail,
+  PickupOrder
+} from '../../../interfaces/pickupOrder'
 import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import * as Yup from 'yup'
@@ -15,12 +17,11 @@ const CreatePickupOrder = () => {
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
   const { t } = useTranslation()
   const [picoTypeValue, setPicoType] = useState<string>('ROUTINE')
-  
- 
 
   function getTenantId() {
-
-    const tenantId = returnApiToken().decodeKeycloack.substring("company".length);
+    const tenantId = returnApiToken().decodeKeycloack.substring(
+      'company'.length
+    )
 
     return tenantId
   }
@@ -33,7 +34,7 @@ const CreatePickupOrder = () => {
         return field + ' ' + t('form.error.atLeastOnePicoExist')
       case 'isInWrongFormat':
         return field + ' ' + t('form.error.isInWrongFormat')
-      }
+    }
   }
 
   // const checkSpesificDate = () =>{
@@ -48,32 +49,58 @@ const CreatePickupOrder = () => {
       picoTypeValue == 'ROUTINE'
         ? Yup.string().required('This routineType is required')
         : Yup.string(),
-        
+
     routine: Yup.array()
       .required('routine is required')
-      .test('is-in-range', t('pick_up_order.out_of_date_range'), function (value) {
-        const { effFrmDate, effToDate } = this.parent;
-        if (!effFrmDate || !effToDate) return true;
-        if (!value) return true;
-        const datesInRange = value.every(date => date >= effFrmDate && date <= effToDate);
-        return datesInRange }),
-    logisticName: Yup.string().required(getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')),
-    vehicleTypeId: Yup.string().required(getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')),
-    platNo: Yup.string().required(getErrorMsg(t('pick_up_order.plat_number'), 'empty')),
-    contactNo: Yup.number().required(getErrorMsg(t('pick_up_order.contact_number'), 'empty')),
+      .test(
+        'is-in-range',
+        t('pick_up_order.out_of_date_range'),
+        function (value) {
+          const { effFrmDate, effToDate } = this.parent
+          if (!effFrmDate || !effToDate) return true
+          if (!value) return true
+          const datesInRange = value.every(
+            (date) => date >= effFrmDate && date <= effToDate
+          )
+          return datesInRange
+        }
+      ),
+    logisticName: Yup.string().required(
+      getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
+    ),
+    vehicleTypeId: Yup.string().required(
+      getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')
+    ),
+    platNo: Yup.string().required(
+      getErrorMsg(t('pick_up_order.plat_number'), 'empty')
+    ),
+    contactNo: Yup.number().required(
+      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
+    ),
     contractNo:
       picoTypeValue == 'ROUTINE'
-        ? Yup.string().required(getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty'))
+        ? Yup.string().required(
+            getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty')
+          )
         : Yup.string(),
     reason:
       picoTypeValue == 'AD_HOC'
-        ? Yup.string().required(getErrorMsg(t('pick_up_order.adhoc.reason_get_off'), 'isInWrongFormat'))
+        ? Yup.string().required(
+            getErrorMsg(
+              t('pick_up_order.adhoc.reason_get_off'),
+              'isInWrongFormat'
+            )
+          )
         : Yup.string(),
     createPicoDetail: Yup.array()
       .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
-      .test('has-rows', (getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))!!, (value) => {
-        return value.length > 0 || addRow.length > 0
-      })
+      .test(
+        'has-rows',
+        getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty')!!,
+        (value) => {
+          return value.length > 0 || addRow.length > 0
+        }
+      )
   })
   const currentDate = new Date().toISOString()
   const createPickupOrder = useFormik({
@@ -129,4 +156,3 @@ const CreatePickupOrder = () => {
 }
 
 export default CreatePickupOrder
- 
