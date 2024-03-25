@@ -45,21 +45,32 @@ const CreatePicoLogistic = () => {
         ? Yup.string().required('This routineType is required')
         : Yup.string(),
 
-    // routine: Yup.array()
-    //   .required('routine is required')
-    //   .test(
-    //     'is-in-range',
-    //     t('pick_up_order.out_of_date_range'),
-    //     function (value) {
-    //       const { effFrmDate, effToDate } = this.parent
-    //       if (!effFrmDate || !effToDate) return true
-    //       if (!value) return true
-    //       const datesInRange = value.every(
-    //         (date) => date >= effFrmDate && date <= effToDate
-    //       )
-    //       return datesInRange
-    //     }
-    //   ),
+    routine: Yup.lazy((value, schema) => {
+      const routineType = schema.parent.routineType
+      if (routineType === 'specificDate') {
+        return Yup.array()
+          .required('routine is required')
+          .test(
+            'is-in-range',
+            t('pick_up_order.out_of_date_range'),
+            function (value) {
+              const { effFrmDate, effToDate } = schema.parent
+              const fromDate = new Date(effFrmDate)
+              const toDate = new Date(effToDate)
+
+              const datesInDateObjects = value.map((date) => new Date(date))
+
+              // Check if every date in the routine array falls within the specified range
+              return datesInDateObjects.every(
+                (date) => date >= fromDate && date <= toDate
+              )
+            }
+          )
+      } else {
+        return Yup.array().required('routine is required')
+      }
+    }),
+
     logisticName: Yup.string().required(
       getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
     ),
