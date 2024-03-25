@@ -88,9 +88,10 @@ const getPicoById = async (picoId: string) => {
         return{
             ...prev,
             picoId: response?.data?.picoId,
-            receiverName: response.data.logisticName,
-            effFrmDate: response.data.effFrmDate,
-            effToDate: response.data.effToDate
+            receiverName: response?.data?.logisticName,
+            effFrmDate: response?.data?.effFrmDate,
+            effToDate: response?.data?.effToDate,
+            setupDate: dayjs(response?.data?.createdAt).format('YYYY/MM/DD hh:mm')
         }
         })
     } catch (error) {
@@ -347,7 +348,7 @@ return (
 
                 <Grid item>
                     <Typography sx={{fontSize: '12px', color: '#ACACAC'}}>
-                        {t('jobOrder.setup_time')} : 2023/09/24 17:00
+                        {t('jobOrder.setup_time')} : {orderDetail.setupDate}
                     </Typography>
                 </Grid>
 
