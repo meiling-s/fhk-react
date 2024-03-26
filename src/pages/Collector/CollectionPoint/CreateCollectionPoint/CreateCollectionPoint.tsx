@@ -38,6 +38,8 @@ import RoutineSelect from '../../../../components/SpecializeComponents/RoutineSe
 import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg'
 import { localStorgeKeyName } from "../../../../constants/constant";
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
+import CustomItemList from "../../../../components/FormComponents/CustomItemList";
+
 
 dayjs.extend(isBetween)
 
@@ -338,6 +340,7 @@ function CreateCollectionPoint() {
         gpsCode: toGpsCode(gpsCode[0], gpsCode[1]),
         epdFlg: EPDFlg,
         extraServiceFlg: !serviceType,
+        serviceFlg: serviceFlg,
         siteTypeId: siteType,
         contractNo: contractNo,
         noOfStaff: parseInt(staffNum),
@@ -373,6 +376,18 @@ function CreateCollectionPoint() {
     console.log('Header click')
     navigate('/collector/collectionPoint') //goback to last page
   }
+
+  const serviceTypeList = [{
+    id: 'basic',
+    name: t('col.basic')
+  },{
+    id: 'additional',
+    name: t('col.additional')
+  }, {
+    id: 'order',
+    name: t('col.orderService')
+  }]
+  const [serviceFlg, setServiceFlg] = useState<string>('basic')
 
   return (
     <>
@@ -610,12 +625,7 @@ function CreateCollectionPoint() {
             </CustomField>
 
             <CustomField label={t('col.serviceType')}>
-              <CustomSwitch
-                onText={t('col.basic')}
-                offText={t('col.extra')}
-                defaultValue={true}
-                setState={setServiceType}
-              />
+              <CustomItemList items={serviceTypeList} singleSelect={setServiceFlg} defaultSelected={serviceFlg}></CustomItemList>
             </CustomField>
             <Grid item className="lg:flex sm:block text-center">
               <Button
