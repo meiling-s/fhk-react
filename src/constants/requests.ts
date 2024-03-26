@@ -634,3 +634,19 @@ export const GET_ALL_REASON = (tenantId: string, functionId: string | number) : 
   method: 'get',
   url: `api/v1/collectors/reason/${tenantId}/${functionId}`
 })
+
+//logistic/jobOrder
+export const GET_ALL_JOB_ORDER = (table: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/jo/search/${table}`
+})
+
+export const UPDATE_JOB_ORDER_STATUS = (table: string, joId: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/logistic/jo/${table}/status/${joId}`
+})
+
+export const GET_DRIVER_DETAIL_BY_ID = (table: string, driverId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/driver/${table}/${driverId}`
+})

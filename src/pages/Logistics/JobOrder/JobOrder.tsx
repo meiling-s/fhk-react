@@ -10,21 +10,18 @@ import { useLocation, useNavigate } from "react-router";
 import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
-import PickupOrderForm from "../../../components/FormComponents/PickupOrderForm";
+import JobOrderForm from "../../../components/FormComponents/JobOrderForm";
 import StatusCard from "../../../components/StatusCard";
 
-import { PickupOrder, queryPickupOrder } from "../../../interfaces/pickupOrder";
+import { JobListOrder, queryJobOrder, Row } from "../../../interfaces/JobOrderInterfaces";
 import { useContainer } from "unstated-next";
-import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import { ToastContainer, toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
-import CustomItemList, { il_item } from '../../../components/FormComponents/CustomItemList'
-import { getAllPickUpOrder, getAllLogisticsPickUpOrder, getAllReason } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
-import { editPickupOrderStatus } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import { getAllJobOrder, editJobOrderStatus } from "../../../APICalls/JobOrder";
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate } from '../../../utils/utils'
-import TableOperation from "../../../components/TableOperation";
+import { displayCreatedDate, returnApiToken } from '../../../utils/utils'
 import { localStorgeKeyName } from '../../../constants/constant'
+import CustomButton from "../../../components/FormComponents/CustomButton";
 
 type Approve = {
   open: boolean
@@ -34,20 +31,20 @@ type Approve = {
 
 const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
   const { t } = useTranslation()
-
+  const auth = returnApiToken()
   const onApprove = async () => {
-    const updatePoStatus = {
-      status: 'CONFIRMED',
-      reason: selectedRow.reason,
-      updatedBy: selectedRow.updatedBy
+    const updateJOStatus = {
+      status: 'REJECTED',
+      reason: [],
+      updatedBy: auth.loginId
     }
     try {
-      const result = await editPickupOrderStatus(
-        selectedRow.picoId,
-        updatePoStatus
+      const result = await editJobOrderStatus(
+        selectedRow.joId,
+        updateJOStatus
       )
       if (result) {
-        toast.info(t('pick_up_order.approved_success'), {
+        toast.info(t('job_order.approved_success'), {
           position: "top-center",
           autoClose: 3000,
           hideProgressBar: true,
@@ -80,7 +77,7 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
               component="h2"
               sx={{ fontWeight: 'bold' }}
             >
-              {t('pick_up_order.confirm_approve_title')}
+              {t('job_order.confirm_approve_title')}
             </Typography>
           </Box>
           <Divider />
@@ -91,7 +88,7 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
                 onApprove()
               }}
             >
-              {t('pick_up_order.confirm_approve')}
+              {t('job_order.confirm_approve')}
             </button>
             <button
               className="secondary-btn mr-2 cursor-pointer"
@@ -99,125 +96,13 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
                 onClose()
               }}
             >
-              {t('pick_up_order.cancel')}
+              {t('job_order.cancel')}
             </button>
           </Box>
         </Stack>
       </Box>
     </Modal>
   )
-}
-
-const Required = () => {
-  return (
-    <Typography
-      sx={{
-        color: "red",
-        ml: "5px",
-      }}
-    >
-      *
-    </Typography>
-  );
-};
-
-type rejectForm = {
-  open: boolean;
-  onClose: () => void;
-  selectedRow: any
-  reasonList: any
-};
-
-function RejectForm({
-  open,
-  onClose,
-  selectedRow,
-  reasonList
-}: rejectForm) {
-  
-  const { t } = useTranslation();
-  const [rejectReasonId, setRejectReasonId] = useState<string>('');
-  const handleConfirmRejectOnClick = async (rejectReasonId: string) => {
-    const rejectReasonItem = reasonList.find((item: { id: string; }) => item.id === rejectReasonId)
-    const reason = rejectReasonItem?.name || '';
-    const updatePoStatus = {
-        status: 'REJECTED',
-        reason: reason,
-        updatedBy: selectedRow.updatedBy
-      }
-      try {
-        const result = await editPickupOrderStatus(
-          selectedRow.picoId,
-          updatePoStatus
-        )
-        if (result) {
-          toast.info(t('pick_up_order.rejected_success'), {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-          onClose()
-        }
-      } catch (error) {
-        console.error('Error reject:', error)
-      }
-  }
-
-  return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={localstyles.modal}>
-        <Stack spacing={2}>
-          <Box>
-            <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              sx={{ fontWeight: "bold" }}
-            >
-              {t('pick_up_order.confirm_reject_title')}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography sx={localstyles.typo}>
-              {t("pick_up_order.reject_reasons")}
-              <Required />
-            </Typography>
-            <CustomItemList items={reasonList} singleSelect={setRejectReasonId} />
-          </Box>
-
-          <Box sx={{ alignSelf: "center" }}>
-            <button
-              className="primary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                handleConfirmRejectOnClick(rejectReasonId);
-                onClose();
-              }}
-            >
-              {t('pick_up_order.confirm_reject')}
-            </button>
-            <button
-              className="secondary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                onClose()
-              }}
-            >
-              {t('pick_up_order.cancel')}
-            </button>
-          </Box>
-        </Stack>
-      </Box>
-    </Modal>
-  );
 }
 
 interface Option {
@@ -230,46 +115,57 @@ const JobOrder = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10 
   const [totalData , setTotalData] = useState<number>(0)
-  const [showOperationColumn, setShowOperationColumn] = useState<Boolean>(false)
   const columns: GridColDef[] = [
-    { field: "createdAt", headerName: t('pick_up_order.table.created_datetime'), width: 150 },
     {
-      field: "logisticCompany",
-      headerName: t('pick_up_order.table.logistic_company'),
-      width: 170,
-      editable: true,
+      field: "createdAt", 
+      headerName: t('job_order.table.created_datetime'), 
+      width: 150 
     },
     {
-      field: "picoId",
-      headerName: t('pick_up_order.table.pico_id'),
+      field: "driverId",
+      headerName: t('job_order.table.driver_id'),
       type:"string",
-      width: 220,
+      width: 150,
       editable: true,
     },
     {
-      field: "deliveryDate",
-      headerName: t('pick_up_order.table.delivery_date'),
+      field: "plateNo",
+      headerName: t('job_order.table.plate_no'),
       type: 'string',
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "joId",
+      headerName: t('job_order.table.jo_id'),
+      type:"string",
       width: 200,
       editable: true,
     },
     {
-      field: "senderCompany",
-      headerName: t('pick_up_order.table.sender_company'),
-      type: "sring",
-      width: 260,
+      field: "picoId",
+      headerName: t('job_order.table.pico_id'),
+      type:"string",
+      width: 200,
       editable: true,
     },
     {
-      field: "receiver",
-      headerName: t('pick_up_order.table.receiver'),
+      field: "senderName",
+      headerName: t('job_order.table.sender_company'),
+      type: "sring",
+      width: 220,
+      editable: true,
+    },
+    {
+      field: "receiverName",
+      headerName: t('job_order.table.receiver_company'),
       type: "string",
-      width: 260,
+      width: 220,
       editable: true,
     },
     {
       field: "status",
-      headerName: t('pick_up_order.table.status'),
+      headerName: t('job_order.table.status'),
       type: "string",
       width: 100,
       editable: true,
@@ -277,58 +173,51 @@ const JobOrder = () => {
         <StatusCard status={params.value}/>
       ),
     },
-    showOperationColumn && {
+    {
       field: "operation",
-      headerName: t('pick_up_order.table.operation'),
+      headerName: t('job_order.table.operation'),
       type: "string",
       width: 220,
       editable: true,
       renderCell: (params) => (
-        <TableOperation
-          row={params.row}
-          onApprove={showApproveModal}
-          onReject={showRejectModal}
-          navigateToJobOrder={navigateToJobOrder}
-        />
+        params.row.status === 'DENY' && <CustomButton text={t('job_order.table.approve')} onClick={() => {
+          showApproveModal(params.row)
+        }}></CustomButton>
       ),
     },
   ];
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
-  const {recycType} = useContainer(CommonTypeContainer)
-  const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation();
   const action: string = location.state;
-  const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
+  const [jobOrder, setJobOrder] = useState<JobListOrder[]>();
   const [rows, setRows] = useState<Row[]>([])
   const [filteredPico , setFilteredPico] = useState<Row[]>([])
-  const [query, setQuery] = useState<queryPickupOrder>({
+  const [query, setQuery] = useState<queryJobOrder>({
+    id: '',
+    joId: '',
     picoId: '',
-    effFromDate: '',
-    effToDate: '',
-    logisticName: '',
-    recycType: '',
-    receiverAddr: '',
-    status: 0
+    driverId: '',
+    senderName: '',
+    receiverName: '',
+    status: ''
   });
   const [approveModal, setApproveModal] = useState(false)
-  const [rejectModal, setRejectModal] = useState(false)
-  const [reasonList, setReasonList] = useState<any>([])
-  const role = localStorage.getItem(localStorgeKeyName.role)
   
-  const initPickupOrderRequest = async () => {
-    setPickupOrder([])
+  const initJobOrderRequest = async () => {
+    setJobOrder([])
     setTotalData(0)
     let result = null
-    if (role === 'logisticadmin') {
-      result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query);
-    } else {
-      result = await getAllPickUpOrder(page - 1, pageSize, query);
+    const params = {
+      page: page -1,
+      pageSize,
+      ...query
     }
+    result = await getAllJobOrder(params);
     const data = result?.data.content;
     if (data && data.length > 0) {
-      setPickupOrder(data);
+      setJobOrder(data);
     } else {
-      setPickupOrder([])
+      setJobOrder([])
     }
     setTotalData( result?.data.totalPages)
   }
@@ -337,131 +226,55 @@ const JobOrder = () => {
     setSelectedRow(row);
     setApproveModal(true)
   }
-  const showRejectModal = (row: any) => {
-    setSelectedRow(row);
-    setRejectModal(true)
-  }
-  const navigateToJobOrder = () => {
-    console.log('navigateToJobOrder')
-  }
   const resetPage = async () => {
     setApproveModal(false)
-    setRejectModal(false)
-    initPickupOrderRequest()
+    initJobOrderRequest()
   }
-
-  const getRejectReason = async() => {
-    let result = await getAllReason()
-    if (result && result?.data && result?.data.length > 0) {
-      let reasonName = ""
-      switch (i18n.language) {
-        case 'enus':
-          reasonName = 'reasonNameEng'
-          break
-        case 'zhch':
-          reasonName = 'reasonNameSchi'
-          break
-        case 'zhhk':
-          reasonName = 'reasonNameTchi'
-          break
-        default:
-          reasonName = 'reasonNameEng'
-          break
-      }
-      result?.data.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
-        item.id = item.reasonId
-        item.name = item[reasonName]
-      })
-      setReasonList(result?.data)
-    }
-  }
-  
-  useEffect(() => {
-    setShowOperationColumn(role === 'logisticadmin')
-  }, [role, columns, i18n.language])
 
   useEffect(()=>{
-    initPickupOrderRequest()
+    initJobOrderRequest()
   }, [i18n.language])
 
   useEffect(() => {
-    initPickupOrderRequest();
-    getRejectReason()
-    if(action){
-      var toastMsg = "";
-      switch(action){
-        case "created":
-          toastMsg = t("pick_up_order.created_pickup_order");
-          break;
-        case "updated":
-          toastMsg = t("pick_up_order.changed_pickup_order");
-          break;
-      }
-      toast.info(toastMsg, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
-    navigate(location.pathname, { replace: true });
+    initJobOrderRequest();
+    // if(action){
+    //   var toastMsg = "";
+    //   switch(action){
+    //     case "created":
+    //       toastMsg = t("pick_up_order.created_pickup_order");
+    //       break;
+    //     case "updated":
+    //       toastMsg = t("pick_up_order.changed_pickup_order");
+    //       break;
+    //   }
+    //   toast.info(toastMsg, {
+    //     position: "top-right",
+    //     autoClose: 3000,
+    //     hideProgressBar: true,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "light",
+    //   });
+    // }
+    // navigate(location.pathname, { replace: true });
   }, [page, query]);
 
-  useEffect(() =>{
-   
-   const recycItems: il_item[] = []
-   recycType?.forEach((item) =>{
-    var name = ""
-    switch (i18n.language) {
-      case 'enus':
-        name = item.recyclableNameEng
-        break
-      case 'zhch':
-        name = item.recyclableNameSchi
-        break
-      case 'zhhk':
-        name = item.recyclableNameTchi
-        break
-      default:
-        name = item.recyclableNameTchi
-        break
-    }
-    recycItems.push({
-      name: name,
-      id: item.recycTypeId.toString()
-    })
-   })
-
-   setRecycItem(recycItems)
-  }, [recycType]);
-
-  const getDeliveryDate = (row: PickupOrder) => {
-    if( row.picoType === 'AD_HOC') {
-      return `${row.effFrmDate} - ${row.effToDate}`
-    } else if(row.routineType === 'daily'){
-      return "Daily"
-    } else {
-      return `${row.routine.join(', ')}`
-    }
-  }
 
   useEffect (() => {
   // const mappingData = () => {
-    const tempRows: any[] =(pickupOrder?.map((item) => ({
+    const tempRows: any[] =(jobOrder?.map((item) => ({
       ...item,
-      id: item.picoId,
+      id: item.joId,
+      joId: item.joId,
+      picoId: item.picoId,
       createdAt: displayCreatedDate(item.createdAt),
-      logisticCompany: item.logisticName,
-      picoId: item.picoId, 
-      deliveryDate: getDeliveryDate(item),
-      senderCompany: item.pickupOrderDetail[0]?.receiverAddr,
-      receiver: item.pickupOrderDetail[0]?.receiverName,
+      driverId: item.driverId,
+      plateNo: item.plateNo, 
+      senderName: item.senderName,
+      receiverName: item.receiverName,
       status: item.status,
-      recyType: item.pickupOrderDetail.map(item => {return item.recycType}),
       operation: '',
       
     //}))??[])
@@ -469,29 +282,15 @@ const JobOrder = () => {
     setRows(tempRows)
     setFilteredPico(tempRows)
   // }
-  },[pickupOrder])
+  },[jobOrder])
 
-  interface Row {
-    id: number;
-    tenantId: string;
-    createdAt: string;
-    logisticCompany: string;
-    picoId: number;
-    deliveryDate: string;
-    senderCompany: string;
-    receiver: string;
-    status: string;
-    recyType: string[];
-  }
+
   const searchfield = [
-    {label:t('pick_up_order.filter.search'),width:'14%', field: 'picoId'},
-    {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('createdAt'), field:"effFromDate"},
-    {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('deliveryDate'), field:"effToDate"},
-    {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticName"},
-    {label:t('pick_up_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderCompany'), field:"receiverAddr"},
-    {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recycType"},
-    {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('status'), field:"status"}
-    
+    {label:t('job_order.filter.search'),width:'14%', field: 'picoId'},
+    {label:t('job_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderName'), field:"senderName"},
+    {label:t('job_order.table.receiver_company'),width:'14%',options:getUniqueOptions('receiverName'), field:"receiverName"},
+    {label:t('job_order.table.driver_id'),width:'14%',options:getUniqueOptions('driverId'), field:"driverId"},
+    {label:t('job_order.table.status'),width:'14%',options:getUniqueOptions('status'), field:"status"}
   ]
 
   const navigate = useNavigate()
@@ -515,14 +314,6 @@ const JobOrder = () => {
     return options
   }
 
-  function getReycleOption() {
-    const options: Option[] = recycItem.map((item) => ({
-      value: item.id,
-      label: item.name,
-    }));
-  
-    return options;
-  }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10,
@@ -538,24 +329,13 @@ const JobOrder = () => {
     setOpenModal(true);
   };
 
-  const updateQuery = (newQuery: Partial<queryPickupOrder>) => {
+  const updateQuery = (newQuery: Partial<queryJobOrder>) => {
     setQuery({ ...query, ...newQuery });
+    initJobOrderRequest()
   }
 
   const handleSearch = (keyName: string, value: string) => {
     if(keyName == 'status') {
-      const statusMapping: { [key: string]: number } = {
-        CREATED: 0,
-        STARTED: 1,
-        CONFIRMED: 2,
-        REJECTED: 3,
-        COMPLETED: 4,
-        CLOSED: 5,
-        OUTSTANDING: 6
-      };
-      const mappedStatus = statusMapping[value];
-      updateQuery({ ...query, [keyName]: mappedStatus });
-    } else {
       updateQuery({[keyName]: value})
     }
   }
@@ -564,29 +344,12 @@ const JobOrder = () => {
     <ToastContainer/>
     <Box sx={{ display: "flex",  flexDirection: "column" }}>
         <Modal open={openModal} onClose={handleCloses} >
-          <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} pickupOrder={pickupOrder} initPickupOrderRequest={initPickupOrderRequest} navigateToJobOrder={navigateToJobOrder} />
+          <JobOrderForm onClose={handleCloses} selectedRow={selectedRow} onApproved={() => setApproveModal(true)} />
         </Modal>
       <Box sx={{ display: "flex", alignItems: "center",ml:'6px'}}>
         <Typography fontSize={20} color="black" fontWeight="bold">
-        {t('pick_up_order.enquiry_pickup_order')}
+        {t('job_order.enquiry_job_order')}
         </Typography>
-        <Button
-          onClick={() => {
-            const routeName = role === 'logisticadmin' ? 'logistics' : 'collector'
-            navigate(`/${routeName}/createPickupOrder`)
-          }}
-          sx={{
-            borderRadius: "20px",
-            backgroundColor: "#79ca25",
-            "&.MuiButton-root:hover": { bgcolor: "#79ca25" },
-            width: "fit-content",
-            height: "40px",
-            marginLeft: "20px",
-          }}
-          variant="contained"
-        >
-          + {t("col.create")}
-        </Button>
       </Box>
       <Box />
       <Stack direction='row' mt={3} >
@@ -635,15 +398,6 @@ const JobOrder = () => {
       </Box>
 
       <ApproveModal open={approveModal} onClose={resetPage} selectedRow={selectedRow} />
-      <RejectForm
-          open={rejectModal}
-          onClose={() => {
-            setRejectModal(false);
-            resetPage()
-          }}
-          selectedRow={selectedRow}
-          reasonList={reasonList}
-        />
     </Box>
     </>
   );

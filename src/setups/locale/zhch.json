@@ -236,7 +236,7 @@
     "closed": "已取消",
     "outstanding": "已逾期",
     "suspend": "已暂停",
-    "DENY": "不接受",
+    "deny": "不接受",
     "success": "成功",
     "failed": "失败",
     "enable": "启用",
@@ -632,6 +632,35 @@
     "errorDeleted": "错误删除"
   },
   "job_order": {
-    "enquiry_job_order": "工作运单"
+    "enquiry_job_order": "工作运单",
+    "table": {
+      "created_datetime": "建立日期",
+      "jo_id": "工作运单编号",
+      "pico_id": "回收运单编号",
+      "driver_id": "司机名称",
+      "plate_no": "车牌号码",
+      "sender_company": "寄件公司",
+      "receiver_company": "收件公司",
+      "status": "状态",
+      "operation": "操作",
+      "approve": "核准"
+    },
+    "filter": {
+      "search": "搜索",
+      "driver": "司机",
+      "status": "状态"
+    },
+    "item": {
+      "detail": "工作运单",
+      "shipping_info": "运输资料",
+      "date_time": "建立日期及时间",
+      "reference_po_number": "參考运单编号",
+      "sender_name": "寄件公司",
+      "rec_loc_info": "回收地点资料"
+    },
+    "confirm_approve_title": "确认核准吗？",
+    "confirm_approve": "确认核准",
+    "cancel": "取消",
+    "approved_success": "核准成功"
   }
 }

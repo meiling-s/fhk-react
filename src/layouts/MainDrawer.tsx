@@ -110,7 +110,7 @@ function MainDrawer() {
     "Job order": {
       name: t('job_order.enquiry_job_order'),
       icon:<SHIPPING_CAR_ICON/>,
-      onClick: () => navigate('/logistic/jobpOrder'),
+      onClick: () => navigate('/logistic/jobOrder'),
       collapse: false
     },
     'Warehouse dashboard':{
