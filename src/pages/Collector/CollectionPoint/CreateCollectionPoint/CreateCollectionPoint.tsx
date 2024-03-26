@@ -511,7 +511,7 @@ function CreateCollectionPoint() {
       name: t('col.additional')
     },
     {
-      id: 'orders',
+      id: 'others',
       name: t('col.other')
     }
   ]
