@@ -17,7 +17,7 @@ import { JobListOrder, queryJobOrder, Row } from "../../../interfaces/JobOrderIn
 import { useContainer } from "unstated-next";
 import { ToastContainer, toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
-import { getAllJobOrder, editJobOrderStatus } from "../../../APICalls/JobOrder";
+import { getAllJobOrder, editJobOrderStatus } from "../../../APICalls/jobOrder";
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate, returnApiToken } from '../../../utils/utils'
 import { localStorgeKeyName } from '../../../constants/constant'

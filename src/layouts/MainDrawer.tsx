@@ -19,7 +19,8 @@ import {
   INBOX_OUTLINE_ICON,
   TEMPLATE_ICON,
   STATISTIC_ICON,
-  PERSON_ICON
+  PERSON_ICON,
+  PERSON_OUTLINE_ICON
 } from '../themes/icons'
 import logo_company from '../logo_company.png'
 import { useNavigate } from 'react-router-dom'
@@ -35,6 +36,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
+import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined';
 type MainDrawer = {
   role: string
 }
@@ -93,6 +95,12 @@ function MainDrawer() {
       name: t('all_Collection_Point'),
      
       onClick: () => navigate('/collector/collectionPoint'),
+      collapse: false
+    },
+    "User account":{
+      name: t('processRecord.userGroup'),
+      icon:<PERSON_OUTLINE_ICON/>,
+      onClick: () => navigate('/logistics/account'),
       collapse: false
     },
     "Collection point": {
@@ -158,6 +166,12 @@ function MainDrawer() {
       name: t('staffManagement.staff'),
       icon: <AccountBoxOutlinedIcon />,
       onClick: () => navigate('/warehouse/staff'),
+      collapse: false
+    },
+    "Notification template":{
+      name: t('notification.notification_menu'),
+      icon: <ViewQuiltOutlinedIcon />,
+      onClick: () => navigate('/logistic/notice'),
       collapse: false
     },
   }]

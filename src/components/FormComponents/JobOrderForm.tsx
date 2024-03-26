@@ -20,7 +20,7 @@ import { PickupOrderDetail } from '../../interfaces/pickupOrder'
 import { getPicoById } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import JobOrderCard from '../JobOrderCard'
 import CustomButton from './CustomButton'
-import { getDriverDetailById } from '../../APICalls/JobOrder'
+import { getDriverDetailById } from '../../APICalls/jobOrder'
 
 const JobOrderForm = ({
   onClose,
