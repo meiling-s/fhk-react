@@ -31,7 +31,7 @@
     "serviceType": "服務種類",
     "basic": "基本",
     "additional": "額外",
-    "orderService": "其他服務",
+    "other": "其他服務",
     "create": "建立",
     "save": "儲存",
     "cancel": "取消",

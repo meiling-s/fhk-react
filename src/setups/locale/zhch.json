@@ -31,7 +31,7 @@
     "serviceType": "服务种类",
     "basic": "基本",
     "additional": "额外",
-    "orderService": "其他服务",
+    "other": "其他服务",
     "create": "建立",
     "save": "储存",
     "cancel": "取消",
@@ -634,20 +634,20 @@
   },
   "jobOrder": {
     "job_order_menu": "工作运单",
-    "create_work_waybill" : "建立工作运单",
-    "shipping_information" : "运输资料",
-    "corresponding_waybill" : "对应运单",
-    "shipping_validity_date_from" : "运输有效日期由",
+    "create_work_waybill": "建立工作运单",
+    "shipping_information": "运输资料",
+    "corresponding_waybill": "对应运单",
+    "shipping_validity_date_from": "运输有效日期由",
     "shipping_validity_date_to": "至",
-    "shipping_company_name" : "寄件公司名称",
+    "shipping_company_name": "寄件公司名称",
     "recycling_location_information": "回收地点资料",
-    "main_category" : "主类别",
-    "subcategory" : "次类别",
-    "estimated_shipping_time" : "预计运送时间",
+    "main_category": "主类别",
+    "subcategory": "次类别",
+    "estimated_shipping_time": "预计运送时间",
     "weight": "重量",
     "shipping_and_receiving_companies": "寄件及收件公司",
     "delivery_and_arrival_locations": "送出及到达地点",
-    "setup_time" : "建立时间",
+    "setup_time": "建立时间",
     "finish": "完成",
     "cancel": "取消",
     "driver": "司机",
@@ -657,22 +657,22 @@
   "notification": {
     "notification_menu": "通知范本",
     "notification_title": "范本",
-    "menu_recycling_materials_and_waybills" : {
-      "tab_name" : "回收物及运单",
-      "name" : "名称",
-      "type" : "种类",
-      "title" : "标题",
-      "language" : "语言"
+    "menu_recycling_materials_and_waybills": {
+      "tab_name": "回收物及运单",
+      "name": "名称",
+      "type": "种类",
+      "title": "标题",
+      "language": "语言"
     },
     "menu_staff": {
-      "tab_name" : "员工",
-      "name" : "名称",
-      "type" : "种类",
-      "title" : "标题",
-      "language" : "语言"
+      "tab_name": "员工",
+      "name": "名称",
+      "type": "种类",
+      "title": "标题",
+      "language": "语言"
     },
-    "modify_template" : {
-      "header" : "修改范本"
+    "modify_template": {
+      "header": "修改范本"
     }
   }
 }
