@@ -1,15 +1,16 @@
 import { Formik, useFormik } from 'formik'
 import PickupOrderFormLogistic from '../../../components/FormComponents/PickupOrderFormLogistic'
 import { createPickUpOrder } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import {
-  CreatePO,
-  CreatePicoDetail
-} from '../../../interfaces/pickupOrder'
+import { CreatePO, CreatePicoDetail } from '../../../interfaces/pickupOrder'
 import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { returnApiToken } from '../../../utils/utils'
+import {
+  returnApiToken,
+  showErrorToast,
+  showSuccessToast
+} from '../../../utils/utils'
 
 const CreatePicoLogistic = () => {
   const navigate = useNavigate()
@@ -44,21 +45,32 @@ const CreatePicoLogistic = () => {
         ? Yup.string().required('This routineType is required')
         : Yup.string(),
 
-    routine: Yup.array()
-      .required('routine is required')
-      .test(
-        'is-in-range',
-        t('pick_up_order.out_of_date_range'),
-        function (value) {
-          const { effFrmDate, effToDate } = this.parent
-          if (!effFrmDate || !effToDate) return true
-          if (!value) return true
-          const datesInRange = value.every(
-            (date) => date >= effFrmDate && date <= effToDate
+    routine: Yup.lazy((value, schema) => {
+      const routineType = schema.parent.routineType
+      if (routineType === 'specificDate') {
+        return Yup.array()
+          .required('routine is required')
+          .test(
+            'is-in-range',
+            t('pick_up_order.out_of_date_range'),
+            function (value) {
+              const { effFrmDate, effToDate } = schema.parent
+              const fromDate = new Date(effFrmDate)
+              const toDate = new Date(effToDate)
+
+              const datesInDateObjects = value.map((date) => new Date(date))
+
+              // Check if every date in the routine array falls within the specified range
+              return datesInDateObjects.every(
+                (date) => date >= fromDate && date <= toDate
+              )
+            }
           )
-          return datesInRange
-        }
-      ),
+      } else {
+        return Yup.array().required('routine is required')
+      }
+    }),
+
     logisticName: Yup.string().required(
       getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
     ),
@@ -125,9 +137,10 @@ const CreatePicoLogistic = () => {
       const data = result?.data
       if (data) {
         console.log('all pickup order: ', data)
-        navigate('/collector/PickupOrder', { state: 'created' })
+        navigate('/logistic/pickupOrder', { state: 'created' })
       } else {
-        alert('fail to create pickup order')
+        showErrorToast('fail to create pickup order')
+        //alert('fail to create pickup order')
       }
     }
   })

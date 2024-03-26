@@ -655,6 +655,28 @@
     "successDeleted": "Success Deleted",
     "errorDeleted": "Error deleted"
   },
+  "jobOrder": {
+    "job_order_menu": "Job Order",
+    "create_work_waybill" : "Create Job Order",
+    "shipping_information" : "Shipping information",
+    "corresponding_waybill" : "Corresponding waybill",
+    "shipping_validity_date_from" : "Shipping validity",
+    "shipping_validity_date_to": "to",
+    "shipping_company_name" : "Shipping company",
+    "recycling_location_information": "Recycling location information",
+    "main_category" : "Type",
+    "subcategory" : "Subtype",
+    "estimated_shipping_time" : "Estimated shipping time",
+    "weight": "weight",
+    "shipping_and_receiving_companies": "Shipping and receiving",
+    "delivery_and_arrival_locations": "Delivery and arrival",
+    "setup_time" : "Setup time",
+    "finish": "Finish",
+    "cancel": "Cancel",
+    "driver": "Driver",
+    "plat_number": "Plate number",
+    "assign_driver": "Assign a driver"
+  },
   "notification": {
     "notification_menu": "Notice template",
     "notification_title": "Template",
