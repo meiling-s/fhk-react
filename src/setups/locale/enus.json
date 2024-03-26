@@ -31,7 +31,7 @@
     "serviceType": "Service type",
     "basic": "Basic",
     "additional": "Additional",
-    "orderService": "Other Services",
+    "other": "Other Services",
     "create": "Create",
     "save": "Save",
     "cancel": "Cancel",
@@ -657,20 +657,20 @@
   },
   "jobOrder": {
     "job_order_menu": "Job Order",
-    "create_work_waybill" : "Create Job Order",
-    "shipping_information" : "Shipping information",
-    "corresponding_waybill" : "Corresponding waybill",
-    "shipping_validity_date_from" : "Shipping validity",
+    "create_work_waybill": "Create Job Order",
+    "shipping_information": "Shipping information",
+    "corresponding_waybill": "Corresponding waybill",
+    "shipping_validity_date_from": "Shipping validity",
     "shipping_validity_date_to": "to",
-    "shipping_company_name" : "Shipping company",
+    "shipping_company_name": "Shipping company",
     "recycling_location_information": "Recycling location information",
-    "main_category" : "Type",
-    "subcategory" : "Subtype",
-    "estimated_shipping_time" : "Estimated shipping time",
+    "main_category": "Type",
+    "subcategory": "Subtype",
+    "estimated_shipping_time": "Estimated shipping time",
     "weight": "weight",
     "shipping_and_receiving_companies": "Shipping and receiving",
     "delivery_and_arrival_locations": "Delivery and arrival",
-    "setup_time" : "Setup time",
+    "setup_time": "Setup time",
     "finish": "Finish",
     "cancel": "Cancel",
     "driver": "Driver",
@@ -680,22 +680,22 @@
   "notification": {
     "notification_menu": "Notice template",
     "notification_title": "Template",
-    "menu_recycling_materials_and_waybills" : {
+    "menu_recycling_materials_and_waybills": {
       "tab_name": "Recyclables and PO",
-      "name" : "Name",
-      "type" : "Type",
-      "title" : "Title",
-      "language" : "Language"
+      "name": "Name",
+      "type": "Type",
+      "title": "Title",
+      "language": "Language"
     },
-    "menu_staff":{
-      "tab_name" :  "Staff",
-      "name" : "Name",
-      "type" : "Type",
-      "title" : "Title",
-      "language" : "Language"
+    "menu_staff": {
+      "tab_name": "Staff",
+      "name": "Name",
+      "type": "Type",
+      "title": "Title",
+      "language": "Language"
     },
-    "modify_template" : {
-      "header" : "Modify Template"
+    "modify_template": {
+      "header": "Modify Template"
     }
   }
 }
