@@ -654,5 +654,26 @@
     "errorEdited": "Error Edited",
     "successDeleted": "Success Deleted",
     "errorDeleted": "Error deleted"
+  },
+  "notification": {
+    "notification_menu": "Notice template",
+    "notification_title": "Template",
+    "menu_recycling_materials_and_waybills" : {
+      "tab_name": "Recyclables and PO",
+      "name" : "Name",
+      "type" : "Type",
+      "title" : "Title",
+      "language" : "Language"
+    },
+    "menu_staff":{
+      "tab_name" :  "Staff",
+      "name" : "Name",
+      "type" : "Type",
+      "title" : "Title",
+      "language" : "Language"
+    },
+    "modify_template" : {
+      "header" : "Modify Template"
+    }
   }
 }

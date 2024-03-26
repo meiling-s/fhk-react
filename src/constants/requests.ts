@@ -634,3 +634,13 @@ export const GET_ALL_REASON = (tenantId: string, functionId: string | number) : 
   method: 'get',
   url: `api/v1/collectors/reason/${tenantId}/${functionId}`
 })
+
+export const GET_LIST_NOTIF_TEMPLATE_PO = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/notiTemplate/${tenantId}`
+})
+
+export const GET_LIST_NOTIF_TEMPLATE_STAFF = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/notiTemplate/${tenantId}`
+})

@@ -631,5 +631,26 @@
     "errorEdited": "错误已编辑",
     "successDeleted": "删除成功",
     "errorDeleted": "错误删除"
+  },
+  "notification": {
+    "notification_menu": "通知范本",
+    "notification_title": "范本",
+    "menu_recycling_materials_and_waybills" : {
+      "tab_name" : "回收物及运单",
+      "name" : "名称",
+      "type" : "种类",
+      "title" : "标题",
+      "language" : "语言"
+    },
+    "menu_staff": {
+      "tab_name" : "员工",
+      "name" : "名称",
+      "type" : "种类",
+      "title" : "标题",
+      "language" : "语言"
+    },
+    "modify_template" : {
+      "header" : "修改范本"
+    }
   }
 }
