@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
   GET_ROSTER_LIST,
@@ -13,17 +11,13 @@ import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 
 //get all roster by tenant
-export const getRosterList = async () => {
+export const getRosterList = async (startAt: string) => {
   try {
     const token = returnApiToken()
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_ROSTER_LIST(token.tenantId),
-      params: {
-        page: 0,
-        size: 100 // change size as needed
-      }
+      ...GET_ROSTER_LIST(token.tenantId, startAt),
     })
 
     return response
@@ -32,7 +26,6 @@ export const getRosterList = async () => {
     return null
   }
 }
-
 
 export const createRoster = async (data: any) => {
   try {

@@ -518,9 +518,9 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
 
 
 //API roster
-export const GET_ROSTER_LIST = (tenantId: string): AxiosRequestConfig => ({
+export const GET_ROSTER_LIST = (tenantId: string, startAt: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/roster/${tenantId}`
+  url: `api/v1/collectors/roster/${tenantId}/${startAt}`
 })
 
 export const CREATE_ROSTER: AxiosRequestConfig = {
