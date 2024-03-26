@@ -49,7 +49,7 @@ import UserGroup from "./pages/Collector/UserGroup/UserGroup";
 import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 import JobOrder from "./pages/Logistic/JobOrder";
 
-//astd
+import LogisticAccount from './pages/Logistic/Account'
 import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
 import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
 import Notice from "./pages/Logistic/Notice/Index";
@@ -125,6 +125,7 @@ const Router = () => {
           <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic /> } />
           <Route path="/logistic/pickupOrder/:picoId" element={<JobOrder />} />  
           <Route path="/logistic/notice" element={<Notice />} />
+          <Route path="/logistics/account" element={<LogisticAccount />} />
         </Route>
         {/* </Route> */}
       </Routes>
