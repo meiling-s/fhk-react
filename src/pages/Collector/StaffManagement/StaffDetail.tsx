@@ -328,6 +328,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
           title:
             action == 'add'
               ? t('top_menu.add_new')
+              : action == 'delete'
+              ? t('add_warehouse_page.delete')
               : selectedItem?.staffNameTchi,
           subTitle:
             action == 'add'

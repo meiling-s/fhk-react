@@ -660,7 +660,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         action={action}
         headerProps={{
           title:
-            action == 'add' ? t('top_menu.add_new') : t('userGroup.change'),
+            action == 'add'
+              ? t('top_menu.add_new')
+              : action == 'delete'
+              ? t('add_warehouse_page.delete')
+              : t('userGroup.change'),
           subTitle: t('top_menu.workshop'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
