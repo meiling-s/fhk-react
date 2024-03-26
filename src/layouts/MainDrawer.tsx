@@ -158,7 +158,7 @@ function MainDrawer() {
     "Notification template":{
       name: t('notification.notification_menu'),
       icon: <ViewQuiltOutlinedIcon />,
-      onClick: () => navigate('/logistic/notice'),
+      onClick: () => navigate('/astd/notice'),
       collapse: false
     },
   }]

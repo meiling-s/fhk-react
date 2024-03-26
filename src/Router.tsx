@@ -52,7 +52,8 @@ import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 //astd
 import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
 import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
-import Notice from "./pages/Logistic/Notice/Index";
+import Notice from "./pages/ASTD/Notice/Index";
+import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 
 const Router = () => {
   
@@ -111,7 +112,8 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/astd" element={<CompanyManage />} />
           <Route path="/astd/company" element={<CompanyManage />} />
-          <Route path="/astd/notice" element={<></>} />
+          <Route path="/astd/notice/" element={<Notice />} />
+          <Route path="/astd/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/astd/report" element={<></>} />
           <Route path="/astd/statistics/recyclables" element={<></>} />
           <Route path="/astd/statistics/convoy" element={<></>} />
@@ -135,7 +137,6 @@ const Router = () => {
 
         <Route element={<MainLayout />}>
           <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
-          <Route path="/logistic/notice" element={<Notice />} />
         </Route>
 
         </Route>

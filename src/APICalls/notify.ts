@@ -5,7 +5,8 @@ import {
   GET_NOTIF_BY_USER_ID,
   UPDATE_FLAG_NOTIF,
   GET_LIST_NOTIF_TEMPLATE_PO,
-  GET_LIST_NOTIF_TEMPLATE_STAFF
+  GET_LIST_NOTIF_TEMPLATE_STAFF,
+  GET_DETAIL_NOTIF_TEMPLATE
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 
@@ -73,6 +74,19 @@ export const getListNotifTemplateStaff = async () => {
       baseURL: administratorAPI.baseURL
     })
     return response
+  } catch (e) {
+    return null
+  }
+}
+
+export const getDetailNotifTemplate = async (templateId: string) => {
+  try {
+    const token = returnApiToken();
+    const response = await axiosInstance({
+      ...GET_DETAIL_NOTIF_TEMPLATE(token.tenantId, templateId),
+      baseURL: administratorAPI.baseURL
+    })
+    return response.data
   } catch (e) {
     return null
   }

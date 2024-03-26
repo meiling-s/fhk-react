@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { NotifTemplate } from '../../../interfaces/notif'
 import { getListNotifTemplatePO, getListNotifTemplateStaff } from '../../../APICalls/notify'
+import { useNavigate } from 'react-router-dom'
 
 function createNotifTemplate(
   templateId: string,
@@ -49,6 +50,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   const [filteredTemplate, setFillteredTemplate] = useState<NotifTemplate[]>([])
   const [selectedRow, setSelectedRow] = useState<NotifTemplate | null>(null)
   const [action, setAction] = useState<'edit'>('edit')
+  const navigate = useNavigate();
 
   useEffect(() => {
     if(selectedTab === 0) {
@@ -64,6 +66,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     const result = await getListNotifTemplateStaff();
     if (result) {
       const data = result.data
+      console.log('notifTemplate', data)
       let notifMappingTemplate: NotifTemplate[] = []
       data.map((item: any) => {
         notifMappingTemplate.push(
@@ -168,10 +171,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     params: GridRenderCellParams,
     action: 'edit'
   ) => {
-    setAction(action)
-
-    setSelectedRow(params.row)
-    setDrawerOpen(true)
+    navigate(`/astd/notice/${params.row.notiType}/${params.row.templateId}`)
   }
 
   const handleSelectRow = (params: GridRowParams) => {

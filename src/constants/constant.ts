@@ -41,3 +41,10 @@ export const formErr = {
   exceedsMaxLength:"exceedsMaxLength",
   minMoreOneImgUploded: "minMoreOneImgUploded"
 }
+
+export const Notiftemplate = {
+  email : 'email',
+  app: 'app',
+  sms: 'sms',
+  broadcast: 'broadcast'
+}
