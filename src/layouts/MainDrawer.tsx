@@ -36,6 +36,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
+import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined';
 type MainDrawer = {
   role: string
 }
@@ -159,6 +160,12 @@ function MainDrawer() {
       name: t('staffManagement.staff'),
       icon: <AccountBoxOutlinedIcon />,
       onClick: () => navigate('/warehouse/staff'),
+      collapse: false
+    },
+    "Notification template":{
+      name: t('notification.notification_menu'),
+      icon: <ViewQuiltOutlinedIcon />,
+      onClick: () => navigate('/logistic/notice'),
       collapse: false
     },
   }]

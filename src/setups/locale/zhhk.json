@@ -30,7 +30,8 @@
     "enterNo": "請輸入編號",
     "serviceType": "服務種類",
     "basic": "基本",
-    "extra": "額外",
+    "additional": "額外",
+    "orderService": "其他服務",
     "create": "建立",
     "save": "儲存",
     "cancel": "取消",
@@ -48,7 +49,7 @@
       "alreadyExist": "已經存在",
       "timeCantDuplicate": "時間不能重複",
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
-      "exceedsMaxLength":"不可超過一百個字符",
+      "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片"
     }
   },
@@ -214,26 +215,30 @@
     "manage": "管理",
     "overview": "概述"
   },
-  "login":{
+  "login": {
     "err_msg_001": "請輸入正確的使用者名稱或密碼",
     "err_msg_002": "至少八個字符，其中包含大小寫混合的字母字符、數字和特殊字符。",
     "err_msg_005": "帳號異常。請再次登入及如果此問題繼續存在，請聯繫管理員。",
     "err_msg_006": "請再次嘗試登入及如果此問題繼續存在，請聯繫管理員。",
     "err_msg_007": "連續登入失敗5次。 你的帳戶已版鎖定。",
     "err_msg_008": "帳號不存在。",
-    "err_msg_500": "取得授權資料失敗。"  
+    "err_msg_500": "取得授權資料失敗。"
   },
   "status": {
-    "active": "已啓用",
-    "inactive": "不活躍的",
-    "deleted": "刪除",
-    "started": "開始",
-    "created": "創建",
+    "active": "已啟用",
+    "inactive": "已停用",
+    "deleted": "已刪除",
+    "started": "處理中",
+    "created": "待處理",
     "confirmed": "已確認",
-    "rejected": "拒絕",
+    "rejected": "已拒絕",
     "completed": "已完成",
-    "closed": "已關閉",
-    "outstanding": "傑出",
+    "closed": "已取消",
+    "outstanding": "已逾期",
+    "suspend": "已暫停",
+    "DENY": "不接受",
+    "success": "成功",
+    "failed": "失敗",
     "enable": "啟用",
     "not_enabled": "未啟用",
     "terminated": "已終止",
@@ -249,6 +254,8 @@
     "enquiry_pickup_order": "查詢運單",
     "delete_msg": "您確定要刪除此項目嗎 ?",
     "out_of_date_range": "具體日期超出「出貨有效期限」範圍",
+    "created_pickup_order": "回收運單已建立",
+    "changed_pickup_order": "回收運單已更改",
     "table": {
       "created_datetime": "建立日期",
       "pico_id": "運單編號",
@@ -256,7 +263,11 @@
       "delivery_date": "送貨日期",
       "sender_company": "寄件公司",
       "receiver": "收件公司",
-      "status": "狀態"
+      "status": "狀態",
+      "operation": "操作",
+      "approve": "接受",
+      "reject": "拒絕",
+      "create_job_order": "建立工作運單"
     },
     "filter": {
       "search": "搜尋",
@@ -282,7 +293,7 @@
     "item": {
       "detail": "運單詳情",
       "edit": "修改",
-      "delete": "修改",
+      "delete": "刪除",
       "shipping_info": "運輸資料",
       "date_time": "建立日期及時間",
       "transport_category": "運輸類別",
@@ -354,7 +365,14 @@
     },
     "select_po": "選擇運單",
     "search_company_name": "輸入寄件者公司",
-    "change": "變更"
+    "change": "變更",
+    "confirm_approve": "確認接受",
+    "confirm_reject": "確認拒絕",
+    "confirm_approve_title": "確認接受嗎？",
+    "confirm_reject_title": "確認拒絕嗎？",
+    "approved_success": "接受成功",
+    "rejected_success": "拒絕成功",
+    "reject_reasons": "拒絕原因"
   },
   "tenant": {
     "company": "公司",
@@ -454,7 +472,7 @@
     "licensePlate": "車牌號碼",
     "picture": "圖片",
     "basic": "基本",
-    "additional":"額外",
+    "additional": "額外",
     "imgNote": "*照片應展示車輛概況、舉升尾板、車牌及採集操作。"
   },
   "inventory": {
@@ -500,11 +518,11 @@
       "modifyRecycl": "修改回收物資料",
       "recycNum": "回收物編號"
     },
-    "tenantType":{
+    "tenantType": {
       "collector": "",
       "logistic": "",
-      "Manufacturer":"",
-      "Customer":""
+      "Manufacturer": "",
+      "Customer": ""
     },
     "createProcessOutSuccess": "建立處理流程成功",
     "createProcessOutFailed": "建立處理流程失敗",
@@ -513,7 +531,7 @@
     "deleteProcessOutSuccess": "刪除處理流程成功",
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
-  "warehouseDashboard" : {
+  "warehouseDashboard": {
     "warehouse": "倉庫",
     "currentCapacity": "現時容量",
     "thereStillEnoughSpace": "還有足夠的空間",
@@ -614,7 +632,7 @@
     "ship": "出貨",
     "send_request": "送出請求",
     "shipping_info": "運輸資料",
-    "recyle_loc_info": "預計回收地點資料",    
+    "recyle_loc_info": "預計回收地點資料",
     "recyc_loc_info": "回收地點資料"
   },
   "userGroup": {
@@ -627,6 +645,34 @@
     "availableFeatures": "可用功能",
     "pleaseEnterName": "請輸入名稱",
     "pleaseEnterText": "請輸入文字"
+  },
+  "notify": {
+    "successCreated": "成功已创造",
+    "errorCreated": "创建错误",
+    "SuccessEdited": "成功编辑",
+    "errorEdited": "错误已编辑",
+    "successDeleted": "删除成功",
+    "errorDeleted": "错误删除"
+  },
+  "notification": {
+    "notification_menu": "通知範本",
+    "notification_title": "範本",
+    "menu_recycling_materials_and_waybills" : {
+      "tab_name" : "回收物及運單",
+      "name" : "名稱",
+      "type" : "種類",
+      "title" :  "標題",
+      "language" : "語言"
+    },
+    "menu_staff": {
+      "tab_name" : "員工",
+      "name" : "名稱",
+      "type" : "種類",
+      "title" :  "標題",
+      "language" : "語言"
+    },
+    "modify_template" : {
+      "header" : "修改範本"
+    }
   }
 }
-

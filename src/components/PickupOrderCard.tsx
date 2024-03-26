@@ -16,21 +16,22 @@ const PickupOrderCard = ({
 }: {
   pickupOrderDetail: PickupOrderDetail[];
 }) => {
-  const [picoitemDetail, setPicoItemDetail] = useState<PicoDetail[]>([]);
   const { t } = useTranslation()
-  useEffect(() => {
-    const fetchData = async () => {
-      const picoDtl: PicoDetail[] = [];
-      if (pickupOrderDetail) {
-        for (const podetail of pickupOrderDetail) {
-          const data = await getDtlById(podetail.picoDtlId);
-          picoDtl.push(data);
-        }
-        setPicoItemDetail(picoDtl);
-      }
-    };
-    fetchData();
-  }, [pickupOrderDetail]);
+  // const [picoitemDetail, setPicoItemDetail] = useState<PicoDetail[]>([]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const picoDtl: PicoDetail[] = [];
+  //     if (pickupOrderDetail) {
+  //       for (const podetail of pickupOrderDetail) {
+  //         console.log({})
+  //         const data = await getDtlById();
+  //         picoDtl.push(data);
+  //       }
+  //       setPicoItemDetail(picoDtl);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [pickupOrderDetail]);
 
   const recyc = LocalizeRecyctype(pickupOrderDetail);
   console.log(pickupOrderDetail);
@@ -40,9 +41,9 @@ const PickupOrderCard = ({
     <>
       {pickupOrderDetail.map((podetail, index) => (
         <Stack
-          borderColor="#ACACAC"
+          borderColor="#e2e2e2"
           p={2}
-          borderRadius="10px"
+          borderRadius="12px"
           sx={{ borderWidth: "1px", borderStyle: "solid" }}
           spacing={1}
         >
@@ -62,10 +63,10 @@ const PickupOrderCard = ({
                 {recyc && (
                    <Box key={index}>
                    <CustomField label={t('pick_up_order.card_detail.main_category')}>
-                     <Typography>{recyc[index].recycType}</Typography>
+                     <Typography sx={localstyles.typo_fieldContent}>{recyc[index].recycType}</Typography>
                    </CustomField>
-                   <CustomField label={t('pick_up_order.card_detail.subcategory')}>
-                     <Typography>{recyc[index].recycSubType}</Typography>
+                   <CustomField label={t('pick_up_order.card_detail.subcategory')} style={{marginTop: '12px'}}>
+                     <Typography sx={localstyles.typo_fieldContent}>{recyc[index].recycSubType}</Typography>
                    </CustomField>
                  </Box>
                 )}
@@ -76,54 +77,54 @@ const PickupOrderCard = ({
               <StatusCard status={podetail?.status} />
             </Box>
           </Box>
-          <Box display="flex">
+          <Box display="flex" mt={'15px !important'}>
             <Box display="flex" width={"150px"}>
-              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px" }}>
+              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px", color: '#acacac' }}>
                 <AccessTimeIcon />
               </Icon>
-              <Typography>{t('pick_up_order.card_detail.shipping_time')}</Typography>
+              <Typography style={localstyles.mini_title}>{t('pick_up_order.card_detail.shipping_time')}</Typography>
             </Box>
-            <Typography ml="60px">{podetail.pickupAt}</Typography>
+            <Typography ml="60px" style={localstyles.mini_value}>{podetail.pickupAt}</Typography>
           </Box>
           <Box display="flex">
             <Box display="flex" width={"150px"}>
-              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px" }}>
+              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px", color: '#acacac' }}>
                 <MonitorWeightOutlinedIcon />
               </Icon>
-              <Typography>{t('pick_up_order.card_detail.weight')}</Typography>
+              <Typography style={localstyles.mini_title}>{t('pick_up_order.card_detail.weight')}</Typography>
             </Box>
-            <Typography ml="60px">{podetail.weight} kg</Typography>
+            <Typography ml="60px" style={localstyles.mini_value}>{podetail.weight} kg</Typography>
           </Box>
           <Box display="flex">
-            <Box display="flex" width={"150px"}>
-              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px" }}>
+            <Box display="flex" width={"150px"} flexShrink={0}>
+              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px", color: '#acacac' }}>
                 <Inventory2OutlinedIcon />
               </Icon>
-              <Typography>{t('pick_up_order.card_detail.shipping_receiver')}</Typography>
+              <Typography style={localstyles.mini_title}>{t('pick_up_order.card_detail.shipping_receiver')}</Typography>
             </Box>
             <Box
               ml={"60px"}
               width={"400px"}
               sx={{ overflowWrap: "break-word" }}
             >
-              <Typography sx={{ overflowWrap: "break-word" }}>
+              <Typography sx={{ overflowWrap: "break-word" }} style={localstyles.mini_value}>
                 {podetail?.senderName} - {podetail?.receiverName}
               </Typography>
             </Box>
           </Box>
           <Box display="flex">
-            <Box display="flex" width={"150px"} height={"30px"}>
-              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px" }}>
+            <Box display="flex" width={"150px"} height={"30px"} flexShrink={0}>
+              <Icon sx={{ justifySelf: "center", display: "flex", mr: "5px", color: '#acacac' }}>
                 <PlaceOutlinedIcon />
               </Icon>
-              <Typography>{t('pick_up_order.card_detail.deliver_location')}</Typography>
+              <Typography style={localstyles.mini_title}>{t('pick_up_order.card_detail.deliver_location')}</Typography>
             </Box>
             <Box
               ml={"60px"}
               width={"400px"}
               sx={{ overflowWrap: "break-word" }}
             >
-              <Typography>
+              <Typography style={localstyles.mini_value}>
                 {podetail?.senderAddr} --- {podetail.receiverAddr}
               </Typography>
             </Box>
@@ -135,3 +136,22 @@ const PickupOrderCard = ({
 };
 
 export default PickupOrderCard;
+
+const localstyles = {
+  typo_fieldContent: {
+    fontSize: '15px',
+    fontWeight: '700',
+    letterSpacing: '0.5px',
+    marginTop: '2px'
+  },
+  mini_title: {
+    fontSize: '12px',
+    color: '#acacac',
+    letterSpacing: '1px'
+  },
+  mini_value: {
+    fontSize: '13px',
+    color: '#535353',
+    letterSpacing: '1px'
+  }
+}

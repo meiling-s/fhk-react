@@ -1,5 +1,5 @@
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
-import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_PICK_UP_ORDER_BY_ID, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_DETAIL_STATUS, UPDATE_PICK_UP_ORDER_STATUS } from '../../../constants/requests'
+import { CREATE_PICK_UP_ORDER, GET_ALL_PICK_UP_ORDER, GET_ALL_LOGISTICS_PICK_UP_ORDER, GET_PICK_UP_ORDER_BY_ID, GET_PICK_UP_ORDER_DETAIL, UPDATE_PICK_UP_ORDER, UPDATE_PICK_UP_ORDER_DETAIL_STATUS, UPDATE_PICK_UP_ORDER_STATUS, GET_ALL_REASON } from '../../../constants/requests'
 import { CreatePO, EditPo, PoDtlStatus, PoStatus } from '../../../interfaces/pickupOrder'
 import { returnApiToken } from '../../../utils/utils';
 import { queryPickupOrder } from '../../../interfaces/pickupOrder'
@@ -34,6 +34,37 @@ import axiosInstance from '../../../constants/axiosInstance'
     
   }
 
+  export const getAllLogisticsPickUpOrder = async (
+    page: number,
+    size: number,
+    query?: queryPickupOrder
+  ) => {
+    const auth = returnApiToken();
+    try {
+      const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        ...GET_ALL_LOGISTICS_PICK_UP_ORDER(auth.tenantId),
+        params: {
+          page: page,
+          size: size,
+          tenantId: auth.tenantId,
+          picoId: query?.picoId,
+          effFromDate: query?.effFromDate,
+          effToDate: query?.effToDate,
+          logisticName: query?.logisticName,
+          recycType: query?.recycType,
+          receiverAddr: query?.receiverAddr,
+          status: query?.status,
+        },
+      });
+      // console.log('Get all pick up order:', JSON.stringify(response.data));
+      return response;
+    } catch (e) {
+      // console.error('Get all collection point failed:', e);
+      return null;
+    }
+  };
+  
   export const getPicoById = async (picoId: string) => {
     try {
       const response = await axiosInstance({
@@ -51,15 +82,13 @@ import axiosInstance from '../../../constants/axiosInstance'
   
   
 
-  export const getDtlById = async (picoDtlId:number) => {
-    
-      const axiosConfig = Object.assign({},GET_PICK_UP_ORDER_DETAIL);
-      axiosConfig.url = GET_PICK_UP_ORDER_DETAIL.url+`/${picoDtlId}`;
+
+  export const getDtlById = async () => {
 
     try {
       const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
-        ...axiosConfig,
+        ...GET_PICK_UP_ORDER_DETAIL,
       });
       // console.log('Get pick up order detail:', JSON.stringify(response.data));
       return response.data
@@ -160,6 +189,21 @@ export const editPickupOrderDetailStatus = async (pickupOrderDtlId: string, data
 
 }
 
+
+export const getAllReason = async () => {
+  const auth = returnApiToken();
+  try {
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      ...GET_ALL_REASON(auth.tenantId, '24')
+    })
+    
+    return response
+  } catch (e) {
+    // console.error('Get all vehicle failed:', e)
+    return null
+  }
+}
 
 
 

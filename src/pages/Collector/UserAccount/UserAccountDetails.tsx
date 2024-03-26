@@ -6,7 +6,7 @@ import {
   Typography,
   InputLabel,
   MenuItem,
-  FormControl,
+  FormControl
 } from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
@@ -22,34 +22,38 @@ import { formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 
-import { localStorgeKeyName } from "../../../constants/constant";
+import { localStorgeKeyName } from '../../../constants/constant'
 import Switches from '../../../components/FormComponents/CustomSwitch'
 import LabelField from '../../../components/FormComponents/CustomField'
 import { getUserGroup } from '../../../APICalls/commonManage'
 import { CreateUserAccount, UserAccount } from '../../../interfaces/userAccount'
 import { ToastContainer, toast } from 'react-toastify'
-import { postUserAccount, updateUserAccount, deleteUserAccount } from '../../../APICalls/userAccount'
+import {
+  postUserAccount,
+  updateUserAccount,
+  deleteUserAccount
+} from '../../../APICalls/userAccount'
 
 interface UserAccountDetailsProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: () => void
-  rowId?: number,
+  rowId?: number
   selectedItem?: UserAccount | null
 }
 
-interface userAccountItem  {
-    loginId: string;
-    email: string;
-    contactNo: string;
+interface userAccountItem {
+  loginId: string
+  email: string
+  contactNo: string
 }
 
 interface DropdownOption {
-    groupId: number;
-    roleName: string;
-    // userAccount: userAccountItem
-  }
+  groupId: number
+  roleName: string
+  // userAccount: userAccountItem
+}
 
 const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   drawerOpen,
@@ -59,52 +63,56 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   selectedItem
 }) => {
   const { t } = useTranslation()
-  const [staffId, setStaffId] = useState<string>("")
-  const [loginId, setLoginId] = useState<string>("")
-  const [email, setEmail] = useState<string>("")
-  const [contactNo, setContactNo] = useState<string>("")
-  const [userGroup, setUserGroup] = useState<number>(0);
+  const [staffId, setStaffId] = useState<string>('')
+  const [loginId, setLoginId] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
+  const [contactNo, setContactNo] = useState<string>('')
+  const [userGroup, setUserGroup] = useState<number>(0)
   const [userGroupList, setUserGroupList] = useState<DropdownOption[]>([])
   // const [isApprover , setApprover] = useState<boolean>(false)
   const [userStatus, setUserStatus] = useState<string>('ACTIVE')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
-  const logginUser =  localStorage.getItem(localStorgeKeyName.username) || ""
+  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+  const logginUser = localStorage.getItem(localStorgeKeyName.username) || ''
 
   const statusList = () => {
     const colList: il_item[] = [
       {
         name: t('userAccount.active'),
-        id: "ACTIVE"
+        id: 'ACTIVE'
       },
       {
         name: t('userAccount.inactive'),
-        id: "INACTIVE"
+        id: 'INACTIVE'
       },
       {
-        name:t('userAccount.suspend'),
-        id: "SUSPEND"
+        name: t('userAccount.suspend'),
+        id: 'SUSPEND'
       }
     ]
     return colList
-  };
-
-  const mappingData = () => {
-    console.log("selectedItem", selectedItem)
-   if(selectedItem) {
-    const selectedStatus = selectedItem.status == 'ACTIVE' ? "ACTIVE" : "SUSPEND" ?  'SUSPEND' : 'INACTIVE'
-    setLoginId(selectedItem.loginId)
-    setUserGroup(selectedItem.userGroup.groupId)
-    setUserStatus(selectedStatus)
-   }
   }
 
+  const mappingData = () => {
+    console.log('selectedItem', selectedItem)
+    if (selectedItem) {
+      const selectedStatus =
+        selectedItem.status == 'ACTIVE'
+          ? 'ACTIVE'
+          : 'SUSPEND'
+          ? 'SUSPEND'
+          : 'INACTIVE'
+      setLoginId(selectedItem.loginId)
+      setUserGroup(selectedItem.userGroup.groupId)
+      setUserStatus(selectedStatus)
+    }
+  }
 
   useEffect(() => {
     getUserGroupList()
     setValidation([])
-    if(action !== 'add'){
+    if (action !== 'add') {
       mappingData()
     } else {
       setTrySubmited(false)
@@ -114,31 +122,29 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   const getUserGroupList = async () => {
     const result = await getUserGroup()
-    const groupList: DropdownOption[]= []
-    if(result) {
-        result.map((item: any) =>{
-            
-            groupList.push({
-                groupId: item.groupId,
-                roleName: item.roleName
-            })
+    const groupList: DropdownOption[] = []
+    if (result) {
+      result.map((item: any) => {
+        groupList.push({
+          groupId: item.groupId,
+          roleName: item.roleName
         })
-        setUserGroupList(groupList)
-       
-        if(groupList.length> 0) setUserGroup(groupList[0].groupId)
+      })
+      setUserGroupList(groupList)
+
+      if (groupList.length > 0) setUserGroup(groupList[0].groupId)
     }
   }
 
-
   const resetData = () => {
-    setLoginId("")
-    setContactNo("")
-    setEmail("")
+    setLoginId('')
+    setContactNo('')
+    setEmail('')
     setUserGroup(0)
-    setUserStatus("ACTIVE")
+    setUserStatus('ACTIVE')
     setUserGroupList([])
     setValidation([])
-  }  
+  }
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -152,23 +158,23 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     const validate = async () => {
       //do validation here
       const tempV: formValidate[] = []
-      loginId?.toString() == ''  &&
+      loginId?.toString() == '' &&
         tempV.push({
           field: t('userAccount.loginName'),
           problem: formErr.empty,
           type: 'error'
         })
-        contactNo?.toString() == ''  &&
+      contactNo?.toString() == '' &&
         tempV.push({
-            field: t('staffManagement.contactNumber'),
-            problem: formErr.empty,
-            type: 'error'
+          field: t('staffManagement.contactNumber'),
+          problem: formErr.empty,
+          type: 'error'
         })
-        email?.toString() == ''  &&
+      email?.toString() == '' &&
         tempV.push({
-            field: t('userAccount.emailAddress'),
-            problem: formErr.empty,
-            type: 'error'
+          field: t('userAccount.emailAddress'),
+          problem: formErr.empty,
+          type: 'error'
         })
       setValidation(tempV)
     }
@@ -212,34 +218,30 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   const handleCreateVehicle = async () => {
     const formData: CreateUserAccount = {
-        loginId: loginId,
-        realm: "collector",
-        tenantId: tenantId,
-        staffId: staffId,
-        groupId: userGroup,
-        status: 'ACTIVE',
-        createdBy: logginUser,
-        updatedBy: logginUser,
-        firstName: loginId,
-        lastName: "",
-        sex: "Male",
-        email: email,
-        role: [
-           'ADMIN'
-        ],
-        phoneNumber: contactNo,
-        actions: [
-          "UPDATE_PASSWORD"
-        ]
+      loginId: loginId,
+      realm: 'collector',
+      tenantId: tenantId,
+      staffId: staffId,
+      groupId: userGroup,
+      status: 'ACTIVE',
+      createdBy: logginUser,
+      updatedBy: logginUser,
+      firstName: loginId,
+      lastName: '',
+      sex: 'Male',
+      email: email,
+      role: ['ADMIN'],
+      phoneNumber: contactNo,
+      actions: ['UPDATE_PASSWORD']
     }
     if (validation.length === 0) {
       const result = await postUserAccount(formData)
-      if(result) {
+      if (result) {
         onSubmitData()
         showSuccessToast(t('userAccount.successCreatedUser'))
         resetData()
         handleDrawerClose()
-      }else{
+      } else {
         showErrorToast(t('userAccount.failedCreatedUser'))
       }
     } else {
@@ -250,32 +252,32 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   const handleEditUser = async () => {
     const formData = {
-        userGroupId: userGroup,
-        status: userStatus,
-        updatedBy: logginUser
+      userGroupId: userGroup,
+      status: userStatus,
+      updatedBy: logginUser
     }
-      if(selectedItem != null){
-        const result = await updateUserAccount(selectedItem.loginId, formData)
-        if(result) {
-          onSubmitData()
-          showSuccessToast(t('userAccount.successEditUser'))
-          resetData()
-          handleDrawerClose()
-        } else {
-            setTrySubmited(true)
-            showErrorToast(t('userAccount.failedEditUser'))
-        }
+    if (selectedItem != null) {
+      const result = await updateUserAccount(selectedItem.loginId, formData)
+      if (result) {
+        onSubmitData()
+        showSuccessToast(t('userAccount.successEditUser'))
+        resetData()
+        handleDrawerClose()
+      } else {
+        setTrySubmited(true)
+        showErrorToast(t('userAccount.failedEditUser'))
       }
+    }
   }
 
   const handleDelete = async () => {
     const formData = {
-        status: "INACTIVE",
-        updatedBy: logginUser
+      status: 'INACTIVE',
+      updatedBy: logginUser
     }
-    if(selectedItem != null){
+    if (selectedItem != null) {
       const result = await deleteUserAccount(selectedItem.loginId, formData)
-      if(result) {
+      if (result) {
         onSubmitData()
         showSuccessToast(t('userAccount.successDeleteUser'))
         resetData()
@@ -296,7 +298,8 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: action == 'add' ? t('top_menu.add_new') : selectedItem?.loginId,
+          title:
+            action == 'add' ? t('top_menu.add_new') : selectedItem?.loginId,
           subTitle: t('userAccount.user'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
@@ -321,18 +324,16 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            {
-                action == 'add' && (
-                    <CustomField label={t('userAccount.addByNumber')}>
-                    <CustomTextField
-                      id="staffId"
-                      value={staffId}
-                      placeholder={t('userAccount.pleaseEnterNumber')}
-                      onChange={(event) => setStaffId(event.target.value)}
-                    />
-                  </CustomField>
-                )
-            }
+            {action == 'add' && (
+              <CustomField label={t('userAccount.addByNumber')}>
+                <CustomTextField
+                  id="staffId"
+                  value={staffId}
+                  placeholder={t('userAccount.pleaseEnterNumber')}
+                  onChange={(event) => setStaffId(event.target.value)}
+                />
+              </CustomField>
+            )}
             <CustomField label={t('userAccount.loginName')} mandatory>
               <CustomTextField
                 id="LoginId"
@@ -343,33 +344,34 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 error={checkString(loginId)}
               />
             </CustomField>
-            {
-                action == 'add' && (
-                  <Grid item>
-                    <Grid item sx={{marginBottom: '16px'}}>
-                      <CustomField label={t('userAccount.emailAddress')} mandatory>
-                      <CustomTextField
-                        id="email"
-                        value={email}
-                        placeholder={t('userAccount.pleaseEnterEmailAddress')}
-                        onChange={(event) => setEmail(event.target.value)}
-                        error={checkString(contactNo)}
-                      />
-                    </CustomField>
-                    </Grid>
-                   
-                  <CustomField label={t('staffManagement.contactNumber')} mandatory>
+            {action == 'add' && (
+              <Grid item>
+                <Grid item sx={{ marginBottom: '16px' }}>
+                  <CustomField label={t('userAccount.emailAddress')} mandatory>
                     <CustomTextField
-                      id="contactNo"
-                      value={contactNo}
-                      placeholder={t('staffManagement.enterContactNo')}
-                      onChange={(event) => setContactNo(event.target.value)}
+                      id="email"
+                      value={email}
+                      placeholder={t('userAccount.pleaseEnterEmailAddress')}
+                      onChange={(event) => setEmail(event.target.value)}
                       error={checkString(contactNo)}
                     />
                   </CustomField>
-                  </Grid>
-                )
-            }
+                </Grid>
+
+                <CustomField
+                  label={t('staffManagement.contactNumber')}
+                  mandatory
+                >
+                  <CustomTextField
+                    id="contactNo"
+                    value={contactNo}
+                    placeholder={t('staffManagement.enterContactNo')}
+                    onChange={(event) => setContactNo(event.target.value)}
+                    error={checkString(contactNo)}
+                  />
+                </CustomField>
+              </Grid>
+            )}
             <Grid item>
               <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
                 {t('userAccount.userGroup')}
@@ -392,15 +394,18 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                   disabled={action === 'delete'}
                   label={t('userAccount.userGroup')}
                   onChange={(event: SelectChangeEvent<string>) => {
-                    const selectedValue = userGroupList.find(item => item.groupId === parseInt(event.target.value));
+                    const selectedValue = userGroupList.find(
+                      (item) => item.groupId === parseInt(event.target.value)
+                    )
                     if (selectedValue) {
-                      setUserGroup(selectedValue.groupId);
+                      setUserGroup(selectedValue.groupId)
                     }
                   }}
-                  
                 >
                   {userGroupList.map((item, index) => (
-                    <MenuItem key={index} value={item.groupId}>{item.roleName}</MenuItem>
+                    <MenuItem key={index} value={item.groupId}>
+                      {item.roleName}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -426,7 +431,6 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
               <CustomItemList
                 items={statusList()}
                 singleSelect={(selectedItem) => {
-                  
                   setUserStatus(selectedItem)
                 }}
                 editable={action != 'delete'}
@@ -434,16 +438,16 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
               />
             </CustomField>
             <Grid item sx={{ width: '100%' }}>
-                {trySubmited &&
-                  validation.map((val, index) => (
-                    <FormErrorMsg
-                      key={index}
-                      field={t(val.field)}
-                      errorMsg={returnErrorMsg(val.problem, t)}
-                      type={val.type}
-                    />
-                  ))}
-              </Grid>
+              {trySubmited &&
+                validation.map((val, index) => (
+                  <FormErrorMsg
+                    key={index}
+                    field={t(val.field)}
+                    errorMsg={returnErrorMsg(val.problem, t)}
+                    type={val.type}
+                  />
+                ))}
+            </Grid>
           </Grid>
         </Box>
       </RightOverlayForm>
