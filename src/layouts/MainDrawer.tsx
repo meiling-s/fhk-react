@@ -155,7 +155,7 @@ function MainDrawer() {
       onClick: () => navigate('/warehouse/staff'),
       collapse: false
     },
-    "Pick up and drop off":{
+    "Notification template":{
       name: t('notification.notification_menu'),
       icon: <ViewQuiltOutlinedIcon />,
       onClick: () => navigate('/logistic/notice'),

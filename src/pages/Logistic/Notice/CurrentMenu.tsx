@@ -39,7 +39,7 @@ interface CurrentMenuProps {
   selectedTab: number
 }
 
-const StaffManagement: FunctionComponent<CurrentMenuProps> = ({
+const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   selectedTab
 }) => {
   const { t } = useTranslation()
@@ -48,12 +48,14 @@ const StaffManagement: FunctionComponent<CurrentMenuProps> = ({
   const [notifTemplate, setNotifTemplateList] = useState<NotifTemplate[]>([])
   const [filteredTemplate, setFillteredTemplate] = useState<NotifTemplate[]>([])
   const [selectedRow, setSelectedRow] = useState<NotifTemplate | null>(null)
-  const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
+  const [action, setAction] = useState<'edit'>('edit')
 
   useEffect(() => {
     if(selectedTab === 0) {
-      initRecyclablesList()
+      setFillteredTemplate([])
+      // initRecyclablesList()
     } else if(selectedTab === 1) {
+      setFillteredTemplate([])
       initStaffList()
     }
   }, [selectedTab])
@@ -114,13 +116,13 @@ const StaffManagement: FunctionComponent<CurrentMenuProps> = ({
 
   const columns: GridColDef[] = [
     {
-      field: 'name',
+      field: 'templateId',
       headerName: t('notification.menu_staff.name'),
       width: 225,
       type: 'string'
     },
     {
-      field: 'type',
+      field: 'notiType',
       headerName: t('notification.menu_staff.type'),
       width: 100,
       type: 'string'
@@ -132,7 +134,7 @@ const StaffManagement: FunctionComponent<CurrentMenuProps> = ({
       type: 'string'
     },
     {
-      field: 'language',
+      field: 'lang',
       headerName: t('notification.menu_staff.language'),
       width: 300,
       type: 'string'
@@ -164,7 +166,7 @@ const StaffManagement: FunctionComponent<CurrentMenuProps> = ({
   
   const handleAction = (
     params: GridRenderCellParams,
-    action: 'add' | 'edit' | 'delete'
+    action: 'edit'
   ) => {
     setAction(action)
 
@@ -220,7 +222,7 @@ const StaffManagement: FunctionComponent<CurrentMenuProps> = ({
           <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
             <DataGrid
               rows={filteredTemplate}
-              getRowId={(row) => row.staffId}
+              getRowId={(row) => row.templateId}
               hideFooter
               columns={columns}
               checkboxSelection
@@ -273,4 +275,4 @@ let localstyles = {
   }
 }
 
-export default StaffManagement
+export default CurrentMenu
