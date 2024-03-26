@@ -384,7 +384,7 @@ function CreateCollectionPoint() {
     id: 'additional',
     name: t('col.additional')
   }, {
-    id: 'order',
+    id: 'other',
     name: t('col.orderService')
   }]
   const [serviceFlg, setServiceFlg] = useState<string>('basic')
