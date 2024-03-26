@@ -8,6 +8,11 @@ export type il_item = {
     id: string
 }
 
+export type itemList = {
+    bgColor: string
+    borderColor: string
+  }
+
 type props = {
     items: il_item[],
     withSubItems?: string[],
@@ -19,6 +24,7 @@ type props = {
     error?: boolean,
     editable?: boolean
     value?:string
+    itemColor?: itemList | null
 }
 function CustomItemList({
     items,
@@ -30,8 +36,19 @@ function CustomItemList({
     dbClickSelect,
     error,
     editable,
-    value
+    value,
+    itemColor
 }: props){
+
+    const triggerdItem = {
+        ...styles.listItemTemp,
+        backgroundColor: itemColor?.bgColor ? itemColor?.bgColor : '#E4F6DC',
+        borderColor: itemColor?.borderColor ? itemColor?.borderColor : '#79CA25',
+        color: '#535353',
+        '&.MuiButton-root:hover': {
+          borderColor: '#79CA25'
+        }
+      }
     
     const [selectSingle, setSelectSingle] = useState<string>("");
     const [selectMulti, setSelectMulti] = useState<string[]>([]);
@@ -97,7 +114,8 @@ function CustomItemList({
         var edit = (editable != undefined)? editable : true;
         if(singleSelect){
             if(selectSingle == s && edit){
-                theme = localstyles.triggered;
+                //theme = localstyles.triggered;
+                theme = triggerdItem
             }else if(selectSingle == s && !edit){
                 theme = localstyles.uneditable;
             }
@@ -108,7 +126,8 @@ function CustomItemList({
                 }else if(withSubItems && withSubItems.includes(s)){
                     theme = localstyles.withSubItems;
                 }else{
-                    theme = localstyles.triggered; 
+                    theme = triggerdItem
+                    //theme = localstyles.triggered; 
                 }
             }
         }
@@ -147,16 +166,16 @@ const localstyles = {
             borderColor: "#D1D1D1"
         }
     },
-    triggered: {
-        ...styles.listItemTemp,
-        backgroundColor: "#E4F6DC",
-        borderColor: "#79CA25",
-        color: "#535353",
-        '&.MuiButton-root:hover':{
-            //bgcolor: "#F4F4F4",
-            borderColor: "#79CA25"
-        }
-    },
+    // triggered: {
+    //     ...styles.listItemTemp,
+    //     backgroundColor: "#E4F6DC",
+    //     borderColor: "#79CA25",
+    //     color: "#535353",
+    //     '&.MuiButton-root:hover':{
+    //         //bgcolor: "#F4F4F4",
+    //         borderColor: "#79CA25"
+    //     }
+    // },
     withSubItems: {
         ...styles.listItemTemp,
         backgroundColor: "#79CA25",

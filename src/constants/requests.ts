@@ -518,9 +518,9 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
 
 
 //API roster
-export const GET_ROSTER_LIST = (tenantId: string): AxiosRequestConfig => ({
+export const GET_ROSTER_LIST = (tenantId: string, startAt: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/roster/${tenantId}`
+  url: `api/v1/collectors/roster/${tenantId}/${startAt}`
 })
 
 export const CREATE_ROSTER: AxiosRequestConfig = {
@@ -607,4 +607,40 @@ export const GET_CHECKOUT_BY_ID = (table:string, chkOutId:number):AxiosRequestCo
 export const GET_ALL_RECYCLE_TYPE = ():AxiosRequestConfig => ({
   method: 'get',
   url: 'api/v1/administrator/recycType'
+})
+
+
+//logistics pickup order
+export const GET_ALL_LOGISTICS_PICK_UP_ORDER = (tenantId: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/pico/search/logistic/${tenantId}`
+})
+
+
+//get all status
+export const GET_ALL_STATUS = () : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/statusGroup`
+})
+
+//get status detail
+export const GET_STATUS_DETAIL = (status: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/statusGroup/${status}`
+})
+
+//get reason list
+export const GET_ALL_REASON = (tenantId: string, functionId: string | number) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/reason/${tenantId}/${functionId}`
+})
+
+export const GET_LIST_NOTIF_TEMPLATE_PO = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/notiTemplate/${tenantId}`
+})
+
+export const GET_LIST_NOTIF_TEMPLATE_STAFF = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/notiTemplate/${tenantId}`
 })

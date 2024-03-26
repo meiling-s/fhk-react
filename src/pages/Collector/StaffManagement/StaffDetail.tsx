@@ -204,7 +204,15 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
 
   useEffect(() => {
     validate()
-  }, [formData.loginId, formData.staffNameTchi, formData.staffNameEng, formData.staffNameSchi, formData.contactNo, formData.email, formData.titleId ])
+  }, [
+    formData.loginId,
+    formData.staffNameTchi,
+    formData.staffNameEng,
+    formData.staffNameSchi,
+    formData.contactNo,
+    formData.email,
+    formData.titleId
+  ])
 
   const handleFieldChange = (field: keyof FormValues, value: string) => {
     setFormData({
@@ -270,7 +278,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       salutation: 'salutation',
       updatedBy: loginName
     }
-    console.log("handleEditStaff",validation.length )
+    console.log('handleEditStaff', validation.length)
     if (validation.length == 0) {
       if (selectedItem != null) {
         const result = await editStaff(editData, selectedItem.staffId)
@@ -279,7 +287,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
           resetFormData()
           handleDrawerClose()
         }
-      } 
+      }
     } else {
       setTrySubmited(true)
     }
@@ -317,8 +325,16 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: action == 'add' ? t('top_menu.add_new') : selectedItem?.staffNameTchi,
-          subTitle: action == 'add' ? '' : selectedItem?.staffId,
+          title:
+            action == 'add'
+              ? t('top_menu.add_new')
+              : action == 'delete'
+              ? t('add_warehouse_page.delete')
+              : selectedItem?.staffNameTchi,
+          subTitle:
+            action == 'add'
+              ? t('staffManagement.staff')
+              : selectedItem?.staffId,
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
@@ -373,7 +389,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                       options={loginIdList.map((login) => login.name)}
                       onChange={(event, value) => {
                         if (value) {
-                          handleFieldChange(item.field as keyof FormValues, value)
+                          handleFieldChange(
+                            item.field as keyof FormValues,
+                            value
+                          )
                           setSelectedLoginId(value)
                         }
                       }}
@@ -385,8 +404,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                           sx={[styles.textField, { width: 320 }]}
                           InputProps={{
                             ...params.InputProps,
-                            sx: styles.inputProps,
-                            
+                            sx: styles.inputProps
                           }}
                           disabled={action != 'add'}
                           error={checkString(selectedLoginId)}
@@ -399,7 +417,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                       sx={[styles.textField, { width: 320 }]}
                       InputProps={{
                         readOnly: true,
-                        sx: styles.inputProps,
+                        sx: styles.inputProps
                       }}
                       disabled={true}
                       value={selectedLoginId}
@@ -412,7 +430,6 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                     items={staffTitleList || []}
                     singleSelect={(values) => {
                       handleFieldChange(item.field as keyof FormValues, values)
-                      
                     }}
                     value={formData[item.field as keyof FormValues]}
                     defaultSelected={selectedItem?.titleId}

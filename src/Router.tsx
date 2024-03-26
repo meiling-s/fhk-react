@@ -50,7 +50,9 @@ import UserGroup from "./pages/Collector/UserGroup/UserGroup";
 import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 
 import LogisticAccount from './pages/Logistic/Account'
-
+import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
+import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
+import Notice from "./pages/Logistic/Notice/Index";
 
 const Router = () => {
   
@@ -117,6 +119,8 @@ const Router = () => {
           <Route path="/astd/statistics/recyclePlant" element={<></>} />
           <Route path="/astd/setting" element={<Settings />} />
           <Route path="/astd/account" element={<></>} />
+          <Route path="/astd/createPicoLogistic" element={<CreatePicoLogistic />} />
+          <Route path="/astd/editPicoLogistic" element={<EditPicoLogistic />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -127,7 +131,11 @@ const Router = () => {
           <Route path="/warehouse/staff" element={<StaffManagement />} />
           <Route path="/warehouse/settings" element={<Settings />} />
           <Route path="/warehouse/settings/vehicle" element={<Vehicles />} />
-          
+        </Route>
+
+        <Route element={<MainLayout />}>
+          <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
+          <Route path="/logistic/notice" element={<Notice />} />
         </Route>
 
         <Route element={<MainLayout />}>

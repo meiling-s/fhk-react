@@ -119,6 +119,7 @@ export interface PicoDetail {
 
 export interface Row {
     id: number;
+    tenantId: string;
     createdAt: string;
     logisticCompany: string;
     picoId: number;

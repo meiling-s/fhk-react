@@ -30,7 +30,8 @@
     "enterNo": "Enter no.",
     "serviceType": "Service type",
     "basic": "Basic",
-    "extra": "Extra",
+    "additional": "Additional",
+    "orderService": "Other Services",
     "create": "Create",
     "save": "Save",
     "cancel": "Cancel",
@@ -48,7 +49,7 @@
       "alreadyExist": " already exist",
       "timeCantDuplicate": "time can't duplicate",
       "atLeastOnePicoExist": "At least one Pico Detail is required",
-      "exceedsMaxLength":"should not exceed 100 characters",
+      "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded"
     }
   },
@@ -220,22 +221,26 @@
     "err_msg_007": "Login failed over 5 times. Your account is locked.",
     "err_msg_008": "That username is taken. Try another.",
     "err_msg_500": "Failed to obtain authorization data."
-      },
+  },
   "mainMenu": {
     "manage": "Manage",
     "overview": "Overview"
   },
   "status": {
     "active": "Active",
-    "inactive": "In-active",
+    "inactive": "Inactive",
     "deleted": "Deleted",
-    "started": "Startd",
+    "started": "Started",
     "created": "Created",
     "confirmed": "Confirmed",
     "rejected": "Rejected",
     "completed": "Completed",
     "closed": "Closed",
     "outstanding": "Outstanding",
+    "suspend": "Suspend",
+    "DENY": "Deny",
+    "success": "Success",
+    "failed": "Failed",
     "enable": "Enable",
     "not_enabled": "Not enabled",
     "terminated": "Terminated",
@@ -250,7 +255,9 @@
   "pick_up_order": {
     "enquiry_pickup_order": "Enquiry pickup order",
     "delete_msg": "are you sure want delete this item ?",
-    "out_of_date_range" : "Specific Date is out of range of the Shipping validity date",
+    "out_of_date_range": "Specific Date is out of range of the Shipping validity date",
+    "created_pickup_order": "Pickup order has been created",
+    "changed_pickup_order": "Pickup order has been changed",
     "table": {
       "created_datetime": "Created datetime",
       "pico_id": "PO number",
@@ -258,7 +265,11 @@
       "delivery_date": "Delivery date",
       "sender_company": " Sender company name",
       "receiver": "Receiver company name",
-      "status": "Status"
+      "status": "Status",
+      "operation": "Operation",
+      "approve": "Approve",
+      "reject": "Reject",
+      "create_job_order": "Create Job Order"
     },
     "filter": {
       "search": "Search",
@@ -355,7 +366,14 @@
     },
     "select_po": "Choose pickup order",
     "search_company_name": "Enter sender company",
-    "change": "Change"
+    "change": "Change",
+    "confirm_approve": "Confirm approve",
+    "confirm_reject": "Confirm reject",
+    "confirm_approve_title": "Confirm approve?",
+    "confirm_reject_title": "Confirm reject?",
+    "approved_success": "Approved successfully",
+    "rejected_success": "Rejected successfully",
+    "reject_reasons": "Reasons for rejection"
   },
   "tenant": {
     "company": "Company",
@@ -451,11 +469,11 @@
   "vehicle": {
     "vehicle": "Vehicle",
     "serviceType": "Service type",
-    "vehicleType": "Vehicle type",
+    "vehicleType": "Vehicle category",
     "licensePlate": "License plate",
     "picture": "Picture",
     "basic": "Basic",
-    "additional":"Additional",
+    "additional": "Additional",
     "imgNote": "*the photo should exhibit the overview, tail lift, car plate and collecting operation of the vehicle."
   },
   "inventory": {
@@ -501,11 +519,11 @@
       "modifyRecycl": "Modify recycling information",
       "recycNum": "Recycling number"
     },
-    "tenantType":{
+    "tenantType": {
       "collector": "Collector",
       "logistic": "Logistic",
-      "Manufacturer":"Manufacturer",
-      "Customer":"Customer"
+      "Manufacturer": "Manufacturer",
+      "Customer": "Customer"
     },
     "createProcessOutSuccess": "Create process out success",
     "createProcessOutFailed": "Create process out failed",
@@ -514,7 +532,7 @@
     "deleteProcessOutSuccess": "Delete process out success",
     "deleteProcessOutFailed": "Delete process out failed"
   },
-  "warehouseDashboard" : {
+  "warehouseDashboard": {
     "warehouse": "Warehouse",
     "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
@@ -615,7 +633,7 @@
     "ship": "Ship",
     "send_request": "Send Request",
     "shipping_info": "Shipping information",
-    "recyle_loc_info": "Estimated recycling location information",    
+    "recyle_loc_info": "Estimated recycling location information",
     "recyc_loc_info": "Recycling location information"
   },
   "userGroup": {
@@ -628,5 +646,34 @@
     "availableFeatures": "Available Features",
     "pleaseEnterName": "Please enter name",
     "pleaseEnterText": "Please enter text"
+  },
+  "notify": {
+    "successCreated": "Success Created",
+    "errorCreated": "Error Created",
+    "SuccessEdited": "Success Edited",
+    "errorEdited": "Error Edited",
+    "successDeleted": "Success Deleted",
+    "errorDeleted": "Error deleted"
+  },
+  "notification": {
+    "notification_menu": "Notice template",
+    "notification_title": "Template",
+    "menu_recycling_materials_and_waybills" : {
+      "tab_name": "Recyclables and PO",
+      "name" : "Name",
+      "type" : "Type",
+      "title" : "Title",
+      "language" : "Language"
+    },
+    "menu_staff":{
+      "tab_name" :  "Staff",
+      "name" : "Name",
+      "type" : "Type",
+      "title" : "Title",
+      "language" : "Language"
+    },
+    "modify_template" : {
+      "header" : "Modify Template"
+    }
   }
 }

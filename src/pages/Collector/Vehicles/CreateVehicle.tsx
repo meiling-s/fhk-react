@@ -26,14 +26,21 @@ import { styles } from '../../../constants/styles'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
+import {
+  Vehicle,
+  CreateVehicle as CreateVehicleForm
+} from '../../../interfaces/vehicles'
 import { formErr } from '../../../constants/constant'
 import { returnErrorMsg, ImageToBase64 } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
-import { createVehicles as addVehicle, deleteVehicle, editVehicle } from '../../../APICalls/Collector/vehicles'
-import { localStorgeKeyName } from "../../../constants/constant";
+import {
+  createVehicles as addVehicle,
+  deleteVehicle,
+  editVehicle
+} from '../../../APICalls/Collector/vehicles'
+import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 
 interface CreateVehicleProps {
@@ -41,7 +48,7 @@ interface CreateVehicleProps {
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
-  rowId?: number,
+  rowId?: number
   selectedItem?: Vehicle | null
   plateListExist: string[]
 }
@@ -67,64 +74,70 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
   ]
   const [serviceType, setServiceType] = useState<il_item[]>(serviceList)
-  const [selectedService, setSelectedService] = useState<il_item>( {
+  const [selectedService, setSelectedService] = useState<il_item>({
     id: 'basic',
     name: t('vehicle.basic')
-  },)
+  })
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
-  const [selectedVehicle, setSelectedVehicle] = useState<il_item>({id: '1', name: "Van"})
+  const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
+    id: '1',
+    name: 'Van'
+  })
   const [licensePlate, setLicensePlate] = useState('')
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const {vehicleType } = useContainer(CommonTypeContainer);
+  const { vehicleType } = useContainer(CommonTypeContainer)
   const [listedPlate, setListedPlate] = useState<string[]>([])
 
-
   const mappingData = () => {
-    if(selectedItem != null){
-    const service = serviceType.find((item) => item.id == selectedItem.serviceType.toLocaleLowerCase()) 
-    setSelectedService(service || serviceType[0])
-    setSelectedVehicle({id: selectedItem.vehicleTypeId, name: selectedItem.vehicleName})
-    setLicensePlate(selectedItem.plateNo)
-
-    const imageList: any = selectedItem.photo.map((url: string, index: number)=>{
-
-      const format = url.startsWith("data:image/png") ? 'png' : 'jpeg'
-      const imgdata = `data:image/${format};base64,${url}`
-
-      return ({
-        data_url: imgdata,
-        file : {
-          name: `image${index + 1}`,
-          size: 0,
-          type: 'image/jpeg'
-        }
+    if (selectedItem != null) {
+      const service = serviceType.find(
+        (item) => item.id == selectedItem.serviceType.toLocaleLowerCase()
+      )
+      setSelectedService(service || serviceType[0])
+      setSelectedVehicle({
+        id: selectedItem.vehicleTypeId,
+        name: selectedItem.vehicleName
       })
-    })
+      setLicensePlate(selectedItem.plateNo)
 
-    setPictures(imageList)
+      const imageList: any = selectedItem.photo.map(
+        (url: string, index: number) => {
+          const format = url.startsWith('data:image/png') ? 'png' : 'jpeg'
+          const imgdata = `data:image/${format};base64,${url}`
+
+          return {
+            data_url: imgdata,
+            file: {
+              name: `image${index + 1}`,
+              size: 0,
+              type: 'image/jpeg'
+            }
+          }
+        }
+      )
+
+      setPictures(imageList)
     }
   }
 
   const getListedPlate = () => {
     let plate: string[] = []
-    if(selectedItem != null && plateListExist != undefined) {
-      plate = plateListExist.filter(item => item != selectedItem.plateNo)
+    if (selectedItem != null && plateListExist != undefined) {
+      plate = plateListExist.filter((item) => item != selectedItem.plateNo)
     } else {
       setListedPlate(plateListExist)
     }
     setListedPlate(plate)
-  } 
-
-
+  }
 
   useEffect(() => {
     getserviceList()
     getVehicles()
     getListedPlate()
     setValidation([])
-    if(action !== 'add'){
+    if (action !== 'add') {
       mappingData()
     } else {
       setTrySubmited(false)
@@ -132,48 +145,45 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
   }, [drawerOpen])
 
-  const getserviceList = () => {
-
-  }
+  const getserviceList = () => {}
 
   const getVehicles = () => {
     if (vehicleType) {
-        const carType: il_item[] = []
-        vehicleType?.forEach((vehicle) => {
-          var name = ''
-          switch (i18n.language) {
-            case 'enus':
-              name = vehicle.vehicleTypeNameEng
-              break
-            case 'zhch':
-              name = vehicle.vehicleTypeNameSchi
-              break
-            case 'zhhk':
-              name = vehicle.vehicleTypeNameTchi
-              break
-            default:
-              name = vehicle.vehicleTypeNameTchi 
-              break
-          }
-          const vehicleType: il_item = {
-            id: vehicle.vehicleTypeId,
-            name: name
-          }
-          carType.push(vehicleType)
-        })
-        setVehicleType(carType)
-        console.log("carType", carType)
+      const carType: il_item[] = []
+      vehicleType?.forEach((vehicle) => {
+        var name = ''
+        switch (i18n.language) {
+          case 'enus':
+            name = vehicle.vehicleTypeNameEng
+            break
+          case 'zhch':
+            name = vehicle.vehicleTypeNameSchi
+            break
+          case 'zhhk':
+            name = vehicle.vehicleTypeNameTchi
+            break
+          default:
+            name = vehicle.vehicleTypeNameTchi
+            break
         }
+        const vehicleType: il_item = {
+          id: vehicle.vehicleTypeId,
+          name: name
+        }
+        carType.push(vehicleType)
+      })
+      setVehicleType(carType)
+      console.log('carType', carType)
+    }
   }
 
   const resetData = () => {
     setSelectedService(serviceType[0])
-    setSelectedVehicle({id: '1', name: "Van"})
+    setSelectedVehicle({ id: '1', name: 'Van' })
     setLicensePlate('')
     setPictures([])
     setValidation([])
   }
-  
 
   const onImageChange = (
     imageList: ImageListType,
@@ -188,7 +198,6 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     newPictures.splice(index, 1)
     setPictures(newPictures)
   }
-  
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -220,8 +229,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
-        console.log("listedPlate", listedPlate)
-        listedPlate?.includes(licensePlate) &&
+      console.log('listedPlate', listedPlate)
+      listedPlate?.includes(licensePlate) &&
         tempV.push({
           field: t('vehicle.licensePlate'),
           problem: formErr.alreadyExist,
@@ -239,7 +248,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.minMoreOneImgUploded,
           type: 'error'
         })
-      console.log("tempV", tempV)
+      console.log('tempV', tempV)
       setValidation(tempV)
     }
 
@@ -247,19 +256,19 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   }, [selectedService, selectedVehicle, licensePlate, pictures])
 
   const handleSubmit = () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 
     const formData: CreateVehicleForm = {
       vehicleTypeId: selectedVehicle.id,
       vehicleName: selectedVehicle.name,
       plateNo: licensePlate,
       serviceType: selectedService.id,
-      photo:  ImageToBase64(pictures),
-      status: "ACTIVE",
+      photo: ImageToBase64(pictures),
+      status: 'ACTIVE',
       createdBy: loginId,
       updatedBy: loginId
     }
-    console.log("iamge", ImageToBase64(pictures))
+    console.log('iamge', ImageToBase64(pictures))
     if (action == 'add') {
       handleCreateVehicle(formData)
     } else {
@@ -270,12 +279,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const handleCreateVehicle = async (formData: CreateVehicleForm) => {
     if (validation.length === 0) {
       const result = await addVehicle(formData)
-      if(result) {
-        onSubmitData("success", "Success created data")
+      if (result) {
+        onSubmitData('success', 'Success created data')
         resetData()
         handleDrawerClose()
-      }else{
-        onSubmitData("error", "Failed created data")
+      } else {
+        onSubmitData('error', 'Failed created data')
       }
     } else {
       setTrySubmited(true)
@@ -284,14 +293,14 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   const handleEditVehicle = async (formData: CreateVehicleForm) => {
     if (validation.length === 0) {
-      if(selectedItem != null){
+      if (selectedItem != null) {
         const result = await editVehicle(formData, selectedItem.vehicleId!)
-        if(result) {
-          onSubmitData("success", "Edit data success")
+        if (result) {
+          onSubmitData('success', 'Edit data success')
           resetData()
           handleDrawerClose()
         }
-      } 
+      }
     } else {
       setTrySubmited(true)
     }
@@ -299,14 +308,14 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   const handleDelete = async () => {
     const status = 'DELETED'
-    if(selectedItem != null){
+    if (selectedItem != null) {
       const result = await deleteVehicle(status, selectedItem.vehicleId)
-      if(result) {
-        onSubmitData("success", "Deleted data success")
+      if (result) {
+        onSubmitData('success', 'Deleted data success')
         resetData()
         handleDrawerClose()
       } else {
-        onSubmitData("error", "Deleted data success")
+        onSubmitData('error', 'Deleted data success')
       }
     }
   }
@@ -319,7 +328,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: t('top_menu.add_new'),
+          title:
+            action == 'add'
+              ? t('top_menu.add_new')
+              : action == 'delete'
+              ? t('add_warehouse_page.delete')
+              : t('userGroup.change'),
           subTitle: t('vehicle.vehicleType'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
@@ -367,18 +381,21 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   label={t('vehicle.serviceType')}
                   //onChange={(event) => setSelectedService(event.target.value)}
                   onChange={(event: SelectChangeEvent<string>) => {
-                    const selectedValue = serviceType.find(item => item.id === event.target.value);
+                    const selectedValue = serviceType.find(
+                      (item) => item.id === event.target.value
+                    )
                     if (selectedValue) {
-                      setSelectedService(selectedValue);
+                      setSelectedService(selectedValue)
                     }
                   }}
-                  
                 >
                   <MenuItem value="">
                     <em>{t('check_in.any')}</em>
                   </MenuItem>
                   {serviceType.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>{t(`vehicle.${item.name}`)}</MenuItem>
+                    <MenuItem key={index} value={item.id}>
+                      {t(`vehicle.${item.name}`)}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -405,9 +422,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   }}
                   label={t('vehicle.vehicleType')}
                   onChange={(event: SelectChangeEvent<string>) => {
-                    const selectedValue = vehicleTypeList.find(item => item.id === event.target.value);
+                    const selectedValue = vehicleTypeList.find(
+                      (item) => item.id === event.target.value
+                    )
                     if (selectedValue) {
-                      setSelectedVehicle(selectedValue);
+                      setSelectedVehicle(selectedValue)
                     }
                   }}
                 >
@@ -415,7 +434,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                     <em>{t('check_in.any')}</em>
                   </MenuItem>
                   {vehicleTypeList.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>{item.name}</MenuItem>
+                    <MenuItem key={index} value={item.id}>
+                      {item.name}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -470,8 +491,10 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                       </Card>
                       <ImageList sx={localstyles.imagesContainer} cols={4}>
                         {imageList.map((image, index) => (
-                          <ImageListItem key={image['file']?.name}
-                          style={{ position: 'relative', width: '100px' }}>
+                          <ImageListItem
+                            key={image['file']?.name}
+                            style={{ position: 'relative', width: '100px' }}
+                          >
                             <img
                               style={localstyles.image}
                               src={image['data_url']}
@@ -500,9 +523,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 </ImageUploading>
               </Box>
               <div className="note">
-                <p className="text-sm text-gray">
-                {t('vehicle.imgNote')}
-                </p>
+                <p className="text-sm text-gray">{t('vehicle.imgNote')}</p>
               </div>
               <Grid item sx={{ width: '100%' }}>
                 {trySubmited &&
