@@ -30,7 +30,8 @@
     "enterNo": "请输入编号",
     "serviceType": "服务种类",
     "basic": "基本",
-    "extra": "额外",
+    "additional": "额外",
+    "orderService": "其他服务",
     "create": "建立",
     "save": "储存",
     "cancel": "取消",
@@ -651,6 +652,27 @@
     "cancel": "取消",
     "driver": "司机",
     "plat_number": "车牌号码",
-    "assign_driver": "指派司机" 
+    "assign_driver": "指派司机"
+  },
+  "notification": {
+    "notification_menu": "通知范本",
+    "notification_title": "范本",
+    "menu_recycling_materials_and_waybills" : {
+      "tab_name" : "回收物及运单",
+      "name" : "名称",
+      "type" : "种类",
+      "title" : "标题",
+      "language" : "语言"
+    },
+    "menu_staff": {
+      "tab_name" : "员工",
+      "name" : "名称",
+      "type" : "种类",
+      "title" : "标题",
+      "language" : "语言"
+    },
+    "modify_template" : {
+      "header" : "修改范本"
+    }
   }
 }

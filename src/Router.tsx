@@ -53,6 +53,7 @@ import JobOrder from "./pages/Logistic/JobOrder";
 //astd
 import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
 import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
+import Notice from "./pages/Logistic/Notice/Index";
 
 const Router = () => {
   
@@ -136,6 +137,7 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
           <Route path="/logistic/pickupOrder/:picoId" element={<JobOrder />} />  
+          <Route path="/logistic/notice" element={<Notice />} />
         </Route>
 
         </Route>

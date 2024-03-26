@@ -30,7 +30,8 @@
     "enterNo": "Enter no.",
     "serviceType": "Service type",
     "basic": "Basic",
-    "extra": "Extra",
+    "additional": "Additional",
+    "orderService": "Other Services",
     "create": "Create",
     "save": "Save",
     "cancel": "Cancel",
@@ -468,7 +469,7 @@
   "vehicle": {
     "vehicle": "Vehicle",
     "serviceType": "Service type",
-    "vehicleType": "Vehicle type",
+    "vehicleType": "Vehicle category",
     "licensePlate": "License plate",
     "picture": "Picture",
     "basic": "Basic",
@@ -653,27 +654,48 @@
     "errorEdited": "Error Edited",
     "successDeleted": "Success Deleted",
     "errorDeleted": "Error deleted"
-},
-"jobOrder": {
-  "job_order_menu": "Job Order",
-  "create_work_waybill" : "Create Job Order",
-  "shipping_information" : "Shipping information",
-  "corresponding_waybill" : "Corresponding waybill",
-  "shipping_validity_date_from" : "Shipping validity",
-  "shipping_validity_date_to": "to",
-  "shipping_company_name" : "Shipping company",
-  "recycling_location_information": "Recycling location information",
-  "main_category" : "Type",
-  "subcategory" : "Subtype",
-  "estimated_shipping_time" : "Estimated shipping time",
-  "weight": "weight",
-  "shipping_and_receiving_companies": "Shipping and receiving",
-  "delivery_and_arrival_locations": "Delivery and arrival",
-  "setup_time" : "Setup time",
-  "finish": "Finish",
-  "cancel": "Cancel",
-  "driver": "Driver",
-  "plat_number": "Plate number",
-  "assign_driver": "Assign a driver"
-}
+  },
+  "jobOrder": {
+    "job_order_menu": "Job Order",
+    "create_work_waybill" : "Create Job Order",
+    "shipping_information" : "Shipping information",
+    "corresponding_waybill" : "Corresponding waybill",
+    "shipping_validity_date_from" : "Shipping validity",
+    "shipping_validity_date_to": "to",
+    "shipping_company_name" : "Shipping company",
+    "recycling_location_information": "Recycling location information",
+    "main_category" : "Type",
+    "subcategory" : "Subtype",
+    "estimated_shipping_time" : "Estimated shipping time",
+    "weight": "weight",
+    "shipping_and_receiving_companies": "Shipping and receiving",
+    "delivery_and_arrival_locations": "Delivery and arrival",
+    "setup_time" : "Setup time",
+    "finish": "Finish",
+    "cancel": "Cancel",
+    "driver": "Driver",
+    "plat_number": "Plate number",
+    "assign_driver": "Assign a driver"
+  },
+  "notification": {
+    "notification_menu": "Notice template",
+    "notification_title": "Template",
+    "menu_recycling_materials_and_waybills" : {
+      "tab_name": "Recyclables and PO",
+      "name" : "Name",
+      "type" : "Type",
+      "title" : "Title",
+      "language" : "Language"
+    },
+    "menu_staff":{
+      "tab_name" :  "Staff",
+      "name" : "Name",
+      "type" : "Type",
+      "title" : "Title",
+      "language" : "Language"
+    },
+    "modify_template" : {
+      "header" : "Modify Template"
+    }
+  }
 }

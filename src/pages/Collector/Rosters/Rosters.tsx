@@ -31,10 +31,16 @@ const Rosters: FunctionComponent = () => {
     initRosterData()
   }, [])
 
-  const initRosterData = async () => {
-    const result = await getRosterList()
+  useEffect(() => {
+    const filteredDate = filterDate.format('YYYY-MM-DD[T]00:00:00.000[Z]')
+    initRosterData(filteredDate)
+  }, [filterDate])
+
+  const initRosterData = async (date?: string) => {
+    const today = dayjs().format('YYYY-MM-DD[T]00:00:00.000[Z]')
+    const result = await getRosterList(date ? date : today)
     if (result) {
-      const rosterRawData = result.data.content
+      const rosterRawData = result.data
 
       //maaping data roster
       const groupedRoster = rosterRawData.reduce(

@@ -14,3 +14,17 @@ export type Notif = {
   createdAt: string
   updatedAt: string
 }
+
+export type NotifTemplate = {
+  templateId: string
+  notiType: string
+  variables:  string[]
+  lang: string
+  title: string
+  senders: string[]
+  receivers: string[]
+  createdBy: string
+  updatedBy: string
+  createdAt: string
+  updatedAt: string
+}
