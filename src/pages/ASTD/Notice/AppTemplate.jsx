@@ -74,7 +74,7 @@ const AppTemplate = (props) => {
                         {t('notification.modify_template.app.title')}
                     </Typography>
                     <Typography style={{fontSize: '16px', color: 'black', fontWeight: '700'}}>
-                        送入請求
+                        {notifTemplate.title}
                     </Typography>
                 </Grid>
 
@@ -85,6 +85,7 @@ const AppTemplate = (props) => {
                     <Autocomplete
                         disablePortal
                         id="combo-box-demo"
+                        value={notifTemplate?.lang}
                         options={['EN-US', 'ZH-HK', 'ZH-CH']}
                         sx={{ width: 300 }}
                         renderInput={(params) => <TextField {...params} style={{backgroundColor: 'white'}} label={t('notification.modify_template.app.language')} />}
@@ -97,6 +98,7 @@ const AppTemplate = (props) => {
                     </Typography>
                     <TextareaAutosize 
                         style={{width: '1135px', backgroundColor: 'white'}}
+                        value={notifTemplate?.content}
                         minRows={5}
                     />
                 </Grid>
