@@ -671,6 +671,26 @@ export const GET_LOGISTICLIST_LOGISTIC = (
   method: 'get',
   url: `api/v1/logistic/logisticlist/${table}`
 })
+export const ASSIGN_DRIVER = (table: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `/api/v1/logistic/jo/${table}`
+})
+
+export const REJECT_DRIVER = (table: string, id: any): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `/api/v1/logistic/jo/${table}/status/${id}`
+})
+
+export const GET_DRIVER = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/logistic/driver/{table}?table=${table}`
+})
+
+export const GET_VEHICLE_LOGISTIC = (table: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}`
+})
+
 export const GET_LIST_NOTIF_TEMPLATE_PO = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/notiTemplate/${tenantId}`

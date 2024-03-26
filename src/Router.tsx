@@ -44,9 +44,10 @@ import StaffManagement from './pages/Collector/StaffManagement/StaffParent'
 import AuthGuard from './components/Guards/AuthGuard'
 import AutoLogout from './components/AutoLogout'
 
-import CheckoutRequest from './pages/Collector/Manage/CheckoutRequest'
-import UserGroup from './pages/Collector/UserGroup/UserGroup'
-import { CheckInAndCheckOut } from './pages/Collector/CheckInAndCheckOut'
+import CheckoutRequest from "./pages/Collector/Manage/CheckoutRequest";
+import UserGroup from "./pages/Collector/UserGroup/UserGroup";
+import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
+import JobOrder from "./pages/Logistic/JobOrder";
 
 //astd
 import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
@@ -59,7 +60,7 @@ const Router = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/changePassword" element={<ChangePassword />} />
-        <Route element={<AutoLogout />}>
+        <Route element={<AutoLogout />} />
         <Route path="/resetPassword" element={<ResetPassword />} />
         <Route
           path="/confirmNewPassword"
@@ -122,6 +123,7 @@ const Router = () => {
           <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
           <Route path="/logistics/createPickupOrder" element={<CreatePicoLogistic />} />
           <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic /> } />
+          <Route path="/logistic/pickupOrder/:picoId" element={<JobOrder />} />  
           <Route path="/logistic/notice" element={<Notice />} />
         </Route>
         {/* </Route> */}
