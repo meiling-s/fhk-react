@@ -42,7 +42,7 @@ import { Contract, CreateContract as CreateContractProps } from '../../../interf
 import LabelField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { createContract } from '../../../APICalls/Collector/contracts'
+import { createContract, editContract } from '../../../APICalls/Collector/contracts'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -69,11 +69,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
   const [remark, setRemark] = useState('')
   const [whether, setWhether] = useState(false)
-  const [licensePlate, setLicensePlate] = useState('')
-  const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const {vehicleType} = useContainer(CommonTypeContainer);
-  const [listedPlate, setListedPlate] = useState<string[]>([])
 
   
   useEffect (() => {
@@ -81,7 +77,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       if (selectedItem !== null && selectedItem !== undefined) {
         setContractNo(selectedItem?.contractNo)
         setReferenceNumber(selectedItem?.parentContractNo)
-        setContractStatus(selectedItem?.status === 'true' ? true : false)
+        setContractStatus(selectedItem?.status === 'ACTIVE' ? true : false)
         setStartDate(dayjs(selectedItem?.contractFrmDate))
         setEndDate(dayjs(selectedItem?.contractToDate))
         setRemark(selectedItem?.remark)
@@ -103,21 +99,6 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   }
   
 
-  const onImageChange = (
-    imageList: ImageListType,
-    addUpdateIndex: number[] | undefined
-  ) => {
-    setPictures(imageList)
-  }
-
-  const removeImage = (index: number) => {
-    // Remove the image at the specified index
-    const newPictures = [...pictures]
-    newPictures.splice(index, 1)
-    setPictures(newPictures)
-  }
-  
-
   const checkString = (s: string) => {
     if (!trySubmited) {
       //before first submit, don't check the validation
@@ -134,7 +115,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       tenantId: tenantId,
       contractNo: contractNo,
       parentContractNo: referenceNumber,
-      status: contractStatus === true ? 'ACTIVE' : 'DEACTIVE',
+      status: contractStatus === true ? 'ACTIVE' : 'INACTIVE',
       contractFrmDate: startDate.format('YYYY-MM-DD'),
       contractToDate: endDate.format('YYYY-MM-DD'),
       remark: remark,
@@ -143,9 +124,10 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       updatedBy: loginId
     }
 
-    console.log(formData, 'formData')
     if (action == 'add') {
       handleCreateContract(formData)
+    } else if (action == 'edit') {
+      handleEditContract(formData)
     }
   }
 
@@ -160,20 +142,14 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       }
   }
 
-  // const handleEditVehicle = async (formData: CreateVehicleForm) => {
-  //   if (validation.length === 0) {
-  //     if(selectedItem != null){
-  //       const result = await editVehicle(formData, selectedItem.vehicleId!)
-  //       if(result) {
-  //         onSubmitData("success", "Edit data success")
-  //         resetData()
-  //         handleDrawerClose()
-  //       }
-  //     } 
-  //   } else {
-  //     setTrySubmited(true)
-  //   }
-  // }
+  const handleEditContract = async (formData: CreateContractProps) => {
+    const result = await editContract(formData)
+    if(result) {
+      onSubmitData("success", "Edit data success")
+      resetData()
+      handleDrawerClose()
+    }
+  }
 
   // const handleDelete = async () => {
   //   const status = 'DELETED'

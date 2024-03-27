@@ -721,7 +721,12 @@ export const GET_CONTRACT_LIST = (tenantId: string): AxiosRequestConfig => ({
   url: `api/v1/logistic/contract/${tenantId}`
 })
 
-export const CREATE_CONTRACT = (): AxiosRequestConfig => ({
+export const CREATE_CONTRACT: AxiosRequestConfig = {
   method: 'post',
   url: `api/v1/logistic/contract`
+}
+
+export const EDIT_CONTRACT = (tenantId: string, contractNo: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/logistic/contract/${tenantId}/${contractNo}`
 })

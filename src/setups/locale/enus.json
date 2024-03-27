@@ -743,7 +743,7 @@
     "whether": "Whether EPD",
     "default_currency": "Default Currency",
     "activate": "Activate",
-    "deactive": "Deactive",
+    "deactive": "Inactive",
     "true": "True",
     "false": "False"
   }

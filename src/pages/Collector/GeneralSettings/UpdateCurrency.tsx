@@ -4,50 +4,34 @@ import {
   Divider,
   Grid,
   Typography,
-  Button,
-  InputLabel,
   MenuItem,
-  Card,
   FormControl,
-  ButtonBase,
-  ImageList,
-  ImageListItem
 } from '@mui/material'
-import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-import ImageUploading, { ImageListType } from 'react-images-uploading'
 import RightOverlayForm from '../../../components/RightOverlayForm'
-import CustomField from '../../../components/FormComponents/CustomField'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { EVENT_RECORDING } from '../../../constants/configs'
 import { styles } from '../../../constants/styles'
 
 import { useTranslation } from 'react-i18next'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
-import { formErr } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64 } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { useContainer } from 'unstated-next'
-import { createVehicles as addVehicle, deleteVehicle, editVehicle } from '../../../APICalls/Collector/vehicles'
 import { localStorgeKeyName } from "../../../constants/constant";
-import i18n from '../../../setups/i18n'
+import { updateUserCurrency } from '../../../APICalls/Collector/currency'
+import { Currency } from '../../../interfaces/currency'
 
 interface UpdateCurrencyProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'edit'
   tenantCurrency: string;
+  onSubmitData: (type: string, msg: string) => void
 }
 
 const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
   drawerOpen,
   handleDrawerClose,
   action,
-  tenantCurrency
+  tenantCurrency,
+  onSubmitData
 }) => {
   const { t } = useTranslation()
   const currencyList: il_item[] = [
@@ -90,14 +74,7 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
     id: tenantCurrency,
     name: tenantCurrency
   })
-  const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
-  const [selectedVehicle, setSelectedVehicle] = useState<il_item>({id: '1', name: "Van"})
-  const [licensePlate, setLicensePlate] = useState('')
-  const [pictures, setPictures] = useState<ImageListType>([])
-  const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const {vehicleType } = useContainer(CommonTypeContainer);
-  const [listedPlate, setListedPlate] = useState<string[]>([])
 
   useEffect(() => {
     setSelectedCurrency({
@@ -111,29 +88,19 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
   }, [drawerOpen])
   
 
-  const handleSubmit = () => {
-    // const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+  const handleSubmit = async () => {
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
 
-    // const formData: CreateVehicleForm = {
-    //   vehicleTypeId: selectedVehicle.id,
-    //   vehicleName: selectedVehicle.name,
-    //   plateNo: licensePlate,
-    //   serviceType: selectedService.id,
-    //   photo:  ImageToBase64(pictures),
-    //   status: "ACTIVE",
-    //   createdBy: loginId,
-    //   updatedBy: loginId
-    // }
-    // console.log("iamge", ImageToBase64(pictures))
-    // if (action == 'add') {
-    //   handleCreateVehicle(formData)
-    // } else {
-    //   handleEditVehicle(formData)
-    // }
-    console.log('hitt save', selectedCurrency)
-    handleDrawerClose()
+    const formData: Currency = {
+      monetaryValue: selectedCurrency.id
+    }
+
+    const result = await updateUserCurrency(formData, Number(tenantId))
+    if (result) {
+      onSubmitData("success", "Success update currency")
+      handleDrawerClose()
+    }
   }
-
 
   return (
     <div className="add-vehicle">

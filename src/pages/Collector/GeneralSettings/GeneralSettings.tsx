@@ -199,6 +199,7 @@ const GeneralSettings: FunctionComponent = () => {
 
   const onSubmitData = (type: string, msg: string) =>{
     initContractList()
+    getTenantData()
     if(type == 'success') {
       showSuccessToast(msg)
     } else {
@@ -359,6 +360,7 @@ const GeneralSettings: FunctionComponent = () => {
           drawerOpen={currencyDrawerOpen}
           handleDrawerClose={() => setCurrencyDrawerOpen(false)}
           action="edit"
+          onSubmitData={onSubmitData}
           tenantCurrency={tenantCurrency}
         />
       </Box>
