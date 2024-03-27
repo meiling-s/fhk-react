@@ -32,11 +32,11 @@ import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import '../styles/MainDrawer.css'
 import { localStorgeKeyName } from '../constants/constant'
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
-import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined';
+import LoginIcon from '@mui/icons-material/Login'
+import LogoutIcon from '@mui/icons-material/Logout'
+import InventoryIcon from '@mui/icons-material/Inventory'
+import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
+import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 type MainDrawer = {
   role: string
 }
@@ -84,100 +84,102 @@ function MainDrawer() {
   }, [])
 
   var role = localStorage.getItem(localStorgeKeyName.role)
-  
+
   interface func {
-    [key: string]: object;
+    [key: string]: object
   }
 
-  // 20240129 add function list daniel keung start 
-  const defaultFunctionList: func[] = [{
-    "Tenant management": {
-      name: t('all_Collection_Point'),
-     
-      onClick: () => navigate('/collector/collectionPoint'),
-      collapse: false
-    },
-    "User account":{
-      name: t('processRecord.userGroup'),
-      icon:<PERSON_OUTLINE_ICON/>,
-      onClick: () => navigate('/logistics/account'),
-      collapse: false
-    },
-    "Collection point": {
-      name: t('all_Collection_Point'),
-      icon:<PLACE_ICON/>,
-      onClick: () => navigate('/collector/collectionPoint'),
-      collapse: false
-    },
-    "Pickup order": {
-      name: t('pick_up_order.enquiry_pickup_order'),
-      icon:<SHIPPING_CAR_ICON/>,
-      onClick: () => navigate('/collector/pickupOrder'),
-      collapse: false
-    },
-    "Job order": {
-      name: t('job_order.enquiry_job_order'),
-      icon:<SHIPPING_CAR_ICON/>,
-      onClick: () => navigate('/logistic/jobOrder'),
-      collapse: false
-    },
-    'Warehouse dashboard':{
-      name: t('warehouseDashboard.warehouse'),
-      icon:<InventoryIcon/>,
-      onClick: () => navigate('/warehouse'),
-      collapse: false
-    },
-    "Request check-in": {
-      name: t('check_in.request_check_in'),
-      icon:<LoginIcon/>,
-      onClick: () => navigate('/warehouse/shipment'),
-      collapse: false
-    },
-    "Request checkout": {
-      name: t('check_out.request_check_out'),
-      icon:<LogoutIcon/>,
-      onClick: () => navigate('/warehouse/checkout'),
-      collapse: false
-    },
-    "Settings": {
-      name: t('settings'),
-      icon: <SETTINGS_ICON />,
-      onClick: () => navigate('/astd/setting'),
-      collapse: false
-    },
-    "Reports": {
-      name: t('reports'),
-      icon: <DOCUMENT_ICON />,
-      onClick: () => navigate('/collector/report'),
-      collapse: false
-    },
-    "Inventory": {
-      name: t('inventory.inventory'),
-      onClick: () => navigate('/collector/inventory'),
-      collapse: false
-    },
-    "Process out recyclables":{
-      name: t('processRecord.processingRecords'),
-      icon: <DOCUMENT_ICON />,
-      onClick: () => navigate('/collector/processRecord'),
-      collapse: false
-    },
-    "Staff":{
-      name: t('staffManagement.staff'),
-      icon: <AccountBoxOutlinedIcon />,
-      onClick: () => navigate('/warehouse/staff'),
-      collapse: false
-    },
-    "Notification template":{
-      name: t('notification.notification_menu'),
-      icon: <ViewQuiltOutlinedIcon />,
-      onClick: () => navigate('/logistic/notice'),
-      collapse: false
-    },
-  }]
-  // 20240129 add function list daniel keung end 
   // 20240129 add function list daniel keung start
-/*   let drawerMenus_collector: DrawerItem[] = [
+  const defaultFunctionList: func[] = [
+    {
+      'Tenant management': {
+        name: t('all_Collection_Point'),
+
+        onClick: () => navigate('/collector/collectionPoint'),
+        collapse: false
+      },
+      'User account': {
+        name: t('processRecord.userGroup'),
+        icon: <PERSON_OUTLINE_ICON />,
+        onClick: () => navigate('/logistics/account'),
+        collapse: false
+      },
+      'Collection point': {
+        name: t('all_Collection_Point'),
+        icon: <PLACE_ICON />,
+        onClick: () => navigate('/collector/collectionPoint'),
+        collapse: false
+      },
+      'Pickup order': {
+        name: t('pick_up_order.enquiry_pickup_order'),
+        icon: <SHIPPING_CAR_ICON />,
+        onClick: () => navigate('/collector/pickupOrder'),
+        collapse: false
+      },
+      'Job order': {
+        name: t('job_order.enquiry_job_order'),
+        icon: <SHIPPING_CAR_ICON />,
+        onClick: () => navigate('/logistic/jobOrder'),
+        collapse: false
+      },
+      'Warehouse dashboard': {
+        name: t('warehouseDashboard.warehouse'),
+        icon: <InventoryIcon />,
+        onClick: () => navigate('/warehouse'),
+        collapse: false
+      },
+      'Request check-in': {
+        name: t('check_in.request_check_in'),
+        icon: <LoginIcon />,
+        onClick: () => navigate('/warehouse/shipment'),
+        collapse: false
+      },
+      'Request checkout': {
+        name: t('check_out.request_check_out'),
+        icon: <LogoutIcon />,
+        onClick: () => navigate('/warehouse/checkout'),
+        collapse: false
+      },
+      Settings: {
+        name: t('settings'),
+        icon: <SETTINGS_ICON />,
+        onClick: () => navigate('/astd/setting'),
+        collapse: false
+      },
+      Reports: {
+        name: t('reports'),
+        icon: <DOCUMENT_ICON />,
+        onClick: () => navigate('/collector/report'),
+        collapse: false
+      },
+      Inventory: {
+        name: t('inventory.inventory'),
+        onClick: () => navigate('/collector/inventory'),
+        collapse: false
+      },
+      'Process out recyclables': {
+        name: t('processRecord.processingRecords'),
+        icon: <DOCUMENT_ICON />,
+        onClick: () => navigate('/collector/processRecord'),
+        collapse: false
+      },
+      Staff: {
+        name: t('staffManagement.staff'),
+        icon: <AccountBoxOutlinedIcon />,
+        onClick: () => navigate('/warehouse/staff'),
+        collapse: false
+      },
+      'Notification template': {
+        name: t('notification.notification_menu'),
+        icon: <ViewQuiltOutlinedIcon />,
+        onClick: () => navigate('/logistic/notice'),
+        collapse: false
+      }
+    }
+  ]
+  // 20240129 add function list daniel keung end
+  // 20240129 add function list daniel keung start
+  /*   let drawerMenus_collector: DrawerItem[] = [
     {
       name: t('collection_Point'),
       icon: <PLACE_ICON />,
@@ -344,23 +346,25 @@ function MainDrawer() {
     }
   ] */
   // 20240129 add function list daniel keung end
-  // 20240129 add function list daniel keung start 
-  var drawerMenus;
-  let drawerMenusTmp: DrawerItem[] = [];
-  var functionListTmp = JSON.parse(localStorage.getItem(localStorgeKeyName.functionList)||"[]");
-  if(functionListTmp){
+  // 20240129 add function list daniel keung start
+  var drawerMenus
+  let drawerMenusTmp: DrawerItem[] = []
+  var functionListTmp = JSON.parse(
+    localStorage.getItem(localStorgeKeyName.functionList) || '[]'
+  )
+  if (functionListTmp) {
     for (var functionItem of functionListTmp) {
       for (let deKey in defaultFunctionList[0]) {
-        if(functionItem == deKey){
+        if (functionItem == deKey) {
           drawerMenusTmp.push(defaultFunctionList[0][deKey] as DrawerItem)
         }
       }
     }
   }
-  // 20240129 add function list daniel keung end 
+  // 20240129 add function list daniel keung end
   console.log(role)
   // 20240129 add function list daniel keung start
-/*   switch (role) {
+  /*   switch (role) {
     case 'astd':
       drawerMenus = drawerMenus_astd
       break
@@ -384,8 +388,8 @@ function MainDrawer() {
   } */
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
-  drawerMenus = drawerMenusTmp;
-  // 20240129 add function list daniel keung end 
+  drawerMenus = drawerMenusTmp
+  // 20240129 add function list daniel keung end
   return (
     <>
       {isMobile ? (

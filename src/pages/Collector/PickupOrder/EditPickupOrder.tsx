@@ -15,7 +15,7 @@ import {
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
-import { localStorgeKeyName } from "../../../constants/constant";
+import { localStorgeKeyName } from '../../../constants/constant'
 
 const EditPickupOrder = () => {
   const { t } = useTranslation()
@@ -23,7 +23,7 @@ const EditPickupOrder = () => {
   const { state } = useLocation()
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
   const poInfo: PickupOrder = state
-  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 
   const updatePickupOrder = useFormik({
     initialValues: {
@@ -38,7 +38,7 @@ const EditPickupOrder = () => {
       vehicleTypeId: 'string',
       platNo: 'string',
       contactNo: 'string',
-      status: "CREATED",
+      status: 'CREATED',
       reason: 'string',
       normalFlg: true,
       approvedAt: '2023-12-12T02:17:30.062Z',
@@ -47,6 +47,7 @@ const EditPickupOrder = () => {
       rejectedBy: 'string',
       contractNo: '',
       updatedBy: loginId,
+      refPicoId: '',
       createPicoDetail: []
     },
 
@@ -56,7 +57,7 @@ const EditPickupOrder = () => {
       values.createPicoDetail = addRow
       const result = await editPickupOrder(poInfo.picoId, values)
       // alert(JSON.stringify(result, null, 2))
-         console.log((JSON.stringify(result, null, 2)))
+      console.log(JSON.stringify(result, null, 2))
 
       const data = result?.data
       if (data) {
@@ -120,6 +121,7 @@ const EditPickupOrder = () => {
         rejectedBy: loginId,
         contractNo: poInfo.contractNo,
         updatedBy: loginId,
+        refPicoId: poInfo.refPicoId,
         createPicoDetail: []
       })
     }

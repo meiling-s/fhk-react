@@ -14,7 +14,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutline'
 import AddIcon from '@mui/icons-material/Add'
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
@@ -23,10 +23,10 @@ import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
-import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
-import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined'
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard'
+import BarChartIcon from '@mui/icons-material/BarChart'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 
 export const PLACE_ICON = PlaceOutlinedIcon
 export const SHIPPING_CAR_ICON = LocalShippingOutlinedIcon
@@ -53,7 +53,7 @@ export const INBOX_OUTLINE_ICON = InboxOutlinedIcon
 export const LEFT_ARROW_ICON = ChevronLeftOutlinedIcon
 export const VISIBILITY_ICON = VisibilityOutlinedIcon
 export const VISIBILITY_OFF_ICON = VisibilityOffOutlinedIcon
-export const WARNING_ICON =  ErrorOutlinedIcon
+export const WARNING_ICON = ErrorOutlinedIcon
 export const TEMPLATE_ICON = SpaceDashboardIcon
 export const STATISTIC_ICON = BarChartIcon
 export const PERSON_OUTLINE_ICON = PersonOutlineIcon

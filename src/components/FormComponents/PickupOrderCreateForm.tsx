@@ -461,6 +461,7 @@ const PickupOrderCreateForm = ({
     picoId: string
   ) => {
     setPicoRefId(picoId)
+    formik.setFieldValue('refPicoId', picoId)
     setOpenPico(false)
   }
 
@@ -699,9 +700,12 @@ const PickupOrderCreateForm = ({
                     <Typography sx={[styles.header3, { marginBottom: 1 }]}>
                       {t('pick_up_order.adhoc.po_number')}
                     </Typography>
-                    {picoRefId !== '' ? (
+                    {formik.values.refPicoId !== '' ||
+                    formik.values.refPicoId ? (
                       <div className="flex items-center justify-between w-[390px]">
-                        <div className="font-bold text-mini">{picoRefId}</div>
+                        <div className="font-bold text-mini">
+                          {formik.values.refPicoId}
+                        </div>
                         <div
                           className="text-mini text-green-400 cursor-pointer"
                           onClick={resetPicoId}
