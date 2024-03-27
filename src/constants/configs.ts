@@ -13,10 +13,10 @@ export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
   timeout: 100000,
   headers: {
     post: {
-      'Content-Type': 'application/json'
+      'Conetent-Type': 'application/json'
     },
     put: {
-      'Content-Type': 'application/json'
+      'Conetent-Type': 'application/json'
     }
   }
 })
