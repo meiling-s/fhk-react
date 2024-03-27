@@ -2,6 +2,7 @@ import { localStorgeKeyName } from '../constants/constant'
 import {
   ADD_TENANT,
   GET_ALL_TENANT,
+  SEARCH_TENANT,
   GET_TENANT_BY_TENANT_ID,
   UPDATE_TENANT_REGISTER,
   UPDATE_TENANT_STATUS
@@ -12,8 +13,10 @@ import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 
-
-export const createInvitation = async (item: CreateTenant) => {
+export const createInvitation = async (
+  item: CreateTenant,
+  tenantType: string
+) => {
   console.log(
     `Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`
   )
@@ -21,7 +24,7 @@ export const createInvitation = async (item: CreateTenant) => {
   try {
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
-      ...ADD_TENANT('collector'),
+      ...ADD_TENANT(tenantType),
       data: item,
       headers: {}
     })
@@ -33,12 +36,33 @@ export const createInvitation = async (item: CreateTenant) => {
   }
 }
 
-export const getAllTenant = async (page: number, size: number, tenantId?: string ) => {
+export const getAllTenant = async (page: number, size: number) => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
-      ...GET_ALL_TENANT(token.tenantId),
+      ...GET_ALL_TENANT,
+      params: {
+        page: page,
+        size: size,
+        tenantId: token.tenantId
+      },
+      headers: {}
+    })
+    console.log('Get all tenant success:', JSON.stringify(response.data))
+    return response
+  } catch (e) {
+    console.error('Get all tenant failed:', e)
+    return null
+  }
+}
+
+export const searchTenantById = async (page: number, size: number, tenantId: number) => {
+  const token = returnApiToken()
+  try {
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      ...SEARCH_TENANT(tenantId),
       params: {
         page: page,
         size: size,
