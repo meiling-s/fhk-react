@@ -10,7 +10,8 @@ import {
   Typography,
   Grid,
   Divider,
-  Pagination
+  Pagination,
+  CircularProgress
 } from '@mui/material'
 import {
   DataGrid,
@@ -284,11 +285,12 @@ type InviteTenant = {
 
 type inviteForm = {
   open: boolean
+  isLoading: boolean
   onClose: () => void
   onSubmit: (formikValues: InviteTenant, submitForm: () => void) => void
 }
 
-function InviteForm({ open, onClose, onSubmit }: inviteForm) {
+function InviteForm({ open, isLoading, onClose, onSubmit }: inviteForm) {
   const { t } = useTranslation()
   const [submitable, setSubmitable] = useState<boolean>(false)
 
@@ -417,10 +419,6 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
                         ) => {
                           formik.setFieldValue('companyCategory', newValue)
                         }}
-                        // onInputChange={(event: any, newInputValue: string) => {
-                        //   console.log(event) // Log the input value
-                        //   formik.setFieldValue('companyCategory', newInputValue) // Update the formik field value if needed
-                        // }}
                         value={t.value}
                         inputValue={t.value}
                         error={t.error || undefined}
@@ -492,8 +490,10 @@ function InviteForm({ open, onClose, onSubmit }: inviteForm) {
                 ></CustomTextField>
               </CustomField>
             </Box>
-
             <Box sx={{ alignSelf: 'center' }}>
+              {isLoading && <CircularProgress color="success" />}
+            </Box>
+            <Box sx={{ alignSelf: 'center', paddingBottom: '16px' }}>
               <Button
                 disabled={submitable}
                 // onClick={() => onSubmit(formik.handleSubmit)}
@@ -536,6 +536,7 @@ function CompanyManage() {
   const [checkedCompanies, setCheckedCompanies] = useState<number[]>([])
   const [openDetail, setOpenDetails] = useState<boolean>(false)
   const [selectedTenanId, setSelectedTenantId] = useState(0)
+  const [isLoadingInvite, setIsLoadingInvite] = useState<boolean>(false)
   const [rejectedId, setRejectId] = useState(0)
   const [page, setPage] = useState(1)
   const pageSize = 10
@@ -807,7 +808,7 @@ function CompanyManage() {
     formikValues: InviteTenant,
     submitForm: () => void
   ) => {
-    //const auth = returnApiToken()
+    setIsLoadingInvite(true)
     const realmType =
       realmOptions.find((item) => item.label == formikValues.companyCategory)
         ?.key || 'collector'
@@ -843,6 +844,9 @@ function CompanyManage() {
       setInviteId(result?.data?.tenantId)
       setInvSendModal(true)
       setInvFormModal(false)
+      setIsLoadingInvite(false)
+    } else {
+      setIsLoadingInvite(false)
     }
   }
 
@@ -952,6 +956,7 @@ function CompanyManage() {
         </div>
         <InviteForm
           open={invFormModal}
+          isLoading={isLoadingInvite}
           onClose={() => setInvFormModal(false)}
           onSubmit={onInviteFormSubmit}
         />
