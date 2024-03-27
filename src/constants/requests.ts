@@ -730,3 +730,18 @@ export const EDIT_CONTRACT = (tenantId: string, contractNo: string): AxiosReques
   method: 'put',
   url: `api/v1/logistic/contract/${tenantId}/${contractNo}`
 })
+
+export const GET_PACKAGING_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/packaginglist/${tenantId}`
+})
+
+export const CREATE_PACKAGING: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/logistic/packaginglist`
+}
+
+export const EDIT_PACKAGING = (tenantId: string, packagingTypeId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/logistic/packaginglist/${tenantId}/${packagingTypeId}`
+})

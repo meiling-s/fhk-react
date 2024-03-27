@@ -723,5 +723,14 @@
     "deactive": "停用",
     "true": "真的",
     "false": "错误的"
+  },
+  "packaging_unit": {
+    "packaging_unit": "包装单位",
+    "new": "新的",
+    "traditional_chinese_name": "繁体中文名字",
+    "simplified_chinese_name": "简体中文名称",
+    "english_name": "English Name",
+    "introduction": "介绍",
+    "remark": "评论"
   }
 }
