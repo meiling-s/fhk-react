@@ -75,7 +75,6 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
 
 
     useEffect(() => {
-        console.log(selectedItem, 'selectedItem')
         if (action === 'edit') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setPackagingTypeId(selectedItem.packagingTypeId)
@@ -114,13 +113,12 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
 
         const formData: CreatePackagingUnitProps = {
             tenantId: tenantId,
-            packagingTypeId: packagingTypeId,
             packagingNameTchi: tChineseName,
             packagingNameSchi: sChineseName,
             packagingNameEng: englishName,
             description: description,
             remark: remark,
-            status: status,
+            status: 'ACTIVE',
             createdBy: loginId,
             updatedBy: loginId
         }
@@ -128,12 +126,11 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         if (action == 'add') {
             handleCreatePackaging(formData)
         } else if (action == 'edit') {
-            handleEditPackaging(formData)
+            handleEditPackaging(formData, packagingTypeId)
         }
     }
 
     const handleCreatePackaging = async (formData: CreatePackagingUnitProps) => {
-        console.log(formData, 'formData before submit')
         const result = await createPackaging(formData)
         if (result) {
             onSubmitData("success", "Success created data")
@@ -144,8 +141,8 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         }
     }
 
-    const handleEditPackaging = async (formData: CreatePackagingUnitProps) => {
-        const result = await editPackaging(formData)
+    const handleEditPackaging = async (formData: CreatePackagingUnitProps, packagingTypeId: string) => {
+        const result = await editPackaging(formData, packagingTypeId)
         if (result) {
             onSubmitData("success", "Edit data success")
             resetData()

@@ -16,7 +16,7 @@ export type PackagingUnit = {
 
 export type CreatePackagingUnit = {
     tenantId: string,
-    packagingTypeId: string,
+    packagingTypeId?: string,
     packagingNameTchi: string,
     packagingNameSchi: string,
     packagingNameEng: string,

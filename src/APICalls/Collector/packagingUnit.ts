@@ -41,13 +41,13 @@ export const createPackaging = async (data: CreatePackagingUnit) => {
   }
 }
 
-export const editPackaging = async (data: CreatePackagingUnit) => {
+export const editPackaging = async (data: CreatePackagingUnit, packagingTypeId: string) => {
   try {
     const token = returnApiToken()
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
-      ...EDIT_PACKAGING(data.tenantId, data.packagingTypeId),
+      ...EDIT_PACKAGING(data.tenantId, packagingTypeId),
       data: data,
       headers: {
         AuthToken: token.authToken

@@ -108,7 +108,7 @@ const GeneralSettings: FunctionComponent = () => {
     {
       field: 'contractNo',
       headerName: t('general_settings.name'),
-      width: 100,
+      width: 150,
       type: 'string',
     },
     {
@@ -120,19 +120,19 @@ const GeneralSettings: FunctionComponent = () => {
     {
       field: 'status',
       headerName: t('general_settings.state'),
-      width: 100,
+      width: 150,
       type: 'string'
     },
     {
       field: 'contractFrmDate',
       headerName: t('general_settings.start_date'),
-      width: 150,
+      width: 170,
       type: 'string'
     },
     {
       field: 'contractToDate',
       headerName: t('general_settings.end_date'),
-      width: 150,
+      width: 170,
       type: 'string'
     },
     {
