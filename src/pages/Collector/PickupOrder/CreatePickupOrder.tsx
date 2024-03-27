@@ -37,12 +37,7 @@ const CreatePickupOrder = () => {
     }
   }
 
-  // const checkSpesificDate = () =>{
-  //   if()
-  // }
-
   const validateSchema = Yup.object().shape({
-    // picoType: Yup.string().required(getErrorMsg(t('pick_up_order.select_shipping_category'), 'empty')),
     effFrmDate: Yup.string().required('This effFrmDate is required'),
     effToDate: Yup.string().required('This effToDate is required'),
     routineType:

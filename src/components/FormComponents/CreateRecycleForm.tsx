@@ -104,6 +104,16 @@ const CreateRecycleForm = ({
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
 
+  //---set custom style each role---
+  const colorList = {
+    collectoradmin: '#79CA25',
+    logisticadmin: '#7CE495',
+    manufactureradmin: '#6BC7FF'
+  }
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
+  const colorTheme: string = colorList[role as keyof typeof colorList]
+  //---end set custom style each role---
+
   const setDefRecyc = (picoDtl: CreatePicoDetail) => {
     const defRecyc: singleRecyclable = {
       recycTypeId: picoDtl.recycType,
@@ -125,21 +135,6 @@ const CreateRecycleForm = ({
       }
     }
   }, [editRowId])
-
-  // useEffect(() => {
-  //   if(updateRowId==null){
-  //     setDefaultRecyc(undefined)
-  //     formik.setValues(initValue)
-  //   }else{
-  //     const updateR = data.at(updateRowId)
-  //     if(updateR){
-  //       setDefaultRecyc({recycTypeId: updateR.recycType, recycSubTypeId: updateR.recycSubType})
-  //       setUpdateRow(updateR)
-  //     }
-
-  //   }
-  // }, [updateRowId]);
-  // const updateRow = data.find((row)=>row.picoDtlId === updateRowId);
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -328,7 +323,12 @@ const CreateRecycleForm = ({
                 <Box sx={{ marginLeft: 'auto' }}>
                   <Button
                     variant="outlined"
-                    sx={localstyles.button}
+                    sx={{
+                      ...localstyles.button,
+                      color: 'white',
+                      bgcolor: colorTheme,
+                      borderColor: colorTheme
+                    }}
                     type="submit"
                   >
                     {t('col.save')}
@@ -337,8 +337,9 @@ const CreateRecycleForm = ({
                     variant="outlined"
                     sx={{
                       ...localstyles.button,
-                      color: theme.palette.primary.main,
-                      bgcolor: 'white'
+                      color: colorTheme,
+                      bgcolor: 'white',
+                      borderColor: colorTheme
                     }}
                     onClick={() => onClose && onClose()}
                   >
@@ -380,6 +381,7 @@ const CreateRecycleForm = ({
                         values?.recycSubTypeId
                       )
                     }}
+                    //itemColor={{ bgColor: colorTheme, borderColor: colorTheme }}
                     defaultRecycL={defaultRecyc}
                     key={formik.values.id}
                   />
@@ -508,7 +510,6 @@ let localstyles = {
     width: '100px',
     height: '35px',
     p: 1,
-    bgcolor: theme.palette.primary.main,
     borderRadius: '18px',
     mr: '10px'
   },

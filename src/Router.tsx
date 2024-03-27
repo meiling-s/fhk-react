@@ -106,8 +106,8 @@ const Router = () => {
           <Route path="/astd/statistics/recyclePlant" element={<></>} />
           <Route path="/astd/setting" element={<Settings />} />
           <Route path="/astd/account" element={<></>} />
-          <Route path="/astd/createPicoLogistic" element={<CreatePicoLogistic />} />
-          <Route path="/astd/editPicoLogistic" element={<EditPicoLogistic />} />
+          <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
+          <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -123,10 +123,15 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
           <Route path="/logistic/jobOrder" element={<JobOrder />} />
-          <Route path="/logistics/createPickupOrder" element={<CreatePicoLogistic />} />
-          <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic /> } />
+          <Route path="/logistics/createPickupOrder" element={<CreatePickupOrder />} />
+          <Route path="/logistics/editPickupOrder" element={<EditPickupOrder /> } />
           <Route path="/logistic/notice" element={<Notice />} />
           <Route path="/logistics/account" element={<LogisticAccount />} />
+        </Route>
+
+        <Route element={<MainLayout />}>
+        <Route path="/manufacturer/createPickupOrder" element={<CreatePickupOrder />} />
+          <Route path="/manufacturer/editPickupOrder" element={<EditPickupOrder /> } />
         </Route>
       </Routes>
     </BrowserRouter>
