@@ -729,3 +729,30 @@ export const GET_LIST_NOTIF_TEMPLATE_STAFF = (
   method: "get",
   url: `api/v1/collectors/notiTemplate/${tenantId}`,
 });
+
+// STAFF ENQUIRY
+export const GET_STAFF_ENQUIRY = (tenantId: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `api/v1/logistic/staff`,
+});
+
+export const CREATE_STAFF_ENQUIRY: AxiosRequestConfig = {
+  method: "post",
+  url: "api/v1/logistic/staff",
+};
+
+export const EDIT_STAFF_ENQUIRY = (
+  tenantId: string,
+  staffId: string
+): AxiosRequestConfig => ({
+  method: "put",
+  url: `api/v1/logistic/staff/${tenantId}/${staffId}`,
+});
+
+export const DELETE_STAFF_ENQUIRY = (
+  tenantId: string,
+  staffId: string
+): AxiosRequestConfig => ({
+  method: "patch",
+  url: `api/v1/logistic/staff/${tenantId}/${staffId}`,
+});
