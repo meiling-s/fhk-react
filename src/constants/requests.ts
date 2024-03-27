@@ -635,27 +635,27 @@ export const GET_ALL_REASON = (tenantId: string, functionId: string | number) : 
   url: `api/v1/collectors/reason/${tenantId}/${functionId}`
 })
 
-export const GET_LIST_NOTIF_TEMPLATE_PO = (tenantId: string): AxiosRequestConfig => ({
+export const GET_LIST_NOTIF_TEMPLATE_PO = (tenantId: string, path: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/notiTemplate/${tenantId}`
+  url: `api/v1/${path}/notiTemplate/${tenantId}`
 })
 
-export const GET_LIST_NOTIF_TEMPLATE_STAFF = (tenantId: string): AxiosRequestConfig => ({
+export const GET_LIST_NOTIF_TEMPLATE_STAFF = (tenantId: string, path: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/notiTemplate/${tenantId}`
+  url: `api/v1/${path}/notiTemplate/${tenantId}`
 })
 
-export const GET_DETAIL_NOTIF_TEMPLATE = (tenantId: string, templateId: string): AxiosRequestConfig => ({
+export const GET_DETAIL_NOTIF_TEMPLATE = (tenantId: string, templateId: string, path: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/notiTemplate/${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
 })
 
-export const UPDATE_NOTIF_TEMPLATE = (tenantId: string, templateId: string): AxiosRequestConfig => ({
+export const UPDATE_NOTIF_TEMPLATE = (tenantId: string, templateId: string, path: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/collectors/notiTemplate/${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
 })
 
-export const UPDATE_NOTIF_TEMPLATE_BROADCAST = (tenantId: string, templateId: string): AxiosRequestConfig => ({
+export const UPDATE_NOTIF_TEMPLATE_BROADCAST = (tenantId: string, templateId: string, path: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/collectors/notiTemplate/${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
 })

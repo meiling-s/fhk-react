@@ -10,11 +10,11 @@ import { formErr } from "../../../constants/constant";
 import { FormErrorMsg } from "../../../components/FormComponents/FormErrorMsg";
 
 interface TemplateProps {
-    templateId: string
+    templateId: string,
+    dynamicPath: string
 }
 
-
-const AppTemplate: FunctionComponent<TemplateProps> = ({templateId}) => {
+const AppTemplate: FunctionComponent<TemplateProps> = ({templateId, dynamicPath}) => {
     const [notifTemplate, setNotifTemplate] = useState({templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: ''})
     const navigate= useNavigate();
     const { t } = useTranslation();
@@ -66,7 +66,7 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({templateId}) => {
     }
 
     const getDetailTemplate = async () => {
-        const notif =  await getDetailNotifTemplate(templateId);
+        const notif =  await getDetailNotifTemplate(templateId, dynamicPath);
         if(notif){
             setNotifTemplate(prev => {
                 return{
@@ -148,11 +148,11 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({templateId}) => {
 
     const onSubmitUpdateTemplate =  async() => {
         if (validation.length == 0) {
-            const response = await updateNotifTemplate(templateId, notifTemplate)
+            const response = await updateNotifTemplate(templateId, notifTemplate, dynamicPath)
             if(response){
                 showSuccessToast('Succeed Update Template')
                 setTimeout(() => {
-                    navigate('/astd/notice')
+                    navigate(`/${dynamicPath}/notice`)
                 }, 1000);
                 
             } else {
@@ -185,7 +185,7 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({templateId}) => {
             <div className="overview-page bg-bg-primary">
                 <div 
                     className="header-page flex justify-start items-center mb-4 cursor-pointer"
-                    onClick={() => navigate('/astd/notice')}
+                    onClick={() => navigate(`/${dynamicPath}/notice`)}
                 >
                     <LEFT_ARROW_ICON fontSize="large" />
                     <Typography style={{fontSize:'22px', color: 'black'}}> 

@@ -48,3 +48,8 @@ export const Notiftemplate = {
   sms: 'sms',
   broadcast: 'broadcast'
 }
+
+export const Roles = {
+  collectoradmin: 'collectoradmin',
+  logisticadmin: 'logisticadmin'
+}

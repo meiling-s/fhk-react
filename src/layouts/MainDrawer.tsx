@@ -30,7 +30,7 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import '../styles/MainDrawer.css'
-import { localStorgeKeyName } from '../constants/constant'
+import { Roles, localStorgeKeyName } from '../constants/constant'
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InventoryIcon from '@mui/icons-material/Inventory';
@@ -60,6 +60,14 @@ function MainDrawer() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0)
+  const userRole = localStorage.getItem('userRole') || '';
+  let pathRole: string = '';
+
+  if(userRole === Roles.collectoradmin){
+    pathRole = 'collector'
+  } else if(userRole === Roles.logisticadmin){
+    pathRole = 'logistic'
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -158,7 +166,7 @@ function MainDrawer() {
     "Notification template":{
       name: t('notification.notification_menu'),
       icon: <ViewQuiltOutlinedIcon />,
-      onClick: () => navigate('/astd/notice'),
+      onClick: () => navigate(`/${pathRole}/notice`),
       collapse: false
     },
   }]

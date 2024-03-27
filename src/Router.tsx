@@ -112,8 +112,8 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/astd" element={<CompanyManage />} />
           <Route path="/astd/company" element={<CompanyManage />} />
-          <Route path="/astd/notice/" element={<Notice />} />
-          <Route path="/astd/notice/:type/:templateId" element={<UpdateTemplate />} />
+          <Route path="/:pathRole/notice/" element={<Notice />} />
+          <Route path="/:pathRole/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/astd/report" element={<></>} />
           <Route path="/astd/statistics/recyclables" element={<></>} />
           <Route path="/astd/statistics/convoy" element={<></>} />
