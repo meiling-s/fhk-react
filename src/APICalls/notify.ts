@@ -3,8 +3,11 @@ import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
   GET_NUM_UNREAD_NOTIF,
   GET_NOTIF_BY_USER_ID,
-  UPDATE_FLAG_NOTIF
+  UPDATE_FLAG_NOTIF,
+  GET_LIST_NOTIF_TEMPLATE_PO,
+  GET_LIST_NOTIF_TEMPLATE_STAFF
 } from '../constants/requests'
+import { returnApiToken } from '../utils/utils'
 
 const administratorAPI = {
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
@@ -45,6 +48,32 @@ export const updateFlagNotif = async (notiId: number) => {
     return response
   } catch (e) {
     console.error(`update flag notif for notifId ${notiId} failed:`, e)
+    return null
+  }
+}
+
+export const getListNotifTemplatePO = async () => {
+  try {
+    const token = returnApiToken()
+    const response = await axiosInstance({
+      ...GET_LIST_NOTIF_TEMPLATE_PO(token.tenantId),
+      baseURL: administratorAPI.baseURL
+    })
+    return response
+  } catch (e) {
+    return null
+  }
+}
+
+export const getListNotifTemplateStaff = async () => {
+  try {
+    const token = returnApiToken();
+    const response = await axiosInstance({
+      ...GET_LIST_NOTIF_TEMPLATE_PO(token.tenantId),
+      baseURL: administratorAPI.baseURL
+    })
+    return response
+  } catch (e) {
     return null
   }
 }

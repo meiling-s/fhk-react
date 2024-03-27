@@ -80,7 +80,7 @@ const initValue = {
   status: 'CREATED',
   createdBy: loginId,
   updatedBy: loginId,
-  pickupAt: formattedTime(initialTime),
+  pickupAt: '00:00:00',
   recycType: '',
   recycSubType: '',
   weight: 0

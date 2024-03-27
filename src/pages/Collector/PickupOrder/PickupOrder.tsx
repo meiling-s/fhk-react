@@ -343,8 +343,8 @@ const PickupOrders = () => {
     setSelectedRow(row);
     setRejectModal(true)
   }
-  const navigateToJobOrder = () => {
-    console.log('navigateToJobOrder')
+  const navigateToJobOrder = (row : any) => {
+    if(row?.picoId) navigate(`/logistic/pickupOrder/${row.picoId}`)
   }
   const resetPage = async () => {
     setApproveModal(false)
@@ -566,7 +566,7 @@ const PickupOrders = () => {
     <ToastContainer/>
     <Box sx={{ display: "flex",  flexDirection: "column" }}>
         <Modal open={openModal} onClose={handleCloses} >
-          <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} pickupOrder={pickupOrder} initPickupOrderRequest={initPickupOrderRequest} navigateToJobOrder={navigateToJobOrder} />
+          <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} pickupOrder={pickupOrder} initPickupOrderRequest={initPickupOrderRequest} />
         </Modal>
       <Box sx={{ display: "flex", alignItems: "center",ml:'6px'}}>
         <Typography fontSize={20} color="black" fontWeight="bold">

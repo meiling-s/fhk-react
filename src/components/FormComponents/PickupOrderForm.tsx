@@ -35,13 +35,13 @@ const PickupOrderForm = ({
   selectedRow,
   pickupOrder,
   initPickupOrderRequest,
-  navigateToJobOrder
+  // navigateToJobOrder
 }: {
   onClose?: () => void
   selectedRow?: Row | null | undefined
   pickupOrder?: PickupOrder[]|null
   initPickupOrderRequest: () => void
-  navigateToJobOrder: () => void;
+  // navigateToJobOrder: () => void;
 }) => {
   const { t } = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role)
@@ -132,7 +132,7 @@ const PickupOrderForm = ({
               {
                 role === 'logisticadmin' && selectedRow && ['STARTED', 'OUTSTANDING'].includes(selectedRow.status) ? (
                   <CustomButton text={t('pick_up_order.table.create_job_order')} onClick={() => {
-                    navigateToJobOrder()
+                    // navigateToJobOrder()
                   }}></CustomButton>
                 ) : role === 'logisticadmin' && selectedRow && selectedRow.status === 'CREATED' && selectedRow?.tenantId === tenantId ? (
                   <Button
