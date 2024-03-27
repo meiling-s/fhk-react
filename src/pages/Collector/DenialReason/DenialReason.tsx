@@ -25,7 +25,7 @@ function createDenialReason(
   reasonNameTchi: string,
   reasonNameSchi: string,
   reasonNameEng: string,
-  introduction: string,
+  description: string,
   remark: string,
   functionId: number,
   status: string,
@@ -40,7 +40,7 @@ function createDenialReason(
     reasonNameTchi,
     reasonNameSchi,
     reasonNameEng,
-    introduction,
+    description,
     remark,
     functionId,
     status,
@@ -112,31 +112,37 @@ const DenialReason: FunctionComponent = () => {
   const columns: GridColDef[] = [
     {
       field: "reasonNameSchi",
-      headerName: t("denialReason.reasonNameSchi"),
+      headerName: t("denial_reason.reason_name_tchi"),
       width: 200,
       type: "string",
     },
     {
       field: "reasonNameTchi",
-      headerName: t("denialReason.reasonNameTchi"),
+      headerName: t("denial_reason.reason_name_schi"),
       width: 200,
       type: "string",
     },
     {
       field: "reasonNameEng",
-      headerName: t("denialReason.reasonNameEng"),
+      headerName: t("denial_reason.reason_name_eng"),
       width: 200,
       type: "string",
     },
     {
-      field: "introduction",
-      headerName: t("denialReason.introduction"),
+      field: "functionId",
+      headerName: t("denial_reason.corresponding_functions"),
+      width: 100,
+      type: "string",
+    },
+    {
+      field: "description",
+      headerName: t("denial_reason.description"),
       width: 100,
       type: "string",
     },
     {
       field: "remark",
-      headerName: t("denialReason.remark"),
+      headerName: t("denial_reason.remark"),
       width: 100,
       type: "string",
     },
@@ -261,7 +267,7 @@ const DenialReason: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t("staffManagement.denialReason")}
+            {t("top_menu.denial_reason")}
           </Typography>
           <Button
             sx={[

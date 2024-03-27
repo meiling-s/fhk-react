@@ -4,7 +4,7 @@ export type DenialReason = {
   reasonNameTchi: string;
   reasonNameSchi: string;
   reasonNameEng: string;
-  introduction: string;
+  description: string;
   remark: string;
   functionId: number;
   status: string;
@@ -18,7 +18,7 @@ export type CreateDenialReason = {
   reasonNameTchi: string;
   reasonNameSchi: string;
   reasonNameEng: string;
-  introduction: string;
+  description: string;
   remark: string;
   functionId: number;
 };

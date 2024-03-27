@@ -92,8 +92,10 @@
   "top_menu": {
     "general_settings": "一般设定",
     "packaging_unit": "包装单位",
-    "workshop": "仓库",
+    "workshop": "工场",
+    "vehicles": "车辆",
     "company": "公司",
+    "waste_disposal": "废弃点",
     "staff_positions": "员工职位",
     "denial_reason": "拒绝原因",
     "add_new": "新增"
@@ -652,5 +654,13 @@
     "modify_template" : {
       "header" : "修改范本"
     }
+  },
+  "denial_reason": {
+    "reason_name_tchi": "原因 (繁体中文)",
+    "reason_name_schi": "原因 (简体中文)",
+    "reason_name_eng": "原因 (英文)",
+    "corresponding_functions": "对应功能",
+    "description": "简介",
+    "remark": "备注"
   }
 }

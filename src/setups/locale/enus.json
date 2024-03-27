@@ -93,7 +93,9 @@
     "general_settings": "General settings",
     "packaging_unit": "Packaging unit",
     "workshop": "Warehouse",
+    "vehicles": "Vehicles",
     "company": "Company",
+    "waste_disposal": "Waste Disposal",
     "staff_positions": "Staff positions",
     "denial_reason": "Denial reason",
     "add_new": "New"
@@ -675,5 +677,13 @@
     "modify_template" : {
       "header" : "Modify Template"
     }
+  },
+  "denial_reason": {
+    "reason_name_tchi": "Reason (Traditional Chinese)",
+    "reason_name_schi": "Reason (Simplified Chinese)",
+    "reason_name_eng": "Reason (English)",
+    "corresponding_functions": "Corresponding Functions",
+    "description": "Description",
+    "remark": "Remark"
   }
 }

@@ -95,7 +95,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     reasonNameTchi: "",
     reasonNameSchi: "",
     reasonNameEng: "",
-    introduction: "",
+    description: "",
     remark: "",
     functionId: null,
   });
@@ -166,7 +166,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         reasonNameTchi: "",
         reasonNameSchi: "",
         reasonNameEng: "",
-        introduction: "",
+        description: "",
         remark: "",
         functionId: null,
       });
@@ -454,11 +454,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
               <CustomField label={t("vehicle.licensePlate")}>
                 <CustomTextField
                   id="licensePlate"
-                  value={form.introduction}
+                  value={form.description}
                   disabled={action === "delete"}
                   placeholder={t("vehicle.licensePlate")}
                   onChange={(event) =>
-                    onChangeForm("introduction", event.target.value)
+                    onChangeForm("description", event.target.value)
                   }
                   multiline
                   textarea

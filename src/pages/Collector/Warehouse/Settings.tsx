@@ -5,7 +5,6 @@ import Warehouse from "./Warehouse";
 import Vehicle from "../Vehicles/Vechicles";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import UserAccount from "../UserAccount/UserAccount";
 import DenialReason from "../DenialReason/DenialReason";
 
 const Settings: FunctionComponent = () => {
@@ -22,10 +21,11 @@ const Settings: FunctionComponent = () => {
     t("top_menu.general_settings"),
     t("top_menu.packaging_unit"),
     t("top_menu.workshop"),
-    t("vehicle.vehicle"),
+    t("top_menu.vehicles"),
+    t("top_menu.company"),
+    t("top_menu.waste_disposal"),
     t("top_menu.staff_positions"),
     t("top_menu.denial_reason"),
-    t("userAccount.user"),
   ];
 
   return (
@@ -39,14 +39,22 @@ const Settings: FunctionComponent = () => {
           className="lg:px-10 sm:px-4 bg-bg-primary"
         />
         {/* rendering content base on tab index */}
-        {selectedTab === 2 ? (
+        {selectedTab === 0 ? (
+          <></>
+        ) : selectedTab === 1 ? (
+          <></>
+        ) : selectedTab === 2 ? (
           <Warehouse />
-        ) : selectedTab === 3 ? (
+        ) :  selectedTab === 3 ? (
           <Vehicle />
+        ) : selectedTab === 4 ? (
+          <></>
         ) : selectedTab === 5 ? (
-          <DenialReason />
+          <></>
         ) : selectedTab === 6 ? (
-          <UserAccount />
+          <></>
+        ) : selectedTab === 7 ? (
+          <DenialReason />
         ) : (
           <div className="p-4 text-center">content not available</div>
         )}
