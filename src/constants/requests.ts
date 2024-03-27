@@ -22,12 +22,12 @@ export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
   url: `api/v1/account/t/addTenant/${realm}`,
 });
 
-// export const GET_ALL_TENANT: AxiosRequestConfig = {
-//   method: 'get',
-//   url: 'api/v1/account/tenant/astd/tenant'
-// }
+export const GET_ALL_TENANT: AxiosRequestConfig = {
+  method: "get",
+  url: "api/v1/account/t/",
+};
 
-export const GET_ALL_TENANT = (tenantId: string): AxiosRequestConfig => ({
+export const SEARCH_TENANT = (tenantId: number): AxiosRequestConfig => ({
   method: "get",
   url: `api/v1/account/t/searching/${tenantId}`,
 });
@@ -527,6 +527,7 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
 //API roster
 export const GET_ROSTER_LIST = (
   tenantId: string,
+
   startAt: string
 ): AxiosRequestConfig => ({
   method: "get",
@@ -727,31 +728,4 @@ export const GET_LIST_NOTIF_TEMPLATE_STAFF = (
 ): AxiosRequestConfig => ({
   method: "get",
   url: `api/v1/collectors/notiTemplate/${tenantId}`,
-});
-
-// STAFF ENQUIRY
-export const GET_STAFF_ENQUIRY = (tenantId: string): AxiosRequestConfig => ({
-  method: "get",
-  url: `api/v1/logistic/staff`,
-});
-
-export const CREATE_STAFF_ENQUIRY: AxiosRequestConfig = {
-  method: "post",
-  url: "api/v1/logistic/staff",
-};
-
-export const EDIT_STAFF_ENQUIRY = (
-  tenantId: string,
-  staffId: string
-): AxiosRequestConfig => ({
-  method: "put",
-  url: `api/v1/logistic/staff/${tenantId}/${staffId}`,
-});
-
-export const DELETE_STAFF_ENQUIRY = (
-  tenantId: string,
-  staffId: string
-): AxiosRequestConfig => ({
-  method: "patch",
-  url: `api/v1/logistic/staff/${tenantId}/${staffId}`,
 });
