@@ -177,6 +177,13 @@ const CreateRecycleFormLogistic = ({
       pickupAt: Yup.string()
         .required('This pickupAt is required')
         .test(
+          'invalid-date',
+          'Invalid pickup time, choose again the time',
+          function (value) {
+            return value !== 'Invalid Date'
+          }
+        )
+        .test(
           'not-in-prev-data',
           'Pickup time already exists in previous data',
           function (value) {
