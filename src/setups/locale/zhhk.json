@@ -31,7 +31,7 @@
     "serviceType": "服務種類",
     "basic": "基本",
     "additional": "額外",
-    "orderService": "其他服務",
+    "other": "其他服務",
     "create": "建立",
     "save": "儲存",
     "cancel": "取消",
@@ -236,7 +236,7 @@
     "closed": "已取消",
     "outstanding": "已逾期",
     "suspend": "已暫停",
-    "DENY": "不接受",
+    "deny": "不接受",
     "success": "成功",
     "failed": "失敗",
     "enable": "啟用",
@@ -654,25 +654,79 @@
     "successDeleted": "删除成功",
     "errorDeleted": "错误删除"
   },
+  "job_order": {
+    "enquiry_job_order": "工作運單",
+    "table": {
+      "created_datetime": "建立日期",
+      "jo_id": "工作運單編號",
+      "pico_id": "回收運單編號",
+      "driver_id": "司機名稱",
+      "plate_no": "車牌號碼",
+      "sender_company": "寄件公司",
+      "receiver_company": "收件公司",
+      "status": "狀態",
+      "operation": "操作",
+      "approve": "核準"
+    },
+    "filter": {
+      "search": "搜索",
+      "driver": "司机",
+      "status": "狀態"
+    },
+    "item": {
+      "detail": "工作運單",
+      "shipping_info": "運輸資料",
+      "date_time": "建立日期及時間",
+      "reference_po_number": "參考運單編號",
+      "sender_name": "寄件公司",
+      "rec_loc_info": "回收地點資料"
+    },
+    "confirm_approve_title": "確認核準吗？",
+    "confirm_approve": "确认核準",
+    "cancel": "取消",
+    "approved_success": "核準成功"
+  },
+  "jobOrder": {
+    "job_order_menu": "工作運單",
+    "create_work_waybill": "建立工作運單",
+    "shipping_information": "運輸資料",
+    "corresponding_waybill": "對應運單",
+    "shipping_validity_date_from": "運輸有效日期由",
+    "shipping_validity_date_to": "至",
+    "shipping_company_name": "寄件公司名稱",
+    "recycling_location_information": "回收地點資料",
+    "main_category": "主類別",
+    "subcategory": "次類別",
+    "estimated_shipping_time": "預計運送時間",
+    "weight": "重量",
+    "shipping_and_receiving_companies": "寄件及收件公司",
+    "delivery_and_arrival_locations": "送出及到達地點",
+    "setup_time": "建立時間",
+    "finish": "完成",
+    "cancel": "取消",
+    "driver": "司機",
+    "plat_number": "車牌號碼",
+    "assign_driver": "指派司機"
+  },
   "notification": {
     "notification_menu": "通知範本",
     "notification_title": "範本",
-    "menu_recycling_materials_and_waybills" : {
-      "tab_name" : "回收物及運單",
-      "name" : "名稱",
-      "type" : "種類",
-      "title" :  "標題",
-      "language" : "語言"
+    "menu_recycling_materials_and_waybills": {
+      "tab_name": "回收物及運單",
+      "name": "名稱",
+      "type": "種類",
+      "title": "標題",
+      "language": "語言"
     },
     "menu_staff": {
-      "tab_name" : "員工",
-      "name" : "名稱",
-      "type" : "種類",
-      "title" :  "標題",
-      "language" : "語言"
+      "tab_name": "員工",
+      "name": "名稱",
+      "type": "種類",
+      "title": "標題",
+      "language": "語言"
     },
-    "modify_template" : {
-      "header" : "修改範本"
+    "modify_template": {
+      "header": "修改範本"
     }
   },
   "general_settings": {

@@ -1,23 +1,42 @@
 // @ts-nocheck
-import { Box, Button, Collapse, Divider, Grid, List, ListItemButton, ListItemText, Typography } from "@mui/material";
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { styles } from "../../../../constants/styles";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import CustomField from "../../../../components/FormComponents/CustomField";
-import { useEffect, useState } from "react";
-import { createCP, openingPeriod, recyclable, timePeriod } from "../../../../interfaces/collectionPoint";
-import CustomTextField from "../../../../components/FormComponents/CustomTextField";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import useDebounce from "../../../../hooks/useDebounce";
-import { getLocation } from "../../../../APICalls/getLocation";
-import CustomSwitch from "../../../../components/FormComponents/CustomSwitch";
-import CustomPeriodSelect from "../../../../components/FormComponents/CustomPeriodSelect";
-import { useNavigate } from "react-router-dom";
-import { findCollectionPointExistByName, findCollectionPointExistByContractAndAddress, createCollectionPoint } from "../../../../APICalls/collectionPointManage"
+import {
+  Box,
+  Button,
+  Collapse,
+  Divider,
+  Grid,
+  List,
+  ListItemButton,
+  ListItemText,
+  Typography
+} from '@mui/material'
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
+import { styles } from '../../../../constants/styles'
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
+import CustomField from '../../../../components/FormComponents/CustomField'
+import { useEffect, useState } from 'react'
+import {
+  createCP,
+  openingPeriod,
+  recyclable,
+  timePeriod
+} from '../../../../interfaces/collectionPoint'
+import CustomTextField from '../../../../components/FormComponents/CustomTextField'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import dayjs from 'dayjs'
+import isBetween from 'dayjs/plugin/isBetween'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import useDebounce from '../../../../hooks/useDebounce'
+import { getLocation } from '../../../../APICalls/getLocation'
+import CustomSwitch from '../../../../components/FormComponents/CustomSwitch'
+import CustomPeriodSelect from '../../../../components/FormComponents/CustomPeriodSelect'
+import { useNavigate } from 'react-router-dom'
+import {
+  findCollectionPointExistByName,
+  findCollectionPointExistByContractAndAddress,
+  createCollectionPoint
+} from '../../../../APICalls/collectionPointManage'
 
 import { formErr, format } from '../../../../constants/constant'
 import { useTranslation } from 'react-i18next'
@@ -36,10 +55,9 @@ import ColPointTypeList from '../../../../components/SpecializeComponents/Collec
 import SiteTypeList from '../../../../components/SpecializeComponents/SiteTypeList'
 import RoutineSelect from '../../../../components/SpecializeComponents/RoutineSelect'
 import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg'
-import { localStorgeKeyName } from "../../../../constants/constant";
+import { localStorgeKeyName } from '../../../../constants/constant'
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
-import CustomItemList from "../../../../components/FormComponents/CustomItemList";
-
+import CustomItemList from '../../../../components/FormComponents/CustomItemList'
 
 dayjs.extend(isBetween)
 
@@ -137,24 +155,23 @@ function CreateCollectionPoint() {
     }
   }, [debouncedSearchValue])
 
-  const checkRecyclable = (items : recyclable) =>{
-    return items.every(item => item.recycSubTypeId.length > 0)
+  const checkRecyclable = (items: recyclable) => {
+    return items.every((item) => item.recycSubTypeId.length > 0)
   }
 
-  const checkTimePeriod = () =>{
-    return colPtRoutine?.routineContent.every(item =>
-       item.startTime.length > 0 && item.endTime.length > 0 )
+  const checkTimePeriod = () => {
+    return colPtRoutine?.routineContent.every(
+      (item) => item.startTime.length > 0 && item.endTime.length > 0
+    )
   }
 
-  const checkTimeNotDuplicate = () =>{
-    
-    const isvalid = colPtRoutine?.routineContent.every( item => {
-      for (let index=0; index < item.startTime.length; index++){
-
+  const checkTimeNotDuplicate = () => {
+    const isvalid = colPtRoutine?.routineContent.every((item) => {
+      for (let index = 0; index < item.startTime.length; index++) {
         const currPair = item.startTime[index] + item.endTime[index]
         const nextPair = item.startTime[index + 1] + item.endTime[index + 1]
 
-        if(currPair === nextPair) {
+        if (currPair === nextPair) {
           return false
         }
       }
@@ -162,39 +179,143 @@ function CreateCollectionPoint() {
     })
 
     return isvalid
-    
   }
 
   useEffect(() => {
-
-        //do validation here
-        const validate = async () => {
-            const tempV: formValidate[] = []        //temp validation
-            colType == "" && tempV.push({ field: "col.colType", problem: formErr.empty, type: "error" });
-            siteType == "" && tempV.push({ field: "col.siteType", problem: formErr.empty, type: "error" });
-            premiseName.length > 100 && tempV.push({ field: "col.premiseName", problem: formErr.exceedsMaxLength, type: "error" });
-            await address == "" ? tempV.push({ field: "col.address", problem: formErr.empty, type: "error" })
-                : await checkAddressUsed(contractNo, address) && tempV.push({ field: "col.address", problem: formErr.hasBeenUsed, type: "error" });
-            await colName == "" ? tempV.push({ field: "col.colName", problem: formErr.empty, type: "error" })
-                : await checkColPtExist(colName) && tempV.push({ field: "col.colName", problem: formErr.hasBeenUsed, type: "error" });
-            (dayjs(new Date()).isBetween(openingPeriod.startDate,openingPeriod.endDate) && status == false && !skipValidation.includes("col.openingDate")) &&      //status == false: status is "CLOSED"
-                tempV.push({ field: "col.openingDate", problem: formErr.withInColPt_Period, type: "warning" });
-            (colPtRoutine?.routineType == "" ) && tempV.push({ field: "col.startTime", problem: formErr.empty, type: "error" });
-            (colPtRoutine?.routineContent.length == 0 || !checkTimePeriod() || !checkTimeNotDuplicate()) && tempV.push({ field: "time_Period", problem: formErr.empty, type: "error" });
-            premiseName == "" && tempV.push({ field: "col.premiseName", problem: formErr.empty, type: "error" });
-            premiseType == "" && tempV.push({ field: "col.premiseType", problem: formErr.empty, type: "error" });
-            premiseRemark == "" && tempV.push({ field: "col.premiseRemark", problem: formErr.empty, type: "error" });
-            (recyclables.length == 0) && tempV.push({ field: "col.recycType", problem: formErr.empty, type: "error" });
-            console.log("num:",staffNum,Number.isNaN(parseInt(staffNum)),staffNum == "")
-            staffNum == "" && tempV.push({ field: "col.numOfStaff", problem: formErr.empty, type: "error" });
-            (Number.isNaN(parseInt(staffNum)) && !(staffNum == ""))
-                ? tempV.push({ field: "col.numOfStaff", problem: formErr.wrongFormat, type: "error" })
-                : (!Number.isNaN(parseInt(staffNum)) && parseInt(staffNum) < 0) && tempV.push({ field: "col.numOfStaff", problem: formErr.numberSmallThanZero, type: "error" });
-            contractNo == "" ? tempV.push({ field: "col.contractNo", problem: formErr.empty, type: "warning" })
-                : (!checkContractisEff(contractNo) && !skipValidation.includes("col.contractNo")) && tempV.push({ field: "col.contractNo", problem: formErr.notWithInContractEffDate, type: "warning" });
-            setValidation(tempV);
-
-        }
+    //do validation here
+    const validate = async () => {
+      const tempV: formValidate[] = [] //temp validation
+      colType == '' &&
+        tempV.push({
+          field: 'col.colType',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      siteType == '' &&
+        tempV.push({
+          field: 'col.siteType',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      premiseName.length > 100 &&
+        tempV.push({
+          field: 'col.premiseName',
+          problem: formErr.exceedsMaxLength,
+          type: 'error'
+        })
+      ;(await address) == ''
+        ? tempV.push({
+            field: 'col.address',
+            problem: formErr.empty,
+            type: 'error'
+          })
+        : (await checkAddressUsed(contractNo, address)) &&
+          tempV.push({
+            field: 'col.address',
+            problem: formErr.hasBeenUsed,
+            type: 'error'
+          })
+      ;(await colName) == ''
+        ? tempV.push({
+            field: 'col.colName',
+            problem: formErr.empty,
+            type: 'error'
+          })
+        : (await checkColPtExist(colName)) &&
+          tempV.push({
+            field: 'col.colName',
+            problem: formErr.hasBeenUsed,
+            type: 'error'
+          })
+      dayjs(new Date()).isBetween(
+        openingPeriod.startDate,
+        openingPeriod.endDate
+      ) &&
+        status == false &&
+        !skipValidation.includes('col.openingDate') && //status == false: status is "CLOSED"
+        tempV.push({
+          field: 'col.openingDate',
+          problem: formErr.withInColPt_Period,
+          type: 'warning'
+        })
+      colPtRoutine?.routineType == '' &&
+        tempV.push({
+          field: 'col.startTime',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      ;(colPtRoutine?.routineContent.length == 0 ||
+        !checkTimePeriod() ||
+        !checkTimeNotDuplicate()) &&
+        tempV.push({
+          field: 'time_Period',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      premiseName == '' &&
+        tempV.push({
+          field: 'col.premiseName',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      premiseType == '' &&
+        tempV.push({
+          field: 'col.premiseType',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      premiseRemark == '' &&
+        tempV.push({
+          field: 'col.premiseRemark',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      recyclables.length == 0 &&
+        tempV.push({
+          field: 'col.recycType',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      console.log(
+        'num:',
+        staffNum,
+        Number.isNaN(parseInt(staffNum)),
+        staffNum == ''
+      )
+      staffNum == '' &&
+        tempV.push({
+          field: 'col.numOfStaff',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      Number.isNaN(parseInt(staffNum)) && !(staffNum == '')
+        ? tempV.push({
+            field: 'col.numOfStaff',
+            problem: formErr.wrongFormat,
+            type: 'error'
+          })
+        : !Number.isNaN(parseInt(staffNum)) &&
+          parseInt(staffNum) < 0 &&
+          tempV.push({
+            field: 'col.numOfStaff',
+            problem: formErr.numberSmallThanZero,
+            type: 'error'
+          })
+      contractNo == ''
+        ? tempV.push({
+            field: 'col.contractNo',
+            problem: formErr.empty,
+            type: 'warning'
+          })
+        : !checkContractisEff(contractNo) &&
+          !skipValidation.includes('col.contractNo') &&
+          tempV.push({
+            field: 'col.contractNo',
+            problem: formErr.notWithInContractEffDate,
+            type: 'warning'
+          })
+      setValidation(tempV)
+    }
 
     validate()
   }, [
@@ -314,17 +435,20 @@ function CreateCollectionPoint() {
     return false
   }
 
-    const checkAddressUsed = async (contractNo: string, address: string) => {
-        const result = await findCollectionPointExistByContractAndAddress(contractNo, address);
-        if(result && result.data != undefined){
-            console.log(result.data);
-            return result.data;
-        }
-        return false;
+  const checkAddressUsed = async (contractNo: string, address: string) => {
+    const result = await findCollectionPointExistByContractAndAddress(
+      contractNo,
+      address
+    )
+    if (result && result.data != undefined) {
+      console.log(result.data)
+      return result.data
     }
+    return false
+  }
 
   const handleCreateOnClick = async () => {
-    console.log("colPtRoutine", colPtRoutine)
+    console.log('colPtRoutine', colPtRoutine)
     const loginId = localStorage.getItem(localStorgeKeyName.username)
     const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
 
@@ -339,7 +463,7 @@ function CreateCollectionPoint() {
         address: address,
         gpsCode: toGpsCode(gpsCode[0], gpsCode[1]),
         epdFlg: EPDFlg,
-        extraServiceFlg: !serviceType,
+        //extraServiceFlg: !serviceType,
         serviceFlg: serviceFlg,
         siteTypeId: siteType,
         contractNo: contractNo,
@@ -377,21 +501,30 @@ function CreateCollectionPoint() {
     navigate('/collector/collectionPoint') //goback to last page
   }
 
-  const serviceTypeList = [{
-    id: 'basic',
-    name: t('col.basic')
-  },{
-    id: 'additional',
-    name: t('col.additional')
-  }, {
-    id: 'order',
-    name: t('col.orderService')
-  }]
+  const serviceTypeList = [
+    {
+      id: 'basic',
+      name: t('col.basic')
+    },
+    {
+      id: 'additional',
+      name: t('col.additional')
+    },
+    {
+      id: 'others',
+      name: t('col.other')
+    }
+  ]
   const [serviceFlg, setServiceFlg] = useState<string>('basic')
 
   return (
     <>
-      <Box sx={styles.innerScreen_container, {paddingLeft: {xs: 0}, width: '100%'}}>
+      <Box
+        sx={
+          (styles.innerScreen_container,
+          { paddingLeft: { xs: 0 }, width: '100%' })
+        }
+      >
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
           <Grid
             container
@@ -401,11 +534,10 @@ function CreateCollectionPoint() {
               ({ ...styles.gridForm },
               {
                 width: { xs: '100%' },
-                marginTop: {sm:2, xs: 6 },
+                marginTop: { sm: 2, xs: 6 },
                 marginLeft: {
                   xs: 0
-                },
-                
+                }
               })
             }
             className="sm:ml-0 mt-o w-full"
@@ -501,16 +633,18 @@ function CreateCollectionPoint() {
             <CustomField
               label={t('col.startTime')}
               mandatory={true}
-              style={{ maxWidth: '220px'}}
+              style={{ maxWidth: '220px' }}
             >
-              <RoutineSelect setRoutine={setColPtRoutine} requiredTimePeriod={true}/>
+              <RoutineSelect
+                setRoutine={setColPtRoutine}
+                requiredTimePeriod={true}
+              />
             </CustomField>
-            {
-              !checkTimeNotDuplicate() && (
-                <div className="ml-5 text-red text-sm">{t('form.error.timeCantDuplicate')}</div>
-              )
-            }
-            
+            {!checkTimeNotDuplicate() && (
+              <div className="ml-5 text-red text-sm">
+                {t('form.error.timeCantDuplicate')}
+              </div>
+            )}
 
             <CustomField label={t('col.premiseName')} mandatory={true}>
               <CustomTextField
@@ -531,14 +665,14 @@ function CreateCollectionPoint() {
 
             <Grid item>
               {/* <Collapse in={premiseType == 'PT00010'}> */}
-                <CustomField label={t('col.premiseRemark')} mandatory={true}>
-                  <CustomTextField
-                    id="premiseRemark"
-                    placeholder={t('col.enterText')}
-                    onChange={(event) => setPremiseRemark(event.target.value)}
-                    error={checkString(premiseName)}
-                  />
-                </CustomField>
+              <CustomField label={t('col.premiseRemark')} mandatory={true}>
+                <CustomTextField
+                  id="premiseRemark"
+                  placeholder={t('col.enterText')}
+                  onChange={(event) => setPremiseRemark(event.target.value)}
+                  error={checkString(premiseName)}
+                />
+              </CustomField>
               {/* </Collapse> */}
             </Grid>
 
@@ -625,12 +759,19 @@ function CreateCollectionPoint() {
             </CustomField>
 
             <CustomField label={t('col.serviceType')}>
-              <CustomItemList items={serviceTypeList} singleSelect={setServiceFlg} defaultSelected={serviceFlg}></CustomItemList>
+              <CustomItemList
+                items={serviceTypeList}
+                singleSelect={setServiceFlg}
+                defaultSelected={serviceFlg}
+              ></CustomItemList>
             </CustomField>
             <Grid item className="lg:flex sm:block text-center">
               <Button
-                sx={[styles.buttonFilledGreen, localstyles.localButton, 
-                {marginBottom: {md: 0, xs:2}}]}
+                sx={[
+                  styles.buttonFilledGreen,
+                  localstyles.localButton,
+                  { marginBottom: { md: 0, xs: 2 } }
+                ]}
                 onClick={() => handleCreateOnClick()}
               >
                 {t('col.create')}
@@ -663,8 +804,8 @@ const localstyles = {
   localButton: {
     width: '200px',
     fontSize: 18,
-    mr: 3,
-  },
+    mr: 3
+  }
 }
 
 export default CreateCollectionPoint

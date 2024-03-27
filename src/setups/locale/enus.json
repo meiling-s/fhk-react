@@ -31,7 +31,7 @@
     "serviceType": "Service type",
     "basic": "Basic",
     "additional": "Additional",
-    "orderService": "Other Services",
+    "other": "Other Services",
     "create": "Create",
     "save": "Save",
     "cancel": "Cancel",
@@ -238,7 +238,7 @@
     "closed": "Closed",
     "outstanding": "Outstanding",
     "suspend": "Suspend",
-    "DENY": "Deny",
+    "deny": "Deny",
     "success": "Success",
     "failed": "Failed",
     "enable": "Enable",
@@ -469,7 +469,7 @@
   "vehicle": {
     "vehicle": "Vehicle",
     "serviceType": "Service type",
-    "vehicleType": "Vehicle type",
+    "vehicleType": "Vehicle category",
     "licensePlate": "License plate",
     "picture": "Picture",
     "basic": "Basic",
@@ -655,25 +655,79 @@
     "successDeleted": "Success Deleted",
     "errorDeleted": "Error deleted"
   },
+  "job_order": {
+    "enquiry_job_order": "Created datetime",
+    "table": {
+      "created_datetime": "Created datetime",
+      "jo_id": "JO number",
+      "pico_id": "PO number",
+      "driver_id": "Driver name",
+      "plate_no": "Plate number",
+      "sender_company": "Sender company name",
+      "receiver_company": "Receiver company name",
+      "status": "Status",
+      "operation": "Operation",
+      "approve": "Approve"
+    },
+    "filter": {
+      "search": "Search",
+      "driver": "Driver",
+      "status": "Status"
+    },
+    "item": {
+      "detail": "Job Order",
+      "shipping_info": "Shipping information",
+      "date_time": "Creation date and time",
+      "reference_po_number": "Reference PO number",
+      "sender_name": "Shipping company",
+      "rec_loc_info": "Recycling location information"
+    },
+    "confirm_approve_title": "Confirm approve?",
+    "confirm_approve": "Confirm approve",
+    "cancel": "Cancel",
+    "approved_success": "Approved successfully"
+  },
+  "jobOrder": {
+    "job_order_menu": "Job Order",
+    "create_work_waybill": "Create Job Order",
+    "shipping_information": "Shipping information",
+    "corresponding_waybill": "Corresponding waybill",
+    "shipping_validity_date_from": "Shipping validity",
+    "shipping_validity_date_to": "to",
+    "shipping_company_name": "Shipping company",
+    "recycling_location_information": "Recycling location information",
+    "main_category": "Type",
+    "subcategory": "Subtype",
+    "estimated_shipping_time": "Estimated shipping time",
+    "weight": "weight",
+    "shipping_and_receiving_companies": "Shipping and receiving",
+    "delivery_and_arrival_locations": "Delivery and arrival",
+    "setup_time": "Setup time",
+    "finish": "Finish",
+    "cancel": "Cancel",
+    "driver": "Driver",
+    "plat_number": "Plate number",
+    "assign_driver": "Assign a driver"
+  },
   "notification": {
     "notification_menu": "Notice template",
     "notification_title": "Template",
-    "menu_recycling_materials_and_waybills" : {
+    "menu_recycling_materials_and_waybills": {
       "tab_name": "Recyclables and PO",
-      "name" : "Name",
-      "type" : "Type",
-      "title" : "Title",
-      "language" : "Language"
+      "name": "Name",
+      "type": "Type",
+      "title": "Title",
+      "language": "Language"
     },
-    "menu_staff":{
-      "tab_name" :  "Staff",
-      "name" : "Name",
-      "type" : "Type",
-      "title" : "Title",
-      "language" : "Language"
+    "menu_staff": {
+      "tab_name": "Staff",
+      "name": "Name",
+      "type": "Type",
+      "title": "Title",
+      "language": "Language"
     },
-    "modify_template" : {
-      "header" : "Modify Template"
+    "modify_template": {
+      "header": "Modify Template"
     }
   },
   "general_settings": {
