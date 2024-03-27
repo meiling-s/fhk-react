@@ -9,10 +9,10 @@ const UpdateTemplate = () => {
     const { type, templateId } = useParams();
     return(
         <div>
-             {type === Notiftemplate.app && <AppTemplate templateId = {templateId}/>}
-            {type === Notiftemplate.email && <EmailTemplate templateId = {templateId}/>}
-            {type === Notiftemplate.broadcast && <BroadcastTemplate templateId = {templateId}/>}
-            {type === Notiftemplate.sms && <SMSTemplate templateId = {templateId}/>}
+            {templateId && type === Notiftemplate.app && <AppTemplate templateId = {templateId}/>}
+            {templateId && type === Notiftemplate.email && <EmailTemplate templateId = {templateId}/>}
+            {templateId && type === Notiftemplate.broadcast && <BroadcastTemplate templateId = {templateId}/>}
+            {templateId && type === Notiftemplate.sms && <SMSTemplate templateId = {templateId}/>}
         </div>
     )
 };

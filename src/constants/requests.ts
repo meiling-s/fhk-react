@@ -649,3 +649,13 @@ export const GET_DETAIL_NOTIF_TEMPLATE = (tenantId: string, templateId: string):
   method: 'get',
   url: `api/v1/collectors/notiTemplate/${tenantId}/${templateId}`
 })
+
+export const UPDATE_NOTIF_TEMPLATE = (tenantId: string, templateId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/collectors/notiTemplate/${tenantId}/${templateId}`
+})
+
+export const UPDATE_NOTIF_TEMPLATE_BROADCAST = (tenantId: string, templateId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/collectors/notiTemplate/${tenantId}/${templateId}`
+})

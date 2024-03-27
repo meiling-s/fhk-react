@@ -2,7 +2,6 @@ import { useEffect, useState, FunctionComponent, useCallback } from 'react'
 import { Box} from '@mui/material'
 import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridRenderCellParams,} from '@mui/x-data-grid'
 import {  EDIT_OUTLINED_ICON} from '../../../themes/icons'
-import { ToastContainer, toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { NotifTemplate } from '../../../interfaces/notif'
 import { getListNotifTemplatePO, getListNotifTemplateStaff } from '../../../APICalls/notify'
@@ -55,7 +54,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   useEffect(() => {
     if(selectedTab === 0) {
       setFillteredTemplate([])
-      // initRecyclablesList()
+      initRecyclablesList()
     } else if(selectedTab === 1) {
       setFillteredTemplate([])
       initStaffList()
@@ -66,7 +65,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     const result = await getListNotifTemplateStaff();
     if (result) {
       const data = result.data
-      console.log('notifTemplate', data)
+    
       let notifMappingTemplate: NotifTemplate[] = []
       data.map((item: any) => {
         notifMappingTemplate.push(
@@ -180,32 +179,6 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     setDrawerOpen(true)
   }
 
-  const showErrorToast = (msg: string) => {
-    toast.error(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
-
-  const showSuccessToast = (msg: string) => {
-    toast.info(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
-
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
@@ -216,8 +189,6 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
       <Box
         sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', pr: 4}}
       >
-        <ToastContainer></ToastContainer>
-
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
             <DataGrid
@@ -248,31 +219,6 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
         </div>
       </Box>
   )
-}
-
-let localstyles = {
-  inputState: {
-    mt: 3,
-    width: '100%',
-    m: 1,
-    borderRadius: '10px',
-    bgcolor: 'white',
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '10px',
-      '& fieldset': {
-        borderColor: '#79CA25'
-      },
-      '&:hover fieldset': {
-        borderColor: '#79CA25'
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#79CA25'
-      },
-      '& label.Mui-focused': {
-        color: '#79CA25'
-      }
-    }
-  }
 }
 
 export default CurrentMenu
