@@ -1,31 +1,32 @@
-import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Tabs from '../../../components/Tabs'
-import Warehouse from './Warehouse'
-import Vehicle from '../Vehicles/Vechicles'
-import { Box } from '@mui/material'
-import { useTranslation } from 'react-i18next'
-import UserAccount from '../UserAccount/UserAccount'
+import { FunctionComponent, useCallback, ReactNode, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Tabs from "../../../components/Tabs";
+import Warehouse from "./Warehouse";
+import Vehicle from "../Vehicles/Vechicles";
+import { Box } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import UserAccount from "../UserAccount/UserAccount";
+import DenialReason from "../DenialReason/DenialReason";
 
 const Settings: FunctionComponent = () => {
   // const navigate = useNavigate()
-  const { t } = useTranslation()
-  const [selectedTab, setSelectedTab] = useState(2)
+  const { t } = useTranslation();
+  const [selectedTab, setSelectedTab] = useState(2);
   const handleTabChange = (value: number, label: string) => {
-    console.log(`Navigated to ${value} ${label}`)
-    setSelectedTab(value)
-  }
+    console.log(`Navigated to ${value} ${label}`);
+    setSelectedTab(value);
+  };
 
-  const titlePage = t('settings_page.title')
+  const titlePage = t("settings_page.title");
   const tabSettings = [
-    t('top_menu.general_settings'),
-    t('top_menu.packaging_unit'),
-    t('top_menu.workshop'),
-    t('vehicle.vehicle'),
-    t('top_menu.staff_positions'),
-    t('top_menu.denial_reason'),
-    t('userAccount.user')
-  ]
+    t("top_menu.general_settings"),
+    t("top_menu.packaging_unit"),
+    t("top_menu.workshop"),
+    t("vehicle.vehicle"),
+    t("top_menu.staff_positions"),
+    t("top_menu.denial_reason"),
+    t("userAccount.user"),
+  ];
 
   return (
     <Box className="container-wrapper w-full">
@@ -42,6 +43,8 @@ const Settings: FunctionComponent = () => {
           <Warehouse />
         ) : selectedTab === 3 ? (
           <Vehicle />
+        ) : selectedTab === 5 ? (
+          <DenialReason />
         ) : selectedTab === 6 ? (
           <UserAccount />
         ) : (
@@ -49,7 +52,7 @@ const Settings: FunctionComponent = () => {
         )}
       </div>
     </Box>
-  )
-}
+  );
+};
 
-export default Settings
+export default Settings;
