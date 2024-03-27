@@ -725,8 +725,46 @@
       "title": "標題",
       "language": "語言"
     },
-    "modify_template": {
-      "header": "修改範本"
+    "modify_template" : {
+      "header" : "修改範本",
+      "app" : {
+        "Recycling_delivery_request" : "回收物送入請求",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      },
+      "sms" : {
+        "Recycling_delivery_request" : "回收物已送到工場",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      },
+      "email" : {
+        "Recycling_delivery_request" : "登記連結",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      },
+      "broadcast" : {
+        "Recycling_delivery_request" : "系統資訊",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "start_valid_date" : "有效日期由",
+        "end_valid_date" : "至",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      }
     }
   }
 }

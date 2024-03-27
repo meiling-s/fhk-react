@@ -727,7 +727,45 @@
       "language": "Language"
     },
     "modify_template": {
-      "header": "Modify Template"
+      "header": "Modify Template",
+      "app" : {
+        "Recycling_delivery_request" : "Recycling delivery request",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "content" : "content",
+        "variables" : "Available Variables",
+        "button_submit": "Store"
+      },
+      "sms" : {
+        "Recycling_delivery_request" : "Recycling materials have been sent to the factory",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "content" : "content",
+        "variables" : "Available Variables",
+        "button_submit": "Store"
+      },
+      "email" : {
+        "Recycling_delivery_request" : "Registration link",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "content" : "content",
+        "variables" : "Available Variables",
+        "button_submit": "Store"
+      },
+      "broadcast" : {
+        "Recycling_delivery_request" : "System Information",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "start_valid_date" : "Valid date",
+        "end_valid_date" : "to",
+        "content" : "content",
+        "variables" : "Available Variables",
+        "button_submit": "Store"
+      }
     }
   }
 }

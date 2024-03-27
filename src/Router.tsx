@@ -53,7 +53,8 @@ import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePico
 import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
 import JobOrder from "./pages/Logistics/JobOrder/JobOrder";
 import LogisticAccount from './pages/Logistic/Account'
-import Notice from "./pages/Logistic/Notice/Index";
+import Notice from "./pages/ASTD/Notice/Index";
+import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 
 const Router = () => {
   return (
@@ -98,7 +99,8 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/astd" element={<CompanyManage />} />
           <Route path="/astd/company" element={<CompanyManage />} />
-          <Route path="/astd/notice" element={<></>} />
+          <Route path="/:pathRole/notice/" element={<Notice />} />
+          <Route path="/:pathRole/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/astd/report" element={<></>} />
           <Route path="/astd/statistics/recyclables" element={<></>} />
           <Route path="/astd/statistics/convoy" element={<></>} />
