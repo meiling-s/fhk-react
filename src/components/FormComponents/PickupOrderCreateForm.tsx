@@ -700,14 +700,14 @@ const PickupOrderCreateForm = ({
                     <Typography sx={[styles.header3, { marginBottom: 1 }]}>
                       {t('pick_up_order.adhoc.po_number')}
                     </Typography>
-                    {formik.values.refPicoId !== '' ||
+                    {formik.values.refPicoId !== '' &&
                     formik.values.refPicoId ? (
                       <div className="flex items-center justify-between w-[390px]">
                         <div className="font-bold text-mini">
                           {formik.values.refPicoId}
                         </div>
                         <div
-                          className="text-mini text-green-400 cursor-pointer"
+                          className={`text-mini text-[${colorTheme}] cursor-pointer`}
                           onClick={resetPicoId}
                         >
                           {t('pick_up_order.change')}
