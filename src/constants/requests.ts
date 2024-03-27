@@ -525,10 +525,13 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
 });
 
 //API roster
-export const GET_ROSTER_LIST = (tenantId: string): AxiosRequestConfig => ({
-  method: "get",
-  url: `api/v1/collectors/roster/${tenantId}`,
-});
+export const GET_ROSTER_LIST = (
+  tenantId: string,
+  startAt: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/roster/${tenantId}/${startAt}`
+})
 
 export const CREATE_ROSTER: AxiosRequestConfig = {
   method: "post",
@@ -657,12 +660,62 @@ export const GET_ALL_REASON = (
   url: `api/v1/collectors/reason/${tenantId}/${functionId}`,
 });
 
+
+//logistic/jobOrder
+export const GET_ALL_JOB_ORDER = (table: string) : AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/jo/search/${table}`
+})
+
+export const UPDATE_JOB_ORDER_STATUS = (table: string, joId: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/logistic/jo/${table}/status/${joId}`
+})
+
+export const GET_DRIVER_DETAIL_BY_ID = (table: string, driverId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/driver/${table}/${driverId}`
+})
+// get logistic , contract, vehicle for logistic admin
+export const GET_CONTRACT_LOGISTIC = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/contract/${tenantId}`
+})
+
+export const GET_LOGISTICLIST_LOGISTIC = (
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/logisticlist/${table}`
+})
+export const ASSIGN_DRIVER = (table: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `/api/v1/logistic/jo/${table}`
+})
+
+export const REJECT_DRIVER = (table: string, id: any): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `/api/v1/logistic/jo/${table}/status/${id}`
+})
+
+export const GET_DRIVER = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/logistic/driver/{table}?table=${table}`
+})
+
+export const GET_VEHICLE_LOGISTIC = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}`
+})
+
 export const GET_LIST_NOTIF_TEMPLATE_PO = (
   tenantId: string
 ): AxiosRequestConfig => ({
-  method: "get",
-  url: `api/v1/collectors/notiTemplate/${tenantId}`,
-});
+  method: 'get',
+  url: `api/v1/collectors/notiTemplate/${tenantId}`
+})
 
 export const GET_LIST_NOTIF_TEMPLATE_STAFF = (
   tenantId: string
