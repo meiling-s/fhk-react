@@ -63,6 +63,11 @@ type props = {
 }
 type CombinedType = manuList[] | collectorList[]
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+const initialTime: dayjs.Dayjs = dayjs()
+
+const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
+  return pickupAtValue.format('HH:mm:ss')
+}
 
 const initValue = {
   id: -1,
@@ -78,7 +83,7 @@ const initValue = {
   status: 'CREATED',
   createdBy: loginId,
   updatedBy: loginId,
-  pickupAt: '',
+  pickupAt: '00:00:00',
   recycType: '',
   recycSubType: '',
   weight: 0
@@ -294,8 +299,13 @@ const CreateRecycleForm = ({
     }
   ]
 
-  const initialTime = '2024-02-10T09:00:00' // Example initial time string
-  const parsedDate = new Date(initialTime) // Parse the string into a Date object
+  const formatTimePickAt = (timeValue: string) => {
+    const times = timeValue.split(':')
+    return initialTime
+      .hour(Number(times[0]))
+      .minute(Number(times[1]))
+      .second(Number(times[2]))
+  }
 
   return (
     <>
@@ -347,16 +357,11 @@ const CreateRecycleForm = ({
                 >
                   <TimePicker
                     sx={{ width: '100%' }}
-                    value={
-                      formik.values.pickupAt ? formik.values.pickupAt : null
-                    }
+                    value={formatTimePickAt(formik.values.pickupAt)}
                     onChange={(value) => {
-                      if (value != null)
-                        formik.setFieldValue(
-                          'pickupAt',
-
-                          dateToLocalTime(new Date(value))
-                        )
+                      if (value != null) {
+                        formik.setFieldValue('pickupAt', formattedTime(value))
+                      }
                     }}
                   />
                 </CustomField>
