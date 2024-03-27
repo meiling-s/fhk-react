@@ -115,6 +115,12 @@ function MainDrawer() {
       onClick: () => navigate('/collector/pickupOrder'),
       collapse: false
     },
+    "Job order": {
+      name: t('job_order.enquiry_job_order'),
+      icon:<SHIPPING_CAR_ICON/>,
+      onClick: () => navigate('/logistic/jobOrder'),
+      collapse: false
+    },
     'Warehouse dashboard':{
       name: t('warehouseDashboard.warehouse'),
       icon:<InventoryIcon/>,
