@@ -127,7 +127,10 @@ const Router = () => {
           <Route path="/logistic/notice" element={<Notice />} />
           <Route path="/logistics/account" element={<LogisticAccount />} />
         </Route>
-        {/* </Route> */}
+
+        <Route element={<MainLayout />}>
+          <Route path="/manufacturing/pickupOrder" element={<PickupOrder />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
