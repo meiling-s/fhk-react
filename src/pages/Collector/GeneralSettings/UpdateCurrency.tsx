@@ -89,13 +89,10 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
   
 
   const handleSubmit = async () => {
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
+    const username = localStorage.getItem(localStorgeKeyName.username) || ""
 
-    const formData: Currency = {
-      monetaryValue: selectedCurrency.id
-    }
-
-    const result = await updateUserCurrency(formData, Number(tenantId))
+    const result = await updateUserCurrency(tenantId, selectedCurrency.id, username)
     if (result) {
       onSubmitData("success", "Success update currency")
       handleDrawerClose()

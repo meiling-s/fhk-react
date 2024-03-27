@@ -1,3 +1,4 @@
 export type Currency = {
-    monetaryValue: string
+    monetaryValue: string,
+    updatedBy: string
 }

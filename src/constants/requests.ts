@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios'
+import { Axios, AxiosRequestConfig } from 'axios'
 
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
@@ -54,6 +54,11 @@ export const GET_TENANT_BY_TENANT_ID = (
 export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/account/t/status/${tenantId}`
+})
+
+export const UPDATE_TENANT_CURRENCY = (tenantId: string, monetaryValue: string, updatedBy: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/account/t/monetary/${tenantId}?tenantId=${tenantId}&monetaryValue=${monetaryValue}&updatedBy=${updatedBy}`
 })
 
 //collection point

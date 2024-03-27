@@ -93,7 +93,6 @@ const GeneralSettings: FunctionComponent = () => {
           )
         )
       })
-      console.log(contractMapping, 'contractMapping')
       setContractList(contractMapping)
       setTotalData(data.totalPages)
     }
@@ -102,7 +101,6 @@ const GeneralSettings: FunctionComponent = () => {
     const token = returnApiToken()
     const result = await getTenantById(parseInt(token.tenantId))
     const data = result?.data
-    console.log('tenant Data', data)
     setTenantCurrency(data.monetaryValue)
 
   }
