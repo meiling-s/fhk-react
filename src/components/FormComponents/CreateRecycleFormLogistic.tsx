@@ -174,13 +174,15 @@ const CreateRecycleFormLogistic = ({
     }
 
     return Yup.object().shape({
-      pickupAt: Yup.string().test(
-        'not-in-prev-data',
-        'Pickup time already exists in previous data',
-        function (value) {
-          return !prevData.some((item) => item.pickupAt === value)
-        }
-      ),
+      pickupAt: Yup.string()
+        .required('This pickupAt is required')
+        .test(
+          'not-in-prev-data',
+          'Pickup time already exists in previous data',
+          function (value) {
+            return !prevData.some((item) => item.pickupAt === value)
+          }
+        ),
       senderName: Yup.string().required('This sendername is required'),
       senderAddr: Yup.string()
         .required('This senderAddr is required')
@@ -339,9 +341,10 @@ const CreateRecycleFormLogistic = ({
                     sx={{ width: '100%' }}
                     value={formatTimePickAt(formik.values.pickupAt)}
                     onChange={(value) => {
-                      if (value != null) {
-                        formik.setFieldValue('pickupAt', formattedTime(value))
-                      }
+                      formik.setFieldValue(
+                        'pickupAt',
+                        value ? formattedTime(value) : ''
+                      )
                     }}
                   />
                 </CustomField>
