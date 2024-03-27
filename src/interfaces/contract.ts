@@ -14,13 +14,15 @@ export type Contract = {
     updatedAt: string
 }
 
-// export type CreateContract = {
-//     vehicleTypeId: string
-//     vehicleName: string
-//     plateNo: string
-//     serviceType: string
-//     photo: string[]
-//     status: string
-//     createdBy: string
-//     updatedBy: string
-// }
+export type CreateContract = {
+    tenantId: string
+    contractNo: string
+    parentContractNo: string
+    status: string
+    contractFrmDate: string
+    contractToDate: string
+    remark: string
+    epdFlg: boolean
+    createdBy: string
+    updatedBy: string
+}

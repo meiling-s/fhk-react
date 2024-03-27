@@ -644,3 +644,13 @@ export const GET_LIST_NOTIF_TEMPLATE_STAFF = (tenantId: string): AxiosRequestCon
   method: 'get',
   url: `api/v1/collectors/notiTemplate/${tenantId}`
 })
+
+export const GET_CONTRACT_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/contract/${tenantId}`
+})
+
+export const CREATE_CONTRACT = (): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/logistic/contract`
+})
