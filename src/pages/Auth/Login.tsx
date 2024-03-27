@@ -125,7 +125,7 @@ const Login = () => {
             navigate("/collector/collectionPoint");
             break;
           case "logistic":
-            navigate("/logistic/pickupOrder");
+            navigate("/logistic/jobOrder");
             break;
           default:
             break;

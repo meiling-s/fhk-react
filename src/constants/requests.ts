@@ -22,15 +22,15 @@ export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
   url: `api/v1/account/t/addTenant/${realm}`,
 });
 
-// export const GET_ALL_TENANT: AxiosRequestConfig = {
-//   method: 'get',
-//   url: 'api/v1/account/tenant/astd/tenant'
-// }
+export const GET_ALL_TENANT: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/account/t/'
+}
 
-export const GET_ALL_TENANT = (tenantId: string): AxiosRequestConfig => ({
-  method: "get",
-  url: `api/v1/account/t/searching/${tenantId}`,
-});
+export const SEARCH_TENANT = (tenantId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/t/searching/${tenantId}`
+})
 
 // export const GET_TENANT_BY_TENANT_ID: AxiosRequestConfig = {
 //   method: 'get',

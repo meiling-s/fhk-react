@@ -19,7 +19,8 @@ import {
   INBOX_OUTLINE_ICON,
   TEMPLATE_ICON,
   STATISTIC_ICON,
-  PERSON_ICON
+  PERSON_ICON,
+  PERSON_OUTLINE_ICON
 } from '../themes/icons'
 import logo_company from '../logo_company.png'
 import { useNavigate } from 'react-router-dom'
@@ -96,6 +97,12 @@ function MainDrawer() {
       onClick: () => navigate('/collector/collectionPoint'),
       collapse: false
     },
+    "User account":{
+      name: t('processRecord.userGroup'),
+      icon:<PERSON_OUTLINE_ICON/>,
+      onClick: () => navigate('/logistics/account'),
+      collapse: false
+    },
     "Collection point": {
       name: t('all_Collection_Point'),
       icon:<PLACE_ICON/>,
@@ -106,6 +113,12 @@ function MainDrawer() {
       name: t('pick_up_order.enquiry_pickup_order'),
       icon:<SHIPPING_CAR_ICON/>,
       onClick: () => navigate('/collector/pickupOrder'),
+      collapse: false
+    },
+    "Job order": {
+      name: t('job_order.enquiry_job_order'),
+      icon:<SHIPPING_CAR_ICON/>,
+      onClick: () => navigate('/logistic/jobOrder'),
       collapse: false
     },
     'Warehouse dashboard':{
