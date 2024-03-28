@@ -35,7 +35,6 @@ const Rosters: FunctionComponent = () => {
 
   useEffect(() => {
     const filteredDate = filterDate.format('YYYY-MM-DD[T]00:00:00.000[Z]')
-    console.log('filteredDate', filteredDate)
     initRosterData(filteredDate)
   }, [filterDate])
 
@@ -81,6 +80,8 @@ const Rosters: FunctionComponent = () => {
     setRosterColId(null)
     setRosterDate('')
     initRosterData()
+    setFilterDate(dayjs(new Date()))
+    console.log(filterDate)
   }
 
   const addNewRoster = (item: GroupedRoster) => {
@@ -90,7 +91,7 @@ const Rosters: FunctionComponent = () => {
       const startDate = item.roster[0].startAt
       setRosterDate(startDate)
     } else {
-      setRosterDate(dayjs().toString())
+      setRosterDate(dayjs().format('YYYY-MM-DD[T]00:00:00.000[Z]'))
     }
     setDrawerOpen(true)
   }
@@ -103,7 +104,7 @@ const Rosters: FunctionComponent = () => {
             <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <Box sx={{ ...localstyles.DateItem }}>
                 <DatePicker
-                  defaultValue={dayjs(filterDate)}
+                  value={filterDate}
                   format={format.dateFormat2}
                   onChange={(value) => setFilterDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
