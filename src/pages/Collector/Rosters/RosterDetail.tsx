@@ -14,34 +14,34 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { ADD_CIRCLE_ICON } from '../../../themes/icons'
 import { REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 
-import RightOverlayForm from "../../../components/RightOverlayForm";
-import CustomField from "../../../components/FormComponents/CustomField";
-import CustomTextField from "../../../components/FormComponents/CustomTextField";
-import CustomItemList from "../../../components/FormComponents/CustomItemList";
-import { useTranslation } from "react-i18next";
-import { FormErrorMsg } from "../../../components/FormComponents/FormErrorMsg";
-import { formValidate } from "../../../interfaces/common";
-import { ToastContainer, toast } from "react-toastify";
-import { styles } from "../../../constants/styles";
+import RightOverlayForm from '../../../components/RightOverlayForm'
+import CustomField from '../../../components/FormComponents/CustomField'
+import CustomTextField from '../../../components/FormComponents/CustomTextField'
+import CustomItemList from '../../../components/FormComponents/CustomItemList'
+import { useTranslation } from 'react-i18next'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
+import { formValidate } from '../../../interfaces/common'
+import { ToastContainer, toast } from 'react-toastify'
+import { styles } from '../../../constants/styles'
 import {
   displayLocalDate,
   displayLocalDateWitoutOffset,
   showErrorToast,
-  showSuccessToast,
-} from "../../../utils/utils";
+  showSuccessToast
+} from '../../../utils/utils'
 
-import { formErr } from "../../../constants/constant";
-import { returnErrorMsg } from "../../../utils/utils";
-import { il_item } from "../../../components/FormComponents/CustomItemList";
-import { Roster, Staff } from "../../../interfaces/roster";
-import { getCollectionPoint } from "../../../APICalls/collectionPointManage";
+import { formErr } from '../../../constants/constant'
+import { returnErrorMsg } from '../../../utils/utils'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
+import { Roster, Staff } from '../../../interfaces/roster'
+import { getCollectionPoint } from '../../../APICalls/collectionPointManage'
 import {
   createRoster,
   addRosterStaff,
   deleteRosterStaff,
   updateRoster,
-  cancelRoster,
-} from "../../../APICalls/roster";
+  cancelRoster
+} from '../../../APICalls/roster'
 
 import { localStorgeKeyName } from '../../../constants/constant'
 import dayjs, { Dayjs } from 'dayjs'
@@ -51,13 +51,13 @@ import { setDate } from 'date-fns'
 import { format } from '../../../constants/constant'
 
 interface RosterDetailProps {
-  drawerOpen: boolean;
-  handleDrawerClose: () => void;
-  action: "add" | "edit" | "delete" | "none";
-  onSubmitData: (type: string, msg: string) => void;
-  selectedRoster?: Roster | null;
-  selectedDate: string;
-  rosterColId?: number | null;
+  drawerOpen: boolean
+  handleDrawerClose: () => void
+  action: 'add' | 'edit' | 'delete' | 'none'
+  onSubmitData: (type: string, msg: string) => void
+  selectedRoster?: Roster | null
+  selectedDate: string
+  rosterColId?: number | null
 }
 
 const RosterDetail: FunctionComponent<RosterDetailProps> = ({
@@ -67,84 +67,84 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   onSubmitData,
   selectedRoster,
   selectedDate,
-  rosterColId,
+  rosterColId
 }) => {
-  const { t } = useTranslation();
-  const initStaff: string[] = [""];
+  const { t } = useTranslation()
+  const initStaff: string[] = ['']
 
-  const [rosterDate, setRosterDate] = useState<string>("");
-  const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs());
-  const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs());
-  const [selectedColPoint, setSelectedColPoint] = useState<string>("");
-  const [routineType, setRoutineType] = useState<string>("once");
-  const [selectedStaff, setSelectedStaff] = useState<string[]>(initStaff);
-  const [colPointList, setColPointList] = useState<il_item[]>([]);
-  const [staffList, setStaffList] = useState<il_item[]>([]);
+  const [rosterDate, setRosterDate] = useState<string>('')
+  const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
+  const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
+  const [selectedColPoint, setSelectedColPoint] = useState<string>('')
+  const [routineType, setRoutineType] = useState<string>('once')
+  const [selectedStaff, setSelectedStaff] = useState<string[]>(initStaff)
+  const [colPointList, setColPointList] = useState<il_item[]>([])
+  const [staffList, setStaffList] = useState<il_item[]>([])
   const routineTypeList = [
     {
-      id: "once",
-      name: t("roster.once"),
+      id: 'once',
+      name: t('roster.once')
     },
     {
-      id: "everyday",
-      name: t("roster.everyday"),
+      id: 'everyday',
+      name: t('roster.everyday')
     },
     {
-      id: "weekly",
-      name: t("roster.weekly"),
-    },
-  ];
-
-  const [trySubmited, setTrySubmited] = useState<boolean>(false);
-  const [validation, setValidation] = useState<formValidate[]>([]);
-  const loginName = localStorage.getItem(localStorgeKeyName.username) || "";
-  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || "";
-
-  useEffect(() => {
-    initCollectionPoint();
-    initStaffList();
-  }, [drawerOpen]);
-
-  useEffect(() => {
-    resetFormData();
-    if (action !== "add") {
-      mappingData();
-    } else {
-      setRosterDate(selectedDate);
-      if (rosterColId) setSelectedColPoint(rosterColId.toString());
+      id: 'weekly',
+      name: t('roster.weekly')
     }
-  }, [drawerOpen]);
+  ]
+
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<formValidate[]>([])
+  const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
+  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+
+  useEffect(() => {
+    initCollectionPoint()
+    initStaffList()
+  }, [drawerOpen])
+
+  useEffect(() => {
+    resetFormData()
+    if (action !== 'add') {
+      mappingData()
+    } else {
+      setRosterDate(selectedDate)
+      if (rosterColId) setSelectedColPoint(rosterColId.toString())
+    }
+  }, [drawerOpen])
 
   const initCollectionPoint = async () => {
-    const result = await getCollectionPoint(0, 10);
-    const data = result?.data.content;
+    const result = await getCollectionPoint(0, 10)
+    const data = result?.data.content
     if (data && data.length > 0) {
-      const collectionPoint: il_item[] = [];
+      const collectionPoint: il_item[] = []
       data.map((item: collectionPoint) => {
         collectionPoint.push({
           id: item.colId,
-          name: item.colName,
-        });
-      });
+          name: item.colName
+        })
+      })
 
-      setColPointList(collectionPoint);
+      setColPointList(collectionPoint)
     }
-  };
+  }
 
   const initStaffList = async () => {
-    const result = await getStaffList(0, 50);
+    const result = await getStaffList(0, 50)
     if (result) {
-      const data = result.data.content;
-      var staffMapping: il_item[] = [];
+      const data = result.data.content
+      var staffMapping: il_item[] = []
       data.map((item: any) => {
         staffMapping.push({
           id: item.staffId,
-          name: item.staffNameTchi,
-        });
-      });
-      setStaffList(staffMapping);
+          name: item.staffNameTchi
+        })
+      })
+      setStaffList(staffMapping)
     }
-  };
+  }
 
   const mappingData = () => {
     if (selectedRoster != null) {
@@ -158,21 +158,21 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       setRoutineType(selectedRoster.routineType)
       setSelectedStaff(staffIdList.length > 0 ? staffIdList : initStaff)
     }
-  };
+  }
 
   const resetFormData = () => {
-    setRosterDate("");
-    setSelectedColPoint("");
-    setStartDate(dayjs());
-    setEndDate(dayjs());
-    setSelectedStaff(initStaff);
-    setValidation([]);
-    setTrySubmited(false);
-  };
+    setRosterDate('')
+    setSelectedColPoint('')
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+    setSelectedStaff(initStaff)
+    setValidation([])
+    setTrySubmited(false)
+  }
 
   useEffect(() => {
     const validate = async () => {
-      const tempV: formValidate[] = [];
+      const tempV: formValidate[] = []
 
       selectedStaff.every((staffId) => staffId.trim() == '') &&
         tempV.push({
@@ -180,24 +180,36 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      startDate > endDate &&
+        tempV.push({
+          field: t('roster.timeBy'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
+      endDate < startDate &&
+        tempV.push({
+          field: t('roster.to'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
 
-      setValidation(tempV);
-    };
+      setValidation(tempV)
+    }
 
-    validate();
-  }, [selectedStaff]);
+    validate()
+  }, [selectedStaff, startDate, endDate])
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
-    return dateData.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
-  };
+    return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+  }
 
   const handleSubmit = () => {
-    if (action == "add") {
-      handleCreateRoster();
+    if (action == 'add') {
+      handleCreateRoster()
     } else {
-      handleEditRoster();
+      handleEditRoster()
     }
-  };
+  }
 
   const deleteStaff = async (rosterId: number) => {
     let allResponseSuccess = true
@@ -213,7 +225,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     }
 
     if (allResponseSuccess) {
-      addStaff(rosterId, "edit");
+      addStaff(rosterId, 'edit')
     } else {
       showErrorToast(t('roster.errorCreatedRoster'))
       onSubmitData('error', 'Some data creation failed')
@@ -221,14 +233,14 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }
 
   const addStaff = async (rosterId: number, type: string) => {
-    let allResponseSuccess = true;
+    let allResponseSuccess = true
 
     for (const key in selectedStaff) {
-      const staffId = selectedStaff[key];
-      const response = await addRosterStaff(rosterId, staffId);
+      const staffId = selectedStaff[key]
+      const response = await addRosterStaff(rosterId, staffId)
       if (!response) {
-        allResponseSuccess = false;
-        break;
+        allResponseSuccess = false
+        break
       }
     }
 
@@ -243,7 +255,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       showErrorToast(t('roster.errorCreatedRoster'))
       onSubmitData('error', 'Some data creation failed')
     }
-  };
+  }
 
   const handleCreateRoster = async () => {
     const rosterForm = {
@@ -251,91 +263,95 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       routineType: routineType,
       startAt: formattedDate(startDate),
       endAt: formattedDate(endDate),
-      status: "ACTIVE",
+      status: 'ACTIVE',
       colId: selectedColPoint,
       createdBy: loginName,
-      updatedBy: loginName,
-    };
+      updatedBy: loginName
+    }
     if (validation.length === 0) {
-      const result = await createRoster(rosterForm);
+      const result = await createRoster(rosterForm)
 
       if (result) {
-        const rosterId = result.data.rosterId;
-        addStaff(rosterId, "create");
+        const rosterId = result.data.rosterId
+        addStaff(rosterId, 'create')
       } else {
-        setTrySubmited(true);
-        showErrorToast(t("roster.errorCreatedRoster"));
-        onSubmitData("error", "Failed created data");
+        setTrySubmited(true)
+        showErrorToast(t('roster.errorCreatedRoster'))
+        onSubmitData('error', 'Failed created data')
       }
     } else {
-      setTrySubmited(true);
+      setTrySubmited(true)
     }
-  };
+  }
 
   const handleEditRoster = async () => {
     const updateForm = {
       routineType: routineType,
       startAt: formattedDate(startDate),
       endAt: formattedDate(endDate),
-      status: "ACTIVE",
+      status: 'ACTIVE',
       reason: 0,
       createdBy: loginName,
-      updatedBy: loginName,
-    };
+      updatedBy: loginName
+    }
+    console.log('validation', validation)
     if (validation.length === 0) {
       if (selectedRoster != null) {
-        const result = await updateRoster(updateForm, selectedRoster.rosterId);
+        const result = await updateRoster(updateForm, selectedRoster.rosterId)
         if (result) {
-          const rosterId = result.data.rosterId;
-          deleteStaff(rosterId);
+          const rosterId = result.data.rosterId
+          deleteStaff(rosterId)
         } else {
-          onSubmitData("error", "Failed edit data");
-          showErrorToast(t("roster.errorEditRoster"));
+          setTrySubmited(true)
+          onSubmitData('error', 'Failed edit data')
+          showErrorToast(t('roster.errorEditRoster'))
         }
       } else {
-        setTrySubmited(true);
-        showErrorToast(t("roster.errorEditRoster"));
+        setTrySubmited(true)
+        showErrorToast(t('roster.errorEditRoster'))
       }
+    } else {
+      setTrySubmited(true)
     }
-  };
+  }
 
   const handleCancelRoster = async () => {
     const cancelForm = {
       reason: 0,
-      updatedBy: loginName,
-    };
+      updatedBy: loginName
+    }
     if (selectedRoster) {
-      const result = await cancelRoster(cancelForm, selectedRoster?.rosterId);
+      const result = await cancelRoster(cancelForm, selectedRoster?.rosterId)
       if (result) {
-        onSubmitData("success", "Success created data");
-        resetFormData();
-        handleDrawerClose();
-        showSuccessToast(t("roster.successDeletedRoster"));
+        onSubmitData('success', 'Success created data')
+        resetFormData()
+        handleDrawerClose()
+        showSuccessToast(t('roster.successDeletedRoster'))
       } else {
-        onSubmitData("error", "Failed created data");
-        showErrorToast(t("roster.errorDeletedRoster"));
+        onSubmitData('error', 'Failed created data')
+        showErrorToast(t('roster.errorDeletedRoster'))
       }
     }
-  };
+  }
 
   const handleRemoveStaff = (indexToRemove: number) => {
     const updatedContractNum = selectedStaff.filter(
       (_, index) => index !== indexToRemove
-    );
-    setSelectedStaff(updatedContractNum);
-  };
+    )
+    setSelectedStaff(updatedContractNum)
+  }
 
   const handleAddStaff = () => {
-    const updatedContractNum = [...selectedStaff, ""];
-    setSelectedStaff(updatedContractNum);
-  };
+    const updatedContractNum = [...selectedStaff, '']
+    setSelectedStaff(updatedContractNum)
+  }
 
   const handleStaffChange = (value: string, index: number) => {
-    console.log("value", value);
-    const updatedStaff = [...selectedStaff];
-    updatedStaff[index] = value;
-    setSelectedStaff(updatedStaff);
-  };
+    console.log('value', value)
+    const updatedStaff = [...selectedStaff]
+    updatedStaff[index] = value
+    setSelectedStaff(updatedStaff)
+  }
 
   return (
     <div className="roster-details">
@@ -343,7 +359,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
-        anchor={"right"}
+        anchor={'right'}
         action={action}
         headerProps={{
           title: action == 'add' ? t('userAccount.new') : t('userGroup.change'),
@@ -352,22 +368,22 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleCancelRoster,
+          onDelete: handleCancelRoster
         }}
       >
         <Divider></Divider>
         <Box sx={{ PaddingX: 2 }}>
           <Grid
             container
-            direction={"column"}
+            direction={'column'}
             spacing={4}
             sx={{
-              width: { xs: "100%" },
+              width: { xs: '100%' },
               marginTop: { sm: 2, xs: 6 },
               marginLeft: {
-                xs: 0,
+                xs: 0
               },
-              paddingRight: 2,
+              paddingRight: 2
             }}
             className="sm:ml-0 mt-o w-full"
           >
@@ -392,10 +408,10 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                 )}
               </CustomField>
             </Grid>
-            <Grid item sx={{ display: "flex", gap: "8px" }}>
+            <Grid item sx={{ display: 'flex', gap: '8px' }}>
               <Box>
                 <Typography sx={styles.header3}>
-                  {t("roster.timeBy")}
+                  {t('roster.timeBy')}
                 </Typography>
                 <Box sx={{ ...localStyle.timePeriodItem }}>
                   <TimePicker
@@ -406,7 +422,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                 </Box>
               </Box>
               <Box>
-                <Typography sx={styles.header3}>{t("roster.to")}</Typography>
+                <Typography sx={styles.header3}>{t('roster.to')}</Typography>
                 <Box sx={{ ...localStyle.timePeriodItem }}>
                   <TimePicker
                     value={endDate}
@@ -418,23 +434,23 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
             </Grid>
             <Grid item>
               <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
-                {t("roster.recyclingPoint")}
+                {t('roster.recyclingPoint')}
               </Typography>
-              <FormControl sx={{ width: "100%" }}>
+              <FormControl sx={{ width: '100%' }}>
                 <InputLabel id="recyclingPoint">
-                  {t("roster.recyclingPoint")}
+                  {t('roster.recyclingPoint')}
                 </InputLabel>
                 <Select
                   labelId="recyclingPoint"
                   id="recyclingPoint"
                   value={selectedColPoint}
                   sx={{
-                    borderRadius: "12px",
+                    borderRadius: '12px'
                   }}
-                  disabled={action === "delete"}
-                  label={t("vehicle.recyclingPoint")}
+                  disabled={action === 'delete'}
+                  label={t('vehicle.recyclingPoint')}
                   onChange={(event: SelectChangeEvent<string>) => {
-                    setSelectedColPoint(event.target.value);
+                    setSelectedColPoint(event.target.value)
                   }}
                 >
                   {colPointList?.map((item, index) => (
@@ -446,7 +462,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
               </FormControl>
             </Grid>
             <Grid item>
-              <CustomField label={t("roster.workWeek")}>
+              <CustomField label={t('roster.workWeek')}>
                 <CustomItemList
                   items={routineTypeList}
                   singleSelect={(values) => setRoutineType(values)}
@@ -458,33 +474,33 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
             </Grid>
             <Grid item>
               <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
-                {t("roster.staff")}
+                {t('roster.staff')}
               </Typography>
               {selectedStaff.map((staff, index) => (
                 <Box
                   key={index + staff}
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    marginBottom: "16px",
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '16px'
                   }}
                 >
-                  <FormControl sx={{ width: "100%" }}>
+                  <FormControl sx={{ width: '100%' }}>
                     <InputLabel id="staff">
-                      {t("roster.pleaseSelectAnEmployee")}
+                      {t('roster.pleaseSelectAnEmployee')}
                     </InputLabel>
                     <Select
                       labelId="staff"
                       id="staff"
                       value={selectedStaff[index]}
                       sx={{
-                        borderRadius: "12px",
+                        borderRadius: '12px'
                       }}
-                      disabled={action === "delete"}
-                      label={t("roster.staff")}
+                      disabled={action === 'delete'}
+                      label={t('roster.staff')}
                       onChange={(event: SelectChangeEvent<string>) => {
-                        handleStaffChange(event.target.value, index);
+                        handleStaffChange(event.target.value, index)
                       }}
                       error={trySubmited && selectedStaff.length == 0}
                     >
@@ -507,8 +523,8 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                         fontSize="small"
                         className={`text-grey-light ${
                           selectedStaff.length === 1
-                            ? "cursor-not-allowed"
-                            : "cursor-pointer"
+                            ? 'cursor-not-allowed'
+                            : 'cursor-pointer'
                         } `}
                         onClick={() => handleRemoveStaff(index)}
                       />
@@ -532,34 +548,34 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
         </Box>
       </RightOverlayForm>
     </div>
-  );
-};
+  )
+}
 
 let localStyle = {
   textField: {
-    fontSize: "16px",
-    fontWeight: "bold",
+    fontSize: '16px',
+    fontWeight: 'bold'
   },
   timePicker: {
-    width: "100%",
+    width: '100%',
     borderRadius: 5,
-    backgroundColor: "white",
-    "& fieldset": {
-      borderWidth: 0,
+    backgroundColor: 'white',
+    '& fieldset': {
+      borderWidth: 0
     },
-    "& input": {
-      paddingX: 0,
+    '& input': {
+      paddingX: 0
     },
-    "& .MuiIconButton-edgeEnd": {
-      color: "#79CA25",
-    },
+    '& .MuiIconButton-edgeEnd': {
+      color: '#79CA25'
+    }
   },
   timePeriodItem: {
-    display: "flex",
-    height: "fit-content",
+    display: 'flex',
+    height: 'fit-content',
     paddingX: 2,
-    alignItems: "center",
-    backgroundColor: "white",
+    alignItems: 'center',
+    backgroundColor: 'white',
     border: 2,
     borderRadius: 3,
     borderColor: '#E2E2E2'
@@ -578,4 +594,4 @@ let localStyle = {
   }
 }
 
-export default RosterDetail;
+export default RosterDetail
