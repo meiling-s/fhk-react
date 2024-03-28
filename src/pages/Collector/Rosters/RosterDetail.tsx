@@ -1,19 +1,18 @@
-import { FunctionComponent, useState, useEffect } from "react";
+import { FunctionComponent, useState, useEffect } from 'react'
 import {
   Box,
   Divider,
   Grid,
-  Autocomplete,
-  TextField,
   MenuItem,
   FormControl,
   InputLabel,
-  Typography,
-} from "@mui/material";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { ADD_CIRCLE_ICON } from "../../../themes/icons";
-import { REMOVE_CIRCLE_ICON } from "../../../themes/icons";
+  Typography
+} from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers'
+import { TimePicker } from '@mui/x-date-pickers/TimePicker'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import { ADD_CIRCLE_ICON } from '../../../themes/icons'
+import { REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 
 import RightOverlayForm from "../../../components/RightOverlayForm";
 import CustomField from "../../../components/FormComponents/CustomField";
@@ -44,11 +43,12 @@ import {
   cancelRoster,
 } from "../../../APICalls/roster";
 
-import { localStorgeKeyName } from "../../../constants/constant";
-import dayjs, { Dayjs } from "dayjs";
-import { collectionPoint } from "../../../interfaces/collectionPoint";
-import { getStaffList } from "../../../APICalls/staff";
-import { setDate } from "date-fns";
+import { localStorgeKeyName } from '../../../constants/constant'
+import dayjs, { Dayjs } from 'dayjs'
+import { collectionPoint } from '../../../interfaces/collectionPoint'
+import { getStaffList } from '../../../APICalls/staff'
+import { setDate } from 'date-fns'
+import { format } from '../../../constants/constant'
 
 interface RosterDetailProps {
   drawerOpen: boolean;
@@ -149,14 +149,14 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   const mappingData = () => {
     if (selectedRoster != null) {
       const staffIdList: string[] = selectedRoster.staff?.map((item: Staff) => {
-        return item.staffId;
-      });
-      setRosterDate(selectedRoster.startAt);
-      setStartDate(dayjs(selectedRoster.startAt));
-      setEndDate(dayjs(selectedRoster.startAt));
-      setSelectedColPoint(selectedRoster.collectionPoint.colId.toString());
-      setRoutineType(selectedRoster.routineType);
-      setSelectedStaff(staffIdList.length > 0 ? staffIdList : initStaff);
+        return item.staffId
+      })
+      setRosterDate(selectedRoster.startAt)
+      setStartDate(dayjs(selectedRoster.startAt))
+      setEndDate(dayjs(selectedRoster.endAt))
+      setSelectedColPoint(selectedRoster.collectionPoint.colId.toString())
+      setRoutineType(selectedRoster.routineType)
+      setSelectedStaff(staffIdList.length > 0 ? staffIdList : initStaff)
     }
   };
 
@@ -174,12 +174,12 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     const validate = async () => {
       const tempV: formValidate[] = [];
 
-      selectedStaff.every((staffId) => staffId.trim() == "") &&
+      selectedStaff.every((staffId) => staffId.trim() == '') &&
         tempV.push({
-          field: t("roster.staff"),
+          field: t('roster.staff'),
           problem: formErr.empty,
-          type: "error",
-        });
+          type: 'error'
+        })
 
       setValidation(tempV);
     };
@@ -200,14 +200,14 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   };
 
   const deleteStaff = async (rosterId: number) => {
-    let allResponseSuccess = true;
+    let allResponseSuccess = true
     if (selectedRoster!.staff.length > 0) {
       for (const key in selectedRoster!.staff) {
-        const staffId = selectedRoster!.staff[key].staffId;
-        const response = await deleteRosterStaff(rosterId, staffId);
+        const staffId = selectedRoster!.staff[key].staffId
+        const response = await deleteRosterStaff(rosterId, staffId)
         if (!response) {
-          allResponseSuccess = false;
-          break;
+          allResponseSuccess = false
+          break
         }
       }
     }
@@ -215,10 +215,10 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     if (allResponseSuccess) {
       addStaff(rosterId, "edit");
     } else {
-      showErrorToast(t("roster.errorCreatedRoster"));
-      onSubmitData("error", "Some data creation failed");
+      showErrorToast(t('roster.errorCreatedRoster'))
+      onSubmitData('error', 'Some data creation failed')
     }
-  };
+  }
 
   const addStaff = async (rosterId: number, type: string) => {
     let allResponseSuccess = true;
@@ -233,15 +233,15 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     }
 
     if (allResponseSuccess) {
-      onSubmitData("success", "Success created data");
-      resetFormData();
-      handleDrawerClose();
-      type == "create"
-        ? showSuccessToast(t("roster.successCreatedRoster"))
-        : showSuccessToast(t("roster.successEditRoster"));
+      onSubmitData('success', 'Success created data')
+      resetFormData()
+      handleDrawerClose()
+      type == 'create'
+        ? showSuccessToast(t('roster.successCreatedRoster'))
+        : showSuccessToast(t('roster.successEditRoster'))
     } else {
-      showErrorToast(t("roster.errorCreatedRoster"));
-      onSubmitData("error", "Some data creation failed");
+      showErrorToast(t('roster.errorCreatedRoster'))
+      onSubmitData('error', 'Some data creation failed')
     }
   };
 
@@ -346,10 +346,10 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
         anchor={"right"}
         action={action}
         headerProps={{
-          title: t("roster.addOrChange"),
-          subTitle: t("roster.schedule"),
-          submitText: t("add_warehouse_page.save"),
-          cancelText: t("add_warehouse_page.delete"),
+          title: action == 'add' ? t('userAccount.new') : t('userGroup.change'),
+          subTitle: t('roster.schedule'),
+          submitText: t('add_warehouse_page.save'),
+          cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
           onDelete: handleCancelRoster,
@@ -372,10 +372,24 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
             className="sm:ml-0 mt-o w-full"
           >
             <Grid item>
-              <CustomField label={t("roster.date")}>
-                <Typography sx={localStyle.textField}>
-                  {displayLocalDateWitoutOffset(rosterDate)}
-                </Typography>
+              <CustomField label={t('roster.date')}>
+                {action == 'add' ? (
+                  <Box sx={{ ...localStyle.DateItem }}>
+                    <DatePicker
+                      defaultValue={dayjs()}
+                      format={format.dateFormat2}
+                      onChange={(value) => {
+                        setStartDate(value!!)
+                        setEndDate(value!!)
+                      }}
+                      sx={{ ...localStyle.datePicker }}
+                    />
+                  </Box>
+                ) : (
+                  <Typography sx={localStyle.textField}>
+                    {displayLocalDateWitoutOffset(rosterDate)}
+                  </Typography>
+                )}
               </CustomField>
             </Grid>
             <Grid item sx={{ display: "flex", gap: "8px" }}>
@@ -548,8 +562,20 @@ let localStyle = {
     backgroundColor: "white",
     border: 2,
     borderRadius: 3,
-    borderColor: "#E2E2E2",
+    borderColor: '#E2E2E2'
   },
-};
+  datePicker: {
+    ...styles.textField,
+    // width: '350px',
+    '& .MuiIconButton-edgeEnd': {
+      color: '#79CA25'
+    }
+  },
+  DateItem: {
+    display: 'flex',
+    height: 'fit-content',
+    alignItems: 'center'
+  }
+}
 
 export default RosterDetail;
