@@ -20,23 +20,23 @@ import {
   TEMPLATE_ICON,
   STATISTIC_ICON,
   PERSON_ICON,
-  PERSON_OUTLINE_ICON
-} from '../themes/icons'
-import logo_company from '../logo_company.png'
-import { useNavigate } from 'react-router-dom'
-import React, { useState } from 'react'
-import { Collapse, createTheme } from '@mui/material'
-import { ExpandLess, ExpandMore, Login } from '@mui/icons-material'
-import { useTranslation } from 'react-i18next'
-import { useTheme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import '../styles/MainDrawer.css'
-import { Roles, localStorgeKeyName } from '../constants/constant'
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
-import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined';
+  PERSON_OUTLINE_ICON,
+} from "../themes/icons";
+import logo_company from "../logo_company.png";
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Collapse, createTheme } from "@mui/material";
+import { ExpandLess, ExpandMore, Login } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import "../styles/MainDrawer.css";
+import { Roles, localStorgeKeyName } from "../constants/constant";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
+import ViewQuiltOutlinedIcon from "@mui/icons-material/ViewQuiltOutlined";
 type MainDrawer = {
   role: string;
 };
@@ -52,22 +52,22 @@ type DrawerItem = {
 const drawerWidth = 225;
 
 function MainDrawer() {
-  const navigate = useNavigate()
-  const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
-  const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false)
-  const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false)
-  const { t } = useTranslation()
-  const [open, setOpen] = useState(false)
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0)
-  const userRole = localStorage.getItem('userRole') || '';
-  let pathRole: string = '';
+  const navigate = useNavigate();
+  const [CPDrawer, setCPDrawer] = useState<boolean>(false); //CP = collection point, this state determine collection point drawer group expand or not
+  const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false);
+  const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false);
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
+  const userRole = localStorage.getItem("userRole") || "";
+  let pathRole: string = "";
 
-  if(userRole === Roles.collectoradmin){
-    pathRole = 'collector'
-  } else if(userRole === Roles.logisticadmin){
-    pathRole = 'logistic'
+  if (userRole === Roles.collectoradmin) {
+    pathRole = "collector";
+  } else if (userRole === Roles.logisticadmin) {
+    pathRole = "logistic";
   }
 
   const handleDrawerOpen = () => {
@@ -98,95 +98,97 @@ function MainDrawer() {
   }
 
   // 20240129 add function list daniel keung start
-  const defaultFunctionList: func[] = [{
-    "Tenant management": {
-      name: t('all_Collection_Point'),
+  const defaultFunctionList: func[] = [
+    {
+      "Tenant management": {
+        name: t("all_Collection_Point"),
 
-      onClick: () => navigate('/collector/collectionPoint'),
-      collapse: false
-    },
-    "User account":{
-      name: t('processRecord.userGroup'),
-      icon:<PERSON_OUTLINE_ICON/>,
-      onClick: () => navigate('/logistics/account'),
-      collapse: false
-    },
-    "Collection point": {
-      name: t('all_Collection_Point'),
-      icon:<PLACE_ICON/>,
-      onClick: () => navigate('/collector/collectionPoint'),
-      collapse: false
-    },
-    "Pickup order": {
-      name: t('pick_up_order.enquiry_pickup_order'),
-      icon:<SHIPPING_CAR_ICON/>,
-      onClick: () => navigate('/collector/pickupOrder'),
-      collapse: false
-    },
-    "Job order": {
-      name: t('job_order.enquiry_job_order'),
-      icon:<SHIPPING_CAR_ICON/>,
-      onClick: () => navigate('/logistic/jobOrder'),
-      collapse: false
-    },
-    'Warehouse dashboard':{
-      name: t('warehouseDashboard.warehouse'),
-      icon:<InventoryIcon/>,
-      onClick: () => navigate('/warehouse'),
-      collapse: false
-    },
-    "Request check-in": {
-      name: t('check_in.request_check_in'),
-      icon:<LoginIcon/>,
-      onClick: () => navigate('/warehouse/shipment'),
-      collapse: false
-    },
-    "Request checkout": {
-      name: t('check_out.request_check_out'),
-      icon:<LogoutIcon/>,
-      onClick: () => navigate('/warehouse/checkout'),
-      collapse: false
-    },
-    "Settings": {
-      name: t('settings'),
-      icon: <SETTINGS_ICON />,
-      onClick: () => navigate('/astd/setting'),
-      collapse: false
-    },
-    "Reports": {
-      name: t('reports'),
-      icon: <DOCUMENT_ICON />,
-      onClick: () => navigate('/collector/report'),
-      collapse: false
-    },
-    "Inventory": {
-      name: t('inventory.inventory'),
-      onClick: () => navigate('/collector/inventory'),
-      collapse: false
-    },
-    "Process out recyclables":{
-      name: t('processRecord.processingRecords'),
-      icon: <DOCUMENT_ICON />,
-      onClick: () => navigate('/collector/processRecord'),
-      collapse: false
-    },
-    "Staff":{
-      name: t('staffManagement.staff'),
-      icon: <AccountBoxOutlinedIcon />,
-      onClick: () => navigate('/warehouse/staff'),
-      collapse: false
-    },
-    StaffEnquiry: {
-      name: t("staffEnquiry.title"),
-      icon: <AccountBoxOutlinedIcon />,
-      onClick: () => navigate("/warehouse/staff-enquiry"),
-      collapse: false,
-    },
-    "Notification template":{
-      name: t('notification.notification_menu'),
-      icon: <ViewQuiltOutlinedIcon />,
-      onClick: () => navigate(`/${pathRole}/notice`),
-      collapse: false
+        onClick: () => navigate("/collector/collectionPoint"),
+        collapse: false,
+      },
+      "User account": {
+        name: t("processRecord.userGroup"),
+        icon: <PERSON_OUTLINE_ICON />,
+        onClick: () => navigate("/logistics/account"),
+        collapse: false,
+      },
+      "Collection point": {
+        name: t("all_Collection_Point"),
+        icon: <PLACE_ICON />,
+        onClick: () => navigate("/collector/collectionPoint"),
+        collapse: false,
+      },
+      "Pickup order": {
+        name: t("pick_up_order.enquiry_pickup_order"),
+        icon: <SHIPPING_CAR_ICON />,
+        onClick: () => navigate("/collector/pickupOrder"),
+        collapse: false,
+      },
+      "Job order": {
+        name: t("job_order.enquiry_job_order"),
+        icon: <SHIPPING_CAR_ICON />,
+        onClick: () => navigate("/logistic/jobOrder"),
+        collapse: false,
+      },
+      "Warehouse dashboard": {
+        name: t("warehouseDashboard.warehouse"),
+        icon: <InventoryIcon />,
+        onClick: () => navigate("/warehouse"),
+        collapse: false,
+      },
+      "Request check-in": {
+        name: t("check_in.request_check_in"),
+        icon: <LoginIcon />,
+        onClick: () => navigate("/warehouse/shipment"),
+        collapse: false,
+      },
+      "Request checkout": {
+        name: t("check_out.request_check_out"),
+        icon: <LogoutIcon />,
+        onClick: () => navigate("/warehouse/checkout"),
+        collapse: false,
+      },
+      Settings: {
+        name: t("settings"),
+        icon: <SETTINGS_ICON />,
+        onClick: () => navigate("/astd/setting"),
+        collapse: false,
+      },
+      Reports: {
+        name: t("reports"),
+        icon: <DOCUMENT_ICON />,
+        onClick: () => navigate("/collector/report"),
+        collapse: false,
+      },
+      Inventory: {
+        name: t("inventory.inventory"),
+        onClick: () => navigate("/collector/inventory"),
+        collapse: false,
+      },
+      "Process out recyclables": {
+        name: t("processRecord.processingRecords"),
+        icon: <DOCUMENT_ICON />,
+        onClick: () => navigate("/collector/processRecord"),
+        collapse: false,
+      },
+      Staff: {
+        name: t("staffManagement.staff"),
+        icon: <AccountBoxOutlinedIcon />,
+        onClick: () => navigate("/warehouse/staff"),
+        collapse: false,
+      },
+      StaffEnquiry: {
+        name: t("staffEnquiry.title"),
+        icon: <AccountBoxOutlinedIcon />,
+        onClick: () => navigate("/warehouse/staff-enquiry"),
+        collapse: false,
+      },
+      "Notification template": {
+        name: t("notification.notification_menu"),
+        icon: <ViewQuiltOutlinedIcon />,
+        onClick: () => navigate(`/${pathRole}/notice`),
+        collapse: false,
+      },
     },
   ];
   // 20240129 add function list daniel keung end
