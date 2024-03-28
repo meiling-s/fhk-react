@@ -17,6 +17,7 @@ type NotifItemProps = {
   title?: string
   content?: string
   datetime?: string
+  readFlg?: boolean
 }
 
 const NotifItem: React.FC<NotifItemProps> = ({
@@ -24,7 +25,8 @@ const NotifItem: React.FC<NotifItemProps> = ({
   handleItem,
   title,
   content,
-  datetime
+  datetime,
+  readFlg
 }) => {
   const createdDate = datetime
     ? dayjs(new Date(datetime)).format(format.dateFormat1)
@@ -42,7 +44,7 @@ const NotifItem: React.FC<NotifItemProps> = ({
         <ListItemButton>
           <Stack>
             <Stack spacing={-2} direction="row" alignItems="center">
-              <ListItemIcon style={{ color: 'red' }}>
+              <ListItemIcon style={{ color: readFlg ? 'green' : 'red' }}>
                 <CircleIcon sx={{ fontSize: '0.75rem' }} />
               </ListItemIcon>
               <Typography fontWeight="bold" sx={{ ml: '40px' }}>

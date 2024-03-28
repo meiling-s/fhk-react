@@ -704,7 +704,44 @@
       "language": "语言"
     },
     "modify_template": {
-      "header": "修改范本"
+      "header": "修改范本",
+      "app" : {
+        "Recycling_delivery_request" : "回收物送入请求",
+        "type": "种类",
+        "title": "标题",
+        "language": "语言",
+        "content" : "内容",
+        "variables": "可用的变数",
+        "button_submit": "儲存"
+      },
+      "sms" : {
+        "Recycling_delivery_request" : "回收物已送到工场",
+        "type": "种类",
+        "title": "标题",
+        "language": "语言",
+        "content" : "内容",
+        "variables": "可用的变数",
+        "button_submit": "儲存"
+      },
+      "email" : {
+        "Recycling_delivery_request" : "登记连结",
+        "type": "种类",
+        "title": "标题",
+        "language": "语言",
+        "content" : "内容",
+        "variables": "可用的变数",
+        "button_submit": "儲存"
+      },
+      "broadcast" : {
+        "Recycling_delivery_request" : "系统资讯",
+        "type": "种类",
+        "title": "标题",
+        "language": "语言",
+        "start_valid_date" : "有效日期由",
+        "end_valid_date" : "至",
+        "content" : "内容",
+        "button_submit": "儲存"
+      }
     }
   },
   "general_settings": {
