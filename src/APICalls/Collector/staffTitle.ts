@@ -1,21 +1,21 @@
 import { AXIOS_DEFAULT_CONFIGS } from "../../constants/configs";
 import {
-  GET_DENIAL_REASON,
-  CREATE_DENIAL_REASON,
-  UPDATE_DENIAL_REASON,
+  GET_STAFF_TITLE,
+  CREATE_STAFF_TITLE,
+  UPDATE_STAFF_TITLE,
 } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import axiosInstance from "../../constants/axiosInstance";
-import { CreateDenialReason } from "../../interfaces/denialReason";
+import { CreateStaffTitle } from "../../interfaces/staffTitle";
 
-//get all denial reasons
-export const getAllDenialReason = async (page: number, size: number) => {
+//get all staff title
+export const getAllStaffTitle = async (page: number, size: number) => {
   try {
     const token = returnApiToken();
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_DENIAL_REASON(token.tenantId),
+      ...GET_STAFF_TITLE(token.decodeKeycloack),
       params: {
         page: page,
         size: size,
@@ -27,21 +27,21 @@ export const getAllDenialReason = async (page: number, size: number) => {
 
     return response;
   } catch (e) {
-    console.error("Get all denial reason failed:", e);
+    console.error("Get all staff title failed:", e);
     return null;
   }
 };
 
-// create denial reason
-export const createDenialReason = async (data: CreateDenialReason) => {
+// create staff title
+export const createStaffTitle = async (data: CreateStaffTitle) => {
   try {
     // const userAccount = await getUserAccount();
     const token = returnApiToken();
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_DENIAL_REASON(),
-      data: { ...data, tenantId: token.tenantId, status: "ACTIVE" },
+      ...CREATE_STAFF_TITLE(),
+      data: { ...data, status: "ACTIVE" },
       headers: {
         AuthToken: token.authToken,
       },
@@ -54,19 +54,19 @@ export const createDenialReason = async (data: CreateDenialReason) => {
   }
 };
 
-// update denial reason
-export const editDenialReason = async (reasonId: number, data: CreateDenialReason) => {
+// update staff title
+export const editStaffTitle = async (reasonId: number, data: CreateStaffTitle) => {
   try {
     const token = returnApiToken();
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...UPDATE_DENIAL_REASON(token.tenantId, reasonId),
+      ...UPDATE_STAFF_TITLE(token.decodeKeycloack, reasonId),
       data: data,
     });
 
     return response;
   } catch (e) {
-    console.error("Get all denial reason failed:", e);
+    console.error("Get all staff title failed:", e);
     return null;
   }
 };

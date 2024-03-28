@@ -1,4 +1,16 @@
 {
+  "common": {
+    "save": "储存",
+    "delete": "删除",
+    "confirm": "确认",
+    "cancel": "取消",
+    "saveSuccessfully": "保存成功",
+    "saveFailed": "保存失败",
+    "editSuccessfully": "编辑成功",
+    "editFailed": "编辑失败",
+    "deletedSuccessfully": "删除成功",
+    "deleteFailed": "删除失败"
+  },
   "col": {
     "createCP": "建立回收点",
     "editCP": "修改回收点",
@@ -714,6 +726,17 @@
     "reason_name_schi": "原因 (简体中文)",
     "reason_name_eng": "原因 (英文)",
     "corresponding_functions": "对应功能",
+    "description": "简介",
+    "remark": "备注",
+    "enter_name": "请输入名称",
+    "select_function": "请选择功能",
+    "enter_text": "请输入文字"
+  },
+  "staff_title": {
+    "staff_title_tchi": "繁体中文名称",
+    "staff_title_schi": "简体中文名称",
+    "staff_title_eng": "英文名称",
+    "duty": "职责",
     "description": "简介",
     "remark": "备注"
   }

@@ -6,6 +6,7 @@ import Vehicle from "../Vehicles/Vechicles";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import DenialReason from "../DenialReason/DenialReason";
+import StaffTitle from "../StaffTitle/StaffTitle";
 
 const Settings: FunctionComponent = () => {
   // const navigate = useNavigate()
@@ -52,7 +53,7 @@ const Settings: FunctionComponent = () => {
         ) : selectedTab === 5 ? (
           <></>
         ) : selectedTab === 6 ? (
-          <></>
+          <StaffTitle />
         ) : selectedTab === 7 ? (
           <DenialReason />
         ) : (

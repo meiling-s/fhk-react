@@ -1,4 +1,16 @@
 {
+  "common": {
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "saveSuccessfully": "Saved successfully",
+    "saveFailed": "Saved failed",
+    "editSuccessfully": "Edited successfully",
+    "editFailed": "Edited failed",
+    "deletedSuccessfully": "Deleted successfully",
+    "deleteFailed": "Deleted failed"
+  },
   "col": {
     "createCP": "Create collection point",
     "editCP": "Edit collection point",
@@ -737,6 +749,17 @@
     "reason_name_schi": "Reason (Simplified Chinese)",
     "reason_name_eng": "Reason (English)",
     "corresponding_functions": "Corresponding Functions",
+    "description": "Description",
+    "remark": "Remark",
+    "enter_name": "Please enter name",
+    "select_function": "Please select function",
+    "enter_text": "Please enter text"
+  },
+  "staff_title": {
+    "staff_title_tchi": "Traditional Chinese Name",
+    "staff_title_schi": "Simplified Chinese Name",
+    "staff_title_eng": "English Name",
+    "duty": "Duty",
     "description": "Description",
     "remark": "Remark"
   }

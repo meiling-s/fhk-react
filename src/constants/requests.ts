@@ -733,5 +733,29 @@ export const GET_DENIAL_REASON = (tenantId: string): AxiosRequestConfig => ({
 //create denial reason
 export const CREATE_DENIAL_REASON = (): AxiosRequestConfig => ({
   method: "post",
-  url: `/api/v1/collectors/reason/`,
+  url: `/api/v1/collectors/reason`,
+});
+
+//update denial reason
+export const UPDATE_DENIAL_REASON = (tenantId: string, reasonId: number): AxiosRequestConfig => ({
+  method: "PUT",
+  url: `/api/v1/collectors/reason/${tenantId}/${reasonId}`,
+});
+
+//get staff title
+export const GET_STAFF_TITLE = (table: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `/api/v1/collectors/stafftitle/${table}`,
+});
+
+//create staff title
+export const CREATE_STAFF_TITLE = (): AxiosRequestConfig => ({
+  method: "post",
+  url: `/api/v1/collectors/stafftitle`,
+});
+
+//update staff title
+export const UPDATE_STAFF_TITLE = (table: string, titleId: number): AxiosRequestConfig => ({
+  method: "PUT",
+  url: `/api/v1/collectors/stafftitle/${table}/${titleId}`,
 });

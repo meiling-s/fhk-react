@@ -6,7 +6,8 @@ export type DenialReason = {
   reasonNameEng: string;
   description: string;
   remark: string;
-  functionId: number;
+  functionId: string;
+  functionName: string;
   status: string;
   createdBy: string;
   updatedBy: string;
@@ -15,10 +16,25 @@ export type DenialReason = {
 };
 
 export type CreateDenialReason = {
+  tenantId?: string;
   reasonNameTchi: string;
   reasonNameSchi: string;
   reasonNameEng: string;
   description: string;
   remark: string;
-  functionId: number;
+  functionId: string;
+  status: string;
+  createdBy?: string;
+  updatedBy?: string;
+};
+
+export type UpdateDenialReason = {
+  reasonNameTchi: string;
+  reasonNameSchi: string;
+  reasonNameEng: string;
+  description: string;
+  remark: string;
+  functionId: string;
+  status: string;
+  updatedBy?: string;
 };

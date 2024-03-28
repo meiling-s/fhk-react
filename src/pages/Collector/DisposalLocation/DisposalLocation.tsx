@@ -1,5 +1,5 @@
 import { useEffect, useState, FunctionComponent, useCallback } from "react";
-import { Box, Button, Checkbox, Typography, Pagination } from "@mui/material";
+import { Box, Button, Typography, Pagination } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -15,38 +15,34 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON,
 } from "../../../themes/icons";
-import { getAllDenialReason } from "../../../APICalls/Collector/denialReason";
-import { DenialReason as DenialReasonItem } from "../../../interfaces/denialReason";
-import CreateDenialReason from "./CreateDenialReason";
-import { getAllFunction } from "../../../APICalls/Collector/userGroup";
-import i18n from "../../../setups/i18n";
+import { getAllDisposalLocation } from "../../../APICalls/Collector/disposalLocation";
+import { DisposalLocation as DisposalLocationItem } from "../../../interfaces/disposalLocation";
+import CreateDisposalLocation from "./CreateDisposalLocation";
 
-function createDenialReason(
-  reasonId: number,
+function createDisposalLocation(
+  titleId: string,
   tenantId: string,
-  reasonNameTchi: string,
-  reasonNameSchi: string,
-  reasonNameEng: string,
+  titleNameTchi: string,
+  titleNameSchi: string,
+  titleNameEng: string,
+  duty: string,
   description: string,
   remark: string,
-  functionId: string,
-  functionName: string,
   status: string,
   createdBy: string,
   updatedBy: string,
   createdAt: string,
   updatedAt: string
-): DenialReasonItem {
+): DisposalLocationItem {
   return {
-    reasonId,
+    titleId,
     tenantId,
-    reasonNameTchi,
-    reasonNameSchi,
-    reasonNameEng,
+    titleNameTchi,
+    titleNameSchi,
+    titleNameEng,
+    duty,
     description,
     remark,
-    functionId,
-    functionName,
     status,
     createdBy,
     updatedBy,
@@ -55,7 +51,7 @@ function createDenialReason(
   };
 }
 
-const DenialReason: FunctionComponent = () => {
+const DisposalLocation: FunctionComponent = () => {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -63,60 +59,28 @@ const DenialReason: FunctionComponent = () => {
   const [rowId, setRowId] = useState<number>(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [totalData, setTotalData] = useState<number>(0);
-  const [DenialReasonList, setDenialReasonList] = useState<DenialReasonItem[]>(
+  const [DisposalLocationList, setDisposalLocationList] = useState<DisposalLocationItem[]>(
     []
   );
-  const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
-  const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
+  const [selectedRow, setSelectedRow] = useState<DisposalLocationItem | null>(null);
 
-  const initFunctionList = async () => {
-    const result = await getAllFunction();
+  const initDisposalLocationList = async () => {
+    const result = await getAllDisposalLocation(page - 1, pageSize);
     const data = result?.data;
-    if (data.length > 0) {
-      let name = ''
-      data.map((item: { functionId: string; functionNameEng: string; functionNameSChi: string; functionNameTChi: string; name: string; }) => {
-        switch (i18n.language) {
-          case 'enus':
-            name = item.functionNameEng
-            break
-          case 'zhch':
-            name = item.functionNameSChi
-            break
-          case 'zhhk':
-            name = item.functionNameTChi
-            break
-          default:
-            name = item.functionNameTChi
-            break
-        }
-        item.name = name
-      })
-    }
-    setFunctionList(data);
-  };
-
-  const initDenialReasonList = async () => {
-    const result = await getAllDenialReason(page - 1, pageSize);
-    const data = result?.data;
-    // setDenialReasonList(data);
+    // setDisposalLocationList(data);
     if (data) {
-      var denialReasonMapping: DenialReasonItem[] = [];
-      data.map((item: any) => {
-        const functionItem = functionList.find((el) => el.functionId === item.functionId)
-        if (functionItem) {
-          item.functionName = functionItem.name
-        }
-        denialReasonMapping.push(
-          createDenialReason(
-            item?.reasonId,
+      var disposalLocationMapping: DisposalLocationItem[] = [];
+      data.content.map((item: any) => {
+        disposalLocationMapping.push(
+          createDisposalLocation(
+            item?.titleId,
             item?.tenantId,
-            item?.reasonNameTchi,
-            item?.reasonNameSchi,
-            item?.reasonNameEng,
+            item?.titleNameTchi,
+            item?.titleNameSchi,
+            item?.titleNameEng,
             item?.description,
             item?.remark,
-            item?.functionId,
-            item?.functionName,
+            item?.duty,
             item?.status,
             item?.createdBy,
             item?.updatedBy,
@@ -125,52 +89,48 @@ const DenialReason: FunctionComponent = () => {
           )
         );
       });
-      setDenialReasonList(denialReasonMapping);
+      setDisposalLocationList(disposalLocationMapping);
       setTotalData(data.totalPages);
     }
   };
   useEffect(() => {
-    initFunctionList();
+    initDisposalLocationList();
   }, [])
-  
-  useEffect(() => {
-    initDenialReasonList();
-  }, [functionList]);
 
   const columns: GridColDef[] = [
     {
-      field: "reasonNameSchi",
-      headerName: t("denial_reason.reason_name_tchi"),
+      field: "titleNameTchi",
+      headerName: t("staff_title.staff_title_tchi"),
       width: 200,
       type: "string",
     },
     {
-      field: "reasonNameTchi",
-      headerName: t("denial_reason.reason_name_schi"),
+      field: "titleNameSchi",
+      headerName: t("staff_title.staff_title_schi"),
       width: 200,
       type: "string",
     },
     {
-      field: "reasonNameEng",
-      headerName: t("denial_reason.reason_name_eng"),
+      field: "titleNameEng",
+      headerName: t("staff_title.staff_title_eng"),
       width: 200,
       type: "string",
     },
     {
-      field: "functionName",
-      headerName: t("denial_reason.corresponding_functions"),
-      width: 200,
-      type: "string",
+      field: "duty",
+      headerName: t("staff_title.duty"),
+      width: 100,
+      type: "number",
     },
     {
       field: "description",
-      headerName: t("denial_reason.description"),
+      headerName: t("staff_title.description"),
       width: 100,
       type: "string",
     },
     {
       field: "remark",
-      headerName: t("denial_reason.remark"),
+      headerName: t("staff_title.remark"),
       width: 100,
       type: "string",
     },
@@ -260,7 +220,7 @@ const DenialReason: FunctionComponent = () => {
   };
 
   const onSubmitData = (type: string, msg: string) => {
-    initDenialReasonList();
+    initDisposalLocationList();
     if (type == "success") {
       showSuccessToast(msg);
     } else {
@@ -295,7 +255,7 @@ const DenialReason: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t("top_menu.denial_reason")}
+            {t("top_menu.staff_positions")}
           </Typography>
           <Button
             sx={[
@@ -317,8 +277,8 @@ const DenialReason: FunctionComponent = () => {
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
             <DataGrid
-              rows={DenialReasonList}
-              getRowId={(row) => row.reasonId}
+              rows={DisposalLocationList}
+              getRowId={(row) => row.titleId}
               hideFooter
               columns={columns}
               checkboxSelection
@@ -351,7 +311,7 @@ const DenialReason: FunctionComponent = () => {
           </Box>
         </div>
         {rowId != 0 && (
-          <CreateDenialReason
+          <CreateDisposalLocation
             drawerOpen={drawerOpen}
             handleDrawerClose={() => setDrawerOpen(false)}
             action={action}
@@ -364,4 +324,4 @@ const DenialReason: FunctionComponent = () => {
   );
 };
 
-export default DenialReason;
+export default DisposalLocation;
