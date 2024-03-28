@@ -706,5 +706,31 @@
     "modify_template": {
       "header": "修改范本"
     }
+  },
+  "general_settings": {
+    "new": "新的",
+    "currency": "货币",
+    "contracts": "合同",
+    "name": "名称",
+    "reference_number": "参考编号",
+    "state": "状态",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "remark": "评论",
+    "whether": "是否EPD",
+    "default_currency": "默认货币",
+    "activate": "活性",
+    "deactive": "停用",
+    "true": "真的",
+    "false": "错误的"
+  },
+  "packaging_unit": {
+    "packaging_unit": "包装单位",
+    "new": "新的",
+    "traditional_chinese_name": "繁体中文名字",
+    "simplified_chinese_name": "简体中文名称",
+    "english_name": "English Name",
+    "introduction": "介绍",
+    "remark": "评论"
   }
 }

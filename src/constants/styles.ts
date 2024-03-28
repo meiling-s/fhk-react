@@ -291,7 +291,7 @@ export const styles = {
     backgroundColor: 'white',
     '& fieldset': {
       borderRadius: '12px'
-    }
+    },
   },
   inputProps: {
     '&:hover fieldset': {

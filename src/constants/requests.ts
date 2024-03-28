@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios'
+import { Axios, AxiosRequestConfig } from 'axios'
 
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
@@ -54,6 +54,11 @@ export const GET_TENANT_BY_TENANT_ID = (
 export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/account/t/status/${tenantId}`
+})
+
+export const UPDATE_TENANT_CURRENCY = (tenantId: string, monetaryValue: string, updatedBy: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/account/t/monetary/${tenantId}?tenantId=${tenantId}&monetaryValue=${monetaryValue}&updatedBy=${updatedBy}`
 })
 
 //collection point
@@ -721,4 +726,34 @@ export const GET_LIST_NOTIF_TEMPLATE_STAFF = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/notiTemplate/${tenantId}`
+})
+
+export const GET_CONTRACT_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/contract/${tenantId}`
+})
+
+export const CREATE_CONTRACT: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/logistic/contract`
+}
+
+export const EDIT_CONTRACT = (tenantId: string, contractNo: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/logistic/contract/${tenantId}/${contractNo}`
+})
+
+export const GET_PACKAGING_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/packaginglist/${tenantId}`
+})
+
+export const CREATE_PACKAGING: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/logistic/packaginglist`
+}
+
+export const EDIT_PACKAGING = (tenantId: string, packagingTypeId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/logistic/packaginglist/${tenantId}/${packagingTypeId}`
 })
