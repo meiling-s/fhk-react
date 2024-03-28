@@ -52,6 +52,7 @@ const AssignDriver = ({
   const [driverList, setDriverList] = useState<DriverList[]>([])
   const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
   const { i18n } = useTranslation();
+  const [errors, setErrors] = useState({startDate: false, driverId: false, vehicleId: false})
   const currentLang = i18n.language
 
   const initListDriver = async () => {
@@ -127,7 +128,19 @@ const AssignDriver = ({
   }, [isEdit])
  
   const onHandleAssign = () => {
-    if(assignField.driverId === '' || assignField.plateNo === '' || assignField.vehicleId === 0 ){
+    const isBefore = dayjs().isBefore(startDate);
+   
+    if(assignField.driverId === '' || assignField.plateNo === '' || assignField.vehicleId === 0 || !isBefore ){
+      if(assignField.driverId === ''){
+        setErrors(prev => {
+          return{
+            ...prev,
+            driverId:true,
+            startDate:true,
+            vehicleId:true
+          }
+        })
+      }
       return
     }
     
@@ -268,18 +281,17 @@ const AssignDriver = ({
                       <div className="flex flex-col gap-y-2">
                         <label htmlFor="" className="font-bold text-[#717171]">{t('jobOrder.shipping_and_receiving_companies')}</label>
                         <div className="flex gap-x-1">
-                        <DatePicker
-                        
-                        value={dayjs(startDate)}
-                        format="YYYY/MM/DD"
-                        onChange={(value) => setStartDate(value!!)}
-                        />
-                        <TimePicker
+                          <DatePicker
+                            value={dayjs(startDate)}
+                            format="YYYY/MM/DD"
+                            onChange={(value) => setStartDate(value!!)}
+                          />
+                          <TimePicker
                             sx={{ width: "50%%" }}
                             value={dayjs(startDate)}
                             format="HH:mm:s"
                             onChange={(value) => setStartDate(value!!)}
-                        />
+                          />
                       </div>
 
                      </div>
@@ -306,6 +318,7 @@ const AssignDriver = ({
                         }}
                         renderInput={(params) => (
                           <TextField
+                            error={errors.driverId}
                             {...params}
                             placeholder={t('jobOrder.driver')}
                             sx={[styles.textField, { width: 400 }]}
@@ -332,6 +345,7 @@ const AssignDriver = ({
                         }}
                         renderInput={(params) => (
                           <TextField
+                          error={errors.vehicleId}
                             {...params}
                             placeholder={t('jobOrder.plat_number')}
                             sx={[styles.textField, { width: 400 }]}
