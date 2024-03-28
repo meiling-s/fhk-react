@@ -51,7 +51,7 @@ import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 //logistic
 import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
 import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
-import JobOrder from "./pages/Logistics/JobOrder/JobOrder";
+import JobOrder from './pages/Logistic/JobOrder'
 import LogisticAccount from './pages/Logistic/Account'
 import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
@@ -124,7 +124,7 @@ const Router = () => {
 
         <Route element={<MainLayout />}>
           <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
-          <Route path="/logistic/jobOrder" element={<JobOrder />} />
+          <Route path="/logistic/pickupOrder/:picoId" element={<JobOrder />} />
           <Route path="/logistics/createPickupOrder" element={<CreatePicoLogistic />} />
           <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic /> } />
           <Route path="/logistic/notice" element={<Notice />} />
