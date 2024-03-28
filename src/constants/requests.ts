@@ -538,6 +538,14 @@ export const GET_ROSTER_LIST = (
   url: `api/v1/collectors/roster/${tenantId}/${startAt}`
 })
 
+export const GET_ROSTER_LIST_BY_COL_POINT = (
+  tenantId: string,
+  colId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/roster/collectionPoint/${tenantId}/${{colId}}`
+})
+
 export const CREATE_ROSTER: AxiosRequestConfig = {
   method: 'post',
   url: `api/v1/collectors/roster`
