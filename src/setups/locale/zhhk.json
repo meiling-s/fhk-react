@@ -50,7 +50,8 @@
       "timeCantDuplicate": "時間不能重複",
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
-      "minMoreOneImgUploded": "至少需要上傳2張車輛圖片"
+      "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
+      "startDateBehindEndDate": "不允許開始時間晚於結束時間"
     }
   },
   "component": {
@@ -726,10 +727,10 @@
       "title": "標題",
       "language": "語言"
     },
-    "modify_template" : {
-      "header" : "修改範本",
-      "app" : {
-        "Recycling_delivery_request" : "回收物送入請求",
+    "modify_template": {
+      "header": "修改範本",
+      "app": {
+        "Recycling_delivery_request": "回收物送入請求",
         "type": "種類",
         "title": "標題",
         "language": "語言",
@@ -737,8 +738,8 @@
         "variables": "可用变量",
         "button_submit": "储存"
       },
-      "sms" : {
-        "Recycling_delivery_request" : "回收物已送到工場",
+      "sms": {
+        "Recycling_delivery_request": "回收物已送到工場",
         "type": "種類",
         "title": "標題",
         "language": "語言",
@@ -746,8 +747,8 @@
         "variables": "可用变量",
         "button_submit": "储存"
       },
-      "email" : {
-        "Recycling_delivery_request" : "登記連結",
+      "email": {
+        "Recycling_delivery_request": "登記連結",
         "type": "種類",
         "title": "標題",
         "language": "語言",
@@ -755,13 +756,13 @@
         "variables": "可用变量",
         "button_submit": "储存"
       },
-      "broadcast" : {
-        "Recycling_delivery_request" : "系統資訊",
+      "broadcast": {
+        "Recycling_delivery_request": "系統資訊",
         "type": "種類",
         "title": "標題",
         "language": "語言",
-        "start_valid_date" : "有效日期由",
-        "end_valid_date" : "至",
+        "start_valid_date": "有效日期由",
+        "end_valid_date": "至",
         "content": "內容",
         "variables": "可用变量",
         "button_submit": "储存"
