@@ -161,6 +161,12 @@ function MainDrawer() {
       onClick: () => navigate('/logistic/notice'),
       collapse: false
     },
+    "Driver":{
+      name: t('driver.sideBarName'),
+      icon:<SHIPPING_CAR_ICON/>,
+      onClick: () => navigate('/logistic/driver'),
+      collapse: false
+    }
   }]
   // 20240129 add function list daniel keung end 
   // 20240129 add function list daniel keung start

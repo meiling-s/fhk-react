@@ -53,6 +53,7 @@ import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
 import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
 import Notice from "./pages/Logistic/Notice/Index";
+import Driver from "./pages/Logistic/Driver";
 
 const Router = () => {
   
@@ -136,6 +137,7 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
           <Route path="/logistic/notice" element={<Notice />} />
+          <Route path="/logistic/driver" element={<Driver/>}/>
         </Route>
 
         </Route>

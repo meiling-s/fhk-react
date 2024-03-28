@@ -635,22 +635,41 @@
   "notification": {
     "notification_menu": "通知范本",
     "notification_title": "范本",
-    "menu_recycling_materials_and_waybills" : {
-      "tab_name" : "回收物及运单",
-      "name" : "名称",
-      "type" : "种类",
-      "title" : "标题",
-      "language" : "语言"
+    "menu_recycling_materials_and_waybills": {
+      "tab_name": "回收物及运单",
+      "name": "名称",
+      "type": "种类",
+      "title": "标题",
+      "language": "语言"
     },
     "menu_staff": {
-      "tab_name" : "员工",
-      "name" : "名称",
-      "type" : "种类",
-      "title" : "标题",
-      "language" : "语言"
+      "tab_name": "员工",
+      "name": "名称",
+      "type": "种类",
+      "title": "标题",
+      "language": "语言"
     },
-    "modify_template" : {
-      "header" : "修改范本"
+    "modify_template": {
+      "header": "修改范本"
+    }
+  },
+  "driver": {
+    "sideBarName": "车队",
+    "title": "车队",
+    "tabs": {
+      "driver": "司机",
+      "cars": "车辆"
+    },
+    "DriverMenu": {
+      "AddBtn": "新增司机",
+      "search": {
+        "label": "搜索",
+        "placeholder": "输入司机编号"   
+      },
+      "table": {
+        "driverId": "司机编号",
+        
+      }
     }
   }
 }
