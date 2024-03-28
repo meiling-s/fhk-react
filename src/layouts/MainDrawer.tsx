@@ -1,13 +1,13 @@
-import { useEffect } from 'react'
-import Box from '@mui/material/Box'
-import Drawer from '@mui/material/Drawer'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import IconButton from '@mui/material/IconButton'
-import MenuIcon from '@mui/icons-material/Menu'
+import { useEffect } from "react";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import {
   DOCUMENT_ICON,
@@ -38,18 +38,18 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined';
 type MainDrawer = {
-  role: string
-}
+  role: string;
+};
 
 type DrawerItem = {
-  name: string
-  icon?: JSX.Element
-  onClick: () => void
-  collapse: boolean
-  collapseGroup?: boolean
-}
+  name: string;
+  icon?: JSX.Element;
+  onClick: () => void;
+  collapse: boolean;
+  collapseGroup?: boolean;
+};
 
-const drawerWidth = 225
+const drawerWidth = 225;
 
 function MainDrawer() {
   const navigate = useNavigate()
@@ -71,37 +71,37 @@ function MainDrawer() {
   }
 
   const handleDrawerOpen = () => {
-    setOpen(true)
-  }
+    setOpen(true);
+  };
 
   const handleDrawerClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   const handleListItemClick = (index: number) => {
-    setSelectedIndex(index)
-    localStorage.setItem('selectedIndex', String(index))
-  }
+    setSelectedIndex(index);
+    localStorage.setItem("selectedIndex", String(index));
+  };
 
   useEffect(() => {
     // Retrieve the selected index from localStorage on component mount
-    const storedIndex = localStorage.getItem('selectedIndex')
+    const storedIndex = localStorage.getItem("selectedIndex");
     if (storedIndex !== null) {
-      setSelectedIndex(parseInt(storedIndex, 10))
+      setSelectedIndex(parseInt(storedIndex, 10));
     }
-  }, [])
+  }, []);
 
-  var role = localStorage.getItem(localStorgeKeyName.role)
-  
+  var role = localStorage.getItem(localStorgeKeyName.role);
+
   interface func {
     [key: string]: object;
   }
 
-  // 20240129 add function list daniel keung start 
+  // 20240129 add function list daniel keung start
   const defaultFunctionList: func[] = [{
     "Tenant management": {
       name: t('all_Collection_Point'),
-     
+
       onClick: () => navigate('/collector/collectionPoint'),
       collapse: false
     },
@@ -176,16 +176,22 @@ function MainDrawer() {
       onClick: () => navigate('/warehouse/staff'),
       collapse: false
     },
+    StaffEnquiry: {
+      name: t("staffEnquiry.title"),
+      icon: <AccountBoxOutlinedIcon />,
+      onClick: () => navigate("/warehouse/staff-enquiry"),
+      collapse: false,
+    },
     "Notification template":{
       name: t('notification.notification_menu'),
       icon: <ViewQuiltOutlinedIcon />,
       onClick: () => navigate(`/${pathRole}/notice`),
       collapse: false
     },
-  }]
-  // 20240129 add function list daniel keung end 
+  ];
+  // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
-/*   let drawerMenus_collector: DrawerItem[] = [
+  /*   let drawerMenus_collector: DrawerItem[] = [
     {
       name: t('collection_Point'),
       icon: <PLACE_ICON />,
@@ -352,23 +358,25 @@ function MainDrawer() {
     }
   ] */
   // 20240129 add function list daniel keung end
-  // 20240129 add function list daniel keung start 
+  // 20240129 add function list daniel keung start
   var drawerMenus;
   let drawerMenusTmp: DrawerItem[] = [];
-  var functionListTmp = JSON.parse(localStorage.getItem(localStorgeKeyName.functionList)||"[]");
-  if(functionListTmp){
+  var functionListTmp = JSON.parse(
+    localStorage.getItem(localStorgeKeyName.functionList) || "[]"
+  );
+  if (functionListTmp) {
     for (var functionItem of functionListTmp) {
       for (let deKey in defaultFunctionList[0]) {
-        if(functionItem == deKey){
-          drawerMenusTmp.push(defaultFunctionList[0][deKey] as DrawerItem)
+        if (functionItem == deKey) {
+          drawerMenusTmp.push(defaultFunctionList[0][deKey] as DrawerItem);
         }
       }
     }
   }
-  // 20240129 add function list daniel keung end 
-  console.log(role)
+  // 20240129 add function list daniel keung end
+  console.log(role);
   // 20240129 add function list daniel keung start
-/*   switch (role) {
+  /*   switch (role) {
     case 'astd':
       drawerMenus = drawerMenus_astd
       break
@@ -393,7 +401,7 @@ function MainDrawer() {
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
   drawerMenus = drawerMenusTmp;
-  // 20240129 add function list daniel keung end 
+  // 20240129 add function list daniel keung end
   return (
     <>
       {isMobile ? (
@@ -410,12 +418,12 @@ function MainDrawer() {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
-            padding: '10px'
-          }
+            padding: "10px",
+          },
         }}
-        variant={isMobile ? 'temporary' : 'permanent'}
+        variant={isMobile ? "temporary" : "permanent"}
         open={isMobile ? open : true}
         onClose={handleDrawerClose}
         anchor="left"
@@ -423,16 +431,16 @@ function MainDrawer() {
         <List>
           <Box
             sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              mt: 2
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mt: 2,
             }}
           >
             <img
               src={logo_company}
               alt="logo_company"
-              style={{ width: '90px' }}
+              style={{ width: "90px" }}
             />
           </Box>
           {drawerMenus.map((drawerMenu, index) =>
@@ -453,9 +461,9 @@ function MainDrawer() {
                 >
                   <ListItemButton
                     sx={{
-                      '&:hover .MuiSvgIcon-root': {
-                        color: '#79ca25'
-                      }
+                      "&:hover .MuiSvgIcon-root": {
+                        color: "#79ca25",
+                      },
                     }}
                     selected={selectedIndex === index}
                     onClick={(event) => handleListItemClick(index)}
@@ -478,16 +486,16 @@ function MainDrawer() {
                   selected={selectedIndex === index}
                   onClick={(event) => handleListItemClick(index)}
                   sx={{
-                    '&:hover': {
-                      '.MuiSvgIcon-root': {
-                        color: '#79ca25' // Change color on hover
-                      }
-                    }
+                    "&:hover": {
+                      ".MuiSvgIcon-root": {
+                        color: "#79ca25", // Change color on hover
+                      },
+                    },
                   }}
                 >
                   <ListItemIcon
                     className={
-                      selectedIndex === index ? 'icon-menu-active' : ''
+                      selectedIndex === index ? "icon-menu-active" : ""
                     }
                   >
                     {drawerMenu.icon}
@@ -509,7 +517,7 @@ function MainDrawer() {
         </List>
       </Drawer>
     </>
-  )
+  );
 }
 
 const styles = {
@@ -517,8 +525,8 @@ const styles = {
     ml: 3,
     pl: 3,
     borderLeft: 3,
-    borderLeftColor: '#F4F4F4'
-  }
-}
+    borderLeftColor: "#F4F4F4",
+  },
+};
 
-export default MainDrawer
+export default MainDrawer;
