@@ -707,7 +707,7 @@ const PickupOrderCreateForm = ({
                           {formik.values.refPicoId}
                         </div>
                         <div
-                          className={`text-mini text-[${colorTheme}] cursor-pointer`}
+                          className={`text-mini cursor-pointer text-[${colorTheme}]`}
                           onClick={resetPicoId}
                         >
                           {t('pick_up_order.change')}
