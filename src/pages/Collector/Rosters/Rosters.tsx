@@ -97,7 +97,7 @@ const Rosters: FunctionComponent = () => {
 
   return (
     <>
-      <Box className="container-wrapper">
+      <Box className="container-wrapper w-full">
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
           <Box className="filter-date" sx={{ marginY: 4 }}>
             <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -118,13 +118,16 @@ const Rosters: FunctionComponent = () => {
           ) : (
             <Box className="roster-section flex gap-8">
               {groupedRoster.map((item, index) => (
-                <Box className="roster" key={index + item.collectionId}>
+                <Box
+                  className="roster w-[225px]"
+                  key={index + item.collectionId}
+                >
                   <div className="col-title mb-3 text-[#717171] text-base font-bold">
                     {item.collectionName}
                   </div>
                   {item.roster.map((rosterItem, indexRoster) => (
                     <div
-                      className="roster-item mb-6 w-[225px] bg-white rounded-2xl p-6 cursor-pointer"
+                      className="roster-item mb-6 bg-white rounded-2xl p-6 cursor-pointer"
                       key={indexRoster + rosterItem.rosterId}
                       onClick={() => {
                         setDrawerOpen(true)
