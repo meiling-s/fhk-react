@@ -28,3 +28,27 @@ export type NotifTemplate = {
   createdAt: string
   updatedAt: string
 }
+
+export type UpdateNotifTemplate = {
+  notiType: string
+  variables:  string[]
+  lang: string
+  title: string
+  content: string
+  senders: string[]
+  receivers: string[]
+  updatedBy: string
+}
+
+export type UpdateNotifTemplateBroadcast = {
+  notiType: string
+  variables:  string[]
+  lang: string
+  title: string
+  content: string
+  senders: string[]
+  receivers: string[]
+  updatedBy: string
+  effFrmDate: string
+  effToDate: string
+}

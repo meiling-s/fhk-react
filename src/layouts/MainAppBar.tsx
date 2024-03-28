@@ -30,6 +30,7 @@ import { useContainer } from 'unstated-next'
 import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
 import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
+import { returnApiToken } from '../utils/utils'
 
 const MainAppBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -41,9 +42,13 @@ const MainAppBar = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const { numOfNotif, notifList, updateNotifications } = useContainer(
+  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList } = useContainer(
     NotifContainerContext
   )
+  const { loginId } = returnApiToken()
+  useEffect(() => {
+    updateNotifications(loginId)
+  }, [])
  
 
   const handleLanguageChange = (lng: string) => {
@@ -89,6 +94,8 @@ const MainAppBar = () => {
   }
   const handleLogout = () => {
     console.log("on logout")
+    setNumOfNotif(0)
+    setNotifList([])
     localStorage.clear()
     navigate('/')
   }
@@ -104,7 +111,7 @@ const MainAppBar = () => {
     const result = await updateFlagNotif(notifId)
     const data = result?.data
     if (data) {
-      await updateNotifications()
+      await updateNotifications(loginId)
     }
   }
 
@@ -129,12 +136,13 @@ const MainAppBar = () => {
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex' }}>
           <IconButton onClick={toggleDrawer}>
-            {numOfNotif !== 0 && (
+
+            {/* {numOfNotif !== 0 && (
               <Badge badgeContent={numOfNotif.toString()} color="error">
                 <NOTIFICATION_ICON />
               </Badge>
-            )}
-            {numOfNotif === 0 && <NOTIFICATION_ICON />}
+            )} */}
+            {numOfNotif === 0 ? <NOTIFICATION_ICON /> : <Badge badgeContent={numOfNotif.toString()} color="error"> <NOTIFICATION_ICON /></Badge>}
 
             <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
               <Box className="md:w-[500px] w-[100vw]">
@@ -165,6 +173,7 @@ const MainAppBar = () => {
                     content={notif.content}
                     datetime={notif.createdAt}
                     handleItem={() => handleClickNotif(notif.notiRecordId)}
+                    readFlg={notif.readFlg}
                   ></NotifItem>
                 ))}
               </Box>

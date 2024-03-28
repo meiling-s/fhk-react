@@ -5,8 +5,12 @@ import {
   GET_NOTIF_BY_USER_ID,
   UPDATE_FLAG_NOTIF,
   GET_LIST_NOTIF_TEMPLATE_PO,
-  GET_LIST_NOTIF_TEMPLATE_STAFF
+  GET_LIST_NOTIF_TEMPLATE_STAFF,
+  GET_DETAIL_NOTIF_TEMPLATE,
+  UPDATE_NOTIF_TEMPLATE,
+  UPDATE_NOTIF_TEMPLATE_BROADCAST
 } from '../constants/requests'
+import { UpdateNotifTemplate, UpdateNotifTemplateBroadcast } from '../interfaces/notif'
 import { returnApiToken } from '../utils/utils'
 
 const administratorAPI = {
@@ -52,11 +56,11 @@ export const updateFlagNotif = async (notiId: number) => {
   }
 }
 
-export const getListNotifTemplatePO = async () => {
+export const getListNotifTemplatePO = async (path: string) => {
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
-      ...GET_LIST_NOTIF_TEMPLATE_PO(token.tenantId),
+      ...GET_LIST_NOTIF_TEMPLATE_PO(token.tenantId, path),
       baseURL: administratorAPI.baseURL
     })
     return response
@@ -65,14 +69,55 @@ export const getListNotifTemplatePO = async () => {
   }
 }
 
-export const getListNotifTemplateStaff = async () => {
+export const getListNotifTemplateStaff = async (path: string) => {
   try {
     const token = returnApiToken();
     const response = await axiosInstance({
-      ...GET_LIST_NOTIF_TEMPLATE_PO(token.tenantId),
+      ...GET_LIST_NOTIF_TEMPLATE_STAFF(token.tenantId, path),
       baseURL: administratorAPI.baseURL
     })
     return response
+  } catch (e) {
+    return null
+  }
+}
+
+export const getDetailNotifTemplate = async (templateId: string, path: string) => {
+  try {
+    const token = returnApiToken();
+    const response = await axiosInstance({
+      ...GET_DETAIL_NOTIF_TEMPLATE(token.tenantId, templateId, path),
+      baseURL: administratorAPI.baseURL
+    })
+    return response.data
+  } catch (e) {
+    return null
+  }
+}
+
+export const updateNotifTemplate = async (templateId: string, data: UpdateNotifTemplate, path: string) => {
+  try {
+    const token = returnApiToken();
+    const response = await axiosInstance({
+      ...UPDATE_NOTIF_TEMPLATE(token.tenantId, templateId, path),
+      baseURL: administratorAPI.baseURL,
+      data
+    })
+    return response.data
+  } catch (e) {
+    return null
+  }
+}
+
+export const updateNotifTemplateBroadcast = async (templateId: string, data: UpdateNotifTemplateBroadcast, path: string) => {
+  try {
+    const token = returnApiToken();
+    const response = await axiosInstance({
+      ...UPDATE_NOTIF_TEMPLATE_BROADCAST(token.tenantId, templateId, path),
+      baseURL: administratorAPI.baseURL,
+      data
+    })
+    return response.data
   } catch (e) {
     return null
   }
