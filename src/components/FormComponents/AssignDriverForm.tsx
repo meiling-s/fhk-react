@@ -25,6 +25,7 @@ import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { getAllVehiclesLogistic, getDriver } from "../../APICalls/jobOrder";
+import { useTranslation } from "react-i18next";
 
 type props = {
   onClose: () => void;
@@ -46,10 +47,12 @@ const AssignDriver = ({
   // onSubmitData,
 }: props) => {
   
-  const [assignField, setAssignField] = useState<AssignJobField>({ driverId: '', vehicleId: 0})
+  const [assignField, setAssignField] = useState<AssignJobField>({ driverId: '', plateNo: '', vehicleId: 0})
   const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
   const [driverList, setDriverList] = useState<DriverList[]>([])
   const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language
 
   const initListDriver = async () => {
     const result = await getDriver(0, 10, 'string')
@@ -76,7 +79,7 @@ const AssignDriver = ({
       data.forEach((item: any) => {
         mappingVehicle.push({
           vehicleId: item.vehicleId,
-          vehicleName:  item.vehicleName,
+          plateNo:  item.plateNo,
         })
       })
       setVehicleList(mappingVehicle)
@@ -115,7 +118,8 @@ const AssignDriver = ({
           return{
             ...prev,
             driverId: assign?.driverId,
-            vehicleId: assign?.vehicleId
+            vehicleId: assign?.vehicleId,
+            plateNo: assign?.plateNo
           }
         })
       }
@@ -123,7 +127,7 @@ const AssignDriver = ({
   }, [isEdit])
  
   const onHandleAssign = () => {
-    if(assignField.driverId === '' || assignField.vehicleId === 0 ){
+    if(assignField.driverId === '' || assignField.plateNo === '' || assignField.vehicleId === 0 ){
       return
     }
     
@@ -133,7 +137,8 @@ const AssignDriver = ({
           ...item,
           pickupAt: new Date(startDate.format()).toISOString(),
           vehicleId: assignField.vehicleId,
-          driverId: assignField.driverId
+          driverId: assignField.driverId,
+          plateNo: assignField.plateNo
         }
       } else {
         return item
@@ -146,12 +151,28 @@ const AssignDriver = ({
   }
 
   const onChangeField = (field: string, value: any) => {
-    setAssignField((prev : AssignJobField) => {
-      return{
-        ...prev,
-        [field]: value
+    const driverId = value.split('-')[0];
+    if(field === 'driverId'){
+      setAssignField((prev : AssignJobField) => {
+        return{
+          ...prev,
+          [field]: driverId,
+          
+        }
+      })
+    } else {
+      const vehicle = vehicleList.find(item => item.plateNo == value);
+    
+      if(vehicle){
+        setAssignField((prev : AssignJobField) => {
+          return{
+            ...prev,
+            vehicleId: vehicle.vehicleId,
+            plateNo: vehicle.plateNo
+          }
+        })
       }
-    })
+    }
   }
 
   return (
@@ -269,7 +290,15 @@ const AssignDriver = ({
                         id="driver"
                         sx={{width: '100%'}}
                         value={assignField.driverId}
-                        options={driverList.map((driver) => driver?.driverId)}
+                        options={driverList.map((driver) => {
+                          if(currentLang === 'enus') {
+                            return driver.driverId + '-' + driver.driverNameEng
+                          } else if(currentLang === 'zhch') {
+                            return driver.driverId + '-' + driver.driverNameSchi
+                          } else if(currentLang === 'zhhk'){
+                            return driver.driverId + '-' + driver.driverNameTchi
+                          }
+                        })}
                         onChange={(event, value) => {
                           if (value) {
                             onChangeField('driverId', value)
@@ -294,8 +323,8 @@ const AssignDriver = ({
                         disablePortal
                         id="plat_number"
                         sx={{width: '100%'}}
-                        value={assignField.vehicleId}
-                        options={vehicleList.map((vehicle) => vehicle?.vehicleId)}
+                        value={assignField.plateNo}
+                        options={vehicleList.map((vehicle) => vehicle?.plateNo)}
                         onChange={(event, value) => {
                           if (value) {
                             onChangeField('vehicleId', value)
