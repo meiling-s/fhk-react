@@ -706,5 +706,24 @@
     "modify_template": {
       "header": "修改范本"
     }
+  },
+  "driver": {
+    "sideBarName": "车队",
+    "title": "车队",
+    "tabs": {
+      "driver": "司机",
+      "cars": "车辆"
+    },
+    "DriverMenu": {
+      "AddBtn": "新增司机",
+      "search": {
+        "label": "搜索",
+        "placeholder": "输入司机编号"   
+      },
+      "table": {
+        "driverId": "司机编号",
+        
+      }
+    }
   }
 }

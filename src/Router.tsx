@@ -54,6 +54,7 @@ import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogi
 import JobOrder from "./pages/Logistics/JobOrder/JobOrder";
 import LogisticAccount from './pages/Logistic/Account'
 import Notice from "./pages/Logistic/Notice/Index";
+import Driver from "./pages/Logistic/Driver";
 
 const Router = () => {
   return (
@@ -127,6 +128,7 @@ const Router = () => {
           <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic /> } />
           <Route path="/logistic/notice" element={<Notice />} />
           <Route path="/logistics/account" element={<LogisticAccount />} />
+          <Route path="/logistic/driver" element={<Driver/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

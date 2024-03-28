@@ -728,5 +728,20 @@
     "modify_template": {
       "header": "修改範本"
     }
+  },
+  "driver": {
+    "sideBarName": "車隊",
+    "title": "車隊",
+    "tabs": {
+      "driver": "司機",
+      "cars": "車輛"
+    },
+    "DriverMenu": {
+      "AddBtn": "新增司機",
+      "search": {
+        "label": "搜索",
+        "placeholder": "輸入司機編號"   
+      }
+    }
   }
 }

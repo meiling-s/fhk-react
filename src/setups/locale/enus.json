@@ -729,5 +729,20 @@
     "modify_template": {
       "header": "Modify Template"
     }
+  },
+  "driver": {
+    "sideBarName": "Driver",
+    "title": "Driver",
+    "tabs": {
+      "driver": "Driver",
+      "cars": "Vehicles"
+    },
+    "DriverMenu": {
+      "AddBtn": "Add Driver"
+    },
+    "search": {
+      "label": "Search",
+      "placeholder": "Please enter Driver No."   
+    }
   }
 }
