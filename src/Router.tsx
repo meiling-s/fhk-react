@@ -51,9 +51,10 @@ import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 //logistic
 import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
 import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
-import JobOrder from "./pages/Logistics/JobOrder/JobOrder";
-import LogisticAccount from "./pages/Logistic/Account";
-import Notice from "./pages/Logistic/Notice/Index";
+import JobOrder from './pages/Logistic/JobOrder'
+import LogisticAccount from './pages/Logistic/Account'
+import Notice from "./pages/ASTD/Notice/Index";
+import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
 
 const Router = () => {
@@ -117,7 +118,8 @@ const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/astd" element={<CompanyManage />} />
           <Route path="/astd/company" element={<CompanyManage />} />
-          <Route path="/astd/notice" element={<></>} />
+          <Route path="/:pathRole/notice/" element={<Notice />} />
+          <Route path="/:pathRole/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/astd/report" element={<></>} />
           <Route path="/astd/statistics/recyclables" element={<></>} />
           <Route path="/astd/statistics/convoy" element={<></>} />
@@ -145,15 +147,9 @@ const Router = () => {
 
         <Route element={<MainLayout />}>
           <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
-          <Route path="/logistic/jobOrder" element={<JobOrder />} />
-          <Route
-            path="/logistics/createPickupOrder"
-            element={<CreatePicoLogistic />}
-          />
-          <Route
-            path="/logistics/editPickupOrder"
-            element={<EditPicoLogistic />}
-          />
+          <Route path="/logistic/pickupOrder/:picoId" element={<JobOrder />} />
+          <Route path="/logistics/createPickupOrder" element={<CreatePicoLogistic />} />
+          <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic /> } />
           <Route path="/logistic/notice" element={<Notice />} />
           <Route path="/logistics/account" element={<LogisticAccount />} />
         </Route>

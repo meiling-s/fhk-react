@@ -3,10 +3,20 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next'
 import CustomTabs from '../../../components/Tabs'
 import CurrentMenu from './CurrentMenu';
+import { Roles } from '../../../constants/constant'
 
 const Notice = () => {
     const { t } = useTranslation();
     const [selectedTab, setSelectedTab] = useState(0)
+    const userRole  = localStorage.getItem('userRole') || '';
+    let dynamicPath:string = '';
+    
+
+    if(userRole === Roles.collectoradmin) {
+        dynamicPath = 'collectors'
+    } else if(userRole === Roles.logisticadmin){
+        dynamicPath = 'logistic'
+    }
 
     const handleTabChange = (value: number) => {
       setSelectedTab(value)
@@ -25,14 +35,17 @@ const Notice = () => {
                         {t('notification.notification_title')}
                     </Typography>
                 </Box>
-               <CustomTabs 
-                    tabs={tabSettings}
-                    navigate={handleTabChange}
-                    selectedProp={selectedTab}
-                    className="lg:px-10 sm:px-4 bg-bg-primary"
-               />
+                { userRole === Roles.collectoradmin && <CustomTabs 
+                        tabs={tabSettings}
+                        navigate={handleTabChange}
+                        selectedProp={selectedTab}
+                        className="lg:px-10 sm:px-4 bg-bg-primary"
+                    />
+                }
+
                <CurrentMenu 
                     selectedTab={selectedTab}
+                    dynamicPath={dynamicPath}
                />
             </div>
         </Box>
