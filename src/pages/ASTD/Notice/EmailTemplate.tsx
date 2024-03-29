@@ -11,18 +11,18 @@ interface TemplateProps {
     dynamicPath: string
 }
 
-const EmailTemplate: FunctionComponent<TemplateProps> = ({templateId, dynamicPath}) => {
-    const [notifTemplate, setNotifTemplate] = useState({templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: ''})
-    const navigate= useNavigate();
+const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPath }) => {
+    const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '' })
+    const navigate = useNavigate();
     const { t } = useTranslation();
     const [isPreviousContentArea, setIsPreviouscontentArea] = useState(false);
     const [cursorPosition, setCursorPosition] = useState(0);
 
     const getDetailTemplate = async () => {
-        const notif =  await getDetailNotifTemplate(templateId, dynamicPath);
-        if(notif){
+        const notif = await getDetailNotifTemplate(templateId, dynamicPath);
+        if (notif) {
             setNotifTemplate(prev => {
-                return{
+                return {
                     ...prev,
                     templateId: notif?.templateId,
                     notiType: notif?.notiType,
@@ -38,22 +38,22 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({templateId, dynamicPat
     }
 
     useEffect(() => {
-        if(templateId){
+        if (templateId) {
             getDetailTemplate()
         }
     }, [])
-   
-    const variables = ["CompanyName","InviteURL"]
-    
-    const onChangeContent = (index: number) =>{
-        if(isPreviousContentArea){
+
+    const variables = ["CompanyName", "InviteURL"]
+
+    const onChangeContent = (index: number) => {
+        if (isPreviousContentArea) {
             let content = ''
             const contentLength = notifTemplate.content.length;
             const activeButton = `[${variables[index]}]`
-            if(cursorPosition === 0){
+            if (cursorPosition === 0) {
                 content = activeButton + ' ' + notifTemplate.content
-            } else if(cursorPosition >= contentLength){
-                content = notifTemplate.content + ' ' + activeButton 
+            } else if (cursorPosition >= contentLength) {
+                content = notifTemplate.content + ' ' + activeButton
             } else {
                 const start = notifTemplate.content.slice(0, cursorPosition);
                 const end = notifTemplate.content.slice(cursorPosition);
@@ -61,7 +61,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({templateId, dynamicPat
             }
 
             setNotifTemplate(prev => {
-                return{
+                return {
                     ...prev,
                     content
                 }
@@ -75,17 +75,17 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({templateId, dynamicPat
 
     const showErrorToast = (msg: string) => {
         toast.error(msg, {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light'
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
         })
-      }
-    
+    }
+
     const showSuccessToast = (msg: string) => {
         toast.info(msg, {
             position: 'top-center',
@@ -99,46 +99,46 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({templateId, dynamicPat
         })
     }
 
-    const onSubmitUpdateTemplate =  async() => {
+    const onSubmitUpdateTemplate = async () => {
         const response = await updateNotifTemplate(templateId, notifTemplate, dynamicPath)
-        if(response){
+        if (response) {
             showSuccessToast('Succeed Update Template')
             setTimeout(() => {
                 navigate(`/${dynamicPath}/notice`)
             }, 1000);
-            
+
         } else {
             showErrorToast('Failed Update Template')
         }
     }
 
     const onChangeLanguage = (lang: string | null) => {
-       if(lang){
-        setNotifTemplate(prev => {
-            return{
-                ...prev,
-                lang
-            }
-        })
-       }
+        if (lang) {
+            setNotifTemplate(prev => {
+                return {
+                    ...prev,
+                    lang
+                }
+            })
+        }
     }
 
     const handleSelect = (event: React.SyntheticEvent<HTMLTextAreaElement, Event>) => {
         const target = event.target as HTMLInputElement;
-         const cursorPosition  = target?.selectionStart;
-         if(cursorPosition) setCursorPosition(cursorPosition)
+        const cursorPosition = target?.selectionStart;
+        if (cursorPosition) setCursorPosition(cursorPosition)
     }
-    
-    
-    return(
+
+
+    return (
         <Box className="container-wrapper w-full mr-11">
             <div className="overview-page bg-bg-primary">
-                <div 
+                <div
                     className="header-page flex justify-start items-center mb-4 cursor-pointer"
                     onClick={() => navigate(`/${dynamicPath}/notice`)}
                 >
                     <LEFT_ARROW_ICON fontSize="large" />
-                    <Typography style={{fontSize:'22px', color: 'black'}}> 
+                    <Typography style={{ fontSize: '22px', color: 'black' }}>
                         {t('notification.modify_template.header')}
                     </Typography>
                     <ToastContainer></ToastContainer>
@@ -147,32 +147,32 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({templateId, dynamicPat
             <Grid
                 display={'flex'}
                 direction={'column'}
-                sx={{alignItems: 'flex-start', rowGap: 2}}
+                sx={{ alignItems: 'flex-start', rowGap: 2 }}
                 spacing={2.5}
             >
-                <Typography style={{color: '#717171', fontSize: '16px', fontWeight: '700'}}>
+                <Typography style={{ color: '#717171', fontSize: '16px', fontWeight: '700' }}>
                     {t('notification.modify_template.email.Recycling_delivery_request')}
                 </Typography>
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
-                    <Typography style={{fontSize: '13px', color: '#ACACAC'}}>
+                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                         {t('notification.modify_template.email.type')}
                     </Typography>
-                    <Typography style={{fontSize: '16px', color: 'black', fontWeight: '700'}}>
+                    <Typography style={{ fontSize: '16px', color: 'black', fontWeight: '700' }}>
                         Email
                     </Typography>
                 </Grid>
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
-                    <Typography style={{fontSize: '13px', color: '#ACACAC'}}>
+                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                         {t('notification.modify_template.email.title')}
                     </Typography>
-                    <Typography style={{fontSize: '16px', color: 'black', fontWeight: '700'}}>
+                    <Typography style={{ fontSize: '16px', color: 'black', fontWeight: '700' }}>
                         {notifTemplate.title}
                     </Typography>
                 </Grid>
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
-                    <Typography style={{fontSize: '13px', color: '#ACACAC'}}>
+                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                         {t('notification.modify_template.email.language')}
                     </Typography>
                     <Autocomplete
@@ -182,22 +182,22 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({templateId, dynamicPat
                         options={['EN-US', 'ZH-HK', 'ZH-CH']}
                         sx={{ width: 300 }}
                         onChange={(_: SyntheticEvent, newValue: string | null) => onChangeLanguage(newValue)}
-                        renderInput={(params) => <TextField {...params} style={{backgroundColor: 'white'}} label={t('notification.modify_template.sms.language')} />}
+                        renderInput={(params) => <TextField {...params} style={{ backgroundColor: 'white' }} />}
                     />
                 </Grid>
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
-                    <Typography style={{fontSize: '13px', color: '#ACACAC'}}>
+                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                         {t('notification.modify_template.email.content')}
                     </Typography>
                     <TextareaAutosize
-                        id="content" 
-                        style={{width: '1135px', backgroundColor: 'white'}}
+                        id="content"
+                        style={{ width: '800px', backgroundColor: 'white', borderColor: '#E2E2E2', padding: '20px' }}
                         value={notifTemplate?.content}
-                        minRows={5}
+                        minRows={7}
                         onChange={(event) => {
                             setNotifTemplate(prev => {
-                                return{
+                                return {
                                     ...prev,
                                     content: event.target.value
                                 }
@@ -209,27 +209,28 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({templateId, dynamicPat
                 </Grid>
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
-                    <Typography style={{fontSize: '13px', color: '#ACACAC'}}>
+                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                         {t('notification.modify_template.email.variables')}
                     </Typography>
-                    <Grid display={'flex'} direction={'row'} style={{gap: 2}}>
+                    <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
                         {variables.map((item, index) => {
-                            return <button 
+                            return <button
                                 className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
+                                style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
                                 onClick={(event) => onChangeContent(index)}
                             > [{item}] </button>
                         })}
                     </Grid>
                 </Grid>
 
-                <Grid  display={'flex'} direction={'column'}>
+                <Grid display={'flex'} direction={'column'}>
                     <Button
                         onClick={onSubmitUpdateTemplate}
                         sx={{
                             borderRadius: "20px",
                             backgroundColor: "#79ca25",
-                            '&.MuiButton-root:hover':{bgcolor: '#79ca25'},
-                            width:'175px',
+                            '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
+                            width: '175px',
                             height: "44px",
                             fontSize: '16px',
                             fontWeight: '700'
