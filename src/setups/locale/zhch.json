@@ -9,7 +9,14 @@
     "editSuccessfully": "编辑成功",
     "editFailed": "编辑失败",
     "deletedSuccessfully": "删除成功",
-    "deleteFailed": "删除失败"
+    "deleteFailed": "删除失败",
+    "enterName": "请输入名称",
+    "enterText": "请输入文字",
+    "description": "简介",
+    "remark": "备注",
+    "traditionalChineseName": "繁体中文名称",
+    "simplifiedChineseName": "简体中文名称",
+    "englishName": "英文名称"
   },
   "col": {
     "createCP": "建立回收点",
@@ -738,6 +745,15 @@
     "staff_title_eng": "英文名称",
     "duty": "职责",
     "description": "简介",
-    "remark": "备注"
+    "remark": "备注",
+    "enter_duty": "请输入职责"
+  },
+  "companyManagement": {
+    "collectorlist": "回收公司",
+    "logisticlist": "物流公司",
+    "manulist": "回收厂",
+    "customerlist": "顾客公司",
+    "brNo": "商业登记号码",
+    "enterBrNo": "请输入商业登记号码"
   }
 }

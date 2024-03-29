@@ -9,7 +9,14 @@
     "editSuccessfully": "Edited successfully",
     "editFailed": "Edited failed",
     "deletedSuccessfully": "Deleted successfully",
-    "deleteFailed": "Deleted failed"
+    "deleteFailed": "Deleted failed",
+    "enterName": "Please enter name",
+    "enterText": "Please enter text",
+    "description": "Description",
+    "remark": "Remark",
+    "traditionalChineseName": "Traditional Chinese Name",
+    "simplifiedChineseName": "Simplified Chinese Name",
+    "englishName": "English Name"
   },
   "col": {
     "createCP": "Create collection point",
@@ -761,6 +768,15 @@
     "staff_title_eng": "English Name",
     "duty": "Duty",
     "description": "Description",
-    "remark": "Remark"
+    "remark": "Remark",
+    "enter_duty": "Please enter duty"
+  },
+  "companyManagement": {
+    "collectorlist": "Collection Company",
+    "logisticlist": "Logistic Company",
+    "manulist": "Manufacturer Company",
+    "customerlist": "Customer Company",
+    "brNo": "Business Registration Number",
+    "enterBrNo": "Please enter business registration number"
   }
 }

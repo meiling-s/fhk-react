@@ -1,21 +1,21 @@
 import { AXIOS_DEFAULT_CONFIGS } from "../../constants/configs";
 import {
-  GET_DENIAL_REASON,
-  CREATE_DENIAL_REASON,
-  UPDATE_DENIAL_REASON,
+  GET_DISPOSAL_LOCATION,
+  CREATE_DISPOSAL_LOCATION,
+  UPDATE_DISPOSAL_LOCATION,
 } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import axiosInstance from "../../constants/axiosInstance";
-import { CreateDenialReason } from "../../interfaces/denialReason";
+import { CreateDisposalLocation } from "../../interfaces/disposalLocation";
 
-//get all denial reasons
-export const getAllDenialReason = async (page: number, size: number) => {
+//get all disposal location
+export const getAllDisposalLocation = async (page: number, size: number) => {
   try {
     const token = returnApiToken();
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_DENIAL_REASON(token.tenantId),
+      ...GET_DISPOSAL_LOCATION(token.decodeKeycloack),
       params: {
         page: page,
         size: size,
@@ -27,46 +27,43 @@ export const getAllDenialReason = async (page: number, size: number) => {
 
     return response;
   } catch (e) {
-    console.error("Get all denial reason failed:", e);
+    console.error("Get all disposal location failed:", e);
     return null;
   }
 };
 
-// create denial reason
-export const createDenialReason = async (data: CreateDenialReason) => {
+// create disposal location
+export const createDisposalLocation = async (data: CreateDisposalLocation) => {
   try {
     // const userAccount = await getUserAccount();
     const token = returnApiToken();
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_DENIAL_REASON(),
-      data: { ...data, tenantId: token.tenantId, status: "ACTIVE" },
-      headers: {
-        AuthToken: token.authToken,
-      },
+      ...CREATE_DISPOSAL_LOCATION(token.decodeKeycloack),
+      data: data
     });
 
     return response;
   } catch (e) {
-    console.error("create denial reason failed:", e);
+    console.error("create disposal location failed:", e);
     return null;
   }
 };
 
-// update denial reason
-export const editDenialReason = async (reasonId: number, data: CreateDenialReason) => {
+// update disposal location
+export const editDisposalLocation = async (disposalLocId: string, data: CreateDisposalLocation) => {
   try {
     const token = returnApiToken();
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...UPDATE_DENIAL_REASON(token.tenantId, reasonId),
+      ...UPDATE_DISPOSAL_LOCATION(token.decodeKeycloack, disposalLocId),
       data: data,
     });
 
     return response;
   } catch (e) {
-    console.error("update denial reason failed:", e);
+    console.error("update disposal location failed:", e);
     return null;
   }
 };

@@ -98,7 +98,6 @@ const DenialReason: FunctionComponent = () => {
   const initDenialReasonList = async () => {
     const result = await getAllDenialReason(page - 1, pageSize);
     const data = result?.data;
-    // setDenialReasonList(data);
     if (data) {
       var denialReasonMapping: DenialReasonItem[] = [];
       data.map((item: any) => {
@@ -159,8 +158,8 @@ const DenialReason: FunctionComponent = () => {
     {
       field: "functionName",
       headerName: t("denial_reason.corresponding_functions"),
-      width: 200,
-      type: "string",
+      width: 100,
+      type: "number",
     },
     {
       field: "description",

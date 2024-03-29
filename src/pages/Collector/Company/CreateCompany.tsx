@@ -6,24 +6,26 @@ import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { editDisposalLocation, createDisposalLocation } from '../../../APICalls/Collector/disposalLocation'
+import { editCompany, createCompany } from '../../../APICalls/Collector/company'
 import { returnErrorMsg } from '../../../utils/utils'
 import { localStorgeKeyName } from '../../../constants/constant'
-import { DisposalLocation, CreateDisposalLocation as CreateDisposalLocationItem,UpdateDisposalLocation } from '../../../interfaces/disposalLocation'
+import { Company, CreateCompany as CreateCompanyItem, UpdateCompany } from '../../../interfaces/company'
 
-interface CreateDisposalLocation {
+interface CreateCompany {
+  companyType: string,
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
-  selectedItem?: DisposalLocation | null
+  selectedItem?: Company | null
 }
 
 interface FormValues {
   [key: string]: string
 }
 
-const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
+const CompanyDetail: FunctionComponent<CreateCompany> = ({
+  companyType,
   drawerOpen,
   handleDrawerClose,
   action,
@@ -34,35 +36,41 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
 
   const initialFormValues = {
     loginId: '',
-    disposalLocNameTchi: '',
-    disposalLocNameEng: '',
-    disposalLocNameSchi: '',
+    nameTchi: '',
+    nameEng: '',
+    nameSchi: '',
     description: '',
     remark: '',
-    disposalLocId: ''
+    companyId: ''
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
-
+  const loginName : string = localStorage.getItem(localStorgeKeyName.username) ?? ''
+  const [prefixItemName, setPrefixItemName] = useState<string>('')
   const staffField = [
     {
       label: t('common.traditionalChineseName'),
       placeholder: t('common.enterName'),
-      field: 'disposalLocNameTchi',
+      field: 'nameTchi',
       type: 'text'
     },
     {
       label: t('common.simplifiedChineseName'),
       placeholder: t('common.enterName'),
-      field: 'disposalLocNameSchi',
+      field: 'nameSchi',
       type: 'text'
     },
     {
       label: t('common.englishName'),
       placeholder: t('common.enterName'),
-      field: 'disposalLocNameEng',
+      field: 'nameEng',
+      type: 'text'
+    },
+    {
+      label: t('companyManagement.brNo'),
+      placeholder: t('companyManagement.enterBrNo'),
+      field: 'brBo',
       type: 'text'
     },
     {
@@ -82,10 +90,11 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   const mappingData = () => {
     if (selectedItem != null) {
       setFormData({
-        disposalLocId: selectedItem.disposalLocId,
-        disposalLocNameTchi: selectedItem.disposalLocNameTchi,
-        disposalLocNameEng: selectedItem.disposalLocNameEng,
-        disposalLocNameSchi: selectedItem.disposalLocNameSchi,
+        companyId: selectedItem.companyId,
+        nameTchi: selectedItem.nameTchi,
+        nameEng: selectedItem.nameEng,
+        nameSchi: selectedItem.nameSchi,
+        brNo: selectedItem.brNo,
         description: selectedItem.description,
         remark: selectedItem.remark,
       })
@@ -106,6 +115,12 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     }
   }, [drawerOpen])
 
+  useEffect(() => {
+    const prefixName = companyType === 'manulist' ? 'manufacturer' : companyType.replace('list', '')
+    setPrefixItemName(prefixName)
+    console.log({prefixName})
+  }, [companyType])
+
   const checkString = (s: string) => {
     if (!trySubmited) {
       return false
@@ -116,9 +131,10 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   const validate = async () => {
     const tempV: formValidate[] = []
     const fieldMapping: FormValues = {
-      disposalLocNameTchi: t('common.traditionalChineseName'),
-      disposalLocNameSchi: t('common.simplifiedChineseName'),
-      disposalLocNameEng: t('common.englishName'),
+      nameTchi: t('common.traditionalChineseName'),
+      nameSchi: t('common.simplifiedChineseName'),
+      nameEng: t('common.englishName'),
+      brNo: t('companyManagement.brNo'),
       description: t('common.description'),
       remark: t('common.remark')
     }
@@ -138,10 +154,11 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   useEffect(() => {
     validate()
   }, [
-    formData.disposalLocId,
-    formData.disposalLocNameTchi,
-    formData.disposalLocNameEng,
-    formData.disposalLocNameSchi,
+    formData.companyId,
+    formData.nameTchi,
+    formData.nameEng,
+    formData.nameSchi,
+    formData.brNo,
     formData.description,
     formData.remark
   ])
@@ -154,13 +171,12 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   }
 
   const handleSubmit = () => {
-    const staffData: CreateDisposalLocationItem = {
-      disposalLocNameTchi: formData.disposalLocNameTchi,
-      disposalLocNameSchi: formData.disposalLocNameSchi,
-      disposalLocNameEng: formData.disposalLocNameEng,
+    const staffData: CreateCompanyItem = {
+      nameTchi: formData.nameTchi,
+      nameSchi: formData.nameSchi,
+      nameEng: formData.nameEng,
       description: formData.description,
-      location: '',
-      locationGps: [],
+      brNo: formData.brNo,
       status: 'ACTIVE',
       remark: formData.remark,
       createdBy: loginName,
@@ -168,16 +184,35 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     }
 
     if (action === 'add') {
-      handleCreateDisposalLocation(staffData)
+      handleCreateCompany(staffData)
     } else {
-      handleEditDisposalLocation()
+      handleEditCompany()
     }
   }
 
-  const handleCreateDisposalLocation = async (staffData: CreateDisposalLocationItem) => {
+  const handleCreateCompany = async (staffData: CreateCompanyItem) => {
     validate()
     if (validation.length === 0) {
-      const result = await createDisposalLocation(staffData)
+      const data: {
+        description: string,
+        brNo: string,
+        status: string,
+        remark: string,
+        createdBy: string,
+        updatedBy: string,
+        [key: string]: string,
+      } = {
+        description: staffData.description,
+        brNo: staffData.brNo,
+        status: staffData.status,
+        remark: staffData.remark,
+        createdBy: staffData.createdBy,
+        updatedBy: staffData.updatedBy
+      }
+      data[`${prefixItemName}NameTchi`] = staffData.nameTchi
+      data[`${prefixItemName}NameSchi`] = staffData.nameSchi
+      data[`${prefixItemName}NameEng`] = staffData.nameEng
+      const result = await createCompany(companyType, data)
       if (result?.data) {
         onSubmitData('success', t('common.saveSuccessfully'))
         resetFormData()
@@ -191,22 +226,42 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     }
   }
 
-  const handleEditDisposalLocation = async () => {
-    const editData: UpdateDisposalLocation = {
-      disposalLocNameTchi: formData.disposalLocNameTchi,
-      disposalLocNameSchi: formData.disposalLocNameSchi,
-      disposalLocNameEng: formData.disposalLocNameEng,
-      disposalLocId: formData.disposalLocId,
+  const handleEditCompany = async () => {
+    const editData: UpdateCompany = {
+      nameTchi: formData.nameTchi,
+      nameSchi: formData.nameSchi,
+      nameEng: formData.nameEng,
+      companyId: formData.companyId,
       description: formData.description,
-      status: 'ACTIVE',
       remark: formData.remark,
+      status: 'ACTIVE',
+      createdBy: formData.createdBy,
       updatedBy: loginName,
-      location: '',
-      locationGps: []
+      brNo: formData.brNo,
     }
-    if (validation.length == 0) {
+    const data: {
+      description: string,
+      brNo: string,
+      status: string,
+      remark: string,
+      createdBy: string,
+      updatedBy: string,
+      [key: string]: string,
+    } = {
+      description: editData.description,
+      brNo: editData.brNo,
+      status: editData.status,
+      remark: editData.remark,
+      createdBy: editData.createdBy,
+      updatedBy: editData.updatedBy
+    }
+    data[`${prefixItemName}NameTchi`] = editData.nameTchi
+    data[`${prefixItemName}NameSchi`] = editData.nameSchi
+    data[`${prefixItemName}NameEng`] = editData.nameEng
+    if (validation.length === 0) {
       if (selectedItem != null) {
-        const result = await editDisposalLocation(selectedItem.disposalLocId, editData)
+        console.log({companyType})
+        const result = await editCompany(companyType, selectedItem.companyId, data)
         if (result) {
           onSubmitData('success', t('common.editSuccessfully'))
           resetFormData()
@@ -219,20 +274,38 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   }
 
   const handleDelete = async () => {
-    const editData: UpdateDisposalLocation = {
-      disposalLocNameTchi: formData.disposalLocNameTchi,
-      disposalLocNameSchi: formData.disposalLocNameSchi,
-      disposalLocNameEng: formData.disposalLocNameEng,
-      disposalLocId: formData.disposalLocId,
+    const editData: UpdateCompany = {
+      nameTchi: formData.nameTchi,
+      nameSchi: formData.nameSchi,
+      nameEng: formData.nameEng,
+      companyId: formData.companyId,
+      brNo: formData.brNo,
       description: formData.description,
-      status: 'DELETED',
       remark: formData.remark,
+      status: 'DELETED',
+      createdBy: formData.createdBy,
       updatedBy: loginName,
-      location: '',
-      locationGps: []
     }
+    const data: {
+      description: string,
+      brNo: string,
+      status: string,
+      remark: string,
+      updatedBy: string,
+      [key: string]: string,
+    } = {
+      description: editData.description,
+      brNo: editData.brNo,
+      status: editData.status,
+      remark: editData.remark,
+      createdBy: editData.createdBy,
+      updatedBy: editData.updatedBy
+    }
+    data[`${prefixItemName}NameTchi`] = editData.nameTchi
+    data[`${prefixItemName}NameSchi`] = editData.nameSchi
+    data[`${prefixItemName}NameEng`] = editData.nameEng
     if (selectedItem != null) {
-      const result = await editDisposalLocation(selectedItem.disposalLocId, editData)
+      const result = await editCompany(companyType, selectedItem.companyId, data)
       if (result) {
         onSubmitData('success', t('common.deletedSuccessfully'))
         resetFormData()
@@ -254,11 +327,11 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
               ? t('top_menu.add_new')
               : action == 'delete'
               ? t('add_warehouse_page.delete')
-              : selectedItem?.disposalLocNameTchi,
+              : selectedItem?.nameTchi,
           subTitle:
             action == 'add'
-              ? t('top_menu.waste_disposal')
-              : selectedItem?.disposalLocId,
+              ? t(`companyManagement.${companyType}`)
+              : selectedItem?.companyId,
           submitText: t('common.save'),
           cancelText: t('common.delete'),
           onCloseHeader: handleDrawerClose,
@@ -321,4 +394,4 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   )
 }
 
-export default DisposalLocationDetail
+export default CompanyDetail

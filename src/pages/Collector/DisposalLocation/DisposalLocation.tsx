@@ -20,28 +20,28 @@ import { DisposalLocation as DisposalLocationItem } from "../../../interfaces/di
 import CreateDisposalLocation from "./CreateDisposalLocation";
 
 function createDisposalLocation(
-  titleId: string,
-  tenantId: string,
-  titleNameTchi: string,
-  titleNameSchi: string,
-  titleNameEng: string,
-  duty: string,
+  disposalLocId: string,
+  disposalLocNameTchi: string,
+  disposalLocNameSchi: string,
+  disposalLocNameEng: string,
   description: string,
   remark: string,
   status: string,
+  location: string,
+  locationGps: number[],
   createdBy: string,
   updatedBy: string,
   createdAt: string,
   updatedAt: string
 ): DisposalLocationItem {
   return {
-    titleId,
-    tenantId,
-    titleNameTchi,
-    titleNameSchi,
-    titleNameEng,
-    duty,
+    disposalLocId,
+    disposalLocNameTchi,
+    disposalLocNameSchi,
+    disposalLocNameEng,
     description,
+    location,
+    locationGps,
     remark,
     status,
     createdBy,
@@ -73,14 +73,14 @@ const DisposalLocation: FunctionComponent = () => {
       data.content.map((item: any) => {
         disposalLocationMapping.push(
           createDisposalLocation(
-            item?.titleId,
-            item?.tenantId,
-            item?.titleNameTchi,
-            item?.titleNameSchi,
-            item?.titleNameEng,
+            item?.disposalLocId,
+            item?.disposalLocNameTchi,
+            item?.disposalLocNameSchi,
+            item?.disposalLocNameEng,
             item?.description,
             item?.remark,
-            item?.duty,
+            item?.location,
+            item?.locationGps,
             item?.status,
             item?.createdBy,
             item?.updatedBy,
@@ -95,42 +95,36 @@ const DisposalLocation: FunctionComponent = () => {
   };
   useEffect(() => {
     initDisposalLocationList();
-  }, [])
+  }, [page])
 
   const columns: GridColDef[] = [
     {
-      field: "titleNameTchi",
-      headerName: t("staff_title.staff_title_tchi"),
+      field: "disposalLocNameTchi",
+      headerName: t("common.traditionalChineseName"),
       width: 200,
       type: "string",
     },
     {
-      field: "titleNameSchi",
-      headerName: t("staff_title.staff_title_schi"),
+      field: "disposalLocNameSchi",
+      headerName: t("common.simplifiedChineseName"),
       width: 200,
       type: "string",
     },
     {
-      field: "titleNameEng",
-      headerName: t("staff_title.staff_title_eng"),
+      field: "disposalLocNameEng",
+      headerName: t("common.englishName"),
       width: 200,
       type: "string",
-    },
-    {
-      field: "duty",
-      headerName: t("staff_title.duty"),
-      width: 100,
-      type: "number",
     },
     {
       field: "description",
-      headerName: t("staff_title.description"),
+      headerName: t("common.description"),
       width: 100,
       type: "string",
     },
     {
       field: "remark",
-      headerName: t("staff_title.remark"),
+      headerName: t("common.remark"),
       width: 100,
       type: "string",
     },
@@ -255,7 +249,7 @@ const DisposalLocation: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t("top_menu.staff_positions")}
+            {t("top_menu.waste_disposal")}
           </Typography>
           <Button
             sx={[
@@ -278,7 +272,7 @@ const DisposalLocation: FunctionComponent = () => {
           <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
             <DataGrid
               rows={DisposalLocationList}
-              getRowId={(row) => row.titleId}
+              getRowId={(row) => row.disposalLocId}
               hideFooter
               columns={columns}
               checkboxSelection

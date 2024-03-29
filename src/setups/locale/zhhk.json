@@ -9,7 +9,14 @@
     "editSuccessfully": "編輯成功",
     "editFailed": "編輯失敗",
     "deletedSuccessfully": "刪除成功",
-    "deleteFailed": "刪除失敗"
+    "deleteFailed": "刪除失敗",
+    "enterName": "請輸入名稱",
+    "enterText": "請輸入文字",
+    "description": "簡介",
+    "remark": "備註",
+    "traditionalChineseName": "繁體中文名稱",
+    "simplifiedChineseName": "簡體中文名稱",
+    "englishName": "英文名稱"
   },
   "col": {
     "createCP": "建立回收點",
@@ -760,6 +767,15 @@
     "staff_title_eng": "英文名稱",
     "duty": "職責",
     "description": "簡介",
-    "remark": "備註"
+    "remark": "備註",
+    "enter_duty": "請輸入職責"
+  },
+  "companyManagement": {
+    "collectorlist": "回收公司",
+    "logisticlist": "物流公司",
+    "manulist": "回收廠",
+    "customerlist": "顧客公司",
+    "brNo": "商業登記號碼",
+    "enterBrNo": "請輸入商業登記號碼"
   }
 }

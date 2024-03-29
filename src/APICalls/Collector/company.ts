@@ -1,21 +1,21 @@
 import { AXIOS_DEFAULT_CONFIGS } from "../../constants/configs";
 import {
-  GET_DENIAL_REASON,
-  CREATE_DENIAL_REASON,
-  UPDATE_DENIAL_REASON,
+  GET_COMPANY,
+  CREATE_COMPANY,
+  UPDATE_COMPANY,
 } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import axiosInstance from "../../constants/axiosInstance";
-import { CreateDenialReason } from "../../interfaces/denialReason";
+import { CreateCompany, UpdateCompany } from "../../interfaces/company";
 
-//get all denial reasons
-export const getAllDenialReason = async (page: number, size: number) => {
+//get all company
+export const getAllCompany = async (companyType: string, page: number, size: number) => {
   try {
     const token = returnApiToken();
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_DENIAL_REASON(token.tenantId),
+      ...GET_COMPANY(token.decodeKeycloack, companyType),
       params: {
         page: page,
         size: size,
@@ -27,46 +27,43 @@ export const getAllDenialReason = async (page: number, size: number) => {
 
     return response;
   } catch (e) {
-    console.error("Get all denial reason failed:", e);
+    console.error("Get all company failed:", e);
     return null;
   }
 };
 
-// create denial reason
-export const createDenialReason = async (data: CreateDenialReason) => {
+// create company
+export const createCompany = async ( companyType: string, data: CreateCompany) => {
   try {
     // const userAccount = await getUserAccount();
     const token = returnApiToken();
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_DENIAL_REASON(),
-      data: { ...data, tenantId: token.tenantId, status: "ACTIVE" },
-      headers: {
-        AuthToken: token.authToken,
-      },
+      ...CREATE_COMPANY(token.decodeKeycloack, companyType),
+      data: data
     });
 
     return response;
   } catch (e) {
-    console.error("create denial reason failed:", e);
+    console.error("create company failed:", e);
     return null;
   }
 };
 
-// update denial reason
-export const editDenialReason = async (reasonId: number, data: CreateDenialReason) => {
+// update company
+export const editCompany = async ( companyType: string, companyId: string, data: UpdateCompany) => {
   try {
     const token = returnApiToken();
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...UPDATE_DENIAL_REASON(token.tenantId, reasonId),
+      ...UPDATE_COMPANY(token.decodeKeycloack, companyType, companyId),
       data: data,
     });
 
     return response;
   } catch (e) {
-    console.error("update denial reason failed:", e);
+    console.error("update company failed:", e);
     return null;
   }
 };

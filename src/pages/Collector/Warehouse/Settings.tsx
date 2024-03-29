@@ -5,8 +5,10 @@ import Warehouse from "./Warehouse";
 import Vehicle from "../Vehicles/Vechicles";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import DisposalLocation from "../DisposalLocation/DisposalLocation";
 import DenialReason from "../DenialReason/DenialReason";
 import StaffTitle from "../StaffTitle/StaffTitle";
+import Company from "../Company/Company";
 
 const Settings: FunctionComponent = () => {
   // const navigate = useNavigate()
@@ -49,9 +51,9 @@ const Settings: FunctionComponent = () => {
         ) :  selectedTab === 3 ? (
           <Vehicle />
         ) : selectedTab === 4 ? (
-          <></>
+          <Company />
         ) : selectedTab === 5 ? (
-          <></>
+          <DisposalLocation />
         ) : selectedTab === 6 ? (
           <StaffTitle />
         ) : selectedTab === 7 ? (

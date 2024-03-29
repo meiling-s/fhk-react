@@ -25,7 +25,7 @@ function createStaffTitle(
   titleNameTchi: string,
   titleNameSchi: string,
   titleNameEng: string,
-  duty: string,
+  duty: string[],
   description: string,
   remark: string,
   status: string,
@@ -78,9 +78,9 @@ const StaffTitle: FunctionComponent = () => {
             item?.titleNameTchi,
             item?.titleNameSchi,
             item?.titleNameEng,
+            item?.duty,
             item?.description,
             item?.remark,
-            item?.duty,
             item?.status,
             item?.createdBy,
             item?.updatedBy,
@@ -95,24 +95,24 @@ const StaffTitle: FunctionComponent = () => {
   };
   useEffect(() => {
     initStaffTitleList();
-  }, [])
+  }, [page])
 
   const columns: GridColDef[] = [
     {
       field: "titleNameTchi",
-      headerName: t("staff_title.staff_title_tchi"),
+      headerName: t("common.traditionalChineseName"),
       width: 200,
       type: "string",
     },
     {
       field: "titleNameSchi",
-      headerName: t("staff_title.staff_title_schi"),
+      headerName: t("common.simplifiedChineseName"),
       width: 200,
       type: "string",
     },
     {
       field: "titleNameEng",
-      headerName: t("staff_title.staff_title_eng"),
+      headerName: t("common.englishName"),
       width: 200,
       type: "string",
     },
@@ -124,13 +124,13 @@ const StaffTitle: FunctionComponent = () => {
     },
     {
       field: "description",
-      headerName: t("staff_title.description"),
+      headerName: t("common.description"),
       width: 100,
       type: "string",
     },
     {
       field: "remark",
-      headerName: t("staff_title.remark"),
+      headerName: t("common.remark"),
       width: 100,
       type: "string",
     },

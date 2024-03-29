@@ -749,13 +749,49 @@ export const GET_STAFF_TITLE = (table: string): AxiosRequestConfig => ({
 });
 
 //create staff title
-export const CREATE_STAFF_TITLE = (): AxiosRequestConfig => ({
+export const CREATE_STAFF_TITLE = (table: string): AxiosRequestConfig => ({
   method: "post",
-  url: `/api/v1/collectors/stafftitle`,
+  url: `/api/v1/collectors/stafftitle/${table}`,
 });
 
 //update staff title
-export const UPDATE_STAFF_TITLE = (table: string, titleId: number): AxiosRequestConfig => ({
+export const UPDATE_STAFF_TITLE = (table: string, titleId: string): AxiosRequestConfig => ({
   method: "PUT",
   url: `/api/v1/collectors/stafftitle/${table}/${titleId}`,
+});
+
+//get disposal location
+export const GET_DISPOSAL_LOCATION = (table: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `/api/v1/collectors/disposallocation/${table}`,
+});
+
+//create disposal location
+export const CREATE_DISPOSAL_LOCATION = (table: string): AxiosRequestConfig => ({
+  method: "post",
+  url: `/api/v1/collectors/disposallocation/${table}`,
+});
+
+//update disposal location
+export const UPDATE_DISPOSAL_LOCATION = (table: string, disposalLocId: string): AxiosRequestConfig => ({
+  method: "PUT",
+  url: `/api/v1/collectors/disposallocation/${table}/${disposalLocId}`,
+});
+
+//get company (collectorlist || logisticlist || manulist || customerlist)
+export const GET_COMPANY = (table: string, companyType: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `/api/v1/collectors/${companyType}/${table}`,
+});
+
+//create company
+export const CREATE_COMPANY = (table: string, companyType: string): AxiosRequestConfig => ({
+  method: "post",
+  url: `/api/v1/collectors/${companyType}/${table}`,
+});
+
+//update company
+export const UPDATE_COMPANY = (table: string, companyType: string, companyId: string): AxiosRequestConfig => ({
+  method: "PUT",
+  url: `/api/v1/collectors/${companyType}/${table}/${companyId}`,
 });

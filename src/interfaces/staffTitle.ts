@@ -6,7 +6,7 @@ export type StaffTitle = {
   titleNameEng: string;
   description: string;
   remark: string;
-  duty: string
+  duty: string[];
   status: string;
   createdBy: string;
   updatedBy: string;
@@ -21,7 +21,7 @@ export type CreateStaffTitle = {
   titleNameEng: string;
   description: string;
   remark: string;
-  duty: string
+  duty: string[];
   status: string;
   createdBy?: string;
   updatedBy?: string;
@@ -34,7 +34,7 @@ export type UpdateStaffTitle = {
   titleNameEng: string;
   description: string;
   remark: string;
-  duty: string
+  duty: string[];
   status: string;
   updatedBy?: string;
 };

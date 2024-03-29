@@ -6,7 +6,7 @@ import {
 } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import axiosInstance from "../../constants/axiosInstance";
-import { CreateStaffTitle } from "../../interfaces/staffTitle";
+import { CreateStaffTitle, UpdateStaffTitle } from "../../interfaces/staffTitle";
 
 //get all staff title
 export const getAllStaffTitle = async (page: number, size: number) => {
@@ -40,33 +40,30 @@ export const createStaffTitle = async (data: CreateStaffTitle) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_STAFF_TITLE(),
-      data: { ...data, status: "ACTIVE" },
-      headers: {
-        AuthToken: token.authToken,
-      },
+      ...CREATE_STAFF_TITLE(token.decodeKeycloack),
+      data: data
     });
 
     return response;
   } catch (e) {
-    console.error("Get all vehicle failed:", e);
+    console.error("create staff title failed:", e);
     return null;
   }
 };
 
 // update staff title
-export const editStaffTitle = async (reasonId: number, data: CreateStaffTitle) => {
+export const editStaffTitle = async (titleId: string, data: UpdateStaffTitle) => {
   try {
     const token = returnApiToken();
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...UPDATE_STAFF_TITLE(token.decodeKeycloack, reasonId),
+      ...UPDATE_STAFF_TITLE(token.decodeKeycloack, titleId),
       data: data,
     });
 
     return response;
   } catch (e) {
-    console.error("Get all staff title failed:", e);
+    console.error("update staff title failed:", e);
     return null;
   }
 };

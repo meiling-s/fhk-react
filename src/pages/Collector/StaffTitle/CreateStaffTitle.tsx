@@ -6,8 +6,7 @@ import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { editStaff, createStaff } from '../../../APICalls/staff'
-import { formErr } from '../../../constants/constant'
+import { createStaffTitle, editStaffTitle } from '../../../APICalls/Collector/staffTitle'
 import { returnErrorMsg } from '../../../utils/utils'
 import { localStorgeKeyName } from '../../../constants/constant'
 import { StaffTitle, CreateStaffTitle as CreateStaffTitleItem, UpdateStaffTitle } from '../../../interfaces/staffTitle'
@@ -50,38 +49,38 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
 
   const staffField = [
     {
-      label: t('staff_title.staff_title_tchi'),
-      placeholder: t('staff_title.enterName'),
+      label: t('common.traditionalChineseName'),
+      placeholder: t('common.enterName'),
       field: 'titleNameTchi',
       type: 'text'
     },
     {
-      label: t('staff_title.staff_title_schi'),
-      placeholder: t('staff_title.enterName'),
+      label: t('common.simplifiedChineseName'),
+      placeholder: t('common.enterName'),
       field: 'titleNameSchi',
       type: 'text'
     },
     {
-      label: t('staff_title.staff_title_eng'),
-      placeholder: t('staff_title.enterName'),
+      label: t('common.englishName'),
+      placeholder: t('common.enterName'),
       field: 'titleNameEng',
       type: 'text'
     },
     {
       label: t('staff_title.duty'),
-      placeholder: '',
+      placeholder: t('staff_title.enter_duty'),
       field: 'duty',
       type: 'text'
     },
     {
-      label: t('staff_title.description'),
-      placeholder: t('staff_title.enter_text'),
+      label: t('common.description'),
+      placeholder: t('common.enterText'),
       field: 'description',
       type: 'text'
     },
     {
-      label: t('staff_title.remark'),
-      placeholder: t('staff_title.enter_text'),
+      label: t('common.remark'),
+      placeholder: t('common.enterText'),
       field: 'remark',
       type: 'text'
     }
@@ -91,7 +90,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     if (selectedItem != null) {
       setFormData({
         titleId: selectedItem.titleId,
-        duty: selectedItem.duty,
+        duty: selectedItem.duty.length > 0 ? selectedItem.duty[0] : '',
         titleNameTchi: selectedItem.titleNameTchi,
         titleNameEng: selectedItem.titleNameEng,
         titleNameSchi: selectedItem.titleNameSchi,
@@ -125,12 +124,12 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
   const validate = async () => {
     const tempV: formValidate[] = []
     const fieldMapping: FormValues = {
-      titleNameTchi: t('staff_title.staff_title_tchi'),
-      titleNameSchi: t('staff_title.staff_title_schi'),
-      titleNameEng: t('staff_title.staff_title_eng'),
+      titleNameTchi: t('common.traditionalChineseName'),
+      titleNameSchi: t('common.simplifiedChineseName'),
+      titleNameEng: t('common.commoenglishNamen_eng'),
       duty: t('staff_title.duty'),
-      description: t('staff_title.description'),
-      remark: t('staff_title.remark')
+      description: t('common.description'),
+      remark: t('common.remark')
     }
     Object.keys(formData).forEach((fieldName) => {
       console.log({fieldName})
@@ -171,7 +170,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       titleNameSchi: formData.titleNameSchi,
       titleNameEng: formData.titleNameEng,
       description: formData.description,
-      duty: formData.duty,
+      duty: [formData.duty],
       status: 'ACTIVE',
       remark: formData.remark,
       createdBy: loginName,
@@ -188,14 +187,14 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
   const handleCreateStaff = async (staffData: CreateStaffTitleItem) => {
     validate()
     if (validation.length === 0) {
-      const result = await createStaff(staffData)
+      const result = await createStaffTitle(staffData)
       if (result?.data) {
-        onSubmitData('success', 'Success created data')
+        onSubmitData('success', t('common.saveSuccessfully'))
         resetFormData()
         handleDrawerClose()
       } else {
         setTrySubmited(true)
-        onSubmitData('error', 'Failed created data')
+        onSubmitData('error', t('common.saveFailed'))
       }
     } else {
       setTrySubmited(true)
@@ -209,16 +208,16 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       titleNameEng: formData.titleNameEng,
       titleId: formData.titleId,
       description: formData.description,
-      duty: formData.duty,
+      duty: [formData.duty],
       status: 'ACTIVE',
       remark: formData.remark,
       updatedBy: loginName
     }
-    if (validation.length == 0) {
+    if (validation.length === 0) {
       if (selectedItem != null) {
-        const result = await editStaff(editData, selectedItem.titleId)
+        const result = await editStaffTitle(selectedItem.titleId, editData)
         if (result) {
-          onSubmitData('success', 'Edit data success')
+          onSubmitData('success', t('common.editSuccessfully'))
           resetFormData()
           handleDrawerClose()
         }
@@ -235,15 +234,15 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       titleNameEng: formData.titleNameEng,
       titleId: formData.titleId,
       description: formData.description,
-      duty: formData.loginId,
+      duty: [formData.duty],
       status: 'DELETED',
       remark: formData.remark,
       updatedBy: loginName
     }
     if (selectedItem != null) {
-      const result = await editStaff(editData, selectedItem.titleId)
+      const result = await editStaffTitle(selectedItem.titleId, editData)
       if (result) {
-        onSubmitData('success', 'Deleted data success')
+        onSubmitData('success', t('common.deletedSuccessfully'))
         resetFormData()
         handleDrawerClose()
       }
@@ -266,7 +265,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
               : selectedItem?.titleNameTchi,
           subTitle:
             action == 'add'
-              ? t('staff_title.staff')
+              ? t('top_menu.staff_positions')
               : selectedItem?.titleId,
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
