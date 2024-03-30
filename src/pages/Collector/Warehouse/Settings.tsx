@@ -1,9 +1,11 @@
 import { FunctionComponent, useState } from "react";
 import Tabs from "../../../components/Tabs";
-import Warehouse from "./Warehouse";
-import Vehicle from "../Vehicles/Vechicles";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import GeneralSettings from '../GeneralSettings/GeneralSettings'
+import PackagingUnit from '../PackagingUnit/PackagingUnit'
+import Warehouse from "./Warehouse";
+import Vehicle from "../Vehicles/Vechicles";
 import DisposalLocation from "../DisposalLocation/DisposalLocation";
 import DenialReason from "../DenialReason/DenialReason";
 import StaffTitle from "../StaffTitle/StaffTitle";
@@ -40,13 +42,14 @@ const Settings: FunctionComponent = () => {
           className="lg:px-10 sm:px-4 bg-bg-primary"
         />
         {/* rendering content base on tab index */}
-        {selectedTab === 0 ? (
-          <></>
+        {
+        selectedTab === 0 ? (
+          <GeneralSettings/>
         ) : selectedTab === 1 ? (
-          <></>
+          <PackagingUnit/>
         ) : selectedTab === 2 ? (
           <Warehouse />
-        ) :  selectedTab === 3 ? (
+        ) : selectedTab === 3 ? (
           <Vehicle />
         ) : selectedTab === 4 ? (
           <Company />

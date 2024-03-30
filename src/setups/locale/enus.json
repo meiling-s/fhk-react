@@ -69,7 +69,8 @@
       "timeCantDuplicate": "time can't duplicate",
       "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength": "should not exceed 100 characters",
-      "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded"
+      "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
+      "startDateBehindEndDate": "not allowed the start time behind the end time"
     }
   },
   "component": {
@@ -580,6 +581,7 @@
     "employeeChineseCn": "Employee's Chinese Simplified Chinese name",
     "position": "Position",
     "loginName": "Login Name",
+    "enterLoginName": "Enter Login Name",
     "contactNumber": "Contact Number",
     "lastLogin": "Last Login",
     "email": "Email",
@@ -748,7 +750,45 @@
       "language": "Language"
     },
     "modify_template": {
-      "header": "Modify Template"
+      "header": "Modify Template",
+      "app": {
+        "Recycling_delivery_request": "Recycling delivery request",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "content": "content",
+        "variables": "Available Variables",
+        "button_submit": "Store"
+      },
+      "sms": {
+        "Recycling_delivery_request": "Recycling materials have been sent to the factory",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "content": "content",
+        "variables": "Available Variables",
+        "button_submit": "Store"
+      },
+      "email": {
+        "Recycling_delivery_request": "Registration link",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "content": "content",
+        "variables": "Available Variables",
+        "button_submit": "Store"
+      },
+      "broadcast": {
+        "Recycling_delivery_request": "System Information",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "start_valid_date": "Valid date",
+        "end_valid_date": "to",
+        "content": "content",
+        "variables": "Available Variables",
+        "button_submit": "Store"
+      }
     }
   },
   "denial_reason": {
@@ -778,5 +818,40 @@
     "customerlist": "Customer Company",
     "brNo": "Business Registration Number",
     "enterBrNo": "Please enter business registration number"
+  },
+  "general_settings": {
+    "new": "New",
+    "currency": "Currency",
+    "contracts": "Contracts",
+    "name": "Name",
+    "reference_number": "Reference Number",
+    "state": "Status",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "remark": "Remark",
+    "whether": "Whether EPD",
+    "default_currency": "Default Currency",
+    "activate": "Activate",
+    "deactive": "Inactive",
+    "true": "True",
+    "false": "False"
+  },
+  "packaging_unit": {
+    "packaging_unit": "Packaging Unit",
+    "new": "New",
+    "traditional_chinese_name": "Traditional Chinese Name",
+    "simplified_chinese_name": "Simplified Chinese Name",
+    "english_name": "English Name",
+    "introduction": "Introduction",
+    "remark": "Remark"
+  },
+  "staffEnquiry": {
+    "title": "Staff Enquiry",
+    "addNewStaffEnquiry": "Add New Staff Enquiry",
+    "contractNo": "Contract No",
+    "fulltimeFlag": "Fulltime Flag",
+    "enterFulltimeFlag": "Enter fulltime flag",
+    "gender": "Gender",
+    "enterGender": "Enter gender"
   }
 }

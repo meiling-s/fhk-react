@@ -89,7 +89,7 @@ export const getDriver = async (page: number, size: number, sort: string) => {
     const token = returnApiToken()
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_DRIVER('company914351'),
+      ...GET_DRIVER(token.decodeKeycloack),
       params: {
         page: page,
         size: size,
@@ -113,7 +113,7 @@ export const getAllVehiclesLogistic = async (page: number, size: number) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_VEHICLE_LOGISTIC('company914352'),
+      ...GET_VEHICLE_LOGISTIC(token.decodeKeycloack),
       params: {
         page: page,
         size: size

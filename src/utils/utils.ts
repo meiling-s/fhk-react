@@ -4,11 +4,17 @@ import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
 export const returnApiToken = () => {
-  const decodeKeycloack = localStorage.getItem(localStorgeKeyName.decodeKeycloack)  || ''
-  const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken  )|| ''
-  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId  )|| ''
-  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
-  return {decodeKeycloack: decodeKeycloack, authToken: authToken, tenantId: tenantId, loginId: loginId}
+  const decodeKeycloack =
+    localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
+  const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
+  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  return {
+    decodeKeycloack: decodeKeycloack,
+    authToken: authToken,
+    tenantId: tenantId,
+    loginId: loginId
+  }
 }
 
 export const ImageToBase64 = (images: ImageListType) => {
@@ -24,70 +30,79 @@ export const ImageToBase64 = (images: ImageListType) => {
 }
 
 export const returnErrorMsg = (error: string, t: (key: string) => string) => {
-    var msg = '';
-    console.log(error);
-    switch (error) {
-      case formErr.empty:
-        msg = t('form.error.shouldNotBeEmpty');
-        break;
-      case formErr.wrongFormat:
-        msg = t('form.error.isInWrongFormat');
-        break;
-      case formErr.numberSmallThanZero:
-        msg = t('form.error.shouldNotSmallerThanZero');
-        break;
-      case formErr.wrongFormat:
-        msg = t('form.error.isInWrongFormat');
-        break;
-      case formErr.minMoreOneImgUploded:
-        msg = t('form.error.minMoreOneImgUploded');
-        break;
-      case formErr.alreadyExist:
-        msg = t('form.error.alreadyExist');
-        break;
-    }
-    return msg;
-  };
-
-
-export const displayCreatedDate = (valueDate : string) =>{
-    const utcOffset = 8 * 60 * 60 * 1000; // UTC+8 in milliseconds
-    const dateWithOffset = new Date(valueDate).getTime() + utcOffset;
-    const formattedDate = dayjs(dateWithOffset).format(format.dateFormat1);
-
-    return formattedDate
+  var msg = ''
+  console.log(error)
+  switch (error) {
+    case formErr.empty:
+      msg = t('form.error.shouldNotBeEmpty')
+      break
+    case formErr.wrongFormat:
+      msg = t('form.error.isInWrongFormat')
+      break
+    case formErr.numberSmallThanZero:
+      msg = t('form.error.shouldNotSmallerThanZero')
+      break
+    case formErr.wrongFormat:
+      msg = t('form.error.isInWrongFormat')
+      break
+    case formErr.minMoreOneImgUploded:
+      msg = t('form.error.minMoreOneImgUploded')
+      break
+    case formErr.alreadyExist:
+      msg = t('form.error.alreadyExist')
+      break
+    case formErr.startDateBehindEndDate:
+      msg = t('form.error.startDateBehindEndDate')
+      break
   }
+  return msg
+}
 
-  export const displayLocalDate = (valueDate: string) => {
-    const utcOffset = 8 * 60 * 60 * 1000 // UTC+8 in milliseconds
-    const dateWithOffset = new Date(valueDate).getTime() + utcOffset
-    const formattedDate = dayjs(dateWithOffset).format(format.dateFormat2)
-  
-    return formattedDate
-  }
+export const displayCreatedDate = (valueDate: string) => {
+  const utcOffset = 8 * 60 * 60 * 1000 // UTC+8 in milliseconds
+  const dateWithOffset = new Date(valueDate).getTime() + utcOffset
+  const formattedDate = dayjs(dateWithOffset).format(format.dateFormat1)
 
-  export const showErrorToast = (msg: string) => {
-    toast.error(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
+  return formattedDate
+}
 
-  export const showSuccessToast = (msg: string) => {
-    toast.info(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
+export const displayLocalDate = (valueDate: string) => {
+  const utcOffset = 8 * 60 * 60 * 1000 // UTC+8 in milliseconds
+  const dateWithOffset = new Date(valueDate).getTime() + utcOffset
+  const formattedDate = dayjs(dateWithOffset).format(format.dateFormat2)
+
+  return formattedDate
+}
+
+export const displayLocalDateWitoutOffset = (valueDate: string) => {
+  const dateWithOffset = new Date(valueDate).getTime()
+  const formattedDate = dayjs(dateWithOffset).format(format.dateFormat2)
+
+  return formattedDate
+}
+
+export const showErrorToast = (msg: string) => {
+  toast.error(msg, {
+    position: 'top-center',
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: 'light'
+  })
+}
+
+export const showSuccessToast = (msg: string) => {
+  toast.info(msg, {
+    position: 'top-center',
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: 'light'
+  })
+}

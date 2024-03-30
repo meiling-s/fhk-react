@@ -127,7 +127,6 @@ const handleDelete = (index: number) => {
                 ...item,
                 vehicleId: 0,
                 driverId: '',
-                plateNo: '',
                 status: status
             }
         } else {
@@ -209,30 +208,26 @@ return (
                 sx={{ ...styles.gridForm }}
             >
                 <Grid item>
-                    <Typography  fontSize={22} color="black" style={{fontWeight: '700'}}>
+                    <Typography  fontSize={20} color="black" fontWeight="bold">
                     {t('jobOrder.create_work_waybill')}
                     </Typography>
                 </Grid>
 
                 <Grid item>
-                    <Typography fontSize={16} color="black" style={{fontWeight: '700'}}>
+                    <Typography fontSize={16} color="#717171" fontWeight="bold">
                     {t('jobOrder.shipping_information')}
                     </Typography>
                 </Grid>
 
-                <Grid item >
-                    <Typography sx={{fontSize: '13px', fontWeight: '400', color: 'ACACAC'}}>
-                        {t('jobOrder.corresponding_waybill')}
-                    </Typography>
-
-                    <Typography sx={{fontSize: '16px', fontWeight: '700', color: 'black'}}>
+                <CustomField label={t('jobOrder.corresponding_waybill')}>
+                    <Typography sx={localstyles.typo_fieldContent}>
                         {orderDetail.picoId}
                     </Typography>
-                </Grid>
+                </CustomField>
                 
                 <Grid display={'flex'} style={{marginTop: '15px', marginLeft: '15px', fontSize: '16px'}} direction={'row'}>
                     <div className='flex flex-col gap-y-1 w-[240px]'>
-                        <Typography sx={{fontSize: '13px', lineHeight: '20px', color: '#ACACAC', fontWeight: '400'}}>{t('jobOrder.shipping_validity_date_from')}</Typography>
+                        <Typography sx={{fontSize: '16px', lineHeight: '20px', color: '#ACACAC'}}>{t('jobOrder.shipping_validity_date_from')}</Typography>
                         <DatePicker
                             value={dayjs(orderDetail.effFrmDate)}
                             sx={localstyles.datePicker}
@@ -241,7 +236,7 @@ return (
                         />
                     </div>
                     <div className='flex flex-col ml-2 gap-y-1 w-[240px]'>
-                        <Typography sx={{fontSize: '13px', lineHeight: '20px', color: '#ACACAC', fontWeight: '400'}}>{t('jobOrder.shipping_validity_date_to')}</Typography>
+                        <Typography sx={{fontSize: '16px', lineHeight: '20px', color: '#ACACAC'}}>{t('jobOrder.shipping_validity_date_to')}</Typography>
                         <DatePicker
                             value={dayjs(orderDetail.effToDate)}
                             sx={localstyles.datePicker}
@@ -252,17 +247,13 @@ return (
                     
                 </Grid>
 
-                <Grid item >
-                    <Typography sx={{fontSize: '13px', fontWeight: '400', color: 'ACACAC'}}>
-                        {t('jobOrder.shipping_company_name')}
-                    </Typography>
-
-                    <Typography sx={{fontSize: '16px', fontWeight: '700', color: 'black'}}>
+                <CustomField label={t('jobOrder.shipping_company_name')}>
+                    <Typography sx={localstyles.typo_fieldContent}>
                         {orderDetail.receiverName}
                     </Typography>
-                </Grid>
+                </CustomField>
 
-                <div  className='flex flex-col gap-y-3 ml-4 mt-2'>
+                <div  className='flex flex-col gap-y-3 ml-4'>
                     <p className='font-semibold text-[#717171]'> {t('jobOrder.recycling_location_information')}</p>
                     {
                         pickupOrderDetail.map((item: AssignJobDriver, index) => {
@@ -328,7 +319,7 @@ return (
                                         </div>
                                         <div className='flex flex-col'>
                                             <label className='label-0 text-[#535353] text-[15px]'>{item.driverId}</label>
-                                            <label className='label-0 text-[#535353] text-[15px]'>{item.plateNo}</label>
+                                            <label className='label-0 text-[#535353] text-[15px]'>{item.vehicleId}</label>
                                         </div>
                                     </div>
                                     <div className='flex  gap-x-1'>
