@@ -53,6 +53,7 @@ import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePico
 import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
 import JobOrder from './pages/Logistic/JobOrder'
 import LogisticAccount from './pages/Logistic/Account'
+import Driver from "./pages/Logistic/Driver";
 import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
@@ -150,8 +151,8 @@ const Router = () => {
           <Route path="/logistic/pickupOrder/:picoId" element={<JobOrder />} />
           <Route path="/logistics/createPickupOrder" element={<CreatePicoLogistic />} />
           <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic /> } />
-          <Route path="/logistic/notice" element={<Notice />} />
           <Route path="/logistics/account" element={<LogisticAccount />} />
+          <Route path="/logistic/driver" element={<Driver/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

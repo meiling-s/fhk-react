@@ -97,7 +97,8 @@
     "company": "Company",
     "staff_positions": "Staff positions",
     "denial_reason": "Denial reason",
-    "add_new": "New"
+    "add_new": "New",
+    "add_new_vehicle": "Add New Vehicle" 
   },
   "settings_page": {
     "title": "Settings"
@@ -768,6 +769,32 @@
         "variables": "Available Variables",
         "button_submit": "Store"
       }
+    }
+  },
+  "driver": {
+    "sideBarName": "Driver",
+    "title": "Driver",
+    "tabs": {
+      "driver": "Driver",
+      "cars": "Vehicles"
+    },
+    "DriverMenu": {
+      "AddBtn": "Add Driver"
+    },
+    "vehicleMenu": {
+      "vehicle_number": "Vehicle Number",
+      "license_plate_number": "License Plate Number",
+      "vehicle_type": "Vehicle Type",
+      "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
+      "picture": "Picture",
+      "license_plate_number_placeholder": "Please enter vehicle plate number",
+      "vehicle_type_placeholder": "Please enter vehicle type",
+      "vehicle_cargo_capacity_placeholder": "Please enter weight"
+
+    },
+    "search": {
+      "label": "Search",
+      "placeholder": "Please enter Driver No."   
     }
   },
   "general_settings": {

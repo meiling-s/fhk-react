@@ -336,6 +336,31 @@ export const GET_VEHICLE = (table: string): AxiosRequestConfig => ({
   url: `api/v1/collectors/vehicle/${table}`,
 });
 
+export const GET_LOGISTIC_VEHICLE = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}`
+})
+
+export const SEARCH_LOGISTIC_VEHICLE = (table: string, vehicleId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
+})
+
+export const CREATE_LOGISTIC_VEHICLE = (table: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/logistic/vehicle/${table}`
+})
+
+export const EDIT_LOGISTIC_VEHICLE = (table: string, vehicleId: number): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
+})
+
+export const DELETE_LOGISTIC_VEHICLE = (table: string, vehicleId: number): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/logistic/vehicle/${table}/${vehicleId}/status`
+})
+
 export const DELETE_VEHICLE = (
   table: string,
   vehicleId: number

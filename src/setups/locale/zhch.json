@@ -97,7 +97,8 @@
     "company": "公司",
     "staff_positions": "员工职位",
     "denial_reason": "拒绝原因",
-    "add_new": "新增"
+    "add_new": "新增",
+    "add_new_vehicle": "添加新车辆"
   },
   "settings_page": {
     "title": "设定"
@@ -744,6 +745,34 @@
         "content" : "内容",
         "button_submit": "儲存"
       }
+    }
+  },
+  "driver": {
+    "sideBarName": "车队",
+    "title": "车队",
+    "tabs": {
+      "driver": "司机",
+      "cars": "车辆"
+    },
+    "DriverMenu": {
+      "AddBtn": "新增司机",
+      "search": {
+        "label": "搜索",
+        "placeholder": "输入司机编号"   
+      },
+      "table": {
+        "driverId": "司机编号"
+      }
+    },
+    "vehicleMenu": {
+      "vehicle_number": "车辆号码",
+      "license_plate_number": "车牌号",
+      "vehicle_type": "Vehicle Type",
+      "vehicle_cargo_capacity": "车辆类型",
+      "picture": "图片",
+      "license_plate_number_placeholder": "请输入车牌号",
+      "vehicle_type_placeholder": "请输入车辆类型",
+      "vehicle_cargo_capacity_placeholder": "请输入体重"
     }
   },
   "general_settings": {
