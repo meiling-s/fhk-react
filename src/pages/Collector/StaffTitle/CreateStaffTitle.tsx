@@ -8,7 +8,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { createStaffTitle, editStaffTitle } from '../../../APICalls/Collector/staffTitle'
 import { returnErrorMsg } from '../../../utils/utils'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { formErr, localStorgeKeyName } from '../../../constants/constant'
 import { StaffTitle, CreateStaffTitle as CreateStaffTitleItem, UpdateStaffTitle } from '../../../interfaces/staffTitle'
 
 interface CreateStaffTitle {
@@ -33,13 +33,12 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
   const { t } = useTranslation()
 
   const initialFormValues = {
-    loginId: '',
     titleNameTchi: '',
-    titleNameEng: '',
     titleNameSchi: '',
+    titleNameEng: '',
+    duty: '',
     description: '',
     remark: '',
-    titleId: ''
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -126,28 +125,26 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     const fieldMapping: FormValues = {
       titleNameTchi: t('common.traditionalChineseName'),
       titleNameSchi: t('common.simplifiedChineseName'),
-      titleNameEng: t('common.commoenglishNamen_eng'),
+      titleNameEng: t('common.englishName'),
       duty: t('staff_title.duty'),
       description: t('common.description'),
       remark: t('common.remark')
     }
     Object.keys(formData).forEach((fieldName) => {
-      console.log({fieldName})
-      console.log(formData[fieldName])
-      // formData[fieldName as keyof FormValues].trim() === '' &&
-      //   tempV.push({
-      //     field: fieldMapping[fieldName as keyof FormValues],
-      //     problem: formErr.empty,
-      //     type: 'error'
-      //   })
+      formData[fieldName as keyof FormValues].trim() === '' &&
+        tempV.push({
+          field: fieldMapping[fieldName as keyof FormValues],
+          problem: formErr.empty,
+          type: 'error'
+        })
     })
     setValidation(tempV)
+    return tempV.length === 0;
   }
 
   useEffect(() => {
     validate()
   }, [
-    formData.titleId,
     formData.titleNameTchi,
     formData.titleNameEng,
     formData.titleNameSchi,
@@ -163,24 +160,29 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     })
   }
 
-  const handleSubmit = () => {
-    const staffData: CreateStaffTitleItem = {
-      tenantId: tenantId.toString(),
-      titleNameTchi: formData.titleNameTchi,
-      titleNameSchi: formData.titleNameSchi,
-      titleNameEng: formData.titleNameEng,
-      description: formData.description,
-      duty: [formData.duty],
-      status: 'ACTIVE',
-      remark: formData.remark,
-      createdBy: loginName,
-      updatedBy: loginName
-    }
+  const handleSubmit = async () => {
+    const isValid = await validate();
+    if (isValid) {
+      const staffData: CreateStaffTitleItem = {
+        tenantId: tenantId.toString(),
+        titleNameTchi: formData.titleNameTchi,
+        titleNameSchi: formData.titleNameSchi,
+        titleNameEng: formData.titleNameEng,
+        description: formData.description,
+        duty: [formData.duty],
+        status: 'ACTIVE',
+        remark: formData.remark,
+        createdBy: loginName,
+        updatedBy: loginName
+      }
 
-    if (action === 'add') {
-      handleCreateStaff(staffData)
+      if (action === 'add') {
+        handleCreateStaff(staffData)
+      } else {
+        handleEditStaff()
+      }
     } else {
-      handleEditStaff()
+      setTrySubmited(true);
     }
   }
 
@@ -203,10 +205,10 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
 
   const handleEditStaff = async () => {
     const editData: UpdateStaffTitle = {
+      titleId: selectedItem?.titleId || '',
       titleNameTchi: formData.titleNameTchi,
       titleNameSchi: formData.titleNameSchi,
       titleNameEng: formData.titleNameEng,
-      titleId: formData.titleId,
       description: formData.description,
       duty: [formData.duty],
       status: 'ACTIVE',
@@ -229,10 +231,10 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
 
   const handleDelete = async () => {
     const editData: UpdateStaffTitle = {
+      titleId: selectedItem?.titleId || '',
       titleNameTchi: formData.titleNameTchi,
       titleNameSchi: formData.titleNameSchi,
       titleNameEng: formData.titleNameEng,
-      titleId: formData.titleId,
       description: formData.description,
       duty: [formData.duty],
       status: 'DELETED',

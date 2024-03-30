@@ -8,7 +8,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { editDisposalLocation, createDisposalLocation } from '../../../APICalls/Collector/disposalLocation'
 import { returnErrorMsg } from '../../../utils/utils'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { formErr, localStorgeKeyName } from '../../../constants/constant'
 import { DisposalLocation, CreateDisposalLocation as CreateDisposalLocationItem,UpdateDisposalLocation } from '../../../interfaces/disposalLocation'
 
 interface CreateDisposalLocation {
@@ -33,13 +33,11 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   const { t } = useTranslation()
 
   const initialFormValues = {
-    loginId: '',
     disposalLocNameTchi: '',
     disposalLocNameEng: '',
     disposalLocNameSchi: '',
     description: '',
     remark: '',
-    disposalLocId: ''
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -82,7 +80,6 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   const mappingData = () => {
     if (selectedItem != null) {
       setFormData({
-        disposalLocId: selectedItem.disposalLocId,
         disposalLocNameTchi: selectedItem.disposalLocNameTchi,
         disposalLocNameEng: selectedItem.disposalLocNameEng,
         disposalLocNameSchi: selectedItem.disposalLocNameSchi,
@@ -123,22 +120,20 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
       remark: t('common.remark')
     }
     Object.keys(formData).forEach((fieldName) => {
-      console.log({fieldName})
-      console.log(formData[fieldName])
-      // formData[fieldName as keyof FormValues].trim() === '' &&
-      //   tempV.push({
-      //     field: fieldMapping[fieldName as keyof FormValues],
-      //     problem: formErr.empty,
-      //     type: 'error'
-      //   })
+      formData[fieldName as keyof FormValues].trim() === '' &&
+        tempV.push({
+          field: fieldMapping[fieldName as keyof FormValues],
+          problem: formErr.empty,
+          type: 'error'
+        })
     })
     setValidation(tempV)
+    return tempV.length === 0;
   }
 
   useEffect(() => {
     validate()
   }, [
-    formData.disposalLocId,
     formData.disposalLocNameTchi,
     formData.disposalLocNameEng,
     formData.disposalLocNameSchi,
@@ -153,29 +148,33 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     })
   }
 
-  const handleSubmit = () => {
-    const staffData: CreateDisposalLocationItem = {
-      disposalLocNameTchi: formData.disposalLocNameTchi,
-      disposalLocNameSchi: formData.disposalLocNameSchi,
-      disposalLocNameEng: formData.disposalLocNameEng,
-      description: formData.description,
-      location: '',
-      locationGps: [],
-      status: 'ACTIVE',
-      remark: formData.remark,
-      createdBy: loginName,
-      updatedBy: loginName
-    }
+  const handleSubmit = async () => {
+    const isValid = await validate();
+    if (isValid) {
+      const staffData: CreateDisposalLocationItem = {
+        disposalLocNameTchi: formData.disposalLocNameTchi,
+        disposalLocNameSchi: formData.disposalLocNameSchi,
+        disposalLocNameEng: formData.disposalLocNameEng,
+        description: formData.description,
+        location: '',
+        locationGps: [],
+        status: 'ACTIVE',
+        remark: formData.remark,
+        createdBy: loginName,
+        updatedBy: loginName
+      }
 
-    if (action === 'add') {
-      handleCreateDisposalLocation(staffData)
+      if (action === 'add') {
+        handleCreateDisposalLocation(staffData)
+      } else {
+        handleEditDisposalLocation()
+      }
     } else {
-      handleEditDisposalLocation()
+      setTrySubmited(true);
     }
   }
 
   const handleCreateDisposalLocation = async (staffData: CreateDisposalLocationItem) => {
-    validate()
     if (validation.length === 0) {
       const result = await createDisposalLocation(staffData)
       if (result?.data) {
@@ -193,10 +192,10 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
 
   const handleEditDisposalLocation = async () => {
     const editData: UpdateDisposalLocation = {
+      disposalLocId: selectedItem?.disposalLocId || '',
       disposalLocNameTchi: formData.disposalLocNameTchi,
       disposalLocNameSchi: formData.disposalLocNameSchi,
       disposalLocNameEng: formData.disposalLocNameEng,
-      disposalLocId: formData.disposalLocId,
       description: formData.description,
       status: 'ACTIVE',
       remark: formData.remark,
@@ -220,10 +219,10 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
 
   const handleDelete = async () => {
     const editData: UpdateDisposalLocation = {
+      disposalLocId: formData?.disposalLocId || '',
       disposalLocNameTchi: formData.disposalLocNameTchi,
       disposalLocNameSchi: formData.disposalLocNameSchi,
       disposalLocNameEng: formData.disposalLocNameEng,
-      disposalLocId: formData.disposalLocId,
       description: formData.description,
       status: 'DELETED',
       remark: formData.remark,
@@ -303,7 +302,7 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
                 </CustomField>
               </Grid>
             )}
-            <Grid item sx={{ width: '100%' }}>
+            <Grid item>
               {trySubmited &&
                 validation.map((val, index) => (
                   <FormErrorMsg

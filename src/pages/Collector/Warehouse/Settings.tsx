@@ -1,5 +1,4 @@
-import { FunctionComponent, useCallback, ReactNode, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { FunctionComponent, useState } from "react";
 import Tabs from "../../../components/Tabs";
 import Warehouse from "./Warehouse";
 import Vehicle from "../Vehicles/Vechicles";
@@ -11,7 +10,6 @@ import StaffTitle from "../StaffTitle/StaffTitle";
 import Company from "../Company/Company";
 
 const Settings: FunctionComponent = () => {
-  // const navigate = useNavigate()
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState(2);
   const handleTabChange = (value: number, label: string) => {

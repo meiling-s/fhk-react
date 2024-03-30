@@ -24,10 +24,10 @@ function createCompany(
   nameTchi: string,
   nameSchi: string,
   nameEng: string,
+  brNo: string,
   description: string,
   remark: string,
   status: string,
-  brNo: string,
   createdBy: string,
   updatedBy: string,
   createdAt: string,
@@ -38,8 +38,8 @@ function createCompany(
     nameTchi,
     nameSchi,
     nameEng,
-    description,
     brNo,
+    description,
     remark,
     status,
     createdBy,
@@ -57,12 +57,14 @@ const Company: FunctionComponent = () => {
   const [rowId, setRowId] = useState<number>(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [totalData, setTotalData] = useState<number>(0);
-  const [CompanyList, setCompanyList] = useState<CompanyItem[]>(
-    []
-  );
+  // const [companyList, setCompanyList] = useState<CompanyItem[]>([]);
   const [selectedRow, setSelectedRow] = useState<CompanyItem | null>(null);
-  const companyTypeList = ['collectorlist', 'logisticlist', 'manulist', 'customerlist']
+  const companyTypeList: string[] = ['collectorlist', 'logisticlist', 'manulist', 'customerlist']
   const [selectCompanyType, setSelectCompanyType] = useState<string>('')
+  const [collectorList, setCollectorList] = useState<CompanyItem[]>([]);
+  const [logisticList, setLogisticList] = useState<CompanyItem[]>([]);
+  const [manuList, setManuList] = useState<CompanyItem[]>([]);
+  const [customerList, setCustomerList] = useState<CompanyItem[]>([]);
   const initCompanyList = async (companyType: string) => {
     const result = await getAllCompany(companyType, page - 1, pageSize);
     const data = result?.data;
@@ -77,9 +79,9 @@ const Company: FunctionComponent = () => {
             item[`${prefixItemName}NameTchi`],
             item[`${prefixItemName}NameSchi`],
             item[`${prefixItemName}NameEng`],
+            item?.brNo,
             item?.description,
             item?.remark,
-            item?.brNo,
             item?.status,
             item?.createdBy,
             item?.updatedBy,
@@ -88,10 +90,48 @@ const Company: FunctionComponent = () => {
           )
         );
       });
-      setCompanyList(companyMapping);
+      switch (companyType) {
+        case 'collectorlist':
+          setCollectorList(companyMapping);
+          break;
+        case 'logisticlist':
+          setLogisticList(companyMapping);
+          break;
+        case 'manulist':
+          setManuList(companyMapping);
+          break;
+        case 'customerlist':
+          setCustomerList(companyMapping);
+          break;
+        default:
+          break;
+      }
       setTotalData(data.totalPages);
     }
   };
+
+  const getSelectedCompanyList = useCallback((companyType: string) => {
+    let selectedList: CompanyItem[] = [];
+    switch (companyType) {
+      case 'collectorlist':
+        selectedList = collectorList;
+        break;
+      case 'logisticlist':
+        selectedList = logisticList;
+        break;
+      case 'manulist':
+        selectedList = manuList;
+        break;
+      case 'customerlist':
+        selectedList = customerList;
+        break;
+      default:
+        selectedList = [];
+        break;
+    }
+    return selectedList;
+  }, [collectorList, logisticList, manuList, customerList]);
+
   const initAllData = () => {
     for (const type of companyTypeList) {
       initCompanyList(type);
@@ -117,6 +157,12 @@ const Company: FunctionComponent = () => {
     {
       field: "nameEng",
       headerName: t("common.englishName"),
+      width: 200,
+      type: "string",
+    },
+    {
+      field: "brNo",
+      headerName: t("companyManagement.brNo"),
       width: 200,
       type: "string",
     },
@@ -283,7 +329,7 @@ const Company: FunctionComponent = () => {
               <div className="table-vehicle">
                 <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
                   <DataGrid
-                    rows={CompanyList}
+                    rows={getSelectedCompanyList(item)}
                     getRowId={(row) => row.companyId}
                     hideFooter
                     columns={columns}

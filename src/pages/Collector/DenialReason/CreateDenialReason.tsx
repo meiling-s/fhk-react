@@ -37,10 +37,10 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   const { t } = useTranslation()
 
   const initialFormValues = {
-    functionId: '',
     reasonNameTchi: '',
-    reasonNameEng: '',
     reasonNameSchi: '',
+    reasonNameEng: '',
+    functionId: '',
     description: '',
     remark: '',
   }
@@ -183,6 +183,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       }
     })
     setValidation(tempV)
+    return tempV.length === 0;
   }
 
   useEffect(() => {
@@ -204,33 +205,37 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     })
   }
 
-  const handleSubmit = () => {
-    const selectedValue = functionList.find((el) => el.name === formData.functionId)
-    if (selectedValue) {
-      formData.functionId = selectedValue.functionId
-    }
-    const denialReasonData: CreateDenialReason = {
-      tenantId: tenantId.toString(),
-      reasonNameTchi: formData.reasonNameTchi,
-      reasonNameSchi: formData.reasonNameSchi,
-      reasonNameEng: formData.reasonNameEng,
-      description: formData.description,
-      functionId: formData.functionId,
-      remark: formData.remark,
-      status: 'ACTIVE',
-      createdBy: loginName,
-      updatedBy: loginName
-    }
+  const handleSubmit = async () => {
+    const isValid = await validate();
+    if (isValid) {
+      const selectedValue = functionList.find((el) => el.name === formData.functionId)
+      if (selectedValue) {
+        formData.functionId = selectedValue.functionId
+      }
+      const denialReasonData: CreateDenialReason = {
+        tenantId: tenantId.toString(),
+        reasonNameTchi: formData.reasonNameTchi,
+        reasonNameSchi: formData.reasonNameSchi,
+        reasonNameEng: formData.reasonNameEng,
+        description: formData.description,
+        functionId: formData.functionId,
+        remark: formData.remark,
+        status: 'ACTIVE',
+        createdBy: loginName,
+        updatedBy: loginName
+      }
 
-    if (action == 'add') {
-      handleCreateDenialReason(denialReasonData)
+      if (action == 'add') {
+        handleCreateDenialReason(denialReasonData)
+      } else {
+        handleEditDenialReason()
+      }
     } else {
-      handleEditDenialReason()
+      setTrySubmited(true);
     }
   }
 
   const handleCreateDenialReason = async (denialReasonData: CreateDenialReason) => {
-    validate()
     if (validation.length === 0) {
       const result = await createDenialReason(denialReasonData)
       if (result?.data) {
