@@ -842,6 +842,8 @@
     "recycling_classification_statistics" : "Recycling classification statistics",
     "recycling_point_establishment": "Recycling point establishment and operation services (first phase follow-up contract) photo records (monthly)",
     "collection_point_establishment" : "Collection point establishment and operation services (first phase follow-up contract) Excel records (monthly)",
-    "download": "Download"
+    "download": "Download",
+    "start_date": "Start Date",
+    "end_date": "to"
   }
 }

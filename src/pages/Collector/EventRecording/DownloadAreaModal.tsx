@@ -92,7 +92,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
             <Box className="filter-date" sx={{ marginY: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}>
               <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
-                <LabelField label={t('general_settings.start_date')} />
+                <LabelField label={t('generate_report.start_date')} />
                   <DatePicker
                     defaultValue={dayjs(startDate)}
                     format={format.dateFormat2}
@@ -101,7 +101,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   />
               </Box>
               <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
-                <LabelField label={t('general_settings.end_date')} />
+                <LabelField label={t('generate_report.end_date')} />
                 <DatePicker
                   defaultValue={dayjs(endDate)}
                   format={format.dateFormat2}
