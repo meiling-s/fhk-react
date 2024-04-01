@@ -156,7 +156,7 @@ const Router = () => {
         </Route>
 
         <Route element={<MainLayout />}>
-          <Route path="/manufacturing/pickupOrder" element={<PickupOrder />} />
+          <Route path="/manufacturer/pickupOrder" element={<PickupOrder />} />
         </Route>
       </Routes>
     </BrowserRouter>

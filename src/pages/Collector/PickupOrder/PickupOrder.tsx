@@ -314,7 +314,7 @@ const PickupOrders = () => {
   const [rejectModal, setRejectModal] = useState(false)
   const [reasonList, setReasonList] = useState<any>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
-  
+  const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const initPickupOrderRequest = async () => {
     setPickupOrder([])
     setTotalData(0)
@@ -375,6 +375,10 @@ const PickupOrders = () => {
       setReasonList(result?.data)
     }
   }
+
+  useEffect(() => {
+    setPrimaryColor(role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25')
+  }, [role])
   
   useEffect(() => {
     setShowOperationColumn(role === 'logisticadmin')
@@ -577,8 +581,8 @@ const PickupOrders = () => {
           }}
           sx={{
             borderRadius: "20px",
-            backgroundColor: "#79ca25",
-            "&.MuiButton-root:hover": { bgcolor: "#79ca25" },
+            backgroundColor: primaryColor,
+            "&.MuiButton-root:hover": { bgcolor: primaryColor },
             width: "fit-content",
             height: "40px",
             marginLeft: "20px",
