@@ -10,13 +10,15 @@ import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { returnApiToken } from '../../../utils/utils'
+import { returnApiToken, showErrorToast } from '../../../utils/utils'
+import { localStorgeKeyName } from '../../../constants/constant'
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
   const { t } = useTranslation()
   const [picoTypeValue, setPicoType] = useState<string>('ROUTINE')
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   function getTenantId() {
     const tenantId = returnApiToken().decodeKeycloack.substring(
@@ -60,7 +62,6 @@ const CreatePickupOrder = () => {
 
               const datesInDateObjects = value.map((date) => new Date(date))
 
-              // Check if every date in the routine array falls within the specified range
               return datesInDateObjects.every(
                 (date) => date >= fromDate && date <= toDate
               )
@@ -107,6 +108,7 @@ const CreatePickupOrder = () => {
         }
       )
   })
+
   const currentDate = new Date().toISOString()
   const createPickupOrder = useFormik({
     initialValues: {
@@ -132,15 +134,20 @@ const CreatePickupOrder = () => {
     validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow
-      //alert(JSON.stringify(values, null, 2))
-      console.log(JSON.stringify(values, null, 2))
       const result = await createPickUpOrder(values)
       const data = result?.data
       if (data) {
-        console.log('all pickup order: ', data)
-        navigate('/collector/PickupOrder', { state: 'created' })
+        //console.log('all pickup order: ', data)
+        const routeName =
+          role === 'logisticadmin'
+            ? 'logistics'
+            : role === 'manufactureradmin'
+            ? 'manufacturer'
+            : 'collector'
+        navigate(`/${routeName}/PickupOrder`, { state: 'created' })
+        //navigate('/collector/PickupOrder', { state: 'created' })
       } else {
-        alert('fail to create pickup order')
+        showErrorToast('fail to create pickup order')
       }
     }
   })

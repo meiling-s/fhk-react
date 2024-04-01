@@ -10,11 +10,13 @@ import { Add } from "@mui/icons-material";
 type props = {
     setSpecificDate: (RSDs: string[]) => void,
     defaultDates?: string[]
+    roleColor?: string
 }
 
 export default function SpecificDate({
     setSpecificDate,
-    defaultDates
+    defaultDates,
+    roleColor
 }: props){
 
     const [specificDates, setSpecificDates] = useState<string[]>([]);
@@ -48,6 +50,7 @@ export default function SpecificDate({
             defaultDate={defaultDates}
             setMultiDate={(dates) => handleDatePick(dates)}
             dp_style={{width: "200px"}}
+            roleColor={roleColor}
         />
     )
     

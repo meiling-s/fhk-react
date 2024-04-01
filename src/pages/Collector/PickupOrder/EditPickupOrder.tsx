@@ -16,7 +16,7 @@ import {
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
 import { localStorgeKeyName } from '../../../constants/constant'
-import { showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { showErrorToast } from '../../../utils/utils'
 import * as Yup from 'yup'
 
 const EditPickupOrder = () => {
@@ -26,6 +26,7 @@ const EditPickupOrder = () => {
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])
   const poInfo: PickupOrder = state
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   const getErrorMsg = (field: string, type: string) => {
     switch (type) {
@@ -56,7 +57,6 @@ const EditPickupOrder = () => {
 
               const datesInDateObjects = value.map((date) => new Date(date))
 
-              // Check if every date in the routine array falls within the specified range
               return datesInDateObjects.every(
                 (date) => date >= fromDate && date <= toDate
               )
@@ -116,17 +116,19 @@ const EditPickupOrder = () => {
     },
     validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
-      // console.log(JSON.stringify(values, null, 2))
-      //alert(JSON.stringify(values, null, 2))
       values.createPicoDetail = addRow
       const result = await editPickupOrder(poInfo.picoId, values)
-      // alert(JSON.stringify(result, null, 2))
-      console.log(JSON.stringify(result, null, 2))
 
       const data = result?.data
       if (data) {
-        console.log('all pickup order: ', data)
-        navigate('/collector/PickupOrder', { state: 'updated' })
+        //navigate('/collector/PickupOrder', { state: 'updated' })
+        const routeName =
+          role === 'logisticadmin'
+            ? 'logistics'
+            : role === 'manufactureradmin'
+            ? 'manufacturer'
+            : 'collector'
+        navigate(`/${routeName}/PickupOrder`, { state: 'updated' })
       } else {
         showErrorToast('fail to create pickup order')
       }

@@ -3,15 +3,18 @@ import CustomItemList, { il_item } from "../../../FormComponents/CustomItemList"
 import { useTranslation } from "react-i18next";
 import { weekDs } from "../predefinedOption";
 import CustomField from "../../../FormComponents/CustomField";
+import { itemList } from "../../../../interfaces/common";
 
 type props = {
     setWeekly: (RWs: string[]) => void,
-    defaultWeek?: string[]
+    defaultWeek?: string[],
+    itemColor?: itemList | null
 }
 
 export default function Weekly({
     setWeekly,
-    defaultWeek
+    defaultWeek,
+    itemColor
 }: props){
 
     const [weekDays, setWeekDays] = useState<string[]>([]);
@@ -80,6 +83,7 @@ export default function Weekly({
                     items={getWeekDays()}
                     multiSelect={setWeekD}
                     defaultSelected={returnDefaultWeekDay()}
+                    itemColor={itemColor ? itemColor : null}
                 />
             </CustomField>
         </>

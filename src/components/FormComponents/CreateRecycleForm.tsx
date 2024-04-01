@@ -51,6 +51,7 @@ import i18n from '../../setups/i18n'
 import dayjs, { Dayjs } from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
+import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
 
 type props = {
   onClose: () => void
@@ -105,13 +106,9 @@ const CreateRecycleForm = ({
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
 
   //---set custom style each role---
-  const colorList = {
-    collectoradmin: '#79CA25',
-    logisticadmin: '#7CE495',
-    manufactureradmin: '#6BC7FF'
-  }
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
-  const colorTheme: string = colorList[role as keyof typeof colorList]
+  const colorTheme: string = getThemeColorRole(role)
+  const customListTheme = getThemeCustomList(role)
   //---end set custom style each role---
 
   const setDefRecyc = (picoDtl: CreatePicoDetail) => {
@@ -393,7 +390,10 @@ const CreateRecycleForm = ({
                         values?.recycSubTypeId
                       )
                     }}
-                    //itemColor={{ bgColor: colorTheme, borderColor: colorTheme }}
+                    itemColor={{
+                      bgColor: customListTheme.bgColor,
+                      borderColor: customListTheme.border
+                    }}
                     defaultRecycL={defaultRecyc}
                     key={formik.values.id}
                   />

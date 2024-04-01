@@ -55,6 +55,7 @@ import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
+import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
 
 type DeleteModalProps = {
   open: boolean
@@ -149,13 +150,9 @@ const PickupOrderCreateForm = ({
   )
 
   // set custom style each role
-  const colorList = {
-    collectoradmin: '#79CA25',
-    logisticadmin: '#7CE495',
-    manufactureradmin: '#6BC7FF'
-  }
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
-  const colorTheme: string = colorList[role as keyof typeof colorList]
+  const colorTheme: string = getThemeColorRole(role)
+  const customListTheme = getThemeCustomList(role)
 
   const buttonFilledCustom = {
     borderRadius: '40px',
@@ -562,6 +559,11 @@ const PickupOrderCreateForm = ({
                       routineType: selectedPo?.routineType ?? 'daily',
                       routineContent: selectedPo?.routine ?? []
                     }}
+                    itemColor={{
+                      bgColor: customListTheme.bgColor,
+                      borderColor: customListTheme.border
+                    }}
+                    roleColor={colorTheme}
                   />
                 </CustomField>
               )}
@@ -609,6 +611,10 @@ const PickupOrderCreateForm = ({
                       formik.errors.vehicleTypeId &&
                       formik.touched.vehicleTypeId
                     }
+                    itemColor={{
+                      bgColor: customListTheme.bgColor,
+                      borderColor: customListTheme.border
+                    }}
                   />
                 </CustomField>
               </Grid>
@@ -690,6 +696,10 @@ const PickupOrderCreateForm = ({
                       value={formik.values.reason}
                       defaultSelected={selectedPo?.reason}
                       error={formik.errors.reason && formik.touched.reason}
+                      itemColor={{
+                        bgColor: customListTheme.bgColor,
+                        borderColor: customListTheme.border
+                      }}
                     />
                   </CustomField>
                 </Grid>
