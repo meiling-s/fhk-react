@@ -97,7 +97,8 @@
     "company": "公司",
     "staff_positions": "員工職位",
     "denial_reason": "拒絕原因",
-    "add_new": "新增"
+    "add_new": "新增",
+    "add_new_vehicle": "新增車輛"
   },
   "settings_page": {
     "title": "設定"
@@ -768,6 +769,31 @@
         "variables": "可用变量",
         "button_submit": "储存"
       }
+    }
+  },
+  "driver": {
+    "sideBarName": "車隊",
+    "title": "車隊",
+    "tabs": {
+      "driver": "司機",
+      "cars": "車輛"
+    },
+    "DriverMenu": {
+      "AddBtn": "新增司機",
+      "search": {
+        "label": "搜索",
+        "placeholder": "輸入司機編號"   
+      }
+    },
+    "vehicleMenu": {
+      "vehicle_number": "車輛號碼",
+      "license_plate_number": "車牌號",
+      "vehicle_type": "車輛類型",
+      "vehicle_cargo_capacity": "車輛載貨量",
+      "picture": "圖片",
+      "license_plate_number_placeholder": "請輸入車牌號",
+      "vehicle_type_placeholder": "請輸入車輛類型",
+      "vehicle_cargo_capacity_placeholder": "請輸入體重"
     }
   },
   "general_settings": {

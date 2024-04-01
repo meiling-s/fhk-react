@@ -8,12 +8,14 @@ interface Option {
   label: string;
 }
 
-const CustomSearchField = ({ label, width, options, onChange, field }: { 
+const CustomSearchField = ({ label, width, options, onChange, field, placeholder, handleSearch }: { 
   label: string; 
   width: string; 
   options?: Option[]; 
   onChange?: (labelField: string, value: string) => void;
-  field?: string
+  field?: string;
+  placeholder?: string;
+  handleSearch?: (value: string) => void;
 }) => {
   const hasOptions = options && options.length>0
   const [selectedValue, setSelectedValue] = useState<string>("")
@@ -61,12 +63,12 @@ const CustomSearchField = ({ label, width, options, onChange, field }: {
         focused: true,
       }}
       value={selectedValue}
-      placeholder={t("pick_up_order.filter.search")}
+      placeholder={placeholder ? placeholder : t("pick_up_order.filter.search")}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
            {!hasOptions && ( 
-            <IconButton onClick={() => {}}>
+            <IconButton onClick={handleSearch ? () => handleSearch(selectedValue) : undefined}>
               <SEARCH_ICON style={{ color: "#79CA25" }} />
             </IconButton>
           )}
