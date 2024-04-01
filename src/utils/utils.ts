@@ -1,5 +1,5 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format } from '../constants/constant'
+import { formErr, localStorgeKeyName, format, Roles, Realm } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
@@ -105,4 +105,24 @@ export const showSuccessToast = (msg: string) => {
     progress: undefined,
     theme: 'light'
   })
+}
+
+export const dynamicpath = () => {
+  const userRole = localStorage.getItem("userRole") || "";
+  let pathRole: string = "";
+
+  switch(userRole){
+    case(Roles.collectoradmin):
+      pathRole = Realm.collector;
+      break;
+    case(Roles.logisticadmin):
+      pathRole = Realm.logistic;
+      break
+    default:
+      break;
+  }
+  
+  return {
+    pathRole
+  }
 }

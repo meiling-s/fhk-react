@@ -442,6 +442,7 @@
   },
   "report": {
     "report": "Report",
+    "downloadArea": "Download Area",
     "basicServicePictures": "Basic service pictures",
     "additionalServicePictures": "Additional service pictures",
     "otherPictures": "Other pictures",
@@ -804,5 +805,16 @@
     "enterFulltimeFlag": "Enter fulltime flag",
     "gender": "Gender",
     "enterGender": "Enter gender"
+  },
+  "generate_report": {
+    "report_name": "Report Name",
+    "recycling_point_record": "Recycling point record",
+    "Waste_ecords_daily_": "Waste records (daily)",
+    "recycling_plant_request_records": "Recycling plant request records",
+    "recycling_classification_processing": "Recycling classification and processing records",
+    "recycling_classification_statistics" : "Recycling classification statistics",
+    "recycling_point_establishment": "Recycling point establishment and operation services (first phase follow-up contract) photo records (monthly)",
+    "collection_point_establishment" : "Collection point establishment and operation services (first phase follow-up contract) Excel records (monthly)",
+    "download": "Download"
   }
 }
