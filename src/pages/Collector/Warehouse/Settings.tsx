@@ -6,6 +6,8 @@ import Vehicle from '../Vehicles/Vechicles'
 import { Box } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import UserAccount from '../UserAccount/UserAccount'
+import GeneralSettings from '../GeneralSettings/GeneralSettings'
+import PackagingUnit from '../PackagingUnit/PackagingUnit'
 
 const Settings: FunctionComponent = () => {
   // const navigate = useNavigate()
@@ -38,7 +40,14 @@ const Settings: FunctionComponent = () => {
           className="lg:px-10 sm:px-4 bg-bg-primary"
         />
         {/* rendering content base on tab index */}
-        {selectedTab === 2 ? (
+        {
+        selectedTab === 0 ? (
+          <GeneralSettings/>
+        ) :
+        selectedTab === 1 ? (
+          <PackagingUnit/>
+        ) :
+        selectedTab === 2 ? (
           <Warehouse />
         ) : selectedTab === 3 ? (
           <Vehicle />

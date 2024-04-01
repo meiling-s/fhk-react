@@ -50,7 +50,8 @@
       "timeCantDuplicate": "時間不能重複",
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
-      "minMoreOneImgUploded": "至少需要上傳2張車輛圖片"
+      "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
+      "startDateBehindEndDate": "不允許開始時間晚於結束時間"
     }
   },
   "component": {
@@ -96,7 +97,8 @@
     "company": "公司",
     "staff_positions": "員工職位",
     "denial_reason": "拒絕原因",
-    "add_new": "新增"
+    "add_new": "新增",
+    "add_new_vehicle": "新增車輛"
   },
   "settings_page": {
     "title": "設定"
@@ -236,7 +238,7 @@
     "closed": "已取消",
     "outstanding": "已逾期",
     "suspend": "已暫停",
-    "DENY": "不接受",
+    "deny": "不接受",
     "success": "成功",
     "failed": "失敗",
     "enable": "啟用",
@@ -558,6 +560,7 @@
     "employeeChineseCn": "員工中文簡體中文姓名",
     "position": "職位",
     "loginName": "登錄名",
+    "enterLoginName": "Enter Login Name",
     "contactNumber": "聯繫電話",
     "lastLogin": "最後登錄",
     "email": "電子郵件",
@@ -654,6 +657,38 @@
     "successDeleted": "删除成功",
     "errorDeleted": "错误删除"
   },
+  "job_order": {
+    "enquiry_job_order": "工作運單",
+    "table": {
+      "created_datetime": "建立日期",
+      "jo_id": "工作運單編號",
+      "pico_id": "回收運單編號",
+      "driver_id": "司機名稱",
+      "plate_no": "車牌號碼",
+      "sender_company": "寄件公司",
+      "receiver_company": "收件公司",
+      "status": "狀態",
+      "operation": "操作",
+      "approve": "核準"
+    },
+    "filter": {
+      "search": "搜索",
+      "driver": "司机",
+      "status": "狀態"
+    },
+    "item": {
+      "detail": "工作運單",
+      "shipping_info": "運輸資料",
+      "date_time": "建立日期及時間",
+      "reference_po_number": "參考運單編號",
+      "sender_name": "寄件公司",
+      "rec_loc_info": "回收地點資料"
+    },
+    "confirm_approve_title": "確認核準吗？",
+    "confirm_approve": "确认核準",
+    "cancel": "取消",
+    "approved_success": "核準成功"
+  },
   "jobOrder": {
     "job_order_menu": "工作運單",
     "create_work_waybill": "建立工作運單",
@@ -694,7 +729,105 @@
       "language": "語言"
     },
     "modify_template": {
-      "header": "修改範本"
+      "header": "修改範本",
+      "app": {
+        "Recycling_delivery_request": "回收物送入請求",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      },
+      "sms": {
+        "Recycling_delivery_request": "回收物已送到工場",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      },
+      "email": {
+        "Recycling_delivery_request": "登記連結",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      },
+      "broadcast": {
+        "Recycling_delivery_request": "系統資訊",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "start_valid_date": "有效日期由",
+        "end_valid_date": "至",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      }
     }
+  },
+  "driver": {
+    "sideBarName": "車隊",
+    "title": "車隊",
+    "tabs": {
+      "driver": "司機",
+      "cars": "車輛"
+    },
+    "DriverMenu": {
+      "AddBtn": "新增司機",
+      "search": {
+        "label": "搜索",
+        "placeholder": "輸入司機編號"   
+      }
+    },
+    "vehicleMenu": {
+      "vehicle_number": "車輛號碼",
+      "license_plate_number": "車牌號",
+      "vehicle_type": "車輛類型",
+      "vehicle_cargo_capacity": "車輛載貨量",
+      "picture": "圖片",
+      "license_plate_number_placeholder": "請輸入車牌號",
+      "vehicle_type_placeholder": "請輸入車輛類型",
+      "vehicle_cargo_capacity_placeholder": "請輸入體重"
+    }
+  },
+  "general_settings": {
+    "new": "新的",
+    "currency": "貨幣",
+    "contracts": "合約",
+    "name": "名稱",
+    "reference_number": "參考編號",
+    "state": "狀態",
+    "start_date": "開始日期",
+    "end_date": "結束日期",
+    "remark": "評論",
+    "whether": "是否EPD",
+    "default_currency": "預設貨幣",
+    "activate": "啟用",
+    "deactive": "停用",
+    "true": "真的",
+    "false": "錯誤的"
+  },
+  "packaging_unit": {
+    "packaging_unit": "包裝單位",
+    "new": "新的",
+    "traditional_chinese_name": "繁體中文名字",
+    "simplified_chinese_name": "简体中文名称",
+    "english_name": "English Name",
+    "introduction": "介紹",
+    "remark": "評論"
+  },
+  "staffEnquiry": {
+    "title": "員工查詢",
+    "addNewStaffEnquiry": "新增員工查詢",
+    "contractNo": "合約號碼",
+    "fulltimeFlag": "全職旗幟",
+    "enterFulltimeFlag": "輸入全職標誌",
+    "gender": "性別",
+    "enterGender": "輸入性別"
   }
 }

@@ -3,13 +3,12 @@ import {
   Box,
   Divider,
   Grid,
-  Autocomplete,
-  TextField,
   MenuItem,
   FormControl,
   InputLabel,
   Typography
 } from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { ADD_CIRCLE_ICON } from '../../../themes/icons'
@@ -24,7 +23,12 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { ToastContainer, toast } from 'react-toastify'
 import { styles } from '../../../constants/styles'
-import { displayLocalDate, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import {
+  displayLocalDate,
+  displayLocalDateWitoutOffset,
+  showErrorToast,
+  showSuccessToast
+} from '../../../utils/utils'
 
 import { formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
@@ -44,6 +48,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import { collectionPoint } from '../../../interfaces/collectionPoint'
 import { getStaffList } from '../../../APICalls/staff'
 import { setDate } from 'date-fns'
+import { format } from '../../../constants/constant'
 
 interface RosterDetailProps {
   drawerOpen: boolean
@@ -148,7 +153,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       })
       setRosterDate(selectedRoster.startAt)
       setStartDate(dayjs(selectedRoster.startAt))
-      setEndDate(dayjs(selectedRoster.startAt))
+      setEndDate(dayjs(selectedRoster.endAt))
       setSelectedColPoint(selectedRoster.collectionPoint.colId.toString())
       setRoutineType(selectedRoster.routineType)
       setSelectedStaff(staffIdList.length > 0 ? staffIdList : initStaff)
@@ -169,18 +174,30 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     const validate = async () => {
       const tempV: formValidate[] = []
 
-      selectedStaff.every(staffId => staffId.trim() == '') && 
-      tempV.push({
-        field: t('roster.staff'),
-        problem: formErr.empty,
-        type: 'error'
-      })
+      selectedStaff.every((staffId) => staffId.trim() == '') &&
+        tempV.push({
+          field: t('roster.staff'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      startDate > endDate &&
+        tempV.push({
+          field: t('roster.timeBy'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
+      endDate < startDate &&
+        tempV.push({
+          field: t('roster.to'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
 
       setValidation(tempV)
     }
 
     validate()
-  }, [selectedStaff])
+  }, [selectedStaff, startDate, endDate])
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
     return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
@@ -196,27 +213,24 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
 
   const deleteStaff = async (rosterId: number) => {
     let allResponseSuccess = true
-    if(selectedRoster!.staff.length > 0){
-    
-    for (const key in selectedRoster!.staff) {
-      const staffId = selectedRoster!.staff[key].staffId
-      const response = await deleteRosterStaff(rosterId, staffId)
-      if (!response) {
-        allResponseSuccess = false
-        break
+    if (selectedRoster!.staff.length > 0) {
+      for (const key in selectedRoster!.staff) {
+        const staffId = selectedRoster!.staff[key].staffId
+        const response = await deleteRosterStaff(rosterId, staffId)
+        if (!response) {
+          allResponseSuccess = false
+          break
+        }
       }
     }
-  }
 
     if (allResponseSuccess) {
       addStaff(rosterId, 'edit')
     } else {
       showErrorToast(t('roster.errorCreatedRoster'))
-      onSubmitData('error', 'Some data creation failed') 
+      onSubmitData('error', 'Some data creation failed')
     }
   }
-
-
 
   const addStaff = async (rosterId: number, type: string) => {
     let allResponseSuccess = true
@@ -234,10 +248,12 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       onSubmitData('success', 'Success created data')
       resetFormData()
       handleDrawerClose()
-      type == 'create' ? showSuccessToast(t('roster.successCreatedRoster')) : showSuccessToast(t('roster.successEditRoster'));
+      type == 'create'
+        ? showSuccessToast(t('roster.successCreatedRoster'))
+        : showSuccessToast(t('roster.successEditRoster'))
     } else {
       showErrorToast(t('roster.errorCreatedRoster'))
-      onSubmitData('error', 'Some data creation failed') 
+      onSubmitData('error', 'Some data creation failed')
     }
   }
 
@@ -278,6 +294,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       createdBy: loginName,
       updatedBy: loginName
     }
+    console.log('validation', validation)
     if (validation.length === 0) {
       if (selectedRoster != null) {
         const result = await updateRoster(updateForm, selectedRoster.rosterId)
@@ -285,6 +302,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
           const rosterId = result.data.rosterId
           deleteStaff(rosterId)
         } else {
+          setTrySubmited(true)
           onSubmitData('error', 'Failed edit data')
           showErrorToast(t('roster.errorEditRoster'))
         }
@@ -292,6 +310,8 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
         setTrySubmited(true)
         showErrorToast(t('roster.errorEditRoster'))
       }
+    } else {
+      setTrySubmited(true)
     }
   }
 
@@ -335,14 +355,14 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
 
   return (
     <div className="roster-details">
-        <ToastContainer></ToastContainer>
+      <ToastContainer></ToastContainer>
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
         anchor={'right'}
         action={action}
         headerProps={{
-          title: t('roster.addOrChange'),
+          title: action == 'add' ? t('userAccount.new') : t('userGroup.change'),
           subTitle: t('roster.schedule'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
@@ -369,9 +389,23 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
           >
             <Grid item>
               <CustomField label={t('roster.date')}>
-                <Typography sx={localStyle.textField}>
-                  {displayLocalDate(rosterDate)}
-                </Typography>
+                {action == 'add' ? (
+                  <Box sx={{ ...localStyle.DateItem }}>
+                    <DatePicker
+                      defaultValue={dayjs()}
+                      format={format.dateFormat2}
+                      onChange={(value) => {
+                        setStartDate(value!!)
+                        setEndDate(value!!)
+                      }}
+                      sx={{ ...localStyle.datePicker }}
+                    />
+                  </Box>
+                ) : (
+                  <Typography sx={localStyle.textField}>
+                    {displayLocalDateWitoutOffset(rosterDate)}
+                  </Typography>
+                )}
               </CustomField>
             </Grid>
             <Grid item sx={{ display: 'flex', gap: '8px' }}>
@@ -468,7 +502,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                       onChange={(event: SelectChangeEvent<string>) => {
                         handleStaffChange(event.target.value, index)
                       }}
-                      error={trySubmited && (selectedStaff.length == 0)}
+                      error={trySubmited && selectedStaff.length == 0}
                     >
                       {staffList?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
@@ -499,15 +533,15 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                 </Box>
               ))}
               <Grid item>
-              {trySubmited &&
-              validation.map((val, index) => (
-                <FormErrorMsg
-                  key={index}
-                  field={t(val.field)}
-                  errorMsg={returnErrorMsg(val.problem, t)}
-                  type={val.type}
-                />
-              ))}
+                {trySubmited &&
+                  validation.map((val, index) => (
+                    <FormErrorMsg
+                      key={index}
+                      field={t(val.field)}
+                      errorMsg={returnErrorMsg(val.problem, t)}
+                      type={val.type}
+                    />
+                  ))}
               </Grid>
             </Grid>
           </Grid>
@@ -545,6 +579,18 @@ let localStyle = {
     border: 2,
     borderRadius: 3,
     borderColor: '#E2E2E2'
+  },
+  datePicker: {
+    ...styles.textField,
+    // width: '350px',
+    '& .MuiIconButton-edgeEnd': {
+      color: '#79CA25'
+    }
+  },
+  DateItem: {
+    display: 'flex',
+    height: 'fit-content',
+    alignItems: 'center'
   }
 }
 

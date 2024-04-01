@@ -63,6 +63,11 @@ type props = {
 }
 type CombinedType = manuList[] | collectorList[]
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+const initialTime: dayjs.Dayjs = dayjs()
+
+const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
+  return pickupAtValue.format('HH:mm:ss')
+}
 
 const initValue = {
   id: -1,
@@ -78,7 +83,7 @@ const initValue = {
   status: 'CREATED',
   createdBy: loginId,
   updatedBy: loginId,
-  pickupAt: '',
+  pickupAt: '00:00:00',
   recycType: '',
   recycSubType: '',
   weight: 0
@@ -186,16 +191,26 @@ const CreateRecycleForm = ({
     } else {
       prevData = data
     }
+    console.log('pickupAt', formik.values.pickupAt)
 
-    console.log('prevData', prevData)
     return Yup.object().shape({
-      pickupAt: Yup.string().test(
-        'not-in-prev-data',
-        'Pickup time already exists in previous data',
-        function (value) {
-          return !prevData.some((item) => item.pickupAt === value)
-        }
-      ),
+      pickupAt: Yup.string()
+        .required('This pickupAt is required')
+        .test(
+          'invalid-date',
+          'Invalid pickup time, choose again the time',
+          function (value) {
+            return value !== 'Invalid Date'
+          }
+        )
+        .test(
+          'not-in-prev-data',
+          'Pickup time already exists in previous data',
+          function (value) {
+            return !prevData.some((item) => item.pickupAt === value)
+          }
+        ),
+
       senderName: Yup.string().required('This sendername is required'),
       senderAddr: Yup.string()
         .required('This senderAddr is required')
@@ -294,8 +309,13 @@ const CreateRecycleForm = ({
     }
   ]
 
-  const initialTime = '2024-02-10T09:00:00' // Example initial time string
-  const parsedDate = new Date(initialTime) // Parse the string into a Date object
+  const formatTimePickAt = (timeValue: string) => {
+    const times = timeValue.split(':')
+    return initialTime
+      .hour(Number(times[0]))
+      .minute(Number(times[1]))
+      .second(Number(times[2]))
+  }
 
   return (
     <>
@@ -347,16 +367,13 @@ const CreateRecycleForm = ({
                 >
                   <TimePicker
                     sx={{ width: '100%' }}
-                    value={
-                      formik.values.pickupAt ? formik.values.pickupAt : null
-                    }
+                    value={formatTimePickAt(formik.values.pickupAt)}
                     onChange={(value) => {
-                      if (value != null)
-                        formik.setFieldValue(
-                          'pickupAt',
-
-                          dateToLocalTime(new Date(value))
-                        )
+                      console.log('onhange', value)
+                      formik.setFieldValue(
+                        'pickupAt',
+                        value ? formattedTime(value) : ''
+                      )
                     }}
                   />
                 </CustomField>

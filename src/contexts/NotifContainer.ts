@@ -6,9 +6,11 @@ import {
   getNotifByUserId,
   updateFlagNotif
 } from '../APICalls/notify'
+import { returnApiToken } from '../utils/utils'
 
 const Notification = () => {
-  const loginId: string = localStorage.getItem('loginId') || 'string' //change key based on fixed key for loginId
+  const { loginId } = returnApiToken();
+  // const loginId: string = localStorage.getItem('loginId') || 'string' //change key based on fixed key for loginId
   const [numOfNotif, setNumOfNotif] = useState(0)
   const [notifList, setNotifList] = useState<Notif[]>([])
 
@@ -20,7 +22,7 @@ const Notification = () => {
   const getNumNotif = async (loginId: string) => {
     const result = await getNumUnreadNotif(loginId)
     const data = result?.data
-    if (data) {
+    if (result?.status === 200) {
       setNumOfNotif(data)
     }
   }
@@ -33,7 +35,7 @@ const Notification = () => {
     }
   }
 
-  const updateNotifications = async () => {
+  const updateNotifications = async (loginId: string) => {
     await getNumNotif(loginId)
     await getNotifList(loginId)
   }
@@ -41,7 +43,9 @@ const Notification = () => {
   return {
     numOfNotif,
     notifList,
-    updateNotifications
+    updateNotifications,
+    setNumOfNotif,
+    setNotifList,
   }
 }
 

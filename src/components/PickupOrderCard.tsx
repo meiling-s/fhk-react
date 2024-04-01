@@ -41,6 +41,7 @@ const PickupOrderCard = ({
     <>
       {pickupOrderDetail.map((podetail, index) => (
         <Stack
+          key={index}
           borderColor="#e2e2e2"
           p={2}
           borderRadius="12px"
