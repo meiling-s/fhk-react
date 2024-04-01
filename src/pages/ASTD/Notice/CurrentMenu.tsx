@@ -2,10 +2,11 @@ import { useEffect, useState, FunctionComponent, useCallback } from 'react'
 import { Box} from '@mui/material'
 import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridRenderCellParams,} from '@mui/x-data-grid'
 import {  EDIT_OUTLINED_ICON} from '../../../themes/icons'
-import { ToastContainer, toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { NotifTemplate } from '../../../interfaces/notif'
 import { getListNotifTemplatePO, getListNotifTemplateStaff } from '../../../APICalls/notify'
+import { useNavigate } from 'react-router-dom'
+import { Roles } from '../../../constants/constant'
 
 function createNotifTemplate(
   templateId: string,
@@ -36,11 +37,13 @@ function createNotifTemplate(
 }
 
 interface CurrentMenuProps {
-  selectedTab: number
+  selectedTab: number,
+  dynamicPath: string
 }
 
 const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
-  selectedTab
+  selectedTab,
+  dynamicPath
 }) => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -49,11 +52,21 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   const [filteredTemplate, setFillteredTemplate] = useState<NotifTemplate[]>([])
   const [selectedRow, setSelectedRow] = useState<NotifTemplate | null>(null)
   const [action, setAction] = useState<'edit'>('edit')
+  const navigate = useNavigate();
 
+  const userRole = localStorage.getItem('userRole') || '';
+  let pathRole: string = '';
+
+  if(userRole === Roles.collectoradmin){
+    pathRole = 'collector'
+  } else if(userRole === Roles.logisticadmin){
+    pathRole = 'logistic'
+  }
+  
   useEffect(() => {
     if(selectedTab === 0) {
       setFillteredTemplate([])
-      // initRecyclablesList()
+      initRecyclablesList()
     } else if(selectedTab === 1) {
       setFillteredTemplate([])
       initStaffList()
@@ -61,9 +74,10 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   }, [selectedTab])
 
   const initStaffList = async () => {
-    const result = await getListNotifTemplateStaff();
+    const result = await getListNotifTemplateStaff(dynamicPath);
     if (result) {
       const data = result.data
+    
       let notifMappingTemplate: NotifTemplate[] = []
       data.map((item: any) => {
         notifMappingTemplate.push(
@@ -88,7 +102,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   }
 
   const initRecyclablesList = async () => {
-    const result = await getListNotifTemplatePO()
+    const result = await getListNotifTemplatePO(dynamicPath)
     if (result) {
       const data = result.data
       var notifMappingTemplate: NotifTemplate[] = []
@@ -168,42 +182,13 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     params: GridRenderCellParams,
     action: 'edit'
   ) => {
-    setAction(action)
-
-    setSelectedRow(params.row)
-    setDrawerOpen(true)
+    navigate(`/${pathRole}/notice/${params.row.notiType}/${params.row.templateId}`)
   }
 
   const handleSelectRow = (params: GridRowParams) => {
     setAction('edit')
     setSelectedRow(params.row)
     setDrawerOpen(true)
-  }
-
-  const showErrorToast = (msg: string) => {
-    toast.error(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
-
-  const showSuccessToast = (msg: string) => {
-    toast.info(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
   }
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
@@ -216,8 +201,6 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
       <Box
         sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', pr: 4}}
       >
-        <ToastContainer></ToastContainer>
-
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
             <DataGrid
@@ -248,31 +231,6 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
         </div>
       </Box>
   )
-}
-
-let localstyles = {
-  inputState: {
-    mt: 3,
-    width: '100%',
-    m: 1,
-    borderRadius: '10px',
-    bgcolor: 'white',
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '10px',
-      '& fieldset': {
-        borderColor: '#79CA25'
-      },
-      '&:hover fieldset': {
-        borderColor: '#79CA25'
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#79CA25'
-      },
-      '& label.Mui-focused': {
-        color: '#79CA25'
-      }
-    }
-  }
 }
 
 export default CurrentMenu

@@ -51,6 +51,9 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
     case formErr.alreadyExist:
       msg = t('form.error.alreadyExist')
       break
+    case formErr.startDateBehindEndDate:
+      msg = t('form.error.startDateBehindEndDate')
+      break
   }
   return msg
 }
@@ -66,6 +69,13 @@ export const displayCreatedDate = (valueDate: string) => {
 export const displayLocalDate = (valueDate: string) => {
   const utcOffset = 8 * 60 * 60 * 1000 // UTC+8 in milliseconds
   const dateWithOffset = new Date(valueDate).getTime() + utcOffset
+  const formattedDate = dayjs(dateWithOffset).format(format.dateFormat2)
+
+  return formattedDate
+}
+
+export const displayLocalDateWitoutOffset = (valueDate: string) => {
+  const dateWithOffset = new Date(valueDate).getTime()
   const formattedDate = dayjs(dateWithOffset).format(format.dateFormat2)
 
   return formattedDate
@@ -123,5 +133,5 @@ export const getThemeCustomList = (role: string) => {
     }
   }
 
-  return customListRole[role as keyof typeof customListRole]
+  return  customListRole[role as keyof typeof customListRole]
 }

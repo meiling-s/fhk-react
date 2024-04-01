@@ -578,7 +578,7 @@ const PickupOrderFormLogistic = ({
               {formik.values.picoType == 'ROUTINE' && (
                 <Grid item>
                   <Box>
-                    <CustomField label={t('col.contractNo')}>
+                    <CustomField label={t('col.contractNo')} mandatory>
                       <Autocomplete
                         disablePortal
                         id="contractNo"

@@ -224,8 +224,9 @@ export interface AssignJobDriver {
 }
 
 export interface AssignJobField {
-    vehicleId: number;
+    plateNo: string;
     driverId: string;
+    vehicleId: number
 }
 
 export interface RejectJobDriver {
@@ -248,5 +249,5 @@ export interface DriverList {
 
 export interface VehicleList {
     vehicleId: number;
-    vehicleName: string
+    plateNo: string
 }

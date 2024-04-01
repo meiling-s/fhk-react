@@ -1,13 +1,13 @@
-import { useEffect } from 'react'
-import Box from '@mui/material/Box'
-import Drawer from '@mui/material/Drawer'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import IconButton from '@mui/material/IconButton'
-import MenuIcon from '@mui/icons-material/Menu'
+import { useEffect } from "react";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import {
   DOCUMENT_ICON,
@@ -20,70 +20,78 @@ import {
   TEMPLATE_ICON,
   STATISTIC_ICON,
   PERSON_ICON,
-  PERSON_OUTLINE_ICON
-} from '../themes/icons'
-import logo_company from '../logo_company.png'
-import { useNavigate } from 'react-router-dom'
-import React, { useState } from 'react'
-import { Collapse, createTheme } from '@mui/material'
-import { ExpandLess, ExpandMore, Login } from '@mui/icons-material'
-import { useTranslation } from 'react-i18next'
-import { useTheme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import '../styles/MainDrawer.css'
-import { localStorgeKeyName } from '../constants/constant'
-import LoginIcon from '@mui/icons-material/Login'
-import LogoutIcon from '@mui/icons-material/Logout'
-import InventoryIcon from '@mui/icons-material/Inventory'
-import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
-import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
+  PERSON_OUTLINE_ICON,
+} from "../themes/icons";
+import logo_company from "../logo_company.png";
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Collapse, createTheme } from "@mui/material";
+import { ExpandLess, ExpandMore, Login } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import "../styles/MainDrawer.css";
+import { Roles, localStorgeKeyName } from "../constants/constant";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
+import ViewQuiltOutlinedIcon from "@mui/icons-material/ViewQuiltOutlined";
 type MainDrawer = {
-  role: string
-}
+  role: string;
+};
 
 type DrawerItem = {
-  name: string
-  icon?: JSX.Element
-  onClick: () => void
-  collapse: boolean
-  collapseGroup?: boolean
-}
+  name: string;
+  icon?: JSX.Element;
+  onClick: () => void;
+  collapse: boolean;
+  collapseGroup?: boolean;
+};
 
-const drawerWidth = 225
+const drawerWidth = 225;
 
 function MainDrawer() {
-  const navigate = useNavigate()
-  const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
-  const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false)
-  const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false)
-  const { t } = useTranslation()
-  const [open, setOpen] = useState(false)
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0)
+  const navigate = useNavigate();
+  const [CPDrawer, setCPDrawer] = useState<boolean>(false); //CP = collection point, this state determine collection point drawer group expand or not
+  const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false);
+  const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false);
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
+  const userRole = localStorage.getItem("userRole") || "";
+  let pathRole: string = "";
+
+  if (userRole === Roles.collectoradmin) {
+    pathRole = "collector";
+  } else if (userRole === Roles.logisticadmin) {
+    pathRole = "logistic";
+  }
 
   const handleDrawerOpen = () => {
-    setOpen(true)
-  }
+    setOpen(true);
+  };
 
   const handleDrawerClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   const handleListItemClick = (index: number) => {
-    setSelectedIndex(index)
-    localStorage.setItem('selectedIndex', String(index))
-  }
+    setSelectedIndex(index);
+    localStorage.setItem("selectedIndex", String(index));
+  };
 
   useEffect(() => {
     // Retrieve the selected index from localStorage on component mount
-    const storedIndex = localStorage.getItem('selectedIndex')
+    const storedIndex = localStorage.getItem("selectedIndex");
     if (storedIndex !== null) {
-      setSelectedIndex(parseInt(storedIndex, 10))
+      setSelectedIndex(parseInt(storedIndex, 10));
     }
-  }, [])
+  }, []);
 
-  var role = localStorage.getItem(localStorgeKeyName.role)
+  var role = localStorage.getItem(localStorgeKeyName.role);
 
   interface func {
     [key: string]: object
@@ -92,91 +100,103 @@ function MainDrawer() {
   // 20240129 add function list daniel keung start
   const defaultFunctionList: func[] = [
     {
-      'Tenant management': {
-        name: t('all_Collection_Point'),
+      "Tenant management": {
+        name: t("all_Collection_Point"),
 
-        onClick: () => navigate('/collector/collectionPoint'),
-        collapse: false
+        onClick: () => navigate("/collector/collectionPoint"),
+        collapse: false,
       },
-      'User account': {
-        name: t('processRecord.userGroup'),
+      "User account": {
+        name: t("processRecord.userGroup"),
         icon: <PERSON_OUTLINE_ICON />,
-        onClick: () => navigate('/logistics/account'),
-        collapse: false
+        onClick: () => navigate("/logistics/account"),
+        collapse: false,
       },
-      'Collection point': {
-        name: t('all_Collection_Point'),
+      "Collection point": {
+        name: t("all_Collection_Point"),
         icon: <PLACE_ICON />,
-        onClick: () => navigate('/collector/collectionPoint'),
-        collapse: false
+        onClick: () => navigate("/collector/collectionPoint"),
+        collapse: false,
       },
-      'Pickup order': {
-        name: t('pick_up_order.enquiry_pickup_order'),
+      "Pickup order": {
+        name: t("pick_up_order.enquiry_pickup_order"),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => navigate('/collector/pickupOrder'),
-        collapse: false
+        onClick: () => navigate("/collector/pickupOrder"),
+        collapse: false,
       },
-      'Job order': {
-        name: t('job_order.enquiry_job_order'),
+      "Job order": {
+        name: t("job_order.enquiry_job_order"),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => navigate('/logistic/jobOrder'),
-        collapse: false
+        onClick: () => navigate("/logistic/pickupOrder"),
+        collapse: false,
       },
-      'Warehouse dashboard': {
-        name: t('warehouseDashboard.warehouse'),
+      "Warehouse dashboard": {
+        name: t("warehouseDashboard.warehouse"),
         icon: <InventoryIcon />,
-        onClick: () => navigate('/warehouse'),
-        collapse: false
+        onClick: () => navigate("/warehouse"),
+        collapse: false,
       },
-      'Request check-in': {
-        name: t('check_in.request_check_in'),
+      "Request check-in": {
+        name: t("check_in.request_check_in"),
         icon: <LoginIcon />,
-        onClick: () => navigate('/warehouse/shipment'),
-        collapse: false
+        onClick: () => navigate("/warehouse/shipment"),
+        collapse: false,
       },
-      'Request checkout': {
-        name: t('check_out.request_check_out'),
+      "Request checkout": {
+        name: t("check_out.request_check_out"),
         icon: <LogoutIcon />,
-        onClick: () => navigate('/warehouse/checkout'),
-        collapse: false
+        onClick: () => navigate("/warehouse/checkout"),
+        collapse: false,
       },
       Settings: {
-        name: t('settings'),
+        name: t("settings"),
         icon: <SETTINGS_ICON />,
-        onClick: () => navigate('/astd/setting'),
-        collapse: false
+        onClick: () => navigate("/astd/setting"),
+        collapse: false,
       },
       Reports: {
-        name: t('reports'),
+        name: t("reports"),
         icon: <DOCUMENT_ICON />,
-        onClick: () => navigate('/collector/report'),
-        collapse: false
+        onClick: () => navigate("/collector/report"),
+        collapse: false,
       },
       Inventory: {
-        name: t('inventory.inventory'),
-        onClick: () => navigate('/collector/inventory'),
-        collapse: false
+        name: t("inventory.inventory"),
+        onClick: () => navigate("/collector/inventory"),
+        collapse: false,
       },
-      'Process out recyclables': {
-        name: t('processRecord.processingRecords'),
+      "Process out recyclables": {
+        name: t("processRecord.processingRecords"),
         icon: <DOCUMENT_ICON />,
-        onClick: () => navigate('/collector/processRecord'),
-        collapse: false
+        onClick: () => navigate("/collector/processRecord"),
+        collapse: false,
       },
       Staff: {
-        name: t('staffManagement.staff'),
+        name: t("staffManagement.staff"),
         icon: <AccountBoxOutlinedIcon />,
-        onClick: () => navigate('/warehouse/staff'),
-        collapse: false
+        onClick: () => navigate("/warehouse/staff"),
+        collapse: false,
       },
-      'Notification template': {
-        name: t('notification.notification_menu'),
+      StaffEnquiry: {
+        name: t("staffEnquiry.title"),
+        icon: <AccountBoxOutlinedIcon />,
+        onClick: () => navigate("/warehouse/staff-enquiry"),
+        collapse: false,
+      },
+      "Notification template": {
+        name: t("notification.notification_menu"),
         icon: <ViewQuiltOutlinedIcon />,
-        onClick: () => navigate('/logistic/notice'),
+        onClick: () => navigate(`/${pathRole}/notice`),
+        collapse: false,
+      },
+      "Driver":{
+        name: t('driver.sideBarName'),
+        icon:<SHIPPING_CAR_ICON/>,
+        onClick: () => navigate('/logistic/driver'),
         collapse: false
       }
-    }
-  ]
+    },
+  ];
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
   /*   let drawerMenus_collector: DrawerItem[] = [
@@ -347,22 +367,22 @@ function MainDrawer() {
   ] */
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
-  var drawerMenus
-  let drawerMenusTmp: DrawerItem[] = []
+  var drawerMenus;
+  let drawerMenusTmp: DrawerItem[] = [];
   var functionListTmp = JSON.parse(
-    localStorage.getItem(localStorgeKeyName.functionList) || '[]'
-  )
+    localStorage.getItem(localStorgeKeyName.functionList) || "[]"
+  );
   if (functionListTmp) {
     for (var functionItem of functionListTmp) {
       for (let deKey in defaultFunctionList[0]) {
         if (functionItem == deKey) {
-          drawerMenusTmp.push(defaultFunctionList[0][deKey] as DrawerItem)
+          drawerMenusTmp.push(defaultFunctionList[0][deKey] as DrawerItem);
         }
       }
     }
   }
   // 20240129 add function list daniel keung end
-  console.log(role)
+  console.log(role);
   // 20240129 add function list daniel keung start
   /*   switch (role) {
     case 'astd':
@@ -388,7 +408,7 @@ function MainDrawer() {
   } */
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
-  drawerMenus = drawerMenusTmp
+  drawerMenus = drawerMenusTmp;
   // 20240129 add function list daniel keung end
   return (
     <>
@@ -406,12 +426,12 @@ function MainDrawer() {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
-            padding: '10px'
-          }
+            padding: "10px",
+          },
         }}
-        variant={isMobile ? 'temporary' : 'permanent'}
+        variant={isMobile ? "temporary" : "permanent"}
         open={isMobile ? open : true}
         onClose={handleDrawerClose}
         anchor="left"
@@ -419,16 +439,16 @@ function MainDrawer() {
         <List>
           <Box
             sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              mt: 2
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mt: 2,
             }}
           >
             <img
               src={logo_company}
               alt="logo_company"
-              style={{ width: '90px' }}
+              style={{ width: "90px" }}
             />
           </Box>
           {drawerMenus.map((drawerMenu, index) =>
@@ -449,9 +469,9 @@ function MainDrawer() {
                 >
                   <ListItemButton
                     sx={{
-                      '&:hover .MuiSvgIcon-root': {
-                        color: '#79ca25'
-                      }
+                      "&:hover .MuiSvgIcon-root": {
+                        color: "#79ca25",
+                      },
                     }}
                     selected={selectedIndex === index}
                     onClick={(event) => handleListItemClick(index)}
@@ -474,16 +494,16 @@ function MainDrawer() {
                   selected={selectedIndex === index}
                   onClick={(event) => handleListItemClick(index)}
                   sx={{
-                    '&:hover': {
-                      '.MuiSvgIcon-root': {
-                        color: '#79ca25' // Change color on hover
-                      }
-                    }
+                    "&:hover": {
+                      ".MuiSvgIcon-root": {
+                        color: "#79ca25", // Change color on hover
+                      },
+                    },
                   }}
                 >
                   <ListItemIcon
                     className={
-                      selectedIndex === index ? 'icon-menu-active' : ''
+                      selectedIndex === index ? "icon-menu-active" : ""
                     }
                   >
                     {drawerMenu.icon}
@@ -505,7 +525,7 @@ function MainDrawer() {
         </List>
       </Drawer>
     </>
-  )
+  );
 }
 
 const styles = {
@@ -513,8 +533,8 @@ const styles = {
     ml: 3,
     pl: 3,
     borderLeft: 3,
-    borderLeftColor: '#F4F4F4'
-  }
-}
+    borderLeftColor: "#F4F4F4",
+  },
+};
 
-export default MainDrawer
+export default MainDrawer;
