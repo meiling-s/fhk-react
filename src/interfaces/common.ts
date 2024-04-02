@@ -187,3 +187,7 @@ export type ProcessType = {
     updatedAt: string    
 }
 
+export type itemList = {
+    bgColor: string
+    borderColor: string
+}

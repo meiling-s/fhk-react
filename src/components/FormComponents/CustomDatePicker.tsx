@@ -17,6 +17,7 @@ type props = {
     container_style?: object,
     dp_style?: object,
     allowDuplicateDate?: boolean
+    roleColor?: string
 }
 
 export default function CustomDatePicker({
@@ -27,7 +28,8 @@ export default function CustomDatePicker({
     setMultiDate,
     container_style,
     dp_style,
-    allowDuplicateDate
+    allowDuplicateDate,
+    roleColor
 }: props){
     
     
@@ -35,6 +37,26 @@ export default function CustomDatePicker({
     const [formattedDates,setFormattedDates] = useState<string[]>([]);
    
 
+    const buttonOutlinedGreen_2 = {
+        padding: 2,
+        borderRadius: 3,
+        border: 1,
+        borderColor: roleColor ||'#79ca25',
+        backgroundColor: 'white',
+        color: roleColor || '#79ca25',
+        fontWeight: 'bold',
+        '&.MuiButton-root:hover': {
+          bgcolor: '#F4F4F4'
+        }
+    }
+
+    const datePicker= {
+        ...styles.textField,
+        maxWidth: "250px",
+        "& .MuiIconButton-edgeEnd": {
+            color:  roleColor ||'#79ca25',
+        }
+    }
 
     const { t } = useTranslation();
 
@@ -104,7 +126,7 @@ export default function CustomDatePicker({
                         minDate={minDate? dayjs(minDate) : undefined}
                         maxDate={maxDate? dayjs(maxDate) : undefined}
                         onChange={(value) => handleDateChange(value, index)}
-                        sx={{...localstyles.datePicker, ...dp_style}}
+                        sx={{...datePicker, ...dp_style}}
                         format={format.dateFormat2}
                         shouldDisableDate={(date) => checkIfDuplicated(date)}
                     />
@@ -127,11 +149,11 @@ export default function CustomDatePicker({
                 }
                 <Box sx={{display: "flex", alignItems: "center"}}>
                     <Button
-                        sx={{...styles.buttonOutlinedGreen_2, marginY: 2}}
+                        sx={{...buttonOutlinedGreen_2, marginY: 2}}
                         onClick={(event) => addDate()}
                     >
                         <AddCircleOutlineIcon
-                            sx={{...styles.endAdornmentIcon, pr: 1}}
+                            sx={{fontSize: 25, pr: 1, color: roleColor ||' #79CA25'}}
                         />
                         {t("component.routine.addPeriod")}
                     </Button>
@@ -157,7 +179,7 @@ export default function CustomDatePicker({
                         minDate={minDate? dayjs(minDate) : undefined}
                         maxDate={maxDate? dayjs(maxDate) : undefined}
                         onChange={(value) => handleDateChange(value)}
-                        sx={{...localstyles.datePicker, ...dp_style}}
+                        sx={{...datePicker, ...dp_style}}
                         format={format.dateFormat2}
                     />
                 </Box>
@@ -171,13 +193,13 @@ export default function CustomDatePicker({
 }
 
 let localstyles = {
-    datePicker: {
-        ...styles.textField,
-        maxWidth: "250px",
-        "& .MuiIconButton-edgeEnd": {
-            color: "#79CA25"
-        }
-    },
+    // datePicker: {
+    //     ...styles.textField,
+    //     maxWidth: "250px",
+    //     "& .MuiIconButton-edgeEnd": {
+    //         color: "#79CA25"
+    //     }
+    // },
     container: {
         display: "flex",
         flexDirection: "row",

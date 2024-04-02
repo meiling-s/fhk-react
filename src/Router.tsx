@@ -128,11 +128,8 @@ const Router = () => {
           <Route path="/astd/statistics/recyclePlant" element={<></>} />
           <Route path="/astd/setting" element={<Settings />} />
           <Route path="/astd/account" element={<></>} />
-          <Route
-            path="/astd/createPicoLogistic"
-            element={<CreatePicoLogistic />}
-          />
-          <Route path="/astd/editPicoLogistic" element={<EditPicoLogistic />} />
+          <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
+          <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -153,6 +150,12 @@ const Router = () => {
           <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic /> } />
           <Route path="/logistics/account" element={<LogisticAccount />} />
           <Route path="/logistic/driver" element={<Driver/>}/>
+        </Route>
+
+        <Route element={<MainLayout />}>
+          <Route path="/manufacturer/pickupOrder" element={<PickupOrder />} />
+          <Route path="/manufacturer/createPickupOrder" element={<CreatePickupOrder />} />
+          <Route path="/manufacturer/editPickupOrder" element={<EditPickupOrder /> } />
         </Route>
       </Routes>
     </BrowserRouter>

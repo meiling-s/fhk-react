@@ -107,6 +107,35 @@ export const showSuccessToast = (msg: string) => {
   })
 }
 
+export const getThemeColorRole = (role: string) => {
+  const colorList = {
+    collectoradmin: '#79CA25',
+    logisticadmin: '#7CE495',
+    manufactureradmin: '#6BC7FF'
+  }
+
+  return colorList[role as keyof typeof colorList]
+}
+
+export const getThemeCustomList = (role: string) => {
+  const customListRole = {
+    collectoradmin: {
+      border: '#79CA25',
+      bgColor: '#E4F6DC'
+    },
+    logisticadmin: {
+      border: '#63D884',
+      bgColor: '#ECF5EE'
+    },
+    manufactureradmin: {
+      border: '#6BC7FF',
+      bgColor: '#F0F9FF'
+    }
+  }
+
+  return  customListRole[role as keyof typeof customListRole]
+}
+
 export const dynamicpath = () => {
   const userRole = localStorage.getItem("userRole") || "";
   let pathRole: string = "";

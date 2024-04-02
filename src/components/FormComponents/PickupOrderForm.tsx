@@ -125,7 +125,7 @@ const PickupOrderForm = ({
                 {selectedPickupOrder?.picoId}
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex', ml: '20px' }}>
+            <Box sx={{ display: 'flex', flexShrink: 0, ml: '20px' }}>
               <StatusCard status={selectedPickupOrder?.status} />
             </Box>
             <Box sx={{ marginLeft: 'auto' }}>
@@ -135,40 +135,30 @@ const PickupOrderForm = ({
                     // navigateToJobOrder()
                   }}></CustomButton>
                 ) : role === 'logisticadmin' && selectedRow && selectedRow.status === 'CREATED' && selectedRow?.tenantId === tenantId ? (
-                  <Button
-                      variant="outlined"
-                      startIcon={<DriveFileRenameOutlineIcon />}
-                      sx={localstyles.button}
-                      onClick={() =>
-                        selectedPickupOrder && handleRowClick(selectedPickupOrder)
-                      }
-                    >
-                      {t('pick_up_order.item.edit')}
-                    </Button>
+                  <CustomButton
+                    text={t('pick_up_order.item.edit')}
+                    onClick={() => {
+                      selectedPickupOrder && handleRowClick(selectedPickupOrder)
+                    }}
+                  ></CustomButton>
                 ) : role !== 'logisticadmin' ? (
                   <>
-                    <Button
-                      variant="outlined"
-                      startIcon={<DriveFileRenameOutlineIcon />}
-                      sx={localstyles.button}
-                      onClick={() =>
+                    <CustomButton
+                      text={t('pick_up_order.item.edit')}
+                      style={{marginRight: '12px'}}
+                      onClick={() => {
                         selectedPickupOrder && handleRowClick(selectedPickupOrder)
-                      }
-                    >
-                      {t('pick_up_order.item.edit')}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      startIcon={<DELETE_OUTLINED_ICON />}
-                      sx={localstyles.button}
+                      }}
+                    ></CustomButton>
+                    <CustomButton
+                      text={t('pick_up_order.item.delete')}
+                      outlined
                       onClick={onDeleteClick}
-                    >
-                      {t('pick_up_order.item.delete')}
-                    </Button>
+                    ></CustomButton>
                   </>
                 ) : null
               }
-              <IconButton sx={{ ml: '25px' }} onClick={onClose}>
+              <IconButton sx={{ ml: '20px' }} onClick={onClose}>
                 <KeyboardTabIcon sx={{ fontSize: '30px' }} />
               </IconButton>
             </Box>
