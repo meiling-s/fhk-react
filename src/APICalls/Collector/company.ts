@@ -12,10 +12,9 @@ import { CreateCompany, UpdateCompany } from "../../interfaces/company";
 export const getAllCompany = async (companyType: string, page: number, size: number) => {
   try {
     const token = returnApiToken();
-
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_COMPANY(token.decodeKeycloack, companyType),
+      ...GET_COMPANY(token.realmApiRoute, token.decodeKeycloack, companyType),
       params: {
         page: page,
         size: size,
@@ -40,7 +39,7 @@ export const createCompany = async ( companyType: string, data: CreateCompany) =
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_COMPANY(token.decodeKeycloack, companyType),
+      ...CREATE_COMPANY(token.realmApiRoute, token.decodeKeycloack, companyType),
       data: data
     });
 
@@ -57,7 +56,7 @@ export const editCompany = async ( companyType: string, companyId: string, data:
     const token = returnApiToken();
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...UPDATE_COMPANY(token.decodeKeycloack, companyType, companyId),
+      ...UPDATE_COMPANY(token.realmApiRoute, token.decodeKeycloack, companyType, companyId),
       data: data,
     });
 

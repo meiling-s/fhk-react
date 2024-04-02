@@ -15,7 +15,7 @@ export const getAllStaffTitle = async (page: number, size: number) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_STAFF_TITLE(token.decodeKeycloack),
+      ...GET_STAFF_TITLE(token.realmApiRoute, token.decodeKeycloack),
       params: {
         page: page,
         size: size,
@@ -40,7 +40,7 @@ export const createStaffTitle = async (data: CreateStaffTitle) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_STAFF_TITLE(token.decodeKeycloack),
+      ...CREATE_STAFF_TITLE(token.realmApiRoute, token.decodeKeycloack),
       data: data
     });
 
@@ -57,7 +57,7 @@ export const editStaffTitle = async (titleId: string, data: UpdateStaffTitle) =>
     const token = returnApiToken();
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...UPDATE_STAFF_TITLE(token.decodeKeycloack, titleId),
+      ...UPDATE_STAFF_TITLE(token.realmApiRoute, token.decodeKeycloack, titleId),
       data: data,
     });
 

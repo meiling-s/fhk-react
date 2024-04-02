@@ -15,7 +15,7 @@ export const getAllDenialReason = async (page: number, size: number) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_DENIAL_REASON(token.tenantId),
+      ...GET_DENIAL_REASON(token.realmApiRoute, token.tenantId),
       params: {
         page: page,
         size: size,
@@ -40,7 +40,7 @@ export const createDenialReason = async (data: CreateDenialReason) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_DENIAL_REASON(),
+      ...CREATE_DENIAL_REASON(token.realmApiRoute, ),
       data: { ...data, tenantId: token.tenantId, status: "ACTIVE" },
       headers: {
         AuthToken: token.authToken,
@@ -60,7 +60,7 @@ export const editDenialReason = async (reasonId: number, data: CreateDenialReaso
     const token = returnApiToken();
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...UPDATE_DENIAL_REASON(token.tenantId, reasonId),
+      ...UPDATE_DENIAL_REASON(token.realmApiRoute, token.tenantId, reasonId),
       data: data,
     });
 
