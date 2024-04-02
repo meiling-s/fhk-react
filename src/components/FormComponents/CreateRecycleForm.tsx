@@ -16,7 +16,6 @@ import React, {
   SetStateAction,
   SyntheticEvent,
   useEffect,
-  useRef,
   useState
 } from 'react'
 import { styles } from '../../constants/styles'
@@ -146,8 +145,6 @@ const CreateRecycleForm = ({
     if (editRow) {
       // Set the form field values based on the editRow data
 
-      console.log(editRow)
-
       const index = data.indexOf(editRow)
 
       formik.setValues({
@@ -173,7 +170,7 @@ const CreateRecycleForm = ({
   }, [editRow])
 
   useEffect(() => {
-    console.log('defaultRecyc: ', defaultRecyc)
+    // console.log('defaultRecyc: ', defaultRecyc)
   }, [defaultRecyc])
 
   const validateSchema = Yup.lazy((values) => {
@@ -183,7 +180,6 @@ const CreateRecycleForm = ({
     } else {
       prevData = data
     }
-    console.log('pickupAt', formik.values.pickupAt)
 
     return Yup.object().shape({
       pickupAt: Yup.string()
@@ -252,13 +248,12 @@ const CreateRecycleForm = ({
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
-      console.log(values)
+      //console.log(values)
       // alert(JSON.stringify(values, null, 2));
       if (isEditing) {
         //editing row
         //const {id, ...updateValue} = values
         const updatedData = data.map((row, id) => {
-          //console.log(id, values.id)
           return id === values.id ? values : row
         })
         setState(updatedData)
@@ -352,7 +347,10 @@ const CreateRecycleForm = ({
                   >
                     {t('col.cancel')}
                   </Button>
-                  <IconButton sx={{ ml: '25px' }}>
+                  <IconButton
+                    sx={{ ml: '25px' }}
+                    onClick={() => onClose && onClose()}
+                  >
                     <KeyboardTabIcon sx={{ fontSize: '30px' }} />
                   </IconButton>
                 </Box>
@@ -367,7 +365,6 @@ const CreateRecycleForm = ({
                     sx={{ width: '100%' }}
                     value={formatTimePickAt(formik.values.pickupAt)}
                     onChange={(value) => {
-                      console.log('onhange', value)
                       formik.setFieldValue(
                         'pickupAt',
                         value ? formattedTime(value) : ''
@@ -436,7 +433,6 @@ const CreateRecycleForm = ({
                           newValue: string | null
                         ) => formik.setFieldValue(it.id, newValue)}
                         onInputChange={(event: any, newInputValue: string) => {
-                          console.log(newInputValue) // Log the input value
                           formik.setFieldValue(it.id, newInputValue) // Update the formik field value if needed
                         }}
                         value={it.value}
