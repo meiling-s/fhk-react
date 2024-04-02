@@ -84,6 +84,14 @@ const Login = () => {
         realm = 'logistic';
         loginTo = 'logisticadmin';
         break;
+      case 'manufacturerAdmin':
+        realm = 'manufacturer';
+        loginTo = 'manufacturer';
+        break;
+      case 'customerAdmin':
+        realm = 'customer';
+        loginTo = 'customer';
+        break;
       default:
         break;
     }
@@ -126,6 +134,9 @@ const Login = () => {
             break;
           case "logistic":
             navigate("/logistic/pickupOrder");
+            break;
+          case "manufacturer":
+            navigate("/manufacturer/pickupOrder");
             break;
           default:
             break;
