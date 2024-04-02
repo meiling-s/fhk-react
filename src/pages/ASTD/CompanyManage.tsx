@@ -113,7 +113,7 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
     const result = await updateTenantStatus(statData, tenantId)
     const data = result?.data
     if (data) {
-      console.log('reject success success')
+      // console.log('reject success success')
       onSubmit()
     }
   }
@@ -202,7 +202,7 @@ function InviteModal({ open, onClose, id }: inviteModal) {
               fullWidth
               placeholder={t('tenant.invite_modal.enter_email')}
               onChange={(event: { target: { value: any } }) => {
-                console.log(event.target.value)
+                // console.log(event.target.value)
               }}
               InputProps={{
                 sx: styles.textField,
@@ -236,7 +236,7 @@ function InviteModal({ open, onClose, id }: inviteModal) {
               fullWidth
               value={defaultPath.tenantRegisterPath + id}
               onChange={(event: { target: { value: any } }) => {
-                console.log(event.target.value)
+                // console.log(event.target.value)
               }}
               InputProps={{
                 sx: styles.textField,
@@ -317,7 +317,7 @@ function InviteForm({ open, isLoading, onClose, onSubmit }: inviteForm) {
     validationSchema: validateSchema,
 
     onSubmit: (values) => {
-      console.log(values)
+      // console.log(values)
       onClose && onClose()
     }
   })

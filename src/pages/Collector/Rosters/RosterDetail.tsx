@@ -294,7 +294,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       createdBy: loginName,
       updatedBy: loginName
     }
-    console.log('validation', validation)
+    // console.log('validation', validation)
     if (validation.length === 0) {
       if (selectedRoster != null) {
         const result = await updateRoster(updateForm, selectedRoster.rosterId)
@@ -347,7 +347,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }
 
   const handleStaffChange = (value: string, index: number) => {
-    console.log('value', value)
+    // console.log('value', value)
     const updatedStaff = [...selectedStaff]
     updatedStaff[index] = value
     setSelectedStaff(updatedStaff)

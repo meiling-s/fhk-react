@@ -28,10 +28,10 @@ export default function FunctionList({
     }, [functions])
 
     return (
-        <Button 
-            key={key} 
-            value={item.functionId} 
-            color="success" 
+        <Button
+            key={key}
+            value={item.functionId}
+            color="success"
             variant={selected ? 'soft' : 'outlined'}
             style={{borderRadius: 50, margin: 4}}
             disabled={disabled}
@@ -44,7 +44,7 @@ export default function FunctionList({
                     newValue.push(item.functionId)
                 }
                 setFunctions(newValue);
-                console.log(functions)
+                // console.log(functions)
                 setSelected(!selected);
             }}
         >

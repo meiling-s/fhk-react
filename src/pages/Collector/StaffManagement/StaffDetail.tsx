@@ -144,7 +144,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
 
   const mappingData = () => {
     if (selectedItem != null) {
-      console.log('selectedItem', selectedItem)
+      // console.log('selectedItem', selectedItem)
       setFormData({
         loginId: selectedItem.loginId,
         staffNameTchi: selectedItem.staffNameTchi,

@@ -143,7 +143,7 @@ function RejectForm({
       const reasonItem = reasons.find((reason) => reason.id === id);
       return reasonItem ? reasonItem.name : "";
     });
-    console.log("checkin ids are " + checkedShipments);
+    // console.log("checkin ids are " + checkedShipments);
     const reason = rejectReason;
     const statReason: updateStatus = {
       status: "REJECTED",
@@ -157,7 +157,7 @@ function RejectForm({
           const result = await updateCheckinStatus(checkInId, statReason);
           const data = result?.data;
           if (data) {
-            console.log("updated check-in status: ", data);
+            // console.log("updated check-in status: ", data);
             if (onRejected) {
               onRejected();
             }
@@ -254,7 +254,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
           const result = await updateCheckinStatus(checkInId, statReason)
           const data = result?.data
           if (data) {
-            console.log('updated check-in status: ', data)
+            // console.log('updated check-in status: ', data)
             if (onApprove) {
               onApprove()
             }
@@ -345,7 +345,7 @@ function ShipmentManage() {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [query, setQuery] = useState<queryCheckIn>({
-    picoId: "", 
+    picoId: "",
     senderName: "",
     senderAddr: "",
   })
@@ -378,7 +378,7 @@ function ShipmentManage() {
        navigate('/')
     } else {
       const data = result?.data.content;
-      if (data && data.length > 0) {  
+      if (data && data.length > 0) {
         const checkinData = data.map(transformToTableRow)
         setCheckInRequest(data);
         setFilterShipments(checkinData)
@@ -388,7 +388,7 @@ function ShipmentManage() {
       setTotalData(result?.data.totalPages)
     }
   };
- 
+
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
     setSelectAll(checked)
@@ -409,7 +409,7 @@ function ShipmentManage() {
       ? [...selectedCheckin, chkInId]
       : selectedCheckin.filter((rowId) => rowId != chkInId)
       setSelectedCheckin(updatedChecked)
-    console.log(updatedChecked)
+    // console.log(updatedChecked)
 
     const allRowsChecked = filterShipments.every((row) =>
       updatedChecked.includes(row.chkInId)
@@ -443,7 +443,7 @@ function ShipmentManage() {
       />
     )
   }
-  
+
   const headCells: GridColDef[] = [
     checkboxColumn,
     {
@@ -585,11 +585,11 @@ function ShipmentManage() {
 
   const handleSelectRow = (params: GridRowParams) =>{
     setOpen(true);
-   
+
     const selectedItem = filterShipments?.find(
       (item) => item.chkInId === params.row.chkInId
     );
-    setSelectedRow(selectedItem); 
+    setSelectedRow(selectedItem);
   }
 
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
@@ -829,7 +829,7 @@ function ShipmentManage() {
           }}
           onRejected={onRejectCheckin}
         />
-       
+
       <ApproveModal
         open={approveModal}
         onClose={() => {

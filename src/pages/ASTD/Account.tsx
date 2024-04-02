@@ -13,7 +13,7 @@ const Settings: FunctionComponent = () => {
   const { t } = useTranslation()
   const [selectedTab, setSelectedTab] = useState(0)
   const handleTabChange = (value: number, label: string) => {
-    console.log(`Navigated to ${value} ${label}`)
+    // console.log(`Navigated to ${value} ${label}`)
     setSelectedTab(value)
   }
 

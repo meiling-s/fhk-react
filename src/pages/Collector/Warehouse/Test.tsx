@@ -48,7 +48,7 @@ const Test: FunctionComponent = () => {
             const response = await getAllWarehouse(0, 10);
             if (response) {
                 setWarehouses(response.data.content); // Extract the 'data' property
-                console.log(response.data.content);
+                // console.log(response.data.content);
             }
         } catch (error) {
             console.error(error);
@@ -58,7 +58,7 @@ const Test: FunctionComponent = () => {
     useEffect(() => {
 
         fetchData();
-        
+
     }, []);
 
     return (

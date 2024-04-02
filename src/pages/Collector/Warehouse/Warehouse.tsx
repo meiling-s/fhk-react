@@ -193,7 +193,7 @@ const Warehouse: FunctionComponent = () => {
 
         setWarehouseItems(filteredData)
         setTotalData(response.data.totalPages)
-        console.log('fetch DATA', filteredData)
+        // console.log('fetch DATA', filteredData)
       }
     } catch (error) {
       console.error(error)
@@ -259,7 +259,7 @@ const Warehouse: FunctionComponent = () => {
 
   const handleDelete = (row: number) => {
     setRowId(row)
-    console.log('handledelete', row)
+    // console.log('handledelete', row)
     setDrawerOpen(true)
     setAction('delete')
     fetchData()

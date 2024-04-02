@@ -186,7 +186,7 @@ const AdditionalServicePict = () => {
       ...prevData,
       [serviceId]: { ...prevData[serviceId], photoImage: imageList }
     }))
-    console.log(`Updated image list for ${serviceId}:`, imageList)
+    // console.log(`Updated image list for ${serviceId}:`, imageList)
   }
 
   const updateData = (serviceId: ServiceId, property: string, value: any) => {
@@ -247,7 +247,7 @@ const AdditionalServicePict = () => {
 
   const returnErrorMsg = (error: string) => {
     var msg = ''
-    console.log(error)
+    // console.log(error)
     switch (error) {
       case formErr.empty:
         msg = t('form.error.shouldNotBeEmpty')
@@ -281,7 +281,7 @@ const AdditionalServicePict = () => {
         const imgList: string[] = ImageToBase64(
           serviceItem.photoImage
         ).map((item) => {
-          return item 
+          return item
         })
 
         const formData: ServiceInfo = {
@@ -303,7 +303,7 @@ const AdditionalServicePict = () => {
 
       if (itemData === 4) {
         setTrySubmited(false)
-        console.log('itemData', itemData)
+        // console.log('itemData', itemData)
         const toastMsg = 'created additional service success'
         toast.info(toastMsg, {
           position: 'top-center',

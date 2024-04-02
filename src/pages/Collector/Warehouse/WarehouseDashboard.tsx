@@ -92,7 +92,7 @@ const WarehouseDashboard: FunctionComponent = () => {
       initCheckOut()
       initWarehouseSubType()
       initCheckInOut()
-    
+
   }, [selectedWarehouse, i18n.language])
 
   const initWarehouse = async () => {
@@ -109,7 +109,7 @@ const WarehouseDashboard: FunctionComponent = () => {
       data.forEach((item: any) => {
 
         item.warehouseRecyc?.forEach((recy: any) => {
-          capacityTotal += recy.recycSubTypeCapacity; 
+          capacityTotal += recy.recycSubTypeCapacity;
         });
 
         var warehouseName = ''
@@ -157,13 +157,13 @@ const WarehouseDashboard: FunctionComponent = () => {
         return result.data
       }
     }
-   
+
   }
 
   const initCapacity = async () => {
     if(selectedWarehouse){
       const result = await getCapacityWarehouse(parseInt(selectedWarehouse.id))
-      if(result) setTotalCapacity(result.data)    
+      if(result) setTotalCapacity(result.data)
     }
   }
 
@@ -229,18 +229,18 @@ const WarehouseDashboard: FunctionComponent = () => {
     if(selectedWarehouse) {
       const weightSubtype = await getWeightSubtypeWarehouse()
       const result = await getWarehouseById(parseInt(selectedWarehouse.id))
-      console.log("weightSubtype",weightSubtype)
+      // console.log("weightSubtype",weightSubtype)
 
       if(result) {
         const data = result.data
-        let subtypeWarehouse: warehouseSubtype[] = []   
+        let subtypeWarehouse: warehouseSubtype[] = []
         var subTypeWeight = 0
         data?.warehouseRecyc.forEach((item: any)=>{
           const recyItem = mappingRecyName(item.recycTypeId , item.recycSubTypeId)
           if(subTypeWeight) {
             subTypeWeight = item.recycSubTypeId in weightSubtype ? weightSubtype[item.recycSubTypeId] : 0;
           }
-          
+
           subtypeWarehouse.push({
             subTypeId: item.recycSubTypeId,
             subtypeName: recyItem ? recyItem.subName : "-",
@@ -378,7 +378,7 @@ const WarehouseDashboard: FunctionComponent = () => {
     const g = Math.floor(Math.random() * 156) + 100; // Green component (100-255)
     const b = Math.floor(Math.random() * 156) + 100; // Blue component (100-255)
     const color = `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`;
-  
+
     return color;
   };
 
@@ -398,7 +398,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                 {item?.name}
             </MenuItem>
             ))
-          }   
+          }
           </Select>
         </FormControl>
       </Box>
@@ -516,7 +516,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               fontSize={13}
               color="gray"
               fontWeight="light"
-              
+
             >
               {t('warehouseDashboard.all')}
             </Typography>

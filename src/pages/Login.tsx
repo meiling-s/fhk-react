@@ -63,18 +63,18 @@ const Login = () => {
         password: password,
         realm: 'astd'
       });
-      console.log("test login test out 1");
-      console.log('result', result)
+      // console.log("test login test out 1");
+      // console.log('result', result)
       if(result){
-        console.log("test login test out 2");
+        // console.log("test login test out 2");
         setWarningMsg(" ");
         //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
         localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
         localStorage.setItem(localStorgeKeyName.role, loginTo);
         localStorage.setItem(localStorgeKeyName.username, result?.username || '');
         // 20240129 add function list daniel keung start
-        console.log("test login functionList");
-        console.log(result?.functionList);
+        // console.log("test login functionList");
+        // console.log(result?.functionList);
         localStorage.setItem(localStorgeKeyName.functionList, JSON.stringify(result?.functionList));
         // 20240129 add function list daniel keung end
         switch(loginTo){
@@ -92,9 +92,9 @@ const Login = () => {
         }
       }
     }
-    
+
     setLogginIn(false);
-    
+
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);

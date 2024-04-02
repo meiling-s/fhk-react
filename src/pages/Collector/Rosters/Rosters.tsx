@@ -81,7 +81,7 @@ const Rosters: FunctionComponent = () => {
     setRosterDate('')
     initRosterData()
     setFilterDate(dayjs(new Date()))
-    console.log(filterDate)
+    // console.log(filterDate)
   }
 
   const addNewRoster = (item: GroupedRoster) => {

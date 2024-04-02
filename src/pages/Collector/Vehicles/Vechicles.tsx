@@ -63,7 +63,7 @@ const Vehicle: FunctionComponent = () => {
   const initVehicleList = async () => {
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
-    console.log("initVehicleList", data)
+    // console.log("initVehicleList", data)
     if(data) {
       var vehicleMapping: VehicleItem[] = []
       data.content.map((item: any) => {
@@ -121,7 +121,7 @@ const Vehicle: FunctionComponent = () => {
       headerName: t('vehicle.picture'),
       width: 300,
       renderCell: (params) => {
-         
+
         return (
           <div style={{ display: 'flex', gap: '8px' }}>{
             params.row.photo.map((item: string) =>{
@@ -130,7 +130,7 @@ const Vehicle: FunctionComponent = () => {
               return (
                 <img key={item} className='w-[30px] h-[30px]' src={imgdata} alt="" />
               )
-            }  
+            }
             )
           }
           </div>
@@ -183,7 +183,7 @@ const Vehicle: FunctionComponent = () => {
     setAction('edit')
     setRowId(params.row.id)
     setSelectedRow(params.row)
-    setDrawerOpen(true) 
+    setDrawerOpen(true)
   }
 
   const showErrorToast = (msg: string) => {
@@ -219,7 +219,7 @@ const Vehicle: FunctionComponent = () => {
     } else {
       showErrorToast(msg)
     }
-  } 
+  }
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {

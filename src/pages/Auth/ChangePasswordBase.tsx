@@ -121,10 +121,10 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
 
   useEffect(() => {
     setRole(localStorage.getItem(localStorgeKeyName.role) || '')
-    console.log(
-      'First Time Login:',
-      localStorage.getItem(localStorgeKeyName.firstTimeLogin)
-    )
+    // console.log(
+    //   'First Time Login:',
+    //   localStorage.getItem(localStorgeKeyName.firstTimeLogin)
+    // )
     setFirstLogin(
       localStorage.getItem(localStorgeKeyName.firstTimeLogin) === 'true'
     )
