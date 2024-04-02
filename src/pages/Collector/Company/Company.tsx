@@ -72,7 +72,7 @@ const Company: FunctionComponent = () => {
     if (data) {
       var companyMapping: CompanyItem[] = [];
       const prefixItemName = companyType === 'manulist' ? 'manufacturer' : companyType.replace('list', '')
-      data.map((item: any) => {
+      data.content.map((item: any) => {
         companyMapping.push(
           createCompany(
             item[`${prefixItemName}Id`],

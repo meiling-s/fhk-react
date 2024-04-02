@@ -16,7 +16,9 @@
     "remark": "备注",
     "traditionalChineseName": "繁体中文名称",
     "simplifiedChineseName": "简体中文名称",
-    "englishName": "英文名称"
+    "englishName": "英文名称",
+    "yes": "是",
+    "no": "否"
   },
   "col": {
     "createCP": "建立回收点",

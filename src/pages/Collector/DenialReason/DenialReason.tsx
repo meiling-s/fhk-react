@@ -100,7 +100,7 @@ const DenialReason: FunctionComponent = () => {
     const data = result?.data;
     if (data) {
       var denialReasonMapping: DenialReasonItem[] = [];
-      data.map((item: any) => {
+      data.content.map((item: any) => {
         const functionItem = functionList.find((el) => el.functionId === item.functionId)
         if (functionItem) {
           item.functionName = functionItem.name
@@ -134,7 +134,7 @@ const DenialReason: FunctionComponent = () => {
   
   useEffect(() => {
     initDenialReasonList();
-  }, [functionList]);
+  }, [functionList, page]);
 
   const columns: GridColDef[] = [
     {

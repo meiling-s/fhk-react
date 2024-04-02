@@ -16,7 +16,9 @@
     "remark": "Remark",
     "traditionalChineseName": "Traditional Chinese Name",
     "simplifiedChineseName": "Simplified Chinese Name",
-    "englishName": "English Name"
+    "englishName": "English Name",
+    "yes": "Yes",
+    "no": "No"
   },
   "col": {
     "createCP": "Create collection point",

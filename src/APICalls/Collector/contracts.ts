@@ -15,6 +15,10 @@ export const getAllContract = async (page: number, size: number) => {
       const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...GET_CONTRACT_LIST(token.tenantId),
+        params: {
+          page: page,
+          size: size,
+        },
         headers: {
           AuthToken: token.authToken
         }

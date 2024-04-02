@@ -13,9 +13,8 @@ import Company from "../Company/Company";
 
 const Settings: FunctionComponent = () => {
   const { t } = useTranslation();
-  const [selectedTab, setSelectedTab] = useState(2);
+  const [selectedTab, setSelectedTab] = useState(0);
   const handleTabChange = (value: number, label: string) => {
-    console.log(`Navigated to ${value} ${label}`);
     setSelectedTab(value);
   };
 

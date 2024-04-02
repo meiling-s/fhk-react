@@ -11,6 +11,10 @@ export const getAllPackagingUnit = async (page: number, size: number) => {
       const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
         ...GET_PACKAGING_LIST(token.tenantId),
+        params: {
+          page: page,
+          size: size,
+        },
         headers: {
           AuthToken: token.authToken
         }
