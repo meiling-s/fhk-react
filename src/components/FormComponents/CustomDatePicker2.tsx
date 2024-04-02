@@ -31,7 +31,7 @@ function CustomDatePicker2({
     startDate: dayjs(startDate),
     endDate: dayjs(endDate),
   });
- console.log(period)
+ //console.log(period)
   const { t } = useTranslation();
 
   const onChangeDate = (start: boolean, value: dayjs.Dayjs | null) => {

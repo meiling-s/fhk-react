@@ -46,7 +46,7 @@ function CustomItemList({
         borderColor: itemColor?.borderColor ? itemColor?.borderColor : '#79CA25',
         color: '#535353',
         '&.MuiButton-root:hover': {
-          borderColor: '#79CA25'
+          borderColor:itemColor?.borderColor ? itemColor?.borderColor : '#79CA25'
         }
       }
     

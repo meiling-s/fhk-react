@@ -94,7 +94,7 @@ function MainDrawer() {
   var role = localStorage.getItem(localStorgeKeyName.role);
 
   interface func {
-    [key: string]: object;
+    [key: string]: object
   }
 
   // 20240129 add function list daniel keung start

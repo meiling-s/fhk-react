@@ -45,7 +45,8 @@ export interface PickupOrder {
     contractNo:        string;
     createdBy:         string;
     updatedBy:         string;
-    createdAt:         string
+    createdAt:         string;
+    refPicoId:         string;
     pickupOrderDetail: PickupOrderDetail[];
 }
 
@@ -150,6 +151,7 @@ export interface Row {
     rejectedBy:    string;
     contractNo:    string;
     updatedBy:     string;
+    refPicoId:     string ;
     createPicoDetail: CreatePicoDetail[]
     
 }
