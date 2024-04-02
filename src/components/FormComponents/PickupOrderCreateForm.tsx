@@ -151,13 +151,16 @@ const PickupOrderCreateForm = ({
 
   const logisticCompany =
     role == 'collectoradmin' ? logisticList : logisticAdminList
+    console.log("logisticCompany", logisticList, logisticAdminList)
   const contractRole =
     role == 'collectoradmin' ? contractType : contractLogistic
-  const unexpiredContracts = contractRole?.filter((contract) => {
-    const currentDate = new Date()
-    const contractDate = new Date(contract.contractToDate)
-    return contractDate > currentDate
-  })
+  const unexpiredContracts = contractRole
+    ? contractRole?.filter((contract) => {
+        const currentDate = new Date()
+        const contractDate = new Date(contract.contractToDate)
+        return contractDate > currentDate
+      })
+    : []
   const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
     null
   )
