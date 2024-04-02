@@ -153,7 +153,8 @@ const Router = () => {
         </Route>
 
         <Route element={<MainLayout />}>
-        <Route path="/manufacturer/createPickupOrder" element={<CreatePickupOrder />} />
+          <Route path="/manufacturer/pickupOrder" element={<PickupOrder />} />
+          <Route path="/manufacturer/createPickupOrder" element={<CreatePickupOrder />} />
           <Route path="/manufacturer/editPickupOrder" element={<EditPickupOrder /> } />
         </Route>
       </Routes>
