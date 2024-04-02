@@ -1,14 +1,13 @@
 import { Box, Button, IconButton, InputAdornment, Pagination, TextField } from "@mui/material"
-import { styles } from "../../../constants/styles"
-import { ADD_ICON, DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON, SEARCH_ICON } from "../../../themes/icons"
-import { useTranslation } from "react-i18next"
 import { DataGrid, GridColDef, GridRenderCellParams, GridRowParams, GridRowSpacingParams } from "@mui/x-data-grid"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { getDriverList } from "../../../APICalls/driver"
+import { styles } from "../../../constants/styles"
 import { Driver } from "../../../interfaces/driver"
+import { ADD_ICON, DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON, SEARCH_ICON } from "../../../themes/icons"
+import { showErrorToast, showSuccessToast } from "../../../utils/utils"
 import DriverDetail from "./DriverDetail"
-import CommonTypeContainer from "../../../contexts/CommonTypeContainer"
-import { useContainer } from "unstated-next"
 
 const localstyles = {
     inputState: {
@@ -47,9 +46,7 @@ const DriverMenu = () => {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [driverLists, setDriverLists] = useState<Driver[]>([])
     const [filterDriverLists, setFilterDriverLists] = useState<Driver[]>([])
-    const { logisticList, contractType, vehicleType, recycType} =
-    useContainer(CommonTypeContainer);
-    
+
 
     const columns: GridColDef[] = useMemo(() => ([
         {
@@ -91,7 +88,12 @@ const DriverMenu = () => {
                         <EDIT_OUTLINED_ICON
                             fontSize="small"
                             className="cursor-pointer text-grey-dark mr-2"
-                            style={{ cursor: 'pointer' }} />
+                            style={{ cursor: 'pointer' }}
+                            onClick={(event) => {
+                                event.stopPropagation()
+                                handleAction(params, 'edit')
+                            }}
+                        />
                     </div>
                 )
             }
@@ -105,17 +107,17 @@ const DriverMenu = () => {
                         <DELETE_OUTLINED_ICON
                             fontSize="small"
                             className="cursor-pointer text-grey-dark"
-                            // onClick={(event) => {
-                            //   event.stopPropagation()
-                            //   handleAction(params, 'delete')
-                            // }}
+                            onClick={(event) => {
+                                event.stopPropagation()
+                                handleAction(params, 'delete')
+                            }}
                             style={{ cursor: 'pointer' }}
                         />
                     </div>
                 )
             }
         }
-    ]), [currentLanguage])
+    ]), [currentLanguage, t])
 
     const handleSearch = (search: string) => {
         if (search.trim() !== '') {
@@ -132,7 +134,6 @@ const DriverMenu = () => {
         action: 'add' | 'edit' | 'delete'
     ) => {
         setAction(action)
-
         setSelectedRow(params.row)
         setDrawerOpen(true)
     }
@@ -162,6 +163,17 @@ const DriverMenu = () => {
     }, [page, pageSize])
 
 
+    const onSubmitData = (type: 'success' | 'error', msg: string) => {
+
+        if (type === 'success') {
+            showSuccessToast(msg)
+        } else {
+            showErrorToast(msg)
+        }
+        initDriverList()
+    }
+
+
     useEffect(() => {
         initDriverList()
     }, [initDriverList])
@@ -182,9 +194,9 @@ const DriverMenu = () => {
                         width: 'max-content',
                         height: '40px'
                     }]}
-                    onClick={() => { 
+                    onClick={() => {
                         setDrawerOpen(true)
-                        setAction('add') 
+                        setAction('add')
                     }}
                     variant="outlined">
                     <ADD_ICON />{t('driver.DriverMenu.AddBtn')}
@@ -247,6 +259,8 @@ const DriverMenu = () => {
                 open={drawerOpen}
                 onClose={() => setDrawerOpen(false)}
                 action={action}
+                onSubmitData={(type, msg) => onSubmitData(type, msg)}
+                driver={selectedRow}
             />
         </Box>
     )

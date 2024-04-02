@@ -722,7 +722,13 @@
         "driveYear": "Years of Driving Experience",
         "addvehicleButton": "Add Vehicle Type",
         "contactNo": "Contact Number",
-        "contactText": "Please Enter Contact Number"
+        "contactText": "Please Enter Contact Number",
+        "createSuccessMsg": "Success created driver",
+        "createFailMsg": "Failed created driver",
+        "editSuccessMsg": "Success edited driver",
+        "editFailMsg": "Failed edited driver",
+        "deleteSuccessMsg": "Success deleted driver",
+        "deleteFailMsg": "Failed delete driver"
       }
     }
   }

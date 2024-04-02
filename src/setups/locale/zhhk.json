@@ -720,7 +720,13 @@
           "driveYear": "駕駛經驗",
           "addvehicleButton": "新增車輛類別",
           "contactNo": "聯絡電話",
-          "contactText": "請輸入聯絡電話"
+          "contactText": "請輸入聯絡電話",
+          "createSuccessMsg": "創建司機成功",
+          "createFailMsg": "創建司機失敗",
+          "editSuccessMsg": "修改司機成功",
+          "editFailMsg": "修改司機失敗",
+          "deleteSuccessMsg": "刪除司機成功",
+          "deleteFailMsg": "刪除司機失敗"
         }
       }
     }

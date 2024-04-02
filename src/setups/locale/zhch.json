@@ -698,7 +698,13 @@
           "driveYear": "驾驶经验",
           "addvehicleButton": "新增车辆类别",
           "contactNo": "联络电话",
-          "contactText": "请输入联络电话"
+          "contactText": "请输入联络电话",
+          "createSuccessMsg": "创建司机成功",
+          "createFailMsg": "创建司机失败",
+          "editSuccessMsg": "修改司机成功",
+          "editFailMsg": "修改司机失败",
+          "deleteSuccessMsg": "删除司机成功",
+          "deleteFailMsg": "删除司机失败"
         }
       }
     }

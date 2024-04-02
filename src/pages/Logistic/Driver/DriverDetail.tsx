@@ -1,21 +1,24 @@
-import { Autocomplete, Box, Button, ButtonBase, Card, Divider, FormControl, Grid, ImageList, ImageListItem, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
-import ImageUploading, { ImageListType } from 'react-images-uploading'
-import RightOverlayForm from "../../../components/RightOverlayForm"
+import { AddCircle, CancelRounded, DeleteSweepOutlined } from "@mui/icons-material"
+import { Autocomplete, Box, Button, ButtonBase, Card, Divider, Grid, ImageList, ImageListItem, TextField, Typography } from "@mui/material"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import CustomTextField from "../../../components/FormComponents/CustomTextField"
-import CustomField from "../../../components/FormComponents/CustomField"
-import { CAMERA_OUTLINE_ICON } from "../../../themes/icons"
-import { AddCircle, AddCircleOutline, AddOutlined, CancelRounded, DeleteSweep, DeleteSweepOutlined } from "@mui/icons-material"
-import { styles } from '../../../constants/styles'
-import { useEffect, useMemo, useState } from "react"
-import CustomItemList, { il_item } from "../../../components/FormComponents/CustomItemList"
-import { getLoginIdList, getStaffTitle } from "../../../APICalls/staff"
-import { Driver } from "../../../interfaces/driver"
+import ImageUploading, { ImageListType } from 'react-images-uploading'
 import { useContainer } from "unstated-next"
-import CommonTypeContainer from "../../../contexts/CommonTypeContainer"
+import { createDriver, deleteDriver, editDriver } from "../../../APICalls/driver"
+import { getLoginIdList } from "../../../APICalls/staff"
 import { getTenantById } from "../../../APICalls/tenantManage"
-import { formValidate } from "../../../interfaces/common"
+import CustomField from "../../../components/FormComponents/CustomField"
+import { il_item } from "../../../components/FormComponents/CustomItemList"
+import CustomTextField from "../../../components/FormComponents/CustomTextField"
+import { FormErrorMsg } from "../../../components/FormComponents/FormErrorMsg"
+import RightOverlayForm from "../../../components/RightOverlayForm"
 import { formErr } from "../../../constants/constant"
+import { styles } from '../../../constants/styles'
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer"
+import { formValidate } from "../../../interfaces/common"
+import { Driver } from "../../../interfaces/driver"
+import { CAMERA_OUTLINE_ICON } from "../../../themes/icons"
+import { ImageToBase64, returnErrorMsg } from "../../../utils/utils"
 
 interface FormValues {
     [key: string]: string | string[]
@@ -26,6 +29,7 @@ interface DriverDetailProps {
     onClose: () => void
     action: 'add' | 'edit' | 'delete'
     driver?: Driver | null
+    onSubmitData: (type: 'success' | 'error', msg: string) => void
 }
 
 interface DriverInfo {
@@ -34,95 +38,109 @@ interface DriverInfo {
     licenseExp: string,
     workingExp: string
 }
-const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) => {
-    const initialFormValues = {
+const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSubmitData, driver }) => {
+    const initialFormValues = useMemo(()=>({
         loginId: '',
-        staffNameTchi: '',
-        staffNameEng: '',
-        staffNameSchi: '',
+        driverNameTchi: '',
+        driverNameEng: '',
+        driverNameSchi: '',
         licenseNo: '',
         contactNo: '',
-        email: '',
-        titleId: '',
-        photo: []
-    }
-    const initDriverInfo: DriverInfo = {
-        vehicleTypeId: '',
-        licenseExp: '',
-        workingExp: ''
-    }
-    const initDriverDetail: DriverInfo[] = [initDriverInfo]
+        photo: [],
+        driverDetail: []
+    }),[])
+    const initDriverInfo: DriverInfo = useMemo(()=>(
+        {
+            vehicleTypeId: '',
+            licenseExp: '',
+            workingExp: ''
+        }
+    ),[])
+    const initDriverDetail: DriverInfo[] = useMemo(()=> ([initDriverInfo]),[initDriverInfo])
     const { t, i18n } = useTranslation()
     const tenantId = localStorage.getItem('tenantId')
     const [pictures, setPictures] = useState<ImageListType>([])
     const [loginIdList, setLoginIdList] = useState<il_item[]>([])
     const [trySubmited, setTrySubmited] = useState<boolean>(false)
-    const [selectedLoginId, setSelectedLoginId] = useState<string>('')
     const [formData, setFormData] = useState<FormValues>(initialFormValues)
     const [driverDetailList, setDriverDetailList] = useState<DriverInfo[]>(initDriverDetail)
     const [maxImageNumber, setMaxImageNumber] = useState(0)
     const [maxImageSize, setMaxImageSize] = useState(0)
     const [validation, setValidation] = useState<formValidate[]>([])
 
-    const driverField = [
-        {
-            label: t('driver.DriverMenu.popUp.field.loginName'),
-            placeholder: t('driver.DriverMenu.popUp.field.nameText'),
-            field: 'loginId',
-            type: 'autocomplete'
-        },
-        {
-            label: t('driver.DriverMenu.popUp.field.TchiName'),
-            placeholder: t('driver.DriverMenu.popUp.field.nameText'),
-            field: 'driverNameTchi',
-            type: 'text'
-        },
-        {
-            label: t('driver.DriverMenu.popUp.field.SchiName'),
-            placeholder: t('driver.DriverMenu.popUp.field.nameText'),
-            field: 'driverNameSchi',
-            type: 'text'
-        },
-        {
-            label: t('driver.DriverMenu.popUp.field.engName'),
-            placeholder: t('driver.DriverMenu.popUp.field.engText'),
-            field: 'driverNameEng',
-            type: 'text'
-        },
-        {
-            label: t('driver.DriverMenu.popUp.field.linsenceName'),
-            placeholder: t('driver.DriverMenu.popUp.field.linsenceText'),
-            field: 'licenseNo',
-            type: 'text'
-        },
-        {
-            label: t('driver.DriverMenu.popUp.field.uploadLinsence'),
-            placeholder: t('report.uploadPictures'),
-            field: 'photo',
-            type: 'upload'
-        },
-        {
-            label: '',
-            placeholder: '',
-            field: '',
-            type: 'select'
-        },
-    ]
+    const driverField = useMemo(() => (
+        [
+            {
+                label: t('driver.DriverMenu.popUp.field.loginName'),
+                placeholder: t('driver.DriverMenu.popUp.field.nameText'),
+                field: 'loginId',
+                type: 'autocomplete'
+            },
+            {
+                label: t('driver.DriverMenu.popUp.field.TchiName'),
+                placeholder: t('driver.DriverMenu.popUp.field.nameText'),
+                field: 'driverNameTchi',
+                type: 'text'
+            },
+            {
+                label: t('driver.DriverMenu.popUp.field.SchiName'),
+                placeholder: t('driver.DriverMenu.popUp.field.nameText'),
+                field: 'driverNameSchi',
+                type: 'text'
+            },
+            {
+                label: t('driver.DriverMenu.popUp.field.engName'),
+                placeholder: t('driver.DriverMenu.popUp.field.engText'),
+                field: 'driverNameEng',
+                type: 'text'
+            },
+            {
+                label: t('driver.DriverMenu.popUp.field.linsenceName'),
+                placeholder: t('driver.DriverMenu.popUp.field.linsenceText'),
+                field: 'licenseNo',
+                type: 'text'
+            },
+            {
+                label: t('driver.DriverMenu.popUp.field.uploadLinsence'),
+                placeholder: t('report.uploadPictures'),
+                field: 'photo',
+                type: 'upload'
+            },
+            {
+                label: '',
+                placeholder: '',
+                field: '',
+                type: 'select'
+            },
+            {
+                label: t('driver.DriverMenu.popUp.field.contactNo'),
+                placeholder: '',
+                field: 'contactNo',
+                type: ''
+            },
+        ]
+    ), [t])
 
-    const validate = ()=>{
-        const tempV:formValidate[]=[]
-        Object.keys(formData).forEach((key)=>{
-            if(key !== 'photo' && formData[key] ===''){
-                const item = driverField.find((d)=>d.field === key)
-                if(item){
+    const validate = useCallback(() => {
+        const tempV: formValidate[] = []
+        Object.keys(formData).forEach((key) => {
+            if (key !== 'photo' && formData[key] === '') {
+                const item = driverField.find((d) => d.field === key)
+                if (item) {
                     tempV.push({
-                        field:item.label,
-                        problem:formErr.empty
+                        field: item.label,
+                        problem: formErr.empty,
+                        type: 'error'
                     })
                 }
             }
         })
-    }
+        setValidation(tempV)
+    }, [
+        formData,
+        setValidation,
+        driverField
+    ])
 
     const removeImage = (index: number) => {
         // Remove the image at the specified index
@@ -150,7 +168,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
         if (!trySubmited) {
             return false
         }
-        return s == ''
+        return s === ''
     }
 
     const { vehicleType } =
@@ -210,7 +228,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
         return []
     }, [i18n.language, vehicleType])
 
-    const initLimit = async () => {
+    const initLimit = useCallback(async () => {
         if (tenantId) {
             const res = await getTenantById(parseInt(tenantId))
             if (res?.data) {
@@ -219,30 +237,112 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                 setMaxImageSize(res.data?.allowImgSize as number || 3 * 1000 * 1000)
             }
         }
+    },[tenantId]) 
 
-    }
+    const mappingData = useCallback(() => {
+        if (driver !== null && driver) {
+            setFormData({
+                loginId: driver.loginId,
+                driverNameTchi: driver.driverNameTchi,
+                driverNameEng: driver.driverNameEng,
+                driverNameSchi: driver.driverNameSchi,
+                licenseNo: driver.licenseNo,
+                contactNo: driver.contactNo,
+            })
+            if (driver.driverDetail.length > 0) {
+                setDriverDetailList([...driver.driverDetail])
+            }
 
-    const handleSubmit = ()=>{
+            const imageList: any = driver.photo.map(
+                (url: string, index: number) => {
+                    const format = url.startsWith('data:image/png') ? 'png' : 'jpeg'
+                    const imgdata = `data:image/${format};base64,${url}`
+
+                    return {
+                        data_url: imgdata,
+                        file: {
+                            name: `image${index + 1}`,
+                            size: 0,
+                            type: 'image/jpeg'
+                        }
+                    }
+                }
+            )
+
+            setPictures(imageList)
+        }
+    },[driver]) 
+
+    const resetData = useCallback(() => {
+        setPictures([])
+        setFormData(initialFormValues)
+        setDriverDetailList(initDriverDetail)
+    },[initDriverDetail, initialFormValues])
+
+    const handleSubmit = async () => {
         const formValues = {
-            loginId: selectedLoginId,
+            ...formData,
+            photo: ImageToBase64(pictures),
+            driverDetail: driverDetailList,
+            status: 'ACTIVE'
+        }
+        const user = localStorage.getItem('username')
+        if (action === 'add' || action === 'edit') {
+            setTrySubmited(true)
+            if (validation.length === 0) {
+                if (action === 'add') {
+                    const res = await createDriver({ ...formValues, createdBy: user, updatedBy: user })
+                    if (res) {
+                        onSubmitData('success', t('driver.DriverMenu.popUp.field.createSuccessMsg'))
+                        resetData()
+                        onClose()
+                    } else {
+                        onSubmitData('error', t('driver.DriverMenu.popUp.field.createFailMsg'))
+                    }
+                }
+                if (action === 'edit') {
+                    const res = await editDriver({ ...formValues, updatedBy: user }, driver?.driverId.toString()!)
+                    if (res) {
+                        onSubmitData('success', t('driver.DriverMenu.popUp.field.editSuccessMsg'))
+                        onClose()
+                    } else {
+                        onSubmitData('error', t('driver.DriverMenu.popUp.field.editFailMsg'))
+                    }
+                }
+            }
+        }
+        if (action === 'delete') {
+            const res = await deleteDriver({ status: 'DELETED', updatedBy: user }, driver?.driverId.toString()!)
+            if (res) {
+                onSubmitData('success', t('driver.DriverMenu.popUp.field.deleteSuccessMsg'))
+                onClose()
+            } else {
+                onSubmitData('error', t('driver.DriverMenu.popUp.field.deleteFailMsg'))
+            }
         }
     }
+    useEffect(() => {
+        validate()
+    }, [validate])
 
     useEffect(() => {
+        initLoginIdList()
+        initLimit()
         if (action === 'add') {
-            initLoginIdList()
+            setTrySubmited(false)
             setFormData(initialFormValues)
-            initLimit()
+            resetData()
         } else {
-
+            mappingData()
         }
 
-    }, [open])
+    }, [open, action, initLimit, initialFormValues, mappingData, resetData])
     return (
         <div className="add-vehicle">
             <RightOverlayForm
                 open={open}
                 onClose={onClose}
+                action={action}
                 anchor="right"
                 headerProps={{
                     title: action === 'add'
@@ -252,7 +352,9 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                     submitText: t('driver.DriverMenu.popUp.saveText'),
                     cancelText: t('driver.DriverMenu.popUp.removeText'),
                     onCloseHeader: onClose,
-                    onSubmit: handleSubmit
+                    onSubmit: handleSubmit,
+                    onDelete: handleSubmit,
+                    subTitle: driver ? driver.driverId.toString() : ''
                 }}
             >
                 <Divider />
@@ -292,7 +394,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                             ) : driver.type === 'upload' ? (
                                 maxImageNumber > 0 && maxImageSize > 0 &&
                                 <Grid item key={driver.label}>
-                                    <CustomField label={driver.label} mandatory>
+                                    <CustomField label={driver.label}>
                                         <ImageUploading
                                             multiple
                                             value={pictures}
@@ -300,20 +402,22 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                             dataURLKey="data_url"
                                             maxFileSize={maxImageSize}
                                             maxNumber={maxImageNumber}
+
                                         >
                                             {({ imageList, onImageUpload, onImageRemove }) => (
                                                 <Box className="box">
                                                     <Card
                                                         sx={{
                                                             ...localstyles.cardImg,
-                                                              ...(trySubmited &&
-                                                                (imageList.length === 0) &&
-                                                                localstyles.imgError)
                                                         }}
                                                     >
                                                         <ButtonBase
                                                             sx={localstyles.btnBase}
-                                                            onClick={(event) => onImageUpload()}
+                                                            onClick={() => {
+                                                                if (action === 'delete') return
+                                                                onImageUpload()
+                                                            }}
+                                                            disabled={action === 'delete'}
                                                         >
                                                             <CAMERA_OUTLINE_ICON style={{ color: '#ACACAC' }} />
                                                             <Typography
@@ -346,6 +450,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                                                         right: '2px',
                                                                         padding: '4px'
                                                                     }}
+                                                                    disabled={action === 'delete'}
                                                                 >
                                                                     <CancelRounded className="text-white" />
                                                                 </ButtonBase>
@@ -362,13 +467,13 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                 <Grid item>
                                     {driverDetailList.map((info, idx) =>
                                         <Grid container spacing={2} key={idx} sx={{ mt: 1 }}>
-                                            <Grid item xs={4}>
+                                            <Grid item xs={4.5}>
                                                 <CustomField
                                                     label={t('driver.DriverMenu.popUp.field.carType')}
-                                                    mandatory
                                                 >
                                                     <Autocomplete
                                                         disablePortal
+                                                        disabled={action === 'delete'}
                                                         id='vehicleTypeId'
                                                         options={getvehicleType}
                                                         getOptionLabel={(option) => option.name}
@@ -382,11 +487,10 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                                                     ...params.InputProps,
                                                                     sx: styles.inputProps
                                                                 }}
-                                                                disabled={action != 'add'}
-                                                                error={checkString(info.vehicleTypeId)}
+                                                                disabled={action !== 'add'}
                                                             />
                                                         )}
-                                                        onChange={(e, value) => {
+                                                        onChange={(_, value) => {
                                                             if (value) {
                                                                 handleEditInfo(idx, 'vehicleTypeId', value.id)
                                                             }
@@ -398,7 +502,6 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                             <Grid item xs>
                                                 <CustomField
                                                     label={t('driver.DriverMenu.popUp.field.carYear')}
-                                                    mandatory
                                                 >
                                                     <TextField
                                                         sx={{ width: '12ch' }}
@@ -408,14 +511,13 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                                             handleEditInfo(idx, 'licenseExp', e.target.value)
                                                         }}
                                                         value={info.licenseExp}
-                                                        error={checkString(info.licenseExp)}
+                                                        disabled={action === 'delete'}
                                                     />
                                                 </CustomField>
                                             </Grid>
                                             <Grid item xs>
                                                 <CustomField
                                                     label={t('driver.DriverMenu.popUp.field.driveYear')}
-                                                    mandatory
                                                 >
                                                     <TextField
                                                         sx={{ width: '12ch' }}
@@ -425,7 +527,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                                             handleEditInfo(idx, 'workingExp', e.target.value)
                                                         }}
                                                         value={info.workingExp}
-                                                        error={checkString(info.workingExp)}
+                                                        disabled={action === 'delete'}
                                                     />
                                                 </CustomField>
                                             </Grid>
@@ -452,6 +554,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                                     width: '100%',
                                                     height: '40px'
                                                 }]}
+                                            disabled={action === 'delete'}
                                             onClick={() => setDriverDetailList([...driverDetailList, initDriverInfo])}
                                         >
                                             <AddCircle />
@@ -473,6 +576,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                                     )
                                                 }}
                                                 value={formData['contactNo'] as string}
+                                                error={checkString(formData['contactNo'] as string)}
                                             />
                                         </CustomField>
                                     </Grid>
@@ -496,19 +600,17 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                                             ...params.InputProps,
                                                             sx: styles.inputProps
                                                         }}
-                                                        disabled={action != 'add'}
+                                                        disabled={action !== 'add'}
                                                         error={checkString(formData['loginId'] as string)}
                                                     />
                                                 )}
                                                 onChange={(_, value) => {
-                                                    console.log(value);
-                                                    
                                                     if (value) {
                                                         handleFieldChange(
                                                             driver.field as keyof FormValues,
                                                             value.id
                                                         )
-                                                    }
+                                                    }   
                                                 }}
                                             />
                                         ) : (
@@ -520,11 +622,22 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action }) =>
                                                     sx: styles.inputProps
                                                 }}
                                                 disabled={true}
-                                                value={selectedLoginId}
+                                                value={formData['loginId']}
                                             />
                                         )}
                                     </CustomField>
                                 ) : null)}
+                        <Grid item sx={{ width: '100%' }}>
+                            {trySubmited &&
+                                validation.map((val, index) => (
+                                    <FormErrorMsg
+                                        key={index}
+                                        field={t(val.field)}
+                                        errorMsg={returnErrorMsg(val.problem, t)}
+                                        type={val.type}
+                                    />
+                                ))}
+                        </Grid>
                     </Grid>
                 </Box>
             </RightOverlayForm>
