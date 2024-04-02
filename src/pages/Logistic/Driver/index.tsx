@@ -2,6 +2,7 @@ import { Box } from "@mui/material"
 import Tabs from '../../../components/Tabs'
 import { useTranslation } from "react-i18next"
 import { useState } from "react"
+import DriverMenu from "./DriverMenu"
 
 const Driver = () => {
     const { t } = useTranslation()
@@ -21,6 +22,7 @@ const Driver = () => {
                 selectedProp={selectedTab}
                 className="lg:px-10 sm:px-4 bg-bg-primary"
             />
+            {selectedTab === 0 && <DriverMenu/>}
         </div>
     </Box>
 }

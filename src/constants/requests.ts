@@ -644,3 +644,9 @@ export const GET_LIST_NOTIF_TEMPLATE_STAFF = (tenantId: string): AxiosRequestCon
   method: 'get',
   url: `api/v1/collectors/notiTemplate/${tenantId}`
 })
+
+//logistics driver
+export const GET_DRIVER_LIST = ():AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/driver/{table}`
+})

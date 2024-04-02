@@ -664,11 +664,42 @@
       "AddBtn": "新增司机",
       "search": {
         "label": "搜索",
-        "placeholder": "输入司机编号"   
+        "placeholder": "输入司机编号"
       },
       "table": {
         "driverId": "司机编号",
-        
+        "driverName": "司机中文名",
+        "driverEngName": "Driver English Name",
+        "gender": "性别",
+        "loginName": "登入名称",
+        "contactNo": "联络电话",
+        "lastLogin": "上次登入"
+      },
+      "popUp":{
+        "addTitle": "新增司机",
+        "editTitle": "修改司机",
+        "deleteTitle": "删除司机",
+        "saveText": "储存",
+        "removeText": "删除",
+        "field": {
+          "loginName": "登入名称",
+          "nameText": "请输入名称",
+          "TchiName": "司机繁体中文名称",
+          "SchiName": "司机简体中文名称",
+          "engName": "Driver English Name",
+          "engText": "Please type a name",
+          "linsenceName": "驾驶执照编号",
+          "linsenceText": "驾驶执照编号",
+          "uploadLinsence": "上载驾驶执照",
+          "carType": "车辆类别",
+          "carTypeSelect": "请选择",
+          "carYear": "持有执照年期",
+          "yearInput": "请输入年期",
+          "driveYear": "驾驶经验",
+          "addvehicleButton": "新增车辆类别",
+          "contactNo": "联络电话",
+          "contactText": "请输入联络电话"
+        }
       }
     }
   }
