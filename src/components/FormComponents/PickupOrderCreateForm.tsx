@@ -149,9 +149,11 @@ const PickupOrderCreateForm = ({
   } = useContainer(CommonTypeContainer)
   const navigate = useNavigate()
 
+  console.log('logisticAdminList', logisticAdminList)
+
   const logisticCompany =
     role == 'collectoradmin' ? logisticList : logisticAdminList
-    console.log("logisticCompany", logisticList, logisticAdminList)
+  console.log('logisticCompany', logisticList, logisticAdminList)
   const contractRole =
     role == 'collectoradmin' ? contractType : contractLogistic
   const unexpiredContracts = contractRole
