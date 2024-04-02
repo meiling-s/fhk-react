@@ -6,15 +6,17 @@ import {
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 
-export const getDownloadWord = async () => {
+export const getDownloadWord = async (from: string, to: string) => {
   try {
-    const token = returnApiToken()
+    const { decodeKeycloack } = returnApiToken()
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       ...DOWNLOAD_WORD_REPORT(),
       params: {
-
+        table: decodeKeycloack,
+        from,
+        to
       }
     })
 
@@ -24,15 +26,17 @@ export const getDownloadWord = async () => {
   }
 }
 
-export const getDownloadExcel = async () => {
+export const getDownloadExcel = async (from: string, to: string) => {
     try {
-      const token = returnApiToken()
+      const { decodeKeycloack } = returnApiToken()
   
       const response = await axiosInstance({
           baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
         ...DOWNLOAD_EXCEL_REPORT(),
         params: {
-        
+          table: decodeKeycloack,
+          from,
+          to
         }
       })
   

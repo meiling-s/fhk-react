@@ -739,9 +739,9 @@ export const ASSIGN_DRIVER = (table: string): AxiosRequestConfig => ({
   url: `/api/v1/logistic/jo/${table}`,
 });
 
-export const REJECT_DRIVER = (table: string, id: any): AxiosRequestConfig => ({
-  method: "patch",
-  url: `/api/v1/logistic/jo/${table}/status/${id}`,
+export const REJECT_REASSIGN_DRIVER = (table: string, id: any): AxiosRequestConfig => ({
+  method: "put",
+  url: `/api/v1/logistic/jo/${table}/${id}`,
 });
 
 export const GET_DRIVER = (table: string): AxiosRequestConfig => ({
