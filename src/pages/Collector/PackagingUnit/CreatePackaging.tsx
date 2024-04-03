@@ -127,42 +127,48 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
             handleCreatePackaging(formData)
         } else if (action == 'edit') {
             handleEditPackaging(formData, packagingTypeId)
+        } else if (action === 'delete') {
+            handleDelete(formData, packagingTypeId)
         }
     }
 
     const handleCreatePackaging = async (formData: CreatePackagingUnitProps) => {
         const result = await createPackaging(formData)
         if (result) {
-            onSubmitData("success", "Success created data")
+            onSubmitData("success", t('common.saveSuccessfully'))
             resetData()
             handleDrawerClose()
         } else {
-            onSubmitData("error", "Failed created data")
+            onSubmitData("error", t('common.saveFailed'))
         }
     }
 
     const handleEditPackaging = async (formData: CreatePackagingUnitProps, packagingTypeId: string) => {
         const result = await editPackaging(formData, packagingTypeId)
         if (result) {
-            onSubmitData("success", "Edit data success")
+            onSubmitData("success", t('common.editSuccessfully'))
             resetData()
             handleDrawerClose()
         }
     }
 
-    // const handleDelete = async () => {
-    //   const status = 'DELETED'
-    //   if(selectedItem != null){
-    //     const result = await deleteVehicle(status, selectedItem.vehicleId)
-    //     if(result) {
-    //       onSubmitData("success", "Deleted data success")
-    //       resetData()
-    //       handleDrawerClose()
-    //     } else {
-    //       onSubmitData("error", "Deleted data success")
-    //     }
-    //   }
-    // }
+    const handleDelete = async (formData: CreatePackagingUnitProps, packagingTypeId: string) => {
+      const status = 'DELETED'
+      const data = {
+        ...formData,
+        status
+      }
+      if(selectedItem != null){
+        const result = await editPackaging(data, packagingTypeId)
+        if(result) {
+          onSubmitData("success", t('common.deletedSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        } else {
+          onSubmitData("error", t('common.deleteFailed'))
+        }
+      }
+    }
 
     return (
         <div className="add-vehicle">
@@ -178,7 +184,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,
                     onSubmit: handleSubmit,
-                    // onDelete: handleDelete
+                    onDelete: handleSubmit
                 }}
             >
                 <Divider></Divider>

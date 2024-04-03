@@ -23,7 +23,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import {
   editPickupOrderDetailStatus,
-  editPickupOrderStatus,
+  editPickupOrderStatus
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../utils/utils'
@@ -34,12 +34,12 @@ const PickupOrderForm = ({
   onClose,
   selectedRow,
   pickupOrder,
-  initPickupOrderRequest,
-  // navigateToJobOrder
-}: {
+  initPickupOrderRequest
+}: // navigateToJobOrder
+{
   onClose?: () => void
   selectedRow?: Row | null | undefined
-  pickupOrder?: PickupOrder[]|null
+  pickupOrder?: PickupOrder[] | null
   initPickupOrderRequest: () => void
   // navigateToJobOrder: () => void;
 }) => {
@@ -66,13 +66,15 @@ const PickupOrderForm = ({
   //   CheckInRequestContainer
   // )
   const [selectedPickupOrder, setSelectedPickupOrder] = useState<PickupOrder>()
-  console.log(selectedPickupOrder)
+  //console.log(selectedPickupOrder)
   const [pickupOrderDetail, setPickUpOrderDetail] =
     useState<PickupOrderDetail[]>()
 
   useEffect(() => {
     if (selectedRow) {
-      const poDetail = pickupOrder?.find((po) => po.picoId.includes(selectedRow.id.toString()))
+      const poDetail = pickupOrder?.find((po) =>
+        po.picoId.includes(selectedRow.id.toString())
+      )
 
       if (poDetail) {
         setSelectedPickupOrder(poDetail)
@@ -98,16 +100,20 @@ const PickupOrderForm = ({
           updatePoStatus
         )
         if (result) {
-          const detailUpdatePromises = selectedPickupOrder.pickupOrderDetail.map(detail => 
-            editPickupOrderDetailStatus(detail.picoDtlId.toString(), updatePoDtlStatus)
-          );
-          await Promise.all(detailUpdatePromises);
+          const detailUpdatePromises =
+            selectedPickupOrder.pickupOrderDetail.map((detail) =>
+              editPickupOrderDetailStatus(
+                detail.picoDtlId.toString(),
+                updatePoDtlStatus
+              )
+            )
+          await Promise.all(detailUpdatePromises)
           await initPickupOrderRequest()
         }
         onClose && onClose()
         navigate('/collector/PickupOrder')
       } catch (error) {
-        console.error('Error updating field:', error)
+        //console.error('Error updating field:', error)
       }
     } else {
       alert('No selected pickup order')
@@ -120,7 +126,9 @@ const PickupOrderForm = ({
         <Box sx={localstyles.container}>
           <Box sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}>
             <Box>
-              <Typography sx={styles.header4}>{t('pick_up_order.item.detail')}</Typography>
+              <Typography sx={styles.header4}>
+                {t('pick_up_order.item.detail')}
+              </Typography>
               <Typography sx={styles.header3}>
                 {selectedPickupOrder?.picoId}
               </Typography>
@@ -129,35 +137,41 @@ const PickupOrderForm = ({
               <StatusCard status={selectedPickupOrder?.status} />
             </Box>
             <Box sx={{ marginLeft: 'auto' }}>
-              {
-                role === 'logisticadmin' && selectedRow && ['STARTED', 'OUTSTANDING'].includes(selectedRow.status) ? (
-                  <CustomButton text={t('pick_up_order.table.create_job_order')} onClick={() => {
+              {role === 'logisticadmin' &&
+              selectedRow &&
+              ['STARTED', 'OUTSTANDING'].includes(selectedRow.status) ? (
+                <CustomButton
+                  text={t('pick_up_order.table.create_job_order')}
+                  onClick={() => {
                     // navigateToJobOrder()
-                  }}></CustomButton>
-                ) : role === 'logisticadmin' && selectedRow && selectedRow.status === 'CREATED' && selectedRow?.tenantId === tenantId ? (
+                  }}
+                ></CustomButton>
+              ) : role === 'logisticadmin' &&
+                selectedRow &&
+                selectedRow.status === 'CREATED' &&
+                selectedRow?.tenantId === tenantId ? (
+                <CustomButton
+                  text={t('pick_up_order.item.edit')}
+                  onClick={() => {
+                    selectedPickupOrder && handleRowClick(selectedPickupOrder)
+                  }}
+                ></CustomButton>
+              ) : role !== 'logisticadmin' ? (
+                <>
                   <CustomButton
                     text={t('pick_up_order.item.edit')}
+                    style={{ marginRight: '12px' }}
                     onClick={() => {
                       selectedPickupOrder && handleRowClick(selectedPickupOrder)
                     }}
                   ></CustomButton>
-                ) : role !== 'logisticadmin' ? (
-                  <>
-                    <CustomButton
-                      text={t('pick_up_order.item.edit')}
-                      style={{marginRight: '12px'}}
-                      onClick={() => {
-                        selectedPickupOrder && handleRowClick(selectedPickupOrder)
-                      }}
-                    ></CustomButton>
-                    <CustomButton
-                      text={t('pick_up_order.item.delete')}
-                      outlined
-                      onClick={onDeleteClick}
-                    ></CustomButton>
-                  </>
-                ) : null
-              }
+                  <CustomButton
+                    text={t('pick_up_order.item.delete')}
+                    outlined
+                    onClick={onDeleteClick}
+                  ></CustomButton>
+                </>
+              ) : null}
               <IconButton sx={{ ml: '20px' }} onClick={onClose}>
                 <KeyboardTabIcon sx={{ fontSize: '30px' }} />
               </IconButton>
@@ -166,21 +180,25 @@ const PickupOrderForm = ({
           <Divider />
           <Stack spacing={2} sx={localstyles.content}>
             <Box>
-              <Typography sx={localstyles.typo_header}>{t('pick_up_order.item.shipping_info')}</Typography>
+              <Typography sx={localstyles.typo_header}>
+                {t('pick_up_order.item.shipping_info')}
+              </Typography>
             </Box>
 
-            <CustomField label= {t('pick_up_order.item.date_time')}>
+            <CustomField label={t('pick_up_order.item.date_time')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.createdAt ? displayCreatedDate(selectedPickupOrder?.createdAt): ''}
+                {selectedPickupOrder?.createdAt
+                  ? displayCreatedDate(selectedPickupOrder?.createdAt)
+                  : ''}
               </Typography>
             </CustomField>
 
             <CustomField label={t('pick_up_order.item.transport_category')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.picoType === 'AD_HOC'
-                  ?  t('pick_up_order.card_detail.one-transport')
+                  ? t('pick_up_order.card_detail.one-transport')
                   : selectedPickupOrder?.picoType === 'ROUTINE'
-                  ?  t('pick_up_order.card_detail.regular_shipping')
+                  ? t('pick_up_order.card_detail.regular_shipping')
                   : undefined}
               </Typography>
             </CustomField>
@@ -231,7 +249,9 @@ const PickupOrderForm = ({
               </Typography>
             </CustomField>
 
-            <Typography sx={localstyles.typo_header}>{t('pick_up_order.item.rec_loc_info')}</Typography>
+            <Typography sx={localstyles.typo_header}>
+              {t('pick_up_order.item.rec_loc_info')}
+            </Typography>
 
             <PickupOrderCard pickupOrderDetail={pickupOrderDetail ?? []} />
           </Stack>
@@ -287,7 +307,7 @@ let localstyles = {
   typo_fieldTitle: {
     fontSize: '13px',
     color: '#ACACAC',
-    letterSpacing: '1px',
+    letterSpacing: '1px'
   },
   typo_fieldContent: {
     fontSize: '15px',

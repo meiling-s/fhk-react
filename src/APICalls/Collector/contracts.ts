@@ -1,20 +1,20 @@
 import { CreateContract } from "../../interfaces/contract";
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
-import {
-  CREATE_CONTRACT,
-   CREATE_VEHICLE, DELETE_VEHICLE, EDIT_CONTRACT, EDIT_VEHICLE, GET_CONTRACT, GET_CONTRACT_LIST
-} from "../../constants/requests";
+import { CREATE_CONTRACT, EDIT_CONTRACT, GET_CONTRACT_LIST } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
-import axiosInstance from '../../constants/axiosInstance'
+import axiosInstance from '../../constants/axiosInstance';
 
 //get all contract
 export const getAllContract = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
-
       const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-        ...GET_CONTRACT_LIST(token.tenantId),
+        ...GET_CONTRACT_LIST(token.realmApiRoute, token.tenantId),
+        params: {
+          page: page,
+          size: size,
+        },
         headers: {
           AuthToken: token.authToken
         }
@@ -29,10 +29,9 @@ export const getAllContract = async (page: number, size: number) => {
 export const createContract = async (data: CreateContract) => {
   try {
     const token = returnApiToken()
-
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
-      ...CREATE_CONTRACT,
+      ...CREATE_CONTRACT(token.realmApiRoute),
       data: data,
       headers: {
         AuthToken: token.authToken
@@ -48,10 +47,9 @@ export const createContract = async (data: CreateContract) => {
 export const editContract = async (data: CreateContract) => {
   try {
     const token = returnApiToken()
-
     const response = axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
-      ...EDIT_CONTRACT(data.tenantId, data.contractNo),
+      ...EDIT_CONTRACT(token.realmApiRoute, data.tenantId, data.contractNo),
       data: data,
       headers: {
         AuthToken: token.authToken,

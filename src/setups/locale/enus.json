@@ -1,4 +1,25 @@
 {
+  "common": {
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "saveSuccessfully": "Saved successfully",
+    "saveFailed": "Saved failed",
+    "editSuccessfully": "Edited successfully",
+    "editFailed": "Edited failed",
+    "deletedSuccessfully": "Deleted successfully",
+    "deleteFailed": "Deleted failed",
+    "enterName": "Please enter name",
+    "enterText": "Please enter text",
+    "description": "Description",
+    "remark": "Remark",
+    "traditionalChineseName": "Traditional Chinese Name",
+    "simplifiedChineseName": "Simplified Chinese Name",
+    "englishName": "English Name",
+    "yes": "Yes",
+    "no": "No"
+  },
   "col": {
     "createCP": "Create collection point",
     "editCP": "Edit collection point",
@@ -94,7 +115,9 @@
     "general_settings": "General settings",
     "packaging_unit": "Packaging unit",
     "workshop": "Warehouse",
+    "vehicles": "Vehicles",
     "company": "Company",
+    "waste_disposal": "Waste Disposal",
     "staff_positions": "Staff positions",
     "denial_reason": "Denial reason",
     "add_new": "New",
@@ -771,6 +794,34 @@
         "button_submit": "Store"
       }
     }
+  },
+  "denial_reason": {
+    "reason_name_tchi": "Reason (Traditional Chinese)",
+    "reason_name_schi": "Reason (Simplified Chinese)",
+    "reason_name_eng": "Reason (English)",
+    "corresponding_functions": "Corresponding Functions",
+    "description": "Description",
+    "remark": "Remark",
+    "enter_name": "Please enter name",
+    "select_function": "Please select function",
+    "enter_text": "Please enter text"
+  },
+  "staff_title": {
+    "staff_title_tchi": "Traditional Chinese Name",
+    "staff_title_schi": "Simplified Chinese Name",
+    "staff_title_eng": "English Name",
+    "duty": "Duty",
+    "description": "Description",
+    "remark": "Remark",
+    "enter_duty": "Please enter duty"
+  },
+  "companyManagement": {
+    "collectorlist": "Collection Company",
+    "logisticlist": "Logistic Company",
+    "manulist": "Manufacturer Company",
+    "customerlist": "Customer Company",
+    "brNo": "Business Registration Number",
+    "enterBrNo": "Please enter business registration number"
   },
   "driver": {
     "sideBarName": "Driver",

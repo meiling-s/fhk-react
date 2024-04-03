@@ -9,11 +9,13 @@ export const returnApiToken = () => {
   const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  const realmApiRoute = localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
   return {
     decodeKeycloack: decodeKeycloack,
     authToken: authToken,
     tenantId: tenantId,
-    loginId: loginId
+    loginId: loginId,
+    realmApiRoute
   }
 }
 

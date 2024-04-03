@@ -53,12 +53,11 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   const initPickupOrderRequest = async () => {
-    //const result = await getAllPickUpOrder(0, 10, query)
     let result = null
-    if (role === 'logisticadmin') {
-      result = await getAllLogisticsPickUpOrder(0 - 1, 20, query)
+    if (role != 'collectoradmin') {
+      result = await getAllLogisticsPickUpOrder(0 - 1, 50, query)
     } else {
-      result = await getAllPickUpOrder(0 - 1, 20, query)
+      result = await getAllPickUpOrder(0 - 1, 50, query)
     }
     const data = result?.data.content
     //console.log("pickup order content: ", data);
@@ -162,7 +161,6 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                             item.pickupOrderDetail,
                             item.picoId
                           )
-                          console.log(item.status)
                         }}
                         className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4"
                       >

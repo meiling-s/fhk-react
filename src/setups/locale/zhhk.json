@@ -1,4 +1,25 @@
 {
+  "common": {
+    "save": "儲存",
+    "delete": "刪除",
+    "confirm": "確認",
+    "cancel": "取消",
+    "saveSuccessfully": "保存成功",
+    "saveFailed": "保存失敗",
+    "editSuccessfully": "編輯成功",
+    "editFailed": "編輯失敗",
+    "deletedSuccessfully": "刪除成功",
+    "deleteFailed": "刪除失敗",
+    "enterName": "請輸入名稱",
+    "enterText": "請輸入文字",
+    "description": "簡介",
+    "remark": "備註",
+    "traditionalChineseName": "繁體中文名稱",
+    "simplifiedChineseName": "簡體中文名稱",
+    "englishName": "英文名稱",
+    "yes": "是",
+    "no": "否"
+  },
   "col": {
     "createCP": "建立回收點",
     "editCP": "修改回收點",
@@ -93,8 +114,10 @@
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
-    "workshop": "倉庫",
+    "workshop": "工場",
+    "vehicles": "車輛",
     "company": "公司",
+    "waste_disposal": "廢棄點",
     "staff_positions": "員工職位",
     "denial_reason": "拒絕原因",
     "add_new": "新增",
@@ -770,6 +793,34 @@
         "button_submit": "储存"
       }
     }
+  },
+  "denial_reason": {
+    "reason_name_tchi": "原因 (繁體中文)",
+    "reason_name_schi": "原因 (簡體中文)",
+    "reason_name_eng": "原因 (英文)",
+    "corresponding_functions": "對應功能",
+    "description": "簡介",
+    "remark": "備註",
+    "enter_name": "請輸入名稱",
+    "select_function": "請選擇功能",
+    "enter_text": "請輸入文字"
+  },
+  "staff_title": {
+    "staff_title_tchi": "繁體中文名稱",
+    "staff_title_schi": "簡體中文名稱",
+    "staff_title_eng": "英文名稱",
+    "duty": "職責",
+    "description": "簡介",
+    "remark": "備註",
+    "enter_duty": "請輸入職責"
+  },
+  "companyManagement": {
+    "collectorlist": "回收公司",
+    "logisticlist": "物流公司",
+    "manulist": "回收廠",
+    "customerlist": "顧客公司",
+    "brNo": "商業登記號碼",
+    "enterBrNo": "請輸入商業登記號碼"
   },
   "driver": {
     "sideBarName": "車隊",

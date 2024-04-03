@@ -26,6 +26,7 @@ import CreateContract from './CreateContract'
 import UpdateCurrency from './UpdateCurrency'
 import { returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
+import StatusLabel from '../../../components/StatusLabel'
 
 type TableRow = {
   id: number
@@ -67,14 +68,14 @@ const GeneralSettings: FunctionComponent = () => {
   useEffect(() => {
     initContractList()
     getTenantData()
-  }, [])
+  }, [page])
 
   const initContractList = async () => {
     const result = await getAllContract(page - 1, pageSize)
     const data = result?.data
     if(data) {
       var contractMapping: ContractItem[] = []
-      data.map((item: any, index: any) => {
+      data.content.map((item: any, index: any) => {
         contractMapping.push(
           createContract(
             item?.id !== undefined ? item?.id : index,
@@ -121,7 +122,8 @@ const GeneralSettings: FunctionComponent = () => {
       field: 'status',
       headerName: t('general_settings.state'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => <StatusLabel status={params.value} />
     },
     {
       field: 'contractFrmDate',
@@ -137,7 +139,7 @@ const GeneralSettings: FunctionComponent = () => {
     },
     {
       field: 'remark',
-      headerName: t('general_settings.remark'),
+      headerName: t('common.remark'),
       width: 100,
       type: 'string'
     },
@@ -145,7 +147,10 @@ const GeneralSettings: FunctionComponent = () => {
       field: 'epdFlg',
       headerName: t('general_settings.whether'),
       width: 100,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return <div>{params.value ? t('common.yes') : t('common.no')}</div>
+      }
     },
     {
       field: 'edit',

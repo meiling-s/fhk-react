@@ -241,7 +241,7 @@ const CommonType = () => {
         ...GET_CONTRACT_LOGISTIC(token.tenantId),
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
       })
-      const contract = response.data
+      const contract = response.data.content
       setContractLogistic(contract)
     } catch (e) {
       console.error('Get contract list failed:', e)
