@@ -37,6 +37,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import ViewQuiltOutlinedIcon from "@mui/icons-material/ViewQuiltOutlined";
+import { dynamicpath } from "../utils/utils";
+
 type MainDrawer = {
   role: string;
 };
@@ -61,14 +63,7 @@ function MainDrawer() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
-  const userRole = localStorage.getItem("userRole") || "";
-  let pathRole: string = "";
-
-  if (userRole === Roles.collectoradmin) {
-    pathRole = "collector";
-  } else if (userRole === Roles.logisticadmin) {
-    pathRole = "logistic";
-  }
+  const { pathRole } = dynamicpath();
 
   const handleDrawerOpen = () => {
     setOpen(true);

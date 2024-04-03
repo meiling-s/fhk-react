@@ -26,9 +26,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { format } from '../../constants/constant'
-import { rejectDriver, assignDriver } from '../../APICalls/jobOrder'
+import { rejectAssginDriver, assignDriver } from '../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../themes/icons'
+import { returnApiToken } from '../../utils/utils'
 
 const JobOrder = () => {
 const [openModal, setOpenModal] = useState<boolean>(false);
@@ -40,8 +41,8 @@ const params = new URLSearchParams(window.location.search);
 const [isEdit, setIsEdit] = useState(false);
 const navigate = useNavigate();
 const [isActive, setIsActive] = useState(false)
-
 const { t } = useTranslation();
+const { loginId } = returnApiToken();
 
 const handleCloses = () => {
     setId(0);
@@ -59,6 +60,7 @@ const getPicoById = async (picoId: string) => {
 
         const details = response.data.pickupOrderDetail.map((item:any)=> {
             return{
+                joId: item?.joId ?? 0,
                 picoId: response?.data?.picoId,
                 picoDtlId: item?.picoDtlId ?? 0,
                 plateNo: item?.plateNo ?? '',
@@ -77,7 +79,8 @@ const getPicoById = async (picoId: string) => {
                 driverId: item?.driverId ?? '',
                 contractNo: response?.data?.contractNo ?? '',
                 pickupAt: item?.pickupAt ?? '',
-                createdBy: item?.createdBy ?? '',
+                createdBy: loginId ?? '',
+                updatedBy: loginId ?? '',
                 status: item?.driverId ? 'assigned' : ''
             }
         })
@@ -127,6 +130,7 @@ const handleDelete = (index: number) => {
                 ...item,
                 vehicleId: 0,
                 driverId: '',
+                plateNo: '',
                 status: status
             }
         } else {
@@ -138,22 +142,48 @@ const handleDelete = (index: number) => {
 }
 
 const onHandleSubmitOrder = async () => {
-    for(let order of pickupOrderDetail){
-       if(order?.status === 'REJECTED'){
-        const response = await rejectDriver({status: 'REJECTED', reason: [], updatedBy: order.createdBy}, order.picoDtlId);
-       } else {
-        const response  =  await assignDriver(order);
-        if(response?.status === 201){
-            onSubmitData('success', `Success Assign Job Order ${order.picoDtlId}`)
-            setTimeout(() => {
-                onHandleCancel()
-            }, 1000);
-        } else {
-            onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+    if(params?.get('isEdit') === 'false'){
+        for(let order of pickupOrderDetail){
+            const response  =  await assignDriver(order);
+            if(response?.status === 201){
+                onSubmitData('success', `Success Assign Job Order ${order.picoDtlId}`)
+                setTimeout(() => {
+                    onHandleCancel()
+                }, 1000);
+            } else {
+                onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+            }
         }
-       }
-       
+    } else {
+        for(let order of pickupOrderDetail){
+            const response  =  await rejectAssginDriver(order, order.joId);
+            if(response?.status === 201){
+                onSubmitData('success', `Success Assign Job Order ${order.picoDtlId}`)
+                setTimeout(() => {
+                    onHandleCancel()
+                }, 1000);
+            } else {
+                onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+            }
+            
+         }
     }
+    // for(let order of pickupOrderDetail){
+    //    if(order?.status === 'REJECTED'){
+    //     const response = await rejectAssginDriver({status: 'REJECTED', reason: [], updatedBy: order.createdBy}, order.picoDtlId);
+    //    } else {
+    //     const response  =  await assignDriver(order);
+    //     if(response?.status === 201){
+    //         onSubmitData('success', `Success Assign Job Order ${order.picoDtlId}`)
+    //         setTimeout(() => {
+    //             onHandleCancel()
+    //         }, 1000);
+    //     } else {
+    //         onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+    //     }
+    //    }
+       
+    // }
 }
 
 const onHandleCancel = () => {
@@ -208,26 +238,30 @@ return (
                 sx={{ ...styles.gridForm }}
             >
                 <Grid item>
-                    <Typography  fontSize={20} color="black" fontWeight="bold">
+                    <Typography  fontSize={22} color="black" style={{fontWeight: '700'}}>
                     {t('jobOrder.create_work_waybill')}
                     </Typography>
                 </Grid>
 
                 <Grid item>
-                    <Typography fontSize={16} color="#717171" fontWeight="bold">
+                    <Typography fontSize={16} color="black" style={{fontWeight: '700'}}>
                     {t('jobOrder.shipping_information')}
                     </Typography>
                 </Grid>
 
-                <CustomField label={t('jobOrder.corresponding_waybill')}>
-                    <Typography sx={localstyles.typo_fieldContent}>
+                <Grid item >
+                    <Typography sx={{fontSize: '13px', fontWeight: '400', color: 'ACACAC'}}>
+                        {t('jobOrder.corresponding_waybill')}
+                    </Typography>
+
+                    <Typography sx={{fontSize: '16px', fontWeight: '700', color: 'black'}}>
                         {orderDetail.picoId}
                     </Typography>
-                </CustomField>
+                </Grid>
                 
                 <Grid display={'flex'} style={{marginTop: '15px', marginLeft: '15px', fontSize: '16px'}} direction={'row'}>
                     <div className='flex flex-col gap-y-1 w-[240px]'>
-                        <Typography sx={{fontSize: '16px', lineHeight: '20px', color: '#ACACAC'}}>{t('jobOrder.shipping_validity_date_from')}</Typography>
+                        <Typography sx={{fontSize: '13px', lineHeight: '20px', color: '#ACACAC', fontWeight: '400'}}>{t('jobOrder.shipping_validity_date_from')}</Typography>
                         <DatePicker
                             value={dayjs(orderDetail.effFrmDate)}
                             sx={localstyles.datePicker}
@@ -236,7 +270,7 @@ return (
                         />
                     </div>
                     <div className='flex flex-col ml-2 gap-y-1 w-[240px]'>
-                        <Typography sx={{fontSize: '16px', lineHeight: '20px', color: '#ACACAC'}}>{t('jobOrder.shipping_validity_date_to')}</Typography>
+                        <Typography sx={{fontSize: '13px', lineHeight: '20px', color: '#ACACAC', fontWeight: '400'}}>{t('jobOrder.shipping_validity_date_to')}</Typography>
                         <DatePicker
                             value={dayjs(orderDetail.effToDate)}
                             sx={localstyles.datePicker}
@@ -247,13 +281,17 @@ return (
                     
                 </Grid>
 
-                <CustomField label={t('jobOrder.shipping_company_name')}>
-                    <Typography sx={localstyles.typo_fieldContent}>
+                <Grid item >
+                    <Typography sx={{fontSize: '13px', fontWeight: '400', color: 'ACACAC'}}>
+                        {t('jobOrder.shipping_company_name')}
+                    </Typography>
+
+                    <Typography sx={{fontSize: '16px', fontWeight: '700', color: 'black'}}>
                         {orderDetail.receiverName}
                     </Typography>
-                </CustomField>
+                </Grid>
 
-                <div  className='flex flex-col gap-y-3 ml-4'>
+                <div  className='flex flex-col gap-y-3 ml-4 mt-2'>
                     <p className='font-semibold text-[#717171]'> {t('jobOrder.recycling_location_information')}</p>
                     {
                         pickupOrderDetail.map((item: AssignJobDriver, index) => {
@@ -319,7 +357,7 @@ return (
                                         </div>
                                         <div className='flex flex-col'>
                                             <label className='label-0 text-[#535353] text-[15px]'>{item.driverId}</label>
-                                            <label className='label-0 text-[#535353] text-[15px]'>{item.vehicleId}</label>
+                                            <label className='label-0 text-[#535353] text-[15px]'>{item.plateNo}</label>
                                         </div>
                                     </div>
                                     <div className='flex  gap-x-1'>

@@ -467,6 +467,7 @@
   },
   "report": {
     "report": "报表",
+    "downloadArea": "下载区",
     "basicServicePictures": "基本服务图片",
     "additionalServicePictures": "额外服务图片",
     "otherPictures": "其他图片",
@@ -860,5 +861,18 @@
     "enterFulltimeFlag": "輸入全職標誌",
     "gender": "性別",
     "enterGender": "輸入性別"
+  },
+  "generate_report": {
+    "report_name": "报表名称",
+    "recycling_point_record": "回收点记录",
+    "Waste_ecords_daily_": "废弃物记录（每日)",
+    "recycling_plant_request_records": "回收厂的回收物请求记录",
+    "recycling_classification_processing": "回收物分类及处理记录",
+    "recycling_classification_statistics" : "回收物分类统计数据",
+    "recycling_point_establishment": "回收点设立及营运服务（第一期后续合约）照片记录（每月)",
+    "collection_point_establishment" : "回收点设立及营运服务（第一期后续合约）Excel 记录（每月)",
+    "download": "下载",
+    "start_date": "日期由",
+    "end_date": "至"
   }
 }

@@ -26,9 +26,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { format } from '../../constants/constant'
-import { rejectDriver, assignDriver } from '../../APICalls/jobOrder'
+import { rejectAssginDriver, assignDriver } from '../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../themes/icons'
+import { returnApiToken } from '../../utils/utils'
+import {getPicoById} from '../../APICalls/Collector/pickupOrder/pickupOrder'
 
 const JobOrder = () => {
 const [openModal, setOpenModal] = useState<boolean>(false);
@@ -40,8 +42,8 @@ const params = new URLSearchParams(window.location.search);
 const [isEdit, setIsEdit] = useState(false);
 const navigate = useNavigate();
 const [isActive, setIsActive] = useState(false)
-
 const { t } = useTranslation();
+const { loginId } = returnApiToken();
 
 const handleCloses = () => {
     setId(0);
@@ -49,58 +51,58 @@ const handleCloses = () => {
     setIsActive(false)
 };
 
-
-const getPicoById = async (picoId: string) => {
+const getDetailPico = async (picoId: string) => {
     try {
-        const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
-        ...GET_PICK_UP_ORDER_BY_ID(picoId)
-        })
-
-        const details = response.data.pickupOrderDetail.map((item:any)=> {
-            return{
-                picoId: response?.data?.picoId,
-                picoDtlId: item?.picoDtlId ?? 0,
-                plateNo: item?.plateNo ?? '',
-                senderId: item?.senderId ?? '',
-                senderName: item?.senderName ?? '',
-                senderAddr: item?.senderAddr ?? '',
-                senderAddrGps: item?.senderAddrGps ?? [],
-                receiverId: item?.receiverId ?? '',
-                receiverName: item?.receiverName ?? '',
-                receiverAddr: item?.receiverAddr ?? '',
-                receiverAddrGps: item?.receiverAddrGps ?? [],
-                recycType: item?.recycType ?? '',
-                recycSubType: item?.recycSubType ?? '',
-                weight: item?.weight ?? 0,
-                vehicleId: item?.vehicleId ?? 0,
-                driverId: item?.driverId ?? '',
-                contractNo: response?.data?.contractNo ?? '',
-                pickupAt: item?.pickupAt ?? '',
-                createdBy: item?.createdBy ?? '',
-                status: item?.driverId ? 'assigned' : ''
-            }
-        })
-
-        setPickupOrderDetail(details)
+        const response = await getPicoById(picoId)
+        if(response) {
+            const details = response?.data.pickupOrderDetail.map((item:any)=> {
+                return{
+                    joId: item?.joId ?? 0,
+                    picoId: response?.data?.picoId,
+                    picoDtlId: item?.picoDtlId ?? 0,
+                    plateNo: item?.plateNo ?? '',
+                    senderId: item?.senderId ?? '',
+                    senderName: item?.senderName ?? '',
+                    senderAddr: item?.senderAddr ?? '',
+                    senderAddrGps: item?.senderAddrGps ?? [],
+                    receiverId: item?.receiverId ?? '',
+                    receiverName: item?.receiverName ?? '',
+                    receiverAddr: item?.receiverAddr ?? '',
+                    receiverAddrGps: item?.receiverAddrGps ?? [],
+                    recycType: item?.recycType ?? '',
+                    recycSubType: item?.recycSubType ?? '',
+                    weight: item?.weight ?? 0,
+                    vehicleId: item?.vehicleId ?? 0,
+                    driverId: item?.driverId ?? '',
+                    contractNo: response?.data?.contractNo ?? '',
+                    pickupAt: item?.pickupAt ?? '',
+                    createdBy: loginId ?? '',
+                    updatedBy: loginId ?? '',
+                    status: item?.driverId ? 'assigned' : ''
+                }
+            })
     
-        setOrderDetail(prev => {
-        return{
-            ...prev,
-            picoId: response?.data?.picoId,
-            receiverName: response?.data?.logisticName,
-            effFrmDate: response?.data?.effFrmDate,
-            effToDate: response?.data?.effToDate,
-            setupDate: dayjs(response?.data?.createdAt).format('YYYY/MM/DD hh:mm')
+            setPickupOrderDetail(details)
+        
+            setOrderDetail(prev => {
+                return{
+                    ...prev,
+                    picoId: response?.data?.picoId,
+                    receiverName: response?.data?.logisticName,
+                    effFrmDate: response?.data?.effFrmDate,
+                    effToDate: response?.data?.effToDate,
+                    setupDate: dayjs(response?.data?.createdAt).format('YYYY/MM/DD hh:mm')
+                }
+            })
         }
-        })
+
     } catch (error) {
         return null
     }
 }
 
 useEffect( () => {
-    if(picoId) getPicoById(picoId);
+    if(picoId) getDetailPico(picoId);
 }, [picoId])
 
 const onHandleAssign = (index : number) => {
@@ -139,22 +141,48 @@ const handleDelete = (index: number) => {
 }
 
 const onHandleSubmitOrder = async () => {
-    for(let order of pickupOrderDetail){
-       if(order?.status === 'REJECTED'){
-        const response = await rejectDriver({status: 'REJECTED', reason: [], updatedBy: order.createdBy}, order.picoDtlId);
-       } else {
-        const response  =  await assignDriver(order);
-        if(response?.status === 201){
-            onSubmitData('success', `Success Assign Job Order ${order.picoDtlId}`)
-            setTimeout(() => {
-                onHandleCancel()
-            }, 1000);
-        } else {
-            onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+    if(params?.get('isEdit') === 'false'){
+        for(let order of pickupOrderDetail){
+            const response  =  await assignDriver(order);
+            if(response?.status === 201){
+                onSubmitData('success', `Success Assign Job Order ${orderDetail.picoId}`)
+                setTimeout(() => {
+                    onHandleCancel()
+                }, 1000);
+            } else {
+                onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+            }
         }
-       }
-       
+    } else {
+        for(let order of pickupOrderDetail){
+            const response  =  await rejectAssginDriver(order, order.joId);
+            if(response?.status === 201){
+                onSubmitData('success', `你已核準[${order.driverId}] 拒絕工作運單 [${order.joId}]，請指派另一位司機`)
+                setTimeout(() => {
+                    onHandleCancel()
+                }, 1000);
+            } else {
+                onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+            }
+            
+         }
     }
+    // for(let order of pickupOrderDetail){
+    //    if(order?.status === 'REJECTED'){
+    //     const response = await rejectAssginDriver({status: 'REJECTED', reason: [], updatedBy: order.createdBy}, order.picoDtlId);
+    //    } else {
+    //     const response  =  await assignDriver(order);
+    //     if(response?.status === 201){
+    //         onSubmitData('success', `Success Assign Job Order ${order.picoDtlId}`)
+    //         setTimeout(() => {
+    //             onHandleCancel()
+    //         }, 1000);
+    //     } else {
+    //         onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+    //     }
+    //    }
+       
+    // }
 }
 
 const onHandleCancel = () => {

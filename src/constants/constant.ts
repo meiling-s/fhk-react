@@ -61,3 +61,8 @@ export const Roles = {
   collectoradmin: 'collectoradmin',
   logisticadmin: 'logisticadmin'
 }
+
+export const Realm = {
+  collector : 'collector',
+  logistic: 'logistic'
+}
