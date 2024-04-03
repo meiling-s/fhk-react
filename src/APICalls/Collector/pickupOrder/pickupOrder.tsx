@@ -8,6 +8,7 @@ import axiosInstance from '../../../constants/axiosInstance'
 
   export const getAllPickUpOrder = async (page: number, size: number, query?: queryPickupOrder) => {
       const auth = returnApiToken()
+      console.log(query?.senderName, 'senderName')
       try {
         const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
@@ -21,7 +22,7 @@ import axiosInstance from '../../../constants/axiosInstance'
             effToDate: query?.effToDate,
             logisticName: query?.logisticName,
             recycType: query?.recycType,
-            receiverAddr: query?.receiverAddr,
+            senderName: query?.senderName,
             status: query?.status
           },
         });
@@ -40,6 +41,7 @@ import axiosInstance from '../../../constants/axiosInstance'
     query?: queryPickupOrder
   ) => {
     const auth = returnApiToken();
+    console.log(query?.senderName, 'senderName')
     try {
       const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
@@ -53,7 +55,7 @@ import axiosInstance from '../../../constants/axiosInstance'
           effToDate: query?.effToDate,
           logisticName: query?.logisticName,
           recycType: query?.recycType,
-          receiverAddr: query?.receiverAddr,
+          senderName: query?.senderName,
           status: query?.status,
         },
       });

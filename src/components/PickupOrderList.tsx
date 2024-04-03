@@ -47,7 +47,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     effToDate: '',
     logisticName: '',
     recycType: '',
-    receiverAddr: '',
+    senderName: '',
     status: 0
   })
   const role = localStorage.getItem(localStorgeKeyName.role)
