@@ -11,40 +11,34 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 type props = {
-    setRoutine: (routine: colPtRoutine) => void,
+    setRoutineType: (value: any) => void
+    setRoutineContent: (value: any) => void
+    routineContent: routineContent[]
     requiredTimePeriod?: boolean
     defaultValue?: colPtRoutine
 }
 
 export default function RoutineSelect({
-    setRoutine,
+    setRoutineType,
+    setRoutineContent,
     requiredTimePeriod = false,
     defaultValue
 }: props){
-
-    //shared state
     const [rouType, setRouType] = useState<string>("");
-    const [routineContent, setRoutineContent] = useState<routineContent[]>([]);
+    const [rouContent, setRouContent] = useState<routineContent[]>([]);
+
 
     useEffect(() => {
         if(defaultValue){
             setRouType(defaultValue.routineType)
-            setRoutineContent(defaultValue.routineContent)
+            setRouContent(defaultValue.routineContent)
         }
     },[])
     
     useEffect(() => {
-        setRoutine(returnColPtRoutine(rouType, routineContent));
-    },[rouType, routineContent])
-
-    const returnColPtRoutine = (rType: string, rContent: routineContent[]) => {
-        const colPtRoutine: colPtRoutine = {
-            routineType: rType,
-            routineContent: rContent
-        }
-        console.log(colPtRoutine);
-        return colPtRoutine;
-    }
+        setRoutineType(rouType)
+        setRouContent(rouContent);
+    },[defaultValue?.routineType, defaultValue?.routineContent])
 
     const { t, i18n } = useTranslation();
 
@@ -68,8 +62,6 @@ export default function RoutineSelect({
         })
         return routineT
     }
-
-    console.log("rouType", rouType)
     
     return(
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
@@ -83,17 +75,17 @@ export default function RoutineSelect({
                {
                     rouType == "daily"?
                         <Daily
-                            setDaily={setRoutineContent}
+                            setDaily={setRouContent}
                             defaultTime={defaultValue?.routineType == routineType[0].id? defaultValue.routineContent : undefined}
                         />
                     :   rouType == "weekly"?
                         <Weekly
-                            setWeekly={setRoutineContent}
+                            setWeekly={setRouContent}
                             defaultWeek={defaultValue?.routineType == routineType[1].id? defaultValue.routineContent : undefined}
                         />
                     :   rouType == "specificDate"&&
                         <SpecificDate
-                            setSpecificDate={setRoutineContent}
+                            setSpecificDate={setRouContent}
                             defaultDates={defaultValue?.routineType == routineType[2].id? defaultValue.routineContent : undefined}
                         />
                 } 

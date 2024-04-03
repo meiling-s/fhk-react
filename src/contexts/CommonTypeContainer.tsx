@@ -104,7 +104,7 @@ const CommonType = () => {
         ...GET_RECYC_TYPE
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get site type success:', JSON.stringify(response.data))
+      // console.log('Get site type success:', JSON.stringify(response.data))
       RecycType = response.data
       setRecycType(RecycType)
     } catch (e) {
@@ -122,7 +122,7 @@ const CommonType = () => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get logistic list success:', JSON.stringify(response.data))
+      // console.log('Get logistic list success:', JSON.stringify(response.data))
 
       const logistic = response.data
       setLogisticList(logistic)
@@ -140,7 +140,7 @@ const CommonType = () => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get manu list success:', JSON.stringify(response.data))
+      // console.log('Get manu list success:', JSON.stringify(response.data))
 
       const manu = response.data
       setManuList(manu)
@@ -157,7 +157,7 @@ const CommonType = () => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get collector list success:', JSON.stringify(response.data))
+      // console.log('Get collector list success:', JSON.stringify(response.data))
 
       const collector = response.data
       setCollectorList(collector)
@@ -175,7 +175,7 @@ const CommonType = () => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get contract list success:', JSON.stringify(response.data))
+      // console.log('Get contract list success:', JSON.stringify(response.data))
 
       const contract = response.data
       setContractType(contract)
@@ -191,7 +191,7 @@ const CommonType = () => {
         ...GET_VEHICLE_TYPE
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get vehicle list success:', JSON.stringify(response.data))
+      // console.log('Get vehicle list success:', JSON.stringify(response.data))
 
       const vehicle = response.data
       setVehicleType(vehicle)
@@ -224,7 +224,7 @@ const CommonType = () => {
         ...GET_LOGISTICLIST_LOGISTIC(token.decodeKeycloack),
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
       })
-      console.log('Get logistic list success:', JSON.stringify(response.data))
+      // console.log('Get logistic list success:', JSON.stringify(response.data))
 
       const logistic = response.data
       setLogisticAdminList(logistic)
