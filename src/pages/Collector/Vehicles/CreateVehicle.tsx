@@ -173,7 +173,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         carType.push(vehicleType)
       })
       setVehicleType(carType)
-      console.log('carType', carType)
+      // console.log('carType', carType)
     }
   }
 
@@ -229,7 +229,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
-      console.log('listedPlate', listedPlate)
+      // console.log('listedPlate', listedPlate)
       listedPlate?.includes(licensePlate) &&
         tempV.push({
           field: t('vehicle.licensePlate'),

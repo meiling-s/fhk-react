@@ -9,7 +9,7 @@ import { forgetPassword } from '../../APICalls/forgetPassword'
 import { forgetPasswordForm } from '../../interfaces/forgetPassword'
 
 interface FormValues {
-  [key: string]: string  
+  [key: string]: string
 }
 
 const ForgetPassword = () => {
@@ -72,7 +72,7 @@ const ForgetPassword = () => {
     return s == ''
   }
 
-  const checkNumber = (n: string) => { 
+  const checkNumber = (n: string) => {
     if(!trySubmited){
         return false;
     }
@@ -80,19 +80,19 @@ const ForgetPassword = () => {
 }
 
   const submitNewPassword = async () => {
-    console.log('Submitted:', formValues)
+    // console.log('Submitted:', formValues)
     const formData: forgetPasswordForm = {
       loginId: formValues.username,
       contactNo: parseInt(formValues.contactNo),
       createdBy: formValues.username
     }
 
-    console.log('data : ', formData)
+    // console.log('data : ', formData)
     if (validation.length === 0) {
       const result = await forgetPassword(formData)
       const data = result?.data
 
-      console.log("data", data)
+      // console.log("data", data)
 
       if (data) {
         navigate('/confirmNewPassword')
@@ -205,7 +205,7 @@ const ForgetPassword = () => {
                 type={field.name == 'contactNo' ? 'number' : 'text'}
                 sx={styles.inputState}
                 onChange={handleInputChange}
-                error={field.name == 'username' ? 
+                error={field.name == 'username' ?
                 checkString(formValues[field.name as keyof FormValues]):
                 checkNumber(formValues[field.name as keyof FormValues])
               }

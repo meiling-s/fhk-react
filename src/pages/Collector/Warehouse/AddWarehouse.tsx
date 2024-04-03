@@ -201,7 +201,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const resetForm = () => {
-    console.log('reset form')
+    // console.log('reset form')
     setNamesField({
       warehouseNameTchi: '',
       warehouseNameSchi: '',
@@ -237,7 +237,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   useEffect(() => {
-    console.log('action', action)
+    // console.log('action', action)
 
     if (action === 'add') {
       resetForm()
@@ -246,7 +246,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       getWarehousebyId()
     }
 
-    console.log('physicalFlg', pysicalLocation)
+    // console.log('physicalFlg', pysicalLocation)
     getRecyleCategory()
   }, [action, handleDrawerClose])
 
@@ -309,7 +309,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         }
       })
       .catch((err) => {
-        console.log('Fecthing google map api error: ', err)
+        // console.log('Fecthing google map api error: ', err)
       })
   }, [place])
 
@@ -481,7 +481,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     try {
       const response = await createWarehouse(addWarehouseForm)
       if (response) {
-        console.log('added', response)
+        // console.log('added', response)
         showSuccessToast(t('notify.successCreated'))
       }
     } catch (error) {
@@ -499,7 +499,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             ? t('notify.SuccessEdited')
             : t('notify.successDeleted')
         )
-        console.log('edited', response)
+        // console.log('edited', response)
         handleDrawerClose()
       }
     } catch (error) {
@@ -517,7 +517,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       statusWarehouse = 'DELETED'
     }
 
-    console.log('action', action)
+    // console.log('action', action)
 
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
@@ -532,8 +532,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       updatedBy: 'string',
       warehouseRecyc: recycleCategory
     }
-    console.log('addWarehouseForm', addWarehouseForm)
-    console.log('rowId', rowId)
+    // console.log('addWarehouseForm', addWarehouseForm)
+    // console.log('rowId', rowId)
 
     const isError = validation.length == 0
     getFormErrorMsg()
@@ -551,10 +551,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       ) {
         onSubmitData(action, rowId, !isError)
       }
-      console.log(addWarehouseForm)
+      // console.log(addWarehouseForm)
       setValidation([])
     } else {
-      console.log(validation)
+      // console.log(validation)
       setTrySubmited(true)
     }
   }
@@ -576,7 +576,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const onDeleteModal = () => {
     //handleSubmit()
     setOpenDelete(false)
-    console.log('rowId', rowId)
+    // console.log('rowId', rowId)
     const deleteform = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,

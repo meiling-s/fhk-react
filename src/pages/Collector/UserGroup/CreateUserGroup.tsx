@@ -104,7 +104,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     setDescription('')
     setValidation([])
   }
-  
+
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -130,7 +130,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
           problem: formErr.empty,
           type: 'error'
         })
-      console.log("tempV", tempV)
+      // console.log("tempV", tempV)
       setValidation(tempV)
     }
 
@@ -180,7 +180,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   const handleEditUserGroup = async (formData: EditUserGroupProps) => {
     if (validation.length === 0) {
-      
+
       if(selectedItem != null){
         const result = await editUserGroup(formData, selectedItem.groupId!)
         if(result) {
@@ -188,7 +188,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
           resetData()
           handleDrawerClose()
         }
-      } 
+      }
     } else {
       setTrySubmited(true)
     }
