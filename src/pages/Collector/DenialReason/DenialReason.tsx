@@ -1,5 +1,5 @@
 import { useEffect, useState, FunctionComponent, useCallback } from "react";
-import { Box, Button, Checkbox, Typography, Pagination } from "@mui/material";
+import { Box, Button, Checkbox, Typography, Pagination, Stack } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -15,11 +15,12 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON,
 } from "../../../themes/icons";
-import { getAllDenialReason } from "../../../APICalls/Collector/denialReason";
+import { getAllDenialReason, getAllDenialReasonByFunctionId } from "../../../APICalls/Collector/denialReason";
 import { DenialReason as DenialReasonItem } from "../../../interfaces/denialReason";
 import CreateDenialReason from "./CreateDenialReason";
 import { getAllFunction } from "../../../APICalls/Collector/userGroup";
 import i18n from "../../../setups/i18n";
+import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 
 function createDenialReason(
   reasonId: number,
@@ -67,6 +68,7 @@ const DenialReason: FunctionComponent = () => {
     []
   );
   const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
+  const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
 
   const initFunctionList = async () => {
@@ -92,11 +94,55 @@ const DenialReason: FunctionComponent = () => {
         item.name = name
       })
     }
+    const options = data.map((item: { name: string; functionId: string; }) => {
+      return {
+        label: item.name,
+        value: item.functionId
+      }
+    })
+    options.push({
+      label: 'any',
+      value: ''
+    })
     setFunctionList(data);
+    setFunctionOptions(options)
   };
 
   const initDenialReasonList = async () => {
     const result = await getAllDenialReason(page - 1, pageSize);
+    const data = result?.data;
+    if (data) {
+      var denialReasonMapping: DenialReasonItem[] = [];
+      data.content.map((item: any) => {
+        const functionItem = functionList.find((el) => el.functionId === item.functionId)
+        if (functionItem) {
+          item.functionName = functionItem.name
+        }
+        denialReasonMapping.push(
+          createDenialReason(
+            item?.reasonId,
+            item?.tenantId,
+            item?.reasonNameTchi,
+            item?.reasonNameSchi,
+            item?.reasonNameEng,
+            item?.description,
+            item?.remark,
+            item?.functionId,
+            item?.functionName,
+            item?.status,
+            item?.createdBy,
+            item?.updatedBy,
+            item?.createdAt,
+            item?.updatedAt
+          )
+        );
+      });
+      setDenialReasonList(denialReasonMapping);
+      setTotalData(data.totalPages);
+    }
+  };
+  const searchByFunctionId = async (functionId: number) => {
+    const result = await getAllDenialReasonByFunctionId(page - 1, pageSize, functionId);
     const data = result?.data;
     if (data) {
       var denialReasonMapping: DenialReasonItem[] = [];
@@ -138,13 +184,13 @@ const DenialReason: FunctionComponent = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "reasonNameSchi",
+      field: "reasonNameTchi",
       headerName: t("denial_reason.reason_name_tchi"),
       width: 200,
       type: "string",
     },
     {
-      field: "reasonNameTchi",
+      field: "reasonNameSchi",
       headerName: t("denial_reason.reason_name_schi"),
       width: 200,
       type: "string",
@@ -215,6 +261,10 @@ const DenialReason: FunctionComponent = () => {
     },
   ];
 
+  const searchfield = [
+    {label:t('denial_reason.corresponding_functions'),width:'100%',options: functionOptions}
+  ]
+
   const handleAction = (
     params: GridRenderCellParams,
     action: "add" | "edit" | "delete"
@@ -273,6 +323,14 @@ const DenialReason: FunctionComponent = () => {
     };
   }, []);
 
+  const handleSearch = (keyName: string, value: string) => {
+    if (value) {
+      searchByFunctionId(Number(value))
+    } else {
+      initDenialReasonList()
+    }
+  }
+
   return (
     <>
       <Box
@@ -314,6 +372,16 @@ const DenialReason: FunctionComponent = () => {
           </Button>
         </Box>
         <div className="table-vehicle">
+          <Stack direction='row' mt={3} >
+            {searchfield.map((s, i)=>(
+              <CustomSearchField
+                key={i}
+                label={s.label} 
+                width={s.width}
+                options={s.options || []} 
+                onChange={handleSearch} />
+            ))}
+          </Stack>
           <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
             <DataGrid
               rows={DenialReasonList}

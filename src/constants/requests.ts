@@ -768,6 +768,11 @@ export const GET_DENIAL_REASON = (realmApiRoute: string, tenantId: string): Axio
   method: "get",
   url: `/api/v1/${realmApiRoute}/reason/${tenantId}`,
 });
+//get denial reason by functionId
+export const GET_DENIAL_REASON_BY_FUNCTION_ID = (realmApiRoute: string, tenantId: string, functionId: number): AxiosRequestConfig => ({
+  method: "get",
+  url: `/api/v1/${realmApiRoute}/reason/${tenantId}/${functionId}`,
+});
 
 //create denial reason
 export const CREATE_DENIAL_REASON = (realmApiRoute: string, ): AxiosRequestConfig => ({
