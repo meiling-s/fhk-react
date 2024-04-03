@@ -61,14 +61,14 @@ const PackagingUnit: FunctionComponent = () => {
     useEffect(() => {
       initPackagingUnitList()
       getTenantData()
-    }, [])
-
+    }, [page])
+  
     const initPackagingUnitList = async () => {
       const result = await getAllPackagingUnit(page - 1, pageSize)
       const data = result?.data
       if(data) {
         var packagingMapping: PackagingUnitItem[] = []
-        data.map((item: any, index: any) => {
+        data.content.map((item: any, index: any) => {
           packagingMapping.push(
             createPackagingUnit(
               item?.id !== undefined ? item?.id : index,
@@ -121,13 +121,13 @@ const PackagingUnit: FunctionComponent = () => {
       },
       {
         field: 'description',
-        headerName: t('packaging_unit.introduction'),
+        headerName: t('common.description'),
         width: 250,
         type: 'string'
       },
       {
         field: 'remark',
-        headerName: t('packaging_unit.remark'),
+        headerName: t('common.remark'),
         width: 170,
         type: 'string'
       },

@@ -1,4 +1,25 @@
 {
+  "common": {
+    "save": "儲存",
+    "delete": "刪除",
+    "confirm": "確認",
+    "cancel": "取消",
+    "saveSuccessfully": "保存成功",
+    "saveFailed": "保存失敗",
+    "editSuccessfully": "編輯成功",
+    "editFailed": "編輯失敗",
+    "deletedSuccessfully": "刪除成功",
+    "deleteFailed": "刪除失敗",
+    "enterName": "請輸入名稱",
+    "enterText": "請輸入文字",
+    "description": "簡介",
+    "remark": "備註",
+    "traditionalChineseName": "繁體中文名稱",
+    "simplifiedChineseName": "簡體中文名稱",
+    "englishName": "英文名稱",
+    "yes": "是",
+    "no": "否"
+  },
   "col": {
     "createCP": "建立回收點",
     "editCP": "修改回收點",
@@ -93,8 +114,10 @@
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
-    "workshop": "倉庫",
+    "workshop": "工場",
+    "vehicles": "車輛",
     "company": "公司",
+    "waste_disposal": "廢棄點",
     "staff_positions": "員工職位",
     "denial_reason": "拒絕原因",
     "add_new": "新增",
@@ -412,7 +435,10 @@
       "enter_email": "請輸入電郵地址",
       "or": "或",
       "link_invitation": "發送連結邀請",
-      "copy": "複製"
+      "copy": "複製",
+      "send": "傳送",
+      "invite_success" : "成功發送邀請",
+      "invite_failed": "發送邀請失敗"
     },
     "detail": {
       "company_category": "公司類別",
@@ -442,6 +468,7 @@
   },
   "report": {
     "report": "報表",
+    "downloadArea": "下載區",
     "basicServicePictures": "基本服務圖片",
     "additionalServicePictures": "額外服務圖片",
     "otherPictures": "其他圖片",
@@ -770,6 +797,34 @@
       }
     }
   },
+  "denial_reason": {
+    "reason_name_tchi": "原因 (繁體中文)",
+    "reason_name_schi": "原因 (簡體中文)",
+    "reason_name_eng": "原因 (英文)",
+    "corresponding_functions": "對應功能",
+    "description": "簡介",
+    "remark": "備註",
+    "enter_name": "請輸入名稱",
+    "select_function": "請選擇功能",
+    "enter_text": "請輸入文字"
+  },
+  "staff_title": {
+    "staff_title_tchi": "繁體中文名稱",
+    "staff_title_schi": "簡體中文名稱",
+    "staff_title_eng": "英文名稱",
+    "duty": "職責",
+    "description": "簡介",
+    "remark": "備註",
+    "enter_duty": "請輸入職責"
+  },
+  "companyManagement": {
+    "collectorlist": "回收公司",
+    "logisticlist": "物流公司",
+    "manulist": "回收廠",
+    "customerlist": "顧客公司",
+    "brNo": "商業登記號碼",
+    "enterBrNo": "請輸入商業登記號碼"
+  },
   "driver": {
     "sideBarName": "車隊",
     "title": "車隊",
@@ -781,7 +836,48 @@
       "AddBtn": "新增司機",
       "search": {
         "label": "搜索",
-        "placeholder": "輸入司機編號"   
+        "placeholder": "輸入司機編號"
+      },
+      "table": {
+        "driverId": "司機編號",
+        "driverName": "司機中文名",
+        "driverEngName": "Driver English Name",
+        "gender": "性别",
+        "loginName": "登入名稱",
+        "contactNo": "聯絡電話",
+        "lastLogin": "上次登入"
+      },
+      "popUp": {
+        "addTitle": "新增司機",
+        "editTitle": "修改司機",
+        "deleteTitle": "刪除司機",
+        "saveText": "儲存",
+        "removeText": "刪除",
+        "field": {
+          "loginName": "登錄名稱",
+          "nameText": "請輸入名稱",
+          "TchiName": "司機繁體中文名稱",
+          "SchiName": "司機簡體中文名稱",
+          "engName": "Driver English Name",
+          "engText": "Please type a name",
+          "linsenceName": "駕駛執照編號",
+          "linsenceText": "駕駛執照編號",
+          "uploadLinsence": "上載駕駛執照",
+          "carType": "車輛類別",
+          "carTypeSelect": "請選擇",
+          "carYear": "持有執照年期",
+          "yearInput": "請輸入年期",
+          "driveYear": "駕駛經驗",
+          "addvehicleButton": "新增車輛類別",
+          "contactNo": "聯絡電話",
+          "contactText": "請輸入聯絡電話",
+          "createSuccessMsg": "創建司機成功",
+          "createFailMsg": "創建司機失敗",
+          "editSuccessMsg": "修改司機成功",
+          "editFailMsg": "修改司機失敗",
+          "deleteSuccessMsg": "刪除司機成功",
+          "deleteFailMsg": "刪除司機失敗"
+        }
       }
     },
     "vehicleMenu": {
@@ -829,5 +925,18 @@
     "enterFulltimeFlag": "輸入全職標誌",
     "gender": "性別",
     "enterGender": "輸入性別"
+  },
+  "generate_report": {
+    "report_name": "報表名稱",
+    "recycling_point_record": "回收點記錄",
+    "Waste_ecords_daily_": "廢棄物記錄（每日)",
+    "recycling_plant_request_records": "回收廠的回收物請求記錄",
+    "recycling_classification_processing": "回收物分類及處理記錄",
+    "recycling_classification_statistics": "回收物分類統計數據",
+    "recycling_point_establishment": "回收點設立及營運服務（第一期後續合約）照片記錄（每月)",
+    "collection_point_establishment": "回收點設立及營運服務（第一期後續合約）Excel 記錄（每月)",
+    "download": "下載",
+    "start_date": "日期由",
+    "end_date": "至"
   }
 }

@@ -1,6 +1,6 @@
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
-  ASSIGN_DRIVER, REJECT_DRIVER, GET_DRIVER, GET_VEHICLE_LOGISTIC, GET_ALL_JOB_ORDER, UPDATE_JOB_ORDER_STATUS, GET_DRIVER_DETAIL_BY_ID
+  ASSIGN_DRIVER, REJECT_REASSIGN_DRIVER, GET_DRIVER, GET_VEHICLE_LOGISTIC, GET_ALL_JOB_ORDER, UPDATE_JOB_ORDER_STATUS, GET_DRIVER_DETAIL_BY_ID
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -68,13 +68,13 @@ export const assignDriver = async (data: AssignJobDriver) => {
   }
 }
 
-export const rejectDriver = async (data: RejectJobDriver, id: any) => {
+export const rejectAssginDriver = async (data: AssignJobDriver, id: number) => {
   try {
     const token = returnApiToken()
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...REJECT_DRIVER(token.decodeKeycloack, id),
+      ...REJECT_REASSIGN_DRIVER(token.decodeKeycloack, id),
       data
     })
 

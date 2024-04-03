@@ -1,4 +1,4 @@
-import { Axios, AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig } from "axios";
 
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
@@ -21,6 +21,11 @@ export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
   method: "post",
   url: `api/v1/account/t/addTenant/${realm}`,
 });
+
+export const SEND_EMAIL_INVITATION : AxiosRequestConfig = {
+  method: "post",
+  url: 'api/v1/account/t/email/',
+};
 
 export const GET_ALL_TENANT: AxiosRequestConfig = {
   method: "get",
@@ -557,7 +562,6 @@ export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
 //API roster
 export const GET_ROSTER_LIST = (
   tenantId: string,
-
   startAt: string
 ): AxiosRequestConfig => ({
   method: "get",
@@ -739,9 +743,9 @@ export const ASSIGN_DRIVER = (table: string): AxiosRequestConfig => ({
   url: `/api/v1/logistic/jo/${table}`,
 });
 
-export const REJECT_DRIVER = (table: string, id: any): AxiosRequestConfig => ({
-  method: "patch",
-  url: `/api/v1/logistic/jo/${table}/status/${id}`,
+export const REJECT_REASSIGN_DRIVER = (table: string, id: any): AxiosRequestConfig => ({
+  method: "put",
+  url: `/api/v1/logistic/jo/${table}/${id}`,
 });
 
 export const GET_DRIVER = (table: string): AxiosRequestConfig => ({
@@ -764,6 +768,108 @@ export const GET_LIST_NOTIF_TEMPLATE_STAFF = (tenantId: string, path: string): A
   url: `api/v1/${path}/notiTemplate/${tenantId}`
 })
 
+//get denial reason
+export const GET_DENIAL_REASON = (realmApiRoute: string, tenantId: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `/api/v1/${realmApiRoute}/reason/${tenantId}`,
+});
+
+//create denial reason
+export const CREATE_DENIAL_REASON = (realmApiRoute: string, ): AxiosRequestConfig => ({
+  method: "post",
+  url: `/api/v1/${realmApiRoute}/reason`,
+});
+
+//update denial reason
+export const UPDATE_DENIAL_REASON = (realmApiRoute: string, tenantId: string, reasonId: number): AxiosRequestConfig => ({
+  method: "PUT",
+  url: `/api/v1/${realmApiRoute}/reason/${tenantId}/${reasonId}`,
+});
+
+//get staff title
+export const GET_STAFF_TITLE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `/api/v1/${realmApiRoute}/stafftitle/${table}`,
+});
+
+//create staff title
+export const CREATE_STAFF_TITLE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+  method: "post",
+  url: `/api/v1/${realmApiRoute}/stafftitle/${table}`,
+});
+
+//update staff title
+export const UPDATE_STAFF_TITLE = (realmApiRoute: string, table: string, titleId: string): AxiosRequestConfig => ({
+  method: "PUT",
+  url: `/api/v1/${realmApiRoute}/stafftitle/${table}/${titleId}`,
+});
+
+//get disposal location
+export const GET_DISPOSAL_LOCATION = (table: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `/api/v1/collectors/disposallocation/${table}`,
+});
+
+//create disposal location
+export const CREATE_DISPOSAL_LOCATION = (table: string): AxiosRequestConfig => ({
+  method: "post",
+  url: `/api/v1/collectors/disposallocation/${table}`,
+});
+
+//update disposal location
+export const UPDATE_DISPOSAL_LOCATION = (table: string, disposalLocId: string): AxiosRequestConfig => ({
+  method: "PUT",
+  url: `/api/v1/collectors/disposallocation/${table}/${disposalLocId}`,
+});
+
+//get company (collectorlist || logisticlist || manulist || customerlist)
+export const GET_COMPANY = (realmApiRoute: string, table: string, companyType: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `/api/v1/${realmApiRoute}/${companyType}/${table}`,
+});
+
+//create company
+export const CREATE_COMPANY = (realmApiRoute: string, table: string, companyType: string): AxiosRequestConfig => ({
+  method: "post",
+  url: `/api/v1/${realmApiRoute}/${companyType}/${table}`,
+});
+
+//update company
+export const UPDATE_COMPANY = (realmApiRoute: string, table: string, companyType: string, companyId: string): AxiosRequestConfig => ({
+  method: "PUT",
+  url: `/api/v1/${realmApiRoute}/${companyType}/${table}/${companyId}`,
+})
+
+export const GET_CONTRACT_LIST = (realmApiRoute: string, tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/contract/${tenantId}`
+})
+
+export const CREATE_CONTRACT = (realmApiRoute: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/contract`
+})
+
+export const EDIT_CONTRACT = (realmApiRoute: string, tenantId: string, contractNo: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/contract/${tenantId}/${contractNo}`
+})
+
+export const GET_PACKAGING_LIST = (realmApiRoute: string, tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/packaginglist/${tenantId}`
+})
+
+export const CREATE_PACKAGING = (realmApiRoute: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/packaginglist`
+})
+
+export const EDIT_PACKAGING = (realmApiRoute: string, tenantId: string, packagingTypeId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/packaginglist/${tenantId}/${packagingTypeId}`
+})
+
 export const GET_DETAIL_NOTIF_TEMPLATE = (tenantId: string, templateId: string, path: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
@@ -774,39 +880,30 @@ export const UPDATE_NOTIF_TEMPLATE = (tenantId: string, templateId: string, path
   url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
 })
 
+//logistics driver
+export const GET_DRIVER_LIST = ():AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/driver/{table}`
+})
+
+export const CREATE_DRIVER = (tenantId: string):AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/logistic/driver/${tenantId}`
+})
+
+export const EDIT_DRIVER = (tableId: string,driverId: string):AxiosRequestConfig =>({
+  method: 'put',
+  url: `api/v1/logistic/driver/${tableId}/${driverId}`
+})
+
+export const DELETE_DRIVER = (tableId: string,driverId: string):AxiosRequestConfig =>({
+  method: 'patch',
+  url: `api/v1/logistic/driver/${tableId}/${driverId}`
+})
+
 export const UPDATE_NOTIF_TEMPLATE_BROADCAST = (tenantId: string, templateId: string, path: string): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
-})
-
-export const GET_CONTRACT_LIST = (tenantId: string): AxiosRequestConfig => ({
-  method: 'get',
-  url: `api/v1/logistic/contract/${tenantId}`
-})
-
-export const CREATE_CONTRACT: AxiosRequestConfig = {
-  method: 'post',
-  url: `api/v1/logistic/contract`
-}
-
-export const EDIT_CONTRACT = (tenantId: string, contractNo: string): AxiosRequestConfig => ({
-  method: 'put',
-  url: `api/v1/logistic/contract/${tenantId}/${contractNo}`
-})
-
-export const GET_PACKAGING_LIST = (tenantId: string): AxiosRequestConfig => ({
-  method: 'get',
-  url: `api/v1/logistic/packaginglist/${tenantId}`
-})
-
-export const CREATE_PACKAGING: AxiosRequestConfig = {
-  method: 'post',
-  url: `api/v1/logistic/packaginglist`
-}
-
-export const EDIT_PACKAGING = (tenantId: string, packagingTypeId: string): AxiosRequestConfig => ({
-  method: 'put',
-  url: `api/v1/logistic/packaginglist/${tenantId}/${packagingTypeId}`
 })
 
 // STAFF ENQUIRY

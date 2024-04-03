@@ -144,7 +144,6 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
 
   const mappingData = () => {
     if (selectedItem != null) {
-      // console.log('selectedItem', selectedItem)
       setFormData({
         loginId: selectedItem.loginId,
         staffNameTchi: selectedItem.staffNameTchi,
@@ -192,14 +191,26 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       email: t('staffManagement.email')
     }
     Object.keys(formData).forEach((fieldName) => {
-      formData[fieldName as keyof FormValues].trim() === '' &&
+      const fieldValue = formData[fieldName as keyof FormValues].trim();
+      
+      if (fieldValue === '') {
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
           problem: formErr.empty,
           type: 'error'
-        })
-    })
-    setValidation(tempV)
+        });
+      }
+
+      if (fieldName === 'email' && !fieldValue.includes('@')) {
+        tempV.push({
+          field: fieldMapping[fieldName as keyof FormValues],
+          problem: formErr.wrongFormat,
+          type: 'error'
+        });
+      }
+    });
+
+    setValidation(tempV);
   }
 
   useEffect(() => {

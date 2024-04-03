@@ -163,7 +163,7 @@ const EditPickupOrder = () => {
 
   useEffect(() => {
     if (poInfo) {
-      // console.log('selectedPo:', poInfo)
+      //console.log('selectedPo:', poInfo)
       const createPicoDetail: CreatePicoDetail[] = setPickupOrderDetail()
 
       updatePickupOrder.setValues({

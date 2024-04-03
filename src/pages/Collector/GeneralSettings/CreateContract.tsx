@@ -128,42 +128,48 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       handleCreateContract(formData)
     } else if (action == 'edit') {
       handleEditContract(formData)
-    }
+    } else if (action === 'delete') {
+      handleDelete(formData)
+  }
   }
 
   const handleCreateContract = async (formData: CreateContractProps) => {
       const result = await createContract(formData)
       if(result) {
-        onSubmitData("success", "Success created data")
+        onSubmitData("success", t("common.saveSuccessfully"))
         resetData()
         handleDrawerClose()
       }else{
-        onSubmitData("error", "Failed created data")
+        onSubmitData("error", t("common.saveFailed"))
       }
   }
 
   const handleEditContract = async (formData: CreateContractProps) => {
     const result = await editContract(formData)
     if(result) {
-      onSubmitData("success", "Edit data success")
+      onSubmitData("success", t("common.editSuccessfully"))
       resetData()
       handleDrawerClose()
     }
   }
 
-  // const handleDelete = async () => {
-  //   const status = 'DELETED'
-  //   if(selectedItem != null){
-  //     const result = await deleteVehicle(status, selectedItem.vehicleId)
-  //     if(result) {
-  //       onSubmitData("success", "Deleted data success")
-  //       resetData()
-  //       handleDrawerClose()
-  //     } else {
-  //       onSubmitData("error", "Deleted data success")
-  //     }
-  //   }
-  // }
+  const handleDelete = async (formData: CreateContractProps) => {
+    const status = 'DELETED'
+    const data = {
+      ...formData,
+      status
+    }
+    if(selectedItem != null){
+      const result = await editContract(data)
+      if(result) {
+        onSubmitData("success", t('common.deleteFailed'))
+        resetData()
+        handleDrawerClose()
+      } else {
+        onSubmitData("error", t('common.deleteFailed'))
+      }
+    }
+  }
 
   return (
     <div className="add-vehicle">
@@ -179,7 +185,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          // onDelete: handleDelete
+          onDelete: handleSubmit
         }}
       >
         <Divider></Divider>
@@ -244,10 +250,11 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
               </Box>
             </Box>
           </LocalizationProvider>
-          <CustomField label={t('general_settings.remark')} mandatory={false}>
+          <CustomField label={t('common.remark')} mandatory={false}>
             <CustomTextField
                 id="remark"
-                placeholder={t('general_settings.remark')}
+                value={remark}
+                placeholder={t('common.remark')}
                 onChange={(event) => setRemark(event.target.value)}
                 error={checkString(remark)}
                 multiline={true}

@@ -217,8 +217,10 @@ const Warehouse: FunctionComponent = () => {
 
     const recyleType = warehouse.warehouseRecyc
       .map((item: RecyleItem) => {
-        const data =
-          recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem] || ''
+        let data = ''
+        if (recyleTypeList[item.recycTypeId]) {
+          data = recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem] || ''
+        }
         return `${data ? data : '-'}`
       })
       .join(', ')

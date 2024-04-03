@@ -199,6 +199,7 @@ export interface OrderJobHeader {
 }
 
 export interface AssignJobDriver {
+    joId: number,
     picoId: string;
     picoDtlId: number;
     plateNo: string;
@@ -220,7 +221,8 @@ export interface AssignJobDriver {
     createdBy: string;
     effFrmDate:  string,
     effToDate:  string,
-    status: string  
+    status: string  ,
+    updatedBy: string
 }
 
 export interface AssignJobField {

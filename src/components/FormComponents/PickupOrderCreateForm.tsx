@@ -134,23 +134,40 @@ const PickupOrderCreateForm = ({
   const [openDelete, setOpenDelete] = useState<boolean>(false)
   const [editRowId, setEditRowId] = useState<number | null>(null)
   const [updateRowId, setUpdateRowId] = useState<number | null>(null)
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType, recycType } =
-    useContainer(CommonTypeContainer)
+
+  const {
+    logisticList,
+    logisticAdminList,
+    contractType,
+    contractLogistic,
+    vehicleType,
+    recycType
+  } = useContainer(CommonTypeContainer)
   const navigate = useNavigate()
-  const unexpiredContracts = contractType?.filter((contract) => {
-    const currentDate = new Date()
-    const contractDate = new Date(contract.contractToDate)
-    return contractDate > currentDate
-  })
+
+  console.log('logisticAdminList', logisticAdminList)
+
+  const logisticCompany =
+    role == 'collectoradmin' ? logisticList : logisticAdminList
+  console.log('logisticCompany', logisticList, logisticAdminList)
+  const contractRole =
+    role == 'collectoradmin' ? contractType : contractLogistic
+  const unexpiredContracts = contractRole
+    ? contractRole?.filter((contract) => {
+        const currentDate = new Date()
+        const contractDate = new Date(contract.contractToDate)
+        return contractDate > currentDate
+      })
+    : []
   const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
     null
   )
 
   // set custom style each role
-  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role)
   const customListTheme = getThemeCustomList(role)
 
@@ -220,14 +237,14 @@ const PickupOrderCreateForm = ({
       picoDtl.id = index
       return picoDtl
     })
-    console.log('deleting: ', id, state, updateDeleteRow)
+    //console.log('deleting: ', id, state, updateDeleteRow)
     setState(updateDeleteRow)
   }
 
   const createdDate = dayjs(new Date()).format(format.dateFormat1)
 
   const handleHeaderOnClick = () => {
-    console.log('Header click')
+    //console.log('Header click')
     navigate(-1) //goback to last page
   }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
@@ -551,7 +568,6 @@ const PickupOrderCreateForm = ({
                 >
                   <PicoRoutineSelect
                     setRoutine={(values) => {
-                      console.log('routine' + JSON.stringify(values))
                       formik.setFieldValue('routineType', values.routineType)
                       formik.setFieldValue('routine', values.routineContent)
                     }}
@@ -576,15 +592,15 @@ const PickupOrderCreateForm = ({
                   <CustomAutoComplete
                     placeholder={t('pick_up_order.enter_company_name')}
                     option={
-                      logisticList?.map((option) => option.logisticNameTchi) ??
-                      []
+                      logisticCompany?.map(
+                        (option) => option.logisticNameTchi
+                      ) ?? []
                     }
                     sx={{ width: '400px' }}
                     onChange={(_: SyntheticEvent, newValue: string | null) =>
                       formik.setFieldValue('logisticName', newValue)
                     }
                     onInputChange={(event: any, newInputValue: string) => {
-                      console.log(newInputValue) // Log the input value
                       formik.setFieldValue('logisticName', newInputValue) // Update the formik field value if needed
                     }}
                     value={formik.values.logisticName}
@@ -660,7 +676,6 @@ const PickupOrderCreateForm = ({
                           ) || []
                         }
                         onChange={(event, value) => {
-                          console.log(value)
                           if (value) {
                             formik.setFieldValue('contractNo', value)
                           }
@@ -690,7 +705,6 @@ const PickupOrderCreateForm = ({
                     <CustomItemList
                       items={getReason() || []}
                       singleSelect={(values) => {
-                        console.log('values', values)
                         formik.setFieldValue('reason', values)
                       }}
                       value={formik.values.reason}

@@ -49,9 +49,8 @@ import UserGroup from "./pages/Collector/UserGroup/UserGroup";
 import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
 
 //logistic
-import CreatePicoLogistic from "./pages/Collector/PickupOrderLogistic/CreatePicoLogistic";
-import EditPicoLogistic from "./pages/Collector/PickupOrderLogistic/EditPicoLogistic";
-import JobOrder from './pages/Logistic/JobOrder'
+import JobOrder from "./pages/Logistic/JobOrder/JobOrder";
+import CreateOrUpdateJobOrder from './pages/Logistic/JobOrder/CreateOrUpdateJobOrder'
 import LogisticAccount from './pages/Logistic/Account'
 import Driver from "./pages/Logistic/Driver";
 import Notice from "./pages/ASTD/Notice/Index";
@@ -145,9 +144,10 @@ const Router = () => {
 
         <Route element={<MainLayout />}>
           <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
-          <Route path="/logistic/pickupOrder/:picoId" element={<JobOrder />} />
-          <Route path="/logistics/createPickupOrder" element={<CreatePicoLogistic />} />
-          <Route path="/logistics/editPickupOrder" element={<EditPicoLogistic /> } />
+          <Route path="/logistic/jobOrder" element={<JobOrder />} />
+          <Route path="/logistic/createJobOrder/:picoId" element={<CreateOrUpdateJobOrder />} />
+          <Route path="/logistics/createPickupOrder" element={<CreatePickupOrder />} />
+          <Route path="/logistics/editPickupOrder" element={<EditPickupOrder /> } />
           <Route path="/logistics/account" element={<LogisticAccount />} />
           <Route path="/logistic/driver" element={<Driver/>}/>
         </Route>

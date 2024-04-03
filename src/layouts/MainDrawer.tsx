@@ -37,6 +37,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import ViewQuiltOutlinedIcon from "@mui/icons-material/ViewQuiltOutlined";
+import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
+import { dynamicpath } from "../utils/utils";
+
 type MainDrawer = {
   role: string;
 };
@@ -61,14 +64,7 @@ function MainDrawer() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
-  const userRole = localStorage.getItem("userRole") || "";
-  let pathRole: string = "";
-
-  if (userRole === Roles.collectoradmin) {
-    pathRole = "collector";
-  } else if (userRole === Roles.logisticadmin) {
-    pathRole = "logistic";
-  }
+  const { pathRole } = dynamicpath();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -92,6 +88,7 @@ function MainDrawer() {
   }, []);
 
   var role = localStorage.getItem(localStorgeKeyName.role);
+  var realm = localStorage.getItem(localStorgeKeyName.realm);
 
   interface func {
     [key: string]: object
@@ -101,9 +98,9 @@ function MainDrawer() {
   const defaultFunctionList: func[] = [
     {
       "Tenant management": {
-        name: t("all_Collection_Point"),
-
-        onClick: () => navigate("/collector/collectionPoint"),
+        name: t("tenant.company"),
+        icon: <FolderCopyOutlinedIcon />,
+        onClick: () => navigate("/astd"),
         collapse: false,
       },
       "User account": {
@@ -121,13 +118,13 @@ function MainDrawer() {
       "Pickup order": {
         name: t("pick_up_order.enquiry_pickup_order"),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => navigate("/collector/pickupOrder"),
+        onClick: () => navigate(`/${realm}/pickupOrder`),
         collapse: false,
       },
       "Job order": {
         name: t("job_order.enquiry_job_order"),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => navigate("/logistic/pickupOrder"),
+        onClick: () => navigate(`/${realm}/jobOrder`),
         collapse: false,
       },
       "Warehouse dashboard": {

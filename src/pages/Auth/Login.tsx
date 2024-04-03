@@ -106,6 +106,7 @@ const Login = () => {
         //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
         localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
         localStorage.setItem(localStorgeKeyName.refreshToken, result?.refresh_token || '');
+        localStorage.setItem(localStorgeKeyName.realm, result?.realm || '');
         localStorage.setItem(localStorgeKeyName.role, loginTo);
         localStorage.setItem(localStorgeKeyName.username, result?.username || '');
         // 20240129 add function list daniel keung start
@@ -119,28 +120,35 @@ const Login = () => {
         localStorage.setItem(localStorgeKeyName.tenantId, tenantID || '')
         loginTo = result?.realm
         // 20240129 add function list daniel keung end
+        let realmApiRoute = ''
         switch(loginTo){
           case "astd":
             navigate("/astd");
             break;
           case "collector":
+            realmApiRoute = 'collectors'
             navigate("/collector");
             break;
           case "warehouse":
+            realmApiRoute = 'collectors'
             navigate("/warehouse");
             break;
           case "collectoradmin":
+            realmApiRoute = 'collectors'
             navigate("/collector/collectionPoint");
             break;
           case "logistic":
-            navigate("/logistic/pickupOrder");
+            realmApiRoute = 'logistic'
+            navigate("/logistic/jobOrder");
             break;
           case "manufacturer":
             navigate("/manufacturer/pickupOrder");
             break;
           default:
+            realmApiRoute = 'collectors'
             break;
         }
+        localStorage.setItem(localStorgeKeyName.realmApiRoute, realmApiRoute);
       }else{
         const errCode = result
         if(errCode == '004') {

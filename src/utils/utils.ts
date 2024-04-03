@@ -1,5 +1,5 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format } from '../constants/constant'
+import { formErr, localStorgeKeyName, format, Roles, Realm } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
@@ -9,11 +9,13 @@ export const returnApiToken = () => {
   const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  const realmApiRoute = localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
   return {
     decodeKeycloack: decodeKeycloack,
     authToken: authToken,
     tenantId: tenantId,
-    loginId: loginId
+    loginId: loginId,
+    realmApiRoute
   }
 }
 
@@ -134,4 +136,24 @@ export const getThemeCustomList = (role: string) => {
   }
 
   return  customListRole[role as keyof typeof customListRole]
+}
+
+export const dynamicpath = () => {
+  const userRole = localStorage.getItem("userRole") || "";
+  let pathRole: string = "";
+
+  switch(userRole){
+    case(Roles.collectoradmin):
+      pathRole = Realm.collector;
+      break;
+    case(Roles.logisticadmin):
+      pathRole = Realm.logistic;
+      break
+    default:
+      break;
+  }
+  
+  return {
+    pathRole
+  }
 }

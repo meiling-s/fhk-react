@@ -2,13 +2,15 @@ export const localStorgeKeyName = {
   keycloakToken: 'keycloakToken',
   refreshToken: 'refreshToken',
   role: 'userRole',
+  realm: 'realm',
   username: 'username',
   firstTimeLogin: 'firstTimeLogin',
   decodeKeycloack: 'decodeKeycloack',
   // 20240129 add function list daniel keung start
   functionList: 'functionList',
   // 20240129 add function list daniel keung end
-  tenantId: 'tenantId'
+  tenantId: 'tenantId',
+  realmApiRoute: 'realmApiRoute'
 }
 
 export const defaultPath = {
@@ -58,4 +60,9 @@ export const Notiftemplate = {
 export const Roles = {
   collectoradmin: 'collectoradmin',
   logisticadmin: 'logisticadmin'
+}
+
+export const Realm = {
+  collector : 'collector',
+  logistic: 'logistic'
 }

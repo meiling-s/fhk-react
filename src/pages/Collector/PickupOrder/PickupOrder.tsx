@@ -344,7 +344,7 @@ const PickupOrders = () => {
     setRejectModal(true)
   }
   const navigateToJobOrder = (row : any) => {
-    if(row?.picoId) navigate(`/logistic/pickupOrder/${row.picoId}`)
+    if(row?.picoId) navigate(`/logistic/createJobOrder/${row.picoId}?isEdit=false`)
   }
   const resetPage = async () => {
     setApproveModal(false)

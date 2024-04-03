@@ -1,4 +1,25 @@
 {
+  "common": {
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "saveSuccessfully": "Saved successfully",
+    "saveFailed": "Saved failed",
+    "editSuccessfully": "Edited successfully",
+    "editFailed": "Edited failed",
+    "deletedSuccessfully": "Deleted successfully",
+    "deleteFailed": "Deleted failed",
+    "enterName": "Please enter name",
+    "enterText": "Please enter text",
+    "description": "Description",
+    "remark": "Remark",
+    "traditionalChineseName": "Traditional Chinese Name",
+    "simplifiedChineseName": "Simplified Chinese Name",
+    "englishName": "English Name",
+    "yes": "Yes",
+    "no": "No"
+  },
   "col": {
     "createCP": "Create collection point",
     "editCP": "Edit collection point",
@@ -94,7 +115,9 @@
     "general_settings": "General settings",
     "packaging_unit": "Packaging unit",
     "workshop": "Warehouse",
+    "vehicles": "Vehicles",
     "company": "Company",
+    "waste_disposal": "Waste Disposal",
     "staff_positions": "Staff positions",
     "denial_reason": "Denial reason",
     "add_new": "New",
@@ -413,7 +436,10 @@
       "enter_email": "Please enter email address",
       "or": "or",
       "link_invitation": "Send link invitation",
-      "copy": "copy"
+      "copy": "copy",
+      "send": "send",
+      "invite_success" : "Success send invitation",
+      "invite_failed": "Failed send invitation"
     },
     "detail": {
       "company_category": "Company category",
@@ -443,6 +469,7 @@
   },
   "report": {
     "report": "Report",
+    "downloadArea": "Download Area",
     "basicServicePictures": "Basic service pictures",
     "additionalServicePictures": "Additional service pictures",
     "otherPictures": "Other pictures",
@@ -771,6 +798,34 @@
       }
     }
   },
+  "denial_reason": {
+    "reason_name_tchi": "Reason (Traditional Chinese)",
+    "reason_name_schi": "Reason (Simplified Chinese)",
+    "reason_name_eng": "Reason (English)",
+    "corresponding_functions": "Corresponding Functions",
+    "description": "Description",
+    "remark": "Remark",
+    "enter_name": "Please enter name",
+    "select_function": "Please select function",
+    "enter_text": "Please enter text"
+  },
+  "staff_title": {
+    "staff_title_tchi": "Traditional Chinese Name",
+    "staff_title_schi": "Simplified Chinese Name",
+    "staff_title_eng": "English Name",
+    "duty": "Duty",
+    "description": "Description",
+    "remark": "Remark",
+    "enter_duty": "Please enter duty"
+  },
+  "companyManagement": {
+    "collectorlist": "Collection Company",
+    "logisticlist": "Logistic Company",
+    "manulist": "Manufacturer Company",
+    "customerlist": "Customer Company",
+    "brNo": "Business Registration Number",
+    "enterBrNo": "Please enter business registration number"
+  },
   "driver": {
     "sideBarName": "Driver",
     "title": "Driver",
@@ -795,6 +850,47 @@
     "search": {
       "label": "Search",
       "placeholder": "Please enter Driver No."   
+    },
+    "table": {
+      "driverId": "Driver Id",
+      "driverName": "司机中文名",
+      "driverEngName": "Driver English Name",
+      "gender": "Gender",
+      "loginName": "Login Name",
+      "contactNo": "Contact No",
+      "lastLogin": "Last Login"
+    },
+    "popUp": {
+      "addTitle": "Add Driver",
+      "editTitle": "Edit Driver",
+      "deleteTitle": "Delete Driver",
+      "saveText": "Save",
+      "removeText": "Remove",
+      "field": {
+        "loginName": "Login Name",
+        "nameText": "Please Enter Name",
+        "TchiName": "Driver Traditional Chinese Name",
+        "SchiName": "Driver Simplified Chinese Name",
+        "engName": "Driver English Name",
+        "engText": "Please type a name",
+        "linsenceName": "Driver's License Number",
+        "linsenceText": "Driver's License Number",
+        "uploadLinsence": "Upload Driver's License",
+        "carType": "Vehicle Type",
+        "carTypeSelect": "Please Select",
+        "carYear": "Years of Holding License",
+        "yearInput": "Please enter year",
+        "driveYear": "Years of Driving Experience",
+        "addvehicleButton": "Add Vehicle Type",
+        "contactNo": "Contact Number",
+        "contactText": "Please Enter Contact Number",
+        "createSuccessMsg": "Success created driver",
+        "createFailMsg": "Failed created driver",
+        "editSuccessMsg": "Success edited driver",
+        "editFailMsg": "Failed edited driver",
+        "deleteSuccessMsg": "Success deleted driver",
+        "deleteFailMsg": "Failed delete driver"
+      }
     }
   },
   "general_settings": {
@@ -831,5 +927,18 @@
     "enterFulltimeFlag": "Enter fulltime flag",
     "gender": "Gender",
     "enterGender": "Enter gender"
+  },
+  "generate_report": {
+    "report_name": "Report Name",
+    "recycling_point_record": "Recycling point record",
+    "Waste_ecords_daily_": "Waste records (daily)",
+    "recycling_plant_request_records": "Recycling plant request records",
+    "recycling_classification_processing": "Recycling classification and processing records",
+    "recycling_classification_statistics" : "Recycling classification statistics",
+    "recycling_point_establishment": "Recycling point establishment and operation services (first phase follow-up contract) photo records (monthly)",
+    "collection_point_establishment" : "Collection point establishment and operation services (first phase follow-up contract) Excel records (monthly)",
+    "download": "Download",
+    "start_date": "Start Date",
+    "end_date": "to"
   }
 }
