@@ -16,7 +16,6 @@ import React, {
   SetStateAction,
   SyntheticEvent,
   useEffect,
-  useRef,
   useState
 } from 'react'
 import { styles } from '../../constants/styles'
@@ -51,6 +50,7 @@ import i18n from '../../setups/i18n'
 import dayjs, { Dayjs } from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
+import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
 
 type props = {
   onClose: () => void
@@ -63,6 +63,11 @@ type props = {
 }
 type CombinedType = manuList[] | collectorList[]
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+const initialTime: dayjs.Dayjs = dayjs()
+
+const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
+  return pickupAtValue.format('HH:mm:ss')
+}
 
 const initValue = {
   id: -1,
@@ -78,7 +83,7 @@ const initValue = {
   status: 'CREATED',
   createdBy: loginId,
   updatedBy: loginId,
-  pickupAt: '',
+  pickupAt: '00:00:00',
   recycType: '',
   recycSubType: '',
   weight: 0
@@ -98,6 +103,12 @@ const CreateRecycleForm = ({
   const [updateRow, setUpdateRow] = useState<CreatePicoDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
+
+  //---set custom style each role---
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
+  const colorTheme: string = getThemeColorRole(role)
+  const customListTheme = getThemeCustomList(role)
+  //---end set custom style each role---
 
   const setDefRecyc = (picoDtl: CreatePicoDetail) => {
     const defRecyc: singleRecyclable = {
@@ -121,21 +132,6 @@ const CreateRecycleForm = ({
     }
   }, [editRowId])
 
-  // useEffect(() => {
-  //   if(updateRowId==null){
-  //     setDefaultRecyc(undefined)
-  //     formik.setValues(initValue)
-  //   }else{
-  //     const updateR = data.at(updateRowId)
-  //     if(updateR){
-  //       setDefaultRecyc({recycTypeId: updateR.recycType, recycSubTypeId: updateR.recycSubType})
-  //       setUpdateRow(updateR)
-  //     }
-
-  //   }
-  // }, [updateRowId]);
-  // const updateRow = data.find((row)=>row.picoDtlId === updateRowId);
-
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -148,8 +144,6 @@ const CreateRecycleForm = ({
   useEffect(() => {
     if (editRow) {
       // Set the form field values based on the editRow data
-
-      console.log(editRow)
 
       const index = data.indexOf(editRow)
 
@@ -176,7 +170,7 @@ const CreateRecycleForm = ({
   }, [editRow])
 
   useEffect(() => {
-    console.log('defaultRecyc: ', defaultRecyc)
+    // console.log('defaultRecyc: ', defaultRecyc)
   }, [defaultRecyc])
 
   const validateSchema = Yup.lazy((values) => {
@@ -187,15 +181,24 @@ const CreateRecycleForm = ({
       prevData = data
     }
 
-    console.log('prevData', prevData)
     return Yup.object().shape({
-      pickupAt: Yup.string().test(
-        'not-in-prev-data',
-        'Pickup time already exists in previous data',
-        function (value) {
-          return !prevData.some((item) => item.pickupAt === value)
-        }
-      ),
+      pickupAt: Yup.string()
+        .required('This pickupAt is required')
+        .test(
+          'invalid-date',
+          'Invalid pickup time, choose again the time',
+          function (value) {
+            return value !== 'Invalid Date'
+          }
+        )
+        .test(
+          'not-in-prev-data',
+          'Pickup time already exists in previous data',
+          function (value) {
+            return !prevData.some((item) => item.pickupAt === value)
+          }
+        ),
+
       senderName: Yup.string().required('This sendername is required'),
       senderAddr: Yup.string()
         .required('This senderAddr is required')
@@ -245,13 +248,12 @@ const CreateRecycleForm = ({
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
-      console.log(values)
+      //console.log(values)
       // alert(JSON.stringify(values, null, 2));
       if (isEditing) {
         //editing row
         //const {id, ...updateValue} = values
         const updatedData = data.map((row, id) => {
-          //console.log(id, values.id)
           return id === values.id ? values : row
         })
         setState(updatedData)
@@ -294,8 +296,13 @@ const CreateRecycleForm = ({
     }
   ]
 
-  const initialTime = '2024-02-10T09:00:00' // Example initial time string
-  const parsedDate = new Date(initialTime) // Parse the string into a Date object
+  const formatTimePickAt = (timeValue: string) => {
+    const times = timeValue.split(':')
+    return initialTime
+      .hour(Number(times[0]))
+      .minute(Number(times[1]))
+      .second(Number(times[2]))
+  }
 
   return (
     <>
@@ -318,7 +325,12 @@ const CreateRecycleForm = ({
                 <Box sx={{ marginLeft: 'auto' }}>
                   <Button
                     variant="outlined"
-                    sx={localstyles.button}
+                    sx={{
+                      ...localstyles.button,
+                      color: 'white',
+                      bgcolor: colorTheme,
+                      borderColor: colorTheme
+                    }}
                     type="submit"
                   >
                     {t('col.save')}
@@ -327,14 +339,18 @@ const CreateRecycleForm = ({
                     variant="outlined"
                     sx={{
                       ...localstyles.button,
-                      color: theme.palette.primary.main,
-                      bgcolor: 'white'
+                      color: colorTheme,
+                      bgcolor: 'white',
+                      borderColor: colorTheme
                     }}
                     onClick={() => onClose && onClose()}
                   >
                     {t('col.cancel')}
                   </Button>
-                  <IconButton sx={{ ml: '25px' }}>
+                  <IconButton
+                    sx={{ ml: '25px' }}
+                    onClick={() => onClose && onClose()}
+                  >
                     <KeyboardTabIcon sx={{ fontSize: '30px' }} />
                   </IconButton>
                 </Box>
@@ -347,16 +363,12 @@ const CreateRecycleForm = ({
                 >
                   <TimePicker
                     sx={{ width: '100%' }}
-                    value={
-                      formik.values.pickupAt ? formik.values.pickupAt : null
-                    }
+                    value={formatTimePickAt(formik.values.pickupAt)}
                     onChange={(value) => {
-                      if (value != null)
-                        formik.setFieldValue(
-                          'pickupAt',
-
-                          dateToLocalTime(new Date(value))
-                        )
+                      formik.setFieldValue(
+                        'pickupAt',
+                        value ? formattedTime(value) : ''
+                      )
                     }}
                   />
                 </CustomField>
@@ -374,6 +386,10 @@ const CreateRecycleForm = ({
                         'recycSubType',
                         values?.recycSubTypeId
                       )
+                    }}
+                    itemColor={{
+                      bgColor: customListTheme.bgColor,
+                      borderColor: customListTheme.border
                     }}
                     defaultRecycL={defaultRecyc}
                     key={formik.values.id}
@@ -417,7 +433,6 @@ const CreateRecycleForm = ({
                           newValue: string | null
                         ) => formik.setFieldValue(it.id, newValue)}
                         onInputChange={(event: any, newInputValue: string) => {
-                          console.log(newInputValue) // Log the input value
                           formik.setFieldValue(it.id, newInputValue) // Update the formik field value if needed
                         }}
                         value={it.value}
@@ -503,7 +518,6 @@ let localstyles = {
     width: '100px',
     height: '35px',
     p: 1,
-    bgcolor: theme.palette.primary.main,
     borderRadius: '18px',
     mr: '10px'
   },

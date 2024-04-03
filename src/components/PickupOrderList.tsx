@@ -7,10 +7,7 @@ import {
   IconButton,
   TextField
 } from '@mui/material'
-import { LEFT_ARROW_ICON, SEARCH_ICON } from '../themes/icons'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-
-import { ReactComponent as Delivery } from '../Delivery.svg'
+import { SEARCH_ICON } from '../themes/icons'
 import RightOverlayForm from '../components/RightOverlayForm'
 import {
   PickupOrder,
@@ -22,6 +19,8 @@ import { useTranslation } from 'react-i18next'
 import { useContainer } from 'unstated-next'
 import { getAllPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
 import { queryPickupOrder } from '../interfaces/pickupOrder'
+import { localStorgeKeyName } from '../constants/constant'
+import { getAllLogisticsPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
 interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
@@ -41,7 +40,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   const { t } = useTranslation()
   const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
   const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
-  const [pickupOrder,setPickupOrder] = useState<PickupOrder[]>();
+  const [pickupOrder, setPickupOrder] = useState<PickupOrder[]>()
   const [query, setQuery] = useState<queryPickupOrder>({
     picoId: '',
     effFromDate: '',
@@ -50,40 +49,47 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     recycType: '',
     receiverAddr: '',
     status: 0
-  });
-  
+  })
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
-    const initPickupOrderRequest = async () => {
-    const result = await getAllPickUpOrder(0, 10, query);
-    const data = result?.data.content;
-    console.log("pickup order content: ", data);
+  const initPickupOrderRequest = async () => {
+    let result = null
+    if (role != 'collectoradmin') {
+      result = await getAllLogisticsPickUpOrder(0 - 1, 50, query)
+    } else {
+      result = await getAllPickUpOrder(0 - 1, 50, query)
+    }
+    const data = result?.data.content
+    //console.log("pickup order content: ", data);
     if (data && data.length > 0) {
-      setPickupOrder(data);
-    }}
- 
-    useEffect(() => {
-      initPickupOrderRequest();
-    }, []);
+      setPickupOrder(data)
+    }
+  }
 
-    useEffect(() => {
-      const picoDetailList =
-      pickupOrder?.flatMap((item) =>
-        item?.pickupOrderDetail.map((detailPico) => ({
-          type: item.picoType,
-          picoId: item.picoId,
-          status: detailPico.status,
-          effFrmDate: item.effFrmDate,
-          effToDate: item.effToDate,
-          routine: `${item.routineType}, ${item.routine.join(', ')}`,
-          senderName: detailPico.senderName,
-          receiver: detailPico.receiverName,
-          pickupOrderDetail: detailPico
-        }))
-      )?.filter((picoDetail) => picoDetail.picoId !== picoId) ?? [];
-      setPicoList(picoDetailList)
-      setFilteredPico(picoDetailList)
-     
-    }, [drawerOpen]);
+  useEffect(() => {
+    initPickupOrderRequest()
+  }, [])
+
+  useEffect(() => {
+    const picoDetailList =
+      pickupOrder
+        ?.flatMap((item) =>
+          item?.pickupOrderDetail.map((detailPico) => ({
+            type: item.picoType,
+            picoId: item.picoId,
+            status: detailPico.status,
+            effFrmDate: item.effFrmDate,
+            effToDate: item.effToDate,
+            routine: `${item.routineType}, ${item.routine.join(', ')}`,
+            senderName: detailPico.senderName,
+            receiver: detailPico.receiverName,
+            pickupOrderDetail: detailPico
+          }))
+        )
+        ?.filter((picoDetail) => picoDetail.picoId !== picoId) ?? []
+    setPicoList(picoDetailList)
+    setFilteredPico(picoDetailList)
+  }, [drawerOpen])
 
   const handleSearch = (searchWord: string) => {
     if (searchWord != '') {
@@ -146,56 +152,57 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                   />
                 </div>
                 <Box>
-                  {filteredPico.map((item, index) => (
-                    (item.status != "CLOSED") ?
-                    <div
-                      key={index}
-                      onClick={() => {
-                        handleSelectedPicoId(
-                          item.pickupOrderDetail,
-                          item.picoId
-                        );
-                        console.log(item.status)}
-                      }
-                      className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4"
-                    >
-                      <div className="font-bold text-mini mb-2">
-                        {item.type}
+                  {filteredPico.map((item, index) =>
+                    item.status != 'CLOSED' ? (
+                      <div
+                        key={index}
+                        onClick={() => {
+                          handleSelectedPicoId(
+                            item.pickupOrderDetail,
+                            item.picoId
+                          )
+                        }}
+                        className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4"
+                      >
+                        <div className="font-bold text-mini mb-2">
+                          {item.type}
+                        </div>
+                        <div className="text-smi mb-2 text-[#717171]">
+                          {item.picoId}
+                        </div>
+                        <div className="date-type mb-2 flex items-center gap-2">
+                          <div className="text-smi bg-green-200 text-green-600 px-2 py-3 rounded-[50%]">
+                            {item.status}
+                          </div>
+                          <div className="text-smi text-[#717171]">
+                            {item.effFrmDate}
+                          </div>
+                          <div className="text-smi text-[#717171]">
+                            {t('pick_up_order.to')}
+                          </div>
+                          <div className="text-smi text-[#717171]">
+                            {item.effToDate}
+                          </div>
+                          <div className="text-smi text-[#717171]">
+                            {item.routine}
+                          </div>
+                        </div>
+                        <div className="mb- flex items-center gap-2">
+                          <div>
+                            <img src="../Delivery.svg" alt="" />
+                          </div>
+                          <div className="text-xs text-[#717171]">
+                            {item.senderName}
+                          </div>
+                          <div className="text-xs text-[#717171]">
+                            {item.receiver}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-smi mb-2 text-[#717171]">
-                        {item.picoId}
-                      </div>
-                      <div className="date-type mb-2 flex items-center gap-2">
-                        <div className="text-smi bg-green-200 text-green-600 px-2 py-3 rounded-[50%]">
-                          {item.status}
-                        </div>
-                        <div className="text-smi text-[#717171]">
-                          {item.effFrmDate}
-                        </div>
-                        <div className="text-smi text-[#717171]">
-                          {t('pick_up_order.to')}
-                        </div>
-                        <div className="text-smi text-[#717171]">
-                          {item.effToDate}
-                        </div>
-                        <div className="text-smi text-[#717171]">
-                          {item.routine}
-                        </div>
-                      </div>
-                      <div className="mb- flex items-center gap-2">
-                        <div>
-                          <img src="../Delivery.svg" alt="" />
-                        </div>
-                        <div className="text-xs text-[#717171]">
-                          {item.senderName}
-                        </div>
-                        <div className="text-xs text-[#717171]">
-                          {item.receiver}
-                        </div>
-                      </div>
-                    </div>
-                    : <></>
-                  ))}
+                    ) : (
+                      <></>
+                    )
+                  )}
                 </Box>
               </Box>
             </div>

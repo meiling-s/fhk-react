@@ -1,4 +1,25 @@
 {
+  "common": {
+    "save": "儲存",
+    "delete": "刪除",
+    "confirm": "確認",
+    "cancel": "取消",
+    "saveSuccessfully": "保存成功",
+    "saveFailed": "保存失敗",
+    "editSuccessfully": "編輯成功",
+    "editFailed": "編輯失敗",
+    "deletedSuccessfully": "刪除成功",
+    "deleteFailed": "刪除失敗",
+    "enterName": "請輸入名稱",
+    "enterText": "請輸入文字",
+    "description": "簡介",
+    "remark": "備註",
+    "traditionalChineseName": "繁體中文名稱",
+    "simplifiedChineseName": "簡體中文名稱",
+    "englishName": "英文名稱",
+    "yes": "是",
+    "no": "否"
+  },
   "col": {
     "createCP": "建立回收點",
     "editCP": "修改回收點",
@@ -31,7 +52,7 @@
     "serviceType": "服務種類",
     "basic": "基本",
     "additional": "額外",
-    "orderService": "其他服務",
+    "other": "其他服務",
     "create": "建立",
     "save": "儲存",
     "cancel": "取消",
@@ -50,7 +71,8 @@
       "timeCantDuplicate": "時間不能重複",
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
-      "minMoreOneImgUploded": "至少需要上傳2張車輛圖片"
+      "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
+      "startDateBehindEndDate": "不允許開始時間晚於結束時間"
     }
   },
   "component": {
@@ -92,11 +114,14 @@
   "top_menu": {
     "general_settings": "一般設定",
     "packaging_unit": "包裝單位",
-    "workshop": "倉庫",
+    "workshop": "工場",
+    "vehicles": "車輛",
     "company": "公司",
+    "waste_disposal": "廢棄點",
     "staff_positions": "員工職位",
     "denial_reason": "拒絕原因",
-    "add_new": "新增"
+    "add_new": "新增",
+    "add_new_vehicle": "新增車輛"
   },
   "settings_page": {
     "title": "設定"
@@ -236,7 +261,7 @@
     "closed": "已取消",
     "outstanding": "已逾期",
     "suspend": "已暫停",
-    "DENY": "不接受",
+    "deny": "不接受",
     "success": "成功",
     "failed": "失敗",
     "enable": "啟用",
@@ -440,6 +465,7 @@
   },
   "report": {
     "report": "報表",
+    "downloadArea": "下載區",
     "basicServicePictures": "基本服務圖片",
     "additionalServicePictures": "額外服務圖片",
     "otherPictures": "其他圖片",
@@ -558,6 +584,7 @@
     "employeeChineseCn": "員工中文簡體中文姓名",
     "position": "職位",
     "loginName": "登錄名",
+    "enterLoginName": "Enter Login Name",
     "contactNumber": "聯繫電話",
     "lastLogin": "最後登錄",
     "email": "電子郵件",
@@ -654,26 +681,146 @@
     "successDeleted": "删除成功",
     "errorDeleted": "错误删除"
   },
+  "job_order": {
+    "enquiry_job_order": "工作運單",
+    "table": {
+      "created_datetime": "建立日期",
+      "jo_id": "工作運單編號",
+      "pico_id": "回收運單編號",
+      "driver_id": "司機名稱",
+      "plate_no": "車牌號碼",
+      "sender_company": "寄件公司",
+      "receiver_company": "收件公司",
+      "status": "狀態",
+      "operation": "操作",
+      "approve": "核準"
+    },
+    "filter": {
+      "search": "搜索",
+      "driver": "司机",
+      "status": "狀態"
+    },
+    "item": {
+      "detail": "工作運單",
+      "shipping_info": "運輸資料",
+      "date_time": "建立日期及時間",
+      "reference_po_number": "參考運單編號",
+      "sender_name": "寄件公司",
+      "rec_loc_info": "回收地點資料"
+    },
+    "confirm_approve_title": "確認核準吗？",
+    "confirm_approve": "确认核準",
+    "cancel": "取消",
+    "approved_success": "核準成功"
+  },
+  "jobOrder": {
+    "job_order_menu": "工作運單",
+    "create_work_waybill": "建立工作運單",
+    "shipping_information": "運輸資料",
+    "corresponding_waybill": "對應運單",
+    "shipping_validity_date_from": "運輸有效日期由",
+    "shipping_validity_date_to": "至",
+    "shipping_company_name": "寄件公司名稱",
+    "recycling_location_information": "回收地點資料",
+    "main_category": "主類別",
+    "subcategory": "次類別",
+    "estimated_shipping_time": "預計運送時間",
+    "weight": "重量",
+    "shipping_and_receiving_companies": "寄件及收件公司",
+    "delivery_and_arrival_locations": "送出及到達地點",
+    "setup_time": "建立時間",
+    "finish": "完成",
+    "cancel": "取消",
+    "driver": "司機",
+    "plat_number": "車牌號碼",
+    "assign_driver": "指派司機"
+  },
   "notification": {
     "notification_menu": "通知範本",
     "notification_title": "範本",
-    "menu_recycling_materials_and_waybills" : {
-      "tab_name" : "回收物及運單",
-      "name" : "名稱",
-      "type" : "種類",
-      "title" :  "標題",
-      "language" : "語言"
+    "menu_recycling_materials_and_waybills": {
+      "tab_name": "回收物及運單",
+      "name": "名稱",
+      "type": "種類",
+      "title": "標題",
+      "language": "語言"
     },
     "menu_staff": {
-      "tab_name" : "員工",
-      "name" : "名稱",
-      "type" : "種類",
-      "title" :  "標題",
-      "language" : "語言"
+      "tab_name": "員工",
+      "name": "名稱",
+      "type": "種類",
+      "title": "標題",
+      "language": "語言"
     },
-    "modify_template" : {
-      "header" : "修改範本"
+    "modify_template": {
+      "header": "修改範本",
+      "app": {
+        "Recycling_delivery_request": "回收物送入請求",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      },
+      "sms": {
+        "Recycling_delivery_request": "回收物已送到工場",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      },
+      "email": {
+        "Recycling_delivery_request": "登記連結",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      },
+      "broadcast": {
+        "Recycling_delivery_request": "系統資訊",
+        "type": "種類",
+        "title": "標題",
+        "language": "語言",
+        "start_valid_date": "有效日期由",
+        "end_valid_date": "至",
+        "content": "內容",
+        "variables": "可用变量",
+        "button_submit": "储存"
+      }
     }
+  },
+  "denial_reason": {
+    "reason_name_tchi": "原因 (繁體中文)",
+    "reason_name_schi": "原因 (簡體中文)",
+    "reason_name_eng": "原因 (英文)",
+    "corresponding_functions": "對應功能",
+    "description": "簡介",
+    "remark": "備註",
+    "enter_name": "請輸入名稱",
+    "select_function": "請選擇功能",
+    "enter_text": "請輸入文字"
+  },
+  "staff_title": {
+    "staff_title_tchi": "繁體中文名稱",
+    "staff_title_schi": "簡體中文名稱",
+    "staff_title_eng": "英文名稱",
+    "duty": "職責",
+    "description": "簡介",
+    "remark": "備註",
+    "enter_duty": "請輸入職責"
+  },
+  "companyManagement": {
+    "collectorlist": "回收公司",
+    "logisticlist": "物流公司",
+    "manulist": "回收廠",
+    "customerlist": "顧客公司",
+    "brNo": "商業登記號碼",
+    "enterBrNo": "請輸入商業登記號碼"
   },
   "driver": {
     "sideBarName": "車隊",
@@ -729,6 +876,64 @@
           "deleteFailMsg": "刪除司機失敗"
         }
       }
+    },
+    "vehicleMenu": {
+      "vehicle_number": "車輛號碼",
+      "license_plate_number": "車牌號",
+      "vehicle_type": "車輛類型",
+      "vehicle_cargo_capacity": "車輛載貨量",
+      "picture": "圖片",
+      "license_plate_number_placeholder": "請輸入車牌號",
+      "vehicle_type_placeholder": "請輸入車輛類型",
+      "vehicle_cargo_capacity_placeholder": "請輸入體重"
     }
+  },
+  "general_settings": {
+    "new": "新的",
+    "currency": "貨幣",
+    "contracts": "合約",
+    "name": "名稱",
+    "reference_number": "參考編號",
+    "state": "狀態",
+    "start_date": "開始日期",
+    "end_date": "結束日期",
+    "remark": "評論",
+    "whether": "是否EPD",
+    "default_currency": "預設貨幣",
+    "activate": "啟用",
+    "deactive": "停用",
+    "true": "真的",
+    "false": "錯誤的"
+  },
+  "packaging_unit": {
+    "packaging_unit": "包裝單位",
+    "new": "新的",
+    "traditional_chinese_name": "繁體中文名字",
+    "simplified_chinese_name": "简体中文名称",
+    "english_name": "English Name",
+    "introduction": "介紹",
+    "remark": "評論"
+  },
+  "staffEnquiry": {
+    "title": "員工查詢",
+    "addNewStaffEnquiry": "新增員工查詢",
+    "contractNo": "合約號碼",
+    "fulltimeFlag": "全職旗幟",
+    "enterFulltimeFlag": "輸入全職標誌",
+    "gender": "性別",
+    "enterGender": "輸入性別"
+  },
+  "generate_report": {
+    "report_name": "報表名稱",
+    "recycling_point_record": "回收點記錄",
+    "Waste_ecords_daily_": "廢棄物記錄（每日)",
+    "recycling_plant_request_records": "回收廠的回收物請求記錄",
+    "recycling_classification_processing": "回收物分類及處理記錄",
+    "recycling_classification_statistics" : "回收物分類統計數據",
+    "recycling_point_establishment": "回收點設立及營運服務（第一期後續合約）照片記錄（每月)",
+    "collection_point_establishment" : "回收點設立及營運服務（第一期後續合約）Excel 記錄（每月)",
+    "download": "下載",
+    "start_date": "日期由",
+    "end_date": "至"
   }
 }

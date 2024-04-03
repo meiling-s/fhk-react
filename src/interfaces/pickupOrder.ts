@@ -45,7 +45,8 @@ export interface PickupOrder {
     contractNo:        string;
     createdBy:         string;
     updatedBy:         string;
-    createdAt:         string
+    createdAt:         string;
+    refPicoId:         string;
     pickupOrderDetail: PickupOrderDetail[];
 }
 
@@ -150,6 +151,7 @@ export interface Row {
     rejectedBy:    string;
     contractNo:    string;
     updatedBy:     string;
+    refPicoId:     string ;
     createPicoDetail: CreatePicoDetail[]
     
 }
@@ -187,3 +189,67 @@ export type queryPickupOrder = {
     receiverAddr: string;
     status: number
   }
+
+export interface OrderJobHeader {
+    picoId: string;
+    receiverName: string;
+    effFrmDate: string;
+    effToDate: string;
+    setupDate: string;
+}
+
+export interface AssignJobDriver {
+    joId: number,
+    picoId: string;
+    picoDtlId: number;
+    plateNo: string;
+    senderId: string;
+    senderName: string;
+    senderAddr: string
+    senderAddrGps: number[];
+    receiverId: string;
+    receiverName: string;
+    receiverAddr: string;
+    receiverAddrGps: number[];
+    recycType: string;
+    recycSubType: string;
+    weight: number;
+    vehicleId: number;
+    driverId: string;
+    contractNo: string;
+    pickupAt: string;
+    createdBy: string;
+    effFrmDate:  string,
+    effToDate:  string,
+    status: string  ,
+    updatedBy: string
+}
+
+export interface AssignJobField {
+    plateNo: string;
+    driverId: string;
+    vehicleId: number
+}
+
+export interface RejectJobDriver {
+    status: string;
+    reason: string[];
+    updatedBy: string;
+}    
+export interface GetDriver {
+    page: number;
+    size: number;
+    sort: string[];
+}
+
+export interface DriverList {
+    driverId: string;
+    driverNameEng: string
+    driverNameSchi: string
+    driverNameTchi: string
+}
+
+export interface VehicleList {
+    vehicleId: number;
+    plateNo: string
+}

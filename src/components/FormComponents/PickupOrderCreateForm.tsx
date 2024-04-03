@@ -17,7 +17,6 @@ import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { styles } from '../../constants/styles'
 import CustomField from './CustomField'
 import CustomSwitch from './CustomSwitch'
-import StatusCard from '../StatusCard'
 import CustomDatePicker2 from './CustomDatePicker2'
 import RoutineSelect from '../SpecializeComponents/RoutineSelect'
 import CustomTextField from './CustomTextField'
@@ -55,9 +54,8 @@ import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
-import { divIcon } from 'leaflet'
-
-
+import { localStorgeKeyName } from '../../constants/constant'
+import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
 
 type DeleteModalProps = {
   open: boolean
@@ -72,7 +70,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   onClose,
   onDelete
 }) => {
-  const { t } = useTranslation()  
+  const { t } = useTranslation()
   return (
     <Modal
       open={open}
@@ -82,7 +80,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
     >
       <Box sx={localstyles.modal}>
         <Stack spacing={2}>
-          <Box  sx={{ paddingX: 3, paddingTop: 3 }}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
             <Typography
               id="modal-modal-title"
               variant="h6"
@@ -117,7 +115,6 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   )
 }
 
-
 const PickupOrderCreateForm = ({
   selectedPo,
   title,
@@ -131,56 +128,123 @@ const PickupOrderCreateForm = ({
   formik: any
   setState: (val: CreatePicoDetail[]) => void
   state: CreatePicoDetail[]
-  editMode:boolean
+  editMode: boolean
 }) => {
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [openDelete , setOpenDelete] = useState<boolean>(false);
-  const [editRowId, setEditRowId] = useState<number | null>(null);
-  const [updateRowId,setUpdateRowId] =  useState<number | null>(null);
-  const [id, setId] = useState<number>(0);
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
+  const [editRowId, setEditRowId] = useState<number | null>(null)
+  const [updateRowId, setUpdateRowId] = useState<number | null>(null)
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
+  const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
-  const [isEditing,setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType, recycType} =
-    useContainer(CommonTypeContainer);
-  const navigate = useNavigate();
-  const unexpiredContracts = contractType?.filter(contract =>{
-    const currentDate = new Date();
-    const contractDate = new Date(contract.contractToDate)
-    return contractDate>currentDate
-  })
-  const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(null)
-  
- 
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+
+  const {
+    logisticList,
+    logisticAdminList,
+    contractType,
+    contractLogistic,
+    vehicleType,
+    recycType
+  } = useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
+
+  console.log('logisticAdminList', logisticAdminList)
+
+  const logisticCompany =
+    role == 'collectoradmin' ? logisticList : logisticAdminList
+  console.log('logisticCompany', logisticList, logisticAdminList)
+  const contractRole =
+    role == 'collectoradmin' ? contractType : contractLogistic
+  const unexpiredContracts = contractRole
+    ? contractRole?.filter((contract) => {
+        const currentDate = new Date()
+        const contractDate = new Date(contract.contractToDate)
+        return contractDate > currentDate
+      })
+    : []
+  const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
+    null
+  )
+
+  // set custom style each role
+  const colorTheme: string = getThemeColorRole(role)
+  const customListTheme = getThemeCustomList(role)
+
+  const buttonFilledCustom = {
+    borderRadius: '40px',
+    borderColor: '#7CE495',
+    backgroundColor: colorTheme,
+    color: 'white',
+    fontWeight: 'bold',
+    transition: '0.3s',
+    '&.MuiButton-root:hover': {
+      backgroundColor: colorTheme,
+      borderColor: '#D0DFC2',
+      boxShadow: '0 0 4px rgba(0, 0, 0, 0.3)'
+    }
+  }
+  const buttonOutlinedCustom = {
+    borderRadius: '40px',
+    border: 1,
+    borderColor: colorTheme,
+    backgroundColor: 'white',
+    color: colorTheme,
+    fontWeight: 'bold',
+    '&.MuiButton-root:hover': {
+      bgcolor: '#F4F4F4'
+    },
+    width: 'max-content'
+  }
+
+  const endAdornmentIcon = {
+    fontSize: 25,
+    color: colorTheme
+  }
+
+  const picoIdButton = {
+    flexDirection: 'column',
+    borderRadius: '8px',
+    width: '400px',
+    padding: '32px',
+    border: 1,
+    borderColor: colorTheme,
+    backgroundColor: 'white',
+    color: 'black',
+    fontWeight: 'bold',
+    '&.MuiButton-root:hover': {
+      bgcolor: '#F4F4F4'
+    }
+  }
+  //-- end custom style --
+
   const handleCloses = () => {
-    setIsEditing(false);
-    setEditRowId(null);
-    setUpdateRowId(null);
-    setOpenModal(false);
-  };
-   
-  const handleEditRow = (id:number) => {
-      console.log('hello'+id)
-      setIsEditing(true)
-      setEditRowId(id)
-      setOpenModal(true)
-  };
- 
+    setIsEditing(false)
+    setEditRowId(null)
+    setUpdateRowId(null)
+    setOpenModal(false)
+  }
+
+  const handleEditRow = (id: number) => {
+    setIsEditing(true)
+    setEditRowId(id)
+    setOpenModal(true)
+  }
+
   const handleDeleteRow = (id: any) => {
-    
-    var updateDeleteRow = state.filter((row,index)=>index!=id)
-    updateDeleteRow = updateDeleteRow.map((picoDtl,index) => {    //reorder id
+    var updateDeleteRow = state.filter((row, index) => index != id)
+    updateDeleteRow = updateDeleteRow.map((picoDtl, index) => {
       picoDtl.id = index
       return picoDtl
     })
-    console.log("deleting: ",id,state,updateDeleteRow)
+    //console.log('deleting: ', id, state, updateDeleteRow)
     setState(updateDeleteRow)
-  };
+  }
 
-  // console.log('yo' + JSON.stringify(state))
   const createdDate = dayjs(new Date()).format(format.dateFormat1)
 
   const handleHeaderOnClick = () => {
-    console.log('Header click')
+    //console.log('Header click')
     navigate(-1) //goback to last page
   }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
@@ -217,25 +281,25 @@ const PickupOrderCreateForm = ({
       return carType
     }
   }
-  
+
   const getReason = () => {
     const reasonList = [
       {
-        id : '1',
-        reasonEn : "Broken Car",
-        reasonSchi: "坏车",
-        reasonTchi : "壞車"
+        id: '1',
+        reasonEn: 'Broken Car',
+        reasonSchi: '坏车',
+        reasonTchi: '壞車'
       },
       {
-        id : '2',
-        reasonEn : "Surplus of Goods",
-        reasonSchi: "货物过剩",
-        reasonTchi : "貨物過剩"
+        id: '2',
+        reasonEn: 'Surplus of Goods',
+        reasonSchi: '货物过剩',
+        reasonTchi: '貨物過剩'
       }
     ]
     const reasons: il_item[] = []
     reasonList.forEach((item) => {
-      var name = ""
+      var name = ''
       switch (i18n.language) {
         case 'enus':
           name = item.reasonEn
@@ -255,7 +319,6 @@ const PickupOrderCreateForm = ({
         name: name
       }
       reasons.push(reasonItem)
-
     })
     return reasons
   }
@@ -264,8 +327,6 @@ const PickupOrderCreateForm = ({
     handleDeleteRow(id)
     setOpenDelete(false)
   }
-
-
 
   const columns: GridColDef[] = [
     {
@@ -278,62 +339,65 @@ const PickupOrderCreateForm = ({
       headerName: t('pick_up_order.detail.main_category'),
       width: 150,
       editable: true,
-      valueGetter: ({ row }) =>{
-        const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
-        if(matchingRecycType){
-          var name = "";
-          switch(i18n.language){
-              case "enus":
-                  name = matchingRecycType.recyclableNameEng;
-                  break;
-              case "zhch":
-                  name = matchingRecycType.recyclableNameSchi;
-                  break;
-              case "zhhk":
-                  name = matchingRecycType.recyclableNameTchi;
-                  break;
-              default:
-                  name = matchingRecycType.recyclableNameTchi;        //default fallback language is zhhk
-                  break;
+      valueGetter: ({ row }) => {
+        const matchingRecycType = recycType?.find(
+          (item) => item.recycTypeId === row.recycType
+        )
+        if (matchingRecycType) {
+          var name = ''
+          switch (i18n.language) {
+            case 'enus':
+              name = matchingRecycType.recyclableNameEng
+              break
+            case 'zhch':
+              name = matchingRecycType.recyclableNameSchi
+              break
+            case 'zhhk':
+              name = matchingRecycType.recyclableNameTchi
+              break
+            default:
+              name = matchingRecycType.recyclableNameTchi //default fallback language is zhhk
+              break
           }
           return name
         }
-    }
-  },
+      }
+    },
     {
       field: 'recycSubType',
       headerName: t('pick_up_order.detail.subcategory'),
       type: 'string',
       width: 150,
       editable: true,
-      valueGetter: ({ row }) =>{
-        const matchingRecycType = recycType?.find(item => item.recycTypeId === row.recycType);
-        if(matchingRecycType){
+      valueGetter: ({ row }) => {
+        const matchingRecycType = recycType?.find(
+          (item) => item.recycTypeId === row.recycType
+        )
+        if (matchingRecycType) {
           const matchrecycSubType = matchingRecycType.recycSubType?.find(
             (subtype) => subtype.recycSubTypeId === row.recycSubType
           )
-          if(matchrecycSubType){
-            var subName = "";
-            switch(i18n.language){
-                case "enus":
-                    subName = matchrecycSubType?.recyclableNameEng ?? "";
-                    break;
-                case "zhch":
-                    subName = matchrecycSubType?.recyclableNameSchi ?? "";
-                    break;
-                case "zhhk":
-                    subName = matchrecycSubType?.recyclableNameTchi ?? "";
-                    break;
-                default:
-                    subName = matchrecycSubType?.recyclableNameTchi ?? "";       //default fallback language is zhhk
-                    break;
+          if (matchrecycSubType) {
+            var subName = ''
+            switch (i18n.language) {
+              case 'enus':
+                subName = matchrecycSubType?.recyclableNameEng ?? ''
+                break
+              case 'zhch':
+                subName = matchrecycSubType?.recyclableNameSchi ?? ''
+                break
+              case 'zhhk':
+                subName = matchrecycSubType?.recyclableNameTchi ?? ''
+                break
+              default:
+                subName = matchrecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+                break
             }
 
-          return subName
+            return subName
           }
-  
         }
-    }
+      }
     },
     {
       field: 'weight',
@@ -388,7 +452,12 @@ const PickupOrderCreateForm = ({
         // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
         //   <DELETE_OUTLINED_ICON />
         // </IconButton>
-        <IconButton onClick={() =>{ setOpenDelete(true); setRecycbleLocId(params.row)}}>
+        <IconButton
+          onClick={() => {
+            setOpenDelete(true)
+            setRecycbleLocId(params.row)
+          }}
+        >
           <DELETE_OUTLINED_ICON />
         </IconButton>
       )
@@ -406,34 +475,15 @@ const PickupOrderCreateForm = ({
     picoId: string
   ) => {
     setPicoRefId(picoId)
-    // const pickupDetails: CreatePicoDetail = {
-    //   id: picodetail.picoDtlId,
-    //   picoHisId: picoRefId,
-    //   senderId: picodetail.senderId,
-    //   senderName: picodetail.senderName,
-    //   senderAddr: picodetail.senderAddr,
-    //   senderAddrGps: [11, 12],
-    //   receiverId: picodetail.receiverId,
-    //   receiverName: picodetail.receiverName,
-    //   receiverAddr: picodetail.receiverAddr,
-    //   receiverAddrGps: [11, 12],
-    //   status: 'CREATED',
-    //   createdBy: 'ADMIN',
-    //   updatedBy: 'ADMIN',
-    //   pickupAt: picodetail.pickupAt,
-    //   recycType: picodetail.recycType,
-    //   recycSubType: picodetail.recycSubType,
-    //   weight: picodetail.weight
-    // }
-    // setState([...state, pickupDetails])
+    formik.setFieldValue('refPicoId', picoId)
     setOpenPico(false)
   }
 
   const resetPicoId = () => {
-    setOpenPico(true) 
+    setOpenPico(true)
     setPicoRefId('')
   }
-  
+
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
@@ -463,13 +513,13 @@ const PickupOrderCreateForm = ({
                 </Typography>
               </Grid>
               {selectedPo && (
-                <Grid item> 
+                <Grid item>
                   <Grid item>
-                  <CustomField label={t('pick_up_order.table.pico_id')}>
-                    <Typography sx={styles.header2}>
-                      {selectedPo.picoId}
-                    </Typography>
-                  </CustomField>
+                    <CustomField label={t('pick_up_order.table.pico_id')}>
+                      <Typography sx={styles.header2}>
+                        {selectedPo.picoId}
+                      </Typography>
+                    </CustomField>
                   </Grid>
                 </Grid>
               )}
@@ -507,6 +557,7 @@ const PickupOrderCreateForm = ({
                   }}
                   defaultStartDate={selectedPo?.effFrmDate}
                   defaultEndDate={selectedPo?.effToDate}
+                  iconColor={colorTheme}
                 />
               </Grid>
               {formik.values.picoType == 'ROUTINE' && (
@@ -517,7 +568,6 @@ const PickupOrderCreateForm = ({
                 >
                   <PicoRoutineSelect
                     setRoutine={(values) => {
-                      console.log('routine' + JSON.stringify(values))
                       formik.setFieldValue('routineType', values.routineType)
                       formik.setFieldValue('routine', values.routineContent)
                     }}
@@ -525,6 +575,11 @@ const PickupOrderCreateForm = ({
                       routineType: selectedPo?.routineType ?? 'daily',
                       routineContent: selectedPo?.routine ?? []
                     }}
+                    itemColor={{
+                      bgColor: customListTheme.bgColor,
+                      borderColor: customListTheme.border
+                    }}
+                    roleColor={colorTheme}
                   />
                 </CustomField>
               )}
@@ -537,15 +592,15 @@ const PickupOrderCreateForm = ({
                   <CustomAutoComplete
                     placeholder={t('pick_up_order.enter_company_name')}
                     option={
-                      logisticList?.map((option) => option.logisticNameTchi) ??
-                      []
+                      logisticCompany?.map(
+                        (option) => option.logisticNameTchi
+                      ) ?? []
                     }
                     sx={{ width: '400px' }}
                     onChange={(_: SyntheticEvent, newValue: string | null) =>
                       formik.setFieldValue('logisticName', newValue)
                     }
                     onInputChange={(event: any, newInputValue: string) => {
-                      console.log(newInputValue) // Log the input value
                       formik.setFieldValue('logisticName', newInputValue) // Update the formik field value if needed
                     }}
                     value={formik.values.logisticName}
@@ -572,6 +627,10 @@ const PickupOrderCreateForm = ({
                       formik.errors.vehicleTypeId &&
                       formik.touched.vehicleTypeId
                     }
+                    itemColor={{
+                      bgColor: customListTheme.bgColor,
+                      borderColor: customListTheme.border
+                    }}
                   />
                 </CustomField>
               </Grid>
@@ -605,71 +664,35 @@ const PickupOrderCreateForm = ({
               {formik.values.picoType == 'ROUTINE' && (
                 <Grid item>
                   <Box>
-                    {/* <CustomField
-                      label={t('pick_up_order.routine.contract_number')}
-                      mandatory
-                    >
-                      <CustomAutoComplete
-                        placeholder={t('pick_up_order.routine.enter_contract')}
-                        option={
-                          unexpiredContracts?.map((option) => option.contractNo) ?? []
+                    <CustomField label={t('col.contractNo')}>
+                      <Autocomplete
+                        disablePortal
+                        id="contractNo"
+                        sx={{ width: 400 }}
+                        defaultValue={formik.values.contractNo}
+                        options={
+                          unexpiredContracts?.map(
+                            (contract) => contract.contractNo
+                          ) || []
                         }
-                        sx={{ width: '400px' }}
-                        onChange={(
-                          _: SyntheticEvent,
-                          newValue: string | null
-                        ) =>{
-                          if (newValue) {
-                            // Check if newValue exists in the options
-                            const isValidOption = unexpiredContracts?.some(
-                              (option) => option.contractNo === newValue
-                            );
-                            if (isValidOption) {
-                              formik.setFieldValue('contractNo', newValue);
-                            } else {
-                              formik.setFieldValue('contractNo', "");
-                              // Handle invalid input, e.g., display a message
-                              console.log('Invalid contract number:', newValue);
-                            }
+                        onChange={(event, value) => {
+                          if (value) {
+                            formik.setFieldValue('contractNo', value)
                           }
-                          else {
-                            // If newValue is null, keep the field value empty
-                            formik.setFieldValue('contractNo', '');
-                          }
-                        }
-                        }
-                        value={formik.values.contractNo}
-                        error={
-                          formik.errors.contractNo && formik.touched.contractNo
-                        }
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={t('col.enterNo')}
+                            sx={[styles.textField, { width: 400 }]}
+                            InputProps={{
+                              ...params.InputProps,
+                              sx: styles.inputProps
+                            }}
+                          />
+                        )}
                       />
-                    </CustomField> */}
-                     <CustomField label={t('col.contractNo')}>
-                        <Autocomplete
-                          disablePortal
-                          id="contractNo"
-                          sx={{width: 400}}
-                          defaultValue={formik.values.contractNo}
-                          options={unexpiredContracts?.map((contract) => contract.contractNo) || []}
-                          onChange={(event, value) => {
-                            console.log(value)
-                            if (value) {
-                              formik.setFieldValue('contractNo', value);
-                            }
-                          }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              placeholder={t('col.enterNo')}
-                              sx={[styles.textField, { width: 400 }]}
-                              InputProps={{
-                                ...params.InputProps,
-                                sx: styles.inputProps
-                              }}
-                            />
-                          )}
-                        />
-                      </CustomField>
+                    </CustomField>
                   </Box>
                 </Grid>
               )}
@@ -681,16 +704,16 @@ const PickupOrderCreateForm = ({
                   >
                     <CustomItemList
                       items={getReason() || []}
-                      singleSelect={(values) =>{
-                        console.log("values",values);
+                      singleSelect={(values) => {
                         formik.setFieldValue('reason', values)
-                      }
-                      }
+                      }}
                       value={formik.values.reason}
                       defaultSelected={selectedPo?.reason}
-                      error={
-                        formik.errors.reason && formik.touched.reason
-                      }
+                      error={formik.errors.reason && formik.touched.reason}
+                      itemColor={{
+                        bgColor: customListTheme.bgColor,
+                        borderColor: customListTheme.border
+                      }}
                     />
                   </CustomField>
                 </Grid>
@@ -698,26 +721,29 @@ const PickupOrderCreateForm = ({
               {formik.values.picoType === 'AD_HOC' && (
                 <>
                   <Grid item>
-                  <Typography sx={[styles.header3, { marginBottom: 1 }]}>
-                    {t('pick_up_order.adhoc.po_number')}
-                  </Typography>
-                    {picoRefId !== '' ? (
+                    <Typography sx={[styles.header3, { marginBottom: 1 }]}>
+                      {t('pick_up_order.adhoc.po_number')}
+                    </Typography>
+                    {formik.values.refPicoId !== '' &&
+                    formik.values.refPicoId ? (
                       <div className="flex items-center justify-between w-[390px]">
-                        <div className="font-bold text-mini">{picoRefId}</div>
-                        <div className="text-mini text-green-400 cursor-pointer" onClick={resetPicoId}>
+                        <div className="font-bold text-mini">
+                          {formik.values.refPicoId}
+                        </div>
+                        <div
+                          className={`text-mini cursor-pointer text-[${colorTheme}]`}
+                          onClick={resetPicoId}
+                        >
                           {t('pick_up_order.change')}
                         </div>
                       </div>
                     ) : (
                       <div>
-                       
                         <Button
-                          sx={[localstyles.picoIdButton]}
+                          sx={[picoIdButton]}
                           onClick={() => setOpenPico(true)}
                         >
-                          <AddCircleIcon
-                            sx={{ ...styles.endAdornmentIcon, pr: 1 }}
-                          />
+                          <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
                           {t('pick_up_order.choose')}
                         </Button>
                       </div>
@@ -733,7 +759,11 @@ const PickupOrderCreateForm = ({
               <Grid item>
                 <CustomField label={''}>
                   <DataGrid
-                    rows={editMode?state.map((row,index) => ({ ...row, id: index })) : state}
+                    rows={
+                      editMode
+                        ? state.map((row, index) => ({ ...row, id: index }))
+                        : state
+                    }
                     hideFooter
                     columns={columns}
                     disableRowSelectionOnClick
@@ -782,9 +812,7 @@ const PickupOrderCreateForm = ({
                   <Button
                     variant="outlined"
                     startIcon={
-                      <AddCircleIcon
-                        sx={{ ...styles.endAdornmentIcon, pr: 1 }}
-                      />
+                      <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
                     }
                     onClick={() => {
                       setIsEditing(false)
@@ -794,7 +822,7 @@ const PickupOrderCreateForm = ({
                       height: '40px',
                       width: '100%',
                       mt: '20px',
-                      borderColor: theme.palette.primary.main,
+                      borderColor: colorTheme,
                       color: 'black',
                       borderRadius: '10px'
                     }}
@@ -811,12 +839,12 @@ const PickupOrderCreateForm = ({
               <Grid item>
                 <Button
                   type="submit"
-                  sx={[styles.buttonFilledGreen, localstyles.localButton]}
+                  sx={[buttonFilledCustom, localstyles.localButton]}
                 >
                   {t('pick_up_order.finish')}
                 </Button>
                 <Button
-                  sx={[styles.buttonOutlinedGreen, localstyles.localButton]}
+                  sx={[buttonOutlinedCustom, localstyles.localButton]}
                   onClick={handleHeaderOnClick}
                 >
                   {t('pick_up_order.cancel')}
@@ -838,7 +866,8 @@ const PickupOrderCreateForm = ({
               onClose={() => {
                 setOpenDelete(false)
               }}
-              onDelete={onDeleteModal} />
+              onDelete={onDeleteModal}
+            />
           </LocalizationProvider>
         </Box>
       </form>
@@ -852,20 +881,6 @@ let localstyles = {
     fontSize: 18,
     mr: 3
   },
-  picoIdButton: {
-    flexDirection: 'column',
-    borderRadius: '8px',
-    width: '400px',
-    padding: '32px',
-    border: 1,
-    borderColor: '#79ca25',
-    backgroundColor: 'white',
-    color: 'black',
-    fontWeight: 'bold',
-    '&.MuiButton-root:hover': {
-      bgcolor: '#F4F4F4'
-    }
-  },
   modal: {
     position: 'absolute',
     top: '50%',
@@ -876,7 +891,7 @@ let localstyles = {
     backgroundColor: 'white',
     border: 'none',
     borderRadius: 5
-  },
+  }
 }
 
 export default PickupOrderCreateForm

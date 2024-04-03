@@ -58,7 +58,7 @@ const Vehicle: FunctionComponent = () => {
 
   useEffect(() => {
     initVehicleList()
-  }, [])
+  }, [page])
 
   const initVehicleList = async () => {
     const result = await getAllVehicles(page - 1, pageSize)

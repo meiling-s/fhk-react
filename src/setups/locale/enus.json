@@ -1,4 +1,25 @@
 {
+  "common": {
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "saveSuccessfully": "Saved successfully",
+    "saveFailed": "Saved failed",
+    "editSuccessfully": "Edited successfully",
+    "editFailed": "Edited failed",
+    "deletedSuccessfully": "Deleted successfully",
+    "deleteFailed": "Deleted failed",
+    "enterName": "Please enter name",
+    "enterText": "Please enter text",
+    "description": "Description",
+    "remark": "Remark",
+    "traditionalChineseName": "Traditional Chinese Name",
+    "simplifiedChineseName": "Simplified Chinese Name",
+    "englishName": "English Name",
+    "yes": "Yes",
+    "no": "No"
+  },
   "col": {
     "createCP": "Create collection point",
     "editCP": "Edit collection point",
@@ -31,7 +52,7 @@
     "serviceType": "Service type",
     "basic": "Basic",
     "additional": "Additional",
-    "orderService": "Other Services",
+    "other": "Other Services",
     "create": "Create",
     "save": "Save",
     "cancel": "Cancel",
@@ -50,7 +71,8 @@
       "timeCantDuplicate": "time can't duplicate",
       "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength": "should not exceed 100 characters",
-      "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded"
+      "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
+      "startDateBehindEndDate": "not allowed the start time behind the end time"
     }
   },
   "component": {
@@ -93,10 +115,13 @@
     "general_settings": "General settings",
     "packaging_unit": "Packaging unit",
     "workshop": "Warehouse",
+    "vehicles": "Vehicles",
     "company": "Company",
+    "waste_disposal": "Waste Disposal",
     "staff_positions": "Staff positions",
     "denial_reason": "Denial reason",
-    "add_new": "New"
+    "add_new": "New",
+    "add_new_vehicle": "Add New Vehicle" 
   },
   "settings_page": {
     "title": "Settings"
@@ -238,7 +263,7 @@
     "closed": "Closed",
     "outstanding": "Outstanding",
     "suspend": "Suspend",
-    "DENY": "Deny",
+    "deny": "Deny",
     "success": "Success",
     "failed": "Failed",
     "enable": "Enable",
@@ -441,6 +466,7 @@
   },
   "report": {
     "report": "Report",
+    "downloadArea": "Download Area",
     "basicServicePictures": "Basic service pictures",
     "additionalServicePictures": "Additional service pictures",
     "otherPictures": "Other pictures",
@@ -559,6 +585,7 @@
     "employeeChineseCn": "Employee's Chinese Simplified Chinese name",
     "position": "Position",
     "loginName": "Login Name",
+    "enterLoginName": "Enter Login Name",
     "contactNumber": "Contact Number",
     "lastLogin": "Last Login",
     "email": "Email",
@@ -655,26 +682,146 @@
     "successDeleted": "Success Deleted",
     "errorDeleted": "Error deleted"
   },
+  "job_order": {
+    "enquiry_job_order": "Created datetime",
+    "table": {
+      "created_datetime": "Created datetime",
+      "jo_id": "JO number",
+      "pico_id": "PO number",
+      "driver_id": "Driver name",
+      "plate_no": "Plate number",
+      "sender_company": "Sender company name",
+      "receiver_company": "Receiver company name",
+      "status": "Status",
+      "operation": "Operation",
+      "approve": "Approve"
+    },
+    "filter": {
+      "search": "Search",
+      "driver": "Driver",
+      "status": "Status"
+    },
+    "item": {
+      "detail": "Job Order",
+      "shipping_info": "Shipping information",
+      "date_time": "Creation date and time",
+      "reference_po_number": "Reference PO number",
+      "sender_name": "Shipping company",
+      "rec_loc_info": "Recycling location information"
+    },
+    "confirm_approve_title": "Confirm approve?",
+    "confirm_approve": "Confirm approve",
+    "cancel": "Cancel",
+    "approved_success": "Approved successfully"
+  },
+  "jobOrder": {
+    "job_order_menu": "Job Order",
+    "create_work_waybill": "Create Job Order",
+    "shipping_information": "Shipping information",
+    "corresponding_waybill": "Corresponding waybill",
+    "shipping_validity_date_from": "Shipping validity",
+    "shipping_validity_date_to": "to",
+    "shipping_company_name": "Shipping company",
+    "recycling_location_information": "Recycling location information",
+    "main_category": "Type",
+    "subcategory": "Subtype",
+    "estimated_shipping_time": "Estimated shipping time",
+    "weight": "weight",
+    "shipping_and_receiving_companies": "Shipping and receiving",
+    "delivery_and_arrival_locations": "Delivery and arrival",
+    "setup_time": "Setup time",
+    "finish": "Finish",
+    "cancel": "Cancel",
+    "driver": "Driver",
+    "plat_number": "Plate number",
+    "assign_driver": "Assign a driver"
+  },
   "notification": {
     "notification_menu": "Notice template",
     "notification_title": "Template",
-    "menu_recycling_materials_and_waybills" : {
+    "menu_recycling_materials_and_waybills": {
       "tab_name": "Recyclables and PO",
-      "name" : "Name",
-      "type" : "Type",
-      "title" : "Title",
-      "language" : "Language"
+      "name": "Name",
+      "type": "Type",
+      "title": "Title",
+      "language": "Language"
     },
-    "menu_staff":{
-      "tab_name" :  "Staff",
-      "name" : "Name",
-      "type" : "Type",
-      "title" : "Title",
-      "language" : "Language"
+    "menu_staff": {
+      "tab_name": "Staff",
+      "name": "Name",
+      "type": "Type",
+      "title": "Title",
+      "language": "Language"
     },
-    "modify_template" : {
-      "header" : "Modify Template"
+    "modify_template": {
+      "header": "Modify Template",
+      "app": {
+        "Recycling_delivery_request": "Recycling delivery request",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "content": "content",
+        "variables": "Available Variables",
+        "button_submit": "Store"
+      },
+      "sms": {
+        "Recycling_delivery_request": "Recycling materials have been sent to the factory",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "content": "content",
+        "variables": "Available Variables",
+        "button_submit": "Store"
+      },
+      "email": {
+        "Recycling_delivery_request": "Registration link",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "content": "content",
+        "variables": "Available Variables",
+        "button_submit": "Store"
+      },
+      "broadcast": {
+        "Recycling_delivery_request": "System Information",
+        "type": "Type",
+        "title": "Title",
+        "language": "Language",
+        "start_valid_date": "Valid date",
+        "end_valid_date": "to",
+        "content": "content",
+        "variables": "Available Variables",
+        "button_submit": "Store"
+      }
     }
+  },
+  "denial_reason": {
+    "reason_name_tchi": "Reason (Traditional Chinese)",
+    "reason_name_schi": "Reason (Simplified Chinese)",
+    "reason_name_eng": "Reason (English)",
+    "corresponding_functions": "Corresponding Functions",
+    "description": "Description",
+    "remark": "Remark",
+    "enter_name": "Please enter name",
+    "select_function": "Please select function",
+    "enter_text": "Please enter text"
+  },
+  "staff_title": {
+    "staff_title_tchi": "Traditional Chinese Name",
+    "staff_title_schi": "Simplified Chinese Name",
+    "staff_title_eng": "English Name",
+    "duty": "Duty",
+    "description": "Description",
+    "remark": "Remark",
+    "enter_duty": "Please enter duty"
+  },
+  "companyManagement": {
+    "collectorlist": "Collection Company",
+    "logisticlist": "Logistic Company",
+    "manulist": "Manufacturer Company",
+    "customerlist": "Customer Company",
+    "brNo": "Business Registration Number",
+    "enterBrNo": "Please enter business registration number"
   },
   "driver": {
     "sideBarName": "Driver",
@@ -685,6 +832,17 @@
     },
     "DriverMenu": {
       "AddBtn": "Add Driver"
+    },
+    "vehicleMenu": {
+      "vehicle_number": "Vehicle Number",
+      "license_plate_number": "License Plate Number",
+      "vehicle_type": "Vehicle Type",
+      "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
+      "picture": "Picture",
+      "license_plate_number_placeholder": "Please enter vehicle plate number",
+      "vehicle_type_placeholder": "Please enter vehicle type",
+      "vehicle_cargo_capacity_placeholder": "Please enter weight"
+
     },
     "search": {
       "label": "Search",
@@ -731,5 +889,53 @@
         "deleteFailMsg": "Failed delete driver"
       }
     }
+  },
+  "general_settings": {
+    "new": "New",
+    "currency": "Currency",
+    "contracts": "Contracts",
+    "name": "Name",
+    "reference_number": "Reference Number",
+    "state": "Status",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "remark": "Remark",
+    "whether": "Whether EPD",
+    "default_currency": "Default Currency",
+    "activate": "Activate",
+    "deactive": "Inactive",
+    "true": "True",
+    "false": "False"
+  },
+  "packaging_unit": {
+    "packaging_unit": "Packaging Unit",
+    "new": "New",
+    "traditional_chinese_name": "Traditional Chinese Name",
+    "simplified_chinese_name": "Simplified Chinese Name",
+    "english_name": "English Name",
+    "introduction": "Introduction",
+    "remark": "Remark"
+  },
+  "staffEnquiry": {
+    "title": "Staff Enquiry",
+    "addNewStaffEnquiry": "Add New Staff Enquiry",
+    "contractNo": "Contract No",
+    "fulltimeFlag": "Fulltime Flag",
+    "enterFulltimeFlag": "Enter fulltime flag",
+    "gender": "Gender",
+    "enterGender": "Enter gender"
+  },
+  "generate_report": {
+    "report_name": "Report Name",
+    "recycling_point_record": "Recycling point record",
+    "Waste_ecords_daily_": "Waste records (daily)",
+    "recycling_plant_request_records": "Recycling plant request records",
+    "recycling_classification_processing": "Recycling classification and processing records",
+    "recycling_classification_statistics" : "Recycling classification statistics",
+    "recycling_point_establishment": "Recycling point establishment and operation services (first phase follow-up contract) photo records (monthly)",
+    "collection_point_establishment" : "Collection point establishment and operation services (first phase follow-up contract) Excel records (monthly)",
+    "download": "Download",
+    "start_date": "Start Date",
+    "end_date": "to"
   }
 }

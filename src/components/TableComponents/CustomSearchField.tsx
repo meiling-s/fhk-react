@@ -1,19 +1,22 @@
 import { IconButton, InputAdornment, MenuItem, TextField } from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { SEARCH_ICON } from "../../themes/icons";
 import { t } from "i18next";
+import { localStorgeKeyName } from "../../constants/constant";
 
 interface Option {
   value: string;
   label: string;
 }
 
-const CustomSearchField = ({ label, width, options, onChange, field }: { 
+const CustomSearchField = ({ label, width, options, onChange, field, placeholder, handleSearch }: { 
   label: string; 
   width: string; 
   options?: Option[]; 
   onChange?: (labelField: string, value: string) => void;
-  field?: string
+  field?: string;
+  placeholder?: string;
+  handleSearch?: (value: string) => void;
 }) => {
   const hasOptions = options && options.length>0
   const [selectedValue, setSelectedValue] = useState<string>("")
@@ -29,9 +32,14 @@ const CustomSearchField = ({ label, width, options, onChange, field }: {
     if(onChange ){
       onChange(field ? field : label, newValue)
     }
-
-
   }
+  const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
+  const role = localStorage.getItem(localStorgeKeyName.role)
+
+  useEffect(() => {
+    setPrimaryColor(role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25')
+  }, [role])
+
   return (
     <TextField
       sx={{
@@ -44,30 +52,30 @@ const CustomSearchField = ({ label, width, options, onChange, field }: {
             borderColor: "#grey",
           },
           "&:hover fieldset": {
-            borderColor: "#79CA25",
+            borderColor: primaryColor,
           },
           "&.Mui-focused fieldset": {
-            borderColor: "#79CA25",
+            borderColor: primaryColor,
           },
           "& label.Mui-focused": {
-            color: "#79CA25", // Change label color when input is focused
+            color: primaryColor, // Change label color when input is focused
           },
         },
       }}
      
       label={label}
       InputLabelProps={{
-        style: { color: "#79CA25" },
+        style: { color: primaryColor },
         focused: true,
       }}
       value={selectedValue}
-      placeholder={t("pick_up_order.filter.search")}
+      placeholder={placeholder ? placeholder : t("pick_up_order.filter.search")}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
            {!hasOptions && ( 
-            <IconButton onClick={() => {}}>
-              <SEARCH_ICON style={{ color: "#79CA25" }} />
+            <IconButton onClick={handleSearch ? () => handleSearch(selectedValue) : undefined}>
+              <SEARCH_ICON style={{ color: primaryColor }} />
             </IconButton>
           )}
         </InputAdornment>

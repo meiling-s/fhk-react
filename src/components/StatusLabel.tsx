@@ -1,3 +1,4 @@
+import { t } from 'i18next'
 import { ReactNode, useState } from 'react'
 
 type TableColumnStatusProps = {
@@ -25,10 +26,10 @@ const StatusLabel: React.FC<TableColumnStatusProps> = ({ width, status }) => {
       >
         <div className="relative tracking-[1px] leading-[20px] font-medium">
           {rowStatus === 'deleted'
-            ? '刪除'
+            ? t('status.deleted')
             : rowStatus === 'inactive'
-            ? '不活跃的'
-            : '已啓用'}
+            ? t('status.inactive')
+            : t('status.active')}
         </div>
       </div>
     </div>

@@ -293,6 +293,8 @@ const PickupOrders = () => {
       ),
     },
   ];
+
+ 
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
   const {recycType} = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
@@ -314,7 +316,7 @@ const PickupOrders = () => {
   const [rejectModal, setRejectModal] = useState(false)
   const [reasonList, setReasonList] = useState<any>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
-  
+  const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const initPickupOrderRequest = async () => {
     setPickupOrder([])
     setTotalData(0)
@@ -341,8 +343,8 @@ const PickupOrders = () => {
     setSelectedRow(row);
     setRejectModal(true)
   }
-  const navigateToJobOrder = () => {
-    console.log('navigateToJobOrder')
+  const navigateToJobOrder = (row : any) => {
+    if(row?.picoId) navigate(`/logistic/pickupOrder/${row.picoId}?isEdit=false`)
   }
   const resetPage = async () => {
     setApproveModal(false)
@@ -375,6 +377,10 @@ const PickupOrders = () => {
       setReasonList(result?.data)
     }
   }
+
+  useEffect(() => {
+    setPrimaryColor(role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25')
+  }, [role])
   
   useEffect(() => {
     setShowOperationColumn(role === 'logisticadmin')
@@ -564,7 +570,7 @@ const PickupOrders = () => {
     <ToastContainer/>
     <Box sx={{ display: "flex",  flexDirection: "column" }}>
         <Modal open={openModal} onClose={handleCloses} >
-          <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} pickupOrder={pickupOrder} initPickupOrderRequest={initPickupOrderRequest} navigateToJobOrder={navigateToJobOrder} />
+          <PickupOrderForm onClose={handleCloses} selectedRow={selectedRow} pickupOrder={pickupOrder} initPickupOrderRequest={initPickupOrderRequest} />
         </Modal>
       <Box sx={{ display: "flex", alignItems: "center",ml:'6px'}}>
         <Typography fontSize={20} color="black" fontWeight="bold">
@@ -577,8 +583,8 @@ const PickupOrders = () => {
           }}
           sx={{
             borderRadius: "20px",
-            backgroundColor: "#79ca25",
-            "&.MuiButton-root:hover": { bgcolor: "#79ca25" },
+            backgroundColor: primaryColor,
+            "&.MuiButton-root:hover": { bgcolor: primaryColor },
             width: "fit-content",
             height: "40px",
             marginLeft: "20px",

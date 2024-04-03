@@ -1,4 +1,25 @@
 {
+  "common": {
+    "save": "储存",
+    "delete": "删除",
+    "confirm": "确认",
+    "cancel": "取消",
+    "saveSuccessfully": "保存成功",
+    "saveFailed": "保存失败",
+    "editSuccessfully": "编辑成功",
+    "editFailed": "编辑失败",
+    "deletedSuccessfully": "删除成功",
+    "deleteFailed": "删除失败",
+    "enterName": "请输入名称",
+    "enterText": "请输入文字",
+    "description": "简介",
+    "remark": "备注",
+    "traditionalChineseName": "繁体中文名称",
+    "simplifiedChineseName": "简体中文名称",
+    "englishName": "英文名称",
+    "yes": "是",
+    "no": "否"
+  },
   "col": {
     "createCP": "建立回收点",
     "editCP": "修改回收点",
@@ -31,7 +52,7 @@
     "serviceType": "服务种类",
     "basic": "基本",
     "additional": "额外",
-    "orderService": "其他服务",
+    "other": "其他服务",
     "create": "建立",
     "save": "储存",
     "cancel": "取消",
@@ -50,7 +71,8 @@
       "timeCantDuplicate": "时间不能重复",
       "atLeastOnePicoExist": "至少需要一个 Pico 详细信息",
       "exceedsMaxLength": "不可超过一百个字符",
-      "minMoreOneImgUploded": "至少需要上传2张车辆图片"
+      "minMoreOneImgUploded": "至少需要上传2张车辆图片",
+      "startDateBehindEndDate": "不允许开始时间晚于结束时间"
     }
   },
   "component": {
@@ -92,11 +114,14 @@
   "top_menu": {
     "general_settings": "一般设定",
     "packaging_unit": "包装单位",
-    "workshop": "仓库",
+    "workshop": "工场",
+    "vehicles": "车辆",
     "company": "公司",
+    "waste_disposal": "废弃点",
     "staff_positions": "员工职位",
     "denial_reason": "拒绝原因",
-    "add_new": "新增"
+    "add_new": "新增",
+    "add_new_vehicle": "添加新车辆"
   },
   "settings_page": {
     "title": "设定"
@@ -237,7 +262,7 @@
     "closed": "已取消",
     "outstanding": "已逾期",
     "suspend": "已暂停",
-    "DENY": "不接受",
+    "deny": "不接受",
     "success": "成功",
     "failed": "失败",
     "enable": "启用",
@@ -442,6 +467,7 @@
   },
   "report": {
     "report": "报表",
+    "downloadArea": "下载区",
     "basicServicePictures": "基本服务图片",
     "additionalServicePictures": "额外服务图片",
     "otherPictures": "其他图片",
@@ -560,6 +586,7 @@
     "employeeChineseCn": "员工中文简体中文姓名",
     "position": "职位",
     "loginName": "登录名",
+    "enterLoginName": "Enter Login Name",
     "contactNumber": "联系电话",
     "lastLogin": "最后登录",
     "email": "电子邮件",
@@ -632,6 +659,60 @@
     "successDeleted": "删除成功",
     "errorDeleted": "错误删除"
   },
+  "job_order": {
+    "enquiry_job_order": "工作运单",
+    "table": {
+      "created_datetime": "建立日期",
+      "jo_id": "工作运单编号",
+      "pico_id": "回收运单编号",
+      "driver_id": "司机名称",
+      "plate_no": "车牌号码",
+      "sender_company": "寄件公司",
+      "receiver_company": "收件公司",
+      "status": "状态",
+      "operation": "操作",
+      "approve": "核准"
+    },
+    "filter": {
+      "search": "搜索",
+      "driver": "司机",
+      "status": "状态"
+    },
+    "item": {
+      "detail": "工作运单",
+      "shipping_info": "运输资料",
+      "date_time": "建立日期及时间",
+      "reference_po_number": "參考运单编号",
+      "sender_name": "寄件公司",
+      "rec_loc_info": "回收地点资料"
+    },
+    "confirm_approve_title": "确认核准吗？",
+    "confirm_approve": "确认核准",
+    "cancel": "取消",
+    "approved_success": "核准成功"
+  },
+  "jobOrder": {
+    "job_order_menu": "工作运单",
+    "create_work_waybill": "建立工作运单",
+    "shipping_information": "运输资料",
+    "corresponding_waybill": "对应运单",
+    "shipping_validity_date_from": "运输有效日期由",
+    "shipping_validity_date_to": "至",
+    "shipping_company_name": "寄件公司名称",
+    "recycling_location_information": "回收地点资料",
+    "main_category": "主类别",
+    "subcategory": "次类别",
+    "estimated_shipping_time": "预计运送时间",
+    "weight": "重量",
+    "shipping_and_receiving_companies": "寄件及收件公司",
+    "delivery_and_arrival_locations": "送出及到达地点",
+    "setup_time": "建立时间",
+    "finish": "完成",
+    "cancel": "取消",
+    "driver": "司机",
+    "plat_number": "车牌号码",
+    "assign_driver": "指派司机"
+  },
   "notification": {
     "notification_menu": "通知范本",
     "notification_title": "范本",
@@ -650,8 +731,73 @@
       "language": "语言"
     },
     "modify_template": {
-      "header": "修改范本"
+      "header": "修改范本",
+      "app" : {
+        "Recycling_delivery_request" : "回收物送入请求",
+        "type": "种类",
+        "title": "标题",
+        "language": "语言",
+        "content" : "内容",
+        "variables": "可用的变数",
+        "button_submit": "儲存"
+      },
+      "sms" : {
+        "Recycling_delivery_request" : "回收物已送到工场",
+        "type": "种类",
+        "title": "标题",
+        "language": "语言",
+        "content" : "内容",
+        "variables": "可用的变数",
+        "button_submit": "儲存"
+      },
+      "email" : {
+        "Recycling_delivery_request" : "登记连结",
+        "type": "种类",
+        "title": "标题",
+        "language": "语言",
+        "content" : "内容",
+        "variables": "可用的变数",
+        "button_submit": "儲存"
+      },
+      "broadcast" : {
+        "Recycling_delivery_request" : "系统资讯",
+        "type": "种类",
+        "title": "标题",
+        "language": "语言",
+        "start_valid_date" : "有效日期由",
+        "end_valid_date" : "至",
+        "content" : "内容",
+        "button_submit": "儲存"
+      }
     }
+  },
+  "denial_reason": {
+    "reason_name_tchi": "原因 (繁体中文)",
+    "reason_name_schi": "原因 (简体中文)",
+    "reason_name_eng": "原因 (英文)",
+    "corresponding_functions": "对应功能",
+    "description": "简介",
+    "remark": "备注",
+    "enter_name": "请输入名称",
+    "select_function": "请选择功能",
+    "enter_text": "请输入文字"
+  },
+  "staff_title": {
+    "staff_title_tchi": "繁体中文名称",
+    "staff_title_schi": "简体中文名称",
+    "staff_title_eng": "英文名称",
+    "duty": "职责",
+    "description": "简介",
+    "remark": "备注",
+    "enter_duty": "请输入职责"
+  },
+  "companyManagement": {
+    "collectorlist": "回收公司",
+    "logisticlist": "物流公司",
+    "manulist": "回收厂",
+    "customerlist": "顾客公司",
+    "brNo": "商业登记号码",
+    "enterBrNo": "请输入商业登记号码"
   },
   "driver": {
     "sideBarName": "车队",
@@ -707,6 +853,64 @@
           "deleteFailMsg": "删除司机失败"
         }
       }
+    },
+    "vehicleMenu": {
+      "vehicle_number": "车辆号码",
+      "license_plate_number": "车牌号",
+      "vehicle_type": "Vehicle Type",
+      "vehicle_cargo_capacity": "车辆类型",
+      "picture": "图片",
+      "license_plate_number_placeholder": "请输入车牌号",
+      "vehicle_type_placeholder": "请输入车辆类型",
+      "vehicle_cargo_capacity_placeholder": "请输入体重"
     }
+  },
+  "general_settings": {
+    "new": "新的",
+    "currency": "货币",
+    "contracts": "合同",
+    "name": "名称",
+    "reference_number": "参考编号",
+    "state": "状态",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "remark": "评论",
+    "whether": "是否EPD",
+    "default_currency": "默认货币",
+    "activate": "活性",
+    "deactive": "停用",
+    "true": "真的",
+    "false": "错误的"
+  },
+  "packaging_unit": {
+    "packaging_unit": "包装单位",
+    "new": "新的",
+    "traditional_chinese_name": "繁体中文名字",
+    "simplified_chinese_name": "简体中文名称",
+    "english_name": "English Name",
+    "introduction": "介绍",
+    "remark": "评论"
+  },
+  "staffEnquiry": {
+    "title": "員工查詢",
+    "addNewStaffEnquiry": "新增員工查詢",
+    "contractNo": "合約號碼",
+    "fulltimeFlag": "全職旗幟",
+    "enterFulltimeFlag": "輸入全職標誌",
+    "gender": "性別",
+    "enterGender": "輸入性別"
+  },
+  "generate_report": {
+    "report_name": "报表名称",
+    "recycling_point_record": "回收点记录",
+    "Waste_ecords_daily_": "废弃物记录（每日)",
+    "recycling_plant_request_records": "回收厂的回收物请求记录",
+    "recycling_classification_processing": "回收物分类及处理记录",
+    "recycling_classification_statistics" : "回收物分类统计数据",
+    "recycling_point_establishment": "回收点设立及营运服务（第一期后续合约）照片记录（每月)",
+    "collection_point_establishment" : "回收点设立及营运服务（第一期后续合约）Excel 记录（每月)",
+    "download": "下载",
+    "start_date": "日期由",
+    "end_date": "至"
   }
 }
