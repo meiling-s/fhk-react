@@ -88,6 +88,7 @@ function MainDrawer() {
   }, []);
 
   var role = localStorage.getItem(localStorgeKeyName.role);
+  var realm = localStorage.getItem(localStorgeKeyName.realm);
 
   interface func {
     [key: string]: object
@@ -117,13 +118,13 @@ function MainDrawer() {
       "Pickup order": {
         name: t("pick_up_order.enquiry_pickup_order"),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => navigate("/collector/pickupOrder"),
+        onClick: () => navigate(`/${realm}/pickupOrder`),
         collapse: false,
       },
       "Job order": {
         name: t("job_order.enquiry_job_order"),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => navigate("/logistic/pickupOrder"),
+        onClick: () => navigate(`/${realm}/jobOrder`),
         collapse: false,
       },
       "Warehouse dashboard": {
