@@ -104,7 +104,7 @@ const CommonType = () => {
         ...GET_RECYC_TYPE
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get site type success:', JSON.stringify(response.data))
+      // console.log('Get site type success:', JSON.stringify(response.data))
       RecycType = response.data
       setRecycType(RecycType)
     } catch (e) {
@@ -122,12 +122,12 @@ const CommonType = () => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get logistic list success:', JSON.stringify(response.data))
+      // console.log('Get logistic list success:', JSON.stringify(response.data))
 
       const logistic = response.data.content
       setLogisticList(logistic)
     } catch (e) {
-      console.error('Get logistic list failed:', e)
+      // console.error('Get logistic list failed:', e)
       return null
     }
   }
@@ -140,12 +140,12 @@ const CommonType = () => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get manu list success:', JSON.stringify(response.data))
+      // console.log('Get manu list success:', JSON.stringify(response.data))
 
       const manu = response.data.content
       setManuList(manu)
     } catch (e) {
-      console.error('Get manu list failed:', e)
+      // console.error('Get manu list failed:', e)
       return null
     }
   }
@@ -157,12 +157,12 @@ const CommonType = () => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get collector list success:', JSON.stringify(response.data))
+      // console.log('Get collector list success:', JSON.stringify(response.data))
 
       const collector = response.data.content
       setCollectorList(collector)
     } catch (e) {
-      console.error('Get collector list failed:', e)
+      // console.error('Get collector list failed:', e)
       return null
     }
   }
@@ -175,12 +175,12 @@ const CommonType = () => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get contract list success:', JSON.stringify(response.data))
+      // console.log('Get contract list success:', JSON.stringify(response.data))
 
       const contract = response.data.content
       setContractType(contract)
     } catch (e) {
-      console.error('Get contract list failed:', e)
+      // console.error('Get contract list failed:', e)
       return null
     }
   }
@@ -191,7 +191,7 @@ const CommonType = () => {
         ...GET_VEHICLE_TYPE
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
-      console.log('Get vehicle list success:', JSON.stringify(response.data))
+      // console.log('Get vehicle list success:', JSON.stringify(response.data))
 
       const vehicle = response.data
       setVehicleType(vehicle)
@@ -224,12 +224,12 @@ const CommonType = () => {
         ...GET_LOGISTICLIST_LOGISTIC(token.decodeKeycloack),
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
       })
-      console.log('Get logistic list success:', JSON.stringify(response.data))
+      // console.log('Get logistic list success:', JSON.stringify(response.data))
 
       const logistic = response.data
       setLogisticAdminList(logistic)
     } catch (e) {
-      console.error('Get logistic list failed:', e)
+      // console.error('Get logistic list failed:', e)
       return null
     }
   }
@@ -244,7 +244,7 @@ const CommonType = () => {
       const contract = response.data.content
       setContractLogistic(contract)
     } catch (e) {
-      console.error('Get contract list failed:', e)
+      // console.error('Get contract list failed:', e)
       return null
     }
   }
