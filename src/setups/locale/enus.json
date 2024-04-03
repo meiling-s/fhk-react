@@ -436,7 +436,10 @@
       "enter_email": "Please enter email address",
       "or": "or",
       "link_invitation": "Send link invitation",
-      "copy": "copy"
+      "copy": "copy",
+      "send": "send",
+      "invite_success" : "Success send invitation",
+      "invite_failed": "Failed send invitation"
     },
     "detail": {
       "company_category": "Company category",

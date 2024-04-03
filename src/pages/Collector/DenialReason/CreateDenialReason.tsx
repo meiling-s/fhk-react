@@ -239,12 +239,12 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     if (validation.length === 0) {
       const result = await createDenialReason(denialReasonData)
       if (result?.data) {
-        onSubmitData('success', 'Success created data')
+        onSubmitData('success', t('common.saveSuccessfully'))
         resetFormData()
         handleDrawerClose()
       } else {
         setTrySubmited(true)
-        onSubmitData('error', 'Failed created data')
+        onSubmitData('error', t('common.saveFailed'))
       }
     } else {
       setTrySubmited(true)
@@ -270,7 +270,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       if (selectedItem != null) {
         const result = await editDenialReason(selectedItem.reasonId, editData)
         if (result) {
-          onSubmitData('success', 'Edit data success')
+          onSubmitData('success', t('common.editSuccessfully'))
           resetFormData()
           handleDrawerClose()
         }
@@ -298,7 +298,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     if (selectedItem != null) {
       const result = await editDenialReason(selectedItem.reasonId, editData)
       if (result) {
-        onSubmitData('success', 'Deleted data success')
+        onSubmitData('success', t('common.deletedSuccessfully'))
         resetFormData()
         handleDrawerClose()
       }

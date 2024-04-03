@@ -124,10 +124,10 @@ const CommonType = () => {
       })
       // console.log('Get logistic list success:', JSON.stringify(response.data))
 
-      const logistic = response.data
+      const logistic = response.data.content
       setLogisticList(logistic)
     } catch (e) {
-      console.error('Get logistic list failed:', e)
+      // console.error('Get logistic list failed:', e)
       return null
     }
   }
@@ -142,10 +142,10 @@ const CommonType = () => {
       })
       // console.log('Get manu list success:', JSON.stringify(response.data))
 
-      const manu = response.data
+      const manu = response.data.content
       setManuList(manu)
     } catch (e) {
-      console.error('Get manu list failed:', e)
+      // console.error('Get manu list failed:', e)
       return null
     }
   }
@@ -159,10 +159,10 @@ const CommonType = () => {
       })
       // console.log('Get collector list success:', JSON.stringify(response.data))
 
-      const collector = response.data
+      const collector = response.data.content
       setCollectorList(collector)
     } catch (e) {
-      console.error('Get collector list failed:', e)
+      // console.error('Get collector list failed:', e)
       return null
     }
   }
@@ -177,10 +177,10 @@ const CommonType = () => {
       })
       // console.log('Get contract list success:', JSON.stringify(response.data))
 
-      const contract = response.data
+      const contract = response.data.content
       setContractType(contract)
     } catch (e) {
-      console.error('Get contract list failed:', e)
+      // console.error('Get contract list failed:', e)
       return null
     }
   }
@@ -229,7 +229,7 @@ const CommonType = () => {
       const logistic = response.data
       setLogisticAdminList(logistic)
     } catch (e) {
-      console.error('Get logistic list failed:', e)
+      // console.error('Get logistic list failed:', e)
       return null
     }
   }
@@ -244,7 +244,7 @@ const CommonType = () => {
       const contract = response.data.content
       setContractLogistic(contract)
     } catch (e) {
-      console.error('Get contract list failed:', e)
+      // console.error('Get contract list failed:', e)
       return null
     }
   }

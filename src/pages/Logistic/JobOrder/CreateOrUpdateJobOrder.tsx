@@ -7,8 +7,8 @@ import {
   } from '@mui/material'
 import React, { useEffect, useState,  } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers'
-import CustomField from '../../components/FormComponents/CustomField'
-import { styles } from '../../constants/styles'
+import CustomField from '../../../components/FormComponents/CustomField'
+import { styles } from '../../../constants/styles'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
@@ -17,20 +17,20 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import CardTravelIcon from '@mui/icons-material/CardTravel';
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined';
 import { useTranslation } from "react-i18next";
-import AssignDriverForm from '../../components/FormComponents/AssignDriverForm'
-import {OrderJobHeader, AssignJobDriver } from '../../interfaces/pickupOrder'
-import axiosInstance from '../../constants/axiosInstance'
-import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
-import { GET_PICK_UP_ORDER_BY_ID } from '../../constants/requests'
+import AssignDriverForm from '../../../components/FormComponents/AssignDriverForm'
+import {OrderJobHeader, AssignJobDriver } from '../../../interfaces/pickupOrder'
+import axiosInstance from '../../../constants/axiosInstance'
+import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
+import { GET_PICK_UP_ORDER_BY_ID } from '../../../constants/requests'
 import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { format } from '../../constants/constant'
-import { rejectAssginDriver, assignDriver } from '../../APICalls/jobOrder'
+import { format } from '../../../constants/constant'
+import { rejectAssginDriver, assignDriver } from '../../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
-import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../themes/icons'
-import { returnApiToken } from '../../utils/utils'
-import {getPicoById} from '../../APICalls/Collector/pickupOrder/pickupOrder'
+import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
+import { returnApiToken } from '../../../utils/utils'
+import {getPicoById} from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 
 const JobOrder = () => {
 const [openModal, setOpenModal] = useState<boolean>(false);

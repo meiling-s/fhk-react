@@ -179,7 +179,12 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: t('general_settings.new'),
+          title:
+            action == 'add'
+              ? t('top_menu.add_new')
+              : action == 'delete'
+              ? t('common.delete')
+              : selectedItem?.contractNo,
           subTitle: t('general_settings.contracts'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),

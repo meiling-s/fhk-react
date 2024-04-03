@@ -16,10 +16,10 @@ export const getAllCollectionPoint = async () => {
         //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
         // },
       });
-      console.log('Get all collection point success:', JSON.stringify(response.data));
+      // console.log('Get all collection point success:', JSON.stringify(response.data));
       return response
     } catch (e) {
-      console.error('Get all collection point failed:', e);
+      // console.error('Get all collection point failed:', e);
       return null;
     }
   
@@ -36,10 +36,10 @@ export const getCollectionPoint = async (page: number, size: number) => {
         size: size
       }
     });
-    console.log('Get all collection point success:', JSON.stringify(response.data));
+    // console.log('Get all collection point success:', JSON.stringify(response.data));
     return response
   } catch (e) {
-    console.error('Get all collection point failed:', e);
+    // console.error('Get all collection point failed:', e);
     return null;
   }
 
@@ -56,10 +56,10 @@ export const createCollectionPoint = async (data: createCP) => {
             //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
             // },
         });
-        console.log('Create collection point success:', JSON.stringify(response.data));
+        // console.log('Create collection point success:', JSON.stringify(response.data));
         return response
     } catch (e) {
-        console.error('Create collection point failed:', e);
+        // console.error('Create collection point failed:', e);
         return null;
     }
 
@@ -80,10 +80,10 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
           //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
           // },
       });
-      console.log('Update collection point success:', JSON.stringify(response.data));
+      // console.log('Update collection point success:', JSON.stringify(response.data));
       return response
   } catch (e) {
-      console.error('Update collection point failed:', e);
+      // console.error('Update collection point failed:', e);
       return null;
   }
 

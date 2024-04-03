@@ -22,6 +22,11 @@ export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
   url: `api/v1/account/t/addTenant/${realm}`,
 });
 
+export const SEND_EMAIL_INVITATION : AxiosRequestConfig = {
+  method: "post",
+  url: 'api/v1/account/t/email/',
+};
+
 export const GET_ALL_TENANT: AxiosRequestConfig = {
   method: "get",
   url: "api/v1/account/t/",
@@ -772,6 +777,11 @@ export const GET_LIST_NOTIF_TEMPLATE_STAFF = (tenantId: string, path: string): A
 export const GET_DENIAL_REASON = (realmApiRoute: string, tenantId: string): AxiosRequestConfig => ({
   method: "get",
   url: `/api/v1/${realmApiRoute}/reason/${tenantId}`,
+});
+//get denial reason by functionId
+export const GET_DENIAL_REASON_BY_FUNCTION_ID = (realmApiRoute: string, tenantId: string, functionId: number): AxiosRequestConfig => ({
+  method: "get",
+  url: `/api/v1/${realmApiRoute}/reason/${tenantId}/${functionId}`,
 });
 
 //create denial reason
