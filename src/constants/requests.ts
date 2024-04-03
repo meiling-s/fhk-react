@@ -22,6 +22,11 @@ export const ADD_TENANT = (realm: string): AxiosRequestConfig => ({
   url: `api/v1/account/t/addTenant/${realm}`,
 });
 
+export const SEND_EMAIL_INVITATION : AxiosRequestConfig = {
+  method: "post",
+  url: 'api/v1/account/t/email/',
+};
+
 export const GET_ALL_TENANT: AxiosRequestConfig = {
   method: "get",
   url: "api/v1/account/t/",

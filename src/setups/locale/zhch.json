@@ -437,7 +437,10 @@
       "enter_email": "请输入电邮地址",
       "or": "或",
       "link_invitation": "发送连结邀请",
-      "copy": "复制"
+      "copy": "复制",
+      "send": "发送",
+      "invite_success" : "成功发送邀请",
+      "invite_failed": "发送邀请失败"
     },
     "detail": {
       "company_category": "公司类别",

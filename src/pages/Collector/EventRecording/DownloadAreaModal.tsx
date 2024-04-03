@@ -32,7 +32,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const { t } = useTranslation()
   const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs());
-  const {authToken, decodeKeycloack} = returnApiToken() 
+  const {tenantId, decodeKeycloack} = returnApiToken() 
   const [downloads, setDownloads] = useState<{date: string, url: any}[]>([])
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     
     // const blb = new Blob([response.data],{type: "application/force-download;charset=utf-8"})
     // const url = URL.createObjectURL(blb);
-    const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-word?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`
+    const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/downloadWord/${decodeKeycloack}?from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`
     if(url){
       setDownloads(prev => {
         return [{date: dayjs().format('YYYY/MM/DD'), url: url}]
@@ -84,7 +84,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
 
     // const blb = new Blob([response.data],{type: "application/force-download;charset=utf-8"})
     // const url = URL.createObjectURL(blb);
-    const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-excel?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`
+    const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/downloadExcel/${tenantId}?frmDate=${dayjs(startDate).format('YYYY/MM/DD')}&toDate=${dayjs(endDate).format('YYYY/MM/DD')}`
     if(url){
       setDownloads(prev => {
         return [{date: dayjs().format('YYYY/MM/DD'), url: url}]
