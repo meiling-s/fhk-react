@@ -28,7 +28,8 @@ import {
   createInvitation,
   getAllTenant,
   searchTenantById,
-  updateTenantStatus
+  updateTenantStatus,
+  sendEmailInvitation
 } from '../../APICalls/tenantManage'
 import { defaultPath, format } from '../../constants/constant'
 import { styles } from '../../constants/styles'
@@ -67,6 +68,7 @@ type inviteModal = {
   open: boolean
   onClose: () => void
   id: string
+  onSendInvitation: (isSend: boolean) => void
 }
 
 const Required = () => {
@@ -170,8 +172,74 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
   )
 }
 
-function InviteModal({ open, onClose, id }: inviteModal) {
+interface ModalNotif {
+  open?: boolean
+  onClose?: () => void
+  isSend?: boolean
+}
+
+const ModalNotification: React.FC<ModalNotif> = ({
+  open = false,
+  onClose,
+  isSend = false
+}) => {
   const { t } = useTranslation()
+  const msgModal = isSend
+    ? t('tenant.invite_modal.invite_success')
+    : t('tenant.invite_modal.invite_failed')
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3, textAlign: 'center' }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h3"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {msgModal}
+            </Typography>
+          </Box>
+
+          <Box sx={{ alignSelf: 'center', paddingY: 3 }}>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={onClose}
+            >
+              {t('check_out.ok')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
+function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
+  const { t } = useTranslation()
+  const [email, setEmail] = useState<string>('')
+
+  const sendInvitation = async () => {
+    const titleInv = 'Invitation Tenant Account'
+    const content = `are u invited to register as tenant member , ${
+      defaultPath.tenantRegisterPath + id
+    }`
+
+    const result = await sendEmailInvitation(email, titleInv, content)
+    if (result) {
+      onSendInvitation(true)
+    } else {
+      onSendInvitation(false)
+    }
+    onClose()
+  }
 
   return (
     <Modal
@@ -201,8 +269,8 @@ function InviteModal({ open, onClose, id }: inviteModal) {
             <TextField
               fullWidth
               placeholder={t('tenant.invite_modal.enter_email')}
-              onChange={(event: { target: { value: any } }) => {
-                console.log(event.target.value)
+              onChange={(event) => {
+                setEmail(event.target.value)
               }}
               InputProps={{
                 sx: styles.textField,
@@ -217,8 +285,9 @@ function InviteModal({ open, onClose, id }: inviteModal) {
                         }
                       ]}
                       variant="outlined"
+                      onClick={sendInvitation}
                     >
-                      {t('tenant.invite_modal.copy')}
+                      {t('tenant.invite_modal.send')}
                     </Button>
                   </InputAdornment>
                 )
@@ -236,7 +305,7 @@ function InviteModal({ open, onClose, id }: inviteModal) {
               fullWidth
               value={defaultPath.tenantRegisterPath + id}
               onChange={(event: { target: { value: any } }) => {
-                console.log(event.target.value)
+                //console.log(event.target.value)
               }}
               InputProps={{
                 sx: styles.textField,
@@ -528,6 +597,8 @@ function CompanyManage() {
   const [selected, setSelected] = useState<string[]>([])
   const [invFormModal, setInvFormModal] = useState<boolean>(false)
   const [invSendModal, setInvSendModal] = useState<boolean>(false)
+  const [modalNotification, setModalNotification] = useState<boolean>(false)
+  const [successSendInv, setSuccessSendInv] = useState<boolean>(false)
   const [rejectModal, setRejectModal] = useState<boolean>(false)
   const [InviteId, setInviteId] = useState<string>('')
   const [companies, setCompanies] = useState<Company[]>([])
@@ -804,6 +875,12 @@ function CompanyManage() {
     initCompaniesData()
   }
 
+  const handleSendInvitation = (isSend: boolean) => {
+    setInvSendModal(false)
+    setModalNotification(true)
+    setSuccessSendInv(isSend)
+  }
+
   const onInviteFormSubmit = async (
     formikValues: InviteTenant,
     submitForm: () => void
@@ -965,6 +1042,12 @@ function CompanyManage() {
           open={invSendModal}
           onClose={handleCloseInvite}
           id={InviteId}
+          onSendInvitation={handleSendInvitation}
+        />
+        <ModalNotification
+          open={modalNotification}
+          onClose={() => setModalNotification(false)}
+          isSend={successSendInv}
         />
 
         <RejectModal

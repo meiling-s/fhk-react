@@ -37,6 +37,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import ViewQuiltOutlinedIcon from "@mui/icons-material/ViewQuiltOutlined";
+import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
 import { dynamicpath } from "../utils/utils";
 
 type MainDrawer = {
@@ -96,9 +97,9 @@ function MainDrawer() {
   const defaultFunctionList: func[] = [
     {
       "Tenant management": {
-        name: t("all_Collection_Point"),
-
-        onClick: () => navigate("/collector/collectionPoint"),
+        name: t("tenant.company"),
+        icon: <FolderCopyOutlinedIcon />,
+        onClick: () => navigate("/astd"),
         collapse: false,
       },
       "User account": {
