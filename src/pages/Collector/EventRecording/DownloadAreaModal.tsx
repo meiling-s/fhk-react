@@ -68,7 +68,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-word?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`
     if(url){
       setDownloads(prev => {
-        return [{date: dayjs().format('YYYY/MM/DD'), url: AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-word?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`}]
+        return [{date: dayjs().format('YYYY/MM/DD'), url: url}]
       })
     }
 
@@ -87,7 +87,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-excel?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`
     if(url){
       setDownloads(prev => {
-        return [{date: dayjs().format('YYYY/MM/DD'), url: AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-excel?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`}]
+        return [{date: dayjs().format('YYYY/MM/DD'), url: url}]
       })
     } 
    }
