@@ -19,11 +19,12 @@ import { useEffect, useState } from 'react'
 import {
   collectionPoint,
   updateCP,
+  openingPeriod,
   recyclable,
   timePeriod
 } from '../../../../interfaces/collectionPoint'
 import CustomTextField from '../../../../components/FormComponents/CustomTextField'
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers'
+import { LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import useDebounce from '../../../../hooks/useDebounce'
@@ -34,8 +35,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   findCollectionPointExistByName,
   findCollectionPointExistByContractAndAddress,
-  updateCollectionPoint,
-  getCollectionPointDetail
+  updateCollectionPoint
 } from '../../../../APICalls/collectionPointManage'
 import { useTranslation } from 'react-i18next'
 import {
@@ -57,36 +57,37 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import { localStorgeKeyName } from '../../../../constants/constant'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
-import LabelField from '../../../../components/FormComponents/CustomField'
-import { format } from '../../../../constants/constant'
 
 function CreateCollectionPoint() {
   const { state } = useLocation()
   const colInfo: collectionPoint = state
   console.log('colInfo', colInfo)
 
-  const [colType, setCOLType] = useState<string>('')
-  const [colName, setCOLName] = useState<string>('')
-  const [address, setAddress] = useState<string>('')
-  const [gpsCode, setGPSCode] = useState<number[]>([0, 0])
-  const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
-  const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
+  const [colType, setCOLType] = useState<string>(colInfo.colPointTypeId)
+  const [address, setAddress] = useState<string>(colInfo.address)
+  const [gpsCode, setGPSCode] = useState<number[]>(colInfo.gpsCode)
+  const [openingPeriod, setOpeningPeriod] = useState<openingPeriod>({
+    startDate: dayjs(colInfo.effFrmDate),
+    endDate: dayjs(colInfo.effToDate)
+  })
   const [colPtRoutine, setColPtRoutine] = useState<colPtRoutine>()
-  const [routineType, setRoutineType] = useState('')
-  const [routineContent, setRoutineContent] = useState([])
-  const [siteType, setSiteType] = useState<string>('') //site type
-  const [contractNo, setContractNo] = useState<string>('')
-  const [premiseName, setPremiseName] = useState<string>('') //Name of the house/place
-  const [premiseType, setPremiseType] = useState<string>('') //Category of the house/place
-  const [premiseRemark, setPremiseRemark] = useState<string>('')
+  const [siteType, setSiteType] = useState<string>(colInfo.siteTypeId) //site type
+  const [contractNo, setContractNo] = useState<string>(colInfo.contractNo)
+  const [premiseName, setPremiseName] = useState<string>(colInfo.premiseName) //Name of the house/place
+  const [premiseType, setPremiseType] = useState<string>(colInfo.premiseTypeId) //Category of the house/place
+  const [premiseRemark, setPremiseRemark] = useState<string>(
+    colInfo.premiseRemark
+  )
   const [status, setStatus] = useState<boolean>(true)
-  const [recyclables, setRecyclables] = useState<recyclable[]>([])
-  const [staffNum, setStaffNum] = useState<string>('')
-  const [EPDEnable, setEPDEnable] = useState<boolean>(false)
+  const [recyclables, setRecyclables] = useState<recyclable[]>(
+    colInfo.colPtRecyc
+  )
+  const [staffNum, setStaffNum] = useState<string>(colInfo.noOfStaff.toString())
+  const [EPDEnable, setEPDEnable] = useState<boolean>(colInfo.epdFlg)
   //   const [serviceType, setServiceType] = useState<boolean>(
   //     colInfo.extraServiceFlg
   //   )
-  const [serviceFlg, setServiceFlg] = useState<string>('')
+  const [serviceFlg, setServiceFlg] = useState<string>(colInfo.serviceFlg)
   const [searchText, setSearchText] = useState<string>('')
   const [listPlace, setListPlace] = useState<any[]>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -101,7 +102,6 @@ function CreateCollectionPoint() {
   const [contractList, setContractList] = useState<
     { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
   >([])
-  const [isFinishUpdate, setFinishUpdate] = useState<boolean>(false)
   const debouncedSearchValue: string = useDebounce(searchText, 1000)
 
   const navigate = useNavigate()
@@ -117,7 +117,6 @@ function CreateCollectionPoint() {
 
   useEffect(() => {
     initType()
-    initCollectionDetail()
   }, [])
 
   const initType = async () => {
@@ -144,40 +143,6 @@ function CreateCollectionPoint() {
     }
   }
 
-  const initCollectionDetail = async () => {
-    try {
-      const result = await getCollectionPointDetail(colInfo.colId)
-      const data = result.data
-      console.log(data, 'initcollectiondetail')
-      if (data) {
-        await Promise.all([
-          setRoutineType(data.routineType),
-          setRoutineContent(data.routine),
-          setCOLType(data.colPointTypeId),
-          setCOLName(data.colName),
-          setAddress(data.address),
-          setGPSCode(data.gpsCode),
-          setStartDate(data.effFrmDate),
-          setEndDate(data.effToDate),
-          setSiteType(data.siteTypeId),
-          setContractNo(data.contractNo),
-          setPremiseName(data.premiseName),
-          setPremiseType(data.premiseTypeId),
-          setPremiseRemark(data.premiseRemark),
-          setRecyclables(data.colPtRecyc),
-          setStatus(data.status),
-          setStaffNum(data.noOfStaff.toString()),
-          setEPDEnable(data.epdFlg),
-          setServiceFlg(data.serviceFlg),
-          setFinishUpdate(true)
-        ])
-      }
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   useEffect(() => {
     if (debouncedSearchValue) {
       getLocation(debouncedSearchValue)
@@ -200,13 +165,13 @@ function CreateCollectionPoint() {
   // }
 
   const checkTimePeriod = () => {
-    return routineContent?.every(
+    return colPtRoutine?.routineContent.every(
       (item) => item.startTime.length > 0 && item.endTime.length > 0
     )
   }
 
   const checkTimeNotDuplicate = () => {
-    const isvalid = routineContent?.every((item) => {
+    const isvalid = colPtRoutine?.routineContent.every((item) => {
       for (let index = 0; index < item.startTime.length; index++) {
         const currPair = item.startTime[index] + item.endTime[index]
         const nextPair = item.startTime[index + 1] + item.endTime[index + 1]
@@ -237,21 +202,21 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      // address == ''
-      //   ? tempV.push({
-      //       field: 'col.address',
-      //       problem: formErr.empty,
-      //       type: 'error'
-      //     })
-      //   : (await checkAddressUsed(contractNo, address)) &&
-      //     tempV.push({
-      //       field: 'col.address',
-      //       problem: formErr.hasBeenUsed,
-      //       type: 'error'
-      //     })
+      address == ''
+        ? tempV.push({
+            field: 'col.address',
+            problem: formErr.empty,
+            type: 'error'
+          })
+        : (await checkAddressUsed(contractNo, address)) &&
+          tempV.push({
+            field: 'col.address',
+            problem: formErr.hasBeenUsed,
+            type: 'error'
+          })
       dayjs(new Date()).isBetween(
-        startDate,
-        endDate
+        openingPeriod.startDate,
+        openingPeriod.endDate
       ) &&
         status == false &&
         !skipValidation.includes('col.openingDate') && //status == false: status is "CLOSED"
@@ -266,14 +231,14 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-        ; (colPtRoutine?.routineContent?.length == 0 ||
-          !checkTimePeriod() ||
-          !checkTimeNotDuplicate()) &&
-          tempV.push({
-            field: 'time_Period',
-            problem: formErr.empty,
-            type: 'error'
-          })
+      ;(colPtRoutine?.routineContent.length == 0 ||
+        !checkTimePeriod() ||
+        !checkTimeNotDuplicate()) &&
+        tempV.push({
+          field: 'time_Period',
+          problem: formErr.empty,
+          type: 'error'
+        })
       premiseName == '' &&
         tempV.push({
           field: 'col.premiseName',
@@ -313,30 +278,30 @@ function CreateCollectionPoint() {
         })
       Number.isNaN(parseInt(staffNum)) && !(staffNum == '')
         ? tempV.push({
-          field: 'col.numOfStaff',
-          problem: formErr.wrongFormat,
-          type: 'error'
-        })
+            field: 'col.numOfStaff',
+            problem: formErr.wrongFormat,
+            type: 'error'
+          })
         : !Number.isNaN(parseInt(staffNum)) &&
-        parseInt(staffNum) < 0 &&
-        tempV.push({
-          field: 'col.numOfStaff',
-          problem: formErr.numberSmallThanZero,
-          type: 'error'
-        })
+          parseInt(staffNum) < 0 &&
+          tempV.push({
+            field: 'col.numOfStaff',
+            problem: formErr.numberSmallThanZero,
+            type: 'error'
+          })
       contractNo == ''
         ? tempV.push({
-          field: 'col.contractNo',
-          problem: formErr.empty,
-          type: 'warning'
-        })
+            field: 'col.contractNo',
+            problem: formErr.empty,
+            type: 'warning'
+          })
         : !checkContractisEff(contractNo) &&
-        !skipValidation.includes('col.contractNo') &&
-        tempV.push({
-          field: 'col.contractNo',
-          problem: formErr.notWithInContractEffDate,
-          type: 'warning'
-        })
+          !skipValidation.includes('col.contractNo') &&
+          tempV.push({
+            field: 'col.contractNo',
+            problem: formErr.notWithInContractEffDate,
+            type: 'warning'
+          })
       setValidation(tempV)
       //console.log(tempV);
     }
@@ -347,8 +312,7 @@ function CreateCollectionPoint() {
     siteType,
     colPtRoutine,
     address,
-    startDate,
-    endDate,
+    openingPeriod,
     premiseName,
     premiseType,
     premiseRemark,
@@ -440,8 +404,8 @@ function CreateCollectionPoint() {
     var isBetween = false
     if (contract) {
       isBetween =
-        dayjs(contract.frmDate).isBefore(startDate) &&
-        dayjs(contract.toDate).isAfter(endDate)
+        dayjs(contract.frmDate).isBefore(openingPeriod.startDate) &&
+        dayjs(contract.toDate).isAfter(openingPeriod.endDate)
     }
     return isBetween
   }
@@ -467,16 +431,11 @@ function CreateCollectionPoint() {
     if (validation.length == 0) {
       const cp: updateCP = {
         colPointTypeId: colType,
-        effFrmDate: startDate,
-        effToDate: endDate,
-        routine: {
-          routineType: routineType,
-          routineContent: routineContent
-        },
-        // address: address,
-        // gpsCode: toGpsCode(gpsCode[0], gpsCode[1]),
-        address: 'hello',
-        gpsCode: [0, 0],
+        effFrmDate: dayjsToLocalDate(openingPeriod.startDate),
+        effToDate: dayjsToLocalDate(openingPeriod.endDate),
+        routine: colPtRoutine,
+        address: address,
+        gpsCode: toGpsCode(gpsCode[0], gpsCode[1]),
         epdFlg: EPDEnable,
         // extraServiceFlg: !serviceType,
         serviceFlg: serviceFlg,
@@ -528,317 +487,297 @@ function CreateCollectionPoint() {
       name: t('col.other')
     }
   ]
-  if (isFinishUpdate) {
-    return (
-      <>
-        <Box
-          sx={
-            (styles.innerScreen_container,
-              { paddingLeft: { xs: 0 }, width: '100%' })
-          }
-        >
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-            <Grid
-              container
-              direction={'column'}
-              spacing={2.5}
-              sx={
-                (styles.gridForm,
-                {
-                  width: { xs: '100%' },
-                  marginTop: { sm: 2, xs: 6 },
-                  marginLeft: {
-                    xs: 0
-                  }
-                })
-              }
-              className="sm:ml-0 mt-o w-full"
-            >
-              <Grid item>
-                <Button
-                  sx={[styles.headerSection]}
-                  onClick={() => handleHeaderOnClick()}
-                >
-                  <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
-                  <Typography sx={styles.header1}>{t('col.editCP')}</Typography>
-                </Button>
-              </Grid>
 
-              <CustomField label={t('col.colType')} mandatory={true}>
-                <ColPointTypeList
-                  setState={setCOLType}
-                  colPointTypes={typeList.colPoint}
-                  defaultValue={colType}
-                  editable={false}
-                />
-              </CustomField>
-
-              <CustomField label={t('col.siteType')} mandatory={true}>
-                <SiteTypeList
-                  setState={setSiteType}
-                  siteTypes={typeList.site}
-                  error={checkString(siteType)}
-                  defaultValue={siteType}
-                  editable={false}
-                />
-              </CustomField>
-
-              <CustomField label={t('col.colName')}>
-                <Typography sx={styles.formDataText}>
-                  {colName}
-                </Typography>
-              </CustomField>
-
-              <CustomField label={t('col.address')} mandatory={true}>
-                <CustomTextField
-                  id="address"
-                  placeholder={t('col.enterAddress')}
-                  onChange={(event) => handleSearchTextChange(event)}
-                  // endAdornment={locationSelect(setCPLocation)}
-                  value={address ? address : searchText}
-                  error={checkString(address)}
-                />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '100%',
-                    borderColor: 'black'
-                  }}
-                >
-                  {listPlace && listPlace.length > 0 && (
-                    <List key={listPlace[0]?.place_id}>
-                      <ListItemButton
-                        onClick={() => {
-                          setAddress(listPlace[0].formatted_address)
-                          setGPSCode([
-                            listPlace[0]?.geometry?.location?.lat,
-                            listPlace[0]?.geometry?.location?.lng
-                          ])
-                        }}
-                      >
-                        <ListItemText>
-                          {listPlace[0]?.formatted_address}
-                        </ListItemText>
-                      </ListItemButton>
-                      <Divider />
-                    </List>
-                  )}
-                </Box>
-              </CustomField>
-              <CustomField>
-              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-                <LabelField label={t('col.effFromDate')} />
-                <Box className="filter-date" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
-                    <DatePicker
-                      defaultValue={dayjs(startDate)}
-                      format={format.dateFormat2}
-                      onChange={(value) => setStartDate(value!!)}
-                      sx={{ ...localstyles.datePicker }}
-                    />
-                  </Box>
-                  <Typography sx={{marginX: 2}}>to</Typography>
-                  <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
-                    <DatePicker
-                      defaultValue={dayjs(endDate)}
-                      format={format.dateFormat2}
-                      onChange={(value) => setEndDate(value!!)}
-                      sx={{ ...localstyles.datePicker }}
-                    />
-                  </Box>
-                </Box>
-              </LocalizationProvider>
-              </CustomField>
-
-              <CustomField
-                label={t('col.startTime')}
-                mandatory={true}
-                style={{ width: '100%' }}
+  return (
+    <>
+      <Box
+        sx={
+          (styles.innerScreen_container,
+          { paddingLeft: { xs: 0 }, width: '100%' })
+        }
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
+          <Grid
+            container
+            direction={'column'}
+            spacing={2.5}
+            sx={
+              (styles.gridForm,
+              {
+                width: { xs: '100%' },
+                marginTop: { sm: 2, xs: 6 },
+                marginLeft: {
+                  xs: 0
+                }
+              })
+            }
+            className="sm:ml-0 mt-o w-full"
+          >
+            <Grid item>
+              <Button
+                sx={[styles.headerSection]}
+                onClick={() => handleHeaderOnClick()}
               >
-                <RoutineSelect
-                  setRoutineType={(value) => setRoutineType(value)}
-                  setRoutineContent={(value) => setRoutineContent(value)}
-                  requiredTimePeriod={true}
-                  defaultValue={{
-                    routineType: routineType,
-                    routineContent: routineContent
-                  }}
-                />
-              </CustomField>
-              {!checkTimeNotDuplicate() && (
-                <div className="ml-5 text-red text-sm">
-                  {t('form.error.timeCantDuplicate')}
-                </div>
-              )}
-
-              <CustomField label={t('col.premiseName')} mandatory={true}>
-                <CustomTextField
-                  id="HouseOrPlaceName"
-                  placeholder={t('col.enterName')}
-                  onChange={(event) => setPremiseName(event.target.value)}
-                  error={checkString(premiseName)}
-                  defaultValue={premiseName}
-                />
-              </CustomField>
-
-              <CustomField label={t('col.premiseType')} mandatory={true}>
-                <PremiseTypeList
-                  setState={setPremiseType}
-                  premiseTypes={typeList.premise}
-                  error={checkString(premiseType)}
-                  defaultValue={colInfo.premiseTypeId}
-                  editable={false}
-                />
-              </CustomField>
-
-              <Grid item>
-                {/* <Collapse in={premiseType == "PT00010"} > */}
-                <CustomField label={t('col.premiseRemark')} mandatory={true}>
-                  <CustomTextField
-                    id="premiseRemark"
-                    disabled={true}
-                    placeholder={t('col.enterText')}
-                    onChange={(event) => setPremiseRemark(event.target.value)}
-                    defaultValue={colInfo.premiseRemark}
-                    error={checkString(premiseName)}
-                  />
-                </CustomField>
-                {/* </Collapse> */}
-              </Grid>
-
-              <CustomField label={t('col.status')}>
-                <CustomSwitch
-                  onText={t('col.open')}
-                  offText={t('col.close')}
-                  defaultValue={status == 'CREATED'}
-                  setState={setStatus}
-                />
-              </CustomField>
-
-              <Grid item sx={{ width: '100%' }}>
-                <Divider />
-              </Grid>
-
-              <Grid item>
-                <Typography sx={styles.header2}>
-                  {t('col.colRecycType')}
-                </Typography>
-              </Grid>
-
-              <CustomField label={t('col.recycType')} mandatory={true}>
-                <RecyclablesList
-                  recycL={typeList.recyc}
-                  subTypeRequired={true}
-                  setState={setRecyclables}
-                  defaultRecycL={recyclables}
-                />
-              </CustomField>
-
-              <Grid item sx={{ width: '100%' }}>
-                <Divider />
-              </Grid>
-
-              <Grid item>
-                <Typography sx={styles.header2}>{t('col.staffInfo')}</Typography>
-              </Grid>
-
-              <CustomField label={t('col.numOfStaff')} mandatory={true}>
-                <CustomTextField
-                  id="employee number"
-                  placeholder={t('col.enterNumOfStaff')}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    setStaffNum(value)
-                  }}
-                  error={checkNumber(staffNum)}
-                  defaultValue={staffNum}
-                />
-              </CustomField>
-
-              <Grid item sx={{ width: '100%' }}>
-                <Divider />
-              </Grid>
-
-              <Grid item>
-                <Typography sx={styles.header2}>
-                  {t('col.serviceInfo')}
-                </Typography>
-              </Grid>
-
-              <CustomField label={t('col.contractNo')}>
-                <Autocomplete
-                  disablePortal
-                  id="contractNo"
-                  options={contractList.map((contract) => contract.contractNo)}
-                  defaultValue={contractNo}
-                  onChange={(event, value) => {
-                    console.log(value)
-                    if (value) {
-                      setContractNo(value)
-                    }
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder={t('col.enterNo')}
-                      sx={[styles.textField, { width: 250 }]}
-                      InputProps={{
-                        ...params.InputProps,
-                        sx: styles.inputProps
-                      }}
-                    />
-                  )}
-                />
-              </CustomField>
-
-              <CustomField label={t('col.serviceType')}>
-                {/* <Typography sx={styles.formDataText}>
-                                  {colInfo.serviceFlg? t("col.basic") : t("col.extra")}
-                              </Typography> */}
-                <CustomItemList
-                  items={serviceTypeList}
-                  singleSelect={setServiceFlg}
-                  defaultSelected={serviceFlg}
-                ></CustomItemList>
-              </CustomField>
-              <Grid item className="lg:flex sm:block text-center">
-                <Button
-                  sx={[
-                    styles.buttonFilledGreen,
-                    localstyles.localButton,
-                    { marginBottom: { md: 0, xs: 2 } }
-                  ]}
-                  onClick={() => handleSaveOnClick()}
-                >
-                  {t('col.save')}
-                </Button>
-                <Button
-                  sx={[styles.buttonOutlinedGreen, localstyles.localButton]}
-                  onClick={() => handleCancelOnClick()}
-                >
-                  {t('col.cancel')}
-                </Button>
-              </Grid>
-              <Grid item sx={{ width: '50%' }}>
-                {trySubmited &&
-                  validation.map((val) => (
-                    <FormErrorMsg
-                      field={t(val.field)}
-                      errorMsg={returnErrorMsg(val.problem)}
-                      type={val.type}
-                      setContinue={() => addSkipValidation(val.field)}
-                    />
-                  ))}
-              </Grid>
+                <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
+                <Typography sx={styles.header1}>{t('col.editCP')}</Typography>
+              </Button>
             </Grid>
-          </LocalizationProvider>
-        </Box>
-      </>
-    )
-  } else {
-    return null
-  }
+
+            <CustomField label={t('col.colType')} mandatory={true}>
+              <ColPointTypeList
+                setState={setCOLType}
+                colPointTypes={typeList.colPoint}
+                defaultValue={colInfo.colPointTypeId}
+                editable={false}
+              />
+            </CustomField>
+
+            <CustomField label={t('col.siteType')} mandatory={true}>
+              <SiteTypeList
+                setState={setSiteType}
+                siteTypes={typeList.site}
+                error={checkString(siteType)}
+                defaultValue={colInfo.siteTypeId}
+                editable={false}
+              />
+            </CustomField>
+
+            <CustomField label={t('col.colName')}>
+              <Typography sx={styles.formDataText}>
+                {colInfo.colName}
+              </Typography>
+            </CustomField>
+
+            <CustomField label={t('col.address')} mandatory={true}>
+              <CustomTextField
+                id="address"
+                placeholder={t('col.enterAddress')}
+                onChange={(event) => handleSearchTextChange(event)}
+                // endAdornment={locationSelect(setCPLocation)}
+                value={address ? address : searchText}
+                error={checkString(address)}
+              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '100%',
+                  borderColor: 'black'
+                }}
+              >
+                {listPlace && listPlace.length > 0 && (
+                  <List key={listPlace[0]?.place_id}>
+                    <ListItemButton
+                      onClick={() => {
+                        setAddress(listPlace[0].formatted_address)
+                        setGPSCode([
+                          listPlace[0]?.geometry?.location?.lat,
+                          listPlace[0]?.geometry?.location?.lng
+                        ])
+                      }}
+                    >
+                      <ListItemText>
+                        {listPlace[0]?.formatted_address}
+                      </ListItemText>
+                    </ListItemButton>
+                    <Divider />
+                  </List>
+                )}
+              </Box>
+            </CustomField>
+
+            <CustomField label={t('col.effFromDate')} mandatory={true}>
+              <CustomPeriodSelect
+                setDate={setOpeningPeriod}
+                defaultStartDate={colInfo.effFrmDate}
+                defaultEndDate={colInfo.effToDate}
+              />
+            </CustomField>
+
+            <CustomField
+              label={t('col.startTime')}
+              mandatory={true}
+              style={{ width: '100%' }}
+            >
+              <RoutineSelect
+                setRoutine={setColPtRoutine}
+                requiredTimePeriod={true}
+                defaultValue={{
+                  routineType: colInfo.routineType,
+                  routineContent: colInfo.routine
+                }}
+              />
+            </CustomField>
+            {!checkTimeNotDuplicate() && (
+              <div className="ml-5 text-red text-sm">
+                {t('form.error.timeCantDuplicate')}
+              </div>
+            )}
+
+            <CustomField label={t('col.premiseName')} mandatory={true}>
+              <CustomTextField
+                id="HouseOrPlaceName"
+                placeholder={t('col.enterName')}
+                onChange={(event) => setPremiseName(event.target.value)}
+                error={checkString(premiseName)}
+                defaultValue={colInfo.premiseName}
+              />
+            </CustomField>
+
+            <CustomField label={t('col.premiseType')} mandatory={true}>
+              <PremiseTypeList
+                setState={setPremiseType}
+                premiseTypes={typeList.premise}
+                error={checkString(premiseType)}
+                defaultValue={colInfo.premiseTypeId}
+                editable={false}
+              />
+            </CustomField>
+
+            <Grid item>
+              {/* <Collapse in={premiseType == "PT00010"} > */}
+              <CustomField label={t('col.premiseRemark')} mandatory={true}>
+                <CustomTextField
+                  id="premiseRemark"
+                  disabled={true}
+                  placeholder={t('col.enterText')}
+                  onChange={(event) => setPremiseRemark(event.target.value)}
+                  defaultValue={colInfo.premiseRemark}
+                  error={checkString(premiseName)}
+                />
+              </CustomField>
+              {/* </Collapse> */}
+            </Grid>
+
+            <CustomField label={t('col.status')}>
+              <CustomSwitch
+                onText={t('col.open')}
+                offText={t('col.close')}
+                defaultValue={colInfo.status == 'CREATED'}
+                setState={setStatus}
+              />
+            </CustomField>
+
+            <Grid item sx={{ width: '100%' }}>
+              <Divider />
+            </Grid>
+
+            <Grid item>
+              <Typography sx={styles.header2}>
+                {t('col.colRecycType')}
+              </Typography>
+            </Grid>
+
+            <CustomField label={t('col.recycType')} mandatory={true}>
+              <RecyclablesList
+                recycL={typeList.recyc}
+                subTypeRequired={true}
+                setState={setRecyclables}
+                defaultRecycL={colInfo.colPtRecyc}
+              />
+            </CustomField>
+
+            <Grid item sx={{ width: '100%' }}>
+              <Divider />
+            </Grid>
+
+            <Grid item>
+              <Typography sx={styles.header2}>{t('col.staffInfo')}</Typography>
+            </Grid>
+
+            <CustomField label={t('col.numOfStaff')} mandatory={true}>
+              <CustomTextField
+                id="employee number"
+                placeholder={t('col.enterNumOfStaff')}
+                onChange={(event) => {
+                  const value = event.target.value
+                  setStaffNum(value)
+                }}
+                error={checkNumber(staffNum)}
+                defaultValue={colInfo.noOfStaff}
+              />
+            </CustomField>
+
+            <Grid item sx={{ width: '100%' }}>
+              <Divider />
+            </Grid>
+
+            <Grid item>
+              <Typography sx={styles.header2}>
+                {t('col.serviceInfo')}
+              </Typography>
+            </Grid>
+
+            <CustomField label={t('col.contractNo')}>
+              <Autocomplete
+                disablePortal
+                id="contractNo"
+                options={contractList.map((contract) => contract.contractNo)}
+                defaultValue={colInfo.contractNo}
+                onChange={(event, value) => {
+                  console.log(value)
+                  if (value) {
+                    setContractNo(value)
+                  }
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder={t('col.enterNo')}
+                    sx={[styles.textField, { width: 250 }]}
+                    InputProps={{
+                      ...params.InputProps,
+                      sx: styles.inputProps
+                    }}
+                  />
+                )}
+              />
+            </CustomField>
+
+            <CustomField label={t('col.serviceType')}>
+              {/* <Typography sx={styles.formDataText}>
+                                {colInfo.serviceFlg? t("col.basic") : t("col.extra")}
+                            </Typography> */}
+              <CustomItemList
+                items={serviceTypeList}
+                singleSelect={setServiceFlg}
+                defaultSelected={serviceFlg}
+              ></CustomItemList>
+            </CustomField>
+            <Grid item className="lg:flex sm:block text-center">
+              <Button
+                sx={[
+                  styles.buttonFilledGreen,
+                  localstyles.localButton,
+                  { marginBottom: { md: 0, xs: 2 } }
+                ]}
+                onClick={() => handleSaveOnClick()}
+              >
+                {t('col.save')}
+              </Button>
+              <Button
+                sx={[styles.buttonOutlinedGreen, localstyles.localButton]}
+                onClick={() => handleCancelOnClick()}
+              >
+                {t('col.cancel')}
+              </Button>
+            </Grid>
+            <Grid item sx={{ width: '50%' }}>
+              {trySubmited &&
+                validation.map((val) => (
+                  <FormErrorMsg
+                    field={t(val.field)}
+                    errorMsg={returnErrorMsg(val.problem)}
+                    type={val.type}
+                    setContinue={() => addSkipValidation(val.field)}
+                  />
+                ))}
+            </Grid>
+          </Grid>
+        </LocalizationProvider>
+      </Box>
+    </>
+  )
 }
 const localstyles = {
   localButton: {
