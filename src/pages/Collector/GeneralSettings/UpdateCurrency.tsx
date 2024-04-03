@@ -94,7 +94,7 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
 
     const result = await updateUserCurrency(tenantId, selectedCurrency.id, username)
     if (result) {
-      onSubmitData("success", "Success update currency")
+      onSubmitData("success", t('common.saveSuccessfully'))
       handleDrawerClose()
     }
   }
