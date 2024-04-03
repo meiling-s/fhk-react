@@ -232,9 +232,8 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
         if (tenantId) {
             const res = await getTenantById(parseInt(tenantId))
             if (res?.data) {
-                // Hardcode maxupload = 3
-                setMaxImageNumber(res.data?.allowImgNum as number || 3)
-                setMaxImageSize(res.data?.allowImgSize as number || 3 * 1000 * 1000)
+                setMaxImageNumber(res.data?.allowImgNum as number)
+                setMaxImageSize(res.data?.allowImgSize as number)
             }
         }
     },[tenantId]) 
@@ -392,7 +391,6 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                     </CustomField>
                                 </Grid>
                             ) : driver.type === 'upload' ? (
-                                maxImageNumber > 0 && maxImageSize > 0 &&
                                 <Grid item key={driver.label}>
                                     <CustomField label={driver.label}>
                                         <ImageUploading
