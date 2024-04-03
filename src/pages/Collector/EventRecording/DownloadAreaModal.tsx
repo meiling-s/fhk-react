@@ -54,38 +54,40 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
    }else if(selectedItem?.id === 6){
     // const response =  await getDownloadWord(startDate.format('YYYY/MM/DD'), endDate.format('YYYY/MM/DD'));
 
-    const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector, ...DOWNLOAD_WORD_REPORT(),
-      params: {
-        table: decodeKeycloack,
-        from: dayjs(startDate).format('YYYY/MM/DD'),
-        to: dayjs(endDate).format('YYYY/MM/DD')
-      }
-    })
+    // const response = await axiosInstance({
+    //   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector, ...DOWNLOAD_WORD_REPORT(),
+    //   params: {
+    //     table: decodeKeycloack,
+    //     from: dayjs(startDate).format('YYYY/MM/DD'),
+    //     to: dayjs(endDate).format('YYYY/MM/DD')
+    //   }
+    // })
     
-    const blb = new Blob([response.data],{type: "application/force-download;charset=utf-8"})
-    const url = URL.createObjectURL(blb);
+    // const blb = new Blob([response.data],{type: "application/force-download;charset=utf-8"})
+    // const url = URL.createObjectURL(blb);
+    const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-word?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`
     if(url){
       setDownloads(prev => {
-        return [{date: dayjs().format('YYYY/MM/DD'), url: url}]
+        return [{date: dayjs().format('YYYY/MM/DD'), url: AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-word?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`}]
       })
     }
 
    }else if(selectedItem?.id === 7){
     // const response =  await getDownloadExcel(startDate.format('YYYY/MM/DD'), endDate.format('YYYY/MM/DD'))
-    const response = await axiosInstance({ baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector, ...DOWNLOAD_EXCEL_REPORT(),
-      params: {
-        table: decodeKeycloack,
-        from: dayjs(startDate).format('YYYY/MM/DD'),
-        to: dayjs(endDate).format('YYYY/MM/DD')
-      }
-    })
+    // const response = await axiosInstance({ baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector, ...DOWNLOAD_EXCEL_REPORT(),
+    //   params: {
+    //     table: decodeKeycloack,
+    //     from: dayjs(startDate).format('YYYY/MM/DD'),
+    //     to: dayjs(endDate).format('YYYY/MM/DD')
+    //   }
+    // })
 
-    const blb = new Blob([response.data],{type: "application/force-download;charset=utf-8"})
-    const url = URL.createObjectURL(blb);
+    // const blb = new Blob([response.data],{type: "application/force-download;charset=utf-8"})
+    // const url = URL.createObjectURL(blb);
+    const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-excel?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`
     if(url){
       setDownloads(prev => {
-        return [{date: dayjs().format('YYYY/MM/DD'), url: url}]
+        return [{date: dayjs().format('YYYY/MM/DD'), url: AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/download-excel?table=${decodeKeycloack}&from=${dayjs(startDate).format('YYYY/MM/DD')}&to=${dayjs(endDate).format('YYYY/MM/DD')}`}]
       })
     } 
    }
@@ -149,7 +151,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
              }
           >
             {
-              downloads.map(item => <DownloadItem date={item.date} url={item.url} typeFile={selectedItem?.typeFile}/>)
+              downloads.map(item => <DownloadItem key={item.url} date={item.date} url={item.url} typeFile={selectedItem?.typeFile}/>)
             }
             
           </Grid>
@@ -213,8 +215,8 @@ const DownloadItem: FunctionComponent<{date: string, url: string, typeFile: stri
           }
           underline="none" 
           target="_blank" 
-          // href={url} 
-          onClick={() => downloadfile(url, typeFile)}
+          href={url} 
+          // onClick={() => downloadfile(url, typeFile)}
         >
           <DOCUMENT_ICON style={{color: '#79CA25'}}/>
           <Typography style={{fontSize: '13px', fontWeight: '700', color: '#79CA25', textAlign: 'center'}}>
