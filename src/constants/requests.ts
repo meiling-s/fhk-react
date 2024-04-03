@@ -875,6 +875,27 @@ export const UPDATE_NOTIF_TEMPLATE = (tenantId: string, templateId: string, path
   url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
 })
 
+//logistics driver
+export const GET_DRIVER_LIST = ():AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/driver/{table}`
+})
+
+export const CREATE_DRIVER = (tenantId: string):AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/logistic/driver/${tenantId}`
+})
+
+export const EDIT_DRIVER = (tableId: string,driverId: string):AxiosRequestConfig =>({
+  method: 'put',
+  url: `api/v1/logistic/driver/${tableId}/${driverId}`
+})
+
+export const DELETE_DRIVER = (tableId: string,driverId: string):AxiosRequestConfig =>({
+  method: 'patch',
+  url: `api/v1/logistic/driver/${tableId}/${driverId}`
+})
+
 export const UPDATE_NOTIF_TEMPLATE_BROADCAST = (tenantId: string, templateId: string, path: string): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`

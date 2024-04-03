@@ -847,6 +847,47 @@
     "search": {
       "label": "Search",
       "placeholder": "Please enter Driver No."   
+    },
+    "table": {
+      "driverId": "Driver Id",
+      "driverName": "司机中文名",
+      "driverEngName": "Driver English Name",
+      "gender": "Gender",
+      "loginName": "Login Name",
+      "contactNo": "Contact No",
+      "lastLogin": "Last Login"
+    },
+    "popUp": {
+      "addTitle": "Add Driver",
+      "editTitle": "Edit Driver",
+      "deleteTitle": "Delete Driver",
+      "saveText": "Save",
+      "removeText": "Remove",
+      "field": {
+        "loginName": "Login Name",
+        "nameText": "Please Enter Name",
+        "TchiName": "Driver Traditional Chinese Name",
+        "SchiName": "Driver Simplified Chinese Name",
+        "engName": "Driver English Name",
+        "engText": "Please type a name",
+        "linsenceName": "Driver's License Number",
+        "linsenceText": "Driver's License Number",
+        "uploadLinsence": "Upload Driver's License",
+        "carType": "Vehicle Type",
+        "carTypeSelect": "Please Select",
+        "carYear": "Years of Holding License",
+        "yearInput": "Please enter year",
+        "driveYear": "Years of Driving Experience",
+        "addvehicleButton": "Add Vehicle Type",
+        "contactNo": "Contact Number",
+        "contactText": "Please Enter Contact Number",
+        "createSuccessMsg": "Success created driver",
+        "createFailMsg": "Failed created driver",
+        "editSuccessMsg": "Success edited driver",
+        "editFailMsg": "Failed edited driver",
+        "deleteSuccessMsg": "Success deleted driver",
+        "deleteFailMsg": "Failed delete driver"
+      }
     }
   },
   "general_settings": {

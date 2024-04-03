@@ -834,6 +834,47 @@
       "search": {
         "label": "搜索",
         "placeholder": "輸入司機編號"   
+      },
+      "table": {
+        "driverId": "司機編號",
+        "driverName": "司機中文名",
+        "driverEngName": "Driver English Name",
+        "gender": "性别",
+        "loginName": "登入名稱",
+        "contactNo": "聯絡電話",
+        "lastLogin": "上次登入"
+      },
+      "popUp": {
+        "addTitle": "新增司機",
+        "editTitle": "修改司機",
+        "deleteTitle": "刪除司機",
+        "saveText": "儲存",
+        "removeText": "刪除",
+        "field": {
+          "loginName": "登錄名稱",
+          "nameText": "請輸入名稱",
+          "TchiName": "司機繁體中文名稱",
+          "SchiName": "司機簡體中文名稱",
+          "engName": "Driver English Name",
+          "engText": "Please type a name",
+          "linsenceName": "駕駛執照編號",
+          "linsenceText": "駕駛執照編號",
+          "uploadLinsence": "上載駕駛執照",
+          "carType": "車輛類別",
+          "carTypeSelect": "請選擇",
+          "carYear": "持有執照年期",
+          "yearInput": "請輸入年期",
+          "driveYear": "駕駛經驗",
+          "addvehicleButton": "新增車輛類別",
+          "contactNo": "聯絡電話",
+          "contactText": "請輸入聯絡電話",
+          "createSuccessMsg": "創建司機成功",
+          "createFailMsg": "創建司機失敗",
+          "editSuccessMsg": "修改司機成功",
+          "editFailMsg": "修改司機失敗",
+          "deleteSuccessMsg": "刪除司機成功",
+          "deleteFailMsg": "刪除司機失敗"
+        }
       }
     },
     "vehicleMenu": {

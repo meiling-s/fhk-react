@@ -2,6 +2,7 @@ import { Box } from "@mui/material"
 import Tabs from '../../../components/Tabs'
 import { useTranslation } from "react-i18next"
 import { useState } from "react"
+import DriverMenu from "./DriverMenu"
 import Vehicles from "./Vehicles/Vehicles"
 
 const Driver = () => {
@@ -23,8 +24,8 @@ const Driver = () => {
                 className="lg:px-10 sm:px-4 bg-bg-primary"
             />
             {selectedTab === 0 ? (
-                <></>
-            ) : 
+               <DriverMenu/>
+            ) :
                 <Vehicles/>
             }
         </div>
