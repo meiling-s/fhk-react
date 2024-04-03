@@ -139,7 +139,7 @@ const Login = () => {
             break;
           case "logistic":
             realmApiRoute = 'logistic'
-            navigate("/logistic/pickupOrder");
+            navigate("/logistic/jobOrder");
             break;
           case "manufacturer":
             navigate("/manufacturer/pickupOrder");
