@@ -11,7 +11,8 @@ import {
   Grid,
   Divider,
   Pagination,
-  CircularProgress
+  CircularProgress,
+  Alert
 } from '@mui/material'
 import {
   DataGrid,
@@ -28,7 +29,8 @@ import {
   createInvitation,
   getAllTenant,
   searchTenantById,
-  updateTenantStatus
+  updateTenantStatus,
+  sendEmailInvitation
 } from '../../APICalls/tenantManage'
 import { defaultPath, format } from '../../constants/constant'
 import { styles } from '../../constants/styles'
@@ -49,7 +51,8 @@ import { ErrorMessage, useFormik, validateYupSchema } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 import CustomAutoComplete from '../../components/FormComponents/CustomAutoComplete'
-import { returnApiToken } from '../../utils/utils'
+import { returnApiToken, showErrorToast } from '../../utils/utils'
+import { ToastContainer } from 'react-toastify'
 
 function createCompany(
   id: number,
@@ -67,6 +70,7 @@ type inviteModal = {
   open: boolean
   onClose: () => void
   id: string
+  onSendInvitation: (isSend: boolean) => void
 }
 
 const Required = () => {
@@ -113,7 +117,7 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
     const result = await updateTenantStatus(statData, tenantId)
     const data = result?.data
     if (data) {
-      console.log('reject success success')
+      // console.log('reject success success')
       onSubmit()
     }
   }
@@ -170,8 +174,74 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
   )
 }
 
-function InviteModal({ open, onClose, id }: inviteModal) {
+interface ModalNotif {
+  open?: boolean
+  onClose?: () => void
+  isSend?: boolean
+}
+
+const ModalNotification: React.FC<ModalNotif> = ({
+  open = false,
+  onClose,
+  isSend = false
+}) => {
   const { t } = useTranslation()
+  const msgModal = isSend
+    ? t('tenant.invite_modal.invite_success')
+    : t('tenant.invite_modal.invite_failed')
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3, textAlign: 'center' }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h3"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {msgModal}
+            </Typography>
+          </Box>
+
+          <Box sx={{ alignSelf: 'center', paddingY: 3 }}>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={onClose}
+            >
+              {t('check_out.ok')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
+function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
+  const { t } = useTranslation()
+  const [email, setEmail] = useState<string>('')
+
+  const sendInvitation = async () => {
+    const titleInv = 'Invitation Tenant Account'
+    const content = `are u invited to register as tenant member , ${
+      defaultPath.tenantRegisterPath + id
+    }`
+
+    const result = await sendEmailInvitation(email, titleInv, content)
+    if (result) {
+      onSendInvitation(true)
+    } else {
+      onSendInvitation(false)
+    }
+    onClose()
+  }
 
   return (
     <Modal
@@ -201,8 +271,8 @@ function InviteModal({ open, onClose, id }: inviteModal) {
             <TextField
               fullWidth
               placeholder={t('tenant.invite_modal.enter_email')}
-              onChange={(event: { target: { value: any } }) => {
-                console.log(event.target.value)
+              onChange={(event) => {
+                setEmail(event.target.value)
               }}
               InputProps={{
                 sx: styles.textField,
@@ -217,8 +287,9 @@ function InviteModal({ open, onClose, id }: inviteModal) {
                         }
                       ]}
                       variant="outlined"
+                      onClick={sendInvitation}
                     >
-                      {t('tenant.invite_modal.copy')}
+                      {t('tenant.invite_modal.send')}
                     </Button>
                   </InputAdornment>
                 )
@@ -236,7 +307,7 @@ function InviteModal({ open, onClose, id }: inviteModal) {
               fullWidth
               value={defaultPath.tenantRegisterPath + id}
               onChange={(event: { target: { value: any } }) => {
-                console.log(event.target.value)
+                //console.log(event.target.value)
               }}
               InputProps={{
                 sx: styles.textField,
@@ -287,16 +358,35 @@ type inviteForm = {
   open: boolean
   isLoading: boolean
   onClose: () => void
-  onSubmit: (formikValues: InviteTenant, submitForm: () => void) => void
+  onSubmitForm: (formikValues: InviteTenant) => void
 }
 
-function InviteForm({ open, isLoading, onClose, onSubmit }: inviteForm) {
+function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
   const { t } = useTranslation()
   const [submitable, setSubmitable] = useState<boolean>(false)
 
   const validateSchema = Yup.object().shape({
-    companyNumber: Yup.string().required('This companyNumber is required'),
-    companyCategory: Yup.string().required('This companyNumber is required')
+    companyNumber: Yup.number().required(
+      `${t('tenant.invite_form.company_number')} is required`
+    ),
+    companyCategory: Yup.string().required(
+      `${t('tenant.invite_form.company_category')} is required`
+    ),
+    companyZhName: Yup.string().required(
+      `${t('tenant.invite_form.company_zh_name')} is required`
+    ),
+    companyCnName: Yup.string().required(
+      `${t('tenant.invite_form.company_cn_name')} is required`
+    ),
+    companyEnName: Yup.string().required(
+      `${t('tenant.invite_form.company_en_name')} is required`
+    ),
+    bussinessNumber: Yup.string().required(
+      `${t('tenant.invite_form.bussiness_number')} is required`
+    ),
+    remark: Yup.string().required(
+      `${t('tenant.invite_form.remark')} is required`
+    )
   })
 
   const initialValues = {
@@ -316,9 +406,14 @@ function InviteForm({ open, isLoading, onClose, onSubmit }: inviteForm) {
     initialValues,
     validationSchema: validateSchema,
 
-    onSubmit: (values) => {
-      console.log(values)
-      onClose && onClose()
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        await onSubmitForm(values)
+        resetForm()
+        onClose && onClose()
+      } catch (error) {
+        console.error('Error submitting form:', error)
+      }
     }
   })
 
@@ -374,150 +469,204 @@ function InviteForm({ open, isLoading, onClose, onSubmit }: inviteForm) {
     }
   ]
 
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    formik.handleSubmit()
+  }
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-      <Modal
-        open={open}
-        onClose={onClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={[
-            localstyles.modal,
-            {
-              height: '90%',
-              width: '40%',
-              overflowY: 'auto'
-            }
-          ]}
+    <form onSubmit={formik.handleSubmit}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
+        <Modal
+          open={open}
+          onClose={onClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
         >
-          <Stack spacing={2}>
-            <Box sx={{ paddingX: 3, paddingTop: 3 }}>
-              <Typography
-                id="modal-modal-title"
-                variant="h6"
-                component="h2"
-                sx={{ fontWeight: 'bold' }}
-              >
-                {t('tenant.invite_modal.invite_company')}
-              </Typography>
-            </Box>
-            <Divider />
-            <Box sx={{ paddingX: 3, paddingTop: 3 }}>
-              {TextFields.map((t, index) => (
-                <Grid item sx={{ marginBottom: 3 }} key={index}>
-                  <CustomField mandatory label={t.label}>
-                    {t.id === 'companyCategory' ? (
-                      <CustomAutoComplete
-                        placeholder={t.placeholder}
-                        option={t.options?.map((option) => option)}
-                        sx={{ width: '100%' }}
-                        onChange={(
-                          _: SyntheticEvent,
-                          newValue: string | null
-                        ) => {
-                          formik.setFieldValue('companyCategory', newValue)
-                        }}
-                        value={t.value}
-                        inputValue={t.value}
-                        error={t.error || undefined}
-                      />
-                    ) : t.id === 'companyNumber' ? (
-                      <Box>
-                        <TextField
-                          fullWidth
-                          InputProps={{
-                            sx: styles.textField
+          <Box
+            sx={[
+              localstyles.modal,
+              {
+                height: '90%',
+                width: '40%',
+                overflowY: 'auto'
+              }
+            ]}
+          >
+            <Stack spacing={2}>
+              <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h2"
+                  sx={{ fontWeight: 'bold' }}
+                >
+                  {t('tenant.invite_modal.invite_company')}
+                </Typography>
+              </Box>
+              <Divider />
+              <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+                {TextFields.map((t, index) => (
+                  <Grid item sx={{ marginBottom: 3 }} key={index}>
+                    <CustomField mandatory label={t.label}>
+                      {t.id === 'companyCategory' ? (
+                        <CustomAutoComplete
+                          placeholder={t.placeholder}
+                          option={t.options?.map((option) => option)}
+                          sx={{ width: '100%' }}
+                          onChange={(
+                            _: SyntheticEvent,
+                            newValue: string | null
+                          ) => {
+                            formik.setFieldValue('companyCategory', newValue)
                           }}
-                          label={t.placeholder}
-                          onChange={(event) => {
-                            const numericValue = event.target.value.replace(
-                              /\D/g,
-                              ''
-                            )
-                            formik.setFieldValue('companyNumber', numericValue)
-                          }}
-                          sx={localstyles.inputState}
                           value={t.value}
-                          inputProps={{
-                            inputMode: 'numeric',
-                            pattern: '[0-9]*',
-                            maxLength: 6
-                          }}
+                          inputValue={t.value}
+                          error={t.error || undefined}
                         />
-                      </Box>
-                    ) : (
-                      <CustomTextField
-                        id={t.id}
-                        placeholder={t.placeholder}
-                        rows={4}
-                        onChange={formik.handleChange}
-                        value={t.value}
-                        sx={{ width: '100%' }}
-                        error={t.error || undefined}
-                      />
-                    )}
-                  </CustomField>
+                      ) : t.id === 'companyNumber' ? (
+                        <Box>
+                          <TextField
+                            fullWidth
+                            InputProps={{
+                              sx: styles.textField
+                            }}
+                            label={t.placeholder}
+                            onChange={(event) => {
+                              const numericValue = event.target.value.replace(
+                                /\D/g,
+                                ''
+                              )
+                              formik.setFieldValue(
+                                'companyNumber',
+                                numericValue
+                              )
+                            }}
+                            sx={localstyles.inputState}
+                            value={t.value}
+                            inputProps={{
+                              inputMode: 'numeric',
+                              pattern: '[0-9]*',
+                              maxLength: 6
+                            }}
+                            error={t.error || undefined}
+                          />
+                        </Box>
+                      ) : (
+                        <CustomTextField
+                          id={t.id}
+                          placeholder={t.placeholder}
+                          rows={4}
+                          onChange={formik.handleChange}
+                          value={t.value}
+                          sx={{ width: '100%' }}
+                          error={t.error || undefined}
+                        />
+                      )}
+                    </CustomField>
+                  </Grid>
+                ))}
+                <Grid item display="flex">
+                  <CustomDatePicker2
+                    pickupOrderForm={true}
+                    setDate={(values) => {
+                      formik.setFieldValue('effFrmDate', values.startDate)
+                      formik.setFieldValue('effToDate', values.endDate)
+                    }}
+                    defaultStartDate={new Date()}
+                    defaultEndDate={new Date()}
+                  />
                 </Grid>
-              ))}
-              <Grid item display="flex">
-                <CustomDatePicker2
-                  pickupOrderForm={true}
-                  setDate={(values) => {
-                    formik.setFieldValue('effFrmDate', values.startDate)
-                    formik.setFieldValue('effToDate', values.endDate)
-                  }}
-                  defaultStartDate={new Date()}
-                  defaultEndDate={new Date()}
-                />
-              </Grid>
-            </Box>
-            <Box sx={{ paddingX: 3 }}>
-              <CustomField mandatory label={t('tenant.invite_form.remark')}>
-                <CustomTextField
-                  id={'remark'}
-                  placeholder={t('tenant.invite_form.enter_remark')}
-                  multiline={true}
-                  rows={4}
-                  onChange={formik.handleChange}
-                  value={formik.values.remark}
-                  sx={{ width: '100%' }}
-                  error={
-                    (formik.errors?.remark && formik.touched?.remark) ||
-                    undefined
-                  }
-                ></CustomTextField>
-              </CustomField>
-            </Box>
-            <Box sx={{ alignSelf: 'center' }}>
-              {isLoading && <CircularProgress color="success" />}
-            </Box>
-            <Box sx={{ alignSelf: 'center', paddingBottom: '16px' }}>
-              <Button
-                disabled={submitable}
-                // onClick={() => onSubmit(formik.handleSubmit)}
-                onClick={async () => {
-                  await onSubmit(formik.values, formik.submitForm)
-                  formik.resetForm() // Reset the form after the onSubmit function completes
-                }}
-                sx={[
-                  styles.buttonFilledGreen,
-                  {
-                    mt: 3,
-                    color: 'white',
-                    width: 'max-content',
-                    height: '40px'
-                  }
-                ]}
-              >
-                提交
-              </Button>
-            </Box>
-          </Stack>
-        </Box>
-      </Modal>
-    </LocalizationProvider>
+              </Box>
+              <Box sx={{ paddingX: 3 }}>
+                <CustomField mandatory label={t('tenant.invite_form.remark')}>
+                  <CustomTextField
+                    id={'remark'}
+                    placeholder={t('tenant.invite_form.enter_remark')}
+                    multiline={true}
+                    rows={4}
+                    onChange={formik.handleChange}
+                    value={formik.values.remark}
+                    sx={{ width: '100%' }}
+                    error={
+                      (formik.errors?.remark && formik.touched?.remark) ||
+                      undefined
+                    }
+                  ></CustomTextField>
+                </CustomField>
+                <Stack spacing={2} marginTop={2}>
+                  {formik.errors.companyNumber &&
+                    formik.touched.companyNumber && (
+                      <Alert severity="error">
+                        {formik.errors.companyNumber}{' '}
+                      </Alert>
+                    )}
+                  {formik.errors.companyCategory &&
+                    formik.touched.companyCategory && (
+                      <Alert severity="error">
+                        {formik.errors.companyCategory}{' '}
+                      </Alert>
+                    )}
+
+                  {formik.errors.companyZhName &&
+                    formik.touched.companyZhName && (
+                      <Alert severity="error">
+                        {formik.errors.companyZhName}{' '}
+                      </Alert>
+                    )}
+                  {formik.errors.companyCnName &&
+                    formik.touched.companyCnName && (
+                      <Alert severity="error">
+                        {formik.errors.companyCnName}{' '}
+                      </Alert>
+                    )}
+                  {formik.errors.companyEnName &&
+                    formik.touched.companyEnName && (
+                      <Alert severity="error">
+                        {formik.errors.companyEnName}{' '}
+                      </Alert>
+                    )}
+                  {formik.errors.bussinessNumber &&
+                    formik.touched.bussinessNumber && (
+                      <Alert severity="error">
+                        {formik.errors.bussinessNumber}{' '}
+                      </Alert>
+                    )}
+                  {formik.errors.remark && formik.touched.remark && (
+                    <Alert severity="error">{formik.errors.remark} </Alert>
+                  )}
+                </Stack>
+              </Box>
+              <Box sx={{ alignSelf: 'center' }}>
+                {isLoading && <CircularProgress color="success" />}
+              </Box>
+              <Box sx={{ alignSelf: 'center', paddingBottom: '16px' }}>
+                <Button
+                  disabled={!formik.isValid || isLoading}
+                  onClick={handleSubmit}
+                  type="submit"
+                  // onClick={async () => {
+                  //   await onSubmit(formik.values, formik.submitForm)
+                  //   formik.resetForm() // Reset the form after the onSubmit function completes
+                  // }}
+                  sx={[
+                    styles.buttonFilledGreen,
+                    {
+                      mt: 3,
+                      color: 'white',
+                      width: 'max-content',
+                      height: '40px'
+                    }
+                  ]}
+                >
+                  提交
+                </Button>
+              </Box>
+            </Stack>
+          </Box>
+        </Modal>
+      </LocalizationProvider>
+    </form>
   )
 }
 
@@ -528,6 +677,8 @@ function CompanyManage() {
   const [selected, setSelected] = useState<string[]>([])
   const [invFormModal, setInvFormModal] = useState<boolean>(false)
   const [invSendModal, setInvSendModal] = useState<boolean>(false)
+  const [modalNotification, setModalNotification] = useState<boolean>(false)
+  const [successSendInv, setSuccessSendInv] = useState<boolean>(false)
   const [rejectModal, setRejectModal] = useState<boolean>(false)
   const [InviteId, setInviteId] = useState<string>('')
   const [companies, setCompanies] = useState<Company[]>([])
@@ -804,9 +955,15 @@ function CompanyManage() {
     initCompaniesData()
   }
 
+  const handleSendInvitation = (isSend: boolean) => {
+    setInvSendModal(false)
+    setModalNotification(true)
+    setSuccessSendInv(isSend)
+  }
+
   const onInviteFormSubmit = async (
-    formikValues: InviteTenant,
-    submitForm: () => void
+    formikValues: InviteTenant
+    //submitForm: () => void
   ) => {
     setIsLoadingInvite(true)
     const realmType =
@@ -839,13 +996,14 @@ function CompanyManage() {
       realmType
     )
 
-    if (result != null) {
+    if (result?.data?.tenantId) {
       console.log(result)
       setInviteId(result?.data?.tenantId)
       setInvSendModal(true)
       setInvFormModal(false)
       setIsLoadingInvite(false)
     } else {
+      showErrorToast('failed to create tenant')
       setIsLoadingInvite(false)
     }
   }
@@ -861,6 +1019,7 @@ function CompanyManage() {
           pr: 4
         }}
       >
+        <ToastContainer></ToastContainer>
         <Typography fontSize={20} color="black" fontWeight="bold">
           {t('tenant.company')}
         </Typography>
@@ -958,13 +1117,19 @@ function CompanyManage() {
           open={invFormModal}
           isLoading={isLoadingInvite}
           onClose={() => setInvFormModal(false)}
-          onSubmit={onInviteFormSubmit}
+          onSubmitForm={onInviteFormSubmit}
         />
 
         <InviteModal
           open={invSendModal}
           onClose={handleCloseInvite}
           id={InviteId}
+          onSendInvitation={handleSendInvitation}
+        />
+        <ModalNotification
+          open={modalNotification}
+          onClose={() => setModalNotification(false)}
+          isSend={successSendInv}
         />
 
         <RejectModal

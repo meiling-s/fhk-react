@@ -61,7 +61,7 @@ import CustomItemList from '../../../../components/FormComponents/CustomItemList
 function CreateCollectionPoint() {
   const { state } = useLocation()
   const colInfo: collectionPoint = state
-  console.log('colInfo', colInfo)
+  // console.log('colInfo', colInfo)
 
   const [colType, setCOLType] = useState<string>(colInfo.colPointTypeId)
   const [address, setAddress] = useState<string>(colInfo.address)
@@ -151,7 +151,7 @@ function CreateCollectionPoint() {
           setListPlace(result)
         })
         .catch((error) => {
-          console.log('Error fetching data:', error)
+          // console.log('Error fetching data:', error)
         })
     } else {
       setListPlace([])

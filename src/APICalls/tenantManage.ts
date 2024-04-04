@@ -5,7 +5,8 @@ import {
   SEARCH_TENANT,
   GET_TENANT_BY_TENANT_ID,
   UPDATE_TENANT_REGISTER,
-  UPDATE_TENANT_STATUS
+  UPDATE_TENANT_STATUS,
+  SEND_EMAIL_INVITATION
 } from '../constants/requests'
 import { RegisterItem } from '../interfaces/account'
 import { CreateTenant, UpdateStatus } from '../interfaces/tenant'
@@ -44,8 +45,8 @@ export const getAllTenant = async (page: number, size: number) => {
       ...GET_ALL_TENANT,
       params: {
         page: page,
-        size: size,
-        tenantId: token.tenantId
+        size: size
+        //tenantId: token.tenantId
       },
       headers: {}
     })
@@ -57,7 +58,11 @@ export const getAllTenant = async (page: number, size: number) => {
   }
 }
 
-export const searchTenantById = async (page: number, size: number, tenantId: number) => {
+export const searchTenantById = async (
+  page: number,
+  size: number,
+  tenantId: number
+) => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
@@ -135,6 +140,32 @@ export const updateTenantStatus = async (
     return response
   } catch (e) {
     console.error('Tenant register status update failed:', e)
+    return null
+  }
+}
+
+export const sendEmailInvitation = async (
+  memberEmail: string,
+  title: string,
+  content: string
+) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      ...SEND_EMAIL_INVITATION,
+      params: {
+        to: memberEmail,
+        title: title,
+        content: content
+      }
+    })
+    console.log(
+      'send tenant invitation success:',
+      JSON.stringify(response.data)
+    )
+    return response
+  } catch (e) {
+    console.error('send tenant invitation Failed:', e)
     return null
   }
 }

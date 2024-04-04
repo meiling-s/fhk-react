@@ -134,7 +134,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
-            console.log('updated check-in status: ', data)
+            // console.log('updated check-in status: ', data)
             if (onApprove) {
               onApprove()
             }
@@ -243,7 +243,7 @@ const RejectModal: React.FC<RejectForm> = ({
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
-            console.log('updated check-out status: ', data)
+            // console.log('updated check-out status: ', data)
             if (onRejected) {
               onRejected()
             }
@@ -335,7 +335,7 @@ const CheckoutRequest: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [query, setQuery] = useState<queryCheckout>({
-    picoId: "", 
+    picoId: "",
     receiverName: "",
     receiverAddr: "",
   });
@@ -347,7 +347,7 @@ const CheckoutRequest: FunctionComponent = () => {
       ? filterCheckOut.map((row) => row.chkOutId)
       : []
     setCheckedCheckOut(selectedRows)
-    console.log('handleSelectAll', selectedRows)
+    // console.log('handleSelectAll', selectedRows)
   }
 
   const handleRowCheckboxChange = (
@@ -361,7 +361,7 @@ const CheckoutRequest: FunctionComponent = () => {
       ? [...checkedCheckOut, chkOutId]
       : checkedCheckOut.filter((rowId) => rowId != chkOutId)
     setCheckedCheckOut(updatedChecked)
-    console.log(updatedChecked)
+    // console.log(updatedChecked)
 
     const allRowsChecked = filterCheckOut.every((row) =>
       updatedChecked.includes(row.chkOutId)
@@ -505,7 +505,7 @@ const CheckoutRequest: FunctionComponent = () => {
   }
 
   const handleCompanyChange = (event: SelectChangeEvent) => {
-    console.log("company", event.target.value)
+    // console.log("company", event.target.value)
     setCompany(event.target.value)
     var searchWord =  event.target.value
     updateQuery({receiverName: searchWord})
@@ -523,7 +523,7 @@ const CheckoutRequest: FunctionComponent = () => {
 
   const handleSelectRow = (params: GridRowParams) => {
     const row = params.row
-    console.log('row', row)
+    // console.log('row', row)
     const selectedItem = checkOutRequest?.find(
       (item) => item.chkOutId === row.chkOutId
     )

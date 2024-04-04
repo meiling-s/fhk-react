@@ -21,7 +21,7 @@ export const login = async (item: LoginItem) => {
         password: item.password
       }
     })
-    console.log('Login user Success:', JSON.stringify(response.data))
+    // console.log('Login user Success:', JSON.stringify(response.data))
     if (response.status === 200) {
       return {
         access_token: response.data?.access_token,
@@ -37,7 +37,7 @@ export const login = async (item: LoginItem) => {
       
   } catch (e: any) {
     if (e.response) {
-      console.error('Login user Failed with msg 1:', e.response.data);
+      // console.error('Login user Failed with msg 1:', e.response.data);
       //handling error msg 
       const response = e.response.data.message
       const errMsgString = removeNonJsonChar(response)

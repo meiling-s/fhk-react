@@ -39,10 +39,10 @@ export const getCollectionPoint = async (page: number, size: number) => {
       //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
       // },
     });
-    console.log('Get all collection point success:', JSON.stringify(response.data));
+    // console.log('Get all collection point success:', JSON.stringify(response.data));
     return response
   } catch (e) {
-    console.error('Get all collection point failed:', e);
+    // console.error('Get all collection point failed:', e);
     return null;
   }
 

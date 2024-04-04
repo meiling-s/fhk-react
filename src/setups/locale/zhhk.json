@@ -435,7 +435,10 @@
       "enter_email": "請輸入電郵地址",
       "or": "或",
       "link_invitation": "發送連結邀請",
-      "copy": "複製"
+      "copy": "複製",
+      "send": "傳送",
+      "invite_success" : "成功發送邀請",
+      "invite_failed": "發送邀請失敗"
     },
     "detail": {
       "company_category": "公司類別",
@@ -833,7 +836,7 @@
       "AddBtn": "新增司機",
       "search": {
         "label": "搜索",
-        "placeholder": "輸入司機編號"   
+        "placeholder": "輸入司機編號"
       },
       "table": {
         "driverId": "司機編號",
@@ -929,9 +932,9 @@
     "Waste_ecords_daily_": "廢棄物記錄（每日)",
     "recycling_plant_request_records": "回收廠的回收物請求記錄",
     "recycling_classification_processing": "回收物分類及處理記錄",
-    "recycling_classification_statistics" : "回收物分類統計數據",
+    "recycling_classification_statistics": "回收物分類統計數據",
     "recycling_point_establishment": "回收點設立及營運服務（第一期後續合約）照片記錄（每月)",
-    "collection_point_establishment" : "回收點設立及營運服務（第一期後續合約）Excel 記錄（每月)",
+    "collection_point_establishment": "回收點設立及營運服務（第一期後續合約）Excel 記錄（每月)",
     "download": "下載",
     "start_date": "日期由",
     "end_date": "至"
