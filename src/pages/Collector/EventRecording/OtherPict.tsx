@@ -51,15 +51,15 @@ const OtherPict = () => {
   const [validation, setValidation] = useState<formValidate[]>([])
   const serviceOthersField = [
     {
-      serviceId: 'SRV00005',
+      serviceName: 'SRV00005',
       label: t('report.picturesUploadedToFacebook')
     },
     {
-      serviceId: 'SRV00006',
+      serviceName: 'SRV00006',
       label: t('report.regulatedWEEESubmittedToRecyclers')
     },
     {
-      serviceId: 'SRV00007',
+      serviceName: 'SRV00007',
       label: t('report.fluorescentLampsSubmittedToRecyclers')
     }
   ]
@@ -250,13 +250,13 @@ const OtherPict = () => {
                   <Box sx={{ ...localstyles.DateItem }}>
                     <DatePicker
                       defaultValue={dayjs(
-                        serviceData[item.serviceId as keyof ServiceData]
+                        serviceData[item.serviceName as keyof ServiceData]
                           .startDate
                       )}
                       format={format.dateFormat2}
                       onChange={(value) =>
                         updateDateTime(
-                          item.serviceId as ServiceName,
+                          item.serviceName as ServiceName,
                           'startDate',
                           value!!
                         )
@@ -267,12 +267,12 @@ const OtherPict = () => {
                   <Box sx={{ ...localstyles.timePeriodItem }}>
                     <TimePicker
                       value={
-                        serviceData[item.serviceId as keyof ServiceData]
+                        serviceData[item.serviceName as keyof ServiceData]
                           .startDate
                       }
                       onChange={(value) =>
                         updateDateTime(
-                          item.serviceId as ServiceName,
+                          item.serviceName as ServiceName,
                           'endDate',
                           value!!
                         )
@@ -291,14 +291,14 @@ const OtherPict = () => {
                   <ImageUploading
                     multiple
                     value={
-                      serviceData[item.serviceId as keyof ServiceData]
+                      serviceData[item.serviceName as keyof ServiceData]
                         .photoImage
                     }
                     onChange={(imageList, addUpdateIndex) =>
                       onImageChange(
                         imageList,
                         addUpdateIndex,
-                        item.serviceId as ServiceName
+                        item.serviceName as ServiceName
                       )
                     }
                     maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
