@@ -226,7 +226,7 @@ const CommonType = () => {
       })
       // console.log('Get logistic list success:', JSON.stringify(response.data))
 
-      const logistic = response.data
+      const logistic = response.data.content
       setLogisticAdminList(logistic)
     } catch (e) {
       // console.error('Get logistic list failed:', e)
