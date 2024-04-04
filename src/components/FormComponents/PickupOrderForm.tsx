@@ -23,7 +23,8 @@ import {
 import { useNavigate } from 'react-router-dom'
 import {
   editPickupOrderDetailStatus,
-  editPickupOrderStatus
+  editPickupOrderStatus,
+  getPicoById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../utils/utils'
@@ -69,19 +70,22 @@ const PickupOrderForm = ({
   //console.log(selectedPickupOrder)
   const [pickupOrderDetail, setPickUpOrderDetail] =
     useState<PickupOrderDetail[]>()
+  const [pickupOrderData, setPickupOrderData] = useState<PickupOrder>()
 
   useEffect(() => {
     if (selectedRow) {
-      const poDetail = pickupOrder?.find((po) =>
-        po.picoId.includes(selectedRow.id.toString())
-      )
-
-      if (poDetail) {
-        setSelectedPickupOrder(poDetail)
-        setPickUpOrderDetail(poDetail?.pickupOrderDetail)
-      }
+      // refresh the data first
+      initGetPickUpOrderData(selectedRow.picoId)
     }
   }, [selectedRow])
+
+  const initGetPickUpOrderData = async (picoId: number) => {
+    const result = await getPicoById(picoId.toString())
+    if (result) {
+      setSelectedPickupOrder(result.data)
+      setPickUpOrderDetail(result.data.pickupOrderDetail)
+    }
+  }
 
   const onDeleteClick = async () => {
     if (selectedPickupOrder) {
@@ -119,7 +123,6 @@ const PickupOrderForm = ({
       alert('No selected pickup order')
     }
   }
-
   return (
     <>
       <Box sx={localstyles.modal} onClick={handleOverlayClick}>
