@@ -117,7 +117,7 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
     const result = await updateTenantStatus(statData, tenantId)
     const data = result?.data
     if (data) {
-      console.log('reject success success')
+      // console.log('reject success success')
       onSubmit()
     }
   }

@@ -82,11 +82,11 @@ const Inventory: FunctionComponent = () => {
   const [picoList, setPicoList] = useState<PickupOrder[]>([])
   const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([])
 
-  useEffect(() =>{ 
+  useEffect(() =>{
     mappingRecyleItem()
    }, [recycType]);
 
-   useEffect(() =>{ 
+   useEffect(() =>{
     if(recycItem.length > 0) initInventory() //init dat when recyleitem done mapping
    }, [recycItem, page]);
 
@@ -125,7 +125,7 @@ const Inventory: FunctionComponent = () => {
                subName = sub.recyclableNameTchi;
                break;
            default:
-               subName = sub.recyclableNameTchi;      
+               subName = sub.recyclableNameTchi;
                break;
        }
 
@@ -149,7 +149,7 @@ const Inventory: FunctionComponent = () => {
           picoData.push(result.data)
         }
       }
-      
+
     }
 
     setPicoList(picoData)
@@ -159,7 +159,7 @@ const Inventory: FunctionComponent = () => {
   const initInventory = async () => {
     const result = await getAllInventory(page - 1, pageSize)
     const data = result?.data
-   
+
     if(data) {
       const picoData = await getAllPickupOrder(data.content)
       var inventoryMapping: InventoryItem[] = []
@@ -177,7 +177,7 @@ const Inventory: FunctionComponent = () => {
           selectedPico =  picoData.filter(pico => pico.picoId == invDetail.sourcePicoId)
         })
 
-       
+
 
         if(selectedPico.length > 0) {
           selectedPico.map(pico =>{
@@ -324,7 +324,7 @@ const Inventory: FunctionComponent = () => {
       } else {
         setFilteredInventory(inventoryList)
       }
-    } 
+    }
 
     if(label == "recycSubTypeId"){
       const filtered:InventoryItem[] = inventoryList.filter(item => item.recycSubTypeId == value)
@@ -336,7 +336,7 @@ const Inventory: FunctionComponent = () => {
     }
 
     if(label == "search"){
-      console.log(label, value)
+      // console.log(label, value)
       if(value == "") return setFilteredInventory(inventoryList)
 
       const filtered:InventoryItem[] = inventoryList.filter(item => item.packageTypeId == value)

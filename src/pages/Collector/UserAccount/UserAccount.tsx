@@ -39,7 +39,7 @@ interface RecyleItem {
 //   realm: string
 //   password: string
 //   staffId: string
-//   userGroup: 
+//   userGroup:
 //   {
 //     groupId: number
 //     tenantId: string
@@ -93,7 +93,7 @@ const UserAccount: FunctionComponent = () => {
       headerName: t('userAccount.loginName'),
       width: 150,
       type: 'string',
-     
+
     },
     {
       field: 'staffId',
@@ -142,7 +142,7 @@ const UserAccount: FunctionComponent = () => {
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              onClick={(event) =>{ 
+              onClick={(event) =>{
                 event.stopPropagation();
                 handleDelete(params.row.loginId)}} // Implement your delete logic here
               style={{ cursor: 'pointer' }}
@@ -165,7 +165,7 @@ const UserAccount: FunctionComponent = () => {
     const result = await getAllUserAccount()
     if(result?.data){
       setUserAccountItems(result.data)
-      console.log("fetchDataUserAccount >> ", result.data);
+      // console.log("fetchDataUserAccount >> ", result.data);
     }
   }
 
@@ -219,7 +219,7 @@ const UserAccount: FunctionComponent = () => {
     }
   }, [])
 
-  console.log('LOGIN ID >> ', theLoginId)
+  // console.log('LOGIN ID >> ', theLoginId)
 
   return (
     <Box

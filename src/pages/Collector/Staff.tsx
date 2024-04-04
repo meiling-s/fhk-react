@@ -9,7 +9,7 @@ import CustomAutoComplete from '../../components/FormComponents/CustomAutoComple
 const Staff = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [resizedImage, setResizedImage] = useState<string | null>(null);
- 
+
 
 
 
@@ -18,7 +18,7 @@ const Staff = () => {
     setSelectedImage(file);
   };
 
-  
+
   const fileChangedHandler = (selectedImage: File | null) => {
     if (selectedImage) {
       const maxSizeBytes = 200 * 1024; // Maximum file size in bytes (200KB)
@@ -40,17 +40,17 @@ const Staff = () => {
             200
           );
         } catch (err) {
-          console.log(err);
+          // console.log(err);
         }
       }
     }
   };
-  
+
   useEffect(() => {
     fileChangedHandler(selectedImage);
   }, [selectedImage]);
-  
- 
+
+
   return (
     <div>
       <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -60,7 +60,7 @@ const Staff = () => {
       ) : selectedImage && (
         <img src={URL.createObjectURL(selectedImage)} alt="Resized" />
       )}
-      
+
       {/* <Autocomplete
         freeSolo
         disableClearable
@@ -74,9 +74,9 @@ const Staff = () => {
               type: 'search',
             }}
           />
-        )} 
+        )}
       /> */}
-      
+
     </div>
   );
 };

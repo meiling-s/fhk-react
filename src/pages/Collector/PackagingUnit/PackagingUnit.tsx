@@ -57,7 +57,7 @@ const PackagingUnit: FunctionComponent = () => {
     const pageSize = 10
     const [totalData, setTotalData] = useState<number>(0)
     const [tenantCurrency, setTenantCurrency] = useState<string>('')
-  
+
     useEffect(() => {
       initPackagingUnitList()
       getTenantData()
@@ -87,7 +87,7 @@ const PackagingUnit: FunctionComponent = () => {
             )
           )
         })
-        console.log(packagingMapping, 'packagingMapping')
+        // console.log(packagingMapping, 'packagingMapping')
         setPackagingMapping(packagingMapping)
         setTotalData(data.totalPages)
       }
@@ -98,7 +98,7 @@ const PackagingUnit: FunctionComponent = () => {
       const data = result?.data
       console.log('tenant Data', data)
       setTenantCurrency(data.monetaryValue)
-  
+
     }
     const columns: GridColDef[] = [
       {
@@ -164,21 +164,21 @@ const PackagingUnit: FunctionComponent = () => {
         }
       }
     ]
-  
+
     const handleAction = (params: GridRenderCellParams, action: 'add' | 'edit' | 'delete') => {
       setAction(action)
       setRowId(params.row.id)
       setSelectedRow(params.row)
       setDrawerOpen(true)
     }
-  
+
     const handleSelectRow = (params: GridRowParams) => {
       setAction('edit')
       setRowId(params.row.id)
       setSelectedRow(params.row)
-      setDrawerOpen(true) 
+      setDrawerOpen(true)
     }
-  
+
     const onSubmitData = (type: string, msg: string) =>{
       initPackagingUnitList()
       getTenantData()
@@ -187,8 +187,8 @@ const PackagingUnit: FunctionComponent = () => {
       } else {
         showErrorToast(msg)
       }
-    } 
-  
+    }
+
     const showErrorToast = (msg: string) => {
       toast.error(msg, {
         position: 'top-center',
@@ -201,7 +201,7 @@ const PackagingUnit: FunctionComponent = () => {
         theme: 'light'
       })
     }
-  
+
     const showSuccessToast = (msg: string) => {
       toast.info(msg, {
         position: 'top-center',
@@ -214,18 +214,18 @@ const PackagingUnit: FunctionComponent = () => {
         theme: 'light'
       })
     }
-  
+
     const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
       return {
         top: params.isFirstVisible ? 0 : 10
       }
     }, [])
-    
+
     const handleOpenSidebar = (value: string) => {
       setCurrencyDrawerOpen(true)
-      
+
     }
-  
+
     return (
       <>
         <Box
@@ -311,6 +311,5 @@ const PackagingUnit: FunctionComponent = () => {
       </>
     )
   }
-  
+
   export default PackagingUnit
-  
