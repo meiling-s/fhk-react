@@ -33,33 +33,33 @@ import { formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
 
-type ServiceId = 'SRV00006' | 'SRV00007' | 'SRV00008'
+type ServiceName = 'SRV00005' | 'SRV00006' | 'SRV00007'
 type ServiceData = Record<
-  ServiceId,
-  { startDate: dayjs.Dayjs; photoImage: ImageListType }
+  ServiceName,
+  {serviceId: number, startDate: dayjs.Dayjs; photoImage: ImageListType }
 >
 const loginId = localStorage.getItem(localStorgeKeyName.username) || 'admin'
 const OtherPict = () => {
   const { t } = useTranslation()
   const [serviceData, setServiceData] = useState<ServiceData>({
-    SRV00006: { startDate: dayjs(), photoImage: [] },
-    SRV00007: { startDate: dayjs(), photoImage: [] },
-    SRV00008: { startDate: dayjs(), photoImage: [] }
+    SRV00005: {serviceId: 5, startDate: dayjs(), photoImage: [] },
+    SRV00006: {serviceId: 6, startDate: dayjs(), photoImage: [] },
+    SRV00007: {serviceId: 7, startDate: dayjs(), photoImage: [] }
   })
 
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const serviceOthersField = [
     {
-      serviceId: 'SRV00006',
+      serviceId: 'SRV00005',
       label: t('report.picturesUploadedToFacebook')
     },
     {
-      serviceId: 'SRV00007',
+      serviceId: 'SRV00006',
       label: t('report.regulatedWEEESubmittedToRecyclers')
     },
     {
-      serviceId: 'SRV00008',
+      serviceId: 'SRV00007',
       label: t('report.fluorescentLampsSubmittedToRecyclers')
     }
   ]
@@ -79,23 +79,23 @@ const OtherPict = () => {
   const onImageChange = (
     imageList: ImageListType,
     addUpdateIndex: number[] | undefined,
-    serviceId: ServiceId
+    serviceName: ServiceName
   ) => {
     setServiceData((prevData) => ({
       ...prevData,
-      [serviceId]: { ...prevData[serviceId], photoImage: imageList }
+      [serviceName]: { ...prevData[serviceName], photoImage: imageList }
     }))
   }
 
   const updateDateTime = (
-    serviceId: ServiceId,
+    serviceName: ServiceName,
     property: string,
     value: dayjs.Dayjs
   ) => {
     setServiceData((prevData) => ({
       ...prevData,
-      [serviceId]: {
-        ...prevData[serviceId],
+      [serviceName]: {
+        ...prevData[serviceName],
         [property]: value
       }
     }))
@@ -107,7 +107,7 @@ const OtherPict = () => {
 
       for (const key in serviceData) {
         if (serviceData.hasOwnProperty(key)) {
-          const entry = serviceData[key as ServiceId]
+          const entry = serviceData[key as ServiceName]
 
           // Validate startDate
           if (entry.startDate?.toString() == '') {
@@ -144,16 +144,16 @@ const OtherPict = () => {
 
   const resetServiceData = () => {
     setServiceData({
-      SRV00006: { startDate: dayjs(), photoImage: [] },
-      SRV00007: { startDate: dayjs(), photoImage: [] },
-      SRV00008: { startDate: dayjs(), photoImage: [] }
+      SRV00005: {serviceId: 5, startDate: dayjs(), photoImage: [] },
+      SRV00006: {serviceId: 6, startDate: dayjs(), photoImage: [] },
+      SRV00007: {serviceId: 7,startDate: dayjs(), photoImage: [] }
     })
   }
 
   const submitServiceInfo = async () => {
     let itemData = 0
     if (validation.length == 0) {
-      for (const key of Object.keys(serviceData) as ServiceId[]) {
+      for (const key of Object.keys(serviceData) as ServiceName[]) {
         const serviceItem = serviceData[key]
         const imgList: string[] = ImageToBase64(
           serviceItem.photoImage
@@ -162,7 +162,7 @@ const OtherPict = () => {
         })
 
         const formData: ServiceInfo = {
-          serviceId: 2,
+          serviceId: serviceItem.serviceId,
           address: '',
           addressGps: [0],
           serviceName: key,
@@ -256,7 +256,7 @@ const OtherPict = () => {
                       format={format.dateFormat2}
                       onChange={(value) =>
                         updateDateTime(
-                          item.serviceId as ServiceId,
+                          item.serviceId as ServiceName,
                           'startDate',
                           value!!
                         )
@@ -272,7 +272,7 @@ const OtherPict = () => {
                       }
                       onChange={(value) =>
                         updateDateTime(
-                          item.serviceId as ServiceId,
+                          item.serviceId as ServiceName,
                           'endDate',
                           value!!
                         )
@@ -298,7 +298,7 @@ const OtherPict = () => {
                       onImageChange(
                         imageList,
                         addUpdateIndex,
-                        item.serviceId as ServiceId
+                        item.serviceId as ServiceName
                       )
                     }
                     maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
