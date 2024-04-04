@@ -8,7 +8,6 @@ import axiosInstance from '../../../constants/axiosInstance'
 
   export const getAllPickUpOrder = async (page: number, size: number, query?: queryPickupOrder) => {
       const auth = returnApiToken()
-      console.log(query?.senderName, 'senderName')
       try {
         const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
@@ -16,7 +15,7 @@ import axiosInstance from '../../../constants/axiosInstance'
           params: {
             page: page,
             size: size,
-            tenanId: auth.tenantId,
+            tenantId: auth.tenantId,
             picoId: query?.picoId,
             effFromDate: query?.effFromDate,
             effToDate: query?.effToDate,
@@ -41,7 +40,6 @@ import axiosInstance from '../../../constants/axiosInstance'
     query?: queryPickupOrder
   ) => {
     const auth = returnApiToken();
-    console.log(query?.senderName, 'senderName')
     try {
       const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,

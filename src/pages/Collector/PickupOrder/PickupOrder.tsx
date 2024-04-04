@@ -464,7 +464,7 @@ const PickupOrders = () => {
       logisticCompany: item.logisticName,
       picoId: item.picoId, 
       deliveryDate: getDeliveryDate(item),
-      senderCompany: item.pickupOrderDetail[0]?.senderName,
+      senderCompany: item.pickupOrderDetail.filter(detail => detail.senderName === query.senderName).length > 0 ? query.senderName : item.pickupOrderDetail[0].senderName,
       receiver: item.pickupOrderDetail[0]?.receiverName,
       status: item.status,
       recyType: item.pickupOrderDetail.map(item => {return item.recycType}),
