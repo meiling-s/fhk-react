@@ -63,99 +63,96 @@ const Router = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/changePassword" element={<ChangePassword />} />
-        <Route element={<AutoLogout />} />
-        <Route path="/resetPassword" element={<ResetPassword />} />
-        <Route path="/confirmNewPassword" element={<ConfirmResetPassword />} />
-        {/* <Route element={<AuthGuard />}> */}
-        <Route path="/changePassword/:idReset?" element={<ChangePassword />} />
-        {/* tenant page */}
-        {/* <Route path="/register/details/:inviteId" element={<CompanyDetails />} />
-        <Route path="/register/contact" element={<CompanyContact />} /> */}
-        {/* <Route path="/register/firstStep" element={<RegisterStepOne />} />
-        <Route path="/register/secondStep" element={<RegisterStepTwo />} /> */}
-        <Route
-          path="/register/details/:tenantId"
-          element={<TenantRegister />}
-        />
-        <Route path="/register/result" element={<RegisterResult />} />
-        <Route path="/register/result" element={<RegisterResult />} />
+        <Route element={<AutoLogout />}> 
+          <Route path="/resetPassword" element={<ResetPassword />} />
+          <Route path="/confirmNewPassword" element={<ConfirmResetPassword />} />
+          {/* <Route element={<AuthGuard />}> */}
+          <Route path="/changePassword/:idReset?" element={<ChangePassword />} />
+          {/* tenant page */}
+          <Route
+            path="/register/details/:tenantId"
+            element={<TenantRegister />}
+          />
+          <Route path="/register/result" element={<RegisterResult />} />
+          <Route path="/register/result" element={<RegisterResult />} />
 
-        {/* collector admin */}
-        <Route element={<MainLayout />}>
-          <Route path="/collector" element={<CollectionPoint />} />
-          <Route
-            path="/collector/collectionPoint"
-            element={<CollectionPoint />}
-          />
-          <Route path="/collector/processRecord" element={<ProcessRecord />} />
-          <Route path="/collector/pickupOrder" element={<PickupOrder />} />
-          <Route
-            path="/collector/createPickupOrder"
-            element={<CreatePickupOrder />}
-          />
-          <Route
-            path="/collector/editPickupOrder"
-            element={<EditPickupOrder />}
-          />
-          <Route path="/collector/report" element={<Report />} />
-          <Route path="/collector/staff" element={<Staff />} />
-          <Route
-            path="/collector/createCollectionPoint"
-            element={<CreateCollectionPoint />}
-          />
-          <Route
-            path="/collector/editCollectionPoint"
-            element={<EditCollectionPoint />}
-          />
-          <Route path="/collector/inventory" element={<Inventory />} />
-          <Route path="/collector/userGroup" element={<UserGroup />} />
-          <Route
-            path="/collector/checkInAndCheckout"
-            element={<CheckInAndCheckOut />}
-          />
-        </Route>
+          {/* collector admin */}
+          <Route element={<MainLayout />}>
+            <Route path="/collector" element={<CollectionPoint />} />
+            <Route
+              path="/collector/collectionPoint"
+              element={<CollectionPoint />}
+            />
+            <Route path="/collector/processRecord" element={<ProcessRecord />} />
+            <Route path="/collector/pickupOrder" element={<PickupOrder />} />
+            <Route
+              path="/collector/createPickupOrder"
+              element={<CreatePickupOrder />}
+            />
+            <Route
+              path="/collector/editPickupOrder"
+              element={<EditPickupOrder />}
+            />
+            <Route path="/collector/report" element={<Report />} />
+            <Route path="/collector/staff" element={<Staff />} />
+            <Route
+              path="/collector/createCollectionPoint"
+              element={<CreateCollectionPoint />}
+            />
+            <Route
+              path="/collector/editCollectionPoint"
+              element={<EditCollectionPoint />}
+            />
+            <Route path="/collector/inventory" element={<Inventory />} />
+            <Route path="/collector/userGroup" element={<UserGroup />} />
+            <Route
+              path="/collector/checkInAndCheckout"
+              element={<CheckInAndCheckOut />}
+            />
+          </Route>
 
-        <Route element={<MainLayout />}>
-          <Route path="/astd" element={<CompanyManage />} />
-          <Route path="/astd/company" element={<CompanyManage />} />
-          <Route path="/:pathRole/notice/" element={<Notice />} />
-          <Route path="/:pathRole/notice/:type/:templateId" element={<UpdateTemplate />} />
-          <Route path="/astd/report" element={<></>} />
-          <Route path="/astd/statistics/recyclables" element={<></>} />
-          <Route path="/astd/statistics/convoy" element={<></>} />
-          <Route path="/astd/statistics/recycleCompany" element={<></>} />
-          <Route path="/astd/statistics/recyclePlant" element={<></>} />
-          <Route path="/astd/setting" element={<Settings />} />
-          <Route path="/astd/account" element={<></>} />
-          <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
-          <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
-        </Route>
+          <Route element={<MainLayout />}>
+            <Route path="/astd" element={<CompanyManage />} />
+            <Route path="/astd/company" element={<CompanyManage />} />
+            <Route path="/:pathRole/notice/" element={<Notice />} />
+            <Route path="/:pathRole/notice/:type/:templateId" element={<UpdateTemplate />} />
+            <Route path="/astd/report" element={<></>} />
+            <Route path="/astd/statistics/recyclables" element={<></>} />
+            <Route path="/astd/statistics/convoy" element={<></>} />
+            <Route path="/astd/statistics/recycleCompany" element={<></>} />
+            <Route path="/astd/statistics/recyclePlant" element={<></>} />
+            <Route path="/astd/setting" element={<Settings />} />
+            <Route path="/astd/account" element={<></>} />
+            <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
+            <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
+          </Route>
 
-        <Route element={<MainLayout />}>
-          <Route path="/warehouse" element={<WarehouseDashboard />} />
-          <Route path="/warehouse/shipment" element={<RecycleShipment />} />
-          <Route path="/warehouse/checkout" element={<CheckoutRequest />} />
-          <Route path="/warehouse/process" element={<ProcessRecord />} />
-          <Route path="/warehouse/staff" element={<StaffManagement />} />
-          <Route path="/warehouse/settings" element={<Settings />} />
-          <Route path="/warehouse/settings/vehicle" element={<Vehicles />} />
-          <Route path="/warehouse/staff-enquiry" element={<StaffEnquiry />} />
-        </Route>
+          <Route element={<MainLayout />}>
+            <Route path="/warehouse" element={<WarehouseDashboard />} />
+            <Route path="/warehouse/shipment" element={<RecycleShipment />} />
+            <Route path="/warehouse/checkout" element={<CheckoutRequest />} />
+            <Route path="/warehouse/process" element={<ProcessRecord />} />
+            <Route path="/warehouse/staff" element={<StaffManagement />} />
+            <Route path="/warehouse/settings" element={<Settings />} />
+            <Route path="/warehouse/settings/vehicle" element={<Vehicles />} />
+            <Route path="/warehouse/staff-enquiry" element={<StaffEnquiry />} />
+          </Route>
 
-        <Route element={<MainLayout />}>
-          <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
-          <Route path="/logistic/jobOrder" element={<JobOrder />} />
-          <Route path="/logistic/createJobOrder/:picoId" element={<CreateOrUpdateJobOrder />} />
-          <Route path="/logistics/createPickupOrder" element={<CreatePickupOrder />} />
-          <Route path="/logistics/editPickupOrder" element={<EditPickupOrder /> } />
-          <Route path="/logistics/account" element={<LogisticAccount />} />
-          <Route path="/logistic/driver" element={<Driver/>}/>
-        </Route>
+          <Route element={<MainLayout />}>
+            <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
+            <Route path="/logistic/jobOrder" element={<JobOrder />} />
+            <Route path="/logistic/createJobOrder/:picoId" element={<CreateOrUpdateJobOrder />} />
+            <Route path="/logistics/createPickupOrder" element={<CreatePickupOrder />} />
+            <Route path="/logistics/editPickupOrder" element={<EditPickupOrder /> } />
+            <Route path="/logistics/account" element={<LogisticAccount />} />
+            <Route path="/logistic/driver" element={<Driver/>}/>
+          </Route>
 
-        <Route element={<MainLayout />}>
-          <Route path="/manufacturer/pickupOrder" element={<PickupOrder />} />
-          <Route path="/manufacturer/createPickupOrder" element={<CreatePickupOrder />} />
-          <Route path="/manufacturer/editPickupOrder" element={<EditPickupOrder /> } />
+          <Route element={<MainLayout />}>
+            <Route path="/manufacturer/pickupOrder" element={<PickupOrder />} />
+            <Route path="/manufacturer/createPickupOrder" element={<CreatePickupOrder />} />
+            <Route path="/manufacturer/editPickupOrder" element={<EditPickupOrder /> } />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
