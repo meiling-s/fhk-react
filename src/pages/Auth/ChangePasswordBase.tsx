@@ -175,9 +175,10 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
             if (onSuccess) return onSuccess()
             if (isFirstLogin) {
               localStorage.removeItem('firstTimeLogin')
-              navigate('/warehouse/settings')
-            } else {
               navigate('/')
+            } else {
+              //navigate('/')
+              setErrorUpdate(true)
             }
           }
         } catch (error) {
