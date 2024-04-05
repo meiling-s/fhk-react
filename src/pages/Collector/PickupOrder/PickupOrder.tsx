@@ -321,11 +321,7 @@ const PickupOrders = () => {
     setPickupOrder([])
     setTotalData(0)
     let result = null
-    if (role === 'logisticadmin') {
-      result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query);
-    } else {
-      result = await getAllPickUpOrder(page - 1, pageSize, query);
-    }
+    result = await getAllPickUpOrder(page - 1, pageSize, query);
     const data = result?.data.content;
     if (data && data.length > 0) {
       setPickupOrder(data);
