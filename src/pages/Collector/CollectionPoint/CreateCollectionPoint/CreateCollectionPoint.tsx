@@ -117,7 +117,7 @@ function CreateCollectionPoint() {
     if (result) {
       setTypeList(result)
     }
-    console.log('result: ', result)
+    // console.log('result: ', result)
     if (result?.contract) {
       var conList: {
         contractNo: string

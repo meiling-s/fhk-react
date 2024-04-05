@@ -116,12 +116,12 @@ const BasicServicePicture = () => {
   }
 
   const submitServiceInfo = async () => {
-    console.log(formattedDate(startDate))
-    console.log(formattedDate(endDate))
+    // console.log(formattedDate(startDate))
+    // console.log(formattedDate(endDate))
     if (validation.length == 0) {
       const imgList: string[] = ImageToBase64(serviceImages).map(
         (item) => {
-          return item 
+          return item
         }
       )
 
@@ -143,7 +143,7 @@ const BasicServicePicture = () => {
       if (result) {
         showSuccessToast()
         setTrySubmited(false)
-        
+
       } else {
         showErrorToast()
       }
@@ -186,7 +186,7 @@ const BasicServicePicture = () => {
     addUpdateIndex: number[] | undefined
   ) => {
     setServiceImages(imageList)
-    console.log(imageList, addUpdateIndex)
+    // console.log(imageList, addUpdateIndex)
   }
 
   const checkString = (s: string) => {
@@ -210,7 +210,7 @@ const BasicServicePicture = () => {
 
   const returnErrorMsg = (error: string) => {
     var msg = ''
-    console.log(error)
+    // console.log(error)
     switch (error) {
       case formErr.empty:
         msg = t('form.error.shouldNotBeEmpty')

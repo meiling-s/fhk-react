@@ -39,11 +39,12 @@ import { formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
 
-type ServiceId = 'SRV00002' | 'SRV00003' | 'SRV00004' | 'SRV00005'
+type ServiceName = 'SRV00001' | 'SRV00002' | 'SRV00003' | 'SRV00004'
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
 type ServiceData = Record<
-  ServiceId,
+  ServiceName,
   {
+    serviceId: number,
     startDate: dayjs.Dayjs
     endDate: dayjs.Dayjs
     place: string
@@ -57,7 +58,16 @@ const AdditionalServicePict = () => {
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const initialServiceData = {
+    SRV00001: {
+      serviceId: 1,
+      startDate: dayjs(),
+      endDate: dayjs(),
+      place: '',
+      numberOfPeople: '',
+      photoImage: []
+    },
     SRV00002: {
+      serviceId: 2,
       startDate: dayjs(),
       endDate: dayjs(),
       place: '',
@@ -65,6 +75,7 @@ const AdditionalServicePict = () => {
       photoImage: []
     },
     SRV00003: {
+      serviceId: 3,
       startDate: dayjs(),
       endDate: dayjs(),
       place: '',
@@ -72,13 +83,7 @@ const AdditionalServicePict = () => {
       photoImage: []
     },
     SRV00004: {
-      startDate: dayjs(),
-      endDate: dayjs(),
-      place: '',
-      numberOfPeople: '',
-      photoImage: []
-    },
-    SRV00005: {
+      serviceId: 4,
       startDate: dayjs(),
       endDate: dayjs(),
       place: '',
@@ -94,19 +99,19 @@ const AdditionalServicePict = () => {
 
   const AdditionalService = [
     {
-      serviceId: 'SRV00002',
+      serviceName: 'SRV00001',
       label: t('report.otherPictures')
     },
     {
-      serviceId: 'SRV00003',
+      serviceName: 'SRV00002',
       label: t('report.otherCollectionPoint')
     },
     {
-      serviceId: 'SRV00004',
+      serviceName: 'SRV00003',
       label: t('report.communityCollectionPoint')
     },
     {
-      serviceId: 'SRV00005',
+      serviceName: 'SRV00004',
       label: t('report.promotionalAndEducationalEventLocations')
     }
   ]
@@ -117,7 +122,7 @@ const AdditionalServicePict = () => {
 
       for (const key in serviceData) {
         if (serviceData.hasOwnProperty(key)) {
-          const entry = serviceData[key as ServiceId]
+          const entry = serviceData[key as ServiceName]
 
           if (entry.startDate?.toString() == '') {
             tempV.push({
@@ -180,34 +185,34 @@ const AdditionalServicePict = () => {
   const onImageChange = (
     imageList: ImageListType,
     addUpdateIndex: number[] | undefined,
-    serviceId: ServiceId
+    ServiceName: ServiceName,
   ) => {
     setServiceData((prevData) => ({
       ...prevData,
-      [serviceId]: { ...prevData[serviceId], photoImage: imageList }
+      [ServiceName]: { ...prevData[ServiceName], photoImage: imageList }
     }))
-    console.log(`Updated image list for ${serviceId}:`, imageList)
+    // console.log(`Updated image list for ${serviceId}:`, imageList)
   }
 
-  const updateData = (serviceId: ServiceId, property: string, value: any) => {
+  const updateData = (serviceName: ServiceName, property: string, value: any) => {
     setServiceData((prevData) => ({
       ...prevData,
-      [serviceId]: {
-        ...prevData[serviceId],
+      [serviceName]: {
+        ...prevData[serviceName],
         [property]: value
       }
     }))
   }
 
   const updateDateTime = (
-    serviceId: ServiceId,
+    serviceName: ServiceName,
     property: string,
     value: dayjs.Dayjs
   ) => {
     setServiceData((prevData) => ({
       ...prevData,
-      [serviceId]: {
-        ...prevData[serviceId],
+      [serviceName]: {
+        ...prevData[serviceName],
         [property]: value
       }
     }))
@@ -247,7 +252,7 @@ const AdditionalServicePict = () => {
 
   const returnErrorMsg = (error: string) => {
     var msg = ''
-    console.log(error)
+    // console.log(error)
     switch (error) {
       case formErr.empty:
         msg = t('form.error.shouldNotBeEmpty')
@@ -276,16 +281,16 @@ const AdditionalServicePict = () => {
   const submitServiceInfo = async () => {
     let itemData = 0
     if (validation.length == 0) {
-      for (const key of Object.keys(serviceData) as ServiceId[]) {
+      for (const key of Object.keys(serviceData) as ServiceName[]) {
         const serviceItem = serviceData[key]
         const imgList: string[] = ImageToBase64(
           serviceItem.photoImage
         ).map((item) => {
-          return item 
+          return item
         })
 
         const formData: ServiceInfo = {
-          serviceId: 3,
+          serviceId: serviceItem.serviceId,
           address: serviceItem.place,
           addressGps: [0],
           serviceName: key,
@@ -303,7 +308,7 @@ const AdditionalServicePict = () => {
 
       if (itemData === 4) {
         setTrySubmited(false)
-        console.log('itemData', itemData)
+        // console.log('itemData', itemData)
         const toastMsg = 'created additional service success'
         toast.info(toastMsg, {
           position: 'top-center',
@@ -368,13 +373,13 @@ const AdditionalServicePict = () => {
                     <Box sx={{ ...localstyles.DateItem }}>
                       <DatePicker
                         defaultValue={dayjs(
-                          serviceData[item.serviceId as keyof ServiceData]
+                          serviceData[item.serviceName as keyof ServiceData]
                             .startDate
                         )}
                         format={format.dateFormat2}
                         onChange={(value) =>
                           updateDateTime(
-                            item.serviceId as ServiceId,
+                            item.serviceName as ServiceName,
                             'startDate',
                             value!!
                           )
@@ -385,12 +390,12 @@ const AdditionalServicePict = () => {
                     <Box sx={{ ...localstyles.timePeriodItem }}>
                       <TimePicker
                         value={
-                          serviceData[item.serviceId as keyof ServiceData]
+                          serviceData[item.serviceName as keyof ServiceData]
                             .startDate
                         }
                         onChange={(value) =>
                           updateDateTime(
-                            item.serviceId as ServiceId,
+                            item.serviceName as ServiceName,
                             'startDate',
                             value!!
                           )
@@ -408,13 +413,13 @@ const AdditionalServicePict = () => {
                     <Box sx={{ ...localstyles.DateItem }}>
                       <DatePicker
                         defaultValue={dayjs(
-                          serviceData[item.serviceId as keyof ServiceData]
+                          serviceData[item.serviceName as keyof ServiceData]
                             .startDate
                         )}
                         format={format.dateFormat2}
                         onChange={(value) =>
                           updateDateTime(
-                            item.serviceId as ServiceId,
+                            item.serviceName as ServiceName,
                             'endDate',
                             value!!
                           )
@@ -425,12 +430,12 @@ const AdditionalServicePict = () => {
                     <Box sx={{ ...localstyles.timePeriodItem }}>
                       <TimePicker
                         value={
-                          serviceData[item.serviceId as keyof ServiceData]
+                          serviceData[item.serviceName as keyof ServiceData]
                             .endDate
                         }
                         onChange={(value) =>
                           updateDateTime(
-                            item.serviceId as ServiceId,
+                            item.serviceName as ServiceName,
                             'endDate',
                             value!!
                           )
@@ -446,14 +451,14 @@ const AdditionalServicePict = () => {
                     placeholder={t('report.address')}
                     onChange={(event) => {
                       updateData(
-                        item.serviceId as ServiceId,
+                        item.serviceName as ServiceName,
                         'place',
                         event.target.value
                       )
                     }}
                     multiline={true}
                     error={checkString(
-                      serviceData[item.serviceId as keyof ServiceData].place
+                      serviceData[item.serviceName as keyof ServiceData].place
                     )}
                   />
                 </CustomField>
@@ -490,13 +495,13 @@ const AdditionalServicePict = () => {
                     placeholder={t('report.pleaseEnterNumberOfPeople')}
                     onChange={(event) => {
                       updateData(
-                        item.serviceId as ServiceId,
+                        item.serviceName as ServiceName,
                         'numberOfPeople',
                         parseInt(event.target.value, 10) || 0
                       )
                     }}
                     error={checkNumber(
-                      serviceData[item.serviceId as keyof ServiceData]
+                      serviceData[item.serviceName as keyof ServiceData]
                         .numberOfPeople
                     )}
                   />
@@ -510,14 +515,14 @@ const AdditionalServicePict = () => {
                     <ImageUploading
                       multiple
                       value={
-                        serviceData[item.serviceId as keyof ServiceData]
+                        serviceData[item.serviceName as keyof ServiceData]
                           .photoImage
                       }
                       onChange={(imageList, addUpdateIndex) =>
                         onImageChange(
                           imageList,
                           addUpdateIndex,
-                          item.serviceId as ServiceId
+                          item.serviceName as ServiceName,
                         )
                       }
                       maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
@@ -530,7 +535,7 @@ const AdditionalServicePict = () => {
                             sx={{
                               ...localstyles.cardImg,
                               ...(trySubmited &&
-                                serviceData[item.serviceId as keyof ServiceData]
+                                serviceData[item.serviceName as keyof ServiceData]
                                   .photoImage.length === 0 &&
                                 localstyles.imgError)
                             }}

@@ -95,7 +95,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   }
 
   const mappingData = () => {
-    console.log('selectedItem', selectedItem)
+    // console.log('selectedItem', selectedItem)
     if (selectedItem) {
       const selectedStatus =
         selectedItem.status == 'ACTIVE'

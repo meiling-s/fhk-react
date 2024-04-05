@@ -83,7 +83,7 @@ const ProcessRecord: FunctionComponent = () => {
   const getProcessInDetail = async (processInId: number) =>{
     const result = await getProcessIn(processInId)
     if (result) {
-      console.log("getProcessInDetail",result)
+      // console.log("getProcessInDetail",result)
       return result.data
     }
   }
@@ -152,7 +152,7 @@ const ProcessRecord: FunctionComponent = () => {
       type: 'string',
       renderCell: (params) => {
         const dateFormatted = displayCreatedDate(params.row.createdAt)
-        
+
         return <div>{dateFormatted}</div>
       }
     },
@@ -163,7 +163,7 @@ const ProcessRecord: FunctionComponent = () => {
       type: 'string',
       renderCell: (params) => {
         const processName = mappingProcessName(params.row.packageTypeId)
-        
+
         return <div>{processName}</div>
       }
     },
@@ -247,7 +247,7 @@ const ProcessRecord: FunctionComponent = () => {
   }, [])
 
   const handleSearch = (label: string, value: string) => {
-    console.log('hanlde search', label, value)
+    // console.log('hanlde search', label, value)
     if (label == 'search') {
       if (value == '') return setFilteredProcessRecords(procesRecords)
       const filtered: ProcessOut[] = procesRecords.filter(
