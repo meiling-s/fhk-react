@@ -543,7 +543,15 @@ function CreateCollectionPoint() {
             </CustomField>
 
             <CustomField label={t('col.colName')}>
-              <Typography sx={styles.formDataText}>
+              <Typography
+                sx={{
+                  ...styles.formDataText,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: '750px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
                 {colInfo.colName}
               </Typography>
             </CustomField>

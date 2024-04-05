@@ -1,5 +1,13 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Button, Checkbox, Typography, Pagination, Container, IconButton } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Typography,
+  Pagination,
+  Container,
+  IconButton
+} from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -16,8 +24,11 @@ import EditIcon from '@mui/icons-material/Edit'
 
 import { styles } from '../../../constants/styles'
 // import CreateVehicle from './CreateVehicle'
-import { Vehicle as VehicleItem, CreateVehicle as VehiclesForm } from '../../../interfaces/vehicles'
-import {Contract as ContractItem} from '../../../interfaces/contract'
+import {
+  Vehicle as VehicleItem,
+  CreateVehicle as VehiclesForm
+} from '../../../interfaces/vehicles'
+import { Contract as ContractItem } from '../../../interfaces/contract'
 import { getAllContract } from '../../../APICalls/Collector/contracts'
 import { ToastContainer, toast } from 'react-toastify'
 
@@ -34,23 +45,36 @@ type TableRow = {
 }
 
 function createContract(
-    id: number,
-    contractNo: string,
-    tenantId: string,
-    contractFrmDate: string,
-    contractToDate: string,
-    epdFlg: boolean,
-    remark: string,
-    parentContractNo: string,
-    status: string,
-    createdBy: string,
-    updatedBy: string,
-    createdAt: string,
-    updatedAt: string,
+  id: number,
+  contractNo: string,
+  tenantId: string,
+  contractFrmDate: string,
+  contractToDate: string,
+  epdFlg: boolean,
+  remark: string,
+  parentContractNo: string,
+  status: string,
+  createdBy: string,
+  updatedBy: string,
+  createdAt: string,
+  updatedAt: string
 ): ContractItem {
-  return { id, contractNo, tenantId, contractFrmDate, contractToDate, epdFlg, remark, parentContractNo, status, createdBy, updatedBy,createdAt, updatedAt }
+  return {
+    id,
+    contractNo,
+    tenantId,
+    contractFrmDate,
+    contractToDate,
+    epdFlg,
+    remark,
+    parentContractNo,
+    status,
+    createdBy,
+    updatedBy,
+    createdAt,
+    updatedAt
+  }
 }
-
 
 const GeneralSettings: FunctionComponent = () => {
   const { t } = useTranslation()
@@ -73,9 +97,9 @@ const GeneralSettings: FunctionComponent = () => {
   const initContractList = async () => {
     const result = await getAllContract(page - 1, pageSize)
     const data = result?.data
-    if(data) {
+    if (data) {
       var contractMapping: ContractItem[] = []
-      data.content.map((item: any, index: any) => {
+      data.map((item: any, index: any) => {
         contractMapping.push(
           createContract(
             item?.id !== undefined ? item?.id : index,
@@ -90,7 +114,7 @@ const GeneralSettings: FunctionComponent = () => {
             item?.createdBy,
             item?.updatedBy,
             item?.createdAt,
-            item?.updatedAt,
+            item?.updatedAt
           )
         )
       })
@@ -103,14 +127,13 @@ const GeneralSettings: FunctionComponent = () => {
     const result = await getTenantById(parseInt(token.tenantId))
     const data = result?.data
     setTenantCurrency(data.monetaryValue)
-
   }
   const columns: GridColDef[] = [
     {
       field: 'contractNo',
       headerName: t('general_settings.name'),
       width: 150,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'parentContractNo',
@@ -161,7 +184,10 @@ const GeneralSettings: FunctionComponent = () => {
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              onClick={(event) => {event.stopPropagation();  handleAction(params, 'edit')}}
+              onClick={(event) => {
+                event.stopPropagation()
+                handleAction(params, 'edit')
+              }}
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -177,7 +203,10 @@ const GeneralSettings: FunctionComponent = () => {
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              onClick={(event) => {event.stopPropagation(); handleAction(params, 'delete')}}
+              onClick={(event) => {
+                event.stopPropagation()
+                handleAction(params, 'delete')
+              }}
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -186,7 +215,10 @@ const GeneralSettings: FunctionComponent = () => {
     }
   ]
 
-  const handleAction = (params: GridRenderCellParams, action: 'add' | 'edit' | 'delete') => {
+  const handleAction = (
+    params: GridRenderCellParams,
+    action: 'add' | 'edit' | 'delete'
+  ) => {
     setAction(action)
     setRowId(params.row.id)
     setSelectedRow(params.row)
@@ -197,18 +229,18 @@ const GeneralSettings: FunctionComponent = () => {
     setAction('edit')
     setRowId(params.row.id)
     setSelectedRow(params.row)
-    setDrawerOpen(true) 
+    setDrawerOpen(true)
   }
 
-  const onSubmitData = (type: string, msg: string) =>{
+  const onSubmitData = (type: string, msg: string) => {
     initContractList()
     getTenantData()
-    if(type == 'success') {
+    if (type == 'success') {
       showSuccessToast(msg)
     } else {
       showErrorToast(msg)
     }
-  } 
+  }
 
   const showErrorToast = (msg: string) => {
     toast.error(msg, {
@@ -241,10 +273,9 @@ const GeneralSettings: FunctionComponent = () => {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
-  
+
   const handleOpenSidebar = (value: string) => {
     setCurrencyDrawerOpen(true)
-    
   }
 
   return (
@@ -270,25 +301,26 @@ const GeneralSettings: FunctionComponent = () => {
           <Typography fontSize={16} color="black" fontWeight="bold">
             {t('general_settings.default_currency')}
           </Typography>
-            <Container
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: 'white',
-                padding: '10px',
-                borderRadius: '5px',
-                marginLeft: 0,
-                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Optional: Add box shadow
-              }}
-            >
-              <Typography variant="body1" sx={{ flexGrow: 1 }}>
-                {tenantCurrency}
-              </Typography>
-              <IconButton onClick={() => handleOpenSidebar('currency')}>
-                <EditIcon />
-              </IconButton>
-            </Container>
+          <Container
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              backgroundColor: 'white',
+              padding: '10px',
+              borderRadius: '5px',
+              marginLeft: 0,
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' // Optional: Add box shadow
+            }}
+          >
+            <Typography variant="body1" sx={{ flexGrow: 1 }}>
+              {tenantCurrency}
+            </Typography>
+            <IconButton onClick={() => handleOpenSidebar('currency')}>
+              <EditIcon />
+            </IconButton>
+                
+          </Container>
         </Box>
         <Box
           sx={{
@@ -310,18 +342,21 @@ const GeneralSettings: FunctionComponent = () => {
               }
             ]}
             variant="outlined"
-            onClick={() => {setDrawerOpen(true); setAction('add')}}
+            onClick={() => {
+              setDrawerOpen(true)
+              setAction('add')
+            }}
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden'}}>
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
             <DataGrid
               rows={contractList}
               getRowId={(row) => row.id}
               hideFooter
-              columns ={columns}
+              columns={columns}
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
@@ -342,7 +377,7 @@ const GeneralSettings: FunctionComponent = () => {
               }}
             />
             <Pagination
-              className='mt-4'
+              className="mt-4"
               count={Math.ceil(totalData)}
               page={page}
               onChange={(_, newPage) => {
@@ -351,14 +386,14 @@ const GeneralSettings: FunctionComponent = () => {
             />
           </Box>
         </div>
-          <CreateContract
-            drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
-            action={action}
-            rowId={rowId}
-            selectedItem={selectedRow}
-            onSubmitData={onSubmitData}
-          />
+        <CreateContract
+          drawerOpen={drawerOpen}
+          handleDrawerClose={() => setDrawerOpen(false)}
+          action={action}
+          rowId={rowId}
+          selectedItem={selectedRow}
+          onSubmitData={onSubmitData}
+        />
         <UpdateCurrency
           drawerOpen={currencyDrawerOpen}
           handleDrawerClose={() => setCurrencyDrawerOpen(false)}
