@@ -96,7 +96,7 @@ const GeneralSettings: FunctionComponent = () => {
 
   const initContractList = async () => {
     const result = await getAllContract(page - 1, pageSize)
-    const data = result?.data
+    const data = result?.data.content
     if (data) {
       var contractMapping: ContractItem[] = []
       data.map((item: any, index: any) => {
