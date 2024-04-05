@@ -58,9 +58,12 @@ const PickupOrderForm = ({
   }
   const navigate = useNavigate()
 
-  const handleRowClick = (po: PickupOrder) => {
+  const handleRowClick = async (po: PickupOrder) => {
     const routeName = role === 'logisticadmin' ? 'logistics' : 'collector'
-    navigate(`/${routeName}/editPickupOrder`, { state: po })
+    const result = await getPicoById(selectedPickupOrder ? selectedPickupOrder.picoId : '')
+    if (result) {
+      navigate(`/${routeName}/editPickupOrder`, { state: result.data })
+    }
   }
 
   // const { pickupOrder, initPickupOrderRequest } = useContainer(
