@@ -105,6 +105,14 @@ const BasicServicePicture = () => {
           problem: formErr.empty,
           type: 'error'
         })
+
+        if(dayjs(startDate).format('YYYY-MM-DD') === dayjs(endDate).format('YYYY-MM-DD')) {
+          tempV.push({
+            field: `${t('report.collectionPoints')} ${t('report.dateAndTime')}`,
+            problem: formErr.startDateBehindEndDate,
+            type: 'error'
+          })
+        }
       setValidation(tempV)
     }
 
@@ -224,6 +232,9 @@ const BasicServicePicture = () => {
       case formErr.wrongFormat:
         msg = t('form.error.isInWrongFormat')
         break
+      case formErr.startDateBehindEndDate:
+        msg = t('form.error.startDateBehindEndDate')
+        break
     }
     return msg
   }
@@ -262,6 +273,7 @@ const BasicServicePicture = () => {
                     format={format.dateFormat2}
                     onChange={(value) => setStartDate(value!!)}
                     sx={{ ...localstyles.datePicker }}
+                    maxDate={dayjs(endDate)}
                   />
                 </Box>
                 <Box sx={{ ...localstyles.timePeriodItem }}>
@@ -282,6 +294,7 @@ const BasicServicePicture = () => {
                     format={format.dateFormat2}
                     onChange={(value) => setEndDate(value!!)}
                     sx={{ ...localstyles.datePicker }}
+                    minDate={dayjs(startDate)}
                   />
                 </Box>
                 <Box sx={{ ...localstyles.timePeriodItem }}>

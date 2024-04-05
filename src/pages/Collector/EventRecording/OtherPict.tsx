@@ -108,11 +108,11 @@ const OtherPict = () => {
       for (const key in serviceData) {
         if (serviceData.hasOwnProperty(key)) {
           const entry = serviceData[key as ServiceName]
-
+          const label = serviceOthersField.find(item => item.serviceName === key)
           // Validate startDate
           if (entry.startDate?.toString() == '') {
             tempV.push({
-              field: `${key} ${t('report.dateAndTime')}`,
+              field: `${label?.label} ${t('report.dateAndTime')}`,
               problem: formErr.empty,
               type: 'error'
             })
@@ -124,7 +124,7 @@ const OtherPict = () => {
             entry.photoImage.length === 0
           ) {
             tempV.push({
-              field: `${key} ${t('report.picture')}`,
+              field: `${label?.label} ${t('report.picture')}`,
               problem: formErr.empty,
               type: 'error'
             })
@@ -135,7 +135,7 @@ const OtherPict = () => {
       setValidation(tempV)
     }
 
-    validate()
+    // validate()
   }, [serviceData])
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
@@ -150,53 +150,81 @@ const OtherPict = () => {
     })
   }
 
+  const resetServiceDataWithKey = (serviceName: string, serviceId: number) => {
+    setServiceData(prev => {
+      return{
+        ...prev,
+        [serviceName]: {serviceId: serviceId, startDate: dayjs(), photoImage: [] },
+      }
+    })
+  }
+
   const submitServiceInfo = async () => {
     let itemData = 0
-    if (validation.length == 0) {
+    // if (validation.length == 0) {
       for (const key of Object.keys(serviceData) as ServiceName[]) {
-        const serviceItem = serviceData[key]
-        const imgList: string[] = ImageToBase64(
-          serviceItem.photoImage
-        ).map((item) => {
-          return item 
-        })
-
-        const formData: ServiceInfo = {
-          serviceId: serviceItem.serviceId,
-          address: '',
-          addressGps: [0],
-          serviceName: key,
-          participants: 'string',
-          startAt: formattedDate(serviceItem.startDate),
-          endAt: formattedDate(serviceItem.startDate),
-          photo: imgList,
-          numberOfVisitor: 0,
-          createdBy: loginId,
-          updatedBy: loginId
+        const serviceItem = serviceData[key];
+        if(serviceItem.photoImage.length === 0 || serviceItem.startDate.add.toString() === '') {
+          // return
+        } else {
+          const imgList: string[] = ImageToBase64(
+            serviceItem.photoImage
+          ).map((item) => {
+            return item 
+          })
+  
+          const formData: ServiceInfo = {
+            serviceId: serviceItem.serviceId,
+            address: '',
+            addressGps: [0],
+            serviceName: key,
+            participants: 'string',
+            startAt: formattedDate(serviceItem.startDate),
+            endAt: formattedDate(serviceItem.startDate),
+            photo: imgList,
+            numberOfVisitor: 0,
+            createdBy: loginId,
+            updatedBy: loginId
+          }
+          const result = await createServiceInfo(formData)
+          if (result) {
+            resetServiceDataWithKey(key, serviceItem.serviceId)
+            const toastMsg = 'created other service success'
+            toast.info(toastMsg, {
+              position: 'top-center',
+              autoClose: 3000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: 'light'
+            })
+          }
+          
         }
-        const result = await createServiceInfo(formData)
-        if (result) itemData++
+        
       }
 
-      if (itemData === 3) {
-        console.log('itemData', itemData)
-        setTrySubmited(false)
-        resetServiceData()
-        const toastMsg = 'created other service success'
-        toast.info(toastMsg, {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light'
-        })
-      }
-    } else {
-      setTrySubmited(true)
-    }
+      // if (itemData >= 1) {
+      //   console.log('itemData', itemData)
+      //   setTrySubmited(false)
+      //   resetServiceData()
+      //   const toastMsg = 'created other service success'
+      //   toast.info(toastMsg, {
+      //     position: 'top-center',
+      //     autoClose: 3000,
+      //     hideProgressBar: true,
+      //     closeOnClick: true,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: 'light'
+      //   })
+      // }
+    // } else {
+    //   setTrySubmited(true)
+    // }
   }
 
   const returnErrorMsg = (error: string) => {
