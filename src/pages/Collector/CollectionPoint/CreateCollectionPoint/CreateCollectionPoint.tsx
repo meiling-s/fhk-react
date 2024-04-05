@@ -125,7 +125,7 @@ function CreateCollectionPoint() {
         frmDate: string
         toDate: string
       }[] = []
-      result.contract.map((con) => {
+      result.contract.content.map((con) => {
         conList.push({
           contractNo: con.contractNo,
           isEpd: con.epdFlg,
@@ -203,18 +203,18 @@ function CreateCollectionPoint() {
           problem: formErr.exceedsMaxLength,
           type: 'error'
         })
-      ;(await address) == ''
-        ? tempV.push({
-            field: 'col.address',
-            problem: formErr.empty,
-            type: 'error'
-          })
-        : (await checkAddressUsed(contractNo, address)) &&
-          tempV.push({
-            field: 'col.address',
-            problem: formErr.hasBeenUsed,
-            type: 'error'
-          })
+      // ;(await address) == ''
+      //   ? tempV.push({
+      //       field: 'col.address',
+      //       problem: formErr.empty,
+      //       type: 'error'
+      //     })
+      //   : (await checkAddressUsed(contractNo, address)) &&
+      //     tempV.push({
+      //       field: 'col.address',
+      //       problem: formErr.hasBeenUsed,
+      //       type: 'error'
+      //     })
       ;(await colName) == ''
         ? tempV.push({
             field: 'col.colName',

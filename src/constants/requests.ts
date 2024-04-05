@@ -95,6 +95,11 @@ export const FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS: AxiosRequestConfig =
     url: "api/v1/collectors/collectionPoint/byContractAndAddress",
   };
 
+export const GET_COLLECTIONPOINT_BY_COLID = (tenantId: string, colId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/collectionPoint/${tenantId}/${colId}`
+})
+
 export const GET_CONTRACT = (tenantId: string): AxiosRequestConfig => ({
   method: "get",
   url: `api/v1/collectors/contract/${tenantId}`,
@@ -573,7 +578,7 @@ export const GET_ROSTER_LIST_BY_COL_POINT = (
   colId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/roster/collectionPoint/${tenantId}/${{colId}}`
+  url: `api/v1/collectors/roster/collectionPoint/${tenantId}/${colId}`
 })
 
 export const CREATE_ROSTER: AxiosRequestConfig = {

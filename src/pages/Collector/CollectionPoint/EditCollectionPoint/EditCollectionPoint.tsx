@@ -131,7 +131,7 @@ function CreateCollectionPoint() {
         frmDate: string
         toDate: string
       }[] = []
-      result?.contract.map((con) => {
+      result?.contract?.content?.map((con) => {
         conList.push({
           contractNo: con.contractNo,
           isEpd: con.epdFlg,

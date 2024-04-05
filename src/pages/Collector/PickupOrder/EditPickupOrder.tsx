@@ -124,7 +124,7 @@ const EditPickupOrder = () => {
         //navigate('/collector/PickupOrder', { state: 'updated' })
         const routeName =
           role === 'logisticadmin'
-            ? 'logistics'
+            ? 'logistic'
             : role === 'manufactureradmin'
             ? 'manufacturer'
             : 'collector'

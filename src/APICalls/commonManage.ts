@@ -50,7 +50,7 @@ export const addTheUserAccount = async (data: any) => {
             ...ADD_USER_ACCOUNT,
             data: data,
         });
-        console.log('Add user account success:', JSON.stringify(response.data));
+        // console.log('Add user account success:', JSON.stringify(response.data));
         userAccount = response.data;
         return userAccount;
     }catch (e) {
@@ -69,7 +69,7 @@ export const getPremiseType = async () => {
             ...GET_PREMISE_TYPE,
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });
-        console.log('Get premise type success:', JSON.stringify(response.data));
+        // console.log('Get premise type success:', JSON.stringify(response.data));
         premiseType = response.data;
         return premiseType;
     }catch (e) {
@@ -88,7 +88,7 @@ export const getSiteType = async () => {
             ...GET_SITE_TYPE,
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });
-        console.log('Get site type success:', JSON.stringify(response.data));
+        // console.log('Get site type success:', JSON.stringify(response.data));
         siteType = response.data;
         return siteType;
     }catch (e) {
@@ -168,7 +168,7 @@ export const getRecycType = async () => {
             ...GET_RECYC_TYPE,
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });
-        console.log('Get site type success:', JSON.stringify(response.data));
+        // console.log('Get site type success:', JSON.stringify(response.data));
         RecycType = response.data;
         return RecycType;
     }catch (e) {

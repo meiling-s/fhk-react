@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { colPointType } from '../interfaces/common'
 import { useMap } from 'react-leaflet'
 import { Position } from '../interfaces/map'
+import { getCollectionPointDetail } from '../APICalls/collectionPointManage'
 
 type props = {
   collectionPoints: collectionPoint[]
@@ -75,8 +76,12 @@ const CustomCard = ({
     }
   }
 
-  const handleCardOnClick = (col: collectionPoint) => {
-    navigate("/collector/editCollectionPoint", { state: col })
+  const handleCardOnClick = async (col: collectionPoint) => {
+    const result = await getCollectionPointDetail(Number(col.colId))
+    const data = result?.data
+    if (data) {
+      navigate("/collector/editCollectionPoint", { state: data })
+    }
   }
 
   const getColPointNameById = (id: string) => {
