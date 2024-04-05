@@ -309,7 +309,7 @@ const PickupOrders = () => {
     effToDate: '',
     logisticName: '',
     recycType: '',
-    receiverAddr: '',
+    senderName: '',
     status: 0
   });
   const [approveModal, setApproveModal] = useState(false)
@@ -464,7 +464,7 @@ const PickupOrders = () => {
       logisticCompany: item.logisticName,
       picoId: item.picoId, 
       deliveryDate: getDeliveryDate(item),
-      senderCompany: item.pickupOrderDetail[0]?.receiverAddr,
+      senderCompany: item.pickupOrderDetail.filter(detail => detail.senderName === query.senderName).length > 0 ? query.senderName : item.pickupOrderDetail[0].senderName,
       receiver: item.pickupOrderDetail[0]?.receiverName,
       status: item.status,
       recyType: item.pickupOrderDetail.map(item => {return item.recycType}),
@@ -475,6 +475,8 @@ const PickupOrders = () => {
     setRows(tempRows)
     setFilteredPico(tempRows)
   // }
+
+  console.log(pickupOrder, 'pickupOrder bro')
   },[pickupOrder])
 
   interface Row {
@@ -494,7 +496,7 @@ const PickupOrders = () => {
     {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('createdAt'), field:"effFromDate"},
     {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('deliveryDate'), field:"effToDate"},
     {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticName"},
-    {label:t('pick_up_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderCompany'), field:"receiverAddr"},
+    {label:t('pick_up_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderCompany'), field:"senderName"},
     {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recycType"},
     {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('status'), field:"status"}
     

@@ -15,13 +15,13 @@ import axiosInstance from '../../../constants/axiosInstance'
           params: {
             page: page,
             size: size,
-            tenanId: auth.tenantId,
+            tenantId: auth.tenantId,
             picoId: query?.picoId,
             effFromDate: query?.effFromDate,
             effToDate: query?.effToDate,
             logisticName: query?.logisticName,
             recycType: query?.recycType,
-            receiverAddr: query?.receiverAddr,
+            senderName: query?.senderName,
             status: query?.status
           },
         });
@@ -53,7 +53,7 @@ import axiosInstance from '../../../constants/axiosInstance'
           effToDate: query?.effToDate,
           logisticName: query?.logisticName,
           recycType: query?.recycType,
-          receiverAddr: query?.receiverAddr,
+          senderName: query?.senderName,
           status: query?.status,
         },
       });

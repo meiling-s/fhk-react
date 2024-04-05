@@ -186,7 +186,7 @@ export type queryPickupOrder = {
     effToDate: string;
     logisticName: string;
     recycType: string;
-    receiverAddr: string;
+    senderName: string;
     status: number
   }
 
