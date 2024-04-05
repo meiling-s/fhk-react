@@ -178,7 +178,12 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                 anchor={'right'}
                 action={action}
                 headerProps={{
-                    title: t('packaging_unit.new'),
+                    title:
+                    action == 'add'
+                      ? t('top_menu.add_new')
+                      : action == 'delete'
+                      ? t('common.delete')
+                      : selectedItem?.packagingTypeId,
                     subTitle: t('packaging_unit.packaging_unit'),
                     submitText: t('add_warehouse_page.save'),
                     cancelText: t('add_warehouse_page.delete'),
