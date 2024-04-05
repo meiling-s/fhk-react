@@ -140,7 +140,7 @@ const CreatePickupOrder = () => {
         //console.log('all pickup order: ', data)
         const routeName =
           role === 'logisticadmin'
-            ? 'logistics'
+            ? 'logistic'
             : role === 'manufactureradmin'
             ? 'manufacturer'
             : 'collector'
