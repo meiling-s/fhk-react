@@ -1,9 +1,9 @@
-import { Typography } from "@mui/material"
+import { Typography } from "@mui/material";
 
 const CustomCopyrightSection = () => {
   return (
     <Typography sx={{ color: "white", marginBottom: "20px" }}>
-      Copyright by GreenHoop 2023 <br /> v1-0-0beta-116
+      Copyright by GreenHoop 2023 <br /> v1-0-0beta-131
     </Typography>
   )
 }
