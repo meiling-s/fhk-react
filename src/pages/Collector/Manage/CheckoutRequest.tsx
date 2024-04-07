@@ -44,10 +44,11 @@ import { CheckOut } from '../../../interfaces/checkout'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
-import { styles } from '../../../constants/styles'
+import { styles, primaryColor } from '../../../constants/styles'
 import { queryCheckout } from '../../../interfaces/checkout'
 import { localStorgeKeyName } from "../../../constants/constant";
 import { displayCreatedDate } from '../../../utils/utils'
+import CustomButton from '../../../components/FormComponents/CustomButton'
 
 type TableRow = {
   id: number
@@ -169,29 +170,19 @@ const ApproveModal: React.FC<ApproveForm> = ({
             </Typography>
           </Box>
           <Divider />
-          <Box className="flex gap-2 justify-start">
+          {/* <Box className="flex gap-2 justify-start">
             <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedCheckOut.length}
             </Typography>
-          </Box>
+          </Box> */}
 
           <Box sx={{ alignSelf: 'center' }}>
-            <button
-              className="primary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                handleApproveRequest()
-              }}
-            >
-              {t('check_in.confirm')}
-            </button>
-            <button
-              className="secondary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                onClose()
-              }}
-            >
-              {t('check_out.cancel')}
-            </button>
+            <CustomButton text={t('check_out.confirm_approve_btn')} color="blue" style={{width: '175px', marginRight: '10px'}} onClick={() => {
+              handleApproveRequest()
+            }} />
+            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '175px', marginRight: '10px'}} onClick={() => {
+              onClose()
+            }} />
           </Box>
         </Stack>
       </Box>
@@ -282,30 +273,24 @@ const RejectModal: React.FC<RejectForm> = ({
             <Typography sx={localstyles.typo}>
               {t('check_out.reject_reasons')}
             </Typography>
-            <Typography sx={localstyles.typo}>
+            {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedCheckOut.length}
-            </Typography>
-            <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
+            </Typography> */}
+            <CustomItemList items={reasons} multiSelect={setRejectReasonId} itemColor={{bgColor: '#F0F9FF', borderColor: primaryColor}} />
           </Box>
 
           <Box sx={{ alignSelf: 'center' }}>
-            <button
-              className="primary-btn mr-2 cursor-pointer"
-              onClick={() => {
+            <CustomButton text={t('check_in.confirm')} color="blue" style={{width: '175px', marginRight: '10px'}} onClick={
+              () => {
                 handleRejectRequest(rejectReasonId)
                 onClose()
-              }}
-            >
-              {t('check_in.confirm')}
-            </button>
-            <button
-              className="secondary-btn mr-2 cursor-pointer"
-              onClick={() => {
+              }
+            } />
+            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '175px'}} onClick={
+              () => {
                 onClose()
-              }}
-            >
-              {t('check_in.cancel')}
-            </button>
+              }
+            } />
           </Box>
         </Stack>
       </Box>
@@ -544,6 +529,14 @@ const CheckoutRequest: FunctionComponent = () => {
     setCheckedCheckOut([])
     await getCheckoutRequest()
   }
+
+  const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
+  const role = localStorage.getItem(localStorgeKeyName.role)
+
+  useEffect(() => {
+    setPrimaryColor(role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25')
+  }, [role])
+
   return (
     <Box className="container-wrapper w-full mr-11">
       <div className="overview-page bg-bg-primary">
@@ -588,20 +581,20 @@ const CheckoutRequest: FunctionComponent = () => {
           <TextField
             id="searchShipment"
             onChange={(event) => handleSearchByPoNumb(event.target.value)}
-            sx={localstyles.inputState}
+            sx={styles.inputStyle}
             label={t('check_in.search')}
             placeholder={t('check_in.search_input')}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: '#79CA25' }} />
+                    <SEARCH_ICON style={{ color: primaryColor }} />
                   </IconButton>
                 </InputAdornment>
               )
             }}
           />
-          <FormControl sx={localstyles.dropDown}>
+          <FormControl sx={styles.inputStyle}>
             <InputLabel id="company-label"  sx={styles.textFieldLabel} >{t('check_out.company')}</InputLabel>
             <Select
               labelId="company-label"
@@ -620,7 +613,7 @@ const CheckoutRequest: FunctionComponent = () => {
               ))}
             </Select>
           </FormControl>
-          <FormControl sx={localstyles.dropDown}>
+          <FormControl sx={styles.inputStyle}>
             <InputLabel id="location-label"  sx={styles.textFieldLabel}>
               {t('check_out.receiver_addr')}
             </InputLabel>
@@ -711,52 +704,10 @@ const CheckoutRequest: FunctionComponent = () => {
     </Box>
   )
 }
-
 let localstyles = {
   typo: {
     color: 'grey',
     fontSize: 14
-  },
-  inputState: {
-    mt: 3,
-    width: '100%',
-    m: 1,
-    borderRadius: '10px',
-    bgcolor: 'white',
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '10px',
-      '& fieldset': {
-        borderColor: '#79CA25'
-      },
-      '&:hover fieldset': {
-        borderColor: '#79CA25'
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#79CA25'
-      },
-      '& label.Mui-focused': {
-        color: '#79CA25'
-      }
-    }
-  },
-  dropDown: {
-    mt: 3,
-    m: 1,
-    borderRadius: '10px',
-    width: '100%',
-    bgcolor: 'white',
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '10px',
-      '& fieldset': {
-        borderColor: '#79CA25'
-      },
-      '&:hover fieldset': {
-        borderColor: '#79CA25'
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#79CA25'
-      }
-    }
   },
   modal: {
     position: 'absolute',
