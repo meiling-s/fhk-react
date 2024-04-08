@@ -26,16 +26,16 @@ const CustomButton: React.FC<ButtonProps> = ({
     switch (color) {
       case 'green':
         style = {
-          backgroundColor: outlined ? '#fff' : '#7CE495',
-          color: outlined ? '#7CE495' : '#fff',
-          borderColor: '#7CE495'
+          backgroundColor: outlined ? '#fff' : '#79CA25',
+          color: outlined ? '#79CA25' : '#fff',
+          borderColor: '#79CA25'
         };
         break;
       case 'blue':
         style = {
           backgroundColor: outlined ? '#fff' : '#6BC7FF',
           color: outlined ? '#6BC7FF' : '#fff',
-          borderColor: outlined ? '#BEE1E8' : '#6BC7FF'
+          borderColor: outlined ? '#6BC7FF' : '#6BC7FF'
         };
         break;
       default:
