@@ -24,7 +24,7 @@ export const paletteColors = {
   Green2:'#E4F6DC',
   Red:'#FFF0F4',
   Red1:'#FF4242',
-  Grey:'#ACACAC,',
+  Grey:'#ACACAC',
   Blue:'#6BC7FF'
 };
 

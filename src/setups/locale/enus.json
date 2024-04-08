@@ -206,6 +206,7 @@
     "confirm_reject": "Are you sure to reject the request?",
     "confirm_approve": "Are you sure to approve the request?",
     "reject_reasons": "Reject reason(s)",
+    "confirm_approve_btn": "Confirm",
     "confirm": "Confirm",
     "cancel": "Cancel",
     "shipping_company": "Shipping company",
