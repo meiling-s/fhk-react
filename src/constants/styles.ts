@@ -1,9 +1,11 @@
-import { layout } from './constant'
+import { layout, localStorgeKeyName } from './constant'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
 // const theme = useTheme()
 // const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+const role = localStorage.getItem(localStorgeKeyName.role)
+export const primaryColor: string = role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
 
 export const styles = {
   innerScreen: {
@@ -64,13 +66,14 @@ export const styles = {
   },
   buttonFilledGreen: {
     borderRadius: '40px',
-    borderColor: '#79ca25',
-    backgroundColor: '#79CA25',
+    borderColor: primaryColor,
+    backgroundColor: primaryColor,
     color: 'white',
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
-      backgroundColor: '#7AD123',
-      border: '2px solid #D0DFC2'
+      backgroundColor: primaryColor,
+      border: "2px solid",
+      borderColor: primaryColor,
     },
     innerScreen: {
         display: "flex",
@@ -130,12 +133,13 @@ export const styles = {
     buttonFilledGreen: {
         borderRadius: "40px",
         borderColor: "#79ca25",
-        backgroundColor: "#79CA25",
+        backgroundColor: primaryColor,
         color: "white",
         fontWeight: "bold",
         '&.MuiButton-root:hover': {
-            backgroundColor: "#7AD123",
-            border: "2px solid #D0DFC2"
+            backgroundColor: primaryColor,
+            border: "2px solid",
+            borderColor: primaryColor,
         }
     },
     buttonOutlinedGreen: {
@@ -256,9 +260,9 @@ export const styles = {
   buttonOutlinedGreen: {
     borderRadius: '40px',
     border: 1,
-    borderColor: '#79ca25',
+    borderColor: primaryColor,
     backgroundColor: 'white',
-    color: '#79ca25',
+    color: primaryColor,
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
       bgcolor: '#F4F4F4'
@@ -269,9 +273,9 @@ export const styles = {
     padding: 2,
     borderRadius: 3,
     border: 1,
-    borderColor: '#79ca25',
+    borderColor: primaryColor,
     backgroundColor: 'white',
-    color: '#79ca25',
+    color: primaryColor,
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
       bgcolor: '#F4F4F4'
@@ -306,7 +310,7 @@ export const styles = {
   },
   endAdornmentIcon: {
     fontSize: 25,
-    color: '#79CA25'
+    color: primaryColor
   },
   disableIcon: {
     fontSize: 25,
@@ -377,10 +381,29 @@ export const styles = {
     }
   },
   textFieldLabel: {
-    color: "#79CA25",
+    color: primaryColor,
     "&.Mui-focused": {
-      color: "#79CA25",
+      color: primaryColor
     },
   },
+  inputStyle: {
+    mt: 3,
+    m: 1,
+    borderRadius: '10px',
+    width: '100%',
+    bgcolor: 'white',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '10px',
+      '& fieldset': {
+        borderColor: primaryColor
+      },
+      '&:hover fieldset': {
+        borderColor: primaryColor
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: primaryColor
+      }
+    }
+  }
 }
 
