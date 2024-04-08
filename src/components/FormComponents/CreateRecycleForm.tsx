@@ -388,7 +388,7 @@ const CreateRecycleForm = ({
                       )
                     }}
                     itemColor={{
-                      bgColor: customListTheme.bgColor,
+                      bgColor: customListTheme ? customListTheme.bgColor : role === 'collectoradmin' ? '#E4F6DC' : role === 'logisticadmin' ? '#ECF5EE' : '#F0F9FF',
                       borderColor: customListTheme.border
                     }}
                     defaultRecycL={defaultRecyc}
