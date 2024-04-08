@@ -369,6 +369,7 @@ function MainDrawer() {
   var functionListTmp = JSON.parse(
     localStorage.getItem(localStorgeKeyName.functionList) || "[]"
   );
+  // functionListTmp = [...functionListTmp, 'Notification template']
   if (functionListTmp) {
     for (var functionItem of functionListTmp) {
       for (let deKey in defaultFunctionList[0]) {

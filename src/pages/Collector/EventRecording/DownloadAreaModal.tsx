@@ -93,6 +93,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                     format={format.dateFormat2}
                     onChange={(value) => setStartDate(value!!)}
                     sx={{ ...localstyles.datePicker }}
+                    maxDate={dayjs(endDate)}
                   />
               </Box>
               <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
@@ -102,6 +103,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   format={format.dateFormat2}
                   onChange={(value) => setEndDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
+                  minDate={dayjs(startDate)}
                   />
               </Box>
             </Box>

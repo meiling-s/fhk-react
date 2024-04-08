@@ -54,14 +54,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   const [action, setAction] = useState<'edit'>('edit')
   const navigate = useNavigate();
 
-  const userRole = localStorage.getItem('userRole') || '';
-  let pathRole: string = '';
 
-  if(userRole === Roles.collectoradmin){
-    pathRole = 'collector'
-  } else if(userRole === Roles.logisticadmin){
-    pathRole = 'logistic'
-  }
   
   useEffect(() => {
     if(selectedTab === 0) {
@@ -182,7 +175,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     params: GridRenderCellParams,
     action: 'edit'
   ) => {
-    navigate(`/${pathRole}/notice/${params.row.notiType}/${params.row.templateId}`)
+    navigate(`/${dynamicPath}/notice/${params.row.notiType}/${params.row.templateId}`)
   }
 
   const handleSelectRow = (params: GridRowParams) => {
