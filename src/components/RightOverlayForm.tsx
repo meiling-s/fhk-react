@@ -1,6 +1,8 @@
 import React, { useState, useEffect, ReactNode } from 'react'
 import Drawer from '@mui/material/Drawer'
 import StatusCard from './StatusCard'
+import { Button, Typography } from '@mui/material'
+import { styles } from '../constants/styles'
 
 type HeaderProps = {
   title?: string
@@ -53,26 +55,35 @@ const HeaderSection: React.FC<HeaderProps> = ({
         <div className='right-action flex items-center'>
         {action !== 'none' && (
           <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
-            <button
-              onClick={onSubmit}
+            <Button
+              sx={[
+                styles.buttonFilledGreen,
+                {
+                  width: 'max-content',
+                  height: '40px'
+                }
+              ]}
               disabled={action === 'delete'}
-              className={`${
-                action === 'delete' ? 'cursor-not-allowed  bg-green-primary border-gray' : ' bg-green-primary cursor-pointer'
-              } rounded-6xl flex flex-row items-center  text-white justify-center py-2 px-5 gap-[5px] border-[1px] border-solid border-green-primary`}
+              onClick={onSubmit}
             >
               {submitText}
-            </button>
-            <button
-              onClick={onDelete}
+            </Button>
+
+             <Button
+              sx={[
+                styles.buttonOutlinedGreen,
+                {
+                  width: 'max-content',
+                  height: '40px'
+                }
+              ]}
+              variant="outlined"
               disabled={action === 'add'}
-              className={`${
-                action === 'add' 
-                  ? 'cursor-not-allowed text-gray border-gray'
-                  : 'cursor-pointer'
-              } rounded-6xl  overflow-hidden flex flex-row items-center justify-center py-2 px-5 gap-[5px] text-green-primary border-[1px] border-solid border-green-pale`}
+              onClick={onDelete}
             >
-              {cancelText}
-            </button>
+               {cancelText}
+            </Button>
+          
           </div>
         )}
 
