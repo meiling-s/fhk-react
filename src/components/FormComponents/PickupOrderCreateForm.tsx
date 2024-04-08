@@ -138,7 +138,6 @@ const PickupOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-
   const {
     logisticList,
     logisticAdminList,
@@ -574,7 +573,7 @@ const PickupOrderCreateForm = ({
                       routineContent: selectedPo?.routine ?? []
                     }}
                     itemColor={{
-                      bgColor: customListTheme.bgColor,
+                      bgColor: customListTheme ? customListTheme.bgColor : role === 'collectoradmin' ? '#E4F6DC' : role === 'logisticadmin' ? '#ECF5EE' : '#F0F9FF',
                       borderColor: customListTheme.border
                     }}
                     roleColor={colorTheme}
@@ -626,7 +625,7 @@ const PickupOrderCreateForm = ({
                       formik.touched.vehicleTypeId
                     }
                     itemColor={{
-                      bgColor: customListTheme.bgColor,
+                      bgColor: customListTheme ? customListTheme.bgColor : role === 'collectoradmin' ? '#E4F6DC' : role === 'logisticadmin' ? '#ECF5EE' : '#F0F9FF',
                       borderColor: customListTheme.border
                     }}
                   />
@@ -709,7 +708,7 @@ const PickupOrderCreateForm = ({
                       defaultSelected={selectedPo?.reason}
                       error={formik.errors.reason && formik.touched.reason}
                       itemColor={{
-                        bgColor: customListTheme.bgColor,
+                        bgColor: customListTheme ? customListTheme.bgColor : role === 'collectoradmin' ? '#E4F6DC' : role === 'logisticadmin' ? '#ECF5EE' : '#F0F9FF',
                         borderColor: customListTheme.border
                       }}
                     />

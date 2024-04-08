@@ -476,7 +476,6 @@ const PickupOrders = () => {
     setFilteredPico(tempRows)
   // }
 
-  console.log(pickupOrder, 'pickupOrder bro')
   },[pickupOrder])
 
   interface Row {
