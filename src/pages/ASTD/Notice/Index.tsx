@@ -4,12 +4,11 @@ import { useTranslation } from 'react-i18next'
 import CustomTabs from '../../../components/Tabs'
 import CurrentMenu from './CurrentMenu';
 import { Roles } from '../../../constants/constant'
-import { dynamicpath } from "../../../utils/utils";
 
 const Notice = () => {
     const { t } = useTranslation();
     const [selectedTab, setSelectedTab] = useState(0)
-    const { pathRole, userRole } = dynamicpath()
+    const userRole = localStorage.getItem('userRole') || '';
 
 
     const handleTabChange = (value: number) => {
@@ -39,7 +38,6 @@ const Notice = () => {
 
                <CurrentMenu 
                     selectedTab={selectedTab}
-                    dynamicPath={pathRole}
                />
             </div>
         </Box>

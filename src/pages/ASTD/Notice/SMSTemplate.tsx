@@ -9,10 +9,10 @@ import { showErrorToast, showSuccessToast } from "../../../utils/utils";
 
 interface TemplateProps {
     templateId: string,
-    dynamicPath: string
+    realmApiRoute: string
 }
 
-const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPath }) => {
+const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRoute }) => {
     const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '' })
     const navigate = useNavigate();
     const { t } = useTranslation();
@@ -21,7 +21,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPath
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}})
 
     const getDetailTemplate = async () => {
-        const notif = await getDetailNotifTemplate(templateId, dynamicPath);
+        const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
         if (notif) {
             setNotifTemplate(prev => {
                 return {
@@ -116,11 +116,11 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPath
             return 
         }
 
-        const response = await updateNotifTemplate(templateId, notifTemplate, dynamicPath)
+        const response = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
         if (response) {
-            showSuccessToast(('common.editSuccessfully'))
+            showSuccessToast(t('common.editSuccessfully'))
             setTimeout(() => {
-                navigate(`/${dynamicPath}/notice`)
+                navigate(`/${realmApiRoute}/notice`)
             }, 1000);
 
         } else {
@@ -157,7 +157,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPath
             <div className="overview-page bg-bg-primary">
                 <div
                     className="header-page flex justify-start items-center mb-4 cursor-pointer"
-                    onClick={() => navigate(`/${dynamicPath}/notice`)}
+                    onClick={() => navigate(`/${realmApiRoute}/notice`)}
                 >
                     <LEFT_ARROW_ICON fontSize="large" />
                     <Typography style={{ fontSize: '22px', color: 'black' }}>

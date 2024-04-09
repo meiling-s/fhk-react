@@ -13,17 +13,17 @@ import { showErrorToast, showSuccessToast } from "../../../utils/utils";
 
 interface TemplateProps {
     templateId: string,
-    dynamicPath: string
+    realmApiRoute: string
 }
 
-const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPath }) => {
+const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRoute }) => {
     const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '', effFrmDate: dayjs().format('YYYY/MM/DDD'), effToDate: dayjs().format('YYYY/MM/DDD') })
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}})
 
     const getDetailTemplate = async () => {
-        const notif = await getDetailNotifTemplate(templateId, dynamicPath);
+        const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
         if (notif) {
             setNotifTemplate(prev => {
                 return {
@@ -72,11 +72,11 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
             showErrorToast(t('common.editFailed'))
             return
         } else {
-            const response = await updateNotifTemplateBroadcast(templateId, notifTemplate, dynamicPath)
+            const response = await updateNotifTemplateBroadcast(templateId, notifTemplate, realmApiRoute)
             if (response) {
-                showSuccessToast(('common.editSuccessfully'))
+                showSuccessToast(t('common.editSuccessfully'))
                 setTimeout(() => {
-                    navigate(`/${dynamicPath}/notice`)
+                    navigate(`/${realmApiRoute}/notice`)
                 }, 1000);
 
             } else {
@@ -116,7 +116,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
                 <div className="overview-page bg-bg-primary">
                     <div
                         className="header-page flex justify-start items-center mb-4 cursor-pointer"
-                        onClick={() => navigate(`/${dynamicPath}/notice`)}
+                        onClick={() => navigate(`/${realmApiRoute}/notice`)}
                     >
                         <LEFT_ARROW_ICON fontSize="large" />
                         <Typography style={{ fontSize: '22px', color: 'black' }}>
