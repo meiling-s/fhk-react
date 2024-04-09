@@ -154,6 +154,8 @@ const Router = () => {
             <Route path="/manufacturer/editPickupOrder" element={<EditPickupOrder /> } />
             <Route path="/manufacturer/checkout" element={<CheckoutRequest /> } />
             <Route path="/manufacturer/account" element={<LogisticAccount />} />
+            <Route path="/manufacturer/inventory" element={<Inventory/>}/>
+            <Route path="/manufacturer/setting" element={<Settings/>}/>
           </Route>
         </Route>
       </Routes>

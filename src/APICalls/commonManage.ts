@@ -1,8 +1,9 @@
 import axiosInstance from '../constants/axiosInstance'
-import { GET_COLLECTIONPOINT_TYPE, GET_CONTRACT, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_USER_GROUP, ADD_USER_ACCOUNT } from '../constants/requests';
+import { GET_COLLECTIONPOINT_TYPE, GET_CONTRACT, GET_PREMISE_TYPE, GET_RECYC_TYPE, GET_SITE_TYPE, GET_USER_GROUP, ADD_USER_ACCOUNT, GET_CONTRACT_LIST } from '../constants/requests';
 import { colPointType, contract, premiseType, recycType, siteType } from '../interfaces/common';
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import { returnApiToken } from '../utils/utils';
+import { localStorgeKeyName } from '../constants/constant';
 
 const token = returnApiToken()
 
@@ -142,7 +143,7 @@ export const getCommonTypes = async () => {
         const auth = returnApiToken()
 
         response = await axiosInstance({
-            ...GET_CONTRACT(auth.tenantId),
+            ...GET_CONTRACT_LIST(token.realmApiRoute, auth.tenantId),
             baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });

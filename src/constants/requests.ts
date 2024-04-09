@@ -247,9 +247,9 @@ export const CREATE_FORGET_PASSWORD = (table: string): AxiosRequestConfig => ({
 });
 
 //warehouse
-export const GET_ALL_WAREHOUSE = (table: string): AxiosRequestConfig => ({
+export const GET_ALL_WAREHOUSE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/warehouse/${table}`,
+  url: `api/v1/${realmApiRoute}/warehouse/${table}`,
 });
 
 export const GET_WAREHOUSE_BY_ID = (
@@ -260,9 +260,9 @@ export const GET_WAREHOUSE_BY_ID = (
   url: `api/v1/collectors/warehouse/${table}/${warehouseId}`,
 });
 
-export const ADD_WAREHOUSE = (table: string): AxiosRequestConfig => ({
+export const ADD_WAREHOUSE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "post",
-  url: `api/v1/collectors/warehouse/${table}`,
+  url: `api/v1/${realmApiRoute}/warehouse/${table}`,
 });
 
 export const UPDATE_WAREHOUSE_BY_ID = (
@@ -272,6 +272,11 @@ export const UPDATE_WAREHOUSE_BY_ID = (
   method: "put",
   url: `api/v1/collectors/warehouse/${table}/${warehouseId}`,
 });
+
+export const MANUFACTURER_GET_ALL_WAREHOUSE = (table: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `api/v1/manufacturer/warehouse/${table}`
+})
 
 export const UPDATE_RECYCLE_CAPACITY_BY_ID = (
   warehouseRecycId: number,

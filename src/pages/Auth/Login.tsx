@@ -84,7 +84,7 @@ const Login = () => {
         realm = 'logistic';
         loginTo = 'logisticadmin';
         break;
-      case 'manufacturerAdmin':
+      case 'alan1':
         realm = 'manufacturer';
         loginTo = 'manufacturer';
         break;
@@ -142,6 +142,7 @@ const Login = () => {
             navigate("/logistic/jobOrder");
             break;
           case "manufacturer":
+            realmApiRoute = 'manufacturer'
             navigate("/manufacturer/pickupOrder");
             break;
           default:

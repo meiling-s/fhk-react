@@ -159,7 +159,7 @@ function MainDrawer() {
       },
       Inventory: {
         name: t("inventory.inventory"),
-        onClick: () => navigate("/collector/inventory"),
+        onClick: () => navigate(`/${realm}/inventory`),
         collapse: false,
       },
       "Process out recyclables": {
