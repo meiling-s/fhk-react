@@ -56,11 +56,11 @@ export const updateFlagNotif = async (notiId: number) => {
   }
 }
 
-export const getListNotifTemplatePO = async (path: string) => {
+export const getListNotifTemplatePO = async () => {
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
-      ...GET_LIST_NOTIF_TEMPLATE_PO(token.tenantId, path),
+      ...GET_LIST_NOTIF_TEMPLATE_PO(token.tenantId, token.realmApiRoute),
       baseURL: administratorAPI.baseURL
     })
     return response
@@ -69,11 +69,11 @@ export const getListNotifTemplatePO = async (path: string) => {
   }
 }
 
-export const getListNotifTemplateStaff = async (path: string) => {
+export const getListNotifTemplateStaff = async () => {
   try {
     const token = returnApiToken();
     const response = await axiosInstance({
-      ...GET_LIST_NOTIF_TEMPLATE_STAFF(token.tenantId, path),
+      ...GET_LIST_NOTIF_TEMPLATE_STAFF(token.tenantId, token.realmApiRoute),
       baseURL: administratorAPI.baseURL
     })
     return response

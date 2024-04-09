@@ -4,43 +4,26 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FunctionComponent, useEffect, useState, SyntheticEvent } from "react";
 import { getDetailNotifTemplate, updateNotifTemplateBroadcast } from "../../../APICalls/notify";
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import dayjs from "dayjs";
 import { styles } from "../../../constants/styles";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { formValidate } from "../../../interfaces/common";
-import { formErr } from "../../../constants/constant";
-import { FormErrorMsg } from "../../../components/FormComponents/FormErrorMsg";
+import { showErrorToast, showSuccessToast } from "../../../utils/utils";
 
 interface TemplateProps {
     templateId: string,
-    dynamicPath: string
+    realmApiRoute: string
 }
 
-const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPath }) => {
+const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRoute }) => {
     const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '', effFrmDate: dayjs().format('YYYY/MM/DDD'), effToDate: dayjs().format('YYYY/MM/DDD') })
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const [validation, setValidation] = useState<formValidate[]>([])
-    const [trySubmited, setTrySubmited] = useState<boolean>(false)
-
-    const validate = () => {
-        const tempV: formValidate[] = [];
-        if (notifTemplate.lang === '') tempV.push({ field: "field", problem: formErr.empty, type: "error" });
-        if (notifTemplate.content === '') tempV.push({ field: "field", problem: formErr.empty, type: "error" });
-        if (notifTemplate.effFrmDate === '') tempV.push({ field: "field", problem: formErr.empty, type: "error" });
-        if (notifTemplate.effToDate === '') tempV.push({ field: "field", problem: formErr.empty, type: "error" });
-        setValidation(tempV)
-    }
-
-    useEffect(() => {
-        validate()
-    }, [notifTemplate])
-
+    const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}})
 
     const getDetailTemplate = async () => {
-        const notif = await getDetailNotifTemplate(templateId, dynamicPath);
+        const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
         if (notif) {
             setNotifTemplate(prev => {
                 return {
@@ -60,56 +43,46 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
         }
     }
 
-
-
     useEffect(() => {
         if (templateId) {
             getDetailTemplate()
         }
     }, [])
 
-    const showErrorToast = (msg: string) => {
-        toast.error(msg, {
-            position: 'top-center',
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light'
-        })
-    }
-
-    const showSuccessToast = (msg: string) => {
-        toast.info(msg, {
-            position: 'top-center',
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light'
-        })
-    }
+    useEffect(() => {   
+        if(notifTemplate.content === ''){
+            setErrors(prev => {
+                return{
+                    ...prev,
+                    content: {status: true, message: t('form.error.shouldNotBeEmpty')}
+                }
+            })
+        } else {
+            setErrors(prev => {
+                return{
+                    ...prev,
+                    content: {status: false, message: ''}
+                }
+            })
+        }
+    }, [notifTemplate.content, notifTemplate.lang])
 
     const onSubmitUpdateTemplate = async () => {
-        if (validation.length == 0) {
-            const response = await updateNotifTemplateBroadcast(templateId, notifTemplate, dynamicPath)
+        if(errors.lang.status || errors.content.status){
+            showErrorToast(t('common.editFailed'))
+            return
+        } else {
+            const response = await updateNotifTemplateBroadcast(templateId, notifTemplate, realmApiRoute)
             if (response) {
-                showSuccessToast('Succeed Update Template')
+                showSuccessToast(t('common.editSuccessfully'))
                 setTimeout(() => {
-                    navigate(`/${dynamicPath}/notice`)
+                    navigate(`/${realmApiRoute}/notice`)
                 }, 1000);
 
             } else {
-                showErrorToast('Failed Update Template')
+                showErrorToast(t('common.editFailed'))
             }
-        } else {
-            setTrySubmited(true)
         }
-
     }
 
     const onChangeLanguage = (lang: string | null) => {
@@ -124,7 +97,6 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
     }
 
     const onChangeDate = (value: dayjs.Dayjs | null, type: string) => {
-
         if (value) {
             setNotifTemplate(prev => {
                 return {
@@ -133,37 +105,6 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
                 }
             })
         }
-    }
-
-    const returnErrorMsg = (error: string) => {
-        let msg = ''
-        switch (error) {
-            case formErr.empty:
-                msg = t('form.error.shouldNotBeEmpty')
-                break
-            case formErr.wrongFormat:
-                msg = t('form.error.isInWrongFormat')
-                break
-            case formErr.numberSmallThanZero:
-                msg = t('form.error.shouldNotSmallerThanZero')
-                break
-            case formErr.withInColPt_Period:
-                msg = t('form.error.withInColPt_Period')
-                break
-            case formErr.notWithInContractEffDate:
-                msg = t('form.error.isNotWithInContractEffDate')
-                break
-            case formErr.alreadyExist:
-                msg = t('form.error.alreadyExist')
-                break
-            case formErr.hasBeenUsed:
-                msg = t('form.error.hasBeenUsed')
-                break
-            case formErr.exceedsMaxLength:
-                msg = t('form.error.exceedsMaxLength')
-                break
-        }
-        return msg
     }
 
     return (
@@ -175,7 +116,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
                 <div className="overview-page bg-bg-primary">
                     <div
                         className="header-page flex justify-start items-center mb-4 cursor-pointer"
-                        onClick={() => navigate(`/${dynamicPath}/notice`)}
+                        onClick={() => navigate(`/${realmApiRoute}/notice`)}
                     >
                         <LEFT_ARROW_ICON fontSize="large" />
                         <Typography style={{ fontSize: '22px', color: 'black' }}>
@@ -224,6 +165,9 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
                             onChange={(_: SyntheticEvent, newValue: string | null) => onChangeLanguage(newValue)}
                             renderInput={(params) => <TextField {...params} style={{ backgroundColor: 'white' }} />}
                         />
+                        <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
+                            {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}
+                        </Typography>
                     </Grid>
                     <Grid display={'flex'} direction={'row'} rowGap={1} >
                         <Grid display={'flex'} direction={'column'} rowGap={1} style={{ width: '180px' }}>
@@ -233,6 +177,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
                             <DatePicker
                                 defaultValue={dayjs()}
                                 sx={localstyles.datePicker(false)}
+                                maxDate={dayjs(notifTemplate.effToDate)}
                                 onChange={(event) => onChangeDate(event, 'effFrmDate')}
                             />
 
@@ -245,6 +190,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
                             <DatePicker
                                 sx={localstyles.datePicker(false)}
                                 // value={notifTemplate.effToDate}
+                                minDate={dayjs(notifTemplate.effFrmDate)}
                                 defaultValue={dayjs()}
                                 onChange={(event) => onChangeDate(event, 'effToDate')}
                             />
@@ -270,10 +216,14 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
                                 })
                             }}
                         />
+                        <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
+                            {errors.content.status ? t('form.error.shouldNotBeEmpty') : ''}
+                        </Typography>
                     </Grid>
 
                     <Grid display={'flex'} direction={'column'}>
                         <Button
+                            disabled = {errors.content.status || errors.lang.status}
                             onClick={onSubmitUpdateTemplate}
                             sx={{
                                 borderRadius: "20px",
@@ -289,18 +239,6 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynam
                             {t('notification.modify_template.app.button_submit')}
                         </Button>
                     </Grid>
-
-                    <Grid item sx={{ width: '50%' }}>
-                        {trySubmited &&
-                            validation.map((val) => (
-                                <FormErrorMsg
-                                    field={t(val.field)}
-                                    errorMsg={returnErrorMsg(val.problem)}
-                                    type={val.type}
-                                />
-                            ))}
-                    </Grid>
-
                 </Grid>
             </LocalizationProvider>
         </Box>

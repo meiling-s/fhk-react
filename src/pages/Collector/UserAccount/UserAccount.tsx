@@ -8,7 +8,7 @@ import {
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
-import { Box } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import {
   ADD_ICON,
@@ -25,6 +25,7 @@ import {
 import { UserAccount as UserAccountItem} from '../../../interfaces/userAccount'
 import UserAccountDetails from './UserAccountDetails'
 import StatusCard from '../../../components/StatusCard'
+import { styles } from '../../../constants/styles'
 
 interface RecyleItem {
   recycTypeId: string
@@ -241,18 +242,24 @@ const UserAccount: FunctionComponent = () => {
               >
                 <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                   <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-grey-dark">
-                    <b className="relative tracking-[0.08em] leading-[28px]">
+                  
+                    <Typography fontSize={16} color="grey" fontWeight="600">
                       {t('userAccount.user')}
-                    </b>
-                    <div
-                      className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi text-green-primary border-[1px] border-solid border-green-pale"
-                      onClick={addDataWarehouse}
+                    </Typography>
+                    <Button
+                      sx={[
+                        styles.buttonOutlinedGreen,
+                        {
+                          width: 'max-content',
+                          height: '40px'
+                        }
+                      ]}
+                      variant="outlined"
+                      onClick={() => {addDataWarehouse()}}
                     >
-                      <ADD_ICON />
-                      <b className="relative tracking-[1px] leading-[20px]">
-                        {t('top_menu.add_new')}
-                      </b>
-                    </div>
+                      <ADD_ICON /> {t('top_menu.add_new')}
+                    </Button>
+                   
                   </div>
                   <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
                     <DataGrid

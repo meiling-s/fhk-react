@@ -237,7 +237,7 @@ const UserGroup: FunctionComponent = () => {
             marginY: 4
           }}
         >
-          <Typography fontSize={16} color="black" fontWeight="bold">
+          <Typography fontSize={16} color="grey" fontWeight="600">
             {t('staffManagement.userGroup')}
           </Typography>
           <Button
