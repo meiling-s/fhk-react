@@ -38,7 +38,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import ViewQuiltOutlinedIcon from "@mui/icons-material/ViewQuiltOutlined";
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
-import { dynamicpath } from "../utils/utils";
+import { dynamicpath, returnApiToken } from "../utils/utils";
 
 type MainDrawer = {
   role: string;
@@ -64,7 +64,7 @@ function MainDrawer() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
-  const { pathRole } = dynamicpath();
+  const { realmApiRoute } = returnApiToken()
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -183,7 +183,7 @@ function MainDrawer() {
       "Notification template": {
         name: t("notification.notification_menu"),
         icon: <ViewQuiltOutlinedIcon />,
-        onClick: () => navigate(`/${pathRole}/notice`),
+        onClick: () => navigate(`/${realmApiRoute}/notice`),
         collapse: false,
       },
       "Driver":{
@@ -369,6 +369,7 @@ function MainDrawer() {
   var functionListTmp = JSON.parse(
     localStorage.getItem(localStorgeKeyName.functionList) || "[]"
   );
+  // functionListTmp = [...functionListTmp, 'Notification template']
   if (functionListTmp) {
     for (var functionItem of functionListTmp) {
       for (let deKey in defaultFunctionList[0]) {

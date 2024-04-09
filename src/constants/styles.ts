@@ -5,8 +5,9 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 // const theme = useTheme()
 // const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 const role = localStorage.getItem(localStorgeKeyName.role)
+// const role = 'manufacturer'
 export const primaryColor: string = role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
-
+export const primaryLightColor: string = role === 'manufacturer' || role === 'customer' ? '#F0F9FF' : '#E4F6DC'
 export const styles = {
   innerScreen: {
     display: 'flex',
@@ -403,6 +404,28 @@ export const styles = {
       '&.Mui-focused fieldset': {
         borderColor: primaryColor
       }
+    }
+  },
+  tagOutlineActive:{
+    borderRadius: "40px",
+    border: 1,
+    borderColor: primaryColor,
+    backgroundColor: primaryLightColor,
+    color: primaryColor,
+    fontWeight: "bold",
+    '&.MuiButton-root:hover': {
+        bgcolor: primaryLightColor
+    }
+  },
+  tagOutlineDefault:{
+    borderRadius: "40px",
+    border: 1,
+    borderColor: '#D1D1D1',
+    backgroundColor: '#fff',
+    color: '#535353',
+    fontWeight: "bold",
+    '&.MuiButton-root:hover': {
+        bgcolor: primaryLightColor
     }
   }
 }

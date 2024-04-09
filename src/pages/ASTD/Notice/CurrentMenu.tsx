@@ -7,6 +7,7 @@ import { NotifTemplate } from '../../../interfaces/notif'
 import { getListNotifTemplatePO, getListNotifTemplateStaff } from '../../../APICalls/notify'
 import { useNavigate } from 'react-router-dom'
 import { Roles } from '../../../constants/constant'
+import { returnApiToken } from '../../../utils/utils'
 
 function createNotifTemplate(
   templateId: string,
@@ -38,12 +39,10 @@ function createNotifTemplate(
 
 interface CurrentMenuProps {
   selectedTab: number,
-  dynamicPath: string
 }
 
 const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   selectedTab,
-  dynamicPath
 }) => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -53,15 +52,8 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   const [selectedRow, setSelectedRow] = useState<NotifTemplate | null>(null)
   const [action, setAction] = useState<'edit'>('edit')
   const navigate = useNavigate();
+  const { realmApiRoute } = returnApiToken()
 
-  const userRole = localStorage.getItem('userRole') || '';
-  let pathRole: string = '';
-
-  if(userRole === Roles.collectoradmin){
-    pathRole = 'collector'
-  } else if(userRole === Roles.logisticadmin){
-    pathRole = 'logistic'
-  }
   
   useEffect(() => {
     if(selectedTab === 0) {
@@ -74,7 +66,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   }, [selectedTab])
 
   const initStaffList = async () => {
-    const result = await getListNotifTemplateStaff(dynamicPath);
+    const result = await getListNotifTemplateStaff();
     if (result) {
       const data = result.data
     
@@ -102,7 +94,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   }
 
   const initRecyclablesList = async () => {
-    const result = await getListNotifTemplatePO(dynamicPath)
+    const result = await getListNotifTemplatePO()
     if (result) {
       const data = result.data
       var notifMappingTemplate: NotifTemplate[] = []
@@ -182,7 +174,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     params: GridRenderCellParams,
     action: 'edit'
   ) => {
-    navigate(`/${pathRole}/notice/${params.row.notiType}/${params.row.templateId}`)
+    navigate(`/${realmApiRoute}/notice/${params.row.notiType}/${params.row.templateId}`)
   }
 
   const handleSelectRow = (params: GridRowParams) => {

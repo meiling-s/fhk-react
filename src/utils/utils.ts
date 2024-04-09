@@ -140,6 +140,7 @@ export const getThemeCustomList = (role: string) => {
 
 export const dynamicpath = () => {
   const userRole = localStorage.getItem("userRole") || "";
+  // const userRole = Roles.astd
   let pathRole: string = "";
 
   switch(userRole){

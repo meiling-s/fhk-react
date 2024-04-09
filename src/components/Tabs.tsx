@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material'
+import { styles, primaryColor } from '../constants/styles'
 
 type TabsProps = {
   tabs: string[]
@@ -22,7 +23,7 @@ const Tabs: React.FC<TabsProps> = ({
 }) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const activeTab = '#79ca25'
+  const activeTab = primaryColor
 
   const [selected, setSelectedValue] = React.useState<number>(
     selectedProp !== undefined ? selectedProp : 0
