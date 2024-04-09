@@ -177,10 +177,10 @@ const ApproveModal: React.FC<ApproveForm> = ({
           </Box> */}
 
           <Box sx={{ alignSelf: 'center' }}>
-            <CustomButton text={t('check_out.confirm_approve_btn')} color="blue" style={{width: '175px', marginRight: '10px'}} onClick={() => {
+            <CustomButton text={t('check_out.confirm_approve_btn')} color="blue" style={{width: '150px', marginRight: '10px'}} onClick={() => {
               handleApproveRequest()
             }} />
-            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '175px', marginRight: '10px'}} onClick={() => {
+            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '150px', marginRight: '10px'}} onClick={() => {
               onClose()
             }} />
           </Box>
