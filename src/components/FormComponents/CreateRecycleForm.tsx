@@ -106,8 +106,8 @@ const CreateRecycleForm = ({
 
   //---set custom style each role---
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
-  const colorTheme: string = getThemeColorRole(role)
-  const customListTheme = getThemeCustomList(role)
+  const colorTheme: string = getThemeColorRole(role) || '#79CA25'
+  const customListTheme = getThemeCustomList(role) || '#E4F6DC'
   //---end set custom style each role---
 
   const setDefRecyc = (picoDtl: CreatePicoDetail) => {
@@ -388,8 +388,8 @@ const CreateRecycleForm = ({
                       )
                     }}
                     itemColor={{
-                      bgColor: customListTheme ? customListTheme.bgColor : role === 'collectoradmin' ? '#E4F6DC' : role === 'logisticadmin' ? '#ECF5EE' : '#F0F9FF',
-                      borderColor: customListTheme.border
+                      bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
+                      borderColor: customListTheme ? customListTheme.border: '79CA25'
                     }}
                     defaultRecycL={defaultRecyc}
                     key={formik.values.id}
