@@ -59,10 +59,21 @@ export const Notiftemplate = {
 
 export const Roles = {
   collectoradmin: 'collectoradmin',
-  logisticadmin: 'logisticadmin'
+  logisticadmin: 'logisticadmin',
+  astd: 'astd',
+  manufacturerAdmin: 'manufacturerAdmin'
 }
 
 export const Realm = {
   collector : 'collector',
-  logistic: 'logistic'
+  logistic: 'logistic',
+  astd: 'astd',
+  manufacturer: 'manufacturer'
+}
+
+export const RealmApi = {
+  collector : 'collectors',
+  logistic: 'logistic',
+  astd: 'astd',
+  manufacturer: 'manufacturer'
 }

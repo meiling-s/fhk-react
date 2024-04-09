@@ -394,17 +394,18 @@ export const GET_INVENTORY = (table: string): AxiosRequestConfig => ({
 });
 
 //process records
-export const GET_PROCESS_OUT = (table: string): AxiosRequestConfig => ({
+export const GET_PROCESS_OUT = (table: string, realmApiRoute: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/processout/${table}`,
+  url: `api/v1/${realmApiRoute}/processout/${table}`,
 });
 
 export const GET_PROCESS_IN_BY_ID = (
   table: string,
-  processInId: number
+  processInId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/processin/${table}/${processInId}`,
+  url: `api/v1/${realmApiRoute}/processin/${table}/${processInId}`,
 });
 
 export const GET_PROCESS_LIST: AxiosRequestConfig = {
@@ -414,43 +415,48 @@ export const GET_PROCESS_LIST: AxiosRequestConfig = {
 
 export const GET_PROCESS_OUT_DETAIL = (
   table: string,
-  processOutId: number
+  processOutId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/processout/${table}/${processOutId}`,
+  url: `api/v1/${realmApiRoute}/processout/${table}/${processOutId}`,
 });
 
 export const CREATE_PROCESS_OUT_ITEM = (
   table: string,
-  processOutId: number
+  processOutId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: "post",
-  url: `api/v1/collectors/processout/${table}/items/${processOutId}`,
+  url: `api/v1/${realmApiRoute}/processout/${table}/items/${processOutId}`,
 });
 
 export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
   table: string,
   processOutId: number,
-  processOutDtlId: number
+  processOutDtlId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: "put",
-  url: `api/v1/collectors/processout/${table}/processout/${processOutId}/proecessoutDtl/${processOutDtlId}`,
+  url: `api/v1/${realmApiRoute}/processout/${table}/processout/${processOutId}/proecessoutDtl/${processOutDtlId}`,
 });
 
 export const DELETE_PROCESS_OUT_RECORD = (
   table: string,
-  processOutId: number
+  processOutId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: "patch",
-  url: `api/v1/collectors/processout/${table}/delete/${processOutId}`,
+  url: `api/v1/${realmApiRoute}/processout/${table}/delete/${processOutId}`,
 });
 
 export const DELETE_PROCESS_OUT_DETAIL_ITEM = (
   table: string,
-  processOutDtlId: number
+  processOutDtlId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: "patch",
-  url: `api/v1/collectors/processoutDetail/${table}/${processOutDtlId}/status`,
+  url: `api/v1/${realmApiRoute}/processoutDetail/${table}/${processOutDtlId}/status`,
 });
 
 // WAREHOUSE DASHBOARD
