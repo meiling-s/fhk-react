@@ -268,6 +268,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                     <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
                         {notifTemplate.variables.map((item, index) => {
                             return <button
+                                key={index}
                                 className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
                                 style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
                                 onClick={(event) => onChangeContent(index)}
