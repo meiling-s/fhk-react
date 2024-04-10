@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material"
 import { useEffect, useState } from "react"
-import { styles } from "../../constants/styles"
+import { styles, primaryColor, primaryLightColor } from "../../constants/styles"
 
 //item list's item
 export type il_item = {
@@ -24,7 +24,8 @@ type props = {
     error?: boolean,
     editable?: boolean
     value?:string
-    itemColor?: itemList | null
+    itemColor?: itemList | null,
+    needPrimaryColor?: boolean
 }
 function CustomItemList({
     items,
@@ -37,16 +38,17 @@ function CustomItemList({
     error,
     editable,
     value,
-    itemColor
+    itemColor,
+    needPrimaryColor,
 }: props){
 
     const triggerdItem = {
         ...styles.listItemTemp,
-        backgroundColor: itemColor?.bgColor ? itemColor?.bgColor : '#E4F6DC',
-        borderColor: itemColor?.borderColor ? itemColor?.borderColor : '#79CA25',
-        color: '#535353',
+        backgroundColor: itemColor?.bgColor ? itemColor?.bgColor : primaryLightColor,
+        borderColor: itemColor?.borderColor ? itemColor?.borderColor : primaryColor,
+        color: needPrimaryColor ? primaryColor : '#535353',
         '&.MuiButton-root:hover': {
-          borderColor:itemColor?.borderColor ? itemColor?.borderColor : '#79CA25'
+          borderColor:itemColor?.borderColor ? itemColor?.borderColor : primaryColor
         }
       }
     

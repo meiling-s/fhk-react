@@ -381,9 +381,9 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                   width: '100%'
                 }}
               >
-                <InputLabel id="userGroup">
+                {/* <InputLabel id="userGroup">
                   {t('userAccount.userGroup')}
-                </InputLabel>
+                </InputLabel> */}
                 <Select
                   labelId="userGroup"
                   id="userGroup"
@@ -392,7 +392,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                     borderRadius: '12px'
                   }}
                   disabled={action === 'delete'}
-                  label={t('userAccount.userGroup')}
+                  // label={t('userAccount.userGroup')}
                   onChange={(event: SelectChangeEvent<string>) => {
                     const selectedValue = userGroupList.find(
                       (item) => item.groupId === parseInt(event.target.value)
@@ -435,6 +435,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 }}
                 editable={action != 'delete'}
                 defaultSelected={userStatus}
+                needPrimaryColor={true}
               />
             </CustomField>
             <Grid item sx={{ width: '100%' }}>
