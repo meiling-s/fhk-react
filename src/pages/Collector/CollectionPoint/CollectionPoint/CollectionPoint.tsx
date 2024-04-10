@@ -53,7 +53,7 @@ const CollectionPoint = () => {
   }, []);
 
   async function initCollectionPoint() {
-    const result = await getCollectionPoint(0, 10);
+    const result = await getCollectionPoint(0, 50);
     const data = result?.data.content;
     if(data && data.length>0){
         //console.log("all collection point: ",data);
