@@ -573,8 +573,8 @@ const PickupOrderCreateForm = ({
                       routineContent: selectedPo?.routine ?? []
                     }}
                     itemColor={{
-                      bgColor: customListTheme ? customListTheme.bgColor : role === 'collectoradmin' ? '#E4F6DC' : role === 'logisticadmin' ? '#ECF5EE' : '#F0F9FF',
-                      borderColor: customListTheme.border
+                      bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
+                      borderColor: customListTheme ? customListTheme.border: '#79CA25'
                     }}
                     roleColor={colorTheme}
                   />
@@ -625,8 +625,8 @@ const PickupOrderCreateForm = ({
                       formik.touched.vehicleTypeId
                     }
                     itemColor={{
-                      bgColor: customListTheme ? customListTheme.bgColor : role === 'collectoradmin' ? '#E4F6DC' : role === 'logisticadmin' ? '#ECF5EE' : '#F0F9FF',
-                      borderColor: customListTheme.border
+                      bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
+                      borderColor: customListTheme ? customListTheme.border: '#79CA25'
                     }}
                   />
                 </CustomField>
@@ -708,8 +708,8 @@ const PickupOrderCreateForm = ({
                       defaultSelected={selectedPo?.reason}
                       error={formik.errors.reason && formik.touched.reason}
                       itemColor={{
-                        bgColor: customListTheme ? customListTheme.bgColor : role === 'collectoradmin' ? '#E4F6DC' : role === 'logisticadmin' ? '#ECF5EE' : '#F0F9FF',
-                        borderColor: customListTheme.border
+                        bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
+                        borderColor: customListTheme ? customListTheme.border: '#79CA25'
                       }}
                     />
                   </CustomField>

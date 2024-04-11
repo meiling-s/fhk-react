@@ -1,6 +1,8 @@
 import { Button } from "@mui/joy";
 import { SetStateAction, useEffect, useState } from "react";
 import { Functions } from "../../../interfaces/userGroup";
+import { styles } from '../../../constants/styles'
+
 import i18next from "i18next";
 
 export default function FunctionList({
@@ -33,7 +35,11 @@ export default function FunctionList({
             value={item.functionId}
             color="success"
             variant={selected ? 'soft' : 'outlined'}
-            style={{borderRadius: 50, margin: 4}}
+            sx={[selected ? styles.tagOutlineActive : styles.tagOutlineDefault, {
+                width: 'max-content',
+                height: '40px'
+            }]}
+            style={{ borderRadius: 50, margin: 4 }}
             disabled={disabled}
             onClick={() => {
                 const index = functions?.indexOf(item.functionId);

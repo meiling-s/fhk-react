@@ -26,7 +26,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
 import { useEffect, useState } from "react";
 import React from "react";
-import { styles } from "../../constants/styles";
+import { primaryColor, styles } from "../../constants/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CheckIcon from "@mui/icons-material/Check";
@@ -49,6 +49,7 @@ import { format, localStorgeKeyName } from "../../constants/constant";
 import { displayCreatedDate } from '../../utils/utils'
 import { useTranslation } from "react-i18next";
 import { queryCheckIn } from "../../interfaces/checkin";
+import CustomButton from "../../components/FormComponents/CustomButton";
 
 const Required = () => {
   return (
@@ -196,28 +197,24 @@ function RejectForm({
               {t("check_in.reject_reasons")}
               <Required />
             </Typography>
-            <Typography sx={localstyles.typo}>
+            {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedShipments.length}
-            </Typography>
-            <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
+            </Typography> */}
+            <CustomItemList items={reasons} multiSelect={setRejectReasonId} itemColor={{bgColor: '#F0F9FF', borderColor: primaryColor}} />
           </Box>
 
-          <Box sx={{ alignSelf: "center" }}>
-            <Button
-              sx={[localstyles.formButton, { m: 0.5 }]}
-              onClick={() => {
+          <Box sx={{ alignSelf: 'center' }}>
+            <CustomButton text={t('check_in.confirm')} color="blue" style={{width: '175px', marginRight: '10px'}} onClick={
+              () => {
                 handleConfirmRejectOnClick(rejectReasonId);
-                onClose();
-              }}
-            >
-              {t("check_in.confirm")}
-            </Button>
-            <Button
-              sx={[localstyles.cancelButton, { m: 0.5 }]}
-              onClick={() => onClose()}
-            >
-              {t("check_in.cancel")}
-            </Button>
+                onClose()
+              }
+            } />
+            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '175px'}} onClick={
+              () => {
+                onClose()
+              }
+            } />
           </Box>
         </Stack>
       </Box>
@@ -289,29 +286,19 @@ const ApproveModal: React.FC<ApproveForm> = ({
             </Typography>
           </Box>
           <Divider />
-          <Box className="flex gap-2 justify-start">
+          {/* <Box className="flex gap-2 justify-start">
             <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedCheckIn.length}
             </Typography>
-          </Box>
+          </Box> */}
 
           <Box sx={{ alignSelf: 'center' }}>
-            <button
-              className="primary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                handleApproveRequest()
-              }}
-            >
-              {t('check_in.confirm')}
-            </button>
-            <button
-              className="secondary-btn mr-2 cursor-pointer"
-              onClick={() => {
-                onClose()
-              }}
-            >
-              {t('check_out.cancel')}
-            </button>
+            <CustomButton text={t('check_out.confirm_approve_btn')} color="blue" style={{width: '150px', marginRight: '10px'}} onClick={() => {
+              handleApproveRequest()
+            }} />
+            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '150px', marginRight: '10px'}} onClick={() => {
+              onClose()
+            }} />
           </Box>
         </Stack>
       </Box>
@@ -659,35 +646,16 @@ function ShipmentManage() {
             {t("check_in.reject")}
           </Button>
         </Box>
-        <Box>
+        <Box className="filter-section flex justify-between items-center w-full">
           <TextField
             id="searchShipment"
             onChange={(event) => {
               handleFilterPoNum(event.target.value);
             }}
-            sx={{
-              mt: 3,
-              m: 1,
-              width: "32%",
-              bgcolor: "white",
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#79CA25",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#79CA25",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#79CA25",
-                },
-                "& label.Mui-focused": {
-                  color: "#79CA25", // Change label color when input is focused
-                },
-              },
-            }}
+            sx={styles.inputStyle}
             label={t("check_in.search")}
             InputLabelProps={{
-              style: { color: "#79CA25" },
+              style: { color: primaryColor },
               focused: true,
             }}
             placeholder={t("check_in.input_po_no")}
@@ -695,31 +663,13 @@ function ShipmentManage() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: "#79CA25" }} />
+                    <SEARCH_ICON style={{ color: primaryColor }} />
                   </IconButton>
                 </InputAdornment>
               ),
             }}
           />
-          <FormControl
-            sx={{
-              mt: 3,
-              m: 1,
-              width: "32%",
-              bgcolor: "white",
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#79CA25",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#79CA25",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#79CA25",
-                },
-              },
-            }}
-          >
+          <FormControl sx={styles.inputStyle}>
             <InputLabel
               id="company-label"
               sx={styles.textFieldLabel}
@@ -742,25 +692,7 @@ function ShipmentManage() {
               ))}
             </Select>
           </FormControl>
-          <FormControl
-            sx={{
-              mt: 3,
-              m: 1,
-              width: "32%",
-              bgcolor: "white",
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#79CA25",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#79CA25",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#79CA25",
-                },
-              },
-            }}
-          >
+          <FormControl sx={styles.inputStyle}>
             <InputLabel
               id="location-label"
               sx={styles.textFieldLabel}

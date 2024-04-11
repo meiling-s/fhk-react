@@ -1,5 +1,5 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format, Roles, Realm } from '../constants/constant'
+import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 
@@ -111,6 +111,7 @@ export const showSuccessToast = (msg: string) => {
 
 export const getThemeColorRole = (role: string) => {
   const colorList = {
+    astd: '#79CA25',
     collectoradmin: '#79CA25',
     logisticadmin: '#7CE495',
     manufactureradmin: '#6BC7FF'
@@ -121,6 +122,10 @@ export const getThemeColorRole = (role: string) => {
 
 export const getThemeCustomList = (role: string) => {
   const customListRole = {
+    astd: {
+      border: '#79CA25',
+      bgColor: '#E4F6DC'
+    },
     collectoradmin: {
       border: '#79CA25',
       bgColor: '#E4F6DC'
@@ -140,20 +145,28 @@ export const getThemeCustomList = (role: string) => {
 
 export const dynamicpath = () => {
   const userRole = localStorage.getItem("userRole") || "";
+  // const userRole = Roles.astd
   let pathRole: string = "";
 
   switch(userRole){
     case(Roles.collectoradmin):
-      pathRole = Realm.collector;
+      pathRole = RealmApi.collector;
       break;
     case(Roles.logisticadmin):
-      pathRole = Realm.logistic;
-      break
+      pathRole = RealmApi.logistic;
+      break;
+    case(Roles.manufacturerAdmin):
+      pathRole = RealmApi.manufacturer;
+      break;
+    case(Roles.astd):
+      pathRole = RealmApi.astd
+      break;
     default:
       break;
   }
   
   return {
-    pathRole
+    pathRole,
+    userRole
   }
 }

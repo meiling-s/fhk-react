@@ -114,8 +114,8 @@ const Router = () => {
           <Route element={<MainLayout />}>
             <Route path="/astd" element={<CompanyManage />} />
             <Route path="/astd/company" element={<CompanyManage />} />
-            <Route path="/:pathRole/notice/" element={<Notice />} />
-            <Route path="/:pathRole/notice/:type/:templateId" element={<UpdateTemplate />} />
+            <Route path="/:realmApiRoute/notice/" element={<Notice />} />
+            <Route path="/:realmApiRoute/notice/:type/:templateId" element={<UpdateTemplate />} />
             <Route path="/astd/report" element={<></>} />
             <Route path="/astd/statistics/recyclables" element={<></>} />
             <Route path="/astd/statistics/convoy" element={<></>} />
@@ -152,6 +152,7 @@ const Router = () => {
             <Route path="/manufacturer/pickupOrder" element={<PickupOrder />} />
             <Route path="/manufacturer/createPickupOrder" element={<CreatePickupOrder />} />
             <Route path="/manufacturer/editPickupOrder" element={<EditPickupOrder /> } />
+            <Route path="/manufacturer/shipment" element={<RecycleShipment /> } />
             <Route path="/manufacturer/checkout" element={<CheckoutRequest /> } />
             <Route path="/manufacturer/account" element={<LogisticAccount />} />
             <Route path="/manufacturer/inventory" element={<Inventory/>}/>

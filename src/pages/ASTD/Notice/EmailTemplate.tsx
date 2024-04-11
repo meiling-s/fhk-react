@@ -4,22 +4,23 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FunctionComponent, useEffect, useState, SyntheticEvent } from "react";
 import { getDetailNotifTemplate, updateNotifTemplate } from "../../../APICalls/notify";
-import { ToastContainer, toast } from 'react-toastify'
-
+import { ToastContainer } from 'react-toastify'
+import { showErrorToast, showSuccessToast } from "../../../utils/utils";
 interface TemplateProps {
     templateId: string,
-    dynamicPath: string
+    realmApiRoute: string
 }
 
-const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPath }) => {
+const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRoute }) => {
     const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '' })
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [isPreviousContentArea, setIsPreviouscontentArea] = useState(false);
     const [cursorPosition, setCursorPosition] = useState(0);
+    const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}})
 
     const getDetailTemplate = async () => {
-        const notif = await getDetailNotifTemplate(templateId, dynamicPath);
+        const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
         if (notif) {
             setNotifTemplate(prev => {
                 return {
@@ -31,7 +32,8 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPa
                     content: notif?.content,
                     senders: notif?.senders,
                     receivers: notif?.receivers,
-                    updatedBy: notif?.updatedBy
+                    updatedBy: notif?.updatedBy,
+                    variables: notif?.variables
                 }
             })
         }
@@ -43,13 +45,31 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPa
         }
     }, [])
 
+    useEffect(() => {   
+        if(notifTemplate.content === ''){
+            setErrors(prev => {
+                return{
+                    ...prev,
+                    content: {status: true, message: t('form.error.shouldNotBeEmpty')}
+                }
+            })
+        } else {
+            setErrors(prev => {
+                return{
+                    ...prev,
+                    content: {status: false, message: ''}
+                }
+            })
+        }
+    }, [notifTemplate.content, notifTemplate.lang])
+
     const variables = ["CompanyName", "InviteURL"]
 
     const onChangeContent = (index: number) => {
         if (isPreviousContentArea) {
             let content = ''
             const contentLength = notifTemplate.content.length;
-            const activeButton = `[${variables[index]}]`
+            const activeButton = `[${notifTemplate.variables[index]}]`
             if (cursorPosition === 0) {
                 content = activeButton + ' ' + notifTemplate.content
             } else if (cursorPosition >= contentLength) {
@@ -73,42 +93,21 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPa
         setIsPreviouscontentArea(true)
     }
 
-    const showErrorToast = (msg: string) => {
-        toast.error(msg, {
-            position: 'top-center',
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light'
-        })
-    }
-
-    const showSuccessToast = (msg: string) => {
-        toast.info(msg, {
-            position: 'top-center',
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light'
-        })
-    }
-
     const onSubmitUpdateTemplate = async () => {
-        const response = await updateNotifTemplate(templateId, notifTemplate, dynamicPath)
+        if(notifTemplate.content === '' || notifTemplate.lang === ''){
+            showErrorToast(t('common.editFailed'))
+            return
+        }
+        
+        const response = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
         if (response) {
-            showSuccessToast('Succeed Update Template')
+            showSuccessToast(t('common.editSuccessfully'))
             setTimeout(() => {
-                navigate(`/${dynamicPath}/notice`)
+                navigate(`/${realmApiRoute}/notice`)
             }, 1000);
 
         } else {
-            showErrorToast('Failed Update Template')
+            showErrorToast(t('common.editFailed'))
         }
     }
 
@@ -135,7 +134,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPa
             <div className="overview-page bg-bg-primary">
                 <div
                     className="header-page flex justify-start items-center mb-4 cursor-pointer"
-                    onClick={() => navigate(`/${dynamicPath}/notice`)}
+                    onClick={() => navigate(`/${realmApiRoute}/notice`)}
                 >
                     <LEFT_ARROW_ICON fontSize="large" />
                     <Typography style={{ fontSize: '22px', color: 'black' }}>
@@ -184,6 +183,9 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPa
                         onChange={(_: SyntheticEvent, newValue: string | null) => onChangeLanguage(newValue)}
                         renderInput={(params) => <TextField {...params} style={{ backgroundColor: 'white' }} />}
                     />
+                    <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
+                        {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}
+                    </Typography>
                 </Grid>
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
@@ -206,6 +208,9 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPa
                         onFocusCapture={onChangeCursor}
                         onClick={(event) => handleSelect(event)}
                     />
+                     <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
+                        {errors.content.status ? t('form.error.shouldNotBeEmpty') : ''}
+                    </Typography>
                 </Grid>
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
@@ -213,7 +218,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPa
                         {t('notification.modify_template.email.variables')}
                     </Typography>
                     <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
-                        {variables.map((item, index) => {
+                        {notifTemplate.variables.map((item, index) => {
                             return <button
                                 className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
                                 style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
@@ -225,6 +230,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, dynamicPa
 
                 <Grid display={'flex'} direction={'column'}>
                     <Button
+                        disabled = {errors.content.status || errors.lang.status}
                         onClick={onSubmitUpdateTemplate}
                         sx={{
                             borderRadius: "20px",

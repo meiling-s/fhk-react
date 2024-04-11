@@ -8,15 +8,8 @@ import { Roles } from '../../../constants/constant'
 const Notice = () => {
     const { t } = useTranslation();
     const [selectedTab, setSelectedTab] = useState(0)
-    const userRole  = localStorage.getItem('userRole') || '';
-    let dynamicPath:string = '';
-    
+    const userRole = localStorage.getItem('userRole') || '';
 
-    if(userRole === Roles.collectoradmin) {
-        dynamicPath = 'collectors'
-    } else if(userRole === Roles.logisticadmin){
-        dynamicPath = 'logistic'
-    }
 
     const handleTabChange = (value: number) => {
       setSelectedTab(value)
@@ -45,7 +38,6 @@ const Notice = () => {
 
                <CurrentMenu 
                     selectedTab={selectedTab}
-                    dynamicPath={dynamicPath}
                />
             </div>
         </Box>
