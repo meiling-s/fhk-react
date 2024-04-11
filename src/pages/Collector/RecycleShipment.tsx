@@ -244,6 +244,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
       reason: confirmReason,
       updatedBy: loginId
     }
+    console.log('hit', checkedCheckIn)
 
     const results = await Promise.allSettled(
       checkedCheckIn.map(async (checkInId) => {

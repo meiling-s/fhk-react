@@ -105,7 +105,6 @@ const WarehouseDashboard: FunctionComponent = () => {
       result = await getAllWarehouse(0, 20)
     }
     if (result) {
-      console.log(result, 'result warehouse')
       let capacityTotal = 0
       let warehouse: il_item[] = []
       const data = result.data.content

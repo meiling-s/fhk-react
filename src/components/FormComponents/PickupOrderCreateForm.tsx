@@ -142,16 +142,13 @@ const PickupOrderCreateForm = ({
     logisticList,
     logisticAdminList,
     contractType,
-    contractLogistic,
     vehicleType,
     recycType
   } = useContainer(CommonTypeContainer)
   const navigate = useNavigate()
 
-  const logisticCompany =
-    role == 'collectoradmin' ? logisticList : logisticAdminList
-  const contractRole =
-    role == 'collectoradmin' ? contractType : contractLogistic
+  const logisticCompany = logisticList
+  const contractRole = contractType
 
   const unexpiredContracts = contractRole
     ? contractRole?.filter((contract) => {

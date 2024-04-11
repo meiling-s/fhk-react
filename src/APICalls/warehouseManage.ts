@@ -63,7 +63,7 @@ export const getWarehouseById = async (warehouseId: number) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
+      ...GET_WAREHOUSE_BY_ID(token.realmApiRoute, warehouseId, token.decodeKeycloack),
       headers: {
         AuthToken: token.authToken
       }

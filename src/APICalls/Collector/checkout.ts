@@ -17,7 +17,7 @@ export const getAllCheckoutRequest = async (page: number, size: number, query: q
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...GET_ALL_CHECKOUT_REQUEST(token.decodeKeycloack),
+      ...GET_ALL_CHECKOUT_REQUEST(token.realmApiRoute, token.decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
       params: {
         page: page,

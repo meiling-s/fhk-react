@@ -6,6 +6,7 @@ import { returnApiToken } from '../utils/utils';
 import { localStorgeKeyName } from '../constants/constant';
 
 const token = returnApiToken()
+const realmApiRoute = localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
 
 export const getColPointType = async () => {
 
@@ -143,7 +144,7 @@ export const getCommonTypes = async () => {
         const auth = returnApiToken()
 
         response = await axiosInstance({
-            ...GET_CONTRACT_LIST(token.realmApiRoute, auth.tenantId),
+            ...GET_CONTRACT_LIST(realmApiRoute, auth.tenantId),
             baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });
