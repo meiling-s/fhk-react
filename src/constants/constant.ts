@@ -61,19 +61,22 @@ export const Roles = {
   collectorAdmin: 'collector',
   logisticAdmin: 'logistic',
   astd: 'astd',
-  manufacturerAdmin: 'manufacturer'
+  manufacturerAdmin: 'manufacturer',
+  customerAdmin: 'customer',
 }
 
 export const Realm = {
   collector : 'collector',
   logistic: 'logistic',
   astd: 'astd',
-  manufacturer: 'manufacturer'
+  manufacturer: 'manufacturer',
+  customer: 'customer',
 }
 
 export const RealmApi = {
   collector : 'collectors',
   logistic: 'logistic',
   astd: 'astd',
-  manufacturer: 'manufacturer'
+  manufacturer: 'manufacturer',
+  customer: 'customer'
 }

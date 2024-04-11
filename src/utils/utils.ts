@@ -114,7 +114,8 @@ export const getThemeColorRole = (role: string) => {
     astd: '#79CA25',
     collector: '#79CA25',
     logistic: '#7CE495',
-    manufacturer: '#6BC7FF'
+    manufacturer: '#6BC7FF',
+    customer: '#6BC7FF',
   }
 
   return colorList[role as keyof typeof colorList]
@@ -137,6 +138,10 @@ export const getThemeCustomList = (role: string) => {
     manufacturer: {
       border: '#6BC7FF',
       bgColor: '#F0F9FF'
+    },
+    customer: {
+      border: '#6BC7FF',
+      bgColor: '#F0F9FF'
     }
   }
 
@@ -144,8 +149,7 @@ export const getThemeCustomList = (role: string) => {
 }
 
 export const dynamicpath = () => {
-  const userRole = localStorage.getItem("userRole") || "";
-  // const userRole = Roles.astd
+  const userRole = localStorage.getItem(localStorgeKeyName.role) || "";
   let pathRole: string = "";
 
   switch(userRole){
@@ -160,6 +164,9 @@ export const dynamicpath = () => {
       break;
     case(Roles.astd):
       pathRole = RealmApi.astd
+      break;
+    case(Roles.customerAdmin):
+      pathRole = RealmApi.customer
       break;
     default:
       break;

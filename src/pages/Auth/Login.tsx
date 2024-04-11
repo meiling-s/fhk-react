@@ -92,11 +92,15 @@ const Login = () => {
             break;
           case "logistic":
             realmApiRoute = 'logistic'
-            navigate("/logistic/jobOrder");
+            navigate("/logistic/pickupOrder");
             break;
           case "manufacturer":
             realmApiRoute = 'manufacturer'
             navigate("/manufacturer/pickupOrder");
+            break;
+          case "customer":
+            realmApiRoute = 'customer'
+            navigate("/customer/pickupOrder");
             break;
           default:
             realmApiRoute = 'collectors'
