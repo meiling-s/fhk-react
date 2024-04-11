@@ -4,10 +4,9 @@ import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import { returnApiToken } from '../utils/utils';
 import axiosInstance from '../constants/axiosInstance'
 
-const token = returnApiToken()
 
 export const getAllCollectionPoint = async () => {
-
+  const token = returnApiToken()
   try {
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
@@ -26,7 +25,7 @@ export const getAllCollectionPoint = async () => {
 }
 
 export const getCollectionPoint = async (page: number, size: number) => {
-
+  const token = returnApiToken()
   try {
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
@@ -139,6 +138,7 @@ export const findCollectionPointExistByContractAndAddress = async (contract: str
 
 
 export const getCollectionPointDetail = async (colId: number) => {
+  const token = returnApiToken()
   try {
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
