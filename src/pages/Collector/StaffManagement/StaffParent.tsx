@@ -1,34 +1,36 @@
-import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Tabs from '../../../components/Tabs'
-import { Box, Typography } from '@mui/material'
-import { useTranslation } from 'react-i18next'
-import StaffManagement from './StaffManagement'
-import Rosters from '../Rosters/Rosters'
-import UserGroup from '../UserGroup/UserGroup'
+import { FunctionComponent, useCallback, ReactNode, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Tabs from "../../../components/Tabs";
+import { Box, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import StaffManagement from "./StaffManagement";
+import Rosters from "../Rosters/Rosters";
+import UserGroup from "../UserGroup/UserGroup";
+import StaffManufacturer from "../StaffManufacturer/StaffManufacturer";
 
 const Settings: FunctionComponent = () => {
   // const navigate = useNavigate()
-  const { t } = useTranslation()
-  const [selectedTab, setSelectedTab] = useState(0)
+  const { t } = useTranslation();
+  const [selectedTab, setSelectedTab] = useState(0);
   const handleTabChange = (value: number, label: string) => {
     // console.log(`Navigated to ${value} ${label}`)
-    setSelectedTab(value)
-  }
+    setSelectedTab(value);
+  };
 
-  const titlePage = t('settings_page.title')
+  const titlePage = t("settings_page.title");
   const tabSettings = [
-    t('staffManagement.list'),
-    t('staffManagement.schedule'),
-    t('staffManagement.userGroup'),
-  ]
+    t("staffManagement.list"),
+    t("staffManagement.schedule"),
+    t("staffManagement.userGroup"),
+    t("staffManagement.manufacturer"),
+  ];
 
   return (
     <Box className="container-wrapper w-full">
       <div className="settings-page bg-bg-primary">
-      <Box>
+        <Box>
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t('staffManagement.staff')}
+            {t("staffManagement.staff")}
           </Typography>
         </Box>
         <Tabs
@@ -44,12 +46,14 @@ const Settings: FunctionComponent = () => {
           <Rosters />
         ) : selectedTab === 2 ? (
           <UserGroup />
+        ) : selectedTab === 3 ? (
+          <StaffManufacturer />
         ) : (
-            <div></div>
+          <div></div>
         )}
       </div>
     </Box>
-  )
-}
+  );
+};
 
-export default Settings
+export default Settings;

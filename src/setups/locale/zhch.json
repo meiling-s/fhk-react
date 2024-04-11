@@ -440,7 +440,7 @@
       "link_invitation": "发送连结邀请",
       "copy": "复制",
       "send": "发送",
-      "invite_success" : "成功发送邀请",
+      "invite_success": "成功发送邀请",
       "invite_failed": "发送邀请失败"
     },
     "detail": {
@@ -581,6 +581,7 @@
     "list": "列表",
     "userGroup": "用戶群組",
     "schedule": "日程",
+    "manufacturer": "制造商",
     "addNewEmployees": "新增员工",
     "employeeId": "员工编号",
     "enterEmployeeNumber": "输入员工编号",
@@ -737,41 +738,41 @@
     },
     "modify_template": {
       "header": "修改范本",
-      "app" : {
-        "Recycling_delivery_request" : "回收物送入请求",
+      "app": {
+        "Recycling_delivery_request": "回收物送入请求",
         "type": "种类",
         "title": "标题",
         "language": "语言",
-        "content" : "内容",
+        "content": "内容",
         "variables": "可用的变数",
         "button_submit": "儲存"
       },
-      "sms" : {
-        "Recycling_delivery_request" : "回收物已送到工场",
+      "sms": {
+        "Recycling_delivery_request": "回收物已送到工场",
         "type": "种类",
         "title": "标题",
         "language": "语言",
-        "content" : "内容",
+        "content": "内容",
         "variables": "可用的变数",
         "button_submit": "儲存"
       },
-      "email" : {
-        "Recycling_delivery_request" : "登记连结",
+      "email": {
+        "Recycling_delivery_request": "登记连结",
         "type": "种类",
         "title": "标题",
         "language": "语言",
-        "content" : "内容",
+        "content": "内容",
         "variables": "可用的变数",
         "button_submit": "儲存"
       },
-      "broadcast" : {
-        "Recycling_delivery_request" : "系统资讯",
+      "broadcast": {
+        "Recycling_delivery_request": "系统资讯",
         "type": "种类",
         "title": "标题",
         "language": "语言",
-        "start_valid_date" : "有效日期由",
-        "end_valid_date" : "至",
-        "content" : "内容",
+        "start_valid_date": "有效日期由",
+        "end_valid_date": "至",
+        "content": "内容",
         "button_submit": "儲存"
       }
     }
@@ -826,7 +827,7 @@
         "contactNo": "联络电话",
         "lastLogin": "上次登入"
       },
-      "popUp":{
+      "popUp": {
         "addTitle": "新增司机",
         "editTitle": "修改司机",
         "deleteTitle": "删除司机",
@@ -911,9 +912,9 @@
     "Waste_ecords_daily_": "废弃物记录（每日)",
     "recycling_plant_request_records": "回收厂的回收物请求记录",
     "recycling_classification_processing": "回收物分类及处理记录",
-    "recycling_classification_statistics" : "回收物分类统计数据",
+    "recycling_classification_statistics": "回收物分类统计数据",
     "recycling_point_establishment": "回收点设立及营运服务（第一期后续合约）照片记录（每月)",
-    "collection_point_establishment" : "回收点设立及营运服务（第一期后续合约）Excel 记录（每月)",
+    "collection_point_establishment": "回收点设立及营运服务（第一期后续合约）Excel 记录（每月)",
     "download": "下载",
     "start_date": "日期由",
     "end_date": "至"

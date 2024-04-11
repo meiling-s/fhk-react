@@ -121,7 +121,7 @@
     "staff_positions": "Staff positions",
     "denial_reason": "Denial reason",
     "add_new": "New",
-    "add_new_vehicle": "Add New Vehicle" 
+    "add_new_vehicle": "Add New Vehicle"
   },
   "settings_page": {
     "title": "Settings"
@@ -439,7 +439,7 @@
       "link_invitation": "Send link invitation",
       "copy": "copy",
       "send": "send",
-      "invite_success" : "Success send invitation",
+      "invite_success": "Success send invitation",
       "invite_failed": "Failed send invitation"
     },
     "detail": {
@@ -580,6 +580,7 @@
     "list": "List",
     "userGroup": "User Group",
     "schedule": "Schedule",
+    "manufacturer": "Manufacturer",
     "addNewEmployees": "Add New Employees",
     "employeeId": "Employee ID",
     "enterEmployeeNumber": "Enter Employee Number",
@@ -847,11 +848,10 @@
       "license_plate_number_placeholder": "Please enter vehicle plate number",
       "vehicle_type_placeholder": "Please enter vehicle type",
       "vehicle_cargo_capacity_placeholder": "Please enter weight"
-
     },
     "search": {
       "label": "Search",
-      "placeholder": "Please enter Driver No."   
+      "placeholder": "Please enter Driver No."
     },
     "table": {
       "driverId": "Driver Id",
@@ -936,9 +936,9 @@
     "Waste_ecords_daily_": "Waste records (daily)",
     "recycling_plant_request_records": "Recycling plant request records",
     "recycling_classification_processing": "Recycling classification and processing records",
-    "recycling_classification_statistics" : "Recycling classification statistics",
+    "recycling_classification_statistics": "Recycling classification statistics",
     "recycling_point_establishment": "Recycling point establishment and operation services (first phase follow-up contract) photo records (monthly)",
-    "collection_point_establishment" : "Collection point establishment and operation services (first phase follow-up contract) Excel records (monthly)",
+    "collection_point_establishment": "Collection point establishment and operation services (first phase follow-up contract) Excel records (monthly)",
     "download": "Download",
     "start_date": "Start Date",
     "end_date": "to"
