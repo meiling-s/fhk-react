@@ -112,9 +112,9 @@ export const showSuccessToast = (msg: string) => {
 export const getThemeColorRole = (role: string) => {
   const colorList = {
     astd: '#79CA25',
-    collectoradmin: '#79CA25',
-    logisticadmin: '#7CE495',
-    manufactureradmin: '#6BC7FF'
+    collector: '#79CA25',
+    logistic: '#7CE495',
+    manufacturer: '#6BC7FF'
   }
 
   return colorList[role as keyof typeof colorList]
@@ -126,15 +126,15 @@ export const getThemeCustomList = (role: string) => {
       border: '#79CA25',
       bgColor: '#E4F6DC'
     },
-    collectoradmin: {
+    collector: {
       border: '#79CA25',
       bgColor: '#E4F6DC'
     },
-    logisticadmin: {
+    logistic: {
       border: '#63D884',
       bgColor: '#ECF5EE'
     },
-    manufactureradmin: {
+    manufacturer: {
       border: '#6BC7FF',
       bgColor: '#F0F9FF'
     }
@@ -149,10 +149,10 @@ export const dynamicpath = () => {
   let pathRole: string = "";
 
   switch(userRole){
-    case(Roles.collectoradmin):
+    case(Roles.collectorAdmin):
       pathRole = RealmApi.collector;
       break;
-    case(Roles.logisticadmin):
+    case(Roles.logisticAdmin):
       pathRole = RealmApi.logistic;
       break;
     case(Roles.manufacturerAdmin):

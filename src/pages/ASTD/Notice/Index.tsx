@@ -28,7 +28,7 @@ const Notice = () => {
                         {t('notification.notification_title')}
                     </Typography>
                 </Box>
-                { userRole === Roles.collectoradmin && <CustomTabs 
+                { userRole === Roles.collectorAdmin && <CustomTabs 
                         tabs={tabSettings}
                         navigate={handleTabChange}
                         selectedProp={selectedTab}

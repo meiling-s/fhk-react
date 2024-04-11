@@ -58,10 +58,10 @@ export const Notiftemplate = {
 }
 
 export const Roles = {
-  collectoradmin: 'collectoradmin',
-  logisticadmin: 'logisticadmin',
+  collectorAdmin: 'collector',
+  logisticAdmin: 'logistic',
   astd: 'astd',
-  manufacturerAdmin: 'manufacturerAdmin'
+  manufacturerAdmin: 'manufacturer'
 }
 
 export const Realm = {
