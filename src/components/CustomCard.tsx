@@ -112,7 +112,8 @@ const CustomCard = ({
   return (
     <>
       {collectionPoints.map((collectionPoint) => {
-        var posistion = JSON.parse("[" + collectionPoint.gpsCode + "]");
+        var posistion = collectionPoint.gpsCode.length > 0 ? collectionPoint.gpsCode : [0,0] //set default [0,0] if data return []
+        // var posistion = JSON.parse("[" + collectionPoint.gpsCode + "]");
         
         return (
           <Card
