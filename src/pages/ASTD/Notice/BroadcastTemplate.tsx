@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import { styles } from "../../../constants/styles";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { showErrorToast, showSuccessToast } from "../../../utils/utils";
+import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
 import CustomField from "../../../components/FormComponents/CustomField";
 import CustomTextField from "../../../components/FormComponents/CustomTextField";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
@@ -24,6 +24,8 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}, title: {status: false, message: ''}})
+    const userRole:string = localStorage.getItem('userRole') || '';
+    const themeColor:string = getThemeColorRole(userRole);
 
     const getDetailTemplate = async () => {
         const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
@@ -283,8 +285,8 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                             onClick={onSubmitUpdateTemplate}
                             sx={{
                                 borderRadius: "20px",
-                                backgroundColor: "#79ca25",
-                                '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
+                                backgroundColor: themeColor,
+                                '&.MuiButton-root:hover': { bgcolor: themeColor },
                                 width: '175px',
                                 height: "44px",
                                 fontSize: '16px',

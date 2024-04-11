@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { FunctionComponent, useEffect, useState, SyntheticEvent } from "react";
 import { getDetailNotifTemplate, updateNotifTemplate } from "../../../APICalls/notify";
 import { ToastContainer } from 'react-toastify'
-import { showErrorToast, showSuccessToast } from "../../../utils/utils";
+import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 import { styles } from "../../../constants/styles";
 
@@ -21,6 +21,8 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
     const [isPreviousContentArea, setIsPreviouscontentArea] = useState(false);
     const [cursorPosition, setCursorPosition] = useState(0);
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}})
+    const userRole:string = localStorage.getItem('userRole') || '';
+    const themeColor:string = getThemeColorRole(userRole);
 
     const getDetailTemplate = async () => {
         const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
@@ -283,8 +285,8 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                         onClick={onSubmitUpdateTemplate}
                         sx={{
                             borderRadius: "20px",
-                            backgroundColor: "#79ca25",
-                            '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
+                            backgroundColor: themeColor,
+                            '&.MuiButton-root:hover': { bgcolor: themeColor },
                             width: '175px',
                             height: "44px",
                             fontSize: '16px',
