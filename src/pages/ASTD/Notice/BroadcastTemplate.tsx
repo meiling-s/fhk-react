@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Grid, TextField, TextareaAutosize, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Grid, TextField, Typography } from "@mui/material";
 import { LEFT_ARROW_ICON } from "../../../themes/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -188,7 +188,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                             placeholder={t('notification.modify_template.broadcast.title')}
                             value={notifTemplate?.title}
                             onChange={(event) =>  onChangeTitle(event.target.value)}
-                            sx={{ width: '300px', color: 'black', fontSize: 16, fontWeight: 'medium' }}
+                            sx={{ width: '400px', color: 'black', fontSize: 16, fontWeight: 'medium' }}
                         />
                         <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
                             {errors.title.status ? t('form.error.shouldNotBeEmpty') : ''}

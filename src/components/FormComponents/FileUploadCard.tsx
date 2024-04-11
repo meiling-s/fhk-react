@@ -1,11 +1,13 @@
-import { ButtonBase, Card, ImageList, ImageListItem, Typography } from '@mui/material';
+import { ButtonBase, Card, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { FileUploader } from 'react-drag-drop-files';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import { useTranslation } from 'react-i18next';
+import PizZip from "pizzip";
+import { DOMParser } from "@xmldom/xmldom";
 
 type props = {
-  onHandleUpload: (s: string) => void,
+  onHandleUpload: (content: string) => void,
 }
 
 const FileUploadCard = (
@@ -15,21 +17,66 @@ const FileUploadCard = (
   ) => {
   const { t } = useTranslation();
 
+  const str2xml = (str: any) => {
+    if (str.charCodeAt(0) === 65279) {
+      str = str.substr(1);
+    }
+    return new DOMParser().parseFromString(str, "text/xml");
+  }
+  
+  const getParagraphs = (content: any) => {
+    const zip = new PizZip(content);
+    const xml = str2xml(zip.files["word/document.xml"].asText());
+    const paragraphsXml = xml.getElementsByTagName("w:p");
+    const paragraphs = [];
+  
+    for (let index = 0, len = paragraphsXml.length; index < len; index++) {
+      let fullText = "";
+      const textsXml = paragraphsXml[index].getElementsByTagName("w:t");
+      for (let j = 0, len2 = textsXml.length; j < len2; j++) {
+        const textXml = textsXml[j];
+        if (textXml.childNodes) {
+          fullText += textXml.childNodes[0].nodeValue;
+        }
+      }
+      if (fullText) {
+        paragraphs.push(fullText);
+      }
+    }
+    return paragraphs;
+  }
+
   const handleChangeFile = (file: any) => {
     const reader = new FileReader();
-    reader.onload = (event) => {
-        const result = event?.target?.result;
-        if(result){
-          onHandleUpload(result.toString())
+    
+    if(file['type'] === 'text/plain') {
+      reader.onload = (event) => {
+        const content = event?.target?.result;
+        if(content){
+          onHandleUpload(content?.toString())
         }
-    };
-
-    reader.readAsText(file);
+      };
+      reader.onerror = (err) => console.error(err);
+      reader.readAsText(file);
+      
+    } else {
+      reader.onload = (event) => {
+        const result = event?.target?.result;
+        const content = getParagraphs(result);
+        if(content){
+          onHandleUpload(content.toString())
+        }
+        
+      };
+      reader.onerror = (err) => console.error(err);
+      reader.readAsBinaryString(file);
+    }
   };
 
   return (
       <FileUploader
       handleChange={handleChangeFile}
+      types={['docx', 'txt']}
       >
         <Box sx={{width: 300}}>
           <Card sx={{

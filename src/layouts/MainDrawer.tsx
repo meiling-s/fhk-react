@@ -165,7 +165,7 @@ function MainDrawer() {
       "Process out recyclables": {
         name: t("processRecord.processingRecords"),
         icon: <DOCUMENT_ICON />,
-        onClick: () => navigate("/collector/processRecord"),
+        onClick: () => navigate(`/${realmApiRoute}/processRecord`), 
         collapse: false,
       },
       Staff: {
