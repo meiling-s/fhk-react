@@ -59,7 +59,7 @@ const PickupOrderForm = ({
   const navigate = useNavigate()
 
   const handleRowClick = async (po: PickupOrder) => {
-    const routeName = role === 'logisticadmin' ? 'logistics' : 'collector'
+    const routeName = role
     const result = await getPicoById(selectedPickupOrder ? selectedPickupOrder.picoId : '')
     if (result) {
       navigate(`/${routeName}/editPickupOrder`, { state: result.data })
@@ -143,7 +143,7 @@ const PickupOrderForm = ({
               <StatusCard status={selectedPickupOrder?.status} />
             </Box>
             <Box sx={{ marginLeft: 'auto' }}>
-              {role === 'logisticadmin' &&
+              {role === 'logistic' &&
               selectedRow &&
               ['STARTED', 'OUTSTANDING'].includes(selectedRow.status) ? (
                 <CustomButton
@@ -152,7 +152,7 @@ const PickupOrderForm = ({
                     // navigateToJobOrder()
                   }}
                 ></CustomButton>
-              ) : role === 'logisticadmin' &&
+              ) : role === 'logistic' &&
                 selectedRow &&
                 selectedRow.status === 'CREATED' &&
                 selectedRow?.tenantId === tenantId ? (
@@ -162,7 +162,7 @@ const PickupOrderForm = ({
                     selectedPickupOrder && handleRowClick(selectedPickupOrder)
                   }}
                 ></CustomButton>
-              ) : role !== 'logisticadmin' ? (
+              ) : role !== 'logistic' ? (
                 <>
                   <CustomButton
                     text={t('pick_up_order.item.edit')}

@@ -44,11 +44,6 @@ const JobOrderForm = ({
   }
   const navigate = useNavigate()
 
-  const handleRowClick = (po: JobListOrder) => {
-    const routeName = role === 'logisticadmin' ? 'logistics' : 'collector'
-    navigate(`/${routeName}/editPickupOrder`, { state: po })
-  }
-
   const [selectedJobOrder, setSelectedJobOrder] = useState<Row>()
   console.log(selectedJobOrder)
   const [pickupOrderDetail, setPickUpOrderDetail] = useState<PickupOrderDetail[]>()
