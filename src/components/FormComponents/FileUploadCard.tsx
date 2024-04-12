@@ -97,7 +97,7 @@ const FileUploadCard = (
               }}
               >
                 <CloudUploadOutlinedIcon style={{color: "#ACACAC"}}/>
-                <Typography sx={styles.typo} style={{fontSize: 'large'}}>{t(`notification.upload`)}</Typography>
+                <Typography sx={styles.typo} style={{fontSize: 'large'}}>{t(`notification.drag_drop_content`)}</Typography>
             </ButtonBase>
           </Card>
         </Box>

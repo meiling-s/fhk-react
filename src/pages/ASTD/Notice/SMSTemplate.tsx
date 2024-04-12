@@ -231,7 +231,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
 
                 <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
                     <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
-                        {t(`notification.upload`)}
+                        {t(`notification.drag_drop_content`)}
                     </Typography>
                     <FileUploadCard 
                         onHandleUpload={onHandleUpload}
