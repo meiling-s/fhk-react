@@ -5,7 +5,6 @@ import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs';
 import { returnApiToken } from '../utils/utils';
 import { localStorgeKeyName } from '../constants/constant';
 
-const token = returnApiToken()
 const realmApiRoute = localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
 
 export const getColPointType = async () => {

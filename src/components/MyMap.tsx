@@ -48,7 +48,8 @@ function MyMap({
             color = 'e85141';
             break;
         }
-        var location = JSON.parse("[" + collectionPoint.gpsCode + "]");
+        var location = collectionPoint.gpsCode.length > 0 ? collectionPoint.gpsCode : [0,0]
+        // var location = JSON.parse("[" + collectionPoint.gpsCode + "]");
         
         return (
           <Marker

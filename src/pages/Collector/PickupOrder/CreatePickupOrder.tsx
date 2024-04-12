@@ -138,12 +138,7 @@ const CreatePickupOrder = () => {
       const data = result?.data
       if (data) {
         //console.log('all pickup order: ', data)
-        const routeName =
-          role === 'logisticadmin'
-            ? 'logistic'
-            : role === 'manufactureradmin'
-            ? 'manufacturer'
-            : 'collector'
+        const routeName = role
         navigate(`/${routeName}/PickupOrder`, { state: 'created' })
         //navigate('/collector/PickupOrder', { state: 'created' })
       } else {

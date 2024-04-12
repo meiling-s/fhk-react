@@ -55,59 +55,19 @@ const Login = () => {
     var realm = 'astd';   //default realm is astd
     var loginTo = 'astd';
 
-    switch(userName){
-      case 'astd':
-        realm = 'astd';
-        loginTo = 'astd';
-        break;
-      case 'collector':
-        realm = 'collector';
-        loginTo = 'collector';
-        break;
-      case 'warehouse':
-        realm = 'collector';
-        loginTo = 'warehouse';
-        break;
-      case 'collectoradmin':
-        realm = 'collector';
-        loginTo = 'collectoradmin';
-        break;
-      case 'ckadm01':
-        realm = 'collector';
-        loginTo = 'collectoradmin';
-        break;
-      case 'oriontadmin':
-        realm = 'collector';
-        loginTo = 'collectoradmin';
-        break;
-      case 'logisticAdmin1':
-        realm = 'logistic';
-        loginTo = 'logisticadmin';
-        break;
-      case 'alan1':
-        realm = 'manufacturer';
-        loginTo = 'manufacturer';
-        break;
-      case 'customerAdmin':
-        realm = 'customer';
-        loginTo = 'customer';
-        break;
-      default:
-        break;
-    }
     if(realm!=''){
       const result = await login({ 
         username: userName,
         password: password,
-        realm: 'astd'
       });
+      console.log(result, 'result login')
       if(result && result.access_token){
         setWarningMsg(" ");
         //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
         localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
         localStorage.setItem(localStorgeKeyName.refreshToken, result?.refresh_token || '');
         localStorage.setItem(localStorgeKeyName.realm, result?.realm || '');
-        localStorage.setItem(localStorgeKeyName.role, loginTo);
+        localStorage.setItem(localStorgeKeyName.role, result?.realm || '');
         localStorage.setItem(localStorgeKeyName.username, result?.username || '');
         // 20240129 add function list daniel keung start
         localStorage.setItem(localStorgeKeyName.functionList, JSON.stringify(result?.functionList));
@@ -123,27 +83,24 @@ const Login = () => {
         let realmApiRoute = ''
         switch(loginTo){
           case "astd":
+            realmApiRoute = 'astd'
             navigate("/astd");
             break;
           case "collector":
             realmApiRoute = 'collectors'
             navigate("/collector");
             break;
-          case "warehouse":
-            realmApiRoute = 'collectors'
-            navigate("/warehouse");
-            break;
-          case "collectoradmin":
-            realmApiRoute = 'collectors'
-            navigate("/collector/collectionPoint");
-            break;
           case "logistic":
             realmApiRoute = 'logistic'
-            navigate("/logistic/jobOrder");
+            navigate("/logistic/pickupOrder");
             break;
           case "manufacturer":
             realmApiRoute = 'manufacturer'
             navigate("/manufacturer/pickupOrder");
+            break;
+          case "customer":
+            realmApiRoute = 'customer'
+            navigate("/customer/pickupOrder");
             break;
           default:
             realmApiRoute = 'collectors'

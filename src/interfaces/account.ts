@@ -1,7 +1,6 @@
 export type LoginItem = {
   username: string,
   password: string,
-  realm: string,
 }
 
 //tenant register item

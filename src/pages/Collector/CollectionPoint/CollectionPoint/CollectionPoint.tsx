@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Typography, Pagination } from '@mui/material';
 import { useEffect, useState } from 'react'
 import CustomCard from '../../../../components/CustomCard';
 import { styles } from '../../../../constants/styles';
@@ -18,12 +18,14 @@ const CollectionPoint = () => {
 
   const [colList, setColList] = useState<collectionPoint[]>([]);
   const [hoveredCard, setHoveredCard] = useState<Position| null>(null);
-
+  const [totalPages, setTotalPages] = useState(0)
+  const [page, setPage] = useState(1)
+  const pageSize = 10
   const { t } = useTranslation();
 
   useEffect(() => {
 
-    initCollectionPoint();
+  
   
 
     if(action){
@@ -52,12 +54,19 @@ const CollectionPoint = () => {
    
   }, []);
 
+  useEffect(() => {
+    initCollectionPoint()
+  }, [page])
+
   async function initCollectionPoint() {
-    const result = await getCollectionPoint(0, 10);
+    setColList([]);
+    const result = await getCollectionPoint(page - 1, pageSize);
     const data = result?.data.content;
+    setTotalPages(result?.data.totalPages)
     if(data && data.length>0){
         //console.log("all collection point: ",data);
         setColList(data);
+
     }
   }
 
@@ -96,6 +105,14 @@ const CollectionPoint = () => {
           </Box>
           <Box/>
           <CustomCard collectionPoints ={colList} hoveredCard = {hoveredCard} setHoveredCard ={setHoveredCard} />
+          <Pagination
+              className="mt-4"
+              count={Math.ceil(totalPages)}
+              page={page}
+              onChange={(_, newPage) => {
+                setPage(newPage)
+              }}
+            />
         </Box>
         <Box
           sx={styles.mapRightContainer}>

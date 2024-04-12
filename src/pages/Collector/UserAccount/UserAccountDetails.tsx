@@ -75,7 +75,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const [validation, setValidation] = useState<formValidate[]>([])
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const logginUser = localStorage.getItem(localStorgeKeyName.username) || ''
-
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
   const statusList = () => {
     const colList: il_item[] = [
       {
@@ -219,7 +219,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const handleCreateVehicle = async () => {
     const formData: CreateUserAccount = {
       loginId: loginId,
-      realm: 'collector',
+      realm,
       tenantId: tenantId,
       staffId: staffId,
       groupId: userGroup,

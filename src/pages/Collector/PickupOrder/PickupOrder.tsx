@@ -321,7 +321,7 @@ const PickupOrders = () => {
     setPickupOrder([])
     setTotalData(0)
     let result = null
-    if (role === 'logisticadmin') {
+    if (role === 'logistic') {
       result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query);
     } else {
       result = await getAllPickUpOrder(page - 1, pageSize, query);
@@ -383,7 +383,7 @@ const PickupOrders = () => {
   }, [role])
   
   useEffect(() => {
-    setShowOperationColumn(role === 'logisticadmin')
+    setShowOperationColumn(role === 'logistic')
   }, [role, columns, i18n.language])
 
   useEffect(()=>{
@@ -579,7 +579,7 @@ const PickupOrders = () => {
         </Typography>
         <Button
           onClick={() => {
-            const routeName = role === 'logisticadmin' ? 'logistics' : 'collector'
+            const routeName = role
             navigate(`/${routeName}/createPickupOrder`)
           }}
           sx={{

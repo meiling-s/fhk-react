@@ -142,9 +142,9 @@ const Router = () => {
             <Route path="/logistic/pickupOrder" element={<PickupOrder />} />
             <Route path="/logistic/jobOrder" element={<JobOrder />} />
             <Route path="/logistic/createJobOrder/:picoId" element={<CreateOrUpdateJobOrder />} />
-            <Route path="/logistics/createPickupOrder" element={<CreatePickupOrder />} />
-            <Route path="/logistics/editPickupOrder" element={<EditPickupOrder /> } />
-            <Route path="/logistics/account" element={<LogisticAccount />} />
+            <Route path="/logistic/createPickupOrder" element={<CreatePickupOrder />} />
+            <Route path="/logistic/editPickupOrder" element={<EditPickupOrder /> } />
+            <Route path="/logistic/account" element={<LogisticAccount />} />
             <Route path="/logistic/driver" element={<Driver/>}/>
           </Route>
 

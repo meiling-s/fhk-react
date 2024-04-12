@@ -4,14 +4,13 @@ import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import { returnApiToken } from '../../utils/utils';
 import axiosInstance from '../../constants/axiosInstance'
 
-const token = returnApiToken()
 
 export const getAllCollectionPoint = async () => {
-
+    const auth = returnApiToken()
     try {
       const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-        ...GET_ALL_COLLECTIONPOINT(token.tenantId)
+        ...GET_ALL_COLLECTIONPOINT(auth.tenantId)
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
         // },
