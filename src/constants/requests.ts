@@ -413,9 +413,9 @@ export const EDIT_VEHICLE = (
 });
 
 //inventory
-export const GET_INVENTORY = (table: string): AxiosRequestConfig => ({
+export const GET_INVENTORY = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/inventory/${table}/searching`,
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching`,
 });
 
 //process records
