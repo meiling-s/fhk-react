@@ -244,7 +244,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                     </Typography>
                     <TextareaAutosize
                         id="content"
-                        style={{ width: '800px', backgroundColor: 'white', padding: '10px' }}
+                        style={{ width: '1200px', backgroundColor: 'white', padding: '10px', borderRadius: '12px' }}
                         value={notifTemplate?.content}
                         minRows={7}
                         onChange={(event) => {
