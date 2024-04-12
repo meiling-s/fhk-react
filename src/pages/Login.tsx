@@ -61,7 +61,6 @@ const Login = () => {
       const result = await login({
         username: userName,
         password: password,
-        realm: 'astd'
       });
       // console.log("test login test out 1");
       // console.log('result', result)
