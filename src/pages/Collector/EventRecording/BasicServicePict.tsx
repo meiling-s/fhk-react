@@ -107,7 +107,7 @@ const BasicServicePicture = () => {
           type: 'error'
         })
 
-        if(dayjs(startDate).format('YYYY-MM-DD') === dayjs(endDate).format('YYYY-MM-DD')) {
+        if(dayjs(startDate).format('YYYY-MM-DD HH:mm') >= dayjs(endDate).format('YYYY-MM-DD HH:mm')) {
           tempV.push({
             field: `${t('report.collectionPoints')} ${t('report.dateAndTime')}`,
             problem: formErr.startDateBehindEndDate,
