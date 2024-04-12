@@ -22,6 +22,9 @@ const isTokenExpired = (authToken: string) => {
     if (authToken === '') return false;
     const decodedToken = parseJwtToken(authToken, 1);
     const currentTime = Date.now() / 1000;
+
+    // For ease of testing, simulated tokens expire
+    // console.log('Token expiration time: ' + (decodedToken.exp - currentTime - 7130))
     return decodedToken.exp < currentTime;
 }
 
@@ -49,7 +52,7 @@ axiosInstance.interceptors.request.use(
     async (config) => {
         const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || '';
         config.headers.AuthToken = accessToken;
-        console.log('isTokenExpired: ' +  isTokenExpired(accessToken))
+        // console.log('isTokenExpired: ' +  isTokenExpired(accessToken))
         if (config.url !== '/api/v1/administrator/login' && isTokenExpired(accessToken)) {
             try {
                 const newAccessToken = await getNewToken();

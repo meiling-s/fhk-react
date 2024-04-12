@@ -380,7 +380,6 @@ function MainDrawer() {
     }
   }
   // 20240129 add function list daniel keung end
-  console.log(role);
   // 20240129 add function list daniel keung start
   /*   switch (role) {
     case 'astd':
