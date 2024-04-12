@@ -107,9 +107,9 @@ export const GET_COLLECTIONPOINT_BY_COLID = (
   url: `api/v1/collectors/collectionPoint/${tenantId}/${colId}`,
 });
 
-export const GET_CONTRACT = (tenantId: string): AxiosRequestConfig => ({
+export const GET_CONTRACT = (realmApiRoute: string, tenantId: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/contract/${tenantId}`,
+  url: `api/v1/${realmApiRoute}/contract/${tenantId}`,
 });
 
 export const GET_ALL_CHECKIN_REQUESTS = (
@@ -161,9 +161,9 @@ export const CREATE_PICK_UP_ORDER: AxiosRequestConfig = {
   url: "api/v1/administrator/pico",
 };
 
-export const GET_LOGISTICLIST = (table: string): AxiosRequestConfig => ({
+export const GET_LOGISTICLIST = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/logisticlist/${table}`,
+  url: `api/v1/${realmApiRoute}/logisticlist/${table}`,
 });
 
 export const GET_COLLECTORLIST = (table: string): AxiosRequestConfig => ({

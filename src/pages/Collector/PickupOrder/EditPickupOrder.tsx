@@ -122,12 +122,7 @@ const EditPickupOrder = () => {
       const data = result?.data
       if (data) {
         //navigate('/collector/PickupOrder', { state: 'updated' })
-        const routeName =
-          role === 'logisticadmin'
-            ? 'logistic'
-            : role === 'manufactureradmin'
-            ? 'manufacturer'
-            : 'collector'
+        const routeName = role
         navigate(`/${routeName}/PickupOrder`, { state: 'updated' })
       } else {
         showErrorToast('fail to create pickup order')

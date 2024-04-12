@@ -36,7 +36,7 @@ const Settings: FunctionComponent = () => {
   const getTabList = () => {
     let updatedTabList = [...defaultTabList]
 
-    if (role === 'logisticadmin') {
+    if (role === 'logistic') {
       const hideTabIndexArr = [2, 3, 5]
       updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
     }
@@ -100,7 +100,7 @@ const Settings: FunctionComponent = () => {
           className="lg:px-10 sm:px-4 bg-bg-primary"
         />
         {/* rendering content base on tab index */}
-        { role === 'logisticadmin' ? logisticSettingTab() : collectorSettingTab()}
+        { role === 'logistic' ? logisticSettingTab() : collectorSettingTab()}
       </div>
     </Box>
   );

@@ -106,7 +106,7 @@ function MainDrawer() {
       "User account": {
         name: t("processRecord.userGroup"),
         icon: <PERSON_OUTLINE_ICON />,
-        onClick: () => navigate("/logistics/account"),
+        onClick: () => navigate("/logistic/account"),
         collapse: false,
       },
       "Collection point": {
