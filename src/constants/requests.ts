@@ -1,4 +1,5 @@
 import { AxiosRequestConfig } from "axios";
+import { CreateDenialReason } from "../interfaces/denialReason";
 
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
@@ -254,30 +255,33 @@ export const CREATE_FORGET_PASSWORD = (table: string): AxiosRequestConfig => ({
 });
 
 //warehouse
-export const GET_ALL_WAREHOUSE = (table: string): AxiosRequestConfig => ({
+export const GET_ALL_WAREHOUSE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/warehouse/${table}`,
+  url: `api/v1/${realmApiRoute}/warehouse/${table}`,
 });
 
 export const GET_WAREHOUSE_BY_ID = (
+  realmApiRoute: string,
   warehouseId: number,
-  table: string
+  table: string,
+  
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/warehouse/${table}/${warehouseId}`,
+  url: `api/v1/${realmApiRoute}/warehouse/${table}/${warehouseId}`,
 });
 
-export const ADD_WAREHOUSE = (table: string): AxiosRequestConfig => ({
+export const ADD_WAREHOUSE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "post",
-  url: `api/v1/collectors/warehouse/${table}`,
+  url: `api/v1/${realmApiRoute}/warehouse/${table}`,
 });
 
 export const UPDATE_WAREHOUSE_BY_ID = (
+  realmApiRoute: string,
   warehouseId: number,
   table: string
 ): AxiosRequestConfig => ({
   method: "put",
-  url: `api/v1/collectors/warehouse/${table}/${warehouseId}`,
+  url: `api/v1/${realmApiRoute}/warehouse/${table}/${warehouseId}`,
 });
 
 export const UPDATE_RECYCLE_CAPACITY_BY_ID = (
@@ -343,14 +347,14 @@ export const CREATE_SERVICE_INFO = (table: string): AxiosRequestConfig => ({
 });
 
 //vehicle
-export const CREATE_VEHICLE = (table: string): AxiosRequestConfig => ({
+export const CREATE_VEHICLE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "post",
-  url: `api/v1/collectors/vehicle/${table}`,
+  url: `api/v1/${realmApiRoute}/vehicle/${table}`,
 });
 
-export const GET_VEHICLE = (table: string): AxiosRequestConfig => ({
+export const GET_VEHICLE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/vehicle/${table}`,
+  url: `api/v1/${realmApiRoute}/vehicle/${table}`,
 });
 
 export const GET_LOGISTIC_VEHICLE = (table: string): AxiosRequestConfig => ({
@@ -388,19 +392,21 @@ export const DELETE_LOGISTIC_VEHICLE = (
 });
 
 export const DELETE_VEHICLE = (
+  realmApiRoute: string,
   table: string,
   vehicleId: number
 ): AxiosRequestConfig => ({
   method: "patch",
-  url: `api/v1/collectors/vehicle/${table}/${vehicleId}/status`,
+  url: `api/v1/${realmApiRoute}/vehicle/${table}/${vehicleId}/status`,
 });
 
 export const EDIT_VEHICLE = (
+  realmApiRoute: string,
   table: string,
   vehicleId: number
 ): AxiosRequestConfig => ({
   method: "put",
-  url: `api/v1/collectors/vehicle/${table}/${vehicleId}`,
+  url: `api/v1/${realmApiRoute}/vehicle/${table}/${vehicleId}`,
 });
 
 //inventory
@@ -818,10 +824,10 @@ export const GET_DENIAL_REASON_BY_FUNCTION_ID = (
 
 //create denial reason
 export const CREATE_DENIAL_REASON = (
-  realmApiRoute: string
+  realmApiRoute: string,
 ): AxiosRequestConfig => ({
   method: "post",
-  url: `/api/v1/${realmApiRoute}/reason`,
+  url: `/api/v1/${realmApiRoute}/reason/`,
 });
 
 //update denial reason
@@ -863,26 +869,28 @@ export const UPDATE_STAFF_TITLE = (
 });
 
 //get disposal location
-export const GET_DISPOSAL_LOCATION = (table: string): AxiosRequestConfig => ({
+export const GET_DISPOSAL_LOCATION = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `/api/v1/collectors/disposallocation/${table}`,
+  url: `/api/v1/${realmApiRoute}/disposallocation/${table}`,
 });
 
 //create disposal location
 export const CREATE_DISPOSAL_LOCATION = (
+  realmApiRoute: string,
   table: string
 ): AxiosRequestConfig => ({
   method: "post",
-  url: `/api/v1/collectors/disposallocation/${table}`,
+  url: `/api/v1/${realmApiRoute}/disposallocation/${table}`,
 });
 
 //update disposal location
 export const UPDATE_DISPOSAL_LOCATION = (
+  realmApiRoute: string,
   table: string,
   disposalLocId: string
 ): AxiosRequestConfig => ({
   method: "PUT",
-  url: `/api/v1/collectors/disposallocation/${table}/${disposalLocId}`,
+  url: `/api/v1/${realmApiRoute}/disposallocation/${table}/${disposalLocId}`,
 });
 
 //get company (collectorlist || logisticlist || manulist || customerlist)

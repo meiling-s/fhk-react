@@ -27,7 +27,7 @@ export const getAllWarehouse = async (page: number, size: number) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_ALL_WAREHOUSE(token.decodeKeycloack),
+      ...GET_ALL_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack),
       params: {
         page: page,
         size: size
@@ -58,7 +58,7 @@ export const getWarehouseById = async (warehouseId: number) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
+      ...GET_WAREHOUSE_BY_ID(token.realmApiRoute, warehouseId, token.decodeKeycloack),
       headers: {
         AuthToken: token.authToken
       }
@@ -77,7 +77,7 @@ export const createWarehouse = async (data: any) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...ADD_WAREHOUSE(token.decodeKeycloack),
+      ...ADD_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack),
       baseURL: collectionPointAPI.baseURL,
       data: data,
       headers: {
@@ -97,7 +97,7 @@ export const editWarehouse = async (data: any, warehouseId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...UPDATE_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
+      ...UPDATE_WAREHOUSE_BY_ID(token.realmApiRoute, warehouseId, token.decodeKeycloack),
       baseURL: collectionPointAPI.baseURL,
       data: data,
       headers: {

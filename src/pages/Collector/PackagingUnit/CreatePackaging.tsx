@@ -128,7 +128,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         } else if (action == 'edit') {
             handleEditPackaging(formData, packagingTypeId)
         } else if (action === 'delete') {
-            handleDelete(formData, packagingTypeId)
+            handleDelete()
         }
     }
 
@@ -152,14 +152,24 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         }
     }
 
-    const handleDelete = async (formData: CreatePackagingUnitProps, packagingTypeId: string) => {
-      const status = 'DELETED'
-      const data = {
-        ...formData,
-        status
-      }
+    const handleDelete = async () => {
+        const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+        const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
+
+        const formData: CreatePackagingUnitProps = {
+            tenantId: tenantId,
+            packagingNameTchi: tChineseName,
+            packagingNameSchi: sChineseName,
+            packagingNameEng: englishName,
+            description: description,
+            remark: remark,
+            status: 'DELETED',
+            createdBy: loginId,
+            updatedBy: loginId
+        }
+
       if(selectedItem != null){
-        const result = await editPackaging(data, packagingTypeId)
+        const result = await editPackaging(formData, packagingTypeId)
         if(result) {
           onSubmitData("success", t('common.deletedSuccessfully'))
           resetData()
@@ -189,7 +199,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,
                     onSubmit: handleSubmit,
-                    onDelete: handleSubmit
+                    onDelete: handleDelete
                 }}
             >
                 <Divider></Divider>

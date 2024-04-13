@@ -65,8 +65,19 @@ export const createDenialReason = async (data: CreateDenialReason) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_DENIAL_REASON(token.realmApiRoute, ),
-      data: { ...data, tenantId: token.tenantId, status: "ACTIVE" },
+      ...CREATE_DENIAL_REASON(token.realmApiRoute),
+      params: {
+        tenantId: data.tenantId,
+        reasonNameTchi: data.reasonNameTchi,
+        reasonNameSchi: data.reasonNameSchi,
+        reasonNameEng: data.reasonNameEng,
+        description: data.description,
+        remark: data.remark,
+        functionId: data.functionId,
+        status: data.status,
+        createdBy: data.createdBy,
+        updatedBy: data.updatedBy
+      },
       headers: {
         AuthToken: token.authToken,
       },
