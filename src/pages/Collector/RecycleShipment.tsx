@@ -359,12 +359,8 @@ function ShipmentManage() {
 
   const initCheckInRequest = async () => {
     const result = await getAllCheckInRequests(page - 1, pageSize, query);
-    if (result == '401') {
-       // direct to login if sttUS 401
-       localStorage.clear()
-       navigate('/')
-    } else {
-      const data = result?.data.content;
+    if (result) {
+      const data = result?.data?.content;
       if (data && data.length > 0) {
         const checkinData = data.map(transformToTableRow)
         setCheckInRequest(data);
