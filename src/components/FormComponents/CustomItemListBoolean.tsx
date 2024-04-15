@@ -54,6 +54,7 @@ function CustomItemList({
             {
                 items.map((item, index) => (
                     <Button
+                        key={index}
                         variant="outlined"
                         sx={value === index ? triggerdItem : localstyles.uneditable}
                         onClick={()=>{ handleSingleClick(index)}}
