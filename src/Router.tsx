@@ -82,7 +82,7 @@ const Router = () => {
             path="/collector/collectionPoint"
             element={<CollectionPoint />}
           />
-          <Route path="/collector/processRecord" element={<ProcessRecord />} />
+          <Route path="/:realmApiRoute/processRecord" element={<ProcessRecord />} />
           <Route path="/collector/pickupOrder" element={<PickupOrder />} />
           <Route
             path="/collector/createPickupOrder"

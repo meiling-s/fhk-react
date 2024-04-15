@@ -721,6 +721,7 @@
   "notification": {
     "notification_menu": "通知范本",
     "notification_title": "范本",
+    "drag_drop_content": "拖放内容",
     "menu_recycling_materials_and_waybills": {
       "tab_name": "回收物及运单",
       "name": "名称",

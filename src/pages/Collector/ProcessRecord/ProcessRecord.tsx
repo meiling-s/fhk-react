@@ -248,8 +248,8 @@ const ProcessRecord: FunctionComponent = () => {
 
   const handleSearch = (label: string, value: string) => {
     // console.log('hanlde search', label, value)
+    if (value == '') return setFilteredProcessRecords(procesRecords)
     if (label == 'search') {
-      if (value == '') return setFilteredProcessRecords(procesRecords)
       const filtered: ProcessOut[] = procesRecords.filter(
         (item) => item.processOutId == value
       )
