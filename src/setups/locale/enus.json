@@ -750,6 +750,7 @@
   "notification": {
     "notification_menu": "Notice template",
     "notification_title": "Template",
+    "drag_drop_content": "Drag and drop content",
     "menu_recycling_materials_and_waybills": {
       "tab_name": "Recyclables and PO",
       "name": "Name",

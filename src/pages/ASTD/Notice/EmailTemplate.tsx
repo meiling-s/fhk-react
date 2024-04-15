@@ -5,7 +5,10 @@ import { useTranslation } from "react-i18next";
 import { FunctionComponent, useEffect, useState, SyntheticEvent } from "react";
 import { getDetailNotifTemplate, updateNotifTemplate } from "../../../APICalls/notify";
 import { ToastContainer } from 'react-toastify'
-import { showErrorToast, showSuccessToast } from "../../../utils/utils";
+import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
+import { styles } from "../../../constants/styles";
+import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
+
 interface TemplateProps {
     templateId: string,
     realmApiRoute: string
@@ -18,6 +21,8 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
     const [isPreviousContentArea, setIsPreviouscontentArea] = useState(false);
     const [cursorPosition, setCursorPosition] = useState(0);
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}})
+    const userRole:string = localStorage.getItem('userRole') || '';
+    const themeColor:string = getThemeColorRole(userRole);
 
     const getDetailTemplate = async () => {
         const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
@@ -128,6 +133,14 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
         if (cursorPosition) setCursorPosition(cursorPosition)
     }
 
+    const onHandleUpload = (content: string) => {
+        setNotifTemplate(prev => {
+         return{
+             ...prev,
+             content: content
+         }
+        })
+    };
 
     return (
         <Box className="container-wrapper w-full mr-11">
@@ -179,13 +192,27 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                         id="combo-box-demo"
                         value={notifTemplate.lang}
                         options={['EN-US', 'ZH-HK', 'ZH-CH']}
-                        sx={{ width: 300 }}
+                        sx={{ width: 300, color: '#79CA25', '&.Mui-checked': { color: '#79CA25'}}}
                         onChange={(_: SyntheticEvent, newValue: string | null) => onChangeLanguage(newValue)}
-                        renderInput={(params) => <TextField {...params} style={{ backgroundColor: 'white' }} />}
+                        renderInput={(params) => <TextField {...params} 
+                            sx={[styles.textField, { width: 400 }]}InputProps={{
+                            ...params.InputProps,
+                            sx: styles.inputProps
+                            }} 
+                        />}
                     />
                     <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
                         {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}
                     </Typography>
+                </Grid>
+
+                <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
+                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
+                        {t(`notification.drag_drop_content`)}
+                    </Typography>
+                    <FileUploadCard 
+                        onHandleUpload={onHandleUpload}
+                    />
                 </Grid>
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
@@ -194,7 +221,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                     </Typography>
                     <TextareaAutosize
                         id="content"
-                        style={{ width: '800px', backgroundColor: 'white', borderColor: '#E2E2E2', padding: '20px' }}
+                        style={{ width: '1200px', backgroundColor: 'white', padding: '10px', borderRadius: '12px' }}
                         value={notifTemplate?.content}
                         minRows={7}
                         onChange={(event) => {
@@ -220,6 +247,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                     <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
                         {notifTemplate.variables.map((item, index) => {
                             return <button
+                                key={index}
                                 className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
                                 style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
                                 onClick={(event) => onChangeContent(index)}
@@ -234,8 +262,8 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                         onClick={onSubmitUpdateTemplate}
                         sx={{
                             borderRadius: "20px",
-                            backgroundColor: "#79ca25",
-                            '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
+                            backgroundColor: themeColor,
+                            '&.MuiButton-root:hover': { bgcolor: themeColor },
                             width: '175px',
                             height: "44px",
                             fontSize: '16px',
