@@ -21,6 +21,7 @@ export const login = async (item: LoginItem) => {
         password: item.password
       }
     })
+    console.log(response, 'response')
     // console.log('Login user Success:', JSON.stringify(response.data))
     if (response.status === 200) {
       return {

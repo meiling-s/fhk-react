@@ -20,7 +20,7 @@ interface TemplateProps {
 }
 
 const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRoute }) => {
-    const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '', effFrmDate: dayjs().format('YYYY/MM/DDD'), effToDate: dayjs().format('YYYY/MM/DDD') })
+    const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '', effFromDate: dayjs().format('YYYY-MM-DD'), effToDate: dayjs().format('YYYY-MM-DD') })
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}, title: {status: false, message: ''}})
@@ -41,7 +41,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                     senders: notif?.senders,
                     receivers: notif?.receivers,
                     updatedBy: notif?.updatedBy,
-                    effFrmDate: notif?.effFrmDate,
+                    effFromDate: notif?.effFromDate,
                     effToDate: notif?.effToDate,
                 }
             })
@@ -106,7 +106,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
             setNotifTemplate(prev => {
                 return {
                     ...prev,
-                    [type]: dayjs(value).format('YYYY/MM/DDD')
+                    [type]: dayjs(value).format('YYYY-MM-DD')
                 }
             })
         }
@@ -252,10 +252,10 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                                 {t('notification.modify_template.broadcast.start_valid_date')}
                             </Typography>
                             <DatePicker
-                                defaultValue={dayjs(notifTemplate.effFrmDate)}
+                                defaultValue={dayjs(notifTemplate.effFromDate)}
                                 sx={localstyles.datePicker(false)}
                                 maxDate={dayjs(notifTemplate.effToDate)}
-                                onChange={(event) => onChangeDate(event, 'effFrmDate')}
+                                onChange={(event) => onChangeDate(event, 'effFromDate')}
                             />
 
                         </Grid>
@@ -267,7 +267,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                             <DatePicker
                                 sx={localstyles.datePicker(false)}
                                 // value={notifTemplate.effToDate}
-                                minDate={dayjs(notifTemplate.effFrmDate)}
+                                minDate={dayjs(notifTemplate.effFromDate)}
                                 defaultValue={dayjs(notifTemplate.effToDate)}
                                 onChange={(event) => onChangeDate(event, 'effToDate')}
                             />
