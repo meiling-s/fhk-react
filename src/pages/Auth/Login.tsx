@@ -83,7 +83,7 @@ const Login = () => {
         let realmApiRoute = ''
         switch(loginTo){
           case "astd":
-            realmApiRoute = 'astd'
+            realmApiRoute = 'account'
             navigate("/astd");
             break;
           case "collector":
