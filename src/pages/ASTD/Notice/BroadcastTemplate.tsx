@@ -13,7 +13,7 @@ import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../ut
 import CustomField from "../../../components/FormComponents/CustomField";
 import CustomTextField from "../../../components/FormComponents/CustomTextField";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
-
+import { toast } from 'react-toastify'
 interface TemplateProps {
     templateId: string,
     realmApiRoute: string
@@ -73,16 +73,16 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
     }, [notifTemplate.content, notifTemplate.lang])
 
     const onSubmitUpdateTemplate = async () => {
-        if(errors.lang.status || errors.content.status){
+        if(errors.lang.status || errors.content.status || errors.title.status){
             showErrorToast(t('common.editFailed'))
             return
         } else {
             const response = await updateNotifTemplateBroadcast(templateId, notifTemplate, realmApiRoute)
             if (response) {
-                showSuccessToast(t('common.editSuccessfully'))
+                showSuccessToast(t('common.editSuccessfully' + ' ' + notifTemplate.content))
                 setTimeout(() => {
                     navigate(`/${realmApiRoute}/notice`)
-                }, 1000);
+                }, 2000);
 
             } else {
                 showErrorToast(t('common.editFailed'))
@@ -144,6 +144,33 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
         }
        })
     };
+
+    const showErrorToast = (msg: string) => {
+        toast.error(msg, {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light'
+        })
+      }
+      
+     const showSuccessToast = (msg: string) => {
+        toast.info(msg, {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          style: {width: 800}
+        })
+      }
 
     return (
         <Box className="container-wrapper w-full mr-11">
