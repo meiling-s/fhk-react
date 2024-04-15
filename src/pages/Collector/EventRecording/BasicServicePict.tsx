@@ -66,6 +66,7 @@ const BasicServicePicture = () => {
 
   useEffect(() => {
     const validate = async () => {
+      setValidation([])
       //do validation here
       const tempV: formValidate[] = []
       startDate?.toString() == '' &&
@@ -106,7 +107,7 @@ const BasicServicePicture = () => {
           type: 'error'
         })
 
-        if(dayjs(startDate).format('YYYY-MM-DD') === dayjs(endDate).format('YYYY-MM-DD')) {
+        if(dayjs(startDate).format('YYYY-MM-DD HH:mm') >= dayjs(endDate).format('YYYY-MM-DD HH:mm')) {
           tempV.push({
             field: `${t('report.collectionPoints')} ${t('report.dateAndTime')}`,
             problem: formErr.startDateBehindEndDate,
@@ -117,7 +118,7 @@ const BasicServicePicture = () => {
     }
 
     validate()
-  }, [startDate, endDate, place, serviceImages])
+  }, [startDate, endDate, place, serviceImages,numberOfPeople])
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
     return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
@@ -151,14 +152,14 @@ const BasicServicePicture = () => {
       if (result) {
         showSuccessToast()
         setTrySubmited(false)
-
+        resetData()
       } else {
         showErrorToast()
       }
     } else {
       setTrySubmited(true)
     }
-    resetData()
+    
   }
 
   const showErrorToast = () => {
@@ -312,6 +313,7 @@ const BasicServicePicture = () => {
                 placeholder={t('report.pleaseEnterAddress')}
                 onChange={(event) => setPlace(event.target.value)}
                 multiline={true}
+                value={place}
                 error={checkString(place)}
               />
             </CustomField>
@@ -319,6 +321,7 @@ const BasicServicePicture = () => {
               <CustomTextField
                 id="numberOfPeople"
                 placeholder={t('report.pleaseEnterNumberOfPeople')}
+                value={numberOfPeople}
                 onChange={(event) => setNumberOfPeople(event.target.value)}
                 error={checkNumber(numberOfPeople)}
               />

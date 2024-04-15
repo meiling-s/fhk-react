@@ -32,21 +32,13 @@ export const getAllWarehouse = async (page: number, size: number) => {
         page: page,
         size: size
       },
-      headers: {
-        AuthToken: token.authToken
-      }
+      // headers: {
+      //   AuthToken: token.authToken
+      // }
     })
 
     return response
   } catch (e: any) {
-    console.error('Get all warehouse failed:', e)
-
-    const errCode = e?.response.status
-    if (errCode === 401) {
-      localStorage.clear()
-      window.location.href = '/'
-    }
-
     return null
   }
 }

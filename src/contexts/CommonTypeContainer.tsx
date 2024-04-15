@@ -25,11 +25,9 @@ import {
   GET_VEHICLE_TYPE,
   GET_PROCESS_LIST,
   GET_CONTRACT_LOGISTIC,
-  GET_LOGISTICLIST_LOGISTIC
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
-import { AnyARecord } from 'dns'
 
 const CommonType = () => {
   const [colPointType, setColPointType] = useState<colPointType[]>()
@@ -43,7 +41,6 @@ const CommonType = () => {
   const [vehicleType, setVehicleType] = useState<vehicleType[]>()
   const [processType, setProcessType] = useState<ProcessType[]>()
   const [contractLogistic, setContractLogistic] = useState<contract[]>()
-  const [logisticAdminList, setLogisticAdminList] = useState<logisticList[]>()
 
   const getColPointType = async () => {
     var colPointType = []
@@ -216,24 +213,6 @@ const CommonType = () => {
     }
   }
 
-  const getLogisticAdminList = async () => {
-    const token = returnApiToken()
-
-    try {
-      var response = await axiosInstance({
-        ...GET_LOGISTICLIST_LOGISTIC(token.decodeKeycloack),
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
-      })
-      // console.log('Get logistic list success:', JSON.stringify(response.data))
-
-      const logistic = response.data.content
-      setLogisticAdminList(logistic)
-    } catch (e) {
-      // console.error('Get logistic list failed:', e)
-      return null
-    }
-  }
-
   const getContractLogistic = async () => {
     const token = returnApiToken()
     try {
@@ -260,7 +239,6 @@ const CommonType = () => {
     getCollectorList()
     getManuList()
     getProcessList()
-    getLogisticAdminList()
     getContractLogistic()
   }, [])
 
@@ -275,7 +253,6 @@ const CommonType = () => {
     collectorList,
     manuList,
     processType,
-    logisticAdminList,
     contractLogistic
   }
 }

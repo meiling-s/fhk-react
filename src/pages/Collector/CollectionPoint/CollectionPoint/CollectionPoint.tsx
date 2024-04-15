@@ -71,7 +71,6 @@ const CollectionPoint = () => {
   }
 
   const navigate = useNavigate();
-  console.log(hoveredCard)
   
   return (
     <>

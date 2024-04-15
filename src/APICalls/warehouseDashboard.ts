@@ -46,14 +46,6 @@ export const getWeightbySubtype = async (
 
     return response
   } catch (e: any) {
-    console.error(`Get capacity warehouse subtype ${warehouseId} failed:`, e)
-
-    const errCode = e?.response.status
-      if(errCode === 401 ){
-        localStorage.clear();
-        window.location.href = '/';
-      }
-   
     return null
   }
 }
