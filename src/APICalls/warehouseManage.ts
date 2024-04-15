@@ -7,7 +7,8 @@ import {
   UPDATE_RECYCLE_CAPACITY_BY_ID,
   UPDATE_WAREHOUSE_STATUS_BY_ID,
   GET_RECYCLE_TYPE,
-  GET_RECYCLE_TYPE_BY_ID
+  GET_RECYCLE_TYPE_BY_ID,
+  MANUFACTURER_GET_ALL_WAREHOUSE
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -20,6 +21,10 @@ const administratorAPI = {
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
 }
 
+const manufacturerPointAPI = {
+  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.manufacturer
+}
+
 //get all warehouse
 export const getAllWarehouse = async (page: number, size: number) => {
   try {
@@ -27,7 +32,7 @@ export const getAllWarehouse = async (page: number, size: number) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_ALL_WAREHOUSE(token.decodeKeycloack),
+      ...GET_ALL_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack),
       params: {
         page: page,
         size: size
@@ -50,7 +55,7 @@ export const getWarehouseById = async (warehouseId: number) => {
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
+      ...GET_WAREHOUSE_BY_ID(token.realmApiRoute, warehouseId, token.decodeKeycloack),
       headers: {
         AuthToken: token.authToken
       }
@@ -69,7 +74,7 @@ export const createWarehouse = async (data: any) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...ADD_WAREHOUSE(token.decodeKeycloack),
+      ...ADD_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack),
       baseURL: collectionPointAPI.baseURL,
       data: data,
       headers: {
@@ -164,6 +169,37 @@ export const getRecycleTypeById = async (recycTypeId: string) => {
     return response
   } catch (e) {
     console.error('Get recycle type by id failed:', e)
+    return null
+  }
+}
+
+
+export const manufacturerGetAllWarehouse = async (page: number, size: number) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.manufacturer,
+      ...MANUFACTURER_GET_ALL_WAREHOUSE(token.decodeKeycloack),
+      params: {
+        page: page,
+        size: size
+      },
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+
+    return response
+  } catch (e: any) {
+    console.error('Get all warehouse failed:', e)
+
+    const errCode = e?.response.status
+    if (errCode === 401) {
+      localStorage.clear()
+      window.location.href = '/'
+    }
+
     return null
   }
 }

@@ -154,6 +154,8 @@ const Router = () => {
           <Route path="/manufacturer/shipment" element={<RecycleShipment /> } />
           <Route path="/manufacturer/checkout" element={<CheckoutRequest /> } />
           <Route path="/manufacturer/account" element={<LogisticAccount />} />
+          <Route path="/manufacturer/inventory" element={<Inventory/>}/>
+          <Route path="/manufacturer/setting" element={<Settings/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

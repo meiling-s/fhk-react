@@ -15,7 +15,7 @@ export const getAllCheckInRequests = async (page: number, size: number, query?: 
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...GET_ALL_CHECKIN_REQUESTS(token.decodeKeycloack),
+      ...GET_ALL_CHECKIN_REQUESTS(token.realmApiRoute, token.decodeKeycloack),
       baseURL: warehouseAPI.baseURL,
       params:{
         page: page,
@@ -42,7 +42,7 @@ export const updateCheckinStatus = async (
  
   try {
     const response = await axiosInstance({
-      ...UPDATE_CHECK_IN_STATUS(chkInId, token.decodeKeycloack),
+      ...UPDATE_CHECK_IN_STATUS(token.realmApiRoute, chkInId, token.decodeKeycloack),
       baseURL: warehouseAPI.baseURL,
       data: data,
       headers: {
