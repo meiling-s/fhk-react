@@ -494,7 +494,13 @@
     "picturesUploadedToFacebook": "Pictures uploaded to Facebook",
     "shareDate": "Share date",
     "regulatedWEEESubmittedToRecyclers": "Regulated waste electrical and electronic equipment (REE) submitted to recyclers (with date)",
-    "fluorescentLampsSubmittedToRecyclers": "Fluorescent lamps and tubes submitted to recyclers (with date)"
+    "fluorescentLampsSubmittedToRecyclers": "Fluorescent lamps and tubes submitted to recyclers (with date)",
+    "please_enter": "Please Enter",
+    "nature": "Nature",
+    "speaker": "Speaker",
+    "service_type": "Service type",
+    "additional": "Additional",
+    "other_services": "Other services"
   },
   "vehicle": {
     "vehicle": "Vehicle",
