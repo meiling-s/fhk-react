@@ -97,23 +97,15 @@ const WarehouseDashboard: FunctionComponent = () => {
   }, [selectedWarehouse, i18n.language])
 
   const initWarehouse = async () => {
-    const role = localStorage.getItem(localStorgeKeyName.role)
-    let result = null
-    if (role === 'manufacturer') {
-      result = await manufacturerGetAllWarehouse(0, 20)
-    } else {
-      result = await getAllWarehouse(0, 20)
-    }
-    if (result) {
+    const result = await getAllWarehouse(0, 20)
+     if(result) {
       let capacityTotal = 0
       let warehouse: il_item[] = []
       const data = result.data.content
       data.forEach((item: any) => {
-
         item.warehouseRecyc?.forEach((recy: any) => {
           capacityTotal += recy.recycSubTypeCapacity;
         });
-
         var warehouseName = ''
         switch (i18n.language) {
           case 'enus':
@@ -129,14 +121,11 @@ const WarehouseDashboard: FunctionComponent = () => {
             warehouseName = item.warehouseNameTchi
             break
         }
-
         warehouse.push({
           id: item.warehouseId,
           name: warehouseName
         })
-
       });
-
       setWarehouseList(warehouse)
       if (warehouse.length > 0) setSelectedWarehouse(warehouse[0])
       setTotalCapacity(capacityTotal)

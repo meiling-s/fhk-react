@@ -165,7 +165,7 @@ function MainDrawer() {
       "Process out recyclables": {
         name: t("processRecord.processingRecords"),
         icon: <DOCUMENT_ICON />,
-        onClick: () => navigate("/collector/processRecord"),
+        onClick: () => navigate(`/${realmApiRoute}/processRecord`), 
         collapse: false,
       },
       Staff: {
@@ -380,7 +380,6 @@ function MainDrawer() {
     }
   }
   // 20240129 add function list daniel keung end
-  console.log(role);
   // 20240129 add function list daniel keung start
   /*   switch (role) {
     case 'astd':

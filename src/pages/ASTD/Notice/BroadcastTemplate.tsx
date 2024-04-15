@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Grid, TextField, TextareaAutosize, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Grid, TextField, Typography } from "@mui/material";
 import { LEFT_ARROW_ICON } from "../../../themes/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -9,7 +9,10 @@ import dayjs from "dayjs";
 import { styles } from "../../../constants/styles";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { showErrorToast, showSuccessToast } from "../../../utils/utils";
+import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
+import CustomField from "../../../components/FormComponents/CustomField";
+import CustomTextField from "../../../components/FormComponents/CustomTextField";
+import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 
 interface TemplateProps {
     templateId: string,
@@ -20,7 +23,9 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
     const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '', effFrmDate: dayjs().format('YYYY/MM/DDD'), effToDate: dayjs().format('YYYY/MM/DDD') })
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}})
+    const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}, title: {status: false, message: ''}})
+    const userRole:string = localStorage.getItem('userRole') || '';
+    const themeColor:string = getThemeColorRole(userRole);
 
     const getDetailTemplate = async () => {
         const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
@@ -107,6 +112,39 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
         }
     }
 
+    const onChangeTitle = (title: string | null) => {
+        if (title) {
+            setNotifTemplate(prev => {
+                return {
+                    ...prev,
+                    title
+                }
+            })
+            setErrors(prev => {
+                return{
+                    ...prev,
+                    title: {status: false, message: ''}
+                }
+            })
+        } else {
+            setErrors(prev => {
+                return{
+                    ...prev,
+                    title: {status: true, message: t('form.error.shouldNotBeEmpty')}
+                }
+            })
+        }
+    }
+
+    const onHandleUpload = (content: string) => {
+       setNotifTemplate(prev => {
+        return{
+            ...prev,
+            content: content
+        }
+       })
+    };
+
     return (
         <Box className="container-wrapper w-full mr-11">
             <LocalizationProvider
@@ -147,8 +185,15 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                         <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                             {t('notification.modify_template.broadcast.title')}
                         </Typography>
-                        <Typography style={{ fontSize: '16px', color: 'black', fontWeight: '700' }}>
-                            {notifTemplate.title}
+                        <CustomTextField
+                            id="eventName"
+                            placeholder={t('notification.modify_template.broadcast.title')}
+                            value={notifTemplate?.title}
+                            onChange={(event) =>  onChangeTitle(event.target.value)}
+                            sx={{ width: '400px', color: 'black', fontSize: 16, fontWeight: 'medium' }}
+                        />
+                        <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
+                            {errors.title.status ? t('form.error.shouldNotBeEmpty') : ''}
                         </Typography>
                     </Grid>
 
@@ -161,9 +206,14 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                             id="combo-box-demo"
                             value={notifTemplate.lang}
                             options={['EN-US', 'ZH-HK', 'ZH-CH']}
-                            sx={{ width: 300 }}
+                            sx={{ width: 300, color: '#79CA25', '&.Mui-checked': { color: '#79CA25'}}}
                             onChange={(_: SyntheticEvent, newValue: string | null) => onChangeLanguage(newValue)}
-                            renderInput={(params) => <TextField {...params} style={{ backgroundColor: 'white' }} />}
+                            renderInput={(params) => <TextField {...params} 
+                                sx={[styles.textField, { width: 400 }]}InputProps={{
+                                ...params.InputProps,
+                                sx: styles.inputProps
+                              }} 
+                            />}
                         />
                         <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
                             {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}
@@ -175,7 +225,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                                 {t('notification.modify_template.broadcast.start_valid_date')}
                             </Typography>
                             <DatePicker
-                                defaultValue={dayjs()}
+                                defaultValue={dayjs(notifTemplate.effFrmDate)}
                                 sx={localstyles.datePicker(false)}
                                 maxDate={dayjs(notifTemplate.effToDate)}
                                 onChange={(event) => onChangeDate(event, 'effFrmDate')}
@@ -191,31 +241,39 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                                 sx={localstyles.datePicker(false)}
                                 // value={notifTemplate.effToDate}
                                 minDate={dayjs(notifTemplate.effFrmDate)}
-                                defaultValue={dayjs()}
+                                defaultValue={dayjs(notifTemplate.effToDate)}
                                 onChange={(event) => onChangeDate(event, 'effToDate')}
                             />
                         </Grid>
 
                     </Grid>
 
-                    <Grid display={'flex'} direction={'column'} rowGap={1}>
+                    <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
                         <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
-                            {t('notification.modify_template.broadcast.content')}
+                            {t(`notification.drag_drop_content`)}
                         </Typography>
-                        <TextareaAutosize
-                            id="content"
-                            style={{ width: '800px', backgroundColor: 'white', borderColor: '#E2E2E2', padding: '20px' }}
-                            value={notifTemplate?.content}
-                            minRows={5}
-                            onChange={(event) => {
-                                setNotifTemplate(prev => {
-                                    return {
-                                        ...prev,
-                                        content: event.target.value
-                                    }
-                                })
-                            }}
+                        <FileUploadCard 
+                             onHandleUpload={onHandleUpload}
                         />
+                    </Grid>
+                    <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
+                        <CustomField label={t('notification.modify_template.broadcast.content')}>
+                            <CustomTextField
+                                id="content"
+                                placeholder={t('notification.modify_template.broadcast.content')}
+                                value={notifTemplate?.content}
+                                onChange={(event) => {
+                                    setNotifTemplate(prev => {
+                                        return {
+                                            ...prev,
+                                            content: event.target.value
+                                        }
+                                    })
+                                }}
+                                sx={{width: 1200}}
+                                multiline={true}
+                            />
+                        </CustomField>
                         <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
                             {errors.content.status ? t('form.error.shouldNotBeEmpty') : ''}
                         </Typography>
@@ -223,12 +281,12 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
 
                     <Grid display={'flex'} direction={'column'}>
                         <Button
-                            disabled = {errors.content.status || errors.lang.status}
+                            disabled = {errors.content.status || errors.lang.status || errors.title.status}
                             onClick={onSubmitUpdateTemplate}
                             sx={{
                                 borderRadius: "20px",
-                                backgroundColor: "#79ca25",
-                                '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
+                                backgroundColor: themeColor,
+                                '&.MuiButton-root:hover': { bgcolor: themeColor },
                                 width: '175px',
                                 height: "44px",
                                 fontSize: '16px',

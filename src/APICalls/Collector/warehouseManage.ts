@@ -25,17 +25,9 @@ export const getAllCheckInRequests = async (page: number, size: number, query?: 
         senderName: query?.senderName,
         senderAddr: query?.senderAddr
       }
-      // headers: {
-      //   AuthToken: token.authToken
-      // }
     })
     return response
   } catch (e: any) {
-    if (e.response.status == '401') {
-      //return 401 if token already invalid
-      const unauthorized = e.response.status 
-      return unauthorized
-    }
     // console.error('Get all check-in request failed:', e)
     return null
   }
