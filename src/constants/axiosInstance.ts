@@ -1,30 +1,11 @@
 import axios from "axios";
 import { localStorgeKeyName } from '../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
-import { returnApiToken } from "../utils/utils";
 
-
-
-const authToken = () => {
-   return localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
-    // const token = returnApiToken()
-    // return token.authToken
-};
-const refreshToken = () => {
-    return localStorage.getItem(localStorgeKeyName.refreshToken) || ''
-}
-
-const axiosInstance = axios.create({
-    headers: {
-        'AuthToken': authToken()
-    },
-})
+const axiosInstance = axios.create()
 
 const refreshTokenAxiosInstance = axios.create({
     baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
-    headers: {
-        AuthToken: refreshToken()
-    },
 })
 
 export const parseJwtToken = (token: string, tokenPart: number) => {
@@ -35,19 +16,23 @@ export const parseJwtToken = (token: string, tokenPart: number) => {
     }
 }
 
-const isTokenExpired = () => {
+const isTokenExpired = (authToken: string) => {
     // this case if when the user is not yet logged in
     // return false if access token in localStorage is not yet initialized
-    if (authToken() === '') return false;
-    const decodedToken = parseJwtToken(authToken(), 1);
+    if (authToken === '') return false;
+    const decodedToken = parseJwtToken(authToken, 1);
     const currentTime = Date.now() / 1000;
 
+    // For ease of testing, simulated tokens expire
+    // console.log('Token expiration time: ' + (decodedToken.exp - currentTime - 7130))
     return decodedToken.exp < currentTime;
 }
 
 const getNewToken = async () => {
     try {
-        const req = await refreshTokenAxiosInstance.post(`/api/v1/administrator/refreshToken/${refreshToken()}`);
+        const refreshToken = localStorage.getItem(localStorgeKeyName.refreshToken) || ''
+
+        const req = await refreshTokenAxiosInstance.post(`/api/v1/administrator/refreshToken/${refreshToken}`);
 
         const data = req.data;
 
@@ -59,18 +44,34 @@ const getNewToken = async () => {
         console.log('Failed to refresh the token: ', e.response.data);
         localStorage.clear();
         window.location.href = '/';
+        throw e
     }
 }
 
 axiosInstance.interceptors.request.use(
     async (config) => {
-        console.log('isTokenExpired: ' +  isTokenExpired())
-        if (isTokenExpired()) {
-            const newAccessToken = await getNewToken();
-            config.headers.AuthToken = `${newAccessToken}`;
+        const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || '';
+        config.headers.AuthToken = accessToken;
+        // console.log('isTokenExpired: ' +  isTokenExpired(accessToken))
+        if (config.url !== '/api/v1/administrator/login' && isTokenExpired(accessToken)) {
+            try {
+                const newAccessToken = await getNewToken();
+                config.headers.AuthToken = newAccessToken;
+            } catch (error) {
+            throw error;
+            }
         }
         
         return config;
+    },
+    async error => {
+        return Promise.reject(error);
+    },
+);
+
+axiosInstance.interceptors.response.use(
+    response => {
+        return response
     },
     async (error) => {
         const originalRequest = error.config;
@@ -98,6 +99,6 @@ axiosInstance.interceptors.request.use(
         
         return Promise.reject(error);
     }
-);
+)
 
 export default axiosInstance;

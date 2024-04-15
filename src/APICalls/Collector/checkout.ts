@@ -33,11 +33,6 @@ export const getAllCheckoutRequest = async (page: number, size: number, query: q
     })
     return response
   } catch (e: any) {
-    if (e.response.status == '401') {
-      //return 401 if token already invalid
-      const unauthorized = e.response.status 
-      return unauthorized
-    }
     console.error('Get all checkout failed:', e)
     return null
   }
