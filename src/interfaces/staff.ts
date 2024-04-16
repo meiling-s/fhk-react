@@ -15,6 +15,7 @@ export type Staff = {
     updatedBy: string
     createdAt: string
     updatedAt: string
+    fullTimeFlg?: boolean
   }
 
   
@@ -33,6 +34,7 @@ export type Staff = {
     salutation: string
     createdBy: string
     updatedBy: string
+    fullTimeFlg?: boolean
   }
   
   export type EditStaff = {
@@ -47,5 +49,6 @@ export type Staff = {
     email: string
     salutation: string
     updatedBy: string
+    fullTimeFlg?: boolean
   }
   

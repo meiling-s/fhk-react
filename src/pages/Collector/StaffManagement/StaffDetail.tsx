@@ -20,8 +20,8 @@ import { formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
-
-import { localStorgeKeyName } from '../../../constants/constant'
+import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
+import { localStorgeKeyName, Realm } from '../../../constants/constant'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -61,8 +61,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+  const realm = localStorage.getItem(localStorgeKeyName.realm);
+  const [contractType, setContractType] = useState<number>(0)
 
-  const staffField = [
+  let staffField = [
     {
       label: t('staffManagement.loginName'),
       placeholder: t('staffManagement.enterName'),
@@ -106,6 +108,18 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       type: 'text'
     }
   ]
+
+  if(realm === Realm.collector){
+    staffField = [
+      ...staffField, 
+      {
+        label: t('staffManagement.fullTimeFlg'),
+        placeholder: t('staffManagement.fullTimeFlg'),
+        field: 'fullTimeFlg',
+        type: 'boolean'
+      }
+    ]
+  }
 
   useEffect(() => {
     initLoginIdList()
@@ -154,6 +168,11 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         titleId: selectedItem.titleId
       })
       setSelectedLoginId(selectedItem.loginId)
+      if(realm === Realm.collector && selectedItem?.fullTimeFlg){
+        setContractType(0)
+      } else if(realm === Realm.collector && !selectedItem?.fullTimeFlg) {
+        setContractType(1)
+      }
     }
   }
 
@@ -249,6 +268,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       updatedBy: loginName
     }
 
+    if(realm === Realm.collector) {
+      staffData.fullTimeFlg = contractType === 0 ? true: false
+    }
+
     if (action == 'add') {
       handleCreateStaff(staffData)
     } else {
@@ -289,6 +312,11 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       salutation: 'salutation',
       updatedBy: loginName
     }
+
+    if(realm === Realm.collector){
+      editData.fullTimeFlg = contractType === 0 ? true : false
+    }
+
     console.log('handleEditStaff', validation.length)
     if (validation.length == 0) {
       if (selectedItem != null) {
@@ -327,6 +355,17 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       }
     }
   }
+
+  const contractTypeList = [
+    {
+      id: 'fulltime',
+      name: t('staffManagement.fullTimeFlg')
+    },
+    {
+      id: 'partime',
+      name: t('staffManagement.partTime')
+    },
+  ]
 
   return (
     <div className="add-vehicle">
@@ -435,7 +474,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                     />
                   )}
                 </CustomField>
-              ) : (
+              ) : item.type === 'option' ? (
                 <CustomField label={t('staffManagement.position')} mandatory>
                   <CustomItemList
                     items={staffTitleList || []}
@@ -446,6 +485,14 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                     defaultSelected={selectedItem?.titleId}
                   />
                 </CustomField>
+              ):(
+                <CustomField label={t('staffManagement.contractType')}>
+                    <CustomItemListBoolean
+                      items={contractTypeList}
+                      setServiceFlg={setContractType}
+                      value={contractType}
+                    ></CustomItemListBoolean>
+                  </CustomField>
               )
             )}
             <Grid item sx={{ width: '100%' }}>

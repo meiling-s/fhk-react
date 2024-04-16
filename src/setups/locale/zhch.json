@@ -597,13 +597,16 @@
     "employeeChineseCn": "员工中文简体中文姓名",
     "position": "职位",
     "loginName": "登录名",
-    "enterLoginName": "Enter Login Name",
+    "enterLoginName": "输入登录名",
     "contactNumber": "联系电话",
     "lastLogin": "最后登录",
     "email": "电子邮件",
     "enterName": "请输入姓名",
     "enterContactNo": "请输入联系电话",
-    "enterEmail": "请输入电子邮件地址"
+    "enterEmail": "请输入电子邮件地址",
+    "fullTimeFlg": "全职",
+    "partTime": "兼职",
+    "contractType": "合同类型"
   },
   "roster": {
     "addSchedule": "添加日程",
