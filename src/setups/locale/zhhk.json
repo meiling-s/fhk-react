@@ -941,5 +941,29 @@
     "download": "下載",
     "start_date": "日期由",
     "end_date": "至"
+  },
+  "purchase_order": {
+    "all_order": "所有訂單",
+    "enquiry_po": "訂單",
+    "table": {
+      "created_datetime": "建立日期",
+      "order_number": "訂單編號",
+      "pico_id": "運單編號",
+      "place_receipt": "收貨地點",
+      "receipt_date_time": "收貨日期及時間",
+      "status": "狀態",
+      "operation": "操作",
+      "approve": "接受",
+      "reject": "拒絕"
+    },
+    "detail": {
+      "order": "訂單",
+      "contact_info": "聯絡資料",
+      "receiving_company_name": "收件公司名稱",
+      "contact_number": "聯絡人號碼",
+      "payment_method": "付款方式",
+      "order_info": "訂單資料",
+      "pico_id": "回收運單編號"
+    }
   }
 }

@@ -38,6 +38,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import ViewQuiltOutlinedIcon from "@mui/icons-material/ViewQuiltOutlined";
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { dynamicpath, returnApiToken } from "../utils/utils";
 
 type MainDrawer = {
@@ -119,6 +120,12 @@ function MainDrawer() {
         name: t("pick_up_order.enquiry_pickup_order"),
         icon: <SHIPPING_CAR_ICON />,
         onClick: () => navigate(`/${realm}/pickupOrder`),
+        collapse: false,
+      },
+      "Purchase order": {
+        name: t("purchase_order.enquiry_po"),
+        icon: <ShoppingCartOutlinedIcon />,
+        onClick: () => navigate('/manufacturer/purchaseOrder'),
         collapse: false,
       },
       "Job order": {
