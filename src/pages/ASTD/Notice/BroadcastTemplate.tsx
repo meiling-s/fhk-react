@@ -267,7 +267,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                             <DatePicker
                                 value={dayjs(notifTemplate.effToDate)}
                                 sx={localstyles.datePicker(false)}
-                                minDate={dayjs(notifTemplate.effToDate)}
+                                minDate={dayjs(notifTemplate.effFromDate)}
                                 onChange={(event) => onChangeDate(event, 'effToDate')}
                             />
                         </Grid>
