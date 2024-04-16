@@ -143,7 +143,7 @@ export const getCommonTypes = async () => {
         const auth = returnApiToken()
 
         response = await axiosInstance({
-            ...GET_CONTRACT_LIST(realmApiRoute, auth.tenantId),
+            ...GET_CONTRACT(auth.realmApiRoute, auth.tenantId),
             baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });
