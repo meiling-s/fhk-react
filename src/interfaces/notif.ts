@@ -49,6 +49,6 @@ export type UpdateNotifTemplateBroadcast = {
   senders: string[]
   receivers: string[]
   updatedBy: string
-  effFrmDate: string
+  effFromDate: string
   effToDate: string
 }
