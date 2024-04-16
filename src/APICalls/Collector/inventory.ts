@@ -10,7 +10,7 @@ export const getAllInventory = async (page: number, size: number) => {
 
       const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-        ...GET_INVENTORY(token.decodeKeycloack),
+        ...GET_INVENTORY(token.realmApiRoute, token.decodeKeycloack),
         params: {
           page: page,
           size: size

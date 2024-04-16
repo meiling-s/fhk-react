@@ -7,7 +7,8 @@ import {
   UPDATE_RECYCLE_CAPACITY_BY_ID,
   UPDATE_WAREHOUSE_STATUS_BY_ID,
   GET_RECYCLE_TYPE,
-  GET_RECYCLE_TYPE_BY_ID
+  GET_RECYCLE_TYPE_BY_ID,
+  MANUFACTURER_GET_ALL_WAREHOUSE
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -18,6 +19,10 @@ const collectionPointAPI = {
 
 const administratorAPI = {
   baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+}
+
+const manufacturerPointAPI = {
+  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.manufacturer
 }
 
 //get all warehouse
@@ -164,6 +169,37 @@ export const getRecycleTypeById = async (recycTypeId: string) => {
     return response
   } catch (e) {
     console.error('Get recycle type by id failed:', e)
+    return null
+  }
+}
+
+
+export const manufacturerGetAllWarehouse = async (page: number, size: number) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.manufacturer,
+      ...MANUFACTURER_GET_ALL_WAREHOUSE(token.decodeKeycloack),
+      params: {
+        page: page,
+        size: size
+      },
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+
+    return response
+  } catch (e: any) {
+    console.error('Get all warehouse failed:', e)
+
+    const errCode = e?.response.status
+    if (errCode === 401) {
+      localStorage.clear()
+      window.location.href = '/'
+    }
+
     return null
   }
 }
