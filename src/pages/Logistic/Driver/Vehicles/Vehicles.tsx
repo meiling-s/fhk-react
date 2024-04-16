@@ -60,9 +60,9 @@ const Vehicles: FunctionComponent = () => {
  
   useEffect(() => {
     initVehicleList()
-  }, [])
+  }, [page])
 
-  const initVehicleList = async () => {
+  const initVehicleList = useCallback(async () => {
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
     if(data) {
@@ -89,7 +89,7 @@ const Vehicles: FunctionComponent = () => {
       setVehicleList(vehicleMapping)
       setTotalData(data.totalPages)
     }
-  }
+  }, [page, pageSize])
 
   const columns: GridColDef[] = [
     {
