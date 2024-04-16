@@ -171,7 +171,7 @@ function RejectForm({
               component="h2"
               sx={{ fontWeight: "bold" }}
             >
-               {t('check_out.confirm_reject')}
+               {t('check_in.confirm_reject')}
             </Typography>
           </Box>
           <Box>
