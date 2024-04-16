@@ -129,6 +129,16 @@ export const UPDATE_CHECK_IN_STATUS = (
   url: `api/v1/${realmApiRoute}/checkin/${table}/status/${chkInId}`,
 });
 
+
+//get checkin reason list
+export const GET_CHECKIN_REASON = (
+  realmApiRoute: string,
+  tenantId: string,
+): AxiosRequestConfig => ({
+  method: "get",
+  url: `api/v1/${realmApiRoute}/reason/${tenantId}/4`,
+});
+
 //collector/pickupOrder
 export const GET_ALL_PICK_UP_ORDER = (
   tenantId: string
@@ -168,14 +178,14 @@ export const GET_LOGISTICLIST = (realmApiRoute: string, table: string): AxiosReq
   url: `api/v1/${realmApiRoute}/logisticlist/${table}`,
 });
 
-export const GET_COLLECTORLIST = (table: string): AxiosRequestConfig => ({
+export const GET_COLLECTORLIST = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/collectorlist/${table}`,
+  url: `api/v1/${realmApiRoute}/collectorlist/${table}`,
 });
 
-export const GET_MANULIST = (table: string): AxiosRequestConfig => ({
+export const GET_MANULIST = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/manulist/${table}`,
+  url: `api/v1/${realmApiRoute}/manulist/${table}`,
 });
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
@@ -321,11 +331,21 @@ export const GET_CHECKOUT_REQUEST_BY_ID = (
 });
 
 export const UPDATE_CHECKOUT_REQUEST_STATUS = (
+  realmApiRoute: string,
   chkOutId: number,
   table: string
 ): AxiosRequestConfig => ({
   method: "patch",
-  url: `api/v1/collectors/checkout/${table}/status/${chkOutId}`,
+  url: `api/v1/${realmApiRoute}/checkout/${table}/status/${chkOutId}`,
+});
+
+//get checkout reason list
+export const GET_CHECKOUT_REASON = (
+  realmApiRoute: string,
+  tenantId: string,
+): AxiosRequestConfig => ({
+  method: "get",
+  url: `api/v1/${realmApiRoute}/reason/${tenantId}/5`,
 });
 
 //recycle type
@@ -735,7 +755,7 @@ export const GET_STATUS_DETAIL = (status: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/statusGroup/${status}`,
 });
 
-//get reason list
+//get pickup order reason list
 export const GET_ALL_REASON = (
   tenantId: string,
   functionId: string | number

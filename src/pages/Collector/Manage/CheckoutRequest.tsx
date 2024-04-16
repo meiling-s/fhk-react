@@ -29,12 +29,11 @@ import { useNavigate } from 'react-router-dom'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 
-import CustomItemList, {
-  il_item
-} from '../../../components/FormComponents/CustomItemList'
+import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import {
   getAllCheckoutRequest,
-  updateCheckoutRequestStatus
+  updateCheckoutRequestStatus,
+  getCheckoutReasons
 } from '../../../APICalls/Collector/checkout'
 import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
 import CheckInDetails from './CheckOutDetails'
@@ -42,13 +41,12 @@ import { updateStatus } from '../../../interfaces/warehouse'
 import { CheckOut } from '../../../interfaces/checkout'
 
 import { useTranslation } from 'react-i18next'
-import dayjs from 'dayjs'
-import { format } from '../../../constants/constant'
 import { styles, primaryColor } from '../../../constants/styles'
 import { queryCheckout } from '../../../interfaces/checkout'
 import { localStorgeKeyName } from "../../../constants/constant";
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, showSuccessToast } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
+import i18n from '../../../setups/i18n'
 
 type TableRow = {
   id: number
@@ -67,6 +65,7 @@ type RejectForm = {
   onClose: () => void
   checkedCheckOut: number[]
   onRejected?: () => void
+  reasonList: any
 }
 
 type Confirm = {
@@ -194,37 +193,21 @@ const RejectModal: React.FC<RejectForm> = ({
   open,
   onClose,
   checkedCheckOut,
-  onRejected
+  onRejected,
+  reasonList
 }) => {
   const { t } = useTranslation()
-
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
-
-  const reasons: il_item[] = [
-    {
-      id: '1',
-      name: t('check_out.reason_1')
-    },
-    {
-      id: '2',
-      name: t('check_out.reason_2')
-    },
-    {
-      id: '3',
-      name: t('check_out.reason_3')
-    }
-  ]
 
   const handleRejectRequest = async (rejectReasonId: string[]) => {
     const rejectReason = rejectReasonId.map((id) => {
-      const reasonItem = reasons.find((reason) => reason.id === id)
+      const reasonItem = reasonList.find((reason: { id: string }) => reason.id === id)
       return reasonItem ? reasonItem.name : ''
     })
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
-    const reason = rejectReason
     const statReason: updateStatus = {
       status: 'REJECTED',
-      reason: reason,
+      reason: rejectReason,
       updatedBy: loginId
     }
 
@@ -276,7 +259,7 @@ const RejectModal: React.FC<RejectForm> = ({
             {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedCheckOut.length}
             </Typography> */}
-            <CustomItemList items={reasons} multiSelect={setRejectReasonId} itemColor={{bgColor: '#F0F9FF', borderColor: primaryColor}} />
+            <CustomItemList items={reasonList} multiSelect={setRejectReasonId} itemColor={{bgColor: '#F0F9FF', borderColor: primaryColor}} />
           </Box>
 
           <Box sx={{ alignSelf: 'center' }}>
@@ -324,6 +307,33 @@ const CheckoutRequest: FunctionComponent = () => {
     receiverName: "",
     receiverAddr: "",
   });
+  const [reasonList, setReasonList] = useState<any>([])
+
+  const getRejectReason = async() => {
+    let result = await getCheckoutReasons()
+    if ( result?.data?.content.length > 0) {
+      let reasonName = ""
+      switch (i18n.language) {
+        case 'enus':
+          reasonName = 'reasonNameEng'
+          break
+        case 'zhch':
+          reasonName = 'reasonNameSchi'
+          break
+        case 'zhhk':
+          reasonName = 'reasonNameTchi'
+          break
+        default:
+          reasonName = 'reasonNameEng'
+          break
+      }
+      result?.data?.content.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
+        item.id = item.reasonId
+        item.name = item[reasonName]
+      })
+      setReasonList(result?.data?.content)
+    }
+  }
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -431,14 +441,14 @@ const CheckoutRequest: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'receiverAddr',
-      headerName: t('check_in.receiver_addr'),
+      field: 'senderAddr',
+      headerName: t('check_out.sender_addr'),
       type: 'string',
       width: 200
     },
     {
-      field: 'receiverAddrGps',
-      headerName: t('check_out.arrival_location'),
+      field: 'receiverAddr',
+      headerName: t('check_out.receiver_addr'),
       width: 200,
       type: 'string'
     }
@@ -479,6 +489,7 @@ const CheckoutRequest: FunctionComponent = () => {
 
   useEffect(() => {
     getCheckoutRequest()
+    getRejectReason()
   }, [page, query.picoId, query.receiverName, query.receiverName])
 
   const updateQuery = (newQuery: Partial<queryCheckout>) => {
@@ -679,9 +690,12 @@ const CheckoutRequest: FunctionComponent = () => {
           setRejectModal(false)
         }}
         checkedCheckOut={checkedCheckOut}
+        reasonList={reasonList}
         onRejected={() => {
           setRejectModal(false)
-          setConfirmModal(true)
+          showSuccessToast(t('pick_up_order.rejected_success'))
+          resetPage()
+          // setConfirmModal(true)
         }}
       />
       <ApproveModal
@@ -691,7 +705,9 @@ const CheckoutRequest: FunctionComponent = () => {
         }}
         onApprove={() => {
           setApproveModal(false)
-          setConfirmModal(true)
+          showSuccessToast(t('pick_up_order.approved_success'))
+          resetPage()
+          // setConfirmModal(true)
         }}
         checkedCheckOut={checkedCheckOut}
       />

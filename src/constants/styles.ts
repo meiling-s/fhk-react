@@ -5,7 +5,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 // const theme = useTheme()
 // const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 const role = localStorage.getItem(localStorgeKeyName.role)
-// const role = 'manufacturer'
+console.log({role})
 export const primaryColor: string = role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
 export const primaryLightColor: string = role === 'manufacturer' || role === 'customer' ? '#F0F9FF' : '#E4F6DC'
 export const styles = {

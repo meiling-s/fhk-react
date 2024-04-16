@@ -138,8 +138,9 @@ function CustomItemList({
     return(
         <Box sx={localstyles.container}>
             {
-                items.map((item) => (
+                items.map((item, index) => (
                     <Button
+                        key={index}
                         variant="outlined"
                         sx={error? localstyles.error : returnTheme(item.id)}
                         onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}
