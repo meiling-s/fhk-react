@@ -24,7 +24,7 @@ import ProgressLine from '../../../components/ProgressLine'
 import StatusCard from '../../../components/StatusCard';
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 
-import { format } from '../../../constants/constant'
+import { format, localStorgeKeyName } from '../../../constants/constant'
 import dayjs from 'dayjs'
 
 import {
@@ -34,7 +34,7 @@ import {
   getCheckOutWarehouse,
   getCheckInOutWarehouse
 } from '../../../APICalls/warehouseDashboard'
-import { getAllWarehouse, getWarehouseById } from '../../../APICalls/warehouseManage'
+import { getAllWarehouse, getWarehouseById, manufacturerGetAllWarehouse } from '../../../APICalls/warehouseManage'
 import { CheckInOutWarehouse } from '../../../interfaces/warehouse'
 
 import { useTranslation } from 'react-i18next'
@@ -61,7 +61,7 @@ interface warehouseSubtype {
   subTypeId: string
   subtypeName: string
   weight: number
-  capacity:number
+  capacity: number
 }
 
 type RecycSubTypeCapacity = {
@@ -81,17 +81,18 @@ const WarehouseDashboard: FunctionComponent = () => {
   const [selectedWarehouse, setSelectedWarehouse] = useState<il_item | null>(null)
   const [warehouseSubtype, setWarehouseSubtype] = useState<warehouseSubtype[]>([])
   const [checkInOut, setCheckInOut] = useState<CheckInOutWarehouse[]>([])
+  const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute)
 
-  useEffect(()=>{
+  useEffect(() => {
     initWarehouse()
   }, [i18n.language])
 
-  useEffect(()=> {
-      initCapacity()
-      initCheckIn()
-      initCheckOut()
-      initWarehouseSubType()
-      initCheckInOut()
+  useEffect(() => {
+    initCapacity()
+    initCheckIn()
+    initCheckOut()
+    initWarehouseSubType()
+    initCheckInOut()
 
   }, [selectedWarehouse, i18n.language])
 
@@ -126,16 +127,16 @@ const WarehouseDashboard: FunctionComponent = () => {
         })
       });
       setWarehouseList(warehouse)
-      if(warehouse.length > 0 ) setSelectedWarehouse(warehouse[0])
+      if (warehouse.length > 0) setSelectedWarehouse(warehouse[0])
       setTotalCapacity(capacityTotal)
     }
   }
 
   const getWeightSubtypeWarehouse = async () => {
     //init weight for each subtype also calculate current subtype
-    if(selectedWarehouse){
+    if (selectedWarehouse) {
       const result = await getWeightbySubtype(parseInt(selectedWarehouse.id))
-      if(result) {
+      if (result) {
         const data = result.data
         //get weigt subtype
         //set current capacity warehouse
@@ -151,23 +152,23 @@ const WarehouseDashboard: FunctionComponent = () => {
   }
 
   const initCapacity = async () => {
-    if(selectedWarehouse){
+    if (selectedWarehouse) {
       const result = await getCapacityWarehouse(parseInt(selectedWarehouse.id))
-      if(result) setTotalCapacity(result.data)
+      if (result) setTotalCapacity(result.data)
     }
   }
 
   const initCheckIn = async () => {
-    if(selectedWarehouse){
-    const result = await getCheckInWarehouse(parseInt(selectedWarehouse.id))
-      if(result) setCheckIn(result.data)
+    if (selectedWarehouse) {
+      const result = await getCheckInWarehouse(parseInt(selectedWarehouse.id))
+      if (result) setCheckIn(result.data)
     }
   }
 
   const initCheckOut = async () => {
-    if(selectedWarehouse){
-    const result = await getCheckOutWarehouse(parseInt(selectedWarehouse.id))
-      if(result) setCheckOut(result.data)
+    if (selectedWarehouse) {
+      const result = await getCheckOutWarehouse(parseInt(selectedWarehouse.id))
+      if (result) setCheckOut(result.data)
     }
   }
 
@@ -216,18 +217,18 @@ const WarehouseDashboard: FunctionComponent = () => {
   }
 
   const initWarehouseSubType = async () => {
-    if(selectedWarehouse) {
+    if (selectedWarehouse) {
       const weightSubtype = await getWeightSubtypeWarehouse()
       const result = await getWarehouseById(parseInt(selectedWarehouse.id))
       // console.log("weightSubtype",weightSubtype)
 
-      if(result) {
+      if (result) {
         const data = result.data
         let subtypeWarehouse: warehouseSubtype[] = []
         var subTypeWeight = 0
-        data?.warehouseRecyc.forEach((item: any)=>{
-          const recyItem = mappingRecyName(item.recycTypeId , item.recycSubTypeId)
-          if(subTypeWeight) {
+        data?.warehouseRecyc.forEach((item: any) => {
+          const recyItem = mappingRecyName(item.recycTypeId, item.recycSubTypeId)
+          if (subTypeWeight) {
             subTypeWeight = item.recycSubTypeId in weightSubtype ? weightSubtype[item.recycSubTypeId] : 0;
           }
 
@@ -245,30 +246,30 @@ const WarehouseDashboard: FunctionComponent = () => {
   }
 
   const initCheckInOut = async () => {
-    if(selectedWarehouse){
-    const result = await getCheckInOutWarehouse(parseInt(selectedWarehouse.id))
-    if(result){
-      const data = result.data
-      let checkinoutMapping :CheckInOutWarehouse[] = []
-      data.map((item: any, index: number)=> {
-        checkinoutMapping.push(
-          createCheckInOutWarehouse(
-            item?.chkInId || index +  item?.chkInId,
-            item?.createdAt,
-            item?.status,
-            item?.senderName,
-            item?.receiverName,
-            item?.picoId,
-            item?.adjustmentFlg,
-            item?.logisticName,
-            item?.senderAddr,
-            item?.receiverAddr,
+    if (selectedWarehouse) {
+      const result = await getCheckInOutWarehouse(parseInt(selectedWarehouse.id))
+      if (result) {
+        const data = result.data
+        let checkinoutMapping: CheckInOutWarehouse[] = []
+        data.map((item: any, index: number) => {
+          checkinoutMapping.push(
+            createCheckInOutWarehouse(
+              item?.chkInId || index + item?.chkInId,
+              item?.createdAt,
+              item?.status,
+              item?.senderName,
+              item?.receiverName,
+              item?.picoId,
+              item?.adjustmentFlg,
+              item?.logisticName,
+              item?.senderAddr,
+              item?.receiverAddr,
+            )
           )
-        )
-      })
+        })
 
-      setCheckInOut(checkinoutMapping)
-    }
+        setCheckInOut(checkinoutMapping)
+      }
     }
   }
 
@@ -351,8 +352,8 @@ const WarehouseDashboard: FunctionComponent = () => {
 
   const onChangeWarehouse = (event: SelectChangeEvent) => {
     const warehouseId = event.target.value
-    const selectedWarehouse = warehouseList.find(item => item.id == warehouseId )
-    if(selectedWarehouse){
+    const selectedWarehouse = warehouseList.find(item => item.id == warehouseId)
+    if (selectedWarehouse) {
       setSelectedWarehouse(selectedWarehouse)
     }
   }
@@ -383,12 +384,12 @@ const WarehouseDashboard: FunctionComponent = () => {
             label={t('check_out.any')}
             onChange={onChangeWarehouse}
           >{
-            warehouseList?.map((item, index) => (
-            <MenuItem value={item?.id} key={index}>
-                {item?.name}
-            </MenuItem>
-            ))
-          }
+              warehouseList?.map((item, index) => (
+                <MenuItem value={item?.id} key={index}>
+                  {item?.name}
+                </MenuItem>
+              ))
+            }
           </Select>
         </FormControl>
       </Box>
@@ -424,8 +425,8 @@ const WarehouseDashboard: FunctionComponent = () => {
               ></ProgressLine>
             </Box>
 
-            <Typography fontSize={14} color={(currentCapacity/totalCapacity) * 100 > 70 ? 'red' : 'green'} fontWeight="light">
-              {(currentCapacity/totalCapacity) * 100 < 70 ? t('warehouseDashboard.thereStillEnoughSpace') :  t('warehouseDashboard.noMoreRoom')}
+            <Typography fontSize={14} color={(currentCapacity / totalCapacity) * 100 > 70 ? 'red' : 'green'} fontWeight="light">
+              {(currentCapacity / totalCapacity) * 100 < 70 ? t('warehouseDashboard.thereStillEnoughSpace') : t('warehouseDashboard.noMoreRoom')}
             </Typography>
           </Box>
           <Box
@@ -477,7 +478,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               <div className="text-sm font-bold mb-4">{t('warehouseDashboard.check-out')}</div>
               <div className="flex gap-1 items-baseline">
                 <Typography fontSize={22} color="white" fontWeight="bold">
-                {checkOut}
+                  {checkOut}
                 </Typography>
                 <Typography fontSize={11} color="white" fontWeight="bold">
                   {t('warehouseDashboard.toBeConfirmed')}
@@ -500,7 +501,7 @@ const WarehouseDashboard: FunctionComponent = () => {
           </Typography>
           <Box
             sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-            onClick={() => navigate('/collector/inventory')}
+            onClick={() => navigate(`/${realmApi}/inventory`)}
           >
             <Typography
               fontSize={13}
@@ -532,9 +533,9 @@ const WarehouseDashboard: FunctionComponent = () => {
                 justifyContent: "space-between"
               }}
             >
-              <div className="circle-color w-[30px] h-[30px] rounded-[50px]" style={{background: generateRandomPastelColor()}}></div>
+              <div className="circle-color w-[30px] h-[30px] rounded-[50px]" style={{ background: generateRandomPastelColor() }}></div>
               <div className="text-sm font-bold text-black mt-2 mb-10 min-h-12">
-               {item.subtypeName}
+                {item.subtypeName}
               </div>
               <div className="flex items-baseline">
                 <div className="text-3xl font-bold text-black">{item.weight}</div>
@@ -556,11 +557,11 @@ const WarehouseDashboard: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="#535353" fontWeight="bold">
-          {t('warehouseDashboard.recentEntryAndExitRecords')}
+            {t('warehouseDashboard.recentEntryAndExitRecords')}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography fontSize={13} color="gray" fontWeight="light">
-            {t('warehouseDashboard.all')}
+              {t('warehouseDashboard.all')}
             </Typography>
             <ChevronRightIcon
               fontSize="small"

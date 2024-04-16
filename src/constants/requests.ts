@@ -113,18 +113,20 @@ export const GET_CONTRACT = (realmApiRoute: string, tenantId: string): AxiosRequ
 });
 
 export const GET_ALL_CHECKIN_REQUESTS = (
+  realmApiRoute: string,
   table: string
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/checkinrequest/searching/${table}`,
+  url: `api/v1/${realmApiRoute}/checkinrequest/searching/${table}`,
 });
 
 export const UPDATE_CHECK_IN_STATUS = (
+  realmApiRoute: string,
   chkInId: number,
   table: string
 ): AxiosRequestConfig => ({
   method: "patch",
-  url: `api/v1/collectors/checkin/${table}/status/${chkInId}`,
+  url: `api/v1/${realmApiRoute}/checkin/${table}/status/${chkInId}`,
 });
 
 //collector/pickupOrder
@@ -254,22 +256,23 @@ export const CREATE_FORGET_PASSWORD = (table: string): AxiosRequestConfig => ({
 });
 
 //warehouse
-export const GET_ALL_WAREHOUSE = (table: string): AxiosRequestConfig => ({
+export const GET_ALL_WAREHOUSE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/warehouse/${table}`,
+  url: `api/v1/${realmApiRoute}/warehouse/${table}`,
 });
 
 export const GET_WAREHOUSE_BY_ID = (
+  realmApiRoute: string,
   warehouseId: number,
   table: string
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/warehouse/${table}/${warehouseId}`,
+  url: `api/v1/${realmApiRoute}/warehouse/${table}/${warehouseId}`,
 });
 
-export const ADD_WAREHOUSE = (table: string): AxiosRequestConfig => ({
+export const ADD_WAREHOUSE = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "post",
-  url: `api/v1/collectors/warehouse/${table}`,
+  url: `api/v1/${realmApiRoute}/warehouse/${table}`,
 });
 
 export const UPDATE_WAREHOUSE_BY_ID = (
@@ -279,6 +282,11 @@ export const UPDATE_WAREHOUSE_BY_ID = (
   method: "put",
   url: `api/v1/collectors/warehouse/${table}/${warehouseId}`,
 });
+
+export const MANUFACTURER_GET_ALL_WAREHOUSE = (table: string): AxiosRequestConfig => ({
+  method: "get",
+  url: `api/v1/manufacturer/warehouse/${table}`
+})
 
 export const UPDATE_RECYCLE_CAPACITY_BY_ID = (
   warehouseRecycId: number,
@@ -297,10 +305,11 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
 });
 
 export const GET_ALL_CHECKOUT_REQUEST = (
+  realmApiRoute: string,
   table: string
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/checkoutrequest/searching/${table}`,
+  url: `api/v1/${realmApiRoute}/checkoutrequest/searching/${table}`,
 });
 
 export const GET_CHECKOUT_REQUEST_BY_ID = (
@@ -404,9 +413,9 @@ export const EDIT_VEHICLE = (
 });
 
 //inventory
-export const GET_INVENTORY = (table: string): AxiosRequestConfig => ({
+export const GET_INVENTORY = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/inventory/${table}/searching`,
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching`,
 });
 
 //process records
@@ -478,43 +487,48 @@ export const DELETE_PROCESS_OUT_DETAIL_ITEM = (
 // WAREHOUSE DASHBOARD
 
 export const GET_CAPACITY_WAREHOUSE = (
+  realmApiRoute: string,
   table: string,
   warehouseId: number
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/warehousecapacity/${table}/${warehouseId}`,
+  url: `api/v1/${realmApiRoute}/warehousecapacity/${table}/${warehouseId}`,
 });
 
 export const GET_WEIGHT_BY_SUBTYPE_ID = (
+  realmApiRoute: string,
   table: string,
   warehouseId: number
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/inventory/${table}/getweightbysubtype/${warehouseId}`,
+  url: `api/v1/${realmApiRoute}/inventory/${table}/getweightbysubtype/${warehouseId}`,
 });
 
 export const GET_CHECKIN_WAREHOUSE = (
+  realmApiRoute: string,
   table: string,
   warehouseId: number
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/numofcheckinreq/${table}/${warehouseId}`,
+  url: `api/v1/${realmApiRoute}/numofcheckinreq/${table}/${warehouseId}`,
 });
 
 export const GET_CHECKOUT_WAREHOUSE = (
+  realmApiRoute: string,
   table: string,
   warehouseId: number
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/numofcheckoutreq/${table}/${warehouseId}`,
+  url: `api/v1/${realmApiRoute}/numofcheckoutreq/${table}/${warehouseId}`,
 });
 
 export const GET_CHECK_IN_OUT_WAREHOUSE = (
+  realmApiRoute: string,
   table: string,
   warehouseId: number
 ): AxiosRequestConfig => ({
   method: "get",
-  url: `api/v1/collectors/checkinout/${table}/${warehouseId}`,
+  url: `api/v1/${realmApiRoute}/checkinout/${table}/${warehouseId}`,
 });
 
 // USER ACCOUNT AND GROUP
