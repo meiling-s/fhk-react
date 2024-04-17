@@ -1,5 +1,5 @@
 import axiosInstance from '../../constants/axiosInstance'
-import { GET_ALL_CHECKIN_REQUESTS, UPDATE_CHECK_IN_STATUS } from '../../constants/requests';
+import { GET_ALL_CHECKIN_REQUESTS, GET_CHECKIN_REASON, UPDATE_CHECK_IN_STATUS } from '../../constants/requests';
 import { updateStatus} from '../../interfaces/warehouse';
 import {localStorgeKeyName} from '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
@@ -52,6 +52,21 @@ export const updateCheckinStatus = async (
     return response
   } catch (e) {
     // console.error('Update check-in request status failed:', e)
+    return null
+  }
+}
+
+export const getCheckinReasons = async () => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      ...GET_CHECKIN_REASON(token.realmApiRoute, token.tenantId),
+      baseURL: warehouseAPI.baseURL,
+    })
+    return response
+  } catch (e) {
+    console.error('get checkin reasons failed:', e)
     return null
   }
 }
