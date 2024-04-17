@@ -13,7 +13,6 @@ import PurchaseOrderForm from './PurchaseOrderForm'
 
 import StatusCard from '../../../components/StatusCard'
 
-import { PickupOrder, queryPickupOrder } from '../../../interfaces/pickupOrder'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { ToastContainer, toast } from 'react-toastify'
@@ -21,15 +20,11 @@ import { useTranslation } from 'react-i18next'
 import CustomItemList, {
   il_item
 } from '../../../components/FormComponents/CustomItemList'
-import {
-  getAllPickUpOrder,
-  getAllLogisticsPickUpOrder,
-  getAllReason
-} from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 
 import {
   getAllPurchaseOrder,
-  updateStatusPurchaseOrder
+  updateStatusPurchaseOrder,
+  getPurchaseOrderReason
 } from '../../../APICalls/Manufacturer/purchaseOrder'
 
 import {
@@ -59,7 +54,7 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
 
     try {
       const result = await updateStatusPurchaseOrder(
-        selectedRow.picoId,
+        selectedRow.poId,
         updatePoStatus
       )
       if (result) {
@@ -158,7 +153,7 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
     }
     try {
       const result = await updateStatusPurchaseOrder(
-        selectedRow.picoId,
+        selectedRow.poId,
         updatePoStatus
       )
       if (result) {
@@ -298,6 +293,7 @@ const PurchaseOrder = () => {
           onApprove={showApproveModal}
           onReject={showRejectModal}
           navigateToJobOrder={navigateToJobOrder}
+          color="blue"
         />
       )
     }
@@ -360,8 +356,9 @@ const PurchaseOrder = () => {
   }
 
   const getRejectReason = async () => {
-    let result = await getAllReason()
-    if (result && result?.data && result?.data.length > 0) {
+    let result = await getPurchaseOrderReason()
+
+    if (result && result?.data && result?.data.content.length > 0) {
       let reasonName = ''
       switch (i18n.language) {
         case 'enus':
@@ -377,13 +374,13 @@ const PurchaseOrder = () => {
           reasonName = 'reasonNameEng'
           break
       }
-      result?.data.map(
+      result?.data.content.map(
         (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
           item.id = item.reasonId
           item.name = item[reasonName]
         }
       )
-      setReasonList(result?.data)
+      setReasonList(result?.data.content)
     }
   }
 
@@ -482,7 +479,7 @@ const PurchaseOrder = () => {
     recyType: string
   }
   const searchfield = [
-    { label: t('pick_up_order.filter.search'), width: '14%', field: 'picoId' },
+    { label: t('pick_up_order.filter.search'), width: '14%', field: 'poId' },
     {
       label: t('pick_up_order.filter.dateby'),
       width: '10%',

@@ -12,8 +12,6 @@ import KeyboardTabIcon from '@mui/icons-material/KeyboardTab'
 import CustomField from '../../../components/FormComponents/CustomField'
 import StatusCard from '../../../components/StatusCard'
 import PickupOrderCard from '../../../components/PickupOrderCard'
-
-import { PickupOrder, PickupOrderDetail } from '../../../interfaces/pickupOrder'
 import { useNavigate } from 'react-router-dom'
 import { getPurchaseOrderById } from '../../../APICalls/Manufacturer/purchaseOrder'
 import { useTranslation } from 'react-i18next'

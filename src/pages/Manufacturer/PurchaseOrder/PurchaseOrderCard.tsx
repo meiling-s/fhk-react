@@ -24,10 +24,6 @@ const PurchaseOrderCard = ({
 }) => {
   const { t } = useTranslation()
 
-  const recyc = LocalizeRecyctype(purchaseOrderDetail)
-  console.log(purchaseOrderDetail)
-  console.log(recyc)
-
   const getRecyName = (podetail: PurchaseOrderDetail) => {
     var name = ''
     switch (i18n.language) {

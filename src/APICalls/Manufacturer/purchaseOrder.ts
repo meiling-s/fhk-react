@@ -2,7 +2,8 @@ import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import {
   SEARCH_PURCHASE_ORDER,
   UPDATE_PURCHASE_ORDER_STATUS,
-  GET_PURCHASE_ORDER_BY_ID
+  GET_PURCHASE_ORDER_BY_ID,
+  GET_ALL_REASON_MANUFACTURER
 } from '../../constants/requests'
 
 import { returnApiToken } from '../../utils/utils'
@@ -54,12 +55,25 @@ export const getPurchaseOrderById = async (poId: string) => {
 }
 
 export const updateStatusPurchaseOrder = async (poId: string, data: any) => {
-  const auth = returnApiToken()
   try {
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
       ...UPDATE_PURCHASE_ORDER_STATUS(poId),
       data: data
+    })
+
+    return response
+  } catch (e) {
+    return null
+  }
+}
+
+export const getPurchaseOrderReason = async () => {
+  const auth = returnApiToken()
+  try {
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      ...GET_ALL_REASON_MANUFACTURER(auth.tenantId)
     })
 
     return response
