@@ -13,31 +13,29 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import StatusCard from '../../../components/StatusCard'
 import PickupOrderCard from '../../../components/PickupOrderCard'
 
-import {
-  PickupOrder,
-  PickupOrderDetail,
-  Row
-} from '../../../interfaces/pickupOrder'
+import { PickupOrder, PickupOrderDetail } from '../../../interfaces/pickupOrder'
 import { useNavigate } from 'react-router-dom'
-import {
-  editPickupOrderDetailStatus,
-  editPickupOrderStatus,
-  getPicoById
-} from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import { getPurchaseOrderById } from '../../../APICalls/Manufacturer/purchaseOrder'
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import { localStorgeKeyName } from '../../../constants/constant'
+import {
+  PurChaseOrder,
+  Row,
+  PurchaseOrderDetail
+} from '../../../interfaces/purchaseOrder'
+import PurchaseOrderCard from './PurchaseOrderCard'
 
 const PurchaseOrderForm = ({
   onClose,
   selectedRow,
-  pickupOrder,
+  purchaseOrder,
   initPickupOrderRequest
 }: {
   onClose?: () => void
   selectedRow?: Row | null | undefined
-  pickupOrder?: PickupOrder[] | null
+  purchaseOrder?: PurChaseOrder[] | null
   initPickupOrderRequest: () => void
 }) => {
   const { t } = useTranslation()
@@ -54,34 +52,25 @@ const PurchaseOrderForm = ({
   }
   const navigate = useNavigate()
 
-  const handleRowClick = async (po: PickupOrder) => {
-    const routeName = role
-    const result = await getPicoById(
-      selectedPickupOrder ? selectedPickupOrder.picoId : ''
-    )
-    if (result) {
-      navigate(`/${routeName}/editPickupOrder`, { state: result.data })
-    }
-  }
-
-  const [selectedPickupOrder, setSelectedPickupOrder] = useState<PickupOrder>()
+  const [selectedPurchaseOrder, setSelectedPurchaseOrder] =
+    useState<PurChaseOrder>()
 
   const [pickupOrderDetail, setPickUpOrderDetail] =
-    useState<PickupOrderDetail[]>()
-  const [pickupOrderData, setPickupOrderData] = useState<PickupOrder>()
+    useState<PurchaseOrderDetail[]>()
+  const [pickupOrderData, setPickupOrderData] = useState<PurChaseOrder>()
 
   useEffect(() => {
     if (selectedRow) {
       // refresh the data first
-      initGetPickUpOrderData(selectedRow.picoId)
+      initGetPickUpOrderData(selectedRow.poId)
     }
   }, [selectedRow])
 
-  const initGetPickUpOrderData = async (picoId: number) => {
-    const result = await getPicoById(picoId.toString())
+  const initGetPickUpOrderData = async (poId: string) => {
+    const result = await getPurchaseOrderById(poId)
     if (result) {
-      setSelectedPickupOrder(result.data)
-      setPickUpOrderDetail(result.data.pickupOrderDetail)
+      setSelectedPurchaseOrder(result.data)
+      setPickUpOrderDetail(result.data.purchaseOrderDetail)
     }
   }
 
@@ -95,11 +84,11 @@ const PurchaseOrderForm = ({
                 {t('purchase_order.detail.order')}
               </Typography>
               <Typography sx={styles.header3}>
-                {selectedPickupOrder?.picoId}
+                {selectedPurchaseOrder?.poId}
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', flexShrink: 0, ml: '20px' }}>
-              <StatusCard status={selectedPickupOrder?.status} />
+              <StatusCard status={selectedPurchaseOrder?.status} />
             </Box>
             <Box sx={{ marginLeft: 'auto' }}>
               <IconButton sx={{ ml: '20px' }} onClick={onClose}>
@@ -119,21 +108,21 @@ const PurchaseOrderForm = ({
               label={t('purchase_order.detail.receiving_company_name')}
             >
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.createdAt
-                  ? displayCreatedDate(selectedPickupOrder?.createdAt)
+                {selectedPurchaseOrder?.createdAt
+                  ? displayCreatedDate(selectedPurchaseOrder?.createdAt)
                   : ''}
               </Typography>
             </CustomField>
 
             <CustomField label={t('purchase_order.detail.contact_number')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.effFrmDate}
+                {selectedPurchaseOrder?.contactNo}
               </Typography>
             </CustomField>
 
             <CustomField label={t('purchase_order.detail.payment_method')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.platNo}
+                {selectedPurchaseOrder?.paymentType}
               </Typography>
             </CustomField>
 
@@ -143,15 +132,24 @@ const PurchaseOrderForm = ({
 
             <CustomField label={t('purchase_order.detail.pico_id')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.contactNo}
+                {selectedPurchaseOrder?.picoId}
               </Typography>
             </CustomField>
 
-            <PickupOrderCard pickupOrderDetail={pickupOrderDetail ?? []} />
+            <PurchaseOrderCard
+              selectedPurchaseOrder={
+                selectedPurchaseOrder ? selectedPurchaseOrder : null
+              }
+              purchaseOrderDetail={pickupOrderDetail ?? []}
+            />
 
-            <CustomField label={t('purchase_order.detail.message')}>
+            <CustomField label={t('check_in.message')}>
               <Typography sx={localstyles.typo_fieldContentGray}>
-                [UserID] Approved on 2023/09/24 17:00
+                {selectedPurchaseOrder?.approvedBy}{' '}
+                {selectedPurchaseOrder?.status}{' '}
+                {selectedPurchaseOrder?.approvedAt
+                  ? displayCreatedDate(selectedPurchaseOrder?.approvedAt)
+                  : ''}
               </Typography>
             </CustomField>
           </Stack>

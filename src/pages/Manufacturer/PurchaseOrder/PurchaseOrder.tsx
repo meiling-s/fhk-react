@@ -584,14 +584,14 @@ const PurchaseOrder = () => {
     <>
       <ToastContainer />
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        {/* <Modal open={openModal} onClose={handleCloses}>
+        <Modal open={openModal} onClose={handleCloses}>
           <PurchaseOrderForm
             onClose={handleCloses}
             selectedRow={selectedRow}
-            pickupOrder={pickupOrder}
+            purchaseOrder={purchaseOrder}
             initPickupOrderRequest={initPurchaseOrderRequest}
           />
-        </Modal> */}
+        </Modal>
         <Box sx={{ display: 'flex', alignItems: 'center', ml: '6px' }}>
           <Typography fontSize={20} color="black" fontWeight="bold">
             {t('purchase_order.all_order')}

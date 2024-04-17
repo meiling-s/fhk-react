@@ -1,7 +1,8 @@
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import {
   SEARCH_PURCHASE_ORDER,
-  UPDATE_PURCHASE_ORDER_STATUS
+  UPDATE_PURCHASE_ORDER_STATUS,
+  GET_PURCHASE_ORDER_BY_ID
 } from '../../constants/requests'
 
 import { returnApiToken } from '../../utils/utils'
@@ -31,6 +32,19 @@ export const getAllPurchaseOrder = async (
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
       ...SEARCH_PURCHASE_ORDER(auth.tenantId),
       params: params
+    })
+
+    return response
+  } catch (e) {
+    return null
+  }
+}
+
+export const getPurchaseOrderById = async (poId: string) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      ...GET_PURCHASE_ORDER_BY_ID(poId)
     })
 
     return response

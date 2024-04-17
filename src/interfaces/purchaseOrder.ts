@@ -51,3 +51,14 @@ export type queryPurchaseOrder = {
   recycType: string
   status: string
 }
+
+export type Row = {
+  id: number
+  createdAt: string
+  poId: string
+  picoId: string
+  receiverAddr: string
+  approvedAt: string
+  status: string
+  recyType: string
+}

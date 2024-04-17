@@ -1127,18 +1127,16 @@ export const DELETE_USER_MANUFACTURER = (
 })
 
 //PURCHASE ORDER MANUFACTURER
-export const GET_PURCHASE_ORDER = (
-  sellerTenantId: string
-): AxiosRequestConfig => ({
-  method: 'get',
-  url: `api/v1/administrator/po/seller/${sellerTenantId}`
-})
-
 export const SEARCH_PURCHASE_ORDER = (
   sellerTenantId: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/po/seller/search/${sellerTenantId}`
+})
+
+export const GET_PURCHASE_ORDER_BY_ID = (poId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/po/${poId}`
 })
 
 export const UPDATE_PURCHASE_ORDER_STATUS = (
