@@ -1,53 +1,36 @@
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import {
-  GET_PURCHASE_ORDER,
   SEARCH_PURCHASE_ORDER,
   UPDATE_PURCHASE_ORDER_STATUS
 } from '../../constants/requests'
 
 import { returnApiToken } from '../../utils/utils'
-import { queryPickupOrder } from '../../interfaces/pickupOrder'
+import { queryPurchaseOrder } from '../../interfaces/purchaseOrder'
 import axiosInstance from '../../constants/axiosInstance'
 
-export const getAllPurchaseOrder = async (page: number, size: number) => {
-  const auth = returnApiToken()
-  try {
-    const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
-      ...GET_PURCHASE_ORDER(auth.tenantId),
-      params: {
-        page: page,
-        size: size
-      }
-    })
-
-    return response
-  } catch (e) {
-    return null
-  }
-}
-
-export const searchPurchaseOrder = async (
+export const getAllPurchaseOrder = async (
   page: number,
   size: number,
-  query?: any
+  query?: queryPurchaseOrder
 ) => {
   const auth = returnApiToken()
   try {
+    const params: any = {
+      page: page,
+      size: size
+    }
+
+    if (query?.poId) params.poId = query.poId
+    if (query?.fromCreatedAt) params.fromCreatedAt = query.fromCreatedAt
+    if (query?.toCreatedAt) params.toCreatedAt = query.toCreatedAt
+    if (query?.receiverAddr) params.receiverAddr = query.receiverAddr
+    if (query?.recycType) params.recycType = query.recycType
+    if (query?.status) params.status = query.status
+
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
       ...SEARCH_PURCHASE_ORDER(auth.tenantId),
-      params: {
-        page: page,
-        size: size,
-        poId: '',
-        fromCreatedAt: '',
-        toCreatedAt: '',
-        receiverAddr: '',
-        recycType: '',
-        status: '',
-        sellerTenantId: auth.tenantId
-      }
+      params: params
     })
 
     return response

@@ -9,7 +9,6 @@ import {
 } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
-//import PickupOrderForm from '../../../components/FormComponents/PickupOrderForm'
 import PurchaseOrderForm from './PurchaseOrderForm'
 
 import StatusCard from '../../../components/StatusCard'
@@ -27,7 +26,17 @@ import {
   getAllLogisticsPickUpOrder,
   getAllReason
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import { editPickupOrderStatus } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+
+import {
+  getAllPurchaseOrder,
+  updateStatusPurchaseOrder
+} from '../../../APICalls/Manufacturer/purchaseOrder'
+
+import {
+  PurChaseOrder,
+  PurchaseOrderDetail,
+  queryPurchaseOrder
+} from '../../../interfaces/purchaseOrder'
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
@@ -45,11 +54,11 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
   const onApprove = async () => {
     const updatePoStatus = {
       status: 'CONFIRMED',
-      reason: selectedRow.reason,
       updatedBy: selectedRow.updatedBy
     }
+
     try {
-      const result = await editPickupOrderStatus(
+      const result = await updateStatusPurchaseOrder(
         selectedRow.picoId,
         updatePoStatus
       )
@@ -145,11 +154,10 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
     const reason = rejectReasonItem?.name || ''
     const updatePoStatus = {
       status: 'REJECTED',
-      reason: reason,
       updatedBy: selectedRow.updatedBy
     }
     try {
-      const result = await editPickupOrderStatus(
+      const result = await updateStatusPurchaseOrder(
         selectedRow.picoId,
         updatePoStatus
       )
@@ -231,12 +239,12 @@ interface Option {
   label: string
 }
 
-const PickupOrders = () => {
+const PurchaseOrder = () => {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const [showOperationColumn, setShowOperationColumn] = useState<Boolean>(true)
+
   const columns: GridColDef[] = [
     {
       field: 'createdAt',
@@ -244,7 +252,7 @@ const PickupOrders = () => {
       width: 150
     },
     {
-      field: 'logisticCompany',
+      field: 'poId',
       headerName: t('purchase_order.table.order_number'),
       width: 220,
       editable: true
@@ -257,14 +265,14 @@ const PickupOrders = () => {
       editable: true
     },
     {
-      field: 'deliveryDate',
+      field: 'receiverAddr',
       headerName: t('purchase_order.table.place_receipt'),
       type: 'string',
       width: 200,
       editable: true
     },
     {
-      field: 'senderCompany',
+      field: 'approvedAt',
       headerName: t('purchase_order.table.receipt_date_time'),
       type: 'sring',
       width: 260,
@@ -299,17 +307,17 @@ const PickupOrders = () => {
   const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation()
   const action: string = location.state
-  const [pickupOrder, setPickupOrder] = useState<PickupOrder[]>()
+  // const [pickupOrder, setPickupOrder] = useState<PickupOrder[]>()
+  const [purchaseOrder, setPurchaseOrder] = useState<PurChaseOrder[]>()
   const [rows, setRows] = useState<Row[]>([])
   const [filteredPico, setFilteredPico] = useState<Row[]>([])
-  const [query, setQuery] = useState<queryPickupOrder>({
-    picoId: '',
-    effFromDate: '',
-    effToDate: '',
-    logisticName: '',
+  const [query, setQuery] = useState<queryPurchaseOrder>({
+    poId: '',
+    fromCreatedAt: '',
+    toCreatedAt: '',
+    receiverAddr: '',
     recycType: '',
-    senderName: '',
-    status: 0
+    status: ''
   })
   const [approveModal, setApproveModal] = useState(false)
   const [rejectModal, setRejectModal] = useState(false)
@@ -318,19 +326,17 @@ const PickupOrders = () => {
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
 
   const initPurchaseOrderRequest = async () => {
-    setPickupOrder([])
+    setPurchaseOrder([])
     setTotalData(0)
     let result = null
-    if (role === 'logistic') {
-      result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query)
-    } else {
-      result = await getAllPickUpOrder(page - 1, pageSize, query)
-    }
+
+    result = await getAllPurchaseOrder(page - 1, pageSize, query)
+
     const data = result?.data.content
     if (data && data.length > 0) {
-      setPickupOrder(data)
+      setPurchaseOrder(data)
     } else {
-      setPickupOrder([])
+      setPurchaseOrder([])
     }
     setTotalData(result?.data.totalPages)
   }
@@ -386,10 +392,6 @@ const PickupOrders = () => {
       role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
     )
   }, [role])
-
-  useEffect(() => {
-    setShowOperationColumn(role === 'logistic')
-  }, [role, columns, i18n.language])
 
   useEffect(() => {
     initPurchaseOrderRequest()
@@ -449,55 +451,35 @@ const PickupOrders = () => {
     setRecycItem(recycItems)
   }, [recycType])
 
-  const getDeliveryDate = (row: PickupOrder) => {
-    if (row.picoType === 'AD_HOC') {
-      return `${row.effFrmDate} - ${row.effToDate}`
-    } else if (row.routineType === 'daily') {
-      return 'Daily'
-    } else {
-      return `${row.routine.join(', ')}`
-    }
-  }
-
   useEffect(() => {
-    // const mappingData = () => {
     const tempRows: any[] = (
-      pickupOrder?.map((item) => ({
+      purchaseOrder?.map((item) => ({
         ...item,
-        id: item.picoId,
+        id: item.poId,
         createdAt: displayCreatedDate(item.createdAt),
-        logisticCompany: item.logisticName,
+        poId: item.poId,
         picoId: item.picoId,
-        deliveryDate: getDeliveryDate(item),
-        senderCompany:
-          item.pickupOrderDetail.filter(
-            (detail) => detail.senderName === query.senderName
-          ).length > 0
-            ? query.senderName
-            : item.pickupOrderDetail[0].senderName,
-        receiver: item.pickupOrderDetail[0]?.receiverName,
+        receiverAddr: item.receiverAddr,
+        approvedAt: displayCreatedDate(item.approvedAt),
         status: item.status,
-        recyType: item.pickupOrderDetail.map((item) => {
-          return item.recycType
-        }),
-        operation: ''
+        recyType: item.purchaseOrderDetail.map((item) => {
+          return item.recycTypeId
+        })
       })) ?? []
     ).filter((item) => item.status !== 'CLOSED')
     setRows(tempRows)
     setFilteredPico(tempRows)
-  }, [pickupOrder])
+  }, [purchaseOrder])
 
   interface Row {
     id: number
-    tenantId: string
     createdAt: string
-    logisticCompany: string
-    picoId: number
-    deliveryDate: string
-    senderCompany: string
-    receiver: string
+    poId: string
+    picoId: string
+    receiverAddr: string
+    approvedAt: string
     status: string
-    recyType: string[]
+    recyType: string
   }
   const searchfield = [
     { label: t('pick_up_order.filter.search'), width: '14%', field: 'picoId' },
@@ -505,19 +487,19 @@ const PickupOrders = () => {
       label: t('pick_up_order.filter.dateby'),
       width: '10%',
       options: getUniqueOptions('createdAt'),
-      field: 'effFromDate'
+      field: 'createdAt'
     },
     {
       label: t('pick_up_order.filter.to'),
       width: '10%',
-      options: getUniqueOptions('deliveryDate'),
-      field: 'effToDate'
+      options: getUniqueOptions('approvedAt'),
+      field: 'updatedAt'
     },
     {
       label: t('warehouse_page.place'),
       width: '14%',
-      options: getUniqueOptions('logisticCompany'),
-      field: 'logisticName'
+      options: getUniqueOptions('receiverAddr'),
+      field: 'receiverAddr'
     },
 
     {
@@ -577,20 +559,20 @@ const PickupOrders = () => {
     setOpenModal(true)
   }
 
-  const updateQuery = (newQuery: Partial<queryPickupOrder>) => {
+  const updateQuery = (newQuery: Partial<queryPurchaseOrder>) => {
     setQuery({ ...query, ...newQuery })
   }
 
   const handleSearch = (keyName: string, value: string) => {
     if (keyName == 'status') {
-      const statusMapping: { [key: string]: number } = {
-        CREATED: 0,
-        STARTED: 1,
-        CONFIRMED: 2,
-        REJECTED: 3,
-        COMPLETED: 4,
-        CLOSED: 5,
-        OUTSTANDING: 6
+      const statusMapping: { [key: string]: string } = {
+        CREATED: '0',
+        STARTED: '1',
+        CONFIRMED: '2',
+        REJECTED: '3',
+        COMPLETED: '4',
+        CLOSED: '5',
+        OUTSTANDING: '6'
       }
       const mappedStatus = statusMapping[value]
       updateQuery({ ...query, [keyName]: mappedStatus })
@@ -602,14 +584,14 @@ const PickupOrders = () => {
     <>
       <ToastContainer />
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Modal open={openModal} onClose={handleCloses}>
+        {/* <Modal open={openModal} onClose={handleCloses}>
           <PurchaseOrderForm
             onClose={handleCloses}
             selectedRow={selectedRow}
             pickupOrder={pickupOrder}
             initPickupOrderRequest={initPurchaseOrderRequest}
           />
-        </Modal>
+        </Modal> */}
         <Box sx={{ display: 'flex', alignItems: 'center', ml: '6px' }}>
           <Typography fontSize={20} color="black" fontWeight="bold">
             {t('purchase_order.all_order')}
@@ -681,7 +663,7 @@ const PickupOrders = () => {
   )
 }
 
-export default PickupOrders
+export default PurchaseOrder
 
 let localstyles = {
   btn_WhiteGreenTheme: {
