@@ -129,7 +129,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     } else if (action == 'edit') {
       handleEditContract(formData)
     } else if (action === 'delete') {
-      handleDelete(formData)
+      handleDelete()
   }
   }
 
@@ -153,16 +153,27 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     }
   }
 
-  const handleDelete = async (formData: CreateContractProps) => {
-    const status = 'DELETED'
-    const data = {
-      ...formData,
-      status
+  
+  const handleDelete = async () => {
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
+
+    const formData: CreateContractProps = {
+      tenantId: tenantId,
+      contractNo: contractNo,
+      parentContractNo: referenceNumber,
+      status: 'DELETED',
+      contractFrmDate: startDate.format('YYYY-MM-DD'),
+      contractToDate: endDate.format('YYYY-MM-DD'),
+      remark: remark,
+      epdFlg: whether,
+      createdBy: loginId,
+      updatedBy: loginId
     }
     if(selectedItem != null){
-      const result = await editContract(data)
+      const result = await editContract(formData)
       if(result) {
-        onSubmitData("success", t('common.deleteFailed'))
+        onSubmitData("success", t('common.deletedSuccessfully'))
         resetData()
         handleDrawerClose()
       } else {
@@ -190,7 +201,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleSubmit
+          onDelete: handleDelete
         }}
       >
         <Divider></Divider>

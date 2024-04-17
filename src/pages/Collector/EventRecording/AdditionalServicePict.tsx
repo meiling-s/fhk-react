@@ -38,6 +38,7 @@ import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
+import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
 
 type ServiceName = 'SRV00001' | 'SRV00002' | 'SRV00003' | 'SRV00004'
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
@@ -138,8 +139,17 @@ const AdditionalServicePict = () => {
   const [errors, setErrors] = useState<ErrorsServiceData>(initialErrors)
   const [eventName, setEventName] = useState<string>('')
   const [activeObj, setActiveObj] = useState<string>('')
-  const [errorsOptions, setErrorOptions] = useState({targetParticipants: {status: false, message: ''}, eventName: {status: false, message: ''}})
-
+  const [nature, setNature] = useState<string>('')
+  const [speaker, setSpeaker] = useState<string>('')
+  const [errorsOptions, setErrorOptions] = useState(
+    {
+      targetParticipants: {status: false, message: ''}, 
+      eventName: {status: false, message: ''},
+      nature: {status: false, message: ''},
+      speaker: {status: false, message: ''}
+    }
+  )
+  const [serviceFlg, setServiceFlg] = useState<number>(0)
   const AdditionalService = [
     {
       serviceName: 'SRV00001',
@@ -456,6 +466,17 @@ const AdditionalServicePict = () => {
     resetServiceData()
   }
 
+  const serviceTypeList = [
+    {
+      id: 'additional',
+      name: t('report.additional')
+    },
+    {
+      id: 'other_services',
+      name: t('report.other_services')
+    },
+  ]
+
   return (
     <Box className="container-wrapper w-full">
       <ToastContainer></ToastContainer>
@@ -634,8 +655,72 @@ const AdditionalServicePict = () => {
                         />
                       </CustomField>
                       <Typography style={{color: 'red', fontWeight: '500'}}>
-                      {errorsOptions.eventName.status ? errorsOptions.eventName.message : ''}
-                    </Typography>
+                        {errorsOptions.eventName.status ? errorsOptions.eventName.message : ''}
+                      </Typography>
+                    </div>
+
+                    <div className="mb-4">
+                      <CustomField label={t('report.nature')}>
+                        <CustomTextField
+                          id="nature"
+                          placeholder={t('report.please_enter') + ' ' + t('report.nature')}
+                          onChange={(event) => {
+                            if(event.target.value){
+                              setNature(event.target.value)
+                              setErrorOptions(prev => {
+                                return{
+                                  ...prev,
+                                  nature: {status: false, message: ''}
+                                }
+                              })
+                            } else {
+                             
+                              setErrorOptions(prev => {
+                                return{
+                                  ...prev,
+                                  nature: {status: true, message: t('form.error.shouldNotBeEmpty')}
+                                }
+                              })
+                            }
+                          }}
+                          error={checkString(nature)}
+                        />
+                      </CustomField>
+                      <Typography style={{color: 'red', fontWeight: '500'}}>
+                        {errorsOptions.nature.status ? errorsOptions.nature.message : ''}
+                      </Typography>
+                    </div>
+
+                    <div className="mb-4">
+                      <CustomField label={t('report.speaker')}>
+                        <CustomTextField
+                          id="speaker"
+                          placeholder={t('report.please_enter') + ' ' + t('report.speaker')}
+                          onChange={(event) => {
+                            if(event.target.value){
+                              setSpeaker(event.target.value)
+                              setErrorOptions(prev => {
+                                return{
+                                  ...prev,
+                                  speaker: {status: false, message: ''}
+                                }
+                              })
+                            } else {
+                             
+                              setErrorOptions(prev => {
+                                return{
+                                  ...prev,
+                                  speaker: {status: true, message: t('form.error.shouldNotBeEmpty')}
+                                }
+                              })
+                            }
+                          }}
+                          error={checkString(speaker)}
+                        />
+                      </CustomField>
+                      <Typography style={{color: 'red', fontWeight: '500'}}>
+                        {errorsOptions.speaker.status ? errorsOptions.speaker.message : ''}
+                      </Typography>
                     </div>
 
                    <Grid item style={{display: 'flex', flexDirection: 'column'}}>
@@ -693,6 +778,18 @@ const AdditionalServicePict = () => {
                     {errors[item.serviceName as keyof ErrorsServiceData].numberOfPeople.status ? errors[item.serviceName as keyof ErrorsServiceData].numberOfPeople.message : ''}
                   </Typography>
                 </Grid>
+
+                { index === 3 && (
+                  <CustomField label={t('col.serviceType')}>
+                    <CustomItemListBoolean
+                      items={serviceTypeList}
+                      setServiceFlg={setServiceFlg}
+                      value={serviceFlg}
+                    ></CustomItemListBoolean>
+                  </CustomField>
+                )
+
+                }
                 <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                   {/* image field */}
                   <Box key={t('report.picture') + index}>

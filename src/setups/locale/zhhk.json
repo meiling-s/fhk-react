@@ -492,7 +492,13 @@
     "picturesUploadedToFacebook": "已上傳到Facebook的圖片",
     "shareDate": "分享日期",
     "regulatedWEEESubmittedToRecyclers": "已呈交回收商的受管制的廢棄電氣和電子設備 (REE)（連日期）",
-    "fluorescentLampsSubmittedToRecyclers": "已呈交回收商的螢光燈和燈管（連日期）"
+    "fluorescentLampsSubmittedToRecyclers": "已呈交回收商的螢光燈和燈管（連日期）",
+    "please_enter": "請輸入",
+    "nature": "性質",
+    "speaker": "揚聲器",
+    "service_type": "服務種類",
+    "additional": "額外的",
+    "other_services": "其他服務"
   },
   "vehicle": {
     "vehicle": "車輛",

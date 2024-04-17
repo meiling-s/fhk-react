@@ -94,7 +94,7 @@ export const editWarehouse = async (data: any, warehouseId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...UPDATE_WAREHOUSE_BY_ID(warehouseId, token.decodeKeycloack),
+      ...UPDATE_WAREHOUSE_BY_ID(token.realmApiRoute, warehouseId, token.decodeKeycloack),
       baseURL: collectionPointAPI.baseURL,
       data: data,
       headers: {

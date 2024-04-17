@@ -45,7 +45,7 @@ const Settings: FunctionComponent = () => {
 
   useEffect(() => {
     getTabList()
-  }, [])
+  }, [t])
 
   const collectorSettingTab = () => {
     return (

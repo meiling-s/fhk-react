@@ -149,7 +149,7 @@ export const createVehicles = async (data: CreateVehicle) => {
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_VEHICLE(token.decodeKeycloack),
+      ...CREATE_VEHICLE(token.realmApiRoute, token.decodeKeycloack),
       data: data,
       headers: {
         AuthToken: token.authToken
@@ -168,7 +168,7 @@ export const editVehicle = async (data: CreateVehicle, vehicleId: number) => {
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...EDIT_VEHICLE(token.decodeKeycloack, vehicleId),
+      ...EDIT_VEHICLE(token.realmApiRoute, token.decodeKeycloack, vehicleId),
       data: data,
       headers: {
         AuthToken: token.authToken,
@@ -189,7 +189,7 @@ export const deleteVehicle = async (data: string, vehicleId: number) => {
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...DELETE_VEHICLE(token.decodeKeycloack, vehicleId),
+      ...DELETE_VEHICLE(token.realmApiRoute, token.decodeKeycloack, vehicleId),
       data: data,
       headers: {
         AuthToken: token.authToken,
