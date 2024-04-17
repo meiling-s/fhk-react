@@ -13,14 +13,14 @@ import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../ut
 import CustomField from "../../../components/FormComponents/CustomField";
 import CustomTextField from "../../../components/FormComponents/CustomTextField";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
-
+import { toast } from 'react-toastify'
 interface TemplateProps {
     templateId: string,
     realmApiRoute: string
 }
 
 const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRoute }) => {
-    const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '', effFrmDate: dayjs().format('YYYY/MM/DDD'), effToDate: dayjs().format('YYYY/MM/DDD') })
+    const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '', effFromDate: dayjs().format('YYYY-MM-DD'), effToDate: dayjs().format('YYYY-MM-DD') })
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}, title: {status: false, message: ''}})
@@ -41,7 +41,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                     senders: notif?.senders,
                     receivers: notif?.receivers,
                     updatedBy: notif?.updatedBy,
-                    effFrmDate: notif?.effFrmDate,
+                    effFromDate: notif?.effFromDate,
                     effToDate: notif?.effToDate,
                 }
             })
@@ -73,16 +73,16 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
     }, [notifTemplate.content, notifTemplate.lang])
 
     const onSubmitUpdateTemplate = async () => {
-        if(errors.lang.status || errors.content.status){
+        if(errors.lang.status || errors.content.status || errors.title.status){
             showErrorToast(t('common.editFailed'))
             return
         } else {
             const response = await updateNotifTemplateBroadcast(templateId, notifTemplate, realmApiRoute)
             if (response) {
-                showSuccessToast(t('common.editSuccessfully'))
+                showSuccessToast(t('common.editSuccessfully' + ' ' + notifTemplate.content))
                 setTimeout(() => {
                     navigate(`/${realmApiRoute}/notice`)
-                }, 1000);
+                }, 2000);
 
             } else {
                 showErrorToast(t('common.editFailed'))
@@ -106,7 +106,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
             setNotifTemplate(prev => {
                 return {
                     ...prev,
-                    [type]: dayjs(value).format('YYYY/MM/DDD')
+                    [type]: dayjs(value).format('YYYY-MM-DD')
                 }
             })
         }
@@ -144,6 +144,33 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
         }
        })
     };
+
+    const showErrorToast = (msg: string) => {
+        toast.error(msg, {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light'
+        })
+      }
+      
+     const showSuccessToast = (msg: string) => {
+        toast.info(msg, {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          style: {width: 800}
+        })
+      }
 
     return (
         <Box className="container-wrapper w-full mr-11">
@@ -225,10 +252,10 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                                 {t('notification.modify_template.broadcast.start_valid_date')}
                             </Typography>
                             <DatePicker
-                                defaultValue={dayjs(notifTemplate.effFrmDate)}
+                                value={dayjs(notifTemplate.effFromDate)}
                                 sx={localstyles.datePicker(false)}
                                 maxDate={dayjs(notifTemplate.effToDate)}
-                                onChange={(event) => onChangeDate(event, 'effFrmDate')}
+                                onChange={(event) => onChangeDate(event, 'effFromDate')}
                             />
 
                         </Grid>
@@ -238,10 +265,9 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                                 {t('notification.modify_template.broadcast.end_valid_date')}
                             </Typography>
                             <DatePicker
+                                value={dayjs(notifTemplate.effToDate)}
                                 sx={localstyles.datePicker(false)}
-                                // value={notifTemplate.effToDate}
-                                minDate={dayjs(notifTemplate.effFrmDate)}
-                                defaultValue={dayjs(notifTemplate.effToDate)}
+                                minDate={dayjs(notifTemplate.effFromDate)}
                                 onChange={(event) => onChangeDate(event, 'effToDate')}
                             />
                         </Grid>
