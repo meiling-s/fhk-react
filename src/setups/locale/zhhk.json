@@ -218,7 +218,7 @@
     "recyc_loc_info": "回收地點資料",
     "recyclable_type_weight": "回收物類別及重量",
     "message": "訊息",
-    "confirm_reject": "確認拒絕送入請求嗎?",
+    "confirm_reject": "確認拒絕送出請求嗎?",
     "confirm_approve": "您確定批準該請求嗎？",
     "reject_reasons": "拒絕原因(可多選)",
     "confirm_approve_btn": "確認批準",
@@ -267,8 +267,7 @@
     "failed": "失敗",
     "enable": "啟用",
     "not_enabled": "未啟用",
-    "terminated": "已終止",
-    "suspend": "暫停"
+    "terminated": "已終止"
   },
   "appBar": {
     "simplified_cn": "简体中文",

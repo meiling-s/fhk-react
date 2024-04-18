@@ -23,33 +23,29 @@ import {
   GridRowSpacingParams,
 } from '@mui/x-data-grid'
 import CloseIcon from '@mui/icons-material/Close'
-import { ADD_PERSON_ICON, SEARCH_ICON } from "../../themes/icons";
+import { SEARCH_ICON } from "../../themes/icons";
 import { useEffect, useState } from "react";
 import React from "react";
 import { primaryColor, styles } from "../../constants/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import CheckIcon from "@mui/icons-material/Check";
-import { ClearIcon } from "@mui/x-date-pickers";
 import { useNavigate } from 'react-router-dom'
-import CustomItemList, {
-  il_item,
-} from "../../components/FormComponents/CustomItemList";
-import CustomAvatar from "../../components/CustomAvatar";
+import CustomItemList from "../../components/FormComponents/CustomItemList";
 import {
   getAllCheckInRequests,
   updateCheckinStatus,
+  getCheckinReasons
 } from "../../APICalls/Collector/warehouseManage";
 import { updateStatus } from "../../interfaces/warehouse";
 import RequestForm from "../../components/FormComponents/RequestForm";
 import { CheckIn } from "../../interfaces/checkin";
-import { useContainer } from "unstated-next";
-import dayjs from "dayjs";
-import { format, localStorgeKeyName } from "../../constants/constant";
-import { displayCreatedDate } from '../../utils/utils'
+import { localStorgeKeyName } from "../../constants/constant";
+import { displayCreatedDate, showSuccessToast } from '../../utils/utils'
 import { useTranslation } from "react-i18next";
 import { queryCheckIn } from "../../interfaces/checkin";
 import CustomButton from "../../components/FormComponents/CustomButton";
+import i18n from "../../setups/i18n";
 
 const Required = () => {
   return (
@@ -112,6 +108,7 @@ type rejectForm = {
   onClose: () => void;
   checkedShipments: number[];
   onRejected?: () => void;
+  reasonList: any
 };
 
 function RejectForm({
@@ -119,37 +116,22 @@ function RejectForm({
   onClose,
   checkedShipments,
   onRejected,
+  reasonList
 }: rejectForm) {
   const { t } = useTranslation();
 
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
 
-  const reasons: il_item[] = [
-    {
-      id: '1',
-      name: t('check_out.reason_1')
-    },
-    {
-      id: '2',
-      name: t('check_out.reason_2')
-    },
-    {
-      id: '3',
-      name: t('check_out.reason_3')
-    }
-  ];
-
   const handleConfirmRejectOnClick = async (rejectReasonId: string[]) => {
     const rejectReason = rejectReasonId.map((id) => {
-      const reasonItem = reasons.find((reason) => reason.id === id);
+      const reasonItem = reasonList.find((reason: { id: string; }) => reason.id === id);
       return reasonItem ? reasonItem.name : "";
     });
-    // console.log("checkin ids are " + checkedShipments);
-    const reason = rejectReason;
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
     const statReason: updateStatus = {
       status: "REJECTED",
-      reason: reason,
-      updatedBy: "admin",
+      reason: rejectReason,
+      updatedBy: loginId
     };
 
     const results = await Promise.allSettled(
@@ -189,7 +171,7 @@ function RejectForm({
               component="h2"
               sx={{ fontWeight: "bold" }}
             >
-               {t('check_out.confirm_reject')}
+               {t('check_in.confirm_reject')}
             </Typography>
           </Box>
           <Box>
@@ -200,7 +182,7 @@ function RejectForm({
             {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedShipments.length}
             </Typography> */}
-            <CustomItemList items={reasons} multiSelect={setRejectReasonId} itemColor={{bgColor: '#F0F9FF', borderColor: primaryColor}} />
+            <CustomItemList items={reasonList} multiSelect={setRejectReasonId} itemColor={{bgColor: '#F0F9FF', borderColor: primaryColor}} />
           </Box>
 
           <Box sx={{ alignSelf: 'center' }}>
@@ -337,9 +319,36 @@ function ShipmentManage() {
     senderName: "",
     senderAddr: "",
   })
+  const [reasonList, setReasonList] = useState<any>([])
 
+  const getRejectReason = async() => {
+    let result = await getCheckinReasons()
+    if ( result?.data?.content.length > 0) {
+      let reasonName = ""
+      switch (i18n.language) {
+        case 'enus':
+          reasonName = 'reasonNameEng'
+          break
+        case 'zhch':
+          reasonName = 'reasonNameSchi'
+          break
+        case 'zhhk':
+          reasonName = 'reasonNameTchi'
+          break
+        default:
+          reasonName = 'reasonNameEng'
+          break
+      }
+      result?.data?.content.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
+        item.id = item.reasonId
+        item.name = item[reasonName]
+      })
+      setReasonList(result?.data?.content)
+    }
+  }
   useEffect(() => {
     initCheckInRequest();
+    getRejectReason()
   }, [page, query]);
 
   const transformToTableRow = (item: CheckIn): TableRow => {
@@ -554,7 +563,9 @@ function ShipmentManage() {
 
   const onRejectCheckin = () => {
     setRejectModal(false)
-    setConfirmModal(true)
+    showSuccessToast(t('pick_up_order.rejected_success'))
+    resetPage()
+    // setConfirmModal(true)
   };
 
   const resetPage = async () => {
@@ -753,6 +764,7 @@ function ShipmentManage() {
         <RejectForm
           checkedShipments={selectedCheckin}
           open={rejFormModal}
+          reasonList={reasonList}
           onClose={() => {
             setRejectModal(false);
           }}
@@ -766,7 +778,9 @@ function ShipmentManage() {
         }}
         onApprove={() => {
           setApproveModal(false)
-          setConfirmModal(true)
+          showSuccessToast(t('pick_up_order.approved_success'))
+          resetPage()
+          // setConfirmModal(true)
         }}
         checkedCheckIn={selectedCheckin}
       />

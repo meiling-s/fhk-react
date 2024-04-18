@@ -263,14 +263,13 @@
     "completed": "Completed",
     "closed": "Closed",
     "outstanding": "Outstanding",
-    "suspend": "Suspend",
+    "suspend": "Suspended",
     "deny": "Deny",
     "success": "Success",
     "failed": "Failed",
     "enable": "Enable",
     "not_enabled": "Not enabled",
-    "terminated": "Terminated",
-    "suspend": "Suspended"
+    "terminated": "Terminated"
   },
   "appBar": {
     "simplified_cn": "简体中文",
