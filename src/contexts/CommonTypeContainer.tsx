@@ -133,7 +133,7 @@ const CommonType = () => {
     const token = returnApiToken()
     try {
       var response = await axiosInstance({
-        ...GET_MANULIST(token.decodeKeycloack),
+        ...GET_MANULIST(token.realmApiRoute, token.decodeKeycloack),
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
@@ -150,7 +150,7 @@ const CommonType = () => {
     const token = returnApiToken()
     try {
       var response = await axiosInstance({
-        ...GET_COLLECTORLIST(token.decodeKeycloack),
+        ...GET_COLLECTORLIST(token.realmApiRoute, token.decodeKeycloack),
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })

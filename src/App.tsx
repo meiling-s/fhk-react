@@ -5,6 +5,7 @@ import CommonTypeContainer from './contexts/CommonTypeContainer'
 import axiosSetup from './setups/axiosSetup'
 import './setups/i18n'
 import theme from './themes/palette'
+import { ToastContainer } from 'react-toastify'
 
 
 
@@ -17,6 +18,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CommonTypeContainer.Provider>
           <NotifContainerContext.Provider>
+            <ToastContainer></ToastContainer>
             <Router />
           </NotifContainerContext.Provider>
       </CommonTypeContainer.Provider>
