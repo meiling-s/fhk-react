@@ -27,6 +27,8 @@ import {
   getPurchaseOrderReason
 } from '../../../APICalls/Manufacturer/purchaseOrder'
 
+import { getStatusList } from '../../../APICalls/status'
+
 import {
   PurChaseOrder,
   PurchaseOrderDetail,
@@ -303,7 +305,6 @@ const PurchaseOrder = () => {
   const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation()
   const action: string = location.state
-  // const [pickupOrder, setPickupOrder] = useState<PickupOrder[]>()
   const [purchaseOrder, setPurchaseOrder] = useState<PurChaseOrder[]>()
   const [rows, setRows] = useState<Row[]>([])
   const [filteredPico, setFilteredPico] = useState<Row[]>([])
@@ -320,6 +321,32 @@ const PurchaseOrder = () => {
   const [reasonList, setReasonList] = useState<any>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
+  const statusList: Option[] = [
+    {
+      value: '',
+      label: 'any'
+    },
+    {
+      value: '0',
+      label: 'CREATED'
+    },
+    {
+      value: '1',
+      label: 'CONFIRMED'
+    },
+    {
+      value: '2',
+      label: 'REJECTED'
+    },
+    {
+      value: '3',
+      label: 'COMPLETED'
+    },
+    {
+      value: '4',
+      label: 'CLOSED'
+    }
+  ]
 
   const initPurchaseOrderRequest = async () => {
     setPurchaseOrder([])
@@ -397,6 +424,7 @@ const PurchaseOrder = () => {
   useEffect(() => {
     initPurchaseOrderRequest()
     getRejectReason()
+
     if (action) {
       var toastMsg = ''
       switch (action) {
@@ -508,7 +536,7 @@ const PurchaseOrder = () => {
     {
       label: t('pick_up_order.filter.status'),
       width: '14%',
-      options: getUniqueOptions('status'),
+      options: statusList,
       field: 'status'
     }
   ]
@@ -561,21 +589,7 @@ const PurchaseOrder = () => {
   }
 
   const handleSearch = (keyName: string, value: string) => {
-    if (keyName == 'status') {
-      const statusMapping: { [key: string]: string } = {
-        CREATED: '0',
-        STARTED: '1',
-        CONFIRMED: '2',
-        REJECTED: '3',
-        COMPLETED: '4',
-        CLOSED: '5',
-        OUTSTANDING: '6'
-      }
-      const mappedStatus = statusMapping[value]
-      updateQuery({ ...query, [keyName]: mappedStatus })
-    } else {
-      updateQuery({ [keyName]: value })
-    }
+    updateQuery({ [keyName]: value })
   }
   return (
     <>
