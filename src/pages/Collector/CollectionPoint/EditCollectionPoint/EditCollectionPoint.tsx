@@ -251,12 +251,12 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      premiseRemark == '' &&
-        tempV.push({
-          field: 'col.premiseRemark',
-          problem: formErr.empty,
-          type: 'error'
-        })
+      // premiseRemark == '' && premiseType === 'PT00009' &&
+      //   tempV.push({
+      //     field: 'col.premiseRemark',
+      //     problem: formErr.empty,
+      //     type: 'error'
+      //   })
       recyclables.length == 0 &&
         tempV.push({
           field: 'col.recycType',
@@ -642,9 +642,10 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-            <Grid item>
+           {premiseType === 'PT00009' && 
+             <Grid item>
               {/* <Collapse in={premiseType == "PT00010"} > */}
-              <CustomField label={t('col.premiseRemark')} mandatory={true}>
+              <CustomField label={t('col.premiseRemark')} mandatory={false}>
                 <CustomTextField
                   id="premiseRemark"
                   disabled={true}
@@ -655,7 +656,7 @@ function CreateCollectionPoint() {
                 />
               </CustomField>
               {/* </Collapse> */}
-            </Grid>
+           </Grid>}
 
             <CustomField label={t('col.status')}>
               <CustomSwitch

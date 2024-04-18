@@ -400,12 +400,16 @@ const AdditionalServicePict = () => {
         photo: imgList,
         numberOfVisitor: parseInt(serviceItem.numberOfPeople),
         createdBy: loginId,
-        updatedBy: loginId
+        updatedBy: loginId,
+        nature: serviceItem.serviceId === 4 ? nature : '',
+        speaker: serviceItem.serviceId === 4 ? speaker : '',
+        additionalFlg: serviceItem.serviceId === 4 && serviceFlg === 1 ? true : false
       }
       
       const result = await createServiceInfo(formData)
-      if (result) itemData++
-              const toastMsg = 'created additional service success'
+      if (result) {
+        itemData++
+        const toastMsg = 'created additional service success'
         toast.info(toastMsg, {
           position: 'top-center',
           autoClose: 3000,
@@ -416,6 +420,8 @@ const AdditionalServicePict = () => {
           progress: undefined,
           theme: 'light'
         })
+      }
+        
      }
     }
 
