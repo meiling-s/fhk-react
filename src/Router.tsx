@@ -108,6 +108,7 @@ const Router = () => {
           />
           <Route path="/collector/inventory" element={<Inventory />} />
           <Route path="/collector/userGroup" element={<UserGroup />} />
+          <Route path="/collector/account" element={<LogisticAccount />} />
           <Route
             path="/collector/checkInAndCheckout"
             element={<CheckInAndCheckOut />}
