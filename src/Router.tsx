@@ -57,6 +57,10 @@ import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
 
+//manufacturer
+import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
+
+
 const Router = () => {
   return (
     <BrowserRouter>
@@ -156,6 +160,7 @@ const Router = () => {
           <Route path="/manufacturer/account" element={<LogisticAccount />} />
           <Route path="/manufacturer/inventory" element={<Inventory/>}/>
           <Route path="/manufacturer/setting" element={<Settings/>}/>
+          <Route path="/manufacturer/purchaseOrder" element={<PurchaseOrder />} />
         </Route>
       </Routes>
     </BrowserRouter>
