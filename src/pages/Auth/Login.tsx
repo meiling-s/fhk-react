@@ -70,7 +70,10 @@ const Login = () => {
         localStorage.setItem(localStorgeKeyName.role, result?.realm || '');
         localStorage.setItem(localStorgeKeyName.username, result?.username || '');
         // 20240129 add function list daniel keung start
-        localStorage.setItem(localStorgeKeyName.functionList, JSON.stringify(result?.functionList));
+        const functionList = result?.functionList || [];
+        const uniqueFunctionList = Array.from(new Set(functionList));
+
+        localStorage.setItem(localStorgeKeyName.functionList, JSON.stringify(uniqueFunctionList));
         // 20240129 add function list daniel keung end
         const decodedToken: any = jwtDecode(result?.access_token);
         const azpValue = decodedToken.azp;

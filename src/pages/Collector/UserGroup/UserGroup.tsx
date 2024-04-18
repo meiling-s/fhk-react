@@ -15,12 +15,20 @@ import {
 
 import { styles } from '../../../constants/styles'
 import CreateUserGroup from './CreateUserGroup'
-import { UserGroup as UserGroupItem, CreateUserGroupProps as UserGroupForm, Functions } from '../../../interfaces/userGroup'
+import {
+  UserGroup as UserGroupItem,
+  CreateUserGroupProps as UserGroupForm,
+  Functions
+} from '../../../interfaces/userGroup'
 import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
-import { getAllFunction, getAllUserGroup } from '../../../APICalls/Collector/userGroup'
+import {
+  getAllFunction,
+  getAllUserGroup
+} from '../../../APICalls/Collector/userGroup'
 import { IconButton } from '@mui/joy'
+import { localStorgeKeyName } from '../../../constants/constant'
 
 type TableRow = {
   id: number
@@ -38,11 +46,22 @@ function createUserGroup(
   updatedBy: string,
   updatedAt: string,
   userAccount: object[],
-  functions: Functions[],
+  functions: Functions[]
 ): UserGroupItem {
-  return { groupId, tenantId, roleName, description, status, createdBy, createdAt, updatedBy, updatedAt, userAccount, functions  }
+  return {
+    groupId,
+    tenantId,
+    roleName,
+    description,
+    status,
+    createdBy,
+    createdAt,
+    updatedBy,
+    updatedAt,
+    userAccount,
+    functions
+  }
 }
-
 
 const UserGroup: FunctionComponent = () => {
   const { t } = useTranslation()
@@ -55,6 +74,7 @@ const UserGroup: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [functionList, setFunctionList] = useState<Functions[]>([])
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   useEffect(() => {
     initFunctionList()
@@ -63,14 +83,14 @@ const UserGroup: FunctionComponent = () => {
 
   const initFunctionList = async () => {
     const result = await getAllFunction()
-    const data = result?.data
-    setFunctionList(data);
+    const data = result?.data.filter((item: any) => item.tenantTypeId == role)
+    setFunctionList(data)
   }
 
   const initUserGroupList = async () => {
     const result = await getAllUserGroup(page - 1, pageSize)
     const data = result?.data
-    if(data) {
+    if (data) {
       var userGroupMapping: UserGroupItem[] = []
       data.map((item: any) => {
         userGroupMapping.push(
@@ -99,7 +119,7 @@ const UserGroup: FunctionComponent = () => {
       field: 'roleName',
       headerName: t('userGroup.groupName'),
       width: 200,
-      type: 'string',
+      type: 'string'
       // renderCell: (params) => {
       //   return (
       //     <div>{params.row.serviceType}</div>
@@ -119,9 +139,16 @@ const UserGroup: FunctionComponent = () => {
       type: 'string',
       renderCell: (params) => {
         return (
-          <div>{params.row.functions.map((item: {functionNameTChi: string}, key: number) => (
-            <span key={key}>{key > 0 ? ' 、' : ''}{item.functionNameTChi}</span>
-          ))}</div>
+          <div>
+            {params.row.functions.map(
+              (item: { functionNameTChi: string }, key: number) => (
+                <span key={key}>
+                  {key > 0 ? ' 、' : ''}
+                  {item.functionNameTChi}
+                </span>
+              )
+            )}
+          </div>
         )
       }
     },
@@ -132,7 +159,10 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
-            onClick={(event) => {event.stopPropagation();  handleAction(params, 'edit')}}
+            onClick={(event) => {
+              event.stopPropagation()
+              handleAction(params, 'edit')
+            }}
           >
             <EDIT_OUTLINED_ICON
               fontSize="small"
@@ -149,7 +179,10 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <Button
-            onClick={(event) => {event.stopPropagation(); handleAction(params, 'delete')}}
+            onClick={(event) => {
+              event.stopPropagation()
+              handleAction(params, 'delete')
+            }}
           >
             <DELETE_OUTLINED_ICON
               fontSize="small"
@@ -162,7 +195,10 @@ const UserGroup: FunctionComponent = () => {
     }
   ]
 
-  const handleAction = (params: GridRenderCellParams, action: 'add' | 'edit' | 'delete') => {
+  const handleAction = (
+    params: GridRenderCellParams,
+    action: 'add' | 'edit' | 'delete'
+  ) => {
     setAction(action)
     setRowId(params.row.id)
     setSelectedRow(params.row)
@@ -173,7 +209,7 @@ const UserGroup: FunctionComponent = () => {
     setAction('edit')
     setRowId(params.row.id)
     setSelectedRow(params.row)
-    setDrawerOpen(true) 
+    setDrawerOpen(true)
   }
 
   const showErrorToast = (msg: string) => {
@@ -202,14 +238,14 @@ const UserGroup: FunctionComponent = () => {
     })
   }
 
-  const onSubmitData = (type: string, msg: string) =>{
+  const onSubmitData = (type: string, msg: string) => {
     initUserGroupList()
-    if(type == 'success') {
+    if (type == 'success') {
       showSuccessToast(msg)
     } else {
       showErrorToast(msg)
     }
-  } 
+  }
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
@@ -249,7 +285,10 @@ const UserGroup: FunctionComponent = () => {
               }
             ]}
             variant="outlined"
-            onClick={() => {setDrawerOpen(true); setAction('add')}}
+            onClick={() => {
+              setDrawerOpen(true)
+              setAction('add')
+            }}
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
@@ -281,7 +320,7 @@ const UserGroup: FunctionComponent = () => {
               }}
             />
             <Pagination
-              className='mt-4'
+              className="mt-4"
               count={Math.ceil(totalData)}
               page={page}
               onChange={(_, newPage) => {
