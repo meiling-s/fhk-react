@@ -1,6 +1,7 @@
 import axios from "axios";
 import { localStorgeKeyName } from '../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
+import { showErrorToast } from "../utils/utils";
 
 const axiosInstance = axios.create()
 
@@ -95,6 +96,8 @@ axiosInstance.interceptors.response.use(
         if (error.response.status === 401) {
             localStorage.clear();
             window.location.href = '/';
+        } else if (error?.response?.data?.message !== '') {
+            showErrorToast(error?.response?.data?.message)
         }
         
         return Promise.reject(error);

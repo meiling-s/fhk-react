@@ -193,8 +193,6 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         onSubmitData('success', 'Success created data')
         resetData()
         handleDrawerClose()
-      } else {
-        onSubmitData('error', 'Failed created data')
       }
     } else {
       setTrySubmited(true)
@@ -224,8 +222,6 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         onSubmitData('success', 'Deleted data success')
         resetData()
         handleDrawerClose()
-      } else {
-        onSubmitData('error', 'Deleted data success')
       }
     }
   }
