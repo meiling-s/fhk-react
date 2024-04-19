@@ -33,8 +33,7 @@ import {
   createWarehouse,
   getWarehouseById,
   editWarehouse,
-  getRecycleType,
-  getAllWarehouse
+  getRecycleType
 } from '../../../APICalls/warehouseManage'
 import { set } from 'date-fns'
 import { getLocation } from '../../../APICalls/getLocation'
@@ -48,6 +47,7 @@ interface AddWarehouseProps {
   action?: 'add' | 'edit' | 'delete'
   onSubmitData?: (type: string, id?: number, error?: boolean) => void
   rowId: number
+  addressList: string[]
 }
 
 interface recyleItem {
@@ -118,14 +118,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   handleDrawerClose,
   action = 'add',
   onSubmitData,
-  rowId
+  rowId,
+  addressList
 }) => {
   const { t } = useTranslation()
   const { i18n } = useTranslation()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
   const [errorMsgList, setErrorMsgList] = useState<string[]>([])
   const [openDelete, setOpenDelete] = useState<boolean>(false)
-  const [adressList, setAddressList] = useState<string[]>([])
 
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
   const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption>({})
@@ -239,7 +239,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   useEffect(() => {
     // console.log('action', action)
-    initAdressList()
     if (action === 'add') {
       resetForm()
       setTrySubmited(false)
@@ -250,19 +249,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     // console.log('physicalFlg', pysicalLocation)
     getRecyleCategory()
   }, [action, handleDrawerClose])
-
-
-  const initAdressList = async () => {
-    const result = await getAllWarehouse(0, 100)
-    if (result) {
-      setAddressList(
-        result.data.content.map((item: any) => {
-          if (item.warehouseId != rowId) return item.location
-        })
-      )
-    }
-  }
-
 
   const name_fields = [
     {
@@ -361,7 +347,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    adressList.includes(place) &&
+    addressList.includes(place) &&
       tempV.push({
         field: 'place',
         error: `${t(`add_warehouse_page.place`)} ${t(
@@ -820,7 +806,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                     }}
                     sx={styles.inputState}
                     disabled={action === 'delete'}
-                    error={checkString(place) && adressList.includes(place)}
+                    error={checkString(place) && addressList.includes(place)}
                   />
                 </FormControl>
               </div>
