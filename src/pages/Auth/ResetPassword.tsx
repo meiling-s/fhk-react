@@ -34,15 +34,17 @@ const ForgetPassword = () => {
 
   useEffect(() => {
     const tempV: { field: string; error: string }[] = []
-    formValues?.username.trim() === '' && tempV.push({
+    formValues?.username.trim() === '' &&
+      tempV.push({
         field: '登入名稱',
         error: `欄位為必填項`
-    })
+      })
 
-    Number.isNaN(parseInt(formValues?.contactNo)) && tempV.push({
-      field: '電郵地址',
-      error: `欄位為必填項`
-  })
+    Number.isNaN(parseInt(formValues?.contactNo)) &&
+      tempV.push({
+        field: '電郵地址',
+        error: `欄位為必填項`
+      })
 
     // Object.keys(formValues).forEach((fieldName) => {
     //   formValues[fieldName as keyof FormValues].trim() === '' &&
@@ -57,9 +59,11 @@ const ForgetPassword = () => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
+    const fieldValue = name == 'contactNo' ? value.replace(/\D/g, '') : value
+   
     setFormValues((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: fieldValue
     }))
     setErorSubmit(false)
   }
@@ -73,11 +77,15 @@ const ForgetPassword = () => {
   }
 
   const checkNumber = (n: string) => {
-    if(!trySubmited){
-        return false;
+    if (!trySubmited) {
+      return false
     }
-    return Number.isNaN(parseInt(n)) || n == "" || (!Number.isNaN(parseInt(n)) && parseInt(n) < 0);
-}
+    return (
+      Number.isNaN(parseInt(n)) ||
+      n == '' ||
+      (!Number.isNaN(parseInt(n)) && parseInt(n) < 0)
+    )
+  }
 
   const submitNewPassword = async () => {
     // console.log('Submitted:', formValues)
@@ -96,7 +104,7 @@ const ForgetPassword = () => {
 
       if (data) {
         navigate('/confirmNewPassword')
-      } else{
+      } else {
         setTrySubmited(true)
         setErorSubmit(true)
       }
@@ -191,27 +199,51 @@ const ForgetPassword = () => {
           </div>
         )}
         <Stack spacing={4}>
-          {formFields.map((field) => (
-            <Box key={field.name}>
-              <Typography sx={styles.typo}>{field.label}</Typography>
-              <TextField
-                fullWidth
-                placeholder={field.placeholder}
-                name={field.name}
-                value={formValues[field.name]}
-                InputProps={{
-                  sx: styles.textField
-                }}
-                type={field.name == 'contactNo' ? 'number' : 'text'}
-                sx={styles.inputState}
-                onChange={handleInputChange}
-                error={field.name == 'username' ?
-                checkString(formValues[field.name as keyof FormValues]):
-                checkNumber(formValues[field.name as keyof FormValues])
-              }
-              />
-            </Box>
-          ))}
+          {formFields.map((field) =>
+            field.name == 'conctactNo' ? (
+              <Box>
+                <TextField
+                  fullWidth
+                  InputProps={{
+                    sx: styles.textField
+                  }}
+                  label={field.placeholder}
+                  onChange={handleInputChange}
+                  sx={styles.textField}
+                  value={formValues[field.name]}
+                  inputProps={{
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*',
+                    maxLength: 6
+                  }}
+                  error={checkNumber(
+                    formValues[field.name as keyof FormValues]
+                  )}
+                />
+              </Box>
+            ) : (
+              <Box key={field.name}>
+                <Typography sx={styles.typo}>{field.label}</Typography>
+                <TextField
+                  fullWidth
+                  placeholder={field.placeholder}
+                  name={field.name}
+                  value={formValues[field.name]}
+                  InputProps={{
+                    sx: styles.textField
+                  }}
+                  type={'text'}
+                  sx={styles.inputState}
+                  onChange={handleInputChange}
+                  error={
+                    field.name == 'username'
+                      ? checkString(formValues[field.name as keyof FormValues])
+                      : checkNumber(formValues[field.name as keyof FormValues])
+                  }
+                />
+              </Box>
+            )
+          )}
           <Box>
             <Button
               fullWidth
