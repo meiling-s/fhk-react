@@ -369,8 +369,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    console.log(adressList, adressList.includes(place), place)
-
     const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
       return (

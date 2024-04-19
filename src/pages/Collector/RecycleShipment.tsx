@@ -15,50 +15,51 @@ import {
   Typography,
   Pagination,
   Divider
-} from "@mui/material";
+} from '@mui/material'
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
-  GridRowSpacingParams,
+  GridRowSpacingParams
 } from '@mui/x-data-grid'
 import CloseIcon from '@mui/icons-material/Close'
-import { SEARCH_ICON } from "../../themes/icons";
-import { useEffect, useState } from "react";
-import React from "react";
-import { primaryColor, styles } from "../../constants/styles";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import CheckIcon from "@mui/icons-material/Check";
+import { SEARCH_ICON, LEFT_ARROW_ICON } from '../../themes/icons'
+import { useEffect, useState } from 'react'
+import React from 'react'
+import { primaryColor, styles } from '../../constants/styles'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import CheckIcon from '@mui/icons-material/Check'
 import { useNavigate } from 'react-router-dom'
-import CustomItemList from "../../components/FormComponents/CustomItemList";
+import CustomItemList from '../../components/FormComponents/CustomItemList'
 import {
   getAllCheckInRequests,
   updateCheckinStatus,
   getCheckinReasons
-} from "../../APICalls/Collector/warehouseManage";
-import { updateStatus } from "../../interfaces/warehouse";
-import RequestForm from "../../components/FormComponents/RequestForm";
-import { CheckIn } from "../../interfaces/checkin";
-import { localStorgeKeyName } from "../../constants/constant";
+} from '../../APICalls/Collector/warehouseManage'
+import { updateStatus } from '../../interfaces/warehouse'
+import RequestForm from '../../components/FormComponents/RequestForm'
+import { CheckIn } from '../../interfaces/checkin'
+import { localStorgeKeyName } from '../../constants/constant'
 import { displayCreatedDate, showSuccessToast } from '../../utils/utils'
-import { useTranslation } from "react-i18next";
-import { queryCheckIn } from "../../interfaces/checkin";
-import CustomButton from "../../components/FormComponents/CustomButton";
-import i18n from "../../setups/i18n";
+import { useTranslation } from 'react-i18next'
+import { queryCheckIn } from '../../interfaces/checkin'
+import CustomButton from '../../components/FormComponents/CustomButton'
+import i18n from '../../setups/i18n'
+
 
 const Required = () => {
   return (
     <Typography
       sx={{
-        color: "red",
-        ml: "5px",
+        color: 'red',
+        ml: '5px'
       }}
     >
       *
     </Typography>
-  );
-};
+  )
+}
 type Confirm = {
   open: boolean
   onClose: () => void
@@ -104,12 +105,12 @@ const ConfirmModal: React.FC<Confirm> = ({ open, onClose, title }) => {
 }
 
 type rejectForm = {
-  open: boolean;
-  onClose: () => void;
-  checkedShipments: number[];
-  onRejected?: () => void;
+  open: boolean
+  onClose: () => void
+  checkedShipments: number[]
+  onRejected?: () => void
   reasonList: any
-};
+}
 
 function RejectForm({
   open,
@@ -118,42 +119,44 @@ function RejectForm({
   onRejected,
   reasonList
 }: rejectForm) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const [rejectReasonId, setRejectReasonId] = useState<string[]>([]);
+  const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
 
   const handleConfirmRejectOnClick = async (rejectReasonId: string[]) => {
     const rejectReason = rejectReasonId.map((id) => {
-      const reasonItem = reasonList.find((reason: { id: string; }) => reason.id === id);
-      return reasonItem ? reasonItem.name : "";
-    });
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+      const reasonItem = reasonList.find(
+        (reason: { id: string }) => reason.id === id
+      )
+      return reasonItem ? reasonItem.name : ''
+    })
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
     const statReason: updateStatus = {
-      status: "REJECTED",
+      status: 'REJECTED',
       reason: rejectReason,
       updatedBy: loginId
-    };
+    }
 
     const results = await Promise.allSettled(
       checkedShipments.map(async (checkInId) => {
         try {
-          const result = await updateCheckinStatus(checkInId, statReason);
-          const data = result?.data;
+          const result = await updateCheckinStatus(checkInId, statReason)
+          const data = result?.data
           if (data) {
             // console.log("updated check-in status: ", data);
             if (onRejected) {
-              onRejected();
+              onRejected()
             }
           }
         } catch (error) {
           console.error(
             `Failed to update check-in status for id ${checkInId}: `,
             error
-          );
+          )
         }
       })
-    );
-  };
+    )
+  }
 
   return (
     <Modal
@@ -169,39 +172,50 @@ function RejectForm({
               id="modal-modal-title"
               variant="h6"
               component="h2"
-              sx={{ fontWeight: "bold" }}
+              sx={{ fontWeight: 'bold' }}
             >
-               {t('check_in.confirm_reject')}
+              {t('check_in.confirm_reject')}
             </Typography>
           </Box>
           <Box>
             <Typography sx={localstyles.typo}>
-              {t("check_in.reject_reasons")}
+              {t('check_in.reject_reasons')}
               <Required />
             </Typography>
             {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedShipments.length}
             </Typography> */}
-            <CustomItemList items={reasonList} multiSelect={setRejectReasonId} itemColor={{bgColor: '#F0F9FF', borderColor: primaryColor}} />
+            <CustomItemList
+              items={reasonList}
+              multiSelect={setRejectReasonId}
+              itemColor={{ bgColor: '#F0F9FF', borderColor: primaryColor }}
+            />
           </Box>
 
           <Box sx={{ alignSelf: 'center' }}>
-            <CustomButton text={t('check_in.confirm')} color="blue" style={{width: '175px', marginRight: '10px'}} onClick={
-              () => {
-                handleConfirmRejectOnClick(rejectReasonId);
+            <CustomButton
+              text={t('check_in.confirm')}
+              color="blue"
+              style={{ width: '175px', marginRight: '10px' }}
+              onClick={() => {
+                handleConfirmRejectOnClick(rejectReasonId)
                 onClose()
-              }
-            } />
-            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '175px'}} onClick={
-              () => {
+              }}
+            />
+            <CustomButton
+              text={t('check_in.cancel')}
+              color="blue"
+              outlined
+              style={{ width: '175px' }}
+              onClick={() => {
                 onClose()
-              }
-            } />
+              }}
+            />
           </Box>
         </Stack>
       </Box>
     </Modal>
-  );
+  )
 }
 
 type ApproveForm = {
@@ -218,7 +232,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
   onApprove
 }) => {
   const { t } = useTranslation()
-  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
     const statReason: updateStatus = {
@@ -276,12 +290,23 @@ const ApproveModal: React.FC<ApproveForm> = ({
           </Box> */}
 
           <Box sx={{ alignSelf: 'center' }}>
-            <CustomButton text={t('check_out.confirm_approve_btn')} color="blue" style={{width: '150px', marginRight: '10px'}} onClick={() => {
-              handleApproveRequest()
-            }} />
-            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '150px', marginRight: '10px'}} onClick={() => {
-              onClose()
-            }} />
+            <CustomButton
+              text={t('check_out.confirm_approve_btn')}
+              color="blue"
+              style={{ width: '150px', marginRight: '10px' }}
+              onClick={() => {
+                handleApproveRequest()
+              }}
+            />
+            <CustomButton
+              text={t('check_in.cancel')}
+              color="blue"
+              outlined
+              style={{ width: '150px', marginRight: '10px' }}
+              onClick={() => {
+                onClose()
+              }}
+            />
           </Box>
         </Stack>
       </Box>
@@ -295,36 +320,36 @@ type TableRow = {
 }
 
 function ShipmentManage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   const navigate = useNavigate()
-  const drawerWidth = 246;
-  const [selectedCheckin, setSelectedCheckin] = useState<number[]>([]);
-  const [shipments, setShipments] = useState<CheckIn[]>([]);
-  const [filterShipments, setFilterShipments] = useState<CheckIn[]>([]);
+  const drawerWidth = 246
+  const [selectedCheckin, setSelectedCheckin] = useState<number[]>([])
+  const [shipments, setShipments] = useState<CheckIn[]>([])
+  const [filterShipments, setFilterShipments] = useState<CheckIn[]>([])
   const [rejFormModal, setRejectModal] = useState<boolean>(false)
   const [approveModal, setApproveModal] = useState<boolean>(false)
-  const [company, setCompany] = useState("");
-  const [location, setLocation] = useState("");
-  const [checkedShipments, setCheckedShipments] = useState<CheckIn[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
+  const [company, setCompany] = useState('')
+  const [location, setLocation] = useState('')
+  const [checkedShipments, setCheckedShipments] = useState<CheckIn[]>([])
+  const [open, setOpen] = useState<boolean>(false)
   const [selectAll, setSelectAll] = useState(false)
-  const [selectedRow, setSelectedRow] = useState<CheckIn>();
-  const [checkInRequest, setCheckInRequest] = useState<CheckIn[]>();
+  const [selectedRow, setSelectedRow] = useState<CheckIn>()
+  const [checkInRequest, setCheckInRequest] = useState<CheckIn[]>()
   const [page, setPage] = useState(1)
   const [confirmModal, setConfirmModal] = useState(false)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [query, setQuery] = useState<queryCheckIn>({
-    picoId: "",
-    senderName: "",
-    senderAddr: "",
+    picoId: '',
+    senderName: '',
+    senderAddr: ''
   })
   const [reasonList, setReasonList] = useState<any>([])
 
-  const getRejectReason = async() => {
+  const getRejectReason = async () => {
     let result = await getCheckinReasons()
-    if ( result?.data?.content.length > 0) {
-      let reasonName = ""
+    if (result?.data?.content.length > 0) {
+      let reasonName = ''
       switch (i18n.language) {
         case 'enus':
           reasonName = 'reasonNameEng'
@@ -339,48 +364,50 @@ function ShipmentManage() {
           reasonName = 'reasonNameEng'
           break
       }
-      result?.data?.content.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
-        item.id = item.reasonId
-        item.name = item[reasonName]
-      })
+      result?.data?.content.map(
+        (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
+          item.id = item.reasonId
+          item.name = item[reasonName]
+        }
+      )
       setReasonList(result?.data?.content)
     }
   }
   useEffect(() => {
-    initCheckInRequest();
+    initCheckInRequest()
     getRejectReason()
-  }, [page, query]);
+  }, [page, query])
 
   const transformToTableRow = (item: CheckIn): TableRow => {
     return {
       id: item.chkInId,
       chkInId: item.chkInId,
-      createdAt: displayCreatedDate(item.createdAt) || "-",
-      senderName: item.senderName ,
-      recipientCompany: "-",
+      createdAt: displayCreatedDate(item.createdAt) || '-',
+      senderName: item.senderName,
+      recipientCompany: '-',
       picoId: item.picoId,
       adjustmentFlg: item.adjustmentFlg,
       logisticName: item.logisticName,
-      senderAddr: item.senderAddr ,
-      deliveryAddress: "-",
-      status: item.status,
+      senderAddr: item.senderAddr,
+      deliveryAddress: '-',
+      status: item.status
     }
   }
 
   const initCheckInRequest = async () => {
-    const result = await getAllCheckInRequests(page - 1, pageSize, query);
+    const result = await getAllCheckInRequests(page - 1, pageSize, query)
     if (result) {
-      const data = result?.data?.content;
+      const data = result?.data?.content
       if (data && data.length > 0) {
         const checkinData = data.map(transformToTableRow)
-        setCheckInRequest(data);
+        setCheckInRequest(data)
         setFilterShipments(checkinData)
       } else {
         setFilterShipments([])
       }
       setTotalData(result?.data.totalPages)
     }
-  };
+  }
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -388,7 +415,7 @@ function ShipmentManage() {
     const selectedRows = checked
       ? filterShipments.map((row) => row.chkInId)
       : []
-      setSelectedCheckin(selectedRows)
+    setSelectedCheckin(selectedRows)
   }
 
   const handleRowCheckboxChange = (
@@ -401,7 +428,7 @@ function ShipmentManage() {
     const updatedChecked = checked
       ? [...selectedCheckin, chkInId]
       : selectedCheckin.filter((rowId) => rowId != chkInId)
-      setSelectedCheckin(updatedChecked)
+    setSelectedCheckin(updatedChecked)
     // console.log(updatedChecked)
 
     const allRowsChecked = filterShipments.every((row) =>
@@ -429,9 +456,7 @@ function ShipmentManage() {
     renderCell: (params) => (
       <Checkbox
         checked={selectAll || selectedCheckin?.includes(params.row?.chkInId)}
-        onChange={(event) =>
-          handleRowCheckboxChange(event, params.row.chkInId)
-        }
+        onChange={(event) => handleRowCheckboxChange(event, params.row.chkInId)}
         color="primary"
       />
     )
@@ -440,27 +465,27 @@ function ShipmentManage() {
   const headCells: GridColDef[] = [
     checkboxColumn,
     {
-      field: "createdAt",
+      field: 'createdAt',
       type: 'string',
-      headerName: t("check_in.created_at"),
+      headerName: t('check_in.created_at'),
       width: 150
     },
     {
-      field: "senderName",
+      field: 'senderName',
       type: 'string',
-      headerName: t("check_in.sender_company"),
+      headerName: t('check_in.sender_company'),
       width: 200
     },
     {
-      field: "recipientCompany",
+      field: 'recipientCompany',
       type: 'string',
-      headerName: t("check_in.receiver_company"),
+      headerName: t('check_in.receiver_company'),
       width: 200
     },
     {
-      field: "picoId",
+      field: 'picoId',
       type: 'string',
-      headerName: t("check_in.pickup_order_no"),
+      headerName: t('check_in.pickup_order_no'),
       width: 200
     },
     {
@@ -481,50 +506,50 @@ function ShipmentManage() {
       }
     },
     {
-      field: "logisticName",
+      field: 'logisticName',
       type: 'string',
-      headerName: t("check_in.logistic_company"),
+      headerName: t('check_in.logistic_company'),
       width: 200
     },
     {
-      field: "senderAddr",
+      field: 'senderAddr',
       type: 'string',
-      headerName: t("check_in.sender_addr"),
+      headerName: t('check_in.sender_addr'),
       width: 200
     },
     {
-      field: "deliveryAddress",
+      field: 'deliveryAddress',
       type: 'string',
-      headerName: t("check_in.receiver_addr"),
+      headerName: t('check_in.receiver_addr'),
       width: 200
     },
     {
-      field: "status",
+      field: 'status',
       type: 'string',
-      headerName: t("check_in.receiver_addr"),
+      headerName: t('check_in.receiver_addr'),
       width: 200
-    },
-  ];
+    }
+  ]
 
   const updateQuery = (newQuery: Partial<queryCheckIn>) => {
-    setQuery({ ...query, ...newQuery });
-  };
+    setQuery({ ...query, ...newQuery })
+  }
 
   const handleFilterPoNum = (searchWord: string) => {
-    updateQuery({picoId: searchWord})
-  };
+    updateQuery({ picoId: searchWord })
+  }
 
   const handleComChange = (event: SelectChangeEvent) => {
-    setCompany(event.target.value);
-    var searchWord = event.target.value;
-    updateQuery({senderName: searchWord})
-  };
+    setCompany(event.target.value)
+    var searchWord = event.target.value
+    updateQuery({ senderName: searchWord })
+  }
 
   const handleLocChange = (event: SelectChangeEvent) => {
-    setLocation(event.target.value);
-    var searchWord = event.target.value;
-    updateQuery({senderAddr: searchWord})
-  };
+    setLocation(event.target.value)
+    var searchWord = event.target.value
+    updateQuery({ senderAddr: searchWord })
+  }
 
   // const handleApproveOnClick = async () => {
   //   // console.log(checkedShipments);
@@ -566,7 +591,7 @@ function ShipmentManage() {
     showSuccessToast(t('pick_up_order.rejected_success'))
     resetPage()
     // setConfirmModal(true)
-  };
+  }
 
   const resetPage = async () => {
     setConfirmModal(false)
@@ -575,16 +600,16 @@ function ShipmentManage() {
   }
 
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
-  const handleSelectRow = (params: GridRowParams) =>{
-    setOpen(true);
+  const handleSelectRow = (params: GridRowParams) => {
+    setOpen(true)
 
     const selectedItem = filterShipments?.find(
       (item) => item.chkInId === params.row.chkInId
-    );
-    setSelectedRow(selectedItem);
+    )
+    setSelectedRow(selectedItem)
   }
 
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
@@ -600,21 +625,23 @@ function ShipmentManage() {
       </Modal>
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          pr: 4,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          pr: 4
         }}
       >
         <Grid container alignItems="center">
           <Grid item>
-            <Button aria-label="back" size="small" sx={{cursor: 'pointer'}} onClick={() => navigate('/warehouse')}>
-              <ChevronLeftIcon sx={styles.buttonBlack} />
-              <Typography fontSize={20} color="black" fontWeight="bold">
-                {t("check_in.request_check_in")}
-              </Typography>
-            </Button>
+          
+            <div
+              className="header-page flex justify-start items-center mb-4 cursor-pointer"
+              onClick={() => navigate('/warehouse')}
+            >
+              <LEFT_ARROW_ICON fontSize="large" />
+              <div className="title font-bold text-3xl pl-4 ">{t('check_in.request_check_in')}</div>
+            </div>
           </Grid>
         </Grid>
         <Box>
@@ -623,10 +650,10 @@ function ShipmentManage() {
               styles.buttonFilledGreen,
               {
                 mt: 3,
-                width: "90px",
-                height: "40px",
-                m: 0.5,
-              },
+                width: '90px',
+                height: '40px',
+                m: 0.5
+              }
             ]}
             variant="outlined"
             onClick={() => {
@@ -634,39 +661,39 @@ function ShipmentManage() {
               setApproveModal(selectedCheckin.length > 0)
             }}
           >
-            {" "}
-            {t("check_in.approve")}
+            {' '}
+            {t('check_in.approve')}
           </Button>
           <Button
             sx={[
               styles.buttonOutlinedGreen,
               {
                 mt: 3,
-                width: "90px",
-                height: "40px",
-                m: 0.5,
-              },
+                width: '90px',
+                height: '40px',
+                m: 0.5
+              }
             ]}
             variant="outlined"
             onClick={() => setRejectModal(selectedCheckin.length > 0)}
           >
-            {" "}
-            {t("check_in.reject")}
+            {' '}
+            {t('check_in.reject')}
           </Button>
         </Box>
         <Box className="filter-section flex justify-between items-center w-full">
           <TextField
             id="searchShipment"
             onChange={(event) => {
-              handleFilterPoNum(event.target.value);
+              handleFilterPoNum(event.target.value)
             }}
             sx={styles.inputStyle}
-            label={t("check_in.search")}
+            label={t('check_in.search')}
             InputLabelProps={{
               style: { color: primaryColor },
-              focused: true,
+              focused: true
             }}
-            placeholder={t("check_in.input_po_no")}
+            placeholder={t('check_in.input_po_no')}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -674,52 +701,50 @@ function ShipmentManage() {
                     <SEARCH_ICON style={{ color: primaryColor }} />
                   </IconButton>
                 </InputAdornment>
-              ),
+              )
             }}
           />
           <FormControl sx={styles.inputStyle}>
-            <InputLabel
-              id="company-label"
-              sx={styles.textFieldLabel}
-            >
-              {t("check_in.sender_company")}
+            <InputLabel id="company-label" sx={styles.textFieldLabel}>
+              {t('check_in.sender_company')}
             </InputLabel>
             <Select
               labelId="company-label"
               id="company"
               value={company}
-              label={t("check_in.sender_company")}
+              label={t('check_in.sender_company')}
               onChange={handleComChange}
             >
               <MenuItem value="">
-                {" "}
-                <em>{t("check_in.any")}</em>
+                {' '}
+                <em>{t('check_in.any')}</em>
               </MenuItem>
               {checkInRequest?.map((item, index) => (
-                <MenuItem key={index} value={item.senderAddr}>{item.senderAddr}</MenuItem>
+                <MenuItem key={index} value={item.senderAddr}>
+                  {item.senderAddr}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
-            <InputLabel
-              id="location-label"
-              sx={styles.textFieldLabel}
-            >
-              {t("check_in.sender_addr")}
+            <InputLabel id="location-label" sx={styles.textFieldLabel}>
+              {t('check_in.sender_addr')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t("check_in.sender_addr")}
+              label={t('check_in.sender_addr')}
               onChange={handleLocChange}
             >
               <MenuItem value="">
-                {" "}
-                <em>{t("check_in.any")}</em>
+                {' '}
+                <em>{t('check_in.any')}</em>
               </MenuItem>
               {checkInRequest?.map((item, index) => (
-                <MenuItem key={index} value={item.senderAddr}>{item.senderAddr}</MenuItem>
+                <MenuItem key={index} value={item.senderAddr}>
+                  {item.senderAddr}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -751,7 +776,7 @@ function ShipmentManage() {
                 }
               }}
             />
-             <Pagination
+            <Pagination
               className="mt-4"
               count={Math.ceil(totalData)}
               page={page}
@@ -766,117 +791,117 @@ function ShipmentManage() {
           open={rejFormModal}
           reasonList={reasonList}
           onClose={() => {
-            setRejectModal(false);
+            setRejectModal(false)
           }}
           onRejected={onRejectCheckin}
         />
 
-      <ApproveModal
-        open={approveModal}
-        onClose={() => {
-          setApproveModal(false)
-        }}
-        onApprove={() => {
-          setApproveModal(false)
-          showSuccessToast(t('pick_up_order.approved_success'))
-          resetPage()
-          // setConfirmModal(true)
-        }}
-        checkedCheckIn={selectedCheckin}
-      />
-      <ConfirmModal open={confirmModal} onClose={resetPage} />
+        <ApproveModal
+          open={approveModal}
+          onClose={() => {
+            setApproveModal(false)
+          }}
+          onApprove={() => {
+            setApproveModal(false)
+            showSuccessToast(t('pick_up_order.approved_success'))
+            resetPage()
+            // setConfirmModal(true)
+          }}
+          checkedCheckIn={selectedCheckin}
+        />
+        <ConfirmModal open={confirmModal} onClose={resetPage} />
       </Box>
     </>
-  );
+  )
 }
 
 let localstyles = {
   btn_WhiteGreenTheme: {
-    borderRadius: "20px",
+    borderRadius: '20px',
     borderWidth: 1,
-    borderColor: "#79ca25",
-    backgroundColor: "white",
-    color: "#79ca25",
-    fontWeight: "bold",
-    "&.MuiButton-root:hover": {
-      bgcolor: "#F4F4F4",
-      borderColor: "#79ca25",
-    },
+    borderColor: '#79ca25',
+    backgroundColor: 'white',
+    color: '#79ca25',
+    fontWeight: 'bold',
+    '&.MuiButton-root:hover': {
+      bgcolor: '#F4F4F4',
+      borderColor: '#79ca25'
+    }
   },
   table: {
     minWidth: 750,
-    borderCollapse: "separate",
-    borderSpacing: "0px 10px",
+    borderCollapse: 'separate',
+    borderSpacing: '0px 10px'
   },
   headerRow: {
     //backgroundColor: "#97F33B",
     borderRadius: 10,
     mb: 1,
-    "th:first-child": {
-      borderRadius: "10px 0 0 10px",
+    'th:first-child': {
+      borderRadius: '10px 0 0 10px'
     },
-    "th:last-child": {
-      borderRadius: "0 10px 10px 0",
-    },
+    'th:last-child': {
+      borderRadius: '0 10px 10px 0'
+    }
   },
   row: {
-    backgroundColor: "#FBFBFB",
+    backgroundColor: '#FBFBFB',
     borderRadius: 10,
     mb: 1,
-    "td:first-child": {
-      borderRadius: "10px 0 0 10px",
+    'td:first-child': {
+      borderRadius: '10px 0 0 10px'
     },
-    "td:last-child": {
-      borderRadius: "0 10px 10px 0",
-    },
+    'td:last-child': {
+      borderRadius: '0 10px 10px 0'
+    }
   },
   headCell: {
-    border: "none",
-    fontWeight: "bold",
+    border: 'none',
+    fontWeight: 'bold'
   },
   bodyCell: {
-    border: "none",
+    border: 'none'
   },
   typo: {
-    color: "#ACACAC",
+    color: '#ACACAC',
     fontSize: 13,
     // fontWeight: "bold",
-    display: "flex",
+    display: 'flex'
   },
   textField: {
-    borderRadius: "10px",
-    fontWeight: "500",
-    "& .MuiOutlinedInput-input": {
-      padding: "10px",
-    },
+    borderRadius: '10px',
+    fontWeight: '500',
+    '& .MuiOutlinedInput-input': {
+      padding: '10px'
+    }
   },
   modal: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%,-50%)",
-    width: "34%",
-    height: "fit-content",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: '34%',
+    height: 'fit-content',
     padding: 4,
-    backgroundColor: "white",
-    border: "none",
-    borderRadius: 5,
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5
   },
   textArea: {
-    width: "100%",
-    height: "100px",
-    padding: "10px",
-    borderColor: "#ACACAC",
-    borderRadius: 5,
+    width: '100%',
+    height: '100px',
+    padding: '10px',
+    borderColor: '#ACACAC',
+    borderRadius: 5
   },
   formButton: {
     ...styles.buttonFilledGreen,
-    width: "150px",
+    width: '150px'
   },
   cancelButton: {
     ...styles.buttonOutlinedGreen,
-    width: "150px",
+    width: '150px'
   }
-};
+}
 
-export default ShipmentManage;
+export default ShipmentManage
