@@ -66,6 +66,7 @@ const Warehouse: FunctionComponent = () => {
   const [warehouseItems, setWarehouseItems] = useState<Warehouse[]>([])
   const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
+  const [addressList, setAddressList] = useState<string[]>([])
   const [page, setPage] = useState(1)
   const pageSize = 10 // change page size lowerg to testing
   const [totalData, setTotalData] = useState<number>(0)
@@ -192,11 +193,22 @@ const Warehouse: FunctionComponent = () => {
         const filteredData = response.data.content.map(transformToTableRow)
 
         setWarehouseItems(filteredData)
+        initAddressList()
         setTotalData(response.data.totalPages)
-        // console.log('fetch DATA', filteredData)
       }
     } catch (error) {
       console.error(error)
+    }
+  }
+
+  const initAddressList = async () => {
+    const result = await getAllWarehouse(0, 100)
+    if (result) {
+      setAddressList(
+        result.data.content.map((item: any) => {
+          if (item.warehouseId != rowId) return item.location
+        })
+      )
     }
   }
 
@@ -219,7 +231,9 @@ const Warehouse: FunctionComponent = () => {
       .map((item: RecyleItem) => {
         let data = ''
         if (recyleTypeList[item.recycTypeId]) {
-          data = recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem] || ''
+          data =
+            recyleTypeList[item.recycTypeId][nameLang as keyof recyTypeItem] ||
+            ''
         }
         return `${data ? data : '-'}`
       })
@@ -355,6 +369,7 @@ const Warehouse: FunctionComponent = () => {
             action={action}
             onSubmitData={handleOnSubmitData}
             rowId={rowId}
+            addressList={addressList}
           ></AddWarehouse>
         </div>
       </div>

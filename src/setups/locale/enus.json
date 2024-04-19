@@ -154,7 +154,8 @@
     "place": "Place",
     "contractNum": "Contract number",
     "warehouseRecyc": "recyclable type(s)",
-    "shouldNotEmpty": "should not empty"
+    "shouldNotEmpty": "should not empty",
+    "shouldNotDuplicated": "The address of warehouse had been used"
   },
   "check_in": {
     "request_check_in": "Request check-in",

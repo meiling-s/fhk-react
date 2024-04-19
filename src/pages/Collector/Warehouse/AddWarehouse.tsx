@@ -47,6 +47,7 @@ interface AddWarehouseProps {
   action?: 'add' | 'edit' | 'delete'
   onSubmitData?: (type: string, id?: number, error?: boolean) => void
   rowId: number
+  addressList: string[]
 }
 
 interface recyleItem {
@@ -117,7 +118,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   handleDrawerClose,
   action = 'add',
   onSubmitData,
-  rowId
+  rowId,
+  addressList
 }) => {
   const { t } = useTranslation()
   const { i18n } = useTranslation()
@@ -199,7 +201,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       console.error(error)
     }
   }
-
   const resetForm = () => {
     // console.log('reset form')
     setNamesField({
@@ -238,7 +239,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   useEffect(() => {
     // console.log('action', action)
-
     if (action === 'add') {
       resetForm()
       setTrySubmited(false)
@@ -347,11 +347,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    // contractNum.some((value) => value.trim() === '') &&
-    //   tempV.push({
-    //     field: 'contractNum',
-    //     error: `${t(`add_warehouse_page.contractNum`)} is required`
-    //   })
+    addressList.includes(place) &&
+      tempV.push({
+        field: 'place',
+        error: `${t(`add_warehouse_page.place`)} ${t(
+          'add_warehouse_page.shouldNotDuplicated'
+        )}`
+      })
 
     const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
@@ -804,7 +806,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                     }}
                     sx={styles.inputState}
                     disabled={action === 'delete'}
-                    error={checkString(place)}
+                    error={checkString(place) && addressList.includes(place)}
                   />
                 </FormControl>
               </div>

@@ -153,7 +153,8 @@
     "place": "地点",
     "contractNum": "合约编号",
     "warehouseRecyc": "回收物类別",
-    "shouldNotEmpty": "不应为空"
+    "shouldNotEmpty": "不应为空",
+    "shouldNotDuplicated": " 货仓地址已经被使用"
   },
   "check_in": {
     "request_check_in": "送入请求",
