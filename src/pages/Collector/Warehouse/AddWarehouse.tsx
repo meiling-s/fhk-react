@@ -141,7 +141,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   useEffect(() => {
     initType()
-    initAdressList()
   }, [])
 
   useEffect(() => {
@@ -202,18 +201,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       console.error(error)
     }
   }
-
-  const initAdressList = async () => {
-    const result = await getAllWarehouse(0, 100)
-    if (result) {
-      setAddressList(
-        result.data.content.map((item: any) => {
-          if (item.warehouseId != rowId) return item.location
-        })
-      )
-    }
-  }
-
   const resetForm = () => {
     // console.log('reset form')
     setNamesField({
@@ -252,7 +239,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   useEffect(() => {
     // console.log('action', action)
-
+    initAdressList()
     if (action === 'add') {
       resetForm()
       setTrySubmited(false)
@@ -263,6 +250,19 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     // console.log('physicalFlg', pysicalLocation)
     getRecyleCategory()
   }, [action, handleDrawerClose])
+
+
+  const initAdressList = async () => {
+    const result = await getAllWarehouse(0, 100)
+    if (result) {
+      setAddressList(
+        result.data.content.map((item: any) => {
+          if (item.warehouseId != rowId) return item.location
+        })
+      )
+    }
+  }
+
 
   const name_fields = [
     {
@@ -368,6 +368,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           'add_warehouse_page.shouldNotDuplicated'
         )}`
       })
+
+    console.log(adressList, adressList.includes(place), place)
 
     const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
