@@ -193,7 +193,7 @@ const Warehouse: FunctionComponent = () => {
 
         setWarehouseItems(filteredData)
         setTotalData(response.data.totalPages)
-        // console.log('fetch DATA', filteredData)
+       
       }
     } catch (error) {
       console.error(error)

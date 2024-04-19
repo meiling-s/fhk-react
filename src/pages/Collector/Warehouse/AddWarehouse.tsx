@@ -33,7 +33,8 @@ import {
   createWarehouse,
   getWarehouseById,
   editWarehouse,
-  getRecycleType
+  getRecycleType,
+  getAllWarehouse
 } from '../../../APICalls/warehouseManage'
 import { set } from 'date-fns'
 import { getLocation } from '../../../APICalls/getLocation'
@@ -124,6 +125,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
   const [errorMsgList, setErrorMsgList] = useState<string[]>([])
   const [openDelete, setOpenDelete] = useState<boolean>(false)
+  const [adressList, setAddressList] = useState<string[]>([])
 
   const [recycleType, setRecycleType] = useState<recyleTypeOption[]>([])
   const [recycleSubType, setSubRecycleType] = useState<recyleSubtypeOption>({})
@@ -139,6 +141,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   useEffect(() => {
     initType()
+    initAdressList()
   }, [])
 
   useEffect(() => {
@@ -197,6 +200,17 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       }
     } catch (error) {
       console.error(error)
+    }
+  }
+
+  const initAdressList = async () => {
+    const result = await getAllWarehouse(0, 100)
+    if (result) {
+      setAddressList(
+        result.data.content.map((item: any) => {
+          if (item.warehouseId != rowId) return item.location
+        })
+      )
     }
   }
 
@@ -347,11 +361,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    // contractNum.some((value) => value.trim() === '') &&
-    //   tempV.push({
-    //     field: 'contractNum',
-    //     error: `${t(`add_warehouse_page.contractNum`)} is required`
-    //   })
+    adressList.includes(place) &&
+      tempV.push({
+        field: 'place',
+        error: `${t(`add_warehouse_page.place`)} ${t(
+          'form.error.alreadyExist'
+        )}`
+      })
 
     const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
@@ -804,7 +820,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                     }}
                     sx={styles.inputState}
                     disabled={action === 'delete'}
-                    error={checkString(place)}
+                    error={checkString(place) && adressList.includes(place)}
                   />
                 </FormControl>
               </div>
