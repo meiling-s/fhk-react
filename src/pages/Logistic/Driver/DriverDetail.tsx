@@ -19,6 +19,7 @@ import { formValidate } from "../../../interfaces/common"
 import { Driver } from "../../../interfaces/driver"
 import { CAMERA_OUTLINE_ICON } from "../../../themes/icons"
 import { ImageToBase64, returnErrorMsg } from "../../../utils/utils"
+import { EVENT_RECORDING } from "../../../constants/configs"
 
 interface FormValues {
     [key: string]: string | string[]
@@ -33,6 +34,7 @@ interface DriverDetailProps {
 }
 
 interface DriverInfo {
+    [key: string]: any,
     driverExpId?: number,
     vehicleTypeId: string,
     licenseExp: string,
@@ -135,11 +137,38 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                 }
             }
         })
+        driverDetailList.forEach((item: DriverInfo, index: number) => {
+            console.log({item})
+            Object.keys(item).forEach((key) => {
+                if (!item[key]) {
+                    let field = ''
+                    switch (key) {
+                        case 'vehicleTypeId':
+                            field = t('driver.DriverMenu.popUp.field.carType')
+                            break;
+                        case 'licenseExp':
+                            field = t('driver.DriverMenu.popUp.field.carYear')
+                            break;
+                        case 'workingExp':
+                            field = t('driver.DriverMenu.popUp.field.driveYear')
+                            break;
+                        default:
+                            break;
+                    }
+                    tempV.push({
+                        field: field + (index + 1),
+                        problem: formErr.empty,
+                        type: 'error'
+                    })
+                }
+            })
+        })
         setValidation(tempV)
     }, [
         formData,
         setValidation,
-        driverField
+        driverField,
+        driverDetailList
     ])
 
     const removeImage = (index: number) => {
@@ -361,19 +390,17 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                     <Grid
                         container
                         direction={'column'}
-                        spacing={4}
+                        spacing={3}
                         sx={{
                             width: { xs: '100%' },
                             marginTop: { sm: 2, xs: 6 },
-                            marginLeft: {
-                                xs: 0
-                            },
+                            marginLeft: 0,
                             paddingRight: 2
                         }}
                         className="sm:ml-0 mt-o w-full">
-                        {driverField.map((driver) =>
+                        {driverField.map((driver, driverIndex) =>
                             driver.type === 'text' ? (
-                                <Grid item key={driver.label}>
+                                <Grid item key={driverIndex.toString()}>
                                     <CustomField label={driver.label} mandatory>
                                         <CustomTextField
                                             id={driver.label}
@@ -391,16 +418,17 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                     </CustomField>
                                 </Grid>
                             ) : driver.type === 'upload' ? (
-                                <Grid item key={driver.label}>
+                                <Grid item key={driverIndex.toString()}>
                                     <CustomField label={driver.label}>
                                         <ImageUploading
                                             multiple
                                             value={pictures}
-                                            onChange={(imageList) => { setPictures(imageList) }}
+                                            onChange={(imageList, addUpdateIndex) => { 
+                                                setPictures(imageList)
+                                             }}
                                             dataURLKey="data_url"
-                                            maxFileSize={maxImageSize}
-                                            maxNumber={maxImageNumber}
-
+                                            maxNumber={EVENT_RECORDING.maxImageNumber}
+                                            maxFileSize={EVENT_RECORDING.maxImageSize}
                                         >
                                             {({ imageList, onImageUpload, onImageRemove }) => (
                                                 <Box className="box">
@@ -462,12 +490,12 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                     </CustomField>
                                 </Grid>
                             ) : driver.type === 'select' ?
-                                <Grid item>
+                                <Grid item key={driverIndex.toString()}>
                                     {driverDetailList.map((info, idx) =>
                                         <Grid container spacing={2} key={idx} sx={{ mt: 1 }}>
                                             <Grid item xs={4.5}>
                                                 <CustomField
-                                                    label={t('driver.DriverMenu.popUp.field.carType')}
+                                                    label={idx === 0 ? t('driver.DriverMenu.popUp.field.carType') : ''}
                                                 >
                                                     <Autocomplete
                                                         disablePortal
@@ -493,16 +521,15 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                                 handleEditInfo(idx, 'vehicleTypeId', value.id)
                                                             }
                                                         }}
-
                                                     />
                                                 </CustomField>
                                             </Grid>
                                             <Grid item xs>
                                                 <CustomField
-                                                    label={t('driver.DriverMenu.popUp.field.carYear')}
+                                                    label={idx === 0 ? t('driver.DriverMenu.popUp.field.carYear') : ''}
                                                 >
                                                     <TextField
-                                                        sx={{ width: '12ch' }}
+                                                        sx={{ ...styles.textField, width: '12ch' }}
                                                         id='caryear'
                                                         placeholder={t('driver.DriverMenu.popUp.field.yearInput')}
                                                         onChange={(e) => {
@@ -515,10 +542,10 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                             </Grid>
                                             <Grid item xs>
                                                 <CustomField
-                                                    label={t('driver.DriverMenu.popUp.field.driveYear')}
+                                                    label={idx === 0 ? t('driver.DriverMenu.popUp.field.driveYear') : ''}
                                                 >
                                                     <TextField
-                                                        sx={{ width: '12ch' }}
+                                                        sx={{ ...styles.textField, width: '12ch' }}
                                                         id='driveYear'
                                                         placeholder={t('driver.DriverMenu.popUp.field.yearInput')}
                                                         onChange={(e) => {
@@ -532,12 +559,8 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                             <Grid item xs>
                                                 {idx > 0
                                                     &&
-                                                    <ButtonBase
-                                                        sx={{
-                                                            mt: 5
-                                                        }}
-                                                        onClick={() => handleRemoveInfo(idx)}>
-                                                        <DeleteSweepOutlined style={{ color: '#ACACAC', fontSize: 30 }} />
+                                                    <ButtonBase onClick={() => handleRemoveInfo(idx)}>
+                                                        <DeleteSweepOutlined style={{ color: '#ACACAC', fontSize: 30, marginTop: '13px' }} />
                                                     </ButtonBase>}
 
                                             </Grid>
@@ -581,7 +604,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                 </Grid>
                                 :
                                 driver.type === 'autocomplete' ? (
-                                    <CustomField label={driver.label} mandatory>
+                                    <CustomField label={driver.label} mandatory  key={driverIndex.toString()}>
                                         {action === 'add' ? (
                                             <Autocomplete
                                                 disablePortal

@@ -13,4 +13,7 @@ export type ServiceInfo = {
     numberOfVisitor: number,
     createdBy: string
     updatedBy: string
+    nature?: string,
+    speaker?: string,
+    additionalFlg?: boolean
 }

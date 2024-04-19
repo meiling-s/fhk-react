@@ -35,6 +35,7 @@ import { getStaffList } from '../../../APICalls/staff'
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../../utils/utils'
 import UserGroup from '../UserGroup/UserGroup'
+import { Realm, localStorgeKeyName } from "../../../constants/constant";
 
 function createStaff(
   staffId: string,
@@ -52,7 +53,8 @@ function createStaff(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  fullTimeFlg?: boolean,
 ): Staff {
   return {
     staffId,
@@ -70,7 +72,8 @@ function createStaff(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    fullTimeFlg
   }
 }
 
@@ -88,6 +91,7 @@ const StaffManagement: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
+  const realm = localStorage.getItem(localStorgeKeyName.realm);
 
   useEffect(() => {
     initStaffList()
@@ -116,7 +120,8 @@ const StaffManagement: FunctionComponent = () => {
             item?.createdBy,
             item?.updatedBy,
             item?.createdAt,
-            item?.updatedAt
+            item?.updatedAt,
+            item?.fullTimeFlg
           )
         )
       })
@@ -126,7 +131,7 @@ const StaffManagement: FunctionComponent = () => {
     }
   }
 
-  const columns: GridColDef[] = [
+  let columns: GridColDef[] = [
     {
       field: 'staffId',
       headerName: t('staffManagement.employeeId'),
@@ -215,6 +220,104 @@ const StaffManagement: FunctionComponent = () => {
       }
     }
   ]
+
+  if(realm === Realm.collector){
+    columns = [
+      {
+        field: "staffId",
+        headerName: t("staffManagement.employeeId"),
+        width: 150,
+        type: "string",
+      },
+      {
+        field: "staffNameTchi",
+        headerName: t("staffManagement.employeeChineseName"),
+        width: 200,
+        type: "string",
+      },
+      {
+        field: "staffNameEng",
+        headerName: "Employee English Name",
+        width: 200,
+        type: "string",
+      },
+      {
+        field: "fullTimeFlg",
+        headerName: t("staffManagement.fullTimeFlg"),
+        width: 200,
+        type: "boolean",
+      },
+      {
+        field: "titleId",
+        headerName: t("staffManagement.position"),
+        width: 150,
+        type: "string",
+      },
+      {
+        field: "loginId",
+        headerName: t("staffManagement.loginName"),
+        width: 150,
+        type: "string",
+      },
+      {
+        field: "contactNo",
+        headerName: t("staffManagement.contactNumber"),
+        width: 150,
+        type: "string",
+      },
+      {
+        field: "updatedAt",
+        headerName: t("staffManagement.lastLogin"),
+        width: 200,
+        type: "string",
+        renderCell: (params) => {
+          return displayCreatedDate(params.row.updatedAt);
+        },
+      },
+      {
+        field: "edit",
+        headerName: "",
+        renderCell: (params) => {
+          return (
+            <div style={{ display: "flex", gap: "8px" }}>
+              <EDIT_OUTLINED_ICON
+                fontSize="small"
+                className="cursor-pointer text-grey-dark mr-2"
+                onClick={(event) => {
+                  const selected = staffList.find(
+                    (item) => item.loginId == params.row.loginId
+                  );
+                  event.stopPropagation();
+                  handleAction(params, "edit");
+                  if (selected) setSelectedRow(selected);
+                }}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+          );
+        },
+      },
+      {
+        field: "delete",
+        headerName: "",
+        renderCell: (params) => {
+          return (
+            <div style={{ display: "flex", gap: "8px" }}>
+              <DELETE_OUTLINED_ICON
+                fontSize="small"
+                className="cursor-pointer text-grey-dark"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleAction(params, "delete");
+                }}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+          );
+        },
+      },
+    ];
+  }
 
   const sortModel: GridSortItem[] = [
     {

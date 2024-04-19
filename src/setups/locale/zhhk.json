@@ -594,13 +594,16 @@
     "employeeChineseCn": "員工中文簡體中文姓名",
     "position": "職位",
     "loginName": "登錄名",
-    "enterLoginName": "Enter Login Name",
+    "enterLoginName": "輸入登入名",
     "contactNumber": "聯繫電話",
     "lastLogin": "最後登錄",
     "email": "電子郵件",
     "enterName": "請輸入姓名",
     "enterContactNo": "請輸入聯絡電話",
-    "enterEmail": "請輸入電子郵件地址"
+    "enterEmail": "請輸入電子郵件地址",
+    "fullTimeFlg": "全職",
+    "partTime": "兼職",
+    "contractType": "合約類型"
   },
   "roster": {
     "addSchedule": "新增日程",
@@ -874,7 +877,7 @@
           "carType": "車輛類別",
           "carTypeSelect": "請選擇",
           "carYear": "持有執照年期",
-          "yearInput": "請輸入年期",
+          "yearInput": "輸入年期",
           "driveYear": "駕駛經驗",
           "addvehicleButton": "新增車輛類別",
           "contactNo": "聯絡電話",

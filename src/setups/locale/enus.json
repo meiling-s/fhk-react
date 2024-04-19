@@ -601,7 +601,10 @@
     "email": "Email",
     "enterName": "Please enter name",
     "enterContactNo": "please enter contact no",
-    "enterEmail": "please enter email address"
+    "enterEmail": "please enter email address",
+    "fullTimeFlg": "Full Time",
+    "partTime": "Part Time",
+    "contractType": "Contract Type"
   },
   "roster": {
     "addSchedule": "Add Schedule",
