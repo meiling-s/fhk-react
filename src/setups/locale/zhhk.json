@@ -153,7 +153,8 @@
     "place": "地點",
     "contractNum": "合約編號",
     "warehouseRecyc": "回收物類別",
-    "shouldNotEmpty": "不應為空"
+    "shouldNotEmpty": "不應為空",
+    "shouldNotDuplicated": "貨倉名稱已經被使用"
   },
   "check_in": {
     "request_check_in": "送入請求",

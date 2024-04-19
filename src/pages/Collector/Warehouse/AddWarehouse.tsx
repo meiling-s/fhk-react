@@ -365,7 +365,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       tempV.push({
         field: 'place',
         error: `${t(`add_warehouse_page.place`)} ${t(
-          'form.error.alreadyExist'
+          'add_warehouse_page.shouldNotDuplicated'
         )}`
       })
 
