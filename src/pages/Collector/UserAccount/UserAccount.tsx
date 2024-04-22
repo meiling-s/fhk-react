@@ -27,38 +27,6 @@ import UserAccountDetails from './UserAccountDetails'
 import StatusCard from '../../../components/StatusCard'
 import { styles } from '../../../constants/styles'
 
-interface RecyleItem {
-  recycTypeId: string
-  recycSubTypeId: string
-  recycSubTypeCapacity: number
-  recycTypeCapacity: number
-}
-
-// interface UserAccount {
-//   loginId: string
-//   tenantId: string
-//   realm: string
-//   password: string
-//   staffId: string
-//   userGroup:
-//   {
-//     groupId: number
-//     tenantId: string
-//     roleName: string
-//     status: string
-//     createdBy: string
-//     updatedBy: string
-//     updatedAt: string
-//     createdAt:string
-//     version: number
-//   }
-//   status: string,
-//   lastLoginDatetime: string
-//   createdBy: string
-//   updatedBy: string
-//   updatedAt: string
-//   createdAt: string
-// }
 
 type TableRow = {
   id: number
@@ -78,13 +46,9 @@ const UserAccount: FunctionComponent = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
-  const [theLoginId, setTheLoginId] = useState<string>('')
   const [userAccountItems, setUserAccountItems] = useState<UserAccountItem[]>([])
-  const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
-  const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
   const [page, setPage] = useState(1)
   const pageSize = 10 // change page size lowerg to testing
-  const [totalData , setTotalData] = useState<number>(0)
   const [selectedAccount, setSelectedAccount] = useState<UserAccountItem | null>(null)
   const navigate = useNavigate()
 
@@ -109,15 +73,6 @@ const UserAccount: FunctionComponent = () => {
       type: 'string',
       valueGetter: (params) => params.row?.userGroup.roleName
     },
-    // {
-    //   field: '是',
-    //   width: 150,
-    //   headerName: t('userAccount.isItAReviewer'),
-    //   type: 'string',
-    //   valueGetter: () => {
-    //     return t('yes')
-    //   }
-    // },
     {
       field: 'status',
       headerName: t('userAccount.status'),
@@ -220,7 +175,6 @@ const UserAccount: FunctionComponent = () => {
     }
   }, [])
 
-  // console.log('LOGIN ID >> ', theLoginId)
 
   return (
     <Box
