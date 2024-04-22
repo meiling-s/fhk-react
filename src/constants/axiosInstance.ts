@@ -96,9 +96,10 @@ axiosInstance.interceptors.response.use(
         if (error.response.status === 401) {
             localStorage.clear();
             window.location.href = '/';
-        } else if (error?.response?.data?.message !== '') {
-            showErrorToast(error?.response?.data?.message)
         }
+        // else if (error?.response?.data?.message !== '') {
+        //     showErrorToast(error?.response?.data?.message)
+        // }
         
         return Promise.reject(error);
     }
