@@ -80,3 +80,7 @@ export const RealmApi = {
   manufacturer: 'manufacturer',
   customer: 'customer'
 }
+
+export const Status = {
+  CREATED : 'CREATED'
+}

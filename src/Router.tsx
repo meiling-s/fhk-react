@@ -59,7 +59,8 @@ import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
-
+import PurchaseOrderCustomer from "./pages/Customer/PurchaseOrder/PurchaseOrder";
+import CreatePurchaseOrder from "./pages/Customer/PurchaseOrder/CreatePurchaseOrder";
 
 const Router = () => {
   return (
@@ -163,6 +164,12 @@ const Router = () => {
           <Route path="/manufacturer/setting" element={<Settings/>}/>
           <Route path="/manufacturer/purchaseOrder" element={<PurchaseOrder />} />
         </Route>
+
+        <Route element={<MainLayout />}>
+          <Route path="/customer/purchaseOrder" element={<PurchaseOrderCustomer />} />
+          <Route path="/customer/createPurchaseOrder" element={<CreatePurchaseOrder />} />
+        </Route>
+
       </Routes>
     </BrowserRouter>
   );

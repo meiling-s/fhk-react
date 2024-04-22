@@ -37,7 +37,10 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
 
   useEffect(() => {
     const isAfter = dayjs(endDate).isAfter(startDate);
-    if(isAfter) getReport()
+
+    if(isAfter || ((startDate).format('YYYY-MM-DD') === dayjs(endDate).format('YYYY-MM-DD'))) {
+      getReport()
+    }
   }, [startDate, endDate])
   
   const getReport = async () => {
