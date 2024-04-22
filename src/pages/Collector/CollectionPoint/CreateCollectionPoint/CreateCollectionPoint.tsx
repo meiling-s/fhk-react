@@ -517,6 +517,8 @@ function CreateCollectionPoint() {
   ]
   const [serviceFlg, setServiceFlg] = useState<string>('basic')
 
+  const createdDate = dayjs(new Date()).format(format.dateFormat1)
+
   return (
     <>
       <Box
@@ -663,19 +665,20 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-           { premiseType === 'PT00009' &&  <Grid item>
-              {/* <Collapse in={premiseType == 'PT00010'}> */}
-              <CustomField label={t('col.premiseRemark')} mandatory={false}>
-                <CustomTextField
-                  id="premiseRemark"
-                  placeholder={t('col.enterText')}
-                  onChange={(event) => setPremiseRemark(event.target.value)}
-                  error={checkString(premiseName)}
-                />
-              </CustomField>
-              {/* </Collapse> */}
-            </Grid>
-           }
+            {premiseType === 'PT00009' && (
+              <Grid item>
+                {/* <Collapse in={premiseType == 'PT00010'}> */}
+                <CustomField label={t('col.premiseRemark')} mandatory={false}>
+                  <CustomTextField
+                    id="premiseRemark"
+                    placeholder={t('col.enterText')}
+                    onChange={(event) => setPremiseRemark(event.target.value)}
+                    error={checkString(premiseName)}
+                  />
+                </CustomField>
+                {/* </Collapse> */}
+              </Grid>
+            )}
 
             <CustomField label={t('col.status')}>
               <CustomSwitch
@@ -766,6 +769,11 @@ function CreateCollectionPoint() {
                 defaultSelected={serviceFlg}
               ></CustomItemList>
             </CustomField>
+            <Grid item>
+              <Typography sx={styles.header3}>
+                {t('pick_up_order.creation_time') + ' : ' + createdDate}
+              </Typography>
+            </Grid>
             <Grid item className="lg:flex sm:block text-center">
               <Button
                 sx={[
