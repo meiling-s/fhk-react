@@ -8,27 +8,21 @@ import {
   ButtonBase,
   ImageList,
   ImageListItem,
-  colors
 } from '@mui/material'
-import React, { FunctionComponent, useEffect, useState } from 'react'
+import { FunctionComponent, useEffect, useState } from 'react'
 import { styles } from '../../../constants/styles'
 import ImageUploading, { ImageListType } from 'react-images-uploading'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import CustomItemList from '../../../components/FormComponents/CustomItemList'
-import theme from '../../../themes/palette'
 import RecyclablesListSingleSelect from '../../../components/SpecializeComponents/RecyclablesListSingleSelect'
-
 import { useTranslation } from 'react-i18next'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
-import { EVENT_RECORDING } from '../../../constants/configs'
 import { formErr } from '../../../constants/constant'
 import { ImageToBase64, returnErrorMsg } from '../../../utils/utils'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
@@ -85,7 +79,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   const [recycTypeId, setRecycTypeId] = useState('')
   const [recycSubTypeId, setRecycSubTypeId] = useState('')
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
-  const { recycType } = useContainer(CommonTypeContainer)
+  const { recycType, imgSettings } = useContainer(CommonTypeContainer)
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
@@ -309,8 +303,8 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                     multiple
                     value={pictures}
                     onChange={(imageList) => onImageChange(imageList)}
-                    maxNumber={EVENT_RECORDING.maxImageNumber}
-                    maxFileSize={EVENT_RECORDING.maxImageSize}
+                    maxNumber={imgSettings?.ImgQuantity}
+                    maxFileSize={imgSettings?.ImgSize}
                     dataURLKey="data_url"
                   >
                     {({ imageList, onImageUpload, onImageRemove }) => (

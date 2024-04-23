@@ -15,18 +15,16 @@ import ImageUploading, {
   ImageListType,
   ImageType
 } from 'react-images-uploading'
-
 import logo_company from '../../logo_company.png'
 import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
-
 import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import CustomField from '../../components/FormComponents/CustomField'
 import CustomTextField from '../../components/FormComponents/CustomTextField'
 import { getTenantById, updateTenantRegInfo } from '../../APICalls/tenantManage'
-
 import { styles as constantStyle } from '../../constants/styles'
-import { Tenant, RegisterItem } from '../../interfaces/account'
-import { TENANT_REGISTER_CONFIGS } from '../../constants/configs'
+import { RegisterItem } from '../../interfaces/account'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 
 interface FormValues {
   [key: string]: string
@@ -64,6 +62,7 @@ const RegisterTenant = () => {
   const [BRNImages, setBRNImages] = useState<ImageListType>([])
   const [EPDImages, setEDPImages] = useState<ImageListType>([])
   const [logoImage, setLogoImage] = useState<string | ImageType[]>([])
+  const {imgSettings} = useContainer(CommonTypeContainer)
 
   const firstFormFields = [
     {
@@ -256,12 +255,8 @@ const RegisterTenant = () => {
                   onChange={(imageList, addUpdateIndex) =>
                     onImageChange(imageList, addUpdateIndex, field.name)
                   }
-                  maxNumber={
-                    field.name === 'company_image'
-                      ? TENANT_REGISTER_CONFIGS.maxBRNImages
-                      : 1
-                  }
-                  maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
+                  maxNumber={imgSettings?.ImgQuantity}
+                  maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
                 >
                   {({ imageList, onImageUpload }) => (
@@ -342,8 +337,8 @@ const RegisterTenant = () => {
                 onChange={(imageList, addUpdateIndex) =>
                   onImageChange(imageList, addUpdateIndex, field.name)
                 }
-                maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
-                maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
+                maxNumber={imgSettings?.ImgQuantity}
+                maxFileSize={imgSettings?.ImgSize}
                 dataURLKey="data_url"
               >
                 {({ imageList, onImageUpload }) => (
