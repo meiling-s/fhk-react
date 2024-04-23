@@ -895,7 +895,12 @@
     "activate": "活性",
     "deactive": "停用",
     "true": "真的",
-    "false": "错误的"
+    "false": "错误的",
+    "number_format": "数字格式",
+    "date_format": "日期格式",
+    "weight_tolerance": "允许重量误差 (kg)",
+    "currency_category": "货币类别",
+    "introduction": "簡介"
   },
   "packaging_unit": {
     "packaging_unit": "包装单位",
@@ -951,5 +956,15 @@
       "order_info": "訂單資料",
       "pico_id": "回收運單編號"
     }
+  },
+  "recycling_unit": {
+    "recycling_and_related_units": "回收物及相关单位",
+    "recyclable_subtype_semi_complete": "回收物、半制成品、制成品类别",
+    "recyclable_code": "编码",
+    "packaging_unit": "包装单位",
+    "weight_unit": "磅重单位",
+    "main_category": "主类别",
+    "sub_category": "次类别",
+    "1kg_equivalent": "1kg 相等于"
   }
 }

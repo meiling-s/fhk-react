@@ -68,7 +68,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
             >
               {submitText}
             </Button>
-
+              {cancelText && (
              <Button
               sx={[
                 styles.buttonOutlinedGreen,
@@ -83,6 +83,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
             >
                {cancelText}
             </Button>
+              )}
           
           </div>
         )}

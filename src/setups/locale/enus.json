@@ -919,7 +919,12 @@
     "activate": "Activate",
     "deactive": "Inactive",
     "true": "True",
-    "false": "False"
+    "false": "False",
+    "number_format": "Number Format",
+    "date_format": "Date Format",
+    "weight_tolerance": "Weight Tolerance (kg)",
+    "currency_category": "Currency Category",
+    "introduction": "Introduction"
   },
   "packaging_unit": {
     "packaging_unit": "Packaging Unit",
@@ -976,5 +981,15 @@
       "pico_id": "PO number",
       "message": "Message"
     }
+  },
+  "recycling_unit": {
+    "recycling_and_related_units": "Recycling and Related Units",
+    "recyclable_subtype_semi_complete": "Recyclable type, subtype, semi-product or completed product",
+    "recyclable_code": "Recyclable Code",
+    "packaging_unit": "Packaging Unit",
+    "weight_unit": "Weight Unit",
+    "main_category": "Main Category",
+    "sub_category": "Sub Category",
+    "1kg_equivalent": "1kg is equivalent to"
   }
 }

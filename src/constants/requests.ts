@@ -1177,3 +1177,18 @@ export const GET_ALL_REASON_MANUFACTURER = (
   method: 'get',
   url: `api/v1/manufacturer/reason/${tenantId}`
 })
+
+export const GET_RECYC_CODE: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/recycCode`
+}
+
+export const GET_WEIGHT_UNIT: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/weightUnit`
+}
+
+export const CREATE_WEIGHT_UNIT: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/administrator/weightUnit`
+}

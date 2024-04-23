@@ -11,6 +11,8 @@ import DenialReason from "../DenialReason/DenialReason";
 import StaffTitle from "../StaffTitle/StaffTitle";
 import Company from "../Company/Company";
 import { localStorgeKeyName } from "../../../constants/constant";
+import ASTDSettings from "../../ASTD/GeneralSettings/GeneralSettings";
+import RecyclingUnit from "../../ASTD/RecyclingUnit/RecyclingUnit";
 
 const Settings: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -30,6 +32,10 @@ const Settings: FunctionComponent = () => {
     t("top_menu.staff_positions"),
     t("top_menu.denial_reason"),
   ];
+  const astdTabList = [
+    t("top_menu.general_settings"),
+    t("recycling_unit.recycling_and_related_units"),
+  ]
 
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [tabList, setTabList] = useState<string[]>([]);
@@ -42,10 +48,21 @@ const Settings: FunctionComponent = () => {
     }
     setTabList(updatedTabList)
   }
+  const getASTDTabList = () => {
+    let updatedTabList = [...astdTabList]
+
+    const hideTabIndexArr: number[] = []
+    updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
+    setTabList(updatedTabList)
+  }
 
   useEffect(() => {
-    getTabList()
-  }, [t])
+    if (role === 'astd') {
+      getASTDTabList()
+    } else {
+      getTabList()
+    }
+  }, [t, role])
 
   const collectorSettingTab = () => {
     return (
@@ -89,6 +106,20 @@ const Settings: FunctionComponent = () => {
     )
   }
 
+  const astdSettingTab = () => {
+    return (
+      selectedTab === 0 ? (
+        <ASTDSettings/> 
+      ) : 
+        selectedTab === 1 ? (
+          <RecyclingUnit/>
+        ) :
+      (
+          <div className="p-4 text-center">content not available</div>
+        )
+      )
+  }
+
   return (
     <Box className="container-wrapper w-full">
       <div className="settings-page bg-bg-primary">
@@ -100,7 +131,7 @@ const Settings: FunctionComponent = () => {
           className="lg:px-10 sm:px-4 bg-bg-primary"
         />
         {/* rendering content base on tab index */}
-        { role === 'logistic' ? logisticSettingTab() : collectorSettingTab()}
+        { role === 'logistic' ? logisticSettingTab() : role === 'astd' ? astdSettingTab() : collectorSettingTab()}
       </div>
     </Box>
   );
