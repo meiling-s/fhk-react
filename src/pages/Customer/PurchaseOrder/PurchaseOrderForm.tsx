@@ -15,7 +15,7 @@ import PickupOrderCard from '../../../components/PickupOrderCard'
 import { useNavigate } from 'react-router-dom'
 import { getPurchaseOrderById } from '../../../APICalls/Manufacturer/purchaseOrder'
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import { Status, localStorgeKeyName } from '../../../constants/constant'
 import {
@@ -25,6 +25,7 @@ import {
 } from '../../../interfaces/purchaseOrder'
 import PurchaseOrderCard from './PurchaseOrderCard'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
+import { UpdatePurchaseOrder } from '../../../APICalls/Customer/purchaseOrder'
 
 const PurchaseOrderForm = ({
   onClose,
@@ -72,40 +73,9 @@ const PurchaseOrderForm = ({
       setPickUpOrderDetail(result.data.purchaseOrderDetail)
     }
   }
-
-  const onChangeData = (value: string, type: string) => {
-    setSelectedPurchaseOrder((prev: any) => {
-      return{
-        ...prev,
-        [type]: value
-      }
-    })
-  }
   
-  const onChangePurchaseOrder = (index: number, orderDetail: PurchaseOrderDetail, type: string, value: string, type2?: string, value2? : string) => {
-   
-    if(type2){
-      const details = selectedPurchaseOrder?.purchaseOrderDetail.map((item, indexItem) => {
-        if(index === indexItem){
-          return orderDetail
-        } else {
-          return item
-        }
-      })
-      setPickUpOrderDetail(details)
-      setSelectedPurchaseOrder((prev: any) => {
-        return{
-          ...prev,
-          [type]: value,
-          [type2]: value2,
-          purchaseOrderDetail: details
-        }
-      })
-    }
-  }
-  
-  const onHandleUpdate = () => {
-
+  const onHandleUpdate = async () => {
+    
   }
 
   return (
@@ -157,74 +127,22 @@ const PurchaseOrderForm = ({
               </Typography>
             </Box>
 
-            <CustomField
-              label={t('purchase_order_customer.detail.receiving_company_name')}
-            >
-              {selectedPurchaseOrder?.status === Status.CREATED ? 
-                (
-
-                  <CustomTextField
-                  id="receiving_company_name"
-                  placeholder={t('pick_up_order.receiving_company_name')}
-                  onChange={(event) => onChangeData(event.target.value, 'receiverName')}
-                  value={selectedPurchaseOrder?.receiverName}
-                  sx={{ width: '100%' }}
-                  />
-                ) 
-                : 
-                (
-                  <Typography sx={localstyles.typo_fieldContent}>
+            <CustomField label={t('purchase_order_customer.detail.receiving_company_name')}>
+               <Typography sx={localstyles.typo_fieldContent}>
                     {selectedPurchaseOrder?.receiverName}
-                  </Typography>
-                )
-              }
+                </Typography>
             </CustomField>
 
             <CustomField label={t('purchase_order_customer.detail.contact_number')}>
-
-              {selectedPurchaseOrder?.status === Status.CREATED ? 
-                (
-
-                  <CustomTextField
-                  id="contact_number"
-                  placeholder={t('purchase_order_customer.detail.contact_number')}
-                  onChange={(event) => onChangeData(event.target.value, 'contactNo')}
-                  value={selectedPurchaseOrder?.contactNo}
-                  sx={{ width: '100%' }}
-                  />
-                ) 
-                : 
-                (
-                  <Typography sx={localstyles.typo_fieldContent}>
-                    {selectedPurchaseOrder?.contactNo}
-                  </Typography>
-                )
-              }
-          
-             
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedPurchaseOrder?.contactNo}
+              </Typography>
             </CustomField>
 
             <CustomField label={t('purchase_order_customer.detail.payment_method')}>
-
-              {selectedPurchaseOrder?.status === Status.CREATED ? 
-                (
-
-                  <CustomTextField
-                  id="payment_method"
-                  placeholder={t('purchase_order_customer.detail.payment_method')}
-                  onChange={(event) => onChangeData(event.target.value, 'paymentType')}
-                  value={selectedPurchaseOrder?.paymentType}
-                  sx={{ width: '100%' }}
-                  />
-                ) 
-                : 
-                (
-                  <Typography sx={localstyles.typo_fieldContent}>
-                  {selectedPurchaseOrder?.paymentType}
-                </Typography>
-                )
-              }
-
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedPurchaseOrder?.paymentType}
+              </Typography>
             </CustomField>
 
             <Typography sx={localstyles.typo_header}>
@@ -232,25 +150,9 @@ const PurchaseOrderForm = ({
             </Typography>
 
             <CustomField label={t('purchase_order_customer.table.recycling_plant')}>
-              {selectedPurchaseOrder?.status === Status.CREATED ? 
-                (
-
-                  <CustomTextField
-                  id="recycling_plant"
-                  placeholder={t('purchase_order_customer.detail.recycling_plant')}
-                  onChange={(event) => onChangeData(event.target.value, 'paymentType')}
-                  value={selectedPurchaseOrder?.picoId}
-                  sx={{ width: '100%' }}
-                  />
-                ) 
-                : 
-                (
-                  <Typography sx={localstyles.typo_fieldContent}>
-                    {selectedPurchaseOrder?.picoId}
-                  </Typography>
-                )
-              }
-
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedPurchaseOrder?.picoId}
+              </Typography>
             </CustomField>
 
             <CustomField label={t('purchase_order_customer.detail.pico_id')}>
@@ -264,8 +166,6 @@ const PurchaseOrderForm = ({
                 selectedPurchaseOrder ? selectedPurchaseOrder : null
               }
               purchaseOrderDetail={pickupOrderDetail ?? []}
-              isEdit={selectedPurchaseOrder?.status === Status.CREATED ? true : false}
-              onChangePurchaseOrder={onChangePurchaseOrder}
             />
 
             <CustomField label={t('check_in.message')}>

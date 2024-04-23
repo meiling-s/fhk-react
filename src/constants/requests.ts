@@ -1177,3 +1177,10 @@ export const GET_ALL_REASON_MANUFACTURER = (
   method: 'get',
   url: `api/v1/manufacturer/reason/${tenantId}`
 })
+
+export const UPDATE_PURCHASE_ORDER = (
+  poId: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/po/${poId}`
+})

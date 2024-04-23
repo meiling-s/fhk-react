@@ -15,22 +15,15 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import { EDIT_OUTLINED_ICON } from '../../../themes/icons'
-import PurchaseOrderFormCreateOrEdit from './PurchaseOrderFormCreateOrEdit'
 
 const PurchaseOrderCard = ({
   selectedPurchaseOrder,
   purchaseOrderDetail,
-  isEdit,
-  onChangePurchaseOrder
 }: {
   selectedPurchaseOrder: PurChaseOrder | null
   purchaseOrderDetail: PurchaseOrderDetail[],
-  isEdit?: boolean,
-  onChangePurchaseOrder?: (index: number, orderDetail: PurchaseOrderDetail, type: string, value: string) => void
 }) => {
   const { t } = useTranslation()
-  const [openModal, setOpenModal] = useState(false);
- 
   const getRecyName = (podetail: PurchaseOrderDetail) => {
     var name = ''
     switch (i18n.language) {
@@ -69,14 +62,6 @@ const PurchaseOrderCard = ({
     }
 
     return name
-  }
-
-  const handleEdit = () => {
-    setOpenModal(true)
-  }
-
-  const handleCloses =() => {
-    setOpenModal(false)
   }
 
   return (
@@ -179,35 +164,6 @@ const PurchaseOrderCard = ({
               </Typography>
             </Box>
           </Box>
-
-          { isEdit && 
-            (
-              <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column'>
-                <Typography>
-                  <EDIT_OUTLINED_ICON
-                    className='hover:cursor-pointer'
-                    onClick={() => handleEdit()}
-                  />
-                </Typography>
-                <Typography>
-                  {t('purchase_order_customer.createOrEdit.edit')}
-                </Typography>
-              </Box>
-            )
-          }
-
-        <Modal open={openModal} onClose={handleCloses}>
-          <PurchaseOrderFormCreateOrEdit
-            onClose={handleCloses}
-            selectedRow={podetail}
-            isEdit={isEdit}
-            createdDate={selectedPurchaseOrder?.createdAt}
-            arrived={selectedPurchaseOrder?.receiverAddr}
-            index={index}
-            onChangePurchaseOrder={onChangePurchaseOrder}
-          />
-        </Modal>
-       
         </Stack>
       ))}
     </>

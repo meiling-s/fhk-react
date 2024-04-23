@@ -4,9 +4,10 @@ import {
   SEARCH_PURCHASE_ORDER,
   GET_PURCHASE_ORDER_BY_ID,
 } from '../../constants/requestsCustomer'
+import { UPDATE_PURCHASE_ORDER } from '../../constants/requests'
 
 import { returnApiToken } from '../../utils/utils'
-import { queryPurchaseOrder } from '../../interfaces/purchaseOrder'
+import { PurChaseOrder, queryPurchaseOrder } from '../../interfaces/purchaseOrder'
 import axiosInstance from '../../constants/axiosInstance'
 
 export const getAllPurchaseOrder = async ( page: number, size: number, query?: queryPurchaseOrder) => {
@@ -68,6 +69,20 @@ export const getPurchaseOrderById = async (poId: string) => {
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
       ...GET_PURCHASE_ORDER_BY_ID(poId)
+    })
+
+    return response
+  } catch (e) {
+    return null
+  }
+}
+
+export const UpdatePurchaseOrder = async (poId: string, data: PurChaseOrder) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      ...UPDATE_PURCHASE_ORDER(poId),
+      data
     })
 
     return response

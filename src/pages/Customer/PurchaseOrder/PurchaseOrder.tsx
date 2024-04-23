@@ -11,7 +11,7 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { ToastContainer, toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { il_item} from '../../../components/FormComponents/CustomItemList'
-import { getAllPurchaseOrder, updateStatusPurchaseOrder, getPurchaseOrderReason } from '../../../APICalls/Manufacturer/purchaseOrder'
+import { getAllPurchaseOrder, searchPurchaseOrder } from '../../../APICalls/Customer/purchaseOrder'
 import { getStatusList } from '../../../APICalls/status'
 import { PurChaseOrder, PurchaseOrderDetail, queryPurchaseOrder } from '../../../interfaces/purchaseOrder'
 import i18n from '../../../setups/i18n'
@@ -95,7 +95,7 @@ const PurchaseOrder = () => {
       field: 'status',
       headerName: t('purchase_order.table.status'),
       type: 'string',
-      width: 100,
+      width: 150,
       editable: true,
       renderCell: (params) => <StatusCard status={params.value} />
     }
@@ -178,7 +178,7 @@ const PurchaseOrder = () => {
     setTotalData(0)
     let result = null
 
-    result = await getAllPurchaseOrder(page - 1, pageSize, query)
+    result = await searchPurchaseOrder(page - 1, pageSize, query)
 
     const data = result?.data.content
     if (data && data.length > 0) {
@@ -187,35 +187,6 @@ const PurchaseOrder = () => {
       setPurchaseOrder([])
     }
     setTotalData(result?.data.totalPages)
-  }
-
-  const getRejectReason = async () => {
-    let result = await getPurchaseOrderReason()
-
-    if (result && result?.data && result?.data.content.length > 0) {
-      let reasonName = ''
-      switch (i18n.language) {
-        case 'enus':
-          reasonName = 'reasonNameEng'
-          break
-        case 'zhch':
-          reasonName = 'reasonNameSchi'
-          break
-        case 'zhhk':
-          reasonName = 'reasonNameTchi'
-          break
-        default:
-          reasonName = 'reasonNameEng'
-          break
-      }
-      result?.data.content.map(
-        (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
-          item.id = item.reasonId
-          item.name = item[reasonName]
-        }
-      )
-      setReasonList(result?.data.content)
-    }
   }
 
   useEffect(() => {
@@ -230,7 +201,6 @@ const PurchaseOrder = () => {
 
   useEffect(() => {
     initPurchaseOrderRequest()
-    getRejectReason()
 
     if (action) {
       var toastMsg = ''
@@ -355,7 +325,7 @@ const PurchaseOrder = () => {
   const handleSearch = (keyName: string, value: string) => {
     updateQuery({ [keyName]: value })
   }
-  console.log('query', query)
+  
   return (
     <>
       <ToastContainer />
