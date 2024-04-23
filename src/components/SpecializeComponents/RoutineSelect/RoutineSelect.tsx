@@ -84,16 +84,19 @@ export default function RoutineSelect({
                     rouType == "daily"?
                         <Daily
                             setDaily={setRoutineContent}
+                            required={requiredTimePeriod}
                             defaultTime={defaultValue?.routineType == routineType[0].id? defaultValue.routineContent : undefined}
                         />
                     :   rouType == "weekly"?
                         <Weekly
                             setWeekly={setRoutineContent}
+                            required={requiredTimePeriod}
                             defaultWeek={defaultValue?.routineType == routineType[1].id? defaultValue.routineContent : undefined}
                         />
                     :   rouType == "specificDate"&&
                         <SpecificDate
                             setSpecificDate={setRoutineContent}
+                            required={requiredTimePeriod}
                             defaultDates={defaultValue?.routineType == routineType[2].id? defaultValue.routineContent : undefined}
                         />
                 } 

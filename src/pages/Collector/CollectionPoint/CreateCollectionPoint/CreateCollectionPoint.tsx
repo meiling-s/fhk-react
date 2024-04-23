@@ -165,11 +165,18 @@ function CreateCollectionPoint() {
     )
   }
 
+  const getTime = (value: string) => {
+    return value.match(/\d{2}:\d{2}:\d{2}/)[0]
+  }
+
   const checkTimeNotDuplicate = () => {
     const isvalid = colPtRoutine?.routineContent.every((item) => {
-      for (let index = 0; index < item.startTime.length; index++) {
-        const currPair = item.startTime[index] + item.endTime[index]
-        const nextPair = item.startTime[index + 1] + item.endTime[index + 1]
+      for (let index = 0; index < item.startTime.length - 1; index++) {
+        const currPair =
+          getTime(item.startTime[index]) + getTime(item.endTime[index])
+
+        const nextPair =
+          getTime(item.startTime[index + 1]) + getTime(item.endTime[index + 1])
 
         if (currPair === nextPair) {
           return false
@@ -244,12 +251,16 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      ;(colPtRoutine?.routineContent.length == 0 ||
-        !checkTimePeriod() ||
-        !checkTimeNotDuplicate()) &&
+      ;(colPtRoutine?.routineContent.length == 0 || !checkTimePeriod()) &&
         tempV.push({
           field: 'time_Period',
           problem: formErr.empty,
+          type: 'error'
+        })
+      !checkTimeNotDuplicate() &&
+        tempV.push({
+          field: 'time_Period',
+          problem: formErr.timeCantDuplicate,
           type: 'error'
         })
       premiseName == '' &&
@@ -405,6 +416,9 @@ function CreateCollectionPoint() {
         break
       case formErr.exceedsMaxLength:
         msg = t('form.error.exceedsMaxLength')
+        break
+      case formErr.timeCantDuplicate:
+        msg = t('form.error.timeCantDuplicate')
         break
     }
     return msg

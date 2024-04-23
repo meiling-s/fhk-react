@@ -10,10 +10,12 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { routineContent } from "../../../../interfaces/common";
 import { format } from "../../../../constants/constant";
+import CustomField from "../../../FormComponents/CustomField";
 
 type props = {
     setSpecificDate: (RSDs: routineContent[]) => void,
-    defaultDates?: routineContent[]
+    defaultDates?: routineContent[],
+    required?: boolean
 }
 
 type specificDate_timePeriod = {     //store the timePeriod with the weekDay id
@@ -24,7 +26,8 @@ type specificDate_timePeriod = {     //store the timePeriod with the weekDay id
 
 export default function SpecificDate({
     setSpecificDate,
-    defaultDates
+    defaultDates,
+    required = false
 }: props){
 
     const [specificDates, setSpecificDates] = useState<specificDate_timePeriod[]>([]);
@@ -135,9 +138,11 @@ export default function SpecificDate({
                     </Typography>
                 </Grid>
                 <Grid xs={9}>
-                    <Typography sx={localstyles.txtHeader}>
+                    {/* <Typography sx={localstyles.txtHeader}>
                         {t("time_Period")}
-                    </Typography>
+                    </Typography> */}
+                    <CustomField label={t("time_Period")}  mandatory={required} />
+
                 </Grid>
             </Grid>
             {
