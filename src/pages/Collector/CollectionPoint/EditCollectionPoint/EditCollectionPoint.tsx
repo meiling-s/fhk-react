@@ -118,6 +118,7 @@ function CreateCollectionPoint() {
 
   useEffect(() => {
     initType()
+    setRecyclables(colInfo.colPtRecyc)
   }, [])
 
   const initType = async () => {
@@ -162,7 +163,7 @@ function CreateCollectionPoint() {
   const checkRecyclable = (items: recyclable) => {
     console.log('items', recyclables)
     //return true
-    return recyclables.every((item) => item.recycSubTypeId.length > 0)
+    return items.every((item) => item.recycSubTypeId.length > 0)
   }
 
   const checkTimePeriod = () => {
@@ -270,12 +271,7 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      // console.log(
-      //   'num:',
-      //   staffNum,
-      //   Number.isNaN(parseInt(staffNum)),
-      //   staffNum == ''
-      // )
+      console.log('recyclables', recyclables)
       staffNum == '' &&
         tempV.push({
           field: 'col.numOfStaff',
@@ -326,7 +322,8 @@ function CreateCollectionPoint() {
     recyclables,
     staffNum,
     contractNo,
-    skipValidation
+    skipValidation,
+    colInfo.colPtRecyc
   ])
 
   useEffect(() => {
@@ -464,6 +461,7 @@ function CreateCollectionPoint() {
         navigate('/collector/collectionPoint', { state: 'updated' })
       }
     } else {
+      console.log('recyclables', recyclables)
       console.log(validation)
       setTrySubmited(true)
     }
