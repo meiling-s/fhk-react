@@ -57,6 +57,7 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import { localStorgeKeyName } from '../../../../constants/constant'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
+import { displayCreatedDate } from '../../../../utils/utils'
 
 function CreateCollectionPoint() {
   const { state } = useLocation()
@@ -488,6 +489,10 @@ function CreateCollectionPoint() {
     }
   ]
 
+  const createdDate = colInfo.createdAt
+    ? displayCreatedDate(colInfo.createdAt)
+    : dayjs(new Date()).format(format.dateFormat1)
+
   return (
     <>
       <Box
@@ -642,21 +647,22 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-           {premiseType === 'PT00009' && 
-             <Grid item>
-              {/* <Collapse in={premiseType == "PT00010"} > */}
-              <CustomField label={t('col.premiseRemark')} mandatory={false}>
-                <CustomTextField
-                  id="premiseRemark"
-                  disabled={true}
-                  placeholder={t('col.enterText')}
-                  onChange={(event) => setPremiseRemark(event.target.value)}
-                  defaultValue={colInfo.premiseRemark}
-                  error={checkString(premiseName)}
-                />
-              </CustomField>
-              {/* </Collapse> */}
-           </Grid>}
+            {premiseType === 'PT00009' && (
+              <Grid item>
+                {/* <Collapse in={premiseType == "PT00010"} > */}
+                <CustomField label={t('col.premiseRemark')} mandatory={false}>
+                  <CustomTextField
+                    id="premiseRemark"
+                    disabled={true}
+                    placeholder={t('col.enterText')}
+                    onChange={(event) => setPremiseRemark(event.target.value)}
+                    defaultValue={colInfo.premiseRemark}
+                    error={checkString(premiseName)}
+                  />
+                </CustomField>
+                {/* </Collapse> */}
+              </Grid>
+            )}
 
             <CustomField label={t('col.status')}>
               <CustomSwitch
@@ -753,6 +759,11 @@ function CreateCollectionPoint() {
                 defaultSelected={serviceFlg}
               ></CustomItemList>
             </CustomField>
+            <Grid item>
+              <Typography sx={styles.header3}>
+                {t('pick_up_order.creation_time') + ' : ' + createdDate}
+              </Typography>
+            </Grid>
             <Grid item className="lg:flex sm:block text-center">
               <Button
                 sx={[

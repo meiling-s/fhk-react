@@ -55,7 +55,11 @@ import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
-import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
+import {
+  getThemeColorRole,
+  getThemeCustomList,
+  displayCreatedDate
+} from '../../utils/utils'
 
 type DeleteModalProps = {
   open: boolean
@@ -138,12 +142,8 @@ const PickupOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const {
-    logisticList,
-    contractType,
-    vehicleType,
-    recycType
-  } = useContainer(CommonTypeContainer)
+  const { logisticList, contractType, vehicleType, recycType } =
+    useContainer(CommonTypeContainer)
   const navigate = useNavigate()
 
   const logisticCompany = logisticList
@@ -234,7 +234,9 @@ const PickupOrderCreateForm = ({
     setState(updateDeleteRow)
   }
 
-  const createdDate = dayjs(new Date()).format(format.dateFormat1)
+  const createdDate = selectedPo
+    ? displayCreatedDate(selectedPo.createdAt)
+    : dayjs(new Date()).format(format.dateFormat1)
 
   const handleHeaderOnClick = () => {
     //console.log('Header click')
@@ -570,7 +572,9 @@ const PickupOrderCreateForm = ({
                     }}
                     itemColor={{
                       bgColor: customListTheme.bgColor,
-                      borderColor: customListTheme ? customListTheme.border: '#79CA25'
+                      borderColor: customListTheme
+                        ? customListTheme.border
+                        : '#79CA25'
                     }}
                     roleColor={colorTheme}
                   />
@@ -622,7 +626,9 @@ const PickupOrderCreateForm = ({
                     }
                     itemColor={{
                       bgColor: customListTheme.bgColor,
-                      borderColor: customListTheme ? customListTheme.border: '#79CA25'
+                      borderColor: customListTheme
+                        ? customListTheme.border
+                        : '#79CA25'
                     }}
                   />
                 </CustomField>
@@ -705,7 +711,9 @@ const PickupOrderCreateForm = ({
                       error={formik.errors.reason && formik.touched.reason}
                       itemColor={{
                         bgColor: customListTheme.bgColor,
-                        borderColor: customListTheme ? customListTheme.border: '#79CA25'
+                        borderColor: customListTheme
+                          ? customListTheme.border
+                          : '#79CA25'
                       }}
                     />
                   </CustomField>
