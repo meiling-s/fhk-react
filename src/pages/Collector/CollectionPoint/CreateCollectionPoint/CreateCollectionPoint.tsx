@@ -264,24 +264,31 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      // premiseRemark == '' && premiseType === 'PT00009'  &&
-      //   tempV.push({
-      //     field: 'col.premiseRemark',
-      //     problem: formErr.empty,
-      //     type: 'error'
-      //   })
+      premiseRemark == '' &&
+        premiseType === 'PT00009' &&
+        tempV.push({
+          field: 'col.premiseRemark',
+          problem: formErr.empty,
+          type: 'error'
+        })
       recyclables.length == 0 &&
         tempV.push({
           field: 'col.recycType',
           problem: formErr.empty,
           type: 'error'
         })
-      console.log(
-        'num:',
-        staffNum,
-        Number.isNaN(parseInt(staffNum)),
-        staffNum == ''
-      )
+      !checkRecyclable(recyclables) &&
+        tempV.push({
+          field: 'inventory.recyleSubType',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      // console.log(
+      //   'num:',
+      //   staffNum,
+      //   Number.isNaN(parseInt(staffNum)),
+      //   staffNum == ''
+      // )
       staffNum == '' &&
         tempV.push({
           field: 'col.numOfStaff',
@@ -301,7 +308,7 @@ function CreateCollectionPoint() {
             problem: formErr.numberSmallThanZero,
             type: 'error'
           })
-      contractNo == ''
+      contractNo == '' && !skipValidation.includes('col.contractNo')
         ? tempV.push({
             field: 'col.contractNo',
             problem: formErr.empty,
@@ -668,7 +675,7 @@ function CreateCollectionPoint() {
             {premiseType === 'PT00009' && (
               <Grid item>
                 {/* <Collapse in={premiseType == 'PT00010'}> */}
-                <CustomField label={t('col.premiseRemark')} mandatory={false}>
+                <CustomField label={t('col.premiseRemark')} mandatory={true}>
                   <CustomTextField
                     id="premiseRemark"
                     placeholder={t('col.enterText')}

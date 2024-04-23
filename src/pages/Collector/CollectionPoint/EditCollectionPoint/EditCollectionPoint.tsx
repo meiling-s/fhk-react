@@ -159,11 +159,11 @@ function CreateCollectionPoint() {
     }
   }, [debouncedSearchValue])
 
-  // const checkRecyclable = (items : recyclable) =>{
-  //     console.log("items", recyclables)
-  //     //return true
-  //     return recyclables.every(item => item.recycSubTypeId.length > 0)
-  // }
+  const checkRecyclable = (items: recyclable) => {
+    console.log('items', recyclables)
+    //return true
+    return recyclables.every((item) => item.recycSubTypeId.length > 0)
+  }
 
   const checkTimePeriod = () => {
     return colPtRoutine?.routineContent.every(
@@ -264,13 +264,18 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      //(!checkRecyclable(recyclables)) && tempV.push({ field: "inventory.recyleSubType", problem: formErr.empty, type: "error" });
-      console.log(
-        'num:',
-        staffNum,
-        Number.isNaN(parseInt(staffNum)),
-        staffNum == ''
-      )
+      !checkRecyclable(recyclables) &&
+        tempV.push({
+          field: 'inventory.recyleSubType',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      // console.log(
+      //   'num:',
+      //   staffNum,
+      //   Number.isNaN(parseInt(staffNum)),
+      //   staffNum == ''
+      // )
       staffNum == '' &&
         tempV.push({
           field: 'col.numOfStaff',
@@ -290,7 +295,7 @@ function CreateCollectionPoint() {
             problem: formErr.numberSmallThanZero,
             type: 'error'
           })
-      contractNo == ''
+      contractNo == '' && !skipValidation.includes('col.contractNo')
         ? tempV.push({
             field: 'col.contractNo',
             problem: formErr.empty,
