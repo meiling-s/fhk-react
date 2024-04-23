@@ -165,6 +165,21 @@ function CreateCollectionPoint() {
     )
   }
 
+  const checkTimePeriodNotInvalid = () => {
+    console.log('checkTimePeriodNotInvalid', colPtRoutine)
+    return colPtRoutine?.routineContent.every((item) => {
+      for (let index = 0; index < item.startTime.length; index++) {
+        const currStartTime = item.startTime[index]
+        const currEndTime = item.endTime[index]
+
+        if (currEndTime > currStartTime) {
+          return false
+        }
+      }
+      return true
+    })
+  }
+
   const getTime = (value: string) => {
     return value.match(/\d{2}:\d{2}:\d{2}/)[0]
   }
@@ -255,6 +270,12 @@ function CreateCollectionPoint() {
         tempV.push({
           field: 'time_Period',
           problem: formErr.empty,
+          type: 'error'
+        })
+      !checkTimePeriodNotInvalid() &&
+        tempV.push({
+          field: 'time_Period',
+          problem: formErr.startDateBehindEndDate,
           type: 'error'
         })
       !checkTimeNotDuplicate() &&
@@ -419,6 +440,9 @@ function CreateCollectionPoint() {
         break
       case formErr.timeCantDuplicate:
         msg = t('form.error.timeCantDuplicate')
+        break
+      case formErr.startDateBehindEndDate:
+        msg = t('form.error.startDateBehindEndDate')
         break
     }
     return msg

@@ -20,21 +20,20 @@ const localeTexts = {
   en: {
     okButtonLabel: 'OK',
     cancelButtonLabel: 'Cancel',
-    toolbarTitle: 'Select Time',
+    toolbarTitle: 'Select Time'
   },
   zhch: {
     okButtonLabel: '确定',
     cancelButtonLabel: '取消',
-    toolbarTitle: '选择时间',
+    toolbarTitle: '选择时间'
   },
   zhhk: {
     okButtonLabel: '確定',
     cancelButtonLabel: '取消',
-    toolbarTitle: '選擇時間',
-  },
+    toolbarTitle: '選擇時間'
+  }
   // Add more language translations as needed
-};
-
+}
 
 function CustomTimePicker({
   multiple,
@@ -50,7 +49,7 @@ function CustomTimePicker({
     defaultTime ? defaultTime : []
   )
   const [errorMessages, setErrorMessages] = useState<string[]>([])
-  const [language, setLanguage] = useState({});
+  const [language, setLanguage] = useState({})
 
   const { t } = useTranslation()
 
@@ -64,22 +63,22 @@ function CustomTimePicker({
     }
   }, [])
 
-useEffect(() => {
-  switch (i18n.language) {
-    case 'enus':
-      setLanguage(localeTexts.en); // Update language state
-      break;
-    case 'zhch':
-      setLanguage(localeTexts.zhch); // Update language state
-      break;
-    case 'zhhk':
-      setLanguage(localeTexts.zhhk); // Update language state
-      break;
-    default:
-      setLanguage(localeTexts.zhhk); // Update language state
-      break;
-  }
-}, [i18n.language]);
+  useEffect(() => {
+    switch (i18n.language) {
+      case 'enus':
+        setLanguage(localeTexts.en) // Update language state
+        break
+      case 'zhch':
+        setLanguage(localeTexts.zhch) // Update language state
+        break
+      case 'zhhk':
+        setLanguage(localeTexts.zhhk) // Update language state
+        break
+      default:
+        setLanguage(localeTexts.zhhk) // Update language state
+        break
+    }
+  }, [i18n.language])
 
   const handleTimePeriodChange = (
     start: boolean,
@@ -113,11 +112,11 @@ useEffect(() => {
           setTimePeriod(timeP)
         } else {
           // Show an error message for this index
-          const errorMessage = 'Start time must be earlier than the end time.'
+          const errorMessage = t('form.error.startDateBehindEndDate')
           const updatedErrorMessages = [...errorMessages]
           updatedErrorMessages[index] = errorMessage
           setErrorMessages(updatedErrorMessages)
-          console.error(errorMessage)
+          //console.error(errorMessage)
         }
       }
     }
@@ -146,7 +145,6 @@ useEffect(() => {
     return (
       <Box>
         <Box sx={localstyles.timePeriodItem}>
-
           <MobileTimePicker
             localeText={language}
             defaultValue={startTime}
@@ -207,7 +205,6 @@ useEffect(() => {
             defaultValue={tempTP.endAt}
             onChange={(value) => handleTimePeriodChange(false, value, 0)}
             sx={localstyles.timePicker}
-            
           />
         </Box>
       </Box>

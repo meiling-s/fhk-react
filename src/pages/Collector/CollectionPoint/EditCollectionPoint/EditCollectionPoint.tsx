@@ -166,18 +166,32 @@ function CreateCollectionPoint() {
     return items.every((item) => item.recycSubTypeId.length > 0)
   }
 
+  const getTime = (value: string) => {
+    return value.match(/\d{2}:\d{2}:\d{2}/)[0]
+  }
+
   const checkTimePeriod = () => {
     return colPtRoutine?.routineContent.every(
       (item) => item.startTime.length > 0 && item.endTime.length > 0
     )
   }
 
-  const getTime = (value: string) => {
-    return value.match(/\d{2}:\d{2}:\d{2}/)[0]
+  const checkTimePeriodNotInvalid = () => {
+    console.log('checkTimePeriodNotInvalid', colPtRoutine)
+    return colPtRoutine?.routineContent.every((item) => {
+      for (let index = 0; index < item.startTime.length; index++) {
+        const currStartTime = item.startTime[index]
+        const currEndTime = item.endTime[index]
+
+        if (currEndTime > currStartTime) {
+          return false
+        }
+      }
+      return true
+    })
   }
 
   const checkTimeNotDuplicate = () => {
-   
     const isvalid = colPtRoutine?.routineContent.every((item) => {
       for (let index = 0; index < item.startTime.length - 1; index++) {
         const currPair =
@@ -241,10 +255,17 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      ;(colPtRoutine?.routineContent.length == 0 || !checkTimePeriod()) &&
+      colPtRoutine?.routineContent.length == 0 ||
+        (!checkTimePeriod() &&
+          tempV.push({
+            field: 'time_Period',
+            problem: formErr.empty,
+            type: 'error'
+          }))
+      !checkTimePeriodNotInvalid() &&
         tempV.push({
           field: 'time_Period',
-          problem: formErr.empty,
+          problem: formErr.startDateBehindEndDate,
           type: 'error'
         })
       !checkTimeNotDuplicate() &&
@@ -283,7 +304,6 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      console.log('recyclables', recyclables)
       staffNum == '' &&
         tempV.push({
           field: 'col.numOfStaff',
@@ -334,8 +354,7 @@ function CreateCollectionPoint() {
     recyclables,
     staffNum,
     contractNo,
-    skipValidation,
-    colInfo.colPtRecyc
+    skipValidation
   ])
 
   useEffect(() => {
@@ -400,6 +419,9 @@ function CreateCollectionPoint() {
         break
       case formErr.timeCantDuplicate:
         msg = t('form.error.timeCantDuplicate')
+        break
+      case formErr.startDateBehindEndDate:
+        msg = t('form.error.startDateBehindEndDate')
         break
     }
     return msg
@@ -839,6 +861,7 @@ function CreateCollectionPoint() {
     </>
   )
 }
+
 const localstyles = {
   localButton: {
     width: '200px',
