@@ -42,6 +42,34 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       getReport()
     }
   }, [startDate, endDate])
+
+  useEffect(() => {
+    defaultReport()
+  }, [selectedItem?.id]);
+ 
+  const defaultReport =  () => {
+    if(selectedItem?.id === 1){
+ 
+    } else if(selectedItem?.id === 2){
+ 
+    } else if(selectedItem?.id === 3){
+ 
+    }else if(selectedItem?.id === 4){
+     
+    }else if(selectedItem?.id === 5){
+     
+    }else if(selectedItem?.id === 6){
+     const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/downloadWord/${decodeKeycloack}?from=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&to=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
+     setDownloads(prev => {
+       return [{date: dayjs(startDate).format('YYYY/MM/DD'), url: url}]
+     })
+    }else if(selectedItem?.id === 7){
+     const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/downloadExcel/${tenantId}?frmDate=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&toDate=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
+     setDownloads(prev => {
+       return [{date: dayjs(startDate).format('YYYY/MM/DD'), url: url}]
+     })
+    }
+   }
   
   const getReport = async () => {
    if(selectedItem?.id === 1){
@@ -69,7 +97,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
 
   const onCloseDrawer = () => {
     handleDrawerClose();
-    setDownloads([])
+    // setDownloads([])
   }
 
   return (

@@ -47,18 +47,24 @@ const PurchaseOrderFormCreateOrEdit = ({
   onClose,
   selectedRow,
   isEdit,
-  createdDate
+  createdDate,
+  arrived,
+  index,
+  onChangePurchaseOrder
 }: {
   onClose?: () => void
   selectedRow?: PurchaseOrderDetail | null,
   isEdit?: boolean,
-  createdDate?: string
+  createdDate?: string,
+  arrived: string | undefined,
+  index?: number,
+  onChangePurchaseOrder?: (index: number, orderDetail: PurchaseOrderDetail, type: string, value: string, type2?: string, value2?: string) => void
 }) => {
   const { t } = useTranslation() 
   const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
   const { recycType } = useContainer(CommonTypeContainer)
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>({recycTypeId: selectedRow?.recycTypeId || '', recycSubTypeId: selectedRow?.recycSubTypeId || ''})
-  
+  const [receiverAddr, setReceiverAddr] = useState(arrived)
   const [selectedPurchaseOrder, setSelectedPurchaseOrder] = useState<PurChaseOrder>()
   const [pickupOrderDetail, setPickUpOrderDetail] =  useState<PurchaseOrderDetail>()
   
@@ -84,8 +90,13 @@ const PurchaseOrderFormCreateOrEdit = ({
     }
   }, [selectedRow])
   
-  const onChangeData = () => {
-
+  const onChangeData = (value: string, type: string) => {
+    setPickUpOrderDetail((prev: any) => {
+      return{
+        ...prev,
+        [type]: value
+      }
+    })
   }
 
   const onChangeRecycable = (recycTypeId: string, recycSubTypeId: string) => {
@@ -93,8 +104,21 @@ const PurchaseOrderFormCreateOrEdit = ({
       recycTypeId,
       recycSubTypeId
     })
+  };
+
+  const onHandleUpdate = () => {
+    if(index !== undefined && pickupOrderDetail && receiverAddr){
+      let updateOrder = {
+        ...pickupOrderDetail,
+        recycTypeId: defaultRecyc?.recycTypeId,
+        recycSubTypeId: defaultRecyc?.recycSubTypeId
+      }
+      
+      onChangePurchaseOrder && onChangePurchaseOrder(index, updateOrder, 'receiverAddr', receiverAddr, 'createdAt',  dayjs(startDate).format('YYYY/MM/DD hh:mm'))
+      onClose && onClose()
+    }
   }
-  console.log('defaultRecyc', defaultRecyc)
+  
   return (
     <>
      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
@@ -112,18 +136,35 @@ const PurchaseOrderFormCreateOrEdit = ({
 
             <Box sx={{ marginLeft: 'auto', display: 'flex' }}>
               <Grid sx={{display: 'flex', columnGap: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <CustomButton
-                  text={t('purchase_order_customer.createOrEdit.finish')}
-                  onClick={() => {
-                    // selectedPickupOrder && handleRowClick(selectedPickupOrder)
+                <Button
+                  onClick={onHandleUpdate}
+                  sx={{
+                    borderRadius: "20px",
+                    backgroundColor: "#6BC7FF",
+                    '&.MuiButton-root:hover':{bgcolor: '#6BC7FF'},
+                    width:'fit-content',
+                    height: "40px",
+                    marginLeft:'20px'
                   }}
-                ></CustomButton>
-                <CustomButton
-                text={t('purchase_order_customer.createOrEdit.cancel')}
-                  onClick={() => {
-                    // selectedPickupOrder && handleRowClick(selectedPickupOrder)
+                  variant='contained'
+                >
+                  {t("purchase_order_customer.createOrEdit.finish")}
+                </Button>
+
+                <Button
+                  onClick={onClose}
+                  sx={{
+                    borderRadius: "20px",
+                    backgroundColor: "#6BC7FF",
+                    '&.MuiButton-root:hover':{bgcolor: '#6BC7FF'},
+                    width:'fit-content',
+                    height: "40px",
+                    marginLeft:'20px'
                   }}
-                ></CustomButton>
+                  variant='contained'
+                >
+                  {t("purchase_order_customer.createOrEdit.cancel")}
+                </Button>
               </Grid>
               <IconButton sx={{ ml: '20px' }} onClick={onClose}>
                 <KeyboardTabIcon sx={{ fontSize: '30px' }} />
@@ -177,12 +218,8 @@ const PurchaseOrderFormCreateOrEdit = ({
               <CustomTextField
                 id="weight"
                 placeholder={t('userAccount.pleaseEnterNumber')}
-                onChange={onChangeData}
+                onChange={(event) => onChangeData(event.target.value, 'weight')}
                 value={pickupOrderDetail?.weight}
-                // error={
-                //   (formik.errors?.weight && formik.touched?.weight) ||
-                //   undefined
-                // }
                 sx={{ width: '100%' }}
                 endAdornment={
                   <InputAdornment position="end">kg</InputAdornment>
@@ -195,13 +232,12 @@ const PurchaseOrderFormCreateOrEdit = ({
               mandatory
             >
               <CustomTextField
-                id={''}
+                id={'arrived'}
                 placeholder={t('purchase_order_customer.createOrEdit.arrived')}
                 rows={4}
-                onChange={onChangeData}
-                value={''}
+                onChange={(event) => setReceiverAddr(event.target.value)}
+                value={receiverAddr}
                 sx={{ width: '100%' }}
-                // error={it.error || undefined}
               />
             </CustomField>
           </Stack>

@@ -73,7 +73,38 @@ const PurchaseOrderForm = ({
     }
   }
 
-  const onChangeData = () => {
+  const onChangeData = (value: string, type: string) => {
+    setSelectedPurchaseOrder((prev: any) => {
+      return{
+        ...prev,
+        [type]: value
+      }
+    })
+  }
+  
+  const onChangePurchaseOrder = (index: number, orderDetail: PurchaseOrderDetail, type: string, value: string, type2?: string, value2? : string) => {
+   
+    if(type2){
+      const details = selectedPurchaseOrder?.purchaseOrderDetail.map((item, indexItem) => {
+        if(index === indexItem){
+          return orderDetail
+        } else {
+          return item
+        }
+      })
+      setPickUpOrderDetail(details)
+      setSelectedPurchaseOrder((prev: any) => {
+        return{
+          ...prev,
+          [type]: value,
+          [type2]: value2,
+          purchaseOrderDetail: details
+        }
+      })
+    }
+  }
+  
+  const onHandleUpdate = () => {
 
   }
 
@@ -94,6 +125,25 @@ const PurchaseOrderForm = ({
               <StatusCard status={selectedPurchaseOrder?.status} />
             </Box>
             <Box sx={{ marginLeft: 'auto' }}>
+              { selectedPurchaseOrder?.status === Status.CREATED && 
+              (
+                <Button
+                  onClick={onHandleUpdate}
+                  sx={{
+                    borderRadius: "20px",
+                    backgroundColor: "#6BC7FF",
+                    '&.MuiButton-root:hover':{bgcolor: '#6BC7FF'},
+                    width:'fit-content',
+                    height: "40px",
+                    marginLeft:'20px'
+                  }}
+                  variant='contained'
+                >
+                  {t("purchase_order_customer.createOrEdit.edit")}
+                </Button>
+              )
+
+              }
               <IconButton sx={{ ml: '20px' }} onClick={onClose}>
                 <KeyboardTabIcon sx={{ fontSize: '30px' }} />
               </IconButton>
@@ -116,7 +166,7 @@ const PurchaseOrderForm = ({
                   <CustomTextField
                   id="receiving_company_name"
                   placeholder={t('pick_up_order.receiving_company_name')}
-                  onChange={onChangeData}
+                  onChange={(event) => onChangeData(event.target.value, 'receiverName')}
                   value={selectedPurchaseOrder?.receiverName}
                   sx={{ width: '100%' }}
                   />
@@ -138,7 +188,7 @@ const PurchaseOrderForm = ({
                   <CustomTextField
                   id="contact_number"
                   placeholder={t('purchase_order_customer.detail.contact_number')}
-                  onChange={onChangeData}
+                  onChange={(event) => onChangeData(event.target.value, 'contactNo')}
                   value={selectedPurchaseOrder?.contactNo}
                   sx={{ width: '100%' }}
                   />
@@ -162,7 +212,7 @@ const PurchaseOrderForm = ({
                   <CustomTextField
                   id="payment_method"
                   placeholder={t('purchase_order_customer.detail.payment_method')}
-                  onChange={onChangeData}
+                  onChange={(event) => onChangeData(event.target.value, 'paymentType')}
                   value={selectedPurchaseOrder?.paymentType}
                   sx={{ width: '100%' }}
                   />
@@ -188,7 +238,7 @@ const PurchaseOrderForm = ({
                   <CustomTextField
                   id="recycling_plant"
                   placeholder={t('purchase_order_customer.detail.recycling_plant')}
-                  onChange={onChangeData}
+                  onChange={(event) => onChangeData(event.target.value, 'paymentType')}
                   value={selectedPurchaseOrder?.picoId}
                   sx={{ width: '100%' }}
                   />
@@ -204,26 +254,9 @@ const PurchaseOrderForm = ({
             </CustomField>
 
             <CustomField label={t('purchase_order_customer.detail.pico_id')}>
-
-              {selectedPurchaseOrder?.status === Status.CREATED ? 
-                (
-
-                  <CustomTextField
-                  id="pico_id"
-                  placeholder={t('purchase_order_customer.detail.pico_id')}
-                  onChange={onChangeData}
-                  value={selectedPurchaseOrder?.picoId}
-                  sx={{ width: '100%' }}
-                  />
-                ) 
-                : 
-                (
-                  <Typography sx={localstyles.typo_fieldContent}>
-                    {selectedPurchaseOrder?.picoId}
-                  </Typography>
-                )
-              }
-            
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedPurchaseOrder?.picoId}
+              </Typography>
             </CustomField>
 
             <PurchaseOrderCard
@@ -232,6 +265,7 @@ const PurchaseOrderForm = ({
               }
               purchaseOrderDetail={pickupOrderDetail ?? []}
               isEdit={selectedPurchaseOrder?.status === Status.CREATED ? true : false}
+              onChangePurchaseOrder={onChangePurchaseOrder}
             />
 
             <CustomField label={t('check_in.message')}>

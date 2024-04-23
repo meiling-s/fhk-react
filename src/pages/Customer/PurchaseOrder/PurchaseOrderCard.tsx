@@ -21,10 +21,12 @@ const PurchaseOrderCard = ({
   selectedPurchaseOrder,
   purchaseOrderDetail,
   isEdit,
+  onChangePurchaseOrder
 }: {
   selectedPurchaseOrder: PurChaseOrder | null
   purchaseOrderDetail: PurchaseOrderDetail[],
   isEdit?: boolean,
+  onChangePurchaseOrder?: (index: number, orderDetail: PurchaseOrderDetail, type: string, value: string) => void
 }) => {
   const { t } = useTranslation()
   const [openModal, setOpenModal] = useState(false);
@@ -200,6 +202,9 @@ const PurchaseOrderCard = ({
             selectedRow={podetail}
             isEdit={isEdit}
             createdDate={selectedPurchaseOrder?.createdAt}
+            arrived={selectedPurchaseOrder?.receiverAddr}
+            index={index}
+            onChangePurchaseOrder={onChangePurchaseOrder}
           />
         </Modal>
        
