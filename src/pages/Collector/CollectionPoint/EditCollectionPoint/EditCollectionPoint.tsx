@@ -760,9 +760,31 @@ function CreateCollectionPoint() {
               ></CustomItemList>
             </CustomField>
             <Grid item>
-              <Typography sx={styles.header3}>
-                {t('pick_up_order.creation_time') + ' : ' + createdDate}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography
+                  sx={{
+                    ...styles.header3,
+                    paddingX: '4px',
+                    paddingRight: '16px'
+                  }}
+                >
+                  {t('common.createdDatetime') +
+                    ' : ' +
+                    displayCreatedDate(colInfo.createdAt)}
+                </Typography>
+                <Typography
+                  sx={{
+                    ...styles.header3,
+                    paddingX: '4px',
+                    paddingLeft: '16px',
+                    borderLeft: '1px solid #ACACAC'
+                  }}
+                >
+                  {t('common.lastUpdateDatetime') +
+                    ' : ' +
+                    displayCreatedDate(colInfo.updatedAt)}
+                </Typography>
+              </Box>
             </Grid>
             <Grid item className="lg:flex sm:block text-center">
               <Button
