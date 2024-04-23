@@ -17,7 +17,7 @@ import { getPurchaseOrderById } from '../../../APICalls/Manufacturer/purchaseOrd
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { Roles, Status, localStorgeKeyName } from '../../../constants/constant'
 import {
   PurChaseOrder,
   Row,
@@ -40,6 +40,9 @@ const PurchaseOrderForm = ({
   const role = localStorage.getItem(localStorgeKeyName.role)
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
 
+  const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
+  const rolesEnableCreatePO = [Roles.customerAdmin]
+  
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -89,6 +92,25 @@ const PurchaseOrderForm = ({
               <StatusCard status={selectedPurchaseOrder?.status} />
             </Box>
             <Box sx={{ marginLeft: 'auto' }}>
+            { selectedRow?.status === Status.CREATED && rolesEnableCreatePO.includes(userRole) && 
+              (
+                <Button
+                  // onClick={onHandleUpdate}
+                  sx={{
+                    borderRadius: "20px",
+                    backgroundColor: "#6BC7FF",
+                    '&.MuiButton-root:hover':{bgcolor: '#6BC7FF'},
+                    width:'fit-content',
+                    height: "40px",
+                    marginLeft:'20px'
+                  }}
+                  variant='contained'
+                >
+                  {t("purchase_order_customer.createOrEdit.edit")}
+                </Button>
+              )
+
+              }
               <IconButton sx={{ ml: '20px' }} onClick={onClose}>
                 <KeyboardTabIcon sx={{ fontSize: '30px' }} />
               </IconButton>

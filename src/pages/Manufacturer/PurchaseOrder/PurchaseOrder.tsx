@@ -37,7 +37,7 @@ import {
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { Roles, localStorgeKeyName } from '../../../constants/constant'
 
 type Approve = {
   open: boolean
@@ -240,9 +240,12 @@ const PurchaseOrder = () => {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const pageSize = 10
-  const [totalData, setTotalData] = useState<number>(0)
+  const [totalData, setTotalData] = useState<number>(0);
 
-  const columns: GridColDef[] = [
+  const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
+  const rolesEnableCreatePO = [Roles.customerAdmin]
+
+  let columns: GridColDef[] = [
     {
       field: 'createdAt',
       headerName: t('purchase_order.table.created_datetime'),
@@ -279,7 +282,7 @@ const PurchaseOrder = () => {
       field: 'status',
       headerName: t('purchase_order.table.status'),
       type: 'string',
-      width: 100,
+      width: 150,
       editable: true,
       renderCell: (params) => <StatusCard status={params.value} />
     },
@@ -300,6 +303,51 @@ const PurchaseOrder = () => {
       )
     }
   ]
+
+  if(rolesEnableCreatePO.includes(userRole)){
+    columns = [
+      {
+        field: 'createdAt',
+        headerName: t('purchase_order.table.created_datetime'),
+        width: 150
+      },
+      {
+        field: 'poId',
+        headerName: t('purchase_order.table.order_number'),
+        width: 220,
+        editable: true
+      },
+      {
+        field: 'picoId',
+        headerName: t('purchase_order.table.pico_id'),
+        type: 'string',
+        width: 220,
+        editable: true
+      },
+      {
+        field: 'receiverAddr',
+        headerName: t('purchase_order.table.place_receipt'),
+        type: 'string',
+        width: 200,
+        editable: true
+      },
+      {
+        field: 'approvedAt',
+        headerName: t('purchase_order.table.receipt_date_time'),
+        type: 'sring',
+        width: 260,
+        editable: true
+      },
+      {
+        field: 'status',
+        headerName: t('purchase_order.table.status'),
+        type: 'string',
+        width: 150,
+        editable: true,
+        renderCell: (params) => <StatusCard status={params.value} />
+      },
+    ]
+  }
 
   const { recycType } = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
@@ -591,6 +639,7 @@ const PurchaseOrder = () => {
   const handleSearch = (keyName: string, value: string) => {
     updateQuery({ [keyName]: value })
   }
+  
   return (
     <>
       <ToastContainer />
@@ -607,6 +656,24 @@ const PurchaseOrder = () => {
           <Typography fontSize={20} color="black" fontWeight="bold">
             {t('purchase_order.all_order')}
           </Typography>
+
+          {rolesEnableCreatePO.includes(userRole) && (
+             <Button
+                // onClick={() => navigate("/customer/createPurchaseOrder")}
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: "#6BC7FF",
+                  '&.MuiButton-root:hover':{bgcolor: '#6BC7FF'},
+                  width:'fit-content',
+                  height: "40px",
+                  marginLeft:'20px'
+                }}
+                variant='contained'
+              >
+                + {t("col.create")}
+            </Button>
+          )}
+         
         </Box>
         <Box />
         <Stack direction="row" mt={3}>
