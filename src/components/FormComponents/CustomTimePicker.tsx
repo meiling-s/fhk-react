@@ -55,6 +55,7 @@ function CustomTimePicker({
 
   useEffect(() => {
     setTime(timePeriod)
+    console.log('timePeriod', timePeriod)
   }, [timePeriod])
 
   useEffect(() => {
