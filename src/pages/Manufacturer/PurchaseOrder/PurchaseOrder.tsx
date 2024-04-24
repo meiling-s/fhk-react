@@ -574,12 +574,6 @@ const PurchaseOrder = () => {
       field: 'updatedAt'
     },
     {
-      label: t('pick_up_order.filter.to'),
-      width: '10%',
-      options: getUniqueOptions('approvedAt'),
-      field: 'updatedAt'
-    },
-    {
       label: t('warehouse_page.place'),
       width: '14%',
       options: getUniqueOptions('receiverAddr'),
