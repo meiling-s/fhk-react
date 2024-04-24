@@ -91,27 +91,29 @@ function CustomTimePicker({
         const isValidStartTime = start ? value.isBefore(TP.endAt) : true
         const isValidEndTime = !start ? value.isAfter(TP.startFrom) : true
 
+        
+        // keep set time if invalid
+        if (start) {
+          TP.startFrom = value
+        } else {
+          TP.endAt = value
+        }
+
+        const timeP = timePeriod.map((hr, curIndex) => {
+          if (index === curIndex) {
+            return TP
+          }
+          return hr
+        })
+        setTimePeriod(timeP)
+
+        //display error msg when selectedtime invalid and parsing to parent
+
         if (isValidStartTime && isValidEndTime) {
           const updatedErrorMessages = [...errorMessages]
           updatedErrorMessages[index] = '' // Clear the error message for this index
           setErrorMessages(updatedErrorMessages)
-
-          if (start) {
-            TP.startFrom = value
-          } else {
-            TP.endAt = value
-          }
-
-          const timeP = timePeriod.map((hr, curIndex) => {
-            if (index === curIndex) {
-              return TP
-            }
-            return hr
-          })
-
-          setTimePeriod(timeP)
         } else {
-          // Show an error message for this index
           const errorMessage = t('form.error.startDateBehindEndDate')
           const updatedErrorMessages = [...errorMessages]
           updatedErrorMessages[index] = errorMessage

@@ -169,17 +169,8 @@ function CreateCollectionPoint() {
   const checkTimePeriodNotInvalid = () => {
     return colPtRoutine?.routineContent.every((item) => {
       for (let index = 0; index < item.startTime.length; index++) {
-        // const currStartTime = new Date(item.startTime[index])
-        // const currEndTime = new Date(item.endTime[index])
-        const currStartTime = new Date(
-          item.startTime[index]
-        ).toLocaleTimeString('en-US', { hour12: false })
-        const currEndTime = new Date(item.endTime[index]).toLocaleTimeString(
-          'en-US',
-          {
-            hour12: false
-          }
-        )
+        const currStartTime = new Date(item.startTime[index])
+        const currEndTime = new Date(item.endTime[index])
 
         console.log(
           'checkTimePeriodNotInvalid',
@@ -209,6 +200,7 @@ function CreateCollectionPoint() {
         const nextPair =
           getTime(item.startTime[index + 1]) + getTime(item.endTime[index + 1])
 
+          console.log(currPair, nextPair)
         if (currPair === nextPair) {
           return false
         }
@@ -289,13 +281,12 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      if (!checkTimePeriodNotInvalid()) {
-        tempV.push({
-          field: 'time_Period',
-          problem: formErr.startDateBehindEndDate,
-          type: 'error'
-        })
-      }
+      !checkTimePeriodNotInvalid() &&
+      tempV.push({
+        field: 'time_Period',
+        problem: formErr.startDateBehindEndDate,
+        type: 'error'
+      })
       !checkTimeNotDuplicate() &&
         tempV.push({
           field: 'time_Period',
@@ -891,6 +882,7 @@ function CreateCollectionPoint() {
     </>
   )
 }
+
 const localstyles = {
   localButton: {
     width: '200px',
@@ -898,5 +890,6 @@ const localstyles = {
     mr: 3
   }
 }
+
 
 export default CreateCollectionPoint
