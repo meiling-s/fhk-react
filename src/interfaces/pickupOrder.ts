@@ -45,6 +45,7 @@ export interface PickupOrder {
     contractNo:        string;
     createdBy:         string;
     updatedBy:         string;
+    updatedAt:         string;
     createdAt:         string;
     refPicoId:         string;
     pickupOrderDetail: PickupOrderDetail[];

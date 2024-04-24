@@ -33,7 +33,7 @@ export default function Daily({
 
   useEffect(() => {
     if (defaultTime && defaultTime.length > 0) {
-      console.log('default time', defaultTime)
+      //console.log('default time', defaultTime)
       setPeriod(toTimePeriod(defaultTime[0].startTime, defaultTime[0].endTime))
     } else {
       setPeriod([]) // Reset period if defaultTime is undefined or empty
