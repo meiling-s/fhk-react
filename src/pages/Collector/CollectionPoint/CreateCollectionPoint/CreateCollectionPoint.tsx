@@ -156,6 +156,7 @@ function CreateCollectionPoint() {
   }, [debouncedSearchValue])
 
   const checkRecyclable = (items: recyclable) => {
+    console.log('checkRecyclable', items)
     return items.every((item) => item.recycSubTypeId.length > 0)
   }
 
@@ -166,13 +167,28 @@ function CreateCollectionPoint() {
   }
 
   const checkTimePeriodNotInvalid = () => {
-    console.log('checkTimePeriodNotInvalid', colPtRoutine)
     return colPtRoutine?.routineContent.every((item) => {
       for (let index = 0; index < item.startTime.length; index++) {
-        const currStartTime = item.startTime[index]
-        const currEndTime = item.endTime[index]
+        // const currStartTime = new Date(item.startTime[index])
+        // const currEndTime = new Date(item.endTime[index])
+        const currStartTime = new Date(
+          item.startTime[index]
+        ).toLocaleTimeString('en-US', { hour12: false })
+        const currEndTime = new Date(item.endTime[index]).toLocaleTimeString(
+          'en-US',
+          {
+            hour12: false
+          }
+        )
 
-        if (currEndTime > currStartTime) {
+        console.log(
+          'checkTimePeriodNotInvalid',
+          currStartTime,
+          currEndTime,
+          currEndTime < currStartTime
+        )
+
+        if (currEndTime < currStartTime) {
           return false
         }
       }
@@ -206,6 +222,7 @@ function CreateCollectionPoint() {
   useEffect(() => {
     //do validation here
     const validate = async () => {
+      console.log('colPtRoutine', colPtRoutine?.routineContent)
       const tempV: formValidate[] = [] //temp validation
       colType == '' &&
         tempV.push({
@@ -272,12 +289,13 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      !checkTimePeriodNotInvalid() &&
+      if (!checkTimePeriodNotInvalid()) {
         tempV.push({
           field: 'time_Period',
           problem: formErr.startDateBehindEndDate,
           type: 'error'
         })
+      }
       !checkTimeNotDuplicate() &&
         tempV.push({
           field: 'time_Period',
@@ -362,6 +380,7 @@ function CreateCollectionPoint() {
     siteType,
     colName,
     colPtRoutine,
+    colPtRoutine?.routineType,
     address,
     openingPeriod,
     premiseName,

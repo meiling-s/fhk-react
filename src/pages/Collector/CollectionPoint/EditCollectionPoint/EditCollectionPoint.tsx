@@ -118,7 +118,6 @@ function CreateCollectionPoint() {
 
   useEffect(() => {
     initType()
-    setRecyclables(colInfo.colPtRecyc)
   }, [])
 
   const initType = async () => {
@@ -161,9 +160,8 @@ function CreateCollectionPoint() {
   }, [debouncedSearchValue])
 
   const checkRecyclable = (items: recyclable) => {
-    console.log('items', recyclables)
     //return true
-    return items.every((item) => item.recycSubTypeId.length > 0)
+    return recyclables.every((item) => item.recycSubTypeId.length > 0)
   }
 
   const getTime = (value: string) => {
@@ -177,13 +175,12 @@ function CreateCollectionPoint() {
   }
 
   const checkTimePeriodNotInvalid = () => {
-    console.log('checkTimePeriodNotInvalid', colPtRoutine)
     return colPtRoutine?.routineContent.every((item) => {
       for (let index = 0; index < item.startTime.length; index++) {
         const currStartTime = item.startTime[index]
         const currEndTime = item.endTime[index]
 
-        if (currEndTime > currStartTime) {
+        if (currEndTime < currStartTime) {
           return false
         }
       }
@@ -213,6 +210,8 @@ function CreateCollectionPoint() {
   useEffect(() => {
     const validate = async () => {
       //do validation here
+
+      setRecyclables(colInfo.colPtRecyc)
       const tempV: formValidate[] = [] //temp validation
       colType == '' &&
         tempV.push({
@@ -268,6 +267,7 @@ function CreateCollectionPoint() {
           problem: formErr.startDateBehindEndDate,
           type: 'error'
         })
+
       !checkTimeNotDuplicate() &&
         tempV.push({
           field: 'time_Period',
@@ -345,6 +345,7 @@ function CreateCollectionPoint() {
     colType,
     siteType,
     colPtRoutine,
+    colPtRoutine?.routineContent,
     address,
     openingPeriod,
     premiseName,
@@ -861,7 +862,6 @@ function CreateCollectionPoint() {
     </>
   )
 }
-
 const localstyles = {
   localButton: {
     width: '200px',
