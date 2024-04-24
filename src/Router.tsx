@@ -59,6 +59,8 @@ import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
+import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder";
+import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
 
 const Router = () => {
   return (
@@ -165,8 +167,8 @@ const Router = () => {
 
         <Route element={<MainLayout />}>
           <Route path="/customer/purchaseOrder" element={<PurchaseOrder />} />
-          <Route path="/customer/createPurchaseOrder" element={<></>} />
-          <Route path="/customer/editPurchaseOrder" element={<></>} />
+          <Route path="/customer/createPurchaseOrder" element={<CreatePurchaseOrder />} />
+          <Route path="/customer/editPurchaseOrder" element={<EditPurchaseOrder />} />
         </Route>
 
       </Routes>

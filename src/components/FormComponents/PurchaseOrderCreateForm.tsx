@@ -1,0 +1,751 @@
+import {
+  Alert,
+  Box,
+  Button,
+  Drawer,
+  Grid,
+  IconButton,
+  Autocomplete,
+  TextField,
+  Modal,
+  Divider,
+  Stack,
+  Typography
+} from '@mui/material'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
+import { styles } from '../../constants/styles'
+import CustomField from './CustomField'
+import CustomSwitch from './CustomSwitch'
+import CustomDatePicker2 from './CustomDatePicker2'
+import RoutineSelect from '../SpecializeComponents/RoutineSelect'
+import CustomTextField from './CustomTextField'
+import CustomItemList, { il_item } from './CustomItemList'
+import CreateRecycleFormPurchaseOrder from './CreateRecycleFormPurchaseOrder'
+import { useContainer } from 'unstated-next'
+import {
+  CreatePicoDetail,
+  EditPo,
+  PickupOrder,
+  PickupOrderDetail
+} from '../../interfaces/pickupOrder'
+import { PaymentType, PurChaseOrder, PurchaseOrderDetail } from '../../interfaces/purchaseOrder'
+import { colPtRoutine } from '../../interfaces/common'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
+import AddCircleIcon from '@mui/icons-material/AddCircle'
+import { useNavigate } from 'react-router-dom'
+import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
+import {
+  ADD_CIRCLE_ICON,
+  DELETE_OUTLINED_ICON,
+  EDIT_OUTLINED_ICON
+} from '../../themes/icons'
+import theme from '../../themes/palette'
+import { t, use } from 'i18next'
+import { useFormik } from 'formik'
+import { editPickupOrder } from '../../APICalls/Collector/pickupOrder/pickupOrder'
+import { validate } from 'uuid'
+import CustomAutoComplete from './CustomAutoComplete'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
+import PickupOrderList from '../PickupOrderList'
+import { amET } from '@mui/material/locale'
+import i18n from '../../setups/i18n'
+import { useTranslation } from 'react-i18next'
+import dayjs from 'dayjs'
+import { format } from '../../constants/constant'
+import { localStorgeKeyName } from '../../constants/constant'
+import {
+  getThemeColorRole,
+  getThemeCustomList,
+  displayCreatedDate
+} from '../../utils/utils'
+
+type DeleteModalProps = {
+  open: boolean
+  selectedRecycLoc?: CreatePicoDetail | null
+  onClose: () => void
+  onDelete: (id: number) => void
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({
+  open,
+  selectedRecycLoc,
+  onClose,
+  onDelete
+}) => {
+  const { t } = useTranslation()
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('pick_up_order.delete_msg')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onDelete(selectedRecycLoc?.id)
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
+const PurchaseOrderCreateForm = ({
+  selectedPo,
+  title,
+  formik,
+  setState,
+  state,
+  editMode
+}: {
+  selectedPo?: PurChaseOrder
+  title: string
+  formik: any
+  setState: (val: PurchaseOrderDetail[]) => void
+  state: PurchaseOrderDetail[]
+  editMode: boolean
+}) => {
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
+  const [editRowId, setEditRowId] = useState<number | null>(null)
+  const [updateRowId, setUpdateRowId] = useState<number | null>(null)
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
+  const [id, setId] = useState<number>(0)
+  const [picoRefId, setPicoRefId] = useState('')
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const { logisticList, contractType, vehicleType, recycType, manuList } =
+    useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
+  
+  const paymentTypes : PaymentType[] = [
+    {
+      paymentNameTchi: '現金',
+      paymentNameSchi: '现金',
+      paymentNameEng: 'Cash',
+      value: 'cash'
+    },
+    {
+      paymentNameTchi: '信用卡',
+      paymentNameSchi: '信用卡',
+      paymentNameEng: 'Credit card',
+      value: 'card'
+    },
+    {
+      paymentNameTchi: '支票',
+      paymentNameSchi: '支票',
+      paymentNameEng: 'Cheque',
+      value: 'cheque'
+    },
+    {
+      paymentNameTchi: '转数快',
+      paymentNameSchi: '轉數快',
+      paymentNameEng: 'FPS',
+      value: 'fps'
+    }
+  ]
+
+  const logisticCompany = logisticList
+  const contractRole = contractType
+
+  const unexpiredContracts = contractRole
+    ? contractRole?.filter((contract) => {
+        const currentDate = new Date()
+        const contractDate = new Date(contract.contractToDate)
+        return contractDate > currentDate
+      })
+    : []
+  const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
+    null
+  )
+
+  // set custom style each role
+  const colorTheme: string = getThemeColorRole(role)
+  const customListTheme = getThemeCustomList(role)
+
+  const buttonFilledCustom = {
+    borderRadius: '40px',
+    borderColor: '#7CE495',
+    backgroundColor: colorTheme,
+    color: 'white',
+    fontWeight: 'bold',
+    transition: '0.3s',
+    '&.MuiButton-root:hover': {
+      backgroundColor: colorTheme,
+      borderColor: '#D0DFC2',
+      boxShadow: '0 0 4px rgba(0, 0, 0, 0.3)'
+    }
+  }
+  const buttonOutlinedCustom = {
+    borderRadius: '40px',
+    border: 1,
+    borderColor: colorTheme,
+    backgroundColor: 'white',
+    color: colorTheme,
+    fontWeight: 'bold',
+    '&.MuiButton-root:hover': {
+      bgcolor: '#F4F4F4'
+    },
+    width: 'max-content'
+  }
+
+  const endAdornmentIcon = {
+    fontSize: 25,
+    color: colorTheme
+  }
+
+  const picoIdButton = {
+    flexDirection: 'column',
+    borderRadius: '8px',
+    width: '400px',
+    padding: '32px',
+    border: 1,
+    borderColor: colorTheme,
+    backgroundColor: 'white',
+    color: 'black',
+    fontWeight: 'bold',
+    '&.MuiButton-root:hover': {
+      bgcolor: '#F4F4F4'
+    }
+  }
+  //-- end custom style --
+
+  const handleCloses = () => {
+    setIsEditing(false)
+    setEditRowId(null)
+    setUpdateRowId(null)
+    setOpenModal(false)
+  }
+
+  const handleEditRow = (id: number) => {
+    setIsEditing(true)
+    setEditRowId(id)
+    setOpenModal(true)
+  }
+
+  const handleDeleteRow = (id: any) => {
+    var updateDeleteRow = state.filter((row, index) => index != id)
+    updateDeleteRow = updateDeleteRow.map((picoDtl, index) => {
+      picoDtl.poDtlId = index
+      return picoDtl
+    })
+    //console.log('deleting: ', id, state, updateDeleteRow)
+    setState(updateDeleteRow)
+  }
+
+  const createdDate = selectedPo
+    ? displayCreatedDate(selectedPo.createdAt)
+    : dayjs(new Date()).format(format.dateFormat1)
+
+  const handleHeaderOnClick = () => {
+    //console.log('Header click')
+    navigate(-1) //goback to last page
+  }
+  const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
+    return {
+      top: params.isFirstVisible ? 0 : 10
+    }
+  }, [])
+
+  const onDeleteModal = (id: number) => {
+    handleDeleteRow(id)
+    setOpenDelete(false)
+  }
+
+  const columns: GridColDef[] = [
+    {
+      field: 'pickupAt',
+      headerName: t('purchase_order.create.receipt_date_and_time'),
+      width: 200,
+      valueFormatter: (params) => {
+        if(params){
+          return dayjs(params.value).format('YYYY/MM/DD hh:mm')
+        }
+      }
+    },
+    {
+      field: 'recycTypeId',
+      headerName: t('purchase_order.create.main_category'),
+      width: 150,
+      editable: true,
+      valueGetter: ({ row }) => {
+        const matchingRecycType = recycType?.find(
+          (item) => item.recycTypeId === row.recycTypeId
+        )
+        if (matchingRecycType) {
+          var name = ''
+          switch (i18n.language) {
+            case 'enus':
+              name = matchingRecycType.recyclableNameEng
+              break
+            case 'zhch':
+              name = matchingRecycType.recyclableNameSchi
+              break
+            case 'zhhk':
+              name = matchingRecycType.recyclableNameTchi
+              break
+            default:
+              name = matchingRecycType.recyclableNameTchi //default fallback language is zhhk
+              break
+          }
+          return name
+        }
+      }
+    },
+    {
+      field: 'recycSubTypeId',
+      headerName: t('purchase_order.create.subcategory'),
+      type: 'string',
+      width: 150,
+      editable: true,
+      valueGetter: ({ row }) => {
+        const matchingRecycType = recycType?.find(
+          (item) => item.recycTypeId === row.recycTypeId
+        )
+        if (matchingRecycType) {
+          const matchrecycSubType = matchingRecycType.recycSubType?.find(
+            (subtype) => subtype.recycSubTypeId === row.recycSubTypeId
+          )
+          if (matchrecycSubType) {
+            var subName = ''
+            switch (i18n.language) {
+              case 'enus':
+                subName = matchrecycSubType?.recyclableNameEng ?? ''
+                break
+              case 'zhch':
+                subName = matchrecycSubType?.recyclableNameSchi ?? ''
+                break
+              case 'zhhk':
+                subName = matchrecycSubType?.recyclableNameTchi ?? ''
+                break
+              default:
+                subName = matchrecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+                break
+            }
+
+            return subName
+          }
+        }
+      }
+    },
+    {
+      field: 'weight',
+      headerName: t('purchase_order.create.weight'),
+      type: 'string',
+      width: 150,
+      editable: true,
+      valueFormatter: (params) => {
+        if(params) {
+          return `${params.value} kg`
+        }
+      }
+    },
+    {
+      field: 'receiverAddr',
+      headerName: t('purchase_order.create.arrived'),
+      type: 'string',
+      width: 150,
+      editable: true
+    },
+    {
+      field: 'edit',
+      headerName: '',
+      width: 100,
+      renderCell: (params) => (
+        <IconButton>
+          <EDIT_OUTLINED_ICON onClick={() => handleEditRow(params.row.id)} />
+        </IconButton>
+      )
+    },
+    {
+      field: 'delete',
+      headerName: '',
+      width: 100,
+      renderCell: (params) => (
+        // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
+        //   <DELETE_OUTLINED_ICON />
+        // </IconButton>
+        <IconButton
+          onClick={() => {
+            setOpenDelete(true)
+            setRecycbleLocId(params.row)
+          }}
+        >
+          <DELETE_OUTLINED_ICON />
+        </IconButton>
+      )
+    }
+  ]
+
+  const [openPico, setOpenPico] = useState(false)
+
+  const handleClosePicoList = () => {
+    setOpenPico(false)
+  }
+
+  const selectPicoRefrence = (
+    picodetail: PickupOrderDetail,
+    picoId: string
+  ) => {
+    setPicoRefId(picoId)
+    formik.setFieldValue('refPicoId', picoId)
+    setOpenPico(false)
+  }
+
+  const resetPicoId = () => {
+    setOpenPico(true)
+    setPicoRefId('')
+  }
+
+  const onChangeAddressReceiver = (value: string) => {
+    formik.setFieldValue('receiverAddr', value)
+  }
+
+  return (
+    <>
+      <form onSubmit={formik.handleSubmit}>
+        <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
+          <LocalizationProvider
+            dateAdapter={AdapterDayjs}
+            adapterLocale="zh-cn"
+          >
+            <Grid
+              container
+              direction={'column'}
+              spacing={2.5}
+              sx={{ ...styles.gridForm }}
+            >
+              <Grid item>
+                <Button
+                  sx={[styles.headerSection]}
+                  onClick={handleHeaderOnClick}
+                >
+                  <ArrowBackIosIcon sx={{ fontSize: 15, marginX: 0.5 }} />
+                  <Typography sx={styles.header1}>{title}</Typography>
+                </Button>
+              </Grid>
+              <Grid item>
+                <Typography sx={styles.header2}>
+                  {t('purchase_order.create.contact_information')}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <CustomField
+                  label={t('purchase_order.create.sender_company_name')}
+                  mandatory
+                >
+                  <CustomAutoComplete
+                    placeholder={t('purchase_order.create.receiving_company_name_placeholder')}
+                    option={
+                      manuList?.map(
+                        (option) => option.manufacturerNameEng
+                      ) ?? []
+                    }
+                    sx={{ width: '400px' }}
+                    onChange={(_: SyntheticEvent, newValue: string | null) =>
+                      formik.setFieldValue('senderName', newValue)
+                    }
+                    onInputChange={(event: any, newInputValue: string) => {
+                      formik.setFieldValue('senderName', newInputValue) // Update the formik field value if needed
+                    }}
+                    value={formik.values.senderName}
+                    inputValue={formik.values.senderName}
+                    error={
+                      formik.errors.senderName && formik.touched.senderName
+                    }
+                  />
+                </CustomField>
+              </Grid>
+              <Grid item>
+                <CustomField
+                  label={t('purchase_order.create.contact_name')}
+                  mandatory
+                >
+                  <CustomAutoComplete
+                    placeholder={t('purchase_order.create.contact_name_placeholder')}
+                    option={[]}
+                    sx={{ width: '400px' }}
+                    onChange={(_: SyntheticEvent, newValue: string | null) =>
+                      formik.setFieldValue('contactName', newValue)
+                    }
+                    onInputChange={(event: any, newInputValue: string) => {
+                      formik.setFieldValue('contactName', newInputValue) // Update the formik field value if needed
+                    }}
+                    value={formik.values.contactName}
+                    inputValue={formik.values.contactName}
+                    error={
+                      formik.errors.contactName && formik.touched.contactName
+                    }
+                  />
+                </CustomField>
+              </Grid>
+              <Grid item>
+                <CustomField
+                  label={t('purchase_order.create.contact_number')}
+                  mandatory
+                >
+                  <CustomAutoComplete
+                    placeholder={t('purchase_order.create.contact_number_placeholder')}
+                    option={
+                      logisticCompany?.map(
+                        (option) => option.logisticNameTchi
+                      ) ?? []
+                    }
+                    sx={{ width: '400px' }}
+                    onChange={(_: SyntheticEvent, newValue: string | null) =>
+                      formik.setFieldValue('contactNo', newValue)
+                    }
+                    onInputChange={(event: any, newInputValue: string) => {
+                      formik.setFieldValue('contactNo', newInputValue) // Update the formik field value if needed
+                    }}
+                    value={formik.values.contactNo}
+                    inputValue={formik.values.contactNo}
+                    error={
+                      formik.errors.contactNo && formik.touched.contactNo
+                    }
+                  />
+                </CustomField>
+              </Grid>
+              <Grid item>
+                <Box>
+                  <CustomField label={t('purchase_order.create.payment_method')} mandatory>
+                    <Autocomplete
+                      disablePortal
+                      id="paymentType"
+                      sx={{ width: 400 }}
+                      defaultValue={formik.values.paymentType}
+                      options={
+                        // unexpiredContracts?.map(
+                        //   (contract) => contract.contractNo
+                        // ) || []
+                        paymentTypes.map(payment => {
+                          return payment.value
+                        })
+                      }
+                      onChange={(event, value) => {
+                        if (value) {
+                          formik.setFieldValue('paymentType', value)
+                        }
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder={t('purchase_order.create.payment_method_placeholder')}
+                          sx={[styles.textField, { width: 400 }]}
+                          InputProps={{
+                            ...params.InputProps,
+                            sx: styles.textField
+                          }}
+                        />
+                      )}
+                    />
+                  </CustomField>
+                </Box>
+              </Grid>
+              <Grid item>
+                <Typography sx={styles.header2}>
+                  {t('purchase_order.create.order_information')}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Box>
+                  <CustomField label={t('purchase_order.create.recycling_plant')}>
+                    <Autocomplete
+                      disablePortal
+                      id="recycling_plant"
+                      sx={{ width: 400 }}
+                      defaultValue={formik.values.contractNo}
+                      options={
+                        unexpiredContracts?.map(
+                          (contract) => contract.contractNo
+                        ) || []
+                      }
+                      onChange={(event, value) => {
+                        if (value) {
+                          formik.setFieldValue('contractNo', value)
+                        }
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder={t('purchase_order.create.payment_method_placeholder')}
+                          sx={[styles.textField, { width: 400 }]}
+                          InputProps={{
+                            ...params.InputProps,
+                            sx: styles.textField
+                          }}
+                        />
+                      )}
+                    />
+                  </CustomField>
+                </Box>
+              </Grid>
+              <Grid item>
+                <CustomField label={''}>
+                  <DataGrid
+                    rows={
+                      editMode
+                        ? state.map((row, index) => ({ ...row, id: index }))
+                        : state
+                    }
+                    hideFooter
+                    columns={columns}
+                    disableRowSelectionOnClick
+                    getRowSpacing={getRowSpacing}
+                    sx={{
+                      border: 'none',
+                      '& .MuiDataGrid-cell': {
+                        border: 'none' // Remove the borders from the cells
+                      },
+                      '& .MuiDataGrid-row': {
+                        bgcolor: 'white',
+                        borderRadius: '10px'
+                      },
+                      '&>.MuiDataGrid-main': {
+                        '&>.MuiDataGrid-columnHeaders': {
+                          borderBottom: 'none'
+                        }
+                      },
+                      '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': {
+                        display: 'none'
+                      },
+                      '& .MuiDataGrid-overlay': {
+                        display: 'none'
+                      }
+                    }}
+                  />
+                  <Modal open={openModal} onClose={handleCloses}>
+                    <CreateRecycleFormPurchaseOrder
+                      data={state}
+                      setId={setId}
+                      setState={setState}
+                      onClose={handleCloses}
+                      editRowId={editRowId}
+                      picoHisId={picoRefId}
+                      isEditing={isEditing}
+                      onChangeAddressReceiver={onChangeAddressReceiver}
+                    />
+                  </Modal>
+
+                  <PickupOrderList
+                    drawerOpen={openPico}
+                    handleDrawerClose={handleClosePicoList}
+                    selectPicoDetail={selectPicoRefrence}
+                    picoId={selectedPo?.picoId}
+                  ></PickupOrderList>
+
+                  <Button
+                    variant="outlined"
+                    startIcon={
+                      <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
+                    }
+                    onClick={() => {
+                      setIsEditing(false)
+                      setOpenModal(true)
+                    }}
+                    sx={{
+                      height: '40px',
+                      width: '100%',
+                      mt: '20px',
+                      borderColor: colorTheme,
+                      color: 'black',
+                      borderRadius: '10px'
+                    }}
+                  >
+                    {t('pick_up_order.new')}
+                  </Button>
+                </CustomField>
+              </Grid>
+              <Grid item>
+                <Typography sx={styles.header3}>
+                  {t('purchase_order.create.setup_time') + ' : ' + createdDate}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Button
+                  type="submit"
+                  sx={[buttonFilledCustom, localstyles.localButton]}
+                >
+                  {t('pick_up_order.finish')}
+                </Button>
+                <Button
+                  sx={[buttonOutlinedCustom, localstyles.localButton]}
+                  onClick={handleHeaderOnClick}
+                >
+                  {t('pick_up_order.cancel')}
+                </Button>
+              </Grid>
+            </Grid>
+            <Stack mt={2} spacing={2}>
+              {Object.keys(formik.errors).map((fieldName) =>
+                formik.touched[fieldName] && formik.errors[fieldName] ? (
+                  <Alert severity="error" key={fieldName}>
+                    {formik.errors[fieldName]}
+                  </Alert>
+                ) : null
+              )}
+            </Stack>
+            <DeleteModal
+              open={openDelete}
+              selectedRecycLoc={recycbleLocId}
+              onClose={() => {
+                setOpenDelete(false)
+              }}
+              onDelete={onDeleteModal}
+            />
+          </LocalizationProvider>
+        </Box>
+      </form>
+    </>
+  )
+}
+
+let localstyles = {
+  localButton: {
+    width: '200px',
+    fontSize: 18,
+    mr: 3
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: '34%',
+    height: 'fit-content',
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5
+  }
+}
+
+export default PurchaseOrderCreateForm

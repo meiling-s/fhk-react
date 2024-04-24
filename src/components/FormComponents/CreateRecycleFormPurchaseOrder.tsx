@@ -1,0 +1,561 @@
+import {
+  Alert,
+  Autocomplete,
+  AutocompleteRenderInputParams,
+  Box,
+  Button,
+  Divider,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material'
+import React, {
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useEffect,
+  useState
+} from 'react'
+import { styles } from '../../constants/styles'
+import { DELETE_OUTLINED_ICON } from '../../themes/icons'
+import KeyboardTabIcon from '@mui/icons-material/KeyboardTab'
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
+import theme from '../../themes/palette'
+import CustomField from './CustomField'
+import CustomTimePicker from './CustomTimePicker'
+import {
+  recyclable,
+  singleRecyclable,
+  timePeriod
+} from '../../interfaces/collectionPoint'
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import RecyclablesList from '../SpecializeComponents/RecyclablesList'
+import { t } from 'i18next'
+import * as Yup from 'yup'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import CustomTextField from './CustomTextField'
+import { ErrorMessage, useFormik } from 'formik'
+import { CreatePicoDetail } from '../../interfaces/pickupOrder'
+import { Navigate, useNavigate } from 'react-router'
+import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesListSingleSelect'
+import { dateToLocalTime } from '../Formatter'
+import { v4 as uuidv4 } from 'uuid'
+import { collectorList, manuList } from '../../interfaces/common'
+import CustomAutoComplete from './CustomAutoComplete'
+import i18n from '../../setups/i18n'
+import dayjs, { Dayjs } from 'dayjs'
+import { format } from '../../constants/constant'
+import { localStorgeKeyName } from '../../constants/constant'
+import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
+import { PurchaseOrderDetail, CreatePurchaseOrderDetail } from '../../interfaces/purchaseOrder'
+import { DatePicker } from '@mui/x-date-pickers'
+
+type props = {
+  onClose: () => void
+  setState: (val: PurchaseOrderDetail[]) => void
+  data: PurchaseOrderDetail[]
+  setId: Dispatch<SetStateAction<number>>
+  picoHisId: string | null
+  editRowId: number | null
+  isEditing: boolean
+  receiverAddr?: string
+  onChangeAddressReceiver? : (value: string) => void
+}
+type CombinedType = manuList[] | collectorList[]
+const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+const initialTime: dayjs.Dayjs = dayjs()
+
+const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
+  return pickupAtValue.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+}
+
+const initValue = {
+    id: -1,
+    poDtlId: 0,
+    recycTypeId: '',
+    recyclableNameTchi: '',
+    recyclableNameSchi: '',
+    recyclableNameEng: '',
+    recycSubTypeId: '',
+    recyclableSubNameTchi: '',
+    recyclableSubNameSchi: '',
+    recyclableSubNameEng: '',
+    unitId: 0,
+    unitNameTchi: '',
+    unitNameSchi: '',
+    unitNameEng: '',
+    weight: 0,
+    pickupAt: dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+    receiverAddr: '',
+    createdBy: loginId,
+    updatedBy: loginId,
+}
+
+const CreateRecycleForm = ({
+  onClose,
+  setState,
+  data,
+  editRowId,
+  isEditing,
+  picoHisId,
+  receiverAddr,
+  onChangeAddressReceiver
+}: props) => {
+  const { recycType, manuList, collectorList } =
+    useContainer(CommonTypeContainer)
+  const [editRow, setEditRow] = useState<PurchaseOrderDetail>()
+  const [updateRow, setUpdateRow] = useState<PurchaseOrderDetail>()
+  const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
+  const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
+
+  //---set custom style each role---
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
+  const colorTheme: string = getThemeColorRole(role) || '#79CA25'
+  const customListTheme = getThemeCustomList(role) || '#E4F6DC'
+  //---end set custom style each role---
+
+  const setDefRecyc = (picoDtl: PurchaseOrderDetail) => {
+    const defRecyc: singleRecyclable = {
+      recycTypeId: picoDtl.recycTypeId,
+      recycSubTypeId: picoDtl.recycSubTypeId
+    }
+    //console.log("set def", defRecyc);
+    setDefaultRecyc(defRecyc)
+  }
+
+  useEffect(() => {
+    if (editRowId == null) {
+      setDefaultRecyc(undefined)
+      formik.setValues(initValue)
+    } else {
+      const editR = data.at(editRowId)
+      if (editR) {
+        setDefRecyc(editR)
+        setEditRow(editR)
+      }
+    }
+  }, [editRowId])
+
+  const handleOverlayClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (event.target === event.currentTarget) {
+      // If the overlay is clicked (not its children), close the modal
+      onClose && onClose()
+    }
+  }
+
+  useEffect(() => {
+    if (editRow) {
+      // Set the form field values based on the editRow data
+
+      const index = data.indexOf(editRow)
+
+      formik.setValues({
+        id: index,
+        poDtlId: editRow.poDtlId,
+        recycTypeId: editRow.recycTypeId,
+        recyclableNameTchi: editRow.recyclableNameTchi,
+        recyclableNameSchi: editRow.recyclableNameSchi,
+        recyclableNameEng: editRow.recyclableNameEng,
+        recycSubTypeId: editRow.recycSubTypeId,
+        recyclableSubNameTchi: editRow.recyclableSubNameTchi,
+        recyclableSubNameSchi: editRow.recyclableSubNameSchi,
+        recyclableSubNameEng: editRow.recyclableSubNameEng,
+        unitId: editRow.unitId,
+        unitNameTchi: editRow.unitNameTchi,
+        unitNameSchi: editRow.unitNameSchi,
+        unitNameEng: editRow.unitNameEng,
+        weight: editRow.weight,
+        pickupAt: editRow?.pickupAt || '',
+        createdBy: editRow.createdBy,
+        updatedBy: editRow.updatedBy,
+        receiverAddr:  editRow.receiverAddr || '' 
+      })
+    }
+  }, [editRow])
+
+  // useEffect(() => {
+    // console.log('defaultRecyc: ', defaultRecyc)
+  // }, [defaultRecyc])
+
+  // const validateSchema = Yup.lazy((values) => {
+  //   let prevData: PurchaseOrderDetail[] = []
+  //   if (editRow) {
+  //     prevData = data.filter((item) => item.poDtlId != editRow.poDtlId)
+  //   } else {
+  //     prevData = data
+  //   }
+
+  //   return Yup.object().shape({
+  //     pickupAt: Yup.string()
+  //       .required('This pickupAt is required')
+  //       .test(
+  //         'invalid-date',
+  //         'Invalid pickup time, choose again the time',
+  //         function (value) {
+  //           return value !== 'Invalid Date'
+  //         }
+  //       )
+  //       .test(
+  //         'not-in-prev-data',
+  //         'Pickup time already exists in previous data',
+  //         function (value) {
+  //           return !prevData.some((item) => item.pickupAt === value)
+  //         }
+  //       ),
+
+  //     senderName: Yup.string().required('This sendername is required'),
+  //     senderAddr: Yup.string()
+  //       .required('This senderAddr is required')
+  //       .test(
+  //         'not-same-as-receiver',
+  //         'Sender address cannot be the same as receiver address',
+  //         function (value) {
+  //           const receiverAddr = values.receiverAddr
+  //           return value !== receiverAddr
+  //         }
+  //       )
+  //       .test(
+  //         'not-in-prev-data',
+  //         'Sender address already exists in previous data',
+  //         function (value) {
+  //           return !prevData.some((item) => item?.senderAddr === value)
+  //         }
+  //       ),
+  //     receiverName: Yup.string().required('This receiverName is required'),
+  //     receiverAddr: Yup.string()
+  //       .required('This receiverAddr is required')
+  //       .test(
+  //         'not-same-as-sender',
+  //         'Receiver address cannot be the same as sender address',
+  //         function (value) {
+  //           const senderAddr = values.senderAddr
+  //           return value !== senderAddr
+  //         }
+  //       )
+  //       .test(
+  //         'not-in-prev-data',
+  //         'Receiver address already exists in previous data',
+  //         function (value) {
+  //           return !prevData.some((item) => item.receiverAddr === value)
+  //         }
+  //       ),
+  //     recycType: Yup.string().required('This recycType is required'),
+  //     recycSubType: Yup.string().required('This recycSubType is required'),
+  //     weight: Yup.number().required('This weight is required')
+  //   })
+  // })
+
+  //console.log(JSON.stringify(data)+'qwesss')
+
+  const formik = useFormik({
+    initialValues: initValue,
+    // validationSchema: validateSchema,
+
+    onSubmit: (values, { resetForm }) => {
+      if (isEditing) {
+        const updatedData = data.map((row, id) => {
+          return id === values.id ? values : row
+        })
+        setState(updatedData)
+      } else {
+        //creating row
+        var updatedValues: PurchaseOrderDetail = values
+        updatedValues.id = data.length
+        console.log('updatedData', updatedValues)
+        //console.log("data: ",data," updatedValues: ",updatedValues)
+        setState([...data, updatedValues])
+      }
+      resetForm()
+      onClose && onClose()
+    }
+  })
+
+  const formatTimePickAt = (timeValue: string) => {
+    const times = timeValue.split(':')
+    return initialTime
+      .hour(Number(times[0]))
+      .minute(Number(times[1]))
+      .second(Number(times[2]))
+  }
+
+  return (
+    <>
+      <form onSubmit={formik.handleSubmit}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Box sx={localstyles.modal} onClick={handleOverlayClick}>
+            <Box sx={localstyles.container}>
+              <Box sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}>
+                <Box>
+                  <Typography sx={styles.header4}>
+                    {isEditing ? t('userGroup.change') : t('top_menu.add_new')}
+                  </Typography>
+                  <Typography sx={styles.header3}>
+                    {t('purchase_order.create.expected_recycling')}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ marginLeft: 'auto' }}>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      ...localstyles.button,
+                      color: 'white',
+                      bgcolor: colorTheme,
+                      borderColor: colorTheme
+                    }}
+                    type="submit"
+                  >
+                    {t('col.save')}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      ...localstyles.button,
+                      color: colorTheme,
+                      bgcolor: 'white',
+                      borderColor: colorTheme
+                    }}
+                    onClick={() => onClose && onClose()}
+                  >
+                    {t('col.cancel')}
+                  </Button>
+                  <IconButton
+                    sx={{ ml: '25px' }}
+                    onClick={() => onClose && onClose()}
+                  >
+                    <KeyboardTabIcon sx={{ fontSize: '30px' }} />
+                  </IconButton>
+                </Box>
+              </Box>
+              <Divider />
+              <Stack spacing={2} sx={localstyles.content}>
+                <CustomField
+                  label={t('purchase_order.create.receipt_date_and_time')}
+                  mandatory
+                >
+                  <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%' }}>
+                    <Box sx={{ ...localstyles.DateItem }}>
+                      <DatePicker
+                        defaultValue={dayjs(formik.values.pickupAt)}
+                        format={format.dateFormat2}
+                        onChange={(value) => {
+                            formik.setFieldValue(
+                              'pickupAt',
+                              value ? formattedTime(value) : ''
+                            )
+                          }}
+                        sx={{ ...localstyles.datePicker }}
+                      />
+                    </Box>
+                    <Box sx={{ ...localstyles.timePeriodItem }}>
+                      <TimePicker
+                        value={dayjs(formik.values.pickupAt)}
+                        onChange={(value) => {
+                            formik.setFieldValue(
+                              'pickupAt',
+                              value ? formattedTime(value) : ''
+                            )
+                          }}
+                        sx={{ ...localstyles.timePicker }}
+                      />
+                    </Box>
+                  </Box>
+                </CustomField>
+                <CustomField label={t('col.recycType')} mandatory>
+                  <RecyclablesListSingleSelect
+                    showError={
+                      (formik.errors?.recycTypeId && formik.touched?.recycTypeId) ||
+                      undefined
+                    }
+                    recycL={recycType ?? []}
+                    setState={(values) => {
+                      formik.setFieldValue('recycTypeId', values?.recycTypeId)
+                      formik.setFieldValue(
+                        'recycSubTypeId',
+                        values?.recycSubTypeId
+                      )
+                    }}
+                    itemColor={{
+                      bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
+                      borderColor: customListTheme ? customListTheme.border: '79CA25'
+                    }}
+                    defaultRecycL={defaultRecyc}
+                    key={formik.values.id}
+                  />
+                </CustomField>
+                <CustomField
+                  label={t('purchase_order.create.weight')}
+                  mandatory
+                >
+                  <CustomTextField
+                    id="weight"
+                    placeholder={t('userAccount.pleaseEnterNumber')}
+                    onChange={formik.handleChange}
+                    value={formik.values.weight}
+                    error={
+                      (formik.errors?.weight && formik.touched?.weight) ||
+                      undefined
+                    }
+                    sx={{ width: '100%' }}
+                    endAdornment={
+                      <InputAdornment position="end">kg</InputAdornment>
+                    }
+                  ></CustomTextField>
+                </CustomField>
+                <CustomField
+                  label={t('purchase_order.create.arrived')}
+                  mandatory
+                >
+                 <CustomTextField
+                    id={'receiverAddr'}
+                    placeholder={t('purchase_order.create.arrived')}
+                    rows={4}
+                    multiline={true}
+                    onChange={(event) => {
+                      formik.setFieldValue('receiverAddr', event.target.value)
+                      onChangeAddressReceiver && onChangeAddressReceiver(event.target.value)
+                    }}
+                    value={receiverAddr}
+                    sx={{ width: '100%', height: '100%' }}
+                    error={
+                      (formik.errors?.receiverAddr && formik.touched?.receiverAddr) ||
+                      undefined
+                    }
+                  />
+                </CustomField>
+               
+                <Stack spacing={2}>
+                  {formik.errors.createdBy && formik.touched.createdBy && (
+                    <Alert severity="error">{formik.errors.createdBy} </Alert>
+                  )}
+                  {formik.errors?.recycTypeId && formik.touched?.recycTypeId && (
+                    <Alert severity="error">{formik.errors?.recycTypeId} </Alert>
+                  )}
+                  {formik.errors?.recycSubTypeId &&
+                    formik.touched?.recycSubTypeId && (
+                      <Alert severity="error">
+                        {formik.errors?.recycSubTypeId}{' '}
+                      </Alert>
+                    )}
+                  {formik.errors?.weight && formik.touched?.weight && (
+                    <Alert severity="error">{formik.errors?.weight} </Alert>
+                  )}
+                  {formik.errors.createdBy && formik.touched.createdBy && (
+                    <Alert severity="error">{formik.errors.createdBy} </Alert>
+                  )}
+                  {formik.errors.createdBy &&
+                    formik.touched.createdBy && (
+                      <Alert severity="error">
+                        {formik.errors.createdBy}{' '}
+                      </Alert>
+                    )}
+                  {formik.errors.createdBy && formik.touched.createdBy && (
+                    <Alert severity="error">{formik.errors.createdBy} </Alert>
+                  )}
+                  {formik.errors.createdBy &&
+                    formik.touched.createdBy && (
+                      <Alert severity="error">
+                        {formik.errors.createdBy}{' '}
+                      </Alert>
+                    )}
+                </Stack>
+              </Stack>
+            </Box>
+          </Box>
+        </LocalizationProvider>
+      </form>
+    </>
+  )
+}
+
+let localstyles = {
+  modal: {
+    display: 'flex',
+    height: '100vh',
+    width: '100%',
+    justifyContent: 'flex-end'
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    width: '40%',
+    bgcolor: 'white',
+    overflowY: 'scroll'
+  },
+
+  button: {
+    borderColor: theme.palette.primary.main,
+    color: 'white',
+    width: '100px',
+    height: '35px',
+    p: 1,
+    borderRadius: '18px',
+    mr: '10px'
+  },
+  content: {
+    flex: 9,
+    p: 4
+  },
+  typo_header: {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#858585',
+    letterSpacing: '2px',
+    mt: '10px'
+  },
+  typo_fieldTitle: {
+    fontSize: '15px',
+    color: '#ACACAC',
+    letterSpacing: '2px'
+  },
+  typo_fieldContent: {
+    fontSize: '17PX',
+    letterSpacing: '2px'
+  },
+  DateItem: {
+    display: 'flex',
+    height: 'fit-content',
+    alignItems: 'center'
+  },
+  timePeriodItem: {
+    display: 'flex',
+    height: 'fit-content',
+    paddingX: 2,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    border: 2,
+    borderRadius: 3,
+    borderColor: '#E2E2E2'
+  },
+  datePicker: {
+    ...styles.textField,
+    maxWidth: '370px',
+    '& .MuiIconButton-edgeEnd': {
+      color: '#79CA25'
+    }
+  },
+  timePicker: {
+    width: '100%',
+    borderRadius: 5,
+    backgroundColor: 'white',
+    '& fieldset': {
+      borderWidth: 0
+    },
+    '& input': {
+      paddingX: 0
+    },
+    '& .MuiIconButton-edgeEnd': {
+      color: '#79CA25'
+    }
+  },
+}
+
+export default CreateRecycleForm

@@ -38,6 +38,7 @@ import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
 import { Roles, localStorgeKeyName } from '../../../constants/constant'
+import dayjs from 'dayjs'
 
 type Approve = {
   open: boolean
@@ -241,7 +242,7 @@ const PurchaseOrder = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0);
-
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || '';
   const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
   const rolesEnableCreatePO = [Roles.customerAdmin]
 
@@ -272,11 +273,14 @@ const PurchaseOrder = () => {
       editable: true
     },
     {
-      field: 'approvedAt',
+      field: 'createdAt',
       headerName: t('purchase_order.table.receipt_date_time'),
       type: 'sring',
       width: 260,
-      editable: true
+      editable: true,
+      valueGetter: (params) => {
+        return params?.row?.purchaseOrderDetail[0]?.pickupAt
+      }
     },
     {
       field: 'status',
@@ -312,6 +316,11 @@ const PurchaseOrder = () => {
         width: 150
       },
       {
+        field: 'senderName',
+        headerName: t('purchase_order_customer.table.recycling_plant'),
+        width: 150
+      },
+      {
         field: 'poId',
         headerName: t('purchase_order.table.order_number'),
         width: 220,
@@ -336,7 +345,12 @@ const PurchaseOrder = () => {
         headerName: t('purchase_order.table.receipt_date_time'),
         type: 'sring',
         width: 260,
-        editable: true
+        editable: true,
+        valueGetter: (params) => {
+          if(params?.row?.purchaseOrderDetail[0]?.pickupAt){
+            return dayjs(params?.row?.purchaseOrderDetail[0]?.pickupAt).format('YYYY/MM/DD hh:mm')
+          } 
+        }
       },
       {
         field: 'status',
@@ -615,7 +629,10 @@ const PurchaseOrder = () => {
       value: item.id,
       label: item.name
     }))
-
+    options.push({
+      value: '',
+      label: 'any'
+    })
     return options
   }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
@@ -659,7 +676,7 @@ const PurchaseOrder = () => {
 
           {rolesEnableCreatePO.includes(userRole) && (
              <Button
-                // onClick={() => navigate("/customer/createPurchaseOrder")}
+                onClick={() => navigate(`/${realm}/createPurchaseOrder`)}
                 sx={{
                   borderRadius: "20px",
                   backgroundColor: "#6BC7FF",

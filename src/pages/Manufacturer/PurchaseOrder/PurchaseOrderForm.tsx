@@ -75,6 +75,17 @@ const PurchaseOrderForm = ({
     }
   }
 
+  const handleRowClick = async () => {
+    const routeName = role
+    if(selectedPurchaseOrder?.poId){
+      const result = await getPurchaseOrderById(selectedPurchaseOrder?.poId)
+    if (result) {
+      navigate(`/${routeName}/editPurchaseOrder`, { state: result.data })
+    }
+    }
+    
+  }
+
   return (
     <>
       <Box sx={localstyles.modal} onClick={handleOverlayClick}>
@@ -95,7 +106,7 @@ const PurchaseOrderForm = ({
             { selectedRow?.status === Status.CREATED && rolesEnableCreatePO.includes(userRole) && 
               (
                 <Button
-                  // onClick={onHandleUpdate}
+                  onClick={handleRowClick}
                   sx={{
                     borderRadius: "20px",
                     backgroundColor: "#6BC7FF",
