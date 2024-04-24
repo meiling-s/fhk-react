@@ -4,7 +4,6 @@ import {
   Divider,
   Grid,
   Typography,
-  Button,
   InputLabel,
   MenuItem,
   Card,
@@ -20,9 +19,7 @@ import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { EVENT_RECORDING } from '../../../constants/configs'
 import { styles } from '../../../constants/styles'
-
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
@@ -87,7 +84,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const { vehicleType } = useContainer(CommonTypeContainer)
+  const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
   const [listedPlate, setListedPlate] = useState<string[]>([])
 
   const mappingData = () => {
@@ -463,8 +460,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   onChange={(imageList, addUpdateIndex) =>
                     onImageChange(imageList, addUpdateIndex)
                   }
-                  maxNumber={EVENT_RECORDING.maxImageNumber}
-                  maxFileSize={EVENT_RECORDING.maxImageSize}
+                  maxNumber={imgSettings?.ImgQuantity}
+                  maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
                 >
                   {({ imageList, onImageUpload, onImageRemove }) => (
