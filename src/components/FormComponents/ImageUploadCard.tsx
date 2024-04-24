@@ -1,11 +1,13 @@
 import { ButtonBase, Card, ImageList, ImageListItem, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react'
-import { TENANT_REGISTER_CONFIGS } from '../../constants/configs';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
+import { useContainer } from 'unstated-next';
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+
 
 const ImageUploadCard = ({Images,onImageChange,cardHeight,text}:{Images:ImageListType, onImageChange :(imageList: ImageListType, addUpdateIndex: number[]|undefined)=> void,cardHeight?:number,text?:string}) => {
+  const {imgSettings} = useContainer(CommonTypeContainer)
   return (
     <Box>
     {/* <Typography sx={styles.typo}>EPD 合約（可上傳多張合約)</Typography> */}
@@ -13,8 +15,8 @@ const ImageUploadCard = ({Images,onImageChange,cardHeight,text}:{Images:ImageLis
       multiple
       value={Images}
       onChange={onImageChange}
-      maxNumber={TENANT_REGISTER_CONFIGS.maxEPDImages}
-      maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
+      maxNumber={imgSettings?.ImgQuantity}
+      maxFileSize={imgSettings?.ImgSize}
       onError={(errors, files)=>{
         console.log("error: ",errors);
       }}

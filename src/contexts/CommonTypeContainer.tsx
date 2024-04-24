@@ -25,6 +25,7 @@ import {
   GET_VEHICLE_TYPE,
   GET_PROCESS_LIST,
   GET_CONTRACT_LOGISTIC,
+  GET_IMG_SETTINGS,
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -41,6 +42,10 @@ const CommonType = () => {
   const [vehicleType, setVehicleType] = useState<vehicleType[]>()
   const [processType, setProcessType] = useState<ProcessType[]>()
   const [contractLogistic, setContractLogistic] = useState<contract[]>()
+  const [imgSettings, setImgSettings] = useState<{ImgQuantity:number, ImgSize: number}>({
+    ImgQuantity: 3,
+    ImgSize: 3 * 1000 * 1000
+  })
 
   const getColPointType = async () => {
     var colPointType = []
@@ -228,7 +233,25 @@ const CommonType = () => {
     }
   }
 
-  useEffect(() => {
+  
+  const getImgSettings = async () => {
+    const token = returnApiToken()
+    try {
+      var response = await axiosInstance({
+        ...GET_IMG_SETTINGS(token.tenantId),
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
+      })
+      const imgSettings = response.data
+      if (imgSettings.ImgSize) {
+        imgSettings.ImgSize *= 1000 * 1000
+      }
+      setImgSettings(imgSettings)
+    } catch (e) {
+      return null
+    }
+  }
+
+  const updateCommonTypeContainer = () => {
     getColPointType()
     getPremiseType()
     getSiteType()
@@ -240,7 +263,26 @@ const CommonType = () => {
     getManuList()
     getProcessList()
     getContractLogistic()
+    getImgSettings()
+  }
+
+  useEffect(() => {
+    if (returnApiToken().authToken) {
+      getColPointType()
+      getPremiseType()
+      getSiteType()
+      getRecycType()
+      getLogisticlist()
+      getContractList()
+      getvehicleType()
+      getCollectorList()
+      getManuList()
+      getProcessList()
+      getContractLogistic()
+      getImgSettings()
+    }
   }, [])
+
 
   return {
     colPointType,
@@ -253,7 +295,21 @@ const CommonType = () => {
     collectorList,
     manuList,
     processType,
-    contractLogistic
+    contractLogistic,
+    imgSettings,
+    updateCommonTypeContainer,
+    getColPointType,
+    getPremiseType,
+    getSiteType,
+    getRecycType,
+    getLogisticlist,
+    getContractList,
+    getvehicleType,
+    getCollectorList,
+    getManuList,
+    getProcessList,
+    getContractLogistic,
+    getImgSettings
   }
 }
 
