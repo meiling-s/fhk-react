@@ -118,6 +118,7 @@ function CreateCollectionPoint() {
 
   useEffect(() => {
     initType()
+    setRecyclables(colInfo.colPtRecyc)
   }, [])
 
   const initType = async () => {
@@ -159,8 +160,8 @@ function CreateCollectionPoint() {
     }
   }, [debouncedSearchValue])
 
-  const checkRecyclable = (items: recyclable) => {
-    //return true
+  const checkRecyclable = () => {
+    //console.log('checkRecyclable', recyclables)
     return recyclables.every((item) => item.recycSubTypeId.length > 0)
   }
 
@@ -180,6 +181,7 @@ function CreateCollectionPoint() {
         const currStartTime = item.startTime[index]
         const currEndTime = item.endTime[index]
 
+        //console.log('checkTimePeriodNotInvalid', currStartTime, currEndTime)
         if (currEndTime < currStartTime) {
           return false
         }
@@ -211,7 +213,6 @@ function CreateCollectionPoint() {
     const validate = async () => {
       //do validation here
 
-      setRecyclables(colInfo.colPtRecyc)
       const tempV: formValidate[] = [] //temp validation
       colType == '' &&
         tempV.push({
@@ -298,7 +299,7 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      !checkRecyclable(recyclables) &&
+      !checkRecyclable() &&
         tempV.push({
           field: 'inventory.recyleSubType',
           problem: formErr.empty,
@@ -387,7 +388,7 @@ function CreateCollectionPoint() {
   }
 
   const addSkipValidation = (skip: string) => {
-    console.log(skip, skipValidation)
+    // console.log(skip, skipValidation)
     var tempSkipValid = Object.assign([], skipValidation)
     tempSkipValid.push(skip)
     setSkipValidation(tempSkipValid)
@@ -395,7 +396,7 @@ function CreateCollectionPoint() {
 
   const returnErrorMsg = (error: string) => {
     var msg = ''
-    console.log(error)
+    // console.log(error)
     switch (error) {
       case formErr.empty:
         msg = t('form.error.shouldNotBeEmpty')
@@ -438,7 +439,7 @@ function CreateCollectionPoint() {
   }
 
   const checkContractisEff = (contractNo: string) => {
-    console.log('checkContractisEff')
+    // console.log('checkContractisEff')
     const contract = contractList.find((contract) => {
       return contract.contractNo == contractNo
     })
@@ -458,7 +459,7 @@ function CreateCollectionPoint() {
         address
       )
       if (result && result.data != undefined) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
       }
     }
@@ -495,23 +496,23 @@ function CreateCollectionPoint() {
       const result = await updateCollectionPoint(colInfo.colId, cp)
       const data = result?.data
       if (data) {
-        console.log('updated collection point: ', data)
+        //console.log('updated collection point: ', data)
         navigate('/collector/collectionPoint', { state: 'updated' })
       }
     } else {
-      console.log('recyclables', recyclables)
-      console.log(validation)
+      //console.log('recyclables', recyclables)
+      //console.log(validation)
       setTrySubmited(true)
     }
   }
 
   const handleCancelOnClick = () => {
-    console.log('Cancel click')
+    //console.log('Cancel click')
     navigate(-1) //goback to last page
   }
 
   const handleHeaderOnClick = () => {
-    console.log('Header click')
+    //console.log('Header click')
     navigate(-1) //goback to last page
   }
 
@@ -771,7 +772,7 @@ function CreateCollectionPoint() {
                 options={contractList.map((contract) => contract.contractNo)}
                 defaultValue={colInfo.contractNo}
                 onChange={(event, value) => {
-                  console.log(value)
+                  //console.log(value)
                   if (value) {
                     setContractNo(value)
                   }

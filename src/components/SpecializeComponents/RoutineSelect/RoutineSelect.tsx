@@ -69,7 +69,7 @@ export default function RoutineSelect({
         return routineT
     }
 
-    console.log("rouType", rouType)
+    //console.log("rouType", rouType)
     
     return(
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">

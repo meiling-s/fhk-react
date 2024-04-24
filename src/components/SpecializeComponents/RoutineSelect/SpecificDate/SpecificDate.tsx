@@ -79,7 +79,7 @@ export default function SpecificDate({
         value.endAt.toString()
       )
 
-      console.log('returnRoutineContent', date.date.format(format.dateFormat2))
+      //console.log('returnRoutineContent', date.date.format(format.dateFormat2))
       const RSD: routineContent = {
         id: date.date.format(format.dateFormat2),
         startTime: ST,

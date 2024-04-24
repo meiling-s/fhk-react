@@ -35,16 +35,17 @@ export default function RecyclablesList({
   const { t, i18n } = useTranslation()
 
   useEffect(() => {
+   
     if (defaultRecycL) {
       setRecycTypeList(recyclables_getRecycTypes(defaultRecycL))
       setSubTypeList(recyclables_getSubTypes(defaultRecycL))
     }
-  }, [defaultRecycL])
+  }, [])
 
   useEffect(() => {
     //console.log(toRecyclables());
     setState(toRecyclables())
-  }, [recycTypeList, subTypeList])
+  }, [recycTypeList, subTypeList, defaultRecycL, recycL])
 
   const returnRecycTypes = () => {
     const recycItem: recycItem[] = []
@@ -112,7 +113,7 @@ export default function RecyclablesList({
     const item: recycItem | undefined = returnRecycTypes().find((recycType) => {
       return recycType.recycType.id === recyTypeId
     })
-    console.log('returnSubRecyclables', recycTypeList?.[0])
+    //console.log('returnSubRecyclables', recycTypeList?.[0])
     if (item) {
       const subItems = item.recycSubType
       return subItems
@@ -177,7 +178,7 @@ export default function RecyclablesList({
 
   const recyclables_getRecycTypes = (recycs: recyclable[]) => {
     const reTypes: string[] = recycs.map((recyc) => {
-      console.log('reTypes', recyc.recycTypeId)
+      //console.log('reTypes', recyc.recycTypeId)
       return recyc.recycTypeId
     })
     return reTypes
@@ -190,6 +191,7 @@ export default function RecyclablesList({
         subTypes.push(sub)
       })
     })
+
     return subTypes
   }
 

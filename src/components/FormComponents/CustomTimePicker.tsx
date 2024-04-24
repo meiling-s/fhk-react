@@ -55,7 +55,6 @@ function CustomTimePicker({
 
   useEffect(() => {
     setTime(timePeriod)
-    console.log('timePeriod', timePeriod)
   }, [timePeriod])
 
   useEffect(() => {
@@ -117,7 +116,7 @@ function CustomTimePicker({
           const updatedErrorMessages = [...errorMessages]
           updatedErrorMessages[index] = errorMessage
           setErrorMessages(updatedErrorMessages)
-          //console.error(errorMessage)
+          console.error(errorMessage)
         }
       }
     }

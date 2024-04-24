@@ -155,9 +155,9 @@ function CreateCollectionPoint() {
     }
   }, [debouncedSearchValue])
 
-  const checkRecyclable = (items: recyclable) => {
-    console.log('checkRecyclable', items)
-    return items.every((item) => item.recycSubTypeId.length > 0)
+  const checkRecyclable = () => {
+    //console.log('checkRecyclable', items)
+    return recyclables.every((item) => item.recycSubTypeId.length > 0)
   }
 
   const checkTimePeriod = () => {
@@ -327,7 +327,7 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      !checkRecyclable(recyclables) &&
+      !checkRecyclable() &&
         tempV.push({
           field: 'inventory.recyleSubType',
           problem: formErr.empty,
