@@ -522,7 +522,7 @@ function CreateCollectionPoint() {
       name: t('col.basic')
     },
     {
-      id: 'extra',
+      id: 'additional',
       name: t('col.additional')
     },
     {
@@ -848,8 +848,9 @@ function CreateCollectionPoint() {
             </Grid>
             <Grid item sx={{ width: '50%' }}>
               {trySubmited &&
-                validation.map((val) => (
+                validation.map((val, index) => (
                   <FormErrorMsg
+                    key={index}
                     field={t(val.field)}
                     errorMsg={returnErrorMsg(val.problem)}
                     type={val.type}
