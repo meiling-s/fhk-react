@@ -136,12 +136,10 @@ const PurchaseOrderForm = ({
             </Box>
 
             <CustomField
-              label={t('purchase_order.detail.receiving_company_name')}
+              label={t('purchase_order.create.receiving_company_name')}
             >
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPurchaseOrder?.createdAt
-                  ? displayCreatedDate(selectedPurchaseOrder?.createdAt)
-                  : ''}
+                {selectedPurchaseOrder?.receiverName}
               </Typography>
             </CustomField>
 
@@ -156,6 +154,16 @@ const PurchaseOrderForm = ({
                 {selectedPurchaseOrder?.paymentType}
               </Typography>
             </CustomField>
+
+            {rolesEnableCreatePO.includes(userRole) && 
+              (
+                <CustomField label={t('purchase_order.create.sender_company_name')}>
+                  <Typography sx={localstyles.typo_fieldContent}>
+                    {selectedPurchaseOrder?.senderName}
+                  </Typography>
+                </CustomField>
+              )
+            }
 
             <Typography sx={localstyles.typo_header}>
               {t('purchase_order.detail.order_info')}
