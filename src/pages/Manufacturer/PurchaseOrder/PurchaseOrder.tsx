@@ -620,7 +620,10 @@ const PurchaseOrder = () => {
       value: item.id,
       label: item.name
     }))
-
+    options.push({
+      value: '',
+      label: 'any'
+    })
     return options
   }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
