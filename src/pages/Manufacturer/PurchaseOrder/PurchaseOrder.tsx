@@ -312,6 +312,11 @@ const PurchaseOrder = () => {
         width: 150
       },
       {
+        field: 'senderName',
+        headerName: t('purchase_order_customer.table.recycling_plant'),
+        width: 150
+      },
+      {
         field: 'poId',
         headerName: t('purchase_order.table.order_number'),
         width: 220,
@@ -561,6 +566,12 @@ const PurchaseOrder = () => {
       width: '10%',
       options: getUniqueOptions('createdAt'),
       field: 'createdAt'
+    },
+    {
+      label: t('pick_up_order.filter.to'),
+      width: '10%',
+      options: getUniqueOptions('approvedAt'),
+      field: 'updatedAt'
     },
     {
       label: t('pick_up_order.filter.to'),
