@@ -510,7 +510,8 @@
     "picture": "Picture",
     "basic": "Basic",
     "additional": "Additional",
-    "imgNote": "*the photo should exhibit the overview, tail lift, car plate and collecting operation of the vehicle."
+    "imgNote": "*the photo should exhibit the overview, tail lift, car plate and collecting operation of the vehicle.",
+    "loading_capacity": "Loading Capacity (kg)"
   },
   "inventory": {
     "inventory": "Inventory",
@@ -991,5 +992,15 @@
     "main_category": "Main Category",
     "sub_category": "Sub Category",
     "1kg_equivalent": "1kg is equivalent to"
+  },
+  "recycling_point": {
+    "recycling_point": "Recycling Point",
+    "engineering_land": "Engineering Land Category",
+    "place": "Place",
+    "capacity": "Capacity",
+    "state": "State",
+    "house_place": "House or Place Category",
+    "residence": "Residence",
+    "epd": "Whether EPD certification category"
   }
 }

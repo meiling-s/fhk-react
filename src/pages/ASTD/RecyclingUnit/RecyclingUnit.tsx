@@ -718,7 +718,7 @@ const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGri
                   />
                 </div>
                 <div style={{ display: 'flex' }}>
-                  <Switch checked={false} onChange={() => console.log('hit')} />
+                  <Switch checked={item.status === 'ACTIVE' ? true : false} onChange={() => console.log('hit')} />
                 </div>
               </div>
             </div>
@@ -754,7 +754,7 @@ const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGri
                     />
                   </div>
                   <div style={{ display: 'flex' }}>
-                    <Switch checked={false} onChange={() => console.log('hit')} />
+                    <Switch checked={value.status === 'ACTIVE' ? true : false} onChange={() => console.log('hit')} />
                   </div>
                 </div>
               </div>

@@ -511,7 +511,8 @@
     "picture": "图片",
     "basic": "基本",
     "additional": "额外",
-    "imgNote": "*照片应展示车辆概况、举升尾板、车牌及采集操作情况。"
+    "imgNote": "*照片应展示车辆概况、举升尾板、车牌及采集操作情况。",
+    "loading_capacity": "载重量 (kg)"
   },
   "inventory": {
     "inventory": "存货",
@@ -966,5 +967,15 @@
     "main_category": "主类别",
     "sub_category": "次类别",
     "1kg_equivalent": "1kg 相等于"
+  },
+  "recycling_point": {
+    "recycling_point": "回收点",
+    "engineering_land": "工程用地类别",
+    "place": "地点",
+    "capacity": "容量",
+    "state": "状态",
+    "house_place": "房屋或场所类别",
+    "residence": "是否住宅",
+    "epd": "是否EPD 认证类别"
   }
 }

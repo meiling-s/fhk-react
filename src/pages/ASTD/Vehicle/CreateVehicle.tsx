@@ -44,37 +44,32 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
 
-interface WeightFormat {
+interface VehicleDataProps {
     createdAt: string
     createdBy: string
     description: string
-    poDetail: string[]
     remark: string
     status: string
-    unitId: number
-    unitNameEng: string
-    unitNameSchi: string
-    unitNameTchi: string
     updatedAt: string
     updatedBy: string
-    weight: number
+    vehicleTypeId: string
+    vehicleTypeNameEng: string
+    vehicleTypeNameSchi: string
+    vehicleTypeNameTchi: string
 }
 
-interface WeightFormatProps {
+
+interface SiteTypeProps {
     drawerOpen: boolean
     handleDrawerClose: () => void
     action?: 'add' | 'edit' | 'delete'
-    onSubmitData?: (type: string, id?: number, error?: boolean) => void
-    rowId?: number,
-    selectedItem: WeightFormat | null
+    selectedItem: VehicleDataProps | null
   }
 
-const WeightFormat: FunctionComponent<WeightFormatProps> = ({
+const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     drawerOpen,
     handleDrawerClose,
     action,
-    onSubmitData,
-    rowId,
     selectedItem
 }) => {
     const { t } = useTranslation()
@@ -86,7 +81,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     const [tChineseName, setTChineseName] = useState('')
     const [sChineseName, setSChineseName] = useState('')
     const [englishName, setEnglishName] = useState('')
-    const [equivalent, setEquivalent] = useState('')
+    const [weight, setWeight] = useState('')
     const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
     const [isMainCategory, setMainCategory] = useState(true)
@@ -101,11 +96,11 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     useEffect(() => {
         if (action === 'edit') {
             if (selectedItem !== null && selectedItem !== undefined) {
-                setTChineseName(selectedItem.unitNameTchi)
-                setSChineseName(selectedItem.unitNameSchi)
-                setEnglishName(selectedItem.unitNameEng)
-                setEquivalent(selectedItem.weight.toString())
+                setTChineseName(selectedItem.vehicleTypeNameTchi)
+                setSChineseName(selectedItem.vehicleTypeNameSchi)
+                setEnglishName(selectedItem.vehicleTypeNameEng)
                 setDescription(selectedItem.description)
+                // setWeight(selectedItem.weight)
                 setRemark(selectedItem.remark)
             }
         } else if (action === 'add') {
@@ -117,8 +112,8 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         setTChineseName('')
         setSChineseName('')
         setEnglishName('')
-        setEquivalent('')
         setDescription('')
+        setWeight('')
         setRemark('')
     }
 
@@ -175,14 +170,8 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 )}`
             })
 
-        equivalent.trim() === '' &&
-            tempV.push({
-                field: 'equivalent',
-                error: `${t(`pickup_order.card_detail.weight`)} ${t('add_warehouse_page.shouldNotEmpty')}`
-            })
-
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName, equivalent])
+    }, [tChineseName, sChineseName, englishName])
 
     const handleDelete = () => {
         setOpenDelete(true)
@@ -192,24 +181,22 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         const { loginId } = returnApiToken();
         console.log(action, 'action')
         
-        const weightForm = {
-            unitNameTchi: tChineseName,
-            unitNameSchi: sChineseName,
-            unitNameEng: englishName,
+        const recyclingPointForm = {
+            siteTypeNameTchi: tChineseName,
+            siteTypeNameSchi: sChineseName,
+            siteTypeNameEng: englishName,
             description: description,
             remark: remark,
-            weight: Number(equivalent),
-            status: "ACTIVE",
+            status: 'ACTIVE',
             createdBy: loginId,
-            updatedBy: loginId,
-            poDetail: []
+            updatedBy: loginId
         }
 
         const isError = validation.length == 0
         getFormErrorMsg()
 
         if (validation.length == 0) {
-            action == 'add' ? createWeightData(weightForm) : editWeightData(weightForm)
+            action == 'add' ? createRecyclingPointData(recyclingPointForm) : editRecyclingPointData(recyclingPointForm)
 
             setValidation([])
         } else {
@@ -217,7 +204,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         }
     }
 
-    const createWeightData = async (weightForm: any) => {
+    const createRecyclingPointData = async (weightForm: any) => {
         try {
             const response = await sendWeightUnit(weightForm)
             if (response) {
@@ -228,7 +215,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
             showErrorToast(t('errorCreated.errorCreated'))
         }
     }
-    const editWeightData = async (weightForm: any) => {
+    const editRecyclingPointData = async (weightForm: any) => {
         // try {
         //     const response = await createRecyc(addRecyclingForm)
         //     if (response) {
@@ -254,7 +241,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                             : action == 'delete'
                                 ? t('common.delete')
                                 : '',
-                    subTitle: t('recycling_unit.weight_unit'),
+                    subTitle: t('recycling_point.engineering_land'),
                     submitText: t('add_warehouse_page.save'),
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,
@@ -301,14 +288,17 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.1kg_equivalent')}>
+                        <CustomField label={t('vehicle.loading_capacity')}>
                             <CustomTextField
-                                id="equivalent"
-                                value={equivalent}
+                                id="weight"
+                                value={weight}
                                 disabled={action === 'delete'}
-                                placeholder={t('recycling_unit.1kg_equivalent')}
-                                onChange={(event) => setEquivalent(event.target.value)}
-                                error={checkString(equivalent)}
+                                placeholder={t('vehicle.loading_capacity')}
+                                onChange={(event) => setWeight(event.target.value)}
+                                error={checkString(weight)}
+                                endAdornment={(
+                                    <Typography>kg</Typography>
+                                  )}
                             />
                         </CustomField>
                     </Box>
@@ -342,55 +332,4 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     )
 }
 
-let styles = {
-    textField: {
-        borderRadius: '10px',
-        fontWeight: '500',
-        '& .MuiOutlinedInput-input': {
-            padding: '15px 20px',
-            margin: 0
-        }
-    },
-    textArea: {
-        borderRadius: '10px',
-        fontWeight: '500',
-        '& .MuiOutlinedInput-input': {
-            padding: 0,
-            margin: 0
-        }
-    },
-    inputState: {
-        '& .MuiOutlinedInput-root': {
-            margin: 0,
-            '&:not(.Mui-disabled):hover fieldset': {
-                borderColor: '#79CA25'
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: '#79CA25'
-            }
-        }
-    },
-    dropDown: {
-        '& .MuiOutlinedInput-root-MuiSelect-root': {
-            borderRadius: '10px'
-        }
-    },
-    modal: {
-        position: 'absolute',
-        top: '50%',
-        width: '34%',
-        left: '50%',
-        transform: 'translate(-50%,-50%)',
-        height: 'fit-content',
-        padding: 4,
-        backgroundColor: 'white',
-        border: 'none',
-        borderRadius: 5,
-
-        '@media (max-width: 768px)': {
-            width: '70%' /* Adjust the width for mobile devices */
-        }
-    }
-}
-
-export default WeightFormat
+export default CreateEngineData

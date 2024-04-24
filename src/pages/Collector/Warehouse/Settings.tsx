@@ -13,6 +13,11 @@ import Company from "../Company/Company";
 import { localStorgeKeyName } from "../../../constants/constant";
 import ASTDSettings from "../../ASTD/GeneralSettings/GeneralSettings";
 import RecyclingUnit from "../../ASTD/RecyclingUnit/RecyclingUnit";
+import RecyclingPoint from "../../ASTD/RecyclingPoint/RecyclingPoint";
+import ASTDVehicle from '../../ASTD/Vehicle/Vehicle'
+import ASTDCompany from '../../ASTD/Company/Company'
+import ASTDStaff from '../../ASTD/Staff/Staff'
+import ASTDDenialReason from '../../ASTD/DenialReason/DenialReason'
 
 const Settings: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -35,6 +40,11 @@ const Settings: FunctionComponent = () => {
   const astdTabList = [
     t("top_menu.general_settings"),
     t("recycling_unit.recycling_and_related_units"),
+    t("recycling_point.recycling_point"),
+    t("vehicle.vehicle"),
+    t("top_menu.company"),
+    t("top_menu.staff_positions"),
+    t("top_menu.denial_reason"),
   ]
 
   const role = localStorage.getItem(localStorgeKeyName.role)
@@ -113,6 +123,16 @@ const Settings: FunctionComponent = () => {
       ) : 
         selectedTab === 1 ? (
           <RecyclingUnit/>
+        ) : selectedTab === 2 ? (
+          <RecyclingPoint/>
+        ) : selectedTab === 3 ? (
+          <ASTDVehicle/>
+        ) : selectedTab === 4 ? (
+          <ASTDCompany />
+        ) : selectedTab === 5 ? (
+          <ASTDStaff />
+        ) : selectedTab === 6 ? (
+          <ASTDDenialReason/>
         ) :
       (
           <div className="p-4 text-center">content not available</div>
