@@ -116,7 +116,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }, [drawerOpen])
 
   const initCollectionPoint = async () => {
-    const result = await getCollectionPoint(0, 10)
+    const result = await getCollectionPoint(0, 1000)
     const data = result?.data.content
     if (data && data.length > 0) {
       const collectionPoint: il_item[] = []
@@ -132,7 +132,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }
 
   const initStaffList = async () => {
-    const result = await getStaffList(0, 50)
+    const result = await getStaffList(0, 1000)
     if (result) {
       const data = result.data.content
       var staffMapping: il_item[] = []
