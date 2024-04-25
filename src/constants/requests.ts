@@ -1178,18 +1178,17 @@ export const GET_ALL_REASON_MANUFACTURER = (
   url: `api/v1/manufacturer/reason/${tenantId}`
 })
 
-<<<<<<< HEAD
-export const UPDATE_PURCHASE_ORDER = (
-  poId: string
-): AxiosRequestConfig => ({
-  method: 'put',
-  url: `api/v1/administrator/po/${poId}`
-=======
 // get upload img setting
 export const GET_IMG_SETTINGS = (
   tenantId: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/account/t/imgSetting/${tenantId}`
->>>>>>> origin/master
+})
+
+export const UPDATE_PURCHASE_ORDER = (
+  poId: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/po/${poId}`
 })
