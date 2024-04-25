@@ -37,7 +37,8 @@ import {
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
-import { Roles, localStorgeKeyName } from '../../../constants/constant'
+import { Languages, Roles, localStorgeKeyName } from '../../../constants/constant'
+import dayjs from 'dayjs'
 
 type Approve = {
   open: boolean
@@ -241,7 +242,7 @@ const PurchaseOrder = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0);
-
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || '';
   const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
   const rolesEnableCreatePO = [Roles.customerAdmin]
 
@@ -272,11 +273,14 @@ const PurchaseOrder = () => {
       editable: true
     },
     {
-      field: 'approvedAt',
+      field: 'createdAt',
       headerName: t('purchase_order.table.receipt_date_time'),
       type: 'sring',
       width: 260,
-      editable: true
+      editable: true,
+      valueGetter: (params) => {
+        return params?.row?.purchaseOrderDetail[0]?.pickupAt
+      }
     },
     {
       field: 'status',
@@ -341,7 +345,12 @@ const PurchaseOrder = () => {
         headerName: t('purchase_order.table.receipt_date_time'),
         type: 'sring',
         width: 260,
-        editable: true
+        editable: true,
+        valueGetter: (params) => {
+          if(params?.row?.purchaseOrderDetail[0]?.pickupAt){
+            return dayjs(params?.row?.purchaseOrderDetail[0]?.pickupAt).format('YYYY/MM/DD hh:mm')
+          } 
+        }
       },
       {
         field: 'status',
@@ -376,10 +385,6 @@ const PurchaseOrder = () => {
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const statusList: Option[] = [
     {
-      value: '',
-      label: 'any'
-    },
-    {
       value: '0',
       label: 'CREATED'
     },
@@ -398,7 +403,11 @@ const PurchaseOrder = () => {
     {
       value: '4',
       label: 'CLOSED'
-    }
+    },
+    {
+      value: '',
+      label: 'any'
+    },
   ]
 
   const initPurchaseOrderRequest = async () => {
@@ -507,13 +516,13 @@ const PurchaseOrder = () => {
     recycType?.forEach((item) => {
       var name = ''
       switch (i18n.language) {
-        case 'enus':
+        case Languages.ENUS:
           name = item.recyclableNameEng
           break
-        case 'zhch':
+        case Languages.ZHCH:
           name = item.recyclableNameSchi
           break
-        case 'zhhk':
+        case Languages.ZHHK:
           name = item.recyclableNameTchi
           break
         default:
@@ -527,7 +536,7 @@ const PurchaseOrder = () => {
     })
 
     setRecycItem(recycItems)
-  }, [recycType])
+  }, [i18n.language])
 
   useEffect(() => {
     const tempRows: any[] = (
@@ -564,14 +573,14 @@ const PurchaseOrder = () => {
     {
       label: t('pick_up_order.filter.dateby'),
       width: '10%',
-      options: getUniqueOptions('createdAt'),
-      field: 'createdAt'
+      options: getUniqueOptionsDate('createdAt'),
+      field: 'fromCreatedAt'
     },
     {
       label: t('pick_up_order.filter.to'),
       width: '10%',
-      options: getUniqueOptions('approvedAt'),
-      field: 'updatedAt'
+      options: getUniqueOptionsDate('approvedAt'),
+      field: 'toCreatedAt'
     },
     {
       label: t('warehouse_page.place'),
@@ -597,11 +606,35 @@ const PurchaseOrder = () => {
   const navigate = useNavigate()
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<Row | null>(null)
+
+  function getUniqueOptionsDate(propertyName: keyof Row) {
+    const optionMap = new Map()
+   
+    rows.forEach((row) => {
+      if(row[propertyName] !== '') {
+        const date = dayjs(row[propertyName]).format('YYYY-MM-DD')
+        optionMap.set(date, date)
+      }
+    })
+
+    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
+      value: option,
+      label: option
+    }))
+    options.push({
+      value: '',
+      label: 'any'
+    })
+    return options
+  }
+
   function getUniqueOptions(propertyName: keyof Row) {
     const optionMap = new Map()
 
     rows.forEach((row) => {
-      optionMap.set(row[propertyName], row[propertyName])
+      if(row[propertyName] !== '') {
+        optionMap.set(row[propertyName], row[propertyName])
+      }
     })
 
     let options: Option[] = Array.from(optionMap.values()).map((option) => ({
@@ -667,7 +700,7 @@ const PurchaseOrder = () => {
 
           {rolesEnableCreatePO.includes(userRole) && (
              <Button
-                // onClick={() => navigate("/customer/createPurchaseOrder")}
+                // onClick={() => navigate(`/${realm}/createPurchaseOrder`)}
                 sx={{
                   borderRadius: "20px",
                   backgroundColor: "#6BC7FF",
