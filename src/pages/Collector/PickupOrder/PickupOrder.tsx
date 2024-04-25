@@ -310,13 +310,48 @@ const PickupOrders = () => {
     logisticName: '',
     recycType: '',
     senderName: '',
-    status: 0
+    status: null
   });
   const [approveModal, setApproveModal] = useState(false)
   const [rejectModal, setRejectModal] = useState(false)
   const [reasonList, setReasonList] = useState<any>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
+  const statusList: Option[] = [
+    {
+      value: '',
+      label: 'any'
+    },
+    {
+      value: '0',
+      label: 'CREATED'
+    },
+    {
+      value: '1',
+      label: 'STARTED'
+    },
+    {
+      value: '2',
+      label: 'CONFIRMED'
+    },
+    {
+      value: '3',
+      label: 'REJECTED'
+    },
+    {
+      value: '4',
+      label: 'COMPLETED'
+    },
+    {
+      value: '5',
+      label: 'CLOSED'
+    },
+    {
+      value: '6',
+      label: 'OUTSTANDING'
+    },
+  ]
+
   const initPickupOrderRequest = async () => {
     setPickupOrder([])
     setTotalData(0)
@@ -497,7 +532,7 @@ const PickupOrders = () => {
     {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticName"},
     {label:t('pick_up_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderCompany'), field:"senderName"},
     {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recycType"},
-    {label:t('pick_up_order.filter.status'),width:'14%',options:getUniqueOptions('status'), field:"status"}
+    {label:t('pick_up_order.filter.status'),width:'14%',options:statusList, field:"status"}
     
   ]
 
@@ -551,16 +586,16 @@ const PickupOrders = () => {
 
   const handleSearch = (keyName: string, value: string) => {
     if(keyName == 'status') {
-      const statusMapping: { [key: string]: number } = {
-        CREATED: 0,
-        STARTED: 1,
-        CONFIRMED: 2,
-        REJECTED: 3,
-        COMPLETED: 4,
-        CLOSED: 5,
-        OUTSTANDING: 6
-      };
-      const mappedStatus = statusMapping[value];
+      // const statusMapping: { [key: string]: number } = {
+      //   CREATED: 0,
+      //   STARTED: 1,
+      //   CONFIRMED: 2,
+      //   REJECTED: 3,
+      //   COMPLETED: 4,
+      //   CLOSED: 5,
+      //   OUTSTANDING: 6
+      // };
+      const mappedStatus = value != '' ? parseInt(value) : null;
       updateQuery({ ...query, [keyName]: mappedStatus });
     } else {
       updateQuery({[keyName]: value})
