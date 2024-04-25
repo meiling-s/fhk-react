@@ -10,10 +10,7 @@ import {
   ImageListItem,
   Divider
 } from '@mui/material'
-import ImageUploading, {
-  ImageListType,
-  ImageType
-} from 'react-images-uploading'
+import ImageUploading, { ImageListType } from 'react-images-uploading'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
@@ -26,9 +23,7 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import { styles } from '../../../constants/styles'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
 
-import { TENANT_REGISTER_CONFIGS } from '../../../constants/configs'
-import dayjs, { Dayjs } from 'dayjs'
-import { Field } from 'formik'
+import dayjs from 'dayjs'
 import { createServiceInfo } from '../../../APICalls/serviceInfo'
 import { ServiceInfo } from '../../../interfaces/serviceInfo'
 import { ToastContainer, toast } from 'react-toastify'
@@ -39,9 +34,12 @@ import { formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 type ServiceName = 'SRV00001' | 'SRV00002' | 'SRV00003' | 'SRV00004'
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+
 type ServiceData = Record<
   ServiceName,
   {
@@ -141,6 +139,7 @@ const AdditionalServicePict = () => {
   const [activeObj, setActiveObj] = useState<string>('')
   const [nature, setNature] = useState<string>('')
   const [speaker, setSpeaker] = useState<string>('')
+  const {imgSettings} = useContainer(CommonTypeContainer)
   const [errorsOptions, setErrorOptions] = useState(
     {
       targetParticipants: {status: false, message: ''}, 
@@ -815,8 +814,8 @@ const AdditionalServicePict = () => {
                           item.serviceName as ServiceName,
                         )
                       }
-                      maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
-                      maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
+                      maxNumber={imgSettings?.ImgQuantity}
+                      maxFileSize={imgSettings?.ImgSize}
                       dataURLKey="data_url"
                     >
                       {({ imageList, onImageUpload }) => (

@@ -11,7 +11,8 @@ import dayjs from "dayjs";
 
 type props = {
     setWeekly: (RWs: routineContent[]) => void,
-    defaultWeek?: routineContent[]
+    defaultWeek?: routineContent[],
+    required?: boolean
 }
 
 type weekDay_timePeriod = {     //store the timePeriod with the weekDay id
@@ -21,7 +22,8 @@ type weekDay_timePeriod = {     //store the timePeriod with the weekDay id
 
 export default function Weekly({
     setWeekly,
-    defaultWeek
+    defaultWeek,
+    required =  false
 }: props){
 
     const [weekDays, setWeekDays] = useState<string[]>([]);
@@ -215,7 +217,7 @@ export default function Weekly({
                     defaultSelected={returnDefaultWeekDay()}
                 />
                 <Collapse sx={{mt: 1}} in={curWeekDay != " " && weekDays.length > 0}>
-                    <CustomField label={t("time_Period") + ` (${getWeekDayById(curWeekDay)})`} key={curWeekDay}>
+                    <CustomField label={t("time_Period") + ` (${getWeekDayById(curWeekDay)})`} key={curWeekDay} mandatory={required}>
                         <CustomTimePicker
                             multiple={true}
                             setTime={setTimePeriodForWeekDay}

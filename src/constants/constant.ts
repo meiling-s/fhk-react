@@ -47,7 +47,8 @@ export const formErr = {
   hasBeenUsed: 'hasBeenUsed',
   exceedsMaxLength: 'exceedsMaxLength',
   minMoreOneImgUploded: 'minMoreOneImgUploded',
-  startDateBehindEndDate: 'startDateBehidEndDate'
+  startDateBehindEndDate: 'startDateBehidEndDate',
+  timeCantDuplicate: 'timeCantDuplicate'
 }
 
 export const Notiftemplate = {
@@ -62,19 +63,19 @@ export const Roles = {
   logisticAdmin: 'logistic',
   astd: 'astd',
   manufacturerAdmin: 'manufacturer',
-  customerAdmin: 'customer',
+  customerAdmin: 'customer'
 }
 
 export const Realm = {
-  collector : 'collector',
+  collector: 'collector',
   logistic: 'logistic',
   astd: 'astd',
   manufacturer: 'manufacturer',
-  customer: 'customer',
+  customer: 'customer'
 }
 
 export const RealmApi = {
-  collector : 'collectors',
+  collector: 'collectors',
   logistic: 'logistic',
   astd: 'astd',
   manufacturer: 'manufacturer',

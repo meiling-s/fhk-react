@@ -74,7 +74,7 @@ export const getLoginIdList = async () => {
       ...GET_LOGINID_LIST(token.tenantId),
       params: {
         page: 0,
-        size: 20
+        size: 1000
       }
     })
 
@@ -95,7 +95,7 @@ export const getStaffTitle = async () => {
       ...GET_TITLE_LIST(token.decodeKeycloack),
       params: {
         page: 0,
-        size: 20
+        size: 1000
       }
     })
 
