@@ -51,9 +51,12 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
+  const role = localStorage.getItem(localStorgeKeyName.role)
+  
   const initFunctionList = async () => {
     const result = await getAllFunction();
-    const data = result?.data;
+    // const data = result?.data;
+    const data = result?.data.filter((item: any) => item.tenantTypeId == role)
     if (data.length > 0) {
       let name = ''
       data.map((item: { functionId: string; functionNameEng: string; functionNameSChi: string; functionNameTChi: string; name: string; }) => {
