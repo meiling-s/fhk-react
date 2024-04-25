@@ -50,7 +50,7 @@ const Rosters: FunctionComponent = () => {
       )
       const rosterData = rosterResult?.data
 
-      if (rosterData.length > 0) {
+      if (rosterData) {
         const groupedRoster: GroupedRoster[] = collectionPointData.map(
           (colPoint: collectionPoint) => {
             return {
