@@ -40,7 +40,7 @@ const Rosters: FunctionComponent = () => {
 
   const initRosterData = async (filteredDate?: string) => {
     setIsLoading(true)
-    const collectionPointResult = await getCollectionPoint(0, 20)
+    const collectionPointResult = await getCollectionPoint(0, 1000)
     const collectionPointData = collectionPointResult?.data.content
 
     if (collectionPointData && collectionPointData.length > 0) {
@@ -50,7 +50,7 @@ const Rosters: FunctionComponent = () => {
       )
       const rosterData = rosterResult?.data
 
-      if (rosterData) {
+      if (rosterData.length > 0) {
         const groupedRoster: GroupedRoster[] = collectionPointData.map(
           (colPoint: collectionPoint) => {
             return {
@@ -65,9 +65,9 @@ const Rosters: FunctionComponent = () => {
         )
 
         setGroupedRoster(groupedRoster)
-        setIsLoading(false)
       }
     }
+    setIsLoading(false)
   }
 
   const formattedTime = (value: string) => {
@@ -98,7 +98,7 @@ const Rosters: FunctionComponent = () => {
 
   return (
     <>
-      <Box className="container-wrapper w-full">
+      <Box className="container-wrapper w-full overflow-scroll">
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
           <Box className="filter-date" sx={{ marginY: 4 }}>
             <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
