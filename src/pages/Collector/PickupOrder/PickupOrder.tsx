@@ -271,7 +271,7 @@ const PickupOrders = () => {
       field: "status",
       headerName: t('pick_up_order.table.status'),
       type: "string",
-      width: 100,
+      width: 120,
       editable: true,
       renderCell: (params) => (
         <StatusCard status={params.value}/>
