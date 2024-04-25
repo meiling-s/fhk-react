@@ -42,7 +42,7 @@ import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createRecyc, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { createRecyc, deleteWeightUnit, editWeightUnit, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
 
 interface WeightFormat {
     createdAt: string
@@ -64,7 +64,7 @@ interface WeightFormatProps {
     drawerOpen: boolean
     handleDrawerClose: () => void
     action?: 'add' | 'edit' | 'delete'
-    onSubmitData?: (type: string, id?: number, error?: boolean) => void
+    onSubmitData: (type: string) => void
     rowId?: number,
     selectedItem: WeightFormat | null
   }
@@ -184,13 +184,27 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         setValidation(tempV)
     }, [tChineseName, sChineseName, englishName, equivalent])
 
-    const handleDelete = () => {
-        setOpenDelete(true)
+    const handleDelete = async () => {
+        const token = returnApiToken()
+        const weightForm = {
+            status: 'DELETED',
+            updatedBy: token.loginId
+        }
+
+        try {
+            const response = await deleteWeightUnit(Number(selectedItem?.unitId), weightForm)
+            if (response) {
+                onSubmitData('weight')
+                showSuccessToast(t('notify.successDeleted'))
+            }
+        } catch (error) {
+            console.log(error)
+            showErrorToast(t('notify.errorDeleted'))
+        }
     }
 
     const handleSubmit = () => {
         const { loginId } = returnApiToken();
-        console.log(action, 'action')
         
         const weightForm = {
             unitNameTchi: tChineseName,
@@ -202,7 +216,6 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
             status: "ACTIVE",
             createdBy: loginId,
             updatedBy: loginId,
-            poDetail: []
         }
 
         const isError = validation.length == 0
@@ -221,6 +234,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         try {
             const response = await sendWeightUnit(weightForm)
             if (response) {
+                onSubmitData('weight')
                 showSuccessToast(t('notify.successCreated'))
             }
         } catch (error) {
@@ -229,15 +243,16 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         }
     }
     const editWeightData = async (weightForm: any) => {
-        // try {
-        //     const response = await createRecyc(addRecyclingForm)
-        //     if (response) {
-        //         showSuccessToast(t('notify.successCreated'))
-        //     }
-        // } catch (error) {
-        //     console.error(error)
-        //     showErrorToast(t('errorCreated.errorCreated'))
-        // }
+        try {
+            const response = await editWeightUnit(Number(selectedItem?.unitId), weightForm)
+            if (response) {
+                onSubmitData('weight')
+                showSuccessToast(t('notify.SuccessEdited'))
+            }
+        } catch (error) {
+            console.error(error)
+            showErrorToast(t('errorCreated.errorEdited'))
+        }
     }
 
     return (

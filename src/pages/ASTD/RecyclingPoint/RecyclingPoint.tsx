@@ -71,6 +71,7 @@ interface engineDataProps {
     registeredFlg: boolean
     remark: string
     residentalFlg: boolean
+    serviceType: string
     status: string
     updatedAt: string
     updatedBy: string
@@ -333,6 +334,16 @@ const RecyclingPoint: FunctionComponent = () => {
     }
   }, [])
 
+  const handleOnSubmitData = (type: string) => {
+    if (type === 'siteType') {
+      setDrawerOpen(false)
+      initSiteTypeData()
+    } else if (type === 'premiseType') {
+      setEngineDrawerOpen(false)
+      initEngineData()
+    }
+  }
+
   return (
     <>
       <Box
@@ -473,6 +484,8 @@ const RecyclingPoint: FunctionComponent = () => {
             action={action}
             rowId={rowId}
             selectedItem={selectedRow}
+            handleOnSubmitData={handleOnSubmitData}
+            
         />
         <CreateEngineData
             drawerOpen={engineDrawerOpen}
@@ -480,6 +493,7 @@ const RecyclingPoint: FunctionComponent = () => {
             action={action}
             rowId={rowId}
             selectedItem={engineSelectedRow}
+            handleOnSubmitData={handleOnSubmitData}
         />
       </Box>
     </>

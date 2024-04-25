@@ -924,7 +924,8 @@
     "date_format": "日期格式",
     "weight_tolerance": "允許重量誤差 (kg)",
     "currency_category": "貨幣類別",
-    "introduction": "備註"
+    "introduction": "備註",
+    "monetary": "名稱"
   },
   "packaging_unit": {
     "packaging_unit": "包裝單位",
@@ -999,6 +1000,9 @@
     "state": "狀態",
     "house_place": "房屋或場所類別",
     "residence": "是否住宅",
-    "epd": "是否EPD 認證類別"
+    "epd": "是否EPD 認證類別",
+    "offsite": "上門回收服務",
+    "community": "社區收集點",
+    "service_type": "服務種類"
   }
 }

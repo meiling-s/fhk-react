@@ -39,42 +39,17 @@ import StatusLabel from '../../../components/StatusLabel'
 import NumberFormat from './NumberFormat'
 import DateFormat from './DateFormat'
 import WeightFormat from './WeightFormat'
+import { getCurrencyList } from '../../../APICalls/ASTD/currrency'
+import CreateCurrency from './CreateCurrency'
 
-type TableRow = {
-  id: number
-  [key: string]: any
-}
-
-function createContract(
-  id: number,
-  contractNo: string,
-  tenantId: string,
-  contractFrmDate: string,
-  contractToDate: string,
-  epdFlg: boolean,
-  remark: string,
-  parentContractNo: string,
-  status: string,
-  createdBy: string,
-  updatedBy: string,
-  createdAt: string,
+interface CurrencyListProps {
+  createdAt: string
+  createdBy: string
+  monetary: string
+  monetaryId: number
+  status: string
   updatedAt: string
-): ContractItem {
-  return {
-    id,
-    contractNo,
-    tenantId,
-    contractFrmDate,
-    contractToDate,
-    epdFlg,
-    remark,
-    parentContractNo,
-    status,
-    createdBy,
-    updatedBy,
-    createdAt,
-    updatedAt
-  }
+  updatedBy: string
 }
 
 const GeneralSettings: FunctionComponent = () => {
@@ -83,10 +58,12 @@ const GeneralSettings: FunctionComponent = () => {
   const [numberDrawerOpen, setNumberDrawerOpen] = useState(false)
   const [dateDrawerOpen, setDateDrawerOpen] = useState(false)
   const [weightDrawerOpen, setWeightDrawerOpen] = useState(false)
+  const [currencyDrawerOpen, setCurrencyDrawerOpen] = useState<boolean>(false)
   const [numberFormat, setNumberFormat] = useState('')
   const [dateFormat, setDateFormat] = useState('')
   const [weightFormat, setWeightFormat] = useState('')
-  const [selectedRow, setSelectedRow] = useState<ContractItem | null>(null)
+  const [currencyList, setCurrencyList] = useState<CurrencyListProps[]>([])
+  const [selectedRow, setSelectedRow] = useState<CurrencyListProps | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [page, setPage] = useState(1)
@@ -94,19 +71,26 @@ const GeneralSettings: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
 
-//   useEffect(() => {
-    
-//   }, [page])
+  useEffect(() => {
+    initCurrencyList()
+  }, [page])
+
+  const initCurrencyList = async () => {
+    const result = await getCurrencyList()
+    const data = result?.data
+
+    setCurrencyList(data)
+  }
 
   const columns: GridColDef[] = [
     {
-      field: 'name',
+      field: 'monetary',
       headerName: t('general_settings.name'),
       width: 150,
       type: 'string'
     },
     {
-      field: 'introduction',
+      field: 'description',
       headerName: t('general_settings.introduction'),
       width: 200,
       type: 'string'
@@ -164,22 +148,20 @@ const GeneralSettings: FunctionComponent = () => {
     setAction(action)
     setRowId(params.row.id)
     setSelectedRow(params.row)
-    setDrawerOpen(true)
+    setCurrencyDrawerOpen(true)
   }
 
   const handleSelectRow = (params: GridRowParams) => {
     setAction('edit')
     setRowId(params.row.id)
     setSelectedRow(params.row)
-    setDrawerOpen(true)
+    setCurrencyDrawerOpen(true)
   }
 
-  const onSubmitData = (type: string, msg: string) => {
-    
-    if (type == 'success') {
-      showSuccessToast(msg)
-    } else {
-      showErrorToast(msg)
+  const onSubmitData = (type: string) => {
+    if (type == 'currency') {
+      initCurrencyList()
+      setCurrencyDrawerOpen(false)
     }
   }
 
@@ -351,18 +333,18 @@ const GeneralSettings: FunctionComponent = () => {
             ]}
             variant="outlined"
             onClick={() => {
-              setDrawerOpen(true)
+              setCurrencyDrawerOpen(true)
               setAction('add')
             }}
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
-        {/* <div className="table-vehicle">
+        <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
             <DataGrid
-              rows={contractList}
-              getRowId={(row) => row.id}
+              rows={currencyList}
+              getRowId={(row) => row.monetaryId}
               hideFooter
               columns={columns}
               checkboxSelection
@@ -393,7 +375,7 @@ const GeneralSettings: FunctionComponent = () => {
               }}
             />
           </Box>
-        </div> */}
+        </div>
       </Box>
       <NumberFormat
         drawerOpen={numberDrawerOpen}
@@ -415,6 +397,13 @@ const GeneralSettings: FunctionComponent = () => {
         action='edit'
         onSubmitData={onSubmitData}
         weightformat={weightFormat}
+      />
+      <CreateCurrency
+        drawerOpen={currencyDrawerOpen}
+        handleDrawerClose={() => setCurrencyDrawerOpen(false)}
+        action='edit'
+        onSubmitData={onSubmitData}
+        selectedItem={selectedRow}
       />
     </>
   )

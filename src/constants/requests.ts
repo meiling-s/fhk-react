@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios'
+import { Axios, AxiosRequestConfig } from 'axios'
 import { CreateDenialReason } from '../interfaces/denialReason'
 
 //tenant manage
@@ -233,6 +233,16 @@ export const ADD_PREMISE_TYPE: AxiosRequestConfig = {
   url: 'api/v1/administrator/premiseType'
 }
 
+export const EDIT_PREMISE_TYPE = (premiseTypeId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/premiseType/${premiseTypeId}`
+})
+
+export const DELETE_PREMISE_TYPE = (premiseTypeId: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/premiseType/${premiseTypeId}`
+})
+
 export const GET_SITE_TYPE: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/administrator/siteType'
@@ -242,6 +252,16 @@ export const ADD_SITE_TYPE: AxiosRequestConfig = {
   method: 'post',
   url: 'api/v1/administrator/siteType'
 }
+
+export const EDIT_SITE_TYPE = (siteTypeId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/siteType/${siteTypeId}`
+})
+
+export const DELETE_SITE_TYPE = (siteTypeId: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/siteType/${siteTypeId}`
+})
 
 export const GET_RECYC_TYPE: AxiosRequestConfig = {
   method: 'get',
@@ -1192,3 +1212,33 @@ export const CREATE_WEIGHT_UNIT: AxiosRequestConfig = {
   method: 'post',
   url: `api/v1/administrator/weightUnit`
 }
+
+export const UPDATE_WEIGHT_UNIT = (unitId: number): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/weightUnit/${unitId}`
+})
+
+export const DELETE_WEIGHT_UNIT = (unitId: number): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/weightUnit/${unitId}`
+})
+
+export const GET_CURRENCY_LIST: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/currencyList`
+}
+
+export const CREATE_CURRENCY: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/administrator/currencyList`
+}
+
+export const EDIT_CURRENCY = (currencyId: number): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/currencyList/${currencyId}`
+})
+
+export const DELETE_CURRENCY = (currencyId: number): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/currencyList/${currencyId}`
+})

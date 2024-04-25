@@ -925,7 +925,8 @@
     "date_format": "Date Format",
     "weight_tolerance": "Weight Tolerance (kg)",
     "currency_category": "Currency Category",
-    "introduction": "Introduction"
+    "introduction": "Introduction",
+    "monetary": "Monetary"
   },
   "packaging_unit": {
     "packaging_unit": "Packaging Unit",
@@ -1001,6 +1002,9 @@
     "state": "State",
     "house_place": "House or Place Category",
     "residence": "Residence",
-    "epd": "Whether EPD certification category"
+    "epd": "Whether EPD certification category",
+    "offsite": "Off-site Collection Service",
+    "community": "Community Collection Point",
+    "service_type": "Service type"
   }
 }

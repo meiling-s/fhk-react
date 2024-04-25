@@ -1,48 +1,24 @@
 import {
     FunctionComponent,
-    useCallback,
     useState,
     useEffect,
     useRef
 } from 'react'
-import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from '../../../components/RightOverlayForm'
-import TextField from '@mui/material/TextField'
 import {
-    Grid,
-    FormHelperText,
     Autocomplete,
-    Modal,
     Box,
-    Stack,
     Divider,
-    Typography
+    TextField,
 } from '@mui/material'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
-import LabelField from '../../../components/FormComponents/CustomField'
-import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
 import { returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
-import {
-    createWarehouse,
-    getWarehouseById,
-    editWarehouse,
-    getRecycleType
-} from '../../../APICalls/warehouseManage'
-import { set } from 'date-fns'
-import { getLocation } from '../../../APICalls/getLocation'
-import { get } from 'http'
-import { getCommonTypes } from '../../../APICalls/commonManage'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createRecyc, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { createRecyc, deleteEngineData, editEngineData, sendEngineData, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { styles } from '../../../constants/styles'
 
 interface engineDataProps {
     createdAt: string
@@ -54,6 +30,7 @@ interface engineDataProps {
     registeredFlg: boolean
     remark: string
     residentalFlg: boolean
+    serviceType: string
     status: string
     updatedAt: string
     updatedBy: string
@@ -65,7 +42,8 @@ interface SiteTypeProps {
     handleDrawerClose: () => void
     action?: 'add' | 'edit' | 'delete'
     rowId?: number,
-    selectedItem: engineDataProps | null
+    selectedItem: engineDataProps | null,
+    handleOnSubmitData: (type: string) => void;
   }
 
 const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
@@ -73,7 +51,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     handleDrawerClose,
     action,
     rowId,
-    selectedItem
+    selectedItem,
+    handleOnSubmitData
 }) => {
     const { t } = useTranslation()
     const { i18n } = useTranslation()
@@ -84,16 +63,22 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const [tChineseName, setTChineseName] = useState('')
     const [sChineseName, setSChineseName] = useState('')
     const [englishName, setEnglishName] = useState('')
-    const [equivalent, setEquivalent] = useState('')
-    const [description, setDescription] = useState('')
     const [registeredFlg, setRegisteredFlg] = useState(false)
     const [residentalFlg, setResidentalFlg] = useState(false)
     const [remark, setRemark] = useState('')
-    const [isMainCategory, setMainCategory] = useState(true)
-    const [chosenRecyclableType, setChosenRecyclableType] = useState('')
+    const [selectedService, setSelectedService] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
-    const isInitialRender = useRef(true) // Add this line
 
+    const serviceTypeSelect = [
+        {
+            name: t('recycling_point.offsite'),
+            value: 'OFFSITE',
+        },
+        {
+            name: t('recycling_point.community'),
+            value: 'COMMUNITY'
+        }
+    ]
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
     }, [i18n, currentLanguage])
@@ -101,11 +86,13 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     useEffect(() => {
         if (action === 'edit') {
             if (selectedItem !== null && selectedItem !== undefined) {
+                const newServiceValue = serviceTypeSelect.filter(value => value.value === selectedItem.serviceType)[0]
                 setTChineseName(selectedItem.premiseTypeNameTchi)
                 setSChineseName(selectedItem.premiseTypeNameSchi)
                 setEnglishName(selectedItem.premiseTypeNameEng)
                 setRegisteredFlg(selectedItem.registeredFlg)
                 setResidentalFlg(selectedItem.residentalFlg)
+                setSelectedService(newServiceValue.name)
                 setRemark(selectedItem.remark)
             }
         } else if (action === 'add') {
@@ -119,6 +106,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         setEnglishName('')
         setRegisteredFlg(false)
         setResidentalFlg(false)
+        setSelectedService('')
         setRemark('')
     }
 
@@ -178,21 +166,43 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         setValidation(tempV)
     }, [tChineseName, sChineseName, englishName])
 
-    const handleDelete = () => {
-        setOpenDelete(true)
+    const handleDelete = async () => {
+        const token = returnApiToken()
+        const premiseTypeForm = {
+            status: 'DELETED',
+            updatedBy: token.loginId
+        }
+        
+        if (selectedItem !== null && selectedItem !== undefined) {
+            try {
+                const response = await deleteEngineData(selectedItem?.premiseTypeId, premiseTypeForm)
+                if (response) {
+                    handleOnSubmitData('premiseType')
+                    showSuccessToast(t('notify.successDeleted'))
+                }
+            } catch (error) {
+                console.log(error)
+                showErrorToast(t('notify.errorDeleted'))
+            }
+        }
     }
 
     const handleSubmit = () => {
         const { loginId } = returnApiToken();
-        console.log(action, 'action')
         
-        const recyclingPointForm = {
-            siteTypeNameTchi: tChineseName,
-            siteTypeNameSchi: sChineseName,
-            siteTypeNameEng: englishName,
-            description: description,
+        const serviceValue = serviceTypeSelect.filter(value => value.name === selectedService)[0]
+
+        console.log(serviceValue, 'serviceValue')
+
+        const premiseTypeForm = {
+            premiseTypeNameTchi: tChineseName,
+            premiseTypeNameSchi: sChineseName,
+            premiseTypeNameEng: englishName,
+            residentalFlg: residentalFlg,
+            registeredFlg: registeredFlg,
             remark: remark,
             status: 'ACTIVE',
+            serviceType: serviceValue.value,
             createdBy: loginId,
             updatedBy: loginId
         }
@@ -201,7 +211,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         getFormErrorMsg()
 
         if (validation.length == 0) {
-            action == 'add' ? createRecyclingPointData(recyclingPointForm) : editRecyclingPointData(recyclingPointForm)
+            action == 'add' ? createEngineData(premiseTypeForm) : editRecyclingPointData(premiseTypeForm)
 
             setValidation([])
         } else {
@@ -209,10 +219,11 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         }
     }
 
-    const createRecyclingPointData = async (weightForm: any) => {
+    const createEngineData = async (premiseTypeForm: any) => {
         try {
-            const response = await sendWeightUnit(weightForm)
+            const response = await sendEngineData(premiseTypeForm)
             if (response) {
+                handleOnSubmitData('premiseType')
                 showSuccessToast(t('notify.successCreated'))
             }
         } catch (error) {
@@ -220,16 +231,19 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             showErrorToast(t('errorCreated.errorCreated'))
         }
     }
-    const editRecyclingPointData = async (weightForm: any) => {
-        // try {
-        //     const response = await createRecyc(addRecyclingForm)
-        //     if (response) {
-        //         showSuccessToast(t('notify.successCreated'))
-        //     }
-        // } catch (error) {
-        //     console.error(error)
-        //     showErrorToast(t('errorCreated.errorCreated'))
-        // }
+    const editRecyclingPointData = async (premiseTypeForm: any) => {
+        if (selectedItem !== null && selectedItem !== undefined) {
+            try {
+                const response = await editEngineData(selectedItem?.premiseTypeId, premiseTypeForm)
+                if (response) {
+                    handleOnSubmitData('premiseType')
+                    showSuccessToast(t('notify.successEdited'))
+                }
+            } catch (error) {
+                console.error(error)
+                showErrorToast(t('notify.errorEdited'))
+            }
+        }
     }
 
     return (
@@ -315,14 +329,31 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.introduction')} mandatory={false}>
-                            <CustomTextField
-                                id="description"
-                                placeholder={t('packaging_unit.introduction')}
-                                onChange={(event) => setDescription(event.target.value)}
-                                error={checkString(description)}
-                                multiline={true}
-                                defaultValue={description}
+                        <CustomField label={t('recycling_point.service_type')} mandatory>
+                            <Autocomplete
+                                disablePortal
+                                id="selectedService"
+                                defaultValue={selectedService}
+                                options={serviceTypeSelect.map((functionItem) => functionItem.name)}
+                                onChange={(event, value) => {
+                                    if (value) {
+                                        setSelectedService(value)
+                                    }
+                                }}
+                                value={selectedService}
+                                disabled={action === 'delete'}
+                                renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    placeholder={t('recycling_point.service_type')}
+                                    sx={[styles.textField, { width: 320 }]}
+                                    InputProps={{
+                                    ...params.InputProps,
+                                    sx: styles.inputProps
+                                    }}
+                                    error={checkString(selectedService)}
+                                />
+                                )}
                             />
                         </CustomField>
                     </Box>

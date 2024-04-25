@@ -901,7 +901,8 @@
     "date_format": "日期格式",
     "weight_tolerance": "允许重量误差 (kg)",
     "currency_category": "货币类别",
-    "introduction": "簡介"
+    "introduction": "簡介",
+    "monetary": "名称"
   },
   "packaging_unit": {
     "packaging_unit": "包装单位",
@@ -976,6 +977,9 @@
     "state": "状态",
     "house_place": "房屋或场所类别",
     "residence": "是否住宅",
-    "epd": "是否EPD 认证类别"
+    "epd": "是否EPD 认证类别",
+    "offsite": "上门回收服务",
+    "community": "社区收集点",
+    "service_type": "服务种类"
   }
 }

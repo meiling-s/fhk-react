@@ -42,7 +42,7 @@ import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createRecyc, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { createRecyc, createRecyclingPoint, deleteRecyclingPoint, editRecyclingPoint, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
 
 interface siteTypeDataProps {
     createdAt: string
@@ -63,7 +63,8 @@ interface SiteTypeProps {
     handleDrawerClose: () => void
     action?: 'add' | 'edit' | 'delete'
     rowId?: number,
-    selectedItem: siteTypeDataProps | null
+    selectedItem: siteTypeDataProps | null,
+    handleOnSubmitData: (type: string) => void
   }
 
 const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
@@ -71,7 +72,8 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
     handleDrawerClose,
     action,
     rowId,
-    selectedItem
+    selectedItem,
+    handleOnSubmitData
 }) => {
     const { t } = useTranslation()
     const { i18n } = useTranslation()
@@ -173,13 +175,29 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
         setValidation(tempV)
     }, [tChineseName, sChineseName, englishName])
 
-    const handleDelete = () => {
-        setOpenDelete(true)
+    const handleDelete = async () => {
+        const { loginId } = returnApiToken();
+        const recyclingPointForm = {
+            status: 'DELETED',
+            updatedBy: loginId
+        }
+        
+        try {
+            if (selectedItem !== null && selectedItem !== undefined) {
+                const response = await deleteRecyclingPoint(selectedItem?.siteTypeId, recyclingPointForm)
+                if (response) {
+                    handleOnSubmitData('siteType')
+                    showSuccessToast(t('notify.successDeleted'))
+                }
+            }
+        } catch (error) {
+            console.log(error)
+            showErrorToast(t('notify.errorDeleted'))
+        }
     }
 
     const handleSubmit = () => {
         const { loginId } = returnApiToken();
-        console.log(action, 'action')
         
         const recyclingPointForm = {
             siteTypeNameTchi: tChineseName,
@@ -204,10 +222,11 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
         }
     }
 
-    const createRecyclingPointData = async (weightForm: any) => {
+    const createRecyclingPointData = async (data: any) => {
         try {
-            const response = await sendWeightUnit(weightForm)
+            const response = await createRecyclingPoint(data)
             if (response) {
+                handleOnSubmitData('siteType')
                 showSuccessToast(t('notify.successCreated'))
             }
         } catch (error) {
@@ -215,16 +234,19 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
             showErrorToast(t('errorCreated.errorCreated'))
         }
     }
-    const editRecyclingPointData = async (weightForm: any) => {
-        // try {
-        //     const response = await createRecyc(addRecyclingForm)
-        //     if (response) {
-        //         showSuccessToast(t('notify.successCreated'))
-        //     }
-        // } catch (error) {
-        //     console.error(error)
-        //     showErrorToast(t('errorCreated.errorCreated'))
-        // }
+    const editRecyclingPointData = async (data: any) => {
+        try {
+            if (selectedItem !== null && selectedItem !== undefined) {
+                const response = await editRecyclingPoint(selectedItem?.siteTypeId, data)
+                if (response) {
+                    handleOnSubmitData('siteType')
+                    showSuccessToast(t('notify.successCreated'))
+                }
+            }
+        } catch (error) {
+            console.error(error)
+            showErrorToast(t('errorCreated.errorCreated'))
+        }
     }
 
     return (

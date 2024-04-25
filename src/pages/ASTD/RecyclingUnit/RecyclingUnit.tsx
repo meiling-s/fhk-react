@@ -392,8 +392,11 @@ const RecyclingUnit: FunctionComponent = () => {
     setSelectedRecyclingRow(value)
   }
 
-  const handleOnSubmitData = () => {
-    console.log('hitt')
+  const handleOnSubmitData = (type: string) => {
+    if (type === 'weight') {
+      setWeightDrawerOpen(false)
+      initWeightUnit()
+    }
   }
 
   return (
