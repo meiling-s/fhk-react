@@ -84,3 +84,9 @@ export const RealmApi = {
 export const Status = {
   CREATED : 'CREATED'
 }
+
+export const Languages = {
+  ENUS : 'enus',
+  ZHCH : 'zhch',
+  ZHHK : 'zhhk'
+}

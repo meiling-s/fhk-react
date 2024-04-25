@@ -180,83 +180,47 @@ const CreateRecycleForm = ({
     }
   }, [editRow])
 
-  // useEffect(() => {
-    // console.log('defaultRecyc: ', defaultRecyc)
-  // }, [defaultRecyc])
+  const validateSchema = Yup.lazy((values) => {
+    let prevData: PurchaseOrderDetail[] = []
+    if (editRow) {
+      prevData = data.filter((item) => item.poDtlId != editRow.poDtlId)
+    } else {
+      prevData = data
+    }
 
-  // const validateSchema = Yup.lazy((values) => {
-  //   let prevData: PurchaseOrderDetail[] = []
-  //   if (editRow) {
-  //     prevData = data.filter((item) => item.poDtlId != editRow.poDtlId)
-  //   } else {
-  //     prevData = data
-  //   }
+    return Yup.object().shape({
+      pickupAt: Yup.string().required(
+        t('purchase_order.create.this') + ' ' + 
+        t('purchase_order.create.receipt_date_and_time') + ' ' + 
+        t('purchase_order.create.is_required')
+      ),
+      recycTypeId: Yup.string().required(
+        t('purchase_order.create.this') + ' ' + 
+        t('col.recycType') + ' ' + 
+        t('purchase_order.create.is_required')
+      ),
+      recycSubTypeId: Yup.string().required(
+        t('purchase_order.create.this') + ' ' + 
+        t('col.recycType') + ' ' + 
+        t('purchase_order.create.is_required')
+      ),
+      weight: Yup.number().required(
+        t('purchase_order.create.this') + ' ' + 
+        t('purchase_order.create.weight') + ' ' + 
+        t('purchase_order.create.is_required')
+      ),
+      receiverAddr: Yup.string().required(
+        t('purchase_order.create.this') + ' ' + 
+        t('purchase_order.create.arrived') + ' ' + 
+        t('purchase_order.create.is_required')
+      ),
+    })
+  })
 
-  //   return Yup.object().shape({
-  //     pickupAt: Yup.string()
-  //       .required('This pickupAt is required')
-  //       .test(
-  //         'invalid-date',
-  //         'Invalid pickup time, choose again the time',
-  //         function (value) {
-  //           return value !== 'Invalid Date'
-  //         }
-  //       )
-  //       .test(
-  //         'not-in-prev-data',
-  //         'Pickup time already exists in previous data',
-  //         function (value) {
-  //           return !prevData.some((item) => item.pickupAt === value)
-  //         }
-  //       ),
-
-  //     senderName: Yup.string().required('This sendername is required'),
-  //     senderAddr: Yup.string()
-  //       .required('This senderAddr is required')
-  //       .test(
-  //         'not-same-as-receiver',
-  //         'Sender address cannot be the same as receiver address',
-  //         function (value) {
-  //           const receiverAddr = values.receiverAddr
-  //           return value !== receiverAddr
-  //         }
-  //       )
-  //       .test(
-  //         'not-in-prev-data',
-  //         'Sender address already exists in previous data',
-  //         function (value) {
-  //           return !prevData.some((item) => item?.senderAddr === value)
-  //         }
-  //       ),
-  //     receiverName: Yup.string().required('This receiverName is required'),
-  //     receiverAddr: Yup.string()
-  //       .required('This receiverAddr is required')
-  //       .test(
-  //         'not-same-as-sender',
-  //         'Receiver address cannot be the same as sender address',
-  //         function (value) {
-  //           const senderAddr = values.senderAddr
-  //           return value !== senderAddr
-  //         }
-  //       )
-  //       .test(
-  //         'not-in-prev-data',
-  //         'Receiver address already exists in previous data',
-  //         function (value) {
-  //           return !prevData.some((item) => item.receiverAddr === value)
-  //         }
-  //       ),
-  //     recycType: Yup.string().required('This recycType is required'),
-  //     recycSubType: Yup.string().required('This recycSubType is required'),
-  //     weight: Yup.number().required('This weight is required')
-  //   })
-  // })
-
-  //console.log(JSON.stringify(data)+'qwesss')
 
   const formik = useFormik({
     initialValues: initValue,
-    // validationSchema: validateSchema,
+    validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
       if (isEditing) {
@@ -276,14 +240,6 @@ const CreateRecycleForm = ({
       onClose && onClose()
     }
   })
-
-  const formatTimePickAt = (timeValue: string) => {
-    const times = timeValue.split(':')
-    return initialTime
-      .hour(Number(times[0]))
-      .minute(Number(times[1]))
-      .second(Number(times[2]))
-  }
 
   return (
     <>

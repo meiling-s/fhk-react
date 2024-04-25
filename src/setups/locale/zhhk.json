@@ -1000,7 +1000,9 @@
       "expected_recycling": "預計回收物",
       "recycling_category": "回收物類別",
       "waste_paper_category": "廢紙類別",
-      "estimated_weight": "預計重量"
+      "estimated_weight": "預計重量",
+      "this": "這",
+      "is_required": "是必須的"
     }
   },
   "purchase_order_customer": {

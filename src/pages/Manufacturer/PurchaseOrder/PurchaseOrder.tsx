@@ -37,7 +37,7 @@ import {
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
-import { Roles, localStorgeKeyName } from '../../../constants/constant'
+import { Languages, Roles, localStorgeKeyName } from '../../../constants/constant'
 import dayjs from 'dayjs'
 
 type Approve = {
@@ -232,9 +232,16 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
   )
 }
 
+interface StatusPurchaseOrder {
+  value: string
+  labelEng: string,
+  labelSchi: string,
+  labelTchi: string
+}
+
 interface Option {
   value: string
-  label: string
+  label: string,
 }
 
 const PurchaseOrder = () => {
@@ -383,31 +390,43 @@ const PurchaseOrder = () => {
   const [reasonList, setReasonList] = useState<any>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
-  const statusList: Option[] = [
-    {
-      value: '',
-      label: 'any'
-    },
+  const statusList: StatusPurchaseOrder[] = [
     {
       value: '0',
-      label: 'CREATED'
+      labelEng: 'CREATED',
+      labelSchi: '已创建',
+      labelTchi: '已創建'
     },
     {
       value: '1',
-      label: 'CONFIRMED'
+      labelEng: 'CONFIRMED',
+      labelSchi: '确认的',
+      labelTchi: '確認的'
     },
     {
       value: '2',
-      label: 'REJECTED'
+      labelEng: 'REJECTED',
+      labelSchi: '拒絕',
+      labelTchi: '拒绝'
     },
     {
       value: '3',
-      label: 'COMPLETED'
+      labelEng: 'COMPLETED',
+      labelSchi: '完全的',
+      labelTchi: '完全的'
     },
     {
       value: '4',
-      label: 'CLOSED'
-    }
+      labelEng: 'CLOSED',
+      labelSchi: '关闭',
+      labelTchi: '關閉'
+    },
+    {
+      value: '',
+      labelEng: 'any',
+      labelSchi: '任何',
+      labelTchi: '任何'
+    },
   ]
 
   const initPurchaseOrderRequest = async () => {
@@ -516,13 +535,13 @@ const PurchaseOrder = () => {
     recycType?.forEach((item) => {
       var name = ''
       switch (i18n.language) {
-        case 'enus':
+        case Languages.ENUS:
           name = item.recyclableNameEng
           break
-        case 'zhch':
+        case Languages.ZHCH:
           name = item.recyclableNameSchi
           break
-        case 'zhhk':
+        case Languages.ZHHK:
           name = item.recyclableNameTchi
           break
         default:
@@ -536,7 +555,7 @@ const PurchaseOrder = () => {
     })
 
     setRecycItem(recycItems)
-  }, [recycType])
+  }, [i18n.language])
 
   useEffect(() => {
     const tempRows: any[] = (
@@ -573,14 +592,14 @@ const PurchaseOrder = () => {
     {
       label: t('pick_up_order.filter.dateby'),
       width: '10%',
-      options: getUniqueOptions('createdAt'),
-      field: 'createdAt'
+      options: getUniqueOptionsDate('createdAt'),
+      field: 'fromCreatedAt'
     },
     {
       label: t('pick_up_order.filter.to'),
       width: '10%',
-      options: getUniqueOptions('approvedAt'),
-      field: 'updatedAt'
+      options: getUniqueOptionsDate('approvedAt'),
+      field: 'toCreatedAt'
     },
     {
       label: t('warehouse_page.place'),
@@ -598,7 +617,7 @@ const PurchaseOrder = () => {
     {
       label: t('pick_up_order.filter.status'),
       width: '14%',
-      options: statusList,
+      options: getStatusOpion(),
       field: 'status'
     }
   ]
@@ -606,11 +625,35 @@ const PurchaseOrder = () => {
   const navigate = useNavigate()
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<Row | null>(null)
+
+  function getUniqueOptionsDate(propertyName: keyof Row) {
+    const optionMap = new Map()
+   
+    rows.forEach((row) => {
+      if(row[propertyName] !== '') {
+        const date = dayjs(row[propertyName]).format('YYYY-MM-DD')
+        optionMap.set(date, date)
+      }
+    })
+
+    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
+      value: option,
+      label: option
+    }))
+    options.push({
+      value: '',
+      label: 'any'
+    })
+    return options
+  }
+
   function getUniqueOptions(propertyName: keyof Row) {
     const optionMap = new Map()
 
     rows.forEach((row) => {
-      optionMap.set(row[propertyName], row[propertyName])
+      if(row[propertyName] !== '') {
+        optionMap.set(row[propertyName], row[propertyName])
+      }
     })
 
     let options: Option[] = Array.from(optionMap.values()).map((option) => ({
@@ -635,6 +678,33 @@ const PurchaseOrder = () => {
     })
     return options
   }
+
+  function getStatusOpion() {
+    const options: Option[] = statusList.map((item) => {
+      if(i18n.language === Languages.ENUS){
+        return {
+          value: item.value,
+          label: item.labelEng
+        }
+      } else if(i18n.language === Languages.ZHCH){
+        return{
+          value: item.value,
+          label: item.labelSchi
+        }
+      } else {
+        return{
+          value: item.value,
+          label: item.labelTchi
+        }
+      }
+    })
+    options.push({
+      value: '',
+      label: 'any'
+    })
+    return options
+  }
+
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10

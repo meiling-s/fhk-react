@@ -977,7 +977,9 @@
       "expected_recycling": "预计回收物",
       "recycling_category": "回收物类别",
       "waste_paper_category": "废纸类别",
-      "estimated_weight": "预计重量"
+      "estimated_weight": "预计重量",
+      "this": "这",
+      "is_required": "是必须的"
     }
   },
   "purchase_order_customer": {

@@ -54,7 +54,7 @@ import { amET } from '@mui/material/locale'
 import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
-import { format } from '../../constants/constant'
+import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
 import {
   getThemeColorRole,
@@ -143,8 +143,7 @@ const PurchaseOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType, recycType, manuList } =
-    useContainer(CommonTypeContainer)
+  const { logisticList, contractType, recycType, manuList } = useContainer(CommonTypeContainer)
   const navigate = useNavigate()
   
   const paymentTypes : PaymentType[] = [
@@ -175,23 +174,12 @@ const PurchaseOrderCreateForm = ({
   ]
 
   const logisticCompany = logisticList
-  const contractRole = contractType
-
-  const unexpiredContracts = contractRole
-    ? contractRole?.filter((contract) => {
-        const currentDate = new Date()
-        const contractDate = new Date(contract.contractToDate)
-        return contractDate > currentDate
-      })
-    : []
-  const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(
-    null
-  )
+  const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(null)
 
   // set custom style each role
   const colorTheme: string = getThemeColorRole(role)
   const customListTheme = getThemeCustomList(role)
-
+  console.log('formik', formik.values)
   const buttonFilledCustom = {
     borderRadius: '40px',
     borderColor: '#7CE495',
@@ -258,7 +246,7 @@ const PurchaseOrderCreateForm = ({
       picoDtl.poDtlId = index
       return picoDtl
     })
-    //console.log('deleting: ', id, state, updateDeleteRow)
+
     setState(updateDeleteRow)
   }
 
@@ -267,9 +255,9 @@ const PurchaseOrderCreateForm = ({
     : dayjs(new Date()).format(format.dateFormat1)
 
   const handleHeaderOnClick = () => {
-    //console.log('Header click')
     navigate(-1) //goback to last page
   }
+
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
@@ -304,13 +292,13 @@ const PurchaseOrderCreateForm = ({
         if (matchingRecycType) {
           var name = ''
           switch (i18n.language) {
-            case 'enus':
+            case Languages.ENUS:
               name = matchingRecycType.recyclableNameEng
               break
-            case 'zhch':
+            case Languages.ZHCH:
               name = matchingRecycType.recyclableNameSchi
               break
-            case 'zhhk':
+            case Languages.ZHHK:
               name = matchingRecycType.recyclableNameTchi
               break
             default:
@@ -338,13 +326,13 @@ const PurchaseOrderCreateForm = ({
           if (matchrecycSubType) {
             var subName = ''
             switch (i18n.language) {
-              case 'enus':
+              case Languages.ENUS:
                 subName = matchrecycSubType?.recyclableNameEng ?? ''
                 break
-              case 'zhch':
+              case Languages.ZHCH:
                 subName = matchrecycSubType?.recyclableNameSchi ?? ''
                 break
-              case 'zhhk':
+              case Languages.ZHHK:
                 subName = matchrecycSubType?.recyclableNameTchi ?? ''
                 break
               default:
@@ -391,9 +379,6 @@ const PurchaseOrderCreateForm = ({
       headerName: '',
       width: 100,
       renderCell: (params) => (
-        // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
-        //   <DELETE_OUTLINED_ICON />
-        // </IconButton>
         <IconButton
           onClick={() => {
             setOpenDelete(true)
@@ -406,29 +391,29 @@ const PurchaseOrderCreateForm = ({
     }
   ]
 
-  const [openPico, setOpenPico] = useState(false)
-
-  const handleClosePicoList = () => {
-    setOpenPico(false)
-  }
-
-  const selectPicoRefrence = (
-    picodetail: PickupOrderDetail,
-    picoId: string
-  ) => {
-    setPicoRefId(picoId)
-    formik.setFieldValue('refPicoId', picoId)
-    setOpenPico(false)
-  }
-
-  const resetPicoId = () => {
-    setOpenPico(true)
-    setPicoRefId('')
-  }
-
   const onChangeAddressReceiver = (value: string) => {
     formik.setFieldValue('receiverAddr', value)
   }
+
+  const onChangePaymentType = (value: string) => {
+    if(i18n.language === Languages.ENUS) {
+      const payment = paymentTypes.find(item => item.paymentNameEng && item.paymentNameEng === value)
+      if(payment){
+        formik.setFieldValue('paymentType', payment.value)
+      }
+    } else if(i18n.language === Languages.ZHCH){
+      const payment = paymentTypes.find(item => item.paymentNameSchi && item.paymentNameSchi === value)
+      if(payment){
+        formik.setFieldValue('paymentType', payment.value)
+      }
+    } else {
+      const payment = paymentTypes.find(item => item.paymentNameTchi && item.paymentNameTchi === value)
+      if(payment){
+        formik.setFieldValue('paymentType', payment.value)
+      }
+    }
+  }
+  
 
   return (
     <>
@@ -460,27 +445,34 @@ const PurchaseOrderCreateForm = ({
               </Grid>
               <Grid item>
                 <CustomField
-                  label={t('purchase_order.create.sender_company_name')}
+                  label={t('purchase_order.create.receiving_company_name')}
                   mandatory
                 >
                   <CustomAutoComplete
                     placeholder={t('purchase_order.create.receiving_company_name_placeholder')}
                     option={
-                      manuList?.map(
-                        (option) => option.manufacturerNameEng
+                      manuList?.map( (option) => {
+                        if(i18n.language === Languages.ENUS) {
+                          return option.manufacturerNameEng
+                        } else if(i18n.language === Languages.ZHCH){
+                          return option.manufacturerNameSchi
+                        } else {
+                          return option.manufacturerNameTchi
+                        }
+                      }
                       ) ?? []
                     }
                     sx={{ width: '400px' }}
                     onChange={(_: SyntheticEvent, newValue: string | null) =>
-                      formik.setFieldValue('senderName', newValue)
+                      formik.setFieldValue('receiverName', newValue)
                     }
                     onInputChange={(event: any, newInputValue: string) => {
-                      formik.setFieldValue('senderName', newInputValue) // Update the formik field value if needed
+                      formik.setFieldValue('receiverName', newInputValue)
                     }}
-                    value={formik.values.senderName}
-                    inputValue={formik.values.senderName}
+                    value={formik.values.receiverName}
+                    inputValue={formik.values.receiverName}
                     error={
-                      formik.errors.senderName && formik.touched.senderName
+                      formik.errors.receiverName && formik.touched.receiverName
                     }
                   />
                 </CustomField>
@@ -543,17 +535,21 @@ const PurchaseOrderCreateForm = ({
                       id="paymentType"
                       sx={{ width: 400 }}
                       defaultValue={formik.values.paymentType}
+                      value={formik.values.paymentType}
                       options={
-                        // unexpiredContracts?.map(
-                        //   (contract) => contract.contractNo
-                        // ) || []
                         paymentTypes.map(payment => {
-                          return payment.value
+                          if(i18n.language === Languages.ENUS) {
+                            return payment.paymentNameEng
+                          } else if(i18n.language === Languages.ZHCH){
+                            return payment.paymentNameSchi
+                          } else {
+                            return payment.paymentNameTchi
+                          }
                         })
                       }
                       onChange={(event, value) => {
                         if (value) {
-                          formik.setFieldValue('paymentType', value)
+                          onChangePaymentType(value)
                         }
                       }}
                       renderInput={(params) => (
@@ -565,8 +561,12 @@ const PurchaseOrderCreateForm = ({
                             ...params.InputProps,
                             sx: styles.textField
                           }}
+                          error={
+                            formik.errors.paymentType && formik.touched.paymentType
+                          }
                         />
                       )}
+                     
                     />
                   </CustomField>
                 </Box>
@@ -581,17 +581,25 @@ const PurchaseOrderCreateForm = ({
                   <CustomField label={t('purchase_order.create.recycling_plant')}>
                     <Autocomplete
                       disablePortal
-                      id="recycling_plant"
+                      id="senderName"
                       sx={{ width: 400 }}
-                      defaultValue={formik.values.contractNo}
+                      defaultValue={formik.values.senderName}
+                      value={formik.values.senderName}
                       options={
-                        unexpiredContracts?.map(
-                          (contract) => contract.contractNo
-                        ) || []
+                        manuList?.map( (option) => {
+                          if(i18n.language === Languages.ENUS) {
+                            return option.manufacturerNameEng
+                          } else if(i18n.language === Languages.ZHCH){
+                            return option.manufacturerNameSchi
+                          } else {
+                            return option.manufacturerNameTchi
+                          }
+                        }
+                        ) ?? []
                       }
                       onChange={(event, value) => {
                         if (value) {
-                          formik.setFieldValue('contractNo', value)
+                          formik.setFieldValue('senderName', value)
                         }
                       }}
                       renderInput={(params) => (
@@ -655,13 +663,6 @@ const PurchaseOrderCreateForm = ({
                       onChangeAddressReceiver={onChangeAddressReceiver}
                     />
                   </Modal>
-
-                  <PickupOrderList
-                    drawerOpen={openPico}
-                    handleDrawerClose={handleClosePicoList}
-                    selectPicoDetail={selectPicoRefrence}
-                    picoId={selectedPo?.picoId}
-                  ></PickupOrderList>
 
                   <Button
                     variant="outlined"

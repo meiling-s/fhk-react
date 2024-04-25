@@ -23,7 +23,7 @@ export type PurchaseOrderDetail = {
 export type PurChaseOrder = {
   poId: string
   picoId: string
-  cusTenantId: string
+  cusTenantId?: string
   receiverAddr: string
   receiverAddrGps: [0]
   sellerTenantId: string

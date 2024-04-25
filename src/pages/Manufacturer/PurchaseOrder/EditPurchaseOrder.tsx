@@ -18,6 +18,7 @@ import { Status, localStorgeKeyName } from '../../../constants/constant'
 import { returnApiToken, showErrorToast } from '../../../utils/utils'
 import * as Yup from 'yup'
 import { PurChaseOrder, PurchaseOrderDetail } from '../../../interfaces/purchaseOrder'
+import { UpdatePurchaseOrder } from '../../../APICalls/Customer/purchaseOrder'
 
 const EditPurchaseOrder = () => {
   const { t } = useTranslation()
@@ -27,6 +28,7 @@ const EditPurchaseOrder = () => {
   const poInfo: PurChaseOrder = state
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
 
   const getErrorMsg = (field: string, type: string) => {
     switch (type) {
@@ -38,6 +40,7 @@ const EditPurchaseOrder = () => {
         return field + ' ' + t('form.error.isInWrongFormat')
     }
   }
+
   const validateSchema = Yup.object().shape({
     effFrmDate: Yup.string().required('This effFrmDate is required'),
     effToDate: Yup.string().required('This effToDate is required'),
@@ -89,22 +92,16 @@ const EditPurchaseOrder = () => {
       )
   })
   
-  function getTenantId() {
-    const tenantId = returnApiToken().decodeKeycloack.substring(
-      'company'.length
-    )
 
-    return tenantId
-  }
+
   const currentDate = new Date().toISOString()
   const updatePickupOrder = useFormik({
     initialValues: {
       poId: '',
       picoId: '',
-      cusTenantId: '',
       receiverAddr: '',
       receiverAddrGps: [0],
-      sellerTenantId: getTenantId(),
+      sellerTenantId: '',
       senderAddr: '',
       senderAddrGps: [0],
       senderName: '',
@@ -123,42 +120,21 @@ const EditPurchaseOrder = () => {
       updatedAt: currentDate,
       purchaseOrderDetail: []
     },
-    validationSchema: validateSchema,
+    // validationSchema: validateSchema,
     onSubmit: async (values: PurChaseOrder) => {
       values.purchaseOrderDetail = addRow
-      // const result = await editPickupOrder(poInfo.picoId, values)
-
-      // const data = result?.data
-      // if (data) {
-      //   //navigate('/collector/PickupOrder', { state: 'updated' })
-      //   const routeName = role
-      //   navigate(`/${routeName}/PickupOrder`, { state: 'updated' })
-      // } else {
-      //   showErrorToast('fail to create pickup order')
-      // }
+      const result = await UpdatePurchaseOrder(values.poId, values)
+      if (result) {
+        navigate(`/${realm}/purchaseOrder`, { state: 'updated' })
+      } else {
+        showErrorToast('fail to update purchase order')
+      }
     }
   })
 
   const setPickupOrderDetail = () => {
     const picoDetails: PurchaseOrderDetail[] =
       poInfo?.purchaseOrderDetail?.map((item) => ({
-        // id: item.picoDtlId,
-        // picoHisId: item.picoHisId,
-        // senderId: item.senderId,
-        // senderName: item.senderName,
-        // senderAddr: item.senderAddr,
-        // senderAddrGps: item.senderAddrGps,
-        // receiverId: item.receiverId,
-        // receiverName: item.receiverName,
-        // receiverAddr: item.receiverAddr,
-        // receiverAddrGps: item.receiverAddrGps,
-        // status: item.status,
-        // createdBy: item.createdBy,
-        // updatedBy: item.updatedBy,
-        // pickupAt: item.pickupAt,
-        // recycType: item.recycType,
-        // recycSubType: item.recycSubType,
-        // weight: item.weight
         id: item.id,
         poDtlId: item.poDtlId,
         recycTypeId: item.recycTypeId,
@@ -186,32 +162,9 @@ const EditPurchaseOrder = () => {
 
   useEffect(() => {
     if (poInfo) {
-      //console.log('selectedPo:', poInfo)
       const createPicoDetail: PurchaseOrderDetail[] = setPickupOrderDetail()
 
       updatePickupOrder.setValues({
-        // tenantId: poInfo.tenantId,
-        // picoType: poInfo.picoType,
-        // effFrmDate: poInfo.effFrmDate,
-        // effToDate: poInfo.effToDate,
-        // routineType: poInfo.routineType,
-        // routine: poInfo.routine,
-        // logisticId: poInfo.logisticId,
-        // logisticName: poInfo.logisticName,
-        // vehicleTypeId: poInfo.vehicleTypeId,
-        // platNo: poInfo.platNo,
-        // contactNo: poInfo.contactNo,
-        // status: 'CREATED',
-        // reason: poInfo.reason,
-        // normalFlg: true,
-        // approvedAt: '2023-12-12T02:17:30.062Z',
-        // rejectedAt: '2023-12-12T02:17:30.062Z',
-        // approvedBy: loginId,
-        // rejectedBy: loginId,
-        // contractNo: poInfo.contractNo,
-        // updatedBy: loginId,
-        // refPicoId: poInfo.refPicoId,
-        // createPicoDetail: []
         poId: poInfo.poId,
         picoId: poInfo.picoId,
         cusTenantId: poInfo.cusTenantId,

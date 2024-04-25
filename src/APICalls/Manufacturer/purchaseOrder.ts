@@ -11,7 +11,8 @@ import { returnApiToken } from '../../utils/utils'
 import { PurChaseOrder, PurchaseOrderDetail, queryPurchaseOrder } from '../../interfaces/purchaseOrder'
 import axiosInstance from '../../constants/axiosInstance'
 import { Roles, localStorgeKeyName } from '../../constants/constant'
-import { CREATE_PURCHASE_ORDER } from '../../constants/purcahseOrder'
+import { CREATE_PURCHASE_ORDER, UPDATE_PURCHASE_ORDER } from '../../constants/purcahseOrder'
+import dayjs from 'dayjs'
 
 export const getAllPurchaseOrder = async (
   page: number,
@@ -41,8 +42,8 @@ export const getAllPurchaseOrder = async (
     }
 
     if (query?.poId) params.poId = query.poId
-    if (query?.fromCreatedAt) params.fromCreatedAt = query.fromCreatedAt
-    if (query?.toCreatedAt) params.toCreatedAt = query.toCreatedAt
+    if (query?.fromCreatedAt) params.fromCreatedAt = dayjs(query.fromCreatedAt).format('YYYY-MM-DD')
+    if (query?.toCreatedAt) params.toCreatedAt = dayjs(query.toCreatedAt).format('YYYY-MM-DD')
     if (query?.receiverAddr) params.receiverAddr = query.receiverAddr
     if (query?.recycType) params.recycType = query.recycType
     if (query?.status) params.status = query.status
@@ -106,6 +107,21 @@ export const postPurchaseOrder = async (data:PurChaseOrder) => {
       const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
           ...CREATE_PURCHASE_ORDER(auth.tenantId),
+          data: data
+      });
+      return response
+  } catch (e) {
+      return null;
+  }
+
+}
+
+export const updatetPurchaseOrder = async (data:PurChaseOrder) => {
+  const auth = returnApiToken()
+  try{
+      const response = await axiosInstance({
+      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+          ...UPDATE_PURCHASE_ORDER(auth.tenantId),
           data: data
       });
       return response

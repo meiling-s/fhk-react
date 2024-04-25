@@ -1002,7 +1002,9 @@
       "expected_recycling": "Expected recycling",
       "recycling_category": "Recycling category",
       "waste_paper_category": "Waste paper category",
-      "estimated_weight": "Estimated weight"
+      "estimated_weight": "Estimated weight",
+      "this": "This",
+      "is_required": "is required"
     }
   },
   "purchase_order_customer": {
