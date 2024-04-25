@@ -117,7 +117,7 @@ const Rosters: FunctionComponent = () => {
               <CircularProgress color="success" />
             </Box>
           ) : (
-            <Box className="roster-section flex gap-8">
+            <Box className="roster-section flex gap-8 w-min">
               {groupedRoster.map((item, index) => (
                 <Box
                   className="roster w-[225px]"
