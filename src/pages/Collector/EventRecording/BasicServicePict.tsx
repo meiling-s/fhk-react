@@ -9,31 +9,27 @@ import {
   ImageList,
   ImageListItem
 } from '@mui/material'
-import ImageUploading, {
-  ImageListType,
-  ImageType
-} from 'react-images-uploading'
+import ImageUploading, {ImageListType} from 'react-images-uploading'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
 import { DatePicker } from '@mui/x-date-pickers'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
-
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import CustomField from '../../../components/FormComponents/CustomField'
 import { styles } from '../../../constants/styles'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
-
-import { EVENT_RECORDING } from '../../../constants/configs'
 import { ServiceInfo } from '../../../interfaces/serviceInfo'
 import { createServiceInfo } from '../../../APICalls/serviceInfo'
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import { ToastContainer, toast } from 'react-toastify'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 const BasicServicePicture = () => {
   const { t } = useTranslation()
@@ -45,6 +41,7 @@ const BasicServicePicture = () => {
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginId = localStorage.getItem(localStorgeKeyName.username)
+  const {imgSettings} = useContainer(CommonTypeContainer)
 
   const ImageToBase64 = (images: ImageListType) => {
     var base64: string[] = []
@@ -338,8 +335,8 @@ const BasicServicePicture = () => {
                   onChange={(imageList, addUpdateIndex) =>
                     onImageChange(imageList, addUpdateIndex)
                   }
-                  maxNumber={EVENT_RECORDING.maxImageNumber}
-                  maxFileSize={EVENT_RECORDING.maxImageSize}
+                  maxNumber={imgSettings?.ImgQuantity}
+                  maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
                 >
                   {({ imageList, onImageUpload }) => (

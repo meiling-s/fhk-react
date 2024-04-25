@@ -8,12 +8,8 @@ import {
   ButtonBase,
   ImageList,
   ImageListItem,
-  Divider
 } from '@mui/material'
-import ImageUploading, {
-  ImageListType,
-  ImageType
-} from 'react-images-uploading'
+import ImageUploading, {ImageListType} from 'react-images-uploading'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
@@ -21,9 +17,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 import { styles } from '../../../constants/styles'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
-
-import { TENANT_REGISTER_CONFIGS } from '../../../constants/configs'
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import { createServiceInfo } from '../../../APICalls/serviceInfo'
 import { ServiceInfo } from '../../../interfaces/serviceInfo'
 import { ToastContainer, toast } from 'react-toastify'
@@ -32,6 +26,8 @@ import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 type ServiceName = 'SRV00005' | 'SRV00006' | 'SRV00007'
 type ServiceData = Record<
@@ -49,6 +45,8 @@ const OtherPict = () => {
 
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+  const {imgSettings} = useContainer(CommonTypeContainer)
+
   const serviceOthersField = [
     {
       serviceName: 'SRV00005',
@@ -329,8 +327,8 @@ const OtherPict = () => {
                         item.serviceName as ServiceName
                       )
                     }
-                    maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
-                    maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
+                    maxNumber={imgSettings?.ImgQuantity}
+                    maxFileSize={imgSettings?.ImgSize}
                     dataURLKey="data_url"
                   >
                     {({ imageList, onImageUpload }) => (

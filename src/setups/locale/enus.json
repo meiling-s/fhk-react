@@ -18,7 +18,9 @@
     "simplifiedChineseName": "Simplified Chinese Name",
     "englishName": "English Name",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "createdDatetime": "Create datetime",
+    "lastUpdateDatetime": "Last update datetime"
   },
   "col": {
     "createCP": "Create collection point",
@@ -34,7 +36,7 @@
     "startTime": "Start time",
     "premiseName": "Premise name",
     "premiseType": "Premise type",
-    "premiseRemark": "Others remark",
+    "premiseRemark": "Others Remarks",
     "enterText": "Enter text",
     "status": "Status",
     "open": "Open",

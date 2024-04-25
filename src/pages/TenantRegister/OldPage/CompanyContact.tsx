@@ -10,15 +10,13 @@ import {
   ImageListItem
 } from "@mui/material";
 import logo_company from "../../logo_company.png";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import CustomCopyrightSection from "../../../components/CustomCopyrightSection";
-import { RegisterItem } from "../../../interfaces/account";
 import { useEffect, useState } from "react";
-import { updateTenantRegInfo } from "../../../APICalls/tenantManage";
-
 import ImageUploading, { ImageListType } from 'react-images-uploading';
-import { TENANT_REGISTER_CONFIGS } from "../../../constants/configs";
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 const ImageToBase64 = (images: ImageListType) => {
   var base64: string[] = [];
@@ -35,13 +33,12 @@ const ImageToBase64 = (images: ImageListType) => {
 
 const TenantRegisterForm2 = () => {
 
-  const navigate = useNavigate();
   const {state} = useLocation();
-  const { BRNImages, inviteId } = state;
-
+  const { BRNImages } = state;
   const [contactName, setContactName] = useState<string>("");
   const [contactNo, setContactNo] = useState<string>("");
   const [EPDImages, setEPDImages] = useState<ImageListType>([]);
+  const {imgSettings} = useContainer(CommonTypeContainer)
 
   const onRegisterButtonClick = async () => {
     // const registerInfo: RegisterItem = {
@@ -130,8 +127,8 @@ const TenantRegisterForm2 = () => {
                 multiple
                 value={EPDImages}
                 onChange={onImageChange}
-                maxNumber={TENANT_REGISTER_CONFIGS.maxEPDImages}
-                maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
+                maxNumber={imgSettings?.ImgQuantity}
+                maxFileSize={imgSettings?.ImgSize}
                 onError={(errors, files)=>{
                   console.log("error: ",errors);
                 }}
