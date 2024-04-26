@@ -45,6 +45,7 @@ export interface PickupOrder {
     contractNo:        string;
     createdBy:         string;
     updatedBy:         string;
+    updatedAt:         string;
     createdAt:         string;
     refPicoId:         string;
     pickupOrderDetail: PickupOrderDetail[];
@@ -187,7 +188,7 @@ export type queryPickupOrder = {
     logisticName: string;
     recycType: string;
     senderName: string;
-    status: number
+    status: number | null
   }
 
 export interface OrderJobHeader {

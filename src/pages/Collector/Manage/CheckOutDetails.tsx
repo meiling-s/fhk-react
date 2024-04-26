@@ -26,6 +26,7 @@ type RecycItem = {
   recycSubtype: il_item
   weight: number
   images: CheckoutDetailPhoto[]
+  packageTypeId: string
 }
 
 interface CheckOutDetailsProps {
@@ -129,7 +130,8 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               id: detail.chkOutDtlId.toString()
             },
             weight: detail.weight,
-            images: detail.checkoutDetailPhoto
+            images: detail.checkoutDetailPhoto,
+            packageTypeId: detail.packageTypeId
           })
         }
       })
@@ -226,7 +228,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   <div className="detail flex justify-between items-center">
                     <div className="recyle-type flex items-center gap-2">
                       <div className="category" style={categoryRecyle}>
-                        {item.recycType.name.charAt(0)}
+                        {item.packageTypeId}
                       </div>
                       <div className="type-item">
                         <div className="sub-type text-xs text-black font-bold tracking-widest">

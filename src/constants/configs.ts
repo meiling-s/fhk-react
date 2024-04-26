@@ -14,11 +14,11 @@ export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
     //collector: 'https://uat.greenhoopapp.com/',
     //logistic: 'https://uat.greenhoopapp.com/',
     //manufacturer: 'https://uat.greenhoopapp.com/'
-    // account: 'https://www.greenhoopapp.com/',
-    // administrator: 'https://www.greenhoopapp.com/',
-    // collector: 'https://www.greenhoopapp.com/',
-    // logistic: 'https://www.greenhoopapp.com/',
-    // manufacturer: 'https://www.greenhoopapp.com/'
+    //account: 'https://www.greenhoopapp.com/',
+    //administrator: 'https://www.greenhoopapp.com/',
+    //collector: 'https://www.greenhoopapp.com/',
+    //logistic: 'https://www.greenhoopapp.com/',
+    //manufacturer: 'https://www.greenhoopapp.com/'
   },
   timeout: 100000,
   headers: {

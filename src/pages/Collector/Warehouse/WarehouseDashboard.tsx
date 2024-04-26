@@ -97,7 +97,7 @@ const WarehouseDashboard: FunctionComponent = () => {
   }, [selectedWarehouse, i18n.language])
 
   const initWarehouse = async () => {
-    const result = await getAllWarehouse(0, 20)
+    const result = await getAllWarehouse(0, 1000)
      if(result) {
       let capacityTotal = 0
       let warehouse: il_item[] = []

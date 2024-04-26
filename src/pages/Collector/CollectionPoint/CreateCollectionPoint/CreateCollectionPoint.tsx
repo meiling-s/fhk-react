@@ -155,8 +155,9 @@ function CreateCollectionPoint() {
     }
   }, [debouncedSearchValue])
 
-  const checkRecyclable = (items: recyclable) => {
-    return items.every((item) => item.recycSubTypeId.length > 0)
+  const checkRecyclable = () => {
+    //console.log('checkRecyclable', items)
+    return recyclables.every((item) => item.recycSubTypeId.length > 0)
   }
 
   const checkTimePeriod = () => {
@@ -165,12 +166,41 @@ function CreateCollectionPoint() {
     )
   }
 
+  const checkTimePeriodNotInvalid = () => {
+    return colPtRoutine?.routineContent.every((item) => {
+      for (let index = 0; index < item.startTime.length; index++) {
+        const currStartTime = new Date(item.startTime[index])
+        const currEndTime = new Date(item.endTime[index])
+
+        console.log(
+          'checkTimePeriodNotInvalid',
+          currStartTime,
+          currEndTime,
+          currEndTime < currStartTime
+        )
+
+        if (currEndTime < currStartTime) {
+          return false
+        }
+      }
+      return true
+    })
+  }
+
+  const getTime = (value: string) => {
+    return value.match(/\d{2}:\d{2}:\d{2}/)[0]
+  }
+
   const checkTimeNotDuplicate = () => {
     const isvalid = colPtRoutine?.routineContent.every((item) => {
-      for (let index = 0; index < item.startTime.length; index++) {
-        const currPair = item.startTime[index] + item.endTime[index]
-        const nextPair = item.startTime[index + 1] + item.endTime[index + 1]
+      for (let index = 0; index < item.startTime.length - 1; index++) {
+        const currPair =
+          getTime(item.startTime[index]) + getTime(item.endTime[index])
 
+        const nextPair =
+          getTime(item.startTime[index + 1]) + getTime(item.endTime[index + 1])
+
+          console.log(currPair, nextPair)
         if (currPair === nextPair) {
           return false
         }
@@ -184,6 +214,7 @@ function CreateCollectionPoint() {
   useEffect(() => {
     //do validation here
     const validate = async () => {
+      console.log('colPtRoutine', colPtRoutine?.routineContent)
       const tempV: formValidate[] = [] //temp validation
       colType == '' &&
         tempV.push({
@@ -244,12 +275,22 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      ;(colPtRoutine?.routineContent.length == 0 ||
-        !checkTimePeriod() ||
-        !checkTimeNotDuplicate()) &&
+      ;(colPtRoutine?.routineContent.length == 0 || !checkTimePeriod()) &&
         tempV.push({
           field: 'time_Period',
           problem: formErr.empty,
+          type: 'error'
+        })
+      !checkTimePeriodNotInvalid() &&
+      tempV.push({
+        field: 'time_Period',
+        problem: formErr.startDateBehindEndDate,
+        type: 'error'
+      })
+      !checkTimeNotDuplicate() &&
+        tempV.push({
+          field: 'time_Period',
+          problem: formErr.timeCantDuplicate,
           type: 'error'
         })
       premiseName == '' &&
@@ -264,24 +305,31 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      // premiseRemark == '' && premiseType === 'PT00009'  &&
-      //   tempV.push({
-      //     field: 'col.premiseRemark',
-      //     problem: formErr.empty,
-      //     type: 'error'
-      //   })
+      premiseRemark == '' &&
+        premiseType === 'PT00009' &&
+        tempV.push({
+          field: 'col.premiseRemark',
+          problem: formErr.empty,
+          type: 'error'
+        })
       recyclables.length == 0 &&
         tempV.push({
           field: 'col.recycType',
           problem: formErr.empty,
           type: 'error'
         })
-      console.log(
-        'num:',
-        staffNum,
-        Number.isNaN(parseInt(staffNum)),
-        staffNum == ''
-      )
+      !checkRecyclable() &&
+        tempV.push({
+          field: 'inventory.recyleSubType',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      // console.log(
+      //   'num:',
+      //   staffNum,
+      //   Number.isNaN(parseInt(staffNum)),
+      //   staffNum == ''
+      // )
       staffNum == '' &&
         tempV.push({
           field: 'col.numOfStaff',
@@ -301,7 +349,7 @@ function CreateCollectionPoint() {
             problem: formErr.numberSmallThanZero,
             type: 'error'
           })
-      contractNo == ''
+      contractNo == '' && !skipValidation.includes('col.contractNo')
         ? tempV.push({
             field: 'col.contractNo',
             problem: formErr.empty,
@@ -323,6 +371,7 @@ function CreateCollectionPoint() {
     siteType,
     colName,
     colPtRoutine,
+    colPtRoutine?.routineType,
     address,
     openingPeriod,
     premiseName,
@@ -398,6 +447,12 @@ function CreateCollectionPoint() {
         break
       case formErr.exceedsMaxLength:
         msg = t('form.error.exceedsMaxLength')
+        break
+      case formErr.timeCantDuplicate:
+        msg = t('form.error.timeCantDuplicate')
+        break
+      case formErr.startDateBehindEndDate:
+        msg = t('form.error.startDateBehindEndDate')
         break
     }
     return msg
@@ -668,7 +723,7 @@ function CreateCollectionPoint() {
             {premiseType === 'PT00009' && (
               <Grid item>
                 {/* <Collapse in={premiseType == 'PT00010'}> */}
-                <CustomField label={t('col.premiseRemark')} mandatory={false}>
+                <CustomField label={t('col.premiseRemark')} mandatory={true}>
                   <CustomTextField
                     id="premiseRemark"
                     placeholder={t('col.enterText')}
@@ -770,9 +825,27 @@ function CreateCollectionPoint() {
               ></CustomItemList>
             </CustomField>
             <Grid item>
-              <Typography sx={styles.header3}>
-                {t('pick_up_order.creation_time') + ' : ' + createdDate}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography
+                  sx={{
+                    ...styles.header3,
+                    paddingX: '4px',
+                    paddingRight: '16px'
+                  }}
+                >
+                  {t('common.createdDatetime') + ' : ' + createdDate}
+                </Typography>
+                <Typography
+                  sx={{
+                    ...styles.header3,
+                    paddingX: '4px',
+                    paddingLeft: '16px',
+                    borderLeft: '1px solid #ACACAC'
+                  }}
+                >
+                  {t('common.lastUpdateDatetime') + ' : ' + createdDate}
+                </Typography>
+              </Box>
             </Grid>
             <Grid item className="lg:flex sm:block text-center">
               <Button
@@ -809,6 +882,7 @@ function CreateCollectionPoint() {
     </>
   )
 }
+
 const localstyles = {
   localButton: {
     width: '200px',
@@ -816,5 +890,6 @@ const localstyles = {
     mr: 3
   }
 }
+
 
 export default CreateCollectionPoint
