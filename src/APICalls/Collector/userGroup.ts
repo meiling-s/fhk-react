@@ -28,7 +28,7 @@ export const getUserAccount = async () => {
 }
 
 //get all user group
-export const getAllUserGroup = async (page: number, size: number) => {
+export const getAllUserGroup = async () => {
   try {
     // const userAccount = await getUserAccount();
     const token = returnApiToken()
@@ -37,10 +37,6 @@ export const getAllUserGroup = async (page: number, size: number) => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_USER_GROUP(token.tenantId),
-      params: {
-        page: page,
-        size: size
-      },
       headers: {
         AuthToken: token.authToken
       }

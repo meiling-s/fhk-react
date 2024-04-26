@@ -29,6 +29,7 @@ import {
 } from '../../../APICalls/Collector/userGroup'
 import { IconButton } from '@mui/joy'
 import { localStorgeKeyName } from '../../../constants/constant'
+import i18n from '../../../setups/i18n'
 
 type TableRow = {
   id: number
@@ -70,9 +71,6 @@ const UserGroup: FunctionComponent = () => {
   const [selectedRow, setSelectedRow] = useState<UserGroupItem | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
-  const [page, setPage] = useState(1)
-  const pageSize = 10
-  const [totalData, setTotalData] = useState<number>(0)
   const [functionList, setFunctionList] = useState<Functions[]>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
 
@@ -88,7 +86,7 @@ const UserGroup: FunctionComponent = () => {
   }
 
   const initUserGroupList = async () => {
-    const result = await getAllUserGroup(page - 1, pageSize)
+    const result = await getAllUserGroup()
     const data = result?.data
     if (data) {
       var userGroupMapping: UserGroupItem[] = []
@@ -110,7 +108,6 @@ const UserGroup: FunctionComponent = () => {
         )
       })
       setUserGroupList(userGroupMapping)
-      setTotalData(data.totalPages)
     }
   }
 
@@ -138,16 +135,19 @@ const UserGroup: FunctionComponent = () => {
       width: 600,
       type: 'string',
       renderCell: (params) => {
+        console.log('params', params)
         return (
           <div>
-            {params.row.functions.map(
-              (item: { functionNameTChi: string }, key: number) => (
-                <span key={key}>
-                  {key > 0 ? ' 、' : ''}
-                  {item.functionNameTChi}
-                </span>
-              )
-            )}
+            {params.row.functions.map((item: any, key: number) => (
+              <span key={key}>
+                {key > 0 ? ' , ' : ''}
+                {i18n.language == 'zhch'
+                  ? item.functionNameSChi
+                  : i18n.language == 'zhhk'
+                  ? item.functionNameTChi
+                  : item.functionNameEng}
+              </span>
+            ))}
           </div>
         )
       }
@@ -317,14 +317,6 @@ const UserGroup: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
               }}
             />
           </Box>
