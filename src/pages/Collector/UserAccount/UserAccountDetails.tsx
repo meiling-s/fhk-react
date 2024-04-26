@@ -41,6 +41,7 @@ interface UserAccountDetailsProps {
   onSubmitData: () => void
   rowId?: number
   selectedItem?: UserAccount | null
+  userList?: string[]
 }
 
 interface userAccountItem {
@@ -60,7 +61,8 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  selectedItem
+  selectedItem,
+  userList
 }) => {
   const { t } = useTranslation()
   const [staffId, setStaffId] = useState<string>('')
@@ -164,6 +166,19 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      userList?.includes(loginId) &&
+        tempV.push({
+          field: t('userAccount.loginName'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      if (/admin/.test(loginId)) {
+        tempV.push({
+          field: t('userAccount.loginName'),
+          problem: formErr.loginIdCantContainAdmin,
+          type: 'error'
+        })
+      }
       contactNo?.toString() == '' &&
         tempV.push({
           field: t('staffManagement.contactNumber'),

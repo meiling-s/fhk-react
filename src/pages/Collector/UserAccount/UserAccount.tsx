@@ -47,8 +47,9 @@ const UserAccount: FunctionComponent = () => {
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [userAccountItems, setUserAccountItems] = useState<UserAccountItem[]>([])
-  const [page, setPage] = useState(1)
-  const pageSize = 10 // change page size lowerg to testing
+  //const [page, setPage] = useState(1)
+  //const pageSize = 10 // change page size lowerg to testing
+  const [userList, setUserList] = useState<string[]>([])
   const [selectedAccount, setSelectedAccount] = useState<UserAccountItem | null>(null)
   const navigate = useNavigate()
 
@@ -119,15 +120,17 @@ const UserAccount: FunctionComponent = () => {
 
   async function fetchDataUserAccount() {
     const result = await getAllUserAccount()
+    const accountlist: string[] = []
     if(result?.data){
       setUserAccountItems(result.data)
-      // console.log("fetchDataUserAccount >> ", result.data);
+      result.data.map((item: any) => accountlist.push(item.loginId))
+      setUserList(accountlist)
     }
   }
 
   useEffect(() => {
     fetchDataUserAccount()
-  }, [action, drawerOpen, currentLanguage, page, i18n, currentLanguage])
+  }, [action, drawerOpen, currentLanguage, i18n, currentLanguage])
 
 
   const addDataWarehouse = () => {
@@ -253,6 +256,7 @@ const UserAccount: FunctionComponent = () => {
            action={action}
            onSubmitData={handleOnSubmitData}
            rowId={rowId}
+           userList={userList}
            />
         </div>
       </div>
