@@ -390,7 +390,8 @@ function ShipmentManage() {
       logisticName: item.logisticName,
       senderAddr: item.senderAddr,
       deliveryAddress: '-',
-      status: item.status
+      status: item.status,
+      checkinDetail: item.checkinDetail
     }
   }
 
