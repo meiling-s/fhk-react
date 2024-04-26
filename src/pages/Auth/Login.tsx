@@ -25,6 +25,8 @@ import { styles as constantStyle } from '../../constants/styles'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { useTranslation } from 'react-i18next'
 import { jwtDecode } from "jwt-decode";
+import { useContainer } from 'unstated-next';
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 
 const Login = () => {
   const [userName, setUserName] = useState('')
@@ -35,7 +37,8 @@ const Login = () => {
   const [warningMsg, setWarningMsg] = useState<string>(" ");
   const navigate = useNavigate()
   const { t } = useTranslation()
-
+  const commonTypeContainer = useContainer(CommonTypeContainer)
+  
   // overwrite select style
   //todo : make select as component
   const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -110,6 +113,8 @@ const Login = () => {
             break;
         }
         localStorage.setItem(localStorgeKeyName.realmApiRoute, realmApiRoute);
+        
+        commonTypeContainer.updateCommonTypeContainer()
       }else{
         const errCode = result
         if(errCode == '004') {

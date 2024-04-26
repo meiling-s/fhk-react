@@ -18,7 +18,9 @@
     "simplifiedChineseName": "簡體中文名稱",
     "englishName": "英文名稱",
     "yes": "是",
-    "no": "否"
+    "no": "否",
+    "createdDatetime": "建立時間",
+    "lastUpdateDatetime": "上次更新時間"
   },
   "col": {
     "createCP": "建立回收點",
@@ -34,7 +36,7 @@
     "startTime": "服務時間",
     "premiseName": "房屋或埸所名稱",
     "premiseType": "房屋或埸所類別",
-    "premiseRemark": "其他備註",
+    "premiseRemark": "其他備注",
     "enterText": "請輸入文字",
     "status": "開放狀態",
     "open": "開放",

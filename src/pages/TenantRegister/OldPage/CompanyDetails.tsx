@@ -14,11 +14,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import CameraAltOutlinedIcon from '@mui/icons-material/CameraAltOutlined';
 import CustomCopyrightSection from "../../../components/CustomCopyrightSection";
 import { useEffect, useState } from "react";
-import { getTenantById } from "../../../APICalls/tenantManage";
-import { RegisterItem } from "../../../interfaces/account";
 import ImageUploading, { ImageListType } from "react-images-uploading";
-import { TENANT_REGISTER_CONFIGS } from "../../../constants/configs";
-  
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+
 const ImageToBase64 = (images: ImageListType) => {
   var base64: string[] = [];
   images.map((image) => {
@@ -41,6 +40,7 @@ const CompanyDetails = () => {
   const [EngName, setEngName] = useState("");
   const [BRN, setBRN] = useState("");   //brn = Business registration no.
   const [BRNImages, setBRNImages] = useState<ImageListType>([]);
+  const {imgSettings} = useContainer(CommonTypeContainer)
 
   const onImageChange = (imageList: ImageListType, addUpdateIndex: number[]|undefined) => {
     // data for submit
@@ -161,8 +161,8 @@ const CompanyDetails = () => {
             multiple
             value={BRNImages}
             onChange={onImageChange}
-            maxNumber={TENANT_REGISTER_CONFIGS.maxBRNImages}
-            maxFileSize={TENANT_REGISTER_CONFIGS.maxImageSize}
+            maxNumber={imgSettings?.ImgQuantity}
+            maxFileSize={imgSettings?.ImgSize}
             dataURLKey="data_url"
           >
             {({

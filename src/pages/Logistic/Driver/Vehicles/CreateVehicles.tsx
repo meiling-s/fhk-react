@@ -15,9 +15,7 @@ import ImageUploading, { ImageListType } from 'react-images-uploading'
 import RightOverlayForm from '../../../../components/RightOverlayForm'
 import CustomField from '../../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../../components/FormComponents/CustomTextField'
-import { EVENT_RECORDING } from '../../../../constants/configs'
 import { styles } from '../../../../constants/styles'
-
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../../interfaces/common'
@@ -29,6 +27,8 @@ import { formErr } from '../../../../constants/constant'
 import { returnErrorMsg, ImageToBase64 } from '../../../../utils/utils'
 import { localStorgeKeyName } from '../../../../constants/constant'
 import { createVehicles, deleteVehicle, editVehicle } from '../../../../APICalls/Logistic/vehicles'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -56,7 +56,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [vehicleWeight, setVehicleWeight] = useState<string>('')
-
+  const {imgSettings} = useContainer(CommonTypeContainer)
   const mappingData = () => {
     if (selectedItem != null) {
       setLicensePlate(selectedItem.plateNo)
@@ -312,8 +312,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   onChange={(imageList, addUpdateIndex) =>
                     onImageChange(imageList, addUpdateIndex)
                   }
-                  maxNumber={EVENT_RECORDING.maxImageNumber}
-                  maxFileSize={EVENT_RECORDING.maxImageSize}
+                  maxNumber={imgSettings?.ImgQuantity}
+                  maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
                 >
                   {({ imageList, onImageUpload, onImageRemove }) => (

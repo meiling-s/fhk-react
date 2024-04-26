@@ -1,5 +1,4 @@
 import { AxiosRequestConfig } from 'axios'
-import { CreateDenialReason } from '../interfaces/denialReason'
 
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
@@ -1177,6 +1176,14 @@ export const GET_ALL_REASON_MANUFACTURER = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/manufacturer/reason/${tenantId}`
+})
+
+// get upload img setting
+export const GET_IMG_SETTINGS = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/t/imgSetting/${tenantId}`
 })
 
 export const UPDATE_PURCHASE_ORDER = (

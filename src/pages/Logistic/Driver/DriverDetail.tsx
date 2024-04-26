@@ -19,7 +19,6 @@ import { formValidate } from "../../../interfaces/common"
 import { Driver } from "../../../interfaces/driver"
 import { CAMERA_OUTLINE_ICON } from "../../../themes/icons"
 import { ImageToBase64, returnErrorMsg } from "../../../utils/utils"
-import { EVENT_RECORDING } from "../../../constants/configs"
 
 interface FormValues {
     [key: string]: string | string[]
@@ -200,7 +199,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
         return s === ''
     }
 
-    const { vehicleType } =
+    const { vehicleType, imgSettings } =
         useContainer(CommonTypeContainer);
 
     const handleFieldChange = (field: keyof FormValues, value: string) => {
@@ -427,8 +426,8 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                 setPictures(imageList)
                                              }}
                                             dataURLKey="data_url"
-                                            maxNumber={EVENT_RECORDING.maxImageNumber}
-                                            maxFileSize={EVENT_RECORDING.maxImageSize}
+                                            maxNumber={imgSettings?.ImgQuantity}
+                                            maxFileSize={imgSettings?.ImgSize}
                                         >
                                             {({ imageList, onImageUpload, onImageRemove }) => (
                                                 <Box className="box">
