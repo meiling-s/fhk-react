@@ -49,7 +49,7 @@ export default function ColPointTypeList({
         return colList;
     };
 
-    console.log("init editable ",editable)
+    //console.log("init editable ",editable)
 
     return(
         <>

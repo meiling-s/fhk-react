@@ -147,7 +147,7 @@ export const getCommonTypes = async () => {
             baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
             // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
         });
-        console.log('Get contract success:', JSON.stringify(response));
+        //console.log('Get contract success:', JSON.stringify(response));
         types.contract = response.data.content;
 
         return types;

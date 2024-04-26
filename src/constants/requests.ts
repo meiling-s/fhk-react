@@ -1327,3 +1327,10 @@ export const UPDATE_WEIGHT_TOLERANCE = (weightId: number): AxiosRequestConfig =>
   method: 'put',
   url: `api/v1/administrator/weightTolerance/${weightId}`
 })
+// get upload img setting
+export const GET_IMG_SETTINGS = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/t/imgSetting/${tenantId}`
+})
