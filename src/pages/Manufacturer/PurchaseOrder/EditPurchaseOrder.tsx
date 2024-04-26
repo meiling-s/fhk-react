@@ -1,21 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  CreatePicoDetail,
-  EditPo,
-  PickupOrder,
-  PickupOrderDetail
-} from '../../../interfaces/pickupOrder'
 import PurchaseOrderCreateForm from '../../../components/FormComponents/PurchaseOrderCreateForm'
 import { useFormik } from 'formik'
-import {
-  editPickupOrder,
-  getAllPickUpOrder
-} from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
 import { Status, localStorgeKeyName } from '../../../constants/constant'
-import { returnApiToken, showErrorToast } from '../../../utils/utils'
+import { showErrorToast } from '../../../utils/utils'
 import * as Yup from 'yup'
 import { PurChaseOrder, PurchaseOrderDetail } from '../../../interfaces/purchaseOrder'
 import { UpdatePurchaseOrder } from '../../../APICalls/Customer/purchaseOrder'
@@ -92,8 +81,6 @@ const EditPurchaseOrder = () => {
       )
   })
   
-
-
   const currentDate = new Date().toISOString()
   const updatePickupOrder = useFormik({
     initialValues: {
@@ -153,7 +140,7 @@ const EditPurchaseOrder = () => {
         createdBy: item.createdBy,
         updatedBy: loginId,
         pickupAt: item.pickupAt,
-        receiverAddr: item.receiverAddr,
+        receiverAddr: poInfo.receiverAddr,
       })) || []
 
     setAddRow(picoDetails)

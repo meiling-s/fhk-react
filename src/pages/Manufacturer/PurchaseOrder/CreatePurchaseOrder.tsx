@@ -1,12 +1,8 @@
-import { Formik, useFormik } from 'formik'
+import { useFormik } from 'formik'
 import PurchaseOrderCreateForm from '../../../components/FormComponents/PurchaseOrderCreateForm'
-import { createPickUpOrder } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
-import {
-  PurChaseOrder,
-  PurchaseOrderDetail,
-} from '../../../interfaces/purchaseOrder'
+import { PurChaseOrder, PurchaseOrderDetail} from '../../../interfaces/purchaseOrder'
 import { useNavigate } from 'react-router'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { returnApiToken, showErrorToast } from '../../../utils/utils'
@@ -17,7 +13,6 @@ const CreatePurchaseOrder = () => {
   const navigate = useNavigate()
   const [addRow, setAddRow] = useState<PurchaseOrderDetail[]>([])
   const { t } = useTranslation()
-  const [picoTypeValue, setPicoType] = useState<string>('ROUTINE')
   const realm = localStorage.getItem(localStorgeKeyName.realm)
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 
@@ -100,9 +95,9 @@ const CreatePurchaseOrder = () => {
       updatedAt: currentDate,
       purchaseOrderDetail: []
     },
-    validationSchema: validateSchema,
+    // validationSchema: validateSchema,
     onSubmit: async (values: PurChaseOrder) => {
-      console.log('purchase_order', values)
+
       values.purchaseOrderDetail = addRow
       const result = await postPurchaseOrder(values)
       const data = result?.data

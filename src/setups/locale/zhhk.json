@@ -1002,7 +1002,8 @@
       "waste_paper_category": "廢紙類別",
       "estimated_weight": "預計重量",
       "this": "這",
-      "is_required": "是必須的"
+      "is_required": "是必須的",
+      "required_field": "此欄位是必需的"
     }
   },
   "purchase_order_customer": {

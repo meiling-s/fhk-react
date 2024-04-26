@@ -2,7 +2,6 @@ import {
   Alert,
   Box,
   Button,
-  Drawer,
   Grid,
   IconButton,
   Autocomplete,
@@ -13,54 +12,28 @@ import {
   Typography
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
-import React, { SyntheticEvent, useEffect, useState } from 'react'
+import React, { SyntheticEvent, useState } from 'react'
 import { styles } from '../../constants/styles'
 import CustomField from './CustomField'
-import CustomSwitch from './CustomSwitch'
-import CustomDatePicker2 from './CustomDatePicker2'
-import RoutineSelect from '../SpecializeComponents/RoutineSelect'
-import CustomTextField from './CustomTextField'
-import CustomItemList, { il_item } from './CustomItemList'
 import CreateRecycleFormPurchaseOrder from './CreateRecycleFormPurchaseOrder'
 import { useContainer } from 'unstated-next'
-import {
-  CreatePicoDetail,
-  EditPo,
-  PickupOrder,
-  PickupOrderDetail
-} from '../../interfaces/pickupOrder'
+import { CreatePicoDetail} from '../../interfaces/pickupOrder'
 import { PaymentType, PurChaseOrder, PurchaseOrderDetail } from '../../interfaces/purchaseOrder'
-import { colPtRoutine } from '../../interfaces/common'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import { useNavigate } from 'react-router-dom'
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
-import {
-  ADD_CIRCLE_ICON,
-  DELETE_OUTLINED_ICON,
-  EDIT_OUTLINED_ICON
-} from '../../themes/icons'
-import theme from '../../themes/palette'
-import { t, use } from 'i18next'
-import { useFormik } from 'formik'
-import { editPickupOrder } from '../../APICalls/Collector/pickupOrder/pickupOrder'
-import { validate } from 'uuid'
+import { DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON} from '../../themes/icons'
+import { t } from 'i18next'
 import CustomAutoComplete from './CustomAutoComplete'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
-import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
-import PickupOrderList from '../PickupOrderList'
-import { amET } from '@mui/material/locale'
 import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
-import {
-  getThemeColorRole,
-  getThemeCustomList,
-  displayCreatedDate
-} from '../../utils/utils'
+import { getThemeColorRole, displayCreatedDate} from '../../utils/utils'
 
 type DeleteModalProps = {
   open: boolean
@@ -145,6 +118,15 @@ const PurchaseOrderCreateForm = ({
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const { logisticList, contractType, recycType, manuList } = useContainer(CommonTypeContainer)
   const navigate = useNavigate()
+  const [errors, setErrors] = useState(
+    {
+      receiverName: {type: 'string', status: false,  required: true},
+      contactName: {type: 'string', status: false,  required: true},
+      contactNo: {type: 'string', status: false,  required: true},
+      paymentType: {type: 'string', status: false,  required: true},
+      senderName: {type: 'string', status: false,  required: false}
+    }
+  )
   
   const paymentTypes : PaymentType[] = [
     {
@@ -178,8 +160,8 @@ const PurchaseOrderCreateForm = ({
 
   // set custom style each role
   const colorTheme: string = getThemeColorRole(role)
-  const customListTheme = getThemeCustomList(role)
-  console.log('formik', formik.values)
+  // const customListTheme = getThemeCustomList(role)
+  
   const buttonFilledCustom = {
     borderRadius: '40px',
     borderColor: '#7CE495',
@@ -396,6 +378,30 @@ const PurchaseOrderCreateForm = ({
   }
 
   const onChangePaymentType = (value: string) => {
+    if(!value){
+      formik.setFieldValue('paymentType', '')
+      setErrors((prev: any) => {
+        return{
+          ...prev,
+          ['paymentType']: {
+            status: true,
+            required: true
+          }
+        }
+      })
+      return
+    } else {
+      setErrors((prev: any) => {
+        return{
+          ...prev,
+          ['paymentType']: {
+            status: false,
+            required: true
+          }
+        }
+      })
+    }
+
     if(i18n.language === Languages.ENUS) {
       const payment = paymentTypes.find(item => item.paymentNameEng && item.paymentNameEng === value)
       if(payment){
@@ -414,10 +420,94 @@ const PurchaseOrderCreateForm = ({
     }
   }
   
+  const onChangeContent = (field: string, value: any) => {
+    if(value === '' || value === 0){
+      formik.setFieldValue([field], '')
+      setErrors(prev => {
+        return{
+          ...prev,
+          [field]: {
+            status: true,
+            required: true
+          }
+        }
+      })
+    } else {
+      formik.setFieldValue([field], value)
+      setErrors(prev => {
+        return{
+          ...prev,
+          [field]: {
+            status: false,
+            require: true
+          }
+        }
+      })
+    }
+  }
+
+  const validateData = () => {
+    let isValid = true
+    if(formik.values.receiverName === ''){
+      setErrors(prev => {
+        return{
+          ...prev,
+          receiverName : {
+            ...prev.receiverName,
+            status: true
+          }
+        }
+      })
+      isValid = false
+    }
+    if(formik.values.contactName === ''){
+      setErrors(prev => {
+        return{
+          ...prev,
+          contactName : {
+            ...prev.contactName,
+            status: true
+          }
+        }
+      })
+      isValid = false
+    }
+    if(formik.values.contactNo === ''){
+      setErrors(prev => {
+        return{
+          ...prev,
+          contactNo : {
+            ...prev.contactNo,
+            status: true
+          }
+        }
+      })
+      isValid = false
+    }
+    if(formik.values.paymentType === ''){
+      setErrors(prev => {
+        return{
+          ...prev,
+          paymentType : {
+            ...prev.paymentType,
+            status: true
+          }
+        }
+      })
+      isValid = false
+    }
+    return isValid
+  }
+
+  const onhandleSubmit =() => {
+    const isValid = validateData();
+    if(!isValid) return
+    formik.handleSubmit()
+  }
 
   return (
     <>
-      <form onSubmit={formik.handleSubmit}>
+      {/* <form onSubmit={onhandleSubmit}> */}
         <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
           <LocalizationProvider
             dateAdapter={AdapterDayjs}
@@ -467,7 +557,7 @@ const PurchaseOrderCreateForm = ({
                       formik.setFieldValue('receiverName', newValue)
                     }
                     onInputChange={(event: any, newInputValue: string) => {
-                      formik.setFieldValue('receiverName', newInputValue)
+                      onChangeContent('receiverName', newInputValue)
                     }}
                     value={formik.values.receiverName}
                     inputValue={formik.values.receiverName}
@@ -476,6 +566,8 @@ const PurchaseOrderCreateForm = ({
                     }
                   />
                 </CustomField>
+                { errors.receiverName.required && errors.receiverName.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
+               
               </Grid>
               <Grid item>
                 <CustomField
@@ -490,7 +582,7 @@ const PurchaseOrderCreateForm = ({
                       formik.setFieldValue('contactName', newValue)
                     }
                     onInputChange={(event: any, newInputValue: string) => {
-                      formik.setFieldValue('contactName', newInputValue) // Update the formik field value if needed
+                      onChangeContent('contactName', newInputValue)
                     }}
                     value={formik.values.contactName}
                     inputValue={formik.values.contactName}
@@ -499,6 +591,7 @@ const PurchaseOrderCreateForm = ({
                     }
                   />
                 </CustomField>
+                {errors.contactName.required && errors.contactName.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
               </Grid>
               <Grid item>
                 <CustomField
@@ -517,7 +610,7 @@ const PurchaseOrderCreateForm = ({
                       formik.setFieldValue('contactNo', newValue)
                     }
                     onInputChange={(event: any, newInputValue: string) => {
-                      formik.setFieldValue('contactNo', newInputValue) // Update the formik field value if needed
+                      onChangeContent('contactNo', newInputValue)
                     }}
                     value={formik.values.contactNo}
                     inputValue={formik.values.contactNo}
@@ -526,6 +619,7 @@ const PurchaseOrderCreateForm = ({
                     }
                   />
                 </CustomField>
+                {errors.contactNo.required && errors.contactNo.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
               </Grid>
               <Grid item>
                 <Box>
@@ -548,9 +642,7 @@ const PurchaseOrderCreateForm = ({
                         })
                       }
                       onChange={(event, value) => {
-                        if (value) {
-                          onChangePaymentType(value)
-                        }
+                        onChangePaymentType(value)
                       }}
                       renderInput={(params) => (
                         <TextField
@@ -570,6 +662,7 @@ const PurchaseOrderCreateForm = ({
                     />
                   </CustomField>
                 </Box>
+                {errors.paymentType.required && errors.paymentType.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
               </Grid>
               <Grid item>
                 <Typography sx={styles.header2}>
@@ -598,9 +691,7 @@ const PurchaseOrderCreateForm = ({
                         ) ?? []
                       }
                       onChange={(event, value) => {
-                        if (value) {
-                          formik.setFieldValue('senderName', value)
-                        }
+                        formik.setFieldValue('senderName', value)
                       }}
                       renderInput={(params) => (
                         <TextField
@@ -616,6 +707,7 @@ const PurchaseOrderCreateForm = ({
                     />
                   </CustomField>
                 </Box>
+                {errors.senderName.required && errors.senderName.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
               </Grid>
               <Grid item>
                 <CustomField label={''}>
@@ -661,6 +753,7 @@ const PurchaseOrderCreateForm = ({
                       picoHisId={picoRefId}
                       isEditing={isEditing}
                       onChangeAddressReceiver={onChangeAddressReceiver}
+                      receiverAddr={formik.values.receiverAddr}
                     />
                   </Modal>
 
@@ -693,7 +786,8 @@ const PurchaseOrderCreateForm = ({
               </Grid>
               <Grid item>
                 <Button
-                  type="submit"
+                  // type="submit"
+                  onClick={onhandleSubmit}
                   sx={[buttonFilledCustom, localstyles.localButton]}
                 >
                   {t('pick_up_order.finish')}
@@ -725,9 +819,15 @@ const PurchaseOrderCreateForm = ({
             />
           </LocalizationProvider>
         </Box>
-      </form>
+      {/* </form> */}
     </>
   )
+}
+
+const ErrorMessage:React.FC<{message: string}> = ({message}) => {
+    return <Typography style={{color: 'red', fontWeight: '400'}}>
+  {message}
+</Typography>
 }
 
 let localstyles = {
