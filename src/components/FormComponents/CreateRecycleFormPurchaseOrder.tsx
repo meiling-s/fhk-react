@@ -432,15 +432,8 @@ const CreateRecycleForm = ({
                       }
                       recycL={recycType ?? []}
                       setState={(values) => {
-                        // if(!refresh){
-                          // refresh = true
-                          // formik.setFieldValue('recycTypeId', values?.recycTypeId)
-                          // formik.setFieldValue('recycSubTypeId', values?.recycSubTypeId)
-                        // } else {
-                          onChangeContent('recycTypeId', values?.recycTypeId)
-                          onChangeContent('recycSubTypeId', values?.recycSubTypeId)
-                        // }
-                        
+                        if(values.recycTypeId) onChangeContent('recycTypeId', values?.recycTypeId)
+                        if(values.recycSubTypeId) onChangeContent('recycSubTypeId', values?.recycSubTypeId)
                       }}
                       itemColor={{
                         bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
