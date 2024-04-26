@@ -396,7 +396,7 @@ const CreateRecycleForm = ({
                     <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%' }}>
                       <Box sx={{ ...localstyles.DateItem }}>
                         <DatePicker
-                          defaultValue={dayjs(formik.values.pickupAt)}
+                          value={dayjs(formik.values.pickupAt)}
                           format={format.dateFormat2}
                           onChange={(value) => {
                               formik.setFieldValue(
