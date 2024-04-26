@@ -42,7 +42,7 @@ import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createRecyc, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { createRecyc, createVehicleData, deleteVehicleData, sendWeightUnit, updateVehicleData } from '../../../APICalls/ASTD/recycling'
 
 interface VehicleDataProps {
     createdAt: string
@@ -56,6 +56,7 @@ interface VehicleDataProps {
     vehicleTypeNameEng: string
     vehicleTypeNameSchi: string
     vehicleTypeNameTchi: string
+    vehicleTypeLimit: string
 }
 
 
@@ -64,13 +65,15 @@ interface SiteTypeProps {
     handleDrawerClose: () => void
     action?: 'add' | 'edit' | 'delete'
     selectedItem: VehicleDataProps | null
+    onSubmit: (type: string) => void;
   }
 
 const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     drawerOpen,
     handleDrawerClose,
     action,
-    selectedItem
+    selectedItem,
+    onSubmit,
 }) => {
     const { t } = useTranslation()
     const { i18n } = useTranslation()
@@ -84,8 +87,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const [weight, setWeight] = useState('')
     const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
-    const [isMainCategory, setMainCategory] = useState(true)
-    const [chosenRecyclableType, setChosenRecyclableType] = useState('')
+    const [vehicleTypeId, setVehicleTypeId] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
 
@@ -96,11 +98,12 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     useEffect(() => {
         if (action === 'edit') {
             if (selectedItem !== null && selectedItem !== undefined) {
+                setVehicleTypeId(selectedItem.vehicleTypeId)
                 setTChineseName(selectedItem.vehicleTypeNameTchi)
                 setSChineseName(selectedItem.vehicleTypeNameSchi)
                 setEnglishName(selectedItem.vehicleTypeNameEng)
                 setDescription(selectedItem.description)
-                // setWeight(selectedItem.weight)
+                setWeight(selectedItem.vehicleTypeLimit)
                 setRemark(selectedItem.remark)
             }
         } else if (action === 'add') {
@@ -173,18 +176,37 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         setValidation(tempV)
     }, [tChineseName, sChineseName, englishName])
 
-    const handleDelete = () => {
-        setOpenDelete(true)
+    const handleDelete = async () => {
+        const token = returnApiToken()
+
+        const vehicleForm = {
+            status: "DELETED",
+            updatedBy: token.loginId
+        }
+
+        if (vehicleForm) {
+            try {
+                const response = await deleteVehicleData(vehicleTypeId, vehicleForm)
+
+                if (response) {
+                    showSuccessToast(t('notify.successDeleted'))
+                    onSubmit('vehicle')
+                }
+            } catch (error) {
+                console.log(error)
+                showErrorToast(t('notify.errorDeleted'))
+            }
+        }
     }
 
     const handleSubmit = () => {
         const { loginId } = returnApiToken();
-        console.log(action, 'action')
         
-        const recyclingPointForm = {
-            siteTypeNameTchi: tChineseName,
-            siteTypeNameSchi: sChineseName,
-            siteTypeNameEng: englishName,
+        const vehicleForm = {
+            vehicleTypeNameTchi: tChineseName,
+            vehicleTypeNameSchi: sChineseName,
+            vehicleTypeNameEng: englishName,
+            vehicleTypeLimit: weight,
             description: description,
             remark: remark,
             status: 'ACTIVE',
@@ -196,7 +218,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         getFormErrorMsg()
 
         if (validation.length == 0) {
-            action == 'add' ? createRecyclingPointData(recyclingPointForm) : editRecyclingPointData(recyclingPointForm)
+            action == 'add' ? createVehicle(vehicleForm) : editVehicleData(vehicleForm)
 
             setValidation([])
         } else {
@@ -204,27 +226,30 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         }
     }
 
-    const createRecyclingPointData = async (weightForm: any) => {
+    const createVehicle = async (vehicleForm: any) => {
         try {
-            const response = await sendWeightUnit(weightForm)
+            const response = await createVehicleData(vehicleForm)
             if (response) {
                 showSuccessToast(t('notify.successCreated'))
+                onSubmit('vehicle')
             }
         } catch (error) {
             console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+            showErrorToast(t('notify.errorCreated'))
         }
     }
-    const editRecyclingPointData = async (weightForm: any) => {
-        // try {
-        //     const response = await createRecyc(addRecyclingForm)
-        //     if (response) {
-        //         showSuccessToast(t('notify.successCreated'))
-        //     }
-        // } catch (error) {
-        //     console.error(error)
-        //     showErrorToast(t('errorCreated.errorCreated'))
-        // }
+
+    const editVehicleData = async (vehicleForm: any) => {
+        try {
+            const response = await updateVehicleData(vehicleTypeId, vehicleForm)
+            if (response) {
+                showSuccessToast(t('notify.successUpdated'))
+                onSubmit('vehicle')
+            }
+        } catch (error) {
+            console.error(error)
+            showErrorToast(t('notify.errorUpdated'))
+        }
     }
 
     return (

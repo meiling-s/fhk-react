@@ -58,6 +58,7 @@ interface VehicleDataProps {
     vehicleTypeNameEng: string
     vehicleTypeNameSchi: string
     vehicleTypeNameTchi: string
+    vehicleTypeLimit: string
 }
 
 const Vehicle: FunctionComponent = () => {
@@ -98,6 +99,12 @@ const Vehicle: FunctionComponent = () => {
     {
       field: 'vehicleTypeNameEng',
       headerName: t('packaging_unit.english_name'),
+      width: 200,
+      type: 'string'
+    },
+    {
+      field: 'vehicleTypeLimit',
+      headerName: t('vehicle.loading_capacity'),
       width: 200,
       type: 'string'
     },
@@ -171,13 +178,9 @@ const Vehicle: FunctionComponent = () => {
   }
 
 
-  const onSubmitData = (type: string, msg: string) => {
-
-    if (type == 'success') {
-      showSuccessToast(msg)
-    } else {
-      showErrorToast(msg)
-    }
+  const onSubmitData = (type: string) => {
+    initVehicleData()
+    setDrawerOpen(false)
   }
 
   const showErrorToast = (msg: string) => {
@@ -233,7 +236,7 @@ const Vehicle: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t(`recycling_point.recycling_point`)}
+            {t(`top_menu.vehicles`)}
           </Typography>
           <Button
             sx={[
@@ -290,6 +293,7 @@ const Vehicle: FunctionComponent = () => {
             handleDrawerClose={() => setDrawerOpen(false)}
             action={action}
             selectedItem={selectedRow}
+            onSubmit={onSubmitData}
         />
       </Box>
     </>

@@ -31,7 +31,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
 import { formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64 } from '../../../utils/utils'
+import { returnErrorMsg, ImageToBase64, showSuccessToast, showErrorToast } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -43,13 +43,23 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { createContract, editContract } from '../../../APICalls/Collector/contracts'
+import { updateDecimalValue } from '../../../APICalls/ASTD/decimal'
+
+interface DecimalValueProps {
+  createdAt: string
+  createdBy: string
+  decimalVal: string
+  decimalValId: number
+  updatedAt: string
+  updatedBy: string
+}
 
 interface NumberFormatProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
-  onSubmitData: (type: string, msg: string) => void
-  numberFormat: string
+  onSubmitData: (type: string) => void
+  numberFormat: DecimalValueProps | null
 }
 
 const NumberFormat: FunctionComponent<NumberFormatProps> = ({
@@ -61,13 +71,15 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
 }) => {
   const { t } = useTranslation()
   const [numFormat, setNumFormat] = useState('')
+  const [decimalValId, setDecimalValId] = useState(0)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
 
   
   useEffect (() => {
     if (action === 'edit') {
       if (numberFormat) {
-        setNumFormat(numberFormat)
+        setNumFormat(numberFormat.decimalVal)
+        setDecimalValId(numberFormat.decimalValId)
       }
     }
   }, [numberFormat, action, drawerOpen])
@@ -89,44 +101,27 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
     const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
 
-    // const formData: CreateContractProps = {
-    //   tenantId: tenantId,
-    //   contractNo: contractNo,
-    //   parentContractNo: referenceNumber,
-    //   status: contractStatus === true ? 'ACTIVE' : 'INACTIVE',
-    //   contractFrmDate: startDate.format('YYYY-MM-DD'),
-    //   contractToDate: endDate.format('YYYY-MM-DD'),
-    //   remark: remark,
-    //   epdFlg: whether,
-    //   createdBy: loginId,
-    //   updatedBy: loginId
-    // }
-
-    // if (action == 'add') {
-    //   handleCreateContract(formData)
-    // } else if (action == 'edit') {
-    //   handleEditContract(formData)
-    // }
-  }
-
-  const handleCreateContract = async (formData: CreateContractProps) => {
-      const result = await createContract(formData)
-      if(result) {
-        onSubmitData("success", t("common.saveSuccessfully"))
-        resetData()
-        handleDrawerClose()
-      }else{
-        onSubmitData("error", t("common.saveFailed"))
-      }
-  }
-
-  const handleEditContract = async (formData: CreateContractProps) => {
-    const result = await editContract(formData)
-    if(result) {
-      onSubmitData("success", t("common.editSuccessfully"))
-      resetData()
-      handleDrawerClose()
+    const formData = {
+      decimalVal: numFormat,
+      updatedBy: loginId
     }
+
+    if (formData) {
+      handleUpdateDecimalValue(formData)
+    }
+
+  }
+
+  const handleUpdateDecimalValue = async (formData: any) => {
+      const result = await updateDecimalValue(formData, decimalValId)
+
+      if(result) {
+        onSubmitData("decimal")
+        resetData()
+        showSuccessToast(t('notify.SuccessEdited'))
+      } else {
+        showErrorToast(t('notify.errorEdited'))
+      }
   }
 
   return (
@@ -149,11 +144,11 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
             <CustomField label={t('general_settings.number_format')}>
               <CustomTextField
                 id="contractNo"
-                value={numberFormat}
+                value={numFormat}
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.number_format')}
                 onChange={(event) => setNumFormat(event.target.value)}
-                error={checkString(numberFormat)}
+                error={checkString(numFormat)}
               />
             </CustomField>
           </Box>

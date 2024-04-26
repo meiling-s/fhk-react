@@ -31,7 +31,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
 import { formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64 } from '../../../utils/utils'
+import { returnErrorMsg, ImageToBase64, showSuccessToast, showErrorToast } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -43,13 +43,23 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { createContract, editContract } from '../../../APICalls/Collector/contracts'
+import { updateDateFormat } from '../../../APICalls/ASTD/date'
+
+interface DateFormat {
+  createdAt: string
+  createdBy: string
+  dateFormat: string
+  dateFormatId: number
+  updatedAt: string
+  updatedBy: string
+}
 
 interface DateFormatProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
-  onSubmitData: (type: string, msg: string) => void
-  dateformat: string
+  onSubmitData: (type: string) => void
+  dateformat: DateFormat | null
 }
 
 const DateFormat: FunctionComponent<DateFormatProps> = ({
@@ -61,13 +71,15 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
 }) => {
   const { t } = useTranslation()
   const [dateFormat, setDateFormat] = useState('')
+  const [dateFormatId, setDateFormatId] = useState(0)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
 
   
   useEffect (() => {
     if (action === 'edit') {
       if (dateformat) {
-        setDateFormat(dateFormat)
+        setDateFormat(dateformat.dateFormat)
+        setDateFormatId(dateformat.dateFormatId)
       }
     }
   }, [dateformat, action, drawerOpen])
@@ -89,45 +101,26 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
     const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
 
-    // const formData: CreateContractProps = {
-    //   tenantId: tenantId,
-    //   contractNo: contractNo,
-    //   parentContractNo: referenceNumber,
-    //   status: contractStatus === true ? 'ACTIVE' : 'INACTIVE',
-    //   contractFrmDate: startDate.format('YYYY-MM-DD'),
-    //   contractToDate: endDate.format('YYYY-MM-DD'),
-    //   remark: remark,
-    //   epdFlg: whether,
-    //   createdBy: loginId,
-    //   updatedBy: loginId
-    // }
+    const formData = {
+      dateFormat: dateFormat,
+      updatedBy: loginId
+    }
 
-    // if (action == 'add') {
-    //   handleCreateContract(formData)
-    // } else if (action == 'edit') {
-    //   handleEditContract(formData)
-    // }
-  }
-
-  const handleCreateContract = async (formData: CreateContractProps) => {
-      const result = await createContract(formData)
-      if(result) {
-        onSubmitData("success", t("common.saveSuccessfully"))
-        resetData()
-        handleDrawerClose()
-      }else{
-        onSubmitData("error", t("common.saveFailed"))
-      }
-  }
-
-  const handleEditContract = async (formData: CreateContractProps) => {
-    const result = await editContract(formData)
-    if(result) {
-      onSubmitData("success", t("common.editSuccessfully"))
-      resetData()
-      handleDrawerClose()
+    if (formData) {
+      handleUpdateDateFormat(formData)
     }
   }
+  const handleUpdateDateFormat = async (formData: any) => {
+    const result = await updateDateFormat(dateFormatId, formData)
+
+    if (result) {
+      onSubmitData("date")
+      resetData()
+      showSuccessToast(t('notify.SuccessEdited'))
+    } else {
+      showErrorToast(t('notify.errorEdited'))
+    }
+}
 
   return (
     <div className="add-vehicle">
@@ -148,7 +141,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
           <Box sx={{marginY: 2}}>
             <CustomField label={t('general_settings.date_format')}>
               <CustomTextField
-                id="contractNo"
+                id="dateFormat"
                 value={dateFormat}
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.date_format')}

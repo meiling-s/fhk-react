@@ -46,6 +46,37 @@ import { t } from 'i18next'
 import RecyclingFormat from './RecyclingFormat'
 import { getAllPackagingUnit, getRecycCode, getWeightUnit } from '../../../APICalls/ASTD/recycling'
 import WeightFormat from './WeightFormat'
+import PackagingFormat from './PackagingFormat'
+import CodeFormat from './CodeFormat'
+
+interface CodeFormatProps {
+  createdAt: string
+  createdBy: string
+  description: string
+  recycCodeId: number
+  recycCodeName: string
+  recycSubTypeId: string
+  recycTypeId: string
+  remark: string
+  status: string
+  updatedAt: string
+  updatedBy: string
+}
+
+interface PackagingUnitProps {
+  createdAt: string
+  createdBy: string
+  description: string
+  packagingNameEng: string
+  packagingNameSchi: string
+  packagingNameTchi: string
+  packagingTypeId: string
+  remark: string
+  status: string
+  tenantId: string
+  updatedAt: string
+  updatedBy: string
+}
 
 interface WeightFormatProps {
   createdAt: string
@@ -68,6 +99,7 @@ interface recyleSubtyeData {
   recyclableNameEng: string
   recyclableNameSchi: string
   recyclableNameTchi: string
+  description: string
   remark: string
   status: string
   updatedAt: string
@@ -87,6 +119,7 @@ interface recyleTypeData {
   status: string
   updatedAt: string
   updatedBy: string
+  recycSubTypeId: string
 }
 
 const RecyclingUnit: FunctionComponent = () => {
@@ -94,21 +127,27 @@ const RecyclingUnit: FunctionComponent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState<WeightFormatProps | null>(null)
   const [selectedRecyclingRow, setSelectedRecyclingRow] = useState<recyleTypeData | null>(null)
+  const [selectedPackagingRow, setSelectedPackagingRow] = useState<PackagingUnitProps | null>(null)
+  const [selectedCodeRow, setSelectedCodeRow] = useState<CodeFormatProps | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [page, setPage] = useState(1)
   const [recyclableType, setRecyclableType] = useState([])
-  const [packagingUnit, setPackagingUnit] = useState([])
+  const [packagingUnit, setPackagingUnit] = useState<PackagingUnitProps[]>([])
   const [weightUnit, setWeightUnit] = useState([])
+  const [code, setCode] = useState<CodeFormatProps[]>([])
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [recycDrawerOpen, setRecycDrawerOpen] = useState<boolean>(false)
+  const [packagingDrawerOpen, setPackagingDrawerOpen] = useState<boolean>(false)
   const [weightDrawerOpen, setWeightDrawerOpen] = useState<boolean>(false)
+  const [codeDrawerOpen, setCodeDrawerOpen] = useState<boolean>(false)
+  const [isMainCategory, setMainCategory] = useState<boolean>(false)
 
   useEffect(() => {
     initRecycTypeList()
-    // initRecycCode() api not ready
-    // initPackagingUnit() api not ready
+    initRecycCode()
+    initPackagingUnit()
     initWeightUnit()
   }, [page])
 
@@ -125,58 +164,99 @@ const RecyclingUnit: FunctionComponent = () => {
   const initRecycCode = async () => {
     const result = await getRecycCode(page -1, pageSize)
     const data = result?.data
-    console.log(data, 'data recyc code')
+    
+    
+    setCode(data)
   }
 
   const initPackagingUnit = async () => {
     const result = await getAllPackagingUnit(page - 1, pageSize)
-    const data = result?.data
-    console.log(data, 'data packaging list')
+    const data = result?.data.content
+    
+    setPackagingUnit(data)
   }
 
   const initWeightUnit = async () => {
     const result = await getWeightUnit(page - 1, pageSize)
-    const data =result?.data
+    const data = result?.data
     
     setWeightUnit(data)
   }
 
   const codeColumns: GridColDef[] = [
     {
-      field: 'code',
+      field: 'recycCodeName',
       headerName: t('recycling_unit.recyclable_code'),
       width: 200,
       type: 'string',
     },
     {
-      field: 'main',
+      field: 'recycTypeId',
       headerName: t('recycling_unit.main_category'),
       width: 200,
       type: 'string',
     },
     {
-      field: 'sub',
+      field: 'recycSubTypeId',
       headerName: t('recycling_unit.sub_category'),
       width: 200,
       type: 'string',
     },
+    {
+      field: 'edit',
+      headerName: '',
+      renderCell: (params) => {
+        return (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <EDIT_OUTLINED_ICON
+              fontSize="small"
+              className="cursor-pointer text-grey-dark mr-2"
+              onClick={(event) => {
+                event.stopPropagation()
+                handleAction(params, 'edit', 'code')
+              }}
+              style={{ cursor: 'pointer' }}
+            />
+          </div>
+        )
+      }
+    },
+    {
+      field: 'delete',
+      headerName: '',
+      renderCell: (params) => {
+        return (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <DELETE_OUTLINED_ICON
+              fontSize="small"
+              className="cursor-pointer text-grey-dark"
+              onClick={(event) => {
+                event.stopPropagation()
+                handleAction(params, 'delete', 'code')
+              }}
+              style={{ cursor: 'pointer' }}
+            />
+          </div>
+        )
+      }
+    }
   ]
 
   const columns: GridColDef[] = [
     {
-      field: 'recyclableNameTchi',
+      field: 'packagingNameTchi',
       headerName: t('packaging_unit.traditional_chinese_name'),
       width: 200,
       type: 'string',
     },
     {
-      field: 'recyclableNameSchi',
+      field: 'packagingNameSchi',
       headerName: t('packaging_unit.simplified_chinese_name'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'recyclableNameEng',
+      field: 'packagingNameEng',
       headerName: t('packaging_unit.english_name'),
       width: 200,
       type: 'string'
@@ -317,13 +397,15 @@ const RecyclingUnit: FunctionComponent = () => {
   ) => {
     setAction(action)
     setRowId(params.row.id)
-    setSelectedRow(params.row)
     if (value === 'weight') {
+      setSelectedRow(params.row)
       setWeightDrawerOpen(true)
     } else if (value === 'packaging') {
-      console.log('hit')
-    } else {
-      console.log('hitt')
+      setSelectedPackagingRow(params.row)
+      setPackagingDrawerOpen(true)
+    } else if (value === 'code') {
+      setSelectedCodeRow(params.row)
+      setCodeDrawerOpen(true)
     }
   }
 
@@ -333,21 +415,26 @@ const RecyclingUnit: FunctionComponent = () => {
     setSelectedRow(params.row)
     setDrawerOpen(true)
   }
+
+  const codeHandleSelectRow = (params: GridRowParams) => {
+    setAction('edit')
+    setRowId(params.row.id)
+    setSelectedCodeRow(params.row)
+    setCodeDrawerOpen(true)
+  }
   
+  const packagingHandleSelectRow = (params: GridRowParams) => {
+    setAction('edit')
+    setRowId(params.row.id)
+    setSelectedPackagingRow(params.row)
+    setPackagingDrawerOpen(true)
+  }
+
   const weightHandleSelectRow = (params: GridRowParams) => {
     setAction('edit')
     setRowId(params.row.id)
     setSelectedRow(params.row)
     setWeightDrawerOpen(true)
-  }
-
-  const onSubmitData = (type: string, msg: string) => {
-
-    if (type == 'success') {
-      showSuccessToast(msg)
-    } else {
-      showErrorToast(msg)
-    }
   }
 
   const showErrorToast = (msg: string) => {
@@ -382,20 +469,26 @@ const RecyclingUnit: FunctionComponent = () => {
     }
   }, [])
 
-  const handleOpenSidebar = (value: string) => {
-
-  }
-
-  const customGridHandleAction = (value: any, action: any) => {
+  const customGridHandleAction = (value: any, action: any, type: string) => {
     setRecycDrawerOpen(true)
     setAction(action)
     setSelectedRecyclingRow(value)
+    setMainCategory(type === 'mainCategory' ? true : false)
   }
 
   const handleOnSubmitData = (type: string) => {
     if (type === 'weight') {
       setWeightDrawerOpen(false)
       initWeightUnit()
+    } else if (type === 'packaging') {
+      setPackagingDrawerOpen(false)
+      initPackagingUnit()
+    } else if (type === 'recycle') {
+      setRecycDrawerOpen(false)
+      initRecycTypeList()
+    } else if (type === 'code') {
+      setCodeDrawerOpen(false)
+      initRecycCode()
     }
   }
 
@@ -469,7 +562,7 @@ const RecyclingUnit: FunctionComponent = () => {
               },
             ]}
             variant="outlined"
-            onClick={() => setRecycDrawerOpen(true)}
+            onClick={() => {setCodeDrawerOpen(true); setAction('add')}}
           >
             <ADD_ICON /> {t("top_menu.add_new")}
           </Button>
@@ -477,12 +570,12 @@ const RecyclingUnit: FunctionComponent = () => {
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
             <DataGrid
-              rows={[]}
-              getRowId={(row) => row}
+              rows={code}
+              getRowId={(row) => row.recycCodeId}
               hideFooter
               columns={codeColumns}
               checkboxSelection
-              onRowClick={handleSelectRow}
+              onRowClick={codeHandleSelectRow}
               getRowSpacing={getRowSpacing}
               sx={{
                 border: 'none',
@@ -529,7 +622,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 },
               ]}
               variant="outlined"
-              onClick={() => setRecycDrawerOpen(true)}
+              onClick={() => {setPackagingDrawerOpen(true); setAction('add')}}
             >
               <ADD_ICON /> {t("top_menu.add_new")}
             </Button>
@@ -539,11 +632,11 @@ const RecyclingUnit: FunctionComponent = () => {
           <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
             <DataGrid
               rows={packagingUnit}
-              getRowId={(row) => row}
+              getRowId={(row) => row.packagingTypeId}
               hideFooter
               columns={columns}
               checkboxSelection
-              onRowClick={handleSelectRow}
+              onRowClick={packagingHandleSelectRow}
               getRowSpacing={getRowSpacing}
               sx={{
                 border: 'none',
@@ -640,6 +733,21 @@ const RecyclingUnit: FunctionComponent = () => {
         onSubmitData={handleOnSubmitData}
         recyclableType={recyclableType}
         selectedItem={selectedRecyclingRow}
+        mainCategory={isMainCategory}
+      />
+      <CodeFormat
+        drawerOpen={codeDrawerOpen}
+        handleDrawerClose={() => setCodeDrawerOpen(false)}
+        action={action}
+        onSubmitData={handleOnSubmitData}
+        selectedItem={selectedCodeRow}
+      />
+      <PackagingFormat
+        drawerOpen={packagingDrawerOpen}
+        handleDrawerClose={() => setPackagingDrawerOpen(false)}
+        action={action}
+        onSubmitData={handleOnSubmitData}
+        selectedItem={selectedPackagingRow}
       />
       <WeightFormat
         drawerOpen={weightDrawerOpen}
@@ -655,7 +763,7 @@ const RecyclingUnit: FunctionComponent = () => {
 
 export default RecyclingUnit
 
-const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGridHandleAction: (value: any, action: string) => void; }) => {
+const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGridHandleAction: (value: any, action: string, type: string) => void; }) => {
   const columns = [
     { key: 'traditionalName', label: t('common.traditionalChineseName'), width: '15%' },
     { key: 'chineseName', label: t('common.simplifiedChineseName'), width: '15%' },
@@ -710,7 +818,7 @@ const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGri
                   <EDIT_OUTLINED_ICON
                     fontSize="small"
                     className="cursor-pointer text-grey-dark mr-5"
-                    onClick={() => customGridHandleAction(item, 'edit')}
+                    onClick={() => customGridHandleAction(item, 'edit', 'mainCategory')}
                   />
                 </div>
                 <div style={{ display: 'flex' }}>
@@ -746,7 +854,7 @@ const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGri
                     <EDIT_OUTLINED_ICON
                       fontSize="small"
                       className="cursor-pointer text-grey-dark mr-5"
-                      onClick={() => customGridHandleAction(value, 'edit')}
+                      onClick={() => customGridHandleAction(value, 'edit', 'subCategory')}
                     />
                   </div>
                   <div style={{ display: 'flex' }}>

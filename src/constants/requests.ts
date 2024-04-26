@@ -273,10 +273,50 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
   url: 'api/v1/administrator/recycType'
 }
 
+export const UPDATE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/recycType/${recycTypeId}`
+})
+
+export const DELETE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/recycType/${recycTypeId}`
+})
+
+export const ADD_SUB_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/administrator/recycType/${recycTypeId}`
+})
+
+export const UPDATE_SUB_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/recycSubType/${recycTypeId}`
+})
+
+export const DELETE_SUB_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/recycSubType/${recycTypeId}`
+})
+
+export const CREATE_VEHICLE_TYPE: AxiosRequestConfig = {
+  method: 'post',
+  url: 'api/v1/administrator/vehicleType'
+}
+
 export const GET_VEHICLE_TYPE: AxiosRequestConfig = {
   method: 'get',
   url: 'api/v1/administrator/vehicleType'
 }
+
+export const UPDATE_VEHICLE_TYPE = (vehicleId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/vehicleType/${vehicleId}`
+})
+
+export const DELETE_VEHICLE_TYPE = (vehicleId: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/vehicleType/${vehicleId}`
+})
 
 export const GET_NUM_UNREAD_NOTIF = (loginId: string): AxiosRequestConfig => ({
   method: 'get',
@@ -1203,6 +1243,21 @@ export const GET_RECYC_CODE: AxiosRequestConfig = {
   url: `api/v1/administrator/recycCode`
 }
 
+export const CREATE_RECYC_CODE: AxiosRequestConfig = {
+  method: 'post',
+  url: `api/v1/administrator/recycCode`
+}
+
+export const UPDATE_RECYC_CODE = (codeId: number): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/recycCode/${codeId}`
+})
+
+export const DELETE_RECYC_CODE = (codeId: number): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/recycCode/${codeId}`
+})
+
 export const GET_WEIGHT_UNIT: AxiosRequestConfig = {
   method: 'get',
   url: `api/v1/administrator/weightUnit`
@@ -1241,4 +1296,34 @@ export const EDIT_CURRENCY = (currencyId: number): AxiosRequestConfig => ({
 export const DELETE_CURRENCY = (currencyId: number): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/currencyList/${currencyId}`
+})
+
+export const GET_DECIMAL_VALUE: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/decimalVal`
+}
+
+export const UPDATE_DECIMAL_VALUE = (decimalValId: number): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/decimalVal/${decimalValId}`
+})
+
+export const GET_DATE_FORMAT: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/dateFormat`
+}
+
+export const UPDATE_DATE_FORMAT = (dateFormatId: number): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/dateFormat/${dateFormatId}`
+})
+
+export const GET_WEIGHT_TOLERANCE: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/weightTolerance`
+}
+
+export const UPDATE_WEIGHT_TOLERANCE = (weightId: number): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/weightTolerance/${weightId}`
 })

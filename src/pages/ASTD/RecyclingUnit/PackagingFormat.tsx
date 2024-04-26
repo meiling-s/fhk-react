@@ -42,34 +42,21 @@ import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createRecyc, createSubRecyc, deleteRecyc, deleteSubRecyc, updateRecyc, updateSubRecyc } from '../../../APICalls/ASTD/recycling'
+import { createPackagingUnit, createRecyc, editPackagingUnit } from '../../../APICalls/ASTD/recycling'
 
-interface recyleSubtyeData {
-    recycSubTypeId: string
-    recyclableNameEng: string
-    recyclableNameSchi: string
-    recyclableNameTchi: string
-    description: string
-    remark: string
-    status: string
-    updatedAt: string
-    updatedBy: string
-}
-
-interface recyleTypeData {
+interface PackagingUnitProps {
     createdAt: string
     createdBy: string
     description: string
-    recycSubType: recyleSubtyeData[]
-    recycTypeId: string
-    recyclableNameEng: string
-    recyclableNameSchi: string
-    recyclableNameTchi: string
+    packagingNameEng: string
+    packagingNameSchi: string
+    packagingNameTchi: string
+    packagingTypeId: string
     remark: string
     status: string
+    tenantId: string
     updatedAt: string
     updatedBy: string
-    recycSubTypeId: string
 }
 
 interface RecyclingFormatProps {
@@ -77,9 +64,7 @@ interface RecyclingFormatProps {
     handleDrawerClose: () => void
     action?: 'add' | 'edit' | 'delete'
     onSubmitData: (type: string) => void
-    recyclableType: recyleTypeData[],
-    selectedItem: recyleTypeData | null,
-    mainCategory: boolean
+    selectedItem: PackagingUnitProps | null 
   }
 
 const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
@@ -87,35 +72,21 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     handleDrawerClose,
     action,
     onSubmitData,
-    recyclableType,
-    selectedItem,
-    mainCategory
+    selectedItem
 }) => {
     const { t } = useTranslation()
     const { i18n } = useTranslation()
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
     const [errorMsgList, setErrorMsgList] = useState<string[]>([])
-    const [openDelete, setOpenDelete] = useState<boolean>(false)
 
-    const [recycleType, setRecycleType] = useState([])
-    const [recycleSubType, setSubRecycleType] = useState({})
-    const [contractList, setContractList] = useState<
-        { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
-    >([])
-    const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
-    const [status, setStatus] = useState(true) // status field
     const [trySubmited, setTrySubmitted] = useState(false)
     const [tChineseName, setTChineseName] = useState('')
     const [sChineseName, setSChineseName] = useState('')
     const [englishName, setEnglishName] = useState('')
     const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
-    const [isMainCategory, setMainCategory] = useState(true)
-    const [chosenRecyclableType, setChosenRecyclableType] = useState('')
-    const [subTypeId, setSubTypeId] = useState('')
-    const [mainTypeId, setMainTypeId] = useState('')
+    const [packagingId, setPackagingId] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
-    const isInitialRender = useRef(true) // Add this line
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
@@ -124,24 +95,17 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     useEffect(() => {
         if (action === 'edit') {
             if (selectedItem !== null && selectedItem !== undefined) {
-                if (!mainCategory) {
-                    const parentData = !isMainCategory && recyclableType.filter(value => value.recycSubType.find(value => value.recycSubTypeId === selectedItem.recycSubTypeId))
-                    setSubTypeId(selectedItem.recycSubTypeId)
-                    setChosenRecyclableType(parentData !== false ? parentData[0].recycTypeId : '')
-                } else {
-                    setMainTypeId(selectedItem.recycTypeId)
-                }
-                setTChineseName(selectedItem.recyclableNameTchi)
-                setSChineseName(selectedItem.recyclableNameSchi)
-                setEnglishName(selectedItem.recyclableNameEng)
+                setPackagingId(selectedItem.packagingTypeId)
+                setTChineseName(selectedItem.packagingNameTchi)
+                setSChineseName(selectedItem.packagingNameSchi)
+                setEnglishName(selectedItem.packagingNameEng)
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
-                setMainCategory(mainCategory)
             }
         } else if (action === 'add') {
             resetForm()
         }
-    }, [selectedItem, action,drawerOpen, mainCategory])
+    }, [selectedItem, action,drawerOpen])
 
     const resetForm = () => {
         setTChineseName('')
@@ -149,9 +113,6 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         setEnglishName('')
         setDescription('')
         setRemark('')
-        setMainCategory(true)
-        setChosenRecyclableType('')
-        setSubTypeId('')
     }
 
     const checkString = (s: string) => {
@@ -207,66 +168,51 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             )}`
         })
 
-        if (isMainCategory === false) {
-            chosenRecyclableType.trim() === '' &&
-            tempV.push({
-                field: 'chosenRecyclableType',
-                error: `${t(`recycling_unit.main_category`)} ${t(
-                'add_warehouse_page.shouldNotEmpty'
-                )}`
-            })
-        }
-
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName, isMainCategory, chosenRecyclableType])
+    }, [tChineseName, sChineseName, englishName])
 
-    const handleDelete = async () => {
-        const token = returnApiToken()
+    const handleDelete = () => {
+        const { loginId, tenantId } = returnApiToken();
 
-        const recyclingForm = {
-            status: 'INACTIVE',
-            updatedBy: token.loginId
+        const packagingForm = {
+            tenantId: tenantId,
+            packagingNameTchi: tChineseName,
+            packagingNameSchi: sChineseName,
+            packagingNameEng: englishName,
+            description: description,
+            remark: remark,
+            status: 'DELETED',
+            createdBy: loginId,
+            updatedBy: loginId
         }
 
-        try {
-            if (isMainCategory) {
-                const response = await deleteRecyc(recyclingForm, mainTypeId)
-                if (response) {
-                    showSuccessToast(t('notify.successDeleted'))
-                    onSubmitData('recycle')
-                }
-            } else {
-            const response = await deleteSubRecyc(recyclingForm, subTypeId)
-                if (response) {
-                    showSuccessToast(t('notify.successDeleted'))
-                    onSubmitData('recycle')
-                }
-            }
-        } catch (error) {
-            console.error(error)
-            showErrorToast(t('notify.errorDeleted'))
+        if (validation.length == 0) {
+            editPackagingData(packagingForm)
+        } else {
+            setTrySubmitted(true)
         }
     }
     
     const handleSubmit = () => {
-        const { loginId } = returnApiToken();
-        
-        const addRecyclingForm = {
-            recyclableNameTchi:tChineseName, 
-            recyclableNameSchi: sChineseName,
-            recyclableNameEng: englishName,
+        const { loginId, tenantId } = returnApiToken();
+
+        const packagingForm = {
+            tenantId: tenantId,
+            packagingNameTchi: tChineseName,
+            packagingNameSchi: sChineseName,
+            packagingNameEng: englishName,
             description: description,
             remark: remark,
             status: 'ACTIVE',
             createdBy: loginId,
-            updatedBy: loginId,
+            updatedBy: loginId
         }
 
         const isError = validation.length == 0
         getFormErrorMsg()
 
         if (validation.length == 0) {
-            action == 'add' ? createRecycData(addRecyclingForm) : editRecycData(addRecyclingForm)
+            action == 'add' ? createPackagingData(packagingForm) : editPackagingData(packagingForm)
 
             setValidation([])
         } else {
@@ -274,45 +220,28 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         }
     }
 
-    const createRecycData = async (addRecyclingForm: any) => {
+    const createPackagingData = async (packagingForm: any) => {
         try {
-            if (isMainCategory) {
-                const response = await createRecyc(addRecyclingForm)
-                if (response) {
-                    showSuccessToast(t('notify.successCreated'))
-                    onSubmitData('recycle')
-                }
-            } else {
-                const response = await createSubRecyc(addRecyclingForm, chosenRecyclableType)
-                if (response) {
-                    showSuccessToast(t('notify.successCreated'))
-                    onSubmitData('recycle')
-                }
+            const response = await createPackagingUnit(packagingForm)
+            if (response) {
+                showSuccessToast(t('notify.successCreated'))
+                onSubmitData('packaging')
             }
         } catch (error) {
             console.error(error)
             showErrorToast(t('errorCreated.errorCreated'))
         }
     }
-    const editRecycData = async (addRecyclingForm: any) => {
+    const editPackagingData = async (packagingForm: any) => {
         try {
-            if (isMainCategory) {
-                console.log(mainTypeId, 'aaa')
-                const response = await updateRecyc(addRecyclingForm, mainTypeId)
-                if (response) {
-                    showSuccessToast(t('notify.successCreated'))
-                    onSubmitData('recycle')
-                }
-            } else {
-            const response = await updateSubRecyc(addRecyclingForm, subTypeId)
-                if (response) {
-                    showSuccessToast(t('notify.successCreated'))
-                    onSubmitData('recycle')
-                }
+            const response = await editPackagingUnit(packagingForm, packagingId)
+            if (response) {
+                showSuccessToast(t('notify.successEdited'))
+                onSubmitData('packaging')
             }
         } catch (error) {
             console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+            showErrorToast(t('notify.errorEdited'))
         }
     }
 
@@ -376,59 +305,12 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             />
                         </CustomField>
                     </Box>
-                    <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.main_category')}>
-                            <Switcher
-                                onText={t('add_warehouse_page.yes')}
-                                offText={t('add_warehouse_page.no')}
-                                disabled={action === 'delete'}
-                                defaultValue={isMainCategory}
-                                setState={(newValue) => {
-                                    setMainCategory(newValue);
-                                    newValue === false && setChosenRecyclableType('')
-                                }}
-                            />
-                        </CustomField>
-                    </Box>
-                    {!isMainCategory && (
-                        <Box sx={{ marginY: 2 }}>
-                            <CustomField label={t('recycling_unit.main_category')}>
-                                <div className="self-stretch flex flex-col items-start justify-start">
-                                    <div className="self-stretch ">
-                                        <FormControl sx={{ m: 1, width: '100%' }}>
-                                            <Select
-                                                value={chosenRecyclableType}
-                                                onChange={(event: SelectChangeEvent<string>) => setChosenRecyclableType(event.target.value)}
-                                                displayEmpty
-                                                disabled={action === 'delete'}
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                sx={{ borderRadius: '12px' }}
-                                                error={checkString(chosenRecyclableType)}
-                                            >
-                                                <MenuItem value="">
-                                                <em>-</em>
-                                                </MenuItem>
-                                                {recyclableType.map((item, index) => (
-                                                <MenuItem value={item.recycTypeId} key={index}>
-                                                    {currentLanguage === 'zhhk'
-                                                    ? item.recyclableNameTchi
-                                                    : currentLanguage === 'zhch'
-                                                    ? item.recyclableNameSchi
-                                                    : item.recyclableNameEng}
-                                                </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                    </div>
-                                </div>
-                            </CustomField>
-                        </Box>
-                    )}
                     <CustomField label={t('packaging_unit.introduction')} mandatory={false}>
                         <CustomTextField
                             id="description"
                             placeholder={t('packaging_unit.introduction')}
                             onChange={(event) => setDescription(event.target.value)}
+                            error={checkString(description)}
                             multiline={true}
                             defaultValue={description}
                         />
@@ -438,6 +320,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             id="remark"
                             placeholder={t('packaging_unit.remark')}
                             onChange={(event) => setRemark(event.target.value)}
+                            error={checkString(remark)}
                             multiline={true}
                             defaultValue={remark}
                         />

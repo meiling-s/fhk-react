@@ -2,47 +2,14 @@ import { FunctionComponent, useState, useEffect } from 'react'
 import {
   Box,
   Divider,
-  Grid,
-  Typography,
-  Button,
-  InputLabel,
-  MenuItem,
-  Card,
-  FormControl,
-  ButtonBase,
-  ImageList,
-  ImageListItem,
-  OutlinedInput
 } from '@mui/material'
-import dayjs from 'dayjs'
-import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-import ImageUploading, { ImageListType } from 'react-images-uploading'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { EVENT_RECORDING } from '../../../constants/configs'
 import { styles } from '../../../constants/styles'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-
 import { useTranslation } from 'react-i18next'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { formValidate } from '../../../interfaces/common'
-import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
-import { formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64, showErrorToast, showSuccessToast, returnApiToken } from '../../../utils/utils'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { useContainer } from 'unstated-next'
-import { createVehicles as addVehicle, deleteVehicle, editVehicle } from '../../../APICalls/Collector/vehicles'
+import { showErrorToast, showSuccessToast, returnApiToken } from '../../../utils/utils'
 import { localStorgeKeyName } from "../../../constants/constant";
-import i18n from '../../../setups/i18n'
-import { Contract, CreateContract as CreateContractProps } from '../../../interfaces/contract'
-import LabelField from '../../../components/FormComponents/CustomField'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { createContract, editContract } from '../../../APICalls/Collector/contracts'
 import { createCurrency, deleteCurrency, editCurrency } from '../../../APICalls/ASTD/currrency'
 
 interface CurrencyListProps {
@@ -127,7 +94,9 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
 
     const currencyProps = {
       monetary: monetary,
-      status: 'ACTIVE',
+      description: description,
+      remark: remark,
+      status: selectedItem?.status ?? 'ACTIVE',
       createdBy: loginId,
       updatedBy: loginId
     }
@@ -178,7 +147,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: t('general_settings.date_format'),
+          title: t('general_settings.currency_category'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
@@ -189,12 +158,12 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('general_settings.date_format')}>
+            <CustomField label={t('general_settings.name')}>
               <CustomTextField
                 id="monetary"
                 value={monetary}
                 disabled={action === 'delete'}
-                placeholder={t('general_settings.date_format')}
+                placeholder={t('general_settings.name')}
                 onChange={(event) => setMonetary(event.target.value)}
                 error={checkString(monetary)}
               />
@@ -207,8 +176,8 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
                 value={remark}
                 disabled={action === 'delete'}
                 placeholder={t('common.remark')}
-                onChange={(event) => setMonetary(event.target.value)}
-                error={checkString(monetary)}
+                onChange={(event) => setRemark(event.target.value)}
+                error={checkString(remark)}
               />
             </CustomField>
           </Box>
@@ -219,8 +188,8 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
                 value={description}
                 disabled={action === 'delete'}
                 placeholder={t('common.description')}
-                onChange={(event) => setMonetary(event.target.value)}
-                error={checkString(monetary)}
+                onChange={(event) => setDescription(event.target.value)}
+                error={checkString(description)}
               />
             </CustomField>
           </Box>

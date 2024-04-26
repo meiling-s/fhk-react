@@ -41,6 +41,9 @@ import DateFormat from './DateFormat'
 import WeightFormat from './WeightFormat'
 import { getCurrencyList } from '../../../APICalls/ASTD/currrency'
 import CreateCurrency from './CreateCurrency'
+import { getDecimalValue } from '../../../APICalls/ASTD/decimal'
+import { getDateFormat } from '../../../APICalls/ASTD/date'
+import { getWeightTolerance } from '../../../APICalls/ASTD/weight'
 
 interface CurrencyListProps {
   createdAt: string
@@ -52,16 +55,42 @@ interface CurrencyListProps {
   updatedBy: string
 }
 
-const GeneralSettings: FunctionComponent = () => {
+interface DecimalValueProps {
+  createdAt: string
+  createdBy: string
+  decimalVal: string
+  decimalValId: number
+  updatedAt: string
+  updatedBy: string
+}
+
+interface DateFormatProps {
+  createdAt: string
+  createdBy: string
+  dateFormat: string
+  dateFormatId: number
+  updatedAt: string
+  updatedBy: string
+}
+
+interface WeightToleranceProps {
+  createdAt: string
+  createdBy: string
+  updatedAt: string
+  updatedBy: string
+  weightVariance: string
+  weightVarianceId: number
+}
+
+const ASTDSettings: FunctionComponent = () => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [numberDrawerOpen, setNumberDrawerOpen] = useState(false)
   const [dateDrawerOpen, setDateDrawerOpen] = useState(false)
   const [weightDrawerOpen, setWeightDrawerOpen] = useState(false)
   const [currencyDrawerOpen, setCurrencyDrawerOpen] = useState<boolean>(false)
-  const [numberFormat, setNumberFormat] = useState('')
-  const [dateFormat, setDateFormat] = useState('')
-  const [weightFormat, setWeightFormat] = useState('')
+  const [dateFormat, setDateFormat] = useState<DateFormatProps | null>(null)
+  const [weightFormat, setWeightFormat] = useState<WeightToleranceProps | null>(null)
   const [currencyList, setCurrencyList] = useState<CurrencyListProps[]>([])
   const [selectedRow, setSelectedRow] = useState<CurrencyListProps | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
@@ -70,9 +99,13 @@ const GeneralSettings: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
+  const [decimalValue, setDecimalValue] = useState<DecimalValueProps | null>(null)
 
   useEffect(() => {
     initCurrencyList()
+    initDecimalValue()
+    initDateFormat()
+    initWeightTolerance()
   }, [page])
 
   const initCurrencyList = async () => {
@@ -80,6 +113,27 @@ const GeneralSettings: FunctionComponent = () => {
     const data = result?.data
 
     setCurrencyList(data)
+  }
+
+  const initDecimalValue = async () => {
+    const result = await getDecimalValue()
+    const data = result?.data
+
+    setDecimalValue(data)
+  }
+  
+  const initDateFormat = async () => {
+    const result = await getDateFormat()
+    const data = result?.data
+
+    setDateFormat(data)
+  }
+
+  const initWeightTolerance = async () => {
+    const result = await getWeightTolerance()
+    const data = result?.data
+
+    setWeightFormat(data)
   }
 
   const columns: GridColDef[] = [
@@ -162,6 +216,15 @@ const GeneralSettings: FunctionComponent = () => {
     if (type == 'currency') {
       initCurrencyList()
       setCurrencyDrawerOpen(false)
+    } else if (type === 'decimal') {
+      initDecimalValue()
+      setNumberDrawerOpen(false)
+    } else if (type === 'date') {
+      initDateFormat()
+      setDateDrawerOpen(false)
+    } else if (type === 'weight') {
+      initWeightTolerance()
+      setWeightDrawerOpen(false)
     }
   }
 
@@ -243,7 +306,7 @@ const GeneralSettings: FunctionComponent = () => {
             }}
           >
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {tenantCurrency}
+              {decimalValue !== null  && decimalValue.decimalVal}
             </Typography>
             <IconButton onClick={() => handleOpenSidebar('number')}>
               <EditIcon />
@@ -274,7 +337,7 @@ const GeneralSettings: FunctionComponent = () => {
             }}
           >
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {tenantCurrency}
+              {dateFormat !== null && dateFormat.dateFormat}
             </Typography>
             <IconButton onClick={() => handleOpenSidebar('date')}>
               <EditIcon />
@@ -305,7 +368,7 @@ const GeneralSettings: FunctionComponent = () => {
             }}
           >
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {tenantCurrency}
+              {weightFormat !== null  && weightFormat.weightVariance}
             </Typography>
             <IconButton onClick={() => handleOpenSidebar('weight')}>
               <EditIcon />
@@ -382,7 +445,7 @@ const GeneralSettings: FunctionComponent = () => {
         handleDrawerClose={() => setNumberDrawerOpen(false)}
         action='edit'
         onSubmitData={onSubmitData}
-        numberFormat={numberFormat}
+        numberFormat={decimalValue}
       />
       <DateFormat
         drawerOpen={dateDrawerOpen}
@@ -401,7 +464,7 @@ const GeneralSettings: FunctionComponent = () => {
       <CreateCurrency
         drawerOpen={currencyDrawerOpen}
         handleDrawerClose={() => setCurrencyDrawerOpen(false)}
-        action='edit'
+        action={action}
         onSubmitData={onSubmitData}
         selectedItem={selectedRow}
       />
@@ -409,4 +472,4 @@ const GeneralSettings: FunctionComponent = () => {
   )
 }
 
-export default GeneralSettings
+export default ASTDSettings

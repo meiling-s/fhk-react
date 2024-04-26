@@ -31,7 +31,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
 import { formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64 } from '../../../utils/utils'
+import { returnErrorMsg, ImageToBase64, showSuccessToast, showErrorToast } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -43,13 +43,23 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { createContract, editContract } from '../../../APICalls/Collector/contracts'
+import { updateWeightTolerance } from '../../../APICalls/ASTD/weight'
+
+interface WeightToleranceProps {
+  createdAt: string
+  createdBy: string
+  updatedAt: string
+  updatedBy: string
+  weightVariance: string
+  weightVarianceId: number
+}
 
 interface DateFormatProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
-  onSubmitData: (type: string, msg: string) => void
-  weightformat: string
+  onSubmitData: (type: string) => void
+  weightformat: WeightToleranceProps | null
 }
 
 const WeightFormat: FunctionComponent<DateFormatProps> = ({
@@ -61,13 +71,15 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
 }) => {
   const { t } = useTranslation()
   const [weightFormat, setWeightFormat] = useState('')
+  const [weightFormatId, setWeightFormatId] = useState(0)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
 
   
   useEffect (() => {
     if (action === 'edit') {
       if (weightformat) {
-        setWeightFormat(weightFormat)
+        setWeightFormat(weightformat.weightVariance)
+        setWeightFormatId(weightformat.weightVarianceId)
       }
     }
   }, [weightformat, action, drawerOpen])
@@ -89,43 +101,25 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
     const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
 
-    // const formData: CreateContractProps = {
-    //   tenantId: tenantId,
-    //   contractNo: contractNo,
-    //   parentContractNo: referenceNumber,
-    //   status: contractStatus === true ? 'ACTIVE' : 'INACTIVE',
-    //   contractFrmDate: startDate.format('YYYY-MM-DD'),
-    //   contractToDate: endDate.format('YYYY-MM-DD'),
-    //   remark: remark,
-    //   epdFlg: whether,
-    //   createdBy: loginId,
-    //   updatedBy: loginId
-    // }
+    const formData = {
+      weightVariance: weightFormat,
+      updatedBy: loginId
+    }
 
-    // if (action == 'add') {
-    //   handleCreateContract(formData)
-    // } else if (action == 'edit') {
-    //   handleEditContract(formData)
-    // }
+    if (formData) {
+      handleUpdateWeight(formData)
+    }
   }
 
-  const handleCreateContract = async (formData: CreateContractProps) => {
-      const result = await createContract(formData)
-      if(result) {
-        onSubmitData("success", t("common.saveSuccessfully"))
-        resetData()
-        handleDrawerClose()
-      }else{
-        onSubmitData("error", t("common.saveFailed"))
-      }
-  }
-
-  const handleEditContract = async (formData: CreateContractProps) => {
-    const result = await editContract(formData)
+  const handleUpdateWeight = async (formData: any) => {
+    const result = await updateWeightTolerance(weightFormatId, formData)
+    
     if(result) {
-      onSubmitData("success", t("common.editSuccessfully"))
+      onSubmitData("weight")
       resetData()
-      handleDrawerClose()
+      showSuccessToast(t('notify.SuccessEdited'))
+    } else {
+      showErrorToast(t('notify.errorEdited'))
     }
   }
 
@@ -148,7 +142,7 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
           <Box sx={{marginY: 2}}>
             <CustomField label={t('general_settings.date_format')}>
               <CustomTextField
-                id="contractNo"
+                id="weightFormat"
                 value={weightFormat}
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.date_format')}
