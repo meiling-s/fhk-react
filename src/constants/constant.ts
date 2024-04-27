@@ -82,3 +82,13 @@ export const RealmApi = {
   manufacturer: 'manufacturer',
   customer: 'customer'
 }
+
+export const Status = {
+  CREATED : 'CREATED'
+}
+
+export const Languages = {
+  ENUS : 'enus',
+  ZHCH : 'zhch',
+  ZHHK : 'zhhk'
+}

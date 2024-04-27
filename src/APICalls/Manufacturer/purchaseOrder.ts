@@ -9,6 +9,7 @@ import {
 import { returnApiToken } from '../../utils/utils'
 import { queryPurchaseOrder } from '../../interfaces/purchaseOrder'
 import axiosInstance from '../../constants/axiosInstance'
+import { Roles, localStorgeKeyName } from '../../constants/constant'
 
 export const getAllPurchaseOrder = async (
   page: number,
@@ -17,6 +18,21 @@ export const getAllPurchaseOrder = async (
 ) => {
   const auth = returnApiToken()
   try {
+    let path : string = '';
+    const userRole = localStorage.getItem(localStorgeKeyName.role);
+
+    switch(userRole){
+      case(Roles.manufacturerAdmin):
+        path = 'seller';
+        break;
+      case(Roles.customerAdmin):
+      path = 'cus';
+        break;
+      default:
+        break;
+    }
+
+
     const params: any = {
       page: page,
       size: size
@@ -31,7 +47,7 @@ export const getAllPurchaseOrder = async (
 
     const response = await axiosInstance({
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
-      ...SEARCH_PURCHASE_ORDER(auth.tenantId),
+      ...SEARCH_PURCHASE_ORDER(auth.tenantId, path),
       params: params
     })
 
