@@ -48,7 +48,8 @@ export const formErr = {
   exceedsMaxLength: 'exceedsMaxLength',
   minMoreOneImgUploded: 'minMoreOneImgUploded',
   startDateBehindEndDate: 'startDateBehidEndDate',
-  timeCantDuplicate: 'timeCantDuplicate'
+  timeCantDuplicate: 'timeCantDuplicate',
+  loginIdCantContainAdmin: 'loginIdCantContainAdmin'
 }
 
 export const Notiftemplate = {
@@ -80,4 +81,14 @@ export const RealmApi = {
   astd: 'astd',
   manufacturer: 'manufacturer',
   customer: 'customer'
+}
+
+export const Status = {
+  CREATED : 'CREATED'
+}
+
+export const Languages = {
+  ENUS : 'enus',
+  ZHCH : 'zhch',
+  ZHHK : 'zhhk'
 }

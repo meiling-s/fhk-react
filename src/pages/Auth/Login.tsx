@@ -106,7 +106,7 @@ const Login = () => {
             break;
           case "customer":
             realmApiRoute = 'customer'
-            navigate("/customer/pickupOrder");
+            navigate("/customer/account");
             break;
           default:
             realmApiRoute = 'collectors'

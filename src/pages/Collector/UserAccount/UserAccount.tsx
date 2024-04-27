@@ -3,7 +3,7 @@ import {
   DataGrid,
   GridColDef,
   GridRowParams,
-  GridRowSpacingParams,
+  GridRowSpacingParams
 } from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -19,46 +19,11 @@ import {
 // import TableBase from '../../../components/TableBase'
 import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
-import {
-  getAllUserAccount
-} from '../../../APICalls/userAccount'
-import { UserAccount as UserAccountItem} from '../../../interfaces/userAccount'
+import { getAllUserAccount } from '../../../APICalls/userAccount'
+import { UserAccount as UserAccountItem } from '../../../interfaces/userAccount'
 import UserAccountDetails from './UserAccountDetails'
 import StatusCard from '../../../components/StatusCard'
 import { styles } from '../../../constants/styles'
-
-interface RecyleItem {
-  recycTypeId: string
-  recycSubTypeId: string
-  recycSubTypeCapacity: number
-  recycTypeCapacity: number
-}
-
-// interface UserAccount {
-//   loginId: string
-//   tenantId: string
-//   realm: string
-//   password: string
-//   staffId: string
-//   userGroup:
-//   {
-//     groupId: number
-//     tenantId: string
-//     roleName: string
-//     status: string
-//     createdBy: string
-//     updatedBy: string
-//     updatedAt: string
-//     createdAt:string
-//     version: number
-//   }
-//   status: string,
-//   lastLoginDatetime: string
-//   createdBy: string
-//   updatedBy: string
-//   updatedAt: string
-//   createdAt: string
-// }
 
 type TableRow = {
   id: number
@@ -78,14 +43,14 @@ const UserAccount: FunctionComponent = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
-  const [theLoginId, setTheLoginId] = useState<string>('')
-  const [userAccountItems, setUserAccountItems] = useState<UserAccountItem[]>([])
-  const [recyleTypeList, setRecyleTypeList] = useState<recyTypeItem>({})
-  const [selectedRow, setSelectedRow] = useState<TableRow | null>(null)
-  const [page, setPage] = useState(1)
-  const pageSize = 10 // change page size lowerg to testing
-  const [totalData , setTotalData] = useState<number>(0)
-  const [selectedAccount, setSelectedAccount] = useState<UserAccountItem | null>(null)
+  const [userAccountItems, setUserAccountItems] = useState<UserAccountItem[]>(
+    []
+  )
+  //const [page, setPage] = useState(1)
+  //const pageSize = 10 // change page size lowerg to testing
+  const [userList, setUserList] = useState<string[]>([])
+  const [selectedAccount, setSelectedAccount] =
+    useState<UserAccountItem | null>(null)
   const navigate = useNavigate()
 
   const columns: GridColDef[] = [
@@ -93,31 +58,21 @@ const UserAccount: FunctionComponent = () => {
       field: 'loginId',
       headerName: t('userAccount.loginName'),
       width: 150,
-      type: 'string',
-
+      type: 'string'
     },
     {
       field: 'staffId',
-      headerName:  t('userAccount.staffId'),
+      headerName: t('userAccount.staffId'),
       width: 150,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'userGroup',
-      headerName:  t('userAccount.userGroup'),
+      headerName: t('userAccount.userGroup'),
       width: 250,
       type: 'string',
       valueGetter: (params) => params.row?.userGroup.roleName
     },
-    // {
-    //   field: '是',
-    //   width: 150,
-    //   headerName: t('userAccount.isItAReviewer'),
-    //   type: 'string',
-    //   valueGetter: () => {
-    //     return t('yes')
-    //   }
-    // },
     {
       field: 'status',
       headerName: t('userAccount.status'),
@@ -136,16 +91,18 @@ const UserAccount: FunctionComponent = () => {
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
               onClick={(event) => {
-                event.stopPropagation();
-                handleEdit(params.row.loginId)}} // Implement your edit logic here
+                event.stopPropagation()
+                handleEdit(params.row.loginId)
+              }} // Implement your edit logic here
               style={{ cursor: 'pointer' }}
             />
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              onClick={(event) =>{
-                event.stopPropagation();
-                handleDelete(params.row.loginId)}} // Implement your delete logic here
+              onClick={(event) => {
+                event.stopPropagation()
+                handleDelete(params.row.loginId)
+              }} // Implement your delete logic here
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -164,16 +121,17 @@ const UserAccount: FunctionComponent = () => {
 
   async function fetchDataUserAccount() {
     const result = await getAllUserAccount()
-    if(result?.data){
+    const accountlist: string[] = []
+    if (result?.data) {
       setUserAccountItems(result.data)
-      // console.log("fetchDataUserAccount >> ", result.data);
+      result.data.map((item: any) => accountlist.push(item.loginId))
+      setUserList(accountlist)
     }
   }
 
   useEffect(() => {
     fetchDataUserAccount()
-  }, [action, drawerOpen, currentLanguage, page, i18n, currentLanguage])
-
+  }, [action, drawerOpen, currentLanguage, i18n, currentLanguage])
 
   const addDataWarehouse = () => {
     setDrawerOpen(true)
@@ -183,8 +141,8 @@ const UserAccount: FunctionComponent = () => {
   const handleEdit = (rowId: string) => {
     setDrawerOpen(true)
     setAction('edit')
-    const selectedItem = userAccountItems.find(item => item.loginId == rowId)
-    if(selectedItem) {
+    const selectedItem = userAccountItems.find((item) => item.loginId == rowId)
+    if (selectedItem) {
       setSelectedAccount(selectedItem)
     }
   }
@@ -193,8 +151,10 @@ const UserAccount: FunctionComponent = () => {
     const row = params.row as TableRow
     setDrawerOpen(true)
     setAction('edit')
-    const selectedItem = userAccountItems.find(item => item.loginId == row.loginId)
-    if(selectedItem) {
+    const selectedItem = userAccountItems.find(
+      (item) => item.loginId == row.loginId
+    )
+    if (selectedItem) {
       setSelectedAccount(selectedItem)
     }
   }
@@ -202,8 +162,8 @@ const UserAccount: FunctionComponent = () => {
   const handleDelete = (rowId: string) => {
     setDrawerOpen(true)
     setAction('delete')
-    const selectedItem = userAccountItems.find(item => item.loginId == rowId)
-    if(selectedItem) {
+    const selectedItem = userAccountItems.find((item) => item.loginId == rowId)
+    if (selectedItem) {
       setSelectedAccount(selectedItem)
     }
   }
@@ -219,8 +179,6 @@ const UserAccount: FunctionComponent = () => {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
-
-  // console.log('LOGIN ID >> ', theLoginId)
 
   return (
     <Box
@@ -242,7 +200,6 @@ const UserAccount: FunctionComponent = () => {
               >
                 <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                   <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-grey-dark">
-                  
                     <Typography fontSize={16} color="grey" fontWeight="600">
                       {t('userAccount.user')}
                     </Typography>
@@ -255,11 +212,12 @@ const UserAccount: FunctionComponent = () => {
                         }
                       ]}
                       variant="outlined"
-                      onClick={() => {addDataWarehouse()}}
+                      onClick={() => {
+                        addDataWarehouse()
+                      }}
                     >
                       <ADD_ICON /> {t('top_menu.add_new')}
                     </Button>
-                   
                   </div>
                   <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
                     <DataGrid
@@ -293,13 +251,14 @@ const UserAccount: FunctionComponent = () => {
             </div>
           </div>
           <UserAccountDetails
-           drawerOpen={drawerOpen}
-           handleDrawerClose={handleDrawerClose}
-           selectedItem={selectedAccount}
-           action={action}
-           onSubmitData={handleOnSubmitData}
-           rowId={rowId}
-           />
+            drawerOpen={drawerOpen}
+            handleDrawerClose={handleDrawerClose}
+            selectedItem={selectedAccount}
+            action={action}
+            onSubmitData={handleOnSubmitData}
+            rowId={rowId}
+            userList={userList}
+          />
         </div>
       </div>
     </Box>
