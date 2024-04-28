@@ -698,10 +698,6 @@ const PurchaseOrder = () => {
         }
       }
     })
-    options.push({
-      value: '',
-      label: 'any'
-    })
     return options
   }
 
