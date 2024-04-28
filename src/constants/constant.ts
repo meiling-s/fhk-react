@@ -48,7 +48,8 @@ export const formErr = {
   exceedsMaxLength: 'exceedsMaxLength',
   minMoreOneImgUploded: 'minMoreOneImgUploded',
   startDateBehindEndDate: 'startDateBehidEndDate',
-  timeCantDuplicate: 'timeCantDuplicate'
+  timeCantDuplicate: 'timeCantDuplicate',
+  loginIdCantContainAdmin: 'loginIdCantContainAdmin'
 }
 
 export const Notiftemplate = {

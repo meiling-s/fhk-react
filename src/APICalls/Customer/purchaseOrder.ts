@@ -9,6 +9,7 @@ import { UPDATE_PURCHASE_ORDER } from '../../constants/requests'
 import { returnApiToken } from '../../utils/utils'
 import { PurChaseOrder, queryPurchaseOrder } from '../../interfaces/purchaseOrder'
 import axiosInstance from '../../constants/axiosInstance'
+import dayjs from 'dayjs'
 
 export const getAllPurchaseOrder = async ( page: number, size: number, query?: queryPurchaseOrder) => {
   const auth = returnApiToken()
@@ -19,8 +20,8 @@ export const getAllPurchaseOrder = async ( page: number, size: number, query?: q
     }
 
     if (query?.poId) params.poId = query.poId
-    if (query?.fromCreatedAt) params.fromCreatedAt = query.fromCreatedAt
-    if (query?.toCreatedAt) params.toCreatedAt = query.toCreatedAt
+    if (query?.fromCreatedAt) params.fromCreatedAt = dayjs(query.fromCreatedAt).format('YYYY-MM-DD')
+    if (query?.toCreatedAt) params.toCreatedAt = dayjs(query.toCreatedAt).format('YYYY-MM-DD')
     if (query?.receiverAddr) params.receiverAddr = query.receiverAddr
     if (query?.recycType) params.recycType = query.recycType
     if (query?.status) params.status = query.status

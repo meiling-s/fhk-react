@@ -56,6 +56,9 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
     case formErr.startDateBehindEndDate:
       msg = t('form.error.startDateBehindEndDate')
       break
+    case formErr.loginIdCantContainAdmin:
+      msg = t('form.error.loginIdCantContainAdmin')
+      break
   }
   return msg
 }
