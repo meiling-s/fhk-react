@@ -15,18 +15,18 @@ import { returnApiToken } from '../../../utils/utils'
 import { createPackagingUnit, editPackagingUnit } from '../../../APICalls/Customer/packagingUnit'
 
 interface PackagingUnit {
-    brNo: string
-    collectorId: string
-    collectorNameEng: string
-    collectorNameSchi: string
-    collectorNameTchi: string
-    createdAt: string
-    createdBy: string
-    description: string
-    remark: string
-    status: string
-    updatedAt: string
-    updatedBy: string
+    packagingTypeId: string
+  tenantId: string
+  packagingNameTchi: string
+  packagingNameSchi: string
+  packagingNameEng: string
+  description: string
+  remark: string
+  status: string
+  createdBy: string
+  updatedBy: string
+  createdAt: string
+  updatedAt: string
   }
 
 interface CreatePackagingProps {
@@ -53,20 +53,18 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
     const [brNo, setBRNumber] = useState('')
     const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
-    const [collectorId, setCollectorId] = useState('')
+    const [packagingId, setPackagingId] = useState('')
     const [status, setStatus] = useState('')
     const [trySubmited, setTrySubmited] = useState<boolean>(false)
 
 
     useEffect(() => {
-        console.log(action, 'aaaa')
-        if (action === 'edit') {
+        if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
-                setCollectorId(selectedItem.collectorId)
-                setBRNumber(selectedItem.brNo)
-                setTChineseName(selectedItem.collectorNameTchi)
-                setSChineseName(selectedItem.collectorNameSchi)
-                setEnglishName(selectedItem.collectorNameEng)
+                setPackagingId(selectedItem.packagingTypeId)
+                setTChineseName(selectedItem.packagingNameTchi)
+                setSChineseName(selectedItem.packagingNameSchi)
+                setEnglishName(selectedItem.packagingNameEng)
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
                 setStatus(selectedItem.status)
@@ -77,8 +75,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
     }, [selectedItem, action, drawerOpen])
 
     const resetData = () => {
-        setCollectorId('')
-        setBRNumber('')
+        setPackagingId('')
         setTChineseName('')
         setSChineseName('')
         setEnglishName('')
@@ -100,10 +97,10 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
         const token = returnApiToken()
 
         const formData = {
-            collectorNameTchi: tChineseName,
-            collectorNameSchi: sChineseName,
-            collectorNameEng: englishName,
-            brNo: brNo,
+            tenantId: token.tenantId,
+            packagingNameTchi: tChineseName,
+            packagingNameSchi: sChineseName,
+            packagingNameEng: englishName,
             description: description,
             remark: remark,
             status: 'ACTIVE',
@@ -114,14 +111,14 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
         if (action == 'add') {
             handleCreatePackaging(formData)
         } else if (action == 'edit') {
-            handleEditPackaging(formData, collectorId)
+            handleEditPackaging(formData, packagingId)
         } else if (action === 'delete') {
             handleDelete()
         }
     }
 
     const handleCreatePackaging = async (formData: any) => {
-        const result = await createPackagingUnit(formData)
+        const result = await createPackaging(formData)
         if (result) {
             onSubmitData("success", t('common.saveSuccessfully'))
             resetData()
@@ -132,7 +129,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
     }
 
     const handleEditPackaging = async (formData: any, collectorId: string) => {
-        const result = await editPackagingUnit(formData, collectorId)
+        const result = await editPackaging(formData, collectorId)
         if (result) {
             onSubmitData("success", t('common.editSuccessfully'))
             resetData()
@@ -144,10 +141,10 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
         const token = returnApiToken()
 
         const formData = {
-            collectorNameTchi: tChineseName,
-            collectorNameSchi: sChineseName,
-            collectorNameEng: englishName,
-            brNo: brNo,
+            tenantId: token.tenantId,
+            packagingNameTchi: tChineseName,
+            packagingNameSchi: sChineseName,
+            packagingNameEng: englishName,
             description: description,
             remark: remark,
             status: 'DELETED',
@@ -156,7 +153,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
         }
 
       if(selectedItem != null){
-        const result = await editPackagingUnit(formData, collectorId)
+        const result = await editPackaging(formData, packagingId)
         if(result) {
           onSubmitData("success", t('common.deletedSuccessfully'))
           resetData()
@@ -180,7 +177,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                       ? t('top_menu.add_new')
                       : action == 'delete'
                       ? t('common.delete')
-                      : selectedItem?.collectorId,
+                      : selectedItem?.packagingTypeId,
                     subTitle: t('packaging_unit.packaging_unit'),
                     submitText: t('add_warehouse_page.save'),
                     cancelText: t('add_warehouse_page.delete'),

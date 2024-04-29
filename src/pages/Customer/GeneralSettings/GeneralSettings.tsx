@@ -37,22 +37,22 @@ import UpdateCurrency from './UpdateCurrency'
 import { returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
-import { getAllPackagingUnit } from '../../../APICalls/Customer/packagingUnit'
+import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import CreatePackagingUnit from './CreatePackagingUnit'
 
 interface PackagingUnit {
-  brNo: string
-  collectorId: string
-  collectorNameEng: string
-  collectorNameSchi: string
-  collectorNameTchi: string
-  createdAt: string
-  createdBy: string
+  packagingTypeId: string
+  tenantId: string
+  packagingNameTchi: string
+  packagingNameSchi: string
+  packagingNameEng: string
   description: string
   remark: string
   status: string
-  updatedAt: string
+  createdBy: string
   updatedBy: string
+  createdAt: string
+  updatedAt: string
 }
 
 const GeneralSettings: FunctionComponent = () => {
@@ -91,19 +91,19 @@ const GeneralSettings: FunctionComponent = () => {
   }
   const columns: GridColDef[] = [
     {
-      field: 'collectorNameTchi',
+      field: 'packagingNameTchi',
       headerName: t('packaging_unit.traditional_chinese_name'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'collectorNameSchi',
+      field: 'packagingNameSchi',
       headerName: t('packaging_unit.simplified_chinese_name'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'collectorNameEng',
+      field: 'packagingNameEng',
       headerName: t('packaging_unit.english_name'),
       width: 200,
       type: 'string'
@@ -298,7 +298,7 @@ const GeneralSettings: FunctionComponent = () => {
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
             <DataGrid
               rows={packagingMapping}
-              getRowId={(row) => row.collectorId}
+              getRowId={(row) => row.packagingTypeId}
               hideFooter
               columns={columns}
               checkboxSelection
