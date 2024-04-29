@@ -979,5 +979,42 @@
       "pico_id": "PO number",
       "message": "Message"
     }
+  },
+  "purchase_order_customer": {
+    "all_order": "All Orders",
+    "enquiry_po": "Order",
+    "table": {
+      "created_datetime": "Created datetime",
+      "recycling_plant": "Recycling plant",
+      "order_number": "Order Number",
+      "pico_id": "PO number",
+      "place_receipt": "Place of receipt",
+      "receipt_date_time": "Receipt date and time",
+      "status": "Status",
+      "operation": "Operation",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "detail": {
+      "order": "Order",
+      "contact_info": "Contact information",
+      "receiving_company_name": "Receiving company name",
+      "contact_number": "Contact number",
+      "payment_method": "Payment method",
+      "order_info": "Order information",
+      "pico_id": "PO number",
+      "message": "Message"
+    },
+    "createOrEdit": {
+      "new": "New",
+      "edit": "Edit",
+      "finish": "Complete",
+      "cancel": "Cancel",
+      "receipt_date_and_time": "Receipt date and time",
+      "recycling_category": "Recycling category",
+      "waste_paper_category": "Waste paper category",
+      "estimated_weight": "Estimated weight",
+      "arrived": "Arrived"
+    }
   }
 }

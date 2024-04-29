@@ -25,7 +25,8 @@ import { localStorgeKeyName } from "../../constants/constant";
 type recycItem = {
   recycType: il_item;
   recycSubType: il_item;
-  weight:number
+  weight:number;
+  packageTypeId: string;
 };
 
 type props = {
@@ -44,17 +45,8 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
   };
   const { recycType } = useContainer(CommonTypeContainer);
   const { t } = useTranslation()
-
   const [selectedDetail, setSelectedDetail] = useState<CheckinDetail[] | undefined>([]);
-
   const [recycItem, setRecycItem] = useState<recycItem[]>([]);
-  
-  console.log(recycItem)
-
-  console.log("Selected: ", selectedItem)
-
- // ...
- 
 
 useEffect(() => {
   setSelectedDetail(selectedItem?.checkinDetail);
@@ -68,7 +60,6 @@ useEffect(() => {
       const matchingRecycType = recycType?.find(
         (recyc) => detail.recycTypeId === recyc.recycTypeId
       );
-      console.log(matchingRecycType)
       if (matchingRecycType) {
         const matchrecycSubType = matchingRecycType.recycSubType?.find(
           (subtype) => subtype.recycSubTypeId === detail.recycSubTypeId
@@ -112,9 +103,8 @@ useEffect(() => {
             name: subName,
             id: detail.chkInDtlId.toString(),
           },
-          weight:detail.weight
-          
-
+          weight:detail.weight,
+          packageTypeId: detail.packageTypeId
         });
       }
     });
@@ -217,6 +207,7 @@ const messageCheckin = `[${loginId}] ${t(
                 fontcolor="#66bff6"
                 weight={item.weight}
                 showImage={false}
+                packageTypeId={item.packageTypeId}
                 recycleName={item.recycSubType.name}
                 recycleType={item.recycType.name}
               />

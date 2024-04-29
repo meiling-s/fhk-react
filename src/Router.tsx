@@ -59,11 +59,7 @@ import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
-
-//customer
 import CustomerAccount from './pages/Logistic/Account'
-
-
 
 const Router = () => {
   return (
@@ -169,6 +165,9 @@ const Router = () => {
         </Route>
 
         <Route element={<MainLayout />}>
+          <Route path="/customer/purchaseOrder" element={<PurchaseOrder />} />
+          <Route path="/customer/createPurchaseOrder" element={<></>} />
+          <Route path="/customer/editPurchaseOrder" element={<></>} />
           <Route path="/customer/account" element={<CustomerAccount />} />
         </Route>
       </Routes>

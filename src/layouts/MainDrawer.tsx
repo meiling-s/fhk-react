@@ -125,7 +125,7 @@ function MainDrawer() {
       'Purchase order': {
         name: t('purchase_order.enquiry_po'),
         icon: <ShoppingCartOutlinedIcon />,
-        onClick: () => navigate('/manufacturer/purchaseOrder'),
+        onClick: () => navigate(`/${realm}/purchaseOrder`),
         collapse: false
       },
       'Job order': {
