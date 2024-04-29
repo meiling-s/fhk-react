@@ -17,14 +17,15 @@ import { getPurchaseOrderById } from '../../../APICalls/Manufacturer/purchaseOrd
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
-import { Roles, Status, localStorgeKeyName } from '../../../constants/constant'
+import { Languages, Roles, Status, localStorgeKeyName } from '../../../constants/constant'
 import {
   PurChaseOrder,
   Row,
   PurchaseOrderDetail
 } from '../../../interfaces/purchaseOrder'
 import PurchaseOrderCard from './PurchaseOrderCard'
-
+import { PaymentType } from '../../../interfaces/purchaseOrder'
+import i18n from '../../../setups/i18n'
 const PurchaseOrderForm = ({
   onClose,
   selectedRow,
@@ -42,6 +43,33 @@ const PurchaseOrderForm = ({
 
   const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
   const rolesEnableCreatePO = [Roles.customerAdmin]
+
+  const paymentTypes : PaymentType[] = [
+    {
+      paymentNameTchi: '現金',
+      paymentNameSchi: '现金',
+      paymentNameEng: 'Cash',
+      value: 'cash'
+    },
+    {
+      paymentNameTchi: '信用卡',
+      paymentNameSchi: '信用卡',
+      paymentNameEng: 'Credit card',
+      value: 'card'
+    },
+    {
+      paymentNameTchi: '支票',
+      paymentNameSchi: '支票',
+      paymentNameEng: 'Cheque',
+      value: 'cheque'
+    },
+    {
+      paymentNameTchi: '轉數快',
+      paymentNameSchi: '转数快',
+      paymentNameEng: 'FPS',
+      value: 'fps'
+    }
+  ]
   
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -84,6 +112,18 @@ const PurchaseOrderForm = ({
     }
     }
     
+  }
+  
+  const onHandlePaymentType = () => {
+    const payment = paymentTypes.find(payment => payment.value === selectedPurchaseOrder?.paymentType)
+
+    if(i18n.language === Languages.ENUS) {
+      return payment?.paymentNameEng
+    } else if(i18n.language === Languages.ZHCH){
+      return payment?.paymentNameSchi
+    } else {
+      return payment?.paymentNameTchi
+    }
   }
 
   return (
@@ -151,7 +191,7 @@ const PurchaseOrderForm = ({
 
             <CustomField label={t('purchase_order.detail.payment_method')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPurchaseOrder?.paymentType}
+                {onHandlePaymentType()}
               </Typography>
             </CustomField>
 

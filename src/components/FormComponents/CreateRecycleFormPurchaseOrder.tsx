@@ -443,7 +443,7 @@ const CreateRecycleForm = ({
                       key={formik.values.id}
                     />
                   </CustomField>
-                  { errors.recycTypeId.required && errors.recycTypeId.status &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>}
+                  { (errors.recycSubTypeId.required && errors.recycSubTypeId.status) &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>}
               </Grid>
               <Grid item>
                 <CustomField

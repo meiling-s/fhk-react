@@ -12,7 +12,7 @@ import {
   Typography
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { styles } from '../../constants/styles'
 import CustomField from './CustomField'
 import CreateRecycleFormPurchaseOrder from './CreateRecycleFormPurchaseOrder'
@@ -124,7 +124,8 @@ const PurchaseOrderCreateForm = ({
       contactName: {type: 'string', status: false,  required: true},
       contactNo: {type: 'string', status: false,  required: true},
       paymentType: {type: 'string', status: false,  required: true},
-      senderName: {type: 'string', status: false,  required: false}
+      senderName: {type: 'string', status: false,  required: false},
+      details: {type: 'string',  status: false, required: true}
     }
   )
   
@@ -148,8 +149,8 @@ const PurchaseOrderCreateForm = ({
       value: 'cheque'
     },
     {
-      paymentNameTchi: '转数快',
-      paymentNameSchi: '轉數快',
+      paymentNameTchi: '轉數快',
+      paymentNameSchi: '转数快',
       paymentNameEng: 'FPS',
       value: 'fps'
     }
@@ -496,6 +497,19 @@ const PurchaseOrderCreateForm = ({
       })
       isValid = false
     }
+
+    if(formik.values.purchaseOrderDetail.length === 0){
+      setErrors(prev => {
+        return{
+          ...prev,
+          details : {
+            ...prev.details,
+            status: true
+          }
+        }
+      })
+      isValid = false
+    }
     return isValid
   }
 
@@ -505,6 +519,20 @@ const PurchaseOrderCreateForm = ({
     formik.handleSubmit()
   }
 
+  useEffect(() => {
+    if(state.length >= 1){
+      setErrors(prev => {
+        return{
+          ...prev,
+          details : {
+            ...prev.details,
+            status: false
+          }
+        }
+      })
+    }
+  }, [state])
+  
   return (
     <>
       {/* <form onSubmit={onhandleSubmit}> */}
@@ -743,6 +771,7 @@ const PurchaseOrderCreateForm = ({
                       }
                     }}
                   />
+                  {errors.details.required && errors.details.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
                   <Modal open={openModal} onClose={handleCloses}>
                     <CreateRecycleFormPurchaseOrder
                       data={state}
