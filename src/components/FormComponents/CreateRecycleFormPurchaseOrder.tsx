@@ -214,7 +214,7 @@ const CreateRecycleForm = ({
       ),
     })
   })
-  
+ 
   const validateData = () => {
     let isValid = true;
     if(formik.values.pickupAt === ''){
@@ -223,6 +223,7 @@ const CreateRecycleForm = ({
           ...prev,
           pickupAt: {
             ...prev.pickupAt,
+            required: true,
             status: true
           }
         }
@@ -235,6 +236,7 @@ const CreateRecycleForm = ({
           ...prev,
           recycTypeId: {
             ...prev.recycTypeId,
+            required: true,
             status: true
           }
         }
@@ -247,30 +249,34 @@ const CreateRecycleForm = ({
           ...prev,
           recycSubTypeId: {
             ...prev.recycSubTypeId,
+            required: true,
             status: true
           }
         }
       })
       isValid = false
     } 
-    if(formik.values.weight === 0){
+    if(Number(formik.values.weight) <= 0){
       setErrors(prev => {
         return{
           ...prev,
           weight: {
             ...prev.weight,
+            required: true,
             status: true
           }
         }
       })
       isValid = false
-    }  
+    } 
+    
     if(formik.values.receiverAddr === ''){
       setErrors(prev => {
         return{
           ...prev,
           receiverAddr: {
             ...prev.receiverAddr,
+            required: true,
             status: true
           }
         }
@@ -316,6 +322,22 @@ const CreateRecycleForm = ({
           }
         }
       })
+    } else if(field === 'recycTypeId'){
+      formik.setFieldValue('recycTypeId', value)
+      formik.setFieldValue('recycSubTypeId', '')
+      setErrors((prev: any) => {
+        return{
+          ...prev,
+          recycTypeId: {
+            status: false,
+            require: true
+          },
+          recycSubTypeId: {
+            status: true,
+            require: true
+          }
+        }
+      })
     } else {
       formik.setFieldValue(field, value)
       setErrors(prev => {
@@ -333,9 +355,11 @@ const CreateRecycleForm = ({
   const onhandleSubmit = () => {
     const isValid = validateData()
     if(!isValid) return
+    console.log('isValid', isValid)
+    // return
     formik.handleSubmit()
   }
-
+ 
   return (
     <>
       {/* <form onSubmit={onhandleSubmit}> */}
@@ -452,6 +476,7 @@ const CreateRecycleForm = ({
                 >
                   <CustomTextField
                     id="weight"
+                    type='number'
                     placeholder={t('userAccount.pleaseEnterNumber')}
                     // onChange={formik.handleChange}
                     onChange={(event) => {
