@@ -498,7 +498,7 @@ const PurchaseOrderCreateForm = ({
       isValid = false
     }
 
-    if(formik.values.purchaseOrderDetail.length === 0){
+    if(state.length === 0){
       setErrors(prev => {
         return{
           ...prev,
@@ -532,7 +532,7 @@ const PurchaseOrderCreateForm = ({
       })
     }
   }, [state])
-  
+
   return (
     <>
       {/* <form onSubmit={onhandleSubmit}> */}
