@@ -499,7 +499,7 @@
     "fluorescentLampsSubmittedToRecyclers": "已呈交回收商的螢光燈和燈管（連日期）",
     "please_enter": "請輸入",
     "nature": "性質",
-    "speaker": "揚聲器",
+    "speaker": "講者",
     "service_type": "服務種類",
     "additional": "額外的",
     "other_services": "其他服務"
@@ -750,7 +750,8 @@
     "cancel": "取消",
     "driver": "司機",
     "plat_number": "車牌號碼",
-    "assign_driver": "指派司機"
+    "assign_driver": "指派司機",
+    "shippingDateAndTime": "運輸日期及時間"
   },
   "notification": {
     "notification_menu": "通知範本",
