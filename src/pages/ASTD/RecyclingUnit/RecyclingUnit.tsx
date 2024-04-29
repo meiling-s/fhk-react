@@ -7,7 +7,10 @@ import {
   Pagination,
   Container,
   IconButton,
-  Switch
+  Switch,
+  Modal,
+  Stack,
+  Divider,
 } from '@mui/material'
 import {
   DataGrid,
@@ -44,10 +47,12 @@ import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import { t } from 'i18next'
 import RecyclingFormat from './RecyclingFormat'
-import { getAllPackagingUnit, getRecycCode, getWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { deleteRecyc, deleteSubRecyc, getAllPackagingUnit, getRecycCode, getWeightUnit } from '../../../APICalls/ASTD/recycling'
 import WeightFormat from './WeightFormat'
 import PackagingFormat from './PackagingFormat'
 import CodeFormat from './CodeFormat'
+import { localStorgeKeyName } from '../../../constants/constant'
+import CustomButton from '../../../components/FormComponents/CustomButton'
 
 interface CodeFormatProps {
   createdAt: string
@@ -122,6 +127,18 @@ interface recyleTypeData {
   recycSubTypeId: string
 }
 
+type DeleteForm = {
+  open: boolean
+  onClose: () => void
+  onRejected?: () => void
+  handleConfirmDelete: () => void
+}
+
+type updateStatus = {
+  status: string
+  updatedBy: string
+}
+
 const RecyclingUnit: FunctionComponent = () => {
   const { t, i18n } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -143,6 +160,7 @@ const RecyclingUnit: FunctionComponent = () => {
   const [weightDrawerOpen, setWeightDrawerOpen] = useState<boolean>(false)
   const [codeDrawerOpen, setCodeDrawerOpen] = useState<boolean>(false)
   const [isMainCategory, setMainCategory] = useState<boolean>(false)
+  const [delFormModal, setDeleteModal] = useState<boolean>(false)
 
   useEffect(() => {
     initRecycTypeList()
@@ -162,24 +180,24 @@ const RecyclingUnit: FunctionComponent = () => {
   }
 
   const initRecycCode = async () => {
-    const result = await getRecycCode(page -1, pageSize)
+    const result = await getRecycCode(page - 1, pageSize)
     const data = result?.data
-    
-    
+
+
     setCode(data)
   }
 
   const initPackagingUnit = async () => {
     const result = await getAllPackagingUnit(page - 1, pageSize)
     const data = result?.data.content
-    
+
     setPackagingUnit(data)
   }
 
   const initWeightUnit = async () => {
     const result = await getWeightUnit(page - 1, pageSize)
     const data = result?.data
-    
+
     setWeightUnit(data)
   }
 
@@ -422,7 +440,7 @@ const RecyclingUnit: FunctionComponent = () => {
     setSelectedCodeRow(params.row)
     setCodeDrawerOpen(true)
   }
-  
+
   const packagingHandleSelectRow = (params: GridRowParams) => {
     setAction('edit')
     setRowId(params.row.id)
@@ -492,6 +510,55 @@ const RecyclingUnit: FunctionComponent = () => {
     }
   }
 
+  const handleClickSwitch = async (value: any, type: string) => {
+    const token = returnApiToken()
+
+    const recyclingForm = {
+      status: 'DELETED',
+      updatedBy: token.loginId
+    }
+    if (type === 'main') {
+      try {
+        const response = await deleteRecyc(recyclingForm, value.recycTypeId)
+        if (response) {
+          showSuccessToast(t('notify.successDeleted'))
+          handleOnSubmitData('recycle')
+        }
+      } catch (error) {
+        console.error(error)
+        showErrorToast(t('notify.errorDeleted'))
+      }
+    } else if (type === 'sub') {
+      const response = await deleteSubRecyc(recyclingForm, value.recycSubTypeId)
+      if (response) {
+        showSuccessToast(t('notify.successDeleted'))
+        handleOnSubmitData('recycle')
+      }
+    }
+  }
+
+  const handleConfirmDelete = async () => {
+    const token = returnApiToken()
+    const recycId = selectedRecyclingRow && selectedRecyclingRow.recycTypeId
+    const recyclingForm = {
+      status: 'INACTIVE',
+      updatedBy: token.loginId
+    }
+    if (recycId !== null) {
+      try {
+        const response = await deleteRecyc(recyclingForm, recycId)
+        if (response) {
+          showSuccessToast(t('notify.successDeleted'))
+          handleOnSubmitData('recycle')
+          setDeleteModal(false)
+        }
+      } catch (error) {
+        console.error(error)
+        showErrorToast(t('notify.errorDeleted'))
+      }
+    }
+  }
+
   return (
     <>
       <Box
@@ -524,14 +591,14 @@ const RecyclingUnit: FunctionComponent = () => {
               },
             ]}
             variant="outlined"
-            onClick={() => {setRecycDrawerOpen(true); setAction('add')}}
+            onClick={() => { setRecycDrawerOpen(true); setAction('add') }}
           >
             <ADD_ICON /> {t("top_menu.add_new")}
           </Button>
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
-            <CustomDataGrid data={recyclableType} customGridHandleAction={customGridHandleAction} />
+            <CustomDataGrid data={recyclableType} customGridHandleAction={customGridHandleAction} handleClickSwitch={handleClickSwitch}/>
             <Pagination
               className="mt-4"
               count={Math.ceil(totalData)}
@@ -562,7 +629,7 @@ const RecyclingUnit: FunctionComponent = () => {
               },
             ]}
             variant="outlined"
-            onClick={() => {setCodeDrawerOpen(true); setAction('add')}}
+            onClick={() => { setCodeDrawerOpen(true); setAction('add') }}
           >
             <ADD_ICON /> {t("top_menu.add_new")}
           </Button>
@@ -622,7 +689,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 },
               ]}
               variant="outlined"
-              onClick={() => {setPackagingDrawerOpen(true); setAction('add')}}
+              onClick={() => { setPackagingDrawerOpen(true); setAction('add') }}
             >
               <ADD_ICON /> {t("top_menu.add_new")}
             </Button>
@@ -683,7 +750,7 @@ const RecyclingUnit: FunctionComponent = () => {
                 },
               ]}
               variant="outlined"
-              onClick={() => {setWeightDrawerOpen(true); setAction('add')}}
+              onClick={() => { setWeightDrawerOpen(true); setAction('add') }}
             >
               <ADD_ICON /> {t("top_menu.add_new")}
             </Button>
@@ -734,6 +801,7 @@ const RecyclingUnit: FunctionComponent = () => {
         recyclableType={recyclableType}
         selectedItem={selectedRecyclingRow}
         mainCategory={isMainCategory}
+        setDeleteModal={setDeleteModal}
       />
       <CodeFormat
         drawerOpen={codeDrawerOpen}
@@ -757,13 +825,24 @@ const RecyclingUnit: FunctionComponent = () => {
         rowId={rowId}
         selectedItem={selectedRow}
       />
+      <DeleteModal
+        open={delFormModal}
+        onClose={() => {
+          setDeleteModal(false)
+        }}
+        onRejected={() => {
+          setDeleteModal(false)
+          showSuccessToast(t('pick_up_order.rejected_success'))
+        }}
+        handleConfirmDelete={handleConfirmDelete}
+      />
     </>
   )
 }
 
 export default RecyclingUnit
 
-const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGridHandleAction: (value: any, action: string, type: string) => void; }) => {
+const CustomDataGrid = ({ data, customGridHandleAction, handleClickSwitch }: { data: any; customGridHandleAction: (value: any, action: string, type: string) => void; handleClickSwitch: (value: any, type: string) => void}) => {
   const columns = [
     { key: 'traditionalName', label: t('common.traditionalChineseName'), width: '15%' },
     { key: 'chineseName', label: t('common.simplifiedChineseName'), width: '15%' },
@@ -825,11 +904,11 @@ const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGri
                   <DELETE_OUTLINED_ICON
                     fontSize="small"
                     className="cursor-pointer text-grey-dark mr-2"
-                    onClick={(event) => console.log('hitt')}
+                    onClick={() => console.log('hitt')}
                   />
                 </div>
                 <div style={{ display: 'flex' }}>
-                  <Switch checked={item.status === 'ACTIVE' ? true : false} onChange={() => console.log('hit')} />
+                  <Switch checked={item.status === 'ACTIVE' ? true : false} onChange={() => handleClickSwitch(item, 'main')} />
                 </div>
               </div>
             </div>
@@ -861,11 +940,11 @@ const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGri
                     <DELETE_OUTLINED_ICON
                       fontSize="small"
                       className="cursor-pointer text-grey-dark mr-2"
-                      onClick={(event) => console.log('hitt')}
+                      onClick={() => console.log('hitt')}
                     />
                   </div>
                   <div style={{ display: 'flex' }}>
-                    <Switch checked={value.status === 'ACTIVE' ? true : false} onChange={() => console.log('hit')} />
+                    <Switch checked={value.status === 'ACTIVE' ? true : false} onChange={() => handleClickSwitch(item, 'sub')} />
                   </div>
                 </div>
               </div>
@@ -876,3 +955,90 @@ const CustomDataGrid = ({ data, customGridHandleAction }: { data: any; customGri
     </div>
   );
 };
+
+const DeleteModal: React.FC<DeleteForm> = ({
+  open,
+  onClose,
+  onRejected,
+  handleConfirmDelete
+}) => {
+  const { t } = useTranslation()
+  const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
+
+  const handleRejectRequest = async () => {
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+    const statReason: updateStatus = {
+      status: 'INACTIVE',
+      updatedBy: loginId
+    }
+
+    console.log('hitt')
+  }
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('check_out.confirm_reject')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box>
+            <Typography sx={localstyles.typo}>
+              {t('check_out.reject_reasons')}
+            </Typography>
+          </Box>
+
+          <Box sx={{ alignSelf: 'center' }}>
+            <CustomButton text={t('check_in.confirm')} color="blue" style={{width: '175px', marginRight: '10px'}} onClick={
+              () => {
+                handleConfirmDelete()
+                onClose()
+              }
+            } />
+            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '175px'}} onClick={
+              () => {
+                onClose()
+              }
+            } />
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
+let localstyles = {
+  typo: {
+    color: 'grey',
+    fontSize: 14
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    width: '34%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    height: 'fit-content',
+    padding: 4,
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5,
+
+    '@media (max-width: 768px)': {
+      width: '70%' /* Adjust the width for mobile devices */
+    }
+  }
+}

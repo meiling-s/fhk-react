@@ -992,7 +992,8 @@
     "weight_unit": "磅重單位",
     "main_category": "主類別",
     "sub_category": "次類別",
-    "1kg_equivalent": "1kg 相等於"
+    "1kg_equivalent": "1kg 相等於",
+    "confirm_text": "如你要删除主類別, 相關的次類別也會删除, 需要繼續嗎?"
   },
   "recycling_point": {
     "recycling_point": "回收點",

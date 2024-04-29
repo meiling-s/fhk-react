@@ -994,7 +994,8 @@
     "weight_unit": "Weight Unit",
     "main_category": "Main Category",
     "sub_category": "Sub Category",
-    "1kg_equivalent": "1kg is equivalent to"
+    "1kg_equivalent": "1kg is equivalent to",
+    "confirm_text": "If you want to delete the main type, the related subtype will also be deleted. Do you need to continue?"
   },
   "recycling_point": {
     "recycling_point": "Recycling Point",

@@ -80,6 +80,7 @@ interface RecyclingFormatProps {
     recyclableType: recyleTypeData[],
     selectedItem: recyleTypeData | null,
     mainCategory: boolean
+    setDeleteModal: (value: boolean) => void
   }
 
 const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
@@ -89,7 +90,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     onSubmitData,
     recyclableType,
     selectedItem,
-    mainCategory
+    mainCategory,
+    setDeleteModal
 }) => {
     const { t } = useTranslation()
     const { i18n } = useTranslation()
@@ -222,7 +224,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
     const handleDelete = async () => {
         const token = returnApiToken()
-
+        
         const recyclingForm = {
             status: 'INACTIVE',
             updatedBy: token.loginId
@@ -230,11 +232,12 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
         try {
             if (isMainCategory) {
-                const response = await deleteRecyc(recyclingForm, mainTypeId)
-                if (response) {
-                    showSuccessToast(t('notify.successDeleted'))
-                    onSubmitData('recycle')
-                }
+                setDeleteModal(true)
+                // const response = await deleteRecyc(recyclingForm, mainTypeId)
+                // if (response) {
+                //     showSuccessToast(t('notify.successDeleted'))
+                //     onSubmitData('recycle')
+                // }
             } else {
             const response = await deleteSubRecyc(recyclingForm, subTypeId)
                 if (response) {
