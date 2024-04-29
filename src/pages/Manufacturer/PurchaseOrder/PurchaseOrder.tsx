@@ -24,7 +24,8 @@ import CustomItemList, {
 import {
   getAllPurchaseOrder,
   updateStatusPurchaseOrder,
-  getPurchaseOrderReason
+  getPurchaseOrderReason,
+  getPurchaseOrderById
 } from '../../../APICalls/Manufacturer/purchaseOrder'
 
 import { getStatusList } from '../../../APICalls/status'
@@ -37,7 +38,7 @@ import {
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
-import { Languages, Roles, localStorgeKeyName } from '../../../constants/constant'
+import { Languages, Roles, Status, localStorgeKeyName } from '../../../constants/constant'
 import dayjs from 'dayjs'
 
 type Approve = {
@@ -151,7 +152,8 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
     )
     const reason = rejectReasonItem?.name || ''
     const updatePoStatus = {
-      status: 'REJECTED',
+      picoId: selectedRow?.picoId,
+      status: Status.REJECTED,
       updatedBy: selectedRow.updatedBy
     }
     try {
@@ -262,7 +264,7 @@ const PurchaseOrder = () => {
     {
       field: 'poId',
       headerName: t('purchase_order.table.order_number'),
-      width: 220,
+      width: 120,
       editable: true
     },
     {
@@ -283,7 +285,7 @@ const PurchaseOrder = () => {
       field: 'createdAt',
       headerName: t('purchase_order.table.receipt_date_time'),
       type: 'sring',
-      width: 260,
+      width: 200,
       editable: true,
       valueGetter: (params) => {
         return params?.row?.purchaseOrderDetail[0]?.pickupAt
@@ -330,7 +332,7 @@ const PurchaseOrder = () => {
       {
         field: 'poId',
         headerName: t('purchase_order.table.order_number'),
-        width: 220,
+        width: 120,
         editable: true
       },
       {
@@ -445,9 +447,16 @@ const PurchaseOrder = () => {
     setTotalData(result?.data.totalPages)
   }
 
-  const showApproveModal = (row: any) => {
-    setSelectedRow(row)
-    setApproveModal(true)
+  const showApproveModal = async (row: any) => {
+    if(row?.poId){
+      const routeName = role
+      const result = await getPurchaseOrderById(row?.poId)
+      if (result) {
+        navigate(`/${routeName}/approvePurchaseOrder`, { state: result.data })
+      }
+    }
+    // setSelectedRow(row)
+    // setApproveModal(true)
   }
   const showRejectModal = (row: any) => {
     setSelectedRow(row)
