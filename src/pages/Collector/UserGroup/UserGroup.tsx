@@ -135,7 +135,6 @@ const UserGroup: FunctionComponent = () => {
       width: 600,
       type: 'string',
       renderCell: (params) => {
-        console.log('params', params)
         return (
           <div>
             {params.row.functions.map((item: any, key: number) => (

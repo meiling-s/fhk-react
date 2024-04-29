@@ -1,48 +1,35 @@
 import { FunctionComponent, useState, useEffect, useMemo } from 'react'
-import {
-  Box,
-  Divider,
-  Grid,
-  Typography,
-  InputLabel,
-  MenuItem,
-  Card,
-  FormControl,
-  ButtonBase,
-  ImageList,
-  ImageListItem,
-  Stack,
-  ToggleButton
-} from '@mui/material'
-import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-import ImageUploading, { ImageListType } from 'react-images-uploading'
+import { Box, Divider, Grid } from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { EVENT_RECORDING } from '../../../constants/configs'
-import { styles } from '../../../constants/styles'
 
 import { useTranslation } from 'react-i18next'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64, returnApiToken } from '../../../utils/utils'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { useContainer } from 'unstated-next'
-import i18n from '../../../setups/i18n'
-import { CreateUserGroupProps, DeleteUserGroupProps, EditUserGroupProps, Functions, UserGroup } from '../../../interfaces/userGroup'
+import { returnApiToken } from '../../../utils/utils'
+import { localStorgeKeyName } from '../../../constants/constant'
+
+import {
+  CreateUserGroupProps,
+  DeleteUserGroupProps,
+  EditUserGroupProps,
+  Functions,
+  UserGroup
+} from '../../../interfaces/userGroup'
 import FunctionList from './FunctionList'
-import { createUserGroup, deleteUserGroup, editUserGroup } from '../../../APICalls/Collector/userGroup'
+import {
+  createUserGroup,
+  deleteUserGroup,
+  editUserGroup
+} from '../../../APICalls/Collector/userGroup'
 
 interface Props {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
-  rowId?: number,
+  rowId?: number
   selectedItem?: UserGroup | null
   functionList: Functions[]
 }
@@ -57,39 +44,30 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   functionList
 }) => {
   const { t } = useTranslation()
-  const serviceList: il_item[] = [
-    {
-      id: 'basic',
-      name: 'basic'
-    },
-    {
-      id: 'additional',
-      name: 'additional'
-    }
-  ]
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [roleName, setRoleName] = useState('')
-  const [realm, setRealm] = useState('')
+  // const [realm, setRealm] = useState('')
   const [description, setDescription] = useState('')
   const [functions, setFunctions] = useState<number[]>([])
+  var realm = localStorage.getItem(localStorgeKeyName.realm) || 'collector'
 
   const mappingData = () => {
-    if(selectedItem != null) {
-      setRealm('collector')
+    if (selectedItem != null) {
+      // setRealm('collector')
       setRoleName(selectedItem.roleName)
-      let newFunctions: number[] = [];
-      selectedItem.functions.forEach(item => {
-        newFunctions.push(item.functionId);
+      let newFunctions: number[] = []
+      selectedItem.functions.forEach((item) => {
+        newFunctions.push(item.functionId)
       })
-      setFunctions(newFunctions);
+      setFunctions(newFunctions)
       setDescription(selectedItem.description)
     }
   }
 
   useEffect(() => {
     setValidation([])
-    if(action !== 'add'){
+    if (action !== 'add') {
       mappingData()
     } else {
       setTrySubmited(false)
@@ -98,13 +76,12 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   }, [drawerOpen])
 
   const resetData = () => {
-    setRealm('')
+    //setRealm('')
     setRoleName('')
     setFunctions([])
     setDescription('')
     setValidation([])
   }
-
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -142,13 +119,13 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
     if (action == 'add') {
       const formData: CreateUserGroupProps = {
-        realm: 'collector',
+        realm: realm,
         tenantId: token.tenantId,
         roleName: roleName,
         description: description,
         functions: functions,
-        createdBy:  token.loginId,
-        status: "ACTIVE",
+        createdBy: token.loginId,
+        status: 'ACTIVE'
       }
       handleCreateUserGroup(formData)
     } else {
@@ -156,8 +133,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         functions: functions,
         roleName: roleName,
         description: description,
-        updatedBy:  token.loginId,
-        status: "ACTIVE",
+        updatedBy: token.loginId,
+        status: 'ACTIVE'
       }
       handleEditUserGroup(formData)
     }
@@ -166,12 +143,12 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   const handleCreateUserGroup = async (formData: CreateUserGroupProps) => {
     if (validation.length === 0) {
       const result = await createUserGroup(formData)
-      if(result) {
-        onSubmitData("success", "Success created data")
+      if (result) {
+        onSubmitData('success', t('notify.successCreated'))
         resetData()
         handleDrawerClose()
-      }else{
-        onSubmitData("error", "Failed created data")
+      } else {
+        onSubmitData('error', t('notify.errorCreated'))
       }
     } else {
       setTrySubmited(true)
@@ -180,13 +157,15 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   const handleEditUserGroup = async (formData: EditUserGroupProps) => {
     if (validation.length === 0) {
-
-      if(selectedItem != null){
+      if (selectedItem != null) {
         const result = await editUserGroup(formData, selectedItem.groupId!)
-        if(result) {
-          onSubmitData("success", "Edit data success")
+        if (result) {
+          onSubmitData('success', t('notify.SuccessEdited'))
           resetData()
           handleDrawerClose()
+        } else {
+          setTrySubmited(true)
+          onSubmitData('error', t('notify.errorEdited'))
         }
       }
     } else {
@@ -196,40 +175,46 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   const titleName = useMemo(() => {
     switch (action) {
-      case "add":
-        return t('top_menu.add_new');
+      case 'add':
+        return t('top_menu.add_new')
 
-      case "edit":
-        return t('userGroup.change');
+      case 'edit':
+        return t('userGroup.change')
 
-      case "delete":
-        return t('userGroup.delete');
+      case 'delete':
+        return t('userGroup.delete')
     }
 
-    return ""
+    return ''
   }, [action])
 
   const handleDelete = async () => {
     const token = returnApiToken()
     const status = 'DELETED'
-    if(selectedItem != null){
+    if (selectedItem != null) {
       const formData: DeleteUserGroupProps = {
-        updatedBy:  token.loginId,
-        status: status,
+        updatedBy: token.loginId,
+        status: status
       }
       const result = await deleteUserGroup(formData, selectedItem.groupId!)
-      if(result) {
-        onSubmitData("success", "Deleted data success")
-        resetData()
-        handleDrawerClose()
+      if (result) {
+        if (result == 500) {
+          setTrySubmited(true)
+          onSubmitData('error', t('notify.userAccountUsed'))
+        } else {
+          onSubmitData('success', t('notify.successDeleted'))
+          resetData()
+          handleDrawerClose()
+        }
       } else {
-        onSubmitData("error", "Deleted data success")
+        setTrySubmited(true)
+        onSubmitData('error', t('notify.errorDeleted'))
       }
     }
   }
 
   return (
-    <div className="add-vehicle">
+    <div className="add-user-group">
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
@@ -282,9 +267,10 @@ const CreateUserGroup: FunctionComponent<Props> = ({
               />
             </CustomField>
             <CustomField label={t('userGroup.availableFeatures')}>
-              {functionList.map((item: Functions, key) => (
+              {functionList.map((item: Functions, index) => (
                 <FunctionList
-                  key={key}
+                  key={index}
+                  keyId={index}
                   item={item}
                   functions={functions}
                   disabled={action === 'delete'}
@@ -297,49 +283,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       </RightOverlayForm>
     </div>
   )
-}
-
-const localstyles = {
-  textField: {
-    borderRadius: '10px',
-    fontWeight: '500',
-    '& .MuiOutlinedInput-input': {
-      padding: '10px'
-    }
-  },
-  imagesContainer: {
-    width: '100%',
-    height: 'fit-content'
-  },
-  image: {
-    aspectRatio: '1/1',
-    width: '100px',
-    borderRadius: 2
-  },
-  cardImg: {
-    borderRadius: 2,
-    backgroundColor: '#E3E3E3',
-    width: '100%',
-    height: 150,
-    boxShadow: 'none'
-  },
-  btnBase: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    borderRadius: 10
-  },
-  imgError: {
-    border: '1px solid red'
-  }
 }
 
 export default CreateUserGroup

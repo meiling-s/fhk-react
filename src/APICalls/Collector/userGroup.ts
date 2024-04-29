@@ -132,9 +132,14 @@ export const deleteUserGroup = async (data: DeleteUserGroupProps, groupId: numbe
     })
     
     return response
-  } catch (e) {
-    console.error('Edit user group failed:', e)
-    return null
+  } catch (e: any) {
+    if (e.response) {
+      const response = e.response.data.status
+      return response
+    } else {
+      console.error('Edit user group failed:', e)
+      return null;
+    }
   }
 }
 

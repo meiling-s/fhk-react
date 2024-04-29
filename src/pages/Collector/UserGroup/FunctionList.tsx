@@ -6,13 +6,13 @@ import { styles } from '../../../constants/styles'
 import i18next from "i18next";
 
 export default function FunctionList({
-    key,
+    keyId,
     item,
     functions,
     disabled,
     setFunctions
 }: {
-    key: number,
+    keyId: number,
     item: Functions,
     functions: number[],
     disabled: boolean,
@@ -31,7 +31,7 @@ export default function FunctionList({
 
     return (
         <Button
-            key={key}
+            key={keyId}
             value={item.functionId}
             color="success"
             variant={selected ? 'soft' : 'outlined'}

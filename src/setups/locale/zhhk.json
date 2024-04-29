@@ -688,7 +688,8 @@
     "description": "描述",
     "availableFeatures": "可用功能",
     "pleaseEnterName": "請輸入名稱",
-    "pleaseEnterText": "請輸入文字"
+    "pleaseEnterText": "請輸入文字",
+    "userAccountUsed": "用戶群組無法刪除，因為其中仍有帳戶"
   },
   "notify": {
     "successCreated": "成功已创造",
