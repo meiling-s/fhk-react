@@ -15,6 +15,7 @@ import { returnApiToken, showErrorToast } from '../../../utils/utils'
 import { Status, localStorgeKeyName } from '../../../constants/constant'
 import { PurChaseOrder, PurchaseOrderDetail } from '../../../interfaces/purchaseOrder'
 import { updateStatusPurchaseOrder } from '../../../APICalls/Manufacturer/purchaseOrder'
+import dayjs from 'dayjs'
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
@@ -178,7 +179,7 @@ const CreatePickupOrder = () => {
         status: Status.CREATED,
         createdBy: item?.createdBy ?? '',
         updatedBy: item?.updatedBy ?? '',
-        pickupAt: item?.pickupAt ?? '',
+        pickupAt: dayjs(item?.pickupAt).format('hh:mm:ss') ?? '',
         recycType: item?.recycTypeId ?? '',
         recycSubType: item?.recycSubTypeId ?? '',
         weight: item.weight
