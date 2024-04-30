@@ -406,7 +406,15 @@
       "effFrmDate": "此日期為必填項",
       "effToDate": "迄今為止這是必要的",
       "routineType": "此例程类型为必填项",
-      "routine": "需要例行公事"
+      "routine": "需要例行公事",
+      "pickuAt": "此提貨點為必填項",
+      "senderName": "此寄件人姓名為必填項",
+      "senderAddr": "此寄件者地址為必填項",
+      "receiverName": "該接收者姓名為必填項",
+      "receiverAddr": "T此收件人地址為必填項",
+      "recycType": "此回收類型是必需的",
+      "recycSubType": "需要此可回收子類型",
+      "weight": "此重量為必填項"
     }
   },
   "tenant": {

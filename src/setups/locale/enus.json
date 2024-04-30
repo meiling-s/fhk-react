@@ -407,7 +407,15 @@
       "effFrmDate": "This from date is required",
       "effToDate": "This  to date is required",
       "routineType": "This routine Type is required",
-      "routine": "routine is required"
+      "routine": "routine is required",
+      "pickuAt": "This pickupAt is required",
+      "senderName": "This sendername is required'",
+      "senderAddr": "This sender address is required",
+      "receiverName": "This receiver Name is required",
+      "receiverAddr": "This receiver address is required",
+      "recycType": "This recycType is required",
+      "recycSubType": "This recycSubType is required",
+      "weight": "This weight is required"
     }
   },
   "tenant": {
