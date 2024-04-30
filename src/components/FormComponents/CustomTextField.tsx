@@ -16,6 +16,7 @@ type props = {
   helperText?: any;
   disabled?: boolean;
   textarea?: boolean;
+  type?: string
 };
 
 function CustomTextField({
@@ -33,9 +34,11 @@ function CustomTextField({
   helperText,
   disabled = false,
   textarea = false,
+  type
 }: props) {
   return (
     <TextField
+      type={type}
       error={error}
       className={className}
       hiddenLabel

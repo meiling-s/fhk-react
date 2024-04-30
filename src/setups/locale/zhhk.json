@@ -499,7 +499,7 @@
     "fluorescentLampsSubmittedToRecyclers": "已呈交回收商的螢光燈和燈管（連日期）",
     "please_enter": "請輸入",
     "nature": "性質",
-    "speaker": "揚聲器",
+    "speaker": "講者",
     "service_type": "服務種類",
     "additional": "額外的",
     "other_services": "其他服務"
@@ -751,7 +751,8 @@
     "cancel": "取消",
     "driver": "司機",
     "plat_number": "車牌號碼",
-    "assign_driver": "指派司機"
+    "assign_driver": "指派司機",
+    "shippingDateAndTime": "運輸日期及時間"
   },
   "notification": {
     "notification_menu": "通知範本",
@@ -977,6 +978,37 @@
       "payment_method": "付款方式",
       "order_info": "訂單資料",
       "pico_id": "回收運單編號"
+    },
+    "create" : {
+      "create_order": "建立訂單",
+      "contact_information": "聯絡資料",
+      "receiving_company_name": "收件公司名稱",
+      "sender_company_name": "寄件者公司名稱",
+      "receiving_company_name_placeholder": "請輸入公司名稱",
+      "contact_name":"聯絡人姓名",
+      "contact_name_placeholder":"請填寫聯絡人姓名",
+      "contact_number": "聯絡人號碼",
+      "contact_number_placeholder": "請填寫手機號碼",
+      "payment_method": "付款方式",
+      "payment_method_placeholder": "請選擇",
+      "order_information": "訂單資料",
+      "recycling_plant": "回收廠",
+      "receipt_date_and_time": "收貨日期及時間",
+      "main_category": "主類別",
+      "subcategory": "次類別",
+      "weight": "重量",
+      "arrived": "到達地點",
+      "new": "新增",
+      "setup_time": "建立時間",
+      "finish": "完成",
+      "cancel": "取消",
+      "expected_recycling": "預計回收物",
+      "recycling_category": "回收物類別",
+      "waste_paper_category": "廢紙類別",
+      "estimated_weight": "預計重量",
+      "this": "這",
+      "is_required": "是必須的",
+      "required_field": "此欄位是必需的"
     }
   },
   "purchase_order_customer": {
