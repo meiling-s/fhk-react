@@ -113,8 +113,8 @@ const PurchaseOrderCard = ({
               </Typography>
             </Box>
             <Typography ml="60px" style={localstyles.mini_value}>
-              {selectedPurchaseOrder?.createdAt
-                ? displayCreatedDate(selectedPurchaseOrder.createdAt)
+              {podetail?.pickupAt
+                ? displayCreatedDate(podetail.pickupAt)
                 : ''}
             </Typography>
           </Box>
