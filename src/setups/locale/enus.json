@@ -402,7 +402,13 @@
     "confirm_reject_title": "Confirm reject?",
     "approved_success": "Approved successfully",
     "rejected_success": "Rejected successfully",
-    "reject_reasons": "Reasons for rejection"
+    "reject_reasons": "Reasons for rejection",
+    "error": {
+      "effFrmDate": "This from date is required",
+      "effToDate": "This  to date is required",
+      "routineType": "This routine Type is required",
+      "routine": "routine is required"
+    }
   },
   "tenant": {
     "company": "Company",

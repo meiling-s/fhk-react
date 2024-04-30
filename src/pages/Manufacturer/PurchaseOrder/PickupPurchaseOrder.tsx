@@ -47,18 +47,18 @@ const CreatePickupOrder = () => {
   }
 
   const validateSchema = Yup.object().shape({
-    effFrmDate: Yup.string().required('This effFrmDate is required'),
-    effToDate: Yup.string().required('This effToDate is required'),
+    effFrmDate: Yup.string().required(t('pick_up_order.error.effFrmDate')),
+    effToDate: Yup.string().required(t('pick_up_order.error.effToDate')),
     routineType:
       picoTypeValue == 'ROUTINE'
-        ? Yup.string().required('This routineType is required')
+        ? Yup.string().required(t('pick_up_order.error.routineType'))
         : Yup.string(),
 
     routine: Yup.lazy((value, schema) => {
       const routineType = schema.parent.routineType
       if (routineType === 'specificDate') {
         return Yup.array()
-          .required('routine is required')
+          .required(t('pick_up_order.error.routine'))
           .test(
             'is-in-range',
             t('pick_up_order.out_of_date_range'),

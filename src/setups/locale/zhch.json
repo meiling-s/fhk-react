@@ -402,7 +402,13 @@
     "confirm_reject_title": "确认拒绝吗？",
     "approved_success": "接受成功",
     "rejected_success": "拒绝成功",
-    "reject_reasons": "拒绝原因"
+    "reject_reasons": "拒绝原因",
+    "error": {
+      "effFrmDate": "此日期为必填项",
+      "effToDate": "迄今为止这是必需的",
+      "routineType": "此例程類型為必填項",
+      "routine": "需要例行公事"
+    }
   },
   "tenant": {
     "company": "公司",
