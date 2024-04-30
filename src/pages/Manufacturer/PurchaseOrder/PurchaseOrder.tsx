@@ -255,7 +255,7 @@ const PurchaseOrder = () => {
   const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
   const rolesEnableCreatePO = [Roles.customerAdmin]
 
-  let columns: GridColDef[] = [
+  let columns: GridColDef[] = [ //
     {
       field: 'createdAt',
       headerName: t('purchase_order.table.created_datetime'),
@@ -282,7 +282,7 @@ const PurchaseOrder = () => {
       editable: true
     },
     {
-      field: 'createdAt',
+      field: 'pickupAt',
       headerName: t('purchase_order.table.receipt_date_time'),
       type: 'sring',
       width: 200,
@@ -350,7 +350,7 @@ const PurchaseOrder = () => {
         editable: true
       },
       {
-        field: 'approvedAt',
+        field: 'pickupAt',
         headerName: t('purchase_order.table.receipt_date_time'),
         type: 'sring',
         width: 260,
