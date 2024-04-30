@@ -4,10 +4,11 @@ import {
   UPDATE_PURCHASE_ORDER_STATUS,
   GET_PURCHASE_ORDER_BY_ID,
   GET_ALL_REASON_MANUFACTURER,
-  CREATE_PICK_UP_ORDER
+  CREATE_PICK_UP_ORDER,
+  GET_MANULIST
 } from '../../constants/requests'
 
-import { returnApiToken } from '../../utils/utils'
+import { getBaseUrl, returnApiToken } from '../../utils/utils'
 import { PurChaseOrder, PurchaseOrderDetail, queryPurchaseOrder } from '../../interfaces/purchaseOrder'
 import axiosInstance from '../../constants/axiosInstance'
 import { Roles, localStorgeKeyName } from '../../constants/constant'
@@ -91,7 +92,7 @@ export const getPurchaseOrderReason = async () => {
   const auth = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: getBaseUrl(),
       ...GET_ALL_REASON_MANUFACTURER(auth.tenantId)
     })
 
@@ -123,6 +124,20 @@ export const updatetPurchaseOrder = async (data:PurChaseOrder) => {
       baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
           ...UPDATE_PURCHASE_ORDER(auth.tenantId),
           data: data
+      });
+      return response
+  } catch (e) {
+      return null;
+  }
+
+}
+
+export const getManuList = async () => {
+  const auth = returnApiToken()
+  try{
+      const response = await axiosInstance({
+      baseURL: getBaseUrl(),
+          ...GET_MANULIST(auth.realmApiRoute, auth.decodeKeycloack),
       });
       return response
   } catch (e) {
