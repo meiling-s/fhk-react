@@ -415,7 +415,17 @@
       "recycType": "此回收類型是必需的",
       "recycSubType": "需要此可回收子類型",
       "weight": "此重量為必填項",
-      "weightGreaterThanZero": "這個權重應該大於零"
+      "weightGreaterThanZero": "這個權重應該大於零",
+      "invalid_date": "失效日期",
+      "invalid_pickup_time": "取件時間無效，請重新選擇時間",
+      "not_in_prev_data": "不在先前數據中",
+      "pickup_time":"先前的資料中已經存在接送時間",
+      "not_same_as_receiverr": "與接收者不同",
+      "sender_address": "寄件者地址不能與收件者地址相同",
+      "sender_address_exists": "寄件者地址已存在於先前的資料中",
+      "not_same_as_sender": "與寄件者不同",
+      "receiver_address_cannot": "收件者地址不能與寄件者地址相同",
+      "receiver_address_exists": "先前的資料中已經存在接收者位址"
     }
   },
   "tenant": {

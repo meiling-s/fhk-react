@@ -186,15 +186,15 @@ const CreateRecycleForm = ({
       pickupAt: Yup.string()
         .required(t('pick_up_order.error.pickuAt'))
         .test(
-          'invalid-date',
-          'Invalid pickup time, choose again the time',
+          t('pick_up_order.error.invalid_date'),
+          t('pick_up_order.error.invalid_pickup_time'),
           function (value) {
-            return value !== 'Invalid Date'
+            return value !== t('pick_up_order.error.invalid_date')
           }
         )
         .test(
-          'not-in-prev-data',
-          'Pickup time already exists in previous data',
+          t('pick_up_order.error.not_in_prev_data'),
+          t('pick_up_order.error.pickup_time'),
           function (value) {
             return !prevData.some((item) => item.pickupAt === value)
           }
@@ -204,16 +204,16 @@ const CreateRecycleForm = ({
       senderAddr: Yup.string()
         .required(t('pick_up_order.error.senderAddr'))
         .test(
-          'not-same-as-receiver',
-          'Sender address cannot be the same as receiver address',
+          t('pick_up_order.error.not_same_as_receiver'),
+          t('pick_up_order.error.sender_address'),
           function (value) {
             const receiverAddr = values.receiverAddr
             return value !== receiverAddr
           }
         )
         .test(
-          'not-in-prev-data',
-          'Sender address already exists in previous data',
+          t('pick_up_order.error.not_in_prev_data'),
+          t('pick_up_order.error.sender_address_exists'),
           function (value) {
             return !prevData.some((item) => item.senderAddr === value)
           }
@@ -222,16 +222,16 @@ const CreateRecycleForm = ({
       receiverAddr: Yup.string()
         .required(t('pick_up_order.error.receiverAddr'))
         .test(
-          'not-same-as-sender',
-          'Receiver address cannot be the same as sender address',
+          t('pick_up_order.error.not_same_as_sender'),
+          t('pick_up_order.error.receiver_address_cannot'),
           function (value) {
             const senderAddr = values.senderAddr
             return value !== senderAddr
           }
         )
         .test(
-          'not-in-prev-data',
-          'Receiver address already exists in previous data',
+          t('pick_up_order.error.not_in_prev_data'),
+          t('pick_up_order.error.receiver_address_exists'),
           function (value) {
             return !prevData.some((item) => item.receiverAddr === value)
           }
