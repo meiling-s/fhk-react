@@ -61,6 +61,12 @@ export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   url: `api/v1/account/t/status/${tenantId}`
 })
 
+export const GET_CURRENCY_LIST : AxiosRequestConfig ={
+  method: 'get',
+  url: 'api/v1/administrator/currencyList'
+}
+  
+
 export const UPDATE_TENANT_CURRENCY = (
   tenantId: string,
   monetaryValue: string,
