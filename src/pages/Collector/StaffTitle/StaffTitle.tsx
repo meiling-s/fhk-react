@@ -78,7 +78,7 @@ const StaffTitle: FunctionComponent = () => {
             item?.titleNameTchi,
             item?.titleNameSchi,
             item?.titleNameEng,
-            item?.duty,
+            item?.duty[0],
             item?.description,
             item?.remark,
             item?.status,
@@ -119,8 +119,8 @@ const StaffTitle: FunctionComponent = () => {
     {
       field: "duty",
       headerName: t("staff_title.duty"),
-      width: 100,
-      type: "number",
+      width: 150,
+      type: "string",
     },
     {
       field: "description",
