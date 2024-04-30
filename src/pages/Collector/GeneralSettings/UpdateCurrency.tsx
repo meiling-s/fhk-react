@@ -96,7 +96,6 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
     const result = await getCurrencyList()
     let tempCurrency: il_item[] = []
     if (result) {
-      console.log(result.data)
       result.data.map((item: any) => {
         tempCurrency.push({
           id: item.monetary,
