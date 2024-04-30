@@ -131,7 +131,7 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: t('general_settings.date_format'),
+          title: t('general_settings.weight_tolerance'),
           submitText: t('add_warehouse_page.save'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
@@ -140,12 +140,12 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('general_settings.date_format')}>
+            <CustomField label={t('general_settings.weight_tolerance')}>
               <CustomTextField
                 id="weightFormat"
                 value={weightFormat}
                 disabled={action === 'delete'}
-                placeholder={t('general_settings.date_format')}
+                placeholder={t('general_settings.weight_tolerance')}
                 onChange={(event) => setWeightFormat(event.target.value)}
                 error={checkString(weightFormat)}
               />
