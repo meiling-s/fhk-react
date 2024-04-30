@@ -116,7 +116,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         })
       groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
         tempV.push({
-          field: 'roleName',
+          field: t('userGroup.groupName'),
           problem: formErr.alreadyExist,
           type: 'error'
         })
@@ -126,7 +126,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
           problem: formErr.empty,
           type: 'error'
         })
-      functions.length === 0 &&
+      functions.length == 0 &&
         tempV.push({
           field: t('userGroup.availableFeatures'),
           problem: formErr.empty,
@@ -166,6 +166,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   }
 
   const handleCreateUserGroup = async (formData: CreateUserGroupProps) => {
+    console.log('handleCreateUserGroup', functions)
     if (validation.length === 0) {
       const result = await createUserGroup(formData)
       if (result) {
@@ -197,21 +198,6 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       setTrySubmited(true)
     }
   }
-
-  const titleName = useMemo(() => {
-    switch (action) {
-      case 'add':
-        return t('top_menu.add_new')
-
-      case 'edit':
-        return t('userGroup.change')
-
-      case 'delete':
-        return t('userGroup.delete')
-    }
-
-    return ''
-  }, [action])
 
   const handleDelete = async () => {
     const token = returnApiToken()
@@ -246,7 +232,12 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         anchor={'right'}
         action={action}
         headerProps={{
-          title: titleName,
+          title:
+            action == 'add'
+              ? t('top_menu.add_new')
+              : action == 'edit'
+              ? t('userGroup.change')
+              : t('userGroup.delete'),
           subTitle: t('userGroup.title'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
