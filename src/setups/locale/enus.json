@@ -751,7 +751,8 @@
     "cancel": "Cancel",
     "driver": "Driver",
     "plat_number": "Plate number",
-    "assign_driver": "Assign a driver"
+    "assign_driver": "Assign a driver",
+    "shippingDateAndTime": "Shipping Date And Time"
   },
   "notification": {
     "notification_menu": "Notice template",

@@ -402,7 +402,7 @@ const AdditionalServicePict = () => {
         updatedBy: loginId,
         nature: serviceItem.serviceId === 4 ? nature : '',
         speaker: serviceItem.serviceId === 4 ? speaker : '',
-        additionalFlg: serviceItem.serviceId === 4 && serviceFlg === 1 ? true : false
+        additionalFlg: serviceItem.serviceId === 4 && serviceFlg === 0 ? true : false
       }
       
       const result = await createServiceInfo(formData)
