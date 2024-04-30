@@ -16,7 +16,7 @@ export const getStaffList = async (page: number, size: number) => {
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_STAFF(token.tenantId),
+      ...GET_STAFF(token.tenantId, token.realmApiRoute),
       params: {
         page: page,
         size: size
@@ -89,10 +89,10 @@ export const getLoginIdList = async () => {
 export const getStaffTitle = async () => {
   try {
     const token = returnApiToken()
-
+  
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_TITLE_LIST(token.decodeKeycloack),
+      ...GET_TITLE_LIST(token.decodeKeycloack, token.realmApiRoute),
       params: {
         page: 0,
         size: 1000

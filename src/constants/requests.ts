@@ -632,9 +632,9 @@ export const DELETE_USER_GROUP = (userGroupId: number): AxiosRequestConfig => ({
 })
 
 //STAFF MANAGEMENT
-export const GET_STAFF = (tenantId: string): AxiosRequestConfig => ({
+export const GET_STAFF = (tenantId: string, role: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/staff/${tenantId}`
+  url: `api/v1/${role}/staff/${tenantId}`
 })
 
 export const CREATE_STAFF: AxiosRequestConfig = {
@@ -655,9 +655,9 @@ export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/userAccount/t/${tenantId}`
 })
 
-export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
+export const GET_TITLE_LIST = (table: string, role: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/stafftitle/${table}`
+  url: `api/v1/${role}/stafftitle/${table}`
 })
 
 //API roster
