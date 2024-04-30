@@ -187,8 +187,6 @@ const Company: FunctionComponent = () => {
             onClick={(event) => {
               event.stopPropagation();
               handleAction(params, "edit");
-              console.log({params})
-              // setSelectCompanyType()
             }}
           >
             <EDIT_OUTLINED_ICON
@@ -222,6 +220,21 @@ const Company: FunctionComponent = () => {
     },
   ];
 
+  const findArrayStateByCompanyId = (lists: any, row: any) => {
+    for (const { name, list } of lists) {
+      const foundItem = list.find((item: {
+        brNo: any;
+        nameEng: any; companyId: any; 
+}) => item.companyId === row.companyId && item.nameEng === row.nameEng && item.brNo === row.brNo);
+      if (foundItem) {
+        return [list, name];
+      }
+    }
+    return [null, null];
+  };
+  
+
+  
   const handleAction = (
     params: GridRenderCellParams,
     action: "add" | "edit" | "delete"
@@ -230,6 +243,20 @@ const Company: FunctionComponent = () => {
     setRowId(params.row.id);
     setSelectedRow(params.row);
     setDrawerOpen(true);
+    const matchedArrayState = findArrayStateByCompanyId([
+      { name: 'collectorlist', list: collectorList },
+      { name: 'logisticlist', list: logisticList },
+      { name: 'manulist', list: manuList },
+      { name: 'customerlist', list: customerList }
+    ], params.row);
+    
+
+    if (matchedArrayState) {
+      setSelectCompanyType(matchedArrayState[1])
+    } else {
+      console.log("No match found.");
+    }
+    
   };
 
   const handleSelectRow = (params: GridRowParams, type: string) => {
