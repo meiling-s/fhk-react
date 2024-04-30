@@ -415,7 +415,8 @@
       "receiverAddr": "This receiver address is required",
       "recycType": "This recycType is required",
       "recycSubType": "This recycSubType is required",
-      "weight": "This weight is required"
+      "weight": "This weight is required",
+      "weightGreaterThanZero": "This weight should greater than zero"
     }
   },
   "tenant": {

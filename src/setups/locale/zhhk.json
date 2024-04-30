@@ -414,7 +414,8 @@
       "receiverAddr": "T此收件人地址為必填項",
       "recycType": "此回收類型是必需的",
       "recycSubType": "需要此可回收子類型",
-      "weight": "此重量為必填項"
+      "weight": "此重量為必填項",
+      "weightGreaterThanZero": "這個權重應該大於零"
     }
   },
   "tenant": {

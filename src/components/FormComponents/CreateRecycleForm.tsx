@@ -238,7 +238,7 @@ const CreateRecycleForm = ({
         ),
       recycType: Yup.string().required(t('pick_up_order.error.recycType')),
       recycSubType: Yup.string().required(t('pick_up_order.error.recycSubType')),
-      weight: Yup.number().moreThan(0).required(t('pick_up_order.error.weight'))
+      weight: Yup.number().moreThan(0, t('pick_up_order.error.weightGreaterThanZero')).required(t('pick_up_order.error.weight'))
     })
   })
 
