@@ -1,4 +1,4 @@
-import { Box, Icon, Stack, Typography } from '@mui/material'
+import { Box, Icon, Modal, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import CustomField from '../../../components/FormComponents/CustomField'
 import StatusCard from '../../../components/StatusCard'
@@ -14,16 +14,16 @@ import {
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
+import { EDIT_OUTLINED_ICON } from '../../../themes/icons'
 
 const PurchaseOrderCard = ({
   selectedPurchaseOrder,
-  purchaseOrderDetail
+  purchaseOrderDetail,
 }: {
   selectedPurchaseOrder: PurChaseOrder | null
-  purchaseOrderDetail: PurchaseOrderDetail[]
+  purchaseOrderDetail: PurchaseOrderDetail[],
 }) => {
   const { t } = useTranslation()
-
   const getRecyName = (podetail: PurchaseOrderDetail) => {
     var name = ''
     switch (i18n.language) {
@@ -113,8 +113,8 @@ const PurchaseOrderCard = ({
               </Typography>
             </Box>
             <Typography ml="60px" style={localstyles.mini_value}>
-              {podetail?.pickupAt
-                ? displayCreatedDate(podetail.pickupAt)
+              {selectedPurchaseOrder?.createdAt
+                ? displayCreatedDate(selectedPurchaseOrder.createdAt)
                 : ''}
             </Typography>
           </Box>

@@ -15,17 +15,18 @@ import PickupOrderCard from '../../../components/PickupOrderCard'
 import { useNavigate } from 'react-router-dom'
 import { getPurchaseOrderById } from '../../../APICalls/Manufacturer/purchaseOrder'
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
-import { Languages, Roles, Status, localStorgeKeyName } from '../../../constants/constant'
+import { Status, localStorgeKeyName } from '../../../constants/constant'
 import {
   PurChaseOrder,
   Row,
   PurchaseOrderDetail
 } from '../../../interfaces/purchaseOrder'
 import PurchaseOrderCard from './PurchaseOrderCard'
-import { PaymentType } from '../../../interfaces/purchaseOrder'
-import i18n from '../../../setups/i18n'
+import CustomTextField from '../../../components/FormComponents/CustomTextField'
+import { UpdatePurchaseOrder } from '../../../APICalls/Customer/purchaseOrder'
+
 const PurchaseOrderForm = ({
   onClose,
   selectedRow,
@@ -41,36 +42,6 @@ const PurchaseOrderForm = ({
   const role = localStorage.getItem(localStorgeKeyName.role)
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
 
-  const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
-  const rolesEnableCreatePO = [Roles.customerAdmin]
-
-  const paymentTypes : PaymentType[] = [
-    {
-      paymentNameTchi: '現金',
-      paymentNameSchi: '现金',
-      paymentNameEng: 'Cash',
-      value: 'cash'
-    },
-    {
-      paymentNameTchi: '信用卡',
-      paymentNameSchi: '信用卡',
-      paymentNameEng: 'Credit card',
-      value: 'card'
-    },
-    {
-      paymentNameTchi: '支票',
-      paymentNameSchi: '支票',
-      paymentNameEng: 'Cheque',
-      value: 'cheque'
-    },
-    {
-      paymentNameTchi: '轉數快',
-      paymentNameSchi: '转数快',
-      paymentNameEng: 'FPS',
-      value: 'fps'
-    }
-  ]
-  
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -102,28 +73,9 @@ const PurchaseOrderForm = ({
       setPickUpOrderDetail(result.data.purchaseOrderDetail)
     }
   }
-
-  const handleRowClick = async () => {
-    const routeName = role
-    if(selectedPurchaseOrder?.poId){
-      const result = await getPurchaseOrderById(selectedPurchaseOrder?.poId)
-    if (result) {
-      navigate(`/${routeName}/editPurchaseOrder`, { state: result.data })
-    }
-    }
-    
-  }
   
-  const onHandlePaymentType = () => {
-    const payment = paymentTypes.find(payment => payment.value === selectedPurchaseOrder?.paymentType)
-
-    if(i18n.language === Languages.ENUS) {
-      return payment?.paymentNameEng
-    } else if(i18n.language === Languages.ZHCH){
-      return payment?.paymentNameSchi
-    } else {
-      return payment?.paymentNameTchi
-    }
+  const onHandleUpdate = async () => {
+    
   }
 
   return (
@@ -133,7 +85,7 @@ const PurchaseOrderForm = ({
           <Box sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}>
             <Box>
               <Typography sx={styles.header4}>
-                {t('purchase_order.detail.order')}
+                {t('purchase_order_customer.detail.order')}
               </Typography>
               <Typography sx={styles.header3}>
                 {selectedPurchaseOrder?.poId}
@@ -143,10 +95,10 @@ const PurchaseOrderForm = ({
               <StatusCard status={selectedPurchaseOrder?.status} />
             </Box>
             <Box sx={{ marginLeft: 'auto' }}>
-            { selectedRow?.status === Status.CREATED && rolesEnableCreatePO.includes(userRole) && 
+              { selectedPurchaseOrder?.status === Status.CREATED && 
               (
                 <Button
-                  onClick={handleRowClick}
+                  onClick={onHandleUpdate}
                   sx={{
                     borderRadius: "20px",
                     backgroundColor: "#6BC7FF",
@@ -171,45 +123,39 @@ const PurchaseOrderForm = ({
           <Stack spacing={2} sx={localstyles.content}>
             <Box>
               <Typography sx={localstyles.typo_header}>
-                {t('purchase_order.detail.contact_info')}
+                {t('purchase_order_customer.detail.contact_info')}
               </Typography>
             </Box>
 
-            <CustomField
-              label={t('purchase_order.create.receiving_company_name')}
-            >
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPurchaseOrder?.receiverName}
-              </Typography>
+            <CustomField label={t('purchase_order_customer.detail.receiving_company_name')}>
+               <Typography sx={localstyles.typo_fieldContent}>
+                    {selectedPurchaseOrder?.receiverName}
+                </Typography>
             </CustomField>
 
-            <CustomField label={t('purchase_order.detail.contact_number')}>
+            <CustomField label={t('purchase_order_customer.detail.contact_number')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPurchaseOrder?.contactNo}
               </Typography>
             </CustomField>
 
-            <CustomField label={t('purchase_order.detail.payment_method')}>
+            <CustomField label={t('purchase_order_customer.detail.payment_method')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {onHandlePaymentType()}
+                {selectedPurchaseOrder?.paymentType}
               </Typography>
             </CustomField>
 
-            {rolesEnableCreatePO.includes(userRole) && 
-              (
-                <CustomField label={t('purchase_order.create.sender_company_name')}>
-                  <Typography sx={localstyles.typo_fieldContent}>
-                    {selectedPurchaseOrder?.senderName}
-                  </Typography>
-                </CustomField>
-              )
-            }
-
             <Typography sx={localstyles.typo_header}>
-              {t('purchase_order.detail.order_info')}
+              {t('purchase_order_customer.detail.order_info')}
             </Typography>
 
-            <CustomField label={t('purchase_order.detail.pico_id')}>
+            <CustomField label={t('purchase_order_customer.table.recycling_plant')}>
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedPurchaseOrder?.picoId}
+              </Typography>
+            </CustomField>
+
+            <CustomField label={t('purchase_order_customer.detail.pico_id')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPurchaseOrder?.picoId}
               </Typography>
