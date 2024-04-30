@@ -3,11 +3,12 @@ import { Box, Divider, Grid } from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 
 import { useTranslation } from 'react-i18next'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
-import { returnApiToken } from '../../../utils/utils'
+import { returnApiToken, returnErrorMsg } from '../../../utils/utils'
 import { localStorgeKeyName } from '../../../constants/constant'
 
 import {
@@ -32,6 +33,7 @@ interface Props {
   rowId?: number
   selectedItem?: UserGroup | null
   functionList: Functions[]
+  groupNameList: string[]
 }
 
 const CreateUserGroup: FunctionComponent<Props> = ({
@@ -41,7 +43,8 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   onSubmitData,
   rowId,
   selectedItem,
-  functionList
+  functionList,
+  groupNameList = []
 }) => {
   const { t } = useTranslation()
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -49,6 +52,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   const [roleName, setRoleName] = useState('')
   // const [realm, setRealm] = useState('')
   const [description, setDescription] = useState('')
+  const [groupList, setGroupList] = useState<string[]>([])
   const [functions, setFunctions] = useState<number[]>([])
   var realm = localStorage.getItem(localStorgeKeyName.realm) || 'collector'
 
@@ -67,11 +71,20 @@ const CreateUserGroup: FunctionComponent<Props> = ({
 
   useEffect(() => {
     setValidation([])
+
     if (action !== 'add') {
       mappingData()
     } else {
       setTrySubmited(false)
       resetData()
+    }
+
+    //set groupRoleNameList
+    if (selectedItem != null) {
+      const temp = groupNameList.filter((item) => item != selectedItem.roleName)
+      setGroupList(temp)
+    } else {
+      setGroupList(groupNameList)
     }
   }, [drawerOpen])
 
@@ -101,9 +114,21 @@ const CreateUserGroup: FunctionComponent<Props> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      groupList.some((item) => item.toLowerCase() == roleName.toLowerCase()) &&
+        tempV.push({
+          field: 'roleName',
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
       description?.toString() == '' &&
         tempV.push({
           field: 'description',
+          problem: formErr.empty,
+          type: 'error'
+        })
+      functions.length === 0 &&
+        tempV.push({
+          field: t('userGroup.availableFeatures'),
           problem: formErr.empty,
           type: 'error'
         })
@@ -112,7 +137,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     }
 
     validate()
-  }, [roleName, description])
+  }, [roleName, description, functions])
 
   const handleSubmit = () => {
     const token = returnApiToken()
@@ -278,6 +303,17 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                 />
               ))}
             </CustomField>
+            <Grid item sx={{ width: '100%' }}>
+              {trySubmited &&
+                validation.map((val, index) => (
+                  <FormErrorMsg
+                    key={index}
+                    field={t(val.field)}
+                    errorMsg={returnErrorMsg(val.problem, t)}
+                    type={val.type}
+                  />
+                ))}
+            </Grid>
           </Grid>
         </Box>
       </RightOverlayForm>
