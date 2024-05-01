@@ -30,7 +30,7 @@ import { styles } from '../../../constants/styles'
 import { ToastContainer, toast } from 'react-toastify'
 import Tabs from '../../../components/Tabs'
 import { Staff } from '../../../interfaces/staff'
-import { getStaffList } from '../../../APICalls/staff'
+import { getStaffList, getStaffListLogistic } from '../../../APICalls/staff'
 
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../../utils/utils'
@@ -92,13 +92,23 @@ const StaffManagement: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const realm = localStorage.getItem(localStorgeKeyName.realm);
+  const role = localStorage.getItem(localStorgeKeyName.role);
+
 
   useEffect(() => {
     initStaffList()
   }, [page])
 
   const initStaffList = async () => {
-    const result = await getStaffList(page - 1, pageSize)
+    let result = null
+    if (role != 'logistic'){
+      result = await getStaffList(page - 1, pageSize)
+    } else {
+      result = await getStaffListLogistic(page - 1, pageSize)
+    }
+    
+
+
     if (result) {
       const data = result.data.content
       var staffMapping: Staff[] = []
