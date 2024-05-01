@@ -197,6 +197,21 @@ export const GET_COLLECTORLIST = (
   url: `api/v1/${realmApiRoute}/collectorlist/${table}`
 })
 
+export const CREATE_COLLECTORLIST = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/collectorlist/${table}`
+})
+
+export const EDIT_COLLECTORLIST = (realmApiRoute: string, table: string, collectorId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/collectorlist/${table}/${collectorId}`
+})
+
+export const CUSTOMER_GET_COLLECTORLIST = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/collectorlist/${table}`
+})
+
 export const GET_MANULIST = (
   realmApiRoute: string,
   table: string
