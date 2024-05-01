@@ -190,7 +190,7 @@ function MainDrawer() {
       'Notification template': {
         name: t('notification.notification_menu'),
         icon: <ViewQuiltOutlinedIcon />,
-        onClick: () => navigate(`/${realmApiRoute}/notice`),
+        onClick: () => navigate(`/${realm}/notice`),
         collapse: false
       },
       Driver: {

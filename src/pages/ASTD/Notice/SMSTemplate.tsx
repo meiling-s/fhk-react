@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify'
 import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 import { styles } from "../../../constants/styles";
+import { localStorgeKeyName } from "../../../constants/constant";
 
 interface TemplateProps {
     templateId: string,
@@ -23,6 +24,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}})
     const userRole:string = localStorage.getItem('userRole') || '';
     const themeColor:string = getThemeColorRole(userRole);
+    const realm = localStorage.getItem(localStorgeKeyName.realm);
 
     const getDetailTemplate = async () => {
         const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
@@ -124,7 +126,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
         if (response) {
             showSuccessToast(t('common.editSuccessfully'))
             setTimeout(() => {
-                navigate(`/${realmApiRoute}/notice`)
+                navigate(`/${realm}/notice`)
             }, 1000);
 
         } else {
@@ -170,7 +172,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
             <div className="overview-page bg-bg-primary">
                 <div
                     className="header-page flex justify-start items-center mb-4 cursor-pointer"
-                    onClick={() => navigate(`/${realmApiRoute}/notice`)}
+                    onClick={() => navigate(`/${realm}/notice`)}
                 >
                     <LEFT_ARROW_ICON fontSize="large" />
                     <Typography style={{ fontSize: '22px', color: 'black' }}>

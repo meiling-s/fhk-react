@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { NotifTemplate } from '../../../interfaces/notif'
 import { getListNotifTemplatePO, getListNotifTemplateStaff } from '../../../APICalls/notify'
 import { useNavigate } from 'react-router-dom'
-import { Roles } from '../../../constants/constant'
+import { Roles, localStorgeKeyName } from '../../../constants/constant'
 import { returnApiToken } from '../../../utils/utils'
 
 function createNotifTemplate(
@@ -52,8 +52,8 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   const [selectedRow, setSelectedRow] = useState<NotifTemplate | null>(null)
   const [action, setAction] = useState<'edit'>('edit')
   const navigate = useNavigate();
-  const { realmApiRoute } = returnApiToken()
-
+  const { realmApiRoute,  } = returnApiToken()
+  const realm = localStorage.getItem(localStorgeKeyName.realm);
   
   useEffect(() => {
     if(selectedTab === 0) {
@@ -174,7 +174,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     params: GridRenderCellParams,
     action: 'edit'
   ) => {
-    navigate(`/${realmApiRoute}/notice/${params.row.notiType}/${params.row.templateId}`)
+    navigate(`/${realm}/notice/${params.row.notiType}/${params.row.templateId}`)
   }
 
   const handleSelectRow = (params: GridRowParams) => {

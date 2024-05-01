@@ -52,3 +52,10 @@ export type UpdateNotifTemplateBroadcast = {
   effFromDate: string
   effToDate: string
 }
+
+export type LanguagesNotif = {
+  value: string,
+  langTchi: string,
+  langSchi: string,
+  langEng: string,
+}

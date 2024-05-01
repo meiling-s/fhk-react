@@ -115,13 +115,15 @@ const Router = () => {
             path="/collector/checkInAndCheckout"
             element={<CheckInAndCheckOut />}
           />
+          <Route path="/collector/notice/" element={<Notice />} />
+          <Route path="/collector/notice/:type/:templateId" element={<UpdateTemplate />} />
         </Route>
 
         <Route element={<MainLayout />}>
           <Route path="/astd" element={<CompanyManage />} />
           <Route path="/astd/company" element={<CompanyManage />} />
-          <Route path="/:realmApiRoute/notice/" element={<Notice />} />
-          <Route path="/:realmApiRoute/notice/:type/:templateId" element={<UpdateTemplate />} />
+          <Route path="/astd/notice/" element={<Notice />} />
+          <Route path="/astd/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/astd/report" element={<></>} />
           <Route path="/astd/statistics/recyclables" element={<></>} />
           <Route path="/astd/statistics/convoy" element={<></>} />
@@ -152,6 +154,8 @@ const Router = () => {
           <Route path="/logistic/editPickupOrder" element={<EditPickupOrder /> } />
           <Route path="/logistic/account" element={<LogisticAccount />} />
           <Route path="/logistic/driver" element={<Driver/>}/>
+          <Route path="/logistic/notice/" element={<Notice />} />
+          <Route path="/logistic/notice/:type/:templateId" element={<UpdateTemplate />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -164,6 +168,8 @@ const Router = () => {
           <Route path="/manufacturer/inventory" element={<Inventory/>}/>
           <Route path="/manufacturer/setting" element={<Settings/>}/>
           <Route path="/manufacturer/purchaseOrder" element={<PurchaseOrder />} />
+          <Route path="/manufacturer/notice/" element={<Notice />} />
+          <Route path="/manufacturer/notice/:type/:templateId" element={<UpdateTemplate />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -171,6 +177,8 @@ const Router = () => {
           <Route path="/customer/createPurchaseOrder" element={<CreatePurchaseOrder />} />
           <Route path="/customer/editPurchaseOrder" element={<EditPurchaseOrder/>} />
           <Route path="/customer/account" element={<CustomerAccount />} />
+          <Route path="/customer/notice/" element={<Notice />} />
+          <Route path="/customer/notice/:type/:templateId" element={<UpdateTemplate />} />
         </Route>
       </Routes>
     </BrowserRouter>
