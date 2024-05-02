@@ -237,7 +237,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 const response = await editEngineData(selectedItem?.premiseTypeId, premiseTypeForm)
                 if (response) {
                     handleOnSubmitData('premiseType')
-                    showSuccessToast(t('notify.successEdited'))
+                    showSuccessToast(t('notify.SuccessEdited'))
                 }
             } catch (error) {
                 console.error(error)

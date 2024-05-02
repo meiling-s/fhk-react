@@ -236,7 +236,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         try {
             const response = await editPackagingUnit(packagingForm, packagingId)
             if (response) {
-                showSuccessToast(t('notify.successEdited'))
+                showSuccessToast(t('notify.SuccessEdited'))
                 onSubmitData('packaging')
             }
         } catch (error) {
