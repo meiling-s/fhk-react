@@ -5,7 +5,7 @@ import {
   Grid,
   Typography,
   MenuItem,
-  FormControl,
+  FormControl
 } from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
@@ -14,15 +14,18 @@ import { styles } from '../../../constants/styles'
 import { useTranslation } from 'react-i18next'
 import { formValidate } from '../../../interfaces/common'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
-import { localStorgeKeyName } from "../../../constants/constant";
-import { updateUserCurrency } from '../../../APICalls/Collector/currency'
+import { localStorgeKeyName } from '../../../constants/constant'
+import {
+  updateUserCurrency,
+  getCurrencyList
+} from '../../../APICalls/Collector/currency'
 import { Currency } from '../../../interfaces/currency'
 
 interface UpdateCurrencyProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'edit'
-  tenantCurrency: string;
+  tenantCurrency: string
   onSubmitData: (type: string, msg: string) => void
 }
 
@@ -34,41 +37,42 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
   onSubmitData
 }) => {
   const { t } = useTranslation()
-  const currencyList: il_item[] = [
-    {
-      id: 'HKD',
-      name: 'HKD'
-    },
-    {
-      id: 'RMB',
-      name: 'RMB'
-    },
-    {
-        id: 'USD',
-        name: 'USD'
-      },
-      {
-        id: 'SGD',
-        name: 'SGD'
-      },
-      {
-        id: 'THB',
-        name: 'THB'
-      },
-      {
-        id: 'AUD',
-        name: 'AUD'
-      },
-      {
-        id: 'EUR',
-        name: 'EUR'
-      },
-      {
-        id: 'GBP',
-        name: 'GBP'
-      },
-  ]
-  
+  const [currencyList, setCurrencyList] = useState<il_item[]>([])
+  // const currencyList: il_item[] = [
+  //   {
+  //     id: 'HKD',
+  //     name: 'HKD'
+  //   },
+  //   {
+  //     id: 'RMB',
+  //     name: 'RMB'
+  //   },
+  //   {
+  //       id: 'USD',
+  //       name: 'USD'
+  //     },
+  //     {
+  //       id: 'SGD',
+  //       name: 'SGD'
+  //     },
+  //     {
+  //       id: 'THB',
+  //       name: 'THB'
+  //     },
+  //     {
+  //       id: 'AUD',
+  //       name: 'AUD'
+  //     },
+  //     {
+  //       id: 'EUR',
+  //       name: 'EUR'
+  //     },
+  //     {
+  //       id: 'GBP',
+  //       name: 'GBP'
+  //     },
+  // ]
+
   const [currencyType, setCurrencyType] = useState<il_item[]>(currencyList)
   const [selectedCurrency, setSelectedCurrency] = useState<il_item>({
     id: tenantCurrency,
@@ -78,23 +82,45 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
 
   useEffect(() => {
     setSelectedCurrency({
-        id: tenantCurrency,
-        name: tenantCurrency,
+      id: tenantCurrency,
+      name: tenantCurrency
     })
   }, [tenantCurrency])
 
   useEffect(() => {
     setValidation([])
+    getAllCurrency()
   }, [drawerOpen])
-  
+
+  const getAllCurrency = async () => {
+    const result = await getCurrencyList()
+    let tempCurrency: il_item[] = []
+    if (result) {
+      result.data
+        .filter((cur: any) => cur.status != 'INACTIVE')
+        .map((item: any) => {
+          tempCurrency.push({
+            id: item.monetary,
+            name: item.monetary
+          })
+        })
+
+      setCurrencyList(tempCurrency)
+      setCurrencyType(currencyList)
+    }
+  }
 
   const handleSubmit = async () => {
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
-    const username = localStorage.getItem(localStorgeKeyName.username) || ""
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+    const username = localStorage.getItem(localStorgeKeyName.username) || ''
 
-    const result = await updateUserCurrency(tenantId, selectedCurrency.id, username)
+    const result = await updateUserCurrency(
+      tenantId,
+      selectedCurrency.id,
+      username
+    )
     if (result) {
-      onSubmitData("success", t('common.saveSuccessfully'))
+      onSubmitData('success', t('common.saveSuccessfully'))
       handleDrawerClose()
     }
   }
@@ -109,8 +135,9 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
         headerProps={{
           title: t('general_settings.default_currency'),
           submitText: t('add_warehouse_page.save'),
+          
           onCloseHeader: handleDrawerClose,
-          onSubmit: handleSubmit,
+          onSubmit: handleSubmit
         }}
       >
         <Divider></Divider>
@@ -146,14 +173,18 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
                     borderRadius: '12px'
                   }}
                   onChange={(event: SelectChangeEvent<string>) => {
-                    const selectedValue = currencyType.find(item => item.id === event.target.value);
+                    const selectedValue = currencyType.find(
+                      (item) => item.id === event.target.value
+                    )
                     if (selectedValue) {
-                      setSelectedCurrency(selectedValue);
+                      setSelectedCurrency(selectedValue)
                     }
                   }}
                 >
                   {currencyType.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>{item.name}</MenuItem>
+                    <MenuItem key={index} value={item.id}>
+                      {item.name}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
