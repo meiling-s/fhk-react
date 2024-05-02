@@ -56,6 +56,7 @@ import Driver from "./pages/Logistic/Driver";
 import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
+import LogisticDashboard from "./pages/Logistic/Dashboard/dashboard"
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
@@ -152,6 +153,7 @@ const Router = () => {
           <Route path="/logistic/editPickupOrder" element={<EditPickupOrder /> } />
           <Route path="/logistic/account" element={<LogisticAccount />} />
           <Route path="/logistic/driver" element={<Driver/>}/>
+          <Route path="/logistic/dashboard" element={<LogisticDashboard/>}/>
         </Route>
 
         <Route element={<MainLayout />}>
