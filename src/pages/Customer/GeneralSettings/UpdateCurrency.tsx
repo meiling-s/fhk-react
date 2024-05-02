@@ -135,6 +135,7 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
         headerProps={{
           title: t('general_settings.default_currency'),
           submitText: t('add_warehouse_page.save'),
+          cancelText: '',
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit
         }}

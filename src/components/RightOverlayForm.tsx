@@ -66,23 +66,22 @@ const HeaderSection: React.FC<HeaderProps> = ({
                 {submitText}
               </Button>
 
-              {cancelText != '' ||
-                (cancelText && (
-                  <Button
-                    sx={[
-                      styles.buttonOutlinedGreen,
-                      {
-                        width: 'max-content',
-                        height: '40px'
-                      }
-                    ]}
-                    variant="outlined"
-                    disabled={action === 'add'}
-                    onClick={onDelete}
-                  >
-                    {cancelText}
-                  </Button>
-                ))}
+              {cancelText != '' && (
+                <Button
+                  sx={[
+                    styles.buttonOutlinedGreen,
+                    {
+                      width: 'max-content',
+                      height: '40px'
+                    }
+                  ]}
+                  variant="outlined"
+                  disabled={action === 'add'}
+                  onClick={onDelete}
+                >
+                  {cancelText}
+                </Button>
+              )}
             </div>
           )}
 
