@@ -4,8 +4,7 @@ import {
   CREATE_STAFF,
   EDIT_STAFF,
   GET_LOGINID_LIST,
-  GET_TITLE_LIST,
-  GET_STAFF_LOGISTIC
+  GET_TITLE_LIST
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -27,25 +26,6 @@ export const getStaffList = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all staff failed:', e)
-    return null
-  }
-}
-
-export const getStaffListLogistic = async (page: number, size: number) => {
-  try {
-   
-    const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_STAFF_LOGISTIC,
-      params: {
-        page: page,
-        size: size
-      }
-    })
-
-    return response
-  } catch (e) {
-    console.error('Get all staff logistic failed:', e)
     return null
   }
 }

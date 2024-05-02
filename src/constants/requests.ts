@@ -663,11 +663,6 @@ export const GET_STAFF = (
   url: `api/v1/${realmApi}/staff/${tenantId}`
 })
 
-export const GET_STAFF_LOGISTIC: AxiosRequestConfig = {
-  method: 'get',
-  url: `api/v1/logistic/staff`
-}
-
 export const CREATE_STAFF = (realmApi: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/${realmApi}/staff`
