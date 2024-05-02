@@ -67,6 +67,7 @@ export type Row = {
 }
 
 export type CreatePurchaseOrderDetail = {
+  poDtlId?: string,
   index?: number,
   poId: string,
   recycTypeId: string,

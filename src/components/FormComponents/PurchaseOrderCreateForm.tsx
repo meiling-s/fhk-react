@@ -93,6 +93,49 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
     </Modal>
   )
 }
+type fieldName = 'receiverName' | 'contactName' | 'contactNo' | 'paymentType' | 'details';
+
+type ErrorsField = Record<
+  fieldName,
+  {
+    type: string
+    status: boolean
+    required: boolean
+  }
+>
+
+const initialErrors = {
+  receiverName: {
+    type: 'string',
+    status: false,
+    required: true
+  },
+  contactName: {
+    type: 'string',
+    status: false,
+    required: true
+  },
+  contactNo: {
+    type: 'string',
+    status: false,
+    required: true
+  },
+  paymentType: {
+    type: 'string',
+    status: false,
+    required: true
+  },
+  senderName: {
+    type: 'string',
+    status: false,
+    required: false
+  },
+  details: {
+    type: 'array',
+    status: false,
+    required: true
+  },
+}
 
 const PurchaseOrderCreateForm = ({
   selectedPo,
@@ -130,6 +173,8 @@ const PurchaseOrderCreateForm = ({
       details: {type: 'string',  status: false, required: true}
     }
   )
+
+  const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
   
   const paymentTypes : PaymentType[] = [
     {
@@ -433,40 +478,49 @@ const PurchaseOrderCreateForm = ({
       }
     }
   }
-  
-  const onChangeContent = (field: string, value: any) => {
-    if(value === '' || value === 0){
-      formik.setFieldValue([field], '')
-      setErrors(prev => {
+
+  const onHandleError = (serviceName: fieldName, message: string) => {    
+    if(message === 'succeed') {
+      setErrorsField(prev => {
         return{
           ...prev,
-          [field]: {
-            status: true,
-            required: true
+          [serviceName]: {
+            ...prev[serviceName],
+            status: false
           }
         }
       })
     } else {
-      formik.setFieldValue([field], value)
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          [field]: {
-            status: false,
-            require: true
+          [serviceName]: {
+            ...prev[serviceName],
+            status: true
           }
         }
       })
+    }
+    
+  };
+  
+  const onChangeContent = (field: fieldName, value: any) => {
+    if(value === '' || value === 0){
+      formik.setFieldValue([field], '')
+      onHandleError(field,'failed')
+    } else {
+      formik.setFieldValue([field], value)
+      onHandleError(field,'succeed')
     }
   }
 
   const validateData = () => {
     let isValid = true
     if(formik.values.receiverName === ''){
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          receiverName : {
+          'receiverName': {
             ...prev.receiverName,
             status: true
           }
@@ -475,10 +529,10 @@ const PurchaseOrderCreateForm = ({
       isValid = false
     }
     if(formik.values.contactName === ''){
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          contactName : {
+          'contactName': {
             ...prev.contactName,
             status: true
           }
@@ -487,10 +541,10 @@ const PurchaseOrderCreateForm = ({
       isValid = false
     }
     if(formik.values.contactNo === ''){
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          contactNo : {
+          'contactNo': {
             ...prev.contactNo,
             status: true
           }
@@ -499,10 +553,10 @@ const PurchaseOrderCreateForm = ({
       isValid = false
     }
     if(formik.values.paymentType === ''){
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          paymentType : {
+          'paymentType': {
             ...prev.paymentType,
             status: true
           }
@@ -512,10 +566,10 @@ const PurchaseOrderCreateForm = ({
     }
 
     if(state.length === 0){
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          details : {
+          'details': {
             ...prev.details,
             status: true
           }
@@ -607,7 +661,10 @@ const PurchaseOrderCreateForm = ({
                     }
                   />
                 </CustomField>
-                { errors.receiverName.required && errors.receiverName.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
+                {
+                  errorsField['receiverName' as keyof ErrorsField].required && errorsField['receiverName' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={t('purchase_order.create.required_field')}/> : ''
+                }
                
               </Grid>
               <Grid item>
@@ -632,7 +689,10 @@ const PurchaseOrderCreateForm = ({
                     }
                   />
                 </CustomField>
-                {errors.contactName.required && errors.contactName.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
+                {
+                  errorsField['contactName' as keyof ErrorsField].required && errorsField['contactName' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={t('purchase_order.create.required_field')}/> : ''
+                }
               </Grid>
               <Grid item>
                 <CustomField
@@ -660,7 +720,10 @@ const PurchaseOrderCreateForm = ({
                     }
                   />
                 </CustomField>
-                {errors.contactNo.required && errors.contactNo.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
+                {
+                  errorsField['contactNo' as keyof ErrorsField].required && errorsField['contactNo' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={t('purchase_order.create.required_field')}/> : ''
+                }
               </Grid>
               <Grid item>
                 <Box>
@@ -703,7 +766,10 @@ const PurchaseOrderCreateForm = ({
                     />
                   </CustomField>
                 </Box>
-                {errors.paymentType.required && errors.paymentType.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
+                {
+                  errorsField['paymentType' as keyof ErrorsField].required && errorsField['paymentType' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={t('purchase_order.create.required_field')}/> : ''
+                }
               </Grid>
               <Grid item>
                 <Typography sx={styles.header2}>
@@ -748,7 +814,10 @@ const PurchaseOrderCreateForm = ({
                     />
                   </CustomField>
                 </Box>
-                {errors.senderName.required && errors.senderName.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
+                {
+                  errorsField['senderName' as keyof ErrorsField].required && errorsField['senderName' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={t('purchase_order.create.required_field')}/> : ''
+                }
               </Grid>
               <Grid item>
                 <CustomField label={''}>
@@ -784,7 +853,10 @@ const PurchaseOrderCreateForm = ({
                       }
                     }}
                   />
-                  {errors.details.required && errors.details.status &&  <ErrorMessage  message={t('purchase_order.create.required_field')}/>}
+                   {
+                  errorsField['details' as keyof ErrorsField].required && errorsField['details' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={t('purchase_order.create.required_field')}/> : ''
+                }
                   <Modal open={openModal} onClose={handleCloses}>
                     <CreateRecycleFormPurchaseOrder
                       data={state}
