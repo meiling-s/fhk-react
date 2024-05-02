@@ -2,6 +2,7 @@ import { ImageListType } from 'react-images-uploading'
 import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
+import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 
 export const returnApiToken = () => {
   const decodeKeycloack =
@@ -55,6 +56,9 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
       break
     case formErr.startDateBehindEndDate:
       msg = t('form.error.startDateBehindEndDate')
+      break
+    case formErr.loginIdCantContainAdmin:
+      msg = t('form.error.loginIdCantContainAdmin')
       break
   }
   return msg
@@ -176,4 +180,27 @@ export const dynamicpath = () => {
     pathRole,
     userRole
   }
+}
+
+export const getBaseUrl = () => {
+  const realm = localStorage.getItem(localStorgeKeyName.realm);
+  let baseURL: string = '';
+  switch(realm){
+    case(Realm.collector):
+      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.collector;
+      break;
+    case(Realm.customer):
+      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.customer
+      break;
+    case(Realm.logistic):
+      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.logistic;
+      break;
+    case(Realm.manufacturer):
+      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.manufacturer;
+      break
+    default:
+      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.administrator
+      break;
+  }
+  return baseURL
 }

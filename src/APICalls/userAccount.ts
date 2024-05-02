@@ -31,9 +31,14 @@ export const postUserAccount = async (data: any) => {
             data: data
         });
         return response;
-    } catch (e) {
-        console.error(" create User Account failed:", e);
-        return null;
+    } catch (e: any) {
+        if (e.response) {
+            const response = e.response.data.status
+            return response
+          } else {
+            console.error(" create User Account failed:", e);
+            return null;
+          }
     }
 };
 

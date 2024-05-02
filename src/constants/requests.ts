@@ -192,6 +192,21 @@ export const GET_COLLECTORLIST = (
   url: `api/v1/${realmApiRoute}/collectorlist/${table}`
 })
 
+export const CREATE_COLLECTORLIST = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/collectorlist/${table}`
+})
+
+export const EDIT_COLLECTORLIST = (realmApiRoute: string, table: string, collectorId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/collectorlist/${table}/${collectorId}`
+})
+
+export const CUSTOMER_GET_COLLECTORLIST = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/collectorlist/${table}`
+})
+
 export const GET_MANULIST = (
   realmApiRoute: string,
   table: string
@@ -1213,10 +1228,11 @@ export const DELETE_USER_MANUFACTURER = (
 
 //PURCHASE ORDER MANUFACTURER
 export const SEARCH_PURCHASE_ORDER = (
-  sellerTenantId: string
+  sellerTenantId: string,
+  path: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/administrator/po/seller/search/${sellerTenantId}`
+  url: `api/v1/administrator/po/${path}/search/${sellerTenantId}`
 })
 
 export const GET_PURCHASE_ORDER_BY_ID = (poId: string): AxiosRequestConfig => ({
@@ -1333,4 +1349,11 @@ export const GET_IMG_SETTINGS = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/account/t/imgSetting/${tenantId}`
+})
+
+export const UPDATE_PURCHASE_ORDER = (
+  poId: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/po/${poId}`
 })

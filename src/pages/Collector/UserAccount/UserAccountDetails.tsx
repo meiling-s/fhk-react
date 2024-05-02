@@ -41,6 +41,7 @@ interface UserAccountDetailsProps {
   onSubmitData: () => void
   rowId?: number
   selectedItem?: UserAccount | null
+  userList?: string[]
 }
 
 interface userAccountItem {
@@ -60,7 +61,8 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  selectedItem
+  selectedItem,
+  userList
 }) => {
   const { t } = useTranslation()
   const [staffId, setStaffId] = useState<string>('')
@@ -142,6 +144,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     setEmail('')
     setUserGroup(0)
     setUserStatus('ACTIVE')
+    setStaffId('')
     setUserGroupList([])
     setValidation([])
   }
@@ -164,6 +167,19 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      userList?.includes(loginId) &&
+        tempV.push({
+          field: t('userAccount.loginName'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      if (/admin/.test(loginId)) {
+        tempV.push({
+          field: t('userAccount.loginName'),
+          problem: formErr.loginIdCantContainAdmin,
+          type: 'error'
+        })
+      }
       contactNo?.toString() == '' &&
         tempV.push({
           field: t('staffManagement.contactNumber'),
@@ -210,20 +226,20 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   const handleSubmit = () => {
     if (action == 'add') {
-      handleCreateVehicle()
+      handleCreateUser()
     } else {
       handleEditUser()
     }
   }
 
-  const handleCreateVehicle = async () => {
+  const handleCreateUser = async () => {
     const formData: CreateUserAccount = {
       loginId: loginId,
       realm,
       tenantId: tenantId,
       staffId: staffId,
       groupId: userGroup,
-      status: 'ACTIVE',
+      status: userStatus,
       createdBy: logginUser,
       updatedBy: logginUser,
       firstName: loginId,
@@ -236,13 +252,22 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     }
     if (validation.length === 0) {
       const result = await postUserAccount(formData)
-      if (result) {
+      if (result == 409) {
+        //SET VALIDATION FOR USER WITH SAME EMAIL
+        setTrySubmited(true)
+        let tempV = []
+        tempV.push({
+          field: t('userAccount.emailAddress'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+        setValidation(tempV)
+        
+      } else {
         onSubmitData()
         showSuccessToast(t('userAccount.successCreatedUser'))
         resetData()
         handleDrawerClose()
-      } else {
-        showErrorToast(t('userAccount.failedCreatedUser'))
       }
     } else {
       setTrySubmited(true)

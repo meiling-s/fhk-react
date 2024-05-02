@@ -59,7 +59,9 @@ import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
-
+import CustomerAccount from './pages/Logistic/Account'
+import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder";
+import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
 
 const Router = () => {
   return (
@@ -162,6 +164,13 @@ const Router = () => {
           <Route path="/manufacturer/inventory" element={<Inventory/>}/>
           <Route path="/manufacturer/setting" element={<Settings/>}/>
           <Route path="/manufacturer/purchaseOrder" element={<PurchaseOrder />} />
+        </Route>
+
+        <Route element={<MainLayout />}>
+        <Route path="/customer/purchaseOrder" element={<PurchaseOrder />} />
+          <Route path="/customer/createPurchaseOrder" element={<CreatePurchaseOrder />} />
+          <Route path="/customer/editPurchaseOrder" element={<EditPurchaseOrder/>} />
+          <Route path="/customer/account" element={<CustomerAccount />} />
         </Route>
       </Routes>
     </BrowserRouter>

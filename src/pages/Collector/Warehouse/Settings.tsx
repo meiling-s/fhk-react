@@ -18,6 +18,7 @@ import ASTDVehicle from '../../ASTD/Vehicle/Vehicle'
 import ASTDCompany from '../../ASTD/Company/Company'
 import ASTDStaff from '../../ASTD/Staff/Staff'
 import ASTDDenialReason from '../../ASTD/DenialReason/DenialReason'
+import CustomerGeneralSettings from '../../Customer/GeneralSettings/GeneralSettings'
 
 const Settings: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -55,6 +56,9 @@ const Settings: FunctionComponent = () => {
     if (role === 'logistic') {
       const hideTabIndexArr = [2, 3, 5]
       updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
+    } else if (role === 'customer') {
+      const hideTabIndexArr = [1,2,3,5,7]
+      updatedTabList = updatedTabList.filter((_,index) => !hideTabIndexArr.includes(index))
     }
     setTabList(updatedTabList)
   }
@@ -139,6 +143,20 @@ const Settings: FunctionComponent = () => {
         )
       )
   }
+  const customerSettingTab = () => {
+    return (
+      selectedTab === 0 ? (
+        <CustomerGeneralSettings/>
+      ): selectedTab === 1 ? (
+        <Company/>
+      ) : selectedTab === 2 ? (
+        <StaffTitle/>
+      ) :
+      (
+        <div className="p-4 text-center">content not available</div>
+      )
+    )
+  }
 
   return (
     <Box className="container-wrapper w-full">
@@ -151,7 +169,7 @@ const Settings: FunctionComponent = () => {
           className="lg:px-10 sm:px-4 bg-bg-primary"
         />
         {/* rendering content base on tab index */}
-        { role === 'logistic' ? logisticSettingTab() : role === 'astd' ? astdSettingTab() : collectorSettingTab()}
+        { role === 'logistic' ? logisticSettingTab() : role === 'astd' ? astdSettingTab() : role === 'customer' ? customerSettingTab() : collectorSettingTab()}
       </div>
     </Box>
   );
