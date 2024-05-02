@@ -595,6 +595,7 @@
     "employeeName": "Employee Name",
     "enterEmployeeName": "Enter Employee Name",
     "employeeChineseName": "Chinese Traditional Chinese name of the employee",
+    "employeeEnglishName": "English Name of the employee",
     "employeeChineseCn": "Employee's Chinese Simplified Chinese name",
     "position": "Position",
     "loginName": "Login Name",

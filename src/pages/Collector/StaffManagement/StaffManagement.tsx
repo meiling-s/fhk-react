@@ -374,18 +374,14 @@ const StaffManagement: FunctionComponent = () => {
     })
   }
 
-  const onSubmitData = (type: string, msg: string) => {
+  const onSubmitData = () => {
     initStaffList()
-    if (type == 'success') {
-      showSuccessToast(msg)
-    } else {
-      showErrorToast(msg)
-    }
   }
 
   const onChangeSearch = (searchWord: string) => {
+    const newData = staffList
     if (searchWord.trim() !== '') {
-      const filteredData: Staff[] = filteredStaff.filter((item) => {
+      const filteredData: Staff[] = newData.filter((item) => {
         const lowerCaseSearchWord = searchWord.toLowerCase()
         const lowerCaseStaffId = item.staffId.toLowerCase()
         const staffNameEng = item.staffNameEng.toLowerCase()
@@ -535,6 +531,7 @@ const StaffManagement: FunctionComponent = () => {
               handleDrawerClose={() => setDrawerOpen(false)}
               action={action}
               selectedItem={selectedRow}
+              staffList={staffList}
               onSubmitData={onSubmitData}
             />
             {/* )} */}
