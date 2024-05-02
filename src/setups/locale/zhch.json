@@ -691,7 +691,8 @@
     "description": "描述",
     "availableFeatures": "可用功能",
     "pleaseEnterName": "請輸入名稱",
-    "pleaseEnterText": "請輸入文字"
+    "pleaseEnterText": "請輸入文字",
+    "userAccountUsed": "用户组无法删除，因为其中仍有帐户"
   },
   "notify": {
     "successCreated": "成功已创造",

@@ -714,7 +714,8 @@
     "description": "Description",
     "availableFeatures": "Available Features",
     "pleaseEnterName": "Please enter name",
-    "pleaseEnterText": "Please enter text"
+    "pleaseEnterText": "Please enter text",
+    "userAccountUsed": "User group can't be deleted since there are still account(s) in it"
   },
   "notify": {
     "successCreated": "Success Created",
