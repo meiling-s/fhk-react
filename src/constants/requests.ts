@@ -626,22 +626,23 @@ export const DELETE_USER_GROUP = (userGroupId: number): AxiosRequestConfig => ({
 })
 
 //STAFF MANAGEMENT
-export const GET_STAFF = (tenantId: string): AxiosRequestConfig => ({
+export const GET_STAFF = (tenantId: string, realmApiRoute: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/staff/${tenantId}`
+  url: `api/v1/${realmApiRoute}/staff/${tenantId}`
 })
 
-export const CREATE_STAFF: AxiosRequestConfig = {
+export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
   method: 'post',
-  url: 'api/v1/collectors/staff'
-}
+  url: `api/v1/${realmApiRoute}/staff`
+})
 
 export const EDIT_STAFF = (
   tenantId: string,
-  staffId: string
+  staffId: string,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/collectors/staff/${tenantId}/${staffId}`
+  url: `api/v1/${realmApiRoute}/staff/${tenantId}/${staffId}`
 })
 
 export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
