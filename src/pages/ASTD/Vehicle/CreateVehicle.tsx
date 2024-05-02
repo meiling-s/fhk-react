@@ -193,7 +193,6 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                     onSubmit('vehicle')
                 }
             } catch (error) {
-                console.log(error)
                 showErrorToast(t('notify.errorDeleted'))
             }
         }
@@ -247,7 +246,6 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 onSubmit('vehicle')
             }
         } catch (error) {
-            console.error(error)
             showErrorToast(t('notify.errorUpdated'))
         }
     }
@@ -316,6 +314,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                         <CustomField label={t('vehicle.loading_capacity')}>
                             <CustomTextField
                                 id="weight"
+                                type="number"
                                 value={weight}
                                 disabled={action === 'delete'}
                                 placeholder={t('vehicle.loading_capacity')}

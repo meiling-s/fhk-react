@@ -136,6 +136,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
             return false
         }
         return s == 0
+        
     }
 
     const getFormErrorMsg = () => {
@@ -198,7 +199,6 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 showSuccessToast(t('notify.successDeleted'))
             }
         } catch (error) {
-            console.log(error)
             showErrorToast(t('notify.errorDeleted'))
         }
     }
@@ -319,11 +319,12 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                         <CustomField label={t('recycling_unit.1kg_equivalent')}>
                             <CustomTextField
                                 id="equivalent"
+                                type="number"
                                 value={equivalent}
                                 disabled={action === 'delete'}
                                 placeholder={t('recycling_unit.1kg_equivalent')}
                                 onChange={(event) => setEquivalent(event.target.value)}
-                                error={checkString(equivalent)}
+                                error={checkNumber(Number(equivalent))}
                             />
                         </CustomField>
                     </Box>

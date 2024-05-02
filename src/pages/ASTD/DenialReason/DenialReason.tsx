@@ -19,7 +19,6 @@ import { getAllDenialReason, getAllDenialReasonByFunctionId } from "../../../API
 import { DenialReason as DenialReasonItem } from "../../../interfaces/denialReason";
 import CreateDenialReason from "./CreateDenialReason";
 import { getAllFunction } from "../../../APICalls/Collector/userGroup";
-import i18n from "../../../setups/i18n";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 
 function createDenialReason(
@@ -58,6 +57,8 @@ function createDenialReason(
 
 const DenialReason: FunctionComponent = () => {
   const { t } = useTranslation();
+  const { i18n } = useTranslation()
+  const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [action, setAction] = useState<"add" | "edit" | "delete">("add");
@@ -70,6 +71,12 @@ const DenialReason: FunctionComponent = () => {
   const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
   const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
+
+  useEffect(() => {
+    i18n.changeLanguage(currentLanguage)
+    initFunctionList()
+}, [i18n, currentLanguage])
+
 
   const initFunctionList = async () => {
     const result = await getAllFunction();

@@ -84,7 +84,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     }, [i18n, currentLanguage])
 
     useEffect(() => {
-        if (action === 'edit') {
+        if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 const newServiceValue = serviceTypeSelect.filter(value => value.value === selectedItem.serviceType)[0]
                 setTChineseName(selectedItem.premiseTypeNameTchi)
@@ -163,8 +163,16 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 )}`
             })
 
+        selectedService.trim() === '' &&
+        tempV.push({
+            field: 'selectedService',
+            error: `${t(`recycling_point.service_type`)} ${t(
+                'add_warehouse_page.shouldNotEmpty'
+            )}`
+        })
+
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName])
+    }, [tChineseName, sChineseName, englishName, selectedService])
 
     const handleDelete = async () => {
         const token = returnApiToken()
@@ -189,10 +197,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
     const handleSubmit = () => {
         const { loginId } = returnApiToken();
-        
-        const serviceValue = serviceTypeSelect.filter(value => value.name === selectedService)[0]
-
-        console.log(serviceValue, 'serviceValue')
+        const serviceValue = serviceTypeSelect.filter(value => value.name === selectedService)[0] || ''
 
         const premiseTypeForm = {
             premiseTypeNameTchi: tChineseName,
@@ -231,6 +236,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             showErrorToast(t('errorCreated.errorCreated'))
         }
     }
+
     const editRecyclingPointData = async (premiseTypeForm: any) => {
         if (selectedItem !== null && selectedItem !== undefined) {
             try {
@@ -271,7 +277,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 <Divider></Divider>
                 <Box sx={{ marginX: 2 }}>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.traditional_chinese_name')}>
+                        <CustomField label={t('packaging_unit.traditional_chinese_name')} mandatory>
                             <CustomTextField
                                 id="tChineseName"
                                 value={tChineseName}
@@ -283,7 +289,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.simplified_chinese_name')}>
+                        <CustomField label={t('packaging_unit.simplified_chinese_name')} mandatory>
                             <CustomTextField
                                 id="sChineseName"
                                 value={sChineseName}
@@ -295,7 +301,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.english_name')}>
+                        <CustomField label={t('packaging_unit.english_name')} mandatory>
                             <CustomTextField
                                 id="englishName"
                                 value={englishName}
@@ -363,7 +369,6 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 id="remark"
                                 placeholder={t('packaging_unit.remark')}
                                 onChange={(event) => setRemark(event.target.value)}
-                                error={checkString(remark)}
                                 multiline={true}
                                 defaultValue={remark}
                             />

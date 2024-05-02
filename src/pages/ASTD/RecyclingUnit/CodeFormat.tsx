@@ -96,7 +96,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     }, [i18n, currentLanguage])
     
     useEffect(() => {
-        if (action === 'edit') {
+        if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setCodeId(selectedItem.recycCodeId)
                 setCodeName(selectedItem.recycCodeName)
@@ -188,6 +188,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             if (response) {
                 onSubmitData('code')
                 showSuccessToast(t('notify.successDeleted'))
+                resetForm()
             }
         } catch (error) {
             console.error(error)
@@ -228,6 +229,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             if (response) {
                 showSuccessToast(t('notify.successCreated'))
                 onSubmitData('code')
+                resetForm()
             }
         } catch (error) {
             console.error(error)
@@ -240,6 +242,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             if (response) {
                 showSuccessToast(t('notify.SuccessEdited'))
                 onSubmitData('code')
+                resetForm()
             }
         } catch (error) {
             console.error(error)

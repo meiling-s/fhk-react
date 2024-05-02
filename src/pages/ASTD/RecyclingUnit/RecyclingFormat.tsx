@@ -303,13 +303,13 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 console.log(mainTypeId, 'aaa')
                 const response = await updateRecyc(addRecyclingForm, mainTypeId)
                 if (response) {
-                    showSuccessToast(t('notify.successCreated'))
+                    showSuccessToast(t('notify.SuccessEdited'))
                     onSubmitData('recycle')
                 }
             } else {
             const response = await updateSubRecyc(addRecyclingForm, subTypeId)
                 if (response) {
-                    showSuccessToast(t('notify.successCreated'))
+                    showSuccessToast(t('notify.SuccessEdited'))
                     onSubmitData('recycle')
                 }
             }

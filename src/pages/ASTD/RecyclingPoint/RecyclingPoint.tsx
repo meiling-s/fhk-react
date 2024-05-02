@@ -212,12 +212,6 @@ const RecyclingPoint: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'description',
-      headerName: t('packaging_unit.introduction'),
-      width: 200,
-      type: 'string'
-    },
-    {
       field: 'remark',
       headerName: t('packaging_unit.remark'),
       width: 170,

@@ -93,7 +93,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     }, [i18n, currentLanguage])
     
     useEffect(() => {
-        if (action === 'edit') {
+        if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setPackagingId(selectedItem.packagingTypeId)
                 setTChineseName(selectedItem.packagingNameTchi)
@@ -188,8 +188,10 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
         if (validation.length == 0) {
             editPackagingData(packagingForm)
+            showSuccessToast(t('notify.successDeleted'))
         } else {
             setTrySubmitted(true)
+            showErrorToast(t('notify.errorDeleted'))
         }
     }
     
@@ -310,7 +312,6 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             id="description"
                             placeholder={t('packaging_unit.introduction')}
                             onChange={(event) => setDescription(event.target.value)}
-                            error={checkString(description)}
                             multiline={true}
                             defaultValue={description}
                         />
@@ -320,7 +321,6 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             id="remark"
                             placeholder={t('packaging_unit.remark')}
                             onChange={(event) => setRemark(event.target.value)}
-                            error={checkString(remark)}
                             multiline={true}
                             defaultValue={remark}
                         />

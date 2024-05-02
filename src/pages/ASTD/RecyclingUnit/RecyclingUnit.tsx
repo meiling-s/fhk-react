@@ -514,7 +514,7 @@ const RecyclingUnit: FunctionComponent = () => {
     const token = returnApiToken()
 
     const recyclingForm = {
-      status: 'DELETED',
+      status: 'INACTIVE',
       updatedBy: token.loginId
     }
     if (type === 'main') {
@@ -529,6 +529,7 @@ const RecyclingUnit: FunctionComponent = () => {
         showErrorToast(t('notify.errorDeleted'))
       }
     } else if (type === 'sub') {
+      console.log(value, 'value sub')
       const response = await deleteSubRecyc(recyclingForm, value.recycSubTypeId)
       if (response) {
         showSuccessToast(t('notify.successDeleted'))
@@ -904,11 +905,8 @@ const CustomDataGrid = ({ data, customGridHandleAction, handleClickSwitch }: { d
                   <DELETE_OUTLINED_ICON
                     fontSize="small"
                     className="cursor-pointer text-grey-dark mr-2"
-                    onClick={() => console.log('hitt')}
+                    onClick={() => handleClickSwitch(item, 'main')}
                   />
-                </div>
-                <div style={{ display: 'flex' }}>
-                  <Switch checked={item.status === 'ACTIVE' ? true : false} onChange={() => handleClickSwitch(item, 'main')} />
                 </div>
               </div>
             </div>
@@ -940,11 +938,8 @@ const CustomDataGrid = ({ data, customGridHandleAction, handleClickSwitch }: { d
                     <DELETE_OUTLINED_ICON
                       fontSize="small"
                       className="cursor-pointer text-grey-dark mr-2"
-                      onClick={() => console.log('hitt')}
+                      onClick={() =>  handleClickSwitch(value, 'sub')}
                     />
-                  </div>
-                  <div style={{ display: 'flex' }}>
-                    <Switch checked={value.status === 'ACTIVE' ? true : false} onChange={() => handleClickSwitch(item, 'sub')} />
                   </div>
                 </div>
               </div>

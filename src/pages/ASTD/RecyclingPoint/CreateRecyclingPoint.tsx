@@ -97,7 +97,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
     }, [i18n, currentLanguage])
 
     useEffect(() => {
-        if (action === 'edit') {
+        if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setTChineseName(selectedItem.siteTypeNameTchi)
                 setSChineseName(selectedItem.siteTypeNameSchi)
