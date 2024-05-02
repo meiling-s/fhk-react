@@ -53,9 +53,14 @@ export type UpdateNotifTemplateBroadcast = {
   effToDate: string
 }
 
-export type LanguagesNotif = {
+export interface LanguagesNotif  {
   value: string,
   langTchi: string,
   langSchi: string,
   langEng: string,
+}
+
+export interface Option {
+  value: string
+  lang: string,
 }

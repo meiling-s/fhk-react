@@ -9,7 +9,7 @@ import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../ut
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 import { styles } from "../../../constants/styles";
 import { Languages, localStorgeKeyName } from "../../../constants/constant";
-import { LanguagesNotif } from "../../../interfaces/notif";
+import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
 
 interface TemplateProps {
@@ -27,8 +27,8 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
     const userRole:string = localStorage.getItem('userRole') || '';
     const themeColor:string = getThemeColorRole(userRole);
     const realm = localStorage.getItem(localStorgeKeyName.realm);
-
-    const languages: LanguagesNotif[] = [
+    const [currentLang, setCurrentLang] = useState<Option>({value: '', lang: ''})
+    const languages: readonly LanguagesNotif[] = [
         {
             value: "ZH-CH",
             langTchi: '簡體中文',
@@ -51,11 +51,51 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
 
     const getCurrentLang = () => {
         if(i18n.language === Languages.ENUS){
-            return languages.map(lang => lang.langEng)
+            let options: Option[] = languages.map(item => {
+                return{
+                    value: item.value,
+                    lang: item.langEng
+                }
+            })
+            return options
         } else if(i18n.language === Languages.ZHCH){
-            return languages.map(lang => lang.langSchi)
+            let options: Option[] = languages.map(item => {
+                return{
+                    value: item.value,
+                    lang: item.langSchi
+                }
+            })
+            return options
         } else {
-            return languages.map(lang => lang.langTchi)
+            let options: Option[] = languages.map(item => {
+                return{
+                    value: item.value,
+                    lang: item.langTchi
+                }
+            })
+            return options
+        }
+    }
+
+    const setCurrentLanguage = (lang: string) => {
+        if(lang === 'ZH-CH' && i18n.language === Languages.ZHCH) {
+            setCurrentLang({value: lang, lang: '简体中文'})
+        }else if(lang === 'ZH-CH' && i18n.language === Languages.ZHHK) {
+            setCurrentLang({value: lang, lang: '簡體中文'})
+        }else if(lang === 'ZH-CH' && i18n.language === Languages.ENUS) {
+            setCurrentLang({value: lang, lang: 'Simplified Chinese'})
+        }else if (lang === 'ZH-HK' && i18n.language === Languages.ZHCH) {
+            setCurrentLang({value: lang, lang: '繁体中文'})
+        }else if (lang === 'ZH-HK' && i18n.language === Languages.ZHHK) {
+            setCurrentLang({value: lang, lang: '繁體中文'})
+        }else if (lang === 'ZH-HK' && i18n.language === Languages.ENUS) {
+            setCurrentLang({value: lang, lang: 'Traditional Chinese'})
+        } else if (lang === 'EN-US' && i18n.language === Languages.ZHCH) {
+            setCurrentLang({value: lang, lang: '英语'})
+        }else if (lang === 'EN-US' && i18n.language === Languages.ZHHK) {
+            setCurrentLang({value: lang, lang: '英语'})
+        }else if (lang === 'EN-US' && i18n.language === Languages.ENUS) {
+            setCurrentLang({value: lang, lang: 'English'})
         }
     }
 
@@ -76,8 +116,13 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                     variables: notif?.variables
                 }
             })
+            setCurrentLanguage(notif.lang)
         }
     }
+    
+    useEffect(() => {
+        setCurrentLanguage(currentLang.value)
+    }, [i18n.language])
 
     useEffect(() => {
         if (templateId) {
@@ -152,12 +197,13 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
         }
     }
 
-    const onChangeLanguage = (lang: string | null) => {
-        if (lang) {
+    const onChangeLanguage = (value: string, lang: string) => {
+        if (value) {
+            setCurrentLang({value: value, lang: lang})
             setNotifTemplate(prev => {
                 return {
                     ...prev,
-                    lang
+                    lang : value
                 }
             })
         }
@@ -224,12 +270,15 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                         {t('notification.modify_template.app.language')}
                     </Typography>
                     <Autocomplete
-                        disablePortal
                         id="combo-box-demo"
-                        value={notifTemplate.lang}
-                        options={['EN-US', 'ZH-HK', 'ZH-CH']}
                         sx={{ width: 300, color: '#79CA25', '&.Mui-checked': { color: '#79CA25'}}}
-                        onChange={(_: SyntheticEvent, newValue: string | null) => onChangeLanguage(newValue)}
+                        options={getCurrentLang()}
+                        autoHighlight
+                        getOptionLabel={(option) => option.lang}
+                        value={currentLang}
+                        onChange={(event, newValue) => {
+                            if(newValue) onChangeLanguage(newValue.value, newValue.lang)
+                        }}
                         renderInput={(params) => <TextField {...params} 
                             sx={[styles.textField, { width: 400 }]}InputProps={{
                             ...params.InputProps,
