@@ -15,7 +15,8 @@ import {
   GridRowParams,
   GridRowSpacingParams,
   GridRenderCellParams,
-  GridSortDirection, GridSortItem 
+  GridSortDirection,
+  GridSortItem
 } from '@mui/x-data-grid'
 import {
   ADD_ICON,
@@ -30,12 +31,12 @@ import { styles } from '../../../constants/styles'
 import { ToastContainer, toast } from 'react-toastify'
 import Tabs from '../../../components/Tabs'
 import { Staff } from '../../../interfaces/staff'
-import { getStaffList, getStaffListLogistic } from '../../../APICalls/staff'
+import { getStaffList } from '../../../APICalls/staff'
 
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../../utils/utils'
 import UserGroup from '../UserGroup/UserGroup'
-import { Realm, localStorgeKeyName } from "../../../constants/constant";
+import { Realm, localStorgeKeyName } from '../../../constants/constant'
 
 function createStaff(
   staffId: string,
@@ -54,7 +55,7 @@ function createStaff(
   updatedBy: string,
   createdAt: string,
   updatedAt: string,
-  fullTimeFlg?: boolean,
+  fullTimeFlg?: boolean
 ): Staff {
   return {
     staffId,
@@ -91,23 +92,15 @@ const StaffManagement: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const realm = localStorage.getItem(localStorgeKeyName.realm);
-  const role = localStorage.getItem(localStorgeKeyName.role);
-
+  const realm = localStorage.getItem(localStorgeKeyName.realm)
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   useEffect(() => {
     initStaffList()
   }, [page])
 
   const initStaffList = async () => {
-    let result = null
-    if (role != 'logistic'){
-      result = await getStaffList(page - 1, pageSize)
-    } else {
-      result = await getStaffListLogistic(page - 1, pageSize)
-    }
-    
-
+    const result = await getStaffList(page - 1, pageSize)
 
     if (result) {
       const data = result.data.content
@@ -184,7 +177,7 @@ const StaffManagement: FunctionComponent = () => {
       width: 200,
       type: 'string',
       renderCell: (params) => {
-        return (displayCreatedDate(params.row.updatedAt))
+        return displayCreatedDate(params.row.updatedAt)
       }
     },
     {
@@ -231,111 +224,110 @@ const StaffManagement: FunctionComponent = () => {
     }
   ]
 
-  if(realm === Realm.collector){
+  if (realm === Realm.collector) {
     columns = [
       {
-        field: "staffId",
-        headerName: t("staffManagement.employeeId"),
+        field: 'staffId',
+        headerName: t('staffManagement.employeeId'),
         width: 150,
-        type: "string",
+        type: 'string'
       },
       {
-        field: "staffNameTchi",
-        headerName: t("staffManagement.employeeChineseName"),
+        field: 'staffNameTchi',
+        headerName: t('staffManagement.employeeChineseName'),
         width: 200,
-        type: "string",
+        type: 'string'
       },
       {
-        field: "staffNameEng",
-        headerName: "Employee English Name",
+        field: 'staffNameEng',
+        headerName: 'Employee English Name',
         width: 200,
-        type: "string",
+        type: 'string'
       },
       {
-        field: "fullTimeFlg",
-        headerName: t("staffManagement.fullTimeFlg"),
+        field: 'fullTimeFlg',
+        headerName: t('staffManagement.fullTimeFlg'),
         width: 200,
-        type: "boolean",
+        type: 'boolean'
       },
       {
-        field: "titleId",
-        headerName: t("staffManagement.position"),
+        field: 'titleId',
+        headerName: t('staffManagement.position'),
         width: 150,
-        type: "string",
+        type: 'string'
       },
       {
-        field: "loginId",
-        headerName: t("staffManagement.loginName"),
+        field: 'loginId',
+        headerName: t('staffManagement.loginName'),
         width: 150,
-        type: "string",
+        type: 'string'
       },
       {
-        field: "contactNo",
-        headerName: t("staffManagement.contactNumber"),
+        field: 'contactNo',
+        headerName: t('staffManagement.contactNumber'),
         width: 150,
-        type: "string",
+        type: 'string'
       },
       {
-        field: "updatedAt",
-        headerName: t("staffManagement.lastLogin"),
+        field: 'updatedAt',
+        headerName: t('staffManagement.lastLogin'),
         width: 200,
-        type: "string",
+        type: 'string',
         renderCell: (params) => {
-          return displayCreatedDate(params.row.updatedAt);
-        },
+          return displayCreatedDate(params.row.updatedAt)
+        }
       },
       {
-        field: "edit",
-        headerName: "",
+        field: 'edit',
+        headerName: '',
         renderCell: (params) => {
           return (
-            <div style={{ display: "flex", gap: "8px" }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <EDIT_OUTLINED_ICON
                 fontSize="small"
                 className="cursor-pointer text-grey-dark mr-2"
                 onClick={(event) => {
                   const selected = staffList.find(
                     (item) => item.loginId == params.row.loginId
-                  );
-                  event.stopPropagation();
-                  handleAction(params, "edit");
-                  if (selected) setSelectedRow(selected);
+                  )
+                  event.stopPropagation()
+                  handleAction(params, 'edit')
+                  if (selected) setSelectedRow(selected)
                 }}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: 'pointer' }}
               />
             </div>
-          );
-        },
+          )
+        }
       },
       {
-        field: "delete",
-        headerName: "",
+        field: 'delete',
+        headerName: '',
         renderCell: (params) => {
           return (
-            <div style={{ display: "flex", gap: "8px" }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <DELETE_OUTLINED_ICON
                 fontSize="small"
                 className="cursor-pointer text-grey-dark"
                 onClick={(event) => {
-                  event.stopPropagation();
-                  handleAction(params, "delete");
+                  event.stopPropagation()
+                  handleAction(params, 'delete')
                 }}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: 'pointer' }}
               />
             </div>
-          );
-        },
-      },
-    ];
+          )
+        }
+      }
+    ]
   }
 
   const sortModel: GridSortItem[] = [
     {
       field: 'staffId',
-      sort: 'asc',
-    },
-  ];
-  
+      sort: 'asc'
+    }
+  ]
 
   const handleAction = (
     params: GridRenderCellParams,
@@ -473,7 +465,7 @@ const StaffManagement: FunctionComponent = () => {
               <TextField
                 id="staffId"
                 onChange={(event) => onChangeSearch(event.target.value)}
-                sx={[localstyles.inputState, {width: '450px'}]}
+                sx={[localstyles.inputState, { width: '450px' }]}
                 label={t('staffManagement.employeeId')}
                 placeholder={t('staffManagement.enterEmployeeNumber')}
                 InputProps={{
@@ -489,7 +481,7 @@ const StaffManagement: FunctionComponent = () => {
               <TextField
                 id="staffName"
                 onChange={(event) => onChangeSearch(event.target.value)}
-                sx={[localstyles.inputState,{ width : '450px'}]}
+                sx={[localstyles.inputState, { width: '450px' }]}
                 label={t('staffManagement.employeeName')}
                 placeholder={t('staffManagement.enterEmployeeName')}
                 InputProps={{
