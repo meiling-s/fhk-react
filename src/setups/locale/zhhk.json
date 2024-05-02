@@ -979,14 +979,14 @@
       "order_info": "訂單資料",
       "pico_id": "回收運單編號"
     },
-    "create" : {
+    "create": {
       "create_order": "建立訂單",
       "contact_information": "聯絡資料",
       "receiving_company_name": "收件公司名稱",
       "sender_company_name": "寄件者公司名稱",
       "receiving_company_name_placeholder": "請輸入公司名稱",
-      "contact_name":"聯絡人姓名",
-      "contact_name_placeholder":"請填寫聯絡人姓名",
+      "contact_name": "聯絡人姓名",
+      "contact_name_placeholder": "請填寫聯絡人姓名",
       "contact_number": "聯絡人號碼",
       "contact_number_placeholder": "請填寫手機號碼",
       "payment_method": "付款方式",
@@ -1046,5 +1046,23 @@
       "estimated_weight": "預計重量",
       "arrived": "到達地點"
     }
+  },
+  "logisticDashboard": {
+    "searchDriver": "搜索司機方向",
+    "driverInfo": "您正在搜索的司機",
+    "driverNumb": "司機號碼",
+    "driverLicense": "駕駛證",
+    "vehicleCategory": "車輛類別",
+    "receivingLocation": "接收位置",
+    "receiptDate": "收據日期",
+    "received": "已收到",
+    "notReceived": "未收到",
+    "logisticsCompany": "物流公司",
+    "poNumber": "採購訂單號",
+    "shippingAddress": "送貨地址",
+    "recyclingCategory:": "回收類別",
+    "packagingCategory:": "包裝類別",
+    "packingQuantity": "包裝數量",
+    "packingWeight": "包裝重量"
   }
 }

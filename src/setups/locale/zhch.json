@@ -956,7 +956,7 @@
       "order_info": "訂單資料",
       "pico_id": "回收運單編號"
     },
-    "create" : {
+    "create": {
       "create_order": "建立订单",
       "contact_information": "联络资料",
       "receiving_company_name": "收件公司名称",
@@ -964,8 +964,8 @@
       "receiving_company_name_placeholder": "请输入公司名称",
       "contact_number": "联络人号码",
       "contact_number_placeholder": "请填写手机号码",
-      "contact_name":"联系人姓名",
-      "contact_name_placeholder":"请填写联系人姓名",
+      "contact_name": "联系人姓名",
+      "contact_name_placeholder": "请填写联系人姓名",
       "payment_method": "付款方式",
       "payment_method_placeholder": "请选择",
       "order_information": "订单资料",
@@ -1023,5 +1023,23 @@
       "estimated_weight": "预计重量",
       "arrived": "到达地点"
     }
+  },
+  "logisticDashboard": {
+    "searchDriver": "搜索司机方向",
+    "driverInfo": "您正在搜索的司机",
+    "driverNumb": "司机号码",
+    "driverLicense": "驾驶证",
+    "vehicleCategory": "车辆类别",
+    "receivingLocation": "接收位置",
+    "receiptDate": "收据日期",
+    "received": "已收到",
+    "notReceived": "未收到",
+    "logisticsCompany": "物流公司",
+    "poNumber": "采购订单号",
+    "shippingAddress": "送货地址",
+    "recyclingCategory:": "回收类别",
+    "packagingCategory:": "包装类别",
+    "packingQuantity": "包装数量",
+    "packingWeight": "包装重量"
   }
 }
