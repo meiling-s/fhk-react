@@ -84,6 +84,44 @@ const ErrorMessages:React.FC<{message: string}> = ({message}) => {
 {message}
 </Typography>
 }
+type fieldName = 'receiverAddr' | 'weight' | 'recycTypeId' | 'recycSubTypeId' | 'pickupAt';
+
+type ErrorsField = Record<
+  fieldName,
+  {
+    type: string
+    status: boolean
+    required: boolean
+  }
+>
+
+const initialErrors = {
+  receiverAddr: {
+    type: 'string',
+    status: false,
+    required: true
+  },
+  weight: {
+    type: 'string',
+    status: false,
+    required: true
+  },
+  recycTypeId: {
+    type: 'string',
+    status: false,
+    required: true
+  },
+  recycSubTypeId: {
+    type: 'string',
+    status: false,
+    required: true
+  },
+  pickupAt: {
+    type: 'string',
+    status: false,
+    required: false
+  }
+}
 
 const CreateRecycleForm = ({
   onClose,
@@ -106,7 +144,7 @@ const CreateRecycleForm = ({
   const colorTheme: string = getThemeColorRole(role) || '#79CA25'
   const customListTheme = getThemeCustomList(role) || '#E4F6DC'
   //---end set custom style each role---
-
+  const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
   const [errors, setErrors] = useState(
     {
       receiverAddr: {type: 'string', status: false,  required: true},
@@ -218,12 +256,11 @@ const CreateRecycleForm = ({
   const validateData = () => {
     let isValid = true;
     if(formik.values.pickupAt === ''){
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          pickupAt: {
+          'pickupAt': {
             ...prev.pickupAt,
-            required: true,
             status: true
           }
         }
@@ -231,12 +268,11 @@ const CreateRecycleForm = ({
       isValid = false
     }  
     if (formik.values.recycTypeId === ''){
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          recycTypeId: {
+          'recycTypeId': {
             ...prev.recycTypeId,
-            required: true,
             status: true
           }
         }
@@ -244,12 +280,21 @@ const CreateRecycleForm = ({
       isValid = false
     } 
     if (formik.values.recycSubTypeId === ''){
-      setErrors(prev => {
+      // setErrors(prev => {
+      //   return{
+      //     ...prev,
+      //     recycSubTypeId: {
+      //       ...prev.recycSubTypeId,
+      //       required: true,
+      //       status: true
+      //     }
+      //   }
+      // })
+      setErrorsField(prev => {
         return{
           ...prev,
-          recycSubTypeId: {
+          'recycSubTypeId': {
             ...prev.recycSubTypeId,
-            required: true,
             status: true
           }
         }
@@ -257,12 +302,11 @@ const CreateRecycleForm = ({
       isValid = false
     } 
     if(Number(formik.values.weight) <= 0){
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          weight: {
+          'weight': {
             ...prev.weight,
-            required: true,
             status: true
           }
         }
@@ -271,12 +315,11 @@ const CreateRecycleForm = ({
     } 
     
     if(formik.values.receiverAddr === ''){
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          receiverAddr: {
+          'receiverAddr': {
             ...prev.receiverAddr,
-            required: true,
             status: true
           }
         }
@@ -310,45 +353,43 @@ const CreateRecycleForm = ({
     }
   })
 
-  const onChangeContent = (field: string, value: any) => {
-    if(value === '' || value === 0){
-      formik.setFieldValue(field, '')
-      setErrors(prev => {
+  const onHandleError = (serviceName: fieldName, message: string) => {    
+    if(message === 'succeed') {
+      setErrorsField(prev => {
         return{
           ...prev,
-          [field]: {
-            status: true,
-            required: true
-          }
-        }
-      })
-    } else if(field === 'recycTypeId'){
-      formik.setFieldValue('recycTypeId', value)
-      formik.setFieldValue('recycSubTypeId', '')
-      setErrors((prev: any) => {
-        return{
-          ...prev,
-          recycTypeId: {
-            status: false,
-            require: true
-          },
-          recycSubTypeId: {
-            status: true,
-            require: true
+          [serviceName]: {
+            ...prev[serviceName],
+            status: false
           }
         }
       })
     } else {
-      formik.setFieldValue(field, value)
-      setErrors(prev => {
+      setErrorsField(prev => {
         return{
           ...prev,
-          [field]: {
-            status: false,
-            require: true
+          [serviceName]: {
+            ...prev[serviceName],
+            status: true
           }
         }
       })
+    }
+    
+  };
+
+  const onChangeContent = (field: fieldName, value: any) => {
+    if(value === '' || value === 0){
+      formik.setFieldValue(field, '')
+      onHandleError(field, 'failed')
+    } else if(field === 'recycTypeId'){
+      formik.setFieldValue('recycTypeId', value)
+      formik.setFieldValue('recycSubTypeId', '')
+      onHandleError('recycTypeId', 'succeed')
+      onHandleError('recycSubTypeId', 'succeed')
+    } else {
+      formik.setFieldValue(field, value)
+      onHandleError(field, 'succeed')
     }
   }
 
@@ -445,7 +486,10 @@ const CreateRecycleForm = ({
                       </Box>
                     </Box>
                   </CustomField>
-                  { errors.pickupAt.required && errors.pickupAt.status &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>}
+                  {
+                    errorsField['pickupAt' as keyof ErrorsField].required && errorsField['pickupAt' as keyof ErrorsField].status ? 
+                    <ErrorMessages  message={t('purchase_order.create.required_field')}/> : ''
+                  }
                </Grid>
               <Grid item>
                   <CustomField label={t('col.recycType')} mandatory>
@@ -467,7 +511,10 @@ const CreateRecycleForm = ({
                       key={formik.values.id}
                     />
                   </CustomField>
-                  { (errors.recycSubTypeId.required && errors.recycSubTypeId.status) &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>}
+                  {
+                    errorsField['recycSubTypeId' as keyof ErrorsField].required && errorsField['recycSubTypeId' as keyof ErrorsField].status ? 
+                    <ErrorMessages  message={t('purchase_order.create.required_field')}/> : ''
+                  }
               </Grid>
               <Grid item>
                 <CustomField
@@ -493,7 +540,11 @@ const CreateRecycleForm = ({
                     }
                   ></CustomTextField>
                 </CustomField>
-                { errors.weight.required && errors.weight.status &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>}
+                {/* { errors.weight.required && errors.weight.status &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>} */}
+                {
+                  errorsField['weight' as keyof ErrorsField].required && errorsField['weight' as keyof ErrorsField].status ? 
+                  <ErrorMessages  message={t('purchase_order.create.required_field')}/> : ''
+                }
               </Grid>
               <Grid item>
                 <CustomField
@@ -518,7 +569,10 @@ const CreateRecycleForm = ({
                     }
                   />
                 </CustomField>
-                { errors.receiverAddr.required && errors.receiverAddr.status &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>}
+                {
+                  errorsField['receiverAddr' as keyof ErrorsField].required && errorsField['receiverAddr' as keyof ErrorsField].status ? 
+                  <ErrorMessages  message={t('purchase_order.create.required_field')}/> : ''
+                }
               </Grid>
                 {/* <Stack spacing={2}>
                   {formik.errors.createdBy && formik.touched.createdBy && (
