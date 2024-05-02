@@ -61,6 +61,11 @@ export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   url: `api/v1/account/t/status/${tenantId}`
 })
 
+export const GET_CURRENCY_LIST: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/administrator/currencyList'
+}
+
 export const UPDATE_TENANT_CURRENCY = (
   tenantId: string,
   monetaryValue: string,
@@ -191,17 +196,26 @@ export const GET_COLLECTORLIST = (
   url: `api/v1/${realmApiRoute}/collectorlist/${table}`
 })
 
-export const CREATE_COLLECTORLIST = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+export const CREATE_COLLECTORLIST = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/${realmApiRoute}/collectorlist/${table}`
 })
 
-export const EDIT_COLLECTORLIST = (realmApiRoute: string, table: string, collectorId: string): AxiosRequestConfig => ({
+export const EDIT_COLLECTORLIST = (
+  realmApiRoute: string,
+  table: string,
+  collectorId: string
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/${realmApiRoute}/collectorlist/${table}/${collectorId}`
 })
 
-export const CUSTOMER_GET_COLLECTORLIST = (table: string): AxiosRequestConfig => ({
+export const CUSTOMER_GET_COLLECTORLIST = (
+  table: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/logistic/collectorlist/${table}`
 })
@@ -641,17 +655,15 @@ export const DELETE_USER_GROUP = (userGroupId: number): AxiosRequestConfig => ({
 })
 
 //STAFF MANAGEMENT
-export const GET_STAFF = (tenantId: string , realmApi: string): AxiosRequestConfig => ({
+export const GET_STAFF = (
+  tenantId: string,
+  realmApi: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApi}/staff/${tenantId}`
 })
 
-export const GET_STAFF_LOGISTIC : AxiosRequestConfig = {
-  method: 'get',
-  url: `api/v1/logistic/staff`
-}
-
-export const CREATE_STAFF =(realmApi: string): AxiosRequestConfig => ({
+export const CREATE_STAFF = (realmApi: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/${realmApi}/staff`
 })
@@ -670,7 +682,10 @@ export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/userAccount/t/${tenantId}`
 })
 
-export const GET_TITLE_LIST = (table: string, realmApi: string): AxiosRequestConfig => ({
+export const GET_TITLE_LIST = (
+  table: string,
+  realmApi: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApi}/stafftitle/${table}`
 })
@@ -1200,16 +1215,12 @@ export const GET_ALL_REASON_MANUFACTURER = (
 })
 
 // get upload img setting
-export const GET_IMG_SETTINGS = (
-  tenantId: string
-): AxiosRequestConfig => ({
+export const GET_IMG_SETTINGS = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/account/t/imgSetting/${tenantId}`
 })
 
-export const UPDATE_PURCHASE_ORDER = (
-  poId: string
-): AxiosRequestConfig => ({
+export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/po/${poId}`
 })
