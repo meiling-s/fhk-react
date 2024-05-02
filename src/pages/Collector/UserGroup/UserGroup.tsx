@@ -72,6 +72,7 @@ const UserGroup: FunctionComponent = () => {
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [functionList, setFunctionList] = useState<Functions[]>([])
+  const [groupNameList, setGroupNameList] = useState<string[]>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   useEffect(() => {
@@ -88,6 +89,7 @@ const UserGroup: FunctionComponent = () => {
   const initUserGroupList = async () => {
     const result = await getAllUserGroup()
     const data = result?.data
+    let tempGroupList: string[] = []
     if (data) {
       var userGroupMapping: UserGroupItem[] = []
       data.map((item: any) => {
@@ -106,8 +108,11 @@ const UserGroup: FunctionComponent = () => {
             item?.functions
           )
         )
+
+        tempGroupList.push(item?.roleName)
       })
       setUserGroupList(userGroupMapping)
+      setGroupNameList(tempGroupList)
     }
   }
 
@@ -332,6 +337,7 @@ const UserGroup: FunctionComponent = () => {
             selectedItem={selectedRow}
             functionList={functionList}
             onSubmitData={onSubmitData}
+            groupNameList={groupNameList}
           />
         )}
       </Box>

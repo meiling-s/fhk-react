@@ -4,7 +4,8 @@ import {
   CREATE_STAFF,
   EDIT_STAFF,
   GET_LOGINID_LIST,
-  GET_TITLE_LIST
+  GET_TITLE_LIST,
+  GET_STAFF_LOGISTIC
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -29,6 +30,26 @@ export const getStaffList = async (page: number, size: number) => {
     return null
   }
 }
+
+export const getStaffListLogistic = async (page: number, size: number) => {
+  try {
+   
+    const response = await axiosInstance({
+        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      ...GET_STAFF_LOGISTIC,
+      params: {
+        page: page,
+        size: size
+      }
+    })
+
+    return response
+  } catch (e) {
+    console.error('Get all staff logistic failed:', e)
+    return null
+  }
+}
+
 //create staff
 export const createStaff = async (data: any) => {
   try {
@@ -36,7 +57,7 @@ export const createStaff = async (data: any) => {
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_STAFF,
+      ...CREATE_STAFF(token.realmApiRoute),
       data: data
     })
     console.log("response", createStaff)
@@ -54,7 +75,7 @@ export const editStaff = async (data: any, staffId: string) => {
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...EDIT_STAFF(token.tenantId, staffId),
+      ...EDIT_STAFF(token.tenantId, staffId, token.realmApiRoute),
       data: data
     })
     return response
