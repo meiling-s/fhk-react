@@ -17,6 +17,8 @@ interface CurrencyListProps {
   createdBy: string
   monetary: string
   monetaryId: number
+  description: string
+  remark: string
   status: string
   updatedAt: string
   updatedBy: string
@@ -46,10 +48,12 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
 
   
   useEffect (() => {
+    resetData()
     if (action === 'edit') {
       if (selectedItem !== null && selectedItem !== undefined) {
         setMonetary(selectedItem.monetary)
-        // setRemark(selectedItem.remark)
+        setRemark(selectedItem.remark)
+        setDescription(selectedItem.description)
       }
     }
   }, [selectedItem, action, drawerOpen])
@@ -59,7 +63,6 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
     setRemark('')
     setDescription('')
   }
-  
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -81,6 +84,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         if (response) {
           onSubmitData('currency')
           showSuccessToast(t('notify.successDeleted'))
+          resetData()
         }
       } catch (error) {
         console.error(error)
@@ -116,6 +120,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       if (response) {
         onSubmitData('currency')
         showSuccessToast(t('notify.successCreated'))
+        resetData()
       }
     } catch (error) {
       console.error(error)
@@ -130,7 +135,8 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       const response = await editCurrency(selectedItem?.monetaryId, data)
       if (response) {
         onSubmitData('currency')
-        showSuccessToast(t('notify.successEdited'))
+        showSuccessToast(t('notify.SuccessEdited'))
+        resetData()
       }
     } catch (error) {
       console.error(error)

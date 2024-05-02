@@ -50,6 +50,8 @@ interface CurrencyListProps {
   createdBy: string
   monetary: string
   monetaryId: number
+  description: string
+  remark: string
   status: string
   updatedAt: string
   updatedBy: string
@@ -111,6 +113,8 @@ const ASTDSettings: FunctionComponent = () => {
   const initCurrencyList = async () => {
     const result = await getCurrencyList()
     const data = result?.data
+
+    console.log(data, 'data currency')
 
     setCurrencyList(data)
   }
