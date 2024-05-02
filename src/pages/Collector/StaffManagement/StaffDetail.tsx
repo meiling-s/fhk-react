@@ -210,7 +210,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       email: t('staffManagement.email')
     }
     Object.keys(formData).forEach((fieldName) => {
-      const fieldValue = formData[fieldName as keyof FormValues].trim();
+      const fieldValue = formData[fieldName as keyof FormValues]?.trim();
       
       if (fieldValue === '') {
         tempV.push({

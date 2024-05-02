@@ -29,6 +29,7 @@ import {
 } from '../../../APICalls/Collector/userGroup'
 import { IconButton } from '@mui/joy'
 import { localStorgeKeyName } from '../../../constants/constant'
+import i18n from '../../../setups/i18n'
 
 type TableRow = {
   id: number
@@ -70,10 +71,8 @@ const UserGroup: FunctionComponent = () => {
   const [selectedRow, setSelectedRow] = useState<UserGroupItem | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
-  const [page, setPage] = useState(1)
-  const pageSize = 10
-  const [totalData, setTotalData] = useState<number>(0)
   const [functionList, setFunctionList] = useState<Functions[]>([])
+  const [groupNameList, setGroupNameList] = useState<string[]>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   useEffect(() => {
@@ -88,8 +87,9 @@ const UserGroup: FunctionComponent = () => {
   }
 
   const initUserGroupList = async () => {
-    const result = await getAllUserGroup(page - 1, pageSize)
+    const result = await getAllUserGroup()
     const data = result?.data
+    let tempGroupList: string[] = []
     if (data) {
       var userGroupMapping: UserGroupItem[] = []
       data.map((item: any) => {
@@ -108,9 +108,11 @@ const UserGroup: FunctionComponent = () => {
             item?.functions
           )
         )
+
+        tempGroupList.push(item?.roleName)
       })
       setUserGroupList(userGroupMapping)
-      setTotalData(data.totalPages)
+      setGroupNameList(tempGroupList)
     }
   }
 
@@ -140,14 +142,16 @@ const UserGroup: FunctionComponent = () => {
       renderCell: (params) => {
         return (
           <div>
-            {params.row.functions.map(
-              (item: { functionNameTChi: string }, key: number) => (
-                <span key={key}>
-                  {key > 0 ? ' 、' : ''}
-                  {item.functionNameTChi}
-                </span>
-              )
-            )}
+            {params.row.functions.map((item: any, key: number) => (
+              <span key={key}>
+                {key > 0 ? ' , ' : ''}
+                {i18n.language == 'zhch'
+                  ? item.functionNameSChi
+                  : i18n.language == 'zhhk'
+                  ? item.functionNameTChi
+                  : item.functionNameEng}
+              </span>
+            ))}
           </div>
         )
       }
@@ -319,14 +323,6 @@ const UserGroup: FunctionComponent = () => {
                 }
               }}
             />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
           </Box>
         </div>
         {rowId != 0 && (
@@ -341,6 +337,7 @@ const UserGroup: FunctionComponent = () => {
             selectedItem={selectedRow}
             functionList={functionList}
             onSubmitData={onSubmitData}
+            groupNameList={groupNameList}
           />
         )}
       </Box>

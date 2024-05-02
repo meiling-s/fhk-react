@@ -135,6 +135,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
   const [status, setStatus] = useState(true) // status field
   const isInitialRender = useRef(true) // Add this line
+  
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
   }, [i18n, currentLanguage])

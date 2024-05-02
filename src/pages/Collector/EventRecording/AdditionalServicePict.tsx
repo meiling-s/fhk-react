@@ -374,53 +374,50 @@ const AdditionalServicePict = () => {
       const error = errors[key];
       const serviceItem = serviceData[key];
      if(
-      (error.endDate.status || serviceItem.startDate.toString() === '') || 
-      (error.startDate.status || serviceItem.endDate.toString() === '') || 
-      (error.numberOfPeople.status || serviceItem.numberOfPeople === '') || 
-      (error.place.status || serviceItem.place === '') || 
-      (error.photoImage.status || serviceItem.photoImage.length === 0)
+      !(error.endDate.status || serviceItem.endDate.toString() === '') && 
+      !(error.startDate.status || serviceItem.startDate.toString() === '') && 
+      !(error.numberOfPeople.status || serviceItem.numberOfPeople === '') && 
+      !(error.place.status || serviceItem.place === '') && 
+      !(error.photoImage.status || serviceItem.photoImage.length === 0)
       ){
-      
-     } else {
-      const imgList: string[] = ImageToBase64(
-        serviceItem.photoImage
-      ).map((item) => {
-        return item
-      })
-
-      const formData: ServiceInfo = {
-        serviceId: serviceItem.serviceId,
-        address: serviceItem.place,
-        addressGps: [0],
-        serviceName: serviceItem.serviceId === 4 ? eventName: '',
-        participants: activeObj,
-        startAt: formattedDate(serviceItem.startDate),
-        endAt: formattedDate(serviceItem.endDate),
-        photo: imgList,
-        numberOfVisitor: parseInt(serviceItem.numberOfPeople),
-        createdBy: loginId,
-        updatedBy: loginId,
-        nature: serviceItem.serviceId === 4 ? nature : '',
-        speaker: serviceItem.serviceId === 4 ? speaker : '',
-        additionalFlg: serviceItem.serviceId === 4 && serviceFlg === 0 ? true : false
-      }
-      
-      const result = await createServiceInfo(formData)
-      if (result) {
-        itemData++
-        const toastMsg = 'created additional service success'
-        toast.info(toastMsg, {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light'
+        const imgList: string[] = ImageToBase64(
+          serviceItem.photoImage
+        ).map((item) => {
+          return item
         })
-      }
+  
+        const formData: ServiceInfo = {
+          serviceId: serviceItem.serviceId,
+          address: serviceItem.place,
+          addressGps: [0],
+          serviceName: serviceItem.serviceId === 4 ? eventName: '',
+          participants: activeObj,
+          startAt: formattedDate(serviceItem.startDate),
+          endAt: formattedDate(serviceItem.endDate),
+          photo: imgList,
+          numberOfVisitor: parseInt(serviceItem.numberOfPeople),
+          createdBy: loginId,
+          updatedBy: loginId,
+          nature: serviceItem.serviceId === 4 ? nature : '',
+          speaker: serviceItem.serviceId === 4 ? speaker : '',
+          additionalFlg: serviceItem.serviceId === 4 && serviceFlg === 0 ? true : false
+        }
         
+        const result = await createServiceInfo(formData)
+        if (result) {
+          itemData++
+          const toastMsg = 'created additional service success'
+          toast.info(toastMsg, {
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light'
+          })
+        }
      }
     }
 
