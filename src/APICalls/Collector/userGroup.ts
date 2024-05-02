@@ -28,7 +28,7 @@ export const getUserAccount = async () => {
 }
 
 //get all user group
-export const getAllUserGroup = async (page: number, size: number) => {
+export const getAllUserGroup = async () => {
   try {
     // const userAccount = await getUserAccount();
     const token = returnApiToken()
@@ -37,10 +37,6 @@ export const getAllUserGroup = async (page: number, size: number) => {
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_USER_GROUP(token.tenantId),
-      params: {
-        page: page,
-        size: size
-      },
       headers: {
         AuthToken: token.authToken
       }
@@ -136,9 +132,14 @@ export const deleteUserGroup = async (data: DeleteUserGroupProps, groupId: numbe
     })
     
     return response
-  } catch (e) {
-    console.error('Edit user group failed:', e)
-    return null
+  } catch (e: any) {
+    if (e.response) {
+      const response = e.response.data.status
+      return response
+    } else {
+      console.error('Edit user group failed:', e)
+      return null;
+    }
   }
 }
 

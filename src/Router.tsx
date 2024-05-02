@@ -99,7 +99,7 @@ const Router = () => {
             element={<EditPickupOrder />}
           />
           <Route path="/collector/report" element={<Report />} />
-          <Route path="/collector/staff" element={<Staff />} />
+          {/* <Route path="/collector/staff" element={<Staff />} /> */}
           <Route
             path="/collector/createCollectionPoint"
             element={<CreateCollectionPoint />}
@@ -115,6 +115,7 @@ const Router = () => {
             path="/collector/checkInAndCheckout"
             element={<CheckInAndCheckOut />}
           />
+           <Route path="/collector/staff" element={<StaffManagement />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -138,7 +139,7 @@ const Router = () => {
           <Route path="/warehouse/shipment" element={<RecycleShipment />} />
           <Route path="/warehouse/checkout" element={<CheckoutRequest />} />
           <Route path="/warehouse/process" element={<ProcessRecord />} />
-          <Route path="/warehouse/staff" element={<StaffManagement />} />
+          {/* <Route path="/warehouse/staff" element={<StaffManagement />} /> */}
           <Route path="/warehouse/settings" element={<Settings />} />
           <Route path="/warehouse/settings/vehicle" element={<Vehicles />} />
           <Route path="/warehouse/staff-enquiry" element={<StaffEnquiry />} />
@@ -152,6 +153,7 @@ const Router = () => {
           <Route path="/logistic/editPickupOrder" element={<EditPickupOrder /> } />
           <Route path="/logistic/account" element={<LogisticAccount />} />
           <Route path="/logistic/driver" element={<Driver/>}/>
+          <Route path="/logistic/staff" element={<StaffManagement />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -164,6 +166,7 @@ const Router = () => {
           <Route path="/manufacturer/inventory" element={<Inventory/>}/>
           <Route path="/manufacturer/setting" element={<Settings/>}/>
           <Route path="/manufacturer/purchaseOrder" element={<PurchaseOrder />} />
+          <Route path="/manufacturer/staff" element={<StaffManagement />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -171,6 +174,7 @@ const Router = () => {
           <Route path="/customer/createPurchaseOrder" element={<CreatePurchaseOrder />} />
           <Route path="/customer/editPurchaseOrder" element={<EditPurchaseOrder/>} />
           <Route path="/customer/account" element={<CustomerAccount />} />
+          <Route path="/customer/staff" element={<StaffManagement />} />
         </Route>
       </Routes>
     </BrowserRouter>
