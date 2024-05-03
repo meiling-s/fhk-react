@@ -130,7 +130,7 @@ const Settings: FunctionComponent = () => {
         ) : selectedTab === 2 ? (
           <RecyclingPoint/>
         ) : selectedTab === 3 ? (
-          <ASTDVehicle/>
+          <Vehicle/>
         ) : selectedTab === 4 ? (
           <ASTDCompany />
         ) : selectedTab === 5 ? (
