@@ -94,55 +94,6 @@ const HeaderSection: React.FC<HeaderProps> = ({
             />
           </div>
         </div>
-        {statusLabel && (
-          <StatusCard status={statusLabel} />
-          
-        )}
-        </div>
-        <div className='right-action flex items-center'>
-        {action !== 'none' && (
-          <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
-            <Button
-              sx={[
-                styles.buttonFilledGreen,
-                {
-                  width: 'max-content',
-                  height: '40px'
-                }
-              ]}
-              disabled={action === 'delete'}
-              onClick={onSubmit}
-            >
-              {submitText}
-            </Button>
-              {cancelText && (
-             <Button
-              sx={[
-                styles.buttonOutlinedGreen,
-                {
-                  width: 'max-content',
-                  height: '40px'
-                }
-              ]}
-              variant="outlined"
-              disabled={action === 'add'}
-              onClick={onDelete}
-            >
-               {cancelText}
-            </Button>
-              )}
-          
-          </div>
-        )}
-
-        <div className="close-icon ml-2 cursor-pointer">
-          <img
-            className="relative w-6 h-6 overflow-hidden shrink-0"
-            alt=""
-            src="/collapse1.svg"
-            onClick={onCloseHeader}
-          />
-        </div>
         </div>
       </div>
   )
