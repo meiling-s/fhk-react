@@ -17,6 +17,7 @@ import {
 } from "../../../themes/icons";
 import { getAllCompany } from "../../../APICalls/Collector/company";
 import { Company as CompanyItem } from "../../../interfaces/company";
+import CreateCompany from "../../Collector/Company/CreateCompany";
 // import CreateCompany from "./CreateCompany";
 
 function createCompany(
@@ -368,7 +369,7 @@ const Company: FunctionComponent = () => {
           )
         })
       }
-      {/* {rowId !== 0 && (
+      {rowId !== 0 && (
         <CreateCompany
           companyType={selectCompanyType}
           drawerOpen={drawerOpen}
@@ -377,7 +378,7 @@ const Company: FunctionComponent = () => {
           selectedItem={selectedRow}
           onSubmitData={onSubmitData}
         />
-      )} */}
+      )}
     </>
   );
 };
