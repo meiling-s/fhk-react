@@ -1312,11 +1312,6 @@ export const DELETE_WEIGHT_UNIT = (unitId: number): AxiosRequestConfig => ({
   url: `api/v1/administrator/weightUnit/${unitId}`
 })
 
-export const GET_CURRENCY_LIST: AxiosRequestConfig = {
-  method: 'get',
-  url: `api/v1/administrator/currencyList`
-}
-
 export const CREATE_CURRENCY: AxiosRequestConfig = {
   method: 'post',
   url: `api/v1/administrator/currencyList`
