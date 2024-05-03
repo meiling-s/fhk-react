@@ -655,17 +655,14 @@ export const DELETE_USER_GROUP = (userGroupId: number): AxiosRequestConfig => ({
 })
 
 //STAFF MANAGEMENT
-export const GET_STAFF = (
-  tenantId: string,
-  realmApi: string
-): AxiosRequestConfig => ({
+export const GET_STAFF = (tenantId: string, realmApiRoute: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApi}/staff/${tenantId}`
+  url: `api/v1/${realmApiRoute}/staff/${tenantId}`
 })
 
-export const CREATE_STAFF = (realmApi: string): AxiosRequestConfig => ({
+export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
   method: 'post',
-  url: `api/v1/${realmApi}/staff`
+  url: `api/v1/${realmApiRoute}/staff`
 })
 
 export const EDIT_STAFF = (
