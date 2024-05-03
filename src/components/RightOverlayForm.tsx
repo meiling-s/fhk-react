@@ -94,8 +94,8 @@ const HeaderSection: React.FC<HeaderProps> = ({
             />
           </div>
         </div>
+        </div>
       </div>
-    </div>
   )
 }
 

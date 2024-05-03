@@ -537,7 +537,8 @@
     "picture": "圖片",
     "basic": "基本",
     "additional": "額外",
-    "imgNote": "*照片應展示車輛概況、舉升尾板、車牌及採集操作。"
+    "imgNote": "*照片應展示車輛概況、舉升尾板、車牌及採集操作。",
+    "loading_capacity": "載重量 (kg)"
   },
   "inventory": {
     "inventory": "存貨",
@@ -949,7 +950,13 @@
     "activate": "啟用",
     "deactive": "停用",
     "true": "真的",
-    "false": "錯誤的"
+    "false": "錯誤的",
+    "number_format": "數字格式",
+    "date_format": "日期格式",
+    "weight_tolerance": "允許重量誤差 (kg)",
+    "currency_category": "貨幣類別",
+    "introduction": "備註",
+    "monetary": "名稱"
   },
   "packaging_unit": {
     "packaging_unit": "包裝單位",
@@ -1072,5 +1079,31 @@
       "estimated_weight": "預計重量",
       "arrived": "到達地點"
     }
+  },
+  "recycling_unit": {
+    "recycling_and_related_units": "回收物及相關單位",
+    "recyclable_subtype_semi_complete": "回收物、半製成品、製成品類別",
+    "recyclable_code": "編碼",
+    "packaging_unit": "包裝單位",
+    "weight_unit": "磅重單位",
+    "main_category": "主類別",
+    "sub_category": "次類別",
+    "1kg_equivalent": "1kg 相等於",
+    "confirm_delete": "確認刪除",
+    "confirm_text": "如你要删除主類別, 相關的次類別也會删除, 需要繼續嗎?",
+    "weight_error": "權重不能低於0"
+  },
+  "recycling_point": {
+    "recycling_point": "回收點",
+    "engineering_land": "工程用地類別",
+    "place": "地點",
+    "capacity": "容量",
+    "state": "狀態",
+    "house_place": "房屋或場所類別",
+    "residence": "是否住宅",
+    "epd": "是否EPD 認證類別",
+    "offsite": "上門回收服務",
+    "community": "社區收集點",
+    "service_type": "服務種類"
   }
 }

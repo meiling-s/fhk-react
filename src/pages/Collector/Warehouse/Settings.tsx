@@ -11,6 +11,12 @@ import DenialReason from "../DenialReason/DenialReason";
 import StaffTitle from "../StaffTitle/StaffTitle";
 import Company from "../Company/Company";
 import { localStorgeKeyName } from "../../../constants/constant";
+import ASTDSettings from "../../ASTD/GeneralSettings/GeneralSettings";
+import RecyclingUnit from "../../ASTD/RecyclingUnit/RecyclingUnit";
+import RecyclingPoint from "../../ASTD/RecyclingPoint/RecyclingPoint";
+import ASTDVehicle from '../../ASTD/Vehicle/Vehicle'
+import ASTDStaff from '../../ASTD/Staff/Staff'
+import ASTDDenialReason from '../../ASTD/DenialReason/DenialReason'
 import CustomerGeneralSettings from '../../Customer/GeneralSettings/GeneralSettings'
 
 const Settings: FunctionComponent = () => {
@@ -31,6 +37,15 @@ const Settings: FunctionComponent = () => {
     t("top_menu.staff_positions"),
     t("top_menu.denial_reason"),
   ];
+  const astdTabList = [
+    t("top_menu.general_settings"),
+    t("recycling_unit.recycling_and_related_units"),
+    t("recycling_point.recycling_point"),
+    t("vehicle.vehicle"),
+    t("top_menu.company"),
+    t("top_menu.staff_positions"),
+    t("top_menu.denial_reason"),
+  ]
 
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [tabList, setTabList] = useState<string[]>([]);
@@ -46,10 +61,21 @@ const Settings: FunctionComponent = () => {
     }
     setTabList(updatedTabList)
   }
+  const getASTDTabList = () => {
+    let updatedTabList = [...astdTabList]
+
+    const hideTabIndexArr: number[] = []
+    updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
+    setTabList(updatedTabList)
+  }
 
   useEffect(() => {
-    getTabList()
-  }, [t])
+    if (role === 'astd') {
+      getASTDTabList()
+    } else {
+      getTabList()
+    }
+  }, [t, role])
 
   const collectorSettingTab = () => {
     return (
@@ -93,6 +119,29 @@ const Settings: FunctionComponent = () => {
     )
   }
 
+  const astdSettingTab = () => {
+    return (
+      selectedTab === 0 ? (
+        <ASTDSettings/> 
+      ) : 
+        selectedTab === 1 ? (
+          <RecyclingUnit/>
+        ) : selectedTab === 2 ? (
+          <RecyclingPoint/>
+        ) : selectedTab === 3 ? (
+          <ASTDVehicle/>
+        ) : selectedTab === 4 ? (
+          <Company />
+        ) : selectedTab === 5 ? (
+          <ASTDStaff />
+        ) : selectedTab === 6 ? (
+          <ASTDDenialReason/>
+        ) :
+      (
+          <div className="p-4 text-center">content not available</div>
+        )
+      )
+  }
   const customerSettingTab = () => {
     return (
       selectedTab === 0 ? (
@@ -119,7 +168,7 @@ const Settings: FunctionComponent = () => {
           className="lg:px-10 sm:px-4 bg-bg-primary"
         />
         {/* rendering content base on tab index */}
-        { role === 'logistic' ? logisticSettingTab() : role === 'customer' ? customerSettingTab() : collectorSettingTab()}
+        { role === 'logistic' ? logisticSettingTab() : role === 'astd' ? astdSettingTab() : role === 'customer' ? customerSettingTab() : collectorSettingTab()}
       </div>
     </Box>
   );
