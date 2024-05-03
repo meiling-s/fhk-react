@@ -263,7 +263,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             : action == 'delete'
                                 ? t('common.delete')
                                 : '',
-                    subTitle: t('packaging_unit.packaging_unit'),
+                    subTitle: t('recycling_unit.recyclable_code'),
                     submitText: t('add_warehouse_page.save'),
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,

@@ -513,15 +513,17 @@ const RecyclingUnit: FunctionComponent = () => {
 
   const handleClickSwitch = async (value: any, type: string) => {
     const token = returnApiToken()
-    setSwitchValue(value)
+    
     
     const recyclingForm = {
       status: 'INACTIVE',
       updatedBy: token.loginId
     }
     if (type === 'main') {
+      setSwitchValue(value)
       setDeleteModal(true)
     } else if (type === 'sub') {
+      setSwitchValue(null)
       const response = await deleteSubRecyc(recyclingForm, value.recycSubTypeId)
       if (response) {
         showSuccessToast(t('notify.successDeleted'))

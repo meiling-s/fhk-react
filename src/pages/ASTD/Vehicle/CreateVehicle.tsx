@@ -271,7 +271,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                             : action == 'delete'
                                 ? t('common.delete')
                                 : '',
-                    subTitle: t('recycling_point.engineering_land'),
+                    subTitle: t('vehicle.vehicle'),
                     submitText: t('add_warehouse_page.save'),
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,
