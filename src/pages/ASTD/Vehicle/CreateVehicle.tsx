@@ -43,6 +43,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, createVehicleData, deleteVehicleData, sendWeightUnit, updateVehicleData } from '../../../APICalls/ASTD/recycling'
+import { paletteColors } from '../../../themes/palette'
 
 interface VehicleDataProps {
     createdAt: string
@@ -133,7 +134,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             //before first submit, don't check the validation
             return false
         }
-        return s == 0
+        return s >= 0
     }
 
     const getFormErrorMsg = () => {
@@ -172,9 +173,15 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
             })
-
+        
+        Number(weight) < 0 &&
+            tempV.push({
+                field: 'weight',
+                error: `${t(`pickup_order.card_detail.weight`)} ${t('recycling_unit.weight_error')}`
+            })
+            
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName])
+    }, [tChineseName, sChineseName, englishName, weight])
 
     const handleDelete = async () => {
         const token = returnApiToken()
@@ -242,7 +249,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         try {
             const response = await updateVehicleData(vehicleTypeId, vehicleForm)
             if (response) {
-                showSuccessToast(t('notify.successUpdated'))
+                showSuccessToast(t('notify.SuccessEdited'))
                 onSubmit('vehicle')
             }
         } catch (error) {
@@ -319,13 +326,16 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 disabled={action === 'delete'}
                                 placeholder={t('vehicle.loading_capacity')}
                                 onChange={(event) => setWeight(event.target.value)}
-                                error={checkString(weight)}
+                                error={checkNumber(Number(weight))}
                                 endAdornment={(
                                     <Typography>kg</Typography>
                                   )}
                             />
                         </CustomField>
                     </Box>
+                    {Number(weight) < 0 && (
+                        <Typography sx={{color: paletteColors.Red1}}>{t('recycling_unit.weight_error')}</Typography>
+                    )}
                     <Box sx={{ marginY: 2 }}>
                         <CustomField label={t('packaging_unit.introduction')} mandatory={false}>
                             <CustomTextField

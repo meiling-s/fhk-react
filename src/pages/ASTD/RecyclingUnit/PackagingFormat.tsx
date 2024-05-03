@@ -187,8 +187,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         }
 
         if (validation.length == 0) {
-            editPackagingData(packagingForm)
-            showSuccessToast(t('notify.successDeleted'))
+            editPackagingData(packagingForm, 'delete')
         } else {
             setTrySubmitted(true)
             showErrorToast(t('notify.errorDeleted'))
@@ -214,7 +213,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         getFormErrorMsg()
 
         if (validation.length == 0) {
-            action == 'add' ? createPackagingData(packagingForm) : editPackagingData(packagingForm)
+            action == 'add' ? createPackagingData(packagingForm) : editPackagingData(packagingForm, 'edit')
 
             setValidation([])
         } else {
@@ -234,12 +233,16 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             showErrorToast(t('errorCreated.errorCreated'))
         }
     }
-    const editPackagingData = async (packagingForm: any) => {
+    const editPackagingData = async (packagingForm: any, value: string) => {
         try {
             const response = await editPackagingUnit(packagingForm, packagingId)
             if (response) {
-                showSuccessToast(t('notify.SuccessEdited'))
                 onSubmitData('packaging')
+                if (value === 'edit') {
+                    showSuccessToast(t('notify.SuccessEdited'))
+                } else {
+                    showSuccessToast(t('notify.successDeleted'))
+                }
             }
         } catch (error) {
             console.error(error)

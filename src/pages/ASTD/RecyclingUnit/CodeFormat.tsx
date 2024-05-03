@@ -80,9 +80,6 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const [errorMsgList, setErrorMsgList] = useState<string[]>([])
 
     const [trySubmited, setTrySubmitted] = useState(false)
-    const [tChineseName, setTChineseName] = useState('')
-    const [sChineseName, setSChineseName] = useState('')
-    const [englishName, setEnglishName] = useState('')
     const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
     const [codeId, setCodeId] = useState(0)
@@ -96,6 +93,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     }, [i18n, currentLanguage])
     
     useEffect(() => {
+        resetForm()
         if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setCodeId(selectedItem.recycCodeId)
@@ -112,6 +110,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
     const resetForm = () => {
         setCodeId(0)
+        setCodeName('')
         setMainName('')
         setSubName('')
         setDescription('')

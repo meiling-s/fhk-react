@@ -240,7 +240,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 const response = await editRecyclingPoint(selectedItem?.siteTypeId, data)
                 if (response) {
                     handleOnSubmitData('siteType')
-                    showSuccessToast(t('notify.successCreated'))
+                    showSuccessToast(t('notify.SuccessEdited'))
                 }
             }
         } catch (error) {

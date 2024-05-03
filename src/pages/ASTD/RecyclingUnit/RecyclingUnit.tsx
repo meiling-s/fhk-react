@@ -161,6 +161,7 @@ const RecyclingUnit: FunctionComponent = () => {
   const [codeDrawerOpen, setCodeDrawerOpen] = useState<boolean>(false)
   const [isMainCategory, setMainCategory] = useState<boolean>(false)
   const [delFormModal, setDeleteModal] = useState<boolean>(false)
+  const [switchValue, setSwitchValue] = useState<any>(null)
 
   useEffect(() => {
     initRecycTypeList()
@@ -512,24 +513,15 @@ const RecyclingUnit: FunctionComponent = () => {
 
   const handleClickSwitch = async (value: any, type: string) => {
     const token = returnApiToken()
-
+    setSwitchValue(value)
+    
     const recyclingForm = {
       status: 'INACTIVE',
       updatedBy: token.loginId
     }
     if (type === 'main') {
-      try {
-        const response = await deleteRecyc(recyclingForm, value.recycTypeId)
-        if (response) {
-          showSuccessToast(t('notify.successDeleted'))
-          handleOnSubmitData('recycle')
-        }
-      } catch (error) {
-        console.error(error)
-        showErrorToast(t('notify.errorDeleted'))
-      }
+      setDeleteModal(true)
     } else if (type === 'sub') {
-      console.log(value, 'value sub')
       const response = await deleteSubRecyc(recyclingForm, value.recycSubTypeId)
       if (response) {
         showSuccessToast(t('notify.successDeleted'))
@@ -545,7 +537,18 @@ const RecyclingUnit: FunctionComponent = () => {
       status: 'INACTIVE',
       updatedBy: token.loginId
     }
-    if (recycId !== null) {
+    if (switchValue !== null) {
+      try {
+        const response = await deleteRecyc(recyclingForm, switchValue.recycTypeId)
+        if (response) {
+          showSuccessToast(t('notify.successDeleted'))
+          handleOnSubmitData('recycle')
+          setSwitchValue(null)
+        }
+      } catch (error) {
+        showErrorToast(t('notify.errorDeleted'))
+      }
+    } else if (recycId !== null) {
       try {
         const response = await deleteRecyc(recyclingForm, recycId)
         if (response) {
@@ -958,17 +961,6 @@ const DeleteModal: React.FC<DeleteForm> = ({
   handleConfirmDelete
 }) => {
   const { t } = useTranslation()
-  const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
-
-  const handleRejectRequest = async () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
-    const statReason: updateStatus = {
-      status: 'INACTIVE',
-      updatedBy: loginId
-    }
-
-    console.log('hitt')
-  }
 
   return (
     <Modal
@@ -986,13 +978,13 @@ const DeleteModal: React.FC<DeleteForm> = ({
               component="h2"
               sx={{ fontWeight: 'bold' }}
             >
-              {t('check_out.confirm_reject')}
+              {t('recycling_unit.confirm_delete')}
             </Typography>
           </Box>
           <Divider />
           <Box>
             <Typography sx={localstyles.typo}>
-              {t('check_out.reject_reasons')}
+              {t('recycling_unit.confirm_text')}
             </Typography>
           </Box>
 

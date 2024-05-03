@@ -1065,7 +1065,9 @@
     "main_category": "Main Category",
     "sub_category": "Sub Category",
     "1kg_equivalent": "1kg is equivalent to",
-    "confirm_text": "If you want to delete the main type, the related subtype will also be deleted. Do you need to continue?"
+    "confirm_delete": "Confirm Delete",
+    "confirm_text": "If you want to delete the main type, the related subtype will also be deleted. Do you need to continue?",
+    "weight_error": "Weight can't be below 0"
   },
   "recycling_point": {
     "recycling_point": "Recycling Point",

@@ -43,6 +43,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, deleteWeightUnit, editWeightUnit, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { paletteColors } from '../../../themes/palette'
 
 interface WeightFormat {
     createdAt: string
@@ -135,7 +136,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
             //before first submit, don't check the validation
             return false
         }
-        return s == 0
+        return s >= 0
         
     }
 
@@ -175,11 +176,11 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
             })
-
-        equivalent.trim() === '' &&
+        
+        Number(equivalent) < 0 &&
             tempV.push({
                 field: 'equivalent',
-                error: `${t(`pickup_order.card_detail.weight`)} ${t('add_warehouse_page.shouldNotEmpty')}`
+                error: `${t(`pickup_order.card_detail.weight`)} ${t('recycling_unit.weight_error')}`
             })
 
         setValidation(tempV)
@@ -328,6 +329,9 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                             />
                         </CustomField>
                     </Box>
+                    {Number(equivalent) < 0 && (
+                        <Typography sx={{color: paletteColors.Red1}}>{t('recycling_unit.weight_error')}</Typography>
+                    )}
                     <Box sx={{ marginY: 2 }}>
                         <CustomField label={t('packaging_unit.introduction')} mandatory={false}>
                             <CustomTextField

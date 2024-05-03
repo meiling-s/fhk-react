@@ -1062,7 +1062,9 @@
     "main_category": "主類別",
     "sub_category": "次類別",
     "1kg_equivalent": "1kg 相等於",
-    "confirm_text": "如你要删除主類別, 相關的次類別也會删除, 需要繼續嗎?"
+    "confirm_delete": "確認刪除",
+    "confirm_text": "如你要删除主類別, 相關的次類別也會删除, 需要繼續嗎?",
+    "weight_error": "權重不能低於0"
   },
   "recycling_point": {
     "recycling_point": "回收點",
