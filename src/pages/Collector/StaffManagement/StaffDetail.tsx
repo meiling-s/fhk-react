@@ -223,7 +223,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       }
     }
     Object.keys(formData).forEach((fieldName) => {
-      const fieldValue = formData[fieldName as keyof FormValues].trim();
+      const fieldValue = formData[fieldName as keyof FormValues]?.trim();
       
       if (fieldValue === '') {
         tempV.push({

@@ -74,7 +74,8 @@
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
-      "startDateBehindEndDate": "不允許開始時間晚於結束時間"
+      "startDateBehindEndDate": "不允許開始時間晚於結束時間",
+      "loginIdCantContainAdmin": "'admin' 中不允許有單字"
     }
   },
   "component": {
@@ -400,7 +401,32 @@
     "confirm_reject_title": "確認拒絕嗎？",
     "approved_success": "接受成功",
     "rejected_success": "拒絕成功",
-    "reject_reasons": "拒絕原因"
+    "reject_reasons": "拒絕原因",
+    "error": {
+      "effFrmDate": "此日期為必填項",
+      "effToDate": "迄今為止這是必要的",
+      "routineType": "此例程类型为必填项",
+      "routine": "需要例行公事",
+      "pickuAt": "此提貨點為必填項",
+      "senderName": "此寄件人姓名為必填項",
+      "senderAddr": "此寄件者地址為必填項",
+      "receiverName": "該接收者姓名為必填項",
+      "receiverAddr": "T此收件人地址為必填項",
+      "recycType": "此回收類型是必需的",
+      "recycSubType": "需要此可回收子類型",
+      "weight": "此重量為必填項",
+      "weightGreaterThanZero": "這個權重應該大於零",
+      "invalid_date": "失效日期",
+      "invalid_pickup_time": "取件時間無效，請重新選擇時間",
+      "not_in_prev_data": "不在先前數據中",
+      "pickup_time":"先前的資料中已經存在接送時間",
+      "not_same_as_receiverr": "與接收者不同",
+      "sender_address": "寄件者地址不能與收件者地址相同",
+      "sender_address_exists": "寄件者地址已存在於先前的資料中",
+      "not_same_as_sender": "與寄件者不同",
+      "receiver_address_cannot": "收件者地址不能與寄件者地址相同",
+      "receiver_address_exists": "先前的資料中已經存在接收者位址"
+    }
   },
   "tenant": {
     "company": "公司",
@@ -498,7 +524,7 @@
     "fluorescentLampsSubmittedToRecyclers": "已呈交回收商的螢光燈和燈管（連日期）",
     "please_enter": "請輸入",
     "nature": "性質",
-    "speaker": "揚聲器",
+    "speaker": "講者",
     "service_type": "服務種類",
     "additional": "額外的",
     "other_services": "其他服務"
@@ -688,7 +714,8 @@
     "description": "描述",
     "availableFeatures": "可用功能",
     "pleaseEnterName": "請輸入名稱",
-    "pleaseEnterText": "請輸入文字"
+    "pleaseEnterText": "請輸入文字",
+    "userAccountUsed": "用戶群組無法刪除，因為其中仍有帳戶"
   },
   "notify": {
     "successCreated": "成功已创造",
@@ -750,7 +777,8 @@
     "cancel": "取消",
     "driver": "司機",
     "plat_number": "車牌號碼",
-    "assign_driver": "指派司機"
+    "assign_driver": "指派司機",
+    "shippingDateAndTime": "運輸日期及時間"
   },
   "notification": {
     "notification_menu": "通知範本",
@@ -976,6 +1004,73 @@
       "payment_method": "付款方式",
       "order_info": "訂單資料",
       "pico_id": "回收運單編號"
+    },
+    "create" : {
+      "create_order": "建立訂單",
+      "contact_information": "聯絡資料",
+      "receiving_company_name": "收件公司名稱",
+      "sender_company_name": "寄件者公司名稱",
+      "receiving_company_name_placeholder": "請輸入公司名稱",
+      "contact_name":"聯絡人姓名",
+      "contact_name_placeholder":"請填寫聯絡人姓名",
+      "contact_number": "聯絡人號碼",
+      "contact_number_placeholder": "請填寫手機號碼",
+      "payment_method": "付款方式",
+      "payment_method_placeholder": "請選擇",
+      "order_information": "訂單資料",
+      "recycling_plant": "回收廠",
+      "receipt_date_and_time": "收貨日期及時間",
+      "main_category": "主類別",
+      "subcategory": "次類別",
+      "weight": "重量",
+      "arrived": "到達地點",
+      "new": "新增",
+      "setup_time": "建立時間",
+      "finish": "完成",
+      "cancel": "取消",
+      "expected_recycling": "預計回收物",
+      "recycling_category": "回收物類別",
+      "waste_paper_category": "廢紙類別",
+      "estimated_weight": "預計重量",
+      "this": "這",
+      "is_required": "是必須的",
+      "required_field": "此欄位是必需的"
+    }
+  },
+  "purchase_order_customer": {
+    "all_order": "所有訂單",
+    "enquiry_po": "訂單",
+    "table": {
+      "created_datetime": "建立日期",
+      "recycling_plant": "回收廠",
+      "order_number": "訂單編號",
+      "pico_id": "運單編號",
+      "place_receipt": "收貨地點",
+      "receipt_date_time": "收貨日期及時間",
+      "status": "狀態",
+      "operation": "操作",
+      "approve": "接受",
+      "reject": "拒絕"
+    },
+    "detail": {
+      "order": "訂單",
+      "contact_info": "聯絡資料",
+      "receiving_company_name": "收件公司名稱",
+      "contact_number": "聯絡人號碼",
+      "payment_method": "付款方式",
+      "order_info": "訂單資料",
+      "pico_id": "回收運單編號"
+    },
+    "createOrEdit": {
+      "new": "新增",
+      "edit": "編輯",
+      "finish": "完成",
+      "cancel": "取消",
+      "Receipt_date_and_time": "收貨日期及時間",
+      "recycling_category": "回收物類別",
+      "waste_paper_category": "廢紙類別",
+      "estimated_weight": "預計重量",
+      "arrived": "到達地點"
     }
   }
 }

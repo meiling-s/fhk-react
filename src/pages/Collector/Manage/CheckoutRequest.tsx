@@ -523,7 +523,6 @@ const CheckoutRequest: FunctionComponent = () => {
     const selectedItem = checkOutRequest?.find(
       (item) => item.chkOutId === row.chkOutId
     )
-    //console.log('selectedItem', selectedItem)
     setSelectedRow(selectedItem)
 
     setDrawerOpen(true)

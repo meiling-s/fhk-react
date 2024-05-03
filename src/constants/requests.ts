@@ -61,6 +61,11 @@ export const UPDATE_TENANT_STATUS = (tenantId: number): AxiosRequestConfig => ({
   url: `api/v1/account/t/status/${tenantId}`
 })
 
+export const GET_CURRENCY_LIST: AxiosRequestConfig = {
+  method: 'get',
+  url: 'api/v1/administrator/currencyList'
+}
+
 export const UPDATE_TENANT_CURRENCY = (
   tenantId: string,
   monetaryValue: string,
@@ -189,6 +194,30 @@ export const GET_COLLECTORLIST = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/collectorlist/${table}`
+})
+
+export const CREATE_COLLECTORLIST = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/collectorlist/${table}`
+})
+
+export const EDIT_COLLECTORLIST = (
+  realmApiRoute: string,
+  table: string,
+  collectorId: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/collectorlist/${table}/${collectorId}`
+})
+
+export const CUSTOMER_GET_COLLECTORLIST = (
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/collectorlist/${table}`
 })
 
 export const GET_MANULIST = (
@@ -639,10 +668,10 @@ export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
 export const EDIT_STAFF = (
   tenantId: string,
   staffId: string,
-  realmApiRoute: string
+  realmApi: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/staff/${tenantId}/${staffId}`
+  url: `api/v1/${realmApi}/staff/${tenantId}/${staffId}`
 })
 
 export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
@@ -650,9 +679,12 @@ export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/userAccount/t/${tenantId}`
 })
 
-export const GET_TITLE_LIST = (table: string): AxiosRequestConfig => ({
+export const GET_TITLE_LIST = (
+  table: string,
+  realmApi: string
+): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/stafftitle/${table}`
+  url: `api/v1/${realmApi}/stafftitle/${table}`
 })
 
 //API roster
@@ -1153,10 +1185,11 @@ export const DELETE_USER_MANUFACTURER = (
 
 //PURCHASE ORDER MANUFACTURER
 export const SEARCH_PURCHASE_ORDER = (
-  sellerTenantId: string
+  sellerTenantId: string,
+  path: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/administrator/po/seller/search/${sellerTenantId}`
+  url: `api/v1/administrator/po/${path}/search/${sellerTenantId}`
 })
 
 export const GET_PURCHASE_ORDER_BY_ID = (poId: string): AxiosRequestConfig => ({
@@ -1179,9 +1212,12 @@ export const GET_ALL_REASON_MANUFACTURER = (
 })
 
 // get upload img setting
-export const GET_IMG_SETTINGS = (
-  tenantId: string
-): AxiosRequestConfig => ({
+export const GET_IMG_SETTINGS = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/account/t/imgSetting/${tenantId}`
+})
+
+export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/administrator/po/${poId}`
 })

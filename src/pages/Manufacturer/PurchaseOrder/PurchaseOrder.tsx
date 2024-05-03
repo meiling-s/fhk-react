@@ -24,7 +24,8 @@ import CustomItemList, {
 import {
   getAllPurchaseOrder,
   updateStatusPurchaseOrder,
-  getPurchaseOrderReason
+  getPurchaseOrderReason,
+  getPurchaseOrderById
 } from '../../../APICalls/Manufacturer/purchaseOrder'
 
 import { getStatusList } from '../../../APICalls/status'
@@ -37,7 +38,8 @@ import {
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { Languages, Roles, Status, localStorgeKeyName } from '../../../constants/constant'
+import dayjs from 'dayjs'
 
 type Approve = {
   open: boolean
@@ -150,7 +152,8 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
     )
     const reason = rejectReasonItem?.name || ''
     const updatePoStatus = {
-      status: 'REJECTED',
+      picoId: selectedRow?.picoId,
+      status: Status.REJECTED,
       updatedBy: selectedRow.updatedBy
     }
     try {
@@ -231,18 +234,28 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
   )
 }
 
+interface StatusPurchaseOrder {
+  value: string
+  labelEng: string,
+  labelSchi: string,
+  labelTchi: string
+}
+
 interface Option {
   value: string
-  label: string
+  label: string,
 }
 
 const PurchaseOrder = () => {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const pageSize = 10
-  const [totalData, setTotalData] = useState<number>(0)
+  const [totalData, setTotalData] = useState<number>(0);
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || '';
+  const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
+  const rolesEnableCreatePO = [Roles.customerAdmin]
 
-  const columns: GridColDef[] = [
+  let columns: GridColDef[] = [ //
     {
       field: 'createdAt',
       headerName: t('purchase_order.table.created_datetime'),
@@ -251,7 +264,7 @@ const PurchaseOrder = () => {
     {
       field: 'poId',
       headerName: t('purchase_order.table.order_number'),
-      width: 220,
+      width: 120,
       editable: true
     },
     {
@@ -269,17 +282,20 @@ const PurchaseOrder = () => {
       editable: true
     },
     {
-      field: 'approvedAt',
+      field: 'pickupAt',
       headerName: t('purchase_order.table.receipt_date_time'),
       type: 'sring',
-      width: 260,
-      editable: true
+      width: 200,
+      editable: true,
+      valueGetter: (params) => {
+        return params?.row?.purchaseOrderDetail[0]?.pickupAt
+      }
     },
     {
       field: 'status',
       headerName: t('purchase_order.table.status'),
       type: 'string',
-      width: 100,
+      width: 150,
       editable: true,
       renderCell: (params) => <StatusCard status={params.value} />
     },
@@ -301,6 +317,61 @@ const PurchaseOrder = () => {
     }
   ]
 
+  if(rolesEnableCreatePO.includes(userRole)){
+    columns = [
+      {
+        field: 'createdAt',
+        headerName: t('purchase_order.table.created_datetime'),
+        width: 150
+      },
+      {
+        field: 'senderName',
+        headerName: t('purchase_order_customer.table.recycling_plant'),
+        width: 150
+      },
+      {
+        field: 'poId',
+        headerName: t('purchase_order.table.order_number'),
+        width: 120,
+        editable: true
+      },
+      {
+        field: 'picoId',
+        headerName: t('purchase_order.table.pico_id'),
+        type: 'string',
+        width: 220,
+        editable: true
+      },
+      {
+        field: 'receiverAddr',
+        headerName: t('purchase_order.table.place_receipt'),
+        type: 'string',
+        width: 200,
+        editable: true
+      },
+      {
+        field: 'pickupAt',
+        headerName: t('purchase_order.table.receipt_date_time'),
+        type: 'sring',
+        width: 260,
+        editable: true,
+        valueGetter: (params) => {
+          if(params?.row?.purchaseOrderDetail[0]?.pickupAt){
+            return dayjs(params?.row?.purchaseOrderDetail[0]?.pickupAt).format('YYYY/MM/DD hh:mm')
+          } 
+        }
+      },
+      {
+        field: 'status',
+        headerName: t('purchase_order.table.status'),
+        type: 'string',
+        width: 150,
+        editable: true,
+        renderCell: (params) => <StatusCard status={params.value} />
+      },
+    ]
+  }
+
   const { recycType } = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation()
@@ -321,31 +392,43 @@ const PurchaseOrder = () => {
   const [reasonList, setReasonList] = useState<any>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
-  const statusList: Option[] = [
-    {
-      value: '',
-      label: 'any'
-    },
+  const statusList: StatusPurchaseOrder[] = [
     {
       value: '0',
-      label: 'CREATED'
+      labelEng: 'CREATED',
+      labelSchi: '已创建',
+      labelTchi: '已創建'
     },
     {
       value: '1',
-      label: 'CONFIRMED'
+      labelEng: 'CONFIRMED',
+      labelSchi: '确认的',
+      labelTchi: '確認的'
     },
     {
       value: '2',
-      label: 'REJECTED'
+      labelEng: 'REJECTED',
+      labelSchi: '拒絕',
+      labelTchi: '拒绝'
     },
     {
       value: '3',
-      label: 'COMPLETED'
+      labelEng: 'COMPLETED',
+      labelSchi: '完全的',
+      labelTchi: '完全的'
     },
     {
       value: '4',
-      label: 'CLOSED'
-    }
+      labelEng: 'CLOSED',
+      labelSchi: '关闭',
+      labelTchi: '關閉'
+    },
+    {
+      value: '',
+      labelEng: 'any',
+      labelSchi: '任何',
+      labelTchi: '任何'
+    },
   ]
 
   const initPurchaseOrderRequest = async () => {
@@ -364,9 +447,16 @@ const PurchaseOrder = () => {
     setTotalData(result?.data.totalPages)
   }
 
-  const showApproveModal = (row: any) => {
-    setSelectedRow(row)
-    setApproveModal(true)
+  const showApproveModal = async (row: any) => {
+    if(row?.poId){
+      const routeName = role
+      const result = await getPurchaseOrderById(row?.poId)
+      if (result) {
+        navigate(`/${routeName}/approvePurchaseOrder`, { state: result.data })
+      }
+    }
+    // setSelectedRow(row)
+    // setApproveModal(true)
   }
   const showRejectModal = (row: any) => {
     setSelectedRow(row)
@@ -454,13 +544,13 @@ const PurchaseOrder = () => {
     recycType?.forEach((item) => {
       var name = ''
       switch (i18n.language) {
-        case 'enus':
+        case Languages.ENUS:
           name = item.recyclableNameEng
           break
-        case 'zhch':
+        case Languages.ZHCH:
           name = item.recyclableNameSchi
           break
-        case 'zhhk':
+        case Languages.ZHHK:
           name = item.recyclableNameTchi
           break
         default:
@@ -474,7 +564,7 @@ const PurchaseOrder = () => {
     })
 
     setRecycItem(recycItems)
-  }, [recycType])
+  }, [i18n.language])
 
   useEffect(() => {
     const tempRows: any[] = (
@@ -511,14 +601,14 @@ const PurchaseOrder = () => {
     {
       label: t('pick_up_order.filter.dateby'),
       width: '10%',
-      options: getUniqueOptions('createdAt'),
-      field: 'createdAt'
+      options: getUniqueOptionsDate('createdAt'),
+      field: 'fromCreatedAt'
     },
     {
       label: t('pick_up_order.filter.to'),
       width: '10%',
-      options: getUniqueOptions('approvedAt'),
-      field: 'updatedAt'
+      options: getUniqueOptionsDate('approvedAt'),
+      field: 'toCreatedAt'
     },
     {
       label: t('warehouse_page.place'),
@@ -536,7 +626,7 @@ const PurchaseOrder = () => {
     {
       label: t('pick_up_order.filter.status'),
       width: '14%',
-      options: statusList,
+      options: getStatusOpion(),
       field: 'status'
     }
   ]
@@ -544,11 +634,35 @@ const PurchaseOrder = () => {
   const navigate = useNavigate()
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<Row | null>(null)
+
+  function getUniqueOptionsDate(propertyName: keyof Row) {
+    const optionMap = new Map()
+   
+    rows.forEach((row) => {
+      if(row[propertyName] !== '') {
+        const date = dayjs(row[propertyName]).format('YYYY-MM-DD')
+        optionMap.set(date, date)
+      }
+    })
+
+    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
+      value: option,
+      label: option
+    }))
+    options.push({
+      value: '',
+      label: 'any'
+    })
+    return options
+  }
+
   function getUniqueOptions(propertyName: keyof Row) {
     const optionMap = new Map()
 
     rows.forEach((row) => {
-      optionMap.set(row[propertyName], row[propertyName])
+      if(row[propertyName] !== '') {
+        optionMap.set(row[propertyName], row[propertyName])
+      }
     })
 
     let options: Option[] = Array.from(optionMap.values()).map((option) => ({
@@ -567,9 +681,35 @@ const PurchaseOrder = () => {
       value: item.id,
       label: item.name
     }))
-
+    options.push({
+      value: '',
+      label: 'any'
+    })
     return options
   }
+
+  function getStatusOpion() {
+    const options: Option[] = statusList.map((item) => {
+      if(i18n.language === Languages.ENUS){
+        return {
+          value: item.value,
+          label: item.labelEng
+        }
+      } else if(i18n.language === Languages.ZHCH){
+        return{
+          value: item.value,
+          label: item.labelSchi
+        }
+      } else {
+        return{
+          value: item.value,
+          label: item.labelTchi
+        }
+      }
+    })
+    return options
+  }
+
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
@@ -591,6 +731,7 @@ const PurchaseOrder = () => {
   const handleSearch = (keyName: string, value: string) => {
     updateQuery({ [keyName]: value })
   }
+  
   return (
     <>
       <ToastContainer />
@@ -607,6 +748,24 @@ const PurchaseOrder = () => {
           <Typography fontSize={20} color="black" fontWeight="bold">
             {t('purchase_order.all_order')}
           </Typography>
+
+          {rolesEnableCreatePO.includes(userRole) && (
+             <Button
+                onClick={() => navigate(`/${realm}/createPurchaseOrder`)}
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: "#6BC7FF",
+                  '&.MuiButton-root:hover':{bgcolor: '#6BC7FF'},
+                  width:'fit-content',
+                  height: "40px",
+                  marginLeft:'20px'
+                }}
+                variant='contained'
+              >
+                + {t("col.create")}
+            </Button>
+          )}
+         
         </Box>
         <Box />
         <Stack direction="row" mt={3}>

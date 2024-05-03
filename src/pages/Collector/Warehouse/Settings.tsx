@@ -11,6 +11,7 @@ import DenialReason from "../DenialReason/DenialReason";
 import StaffTitle from "../StaffTitle/StaffTitle";
 import Company from "../Company/Company";
 import { localStorgeKeyName } from "../../../constants/constant";
+import CustomerGeneralSettings from '../../Customer/GeneralSettings/GeneralSettings'
 
 const Settings: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -39,6 +40,9 @@ const Settings: FunctionComponent = () => {
     if (role === 'logistic') {
       const hideTabIndexArr = [2, 3, 5]
       updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
+    } else if (role === 'customer') {
+      const hideTabIndexArr = [1,2,3,5,7]
+      updatedTabList = updatedTabList.filter((_,index) => !hideTabIndexArr.includes(index))
     }
     setTabList(updatedTabList)
   }
@@ -89,6 +93,21 @@ const Settings: FunctionComponent = () => {
     )
   }
 
+  const customerSettingTab = () => {
+    return (
+      selectedTab === 0 ? (
+        <CustomerGeneralSettings/>
+      ): selectedTab === 1 ? (
+        <Company/>
+      ) : selectedTab === 2 ? (
+        <StaffTitle/>
+      ) :
+      (
+        <div className="p-4 text-center">content not available</div>
+      )
+    )
+  }
+
   return (
     <Box className="container-wrapper w-full">
       <div className="settings-page bg-bg-primary">
@@ -100,7 +119,7 @@ const Settings: FunctionComponent = () => {
           className="lg:px-10 sm:px-4 bg-bg-primary"
         />
         {/* rendering content base on tab index */}
-        { role === 'logistic' ? logisticSettingTab() : collectorSettingTab()}
+        { role === 'logistic' ? logisticSettingTab() : role === 'customer' ? customerSettingTab() : collectorSettingTab()}
       </div>
     </Box>
   );

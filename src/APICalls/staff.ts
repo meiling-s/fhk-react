@@ -30,6 +30,7 @@ export const getStaffList = async (page: number, size: number) => {
     return null
   }
 }
+
 //create staff
 export const createStaff = async (data: any) => {
   try {
@@ -90,10 +91,10 @@ export const getLoginIdList = async () => {
 export const getStaffTitle = async () => {
   try {
     const token = returnApiToken()
-
+  
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...GET_STAFF_TITLE(token.realmApiRoute, token.decodeKeycloack),
+      ...GET_TITLE_LIST(token.decodeKeycloack, token.realmApiRoute),
       params: {
         page: 0,
         size: 1000

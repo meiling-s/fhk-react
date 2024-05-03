@@ -74,7 +74,8 @@
       "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
-      "startDateBehindEndDate": "not allowed the start time behind the end time"
+      "startDateBehindEndDate": "not allowed the start time behind the end time",
+      "loginIdCantContainAdmin": "not allowed have words in 'admin'"
     }
   },
   "component": {
@@ -401,7 +402,32 @@
     "confirm_reject_title": "Confirm reject?",
     "approved_success": "Approved successfully",
     "rejected_success": "Rejected successfully",
-    "reject_reasons": "Reasons for rejection"
+    "reject_reasons": "Reasons for rejection",
+    "error": {
+      "effFrmDate": "This from date is required",
+      "effToDate": "This  to date is required",
+      "routineType": "This routine Type is required",
+      "routine": "routine is required",
+      "pickuAt": "This pickupAt is required",
+      "senderName": "This sendername is required'",
+      "senderAddr": "This sender address is required",
+      "receiverName": "This receiver Name is required",
+      "receiverAddr": "This receiver address is required",
+      "recycType": "This recycType is required",
+      "recycSubType": "This recycSubType is required",
+      "weight": "This weight is required",
+      "weightGreaterThanZero": "This weight should greater than zero",
+      "invalid_date": "invalid-date",
+      "invalid_pickup_time": "Invalid pickup time, choose again the time",
+      "not_in_prev_data": "not-in-prev-data",
+      "pickup_time":"Pickup time already exists in previous data",
+      "not_same_as_receiver": "not-same-as-receiver",
+      "sender_address": "Sender address cannot be the same as receiver address",
+      "sender_address_exists": "Sender address already exists in previous data",
+      "not_same_as_sender": "not-same-as-sender",
+      "receiver_address_cannot": "Receiver address cannot be the same as sender address",
+      "receiver_address_exists": "Receiver address already exists in previous data"
+    }
   },
   "tenant": {
     "company": "Company",
@@ -689,7 +715,8 @@
     "description": "Description",
     "availableFeatures": "Available Features",
     "pleaseEnterName": "Please enter name",
-    "pleaseEnterText": "Please enter text"
+    "pleaseEnterText": "Please enter text",
+    "userAccountUsed": "User group can't be deleted since there are still account(s) in it"
   },
   "notify": {
     "successCreated": "Success Created",
@@ -751,7 +778,8 @@
     "cancel": "Cancel",
     "driver": "Driver",
     "plat_number": "Plate number",
-    "assign_driver": "Assign a driver"
+    "assign_driver": "Assign a driver",
+    "shippingDateAndTime": "Shipping Date And Time"
   },
   "notification": {
     "notification_menu": "Notice template",
@@ -978,6 +1006,74 @@
       "order_info": "Order information",
       "pico_id": "PO number",
       "message": "Message"
+    }, 
+    "create" : {
+      "create_order": "Create order",
+      "contact_information": "Contact information",
+      "receiving_company_name": "Receiving company name",
+      "receiving_company_name_placeholder": "Please enter company name",
+      "sender_company_name": "Sender company name",
+      "contact_number": "Contact number",
+      "contact_number_placeholder": "please fill in cell phone number",
+      "contact_name":"Contact name",
+      "contact_name_placeholder":"Please fill contact name",
+      "payment_method": "Payment method",
+      "payment_method_placeholder": "please choose",
+      "order_information": "Order information",
+      "recycling_plant": "Recycling plant",
+      "receipt_date_and_time": "Receipt date and time",
+      "main_category": "Main category",
+      "subcategory": "Subcategory",
+      "weight": "Weight",
+      "arrived": "Arrived",
+      "new": "New",
+      "setup_time": "Setup time",
+      "finish": "Finish",
+      "cancel": "Cancel",
+      "expected_recycling": "Expected recycling",
+      "recycling_category": "Recycling category",
+      "waste_paper_category": "Waste paper category",
+      "estimated_weight": "Estimated weight",
+      "this": "This",
+      "is_required": "is required",
+      "required_field": "this field is required"
+    }
+  },
+  "purchase_order_customer": {
+    "all_order": "All Orders",
+    "enquiry_po": "Order",
+    "table": {
+      "created_datetime": "Created datetime",
+      "recycling_plant": "Recycling plant",
+      "order_number": "Order Number",
+      "pico_id": "PO number",
+      "place_receipt": "Place of receipt",
+      "receipt_date_time": "Receipt date and time",
+      "status": "Status",
+      "operation": "Operation",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "detail": {
+      "order": "Order",
+      "contact_info": "Contact information",
+      "receiving_company_name": "Receiving company name",
+      "contact_number": "Contact number",
+      "payment_method": "Payment method",
+      "order_info": "Order information",
+      "pico_id": "PO number",
+      "message": "Message"
+    },
+    "createOrEdit": {
+      "new": "New",
+      "edit": "Edit",
+      "finish": "Complete",
+      "cancel": "Cancel",
+      "receipt_date_and_time": "Receipt date and time",
+      "recycling_category": "Recycling category",
+      "waste_paper_category": "Waste paper category",
+      "estimated_weight": "Estimated weight",
+      "arrived": "Arrived"
     }
   }
 }
