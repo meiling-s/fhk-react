@@ -211,7 +211,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       contactNo: t('staffManagement.contactNumber'),
       email: t('staffManagement.email')
     }
-    if (selectedLoginId) {
+    if (selectedLoginId && action === 'add') {
       const filteredData = staffList.filter(value => value.loginId === selectedLoginId)
       if (filteredData.length > 0) {
         tempV.push({
