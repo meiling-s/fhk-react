@@ -17,7 +17,7 @@ import {
 import { styles } from '../../../constants/styles'
 
 import { formErr } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
+import { returnErrorMsg, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
@@ -27,8 +27,9 @@ interface CreateVehicleProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
-  onSubmitData: (type: string, msg: string) => void
+  onSubmitData: () => void
   selectedItem?: Staff | null
+  staffList: Staff[]
 }
 
 interface FormValues {
@@ -40,7 +41,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  selectedItem
+  selectedItem,
+  staffList
 }) => {
   const { t } = useTranslation()
 
@@ -204,13 +206,24 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       loginId: t('staffManagement.loginName'),
       staffNameTchi: t('staffManagement.employeeChineseName'),
       staffNameSchi: t('staffManagement.employeeChineseName'),
-      staffNameEng: 'Staff English Name',
+      staffNameEng: t('staffManagement.employeeEnglishName'),
       titleId: t('staffManagement.position'),
       contactNo: t('staffManagement.contactNumber'),
       email: t('staffManagement.email')
     }
+    if (selectedLoginId && action === 'add') {
+      const filteredData = staffList.filter(value => value.loginId === selectedLoginId)
+      if (filteredData.length > 0) {
+        tempV.push({
+          field: fieldMapping['loginId'],
+          problem: formErr.hasBeenUsed,
+          type: 'error'
+        });
+        showErrorToast(`${t('staffManagement.loginName')} ${t('form.error.hasBeenUsed')}`)
+      }
+    }
     Object.keys(formData).forEach((fieldName) => {
-      const fieldValue = formData[fieldName as keyof FormValues].trim();
+      const fieldValue = formData[fieldName as keyof FormValues]?.trim();
       
       if (fieldValue === '') {
         tempV.push({
@@ -219,7 +232,6 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
           type: 'error'
         });
       }
-
       if (fieldName === 'email' && !fieldValue.includes('@')) {
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
@@ -283,15 +295,15 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     validate()
     if (validation.length === 0) {
       const result = await createStaff(staffData)
-      console.log('result', result?.data)
       if (result?.data) {
-        console.log('result2', result?.data)
-        onSubmitData('success', 'Success created data')
+        onSubmitData()
         resetFormData()
         handleDrawerClose()
+        showSuccessToast(t('notify.successCreated'))
       } else {
         setTrySubmited(true)
-        onSubmitData('error', 'Failed created data')
+        onSubmitData()
+        showErrorToast(t('notify.errorCreated'))
       }
     } else {
       setTrySubmited(true)
@@ -317,18 +329,19 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       editData.fullTimeFlg = contractType === 0 ? true : false
     }
 
-    console.log('handleEditStaff', validation.length)
     if (validation.length == 0) {
       if (selectedItem != null) {
         const result = await editStaff(editData, selectedItem.staffId)
         if (result) {
-          onSubmitData('success', 'Edit data success')
+          onSubmitData()
           resetFormData()
           handleDrawerClose()
+          showSuccessToast(t('notify.SuccessEdited'))
         }
       }
     } else {
       setTrySubmited(true)
+      showErrorToast(t('notify.errorEdited'))
     }
   }
 
@@ -349,9 +362,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     if (selectedItem != null) {
       const result = await editStaff(editData, selectedItem.staffId)
       if (result) {
-        onSubmitData('success', 'Deleted data success')
+        onSubmitData()
         resetFormData()
         handleDrawerClose()
+        showSuccessToast(t('notify.successDeleted'))
       }
     }
   }

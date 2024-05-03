@@ -402,7 +402,32 @@
     "confirm_reject_title": "确认拒绝吗？",
     "approved_success": "接受成功",
     "rejected_success": "拒绝成功",
-    "reject_reasons": "拒绝原因"
+    "reject_reasons": "拒绝原因",
+    "error": {
+      "effFrmDate": "此日期为必填项",
+      "effToDate": "迄今为止这是必需的",
+      "routineType": "此例程類型為必填項",
+      "routine": "需要例行公事",
+      "pickuAt": "此提货点为必填项",
+      "senderName": "此发件人姓名为必填项'",
+      "senderAddr": "此发件人地址为必填项",
+      "receiverName": "该接收者姓名为必填项",
+      "receiverAddr": "此收件人地址为必填项",
+      "recycType": "此回收类型是必需的",
+      "recycSubType": "需要此可回收子类型",
+      "weight": "此重量为必填项",
+      "weightGreaterThanZero": "该权重应大于零",
+      "invalid_date": "失效日期",
+      "invalid_pickup_time": "取件时间无效，请重新选择时间",
+      "not_in_prev_data": "不在先前数据中",
+      "pickup_time":"之前的数据中已经存在接送时间",
+      "not_same_as_receiver": "与接收者不同",
+      "sender_address": "发件人地址已存在于之前的数据中",
+      "sender_address_exists": "发件人地址已存在于之前的数据中",
+      "not_same_as_sender": "与发件人不同",
+      "receiver_address_cannot": "收件人地址不能与发件人地址相同",
+      "receiver_address_exists": "之前的数据中已经存在接收者地址"
+    }
   },
   "tenant": {
     "company": "公司",
@@ -598,6 +623,7 @@
     "employeeName": "员工姓名",
     "enterEmployeeName": "输入员工姓名",
     "employeeChineseName": "中文 员工繁体中文姓名",
+    "employeeEnglishName": "员工英文姓名",
     "employeeChineseCn": "员工中文简体中文姓名",
     "position": "职位",
     "loginName": "登录名",
@@ -667,7 +693,8 @@
     "description": "描述",
     "availableFeatures": "可用功能",
     "pleaseEnterName": "請輸入名稱",
-    "pleaseEnterText": "請輸入文字"
+    "pleaseEnterText": "請輸入文字",
+    "userAccountUsed": "用户组无法删除，因为其中仍有帐户"
   },
   "notify": {
     "successCreated": "成功已创造",

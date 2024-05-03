@@ -84,7 +84,9 @@ export const RealmApi = {
 }
 
 export const Status = {
-  CREATED : 'CREATED'
+  CREATED : 'CREATED',
+  CONFIRMED : "CONFIRMED",
+  REJECTED : "REJECTED"
 }
 
 export const Languages = {
