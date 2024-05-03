@@ -29,6 +29,7 @@ export const getStaffList = async (page: number, size: number) => {
     return null
   }
 }
+
 //create staff
 export const createStaff = async (data: any) => {
   try {
@@ -36,7 +37,7 @@ export const createStaff = async (data: any) => {
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...CREATE_STAFF,
+      ...CREATE_STAFF(token.realmApiRoute),
       data: data
     })
     console.log("response", createStaff)
@@ -54,7 +55,7 @@ export const editStaff = async (data: any, staffId: string) => {
 
     const response = await axiosInstance({
         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
-      ...EDIT_STAFF(token.tenantId, staffId),
+      ...EDIT_STAFF(token.tenantId, staffId, token.realmApiRoute),
       data: data
     })
     return response

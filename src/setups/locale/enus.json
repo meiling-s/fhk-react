@@ -402,7 +402,32 @@
     "confirm_reject_title": "Confirm reject?",
     "approved_success": "Approved successfully",
     "rejected_success": "Rejected successfully",
-    "reject_reasons": "Reasons for rejection"
+    "reject_reasons": "Reasons for rejection",
+    "error": {
+      "effFrmDate": "This from date is required",
+      "effToDate": "This  to date is required",
+      "routineType": "This routine Type is required",
+      "routine": "routine is required",
+      "pickuAt": "This pickupAt is required",
+      "senderName": "This sendername is required'",
+      "senderAddr": "This sender address is required",
+      "receiverName": "This receiver Name is required",
+      "receiverAddr": "This receiver address is required",
+      "recycType": "This recycType is required",
+      "recycSubType": "This recycSubType is required",
+      "weight": "This weight is required",
+      "weightGreaterThanZero": "This weight should greater than zero",
+      "invalid_date": "invalid-date",
+      "invalid_pickup_time": "Invalid pickup time, choose again the time",
+      "not_in_prev_data": "not-in-prev-data",
+      "pickup_time":"Pickup time already exists in previous data",
+      "not_same_as_receiver": "not-same-as-receiver",
+      "sender_address": "Sender address cannot be the same as receiver address",
+      "sender_address_exists": "Sender address already exists in previous data",
+      "not_same_as_sender": "not-same-as-sender",
+      "receiver_address_cannot": "Receiver address cannot be the same as sender address",
+      "receiver_address_exists": "Receiver address already exists in previous data"
+    }
   },
   "tenant": {
     "company": "Company",

@@ -51,6 +51,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
 import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
+import { useTranslation } from 'react-i18next'
 
 type props = {
   onClose: () => void
@@ -109,7 +110,7 @@ const CreateRecycleForm = ({
   const colorTheme: string = getThemeColorRole(role) || '#79CA25'
   const customListTheme = getThemeCustomList(role) || '#E4F6DC'
   //---end set custom style each role---
-
+  const { t } = useTranslation()
   const setDefRecyc = (picoDtl: CreatePicoDetail) => {
     const defRecyc: singleRecyclable = {
       recycTypeId: picoDtl.recycType,
@@ -183,61 +184,61 @@ const CreateRecycleForm = ({
 
     return Yup.object().shape({
       pickupAt: Yup.string()
-        .required('This pickupAt is required')
+        .required(t('pick_up_order.error.pickuAt'))
         .test(
-          'invalid-date',
-          'Invalid pickup time, choose again the time',
+          t('pick_up_order.error.invalid_date'),
+          t('pick_up_order.error.invalid_pickup_time'),
           function (value) {
-            return value !== 'Invalid Date'
+            return value !== t('pick_up_order.error.invalid_date')
           }
         )
         .test(
-          'not-in-prev-data',
-          'Pickup time already exists in previous data',
+          t('pick_up_order.error.not_in_prev_data'),
+          t('pick_up_order.error.pickup_time'),
           function (value) {
             return !prevData.some((item) => item.pickupAt === value)
           }
         ),
 
-      senderName: Yup.string().required('This sendername is required'),
+      senderName: Yup.string().required(t('pick_up_order.error.senderName')),
       senderAddr: Yup.string()
-        .required('This senderAddr is required')
+        .required(t('pick_up_order.error.senderAddr'))
         .test(
-          'not-same-as-receiver',
-          'Sender address cannot be the same as receiver address',
+          t('pick_up_order.error.not_same_as_receiver'),
+          t('pick_up_order.error.sender_address'),
           function (value) {
             const receiverAddr = values.receiverAddr
             return value !== receiverAddr
           }
         )
         .test(
-          'not-in-prev-data',
-          'Sender address already exists in previous data',
+          t('pick_up_order.error.not_in_prev_data'),
+          t('pick_up_order.error.sender_address_exists'),
           function (value) {
             return !prevData.some((item) => item.senderAddr === value)
           }
         ),
-      receiverName: Yup.string().required('This receiverName is required'),
+      receiverName: Yup.string().required(t('pick_up_order.error.receiverName')),
       receiverAddr: Yup.string()
-        .required('This receiverAddr is required')
+        .required(t('pick_up_order.error.receiverAddr'))
         .test(
-          'not-same-as-sender',
-          'Receiver address cannot be the same as sender address',
+          t('pick_up_order.error.not_same_as_sender'),
+          t('pick_up_order.error.receiver_address_cannot'),
           function (value) {
             const senderAddr = values.senderAddr
             return value !== senderAddr
           }
         )
         .test(
-          'not-in-prev-data',
-          'Receiver address already exists in previous data',
+          t('pick_up_order.error.not_in_prev_data'),
+          t('pick_up_order.error.receiver_address_exists'),
           function (value) {
             return !prevData.some((item) => item.receiverAddr === value)
           }
         ),
-      recycType: Yup.string().required('This recycType is required'),
-      recycSubType: Yup.string().required('This recycSubType is required'),
-      weight: Yup.number().required('This weight is required')
+      recycType: Yup.string().required(t('pick_up_order.error.recycType')),
+      recycSubType: Yup.string().required(t('pick_up_order.error.recycSubType')),
+      weight: Yup.number().moreThan(0, t('pick_up_order.error.weightGreaterThanZero')).required(t('pick_up_order.error.weight'))
     })
   })
 

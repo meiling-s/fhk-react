@@ -96,12 +96,14 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
     const result = await getCurrencyList()
     let tempCurrency: il_item[] = []
     if (result) {
-      result.data.map((item: any) => {
-        tempCurrency.push({
-          id: item.monetary,
-          name: item.monetary
+      result.data
+        .filter((cur: any) => cur.status != 'INACTIVE')
+        .map((item: any) => {
+          tempCurrency.push({
+            id: item.monetary,
+            name: item.monetary
+          })
         })
-      })
       setCurrencyList(tempCurrency)
       setCurrencyType(currencyList)
     }
@@ -132,6 +134,7 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
         headerProps={{
           title: t('general_settings.default_currency'),
           submitText: t('add_warehouse_page.save'),
+          cancelText: '',
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit
         }}
