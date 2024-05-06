@@ -128,9 +128,7 @@ const AssignDriver = ({
   }, [isEdit])
  
   const onHandleAssign = () => {
-    const isBefore = dayjs().isBefore(startDate);
-   
-    if(assignField.driverId === '' || assignField.plateNo === '' || assignField.vehicleId === 0 || !isBefore ){
+    if(assignField.driverId === '' || assignField.plateNo === '' || assignField.vehicleId === 0 ){
       if(assignField.driverId === ''){
         setErrors(prev => {
           return{
@@ -203,19 +201,21 @@ const AssignDriver = ({
 
                 <Box sx={{ marginLeft: "auto" }}>
                   <Button
-                    variant="outlined"
-                    sx={localstyles.button}
+                    sx={[styles.buttonFilledGreen, {
+                      width: 'max-content',
+                      height: '40px'
+                    }]}
                     onClick={onHandleAssign}
                   >
                     {t('jobOrder.finish')}
                   </Button>
                   <Button
                     variant="outlined"
-                    sx={{
-                      ...localstyles.button,
-                      color: theme.palette.primary.main,
-                      bgcolor: "white",
-                    }}
+                    sx={[styles.buttonOutlinedGreen, {
+                      width: 'max-content',
+                      height: '40px',
+                      marginLeft: '10px'
+                    }]}
                     onClick={() => onClose && onClose()}
                   >
                     {t('jobOrder.cancel')}
@@ -260,9 +260,9 @@ const AssignDriver = ({
                                 <label className='font-bold text-[#717171]'> {t('jobOrder.shipping_and_receiving_companies')}</label>
                             </div>
                             <div className='flex flex-1 items-center gap-x-1'>
-                                <p className='font-semibold text-[#535353]'>{item.receiverName}</p>
-                                <ArrowForwardIcon fontSize='small'/>
                                 <p className='font-semibold text-[#535353]'>{item.senderName}</p>
+                                <ArrowForwardIcon fontSize='small'/>
+                                <p className='font-semibold text-[#535353]'>{item.receiverName}</p>
                             </div>
                         </div>
                         <div className='flex items-center'>
@@ -271,15 +271,15 @@ const AssignDriver = ({
                                 <label className='font-bold text-[#717171]'> {t('jobOrder.delivery_and_arrival_locations')}</label>
                             </div>
                             <div className='flex flex-1 items-center gap-x-1'>
-                                <p className='font-semibold text-[#535353]'>{item.receiverAddr}</p>
-                                <ArrowForwardIcon fontSize='small'/>
                                 <p className='font-semibold text-[#535353]'>{item.senderAddr}</p>
+                                <ArrowForwardIcon fontSize='small'/>
+                                <p className='font-semibold text-[#535353]'>{item.receiverAddr}</p>
                             </div>
                         </div>
                       </div>
                     
                       <div className="flex flex-col gap-y-2">
-                        <label htmlFor="" className="font-bold text-[#717171]">{t('jobOrder.shipping_and_receiving_companies')}</label>
+                        <label htmlFor="" className="text-[#acacac]" style={{fontSize: 13}}>{t('jobOrder.shippingDateAndTime')}</label>
                         <div className="flex gap-x-1">
                           <DatePicker
                             value={dayjs(startDate)}

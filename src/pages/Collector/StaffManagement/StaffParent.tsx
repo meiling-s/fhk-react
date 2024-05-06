@@ -7,9 +7,10 @@ import StaffManagement from "./StaffManagement";
 import Rosters from "../Rosters/Rosters";
 import UserGroup from "../UserGroup/UserGroup";
 import StaffManufacturer from "../StaffManufacturer/StaffManufacturer";
+import { returnApiToken } from "../../../utils/utils";
 
 const Settings: FunctionComponent = () => {
-  // const navigate = useNavigate()
+  const token = returnApiToken()
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState(0);
   const handleTabChange = (value: number, label: string) => {
@@ -33,13 +34,14 @@ const Settings: FunctionComponent = () => {
             {t("staffManagement.staff")}
           </Typography>
         </Box>
-        <Tabs
-          tabs={tabSettings}
-          navigate={handleTabChange}
-          selectedProp={selectedTab}
-          className="lg:px-10 sm:px-4 bg-bg-primary"
-        />
-        {/* rendering content base on tab index */}
+        {token.realmApiRoute !== 'customer' ? (
+          <Tabs
+            tabs={tabSettings}
+            navigate={handleTabChange}
+            selectedProp={selectedTab}
+            className="lg:px-10 sm:px-4 bg-bg-primary"
+          />
+        ) : null}
         {selectedTab === 0 ? (
           <StaffManagement />
         ) : selectedTab === 1 ? (

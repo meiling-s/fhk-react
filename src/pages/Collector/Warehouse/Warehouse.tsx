@@ -120,6 +120,7 @@ const Warehouse: FunctionComponent = () => {
       field: 'actions',
       headerName: 'actions',
       renderCell: (params) => {
+        console.log(params, 'params warehouse')
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
             <EDIT_OUTLINED_ICON
