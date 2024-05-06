@@ -128,7 +128,7 @@ const Dashboard = ({
                                     onChange={(value) => {
                                         if(value) onChangeFromDate(value)
                                     }}
-                                    format="YYYY/MM/DD"
+                                    format="DD/MM/YYYY"
                                 />
                                 <Typography>-</Typography>
                                 <DatePicker
@@ -140,7 +140,7 @@ const Dashboard = ({
                                     onChange={(value) => {
                                         if(value) onChangeToDate(value)
                                     }}
-                                    format="YYYY/MM/DD"
+                                    format="DD/MM/YYYY"
                                 />
                            </Grid>
 
