@@ -5,7 +5,7 @@ import axiosInstance from '../constants/axiosInstance'
 export const changePassword = async (data: any) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...CHANGE_PASSWORD,
       data: data
     })

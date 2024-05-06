@@ -16,7 +16,7 @@ export const getAllProcessRecord = async (page: number, size: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_PROCESS_OUT(token.decodeKeycloack, token.realmApiRoute),
       params: {
         page: page,
@@ -36,7 +36,7 @@ export const getProcessRecordDetail = async (processOutId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_PROCESS_OUT_DETAIL(token.decodeKeycloack, processOutId, token.realmApiRoute )
       
     })
@@ -54,7 +54,7 @@ export const getProcessIn = async (processInId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_PROCESS_IN_BY_ID(token.decodeKeycloack, processInId, token.realmApiRoute )
       
     })
@@ -75,7 +75,7 @@ export const createProcessRecordItem = async (
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...CREATE_PROCESS_OUT_ITEM(token.decodeKeycloack, processOutId, token.realmApiRoute),
       data: data
     })
@@ -96,7 +96,7 @@ export const editProcessRecordItem = async (
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...EDIT_PROCESS_OUT_DETAIL_ITEM(token.decodeKeycloack, processOutId, processOutDtlId, token.realmApiRoute),
       data: data,
     })
@@ -115,7 +115,7 @@ export const deleteProcessOutRecord = async (
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...DELETE_PROCESS_OUT_RECORD(token.decodeKeycloack, processOutId, token.realmApiRoute)
     })
 
@@ -134,7 +134,7 @@ export const deleteProcessOutItem = async (
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...DELETE_PROCESS_OUT_DETAIL_ITEM(token.decodeKeycloack, processOutDtlId, token.realmApiRoute),
       data: data,
       headers: {

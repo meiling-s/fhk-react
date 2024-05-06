@@ -15,7 +15,7 @@ export const getCapacityWarehouse = async (
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_CAPACITY_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack, warehouseId)
     })
 
@@ -33,7 +33,7 @@ export const getWeightbySubtype = async (
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_WEIGHT_BY_SUBTYPE_ID(
         token.realmApiRoute,
         token.decodeKeycloack,
@@ -55,7 +55,7 @@ export const getCheckInWarehouse = async (warehouseId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_CHECKIN_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack, warehouseId)
     })
 
@@ -71,7 +71,7 @@ export const getCheckOutWarehouse = async (warehouseId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_CHECKOUT_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack, warehouseId)
     })
 
@@ -87,7 +87,7 @@ export const getCheckInOutWarehouse = async (warehouseId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_CHECK_IN_OUT_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack, warehouseId)
     })
 

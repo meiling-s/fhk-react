@@ -9,7 +9,7 @@ export const getAllInventory = async (page: number, size: number) => {
       const token = returnApiToken()
 
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...GET_INVENTORY(token.realmApiRoute, token.decodeKeycloack),
         params: {
           page: page,

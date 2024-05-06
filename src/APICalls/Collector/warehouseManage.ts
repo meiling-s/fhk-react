@@ -7,7 +7,7 @@ import { returnApiToken } from '../../utils/utils';
 import { queryCheckIn } from '../../interfaces/checkin';
 
 const warehouseAPI = {
-    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+    baseURL: window.baseURL.collector
 }
 
 export const getAllCheckInRequests = async (page: number, size: number, query?: queryCheckIn ) => {

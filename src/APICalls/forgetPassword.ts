@@ -4,13 +4,13 @@ import { forgetPasswordForm } from '../interfaces/forgetPassword'
 import axiosInstance from '../constants/axiosInstance'
 
 export const forgetPassword = async (data: forgetPasswordForm) => {
-  const isProd = AXIOS_DEFAULT_CONFIGS.baseURL.administrator == 'https://www.greenhoopapp.com/' ? true : false 
+  const isProd = window.baseURL.administrator == 'https://www.greenhoopapp.com/' ? true : false 
   const token = {
     decodeKeyCloack :  isProd?  'company888888':'company861341' // remove when api changed
   }
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...CREATE_FORGET_PASSWORD(token.decodeKeyCloack),
       data: data
     })

@@ -10,7 +10,7 @@ import { queryCheckout } from '../../interfaces/checkout'
 import { returnApiToken } from '../../utils/utils';
 
 const checkoutAPI = {
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+  baseURL: window.baseURL.collector
 }
 
 export const getAllCheckoutRequest = async (page: number, size: number, query: queryCheckout ) => {

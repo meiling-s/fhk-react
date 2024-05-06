@@ -172,7 +172,7 @@ const RecyclingUnit: FunctionComponent = () => {
 
   const initRecycTypeList = async () => {
     var response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...GET_RECYC_TYPE
       // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
     })
