@@ -3,7 +3,7 @@ import { returnApiToken } from "../../utils/utils";
 import axiosInstance from "../../constants/axiosInstance";
 import { GET_COLPOINTRECYCABLES_DASHBOARD } from "../../constants/requests";
 
-export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: string, colId?: number) => {
+export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: string, colId?: number | null) => {
     try {
         const token = returnApiToken()
 
@@ -13,6 +13,7 @@ export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: s
             params: {
                 frmDate: frmDate,
                 toDate: toDate,
+                colId
               },
             headers: {
                 AuthToken: token.authToken

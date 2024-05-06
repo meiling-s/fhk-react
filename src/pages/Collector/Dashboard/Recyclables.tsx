@@ -8,7 +8,8 @@ import dayjs from "dayjs";
 import { Languages } from "../../../constants/constant";
 import i18n from "../../../setups/i18n";
 import Dashboard from "../../../components/Dashboard/Dashboard";
-
+import { getCollectionPoint } from "../../../APICalls/Collector/collectionPointManage";
+import { collectionPoint } from '../../../interfaces/collectionPoint'
 interface Dataset{
     id: string,
     label: string,
@@ -35,6 +36,26 @@ const Recyclables: FunctionComponent = () => {
     const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
     const [dataset, setDataSet] = useState<Dataset[]>([])
+    const [collectionIds, setCollectionIds] = useState<number[]>([])
+    const [colId, setColId] = useState<number | null>(null)
+    
+    useEffect(() => {
+        initCollectionPoint()
+    }, [])
+
+    const initCollectionPoint = async () => {
+        const result = await getCollectionPoint(0, 1000)
+        const data = result?.data.content
+        
+        if (data && data.length > 0) {
+          const collectionPoint: number[] = []
+          data.map((item: collectionPoint) => {
+            if(item?.colId) collectionPoint.push(Number(item?.colId))
+          })
+    
+          setCollectionIds(collectionPoint)
+        }
+      }
     
     useEffect(() => {
         const changeLang = dataset.map(item => {
@@ -63,7 +84,7 @@ const Recyclables: FunctionComponent = () => {
     }
 
     const getRecyclablesDashboard = async () => {
-        const response = await getcolPointRecyclablesDashboard(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
+        const response = await getcolPointRecyclablesDashboard(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'), colId);
 
         const getDataWeights = (type: fieldName, length: number): number[] =>{
             const weights:number[]= [];
@@ -156,10 +177,13 @@ const Recyclables: FunctionComponent = () => {
   
     useEffect(() => {
         getRecyclablesDashboard()
-    }, [recycType])
+    }, [recycType, frmDate, toDate, colId])
 
     const onHandleSearch = () => {
         getRecyclablesDashboard()
+    }
+    const onChangeColdId = (value: number | null) => {
+        setColId(value)
     }
 
     return(
@@ -172,6 +196,9 @@ const Recyclables: FunctionComponent = () => {
                 onHandleSearch={onHandleSearch}
                 frmDate={frmDate}
                 toDate={toDate}
+                collectionIds={collectionIds}
+                onChangeColdId={onChangeColdId}
+                colId={colId}
                 title={t('dashboard_recyclables.recycling_data')}
             />
         </Box>

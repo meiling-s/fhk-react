@@ -8,12 +8,13 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import {Grid, Typography } from '@mui/material';
+import {Autocomplete, Grid, TextField, Typography } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
 import dayjs from "dayjs";
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+import { styles } from '../../constants/styles';
 
 ChartJS.register(
     CategoryScale,
@@ -39,7 +40,10 @@ type props = {
     onHandleSearch:() => void
     frmDate:dayjs.Dayjs
     toDate:dayjs.Dayjs
+    collectionIds?: number[]
     title:string
+    onChangeColdId: (value: number | null) => void
+    colId:number | null
 }
 
 const Dashboard = ({
@@ -50,7 +54,10 @@ const Dashboard = ({
     onHandleSearch,
     frmDate,
     toDate,
-    title
+    collectionIds,
+    title,
+    onChangeColdId,
+    colId
 }:props) => {
     const { t } = useTranslation()
 
@@ -138,16 +145,29 @@ const Dashboard = ({
                                     format="YYYY/MM/DD"
                                 />
                            </Grid>
-    
-                            <Grid  item style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: 1, border: '1px solid #E2E2E2', height: '40px', padding: '8px', borderRadius: '6px'}}
-                                className="hover:cursor-pointer"
-                                onClick={onHandleSearch}
-                            >
-                                <Typography>
-                                    {t('dashboard_recyclables.recycling_point')}
-                                </Typography>
-                                <ExpandMoreRoundedIcon sx={{color: '#79CA25'}}/>
-                            </Grid>         
+
+                            <Autocomplete
+                                disablePortal
+                                id="collectionIds"
+                                defaultValue={0}
+                                options={collectionIds ? collectionIds : []}
+                                onChange={(event, value) => {
+                                    onChangeColdId(value)
+                                }}
+                                value={colId}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        size='small'
+                                        placeholder={t('dashboard_recyclables.recycling_point')}
+                                        sx={[styles.textField, { width: 400}]}
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            sx: styles.inputProps
+                                        }}
+                                    />
+                                )}
+                            />
                         
                         </Grid>
                         <Grid style={{height: '295px', width: '1200px'}}>
