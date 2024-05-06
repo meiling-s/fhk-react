@@ -10,7 +10,7 @@ import { returnApiToken } from '../../utils/utils';
 export const createCodeData = async (data: any) => {
   try {
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
       ...CREATE_RECYC_CODE,
       data: data
     });
@@ -25,7 +25,7 @@ export const createCodeData = async (data: any) => {
 export const updateCodeData = async (data: any, codeId: number) => {
     try {
       const response = await axiosInstance({
-          baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+          baseURL: window.baseURL.administrator,
         ...UPDATE_RECYC_CODE(codeId),
         data: data
       });
@@ -40,7 +40,7 @@ export const updateCodeData = async (data: any, codeId: number) => {
   export const deleteCodeData = async (data: any, codeId: number) => {
     try {
       const response = await axiosInstance({
-          baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+          baseURL: window.baseURL.administrator,
         ...DELETE_RECYC_CODE(codeId),
         data: data
       });

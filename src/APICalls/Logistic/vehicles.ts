@@ -12,7 +12,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       const token = returnApiToken()
 
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+        baseURL: window.baseURL.logistic,
         ...GET_LOGISTIC_VEHICLE(token.decodeKeycloack),
         params: {
           page: page,
@@ -34,7 +34,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       const token = returnApiToken()
 
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...CREATE_LOGISTIC_VEHICLE(token.decodeKeycloack),
         data: data,
         headers: {
@@ -53,7 +53,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       const token = returnApiToken()
 
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...EDIT_LOGISTIC_VEHICLE(token.decodeKeycloack, vehicleId),
         data: data,
         headers: {
@@ -74,7 +74,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       const token = returnApiToken()
 
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...DELETE_LOGISTIC_VEHICLE(token.decodeKeycloack, vehicleId),
         data: data,
         headers: {
@@ -94,7 +94,7 @@ export const searchVehicle = async (vehicleId: string) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+      baseURL: window.baseURL.logistic,
       ...SEARCH_LOGISTIC_VEHICLE(token.decodeKeycloack, vehicleId),
       headers: {
         AuthToken: token.authToken

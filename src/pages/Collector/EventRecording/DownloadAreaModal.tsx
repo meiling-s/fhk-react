@@ -60,12 +60,12 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     }else if(selectedItem?.id === 5){
      
     }else if(selectedItem?.id === 6){
-     const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/downloadWord/${decodeKeycloack}?from=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&to=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
+     const url = window.baseURL.collector + `api/v1/collectors/downloadWord/${decodeKeycloack}?from=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&to=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
      setDownloads(prev => {
        return [{date: dayjs(startDate).format('YYYY/MM/DD'), url: url}]
      })
     }else if(selectedItem?.id === 7){
-     const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/downloadExcel/${tenantId}?frmDate=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&toDate=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
+     const url = window.baseURL.collector + `api/v1/collectors/downloadExcel/${tenantId}?frmDate=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&toDate=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
      setDownloads(prev => {
        return [{date: dayjs(startDate).format('YYYY/MM/DD'), url: url}]
      })
@@ -84,12 +84,12 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
    }else if(selectedItem?.id === 5){
     
    }else if(selectedItem?.id === 6){
-    const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/downloadWord/${decodeKeycloack}?from=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&to=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
+    const url = window.baseURL.collector + `api/v1/collectors/downloadWord/${decodeKeycloack}?from=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&to=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
     setDownloads(prev => {
       return [{date: dayjs(startDate).format('YYYY/MM/DD'), url: url}]
     })
    }else if(selectedItem?.id === 7){
-    const url = AXIOS_DEFAULT_CONFIGS.baseURL.collector + `api/v1/collectors/downloadExcel/${tenantId}?frmDate=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&toDate=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
+    const url = window.baseURL.collector + `api/v1/collectors/downloadExcel/${tenantId}?frmDate=${dayjs(startDate).format('YYYY-MM-DD 00:00:00')}&toDate=${dayjs(endDate).format('YYYY-MM-DD 23:59:59')}`
     setDownloads(prev => {
       return [{date: dayjs(startDate).format('YYYY/MM/DD'), url: url}]
     })

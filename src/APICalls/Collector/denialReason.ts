@@ -15,7 +15,7 @@ export const getAllDenialReason = async (page: number, size: number) => {
     const token = returnApiToken();
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_DENIAL_REASON(token.realmApiRoute, token.tenantId),
       params: {
         page: page,
@@ -39,7 +39,7 @@ export const getAllDenialReasonByFunctionId = async (page: number, size: number,
     const token = returnApiToken();
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_DENIAL_REASON_BY_FUNCTION_ID(token.realmApiRoute, token.tenantId, functionId),
       params: {
         page: page,
@@ -64,7 +64,7 @@ export const createDenialReason = async (data: CreateDenialReason) => {
     const token = returnApiToken();
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...CREATE_DENIAL_REASON(token.realmApiRoute),
       params: {
         tenantId: data.tenantId,
@@ -95,7 +95,7 @@ export const editDenialReason = async (reasonId: number, data: CreateDenialReaso
   try {
     const token = returnApiToken();
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...UPDATE_DENIAL_REASON(token.realmApiRoute, token.tenantId, reasonId),
       data: data,
     });

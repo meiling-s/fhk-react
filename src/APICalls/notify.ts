@@ -14,7 +14,7 @@ import { UpdateNotifTemplate, UpdateNotifTemplateBroadcast } from '../interfaces
 import { returnApiToken } from '../utils/utils'
 
 const administratorAPI = {
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator
+  baseURL: window.baseURL.administrator
 }
 
 export const getNumUnreadNotif = async (loginId: string) => {

@@ -11,7 +11,7 @@ export const getDownloadWord = async (from: string, to: string) => {
     const { decodeKeycloack } = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...DOWNLOAD_WORD_REPORT(),
       params: {
         table: decodeKeycloack,
@@ -31,7 +31,7 @@ export const getDownloadExcel = async (from: string, to: string) => {
       const { decodeKeycloack } = returnApiToken()
   
       const response = await axiosInstance({
-          baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+          baseURL: window.baseURL.collector,
         ...DOWNLOAD_EXCEL_REPORT(),
         params: {
           table: decodeKeycloack,

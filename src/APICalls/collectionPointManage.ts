@@ -9,7 +9,7 @@ export const getAllCollectionPoint = async () => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_ALL_COLLECTIONPOINT(token.tenantId),
       // headers: {
       //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
@@ -28,7 +28,7 @@ export const getCollectionPoint = async (page: number, size: number) => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_ALL_COLLECTIONPOINT(token.tenantId),
       params: {
         page: page,
@@ -51,7 +51,7 @@ export const createCollectionPoint = async (data: createCP) => {
 
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...CREATE_COLLECTIONPOINT,
       data: data
       // headers: {
@@ -75,7 +75,7 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
 
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...axiosConfig,
       data: data
       // headers: {
@@ -98,7 +98,7 @@ export const findCollectionPointExistByName = async (colName: string) => {
 
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...axiosConfig,
       // headers: {
       //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
@@ -121,7 +121,7 @@ export const findCollectionPointExistByContractAndAddress = async (contract: str
 
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...axiosConfig,
       // headers: {
       //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
@@ -141,7 +141,7 @@ export const getCollectionPointDetail = async (colId: number) => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_COLLECTIONPOINT_BY_COLID(token.tenantId, colId),
     });
     return response
