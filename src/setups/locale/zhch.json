@@ -20,7 +20,8 @@
     "yes": "是",
     "no": "否",
     "createdDatetime": "建立时间",
-    "lastUpdateDatetime": "上次更新时间"
+    "lastUpdateDatetime": "上次更新时间",
+    "pckgCtegory:": "包装类别"
   },
   "col": {
     "createCP": "建立回收点",
@@ -420,7 +421,7 @@
       "invalid_date": "失效日期",
       "invalid_pickup_time": "取件时间无效，请重新选择时间",
       "not_in_prev_data": "不在先前数据中",
-      "pickup_time":"之前的数据中已经存在接送时间",
+      "pickup_time": "之前的数据中已经存在接送时间",
       "not_same_as_receiver": "与接收者不同",
       "sender_address": "发件人地址已存在于之前的数据中",
       "sender_address_exists": "发件人地址已存在于之前的数据中",
@@ -1057,24 +1058,7 @@
       "arrived": "到达地点"
     }
   },
-  "logisticDashboard": {
-    "searchDriver": "搜索司机方向",
-    "driverInfo": "您正在搜索的司机",
-    "driverNumb": "司机号码",
-    "driverLicense": "驾驶证",
-    "vehicleCategory": "车辆类别",
-    "receivingLocation": "接收位置",
-    "receiptDate": "收据日期",
-    "received": "已收到",
-    "notReceived": "未收到",
-    "logisticsCompany": "物流公司",
-    "poNumber": "采购订单号",
-    "shippingAddress": "送货地址",
-    "recyclingCategory:": "回收类别",
-    "packagingCategory:": "包装类别",
-    "packingQuantity": "包装数量",
-    "packingWeight": "包装重量"
-  },
+
   "recycling_unit": {
     "recycling_and_related_units": "回收物及相关单位",
     "recyclable_subtype_semi_complete": "回收物、半制成品、制成品类别",
@@ -1100,5 +1084,24 @@
     "offsite": "上门回收服务",
     "community": "社区收集点",
     "service_type": "服务种类"
+  },
+  "logisticDashboard": {
+    "searchDriver": "搜索司机方向",
+    "driverInfo": "您正在搜索的司机",
+    "driverNumb": "司机号码",
+    "driverLicense": "驾驶证",
+    "vehicleCategory": "车辆类别",
+    "receivingLocation": "接收位置",
+    "receiptDate": "收据日期",
+    "received": "已收到",
+    "notReceived": "未收到",
+    "logisticsCompany": "物流公司",
+    "poNumber": "采购订单号",
+    "shippingAddress": "送货地址",
+    "recyclingCategory:": "回收类别",
+    "package:": "包装类别",
+    "packingQty": "包装数量",
+    "packingWeight": "包装重量",
+    "recyc": "回收类别"
   }
 }

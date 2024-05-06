@@ -14,36 +14,97 @@ import L from 'leaflet'
 import { LatLngTuple, LatLngBounds } from 'leaflet'
 
 import { SEARCH_ICON } from '../../../themes/icons'
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded'
+import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded'
+import {
+  getDriverDetail,
+  getDriverPickupPoint,
+  getDriverDropOffPoint
+} from '../../../APICalls/Logistic/dashboard'
+import {
+  DriverInfo,
+  PickupPoint,
+  DropOffPoint
+} from '../../../interfaces/dashboardLogistic'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { displayCreatedDate, displayLocalDate } from '../../../utils/utils'
 
+import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
+import dayjs from 'dayjs'
+
+interface PuAndDropOffMarker {
+  id: number
+  type: string
+  gpsCode: LatLngTuple
+}
 
 const LogisticDashboard = () => {
   const { t } = useTranslation()
-  const [driverInfo, setDriverInfo] = useState<string | null>(null)
-  const [pickupOrDropPoint, setPickupOrDropPoint] = useState<boolean>(false)
+  // const [driverId, setDriverId] = useState<string | null>(null)
+  const { vehicleType } = useContainer(CommonTypeContainer)
+  const [driverInfo, setDriverInfo] = useState<DriverInfo | null>(null)
+  const [vehicleCategory, setVehicleCategory] = useState<string>('')
+  const [puAndDropOffMarker, setPuAndDropOffMarker] = useState<
+    PuAndDropOffMarker[]
+  >([])
+  const [showPuDropPoint, setShowPuDropPoint] = useState<boolean>(false)
+  const [typePoint, setTypePoint] = useState<string>('pu')
+  const [pickupPoint, setPickupPoint] = useState<PickupPoint[]>([])
+  const [dropOfPoint, setDropofPoint] = useState<DropOffPoint[]>([])
+  const [selectedPuPoint, setSelectedPuPoint] = useState<PickupPoint | null>(
+    null
+  )
+  const [selectedDrofPoint, setSelectedDrof] = useState<DropOffPoint | null>(
+    null
+  )
+  const todayDate = dayjs().format('YYYY-MM-DD')
 
-  const handleMarkerClick = () => {
-    // setPickupOrDropPoint('syalalalalal')
-  }
+  // const getVehicleList = () => {
+  //   if (vehicleType) {
+  //     const vehicleName = vehicleType.find(item => item.vehicleTypeId == selectedPoint!!.vehicleId)
+  //   }
+  // }
 
-  const markerPositions: LatLngTuple[] = [
-    [22.42734537836034, 114.20837003279368],
-    [22.41786325107272, 114.2084943679594]
+  useEffect(() => {
+    console.log('puAndDropOffMarker', puAndDropOffMarker)
+  }, [puAndDropOffMarker])
+
+  const markerPositions: PuAndDropOffMarker[] = [
+    {
+      id: 1,
+      type: 'pu',
+      gpsCode: [22.42734537836034, 114.20837003279368]
+    },
+    {
+      id: 2,
+      type: 'drop',
+      gpsCode: [22.41786325107272, 114.2084943679594]
+    }
   ]
 
-  const customIcon = L.divIcon({
-    className: 'custom-icon',
-    html: '<div class="custom-marker w-6 h-6 bg-red rounded-3xl"></div>'
-  })
+  const getMarkerColor = (type: string) => {
+    return type === 'pu' ? '#79CA25' : '#FF668B'
+  }
+
+  const customIcon = (type: string) =>
+    L.divIcon({
+      className: 'custom-icon',
+      html: `<div class="custom-marker w-6 h-6 rounded-3xl" style="background-color:${getMarkerColor(
+        type
+      )} "></div>`
+    })
 
   const bounds = useMemo(() => {
     if (markerPositions.length > 0) {
-      return new LatLngBounds(markerPositions)
+      return new LatLngBounds(
+        markerPositions.map((item) => (item.gpsCode ? item.gpsCode : [0, 0]))
+      )
     }
     return null
   }, [markerPositions])
 
-  // Function to fit all markers within the bounds when the map first loads
+  //Function to fit all markers within the bounds when the map first loads
   const FitBoundsOnLoad = () => {
     const map = useMap()
     useEffect(() => {
@@ -54,7 +115,90 @@ const LogisticDashboard = () => {
     return null
   }
 
-  const handleSearch = (e: string) => {}
+  const getDriverInfo = async (driverIdValue: string) => {
+    const result = await getDriverDetail(parseInt(driverIdValue))
+    if (result) {
+      setDriverInfo(result.data)
+    }
+  }
+
+  const getPickupPointList = async (driverIdValue: number) => {
+    const result = await getDriverPickupPoint(
+      driverIdValue,
+
+      '2024-05-06',
+      '2024-05-06'
+    )
+    if (result) {
+      let tempPUpoint: PuAndDropOffMarker[] = []
+      result.data.map((pu: any) => {
+        tempPUpoint.push({
+          id: pu.puId,
+          type: 'pu',
+          gpsCode: pu.senderAddrGps.length > 1 ? pu.senderAddrGps : [0.0, 0.0]
+        })
+      })
+      setPickupPoint(result.data)
+      setPuAndDropOffMarker((existingMarkers) => [
+        ...existingMarkers,
+        ...tempPUpoint
+      ])
+    }
+  }
+
+  const getDropOffPointList = async (driverIdValue: number) => {
+    const result = await getDriverDropOffPoint(
+      driverIdValue,
+      '2024-05-06',
+      '2024-05-06'
+      // todayDate,
+      // todayDate
+    )
+    if (result) {
+      let tempDropOffPoint: PuAndDropOffMarker[] = []
+      result.data.map((drof: any) => {
+        tempDropOffPoint.push({
+          id: drof.drofId,
+          type: 'drop',
+          gpsCode: [22.416551141285588, 114.20057888860003]
+          // drof.puHeader.receiverAddrGps.length > 1
+          //   ? drof.puHeader.receiverAddrGps
+          //   : [0.0, 0.0]
+        })
+      })
+
+      setPuAndDropOffMarker((existingMarkers) => [
+        ...existingMarkers,
+        ...tempDropOffPoint
+      ])
+      setDropofPoint(result.data)
+    }
+  }
+
+  const handleSearch = (value: string) => {
+    if (value || value != '') {
+      getDriverInfo(value)
+      getPickupPointList(parseInt(value))
+      getDropOffPointList(parseInt(value))
+      console.log('handleSearch', puAndDropOffMarker)
+    } else {
+      setDriverInfo(null)
+    }
+  }
+
+  const showDetailPoint = (point: PuAndDropOffMarker) => {
+    setShowPuDropPoint(true)
+    setTypePoint(point.type)
+    if (point.type == 'pu') {
+      setSelectedPuPoint(
+        pickupPoint.find((item) => item.puId === point.id) || null
+      )
+    } else {
+      setSelectedDrof(
+        dropOfPoint.find((item) => item.drofId === point.id) || null
+      )
+    }
+  }
 
   return (
     <Box
@@ -68,10 +212,10 @@ const LogisticDashboard = () => {
         }
       }}
     >
-      <Box sx={{ width: '80%', height: '100%', marginTop: '-32px' }}>
+      <Box sx={{ width: '70%', height: '100%', marginTop: '-32px' }}>
         <MapContainer
           center={[22.4241897, 114.2117632]}
-          zoom={12}
+          zoom={11}
           zoomControl={false}
         >
           <FitBoundsOnLoad />
@@ -79,14 +223,18 @@ const LogisticDashboard = () => {
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {markerPositions.map((position, index) => (
+          {puAndDropOffMarker.map((position, index) => (
             <Marker
               key={index}
-              position={position}
-              icon={customIcon}
+              position={position.gpsCode}
+              icon={customIcon(position.type)}
               eventHandlers={{
-                mouseover: () => setPickupOrDropPoint(true),
-                mouseout: () => setPickupOrDropPoint(false)
+                mouseover: () => {
+                  showDetailPoint(position)
+                },
+                mouseout: () => {
+                  setShowPuDropPoint(false)
+                }
               }}
             />
           ))}
@@ -131,61 +279,127 @@ const LogisticDashboard = () => {
               {t('logisticDashboard.driverInfo')}
             </Typography>
             <Typography sx={{ ...style.typo2, marginTop: 1 }}>
-              {t('logisticDashboard.driverNumb')} : 000000000
+              {t('logisticDashboard.driverNumb')} : {driverInfo.contactNo}
             </Typography>
             <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
-              {t('logisticDashboard.driverLicense')} : 000000000
+              {t('logisticDashboard.driverLicense')} : {driverInfo.licenseNo}
             </Typography>
             <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
-              {t('logisticDashboard.vehicleCategory')} : Minivan
+              {t('logisticDashboard.vehicleCategory')} :{' '}
+              {vehicleCategory ? vehicleCategory : '-'}
             </Typography>
           </Grid>
         )}
-        {pickupOrDropPoint && (
+        {showPuDropPoint && (
           <Grid item>
             <Typography sx={{ ...style.typo, marginTop: 2, marginBottom: 2 }}>
               {t('logisticDashboard.receivingLocation')}
             </Typography>
-            <Box sx={{ ...style.driverDetail }}>
+            <Box
+              sx={{
+                ...style.driverDetail,
+                backgroundColor: typePoint == 'pu' ? '#E4F6DC' : '#FFF0F4'
+              }}
+            >
               <Typography sx={{ ...style.typo3, marginTop: 0.5 }}>
-                收件點1
+                {typePoint == 'pu'
+                  ? selectedPuPoint?.senderName
+                  : selectedDrofPoint?.puHeader.receiverName}
               </Typography>
               <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
-                {t('logisticDashboard.vehicleCategory')} : 10/10/2023
+                {t('logisticDashboard.receiptDate')} :
+                {typePoint == 'pu'
+                  ? displayLocalDate(selectedPuPoint?.puAt || '')
+                  : displayLocalDate(selectedDrofPoint?.drofAt || '')}
               </Typography>
               <Typography
                 sx={{
-                  fontSize: 15,
-                  color: '#58C33C',
+                  fontSize: 13,
+                  color: typePoint == 'pu' ? '#58C33C' : '#FF4242',
                   fontWeight: '500',
-                  marginTop: 0.5
+                  marginTop: 0.5,
+                  display: 'flex',
+                  justifyContent: 'start',
+                  alignItems: 'center'
                 }}
               >
-                {t('logisticDashboard.vehicleCategory')} : 10/10/2023 00:00:00
+                <Box sx={{ marginRight: 1, marginTop: 0.5 }}>
+                  {typePoint == 'pu' ? (
+                    selectedPuPoint?.jo.status.toLocaleLowerCase() !=
+                    'rejected' ? (
+                      <CheckCircleRoundedIcon
+                        fontSize="small"
+                        style={{ color: '#58C33C' }}
+                      />
+                    ) : (
+                      <CheckCircleRoundedIcon
+                        fontSize="small"
+                        style={{ color: '#58C33C' }}
+                      />
+                    )
+                  ) : selectedDrofPoint?.puHeader.jo.status.toLocaleLowerCase() !=
+                    'rejected' ? (
+                    <CheckCircleRoundedIcon
+                      fontSize="small"
+                      style={{ color: '#58C33C' }}
+                    />
+                  ) : (
+                    <ErrorRoundedIcon
+                      fontSize="small"
+                      style={{ color: '#FF6166' }}
+                    />
+                  )}
+                </Box>
+
+                {typePoint == 'pu'
+                  ? t(
+                      `status.${selectedPuPoint?.jo.status.toLocaleLowerCase()}`
+                    )
+                  : t(
+                      `status.${selectedDrofPoint?.puHeader.jo.status.toLocaleLowerCase()}`
+                    )}
+                {'  '}
+                {typePoint == 'pu'
+                  ? displayCreatedDate(selectedPuPoint?.puAt || '')
+                  : displayCreatedDate(selectedDrofPoint?.drofAt || '')}
               </Typography>
               <Box sx={{ marginY: 4 }}>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.vehicleCategory')} : 物流公司
+                  {t('logisticDashboard.logisticsCompany')} :
+                  {typePoint == 'pu'
+                    ? selectedPuPoint?.senderName
+                    : selectedDrofPoint?.puHeader.receiverName}
                 </Typography>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.vehicleCategory')} : PO12345678
+                  {t('logisticDashboard.poNumber')} :
+                  {typePoint == 'pu'
+                    ? selectedPuPoint?.jo.picoId
+                    : selectedDrofPoint?.puHeader.jo.picoId}
                 </Typography>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.vehicleCategory')} : 寄件地址
+                  {t('logisticDashboard.shippingAddress')} :
+                  {typePoint == 'pu'
+                    ? selectedPuPoint?.senderAddr
+                    : selectedDrofPoint?.puHeader.receiverAddr}
                 </Typography>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.vehicleCategory')} : 廢紙
+                  {t('logisticDashboard.recyc')} :
+                  {typePoint == 'pu'
+                    ? selectedPuPoint?.jo.recycType
+                    : selectedDrofPoint?.puHeader.jo.recycType}
                 </Typography>
               </Box>
               <Box>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.vehicleCategory')} : 紙箱
+                  {t('common.pckgCtegory')} :
+                  {selectedPuPoint?.puDetail[0].packageTypeId}
                 </Typography>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.vehicleCategory')} : 1
-                </Typography>
-                <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.vehicleCategory')} : 20 Kg
+                  {t('logisticDashboard.packingWeight')} :
+                  {typePoint == 'pu'
+                    ? selectedPuPoint?.jo.weight.toString()
+                    : selectedDrofPoint?.puHeader.jo.weight.toString()}
+                  Kg
                 </Typography>
               </Box>
             </Box>
