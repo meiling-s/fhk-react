@@ -1224,3 +1224,8 @@ export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/po/${poId}`
 })
+
+export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/collectors/dashboard/colPointRecyclables/${tenantId}`
+})

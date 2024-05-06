@@ -1071,5 +1071,20 @@
       "estimated_weight": "預計重量",
       "arrived": "到達地點"
     }
+  },
+  "dashboard_recyclables": {
+    "recycling_data": "回收物數據",
+    "different_recycling_weights": "不同回收物重量",
+    "date_range": "日期範圍",
+    "recycling_point": "回收點",
+    "plastic": "塑膠",
+    "waste_paper": "廢紙r",
+    "metal": "金屬",
+    "glass_bottle": "玻璃樽",
+    "regulated_electrical": "受管制電器(四電一腦)",
+    "unregulated_electrical": "非受管制電器",
+    "rechargeable_battery": "充電池",
+    "compact_fluorescent": "慳電膽和光管",
+    "paper_drink_box": "紙包飲品盒"
   }
 }

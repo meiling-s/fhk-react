@@ -63,6 +63,7 @@ import CustomerAccount from './pages/Logistic/Account'
 import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder";
 import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
 import PickupPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder"
+import DashboardRecyclables from "./pages/Collector/Dashboard/Recyclables";
 
 const Router = () => {
   return (
@@ -119,6 +120,7 @@ const Router = () => {
            <Route path="/collector/notice/" element={<Notice />} />
           <Route path="/collector/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/collector/staff" element={<StaffManagement />} />
+          <Route path="/collector/dashboard" element={<DashboardRecyclables />} />
         </Route>
 
         <Route element={<MainLayout />}>
