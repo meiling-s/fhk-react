@@ -4,7 +4,8 @@ import {
   CREATE_STAFF,
   EDIT_STAFF,
   GET_LOGINID_LIST,
-  GET_TITLE_LIST
+  GET_TITLE_LIST,
+  GET_STAFF_TITLE
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'

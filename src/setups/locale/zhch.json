@@ -539,7 +539,8 @@
     "picture": "图片",
     "basic": "基本",
     "additional": "额外",
-    "imgNote": "*照片应展示车辆概况、举升尾板、车牌及采集操作情况。"
+    "imgNote": "*照片应展示车辆概况、举升尾板、车牌及采集操作情况。",
+    "loading_capacity": "载重量 (kg)"
   },
   "inventory": {
     "inventory": "存货",
@@ -622,6 +623,7 @@
     "employeeName": "员工姓名",
     "enterEmployeeName": "输入员工姓名",
     "employeeChineseName": "中文 员工繁体中文姓名",
+    "employeeEnglishName": "员工英文姓名",
     "employeeChineseCn": "员工中文简体中文姓名",
     "position": "职位",
     "loginName": "登录名",
@@ -925,7 +927,13 @@
     "activate": "活性",
     "deactive": "停用",
     "true": "真的",
-    "false": "错误的"
+    "false": "错误的",
+    "number_format": "数字格式",
+    "date_format": "日期格式",
+    "weight_tolerance": "允许重量误差 (kg)",
+    "currency_category": "货币类别",
+    "introduction": "簡介",
+    "monetary": "名称"
   },
   "packaging_unit": {
     "packaging_unit": "包装单位",
@@ -1066,5 +1074,31 @@
     "packagingCategory:": "包装类别",
     "packingQuantity": "包装数量",
     "packingWeight": "包装重量"
+  },
+  "recycling_unit": {
+    "recycling_and_related_units": "回收物及相关单位",
+    "recyclable_subtype_semi_complete": "回收物、半制成品、制成品类别",
+    "recyclable_code": "编码",
+    "packaging_unit": "包装单位",
+    "weight_unit": "磅重单位",
+    "main_category": "主类别",
+    "sub_category": "次类别",
+    "1kg_equivalent": "1kg 相等于",
+    "confirm_delete": "确认删除",
+    "confirm_text": "如你要删除主类别, 相关的次类别也会删除, 需要继续吗?",
+    "weight_error": "权重不能低于0"
+  },
+  "recycling_point": {
+    "recycling_point": "回收点",
+    "engineering_land": "工程用地类别",
+    "place": "地点",
+    "capacity": "容量",
+    "state": "状态",
+    "house_place": "房屋或场所类别",
+    "residence": "是否住宅",
+    "epd": "是否EPD 认证类别",
+    "offsite": "上门回收服务",
+    "community": "社区收集点",
+    "service_type": "服务种类"
   }
 }

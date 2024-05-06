@@ -538,7 +538,8 @@
     "picture": "Picture",
     "basic": "Basic",
     "additional": "Additional",
-    "imgNote": "*the photo should exhibit the overview, tail lift, car plate and collecting operation of the vehicle."
+    "imgNote": "*the photo should exhibit the overview, tail lift, car plate and collecting operation of the vehicle.",
+    "loading_capacity": "Loading Capacity (kg)"
   },
   "inventory": {
     "inventory": "Inventory",
@@ -621,6 +622,7 @@
     "employeeName": "Employee Name",
     "enterEmployeeName": "Enter Employee Name",
     "employeeChineseName": "Chinese Traditional Chinese name of the employee",
+    "employeeEnglishName": "English Name of the employee",
     "employeeChineseCn": "Employee's Chinese Simplified Chinese name",
     "position": "Position",
     "loginName": "Login Name",
@@ -949,7 +951,13 @@
     "activate": "Activate",
     "deactive": "Inactive",
     "true": "True",
-    "false": "False"
+    "false": "False",
+    "number_format": "Number Format",
+    "date_format": "Date Format",
+    "weight_tolerance": "Weight Tolerance (kg)",
+    "currency_category": "Currency Category",
+    "introduction": "Introduction",
+    "monetary": "Monetary"
   },
   "packaging_unit": {
     "packaging_unit": "Packaging Unit",
@@ -1092,5 +1100,31 @@
     "packagingCategory:": "Packaging category",
     "packingQuantity": "Packing quantity",
     "packingWeight": "Packing weight"
+  },
+  "recycling_unit": {
+    "recycling_and_related_units": "Recycling and Related Units",
+    "recyclable_subtype_semi_complete": "Recyclable type, subtype, semi-product or completed product",
+    "recyclable_code": "Recyclable Code",
+    "packaging_unit": "Packaging Unit",
+    "weight_unit": "Weight Unit",
+    "main_category": "Main Category",
+    "sub_category": "Sub Category",
+    "1kg_equivalent": "1kg is equivalent to",
+    "confirm_delete": "Confirm Delete",
+    "confirm_text": "If you want to delete the main type, the related subtype will also be deleted. Do you need to continue?",
+    "weight_error": "Weight can't be below 0"
+  },
+  "recycling_point": {
+    "recycling_point": "Recycling Point",
+    "engineering_land": "Engineering Land Category",
+    "place": "Place",
+    "capacity": "Capacity",
+    "state": "State",
+    "house_place": "House or Place Category",
+    "residence": "Residence",
+    "epd": "Whether EPD certification category",
+    "offsite": "Off-site Collection Service",
+    "community": "Community Collection Point",
+    "service_type": "Service type"
   }
 }
