@@ -13,7 +13,6 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
 import dayjs from "dayjs";
-import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import { styles } from '../../constants/styles';
 
 ChartJS.register(
@@ -51,7 +50,6 @@ const Dashboard = ({
     dataset, 
     onChangeFromDate,
     onChangeToDate,
-    onHandleSearch,
     frmDate,
     toDate,
     collectionIds,
