@@ -118,7 +118,7 @@ const Dashboard = ({
                                     value={frmDate}
                                     disableOpenPicker
                                     slotProps={{ textField: { size: 'small' } }}
-                                    sx={{padding: 0, width: 110, border: 0}}
+                                    sx={localstyles.datePicker}
                                     maxDate={toDate}
                                     onChange={(value) => {
                                         if(value) onChangeFromDate(value)
@@ -130,7 +130,7 @@ const Dashboard = ({
                                     value={toDate}
                                     disableOpenPicker
                                     slotProps={{ textField: { size: 'small' } }}
-                                    sx={{padding: 0, width: 110}}
+                                    sx={localstyles.datePicker}
                                     minDate={frmDate}
                                     onChange={(value) => {
                                         if(value) onChangeToDate(value)
@@ -160,5 +160,15 @@ const Dashboard = ({
         </>
     )
 };
+
+const localstyles = {
+    datePicker: () => ({
+        padding: 0, 
+        width: 110,
+        '.react-datepicker-wrapper input[type="text"]' :{
+            border: 'none'
+        }
+    })
+  }
 
 export default Dashboard

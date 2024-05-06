@@ -100,49 +100,49 @@ const Recyclables: FunctionComponent = () => {
                 } else if(type.recyclableNameEng === 'Glass Bottles'){
                     datasets.push({
                         id: type.recyclableNameEng,
-                        label: type.recyclableNameEng,
+                        label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
                         backgroundColor: '#4FB5F5'
                     })
                 } else if(type.recyclableNameEng === 'Paper'){ 
                     datasets.push({
                         id: type.recyclableNameEng,
-                        label: type.recyclableNameEng,
+                        label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
                         backgroundColor: '#7ADFF1'
                     })
                 } else if(type.recyclableNameEng === 'Fluorescent Lamps and Tubes'){ 
                     datasets.push({
                         id: type.recyclableNameEng,
-                        label: type.recyclableNameEng,
+                        label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
                         backgroundColor: '#ECAB05'
                     })
                 } else if(type.recyclableNameEng === 'Small Electrical Appliances'){ 
                     datasets.push({
                         id: type.recyclableNameEng,
-                        label: type.recyclableNameEng,
+                        label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
                         backgroundColor: '#5AE9D8'
                     })
                 } else if(type.recyclableNameEng === 'Plastics'){
                     datasets.push({
                         id: type.recyclableNameEng,
-                        label: type.recyclableNameEng,
+                        label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
                         backgroundColor: '#FF9FB7'
                     })
                 } else if(type.recyclableNameEng === 'Non-recyclable'){
                     datasets.push({
                         id: type.recyclableNameEng,
-                        label: type.recyclableNameEng,
+                        label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
                         backgroundColor: '#F9B8FF'
                     })
                 } else if(type.recyclableNameEng === 'Cardboard'){
                     datasets.push({
                         id: type.recyclableNameEng,
-                        label: type.recyclableNameEng,
+                        label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
                         backgroundColor: '#C69AFF'
                     })
@@ -156,7 +156,7 @@ const Recyclables: FunctionComponent = () => {
   
     useEffect(() => {
         getRecyclablesDashboard()
-    }, [])
+    }, [recycType])
 
     const onHandleSearch = () => {
         getRecyclablesDashboard()
