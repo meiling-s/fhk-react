@@ -1124,7 +1124,8 @@
     "packingQty": "包裝數量",
     "packingWeight": "包裝重量",
     "recyc": "回收類別",
-    "packageName": "包裝類別"
+    "packageName": "包裝類別",
+    "inputDriverNumber": "請輸入司機號碼"
   },
   "dashboard_recyclables": {
     "data": "數據",

@@ -1127,7 +1127,8 @@
     "packingQty": "Packing quantity",
     "packingWeight": "Packing weight",
     "recyc": "Recycling category",
-    "packageName" : "Package category "
+    "packageName" : "Package category ",
+    "inputDriverNumber": "Please enter driver number"
   },
   "dashboard_recyclables": {
     "data": "Data",

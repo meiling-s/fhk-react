@@ -1102,7 +1102,8 @@
     "packingQty": "包装数量",
     "packingWeight": "包装重量",
     "recyc": "回收类别",
-    "packageName": "包装类别"
+    "packageName": "包装类别",
+    "inputDriverNumber": "请输入司机号码"
   },
   "dashboard_recyclables": {
     "data": "数据",

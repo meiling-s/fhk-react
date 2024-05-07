@@ -41,6 +41,8 @@ interface PuAndDropOffMarker {
   id: number
   type: string
   gpsCode: LatLngTuple
+  senderAddr: string
+  receiverAddr: string
 }
 
 const LogisticDashboard = () => {
@@ -63,6 +65,7 @@ const LogisticDashboard = () => {
   const [selectedDrofPoint, setSelectedDrof] = useState<DropOffPoint | null>(
     null
   )
+  const [hoveredMarker, setHoveredMarker] = useState<number | null>(null)
   const todayDate = dayjs().format('YYYY-MM-DD')
 
   useEffect(() => {
@@ -107,7 +110,7 @@ const LogisticDashboard = () => {
     const result = await getAllPackagingUnit(0, 1000)
     const data = result?.data
 
-    if (data.content) {
+    if (data) {
       setPackagingMapping(data.content)
     }
   }
@@ -147,6 +150,17 @@ const LogisticDashboard = () => {
       html: `<div class="custom-marker w-6 h-6 rounded-3xl" style="background-color:${getMarkerColor(
         type
       )} "></div>`
+    })
+
+  const hoverCustomIcon = (type: string, address: string) =>
+    L.divIcon({
+      className: 'custom-icon',
+      html: `<div><div class="custom-marker w-6 h-6 rounded-3xl" style="background-color:${getMarkerColor(
+        type
+      )}"></div><div class="w-max py-1 px-2 absolute mt-4 left-1/4 ml-4 translate-x-[-50%] rounded-lg" style="background-color:${
+        type === 'pu' ? '#AFE397' : '#F5A4B7'
+      }">${address}</div></<div>`,
+      iconAnchor: [3, 6]
     })
 
   const bounds = useMemo(() => {
@@ -212,7 +226,9 @@ const LogisticDashboard = () => {
         tempPUpoint.push({
           id: pu.puId,
           type: 'pu',
-          gpsCode: pu.senderAddrGps.length > 1 ? pu.senderAddrGps : [0.0, 0.0]
+          gpsCode: pu.senderAddrGps.length > 1 ? pu.senderAddrGps : [0.0, 0.0],
+          senderAddr: pu.senderAddr,
+          receiverAddr: pu.receiverAddr
         })
       })
       setPickupPoint(result.data)
@@ -247,7 +263,9 @@ const LogisticDashboard = () => {
           id: drof.drofId,
           type: 'drop',
           gpsCode:
-            drofReceiverAddrGps.length > 1 ? drofReceiverAddrGps : [0.0, 0.0]
+            drofReceiverAddrGps.length > 1 ? drofReceiverAddrGps : [0.0, 0.0],
+          senderAddr: pu.senderAddr,
+          receiverAddr: pu.receiverAddr
         })
       })
 
@@ -283,6 +301,17 @@ const LogisticDashboard = () => {
     }
   }
 
+  // Function to handle mouseover event
+  const handleMouseOver = (index: number) => {
+    setHoveredMarker(index)
+  }
+
+  // Function to handle mouseout event
+  const handleMouseOut = () => {
+    setHoveredMarker(null)
+    setShowPuDropPoint(false)
+  }
+
   return (
     <Box
       sx={{
@@ -298,7 +327,7 @@ const LogisticDashboard = () => {
       <Box sx={{ width: '70%', height: '100%', marginTop: '-32px' }}>
         <MapContainer
           center={[22.4241897, 114.2117632]}
-          zoom={11}
+          zoom={12}
           zoomControl={false}
         >
           <FitBoundsOnLoad />
@@ -310,14 +339,27 @@ const LogisticDashboard = () => {
             <Marker
               key={index}
               position={position.gpsCode}
-              icon={customIcon(position.type)}
+              // icon={customIcon(position.type)}
+              icon={
+                hoveredMarker === index
+                  ? hoverCustomIcon(
+                      position.type,
+                      position.type == 'pu'
+                        ? position.senderAddr
+                        : position.receiverAddr
+                    )
+                  : customIcon(position.type)
+              }
               eventHandlers={{
                 mouseover: () => {
                   showDetailPoint(position)
+                  handleMouseOver(index)
                 },
-                mouseout: () => {
-                  setShowPuDropPoint(false)
-                }
+                // mouseout: () => {
+
+                //   setShowPuDropPoint(false)
+                // }
+                mouseout: handleMouseOut
               }}
             />
           ))}
@@ -344,7 +386,7 @@ const LogisticDashboard = () => {
               handleSearch(numericValue)
             }}
             sx={style.inputState}
-            placeholder={t('pick_up_order.search_company_name')}
+            placeholder={t('logisticDashboard.inputDriverNumber')}
             inputProps={{
               inputMode: 'numeric',
               pattern: '[0-9]*',
