@@ -21,7 +21,7 @@
     "no": "否",
     "createdDatetime": "建立時間",
     "lastUpdateDatetime": "上次更新時間",
-    "pckgCtegory:": "包裝類別"
+    "pckgCategory:": "包裝類別"
   },
   "col": {
     "createCP": "建立回收點",
@@ -1121,9 +1121,9 @@
     "poNumber": "採購訂單號",
     "shippingAddress": "送貨地址",
     "recyclingCategory:": "回收類別",
-    "package:": "包裝類別",
     "packingQty": "包裝數量",
     "packingWeight": "包裝重量",
-    "recyc": "回收類別"
+    "recyc": "回收類別",
+    "packageName": "包裝類別"
   }
 }

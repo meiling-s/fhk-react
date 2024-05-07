@@ -28,10 +28,13 @@ import {
 } from '../../../interfaces/dashboardLogistic'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { displayCreatedDate, displayLocalDate } from '../../../utils/utils'
+import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
+import { PackagingUnit } from '../../../interfaces/packagingUnit'
 
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
+import i18n from '../../../setups/i18n'
 
 interface PuAndDropOffMarker {
   id: number
@@ -41,8 +44,8 @@ interface PuAndDropOffMarker {
 
 const LogisticDashboard = () => {
   const { t } = useTranslation()
-  // const [driverId, setDriverId] = useState<string | null>(null)
-  const { vehicleType } = useContainer(CommonTypeContainer)
+  const { vehicleType, recycType } = useContainer(CommonTypeContainer)
+  const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
   const [driverInfo, setDriverInfo] = useState<DriverInfo | null>(null)
   const [vehicleCategory, setVehicleCategory] = useState<string>('')
   const [puAndDropOffMarker, setPuAndDropOffMarker] = useState<
@@ -67,8 +70,43 @@ const LogisticDashboard = () => {
   // }
 
   useEffect(() => {
+    initPackageList()
     console.log('puAndDropOffMarker', puAndDropOffMarker)
   }, [puAndDropOffMarker])
+
+  const initPackageList = async () => {
+    const result = await getAllPackagingUnit(0, 1000)
+    const data = result?.data
+
+    if (data.content) {
+      setPackagingMapping(data.content)
+    }
+  }
+
+  const getPackageName = (packagingTypeId: string) => {
+    const selectedPackage = packagingMapping.find(
+      (item) => item.packagingTypeId == packagingTypeId
+    )
+
+    if (selectedPackage) {
+      var name = '-'
+      switch (i18n.language) {
+        case 'enus':
+          name = selectedPackage?.packagingNameEng
+          break
+        case 'zhch':
+          name = selectedPackage?.packagingNameTchi
+          break
+        case 'zhhk':
+          name = selectedPackage?.packagingNameSchi
+          break
+        default:
+          name = selectedPackage?.packagingNameEng
+          break
+      }
+      return name
+    }
+  }
 
   const markerPositions: PuAndDropOffMarker[] = [
     {
@@ -113,6 +151,30 @@ const LogisticDashboard = () => {
       }
     }, [bounds, map])
     return null
+  }
+
+  const mappingRecyName = (recycTypeId: string) => {
+    const matchingRecycType = recycType?.find(
+      (recyc) => recycTypeId === recyc.recycTypeId
+    )
+    if (matchingRecycType) {
+      var name = '-'
+      switch (i18n.language) {
+        case 'enus':
+          name = matchingRecycType.recyclableNameEng
+          break
+        case 'zhch':
+          name = matchingRecycType.recyclableNameSchi
+          break
+        case 'zhhk':
+          name = matchingRecycType.recyclableNameTchi
+          break
+        default:
+          name = matchingRecycType.recyclableNameTchi
+          break
+      }
+      return name
+    }
   }
 
   const getDriverInfo = async (driverIdValue: string) => {
@@ -279,13 +341,14 @@ const LogisticDashboard = () => {
               {t('logisticDashboard.driverInfo')}
             </Typography>
             <Typography sx={{ ...style.typo2, marginTop: 1 }}>
-              {t('logisticDashboard.driverNumb')} : {driverInfo.contactNo}
+              {t('logisticDashboard.driverNumb')} {' : '} {driverInfo.contactNo}
             </Typography>
             <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
-              {t('logisticDashboard.driverLicense')} : {driverInfo.licenseNo}
+              {t('logisticDashboard.driverLicense')} {' : '}
+              {driverInfo.licenseNo}
             </Typography>
             <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
-              {t('logisticDashboard.vehicleCategory')} :{' '}
+              {t('logisticDashboard.vehicleCategory')} {' : '}
               {vehicleCategory ? vehicleCategory : '-'}
             </Typography>
           </Grid>
@@ -307,7 +370,7 @@ const LogisticDashboard = () => {
                   : selectedDrofPoint?.puHeader.receiverName}
               </Typography>
               <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
-                {t('logisticDashboard.receiptDate')} :
+                {t('logisticDashboard.receiptDate')} {' : '}
                 {typePoint == 'pu'
                   ? displayLocalDate(selectedPuPoint?.puAt || '')
                   : displayLocalDate(selectedDrofPoint?.drofAt || '')}
@@ -317,13 +380,12 @@ const LogisticDashboard = () => {
                   fontSize: 13,
                   color: typePoint == 'pu' ? '#58C33C' : '#FF4242',
                   fontWeight: '500',
-                  marginTop: 0.5,
                   display: 'flex',
                   justifyContent: 'start',
                   alignItems: 'center'
                 }}
               >
-                <Box sx={{ marginRight: 1, marginTop: 0.5 }}>
+                <Box sx={{ marginRight: 1, marginTop: '4px' }}>
                   {typePoint == 'pu' ? (
                     selectedPuPoint?.jo.status.toLocaleLowerCase() !=
                     'rejected' ? (
@@ -363,39 +425,43 @@ const LogisticDashboard = () => {
                   ? displayCreatedDate(selectedPuPoint?.puAt || '')
                   : displayCreatedDate(selectedDrofPoint?.drofAt || '')}
               </Typography>
-              <Box sx={{ marginY: 4 }}>
+              <Box sx={{ marginY: 2 }}>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.logisticsCompany')} :
+                  {t('logisticDashboard.logisticsCompany')} {' : '}
                   {typePoint == 'pu'
                     ? selectedPuPoint?.senderName
                     : selectedDrofPoint?.puHeader.receiverName}
                 </Typography>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.poNumber')} :
+                  {t('logisticDashboard.poNumber')} {' : '}
                   {typePoint == 'pu'
                     ? selectedPuPoint?.jo.picoId
                     : selectedDrofPoint?.puHeader.jo.picoId}
                 </Typography>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.shippingAddress')} :
+                  {t('logisticDashboard.shippingAddress')} {' : '}
                   {typePoint == 'pu'
                     ? selectedPuPoint?.senderAddr
                     : selectedDrofPoint?.puHeader.receiverAddr}
                 </Typography>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.recyc')} :
+                  {t('logisticDashboard.recyc')} {' : '}
                   {typePoint == 'pu'
-                    ? selectedPuPoint?.jo.recycType
-                    : selectedDrofPoint?.puHeader.jo.recycType}
+                    ? mappingRecyName(selectedPuPoint?.jo.recycType || '-')
+                    : mappingRecyName(
+                        selectedDrofPoint?.puHeader.jo.recycType || '-'
+                      )}
                 </Typography>
               </Box>
               <Box>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('common.pckgCtegory')} :
-                  {selectedPuPoint?.puDetail[0].packageTypeId}
+                  {t('logisticDashboard.packageName')} {' : '}
+                  {getPackageName(
+                    selectedPuPoint?.puDetail[0].packageTypeId || ''
+                  )}
                 </Typography>
                 <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.packingWeight')} :
+                  {t('logisticDashboard.packingWeight')} {' : '}
                   {typePoint == 'pu'
                     ? selectedPuPoint?.jo.weight.toString()
                     : selectedDrofPoint?.puHeader.jo.weight.toString()}

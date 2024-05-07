@@ -21,7 +21,7 @@
     "no": "否",
     "createdDatetime": "建立时间",
     "lastUpdateDatetime": "上次更新时间",
-    "pckgCtegory:": "包装类别"
+    "pckgCategory:": "包装类别"
   },
   "col": {
     "createCP": "建立回收点",
@@ -1099,9 +1099,9 @@
     "poNumber": "采购订单号",
     "shippingAddress": "送货地址",
     "recyclingCategory:": "回收类别",
-    "package:": "包装类别",
     "packingQty": "包装数量",
     "packingWeight": "包装重量",
-    "recyc": "回收类别"
+    "recyc": "回收类别",
+    "packageName": "包装类别"
   }
 }

@@ -21,7 +21,7 @@
     "no": "No",
     "createdDatetime": "Create datetime",
     "lastUpdateDatetime": "Last update datetime",
-    "pckgCtegory:": "Packaging category"
+    "pckgCategory:": "Packaging category"
   },
   "col": {
     "createCP": "Create collection point",
@@ -1124,9 +1124,9 @@
     "poNumber": "PO Number",
     "shippingAddress": "Shipping address",
     "recyclingCategory:": "Recycling category",
-    "package:": "Packaging category",
     "packingQty": "Packing quantity",
     "packingWeight": "Packing weight",
-    "recyc": "Recycling category"
+    "recyc": "Recycling category",
+    "packageName" : "Package category "
   }
 }
