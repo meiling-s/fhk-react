@@ -6,7 +6,7 @@ interface RecycleCardProps {
     name: string;
   }
 
-const RecycleCard = ({ name, bgcolor,fontcolor,showImage,recycleName,recycleType,weight}: { name: string, bgcolor :string , fontcolor:string,showImage:boolean,recycleName:string,recycleType:string,weight:number}) => {
+const RecycleCard = ({ name ,packageTypeId, bgcolor, fontcolor, showImage, recycleName, recycleType, weight}: { name: string, packageTypeId: string, bgcolor :string , fontcolor:string,showImage:boolean,recycleName:string,recycleType:string,weight:number}) => {
     
   const [open, setOpen] = useState<boolean>(false);
 
@@ -15,7 +15,6 @@ const RecycleCard = ({ name, bgcolor,fontcolor,showImage,recycleName,recycleType
     {imageUrl:'https://thanam.com.my/wp-content/uploads/2022/07/newspapers-g19e6b2746_1920.png'},
     {imageUrl:'https://thanam.com.my/wp-content/uploads/2022/07/newspapers-g19e6b2746_1920.png'},
   ];
-
   return (
     <Box
     sx={{
@@ -36,7 +35,7 @@ const RecycleCard = ({ name, bgcolor,fontcolor,showImage,recycleName,recycleType
       <Box flexDirection="row" display="flex">
         <Box alignSelf="center" sx={{ mr: "15px" }}>
           <BackgroundLetterAvatars
-            name={name}
+            name={packageTypeId}
             size={33}
             backgroundColor={bgcolor}
             fontColor={fontcolor}

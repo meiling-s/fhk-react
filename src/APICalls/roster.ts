@@ -16,7 +16,7 @@ export const getRosterList = async (startAt: string) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_ROSTER_LIST(token.tenantId, startAt),
     })
 
@@ -30,7 +30,7 @@ export const getRosterList = async (startAt: string) => {
 export const createRoster = async (data: any) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...CREATE_ROSTER,
       data: data
     })
@@ -47,7 +47,7 @@ export const addRosterStaff = async (rosterId: any, staffId: string) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...ADD_STAFF_ROSTER(token.tenantId, rosterId, staffId)
     })
 
@@ -63,7 +63,7 @@ export const deleteRosterStaff = async (rosterId: any, staffId: string) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...DELETE_STAFF_ROSTER(token.tenantId, rosterId, staffId)
     })
 
@@ -79,7 +79,7 @@ export const updateRoster = async (data: any, rosterId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...UPDATE_ROSTER(token.tenantId, rosterId),
       data: data
     })
@@ -96,7 +96,7 @@ export const cancelRoster = async (data: any, rosterId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...CANCEL_ROSTER(token.tenantId, rosterId),
       data: data
     })

@@ -178,7 +178,7 @@ function MainDrawer() {
       Staff: {
         name: t('staffManagement.staff'),
         icon: <AccountBoxOutlinedIcon />,
-        onClick: () => navigate('/warehouse/staff'),
+        onClick: () => navigate(`/${realm}/staff`),
         collapse: false
       },
       StaffEnquiry: {
@@ -190,7 +190,7 @@ function MainDrawer() {
       'Notification template': {
         name: t('notification.notification_menu'),
         icon: <ViewQuiltOutlinedIcon />,
-        onClick: () => navigate(`/${realmApiRoute}/notice`),
+        onClick: () => navigate(`/${realm}/notice`),
         collapse: false
       },
       Driver: {

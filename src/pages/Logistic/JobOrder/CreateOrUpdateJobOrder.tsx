@@ -397,11 +397,11 @@ const JobOrder = () => {
                     </div>
                     <div className="flex flex-1 items-center gap-x-1">
                       <p className="font-semibold text-[#535353]">
-                        {item.receiverName}
+                        {item.senderName}
                       </p>
                       <ArrowForwardIcon fontSize="small" />
                       <p className="font-semibold text-[#535353]">
-                        {item.senderName}
+                        {item.receiverName}
                       </p>
                     </div>
                   </div>
@@ -415,27 +415,27 @@ const JobOrder = () => {
                     </div>
                     <div className="flex flex-1 items-center gap-x-1">
                       <p className="font-semibold text-[#535353]">
-                        {item.receiverAddr}
+                        {item.senderAddr}
                       </p>
                       <ArrowForwardIcon fontSize="small" />
                       <p className="font-semibold text-[#535353]">
-                        {item.senderAddr}
+                        {item.receiverAddr}
                       </p>
                     </div>
                   </div>
 
                   {!item.driverId && !item.plateNo ? (
                     <div
-                      className={`flex flex-col items-center justify-center h-[113px] rounded-md w-full border border-solid ${
+                      className={`flex flex-col items-center justify-center h-[113px] rounded-md w-full border border-solid hover:cursor-pointer ${
                         isActive && index == id
                           ? 'bg-white'
                           : 'border-[#8AF3A3]'
                       }`}
+                      onClick={() => onHandleAssign(index)}
                     >
                       <AddCircleIcon
                         fontSize="large"
-                        className="text-[#7CE495] hover:cursor-pointer"
-                        onClick={() => onHandleAssign(index)}
+                        className="text-[#7CE495]"
                       />
                       <label htmlFor="" className="font-semibold">
                         {t('jobOrder.assign_driver')}

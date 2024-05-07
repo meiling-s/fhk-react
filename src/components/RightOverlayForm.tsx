@@ -12,7 +12,7 @@ type HeaderProps = {
   onCloseHeader?: () => void
   onSubmit?: () => void
   onDelete?: () => void
-  action?: 'add' | 'edit' | 'delete' | 'none',
+  action?: 'add' | 'edit' | 'delete' | 'none'
   statusLabel?: string
 }
 
@@ -23,7 +23,7 @@ type RightOverlayFormProps = {
   anchor?: 'left' | 'right'
   showHeader?: boolean
   headerProps?: HeaderProps
-  action?: 'add' | 'edit' | 'delete' | 'none',
+  action?: 'add' | 'edit' | 'delete' | 'none'
 }
 
 const HeaderSection: React.FC<HeaderProps> = ({
@@ -40,66 +40,62 @@ const HeaderSection: React.FC<HeaderProps> = ({
   return (
     <div className="header-section">
       <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
-        <div className='md:flex items-center gap-2 sm:block'>
-        <div className="flex-1 flex flex-col items-start justify-start sm:mb-2">
-          <b className="md:text-sm sm:text-xs">{title}</b>
-          <div className="md:text-smi sm:text-2xs text-grey-dark text-left">
-            {subTitle}
+        <div className="md:flex items-center gap-2 sm:block">
+          <div className="flex-1 flex flex-col items-start justify-start sm:mb-2">
+            <b className="md:text-sm sm:text-xs">{title}</b>
+            <div className="md:text-smi sm:text-2xs text-grey-dark text-left">
+              {subTitle}
+            </div>
+          </div>
+          {statusLabel && <StatusCard status={statusLabel} />}
+        </div>
+        <div className="right-action flex items-center">
+          {action !== 'none' && (
+            <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
+              <Button
+                sx={[
+                  styles.buttonFilledGreen,
+                  {
+                    width: 'max-content',
+                    height: '40px'
+                  }
+                ]}
+                disabled={action === 'delete'}
+                onClick={onSubmit}
+              >
+                {submitText}
+              </Button>
+
+              {cancelText != '' && (
+                <Button
+                  sx={[
+                    styles.buttonOutlinedGreen,
+                    {
+                      width: 'max-content',
+                      height: '40px'
+                    }
+                  ]}
+                  variant="outlined"
+                  disabled={action === 'add'}
+                  onClick={onDelete}
+                >
+                  {cancelText}
+                </Button>
+              )}
+            </div>
+          )}
+
+          <div className="close-icon ml-2 cursor-pointer">
+            <img
+              className="relative w-6 h-6 overflow-hidden shrink-0"
+              alt=""
+              src="/collapse1.svg"
+              onClick={onCloseHeader}
+            />
           </div>
         </div>
-        {statusLabel && (
-          <StatusCard status={statusLabel} />
-          
-        )}
         </div>
-        <div className='right-action flex items-center'>
-        {action !== 'none' && (
-          <div className="h-9 flex flex-row items-start justify-start gap-[12px] text-smi text-white">
-            <Button
-              sx={[
-                styles.buttonFilledGreen,
-                {
-                  width: 'max-content',
-                  height: '40px'
-                }
-              ]}
-              disabled={action === 'delete'}
-              onClick={onSubmit}
-            >
-              {submitText}
-            </Button>
-
-             <Button
-              sx={[
-                styles.buttonOutlinedGreen,
-                {
-                  width: 'max-content',
-                  height: '40px'
-                }
-              ]}
-              variant="outlined"
-              disabled={action === 'add'}
-              onClick={onDelete}
-            >
-               {cancelText}
-            </Button>
-          
-          </div>
-        )}
-
-        <div className="close-icon ml-2 cursor-pointer">
-          <img
-            className="relative w-6 h-6 overflow-hidden shrink-0"
-            alt=""
-            src="/collapse1.svg"
-            onClick={onCloseHeader}
-          />
-        </div>
-        </div>
-        
-       
       </div>
-    </div>
   )
 }
 

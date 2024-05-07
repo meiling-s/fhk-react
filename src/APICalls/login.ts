@@ -14,7 +14,7 @@ export const login = async (item: LoginItem) => {
 
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...axiosConfig,
       data: {
         loginId: item.username,

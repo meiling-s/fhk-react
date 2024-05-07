@@ -54,7 +54,7 @@ const handleCloses = () => {
 const getPicoById = async (picoId: string) => {
     try {
         const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         ...GET_PICK_UP_ORDER_BY_ID(picoId)
         })
 

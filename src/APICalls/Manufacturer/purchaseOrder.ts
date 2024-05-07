@@ -3,13 +3,17 @@ import {
   SEARCH_PURCHASE_ORDER,
   UPDATE_PURCHASE_ORDER_STATUS,
   GET_PURCHASE_ORDER_BY_ID,
-  GET_ALL_REASON_MANUFACTURER
+  GET_ALL_REASON_MANUFACTURER,
+  CREATE_PICK_UP_ORDER,
+  GET_MANULIST
 } from '../../constants/requests'
 
-import { returnApiToken } from '../../utils/utils'
-import { queryPurchaseOrder } from '../../interfaces/purchaseOrder'
+import { getBaseUrl, returnApiToken } from '../../utils/utils'
+import { PurChaseOrder, PurchaseOrderDetail, queryPurchaseOrder } from '../../interfaces/purchaseOrder'
 import axiosInstance from '../../constants/axiosInstance'
 import { Roles, localStorgeKeyName } from '../../constants/constant'
+import { CREATE_PURCHASE_ORDER, UPDATE_PURCHASE_ORDER } from '../../constants/purcahseOrder'
+import dayjs from 'dayjs'
 
 export const getAllPurchaseOrder = async (
   page: number,
@@ -39,14 +43,14 @@ export const getAllPurchaseOrder = async (
     }
 
     if (query?.poId) params.poId = query.poId
-    if (query?.fromCreatedAt) params.fromCreatedAt = query.fromCreatedAt
-    if (query?.toCreatedAt) params.toCreatedAt = query.toCreatedAt
+    if (query?.fromCreatedAt) params.fromCreatedAt = dayjs(query.fromCreatedAt).format('YYYY-MM-DD')
+    if (query?.toCreatedAt) params.toCreatedAt = dayjs(query.toCreatedAt).format('YYYY-MM-DD')
     if (query?.receiverAddr) params.receiverAddr = query.receiverAddr
     if (query?.recycType) params.recycType = query.recycType
     if (query?.status) params.status = query.status
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...SEARCH_PURCHASE_ORDER(auth.tenantId, path),
       params: params
     })
@@ -60,7 +64,7 @@ export const getAllPurchaseOrder = async (
 export const getPurchaseOrderById = async (poId: string) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...GET_PURCHASE_ORDER_BY_ID(poId)
     })
 
@@ -73,7 +77,7 @@ export const getPurchaseOrderById = async (poId: string) => {
 export const updateStatusPurchaseOrder = async (poId: string, data: any) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...UPDATE_PURCHASE_ORDER_STATUS(poId),
       data: data
     })
@@ -88,7 +92,7 @@ export const getPurchaseOrderReason = async () => {
   const auth = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: getBaseUrl(),
       ...GET_ALL_REASON_MANUFACTURER(auth.tenantId)
     })
 
@@ -96,4 +100,48 @@ export const getPurchaseOrderReason = async () => {
   } catch (e) {
     return null
   }
+}
+
+export const postPurchaseOrder = async (data:PurChaseOrder) => {
+  const auth = returnApiToken()
+  try{
+      const response = await axiosInstance({
+      baseURL: window.baseURL.administrator,
+          ...CREATE_PURCHASE_ORDER(auth.tenantId),
+          data: data
+      });
+      return response
+  } catch (e) {
+      return null;
+  }
+
+}
+
+export const updatetPurchaseOrder = async (data:PurChaseOrder) => {
+  const auth = returnApiToken()
+  try{
+      const response = await axiosInstance({
+      baseURL: window.baseURL.administrator,
+          ...UPDATE_PURCHASE_ORDER(auth.tenantId),
+          data: data
+      });
+      return response
+  } catch (e) {
+      return null;
+  }
+
+}
+
+export const getManuList = async () => {
+  const auth = returnApiToken()
+  try{
+      const response = await axiosInstance({
+      baseURL: getBaseUrl(),
+          ...GET_MANULIST(auth.realmApiRoute, auth.decodeKeycloack),
+      });
+      return response
+  } catch (e) {
+      return null;
+  }
+
 }

@@ -9,7 +9,7 @@ export const getAllCollectionPoint = async () => {
     const auth = returnApiToken()
     try {
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...GET_ALL_COLLECTIONPOINT(auth.tenantId)
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
@@ -28,7 +28,7 @@ export const getCollectionPoint = async (page: number, size: number) => {
   const auth = returnApiToken()
   try {
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_ALL_COLLECTIONPOINT(auth.tenantId),
       params:{
         page: page,
@@ -48,7 +48,7 @@ export const createCollectionPoint = async (data: createCP) => {
 
     try{
         const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
             ...CREATE_COLLECTIONPOINT,
             data: data
             // headers: {
@@ -72,7 +72,7 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
 
   try{
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
           ...axiosConfig,
           data: data
           // headers: {
@@ -95,7 +95,7 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
 
 //   try{
 //     const response = await axiosInstance({
-//        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+//        baseURL: window.baseURL.collector,
 //         ...GET_ALL_RECYC,
 //         
 //         // headers: {

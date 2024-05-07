@@ -1,13 +1,15 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box} from '@mui/material'
+import { Box, Grid} from '@mui/material'
 import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridRenderCellParams,} from '@mui/x-data-grid'
 import {  EDIT_OUTLINED_ICON} from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { NotifTemplate } from '../../../interfaces/notif'
 import { getListNotifTemplatePO, getListNotifTemplateStaff } from '../../../APICalls/notify'
 import { useNavigate } from 'react-router-dom'
-import { Roles } from '../../../constants/constant'
+import { Languages, Roles, localStorgeKeyName } from '../../../constants/constant'
 import { returnApiToken } from '../../../utils/utils'
+import { LanguagesNotif,Option } from "../../../interfaces/notif";
+import i18n from '../../../setups/i18n'
 
 function createNotifTemplate(
   templateId: string,
@@ -52,8 +54,29 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   const [selectedRow, setSelectedRow] = useState<NotifTemplate | null>(null)
   const [action, setAction] = useState<'edit'>('edit')
   const navigate = useNavigate();
-  const { realmApiRoute } = returnApiToken()
+  const { realmApiRoute,  } = returnApiToken()
+  const realm = localStorage.getItem(localStorgeKeyName.realm);
 
+  const languages: readonly LanguagesNotif[] = [
+    {
+        value: "ZH-CH",
+        langTchi: '簡體中文',
+        langSchi: '简体中文',
+        langEng: 'Simplified Chinese',
+    },
+    {
+        value: "ZH-HK",
+        langTchi: '繁體中文',
+        langSchi: '繁体中文',
+        langEng: 'Traditional Chinese',
+    },
+    {
+        value: "EN-US",
+        langTchi: '英語',
+        langSchi: '英语',
+        langEng: 'English',
+    }
+];
   
   useEffect(() => {
     if(selectedTab === 0) {
@@ -143,11 +166,15 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
       field: 'lang',
       headerName: t('notification.menu_staff.language'),
       width: 300,
-      type: 'string'
+      type: 'string',
+      valueFormatter: (params) => {
+        return setCurrentLanguage(params.value)
+      }
     },
     {
       field: 'edit',
       headerName: '',
+      width: 300,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -169,12 +196,36 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
       }
     }
   ]
+
+  const setCurrentLanguage = (lang: string) :string => {
+    let language: string = ''
+    if(lang === 'ZH-CH' && i18n.language === Languages.ZHCH) {
+        return language = '简体中文'
+    }else if(lang === 'ZH-CH' && i18n.language === Languages.ZHHK) {
+        return language = '簡體中文'
+    }else if(lang === 'ZH-CH' && i18n.language === Languages.ENUS) {
+        return language = 'Simplified Chinese'
+    }else if (lang === 'ZH-HK' && i18n.language === Languages.ZHCH) {
+        return language = '繁体中文'
+    }else if (lang === 'ZH-HK' && i18n.language === Languages.ZHHK) {
+        return language = '繁體中文'
+    }else if (lang === 'ZH-HK' && i18n.language === Languages.ENUS) {
+        return language = 'Traditional Chinese'
+    } else if (lang === 'EN-US' && i18n.language === Languages.ZHCH) {
+        return language = '英语'
+    }else if (lang === 'EN-US' && i18n.language === Languages.ZHHK) {
+        return language = '英语'
+    }else if (lang === 'EN-US' && i18n.language === Languages.ENUS) {
+        return language = 'English'
+    } 
+    return language
+}
   
   const handleAction = (
     params: GridRenderCellParams,
     action: 'edit'
   ) => {
-    navigate(`/${realmApiRoute}/notice/${params.row.notiType}/${params.row.templateId}`)
+    navigate(`/${realm}/notice/${params.row.notiType}/${params.row.templateId}`)
   }
 
   const handleSelectRow = (params: GridRowParams) => {
@@ -200,7 +251,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
               getRowId={(row) => row.templateId}
               hideFooter
               columns={columns}
-              checkboxSelection
+              // checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               sx={{

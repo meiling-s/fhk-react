@@ -1,4 +1,5 @@
 export type PurchaseOrderDetail = {
+  id?: any;
   poDtlId: number
   recycTypeId: string
   recyclableNameTchi: string
@@ -15,12 +16,14 @@ export type PurchaseOrderDetail = {
   weight: number
   createdBy: string
   updatedBy: string
+  pickupAt?: string
+  receiverAddr?: string
 }
 
 export type PurChaseOrder = {
   poId: string
   picoId: string
-  cusTenantId: string
+  cusTenantId?: string
   receiverAddr: string
   receiverAddrGps: [0]
   sellerTenantId: string
@@ -61,4 +64,44 @@ export type Row = {
   approvedAt: string
   status: string
   recyType: string
+}
+
+export type CreatePurchaseOrderDetail = {
+  poDtlId?: string,
+  index?: number,
+  poId: string,
+  recycTypeId: string,
+  recycSubTypeId: string,
+  weight: number,
+  createdBy: string,
+  updatedBy: string
+}
+
+export type CreatePurchaseOrder = {
+  picoId: string,
+  receiverAddr: string,
+  receiverAddrGps: [0],
+  sellerTenantId: string,
+  senderAddr: string,
+  senderAddrGps: [0],
+  senderName: string,
+  receiverName: string,
+  contactName: string,
+  contactNo: string,
+  paymentType: string,
+  status: string,
+  approvedAt: string,
+  rejectedAt: string,
+  approvedBy: string,
+  rejectedBy: string,
+  createdBy: string,
+  updatedBy: string,
+  purchaseOrderDetail: CreatePurchaseOrderDetail[]
+}
+
+export interface PaymentType {
+  paymentNameTchi: string
+  paymentNameSchi: string
+  paymentNameEng: string,
+  value: string
 }

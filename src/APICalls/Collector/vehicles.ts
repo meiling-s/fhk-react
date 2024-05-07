@@ -12,7 +12,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       const token = returnApiToken()
 
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...GET_VEHICLE(token.realmApiRoute, token.decodeKeycloack),
         params: {
           page: page,
@@ -35,7 +35,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       const token = returnApiToken()
 
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...CREATE_VEHICLE(token.realmApiRoute, token.decodeKeycloack),
         data: data,
         headers: {
@@ -54,7 +54,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       const token = returnApiToken()
 
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...EDIT_VEHICLE(token.realmApiRoute, token.decodeKeycloack, vehicleId),
         data: data,
         headers: {
@@ -75,7 +75,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       const token = returnApiToken()
 
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...DELETE_VEHICLE(token.realmApiRoute, token.decodeKeycloack, vehicleId),
         data: data,
         headers: {

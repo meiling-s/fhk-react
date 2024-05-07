@@ -13,7 +13,7 @@ export const getUserAccount = async () => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_USER_ACCOUNT(token.loginId),
       headers: {
         AuthToken: token.authToken
@@ -28,19 +28,15 @@ export const getUserAccount = async () => {
 }
 
 //get all user group
-export const getAllUserGroup = async (page: number, size: number) => {
+export const getAllUserGroup = async () => {
   try {
     // const userAccount = await getUserAccount();
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_USER_GROUP(token.tenantId),
-      params: {
-        page: page,
-        size: size
-      },
       headers: {
         AuthToken: token.authToken
       }
@@ -60,7 +56,7 @@ export const getAllFunction = async () => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_FUNCTION(),
       headers: {
@@ -82,7 +78,7 @@ export const createUserGroup = async (data: CreateUserGroupProps) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...CREATE_USER_GROUP(),
       data: data,
@@ -105,7 +101,7 @@ export const editUserGroup = async (data: EditUserGroupProps, groupId: number) =
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...EDIT_USER_GROUP(groupId),
       data: data,
       headers: {
@@ -127,7 +123,7 @@ export const deleteUserGroup = async (data: DeleteUserGroupProps, groupId: numbe
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...DELETE_USER_GROUP(groupId),
       data: data,
       headers: {
@@ -136,9 +132,14 @@ export const deleteUserGroup = async (data: DeleteUserGroupProps, groupId: numbe
     })
     
     return response
-  } catch (e) {
-    console.error('Edit user group failed:', e)
-    return null
+  } catch (e: any) {
+    if (e.response) {
+      const response = e.response.data.status
+      return response
+    } else {
+      console.error('Edit user group failed:', e)
+      return null;
+    }
   }
 }
 
@@ -148,7 +149,7 @@ export const createVehicles = async (data: CreateVehicle) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...CREATE_VEHICLE(token.realmApiRoute, token.decodeKeycloack),
       data: data,
       headers: {
@@ -167,7 +168,7 @@ export const editVehicle = async (data: CreateVehicle, vehicleId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...EDIT_VEHICLE(token.realmApiRoute, token.decodeKeycloack, vehicleId),
       data: data,
       headers: {
@@ -188,7 +189,7 @@ export const deleteVehicle = async (data: string, vehicleId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...DELETE_VEHICLE(token.realmApiRoute, token.decodeKeycloack, vehicleId),
       data: data,
       headers: {
