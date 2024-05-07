@@ -187,19 +187,19 @@ export const getBaseUrl = () => {
   let baseURL: string = '';
   switch(realm){
     case(Realm.collector):
-      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.collector;
+      baseURL = window.baseURL.collector;
       break;
     case(Realm.customer):
-      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.customer
+      baseURL = window.baseURL.customer
       break;
     case(Realm.logistic):
-      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.logistic;
+      baseURL = window.baseURL.logistic;
       break;
     case(Realm.manufacturer):
-      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.manufacturer;
+      baseURL = window.baseURL.manufacturer;
       break
     default:
-      baseURL = AXIOS_DEFAULT_CONFIGS.baseURL.administrator
+      baseURL = window.baseURL.administrator
       break;
   }
   return baseURL

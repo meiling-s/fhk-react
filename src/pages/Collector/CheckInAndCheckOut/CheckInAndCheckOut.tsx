@@ -48,7 +48,7 @@ import { returnApiToken } from "../../../utils/utils";
     }, [page, keyword]) 
 
     const request = axios.create({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+      baseURL: window.baseURL.collector
     })
   
 

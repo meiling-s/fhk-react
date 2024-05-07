@@ -8,7 +8,7 @@ import { returnApiToken } from '../../utils/utils';
 export const getWeightTolerance = async () => {
   try {
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
       ...GET_WEIGHT_TOLERANCE,
     });
 
@@ -22,7 +22,7 @@ export const getWeightTolerance = async () => {
 export const updateWeightTolerance = async (weightId: number, data: any) => {
     try {
         const response = await axiosInstance({
-            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+            baseURL: window.baseURL.administrator,
             ...UPDATE_WEIGHT_TOLERANCE(weightId),
             data: data
         })

@@ -8,7 +8,7 @@ export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: s
         const token = returnApiToken()
 
         const response = await axiosInstance({
-            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+            baseURL: window.baseURL.collector,
             ...GET_COLPOINTRECYCABLES_DASHBOARD(token.tenantId),
             params: {
                 frmDate: frmDate,
