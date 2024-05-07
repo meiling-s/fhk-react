@@ -98,7 +98,7 @@ const LogisticDashboard = () => {
             name = selectedVehicle.vehicleTypeNameTchi
             break
         }
-        setVehicleName('name')
+        setVehicleName(name)
       }
     }
   }
@@ -203,9 +203,8 @@ const LogisticDashboard = () => {
   const getPickupPointList = async (driverIdValue: number) => {
     const result = await getDriverPickupPoint(
       driverIdValue,
-
-      '2024-05-06',
-      '2024-05-06'
+      todayDate,
+      todayDate
     )
     if (result) {
       let tempPUpoint: PuAndDropOffMarker[] = []
@@ -232,10 +231,8 @@ const LogisticDashboard = () => {
   ) => {
     const result = await getDriverDropOffPoint(
       driverIdValue,
-      '2024-05-06',
-      '2024-05-06'
-      // todayDate,
-      // todayDate
+      todayDate,
+      todayDate
     )
     if (result) {
       let tempDropOffPoint: PuAndDropOffMarker[] = []
