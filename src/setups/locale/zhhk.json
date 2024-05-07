@@ -1108,6 +1108,7 @@
   },
   "dashboard_recyclables": {
     "data": "數據",
+    "recyclable": "回收物",
     "recycling_data": "回收物数据",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "日期范围",
