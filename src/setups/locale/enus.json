@@ -1108,5 +1108,22 @@
     "offsite": "Off-site Collection Service",
     "community": "Community Collection Point",
     "service_type": "Service type"
+  },
+  "dashboard_recyclables": {
+    "data": "Data",
+    "recyclable": "Recyclable Data",
+    "recycling_data": "Recycling data",
+    "different_recycling_weights": "Different recycling weights",
+    "date_range": "Date range",
+    "recycling_point": "Recycling point",
+    "plastic": "Plastic",
+    "waste_paper": "Waste paper",
+    "metal": "Metal",
+    "glass_bottle": "Glass bottle",
+    "regulated_electrical": "Regulated electrical appliances (four electrical appliances and one computer)",
+    "unregulated_electrical": "Unregulated electrical appliances",
+    "rechargeable_battery": "Rechargeable battery",
+    "compact_fluorescent": "Compact fluorescent lamps and light tubes",
+    "paper_drink_box": "Paper drink box"
   }
 }

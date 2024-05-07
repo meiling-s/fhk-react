@@ -1105,5 +1105,22 @@
     "offsite": "上門回收服務",
     "community": "社區收集點",
     "service_type": "服務種類"
+  },
+  "dashboard_recyclables": {
+    "data": "數據",
+    "recyclable": "回收物",
+    "recycling_data": "回收物数据",
+    "different_recycling_weights": "不同回收物重量",
+    "date_range": "日期范围",
+    "recycling_point": "回收点",
+    "plastic": "塑料",
+    "waste_paper": "废纸",
+    "metal": "金属",
+    "glass_bottle": "玻璃樽",
+    "regulated_electrical": "受管制电器(四电一脑)",
+    "unregulated_electrical": "非受管制电器",
+    "rechargeable_battery": "可充电电池",
+    "compact_fluorescent": "悭电胆和光管",
+    "paper_drink_box": "纸包饮品盒"
   }
 }
