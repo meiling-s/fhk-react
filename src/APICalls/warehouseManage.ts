@@ -14,15 +14,15 @@ import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 
 const collectionPointAPI = {
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+  baseURL: window.baseURL.collector
 }
 
 const administratorAPI = {
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+  baseURL: window.baseURL.collector
 }
 
 const manufacturerPointAPI = {
-  baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.manufacturer
+  baseURL: window.baseURL.manufacturer
 }
 
 //get all warehouse
@@ -31,7 +31,7 @@ export const getAllWarehouse = async (page: number, size: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_ALL_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack),
       params: {
         page: page,
@@ -54,7 +54,7 @@ export const getWarehouseById = async (warehouseId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_WAREHOUSE_BY_ID(token.realmApiRoute, warehouseId, token.decodeKeycloack),
       headers: {
         AuthToken: token.authToken
@@ -179,7 +179,7 @@ export const manufacturerGetAllWarehouse = async (page: number, size: number) =>
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.manufacturer,
+      baseURL: window.baseURL.manufacturer,
       ...MANUFACTURER_GET_ALL_WAREHOUSE(token.decodeKeycloack),
       params: {
         page: page,

@@ -10,7 +10,7 @@ export const getCurrencyList = async () => {
         const token = returnApiToken()
 
         const response = await axiosInstance({
-            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+            baseURL: window.baseURL.administrator,
             ...GET_CURRENCY_LIST,
             headers: {
                 AuthToken: token.authToken
@@ -29,7 +29,7 @@ export const updateUserCurrency = async (tenantId: string, monetaryValue: string
         const token = returnApiToken()
 
         const response = await axiosInstance({
-            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+            baseURL: window.baseURL.account,
             ...UPDATE_TENANT_CURRENCY(tenantId, monetaryValue, updatedBy),
             headers: {
                 AuthToken: token.authToken

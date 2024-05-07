@@ -27,7 +27,7 @@ export const getAllPurchaseOrder = async ( page: number, size: number, query?: q
     if (query?.status) params.status = query.status
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...GET_PURCHASE_ORDER(auth.tenantId),
       params: params
     })
@@ -54,7 +54,7 @@ export const searchPurchaseOrder = async ( page: number, size: number, query?: q
     if (query?.status) params.status = query.status
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...SEARCH_PURCHASE_ORDER(auth.tenantId),
       params: params
     })
@@ -68,7 +68,7 @@ export const searchPurchaseOrder = async ( page: number, size: number, query?: q
 export const getPurchaseOrderById = async (poId: string) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...GET_PURCHASE_ORDER_BY_ID(poId)
     })
 
@@ -81,7 +81,7 @@ export const getPurchaseOrderById = async (poId: string) => {
 export const UpdatePurchaseOrder = async (poId: string, data: PurChaseOrder) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...UPDATE_PURCHASE_ORDER(poId),
       data
     })

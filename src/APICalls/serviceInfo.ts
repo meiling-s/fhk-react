@@ -9,7 +9,7 @@ export const createServiceInfo = async (data: any) => {
     const tenantId = returnApiToken().decodeKeycloack
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...CREATE_SERVICE_INFO(tenantId),
       data: data
     })

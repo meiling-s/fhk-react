@@ -16,7 +16,7 @@ export const getStaffList = async (page: number, size: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_STAFF(token.tenantId, token.realmApiRoute),
       params: {
         page: page,
@@ -37,7 +37,7 @@ export const createStaff = async (data: any) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...CREATE_STAFF(token.realmApiRoute),
       data: data
     })
@@ -55,7 +55,7 @@ export const editStaff = async (data: any, staffId: string) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...EDIT_STAFF(token.tenantId, staffId, token.realmApiRoute),
       data: data
     })
@@ -72,7 +72,7 @@ export const getLoginIdList = async () => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_LOGINID_LIST(token.tenantId),
       params: {
         page: 0,
@@ -93,7 +93,7 @@ export const getStaffTitle = async () => {
     const token = returnApiToken()
   
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_TITLE_LIST(token.decodeKeycloack, token.realmApiRoute),
       params: {
         page: 0,

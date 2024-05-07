@@ -12,7 +12,7 @@ export const getDriverDetail = async (driverId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+      baseURL: window.baseURL.collector,
       ...GET_DRIVER_DETAIL(token.decodeKeycloack, driverId)
     })
     return response
@@ -31,7 +31,7 @@ export const getDriverPickupPoint = async (
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+      baseURL: window.baseURL.collector,
       ...GET_DRIVER_PICKUP_POINT(
         token.decodeKeycloack,
         driverId,
@@ -55,7 +55,7 @@ export const getDriverDropOffPoint = async (
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+      baseURL: window.baseURL.collector,
       ...GET_DRIVER_DROPOFF_POINT(
         token.decodeKeycloack,
         driverId,

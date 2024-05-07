@@ -8,7 +8,7 @@ import { returnApiToken } from '../../utils/utils';
 export const getDateFormat = async () => {
   try {
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
       ...GET_DATE_FORMAT,
     });
 
@@ -22,7 +22,7 @@ export const getDateFormat = async () => {
 export const updateDateFormat = async (dateFormatId: number, data: any) => {
     try {
         const response = await axiosInstance({
-            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+            baseURL: window.baseURL.administrator,
             ...UPDATE_DATE_FORMAT(dateFormatId),
             data: data
         })

@@ -10,7 +10,7 @@ import axiosInstance from '../../../constants/axiosInstance'
       const auth = returnApiToken()
       try {
         const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
           ...GET_ALL_PICK_UP_ORDER(auth.tenantId),
           params: {
             page: page,
@@ -42,7 +42,7 @@ import axiosInstance from '../../../constants/axiosInstance'
     const auth = returnApiToken();
     try {
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         ...GET_ALL_LOGISTICS_PICK_UP_ORDER(auth.tenantId),
         params: {
           page: page,
@@ -68,7 +68,7 @@ import axiosInstance from '../../../constants/axiosInstance'
   export const getPicoById = async (picoId: string) => {
     try {
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         ...GET_PICK_UP_ORDER_BY_ID(picoId)
       })
       
@@ -87,7 +87,7 @@ import axiosInstance from '../../../constants/axiosInstance'
 
     try {
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         ...GET_PICK_UP_ORDER_DETAIL,
       });
       // console.log('Get pick up order detail:', JSON.stringify(response.data));
@@ -103,7 +103,7 @@ import axiosInstance from '../../../constants/axiosInstance'
 
     try{
         const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
             ...CREATE_PICK_UP_ORDER,
             data: data
             // headers: {
@@ -127,7 +127,7 @@ export const editPickupOrder = async (pickupOrderId: string, data:EditPo) => {
 
   try{
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
           ...axiosConfig,
           data: data
           // headers: {
@@ -150,7 +150,7 @@ export const editPickupOrderStatus = async (pickupOrderId: string, data:PoStatus
 
   try{
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
           ...axiosConfig,
           data: data
           // headers: {
@@ -173,7 +173,7 @@ export const editPickupOrderDetailStatus = async (pickupOrderDtlId: string, data
 
   try{
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
           ...axiosConfig,
           data: data
           // headers: {
@@ -194,7 +194,7 @@ export const getAllReason = async () => {
   const auth = returnApiToken();
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_ALL_REASON(auth.tenantId, '24')
     })
     

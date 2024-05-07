@@ -12,7 +12,7 @@ export const getAllJobOrder = async (query?: queryJobOrder) => {
   const auth = returnApiToken()
   try {
     const response = await axiosInstance({
-    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+    baseURL: window.baseURL.administrator,
       ...GET_ALL_JOB_ORDER(auth.decodeKeycloack),
       params: query
     });
@@ -28,7 +28,7 @@ const auth = returnApiToken()
 try{
     const response = await axiosInstance({
         ...UPDATE_JOB_ORDER_STATUS(auth.decodeKeycloack, joId),
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         data: data
     });
     return response
@@ -43,7 +43,7 @@ const auth = returnApiToken()
 try{
     const response = await axiosInstance({
         ...GET_DRIVER_DETAIL_BY_ID(auth.decodeKeycloack, driverId),
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
     });
     return response
 } catch (e) {
@@ -57,7 +57,7 @@ export const assignDriver = async (data: AssignJobDriver) => {
     const token = returnApiToken()
     
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...ASSIGN_DRIVER(token.decodeKeycloack),
       data
     })
@@ -73,7 +73,7 @@ export const rejectAssginDriver = async (data: AssignJobDriver, id: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...REJECT_REASSIGN_DRIVER(token.decodeKeycloack, id),
       data
     })
@@ -88,7 +88,7 @@ export const getDriver = async (page: number, size: number, sort: string) => {
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_DRIVER(token.decodeKeycloack),
       params: {
         page: page,
@@ -112,7 +112,7 @@ export const getAllVehiclesLogistic = async (page: number, size: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_VEHICLE_LOGISTIC(token.decodeKeycloack),
       params: {
         page: page,

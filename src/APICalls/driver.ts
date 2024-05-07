@@ -7,7 +7,7 @@ export const getDriverList = async (page: number, size: number) => {
     try {
         const token = returnApiToken()
         return await axiosInstance({
-            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+            baseURL: window.baseURL.collector,
             ...GET_DRIVER_LIST(),
             params: {
                 page,
@@ -24,7 +24,7 @@ export const createDriver = async (data: any) => {
     try {
         const token = returnApiToken()
         return await axiosInstance({
-            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+            baseURL: window.baseURL.collector,
             ...CREATE_DRIVER(token.decodeKeycloack),
             data
         })
@@ -37,7 +37,7 @@ export const editDriver = async (data: any,driverId: string) => {
     try {
         const token = returnApiToken()
         return await axiosInstance({
-            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+            baseURL: window.baseURL.collector,
             ...EDIT_DRIVER(token.decodeKeycloack,driverId),
             data
         })
@@ -50,7 +50,7 @@ export const deleteDriver = async (data: any,driverId: string) => {
     try {
         const token = returnApiToken()
         return await axiosInstance({
-            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+            baseURL: window.baseURL.collector,
             ...DELETE_DRIVER(token.decodeKeycloack,driverId),
             data
         })

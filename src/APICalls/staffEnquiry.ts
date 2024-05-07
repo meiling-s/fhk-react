@@ -14,7 +14,7 @@ export const getStaffEnquiryList = async (page: number, size: number) => {
     const token = returnApiToken();
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_STAFF_ENQUIRY(token.tenantId),
       params: {
         page: page,
@@ -34,7 +34,7 @@ export const createStaffEnquiry = async (data: any) => {
     const token = returnApiToken();
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...CREATE_STAFF_ENQUIRY,
       data: data,
     });
@@ -52,7 +52,7 @@ export const editStaffEnquiry = async (data: any, staffId: string) => {
     const token = returnApiToken();
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...EDIT_STAFF_ENQUIRY(token.tenantId, staffId),
       data: data,
     });
@@ -69,7 +69,7 @@ export const deleteStaffEnquiry = async (data: any, staffId: string) => {
     const token = returnApiToken();
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...DELETE_STAFF_ENQUIRY(token.tenantId, staffId),
       data: data,
     });
@@ -86,7 +86,7 @@ export const deleteStaffEnquiry = async (data: any, staffId: string) => {
 //     const token = returnApiToken()
 
 //     const response = await axiosInstance({
-//         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+//         baseURL: window.baseURL.collector,
 //       ...GET_LOGINID_LIST(token.tenantId),
 //       params: {
 //         page: 0,
@@ -107,7 +107,7 @@ export const deleteStaffEnquiry = async (data: any, staffId: string) => {
 //     const token = returnApiToken()
 
 //     const response = await axiosInstance({
-//         baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+//         baseURL: window.baseURL.collector,
 //       ...GET_TITLE_LIST(token.decodeKeycloack),
 //       params: {
 //         page: 0,
