@@ -66,8 +66,10 @@ function MainDrawer() {
   const [open, setOpen] = useState(false)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0)
+  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
+  const [selectedISubIndex, setSelectedSubIndex] = useState<number | null>(null);
   const { realmApiRoute } = returnApiToken()
+  const subMenuDashboard:string[] = ['dashboard'];
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -80,6 +82,7 @@ function MainDrawer() {
   const handleListItemClick = (index: number) => {
     setSelectedIndex(index)
     localStorage.setItem('selectedIndex', String(index))
+    setSelectedSubIndex(null)
   }
 
   useEffect(() => {
@@ -536,9 +539,26 @@ function MainDrawer() {
           )}
            <Collapse in={dashboarddGroup} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItemButton sx={{ pl: 8 }} onClick={() => navigate(`${realm}/dashboard`)}>
-                <ListItemText primary={t('dashboard_recyclables.recyclable')} />
-              </ListItemButton>
+              {subMenuDashboard.map((item, index) => {
+                return(
+                  <ListItemButton  
+                    sx={{pl: 8}} 
+                    selected={true}
+                    onClick={() => {
+                      navigate(`${realm}/${item}`)
+                      setSelectedSubIndex(index)
+                    }}
+                  >
+                    <ListItemText 
+                      className={ index === selectedISubIndex ? 'text-menu-active' : ''}
+                      primary={t('dashboard_recyclables.recyclable')} 
+                    />
+                  </ListItemButton>
+                )
+              })
+
+              }
+              
             </List>
           </Collapse>
         </List>
