@@ -265,6 +265,7 @@ const LogisticDashboard = () => {
       await getPickupPointList(parseInt(value))
     } else {
       setDriverInfo(null)
+      setPuAndDropOffMarker([])
     }
   }
 
@@ -338,9 +339,17 @@ const LogisticDashboard = () => {
         <Grid item>
           <TextField
             id="searchShipment"
-            onChange={(event) => handleSearch(event.target.value)}
+            onChange={(event) => {
+              const numericValue = event.target.value.replace(/\D/g, '')
+              handleSearch(numericValue)
+            }}
             sx={style.inputState}
             placeholder={t('pick_up_order.search_company_name')}
+            inputProps={{
+              inputMode: 'numeric',
+              pattern: '[0-9]*',
+              maxLength: 3
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
