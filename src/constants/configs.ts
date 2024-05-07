@@ -4,12 +4,12 @@ export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
     // administrator: 'http://10.166.22.107:8002/',
     // collector: 'http://10.166.22.107:8003/',
 
-    account: 'http://10.166.22.250/',
-    administrator: 'http://10.166.22.250/',
-    collector: 'http://10.166.22.250/',
-    logistic: 'http://10.166.22.250/',
-    manufacturer: 'http://10.166.22.250/',
-    customer: 'http://10.166.22.250/',
+    //account: 'http://10.166.22.250/',
+    //administrator: 'http://10.166.22.250/',
+    //collector: 'http://10.166.22.250/',
+    //logistic: 'http://10.166.22.250/',
+    //manufacturer: 'http://10.166.22.250/',
+    //customer: 'http://10.166.22.250/'
     //account: 'https://uat.greenhoopapp.com/',
     //administrator: 'https://uat.greenhoopapp.com/',
     //collector: 'https://uat.greenhoopapp.com/',
@@ -22,6 +22,12 @@ export const AXIOS_DEFAULT_CONFIGS = Object.freeze({
     //logistic: 'https://www.greenhoopapp.com/',
     //manufacturer: 'https://www.greenhoopapp.com/',
     //customer: 'https://www.greenhoopapp.com/'
+    account: 'http://not.use/',
+    administrator: 'http://not.use/',
+    collector: 'http://not.use/',
+    logistic: 'http://not.use/',
+    manufacturer: 'http://not.use/',
+    customer: 'http://not.use/'    
   },
   timeout: 100000,
   headers: {

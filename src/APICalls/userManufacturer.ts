@@ -13,7 +13,7 @@ export const getAllUserManufacturer = async (page: number, size: number) => {
   const token = returnApiToken();
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_USER_MANUFACTURER_LIST(token.tenantId),
       params: {
         page: page,
@@ -30,7 +30,7 @@ export const getAllUserManufacturer = async (page: number, size: number) => {
 export const postUserManufacturer = async (data: any) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...CREATE_USER_MANUFACTURER,
       data: data,
     });
@@ -45,7 +45,7 @@ export const updateUserManufacturer = async (loginId: string, data: any) => {
   const token = returnApiToken();
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...UPDATE_USER_MANUFACTURER(token.tenantId, loginId),
       data: data,
     });
@@ -60,7 +60,7 @@ export const deleteUserAccount = async (loginId: string, data: any) => {
   const token = returnApiToken();
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...DELETE_USER_MANUFACTURER(loginId),
       data: data,
     });

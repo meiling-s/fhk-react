@@ -14,7 +14,7 @@ export const getAllDisposalLocation = async (page: number, size: number) => {
     const token = returnApiToken();
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_DISPOSAL_LOCATION(token.realmApiRoute, token.decodeKeycloack),
       params: {
         page: page,
@@ -39,7 +39,7 @@ export const createDisposalLocation = async (data: CreateDisposalLocation) => {
     const token = returnApiToken();
 
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...CREATE_DISPOSAL_LOCATION(token.realmApiRoute, token.decodeKeycloack),
       data: data
     });
@@ -56,7 +56,7 @@ export const editDisposalLocation = async (disposalLocId: string, data: CreateDi
   try {
     const token = returnApiToken();
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...UPDATE_DISPOSAL_LOCATION(token.realmApiRoute, token.decodeKeycloack, disposalLocId),
       data: data,
     });

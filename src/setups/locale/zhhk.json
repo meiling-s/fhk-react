@@ -1107,6 +1107,7 @@
     "service_type": "服務種類"
   },
   "dashboard_recyclables": {
+    "data": "數據",
     "recycling_data": "回收物数据",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "日期范围",

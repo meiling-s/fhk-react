@@ -51,7 +51,7 @@ const CommonType = () => {
     var colPointType = []
     try {
       var response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         ...GET_COLLECTIONPOINT_TYPE
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
@@ -68,7 +68,7 @@ const CommonType = () => {
     var premiseType = []
     try {
       var response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         ...GET_PREMISE_TYPE
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
@@ -85,7 +85,7 @@ const CommonType = () => {
     var siteType = []
     try {
       var response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         ...GET_SITE_TYPE
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
@@ -102,7 +102,7 @@ const CommonType = () => {
     var RecycType = []
     try {
       var response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         ...GET_RECYC_TYPE
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
@@ -121,7 +121,7 @@ const CommonType = () => {
     try {
       var response = await axiosInstance({
         ...GET_LOGISTICLIST(token.realmApiRoute, token.decodeKeycloack),
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+        baseURL: window.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
       // console.log('Get logistic list success:', JSON.stringify(response.data))
@@ -139,7 +139,7 @@ const CommonType = () => {
     try {
       var response = await axiosInstance({
         ...GET_MANULIST(token.realmApiRoute, token.decodeKeycloack),
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+        baseURL: window.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
       // console.log('Get manu list success:', JSON.stringify(response.data))
@@ -156,7 +156,7 @@ const CommonType = () => {
     try {
       var response = await axiosInstance({
         ...GET_COLLECTORLIST(token.realmApiRoute, token.decodeKeycloack),
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+        baseURL: window.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
       // console.log('Get collector list success:', JSON.stringify(response.data))
@@ -174,7 +174,7 @@ const CommonType = () => {
     try {
       var response = await axiosInstance({
         ...GET_CONTRACT(token.realmApiRoute, token.tenantId),
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+        baseURL: window.baseURL.collector
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
       // console.log('Get contract list success:', JSON.stringify(response.data))
@@ -189,7 +189,7 @@ const CommonType = () => {
   const getvehicleType = async () => {
     try {
       var response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
         ...GET_VEHICLE_TYPE
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
@@ -206,7 +206,7 @@ const CommonType = () => {
   const getProcessList = async () => {
     try {
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...GET_PROCESS_LIST
       })
 
@@ -223,7 +223,7 @@ const CommonType = () => {
     try {
       var response = await axiosInstance({
         ...GET_CONTRACT_LOGISTIC(token.tenantId),
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector
+        baseURL: window.baseURL.collector
       })
       const contract = response.data.content
       setContractLogistic(contract)
@@ -239,7 +239,7 @@ const CommonType = () => {
     try {
       var response = await axiosInstance({
         ...GET_IMG_SETTINGS(token.tenantId),
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account
+        baseURL: window.baseURL.account
       })
       const imgSettings = response.data
       if (imgSettings.ImgSize) {

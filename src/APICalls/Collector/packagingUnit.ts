@@ -8,7 +8,7 @@ export const getAllPackagingUnit = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+        baseURL: window.baseURL.logistic,
         ...GET_PACKAGING_LIST(token.realmApiRoute, token.tenantId),
         params: {
           page: page,
@@ -29,7 +29,7 @@ export const createPackaging = async (data: CreatePackagingUnit) => {
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+      baseURL: window.baseURL.logistic,
       ...CREATE_PACKAGING(token.realmApiRoute),
       data: data,
       headers: {
@@ -47,7 +47,7 @@ export const editPackaging = async (data: CreatePackagingUnit, packagingTypeId: 
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+      baseURL: window.baseURL.logistic,
       ...EDIT_PACKAGING(token.realmApiRoute, data.tenantId, packagingTypeId),
       data: data,
       headers: {

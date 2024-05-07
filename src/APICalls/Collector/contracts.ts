@@ -9,7 +9,7 @@ export const getAllContract = async (page: number, size: number) => {
     try {
       const token = returnApiToken()
       const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
         ...GET_CONTRACT_LIST(token.realmApiRoute, token.tenantId),
         params: {
           page: page,
@@ -30,7 +30,7 @@ export const createContract = async (data: CreateContract) => {
   try {
     const token = returnApiToken()
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+      baseURL: window.baseURL.logistic,
       ...CREATE_CONTRACT(token.realmApiRoute),
       data: data,
       headers: {
@@ -48,7 +48,7 @@ export const editContract = async (data: CreateContract) => {
   try {
     const token = returnApiToken()
     const response = axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.logistic,
+      baseURL: window.baseURL.logistic,
       ...EDIT_CONTRACT(token.realmApiRoute, data.tenantId, data.contractNo),
       data: data,
       headers: {

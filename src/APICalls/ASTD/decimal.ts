@@ -8,7 +8,7 @@ import { returnApiToken } from '../../utils/utils';
 export const getDecimalValue = async () => {
   try {
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
       ...GET_DECIMAL_VALUE,
     });
 
@@ -22,7 +22,7 @@ export const getDecimalValue = async () => {
 export const updateDecimalValue = async (data: any, decimalValId: number) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...UPDATE_DECIMAL_VALUE(decimalValId),
       data: data
     })

@@ -1110,6 +1110,7 @@
     "service_type": "Service type"
   },
   "dashboard_recyclables": {
+    "data": "Data",
     "recycling_data": "Recycling data",
     "different_recycling_weights": "Different recycling weights",
     "date_range": "Date range",

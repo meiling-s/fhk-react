@@ -4,9 +4,8 @@ import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import { showErrorToast } from "../utils/utils";
 
 const axiosInstance = axios.create()
-
 const refreshTokenAxiosInstance = axios.create({
-    baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+    baseURL: window.baseURL.account,
 })
 
 export const parseJwtToken = (token: string, tokenPart: number) => {

@@ -8,7 +8,7 @@ export const getAllPackagingUnit = async (page: number, pageSize: number) => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...GET_COLLECTORLIST(token.realmApiRoute, token.decodeKeycloack),
       params: {
         page: page,
@@ -27,7 +27,7 @@ export const createPackagingUnit = async (data: any) => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...CREATE_COLLECTORLIST(token.realmApiRoute, token.decodeKeycloack),
       data: data
     })
@@ -43,7 +43,7 @@ export const editPackagingUnit = async (data: any, collectorId: string) => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+      baseURL: window.baseURL.collector,
       ...EDIT_COLLECTORLIST(token.realmApiRoute, token.decodeKeycloack, collectorId),
       data: data
     })

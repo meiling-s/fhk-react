@@ -11,7 +11,7 @@ import { returnApiToken } from '../../utils/utils';
 export const getCurrencyList = async () => {
   try {
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
       ...GET_CURRENCY_LIST,
     });
 
@@ -26,7 +26,7 @@ export const getCurrencyList = async () => {
 export const createCurrency = async (data: any) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...CREATE_CURRENCY,
       data: data
     })
@@ -41,7 +41,7 @@ export const createCurrency = async (data: any) => {
 export const editCurrency = async (currencyId: number, data: any) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...EDIT_CURRENCY(currencyId),
       data: data
     })
@@ -56,7 +56,7 @@ export const editCurrency = async (currencyId: number, data: any) => {
 export const deleteCurrency = async (currencyId: number, data: any) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+      baseURL: window.baseURL.administrator,
       ...DELETE_CURRENCY(currencyId),
       data: data
     })

@@ -9,7 +9,7 @@ import axiosInstance from '../constants/axiosInstance'
 export const getStatusList = async (page: number, size: number) => {
   try {
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
       ...GET_ALL_STATUS(),
     })
 
@@ -23,7 +23,7 @@ export const getStatusList = async (page: number, size: number) => {
 export const getStatusDetail = async (status: string) => {
   try {
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.administrator,
+        baseURL: window.baseURL.administrator,
       ...GET_STATUS_DETAIL(status),
     })
     return response

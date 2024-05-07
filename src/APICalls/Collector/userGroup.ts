@@ -13,7 +13,7 @@ export const getUserAccount = async () => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...GET_USER_ACCOUNT(token.loginId),
       headers: {
         AuthToken: token.authToken
@@ -34,7 +34,7 @@ export const getAllUserGroup = async () => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_USER_GROUP(token.tenantId),
       headers: {
@@ -56,7 +56,7 @@ export const getAllFunction = async () => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_FUNCTION(),
       headers: {
@@ -78,7 +78,7 @@ export const createUserGroup = async (data: CreateUserGroupProps) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...CREATE_USER_GROUP(),
       data: data,
@@ -101,7 +101,7 @@ export const editUserGroup = async (data: EditUserGroupProps, groupId: number) =
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...EDIT_USER_GROUP(groupId),
       data: data,
       headers: {
@@ -123,7 +123,7 @@ export const deleteUserGroup = async (data: DeleteUserGroupProps, groupId: numbe
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...DELETE_USER_GROUP(groupId),
       data: data,
       headers: {
@@ -149,7 +149,7 @@ export const createVehicles = async (data: CreateVehicle) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...CREATE_VEHICLE(token.realmApiRoute, token.decodeKeycloack),
       data: data,
       headers: {
@@ -168,7 +168,7 @@ export const editVehicle = async (data: CreateVehicle, vehicleId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...EDIT_VEHICLE(token.realmApiRoute, token.decodeKeycloack, vehicleId),
       data: data,
       headers: {
@@ -189,7 +189,7 @@ export const deleteVehicle = async (data: string, vehicleId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-        baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+        baseURL: window.baseURL.collector,
       ...DELETE_VEHICLE(token.realmApiRoute, token.decodeKeycloack, vehicleId),
       data: data,
       headers: {

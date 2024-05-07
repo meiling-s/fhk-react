@@ -24,7 +24,7 @@ export const createInvitation = async (
 
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...ADD_TENANT(tenantType),
       data: item,
       headers: {}
@@ -41,7 +41,7 @@ export const getAllTenant = async (page: number, size: number) => {
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...GET_ALL_TENANT,
       params: {
         page: page,
@@ -66,7 +66,7 @@ export const searchTenantById = async (
   const token = returnApiToken()
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...SEARCH_TENANT(tenantId),
       params: {
         page: page,
@@ -87,7 +87,7 @@ export const searchTenantById = async (
 export const getTenantById = async (tenantId: number) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...GET_TENANT_BY_TENANT_ID(tenantId),
       headers: {}
     })
@@ -108,7 +108,7 @@ export const updateTenantRegInfo = async (
 
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...UPDATE_TENANT_REGISTER(tenantId),
       data: item
     })
@@ -129,7 +129,7 @@ export const updateTenantStatus = async (
 ) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...UPDATE_TENANT_STATUS(tenantId),
       data: item
     })
@@ -151,7 +151,7 @@ export const sendEmailInvitation = async (
 ) => {
   try {
     const response = await axiosInstance({
-      baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.account,
+      baseURL: window.baseURL.account,
       ...SEND_EMAIL_INVITATION,
       params: {
         to: memberEmail,
