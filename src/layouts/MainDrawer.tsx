@@ -39,6 +39,7 @@ import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { dynamicpath, returnApiToken } from '../utils/utils'
 
 type MainDrawer = {
@@ -197,6 +198,12 @@ function MainDrawer() {
         name: t('driver.sideBarName'),
         icon: <SHIPPING_CAR_ICON />,
         onClick: () => navigate('/logistic/driver'),
+        collapse: false
+      },
+      'Dashboard': {
+        name: t('dashboard_recyclables.data'),
+        icon: <BarChartIcon />,
+        onClick: () => navigate(`/${realm}/dashboard`),
         collapse: false
       }
     }
