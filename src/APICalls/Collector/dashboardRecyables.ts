@@ -1,7 +1,7 @@
 import { AXIOS_DEFAULT_CONFIGS } from "../../constants/configs";
 import { returnApiToken } from "../../utils/utils";
 import axiosInstance from "../../constants/axiosInstance";
-import { GET_COLPOINTRECYCABLES_DASHBOARD } from "../../constants/requests";
+import { GET_COLPOINTRECYCABLES_DASHBOARD, GET_WEIGHT_RECYCABLES_DASHBOARD } from "../../constants/requests";
 
 export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: string, colId?: number | null) => {
     try {
@@ -22,6 +22,24 @@ export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: s
         return response
     } catch (e) {
         console.error('getcolPointRecyclablesDashboard failed:', e)
+      return null
+    }
+}
+
+export const getWeightRecyclablesColPointDashboard = async (frmDate: string, toDate: string) => {
+    try {
+        const token = returnApiToken()
+
+        const response = await axiosInstance({
+            baseURL: AXIOS_DEFAULT_CONFIGS.baseURL.collector,
+            ...GET_WEIGHT_RECYCABLES_DASHBOARD(token.decodeKeycloack, frmDate, toDate),
+            headers: {
+                AuthToken: token.authToken
+            }
+        })
+        return response
+    } catch (e) {
+        console.error('getWeightRecyclablesColPointDashboard failed:', e)
       return null
     }
 }

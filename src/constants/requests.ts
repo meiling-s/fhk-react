@@ -1371,3 +1371,8 @@ export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string): AxiosRequest
   method: 'get',
   url: `api/v1/collectors/dashboard/colPointRecyclables/${tenantId}`
 })
+
+export const GET_WEIGHT_RECYCABLES_DASHBOARD = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/weightRecyclablesColPoint/${table}/${frmDate}/${toDate}`
+})

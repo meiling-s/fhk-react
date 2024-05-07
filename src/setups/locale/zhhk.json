@@ -1120,5 +1120,26 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒"
+  },
+  "dashboard_manufacturer": {
+    "data": "數據",
+    "recycling_station": "各個回收站的回收物重量",
+    "recycled_product": "回收產品銷售數據",
+    "recycling_processing_types": "回收加工種類",
+    "plastic": "塑膠",
+    "Waste_paper": "廢紙",
+    "metal": "金屬",
+    "january": "一月",
+    "february": "二月",
+    "march": "三月",
+    "april": "四月",
+    "may": "五月",
+    "june": "六月",
+    "juli": "七月",
+    "august": "八月",
+    "september": "九月",
+    "october": "十月",
+    "november": "十一月",
+    "december": "十二月"
   }
 }

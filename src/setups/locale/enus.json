@@ -1123,5 +1123,26 @@
     "rechargeable_battery": "Rechargeable battery",
     "compact_fluorescent": "Compact fluorescent lamps and light tubes",
     "paper_drink_box": "Paper drink box"
+  },
+  "dashboard_manufacturer": {
+    "data": "Data",
+    "recycling_station": "Recycling weight at each recycling station",
+    "recycled_product": "Recycled product sales data",
+    "recycling_processing_types": "Recycling processing types",
+    "plastic": "Plastic",
+    "Waste_paper": "waste paper",
+    "metal": "Metal",
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "juli": "Juli",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
   }
 }

@@ -6,14 +6,17 @@ import {
   Title,
   Tooltip,
   Legend,
+  PointElement,
+  LineElement
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import {Autocomplete, Grid, TextField, Typography } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
 import dayjs from "dayjs";
 import { styles } from '../../constants/styles';
+import { Realm, localStorgeKeyName } from '../../constants/constant';
 
 ChartJS.register(
     CategoryScale,
@@ -21,7 +24,9 @@ ChartJS.register(
     BarElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    PointElement,
+    LineElement
 );
 
 interface Dataset{
@@ -29,6 +34,8 @@ interface Dataset{
     label: string,
     data: number[],
     backgroundColor: string,
+    borderColor?: string,
+    yAxisID?: string
 }
 
 type props = {
@@ -36,16 +43,17 @@ type props = {
     dataset:Dataset[]|[]
     onChangeFromDate: (value: dayjs.Dayjs ) => void
     onChangeToDate:(value: dayjs.Dayjs) => void
-    onHandleSearch:() => void
+    onHandleSearch?:() => void
     frmDate:dayjs.Dayjs
     toDate:dayjs.Dayjs
     collectionIds?: number[]
     title:string
     onChangeColdId: (value: number | null) => void
     colId:number | null
+    typeChart:string
 }
 
-const Dashboard = ({
+const Chart = ({
     labels, 
     dataset, 
     onChangeFromDate,
@@ -55,11 +63,13 @@ const Dashboard = ({
     collectionIds,
     title,
     onChangeColdId,
-    colId
+    colId,
+    typeChart
 }:props) => {
     const { t } = useTranslation()
+    const realm = localStorage.getItem(localStorgeKeyName.realm);
 
-    const options: any = {
+    let options: any = {
         plugins: {
           title: {
             display: false,
@@ -97,19 +107,25 @@ const Dashboard = ({
         datasets: dataset,
     };
 
+    let chart =  <Bar options={options} data={data}/>
+    switch(typeChart){
+        case('bar'):
+            chart =  <Bar options={options} data={data}/>
+            break;
+        case('line'):
+            chart =  <Line options={options} data={data}/>
+            break;
+        default:
+            break;
+    }
+
     return(
         <>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-                <Grid style={{display: 'flex', alignItems: 'center', height: '80px', padding: '20px, 20px, 0px, 20px', gap: '40px', backgroundColor: '#F4F5F7'}}>
-                    <Typography style={{fontWeight: '700', color: '#000000', fontSize: '22px'}}>
-                        {title}
-                    </Typography>
-                </Grid>
-                
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">               
                 <Grid style={{width: '100%', height: '518px', padding: '38px, 55px, 38px, 55px', gap: '10px', backgroundColor: '#F4F5F7'}}>
                     <Grid style={{display: 'flex', flexDirection: 'column', width: '100%', height: '465px', padding: '30px', gap: '10px', backgroundColor: '#FFFFFF', borderRadius: '30px'}}>
                         <Typography style={{fontWeight: 700, fontSize: '18px', color: '#717171' }}>
-                            {t('dashboard_recyclables.different_recycling_weights')}
+                            {title}
                         </Typography>
                         <Grid style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                             <Grid  item style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: 1, border: '1px solid #E2E2E2', height: '40px', padding: '8px', borderRadius: '6px'}} >
@@ -128,7 +144,7 @@ const Dashboard = ({
                                     onChange={(value) => {
                                         if(value) onChangeFromDate(value)
                                     }}
-                                    format="YYYY/MM/DD"
+                                    format="DD/MM/YYYY"
                                 />
                                 <Typography>-</Typography>
                                 <DatePicker
@@ -140,10 +156,11 @@ const Dashboard = ({
                                     onChange={(value) => {
                                         if(value) onChangeToDate(value)
                                     }}
-                                    format="YYYY/MM/DD"
+                                    format="DD/MM/YYYY"
                                 />
                            </Grid>
 
+                           {realm === Realm.collector && (
                             <Autocomplete
                                 disablePortal
                                 id="collectionIds"
@@ -166,10 +183,11 @@ const Dashboard = ({
                                     />
                                 )}
                             />
-                        
+                            )}
                         </Grid>
                         <Grid style={{height: '295px', width: '1200px'}}>
-                            <Bar options={options} data={data}/>
+                            {/* <Bar options={options} data={data}/> */}
+                            {chart}
                         </Grid>
                     </Grid>
                     
@@ -189,4 +207,4 @@ const localstyles = {
     })
   }
 
-export default Dashboard
+export default Chart;

@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next'
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
@@ -7,7 +7,7 @@ import { getcolPointRecyclablesDashboard } from "../../../APICalls/Collector/das
 import dayjs from "dayjs";
 import { Languages } from "../../../constants/constant";
 import i18n from "../../../setups/i18n";
-import Dashboard from "../../../components/Dashboard/Dashboard";
+import Dashboard from "../../../components/Dashboard/Chart";
 import { getCollectionPoint } from "../../../APICalls/Collector/collectionPointManage";
 import { collectionPoint } from '../../../interfaces/collectionPoint'
 interface Dataset{
@@ -188,6 +188,9 @@ const Recyclables: FunctionComponent = () => {
 
     return(
         <Box >
+            <Typography style={{fontSize: '32px', fontWeight: '700', color: '#000000', marginBottom: '30px'}}>
+                {t('dashboard_recyclables.recycling_data')}
+            </Typography>
             <Dashboard 
                 labels={labels}
                 dataset={dataset}
@@ -200,6 +203,7 @@ const Recyclables: FunctionComponent = () => {
                 onChangeColdId={onChangeColdId}
                 colId={colId}
                 title={t('dashboard_recyclables.recycling_data')}
+                typeChart="bar"
             />
         </Box>
     )
