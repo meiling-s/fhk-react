@@ -542,7 +542,7 @@ function MainDrawer() {
               {subMenuDashboard.map((item, index) => {
                 return(
                   <ListItemButton  
-                    sx={{pl: 8}} 
+                    sx={{pl: 7}} 
                     selected={true}
                     onClick={() => {
                       navigate(`${realm}/${item}`)
