@@ -61,7 +61,7 @@ function MainDrawer() {
   const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
   const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false)
   const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false)
-  const [dashboarddGroup, setDashboardGroup] = useState<boolean>(true)
+  const [dashboarddGroup, setDashboardGroup] = useState<boolean>(false)
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const theme = useTheme()
