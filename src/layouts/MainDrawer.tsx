@@ -83,6 +83,7 @@ function MainDrawer() {
     setSelectedIndex(index)
     localStorage.setItem('selectedIndex', String(index))
     setSelectedSubIndex(null)
+    setDashboardGroup(false)
   }
 
   useEffect(() => {
