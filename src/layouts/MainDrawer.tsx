@@ -541,24 +541,22 @@ function MainDrawer() {
             <List component="div" disablePadding>
               {subMenuDashboard.map((item, index) => {
                 return(
-                  <ListItemButton  
-                    sx={{pl: 7}} 
-                    selected={true}
-                    onClick={() => {
-                      navigate(`${realm}/${item}`)
-                      setSelectedSubIndex(index)
-                    }}
-                  >
-                    <ListItemText 
-                      className={ index === selectedISubIndex ? 'text-menu-active' : ''}
-                      primary={t('dashboard_recyclables.recyclable')} 
-                    />
-                  </ListItemButton>
-                )
-              })
-
+                    <ListItemButton  
+                      sx={{pl: 7}} 
+                      selected={true}
+                      onClick={() => {
+                        navigate(`${realm}/${item}`)
+                        setSelectedSubIndex(index)
+                      }}
+                    >
+                      <ListItemText 
+                        className={ index === selectedISubIndex ? 'text-menu-active' : ''}
+                        primary={t('dashboard_recyclables.recyclable')} 
+                      />
+                    </ListItemButton>
+                  )
+                })
               }
-              
             </List>
           </Collapse>
         </List>
