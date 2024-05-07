@@ -30,6 +30,7 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { displayCreatedDate, displayLocalDate } from '../../../utils/utils'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import { PackagingUnit } from '../../../interfaces/packagingUnit'
+import { getVehicleLogistic } from '../../../APICalls/Logistic/vehicles'
 
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
@@ -47,7 +48,8 @@ const LogisticDashboard = () => {
   const { vehicleType, recycType } = useContainer(CommonTypeContainer)
   const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
   const [driverInfo, setDriverInfo] = useState<DriverInfo | null>(null)
-  const [vehicleCategory, setVehicleCategory] = useState<string>('')
+  const [vehicleCategory, setVehicleCategory] = useState<number | null>(null)
+  const [vehicleName, setVehicleName] = useState<string | null>('-')
   const [puAndDropOffMarker, setPuAndDropOffMarker] = useState<
     PuAndDropOffMarker[]
   >([])
@@ -63,16 +65,43 @@ const LogisticDashboard = () => {
   )
   const todayDate = dayjs().format('YYYY-MM-DD')
 
-  // const getVehicleList = () => {
-  //   if (vehicleType) {
-  //     const vehicleName = vehicleType.find(item => item.vehicleTypeId == selectedPoint!!.vehicleId)
-  //   }
-  // }
+  useEffect(() => {
+    if (vehicleCategory != null) {
+      getVehicleName(vehicleCategory)
+    }
+  }, [vehicleCategory])
 
   useEffect(() => {
     initPackageList()
-    console.log('puAndDropOffMarker', puAndDropOffMarker)
   }, [puAndDropOffMarker])
+
+  const getVehicleName = async (vehicleId: number) => {
+    const result = await getVehicleLogistic(vehicleId)
+    if (result?.data) {
+      const selectedVehicle = vehicleType?.find(
+        (item) => item.vehicleTypeId == result.data.vehicleTypeId
+      )
+
+      if (selectedVehicle) {
+        var name = '-'
+        switch (i18n.language) {
+          case 'enus':
+            name = selectedVehicle.vehicleTypeNameEng
+            break
+          case 'zhch':
+            name = selectedVehicle.vehicleTypeNameSchi
+            break
+          case 'zhhk':
+            name = selectedVehicle.vehicleTypeNameTchi
+            break
+          default:
+            name = selectedVehicle.vehicleTypeNameTchi
+            break
+        }
+        setVehicleName('name')
+      }
+    }
+  }
 
   const initPackageList = async () => {
     const result = await getAllPackagingUnit(0, 1000)
@@ -108,19 +137,6 @@ const LogisticDashboard = () => {
     }
   }
 
-  const markerPositions: PuAndDropOffMarker[] = [
-    {
-      id: 1,
-      type: 'pu',
-      gpsCode: [22.42734537836034, 114.20837003279368]
-    },
-    {
-      id: 2,
-      type: 'drop',
-      gpsCode: [22.41786325107272, 114.2084943679594]
-    }
-  ]
-
   const getMarkerColor = (type: string) => {
     return type === 'pu' ? '#79CA25' : '#FF668B'
   }
@@ -134,13 +150,13 @@ const LogisticDashboard = () => {
     })
 
   const bounds = useMemo(() => {
-    if (markerPositions.length > 0) {
+    if (puAndDropOffMarker.length > 0) {
       return new LatLngBounds(
-        markerPositions.map((item) => (item.gpsCode ? item.gpsCode : [0, 0]))
+        puAndDropOffMarker.map((item) => (item.gpsCode ? item.gpsCode : [0, 0]))
       )
     }
     return null
-  }, [markerPositions])
+  }, [puAndDropOffMarker])
 
   //Function to fit all markers within the bounds when the map first loads
   const FitBoundsOnLoad = () => {
@@ -205,10 +221,15 @@ const LogisticDashboard = () => {
         ...existingMarkers,
         ...tempPUpoint
       ])
+      // call drop off api to and send pickup list to fetch data
+      await getDropOffPointList(driverIdValue, result.data)
     }
   }
 
-  const getDropOffPointList = async (driverIdValue: number) => {
+  const getDropOffPointList = async (
+    driverIdValue: number,
+    pickupPointList: any
+  ) => {
     const result = await getDriverDropOffPoint(
       driverIdValue,
       '2024-05-06',
@@ -219,13 +240,17 @@ const LogisticDashboard = () => {
     if (result) {
       let tempDropOffPoint: PuAndDropOffMarker[] = []
       result.data.map((drof: any) => {
+        const pu = pickupPointList.find(
+          (item: any) => item.puId == drof.puHeader.puId
+        )
+        const drofReceiverAddrGps: LatLngTuple = pu
+          ? pu.receiverAddrGps
+          : [0.0, 0.0]
         tempDropOffPoint.push({
           id: drof.drofId,
           type: 'drop',
-          gpsCode: [22.416551141285588, 114.20057888860003]
-          // drof.puHeader.receiverAddrGps.length > 1
-          //   ? drof.puHeader.receiverAddrGps
-          //   : [0.0, 0.0]
+          gpsCode:
+            drofReceiverAddrGps.length > 1 ? drofReceiverAddrGps : [0.0, 0.0]
         })
       })
 
@@ -237,12 +262,10 @@ const LogisticDashboard = () => {
     }
   }
 
-  const handleSearch = (value: string) => {
+  const handleSearch = async (value: string) => {
     if (value || value != '') {
       getDriverInfo(value)
-      getPickupPointList(parseInt(value))
-      getDropOffPointList(parseInt(value))
-      console.log('handleSearch', puAndDropOffMarker)
+      await getPickupPointList(parseInt(value))
     } else {
       setDriverInfo(null)
     }
@@ -252,13 +275,13 @@ const LogisticDashboard = () => {
     setShowPuDropPoint(true)
     setTypePoint(point.type)
     if (point.type == 'pu') {
-      setSelectedPuPoint(
-        pickupPoint.find((item) => item.puId === point.id) || null
-      )
+      const pu = pickupPoint.find((item) => item.puId === point.id) || null
+      if (pu) setVehicleCategory(pu.vehicleId)
+      setSelectedPuPoint(pu)
     } else {
-      setSelectedDrof(
-        dropOfPoint.find((item) => item.drofId === point.id) || null
-      )
+      const drof = dropOfPoint.find((item) => item.drofId === point.id) || null
+      if (drof) setVehicleCategory(drof.puHeader.vehicleId)
+      setSelectedDrof(drof)
     }
   }
 
@@ -349,7 +372,7 @@ const LogisticDashboard = () => {
             </Typography>
             <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
               {t('logisticDashboard.vehicleCategory')} {' : '}
-              {vehicleCategory ? vehicleCategory : '-'}
+              {vehicleName}
             </Typography>
           </Grid>
         )}

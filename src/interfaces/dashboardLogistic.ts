@@ -1,4 +1,5 @@
 import { JobListOrder } from './JobOrderInterfaces'
+import { LatLngTuple } from 'leaflet'
 
 export type DriverDetail = {
   driverExpId: number
@@ -44,8 +45,8 @@ export type PickupPoint = {
   receiverName: string
   senderAddr: string
   receiverAddr: string
-  senderAddrGps: number[]
-  receiverAddrGps: number[]
+  senderAddrGps: LatLngTuple
+  receiverAddrGps: LatLngTuple
   jo: JobListOrder
   signature: string
   puDetail: PuDetail[]
