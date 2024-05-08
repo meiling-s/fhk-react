@@ -126,7 +126,7 @@ const GeneralSettings: FunctionComponent = () => {
     const token = returnApiToken()
     const result = await getTenantById(parseInt(token.tenantId))
     const data = result?.data
-    setTenantCurrency(data.monetaryValue)
+    setTenantCurrency(data?.monetaryValue || '')
   }
   const columns: GridColDef[] = [
     {

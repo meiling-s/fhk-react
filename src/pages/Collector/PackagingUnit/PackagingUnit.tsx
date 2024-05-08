@@ -57,6 +57,10 @@ const PackagingUnit: FunctionComponent = () => {
     const pageSize = 10
     const [totalData, setTotalData] = useState<number>(0)
     const [tenantCurrency, setTenantCurrency] = useState<string>('')
+    const [engNameList, setEngNameList] = useState<string[]>([])
+    const [schiNameList, setSchiNameList] = useState<string[]>([])
+    const [tchiNameList, setTchiNameList] = useState<string[]>([])
+
 
     useEffect(() => {
       initPackagingUnitList()
@@ -68,6 +72,10 @@ const PackagingUnit: FunctionComponent = () => {
       const data = result?.data
       if(data) {
         var packagingMapping: PackagingUnitItem[] = []
+        setEngNameList([])
+        setSchiNameList([])
+        setTchiNameList([])
+
         data.content.map((item: any, index: any) => {
           packagingMapping.push(
             createPackagingUnit(
@@ -86,6 +94,10 @@ const PackagingUnit: FunctionComponent = () => {
               item?.updatedAt,
             )
           )
+
+          setEngNameList((prevEngName: any) => [...prevEngName, item.packagingNameEng]);
+          setSchiNameList((prevSchiName: any) => [...prevSchiName, item.packagingNameSchi]);
+          setTchiNameList((prevTchiName: any) => [...prevTchiName, item.packagingNameTchi]);
         })
         // console.log(packagingMapping, 'packagingMapping')
         setPackagingMapping(packagingMapping)
@@ -97,7 +109,7 @@ const PackagingUnit: FunctionComponent = () => {
       const result = await getTenantById(parseInt(token.tenantId))
       const data = result?.data
       console.log('tenant Data', data)
-      setTenantCurrency(data.monetaryValue)
+      setTenantCurrency(data?.monetaryValue || "")
 
     }
     const columns: GridColDef[] = [
@@ -306,6 +318,9 @@ const PackagingUnit: FunctionComponent = () => {
               rowId={rowId}
               selectedItem={selectedRow}
               onSubmitData={onSubmitData}
+              engNameList={engNameList}
+              schiNameList={schiNameList}
+              tchiNameList={tchiNameList}
             />
         </Box>
       </>

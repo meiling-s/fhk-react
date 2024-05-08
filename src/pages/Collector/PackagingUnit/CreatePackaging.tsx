@@ -1,9 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react'
-import {
-  Box,
-  Divider,
-  Grid,
-} from '@mui/material'
+import { Box, Divider, Grid } from '@mui/material'
 import dayjs from 'dayjs'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
@@ -42,6 +38,9 @@ interface CreatePackagingProps {
   onSubmitData: (type: string, msg: string) => void
   rowId?: number
   selectedItem?: PackagingUnit | null
+  engNameList: string[]
+  schiNameList: string[]
+  tchiNameList: string[]
 }
 
 const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
@@ -50,7 +49,10 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   action,
   onSubmitData,
   rowId,
-  selectedItem
+  selectedItem,
+  engNameList = [],
+  schiNameList = [],
+  tchiNameList = []
 }) => {
   const { t } = useTranslation()
   const [tChineseName, setTChineseName] = useState('')
@@ -61,9 +63,13 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   const [packagingTypeId, setPackagingTypeId] = useState('')
   const [status, setStatus] = useState('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<formValidate[]>([])
+  const [engNameExisting, setEngNameExisting] = useState<string[]>([])
+  const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
+  const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
 
   useEffect(() => {
-    if (action === 'edit') {
+    if (action === 'edit' || action === 'delete') {
       if (selectedItem !== null && selectedItem !== undefined) {
         setPackagingTypeId(selectedItem.packagingTypeId)
         setTChineseName(selectedItem.packagingNameTchi)
@@ -72,9 +78,23 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         setDescription(selectedItem.description)
         setRemark(selectedItem.remark)
         setStatus(selectedItem.status)
+
+        // set existing name
+        setEngNameExisting(
+          engNameList.filter((item) => item != selectedItem.packagingNameEng)
+        )
+        setSchiNameExisting(
+          schiNameList.filter((item) => item != selectedItem.packagingNameSchi)
+        )
+        setTchiNameExisting(
+          tchiNameList.filter((item) => item != selectedItem.packagingNameTchi)
+        )
       }
     } else if (action === 'add') {
       resetData()
+      setEngNameExisting(engNameList)
+      setSchiNameExisting(schiNameList)
+      setTchiNameExisting(tchiNameList)
     }
   }, [selectedItem, action, drawerOpen])
 
@@ -84,7 +104,61 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     setEnglishName('')
     setDescription('')
     setRemark('')
+    setTrySubmited(false)
   }
+
+  useEffect(() => {
+    const validate = async () => {
+      const tempV: formValidate[] = []
+
+      tChineseName.toString() == '' &&
+        tempV.push({
+          field: t('packaging_unit.traditional_chinese_name'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      tchiNameExisting.some(
+        (item) => item.toLowerCase() == tChineseName.toLowerCase()
+      ) &&
+        tempV.push({
+          field: t('packaging_unit.traditional_chinese_name'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      sChineseName.toString() == '' &&
+        tempV.push({
+          field: t('packaging_unit.simplified_chinese_name'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      schiNameExisting.some(
+        (item) => item.toLowerCase() == sChineseName.toLowerCase()
+      ) &&
+        tempV.push({
+          field: t('packaging_unit.simplified_chinese_name'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      englishName.toString() == '' &&
+        tempV.push({
+          field: t('packaging_unit.english_name'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      engNameExisting.some(
+        (item) => item.toLowerCase() == englishName.toLowerCase()
+      ) &&
+        tempV.push({
+          field: t('packaging_unit.english_name'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+
+      setValidation(tempV)
+    }
+
+    validate()
+  }, [tChineseName, sChineseName, englishName])
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -120,13 +194,17 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   }
 
   const handleCreatePackaging = async (formData: CreatePackagingUnitProps) => {
-    const result = await createPackaging(formData)
-    if (result) {
-      onSubmitData('success', t('common.saveSuccessfully'))
-      resetData()
-      handleDrawerClose()
+    if (validation.length === 0) {
+      const result = await createPackaging(formData)
+      if (result) {
+        onSubmitData('success', t('common.saveSuccessfully'))
+        resetData()
+        handleDrawerClose()
+      } else {
+        onSubmitData('error', t('common.saveFailed'))
+      }
     } else {
-      onSubmitData('error', t('common.saveFailed'))
+      setTrySubmited(true)
     }
   }
 
@@ -134,11 +212,15 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     formData: CreatePackagingUnitProps,
     packagingTypeId: string
   ) => {
-    const result = await editPackaging(formData, packagingTypeId)
-    if (result) {
-      onSubmitData('success', t('common.editSuccessfully'))
-      resetData()
-      handleDrawerClose()
+    if (validation.length === 0) {
+      const result = await editPackaging(formData, packagingTypeId)
+      if (result) {
+        onSubmitData('success', t('common.editSuccessfully'))
+        resetData()
+        handleDrawerClose()
+      }
+    } else {
+      setTrySubmited(true)
     }
   }
 
@@ -244,7 +326,6 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
               id="description"
               placeholder={t('packaging_unit.introduction')}
               onChange={(event) => setDescription(event.target.value)}
-              error={checkString(description)}
               multiline={true}
               defaultValue={description}
             />
@@ -254,11 +335,21 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
               id="remark"
               placeholder={t('packaging_unit.remark')}
               onChange={(event) => setRemark(event.target.value)}
-              error={checkString(remark)}
               multiline={true}
               defaultValue={remark}
             />
           </CustomField>
+          <Grid item>
+            {trySubmited &&
+              validation.map((val, index) => (
+                <FormErrorMsg
+                  key={index}
+                  field={t(val.field)}
+                  errorMsg={returnErrorMsg(val.problem, t)}
+                  type={val.type}
+                />
+              ))}
+          </Grid>
         </Box>
       </RightOverlayForm>
     </div>
