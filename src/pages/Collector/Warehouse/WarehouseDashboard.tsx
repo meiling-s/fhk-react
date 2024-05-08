@@ -42,8 +42,10 @@ import {
     getCheckInWarehouse,
     getCheckOutWarehouse,
     getCheckInOutWarehouse,
+    getRecycSubTypeWeight,
 } from '../../../APICalls/warehouseDashboard';
 import {
+    astdSearchWarehouse,
     getAllWarehouse,
     getWarehouseById,
     manufacturerGetAllWarehouse,
@@ -57,6 +59,7 @@ import { useContainer } from 'unstated-next';
 import { primaryColor, styles } from '../../../constants/styles';
 import { SEARCH_ICON } from '../../../themes/icons';
 import useDebounce from '../../../hooks/useDebounce';
+import { returnApiToken } from '../../../utils/utils';
 
 function createCheckInOutWarehouse(
     id: number,
@@ -117,8 +120,10 @@ const WarehouseDashboard: FunctionComponent = () => {
     const debouncedSearchValue: string = useDebounce(searchText, 1000);
 
     useEffect(() => {
-        initWarehouse();
-    }, [i18n.language]);
+        if (realmApi !== 'account') {
+            initWarehouse();
+        }
+    }, [i18n.language, realmApi]);
 
     useEffect(() => {
         initCapacity();
@@ -129,7 +134,12 @@ const WarehouseDashboard: FunctionComponent = () => {
     }, [selectedWarehouse, i18n.language]);
 
     const initWarehouse = async () => {
-        const result = await getAllWarehouse(0, 1000);
+        let result;
+        if (realmApi === 'account') {
+            result = await astdSearchWarehouse(0, 1000, searchText)
+        } else {
+            result = await getAllWarehouse(0, 1000);
+        }
         if (result) {
             let capacityTotal = 0;
             let warehouse: il_item[] = [];
@@ -166,10 +176,18 @@ const WarehouseDashboard: FunctionComponent = () => {
 
     const getWeightSubtypeWarehouse = async () => {
         //init weight for each subtype also calculate current subtype
+        const token = returnApiToken()
         if (selectedWarehouse) {
-            const result = await getWeightbySubtype(
-                parseInt(selectedWarehouse.id)
-            );
+            let result;
+            if (realmApi === 'account') {
+                result = await getWeightbySubtype(
+                    parseInt(selectedWarehouse.id), debouncedSearchValue
+                );
+            } else {
+                result = await getWeightbySubtype(
+                    parseInt(selectedWarehouse.id), token.decodeKeycloack
+                );
+            }
             if (result) {
                 const data = result.data;
                 //get weigt subtype
@@ -185,28 +203,48 @@ const WarehouseDashboard: FunctionComponent = () => {
     };
 
     const initCapacity = async () => {
+        const token = returnApiToken()
         if (selectedWarehouse) {
-            const result = await getCapacityWarehouse(
-                parseInt(selectedWarehouse.id)
-            );
+            let result;
+            if (realmApi === 'account') {
+                result = await getCapacityWarehouse(
+                    parseInt(selectedWarehouse.id), debouncedSearchValue
+                );
+            } else {
+                result = await getCapacityWarehouse(
+                    parseInt(selectedWarehouse.id), token.decodeKeycloack
+                );
+            }
             if (result) setTotalCapacity(result.data);
         }
     };
 
     const initCheckIn = async () => {
+        const token = returnApiToken()
         if (selectedWarehouse) {
-            const result = await getCheckInWarehouse(
-                parseInt(selectedWarehouse.id)
-            );
+            let result;
+            if (realmApi === 'account') {
+                result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), debouncedSearchValue)
+            } else {
+                result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), token.decodeKeycloack);
+            }
             if (result) setCheckIn(result.data);
         }
     };
 
     const initCheckOut = async () => {
+        const token = returnApiToken()
         if (selectedWarehouse) {
-            const result = await getCheckOutWarehouse(
-                parseInt(selectedWarehouse.id)
-            );
+            let result;
+            if (realmApi === 'account') {
+                result = await getCheckOutWarehouse(
+                    parseInt(selectedWarehouse.id), debouncedSearchValue
+                );
+            } else {
+                result = await getCheckOutWarehouse(
+                    parseInt(selectedWarehouse.id), token.decodeKeycloack
+                );
+            }
             if (result) setCheckOut(result.data);
         }
     };
@@ -257,45 +295,93 @@ const WarehouseDashboard: FunctionComponent = () => {
 
     const initWarehouseSubType = async () => {
         if (selectedWarehouse) {
-            const weightSubtype = await getWeightSubtypeWarehouse();
-            const result = await getWarehouseById(
-                parseInt(selectedWarehouse.id)
-            );
-            // console.log("weightSubtype",weightSubtype)
+            if (realmApi === 'account') {
+                const weightSubtype = await initGetRecycSubTypeWeight()
+                const result = await astdSearchWarehouse(0, 1000, debouncedSearchValue)
+                if (result) {
+                    const data = result.data.content
+                    if (data.length > 0) {
+                        const filteredWarehouse = data.filter((value: { warehouseId: string; }) => value.warehouseId === selectedWarehouse.id)[0]
+                        if (filteredWarehouse) {
+                            const chosenWarehouseRecyc = filteredWarehouse.warehouseRecyc
+                            console.log(chosenWarehouseRecyc, 'chosenWarehouseRecyc')
+                            let subtypeWarehouse: warehouseSubtype[] = [];
+                            var subTypeWeight = 0;
+                            chosenWarehouseRecyc.forEach((item: any) => {
+                                const recyItem = mappingRecyName(
+                                    item.recycTypeId,
+                                    item.recycSubTypeId
+                                );
+                                if (subTypeWeight) {
+                                    subTypeWeight =
+                                        item.recycSubTypeId in weightSubtype
+                                            ? weightSubtype[item.recycSubTypeId]
+                                            : 0;
+                                }
+            
+                                subtypeWarehouse.push({
+                                    subTypeId: item.recycSubTypeId,
+                                    subtypeName: recyItem ? recyItem.subName : '-',
+                                    weight: 0,
+                                    capacity: item.recycSubTypeCapacity,
+                                });
+                            })
 
-            if (result) {
-                const data = result.data;
-                let subtypeWarehouse: warehouseSubtype[] = [];
-                var subTypeWeight = 0;
-                data?.warehouseRecyc.forEach((item: any) => {
-                    const recyItem = mappingRecyName(
-                        item.recycTypeId,
-                        item.recycSubTypeId
-                    );
-                    if (subTypeWeight) {
-                        subTypeWeight =
-                            item.recycSubTypeId in weightSubtype
-                                ? weightSubtype[item.recycSubTypeId]
-                                : 0;
+                            setWarehouseSubtype(subtypeWarehouse);
+                        }
                     }
-
-                    subtypeWarehouse.push({
-                        subTypeId: item.recycSubTypeId,
-                        subtypeName: recyItem ? recyItem.subName : '-',
-                        weight: subTypeWeight,
-                        capacity: item.recycSubTypeCapacity,
+                }
+            } else {
+                const weightSubtype = await getWeightSubtypeWarehouse();
+                console.log(weightSubtype, 'weightSubType')
+                const result = await getWarehouseById(
+                    parseInt(selectedWarehouse.id)
+                );
+                // console.log("weightSubtype",weightSubtype)
+    
+                if (result) {
+                    const data = result.data;
+                    let subtypeWarehouse: warehouseSubtype[] = [];
+                    var subTypeWeight = 0;
+                    data?.warehouseRecyc.forEach((item: any) => {
+                        const recyItem = mappingRecyName(
+                            item.recycTypeId,
+                            item.recycSubTypeId
+                        );
+                        if (subTypeWeight) {
+                            subTypeWeight =
+                                item.recycSubTypeId in weightSubtype
+                                    ? weightSubtype[item.recycSubTypeId]
+                                    : 0;
+                        }
+    
+                        subtypeWarehouse.push({
+                            subTypeId: item.recycSubTypeId,
+                            subtypeName: recyItem ? recyItem.subName : '-',
+                            weight: subTypeWeight,
+                            capacity: item.recycSubTypeCapacity,
+                        });
                     });
-                });
-                setWarehouseSubtype(subtypeWarehouse);
+                    console.log(subtypeWarehouse, 'subtypewarehouse')
+                    setWarehouseSubtype(subtypeWarehouse);
+                }
             }
         }
     };
 
     const initCheckInOut = async () => {
+        const token = returnApiToken()
         if (selectedWarehouse) {
-            const result = await getCheckInOutWarehouse(
-                parseInt(selectedWarehouse.id)
-            );
+            let result;
+            if (realmApi === 'account') {
+                result = await getCheckInOutWarehouse(
+                    parseInt(selectedWarehouse.id), debouncedSearchValue
+                );
+            } else{
+                result = await getCheckInOutWarehouse(
+                    parseInt(selectedWarehouse.id), token.decodeKeycloack
+                );
+            }
             if (result) {
                 const data = result.data;
                 let checkinoutMapping: CheckInOutWarehouse[] = [];
@@ -320,6 +406,22 @@ const WarehouseDashboard: FunctionComponent = () => {
             }
         }
     };
+
+    const initGetRecycSubTypeWeight = async () => {
+        const token = returnApiToken()
+        if (selectedWarehouse) {
+            const result = await getRecycSubTypeWeight(parseInt(selectedWarehouse.id), debouncedSearchValue)
+            if (result) {
+                const data = result.data;
+                var currCapacityWarehouse = 0;
+                Object.keys(data).forEach((item) => {
+                    currCapacityWarehouse += data[item];
+                });
+                setCurrentCapacity(currCapacityWarehouse);
+                return result.data;
+            }
+        }
+    }
 
     const columns: GridColDef[] = [
         {
@@ -429,7 +531,7 @@ const WarehouseDashboard: FunctionComponent = () => {
 
     useEffect(() => {
         if (debouncedSearchValue) {
-            console.log('hitt', searchText);
+            initWarehouse()
         }
     }, [debouncedSearchValue]);
 
