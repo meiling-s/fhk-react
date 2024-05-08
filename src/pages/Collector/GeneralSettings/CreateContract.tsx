@@ -233,7 +233,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
               <CustomTextField
                 id="contractNo"
                 value={contractNo}
-                disabled={action === 'delete'}
+                disabled={action != 'add'}
                 placeholder={t('general_settings.name')}
                 onChange={(event) => setContractNo(event.target.value)}
                 error={checkString(contractNo)}
