@@ -1132,6 +1132,7 @@
   },
   "dashboard_recyclables": {
     "data": "Data",
+    "recyclable": "Recyclable Data",
     "recycling_data": "Recycling data",
     "different_recycling_weights": "Different recycling weights",
     "date_range": "Date range",
