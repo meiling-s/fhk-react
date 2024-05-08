@@ -65,7 +65,7 @@ const LogisticDashboard = () => {
   const [selectedDrofPoint, setSelectedDrof] = useState<DropOffPoint | null>(
     null
   )
-  const [hoveredMarker, setHoveredMarker] = useState<number | null>(null)
+  const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
   const todayDate = dayjs().format('YYYY-MM-DD')
 
   useEffect(() => {
@@ -284,6 +284,7 @@ const LogisticDashboard = () => {
     } else {
       setDriverInfo(null)
       setPuAndDropOffMarker([])
+      setShowPuDropPoint(false)
     }
   }
 
@@ -302,14 +303,8 @@ const LogisticDashboard = () => {
   }
 
   // Function to handle mouseover event
-  const handleMouseOver = (index: number) => {
-    setHoveredMarker(index)
-  }
-
-  // Function to handle mouseout event
-  const handleMouseOut = () => {
-    setHoveredMarker(null)
-    setShowPuDropPoint(false)
+  const handleClickMarker = (index: number) => {
+    setSelectedMarker(index)
   }
 
   return (
@@ -341,7 +336,7 @@ const LogisticDashboard = () => {
               position={position.gpsCode}
               // icon={customIcon(position.type)}
               icon={
-                hoveredMarker === index
+                selectedMarker === index
                   ? hoverCustomIcon(
                       position.type,
                       position.type == 'pu'
@@ -351,15 +346,10 @@ const LogisticDashboard = () => {
                   : customIcon(position.type)
               }
               eventHandlers={{
-                mouseover: () => {
+                click: () => {
                   showDetailPoint(position)
-                  handleMouseOver(index)
+                  handleClickMarker(index)
                 },
-                // mouseout: () => {
-
-                //   setShowPuDropPoint(false)
-                // }
-                mouseout: handleMouseOut
               }}
             />
           ))}
