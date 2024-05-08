@@ -164,10 +164,15 @@ const LogisticDashboard = () => {
     })
 
   const bounds = useMemo(() => {
-    if (puAndDropOffMarker.length > 0) {
-      return new LatLngBounds(
-        puAndDropOffMarker.map((item) => (item.gpsCode ? item.gpsCode : [0, 0]))
-      )
+    const filteredMarkers = puAndDropOffMarker.filter(
+      (item) =>
+        item.gpsCode &&
+        item.gpsCode.length === 2 &&
+        item.gpsCode[0] !== 0 &&
+        item.gpsCode[1] !== 0
+    )
+    if (filteredMarkers.length > 0) {
+      return new LatLngBounds(filteredMarkers.map((item) => item.gpsCode))
     }
     return null
   }, [puAndDropOffMarker])
@@ -322,7 +327,7 @@ const LogisticDashboard = () => {
       <Box sx={{ width: '70%', height: '100%', marginTop: '-32px' }}>
         <MapContainer
           center={[22.4241897, 114.2117632]}
-          zoom={12}
+          zoom={13}
           zoomControl={false}
         >
           <FitBoundsOnLoad />
@@ -349,7 +354,7 @@ const LogisticDashboard = () => {
                 click: () => {
                   showDetailPoint(position)
                   handleClickMarker(index)
-                },
+                }
               }}
             />
           ))}
