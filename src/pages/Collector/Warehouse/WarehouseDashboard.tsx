@@ -531,6 +531,14 @@ const WarehouseDashboard: FunctionComponent = () => {
 
     useEffect(() => {
         if (debouncedSearchValue) {
+            setWarehouseList([])
+            setCurrentCapacity(0)
+            setTotalCapacity(0)
+            setCheckIn(0)
+            setCheckOut(0)
+            setSelectedWarehouse(null)
+            setWarehouseSubtype([])
+            setCheckInOut([])
             initWarehouse()
         }
     }, [debouncedSearchValue]);
