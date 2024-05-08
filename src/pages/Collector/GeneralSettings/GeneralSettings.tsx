@@ -119,8 +119,8 @@ const GeneralSettings: FunctionComponent = () => {
         )
       })
       setContractList(contractMapping)
-      setTotalData(data.totalPages)
     }
+    setTotalData(result?.data.totalPages)
   }
   const getTenantData = async () => {
     const token = returnApiToken()

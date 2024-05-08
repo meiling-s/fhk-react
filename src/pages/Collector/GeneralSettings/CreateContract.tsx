@@ -1,26 +1,8 @@
 import { FunctionComponent, useState, useEffect } from 'react'
-import {
-  Box,
-  Divider,
-  Grid,
-  Typography,
-  Button,
-  InputLabel,
-  MenuItem,
-  Card,
-  FormControl,
-  ButtonBase,
-  ImageList,
-  ImageListItem,
-  OutlinedInput
-} from '@mui/material'
+import { Box, Divider, Grid } from '@mui/material'
 import dayjs from 'dayjs'
-import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-import ImageUploading, { ImageListType } from 'react-images-uploading'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { EVENT_RECORDING } from '../../../constants/configs'
 import { styles } from '../../../constants/styles'
@@ -29,27 +11,33 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
+import {
+  Vehicle,
+  CreateVehicle as CreateVehicleForm
+} from '../../../interfaces/vehicles'
 import { formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64 } from '../../../utils/utils'
+import { returnErrorMsg } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
-import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { useContainer } from 'unstated-next'
-import { createVehicles as addVehicle, deleteVehicle, editVehicle } from '../../../APICalls/Collector/vehicles'
-import { localStorgeKeyName } from "../../../constants/constant";
+import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
-import { Contract, CreateContract as CreateContractProps } from '../../../interfaces/contract'
+import {
+  Contract,
+  CreateContract as CreateContractProps
+} from '../../../interfaces/contract'
 import LabelField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { createContract, editContract } from '../../../APICalls/Collector/contracts'
+import {
+  createContract,
+  editContract
+} from '../../../APICalls/Collector/contracts'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
-  rowId?: number,
+  rowId?: number
   selectedItem?: Contract | null
 }
 
@@ -59,7 +47,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   action,
   onSubmitData,
   rowId,
-  selectedItem,
+  selectedItem
 }) => {
   const { t } = useTranslation()
   const [contractNo, setContractNo] = useState('')
@@ -70,9 +58,10 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const [remark, setRemark] = useState('')
   const [whether, setWhether] = useState(false)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<formValidate[]>([])
 
-  
-  useEffect (() => {
+  useEffect(() => {
+    resetData()
     if (action === 'edit') {
       if (selectedItem !== null && selectedItem !== undefined) {
         setContractNo(selectedItem?.contractNo)
@@ -95,9 +84,39 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     setStartDate(dayjs())
     setEndDate(dayjs())
     setRemark('')
+    setValidation([])
     setWhether(false)
+    setTrySubmited(false)
   }
-  
+
+  useEffect(() => {
+    const validate = async () => {
+      const tempV: formValidate[] = []
+
+      contractNo.toString() == '' &&
+        tempV.push({
+          field: t('general_settings.name'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      startDate > endDate &&
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
+      endDate < startDate &&
+        tempV.push({
+          field: t('general_settings.end_date'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
+
+      setValidation(tempV)
+    }
+
+    validate()
+  }, [contractNo, startDate, endDate])
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -108,8 +127,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleSubmit = () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
     const formData: CreateContractProps = {
       tenantId: tenantId,
@@ -130,33 +149,36 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       handleEditContract(formData)
     } else if (action === 'delete') {
       handleDelete()
-  }
+    }
   }
 
   const handleCreateContract = async (formData: CreateContractProps) => {
+    if (validation.length === 0) {
       const result = await createContract(formData)
-      if(result) {
-        onSubmitData("success", t("common.saveSuccessfully"))
+      if (result) {
+        onSubmitData('success', t('common.saveSuccessfully'))
         resetData()
         handleDrawerClose()
-      }else{
-        onSubmitData("error", t("common.saveFailed"))
+      } else {
+        onSubmitData('error', t('common.saveFailed'))
       }
+    } else {
+      setTrySubmited(true)
+    }
   }
 
   const handleEditContract = async (formData: CreateContractProps) => {
     const result = await editContract(formData)
-    if(result) {
-      onSubmitData("success", t("common.editSuccessfully"))
+    if (result) {
+      onSubmitData('success', t('common.editSuccessfully'))
       resetData()
       handleDrawerClose()
     }
   }
 
-  
   const handleDelete = async () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
     const formData: CreateContractProps = {
       tenantId: tenantId,
@@ -170,14 +192,14 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       createdBy: loginId,
       updatedBy: loginId
     }
-    if(selectedItem != null){
+    if (selectedItem != null) {
       const result = await editContract(formData)
-      if(result) {
-        onSubmitData("success", t('common.deletedSuccessfully'))
+      if (result) {
+        onSubmitData('success', t('common.deletedSuccessfully'))
         resetData()
         handleDrawerClose()
       } else {
-        onSubmitData("error", t('common.deleteFailed'))
+        onSubmitData('error', t('common.deleteFailed'))
       }
     }
   }
@@ -206,7 +228,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       >
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.name')}>
               <CustomTextField
                 id="contractNo"
@@ -218,7 +240,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
               />
             </CustomField>
           </Box>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.reference_number')}>
               <CustomTextField
                 id="referenceNumber"
@@ -226,11 +248,10 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.reference_number')}
                 onChange={(event) => setReferenceNumber(event.target.value)}
-                error={checkString(referenceNumber)}
               />
             </CustomField>
           </Box>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField label={t('general_settings.state')} />
               <Switcher
@@ -244,16 +265,27 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
               />
             </div>
           </Box>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-            <Box className="filter-date" sx={{ marginY: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}>
+          <LocalizationProvider
+            dateAdapter={AdapterDayjs}
+            adapterLocale="zh-cn"
+          >
+            <Box
+              className="filter-date"
+              sx={{
+                marginY: 2,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-evenly'
+              }}
+            >
               <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
                 <LabelField label={t('general_settings.start_date')} />
-                  <DatePicker
-                    defaultValue={dayjs(startDate)}
-                    format={format.dateFormat2}
-                    onChange={(value) => setStartDate(value!!)}
-                    sx={{ ...localstyles.datePicker }}
-                  />
+                <DatePicker
+                  defaultValue={dayjs(startDate)}
+                  format={format.dateFormat2}
+                  onChange={(value) => setStartDate(value!!)}
+                  sx={{ ...localstyles.datePicker }}
+                />
               </Box>
               <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
                 <LabelField label={t('general_settings.end_date')} />
@@ -262,21 +294,20 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                   format={format.dateFormat2}
                   onChange={(value) => setEndDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
-                  />
+                />
               </Box>
             </Box>
           </LocalizationProvider>
           <CustomField label={t('common.remark')} mandatory={false}>
             <CustomTextField
-                id="remark"
-                value={remark}
-                placeholder={t('common.remark')}
-                onChange={(event) => setRemark(event.target.value)}
-                error={checkString(remark)}
-                multiline={true}
-              />
+              id="remark"
+              value={remark}
+              placeholder={t('common.remark')}
+              onChange={(event) => setRemark(event.target.value)}
+              multiline={true}
+            />
           </CustomField>
-          <Box sx={{marginY: 2}}>
+          <Box sx={{ marginY: 2 }}>
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField label={t('general_settings.whether')} />
               <Switcher
@@ -290,6 +321,17 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
               />
             </div>
           </Box>
+          <Grid item>
+            {trySubmited &&
+              validation.map((val, index) => (
+                <FormErrorMsg
+                  key={index}
+                  field={t(val.field)}
+                  errorMsg={returnErrorMsg(val.problem, t)}
+                  type={val.type}
+                />
+              ))}
+          </Grid>
         </Box>
       </RightOverlayForm>
     </div>
@@ -341,12 +383,12 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25',
+      color: '#79CA25'
     }
   },
   DateItem: {
     display: 'flex',
-    height: 'fit-content',
+    height: 'fit-content'
   }
 }
 
