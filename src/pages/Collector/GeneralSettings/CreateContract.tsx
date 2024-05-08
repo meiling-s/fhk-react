@@ -168,11 +168,15 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleEditContract = async (formData: CreateContractProps) => {
-    const result = await editContract(formData)
-    if (result) {
-      onSubmitData('success', t('common.editSuccessfully'))
-      resetData()
-      handleDrawerClose()
+    if (validation.length === 0) {
+      const result = await editContract(formData)
+      if (result) {
+        onSubmitData('success', t('common.editSuccessfully'))
+        resetData()
+        handleDrawerClose()
+      }
+    } else {
+      setTrySubmited(true)
     }
   }
 
