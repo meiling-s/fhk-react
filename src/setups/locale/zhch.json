@@ -1085,6 +1085,7 @@
   },
   "dashboard_recyclables": {
     "data": "数据",
+    "recyclable": "回收物",
     "recycling_data": "回收物数据",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "日期范围",
@@ -1118,6 +1119,12 @@
     "september": "九月",
     "october": "十月",
     "november": "十一月",
-    "december": "十二月"
+    "december": "十二月",
+    "product_category": "产品种类",
+    "total_customer_orders": "客户订单总量",
+    "sales_volume_region": "各地区销售量",
+    "sales_volume": "销售量",
+    "high": "高",
+    "low": "低"
   }
 }

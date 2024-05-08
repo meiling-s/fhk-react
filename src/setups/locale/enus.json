@@ -1111,6 +1111,7 @@
   },
   "dashboard_recyclables": {
     "data": "Data",
+    "recyclable": "Recyclable Data",
     "recycling_data": "Recycling data",
     "different_recycling_weights": "Different recycling weights",
     "date_range": "Date range",
@@ -1144,6 +1145,12 @@
     "september": "September",
     "october": "October",
     "november": "November",
-    "december": "December"
+    "december": "December",
+    "product_category": "Product Category",
+    "total_customer_orders": "Total customer orders",
+    "sales_volume_region": "Sales volume by region",
+    "sales_volume": "Sales volume",
+    "high": "High",
+    "low": "Low"
   }
 }

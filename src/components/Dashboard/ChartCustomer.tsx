@@ -95,23 +95,23 @@ const ChartCustomer = () => {
     return(
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">               
-                <Grid style={{width: '100%', height: '400px', padding: '38px, 55px, 38px, 55px', gap: '10px', backgroundColor: '#F4F5F7'}}>
+                <Grid style={{width: '100%', height: '340px', padding: '38px, 55px, 38px, 55px', gap: '10px', backgroundColor: '#F4F5F7'}}>
                     <Grid style={{display: 'flex', flexDirection: 'column', width: '100%', height: '270px', padding: '30px', gap: '10px', backgroundColor: '#FFFFFF', borderRadius: '30px'}}>
                         <Grid style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                             <Autocomplete
                                 disablePortal
                                 id="collectionIds"
-                                defaultValue={dayjs()}
+                                defaultValue={''}
                                 options={ []}
                                 onChange={(event, value) => {
                                     // onChangeColdId(value)
                                 }}
-                                value={dayjs()}
+                                value={''}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
                                         size='small'
-                                        placeholder={t('dashboard_recyclables.recycling_point')}
+                                        placeholder={t('dashboard_manufacturer.product_category')}
                                         sx={[styles.textField, { width: 400}]}
                                         InputProps={{
                                             ...params.InputProps,
@@ -154,10 +154,13 @@ const ChartCustomer = () => {
                         </Grid>
                         <Grid style={{display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px', marginBottom: '60px'}}>
                             <Typography style={{fontSize: '18px', color: '#717171', fontWeight: '700'}}>
-                                {'客戶訂單總量'}
+                                {t('dashboard_manufacturer.total_customer_orders')}
                             </Typography>
                             <Typography style={{fontSize: '36px', color: '#717171', fontWeight: '700'}}>
-                                {'50,000 kg'}
+                                {'50,000'}
+                            </Typography>
+                            <Typography style={{fontSize: '20px', color:'#717171', fontWeight: '700'}}>
+                                {'Kg'}
                             </Typography>
                         </Grid>
                         <Grid style={{display: 'flex', height: '20px', width: '1200px'}}>

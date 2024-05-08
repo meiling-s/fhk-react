@@ -11,6 +11,7 @@ import Dashboard from "../../../components/Dashboard/Chart";
 import { getCollectionPoint } from "../../../APICalls/Collector/collectionPointManage";
 import { collectionPoint } from '../../../interfaces/collectionPoint'
 import ChartCustomer from "../../../components/Dashboard/ChartCustomer";
+import ChartRegion from "../../../components/Dashboard/ChartRegion";
 
 interface Dataset{
     id: string,
@@ -417,7 +418,7 @@ const Recyclables: FunctionComponent = () => {
     const onChangeColdId = (value: number | null) => {
         setColId(value)
     }
-    console.log('datasetProcessing', datasetProcessing)
+    
     return(
         <Box >
             <Typography style={{fontSize: '32px', fontWeight: '700', color: '#000000', marginBottom: '30px'}}>
@@ -463,6 +464,7 @@ const Recyclables: FunctionComponent = () => {
             />
 
             <ChartCustomer/>
+            <ChartRegion />
         </Box>
     )
 };

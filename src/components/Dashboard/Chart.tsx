@@ -186,7 +186,6 @@ const Chart = ({
                             )}
                         </Grid>
                         <Grid style={{height: '295px', width: '1200px'}}>
-                            {/* <Bar options={options} data={data}/> */}
                             {chart}
                         </Grid>
                     </Grid>
