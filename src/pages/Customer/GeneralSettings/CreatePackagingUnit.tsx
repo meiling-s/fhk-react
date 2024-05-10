@@ -19,6 +19,7 @@ import {
 } from '../../../APICalls/Customer/packagingUnit'
 import { formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
+import i18n from "../../../setups/i18n";
 
 interface PackagingUnit {
   packagingTypeId: string
@@ -171,7 +172,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
     }
 
     validate()
-  }, [tChineseName, sChineseName, englishName, brNo])
+  }, [tChineseName, sChineseName, englishName, brNo, i18n.language])
 
   const checkString = (s: string) => {
     if (!trySubmited) {

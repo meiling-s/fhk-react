@@ -158,7 +158,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     }
 
     validate()
-  }, [tChineseName, sChineseName, englishName])
+  }, [tChineseName, sChineseName, englishName, i18n.language])
 
   const checkString = (s: string) => {
     if (!trySubmited) {
