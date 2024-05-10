@@ -1,5 +1,5 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Typography, Pagination, Stack } from '@mui/material'
+import { Box, Typography, Pagination, Stack, TextField, InputAdornment, IconButton } from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -7,14 +7,14 @@ import {
   GridRowSpacingParams,
   GridRenderCellParams
 } from '@mui/x-data-grid'
-import { styles } from '../../../constants/styles'
+import { primaryColor, styles } from '../../../constants/styles'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import InventoryDetail from './DetailInventory'
 import { useContainer } from "unstated-next";
-import { InventoryItem, InventoryDetail as InvDetails} from '../../../interfaces/inventory'
+import { InventoryItem, InventoryDetail as InvDetails } from '../../../interfaces/inventory'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { getAllInventory } from '../../../APICalls/Collector/inventory'
-import { format } from "../../../constants/constant";
+import { format, localStorgeKeyName } from "../../../constants/constant";
 import dayjs from 'dayjs'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
@@ -22,6 +22,7 @@ import { PickupOrder } from '../../../interfaces/pickupOrder'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
+import { SEARCH_ICON } from '../../../themes/icons'
 
 interface Option {
   value: string
@@ -77,75 +78,76 @@ const Inventory: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const {recycType} = useContainer(CommonTypeContainer)
+  const { recycType } = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<recycItem[]>([])
   const [picoList, setPicoList] = useState<PickupOrder[]>([])
   const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([])
+  const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
 
-  useEffect(() =>{
+  useEffect(() => {
     mappingRecyleItem()
-   }, [recycType]);
+  }, [recycType]);
 
-   useEffect(() =>{
-    if(recycItem.length > 0) initInventory() //init dat when recyleitem done mapping
-   }, [recycItem, page]);
+  useEffect(() => {
+    if (recycItem.length > 0) initInventory() //init dat when recyleitem done mapping
+  }, [recycItem, page]);
 
   const mappingRecyleItem = () => {
     const recyleMapping: recycItem[] = []
-    recycType?.forEach((re) =>{
-     var reItem: recycItem = {recycType: {name: "", id: ""}, recycSubType: []};
-     var subItem: il_item[] = [];
-    var name = ""
-    switch (i18n.language) {
-      case 'enus':
-        name = re.recyclableNameEng
-        break
-      case 'zhch':
-        name = re.recyclableNameSchi
-        break
-      case 'zhhk':
-        name = re.recyclableNameTchi
-        break
-      default:
-        name = re.recyclableNameTchi
-        break
-    }
-   reItem.recycType = {name: name, id: re.recycTypeId};
+    recycType?.forEach((re) => {
+      var reItem: recycItem = { recycType: { name: "", id: "" }, recycSubType: [] };
+      var subItem: il_item[] = [];
+      var name = ""
+      switch (i18n.language) {
+        case 'enus':
+          name = re.recyclableNameEng
+          break
+        case 'zhch':
+          name = re.recyclableNameSchi
+          break
+        case 'zhhk':
+          name = re.recyclableNameTchi
+          break
+        default:
+          name = re.recyclableNameTchi
+          break
+      }
+      reItem.recycType = { name: name, id: re.recycTypeId };
 
-     re.recycSubType.map((sub) => {
-       var subName = "";
-       switch(i18n.language){
-           case "enus":
-               subName = sub.recyclableNameEng;
-               break;
-           case "zhch":
-               subName = sub.recyclableNameSchi;
-               break;
-           case "zhhk":
-               subName = sub.recyclableNameTchi;
-               break;
-           default:
-               subName = sub.recyclableNameTchi;
-               break;
-       }
+      re.recycSubType.map((sub) => {
+        var subName = "";
+        switch (i18n.language) {
+          case "enus":
+            subName = sub.recyclableNameEng;
+            break;
+          case "zhch":
+            subName = sub.recyclableNameSchi;
+            break;
+          case "zhhk":
+            subName = sub.recyclableNameTchi;
+            break;
+          default:
+            subName = sub.recyclableNameTchi;
+            break;
+        }
 
-       reItem.recycSubType = subItem;
-       subItem.push({name: subName, id: sub.recycSubTypeId})
-     })
-     reItem.recycSubType = subItem;
-     recyleMapping.push(reItem)
-   })
-   setRecycItem(recyleMapping)
+        reItem.recycSubType = subItem;
+        subItem.push({ name: subName, id: sub.recycSubTypeId })
+      })
+      reItem.recycSubType = subItem;
+      recyleMapping.push(reItem)
+    })
+    setRecycItem(recyleMapping)
   }
 
   const getAllPickupOrder = async (data: InventoryItem[]) => {
     const picoData: PickupOrder[] = []
-    for (let index=0; index < data.length; index++){
+    for (let index = 0; index < data.length; index++) {
       const item = data[index]
-      for (let index=0; index < item.inventoryDetail.length; index++){
+      for (let index = 0; index < item.inventoryDetail.length; index++) {
         const invDetail = item.inventoryDetail[index]
         const result = await getPicoById(invDetail.sourcePicoId)
-        if(result?.data) {
+        if (result?.data) {
           picoData.push(result.data)
         }
       }
@@ -160,7 +162,7 @@ const Inventory: FunctionComponent = () => {
     const result = await getAllInventory(page - 1, pageSize)
     const data = result?.data
 
-    if(data) {
+    if (data) {
       const picoData = await getAllPickupOrder(data.content)
       var inventoryMapping: InventoryItem[] = []
       data.content.map((item: any) => {
@@ -173,14 +175,14 @@ const Inventory: FunctionComponent = () => {
         let selectedPico: PickupOrder[] = []
         let location: string[] = []
 
-        item.inventoryDetail?.map((invDetail: InvDetails ) =>{
-          selectedPico =  picoData.filter(pico => pico.picoId == invDetail.sourcePicoId)
+        item.inventoryDetail?.map((invDetail: InvDetails) => {
+          selectedPico = picoData.filter(pico => pico.picoId == invDetail.sourcePicoId)
         })
 
 
 
-        if(selectedPico.length > 0) {
-          selectedPico.map(pico =>{
+        if (selectedPico.length > 0) {
+          selectedPico.map(pico => {
             pico.pickupOrderDetail.map(picoDetail => {
               location.push(picoDetail.senderAddr)
             })
@@ -264,7 +266,7 @@ const Inventory: FunctionComponent = () => {
   ]
 
   const searchfield = [
-    { label: t('pick_up_order.filter.search'), width: '14%' , field: "search"},
+    { label: t('pick_up_order.filter.search'), width: '14%', field: "search" },
     {
       label: t('inventory.recyleType'),
       width: '15%',
@@ -297,11 +299,11 @@ const Inventory: FunctionComponent = () => {
   }
 
   const handleSelectRow = (params: GridRowParams) => {
-    const selectedInv:InventoryItem = inventoryList.find((item) => item.itemId == params.row.itemId)
+    const selectedInv: InventoryItem = inventoryList.find((item) => item.itemId == params.row.itemId)
     let selectedPicoList: PickupOrder[] = []
     selectedInv.inventoryDetail?.forEach(item => {
       const pico = picoList.find(pico => pico.picoId == item.sourcePicoId)
-      if(pico) {
+      if (pico) {
         selectedPicoList.push(pico)
       }
     })
@@ -317,8 +319,8 @@ const Inventory: FunctionComponent = () => {
   }, [])
 
   const handleSearch = (label: string, value: string) => {
-    if(label == 'recycTypeId'){
-      const filtered:InventoryItem[] = inventoryList.filter(item => item.recycTypeId == value)
+    if (label == 'recycTypeId') {
+      const filtered: InventoryItem[] = inventoryList.filter(item => item.recycTypeId == value)
       if (filtered) {
         setFilteredInventory(filtered)
       } else {
@@ -326,8 +328,8 @@ const Inventory: FunctionComponent = () => {
       }
     }
 
-    if(label == "recycSubTypeId"){
-      const filtered:InventoryItem[] = inventoryList.filter(item => item.recycSubTypeId == value)
+    if (label == "recycSubTypeId") {
+      const filtered: InventoryItem[] = inventoryList.filter(item => item.recycSubTypeId == value)
       if (filtered) {
         setFilteredInventory(filtered)
       } else {
@@ -335,17 +337,21 @@ const Inventory: FunctionComponent = () => {
       }
     }
 
-    if(label == "search"){
+    if (label == "search") {
       // console.log(label, value)
-      if(value == "") return setFilteredInventory(inventoryList)
+      if (value == "") return setFilteredInventory(inventoryList)
 
-      const filtered:InventoryItem[] = inventoryList.filter(item => item.packageTypeId == value)
+      const filtered: InventoryItem[] = inventoryList.filter(item => item.packageTypeId == value)
       if (filtered) {
         setFilteredInventory(filtered)
       } else {
         setFilteredInventory(inventoryList)
       }
     }
+  }
+
+  const handleSearchByPoNumb = (value: string) => {
+    console.log(value, 'value search')
   }
 
   return (
@@ -359,6 +365,28 @@ const Inventory: FunctionComponent = () => {
           pr: 4
         }}
       >
+        {realmApi === 'account' && (
+          <TextField
+            id="searchShipment"
+            onChange={(event) =>
+              handleSearchByPoNumb(event.target.value)
+            }
+            sx={styles.inputStyle}
+            label={t('check_in.search')}
+            placeholder={t('warehouse_page.enter_tenantId')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => { }}>
+                    <SEARCH_ICON
+                      style={{ color: primaryColor }}
+                    />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
         <Box
           sx={{
             display: 'flex',
