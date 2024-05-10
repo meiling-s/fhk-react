@@ -19,7 +19,7 @@ import {
 } from '../../../APICalls/Customer/packagingUnit'
 import { formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
-import i18n from "../../../setups/i18n";
+import i18n from '../../../setups/i18n'
 
 interface PackagingUnit {
   packagingTypeId: string
@@ -109,6 +109,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
     setTChineseName('')
     setSChineseName('')
     setEnglishName('')
+    setBRNumber('')
     setDescription('')
     setRemark('')
     setStatus('')
@@ -161,7 +162,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
           problem: formErr.alreadyExist,
           type: 'error'
         })
-        brNo.toString() == '' &&
+      brNo.toString() == '' &&
         tempV.push({
           field: t('general_settings.reference_number'),
           problem: formErr.empty,
