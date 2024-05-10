@@ -136,7 +136,8 @@
     "location": "实体地点",
     "place": "地点",
     "status": "状态",
-    "recyclable_subcategories": "回收物类別"
+    "recyclable_subcategories": "回收物类別",
+    "enter_tenantId": "输入租户 ID"
   },
   "add_warehouse_page": {
     "save": "储存",

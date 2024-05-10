@@ -136,7 +136,8 @@
     "location": "Physical location",
     "place": "Place",
     "status": "Status",
-    "recyclable_subcategories": "Recyclable subcategories"
+    "recyclable_subcategories": "Recyclable subcategories",
+    "enter_tenantId": "Enter the tenant id"
   },
   "add_warehouse_page": {
     "save": "Save",

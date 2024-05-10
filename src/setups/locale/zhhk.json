@@ -136,7 +136,8 @@
     "location": "實體地點",
     "place": "地點",
     "status": "狀態",
-    "recyclable_subcategories": "回收物類別"
+    "recyclable_subcategories": "回收物類別",
+    "enter_tenantId": "輸入租戶 ID"
   },
   "add_warehouse_page": {
     "save": "儲存",

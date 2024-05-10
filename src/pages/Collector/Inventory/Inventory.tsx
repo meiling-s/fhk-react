@@ -13,7 +13,7 @@ import InventoryDetail from './DetailInventory'
 import { useContainer } from "unstated-next";
 import { InventoryItem, InventoryDetail as InvDetails } from '../../../interfaces/inventory'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
-import { getAllInventory } from '../../../APICalls/Collector/inventory'
+import { astdGetAllInventory, getAllInventory } from '../../../APICalls/Collector/inventory'
 import { format, localStorgeKeyName } from "../../../constants/constant";
 import dayjs from 'dayjs'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
@@ -23,6 +23,8 @@ import { PickupOrder } from '../../../interfaces/pickupOrder'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { SEARCH_ICON } from '../../../themes/icons'
+import useDebounce from '../../../hooks/useDebounce'
+import { returnApiToken } from '../../../utils/utils'
 
 interface Option {
   value: string
@@ -82,15 +84,20 @@ const Inventory: FunctionComponent = () => {
   const [recycItem, setRecycItem] = useState<recycItem[]>([])
   const [picoList, setPicoList] = useState<PickupOrder[]>([])
   const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([])
+  const [searchText, setSearchText] = useState<string>('')
   const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
+  const debouncedSearchValue: string = useDebounce(searchText, 1000);
+
 
   useEffect(() => {
     mappingRecyleItem()
   }, [recycType]);
 
   useEffect(() => {
-    if (recycItem.length > 0) initInventory() //init dat when recyleitem done mapping
-  }, [recycItem, page]);
+    if (realmApi !== 'account') {
+      if (recycItem.length > 0) initInventory() //init dat when recyleitem done mapping
+    }
+  }, [recycItem, page, realmApi]);
 
   const mappingRecyleItem = () => {
     const recyleMapping: recycItem[] = []
@@ -159,7 +166,12 @@ const Inventory: FunctionComponent = () => {
   }
 
   const initInventory = async () => {
-    const result = await getAllInventory(page - 1, pageSize)
+    let result;
+    if (realmApi === 'account') {
+      result = await astdGetAllInventory(page - 1, pageSize, debouncedSearchValue)
+    } else {
+      result = await getAllInventory(page - 1, pageSize)
+    }
     const data = result?.data
 
     if (data) {
@@ -351,8 +363,22 @@ const Inventory: FunctionComponent = () => {
   }
 
   const handleSearchByPoNumb = (value: string) => {
-    console.log(value, 'value search')
+    setSearchText(value)
   }
+
+  useEffect(() => {
+    if (debouncedSearchValue) {
+      setInventory([])
+      setFilteredInventory([])
+      setSelectedRow(null)
+      setPage(1)
+      setTotalData(0)
+      setPicoList([])
+      setSelectedPico([])
+      initInventory()
+    }
+  }, [debouncedSearchValue]);
+
 
   return (
     <>

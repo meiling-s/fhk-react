@@ -551,6 +551,14 @@ export const EDIT_VEHICLE = (
 })
 
 //inventory
+export const ASTD_GET_INVENTORY = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/search/${table}`
+})
+
 export const GET_INVENTORY = (
   realmApiRoute: string,
   table: string
