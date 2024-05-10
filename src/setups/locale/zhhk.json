@@ -74,7 +74,8 @@
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
-      "startDateBehindEndDate": "不允許開始時間晚於結束時間",
+      "startDateBehindEndDate": "如果開始日期晚於結束日期則不允許",
+      "endDateEarlyThanStartDate": "如果結束日期早於開始日期則不允許",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字"
     }
   },

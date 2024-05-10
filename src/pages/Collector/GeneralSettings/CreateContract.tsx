@@ -108,7 +108,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       endDate < startDate &&
         tempV.push({
           field: t('general_settings.end_date'),
-          problem: formErr.startDateBehindEndDate,
+          problem: formErr.endDateEarlyThanStartDate,
           type: 'error'
         })
 
