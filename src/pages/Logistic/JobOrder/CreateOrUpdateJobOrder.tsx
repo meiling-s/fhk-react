@@ -1,7 +1,6 @@
 import { Box, Button, Typography, Grid, Modal } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers'
-import CustomField from '../../../components/FormComponents/CustomField'
 import { styles } from '../../../constants/styles'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
@@ -12,13 +11,7 @@ import CardTravelIcon from '@mui/icons-material/CardTravel'
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined'
 import { useTranslation } from 'react-i18next'
 import AssignDriverForm from '../../../components/FormComponents/AssignDriverForm'
-import {
-  OrderJobHeader,
-  AssignJobDriver
-} from '../../../interfaces/pickupOrder'
-import axiosInstance from '../../../constants/axiosInstance'
-import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
-import { GET_PICK_UP_ORDER_BY_ID } from '../../../constants/requests'
+import { OrderJobHeader, AssignJobDriver, DriverList, VehicleList } from '../../../interfaces/pickupOrder'
 import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
@@ -28,6 +21,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
 import { returnApiToken } from '../../../utils/utils'
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import { getAllVehiclesLogistic, getDriver } from "../../../APICalls/jobOrder";
 
 const JobOrder = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -49,12 +43,52 @@ const JobOrder = () => {
   const [isActive, setIsActive] = useState(false)
   const { t } = useTranslation()
   const { loginId } = returnApiToken()
+  const [driverList, setDriverList] = useState<DriverList[]>([])
+  const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
 
   const handleCloses = () => {
     setId(0)
     setOpenModal(false)
     setIsActive(false)
   }
+
+  
+  const initListDriver = async () => {
+    const result = await getDriver(0, 10, 'string')
+    if (result) {
+      const data = result?.data?.content
+      const mappingDriver : DriverList[] = []
+      data.forEach((item: any) => {
+        mappingDriver.push({
+          driverId: item.driverId,
+          driverNameEng:  item.driverNameEng,
+          driverNameSchi:  item.driverNameSchi,
+          driverNameTchi:  item.driverNameTchi,
+        })
+      })
+      setDriverList(mappingDriver)
+    }
+  }
+
+  const initListVehicle = async () => {
+    const result = await getAllVehiclesLogistic(0, 10)
+    if (result) {
+      const data = result?.data?.content
+      const mappingVehicle : VehicleList[] = []
+      data.forEach((item: any) => {
+        mappingVehicle.push({
+          vehicleId: item.vehicleId,
+          plateNo:  item.plateNo,
+        })
+      })
+      setVehicleList(mappingVehicle)
+    }
+  }
+
+  useEffect(() => {
+    initListDriver()
+    initListVehicle()
+  }, [])
 
   const getDetailPico = async (picoId: string) => {
     try {
@@ -506,6 +540,8 @@ const JobOrder = () => {
             setPickupOrderDetail={setPickupOrderDetail}
             setIsEdit={setIsEdit}
             isEdit={isEdit}
+            driverList={driverList}
+            vehicleList={vehicleList}
             // onSubmitData={onSubmitData}
           />
         </Modal>

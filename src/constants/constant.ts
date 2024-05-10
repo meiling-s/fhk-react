@@ -95,3 +95,14 @@ export const Languages = {
   ZHCH : 'zhch',
   ZHHK : 'zhhk'
 }
+
+export const TypeRecycables = {
+  RECHARGEABLE_BATTERIES: 'Rechargeable Batteries',
+  GLASS_BOTTLES: 'Glass Bottles',
+  PAPER: 'Paper',
+  FLUORESCENT_LAMPS_AND_TUBES: 'Fluorescent Lamps and Tubes',
+  SMALL_ELETRICAL_APPLIANCES: 'Small Electrical Appliances',
+  PLASTICS: 'Plastics',
+  NON_RECYCLABLE: 'Non-recyclable',
+  CARDBOARD: 'Cardboard',
+}
