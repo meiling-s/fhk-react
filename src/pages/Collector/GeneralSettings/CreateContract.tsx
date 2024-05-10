@@ -22,14 +22,15 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import {
   Contract,
-  CreateContract as CreateContractProps
+  CreateContract as CreateContractProps,
 } from '../../../interfaces/contract'
 import LabelField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import {
   createContract,
-  editContract
+  editContract,
+  deleteContract
 } from '../../../APICalls/Collector/contracts'
 
 interface CreateVehicleProps {
@@ -184,20 +185,20 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
     const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
-    const formData: CreateContractProps = {
-      tenantId: tenantId,
-      contractNo: contractNo,
-      parentContractNo: referenceNumber,
+    const formData: any = {
+      // tenantId: tenantId,
+      // contractNo: contractNo,
+      // parentContractNo: referenceNumber,
       status: 'DELETED',
-      contractFrmDate: startDate.format('YYYY-MM-DD'),
-      contractToDate: endDate.format('YYYY-MM-DD'),
-      remark: remark,
-      epdFlg: whether,
-      createdBy: loginId,
+      // contractFrmDate: startDate.format('YYYY-MM-DD'),
+      // contractToDate: endDate.format('YYYY-MM-DD'),
+      // remark: remark,
+      // epdFlg: whether,
+      // createdBy: loginId,
       updatedBy: loginId
     }
     if (selectedItem != null) {
-      const result = await editContract(formData)
+      const result = await deleteContract(formData, selectedItem.contractNo)
       if (result) {
         onSubmitData('success', t('common.deletedSuccessfully'))
         resetData()
