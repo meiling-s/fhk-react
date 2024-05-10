@@ -223,7 +223,7 @@ const ChartTotalSales = () => {
             setDataset(dataSales)
         }
     };
-    console.log('dataSales total_weight', dataset)
+   
     useEffect(() => {
         initTotalSales()
     }, [])

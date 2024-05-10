@@ -60,7 +60,7 @@ const ChartDistrictSales = () => {
     const [data, setData] = useState<any>(location);
     const colors:string[] = ['#6FBD33','#88D13D','#AED982','#D3E3C3','#CCCCCC'];
 
-    const getData = async() => {
+    const initData = async() => {
         try {
             fetch("https://raw.githubusercontent.com/markmarkoh/datamaps/master/src/js/data/hkg.topo.json")
             .then((response) => response.json())
@@ -73,9 +73,25 @@ const ChartDistrictSales = () => {
     }
   
     useEffect(() => {
-        // getData()
+        // initData()
     }, []);
-   
+
+    const footerTooltip = (tooltipItems:any[]) => {
+        let footer = 0;
+      
+        tooltipItems.forEach(function(tooltipItem) {
+          footer = tooltipItem.raw.value;
+        });
+        return footer + 'Kg';
+    };
+
+    const data1 = data.map((d: any) => (
+        {
+            feature: d,
+            value:  Math.round(Math.random() * 100),
+        }
+    ));
+
     return(
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">               
@@ -122,7 +138,7 @@ const ChartDistrictSales = () => {
                                         sx={localstyles.datePicker}
                                         maxDate={toDate}
                                         onChange={(value) => {
-                                            // if(value) onChangeFromDate(value)
+                                            if(value) setFrmDate(value)
                                         }}
                                         format="DD/MM/YYYY"
                                     />
@@ -134,7 +150,7 @@ const ChartDistrictSales = () => {
                                         sx={localstyles.datePicker}
                                         minDate={frmDate}
                                         onChange={(value) => {
-                                            // if(value) onChangeToDate(value)
+                                            if(value) setToDate(value)
                                         }}
                                         format="DD/MM/YYYY"
                                     />
@@ -174,15 +190,15 @@ const ChartDistrictSales = () => {
                                         {
                                             colors.map((item, index) => {
                                                 return <Box 
-                                                sx={{
-                                                    width: '20%', 
-                                                    height: '10px',
-                                                    backgroundColor: item, 
-                                                    borderTopLeftRadius: (index === 0) ? '6px' : '', 
-                                                    borderBottomLeftRadius: (index === 0) ? '6px' : '', 
-                                                    borderTopRightRadius: (colors.length === index + 1) ? '6px' : '', 
-                                                    borderBottomRightRadius: (colors.length === index + 1) ? '6px' : '', 
-                                                }}
+                                                    sx={{
+                                                        width: '20%', 
+                                                        height: '10px',
+                                                        backgroundColor: item, 
+                                                        borderTopLeftRadius: (index === 0) ? '6px' : '', 
+                                                        borderBottomLeftRadius: (index === 0) ? '6px' : '', 
+                                                        borderTopRightRadius: (colors.length === index + 1) ? '6px' : '', 
+                                                        borderBottomRightRadius: (colors.length === index + 1) ? '6px' : '', 
+                                                    }}
                                                 >
                                                 </Box>
                                             })
@@ -203,67 +219,81 @@ const ChartDistrictSales = () => {
                                         {
                                             outline: data,
                                             label: "Completed",
-                                            data: data.map((d: any) => ({
-                                            feature: d,
-                                            value: Math.round(Math.random() * 100),
-                                            backgroundColor: 'red'
-                                            })),
+                                            data: data1,
                                         },
                                     ]
                                 }}
                                 options={{
-                                showOutline: true,
-                                showGraticule: false,
-                                plugins: {
-                                  tooltip: {
-                                    callbacks: {
-                                      label: (context: any) => {
-                                        return `${context.element.feature.properties.name} - ${context.dataset.label}: ${context.formattedValue}%`;
-                                      }
-                                    }
-                                  },
-                                  legend: {
-                                    display: false
-                                  }
-                                },
-                                hover: {
-                                  mode: "nearest"
-                                },
-                                scales: {
-                                  xy: {
-                                    axis: 'x',
-                                    projection: "mercator",
-                                    ticks: {
-                                        // Include a dollar sign in the ticks
-                                        callback: function(value, index, ticks) {
-                                            return '$' + value;
-                                        }
-                                    }
-                                  },
-                                  color: {
-                                    axis: 'x',
-                                    interpolate: (value) => {
-                                        if(value > 0.9){
-                                            return '#6FBD33'
-                                        } else if(value > 0.7){
-                                            return '#88D13D'
-                                        } else if(value > 0.5){
-                                            return '#AED982'
-                                        } else if(value > .03){
-                                            return '#D3E3C3'
-                                        } else {
-                                            return '#CCCCCC'
-                                        }
+                                    showOutline: true,
+                                    showGraticule: false,
+                                    plugins: {
+                                    tooltip: {
+                                        callbacks: {
+                                            label: (context: any) => {
+                                                // return `${context.element.feature.properties.name} - ${context.dataset.label}: ${context.formattedValue}Kg`;
+                                                return ` ${context.element.feature.properties.name} `;
+                                            },
+                                            footer: footerTooltip,
+                                        },
+                                        position: 'nearest',
+                                        usePointStyle: true,
+                                        backgroundColor: '#C3DAAC',
+                                        boxWidth: 30,
+                                        boxHeight: 30,
+                                        bodyColor: '#717171',
+                                        footerColor: '#717171',
+                                        footerAlign: 'center',
+                                        bodyAlign: 'center',
+                                        xAlign: 'center',
+                                        bodyFont: {
+                                            size: 15
+                                        },
+                                        
                                     },
-                                    display: false,
                                     legend: {
-                                        position: "top-right",
-                                        align: "right",
+                                        display: false
                                     }
-                                  }
-                                }
-                              }}
-                        />
+                                    },
+                                    hover: {
+                                        mode: "nearest"
+                                    },
+                                    scales: {
+                                        xy: {
+                                            axis: 'x',
+                                            projection: "mercator",
+                                            ticks: {
+                                                // Include a dollar sign in the ticks
+                                                callback: function(value, index, ticks) {
+                                                    return '$' + value;
+                                                }
+                                            }
+                                        },
+                                        color: {
+                                            axis: 'x',
+                                            interpolate: (value) => {
+                                                let color:string= ''
+                                                if(value > 0.9){
+                                                    color = '#6FBD33'
+                                                } else if(value > 0.7){
+                                                    color = '#88D13D'
+                                                } else if(value > 0.5){
+                                                    color = '#AED982'
+                                                } else if(value > 0.3){
+                                                    color = '#D3E3C3'
+                                                } else {
+                                                    color = '#CCCCCC'
+                                                }
+                                                return color
+                                            },
+                                            display: false,
+                                            legend: {
+                                                position: "top-right",
+                                                align: "right",
+                                            }
+                                        }
+                                    }
+                                }}
+                            />
                         </Grid>
                     </Grid>
                     
