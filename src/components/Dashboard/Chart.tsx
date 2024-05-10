@@ -91,8 +91,10 @@ const Chart = ({
           legend: {
             labels: {
                 usePointStyle: true,
+                fontColor: '#717171',
             },
             position: 'right',
+            align: 'start',
             pointStyle: 'circle',
             usePointStyle: true,
           },

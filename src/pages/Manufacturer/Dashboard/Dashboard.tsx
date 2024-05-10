@@ -74,7 +74,6 @@ const Recyclables: FunctionComponent = () => {
             const processing = processingType?.find(item => item.processingNameEng === type)
             if(processing) languages = processing?.processingNameTchi
         }
-        console.log('languages processing', type, languages)
         return languages
     }
    
@@ -536,6 +535,7 @@ const Recyclables: FunctionComponent = () => {
                 {t('dashboard_manufacturer.data')}
             </Typography>
             <Dashboard 
+                key={t('dashboard_manufacturer.recycling_station')}
                 labels={labelWeight}
                 dataset={datasetWeigth}
                 onChangeFromDate={setFrmDateWeight}
@@ -549,6 +549,7 @@ const Recyclables: FunctionComponent = () => {
             />
 
             <Dashboard 
+                key={t('dashboard_manufacturer.recycled_product')}
                 labels={labelProduct}
                 dataset={datasetProduct}
                 onChangeFromDate={setFrmDateProduct}
@@ -563,6 +564,7 @@ const Recyclables: FunctionComponent = () => {
             />
 
             <Dashboard 
+                key={t('dashboard_manufacturer.recycling_processing_types')}
                 labels={labelProcessing}
                 dataset={datasetProcessing}
                 onChangeFromDate={setFrmDateProcessing}

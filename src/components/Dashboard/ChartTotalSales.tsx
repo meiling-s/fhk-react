@@ -7,23 +7,28 @@ import { styles } from '../../constants/styles';
 import Tooltip from '@mui/material/Tooltip';
 import { useEffect, useState } from 'react';
 import { getTotalSalesProductAnalysis } from '../../APICalls/Collector/dashboardRecyables';
+import CommonTypeContainer from '../../contexts/CommonTypeContainer';
+import { useContainer } from 'unstated-next';
+import { Languages } from '../../constants/constant';
 
+type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
 interface DataSales {
-    label: string,
-    data: number,
+    label: fieldName,
+    weight: number,
     backgroundColor: string,
     width: string,
+    description: string
 }
 
 interface Dataset{
-    total_weight: string,
+    total_weight: number,
     sales: DataSales[]   
 }
 
 // type props = {
 //     labels: string[]
 //     dataset:Dataset[]|[]
-//     onChangeFromDate: (value: dayjs.Dayjs ) => void
+//     setFrmDate: (value: dayjs.Dayjs ) => void
 //     onChangeToDate:(value: dayjs.Dayjs) => void
 //     onHandleSearch?:() => void
 //     frmDate:dayjs.Dayjs
@@ -95,26 +100,146 @@ interface Dataset{
 // ]
 
 const ChartTotalSales = () => {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const { recycType } = useContainer(CommonTypeContainer);
     const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
-    const [dataset, setDataset] = useState<Dataset>({total_weight: '0', sales: []});
+    const [dataset, setDataset] = useState<Dataset>({total_weight: 0, sales: []});
+
+    const getBackgroundColor = (fieldName: fieldName) :string => {
+        const backgroundColors = {
+            'Rechargeable Batteries': '#EFE72F',
+            'Glass Bottles': '#4FB5F5',
+            'Paper': '#7ADFF1',
+            'Fluorescent Lamps and Tubes': '#ECAB05',
+            'Small Electrical Appliances': '#5AE9D8',
+            'Plastics': '#FF9FB7',
+            'Non-recyclable': '#F9B8FF',
+            'Cardboard': '#C69AFF'
+        }
+
+        return backgroundColors[fieldName]
+    }
+
+    const getLabel = (type: string): string => {
+        let languages:string = ''
+        if(i18n.language === Languages.ENUS){
+            const recyclables = recycType?.find(item => item.recyclableNameEng === type)
+            if(recyclables) languages = recyclables?.recyclableNameEng
+        } else if(i18n.language === Languages.ZHCH){
+            const recyclables = recycType?.find(item => item.recyclableNameEng === type)
+            if(recyclables) languages = recyclables?.recyclableNameSchi
+        } else {
+            const recyclables = recycType?.find(item => item.recyclableNameEng === type)
+            if(recyclables) languages = recyclables?.recyclableNameTchi
+        }
+        return languages
+    }
 
     const initTotalSales = async () => {
         const response = await getTotalSalesProductAnalysis(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
-        const dataSales:Dataset = {total_weight: '0', sales: []}
+        const dataSales:Dataset = {total_weight: 0, sales: []}
         if(response){
-            dataSales.total_weight = response.total_weight;
-            for(let [key, value] of Object.entries(response.sales)){
-                console.log('keys',key, value)
+            const total_weight = 5500
+            dataSales.total_weight = total_weight;
+            const sales:DataSales[] = [
+                {
+                    label: 'Rechargeable Batteries',
+                    weight: 1000,
+                    backgroundColor: '',
+                    width: '',
+                    description: '',
+                },
+                {
+                    label: 'Glass Bottles',
+                    weight: 1000,
+                    backgroundColor: '',
+                    width: '',
+                    description: '',
+                },
+                {
+                    label: 'Paper',
+                    weight: 1000,
+                    backgroundColor: '',
+                    width: '',
+                    description: '',
+                },
+                {
+                    label: 'Fluorescent Lamps and Tubes',
+                    weight: 500,
+                    backgroundColor: '',
+                    width: '',
+                    description: '',
+                },
+                {
+                    label: 'Small Electrical Appliances',
+                    weight: 500,
+                    backgroundColor: '',
+                    width: '',
+                    description: '',
+                },
+                {
+                    label: 'Plastics',
+                    weight: 500,
+                    backgroundColor: '',
+                    width: '',
+                    description: '',
+                },
+                {
+                    label: 'Non-recyclable',
+                    weight: 500,
+                    backgroundColor: '',
+                    width: '',
+                    description: '',
+                },
+                {
+                    label: 'Cardboard',
+                    weight: 500,
+                    backgroundColor: '',
+                    width: '',
+                    description: '',
+                }
+            ];
+
+            for(let sale of sales){
+                dataSales.sales.push({
+                    label: sale.label,
+                    description: getLabel(sale.label),
+                    weight: sale.weight,
+                    backgroundColor: getBackgroundColor(sale.label),
+                    width: `${sale.weight / dataSales.total_weight*100}%`
+                })
             }
+            // for(let [key, value] of Object.entries(response.sales)){
+            //     if(!value?.weight) continue
+            //     const weight:number = Number(value?.weight.slice(0, -1))
+            //     dataSales.sales.push({
+            //         label: '',
+            //         data: 0,
+            //         backgroundColor: '',
+            //         width: `${weight/Number(dataSales.total_weight)}%`,
+            //     })
+            // }
             setDataset(dataSales)
         }
     };
-
+    console.log('dataSales total_weight', dataset)
     useEffect(() => {
         initTotalSales()
     }, [])
+
+    useEffect(() => {
+        const datsetLang = {
+            ...dataset,
+            sales: dataset.sales.map(sale => {
+                return{
+                    ...sale,
+                    description: getLabel(sale.label)
+                }
+            })
+        }
+        setDataset(datsetLang)
+    }, [i18n.language])
 
     useEffect(() => {
        setTimeout(() => {
@@ -164,7 +289,7 @@ const ChartTotalSales = () => {
                                     sx={localstyles.datePicker}
                                     maxDate={dayjs()}
                                     onChange={(value) => {
-                                        // if(value) onChangeFromDate(value)
+                                        if(value) setFrmDate(value)
                                     }}
                                     format="DD/MM/YYYY"
                                 />
@@ -176,7 +301,7 @@ const ChartTotalSales = () => {
                                     sx={localstyles.datePicker}
                                     minDate={dayjs()}
                                     onChange={(value) => {
-                                        // if(value) onChangeToDate(value)
+                                        if(value) setToDate(value)
                                     }}
                                     format="DD/MM/YYYY"
                                 />
@@ -198,7 +323,7 @@ const ChartTotalSales = () => {
                                 dataset?.sales.map((item, index) => {
                                     return(
                                         <Tooltip 
-                                        title={`${item.label} ${item.data}Kg`} 
+                                        title={`${item.description} ${item.weight}Kg`} 
                                         arrow 
                                         placement="top" 
                                         componentsProps={{
