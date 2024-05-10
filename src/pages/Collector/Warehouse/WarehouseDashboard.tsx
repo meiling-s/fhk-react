@@ -546,26 +546,28 @@ const WarehouseDashboard: FunctionComponent = () => {
     return (
         <Box className="container-wrapper w-[1283px] mt-4">
             <Box sx={{ marginBottom: 2 }}>
-                <TextField
-                    id="searchShipment"
-                    onChange={(event) =>
-                        handleSearchByPoNumb(event.target.value)
-                    }
-                    sx={styles.inputStyle}
-                    label={t('check_in.search')}
-                    placeholder={t('warehouse_page.enter_tenantId')}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton onClick={() => {}}>
-                                    <SEARCH_ICON
-                                        style={{ color: primaryColor }}
-                                    />
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
-                />
+                {realmApi === 'account' && (
+                    <TextField
+                        id="searchShipment"
+                        onChange={(event) =>
+                            handleSearchByPoNumb(event.target.value)
+                        }
+                        sx={styles.inputStyle}
+                        label={t('check_in.search')}
+                        placeholder={t('warehouse_page.enter_tenantId')}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => {}}>
+                                        <SEARCH_ICON
+                                            style={{ color: primaryColor }}
+                                        />
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                )}
                 <FormControl sx={dropDownStyle}>
                     <Select
                         id="warehouse"
