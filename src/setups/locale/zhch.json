@@ -1125,6 +1125,9 @@
     "sales_volume_region": "各地区销售量",
     "sales_volume": "销售量",
     "high": "高",
-    "low": "低"
+    "low": "低",
+    "total_amount_of_recyclate_processed": "已处理的回收物总量",
+    "total_amount_of_recyclate_remaining": "处理后剩余的回收物总量",
+    "total_amount_of_recycled_material": "处理后无法使用的回收物总量"
   }
 }

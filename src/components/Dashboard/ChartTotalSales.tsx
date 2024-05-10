@@ -5,92 +5,122 @@ import { useTranslation } from 'react-i18next'
 import dayjs from "dayjs";
 import { styles } from '../../constants/styles';
 import Tooltip from '@mui/material/Tooltip';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getTotalSalesProductAnalysis } from '../../APICalls/Collector/dashboardRecyables';
 
-interface Dataset{
-    id: string,
+interface DataSales {
     label: string,
     data: number,
     backgroundColor: string,
-    width: string   
+    width: string,
 }
 
-type props = {
-    labels: string[]
-    dataset:Dataset[]|[]
-    onChangeFromDate: (value: dayjs.Dayjs ) => void
-    onChangeToDate:(value: dayjs.Dayjs) => void
-    onHandleSearch?:() => void
-    frmDate:dayjs.Dayjs
-    toDate:dayjs.Dayjs
-    collectionIds?: number[]
-    title:string
-    onChangeColdId: (value: number | null) => void
-    colId:number | null
-    typeChart:string
+interface Dataset{
+    total_weight: string,
+    sales: DataSales[]   
 }
 
-const ChartCustomer = () => {
+// type props = {
+//     labels: string[]
+//     dataset:Dataset[]|[]
+//     onChangeFromDate: (value: dayjs.Dayjs ) => void
+//     onChangeToDate:(value: dayjs.Dayjs) => void
+//     onHandleSearch?:() => void
+//     frmDate:dayjs.Dayjs
+//     toDate:dayjs.Dayjs
+//     collectionIds?: number[]
+//     title:string
+//     onChangeColdId: (value: number | null) => void
+//     colId:number | null
+//     typeChart:string
+// }
+
+// [
+    // {
+    //     id: 'Rechargeable Batteries',
+    //     label: 'Rechargeable Batteries',
+    //     data: 30,
+    //     backgroundColor: '#EFE72F',
+    //     width: '20%' 
+    // },
+    // {
+    //     id: 'Glass Bottles',
+    //     label: 'Glass Bottles',
+    //     data: 30,
+    //     backgroundColor: '#4FB5F5',
+    //     width: '20%' 
+    // },
+    // {
+    //     id: 'Paper',
+    //     label: 'Paper',
+    //     data: 30,
+    //     backgroundColor: '#7ADFF1',
+    //     width: '10%' 
+    // },
+    // {
+    //     id: 'Fluorescent Lamps and Tubes',
+    //     label: 'Fluorescent Lamps and Tubes',
+    //     data: 30,
+    //     backgroundColor: '#ECAB05',
+    //     width: '10%' 
+    // },
+    // {
+    //     id: 'Small Electrical Appliances',
+    //     label: 'Small Electrical Appliances',
+    //     data: 30,
+    //     backgroundColor: '#5AE9D8',
+    //     width: '10%' 
+    // },
+    // {
+    //     id: 'Plastics',
+    //     label: 'Plastics',
+    //     data: 30,
+    //     backgroundColor: '#FF9FB7',
+    //     width: '10%' 
+    // },
+    // {
+    //     id: 'Non-recyclable',
+    //     label: 'Non-recyclable',
+    //     data: 30,
+    //     backgroundColor: '#F9B8FF',
+    //     width: '10%' 
+    // },
+    // {
+    //     id: 'Cardboard',
+    //     label: 'Cardboard',
+    //     data: 30,
+    //     backgroundColor: '#C69AFF',
+    //     width: '33%' 
+    // }
+// ]
+
+const ChartTotalSales = () => {
     const { t } = useTranslation()
+    const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
+    const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
+    const [dataset, setDataset] = useState<Dataset>({total_weight: '0', sales: []});
 
-    const [dataset, setDataset] = useState<Dataset[]>([
-        {
-            id: 'Rechargeable Batteries',
-            label: 'Rechargeable Batteries',
-            data: 30,
-            backgroundColor: '#EFE72F',
-            width: '20%' 
-        },
-        {
-            id: 'Glass Bottles',
-            label: 'Glass Bottles',
-            data: 30,
-            backgroundColor: '#4FB5F5',
-            width: '20%' 
-        },
-        {
-            id: 'Paper',
-            label: 'Paper',
-            data: 30,
-            backgroundColor: '#7ADFF1',
-            width: '10%' 
-        },
-        {
-            id: 'Fluorescent Lamps and Tubes',
-            label: 'Fluorescent Lamps and Tubes',
-            data: 30,
-            backgroundColor: '#ECAB05',
-            width: '10%' 
-        },
-        {
-            id: 'Small Electrical Appliances',
-            label: 'Small Electrical Appliances',
-            data: 30,
-            backgroundColor: '#5AE9D8',
-            width: '10%' 
-        },
-        {
-            id: 'Plastics',
-            label: 'Plastics',
-            data: 30,
-            backgroundColor: '#FF9FB7',
-            width: '10%' 
-        },
-        {
-            id: 'Non-recyclable',
-            label: 'Non-recyclable',
-            data: 30,
-            backgroundColor: '#F9B8FF',
-            width: '10%' 
-        },
-        {
-            id: 'Cardboard',
-            label: 'Cardboard',
-            data: 30,
-            backgroundColor: '#C69AFF',
-            width: '33%' 
+    const initTotalSales = async () => {
+        const response = await getTotalSalesProductAnalysis(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
+        const dataSales:Dataset = {total_weight: '0', sales: []}
+        if(response){
+            dataSales.total_weight = response.total_weight;
+            for(let [key, value] of Object.entries(response.sales)){
+                console.log('keys',key, value)
+            }
+            setDataset(dataSales)
         }
-    ]);
+    };
+
+    useEffect(() => {
+        initTotalSales()
+    }, [])
+
+    useEffect(() => {
+       setTimeout(() => {
+        initTotalSales()
+       }, 1000);
+    }, [frmDate, toDate])
 
     return(
         <>
@@ -157,7 +187,7 @@ const ChartCustomer = () => {
                                 {t('dashboard_manufacturer.total_customer_orders')}
                             </Typography>
                             <Typography style={{fontSize: '36px', color: '#717171', fontWeight: '700'}}>
-                                {'50,000'}
+                                {dataset.total_weight}
                             </Typography>
                             <Typography style={{fontSize: '20px', color:'#717171', fontWeight: '700'}}>
                                 {'Kg'}
@@ -165,7 +195,7 @@ const ChartCustomer = () => {
                         </Grid>
                         <Grid style={{display: 'flex', height: '20px', width: '1200px'}}>
                             {
-                                dataset.map((item, index) => {
+                                dataset?.sales.map((item, index) => {
                                     return(
                                         <Tooltip 
                                         title={`${item.label} ${item.data}Kg`} 
@@ -183,8 +213,8 @@ const ChartCustomer = () => {
                                                 backgroundColor: item.backgroundColor, 
                                                 borderTopLeftRadius: (index === 0) ? '6px' : '', 
                                                 borderBottomLeftRadius: (index === 0) ? '6px' : '', 
-                                                borderTopRightRadius: (dataset.length === index + 1) ? '6px' : '', 
-                                                borderBottomRightRadius: (dataset.length === index + 1) ? '6px' : '', 
+                                                borderTopRightRadius: (dataset.sales.length === index + 1) ? '6px' : '', 
+                                                borderBottomRightRadius: (dataset.sales.length === index + 1) ? '6px' : '', 
                                             }}>    
                                         </Box>
                                     </Tooltip>
@@ -223,4 +253,4 @@ const localstyles = {
     })
   }
 
-export default ChartCustomer;
+export default ChartTotalSales;

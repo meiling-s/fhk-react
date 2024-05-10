@@ -1151,6 +1151,9 @@
     "sales_volume_region": "Sales volume by region",
     "sales_volume": "Sales volume",
     "high": "High",
-    "low": "Low"
+    "low": "Low",
+    "total_amount_of_recyclate_processed": "Total amount of recyclate processed",
+    "total_amount_of_recyclate_remaining": "Total amount of recyclate remaining after processing",
+    "total_amount_of_recycled_material": "Total amount of recycled material that cannot be used after processing"
   }
 }

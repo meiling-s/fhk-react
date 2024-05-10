@@ -50,7 +50,8 @@ type props = {
     title:string
     onChangeColdId: (value: number | null) => void
     colId:number | null
-    typeChart:string
+    typeChart:string,
+    canvasColor?: string
 }
 
 const Chart = ({
@@ -64,10 +65,22 @@ const Chart = ({
     title,
     onChangeColdId,
     colId,
-    typeChart
+    typeChart,
+    canvasColor
 }:props) => {
     const { t } = useTranslation()
     const realm = localStorage.getItem(localStorgeKeyName.realm);
+    const plugin = {
+        id: 'customCanvasBackgroundColor',
+        beforeDraw: (chart:any, args:any, options:any) => {
+          const {ctx, chartArea} = chart;
+          ctx.save();
+          ctx.globalCompositeOperation = 'destination-over';
+          ctx.fillStyle = canvasColor? canvasColor : 'white';
+          ctx.fillRect(chartArea.left, 0, chartArea.width, chart.height);
+          ctx.restore();
+        }
+      };
 
     let options: any = {
         plugins: {
@@ -83,6 +96,9 @@ const Chart = ({
             pointStyle: 'circle',
             usePointStyle: true,
           },
+          customCanvasBackgroundColor: {
+            color: '',
+          }
         },
         responsive: true,
         maintainAspectRatio: false,
@@ -107,13 +123,13 @@ const Chart = ({
         datasets: dataset,
     };
 
-    let chart =  <Bar options={options} data={data}/>
+    let chart:JSX.Element = <div></div>
     switch(typeChart){
         case('bar'):
-            chart =  <Bar options={options} data={data}/>
+            chart =  <Bar options={options} data={data} plugins={[plugin]}/>
             break;
         case('line'):
-            chart =  <Line options={options} data={data}/>
+            chart =  <Line options={options} data={data} plugins={[plugin]}/>
             break;
         default:
             break;

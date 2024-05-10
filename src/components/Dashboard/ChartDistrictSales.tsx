@@ -16,6 +16,7 @@ import {
   Title,
   Legend
 } from "chart.js";
+import location from './hongkongLocation.json';
 
 ChartJS.register(
     Title,
@@ -50,13 +51,13 @@ type props = {
     typeChart:string
 }
 
-const ChartRegion = () => {
+const ChartDistrictSales = () => {
     const { t } = useTranslation()
     const realm = localStorage.getItem(localStorgeKeyName.realm);
     const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
     const chartRef = useRef();
-    const [data, setData] = useState<any>([]);
+    const [data, setData] = useState<any>(location);
     const colors:string[] = ['#6FBD33','#88D13D','#AED982','#D3E3C3','#CCCCCC'];
 
     const getData = async() => {
@@ -72,7 +73,7 @@ const ChartRegion = () => {
     }
   
     useEffect(() => {
-        getData()
+        // getData()
     }, []);
    
     return(
@@ -282,4 +283,4 @@ const localstyles = {
     })
   }
 
-export default ChartRegion;
+export default ChartDistrictSales;
