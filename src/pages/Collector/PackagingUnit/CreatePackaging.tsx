@@ -14,8 +14,8 @@ import {
   Vehicle,
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
-import { formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64 } from '../../../utils/utils'
+import { formErr } from '../../../constants/constant'
+import { returnErrorMsg } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
