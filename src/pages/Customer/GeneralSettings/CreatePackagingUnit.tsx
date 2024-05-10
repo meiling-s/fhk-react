@@ -162,12 +162,12 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
           problem: formErr.alreadyExist,
           type: 'error'
         })
-      brNo.toString() == '' &&
-        tempV.push({
-          field: t('general_settings.reference_number'),
-          problem: formErr.empty,
-          type: 'error'
-        })
+    //   brNo.toString() == '' &&
+    //     tempV.push({
+    //       field: t('general_settings.reference_number'),
+    //       problem: formErr.empty,
+    //       type: 'error'
+    //     })
 
       setValidation(tempV)
     }
@@ -328,7 +328,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
               />
             </CustomField>
           </Box>
-          <Box sx={{ marginY: 2 }}>
+          {/* <Box sx={{ marginY: 2 }}>
             <CustomField label={t('general_settings.reference_number')}>
               <CustomTextField
                 id="brNo"
@@ -339,7 +339,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                 error={checkString(brNo)}
               />
             </CustomField>
-          </Box>
+          </Box> */}
           <CustomField
             label={t('packaging_unit.introduction')}
             mandatory={false}
