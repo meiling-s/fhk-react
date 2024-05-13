@@ -33,7 +33,6 @@ export const ImageToBase64 = (images: ImageListType) => {
 
 export const returnErrorMsg = (error: string, t: (key: string) => string) => {
   var msg = ''
-  console.log(error)
   switch (error) {
     case formErr.empty:
       msg = t('form.error.shouldNotBeEmpty')
@@ -211,10 +210,16 @@ export const formatWeight = (weight: string | number, decimalVal: number) => {
 }
 
 export const onChangeWeight = (value: string, decimalVal: number, cb: (arg0: string) => void) => {
-  const decimalStr = decimalVal.toString();
-  const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
-  const regex = new RegExp("^\\d*\\.?\\d{0," + zeroCount + "}$");
+  let regexStr;
+  if (decimalVal === 0) {
+    regexStr = "^\\d*$"; // 只匹配整數
+  } else {
+    const decimalStr = decimalVal.toString();
+    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
+    regexStr = "^(?!\\.$)\\d*\\.?\\d{0," + zeroCount + "}$"; // 匹配小數，但首字符不能是小數點
+  }
+  const regex = new RegExp(regexStr);
   if (regex.test(value) || value === '') {
-    cb(value)
+    cb(value);
   }
 }

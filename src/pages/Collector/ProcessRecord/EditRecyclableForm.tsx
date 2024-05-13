@@ -287,6 +287,10 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                   id="weight"
                   placeholder="請輸入重量"
                   onChange={(event) => onChangeWeight(event.target.value, decimalVal, setWeight)}
+                  onBlur={(event) => {
+                    const value = formatWeight(event.target.value, decimalVal)
+                    setWeight(value)
+                  }}
                   value={weight}
                   sx={{ width: '100%' }}
                   endAdornment={

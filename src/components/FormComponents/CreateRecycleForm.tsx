@@ -83,9 +83,7 @@ const CreateRecycleForm = ({
   const { recycType, manuList, collectorList, decimalVal } =
     useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<CreatePicoDetail>()
-  const [updateRow, setUpdateRow] = useState<CreatePicoDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
-  const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
 
   //---set custom style each role---
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
@@ -390,6 +388,10 @@ const CreateRecycleForm = ({
                       onChangeWeight(event.target.value, decimalVal, (value: string) => {
                         formik.setFieldValue('weight', value)
                       })
+                    }}
+                    onBlur={(event) => {
+                      const value = formatWeight(event.target.value, decimalVal)
+                      formik.setFieldValue('weight', value)
                     }}
                     value={formik.values.weight}
                     error={
