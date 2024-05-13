@@ -10,7 +10,8 @@ export const localStorgeKeyName = {
   functionList: 'functionList',
   // 20240129 add function list daniel keung end
   tenantId: 'tenantId',
-  realmApiRoute: 'realmApiRoute'
+  realmApiRoute: 'realmApiRoute',
+  selectedLanguage: 'selectedLanguage'
 }
 
 export const defaultPath = {
