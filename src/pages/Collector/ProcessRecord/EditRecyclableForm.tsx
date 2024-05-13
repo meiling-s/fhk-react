@@ -24,7 +24,7 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { formErr } from '../../../constants/constant'
-import { ImageToBase64, returnErrorMsg } from '../../../utils/utils'
+import { ImageToBase64, formatWeight, onChangeWeight, returnErrorMsg } from '../../../utils/utils'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { generateNumericId } from '../../../utils/uuidgenerator'
@@ -79,7 +79,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   const [recycTypeId, setRecycTypeId] = useState('')
   const [recycSubTypeId, setRecycSubTypeId] = useState('')
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
-  const { recycType, imgSettings } = useContainer(CommonTypeContainer)
+  const { recycType, imgSettings, decimalVal } = useContainer(CommonTypeContainer)
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
@@ -104,7 +104,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
         recycSubTypeId: editedData.recycSubtype.id
       }
       setDefaultRecyc(defRecyc)
-      setWeight(editedData.weight.toString())
+      setWeight(formatWeight(editedData.weight.toString(), decimalVal))
 
       const imageList: any = editedData.images.map(
         (url: string, index: number) => {
@@ -135,7 +135,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
-      weight == '0' &&
+      weight === '0' &&
         tempV.push({
           field: t('pick_up_order.recyclForm.weight'),
           problem: formErr.empty,
@@ -168,7 +168,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       recycTypeId: recycTypeId,
       recycSubTypeId: recycSubTypeId,
       packageTypeId: '',
-      weight: parseInt(weight),
+      weight: parseFloat(weight),
       unitId: 'kg',
       status: "ACTIVE",
       processoutDetailPhoto: imgItems,
@@ -286,14 +286,14 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                 <CustomTextField
                   id="weight"
                   placeholder="請輸入重量"
-                  onChange={(event) => setWeight(event.target.value)}
+                  onChange={(event) => onChangeWeight(event.target.value, decimalVal, setWeight)}
                   value={weight}
                   sx={{ width: '100%' }}
                   endAdornment={
                     <InputAdornment position="end">kg</InputAdornment>
                   }
                   disabled={action == 'delete'}
-                  error={weight == '0' && trySubmited}
+                  error={weight === '0' && trySubmited}
                 ></CustomTextField>
               </CustomField>
               <Grid item>

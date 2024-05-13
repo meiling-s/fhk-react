@@ -1,14 +1,11 @@
 import {
   Alert,
-  Autocomplete,
-  AutocompleteRenderInputParams,
   Box,
   Button,
   Divider,
   IconButton,
   InputAdornment,
   Stack,
-  TextField,
   Typography
 } from '@mui/material'
 import React, {
@@ -19,38 +16,24 @@ import React, {
   useState
 } from 'react'
 import { styles } from '../../constants/styles'
-import { DELETE_OUTLINED_ICON } from '../../themes/icons'
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab'
-import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
 import theme from '../../themes/palette'
 import CustomField from './CustomField'
-import CustomTimePicker from './CustomTimePicker'
-import {
-  recyclable,
-  singleRecyclable,
-  timePeriod
-} from '../../interfaces/collectionPoint'
+import { singleRecyclable } from '../../interfaces/collectionPoint'
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import RecyclablesList from '../SpecializeComponents/RecyclablesList'
-import { t } from 'i18next'
 import * as Yup from 'yup'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import CustomTextField from './CustomTextField'
-import { ErrorMessage, useFormik } from 'formik'
+import { useFormik } from 'formik'
 import { CreatePicoDetail } from '../../interfaces/pickupOrder'
-import { Navigate, useNavigate } from 'react-router'
 import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesListSingleSelect'
-import { dateToLocalTime } from '../Formatter'
-import { v4 as uuidv4 } from 'uuid'
 import { collectorList, manuList } from '../../interfaces/common'
 import CustomAutoComplete from './CustomAutoComplete'
-import i18n from '../../setups/i18n'
-import dayjs, { Dayjs } from 'dayjs'
-import { format } from '../../constants/constant'
+import dayjs from 'dayjs'
 import { localStorgeKeyName } from '../../constants/constant'
-import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
+import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 
 type props = {
@@ -62,7 +45,6 @@ type props = {
   editRowId: number | null
   isEditing: boolean
 }
-type CombinedType = manuList[] | collectorList[]
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 const initialTime: dayjs.Dayjs = dayjs()
 
@@ -87,7 +69,7 @@ const initValue = {
   pickupAt: '00:00:00',
   recycType: '',
   recycSubType: '',
-  weight: 0
+  weight: '0'
 }
 
 const CreateRecycleForm = ({
@@ -98,7 +80,7 @@ const CreateRecycleForm = ({
   isEditing,
   picoHisId
 }: props) => {
-  const { recycType, manuList, collectorList } =
+  const { recycType, manuList, collectorList, decimalVal } =
     useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<CreatePicoDetail>()
   const [updateRow, setUpdateRow] = useState<CreatePicoDetail>()
@@ -165,7 +147,7 @@ const CreateRecycleForm = ({
         pickupAt: editRow.pickupAt,
         recycType: editRow.recycType,
         recycSubType: editRow.recycSubType,
-        weight: editRow.weight
+        weight: formatWeight(editRow.weight, decimalVal)
       })
     }
   }, [editRow])
@@ -403,7 +385,12 @@ const CreateRecycleForm = ({
                   <CustomTextField
                     id="weight"
                     placeholder={t('userAccount.pleaseEnterNumber')}
-                    onChange={formik.handleChange}
+                    // onChange={formik.handleChange}
+                    onChange={(event) => {
+                      onChangeWeight(event.target.value, decimalVal, (value: string) => {
+                        formik.setFieldValue('weight', value)
+                      })
+                    }}
                     value={formik.values.weight}
                     error={
                       (formik.errors?.weight && formik.touched?.weight) ||

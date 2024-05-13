@@ -1,8 +1,7 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi, Languages } from '../constants/constant'
+import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 
 export const returnApiToken = () => {
   const decodeKeycloack =
@@ -22,7 +21,7 @@ export const returnApiToken = () => {
 
 export const ImageToBase64 = (images: ImageListType) => {
   var base64: string[] = []
-  images.map((image) => {
+  images.forEach((image) => {
     if (image['data_url']) {
       var imageBase64: string = image['data_url'].toString()
       imageBase64 = imageBase64.split(',')[1]
@@ -203,4 +202,19 @@ export const getBaseUrl = () => {
       break;
   }
   return baseURL
+}
+
+export const formatWeight = (weight: string | number, decimalVal: number) => {
+  const decimalStr = decimalVal.toString();
+  const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
+  return parseFloat(weight.toString()).toFixed(zeroCount);
+}
+
+export const onChangeWeight = (value: string, decimalVal: number, cb: (arg0: string) => void) => {
+  const decimalStr = decimalVal.toString();
+  const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
+  const regex = new RegExp("^\\d*\\.?\\d{0," + zeroCount + "}$");
+  if (regex.test(value) || value === '') {
+    cb(value)
+  }
 }

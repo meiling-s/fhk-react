@@ -1,23 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import CreatePickupOrder from './CreatePickupOrder'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
   CreatePicoDetail,
   EditPo,
   PickupOrder,
-  PickupOrderDetail
 } from '../../../interfaces/pickupOrder'
 import PickupOrderCreateForm from '../../../components/FormComponents/PickupOrderCreateForm'
 import { useFormik } from 'formik'
 import {
   editPickupOrder,
-  getAllPickUpOrder
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
 import { localStorgeKeyName } from '../../../constants/constant'
-import { showErrorToast } from '../../../utils/utils'
+import { formatWeight, showErrorToast } from '../../../utils/utils'
 import * as Yup from 'yup'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 const EditPickupOrder = () => {
   const { t } = useTranslation()
@@ -27,7 +25,8 @@ const EditPickupOrder = () => {
   const poInfo: PickupOrder = state
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
-
+  const { decimalVal } = useContainer(CommonTypeContainer)
+  
   const getErrorMsg = (field: string, type: string) => {
     switch (type) {
       case 'empty':
@@ -149,7 +148,7 @@ const EditPickupOrder = () => {
         pickupAt: item.pickupAt,
         recycType: item.recycType,
         recycSubType: item.recycSubType,
-        weight: item.weight
+        weight: formatWeight(item.weight, decimalVal)
       })) || []
 
     setAddRow(picoDetails)

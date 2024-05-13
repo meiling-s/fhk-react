@@ -1,7 +1,6 @@
 import { Box, Button, Typography, Grid, Modal } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers'
-import CustomField from '../../../components/FormComponents/CustomField'
 import { styles } from '../../../constants/styles'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
@@ -16,9 +15,6 @@ import {
   OrderJobHeader,
   AssignJobDriver
 } from '../../../interfaces/pickupOrder'
-import axiosInstance from '../../../constants/axiosInstance'
-import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
-import { GET_PICK_UP_ORDER_BY_ID } from '../../../constants/requests'
 import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
@@ -26,8 +22,10 @@ import { format } from '../../../constants/constant'
 import { rejectAssginDriver, assignDriver } from '../../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
-import { returnApiToken } from '../../../utils/utils'
+import { formatWeight, returnApiToken } from '../../../utils/utils'
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { useContainer } from 'unstated-next'
 
 const JobOrder = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -49,6 +47,7 @@ const JobOrder = () => {
   const [isActive, setIsActive] = useState(false)
   const { t } = useTranslation()
   const { loginId } = returnApiToken()
+  const { decimalVal } = useContainer(CommonTypeContainer)
 
   const handleCloses = () => {
     setId(0)
@@ -76,7 +75,7 @@ const JobOrder = () => {
             receiverAddrGps: item?.receiverAddrGps ?? [],
             recycType: item?.recycType ?? '',
             recycSubType: item?.recycSubType ?? '',
-            weight: item?.weight ?? 0,
+            weight: formatWeight(item?.weight, decimalVal) ?? 0,
             vehicleId: item?.vehicleId ?? 0,
             driverId: item?.driverId ?? '',
             contractNo: response?.data?.contractNo ?? '',
