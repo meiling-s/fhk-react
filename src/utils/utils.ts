@@ -203,12 +203,18 @@ export const getBaseUrl = () => {
   return baseURL
 }
 
+// 格式化重量
 export const formatWeight = (weight: string | number, decimalVal: number) => {
-  const decimalStr = decimalVal.toString();
-  const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
-  return parseFloat(weight.toString()).toFixed(zeroCount);
+  if (decimalVal === 0) {
+    return Math.round(parseFloat(weight.toString())).toString(); // 返回整數類型的字串
+  } else {
+    const decimalStr = decimalVal.toString();
+    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
+    return parseFloat(weight.toString()).toFixed(zeroCount); // 返回浮點數類型的字串
+  }
 }
 
+//  重量輸入框change事件，並根據decimalVal格式化重量及限制小數位
 export const onChangeWeight = (value: string, decimalVal: number, cb: (arg0: string) => void) => {
   let regexStr;
   if (decimalVal === 0) {
