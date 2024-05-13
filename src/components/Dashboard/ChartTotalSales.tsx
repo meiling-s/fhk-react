@@ -10,6 +10,7 @@ import { getTotalSalesProductAnalysis } from '../../APICalls/Collector/dashboard
 import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import { useContainer } from 'unstated-next';
 import { Languages } from '../../constants/constant';
+import { getBackgroundColor } from '../../utils/utils';
 
 type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
 interface DataSales {
@@ -106,20 +107,6 @@ const ChartTotalSales = () => {
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
     const [dataset, setDataset] = useState<Dataset>({total_weight: 0, sales: []});
 
-    const getBackgroundColor = (fieldName: fieldName) :string => {
-        const backgroundColors = {
-            'Rechargeable Batteries': '#EFE72F',
-            'Glass Bottles': '#4FB5F5',
-            'Paper': '#7ADFF1',
-            'Fluorescent Lamps and Tubes': '#ECAB05',
-            'Small Electrical Appliances': '#5AE9D8',
-            'Plastics': '#FF9FB7',
-            'Non-recyclable': '#F9B8FF',
-            'Cardboard': '#C69AFF'
-        }
-
-        return backgroundColors[fieldName]
-    }
 
     const getLabel = (type: string): string => {
         let languages:string = ''
@@ -226,7 +213,7 @@ const ChartTotalSales = () => {
    
     useEffect(() => {
         initTotalSales()
-    }, [])
+    }, [recycType])
 
     useEffect(() => {
         const datsetLang = {
@@ -323,15 +310,51 @@ const ChartTotalSales = () => {
                                 dataset?.sales.map((item, index) => {
                                     return(
                                         <Tooltip 
-                                        title={`${item.description} ${item.weight}Kg`} 
-                                        arrow 
-                                        placement="top" 
-                                        componentsProps={{
-                                            tooltip: {
-                                                sx: localstyles.tooltip(item.backgroundColor)
-                                            },
-                                        }}    
-                                    >
+                                            title={
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        maxWidth: 320,
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        p: 1,
+                                                    }}
+                                                >
+                                                    <Typography 
+                                                        style={
+                                                            {
+                                                                fontSize: '10px', 
+                                                                fontWeight: '500', 
+                                                                alignItems: 'center', 
+                                                                textAlign: 'center'
+                                                        }
+                                                        }
+                                                    >
+                                                        {item.description}
+                                                    </Typography>
+                                                    <Typography 
+                                                        style={
+                                                            {
+                                                                fontSize: '10px', 
+                                                                fontWeight: '500', 
+                                                                alignItems: 'center', 
+                                                                textAlign: 'center'
+                                                            }
+                                                        }
+                                                    >
+                                                        {item.weight}Kg
+                                                    </Typography>
+                                                </Box>
+                                            } 
+                                            arrow 
+                                            placement="top" 
+                                            componentsProps={{
+                                                tooltip: {
+                                                    sx: localstyles.tooltip(item.backgroundColor)
+                                                },
+                                            }}    
+                                        >
                                         <Box 
                                             sx={{
                                                 width: item.width, 

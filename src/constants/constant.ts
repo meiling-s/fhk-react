@@ -95,7 +95,21 @@ export const Languages = {
   ZHHK : 'zhhk'
 }
 
-export const TypeRecycables = {
+export type fieldNameRecycables = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
+type ColorNameRecycables = '#EFE72F' | '#4FB5F5' | '#7ADFF1' | '#ECAB05' | '#5AE9D8'| '#FF9FB7' | '#F9B8FF' | '#C69AFF';
+
+type TypeRecycable = {
+  'RECHARGEABLE_BATTERIES'?: fieldNameRecycables;
+  'GLASS_BOTTLES'?: fieldNameRecycables;
+  'PAPER'?: fieldNameRecycables;
+  'FLUORESCENT_LAMPS_AND_TUBES'?: fieldNameRecycables;
+  'SMALL_ELETRICAL_APPLIANCES'?: fieldNameRecycables;
+  'PLASTICS'?: fieldNameRecycables;
+  'NON_RECYCLABLE'?: fieldNameRecycables;
+  'CARDBOARD'?: fieldNameRecycables;
+};
+
+export const TypeRecycables:TypeRecycable = {
   RECHARGEABLE_BATTERIES: 'Rechargeable Batteries',
   GLASS_BOTTLES: 'Glass Bottles',
   PAPER: 'Paper',

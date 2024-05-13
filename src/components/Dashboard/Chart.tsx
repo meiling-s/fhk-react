@@ -184,6 +184,7 @@ const Chart = ({
                                 id="collectionIds"
                                 defaultValue={0}
                                 options={collectionIds ? collectionIds : []}
+                                getOptionLabel={(option) => option.toString()}
                                 onChange={(event, value) => {
                                     onChangeColdId(value)
                                 }}

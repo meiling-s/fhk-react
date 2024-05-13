@@ -10,6 +10,9 @@ import i18n from "../../../setups/i18n";
 import Dashboard from "../../../components/Dashboard/Chart";
 import { getCollectionPoint } from "../../../APICalls/Collector/collectionPointManage";
 import { collectionPoint } from '../../../interfaces/collectionPoint'
+import { TypeRecycables, fieldNameRecycables } from '../../../constants/constant'
+import { getBackgroundColor } from "../../../utils/utils";
+
 interface Dataset{
     id: string,
     label: string,
@@ -28,7 +31,7 @@ type TypeRecycable = {
     'Cardboard'?: string;
 };
 
-type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
+// type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
 const Recyclables: FunctionComponent = () => {
     const { t } = useTranslation()
     const { recycType } =useContainer(CommonTypeContainer);
@@ -86,7 +89,7 @@ const Recyclables: FunctionComponent = () => {
     const getRecyclablesDashboard = async () => {
         const response = await getcolPointRecyclablesDashboard(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'), colId);
 
-        const getDataWeights = (type: fieldName, length: number): number[] =>{
+        const getDataWeights = (type: fieldNameRecycables, length: number): number[] =>{
             const weights:number[]= [];
             if(!response) return weights
             const recyclables:any =  Object.values(response.data)
@@ -111,61 +114,61 @@ const Recyclables: FunctionComponent = () => {
             if(!recycType) return;
 
             for(let type of recycType){
-                if(type.recyclableNameEng === 'Rechargeable Batteries'){
+                if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
                     datasets.push({
                         id: type.recyclableNameEng,
                         label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#EFE72F'
+                        backgroundColor: getBackgroundColor(TypeRecycables.RECHARGEABLE_BATTERIES)
                     })
-                } else if(type.recyclableNameEng === 'Glass Bottles'){
+                } else if(type.recyclableNameEng === TypeRecycables.GLASS_BOTTLES){
                     datasets.push({
                         id: type.recyclableNameEng,
                         label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#4FB5F5'
+                        backgroundColor: getBackgroundColor(TypeRecycables.GLASS_BOTTLES)
                     })
-                } else if(type.recyclableNameEng === 'Paper'){ 
+                } else if(type.recyclableNameEng === TypeRecycables.PAPER){ 
                     datasets.push({
                         id: type.recyclableNameEng,
                         label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#7ADFF1'
+                        backgroundColor: getBackgroundColor(TypeRecycables.PAPER)
                     })
-                } else if(type.recyclableNameEng === 'Fluorescent Lamps and Tubes'){ 
+                } else if(type.recyclableNameEng === TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES){ 
                     datasets.push({
                         id: type.recyclableNameEng,
                         label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#ECAB05'
+                        backgroundColor: getBackgroundColor(TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES)
                     })
-                } else if(type.recyclableNameEng === 'Small Electrical Appliances'){ 
+                } else if(type.recyclableNameEng === TypeRecycables.SMALL_ELETRICAL_APPLIANCES){ 
                     datasets.push({
                         id: type.recyclableNameEng,
                         label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#5AE9D8'
+                        backgroundColor: getBackgroundColor(TypeRecycables.SMALL_ELETRICAL_APPLIANCES)
                     })
-                } else if(type.recyclableNameEng === 'Plastics'){
+                } else if(type.recyclableNameEng === TypeRecycables.PLASTICS){
                     datasets.push({
                         id: type.recyclableNameEng,
                         label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#FF9FB7'
+                        backgroundColor: getBackgroundColor(TypeRecycables.PLASTICS)
                     })
-                } else if(type.recyclableNameEng === 'Non-recyclable'){
+                } else if(type.recyclableNameEng === TypeRecycables.NON_RECYCLABLE){
                     datasets.push({
                         id: type.recyclableNameEng,
                         label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#F9B8FF'
+                        backgroundColor: getBackgroundColor(TypeRecycables.NON_RECYCLABLE)
                     })
-                } else if(type.recyclableNameEng === 'Cardboard'){
+                } else if(type.recyclableNameEng === TypeRecycables.CARDBOARD){
                     datasets.push({
                         id: type.recyclableNameEng,
                         label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#C69AFF'
+                        backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD)
                     })
                 }
             }

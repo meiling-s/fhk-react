@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
 import dayjs from "dayjs";
 import { styles } from '../../constants/styles';
-import { Realm, localStorgeKeyName } from '../../constants/constant';
+import { Languages, Realm, localStorgeKeyName } from '../../constants/constant';
 import { useEffect, useState, useRef } from 'react';
 import { Chart } from "react-chartjs-2";
 import * as ChartGeo from "chartjs-chart-geo";
@@ -17,6 +17,7 @@ import {
   Legend
 } from "chart.js";
 import location from './hongkongLocation.json';
+import i18n from '../../setups/i18n';
 
 ChartJS.register(
     Title,
@@ -76,6 +77,31 @@ const ChartDistrictSales = () => {
         // initData()
     }, []);
 
+    const getDistirctLabelName = (properties: any):string => {
+        if(i18n.language === Languages.ENUS){
+            return properties.name_english
+        } else if(i18n.language === Languages.ZHCH){
+            return properties.name_simplified
+        } else {
+            return properties.name_traditional
+        }
+    }
+
+    useEffect(() => {
+        const changeLang = data.map((item:any) => {
+            return{
+                ...item,
+                properties: {
+                    ...item.properties,
+                    name: getDistirctLabelName(item.properties)
+
+                }
+            }
+        })
+
+        setData(changeLang)
+    }, [i18n.language])
+    
     const footerTooltip = (tooltipItems:any[]) => {
         let footer = 0;
       

@@ -1,8 +1,8 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi, Languages } from '../constants/constant'
+import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
+import { fieldNameRecycables } from '../constants/constant'
 
 export const returnApiToken = () => {
   const decodeKeycloack =
@@ -203,4 +203,19 @@ export const getBaseUrl = () => {
       break;
   }
   return baseURL
+}
+
+export const getBackgroundColor = (fieldName: fieldNameRecycables) :string => {
+    const backgroundColors = {
+        'Rechargeable Batteries': '#EFE72F',
+        'Glass Bottles': '#4FB5F5',
+        'Paper': '#7ADFF1',
+        'Fluorescent Lamps and Tubes': '#ECAB05',
+        'Small Electrical Appliances': '#5AE9D8',
+        'Plastics': '#FF9FB7',
+        'Non-recyclable': '#F9B8FF',
+        'Cardboard': '#C69AFF'
+    }
+
+    return backgroundColors[fieldName]
 }

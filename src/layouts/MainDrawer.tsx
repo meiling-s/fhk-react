@@ -62,7 +62,7 @@ function MainDrawer() {
   const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
   const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false)
   const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false)
-  const [dashboarddGroup, setDashboardGroup] = useState<boolean>(false)
+  const [dashboardGroup, setDashboardGroup] = useState<boolean>(false)
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const theme = useTheme()
@@ -219,7 +219,7 @@ function MainDrawer() {
         name: t('dashboard_recyclables.recyclable'),
         onClick: () => navigate(`${realm}/dashboard`),
         collapse: true,
-        collapseGroup: dashboarddGroup,
+        collapseGroup: dashboardGroup,
         path: `${realm}/dashboard`
       },
 
@@ -560,7 +560,7 @@ function MainDrawer() {
               </ListItem>
             )
           )}
-           {/* <Collapse in={dashboarddGroup} timeout="auto" unmountOnExit>
+           {/* <Collapse in={dashboardGroup} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {subMenuDashboard.map((item, index) => {
                 return(

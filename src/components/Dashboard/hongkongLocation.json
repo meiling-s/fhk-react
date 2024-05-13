@@ -3,7 +3,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Central and Western"
+        "name_english": "Central and Western",
+        "name_simplified": "中西区",
+        "name_traditional": "中西區"
       },
       "geometry": {
         "type": "Polygon",
@@ -73,7 +75,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Wan Chai"
+        "name_english": "Wan Chai",
+        "name_simplified": "晚拆",
+        "name_traditional": "晚拆"
       },
       "geometry": {
         "type": "Polygon",
@@ -123,7 +127,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Eastern"
+        "name_english": "Eastern",
+        "name_simplified": "东",
+        "name_traditional": "東"
       },
       "geometry": {
         "type": "Polygon",
@@ -209,7 +215,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Southern"
+        "name_english": "Southern",
+        "name_simplified": "南方",
+        "name_traditional": "南方"
       },
       "geometry": {
         "type": "MultiPolygon",
@@ -469,7 +477,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Yau Tsim Mong"
+        "name_english": "Yau Tsim Mong",
+        "name_simplified": "油尖旺",
+        "name_traditional": "油尖旺"
       },
       "geometry": {
         "type": "Polygon",
@@ -531,7 +541,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Kowloon City"
+        "name_english": "Kowloon City",
+        "name_simplified": "九龙城",
+        "name_traditional": "九龍城"
       },
       "geometry": {
         "type": "Polygon",
@@ -625,7 +637,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Sham Shui Po"
+        "name_english": "Sham Shui Po",
+        "name_simplified": "沙漠水泼",
+        "name_traditional": "沙漠水潑"
       },
       "geometry": {
         "type": "MultiPolygon",
@@ -709,7 +723,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Wong Tai Sin"
+        "name_english": "Wong Tai Sin",
+        "name_simplified": "黄大仙",
+        "name_traditional": "黃大仙"
       },
       "geometry": {
         "type": "Polygon",
@@ -747,7 +763,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Kwun Tong"
+        "name_english": "Kwun Tong",
+        "name_simplified": "可无奈同",
+        "name_traditional": "可無奈同"
       },
       "geometry": {
         "type": "Polygon",
@@ -801,7 +819,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Sai Kung"
+        "name_english": "Sai Kung",
+        "name_simplified": "西贡",
+        "name_traditional": "西貢"
       },
       "geometry": {
         "type": "MultiPolygon",
@@ -1393,7 +1413,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Sha Tin"
+        "name_english": "Sha Tin",
+        "name_simplified": "沙田",
+        "name_traditional": "沙田"
       },
       "geometry": {
         "type": "Polygon",
@@ -1503,7 +1525,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Kwai Tsing"
+        "name_english": "Kwai Tsing",
+        "name_simplified": "葵青区",
+        "name_traditional": "葵青區"
       },
       "geometry": {
         "type": "MultiPolygon",
@@ -1655,7 +1679,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Tsuen Wan"
+        "name_english": "Tsuen Wan",
+        "name_simplified": "荃一号",
+        "name_traditional": "荃一號"
       },
       "geometry": {
         "type": "MultiPolygon",
@@ -1871,7 +1897,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Tuen Mun"
+        "name_english": "Tuen Mun",
+        "name_simplified": "我支持蒙",
+        "name_traditional": "我支持蒙"
       },
       "geometry": {
         "type": "MultiPolygon",
@@ -2023,7 +2051,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Yuen Long"
+        "name_english": "Yuen Long",
+        "name_simplified": "与恩龙",
+        "name_traditional": "與恩龍"
       },
       "geometry": {
         "type": "Polygon",
@@ -2177,7 +2207,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "North"
+        "name_english": "North",
+        "name_simplified": "北",
+        "name_traditional": "北"
       },
       "geometry": {
         "type": "MultiPolygon",
@@ -2553,7 +2585,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Tai Po"
+        "name_english": "Tai Po",
+        "name_simplified": "这是坡",
+        "name_traditional": "這是坡"
       },
       "geometry": {
         "type": "MultiPolygon",
@@ -2929,7 +2963,9 @@
       "type": "Feature",
       "id": "HK.",
       "properties": {
-        "name": "Islands"
+        "name_english": "Islands",
+        "name_simplified": "岛屿",
+        "name_traditional": "島嶼"
       },
       "geometry": {
         "type": "MultiPolygon",
