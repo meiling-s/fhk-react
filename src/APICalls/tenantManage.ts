@@ -50,7 +50,7 @@ export const getAllTenant = async (page: number, size: number) => {
       },
       headers: {}
     })
-    console.log('Get all tenant success:', JSON.stringify(response.data))
+    //console.log('Get all tenant success:', JSON.stringify(response.data))
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)
@@ -75,7 +75,7 @@ export const searchTenantById = async (
       },
       headers: {}
     })
-    console.log('Get all tenant success:', JSON.stringify(response.data))
+    //console.log('Get all tenant success:', JSON.stringify(response.data))
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)

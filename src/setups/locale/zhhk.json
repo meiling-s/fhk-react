@@ -492,7 +492,8 @@
       "please_enter_the_reason": "請輸入原因",
       "no_preference": "無特別偏好",
       "fifo": "先進先出（FIFO）",
-      "lifo": "後進先出（LIFO）"
+      "lifo": "後進先出（LIFO）",
+      "default_lang": "默认语言"
     }
   },
   "report": {

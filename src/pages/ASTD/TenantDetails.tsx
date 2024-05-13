@@ -1,7 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import CheckIcon from '@mui/icons-material/Check'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 import RightOverlayForm from '../../components/RightOverlayForm'
 import {
@@ -9,16 +7,18 @@ import {
   Stack,
   FormControl,
   InputLabel,
-  Select,
-  MenuItem
+  Typography,
+  MenuItem,
+  Grid
 } from '@mui/material'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomField from '../../components/FormComponents/CustomField'
 import CustomTextField from '../../components/FormComponents/CustomTextField'
-import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import CustomItemList, {
   il_item
 } from '../../components/FormComponents/CustomItemList'
-import { useContainer } from 'unstated-next'
+import { displayCreatedDate } from '../../utils/utils'
+import { styles } from '../../constants/styles'
 
 import { getTenantById } from '../../APICalls/tenantManage'
 import { Tenant } from '../../interfaces/account'
@@ -40,18 +40,19 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
 }) => {
   const { t } = useTranslation()
   const [tenantDetail, setTenantDetails] = useState<Tenant>()
+  const [companyLogo, setCompanyLogo] = useState<string | null>(null)
+  const [numOfAccount, setNumOfAccount] = useState<number>(1)
+  const [inventoryMethod, setInventoryMethod] = useState<string>('')
+  const [numOfUplodedPhoto, setNumOfUplodedPhoto] = useState<number>(0)
+  const [maxUploadSize, setMaxUploadSize] = useState<string>('1')
+  const [defaultLang, setDefaultLang] = useState<string>('ZH-HK')
+  const [selectedStatus, setSelectedStatus] = useState<string>('CREATED')
+  const [deactiveReason, setDeactiveReason] = useState<string>('-')
 
-  const getDateFormat = (item: string | undefined) => {
-    if (item) {
-      const dateFormatted = dayjs(new Date(item)).format(format.dateFormat1)
-      return dateFormatted
-    } else {
-      return '-'
-    }
-  }
+  const footerTenant = `[${tenantDetail?.tenantId}] ${t(
+    `status.${tenantDetail?.status.toLocaleLowerCase()}`
+  )} ${displayCreatedDate(tenantDetail?.updatedAt || '')} `
 
-  const approveOn = getDateFormat(tenantDetail?.approvedAt)
-  const messageCheckout = `[UserID] ${t('check_out.approved_on')} ${approveOn} `
   useEffect(() => {
     getCompanyDetail()
   }, [])
@@ -60,6 +61,11 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     const result = await getTenantById(tenantId)
     const data = result?.data
     setTenantDetails(data)
+
+    ///mapping data
+    setNumOfAccount(data.decimalPlace)
+    setNumOfUplodedPhoto(data.allowImgNum)
+    setMaxUploadSize(data.allowImgSize.toString())
   }
 
   const mainInfoFields = [
@@ -86,22 +92,31 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   ]
 
   const statuses: il_item[] = [
-    { id: '1', name: t('status.enable') },
-    { id: '2', name: t('status.not_enabled') },
-    { id: '3', name: t('status.terminated') }
+    { id: 'CREATED', name: t('status.created') },
+    { id: 'CONFIRMED', name: t('status.confirmed') },
+    { id: 'REJECTED', name: t('status.rejected') }
   ]
 
   const ways_of_exits: il_item[] = [
-    { id: '1', name: t('tenant.detail.no_preference') },
-    { id: '2', name: t('tenant.detail.fifo') },
-    { id: '3', name: t('tenant.detail.lifo') }
+    { id: '', name: t('tenant.detail.no_preference') },
+    { id: 'FIFO', name: t('tenant.detail.fifo') },
+    { id: 'LIFO', name: t('tenant.detail.lifo') }
   ]
 
-  const setStatus = () => {}
+  const lang_option: il_item[] = [
+    { id: 'EN-US', name: 'EN-US' },
+    { id: 'ZH-HK', name: 'ZH-HK' },
+    { id: 'ZH-CH', name: 'ZH-CH' }
+  ]
 
-  const handleReasonDeact = () => {}
-
-  const handleChangeAccount = () => {}
+  const num_option: il_item[] = [
+    { id: '0', name: '0' },
+    { id: '1', name: '1' },
+    { id: '2', name: '2' },
+    { id: '3', name: '3' },
+    { id: '4', name: '4' },
+    { id: '5', name: '5' }
+  ]
 
   return (
     <div className="checkin-request-detail">
@@ -193,21 +208,25 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.creation_date')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  {getDateFormat(tenantDetail?.createdAt)}
+                  {displayCreatedDate(tenantDetail?.createdAt || '')}
                 </div>
               </div>
             </Box>
             <Box>
               <div className="logo mt-6">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-4">
-                  {t('tenant.detail.epd_contract')}
+                  {t('tenant.detail.company_logo')}
                 </div>
                 <div className="">
-                  <img
-                    src={tenantDetail?.companyLogo}
-                    alt="logo_company"
-                    style={{ width: '70px' }}
-                  />
+                  {tenantDetail?.companyLogo ? (
+                    <img
+                      src={tenantDetail?.companyLogo}
+                      alt="logo_company"
+                      style={{ width: '70px' }}
+                    />
+                  ) : (
+                    '-'
+                  )}
                 </div>
               </div>
             </Box>
@@ -217,118 +236,156 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.remark')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  -
+                  {tenantDetail?.remark}
                 </div>
               </div>
             </Box>
+            <Grid item className="field-default-lang">
+              <Typography sx={{ ...styles.header3 }}>
+                {t('tenant.detail.number_of_accounts')}
+              </Typography>
+              <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
+                <Select
+                  labelId="company-label"
+                  id="company-label"
+                  value={numOfAccount.toString()}
+                  sx={{
+                    borderRadius: '12px'
+                  }}
+                  onChange={(event) => {
+                    const selectedValue = num_option.find(
+                      (item) =>
+                        parseInt(item.id) === parseInt(event.target.value)
+                    )
+                    if (selectedValue) {
+                      setNumOfAccount(parseInt(selectedValue.id))
+                    }
+                  }}
+                  defaultValue={tenantDetail?.decimalPlace.toString()}
+                >
+                  {num_option.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
             <Box>
-              <div className="field-status">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('tenant.detail.number_of_accounts')}
-                </div>
-                <div className="items">
-                  <FormControl sx={dropDown}>
-                    <InputLabel>
-                      {t('tenant.detail.number_of_accounts')}
-                    </InputLabel>
-                    <Select
-                      labelId="company-label"
-                      id="company"
-                      value={tenantDetail?.decimalPlace}
-                      label={t('check_out.any')}
-                      onChange={handleChangeAccount}
-                    >
-                      <MenuItem value={tenantDetail?.decimalPlace}>
-                        {tenantDetail?.decimalPlace || 0}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </div>
-              </div>
-            </Box>
-            <Box>
-              <div className="field-status">
+              <div className="field-ways_of_entry_and_exit">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
                   {t('tenant.detail.ways_of_entry_and_exit')}
                 </div>
                 <div className="items">
                   <CustomItemList
                     items={ways_of_exits}
-                    singleSelect={setStatus}
+                    singleSelect={(value) => setInventoryMethod(value)}
+                    value={inventoryMethod}
+                    defaultSelected={tenantDetail?.inventoryMethod}
                   />
                 </div>
               </div>
             </Box>
+            <Grid item className="field-number-of-photo">
+              <Typography sx={{ ...styles.header3 }}>
+                {t('tenant.detail.number_of_photos_uploaded')}
+              </Typography>
+              <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
+                <Select
+                  labelId="company-label"
+                  id="company-label"
+                  value={numOfUplodedPhoto.toString()}
+                  sx={{
+                    borderRadius: '12px'
+                  }}
+                  onChange={(event) => {
+                    const selectedValue = num_option.find(
+                      (item) =>
+                        parseInt(item.id) === parseInt(event.target.value)
+                    )
+                    if (selectedValue) {
+                      setNumOfUplodedPhoto(parseInt(selectedValue.id))
+                    }
+                  }}
+                  defaultValue={tenantDetail?.allowImgNum.toString()}
+                >
+                  {num_option.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
             <Box>
-              <div className="field-status">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('tenant.detail.number_of_photos_uploaded')}
-                </div>
-                <div className="items">
-                  <FormControl sx={dropDown}>
-                    <InputLabel>
-                      {t('tenant.detail.number_of_photos_uploaded')}
-                    </InputLabel>
-                    <Select
-                      labelId="company-label"
-                      id="company"
-                      value={tenantDetail?.allowImgNum}
-                      label={t('check_out.any')}
-                      onChange={handleChangeAccount}
-                    >
-                      <MenuItem value={tenantDetail?.allowImgNum}>
-                        {tenantDetail?.allowImgNum}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </div>
-              </div>
-            </Box>
-            <Box>
-              <CustomField
-                mandatory
-                label={t('tenant.detail.max_photo_upload_capacity')}
-              >
+              <Typography sx={{ ...styles.header3, marginBottom: 3 }}>
+                {t('tenant.detail.max_photo_upload_capacity')}
+              </Typography>
+              <CustomField label="">
                 <CustomTextField
                   id={'please_enter_capacity_mb'}
                   placeholder={t('tenant.detail.please_enter_capacity_mb')}
-                  rows={1}
-                  onChange={handleReasonDeact}
-                  value={tenantDetail?.allowImgSize}
+                  onChange={(event) => setMaxUploadSize(event.target.value)}
+                  value={maxUploadSize}
                   sx={{ width: '100%' }}
                 ></CustomTextField>
               </CustomField>
             </Box>
-            <Box>
-              <div className="field-status">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('tenant.detail.account_status')}
-                </div>
-                <div className="items">
-                  <CustomItemList items={statuses} singleSelect={setStatus} />
-                </div>
+            <Grid item className="field-default-lang">
+              <Typography sx={{ ...styles.header3 }}>
+                {t('tenant.detail.default_lang')}
+              </Typography>
+              <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
+                <Select
+                  labelId="company-label"
+                  id="company-label"
+                  value={defaultLang}
+                  sx={{
+                    borderRadius: '12px'
+                  }}
+                  onChange={(event) => setDefaultLang(event.target.value)}
+                >
+                  {lang_option.map((item, index) => (
+                    <MenuItem key={index + item.id} value={item?.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item className="field-status">
+              <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
+                {t('tenant.detail.account_status')}
+              </Typography>
+              <div className="items">
+                <CustomItemList
+                  items={statuses}
+                  singleSelect={setSelectedStatus}
+                  defaultSelected={tenantDetail?.status}
+                  value={selectedStatus}
+                />
               </div>
-            </Box>
-            <Box>
-              <CustomField
-                mandatory
-                label={t('tenant.detail.reason_for_deactivation')}
-              >
+            </Grid>
+            <Grid item className="field-reason_for_deactivation">
+              <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
+                {t('tenant.detail.reason_for_deactivation')}
+              </Typography>
+              <CustomField label="">
                 <CustomTextField
                   id={'reason_for_deactivation'}
                   placeholder={t('tenant.detail.please_enter_the_reason')}
                   multiline={true}
                   rows={4}
-                  onChange={handleReasonDeact}
-                  value={''}
+                  onChange={(event) => setDeactiveReason(event.target.value)}
+                  value={deactiveReason}
                   sx={{ width: '100%' }}
                 ></CustomTextField>
               </CustomField>
-            </Box>
+            </Grid>
             <Box>
-              <div className="field-remark">
+              <div className="field-tenant-footer">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {messageCheckout}
+                  {footerTenant}
                 </div>
               </div>
             </Box>
@@ -350,23 +407,24 @@ const categoryRecyle: React.CSSProperties = {
   color: 'darkblue'
 }
 
-let dropDown = {
-  mt: 3,
-  borderRadius: '10px',
-  width: '100%',
-  bgcolor: 'white',
-  '& .MuiOutlinedInput-root': {
+let localstyles = {
+  dropdown: {
+    mt: 3,
     borderRadius: '10px',
-    '& fieldset': {
-      borderColor: 'rgba(0, 0, 0, 0.23)'
-    },
-    '&:hover fieldset': {
-      borderColor: '#79CA25'
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#79CA25'
+    width: '100%',
+    bgcolor: 'white',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '10px',
+      '& fieldset': {
+        borderColor: 'rgba(0, 0, 0, 0.23)'
+      },
+      '&:hover fieldset': {
+        borderColor: '#79CA25'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#79CA25'
+      }
     }
   }
 }
-
 export default TenantDetails

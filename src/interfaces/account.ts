@@ -41,4 +41,5 @@ export type Tenant = {
   createdBy: string
   createdAt: string
   updatedBy: string
+  updatedAt: string
 }
