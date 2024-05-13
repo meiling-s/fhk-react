@@ -20,6 +20,8 @@ import { dateToLocalDate, dayjsToLocalDate } from '../../../components/Formatter
 
 import { useTranslation } from 'react-i18next'
 import { PickupOrder } from '../../../interfaces/pickupOrder'
+import { returnApiToken } from '../../../utils/utils'
+import { getItemTrackInventory } from '../../../APICalls/Collector/inventory'
 
 interface InventoryDetailProps {
   drawerOpen: boolean
@@ -73,7 +75,26 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
     }
   ]
 
-  useEffect(() => {}, [selectedRow])
+  useEffect(() => {
+    initItemTrackInventory()
+  }, [selectedRow])
+
+  const initItemTrackInventory = async () => {
+    const token = returnApiToken()
+    if (selectedRow !== null && selectedRow !== undefined) {
+      let result;
+      if (token.realmApiRoute === 'account') {
+  
+      } else {
+          result = await getItemTrackInventory(token.realmApiRoute, token.decodeKeycloack, selectedRow?.itemId)
+
+          if (result) {
+            const data = result
+            console.log(data, 'dataaa')
+          }
+      }
+    }
+  }
 
   return (
     <>
