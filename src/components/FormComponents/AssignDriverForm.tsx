@@ -24,7 +24,6 @@ import CardTravelIcon from '@mui/icons-material/CardTravel';
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined';
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { getAllVehiclesLogistic, getDriver } from "../../APICalls/jobOrder";
 import { useTranslation } from "react-i18next";
 
 type props = {
@@ -33,7 +32,9 @@ type props = {
   pickupOrderDetail: AssignJobDriver[],
   setPickupOrderDetail : (val: AssignJobDriver[]) => void;
   setIsEdit: (val: boolean) => void;
-  isEdit: boolean,
+  isEdit: boolean;
+  driverList: DriverList[];
+  vehicleList: VehicleList[];
   // onSubmitData: (type: string, msg: string) => void
 };
 
@@ -44,49 +45,16 @@ const AssignDriver = ({
   setPickupOrderDetail,
   setIsEdit,
   isEdit,
+  driverList,
+  vehicleList,
   // onSubmitData,
 }: props) => {
   
   const [assignField, setAssignField] = useState<AssignJobField>({ driverId: '', plateNo: '', vehicleId: 0})
   const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
-  const [driverList, setDriverList] = useState<DriverList[]>([])
-  const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
   const { i18n } = useTranslation();
   const [errors, setErrors] = useState({startDate: false, driverId: false, vehicleId: false})
   const currentLang = i18n.language
-
-  const initListDriver = async () => {
-    const result = await getDriver(0, 10, 'string')
-    if (result) {
-      const data = result?.data?.content
-      const mappingDriver : DriverList[] = []
-      data.forEach((item: any) => {
-        mappingDriver.push({
-          driverId: item.driverId,
-          driverNameEng:  item.driverNameEng,
-          driverNameSchi:  item.driverNameSchi,
-          driverNameTchi:  item.driverNameTchi,
-        })
-      })
-      setDriverList(mappingDriver)
-    }
-  }
-
-  const initListVehicle = async () => {
-    const result = await getAllVehiclesLogistic(0, 10)
-    if (result) {
-      const data = result?.data?.content
-      const mappingVehicle : VehicleList[] = []
-      data.forEach((item: any) => {
-        mappingVehicle.push({
-          vehicleId: item.vehicleId,
-          plateNo:  item.plateNo,
-        })
-      })
-      setVehicleList(mappingVehicle)
-    }
-  }
-
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -100,11 +68,6 @@ const AssignDriver = ({
       onClose && onClose();
     }
   };
-
-  useEffect(() => {
-    initListDriver()
-    initListVehicle()
-  }, [])
   
   useEffect(() => {
     if(isEdit){

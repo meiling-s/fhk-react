@@ -11,10 +11,7 @@ import CardTravelIcon from '@mui/icons-material/CardTravel'
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined'
 import { useTranslation } from 'react-i18next'
 import AssignDriverForm from '../../../components/FormComponents/AssignDriverForm'
-import {
-  OrderJobHeader,
-  AssignJobDriver
-} from '../../../interfaces/pickupOrder'
+import { OrderJobHeader, AssignJobDriver, DriverList, VehicleList } from '../../../interfaces/pickupOrder'
 import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
@@ -26,6 +23,7 @@ import { formatWeight, returnApiToken } from '../../../utils/utils'
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
+import { getAllVehiclesLogistic, getDriver } from "../../../APICalls/jobOrder";
 
 const JobOrder = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -48,12 +46,52 @@ const JobOrder = () => {
   const { t } = useTranslation()
   const { loginId } = returnApiToken()
   const { decimalVal } = useContainer(CommonTypeContainer)
+  const [driverList, setDriverList] = useState<DriverList[]>([])
+  const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
 
   const handleCloses = () => {
     setId(0)
     setOpenModal(false)
     setIsActive(false)
   }
+
+  
+  const initListDriver = async () => {
+    const result = await getDriver(0, 10, 'string')
+    if (result) {
+      const data = result?.data?.content
+      const mappingDriver : DriverList[] = []
+      data.forEach((item: any) => {
+        mappingDriver.push({
+          driverId: item.driverId,
+          driverNameEng:  item.driverNameEng,
+          driverNameSchi:  item.driverNameSchi,
+          driverNameTchi:  item.driverNameTchi,
+        })
+      })
+      setDriverList(mappingDriver)
+    }
+  }
+
+  const initListVehicle = async () => {
+    const result = await getAllVehiclesLogistic(0, 10)
+    if (result) {
+      const data = result?.data?.content
+      const mappingVehicle : VehicleList[] = []
+      data.forEach((item: any) => {
+        mappingVehicle.push({
+          vehicleId: item.vehicleId,
+          plateNo:  item.plateNo,
+        })
+      })
+      setVehicleList(mappingVehicle)
+    }
+  }
+
+  useEffect(() => {
+    initListDriver()
+    initListVehicle()
+  }, [])
 
   const getDetailPico = async (picoId: string) => {
     try {
@@ -505,6 +543,8 @@ const JobOrder = () => {
             setPickupOrderDetail={setPickupOrderDetail}
             setIsEdit={setIsEdit}
             isEdit={isEdit}
+            driverList={driverList}
+            vehicleList={vehicleList}
             // onSubmitData={onSubmitData}
           />
         </Modal>
