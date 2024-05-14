@@ -20,7 +20,8 @@
     "yes": "Yes",
     "no": "No",
     "createdDatetime": "Create datetime",
-    "lastUpdateDatetime": "Last update datetime"
+    "lastUpdateDatetime": "Last update datetime",
+    "details": "Details"
   },
   "col": {
     "createCP": "Create collection point",

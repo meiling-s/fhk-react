@@ -1,6 +1,6 @@
 export type LoginItem = {
-  username: string,
-  password: string,
+  username: string
+  password: string
 }
 
 //tenant register item
@@ -18,6 +18,7 @@ export type Tenant = {
   companyNameSchi: string
   companyNameEng: string
   tenantType: string
+  lang: string
   status: string
   brNo: string
   remark: string
@@ -27,11 +28,11 @@ export type Tenant = {
   brPhoto: string[]
   epdPhoto: string[]
   companyLogo: string
-  decimalPlace: 0
+  decimalPlace: number
   monetaryValue: string
   inventoryMethod: string
-  allowImgSize: 0
-  allowImgNum: 0
+  allowImgSize: number
+  allowImgNum: number
   effFrmDate: string
   effToDate: string
   approvedAt: string
@@ -42,4 +43,36 @@ export type Tenant = {
   createdAt: string
   updatedBy: string
   updatedAt: string
+}
+
+export type UpdateTenantForm = {
+  companyNameTchi: string
+  companyNameSchi: string
+  companyNameEng: string
+  tenantType: string
+  lang: string
+  status: string
+  brNo: string
+  remark: string
+  contactNo: string
+  email: string
+  contactName: string
+  brPhoto: string[]
+  epdPhoto: string[]
+  companyLogo: string
+  decimalPlace: number
+  monetaryValue: string
+  inventoryMethod: string
+  allowImgSize: number
+  allowImgNum: number
+  effFrmDate: string
+  effToDate: string
+  approvedAt: string
+  approvedBy: string
+  rejectedAt: string
+  rejectedBy: string
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+  updatedBy: string
 }

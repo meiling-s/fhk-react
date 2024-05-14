@@ -20,7 +20,8 @@
     "yes": "是",
     "no": "否",
     "createdDatetime": "建立時間",
-    "lastUpdateDatetime": "上次更新時間"
+    "lastUpdateDatetime": "上次更新時間",
+    "details": "詳情"
   },
   "col": {
     "createCP": "建立回收點",

@@ -6,27 +6,36 @@ import {
   Box,
   Stack,
   FormControl,
-  InputLabel,
   Typography,
   MenuItem,
-  Grid
+  Grid,
+  ButtonBase,
+  ImageList,
+  ImageListItem,
+  Card
 } from '@mui/material'
+import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
+import ImageUploading, { ImageListType } from 'react-images-uploading'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomField from '../../components/FormComponents/CustomField'
 import CustomTextField from '../../components/FormComponents/CustomTextField'
 import CustomItemList, {
   il_item
 } from '../../components/FormComponents/CustomItemList'
-import { displayCreatedDate } from '../../utils/utils'
+import {
+  displayCreatedDate,
+  showSuccessToast,
+  showErrorToast
+} from '../../utils/utils'
 import { styles } from '../../constants/styles'
-
-import { getTenantById } from '../../APICalls/tenantManage'
-import { Tenant } from '../../interfaces/account'
-import dayjs from 'dayjs'
-import { format } from '../../constants/constant'
-
-interface Company {}
-
+import { ImageToBase64 } from '../../utils/utils'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import { getTenantById, updateTenantDetail } from '../../APICalls/tenantManage'
+import { Tenant, UpdateTenantForm } from '../../interfaces/account'
+import { useContainer } from 'unstated-next'
+import { localStorgeKeyName } from '../../constants/constant'
+import { ToastContainer, toast } from 'react-toastify'
 interface TenantDetailsProps {
   tenantId: number
   drawerOpen: boolean
@@ -39,8 +48,9 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   handleDrawerClose
 }) => {
   const { t } = useTranslation()
+  const { imgSettings } = useContainer(CommonTypeContainer)
   const [tenantDetail, setTenantDetails] = useState<Tenant>()
-  const [companyLogo, setCompanyLogo] = useState<string | null>(null)
+  const [companyLogo, setCompanyLogo] = useState<ImageListType>([])
   const [numOfAccount, setNumOfAccount] = useState<number>(1)
   const [inventoryMethod, setInventoryMethod] = useState<string>('')
   const [numOfUplodedPhoto, setNumOfUplodedPhoto] = useState<number>(0)
@@ -48,6 +58,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const [defaultLang, setDefaultLang] = useState<string>('ZH-HK')
   const [selectedStatus, setSelectedStatus] = useState<string>('CREATED')
   const [deactiveReason, setDeactiveReason] = useState<string>('-')
+  const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
 
   const footerTenant = `[${tenantDetail?.tenantId}] ${t(
     `status.${tenantDetail?.status.toLocaleLowerCase()}`
@@ -118,17 +129,88 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     { id: '5', name: '5' }
   ]
 
+  const handleUpdateTenant = async () => {
+    console.log('update tenant')
+
+    const companyLogoImg =
+      companyLogo.length > 0 ? ImageToBase64(companyLogo)[0] : ''
+
+    if (tenantDetail) {
+      const dataForm: UpdateTenantForm = {
+        companyNameTchi: tenantDetail.companyNameTchi,
+        companyNameSchi: tenantDetail.companyNameSchi,
+        companyNameEng: tenantDetail.companyNameEng,
+        tenantType: tenantDetail.tenantType,
+        lang: defaultLang,
+        status: selectedStatus,
+        brNo: tenantDetail.brNo,
+        remark: tenantDetail.remark,
+        contactNo: tenantDetail.contactNo,
+        email: tenantDetail.email,
+        contactName: tenantDetail.contactName,
+        brPhoto: tenantDetail.brPhoto,
+        epdPhoto: tenantDetail.epdPhoto,
+        companyLogo: companyLogoImg,
+        decimalPlace: numOfAccount,
+        monetaryValue: tenantDetail.monetaryValue,
+        inventoryMethod: inventoryMethod,
+        allowImgSize: parseInt(maxUploadSize),
+        allowImgNum: numOfUplodedPhoto,
+        effFrmDate: tenantDetail.effFrmDate,
+        effToDate: tenantDetail.effToDate,
+        approvedAt: tenantDetail?.approvedAt,
+        approvedBy: tenantDetail?.approvedBy,
+        rejectedAt: tenantDetail?.rejectedAt,
+        rejectedBy: tenantDetail?.rejectedBy,
+        createdBy: tenantDetail.createdBy,
+        createdAt: tenantDetail.createdAt,
+        updatedAt: tenantDetail.updatedAt,
+        updatedBy: loginName
+      }
+
+      const result = await updateTenantDetail(
+        dataForm,
+        tenantDetail.tenantId.toString()
+      )
+      if (result) {
+        showSuccessToast(t('common.editSuccessfully'))
+        getCompanyDetail()
+        handleDrawerClose()
+      } else {
+        showErrorToast(t('common.editFailed'))
+      }
+    }
+  }
+
+  const onImageChange = (
+    imageList: ImageListType,
+    addUpdateIndex: number[] | undefined
+  ) => {
+    setCompanyLogo(imageList)
+  }
+
+  const removeImage = (index: number) => {
+    const newPictures = [...companyLogo]
+    newPictures.splice(index, 1)
+    setCompanyLogo(newPictures)
+  }
+
   return (
-    <div className="checkin-request-detail">
+    <div className="tenant-detail">
+      <ToastContainer></ToastContainer>
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
         anchor={'right'}
-        action={'none'}
+        action={'edit'}
         headerProps={{
-          title: t('check_out.request_check_out'),
+          title: t('common.details'),
           subTitle: tenantId.toString(),
-          onCloseHeader: handleDrawerClose
+          submitText: t('add_warehouse_page.save'),
+          cancelText: t('common.cancel'),
+          onCloseHeader: handleDrawerClose,
+          onSubmit: handleUpdateTenant,
+          onDelete: handleDrawerClose
         }}
       >
         <div
@@ -214,20 +296,70 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
             </Box>
             <Box>
               <div className="logo mt-6">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-4">
+                <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
                   {t('tenant.detail.company_logo')}
-                </div>
-                <div className="">
-                  {tenantDetail?.companyLogo ? (
-                    <img
-                      src={tenantDetail?.companyLogo}
-                      alt="logo_company"
-                      style={{ width: '70px' }}
-                    />
-                  ) : (
-                    '-'
+                </Typography>
+                <ImageUploading
+                  multiple
+                  value={companyLogo}
+                  onChange={(imageList, addUpdateIndex) =>
+                    onImageChange(imageList, addUpdateIndex)
+                  }
+                  maxNumber={1}
+                  maxFileSize={imgSettings?.ImgSize}
+                  dataURLKey="data_url"
+                >
+                  {({ imageList, onImageUpload, onImageRemove }) => (
+                    <Box className="box">
+                      <Card
+                        sx={{
+                          ...localstyles.cardImg
+                        }}
+                      >
+                        <ButtonBase
+                          sx={localstyles.btnBase}
+                          onClick={(event) => onImageUpload()}
+                        >
+                          <CAMERA_OUTLINE_ICON style={{ color: '#ACACAC' }} />
+                          <Typography
+                            sx={[styles.labelField, { fontWeight: 'bold' }]}
+                          >
+                            {t('report.uploadPictures')}
+                          </Typography>
+                        </ButtonBase>
+                      </Card>
+                      <ImageList sx={localstyles.imagesContainer} cols={4}>
+                        {imageList.map((image, index) => (
+                          <ImageListItem
+                            key={image['file']?.name}
+                            style={{ position: 'relative', width: '100px' }}
+                          >
+                            <img
+                              style={localstyles.image}
+                              src={image['data_url']}
+                              alt={image['file']?.name}
+                              loading="lazy"
+                            />
+                            <ButtonBase
+                              onClick={(event) => {
+                                onImageRemove(index)
+                                removeImage(index)
+                              }}
+                              style={{
+                                position: 'absolute',
+                                top: '2px',
+                                right: '2px',
+                                padding: '4px'
+                              }}
+                            >
+                              <CancelRoundedIcon className="text-white" />
+                            </ButtonBase>
+                          </ImageListItem>
+                        ))}
+                      </ImageList>
+                    </Box>
                   )}
-                </div>
+                </ImageUploading>
               </div>
             </Box>
             <Box>
@@ -396,17 +528,6 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   )
 }
 
-const categoryRecyle: React.CSSProperties = {
-  height: '25px',
-  width: '25px',
-  padding: '4px',
-  textAlign: 'center',
-  background: 'lightskyblue',
-  lineHeight: '25px',
-  borderRadius: '25px',
-  color: 'darkblue'
-}
-
 let localstyles = {
   dropdown: {
     mt: 3,
@@ -425,6 +546,39 @@ let localstyles = {
         borderColor: '#79CA25'
       }
     }
+  },
+  imagesContainer: {
+    width: '100%',
+    height: 'fit-content'
+  },
+  image: {
+    aspectRatio: '1/1',
+    width: '100px',
+    borderRadius: 2
+  },
+  cardImg: {
+    borderRadius: 2,
+    backgroundColor: '#E3E3E3',
+    width: '100%',
+    height: 150,
+    boxShadow: 'none'
+  },
+  btnBase: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    borderRadius: 10
+  },
+  imgError: {
+    border: '1px solid red'
   }
 }
 export default TenantDetails
