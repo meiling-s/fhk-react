@@ -9,12 +9,12 @@ import {
     getRecycProcessAnalysis 
 } from "../../../APICalls/Collector/dashboardRecyables";
 import dayjs from "dayjs";
-import { Languages } from "../../../constants/constant";
+import { Languages, indexMonths, monthSequence } from "../../../constants/constant";
 import i18n from "../../../setups/i18n";
 import Dashboard from "../../../components/Dashboard/Chart";
 import ChartTotalSales from "../../../components/Dashboard/ChartTotalSales";
 import ChartDistrictSales from "../../../components/Dashboard/ChartDistrictSales";
-import { TypeRecycables,fieldNameRecycables } from '../../../constants/constant'
+import { TypeRecycables,fieldNameRecycables, months } from '../../../constants/constant'
 import { getBackgroundColor } from '../../../utils/utils'
 interface Dataset{
     id: string,
@@ -37,6 +37,7 @@ type TypeRecycable = {
     'Plastics'?: string;
     'Non-recyclable'?: string;
     'Cardboard'?: string;
+    'Metals'?:string
 };
 
 type TypeProcessing = {
@@ -184,7 +185,7 @@ const Recyclables: FunctionComponent = () => {
             pointHoverRadius: 15
         }
     ]);
-    const [labelProcessing, setLabelProcessing] = useState<string[]>([]);
+    const [labelProcessing, setLabelProcessing] = useState<{id: number, value: string}[]>([]);
     const [datasetProcessing, setDataSetProcessing] = useState<Dataset[]>([]);
     const [frmDateWeight, setFrmDateWeight] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDateWeight, setToDateWeigth] = useState<dayjs.Dayjs>(dayjs())
@@ -231,20 +232,21 @@ const Recyclables: FunctionComponent = () => {
         return weights
     }
 
-    const getDataWeightsProcessing = (type: fieldNameProcssing, length: number, response: any): number[] =>{
+    const getDataWeightsUsingName = (type: fieldNameRecycables, length: number, response: any): number[] =>{
         const weights:number[]= [];
         if(!response) return weights
-        const recyclables:any =  Object.values(response)
-        
+        const processing:any =  Object.values(response);
+        console.log('processing', processing)
+        // console.log('length', length, response, type)
         for(let index=0; index<length; index++){
-            const data:TypeProcessing = recyclables[index];
+            const data:TypeRecycable = processing[index];
             if(data[type]){
                 weights.push(Number(data[type]?.slice(0, -2)) ?? 0)
             } else {
-                weights.push(0)
+                weights.push(9)
             }
         }
-        
+        console.log('weights', weights)
         return weights
     }
 
@@ -308,9 +310,36 @@ const Recyclables: FunctionComponent = () => {
                     data: getDataWeights(type.recyclableNameEng, length, response),
                     backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD)
                 })
+            }else if(type.recyclableNameEng === TypeRecycables.Metals){
+                datasets.push({
+                    id: type.recyclableNameEng,
+                    label: getLabel(type.recyclableNameEng),
+                    data: getDataWeights(type.recyclableNameEng, length, response),
+                    backgroundColor: getBackgroundColor(TypeRecycables.Metals)
+                })
             }
         }
         return datasets
+    }
+
+    const getDataWeightsProcessing = (type: fieldNameProcssing, length: number, response: any): number[] =>{
+        let weights:number[]= [];
+        if(!response) return weights
+        if(type === 'Total amount of recyclate processed'){
+            weights = response.map((item: any) => {
+                return Number(item?.processed.split('.').join("")) ?? 0
+            })
+        } else if(type === 'Total amount of recyclate remaining after processing'){
+            weights = response.map((item: any) => {
+                return Number(item?.processing.split('.').join("")) ?? 0
+            })
+        } else if(type === 'Total amount of recycled material that cannot be used after processing') {
+            weights = response.map((item: any) => {
+                return Number(item?.disposal.split('.').join("")) ?? 0
+            })
+        }
+        
+        return weights
     }
 
     const getDataSetProsessingBarChart = (response: any, length:number) :Dataset[] => {
@@ -351,7 +380,7 @@ const Recyclables: FunctionComponent = () => {
                 datasets.push({
                     id: type.recyclableNameEng,
                     label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
+                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
                     backgroundColor: getBackgroundColor(TypeRecycables.RECHARGEABLE_BATTERIES),
                     yAxisID: 'y',
                     pointStyle: 'circle',
@@ -362,7 +391,7 @@ const Recyclables: FunctionComponent = () => {
                 datasets.push({
                     id: type.recyclableNameEng,
                     label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
+                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
                     backgroundColor: getBackgroundColor(TypeRecycables.GLASS_BOTTLES),
                     yAxisID: 'y',
                     pointStyle: 'circle',
@@ -373,7 +402,7 @@ const Recyclables: FunctionComponent = () => {
                 datasets.push({
                     id: type.recyclableNameEng,
                     label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
+                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
                     backgroundColor: getBackgroundColor(TypeRecycables.PAPER),
                     yAxisID: 'y',
                     pointStyle: 'circle',
@@ -384,7 +413,7 @@ const Recyclables: FunctionComponent = () => {
                 datasets.push({
                     id: type.recyclableNameEng,
                     label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
+                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
                     backgroundColor: getBackgroundColor(TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES),
                     yAxisID: 'y',
                     pointStyle: 'circle',
@@ -395,7 +424,7 @@ const Recyclables: FunctionComponent = () => {
                 datasets.push({
                     id: type.recyclableNameEng,
                     label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
+                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
                     backgroundColor:  getBackgroundColor(TypeRecycables.SMALL_ELETRICAL_APPLIANCES),
                     yAxisID: 'y',
                     pointStyle: 'circle',
@@ -406,7 +435,7 @@ const Recyclables: FunctionComponent = () => {
                 datasets.push({
                     id: type.recyclableNameEng,
                     label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
+                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
                     backgroundColor: getBackgroundColor(TypeRecycables.PLASTICS),
                     yAxisID: 'y',
                     pointStyle: 'circle',
@@ -417,7 +446,7 @@ const Recyclables: FunctionComponent = () => {
                 datasets.push({
                     id: type.recyclableNameEng,
                     label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
+                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
                     backgroundColor: getBackgroundColor(TypeRecycables.NON_RECYCLABLE),
                     yAxisID: 'y',
                     pointStyle: 'circle',
@@ -428,8 +457,19 @@ const Recyclables: FunctionComponent = () => {
                 datasets.push({
                     id: type.recyclableNameEng,
                     label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
+                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
                     backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD),
+                    yAxisID: 'y',
+                    pointStyle: 'circle',
+                    pointRadius: 8,
+                    pointHoverRadius: 15
+                })
+            } else if(type.recyclableNameEng === TypeRecycables.Metals){
+                datasets.push({
+                    id: type.recyclableNameEng,
+                    label: getLabel(type.recyclableNameEng),
+                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+                    backgroundColor: getBackgroundColor(TypeRecycables.Metals),
                     yAxisID: 'y',
                     pointStyle: 'circle',
                     pointRadius: 8,
@@ -463,8 +503,8 @@ const Recyclables: FunctionComponent = () => {
             const labels:string[] = Object.keys(response);
             if(!recycType) return;
             const datasets = getDataSetLineChart(response, labels.length)
-            setLabelProduct(labels)
-            setDataSetProduct(datasets)
+            // setLabelProduct(labels)
+            // setDataSetProduct(datasets)
         }
     }
 
@@ -474,11 +514,37 @@ const Recyclables: FunctionComponent = () => {
         }, 1000);
     }, [frmDateProduct, toDateProduct])
 
+    const getLangMonth = (value: monthSequence) :string => {
+        const months = {
+            0: t('dashboard_manufacturer.january'),
+            1: t('dashboard_manufacturer.february'),
+            2: t('dashboard_manufacturer.march'),
+            3: t('dashboard_manufacturer.april'),
+            4: t('dashboard_manufacturer.may'),
+            5: t('dashboard_manufacturer.june'),
+            6: t('dashboard_manufacturer.juli'),
+            7: t('dashboard_manufacturer.august'),
+            8: t('dashboard_manufacturer.september'),
+            9: t('dashboard_manufacturer.october'),
+            10: t('dashboard_manufacturer.november'),
+            11: t('dashboard_manufacturer.december')
+        }
+        return months[value]
+    }
+
     const initgetRecycProcessAnalysis = async () => {
-        const response = await getRecycProcessAnalysis(frmDateWeight.format('YYYY-MM-DD'), toDateWeight.format('YYYY-MM-DD'))
+        const response = await getRecycProcessAnalysis(frmDateProcessing.format('YYYY-MM-DD'), toDateProcessing.format('YYYY-MM-DD'))
         if (response) {
-            const labels:string[] = Object.keys(response);
-            if(!recycType) return;
+            const labels:{id: number, value: string}[] = response?.map((item:any) => {
+                const index = indexMonths.indexOf(item.month) as monthSequence
+                const month = getLangMonth(index)
+                return{
+                    id: index,
+                    value: `${month} ${item.year}`
+                }
+            });
+           
+            // if(!recycType) return;
             const datasets = getDataSetProsessingBarChart(response, labels.length)
             setLabelProcessing(labels)
             setDataSetProcessing(datasets)
@@ -515,6 +581,15 @@ const Recyclables: FunctionComponent = () => {
                 label: getLabelProcessing(item.id)
             }
         })
+
+        const labels:{id: number, value: string}[] = labelProcessing?.map((item:any) => {
+            const month = getLangMonth(item.id)
+            return{
+                id: item?.id,
+                value: `${month} ${item?.value?.split(' ')[1]}`
+            }
+        })
+        setLabelProcessing(labels)
         setDataSetProcessing(changeLangProcessing);
 
     }, [i18n.language])
@@ -566,7 +641,7 @@ const Recyclables: FunctionComponent = () => {
 
             <Dashboard 
                 key={t('dashboard_manufacturer.recycling_processing_types')}
-                labels={labelProcessing}
+                labels={labelProcessing.map(item => item.value)}
                 dataset={datasetProcessing}
                 onChangeFromDate={setFrmDateProcessing}
                 onChangeToDate={setToDateProcessing}

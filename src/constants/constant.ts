@@ -95,9 +95,10 @@ export const Languages = {
   ZHHK : 'zhhk'
 }
 
-export type fieldNameRecycables = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
+export type fieldNameRecycables = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard' | 'Metals';
 type ColorNameRecycables = '#EFE72F' | '#4FB5F5' | '#7ADFF1' | '#ECAB05' | '#5AE9D8'| '#FF9FB7' | '#F9B8FF' | '#C69AFF';
-
+export type months = 'January' | 'February' | 'March' | 'April' | 'May'| 'June' | 'Juli' | 'August'| 'September'| 'October' | 'November' | 'December';
+export type monthSequence = 0| 1 | 2| 3 | 4| 5| 6 | 7 | 8 | 9| 10 | 11;
 type TypeRecycable = {
   'RECHARGEABLE_BATTERIES'?: fieldNameRecycables;
   'GLASS_BOTTLES'?: fieldNameRecycables;
@@ -107,6 +108,7 @@ type TypeRecycable = {
   'PLASTICS'?: fieldNameRecycables;
   'NON_RECYCLABLE'?: fieldNameRecycables;
   'CARDBOARD'?: fieldNameRecycables;
+  'Metals'?: fieldNameRecycables;
 };
 
 export const TypeRecycables:TypeRecycable = {
@@ -118,4 +120,7 @@ export const TypeRecycables:TypeRecycable = {
   PLASTICS: 'Plastics',
   NON_RECYCLABLE: 'Non-recyclable',
   CARDBOARD: 'Cardboard',
+  Metals: 'Metals'
 }
+
+export const indexMonths: string[] = ['January','February','March','April','May','June','Juli','August','September','October','November','December']

@@ -6,7 +6,8 @@ import {
     GET_WEIGHT_RECYCABLES_DASHBOARD,
     GET_SALES_PRODUCT_ANALYSIS,
     GET_RECYC_PROCESS_ANALYSIS,
-    GET_TOTAL_SALES_PRODUCT_ANALYSIS
+    GET_TOTAL_SALES_PRODUCT_ANALYSIS,
+    GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS
  } from "../../constants/requests";
 
 export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: string, colId?: number | null) => {
@@ -92,7 +93,7 @@ export const getTotalSalesProductAnalysis = async (frmDate: string, toDate: stri
 
         const response = await axiosInstance({
             baseURL: window.baseURL.manufacturer,
-            ...GET_TOTAL_SALES_PRODUCT_ANALYSIS(token.decodeKeycloack, frmDate, toDate),
+            ...GET_TOTAL_SALES_PRODUCT_ANALYSIS(token.tenantId, frmDate, toDate),
             headers: {
                 AuthToken: token.authToken
             }
@@ -100,6 +101,24 @@ export const getTotalSalesProductAnalysis = async (frmDate: string, toDate: stri
         return response?.data
     } catch (e) {
         console.error('getrecycProcessAnalysis failed:', e)
+      return null
+    }
+}
+
+export const getTotalSalesProductByDistrictAnalysis = async (frmDate: string, toDate: string) => {
+    try {
+        const token = returnApiToken()
+
+        const response = await axiosInstance({
+            baseURL: window.baseURL.manufacturer,
+            ...GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS(token.tenantId, frmDate, toDate),
+            headers: {
+                AuthToken: token.authToken
+            }
+        })
+        return response?.data
+    } catch (e) {
+        console.error('getTotalSalesProductByDistrictAnalysis failed:', e)
       return null
     }
 }

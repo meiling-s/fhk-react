@@ -29,6 +29,7 @@ type TypeRecycable = {
     'Plastics'?: string;
     'Non-recyclable'?: string;
     'Cardboard'?: string;
+    'Metals'?: string
 };
 
 // type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
@@ -41,7 +42,7 @@ const Recyclables: FunctionComponent = () => {
     const [dataset, setDataSet] = useState<Dataset[]>([])
     const [collectionIds, setCollectionIds] = useState<number[]>([])
     const [colId, setColId] = useState<number | null>(null)
-    
+   
     useEffect(() => {
         initCollectionPoint()
     }, [])
@@ -169,6 +170,13 @@ const Recyclables: FunctionComponent = () => {
                         label: getLabel(type.recyclableNameEng),
                         data: getDataWeights(type.recyclableNameEng, labels.length),
                         backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD)
+                    })
+                } else if(type.recyclableNameEng === TypeRecycables.Metals){
+                    datasets.push({
+                        id: type.recyclableNameEng,
+                        label: getLabel(type.recyclableNameEng),
+                        data: getDataWeights(type.recyclableNameEng, labels.length),
+                        backgroundColor: getBackgroundColor(TypeRecycables.Metals)
                     })
                 }
             }

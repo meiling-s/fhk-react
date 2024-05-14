@@ -11,8 +11,9 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import { useContainer } from 'unstated-next';
 import { Languages } from '../../constants/constant';
 import { getBackgroundColor } from '../../utils/utils';
+import { Dataset } from '@mui/icons-material';
 
-type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
+type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard' | 'Metals';
 interface DataSales {
     label: fieldName,
     weight: number,
@@ -106,8 +107,8 @@ const ChartTotalSales = () => {
     const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
     const [dataset, setDataset] = useState<Dataset>({total_weight: 0, sales: []});
-
-
+    const [recycTypeId, setRecycTypeId] = useState<string|null>(null);
+    const [datasetBackup, setDatasetBackup] = useState<Dataset>({total_weight: 0, sales: []});
     const getLabel = (type: string): string => {
         let languages:string = ''
         if(i18n.language === Languages.ENUS){
@@ -125,95 +126,64 @@ const ChartTotalSales = () => {
 
     const initTotalSales = async () => {
         const response = await getTotalSalesProductAnalysis(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
+    
         const dataSales:Dataset = {total_weight: 0, sales: []}
         if(response){
-            const total_weight = 5500
+            const total_weight = response.total_weight
             dataSales.total_weight = total_weight;
-            const sales:DataSales[] = [
-                {
-                    label: 'Rechargeable Batteries',
-                    weight: 1000,
-                    backgroundColor: '',
-                    width: '',
-                    description: '',
-                },
-                {
-                    label: 'Glass Bottles',
-                    weight: 1000,
-                    backgroundColor: '',
-                    width: '',
-                    description: '',
-                },
-                {
-                    label: 'Paper',
-                    weight: 1000,
-                    backgroundColor: '',
-                    width: '',
-                    description: '',
-                },
-                {
-                    label: 'Fluorescent Lamps and Tubes',
-                    weight: 500,
-                    backgroundColor: '',
-                    width: '',
-                    description: '',
-                },
-                {
-                    label: 'Small Electrical Appliances',
-                    weight: 500,
-                    backgroundColor: '',
-                    width: '',
-                    description: '',
-                },
-                {
-                    label: 'Plastics',
-                    weight: 500,
-                    backgroundColor: '',
-                    width: '',
-                    description: '',
-                },
-                {
-                    label: 'Non-recyclable',
-                    weight: 500,
-                    backgroundColor: '',
-                    width: '',
-                    description: '',
-                },
-                {
-                    label: 'Cardboard',
-                    weight: 500,
-                    backgroundColor: '',
-                    width: '',
-                    description: '',
-                }
-            ];
+            const sales:DataSales[] = [];
 
-            for(let sale of sales){
-                dataSales.sales.push({
-                    label: sale.label,
-                    description: getLabel(sale.label),
-                    weight: sale.weight,
-                    backgroundColor: getBackgroundColor(sale.label),
-                    width: `${sale.weight / dataSales.total_weight*100}%`
-                })
+            for(let [key, value] of Object.entries(response.sales)){
+                const recycable = recycType?.find(item => item.recycTypeId === key);
+                const label = recycable?.recyclableNameEng as fieldName
+                if(!recycable) continue;
+                sales.push(
+                    {
+                        label: label,
+                        weight: Number(value),
+                        backgroundColor: getBackgroundColor(label),
+                        width: `${Number(value) / dataSales.total_weight*100}%`,
+                        description: getLabel(label),
+                    }
+                )
             }
-            // for(let [key, value] of Object.entries(response.sales)){
-            //     if(!value?.weight) continue
-            //     const weight:number = Number(value?.weight.slice(0, -1))
-            //     dataSales.sales.push({
-            //         label: '',
-            //         data: 0,
-            //         backgroundColor: '',
-            //         width: `${weight/Number(dataSales.total_weight)}%`,
-            //     })
-            // }
+            dataSales.sales = sales
             setDataset(dataSales)
+            setDatasetBackup(dataSales)
         }
     };
-   
+  
     useEffect(() => {
         initTotalSales()
     }, [recycType])
+
+    useEffect(() => {
+        
+        if(!recycTypeId){
+            initTotalSales()
+            return
+        }
+        const recycable = recycType?.find(item => item.recycTypeId === recycTypeId);
+        if(!recycable) return
+        const label = recycable?.recyclableNameEng as fieldName
+        let weight:number = 0;
+        const sales:DataSales[] = []
+        for(let data of datasetBackup.sales){
+            if(label === data.label){
+                weight = data.weight
+                data.width = '100%'
+                sales.push(data)
+            }
+        }
+  
+        setDataset(prev => {
+            return{
+                ...prev,
+                total_weight: weight,
+                sales : sales
+            }
+        })
+    }, [recycTypeId])
 
     useEffect(() => {
         const datsetLang = {
@@ -234,6 +204,10 @@ const ChartTotalSales = () => {
        }, 1000);
     }, [frmDate, toDate])
 
+    const onChangeRecycTypeId = (value: string|null) => {
+        setRecycTypeId(value)
+    }
+    
     return(
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">               
@@ -242,13 +216,14 @@ const ChartTotalSales = () => {
                         <Grid style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                             <Autocomplete
                                 disablePortal
-                                id="collectionIds"
-                                defaultValue={''}
-                                options={ []}
+                                id="recycTypeId"
+                                defaultValue={recycTypeId}
+                                options={recycType ? recycType?.map(item =>  item.recycTypeId).sort() : []}
+                                sx={{width: 170}}
                                 onChange={(event, value) => {
-                                    // onChangeColdId(value)
+                                    onChangeRecycTypeId(value)
                                 }}
-                                value={''}
+                                value={recycTypeId}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
@@ -270,11 +245,11 @@ const ChartTotalSales = () => {
 
                            <Grid item style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1}}>
                                 <DatePicker
-                                    value={dayjs()}
+                                    value={frmDate}
                                     disableOpenPicker
                                     slotProps={{ textField: { size: 'small' } }}
                                     sx={localstyles.datePicker}
-                                    maxDate={dayjs()}
+                                    maxDate={toDate}
                                     onChange={(value) => {
                                         if(value) setFrmDate(value)
                                     }}
@@ -282,11 +257,11 @@ const ChartTotalSales = () => {
                                 />
                                 <Typography>-</Typography>
                                 <DatePicker
-                                    value={dayjs()}
+                                    value={toDate}
                                     disableOpenPicker
                                     slotProps={{ textField: { size: 'small' } }}
                                     sx={localstyles.datePicker}
-                                    minDate={dayjs()}
+                                    minDate={frmDate}
                                     onChange={(value) => {
                                         if(value) setToDate(value)
                                     }}

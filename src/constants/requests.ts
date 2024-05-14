@@ -1414,7 +1414,12 @@ export const GET_RECYC_PROCESS_ANALYSIS = (table: string, frmDate: string, toDat
   url: `/api/v1/manufacturer/dashboard/recycProcessAnalysis/${table}/${frmDate}/${toDate}`
 })
 
-export const GET_TOTAL_SALES_PRODUCT_ANALYSIS = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+export const GET_TOTAL_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `/api/v1/manufacturer/dashboard/ttlSalesProductAnalysis/${table}/${frmDate}/${toDate}`
+  url: `/api/v1/manufacturer/dashboard/ttlSalesProductAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/ttlSalesProductByDistrictAnalysis/${tenantId}/${frmDate}/${toDate}`
 })

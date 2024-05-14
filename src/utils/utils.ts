@@ -207,14 +207,15 @@ export const getBaseUrl = () => {
 
 export const getBackgroundColor = (fieldName: fieldNameRecycables) :string => {
     const backgroundColors = {
-        'Rechargeable Batteries': '#EFE72F',
-        'Glass Bottles': '#4FB5F5',
-        'Paper': '#7ADFF1',
-        'Fluorescent Lamps and Tubes': '#ECAB05',
+        'Rechargeable Batteries': '#FF9FB7',
+        'Glass Bottles': '#7ADFF1',
+        'Paper': '#F9B8FF',
+        'Fluorescent Lamps and Tubes': '#4FB5F5',
         'Small Electrical Appliances': '#5AE9D8',
-        'Plastics': '#FF9FB7',
-        'Non-recyclable': '#F9B8FF',
-        'Cardboard': '#C69AFF'
+        'Plastics': '#87FDA7',
+        'Non-recyclable': '#EFE72F',
+        'Cardboard': '#ECAB05',
+        'Metals': '#C69AFF'
     }
 
     return backgroundColors[fieldName]

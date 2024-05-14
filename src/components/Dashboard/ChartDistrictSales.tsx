@@ -18,6 +18,9 @@ import {
 } from "chart.js";
 import location from './hongkongLocation.json';
 import i18n from '../../setups/i18n';
+import { getTotalSalesProductByDistrictAnalysis } from '../../APICalls/Collector/dashboardRecyables';
+import CommonTypeContainer from '../../contexts/CommonTypeContainer';
+import { useContainer } from 'unstated-next';
 
 ChartJS.register(
     Title,
@@ -30,26 +33,12 @@ ChartJS.register(
     ChartGeo.GeoFeature
 );
 
-interface Dataset{
-    data: any,
-    outline: any,
-    label: string,
-    backgroundColor: string,
-}
-
-type props = {
-    labels: string[]
-    dataset:Dataset[]|[]
-    onChangeFromDate: (value: dayjs.Dayjs ) => void
-    onChangeToDate:(value: dayjs.Dayjs) => void
-    onHandleSearch?:() => void
-    frmDate:dayjs.Dayjs
-    toDate:dayjs.Dayjs
-    collectionIds?: number[]
-    title:string
-    onChangeColdId: (value: number | null) => void
-    colId:number | null
-    typeChart:string
+type Districts = "Central and Western"|"Eastern"|"Southern"|"Sham Shui Po"|"Kowloon City"|"Wong Tai Sin"|"Kwun Tong"|"Yau Tsim Mong"|"Kwai Tsing"|"Tsuen Wan"|"Tuen Mun"|"Yuen Long"|"North"|"Tai Po"|"Sha Tin"|"Sai Kung"|"Islands"|"Wan Chai";
+type DataDistricts = {
+    district: Districts,
+    percentage: string,
+    total_weight: string,
+    recyc_weight: {}
 }
 
 const ChartDistrictSales = () => {
@@ -59,23 +48,42 @@ const ChartDistrictSales = () => {
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
     const chartRef = useRef();
     const [data, setData] = useState<any>(location);
+    const [dataset, setDataset] = useState<any>([]);
+    const [recycTypeId, setRecycTypeId] = useState<string|null>(null);
+    const [sourceData, setSourcaData] = useState<DataDistricts>()
+
     const colors:string[] = ['#6FBD33','#88D13D','#AED982','#D3E3C3','#CCCCCC'];
+    const { recycType } = useContainer(CommonTypeContainer);
 
     const initData = async() => {
-        try {
-            fetch("https://raw.githubusercontent.com/markmarkoh/datamaps/master/src/js/data/hkg.topo.json")
-            .then((response) => response.json())
-            .then((value) => {
-                setData((ChartGeo.topojson.feature(value, value.objects.hkg) as any).features);
-            });
-        } catch (error) {
+        const response = await getTotalSalesProductByDistrictAnalysis(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
+
+        if(response){
+            const copyData = [...data];
+            const update:any = []
+            for(let region of response){
+                const indexOfRegion = copyData.findIndex(item => item.properties.name_english === region.district);
+                const reg = copyData[indexOfRegion]
+                update.push({
+                    feature: reg,
+                    value:  Number(region?.percentage),
+                    weight:  Number(region?.total_weight),
+                    recyc_weight: region.recyc_weight
+                })
+            }
+            // setSourcaData(response)
+            setDataset(update)
 
         }
     }
-  
+
     useEffect(() => {
-        // initData()
+        initData()
     }, []);
+
+    useEffect(() => {
+        initData()
+    }, [frmDate, toDate])
 
     const getDistirctLabelName = (properties: any):string => {
         if(i18n.language === Languages.ENUS){
@@ -87,36 +95,53 @@ const ChartDistrictSales = () => {
         }
     }
 
-    useEffect(() => {
-        const changeLang = data.map((item:any) => {
-            return{
-                ...item,
-                properties: {
-                    ...item.properties,
-                    name: getDistirctLabelName(item.properties)
+    // useEffect(() => {
+    //     const changeLang = data.map((item:any) => {
+    //         return{
+    //             ...item,
+    //             properties: {
+    //                 ...item.properties,
+    //                 name: getDistirctLabelName(item.properties)
 
-                }
-            }
-        })
+    //             }
+    //         }
+    //     })
 
-        setData(changeLang)
-    }, [i18n.language])
+    //     setData(changeLang)
+    // }, [i18n.language])
     
     const footerTooltip = (tooltipItems:any[]) => {
-        let footer = 0;
-      
-        tooltipItems.forEach(function(tooltipItem) {
-          footer = tooltipItem.raw.value;
-        });
-        return footer + 'Kg';
+        let total:number = 0;
+        const weights = tooltipItems[0]?.raw?.recyc_weight;
+        if(recycTypeId){
+            for(let [key, value] of  Object.entries(weights)){
+                if(recycTypeId && key === recycTypeId){
+                    total += Number(value);
+                } 
+           }
+        } else {
+            for(let [key, value] of  Object.entries(weights)){
+                total += Number(value);
+           }
+        }
+ 
+        //     tooltipItems.forEach(function(tooltipItem) {
+        //         // console.log('tooltip', tooltipItem.raw.recyc_weight)
+        //       total = tooltipItem.raw.weight;
+        //     });
+        return total + ' Kg';
     };
 
-    const data1 = data.map((d: any) => (
-        {
-            feature: d,
-            value:  Math.round(Math.random() * 100),
-        }
-    ));
+    // const data1 = data.map((d: any) => (
+    //     {
+    //         feature: d,
+    //         value:  Math.round(Math.random() * 100),
+    //     }
+    // ));
+
+    const onChangeRecycTypeId = (value: string|null) => {
+        setRecycTypeId(value)
+    }
 
     return(
         <>
@@ -130,13 +155,14 @@ const ChartDistrictSales = () => {
                             <Grid style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                                 <Autocomplete
                                     disablePortal
-                                    id="collectionIds"
-                                    defaultValue={''}
-                                    options={ []}
+                                    id="recycTypeId"
+                                    defaultValue={recycTypeId}
+                                    options={recycType ? recycType?.map(item =>  item.recycTypeId).sort() : []}
                                     onChange={(event, value) => {
-                                        // onChangeColdId(value)
+                                        onChangeRecycTypeId(value)
                                     }}
-                                    value={''}
+                                    sx={{width: 170}}
+                                    value={recycTypeId}
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
@@ -181,31 +207,6 @@ const ChartDistrictSales = () => {
                                         format="DD/MM/YYYY"
                                     />
                             </Grid>
-
-                            {realm === Realm.collector && (
-                                <Autocomplete
-                                    disablePortal
-                                    id="collectionIds"
-                                    defaultValue={''}
-                                    options={[]}
-                                    onChange={(event, value) => {
-                                        // onChangeColdId(value)
-                                    }}
-                                    value={'colId'}
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            size='small'
-                                            placeholder={t('dashboard_recyclables.recycling_point')}
-                                            sx={[styles.textField, { width: 400}]}
-                                            InputProps={{
-                                                ...params.InputProps,
-                                                sx: styles.inputProps
-                                            }}
-                                        />
-                                    )}
-                                />
-                                )}
                             </Grid>
 
                             <Grid style={{display: 'flex', flexDirection: 'column', width: '250px'}}>
@@ -245,7 +246,7 @@ const ChartDistrictSales = () => {
                                         {
                                             outline: data,
                                             label: "Completed",
-                                            data: data1,
+                                            data: dataset,
                                         },
                                     ]
                                 }}
