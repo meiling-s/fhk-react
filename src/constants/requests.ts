@@ -262,12 +262,16 @@ export const ADD_PREMISE_TYPE: AxiosRequestConfig = {
   url: 'api/v1/administrator/premiseType'
 }
 
-export const EDIT_PREMISE_TYPE = (premiseTypeId: string): AxiosRequestConfig => ({
+export const EDIT_PREMISE_TYPE = (
+  premiseTypeId: string
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/premiseType/${premiseTypeId}`
 })
 
-export const DELETE_PREMISE_TYPE = (premiseTypeId: string): AxiosRequestConfig => ({
+export const DELETE_PREMISE_TYPE = (
+  premiseTypeId: string
+): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/premiseType/${premiseTypeId}`
 })
@@ -312,17 +316,23 @@ export const DELETE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/recycType/${recycTypeId}`
 })
 
-export const ADD_SUB_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+export const ADD_SUB_RECYC_TYPE = (
+  recycTypeId: string
+): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/recycType/${recycTypeId}`
 })
 
-export const UPDATE_SUB_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+export const UPDATE_SUB_RECYC_TYPE = (
+  recycTypeId: string
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/recycSubType/${recycTypeId}`
 })
 
-export const DELETE_SUB_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+export const DELETE_SUB_RECYC_TYPE = (
+  recycTypeId: string
+): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/recycSubType/${recycTypeId}`
 })
@@ -501,6 +511,14 @@ export const GET_VEHICLE = (
 export const GET_LOGISTIC_VEHICLE = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/logistic/vehicle/${table}`
+})
+
+export const GET_LOGISTIC_VEHICLE_BY_ID = (
+  table: string,
+  vehicleId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
 })
 
 export const SEARCH_LOGISTIC_VEHICLE = (
@@ -716,7 +734,10 @@ export const DELETE_USER_GROUP = (userGroupId: number): AxiosRequestConfig => ({
 })
 
 //STAFF MANAGEMENT
-export const GET_STAFF = (tenantId: string, realmApiRoute: string): AxiosRequestConfig => ({
+export const GET_STAFF = (
+  tenantId: string,
+  realmApiRoute: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/staff/${tenantId}`
 })
@@ -1341,7 +1362,9 @@ export const GET_DECIMAL_VALUE: AxiosRequestConfig = {
   url: `api/v1/administrator/decimalVal`
 }
 
-export const UPDATE_DECIMAL_VALUE = (decimalValId: number): AxiosRequestConfig => ({
+export const UPDATE_DECIMAL_VALUE = (
+  decimalValId: number
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/decimalVal/${decimalValId}`
 })
@@ -1351,7 +1374,9 @@ export const GET_DATE_FORMAT: AxiosRequestConfig = {
   url: `api/v1/administrator/dateFormat`
 }
 
-export const UPDATE_DATE_FORMAT = (dateFormatId: number): AxiosRequestConfig => ({
+export const UPDATE_DATE_FORMAT = (
+  dateFormatId: number
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/dateFormat/${dateFormatId}`
 })
@@ -1361,7 +1386,9 @@ export const GET_WEIGHT_TOLERANCE: AxiosRequestConfig = {
   url: `api/v1/administrator/weightTolerance`
 }
 
-export const UPDATE_WEIGHT_TOLERANCE = (weightId: number): AxiosRequestConfig => ({
+export const UPDATE_WEIGHT_TOLERANCE = (
+  weightId: number
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/weightTolerance/${weightId}`
 })
