@@ -69,7 +69,20 @@ function MainDrawer() {
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
   const [selectedISubIndex, setSelectedSubIndex] = useState<number | null>(null);
   const { realmApiRoute } = returnApiToken()
-  const subMenuDashboard:string[] = ['dashboard'];
+  const subMenuDashboard = [
+    {
+      name: 'dashboard',
+      value: t('dashboard_recyclables.recyclable')
+    },
+    {
+      name: 'inventory',
+      value: t('inventory.inventory')
+    },
+    {
+      name: 'warehouse',
+      value: t('warehouseDashboard.warehouse'),
+    }
+  ];
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -140,12 +153,12 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/jobOrder`),
         collapse: false
       },
-      'Warehouse dashboard': {
-        name: t('warehouseDashboard.warehouse'),
-        icon: <InventoryIcon />,
-        onClick: () => navigate('/warehouse'),
-        collapse: false
-      },
+      // 'Warehouse dashboard': {
+      //   name: t('warehouseDashboard.warehouse'),
+      //   icon: <InventoryIcon />,
+      //   onClick: () => navigate('/warehouse'),
+      //   collapse: false
+      // },
       'Request check-in': {
         name: t('check_in.request_check_in'),
         icon: <LoginIcon />,
@@ -170,11 +183,11 @@ function MainDrawer() {
         onClick: () => navigate('/collector/report'),
         collapse: false
       },
-      Inventory: {
-        name: t('inventory.inventory'),
-        onClick: () => navigate(`/${realm}/inventory`),
-        collapse: false
-      },
+      // Inventory: {
+      //   name: t('inventory.inventory'),
+      //   onClick: () => navigate(`/${realm}/inventory`),
+      //   collapse: false
+      // },
       'Process out recyclables': {
         name: t('processRecord.processingRecords'),
         icon: <DOCUMENT_ICON />,
@@ -546,13 +559,13 @@ function MainDrawer() {
                       sx={{pl: 7}} 
                       selected={true}
                       onClick={() => {
-                        navigate(`${realm}/${item}`)
+                        navigate(`${realm}/${item.name}`)
                         setSelectedSubIndex(index)
                       }}
                     >
                       <ListItemText 
                         className={ index === selectedISubIndex ? 'text-menu-active' : ''}
-                        primary={t('dashboard_recyclables.recyclable')} 
+                        primary={item.value} 
                       />
                     </ListItemButton>
                   )

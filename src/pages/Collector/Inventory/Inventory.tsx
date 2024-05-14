@@ -353,7 +353,8 @@ const Inventory: FunctionComponent = () => {
       // console.log(label, value)
       if (value == "") return setFilteredInventory(inventoryList)
 
-      const filtered: InventoryItem[] = inventoryList.filter(item => item.packageTypeId == value)
+      const filtered: InventoryItem[] = inventoryList.filter(item => item.recycTypeId == value)
+      
       if (filtered) {
         setFilteredInventory(filtered)
       } else {
