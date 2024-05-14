@@ -77,6 +77,8 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setNumOfAccount(data.decimalPlace)
     setNumOfUplodedPhoto(data.allowImgNum)
     setMaxUploadSize(data.allowImgSize.toString())
+    setDefaultLang(data.lang)
+    setSelectedStatus(data.status)
   }
 
   const mainInfoFields = [
