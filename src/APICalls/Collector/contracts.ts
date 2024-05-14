@@ -1,6 +1,6 @@
 import { CreateContract } from "../../interfaces/contract";
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
-import { CREATE_CONTRACT, EDIT_CONTRACT, GET_CONTRACT_LIST } from "../../constants/requests";
+import { CREATE_CONTRACT, EDIT_CONTRACT, GET_CONTRACT_LIST, DELETE_CONTRACT} from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import axiosInstance from '../../constants/axiosInstance';
 
@@ -50,6 +50,25 @@ export const editContract = async (data: CreateContract) => {
     const response = axiosInstance({
       baseURL: window.baseURL.logistic,
       ...EDIT_CONTRACT(token.realmApiRoute, data.tenantId, data.contractNo),
+      data: data,
+      headers: {
+        AuthToken: token.authToken,
+        'Content-Type': 'application/json'
+      }
+    })
+    return response
+  } catch (e) {
+    console.error('Create a contract failed:', e)
+    return null
+  }
+}
+
+export const deleteContract = async (data: any, contractNo: string) => {
+  try {
+    const token = returnApiToken()
+    const response = axiosInstance({
+      baseURL: window.baseURL.logistic,
+      ...DELETE_CONTRACT(token.realmApiRoute, token.tenantId, contractNo),
       data: data,
       headers: {
         AuthToken: token.authToken,
