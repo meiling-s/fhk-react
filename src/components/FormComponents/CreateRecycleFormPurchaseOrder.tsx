@@ -34,7 +34,7 @@ import { collectorList, manuList } from '../../interfaces/common'
 import dayjs, { Dayjs } from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
-import { formatWeight, getThemeColorRole, getThemeCustomList } from '../../utils/utils'
+import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
 import { PurchaseOrderDetail } from '../../interfaces/purchaseOrder'
 import { DatePicker } from '@mui/x-date-pickers'
 
@@ -521,11 +521,23 @@ const CreateRecycleForm = ({
                 >
                   <CustomTextField
                     id="weight"
-                    type='number'
                     placeholder={t('userAccount.pleaseEnterNumber')}
                     // onChange={formik.handleChange}
                     onChange={(event) => {
-                      onChangeContent('weight', event.target.value)
+                      // onChangeContent('weight', event.target.value)
+                      onChangeWeight(event.target.value, decimalVal, (value: string) => {
+                        formik.setFieldValue('weight', value)
+                        if (value) {
+                          onHandleError('weight', 'succeed')
+                        }
+                      })
+                    }}
+                    onBlur={(event) => {
+                      const value = formatWeight(event.target.value, decimalVal)
+                      formik.setFieldValue('weight', value)
+                      if (value) {
+                        onHandleError('weight', 'succeed')
+                      }
                     }}
                     value={formik.values.weight}
                     error={

@@ -421,7 +421,7 @@ const JobOrder = () => {
                       </label>
                     </div>
                     <p className="flex-1 font-semibold text-[#535353]">
-                      ${item.weight}kg
+                      {item.weight}kg
                     </p>
                   </div>
                   <div className="flex items-center">
