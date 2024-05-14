@@ -69,7 +69,16 @@ function MainDrawer() {
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
   const [selectedISubIndex, setSelectedSubIndex] = useState<number | null>(null);
   const { realmApiRoute } = returnApiToken()
-  const subMenuDashboard:string[] = ['dashboard', 'warehouse'];
+  const subMenuDashboard = [
+    {
+      name: 'dashboard',
+      value: t('dashboard_recyclables.recyclable')
+    },
+    {
+      name: 'warehouse',
+      value: t('warehouseDashboard.warehouse'),
+    }
+  ];
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -546,13 +555,13 @@ function MainDrawer() {
                       sx={{pl: 7}} 
                       selected={true}
                       onClick={() => {
-                        navigate(`${realm}/${item}`)
+                        navigate(`${realm}/${item.name}`)
                         setSelectedSubIndex(index)
                       }}
                     >
                       <ListItemText 
                         className={ index === selectedISubIndex ? 'text-menu-active' : ''}
-                        primary={t('dashboard_recyclables.recyclable')} 
+                        primary={item.value} 
                       />
                     </ListItemButton>
                   )
