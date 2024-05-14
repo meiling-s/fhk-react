@@ -49,142 +49,12 @@ type TypeProcessing = {
 // type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
 type fieldNameProcssing = 'Total amount of recyclate processed' | 'Total amount of recyclate remaining after processing' | 'Total amount of recycled material that cannot be used after processing';
 const Recyclables: FunctionComponent = () => {
-    const getLabel = (type: string): string => {
-        let languages:string = ''
-        if(i18n.language === Languages.ENUS){
-            const recyclables = recycType?.find(item => item.recyclableNameEng === type)
-            if(recyclables) languages = recyclables?.recyclableNameEng
-        } else if(i18n.language === Languages.ZHCH){
-            const recyclables = recycType?.find(item => item.recyclableNameEng === type)
-            if(recyclables) languages = recyclables?.recyclableNameSchi
-        } else {
-            const recyclables = recycType?.find(item => item.recyclableNameEng === type)
-            if(recyclables) languages = recyclables?.recyclableNameTchi
-        }
-        return languages
-    }
-
-    const getLabelProcessing = (type: string): string => {
-        let languages:string = ''
-        if(i18n.language === Languages.ENUS){
-            const processing = processingType?.find(item => item.processingNameEng === type)
-            if(processing) languages = processing?.processingNameEng
-        } else if(i18n.language === Languages.ZHCH){
-            const processing = processingType?.find(item => item.processingNameEng === type)
-            if(processing) languages = processing?.processingNameSchi
-        } else {
-            const processing = processingType?.find(item => item.processingNameEng === type)
-            if(processing) languages = processing?.processingNameTchi
-        }
-        return languages
-    }
-   
     const { t } = useTranslation()
     const { recycType } =useContainer(CommonTypeContainer);
     const [labelWeight, setLabelWeigth] = useState<string[]>([]);
     const [datasetWeigth, setDataSetWeight] = useState<Dataset[]>([]);
-    const [labelProduct, setLabelProduct] = useState<string[]>(['January', 'February', 'Maret','April','Mei','Juni','Juli','Agust','September','October','November','December']);
-    const [datasetProduct, setDataSetProduct] = useState<Dataset[]>([
-        {
-            id: 'Rechargeable Batteries',
-            label: getLabel('Rechargeable Batteries'),
-            data:[10, 40, 90, 20, 50, 230, 90, 69, 12, 456, 345, 100],
-            borderColor: '#EFE72F',
-            backgroundColor: '#EFE72F',
-            yAxisID: 'y',
-            pointStyle: 'circle',
-            pointRadius: 8,
-            pointHoverRadius: 15
-        },
-        {
-            id: 'Glass Bottles',
-            label: getLabel('Glass Bottles'),
-            data:[100, 200, 45, 490, 50, 123, 45, 345, 123, 444, 234, 100],
-            borderColor: '#4FB5F5',
-            backgroundColor: '#4FB5F5',
-            yAxisID: 'y',
-            pointStyle: 'circle',
-            pointRadius: 8,
-            pointHoverRadius: 15
-        },
-        {
-            id: 'Paper',
-            label: getLabel('Paper'),
-            data:[45, 300, 22, 124, 231, 111, 90, 121, 150, 234, 222, 980, 200],
-            borderColor: '#7ADFF1',
-            backgroundColor: '#7ADFF1',
-            yAxisID: 'y',
-            pointStyle: 'circle',
-            pointRadius: 8,
-            pointHoverRadius: 15
-        },
-        {
-            id: 'Fluorescent Lamps and Tubes',
-            label: getLabel('Fluorescent Lamps and Tubes'),
-            data:[20, 50, 100, 200, 500, 450, 100, 500, 890, 345, 225, 800],
-            borderColor: '#ECAB05',
-            backgroundColor: '#ECAB05',
-            yAxisID: 'y',
-            pointStyle: 'circle',
-            pointRadius: 8,
-            pointHoverRadius: 15
-        },
-        {
-            id: 'Small Electrical Appliances',
-            label: getLabel('Small Electrical Appliances'),
-            data:[1, 120, 80, 300, 500, 1000, 450, 234, 100, 400, 200, 500],
-            borderColor: '#5AE9D8',
-            backgroundColor: '#5AE9D8',
-            yAxisID: 'y',
-            pointStyle: 'circle',
-            pointRadius: 8,
-            pointHoverRadius: 15
-        },
-        {
-            id: 'Plastics',
-            label: getLabel('Plastics'),
-            data:[23, 100, 220, 150, 289, 150, 190, 200, 100, 200, 250, 450, 300],
-            borderColor: '#FF9FB7',
-            backgroundColor: '#FF9FB7',
-            yAxisID: 'y',
-            pointStyle: 'circle',
-            pointRadius: 8,
-            pointHoverRadius: 15
-        },
-        {
-            id: 'Non-recyclable',
-            label:getLabel('Non-recyclable'),
-            data:[30, 50, 100, 80, 90, 300, 450, 300, 120, 450, 500, 120],
-            borderColor: '#F9B8FF',
-            backgroundColor: '#F9B8FF',
-            yAxisID: 'y',
-            pointStyle: 'circle',
-            pointRadius: 8,
-            pointHoverRadius: 15
-        },
-        {
-            id: 'Cardboard',
-            label: getLabel('Cardboard'),
-            data:[10, 30, 45, 900, 20, 100, 90, 90, 40, 345, 123, 1000],
-            borderColor: '#C69AFF',
-            backgroundColor: '#C69AFF',
-            yAxisID: 'y',
-            pointStyle: 'circle',
-            pointRadius: 8,
-            pointHoverRadius: 15
-        },
-        {
-            id: 'Cardboard',
-            label: getLabel('Cardboard'),
-            data:[10, 30, 45, 900, 20, 100, 90, 90, 40, 345, 123, 1000],
-            borderColor: '#C69AFF',
-            backgroundColor: '#C69AFF',
-            yAxisID: 'y',
-            pointStyle: 'circle',
-            pointRadius: 8,
-            pointHoverRadius: 15
-        }
-    ]);
+    const [labelProduct, setLabelProduct] = useState<string[]>([]);
+    const [datasetProduct, setDataSetProduct] = useState<Dataset[]>([]);
     const [labelProcessing, setLabelProcessing] = useState<{id: number, value: string}[]>([]);
     const [datasetProcessing, setDataSetProcessing] = useState<Dataset[]>([]);
     const [frmDateWeight, setFrmDateWeight] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
@@ -215,6 +85,36 @@ const Recyclables: FunctionComponent = () => {
         }
     ]
 
+    const getLabel = (type: string): string => {
+        let languages:string = ''
+        if(i18n.language === Languages.ENUS){
+            const recyclables = recycType?.find(item => item.recyclableNameEng === type)
+            if(recyclables) languages = recyclables?.recyclableNameEng
+        } else if(i18n.language === Languages.ZHCH){
+            const recyclables = recycType?.find(item => item.recyclableNameEng === type)
+            if(recyclables) languages = recyclables?.recyclableNameSchi
+        } else {
+            const recyclables = recycType?.find(item => item.recyclableNameEng === type)
+            if(recyclables) languages = recyclables?.recyclableNameTchi
+        }
+        return languages
+    }
+
+    const getLabelProcessing = (type: string): string => {
+        let languages:string = ''
+        if(i18n.language === Languages.ENUS){
+            const processing = processingType?.find(item => item.processingNameEng === type)
+            if(processing) languages = processing?.processingNameEng
+        } else if(i18n.language === Languages.ZHCH){
+            const processing = processingType?.find(item => item.processingNameEng === type)
+            if(processing) languages = processing?.processingNameSchi
+        } else {
+            const processing = processingType?.find(item => item.processingNameEng === type)
+            if(processing) languages = processing?.processingNameTchi
+        }
+        return languages
+    }
+
     const getDataWeights = (type: fieldNameRecycables, length: number, response: any): number[] =>{
         const weights:number[]= [];
         if(!response) return weights
@@ -236,17 +136,14 @@ const Recyclables: FunctionComponent = () => {
         const weights:number[]= [];
         if(!response) return weights
         const processing:any =  Object.values(response);
-        console.log('processing', processing)
-        // console.log('length', length, response, type)
         for(let index=0; index<length; index++){
             const data:TypeRecycable = processing[index];
             if(data[type]){
-                weights.push(Number(data[type]?.slice(0, -2)) ?? 0)
+                weights.push(Number(data[type]) ?? 0)
             } else {
-                weights.push(9)
+                weights.push(0)
             }
         }
-        console.log('weights', weights)
         return weights
     }
 
@@ -500,11 +397,32 @@ const Recyclables: FunctionComponent = () => {
     const initSalesProductAnalysis = async () => {
         const response = await getSalesProductAnalysis(frmDateWeight.format('YYYY-MM-DD'), toDateWeight.format('YYYY-MM-DD'));
         if (response) {
-            const labels:string[] = Object.keys(response);
+            let cache:any = {}
+            const source:any = {}
+            for(let product of response){
+                const label = product.month + ' ' + product.year;
+                const data:any = {}
+                for(let [key, value] of Object.entries(product)){
+                    if(!['year', 'month'].includes(key)){
+                        if(cache[key]){
+                            const name:string = cache[key];
+                            data[name] = value
+                        } else {
+                            const type = recycType?.find(item => item.recycTypeId === key);
+                            cache[key] = type?.recyclableNameEng;
+                            const name:string = type?.recyclableNameEng || '';
+                            if(name !== '')  data[name] = value
+                           
+                        }
+                    }
+                }
+                source[label]= data 
+            }
+            const labels:string[] = Object.keys(source);
             if(!recycType) return;
-            const datasets = getDataSetLineChart(response, labels.length)
-            // setLabelProduct(labels)
-            // setDataSetProduct(datasets)
+            const datasets = getDataSetLineChart(source, labels.length)
+            setLabelProduct(labels)
+            setDataSetProduct(datasets)
         }
     }
 
