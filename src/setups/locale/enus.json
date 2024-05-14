@@ -21,7 +21,8 @@
     "no": "No",
     "createdDatetime": "Create datetime",
     "lastUpdateDatetime": "Last update datetime",
-    "details": "Details"
+    "details": "Details",
+    "pckgCategory:": "Packaging category"
   },
   "col": {
     "createCP": "Create collection point",
@@ -421,7 +422,7 @@
       "invalid_date": "invalid-date",
       "invalid_pickup_time": "Invalid pickup time, choose again the time",
       "not_in_prev_data": "not-in-prev-data",
-      "pickup_time":"Pickup time already exists in previous data",
+      "pickup_time": "Pickup time already exists in previous data",
       "not_same_as_receiver": "not-same-as-receiver",
       "sender_address": "Sender address cannot be the same as receiver address",
       "sender_address_exists": "Sender address already exists in previous data",
@@ -1015,8 +1016,8 @@
       "order_info": "Order information",
       "pico_id": "PO number",
       "message": "Message"
-    }, 
-    "create" : {
+    },
+    "create": {
       "create_order": "Create order",
       "contact_information": "Contact information",
       "receiving_company_name": "Receiving company name",
@@ -1024,8 +1025,8 @@
       "sender_company_name": "Sender company name",
       "contact_number": "Contact number",
       "contact_number_placeholder": "please fill in cell phone number",
-      "contact_name":"Contact name",
-      "contact_name_placeholder":"Please fill contact name",
+      "contact_name": "Contact name",
+      "contact_name_placeholder": "Please fill contact name",
       "payment_method": "Payment method",
       "payment_method_placeholder": "please choose",
       "order_information": "Order information",
@@ -1110,6 +1111,26 @@
     "offsite": "Off-site Collection Service",
     "community": "Community Collection Point",
     "service_type": "Service type"
+  },
+  "logisticDashboard": {
+    "searchDriver": "Search for driver directions",
+    "driverInfo": "The driver you are searching for",
+    "driverNumb": "Driver number",
+    "driverLicense": "Driving license",
+    "vehicleCategory": "Vehicle Category",
+    "receivingLocation": "Receiving location",
+    "receiptDate": "Receipt date",
+    "received": "received",
+    "notReceived": "Not received",
+    "logisticsCompany": "Logistics Company",
+    "poNumber": "PO Number",
+    "shippingAddress": "Shipping address",
+    "recyclingCategory:": "Recycling category",
+    "packingQty": "Packing quantity",
+    "packingWeight": "Packing weight",
+    "recyc": "Recycling category",
+    "packageName" : "Package category ",
+    "inputDriverNumber": "Please enter driver Id"
   },
   "dashboard_recyclables": {
     "data": "Data",
