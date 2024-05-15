@@ -75,7 +75,8 @@
       "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
-      "startDateBehindEndDate": "not allowed the start time behind the end time",
+      "startDateBehindEndDate": "not allowed if the start date is behind than the end date",
+      "endDateEarlyThanStartDate": "not allowed if the end date is earlier than the start date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'"
     }
   },

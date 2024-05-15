@@ -65,6 +65,7 @@ const Company: FunctionComponent = () => {
   const [logisticList, setLogisticList] = useState<CompanyItem[]>([]);
   const [manuList, setManuList] = useState<CompanyItem[]>([]);
   const [customerList, setCustomerList] = useState<CompanyItem[]>([]);
+
   const initCompanyList = async (companyType: string) => {
     const result = await getAllCompany(companyType, page - 1, pageSize);
     const data = result?.data;
@@ -107,6 +108,7 @@ const Company: FunctionComponent = () => {
           break;
       }
       setTotalData(data.totalPages);
+      
     }
   };
 
@@ -403,6 +405,7 @@ const Company: FunctionComponent = () => {
           action={action}
           selectedItem={selectedRow}
           onSubmitData={onSubmitData}
+          selectedCompanyList={getSelectedCompanyList(selectCompanyType)}
         />
       )}
     </>
