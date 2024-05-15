@@ -78,7 +78,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
 
         setExistingContract(
           contractList.filter(
-            (item) => item.contractNo === selectedItem.contractNo
+            (item) => item.contractNo != selectedItem.contractNo
           )
         )
       }
