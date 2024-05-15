@@ -135,7 +135,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
   const [status, setStatus] = useState(true) // status field
   const isInitialRender = useRef(true) // Add this line
-  
+
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
   }, [i18n, currentLanguage])
@@ -359,15 +359,15 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
       return (
-        item.recycTypeId.trim() !== '' &&
-        item.recycSubTypeId.trim() !== '' &&
-        item.recycSubTypeCapacity === 0
+        item.recycTypeId.trim() != '' &&
+        item.recycSubTypeId.trim() != '' &&
+        item.recycSubTypeCapacity != 0
       )
     })
 
     //console.log('isRecycleTypeIdUnique', isRecycleTypeIdUnique)
 
-    isRecyleUnselected &&
+    !isRecyleUnselected &&
       tempV.push({
         field: 'warehouseRecyc',
         error: `${t(`add_warehouse_page.warehouseRecyc`)} ${t(
@@ -540,6 +540,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     const isError = validation.length == 0
     getFormErrorMsg()
+
+    console.log('addWarehouseForm', validation)
 
     if (validation.length == 0) {
       action === 'add'
