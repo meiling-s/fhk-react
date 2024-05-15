@@ -155,7 +155,7 @@ const Recyclables: FunctionComponent = () => {
                 id: type.recyclableNameEng,
                 label: getLabel(type.recyclableNameEng),
                 data: getDataWeights(type.recyclableNameEng, length, response),
-                backgroundColor: randomBackgroundColor()
+                backgroundColor: type?.backgroundColor ? type.backgroundColor : randomBackgroundColor()
             })
             // if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
             //     datasets.push({
@@ -283,7 +283,7 @@ const Recyclables: FunctionComponent = () => {
                 id: type.recyclableNameEng,
                 label: getLabel(type.recyclableNameEng),
                 data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                backgroundColor: randomBackgroundColor(),
+                backgroundColor: type?.backgroundColor ? type.backgroundColor : randomBackgroundColor(),
                 yAxisID: 'y',
                 pointStyle: 'circle',
                 pointRadius: 8,

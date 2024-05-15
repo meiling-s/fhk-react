@@ -67,7 +67,7 @@ const ChartTotalSales = () => {
                     {
                         label: label,
                         weight: Number(value),
-                        backgroundColor: randomBackgroundColor(),
+                        backgroundColor: recycable?.backgroundColor ? recycable.backgroundColor : randomBackgroundColor(),
                         width: `${Number(value) / dataSales.total_weight*100}%`,
                         description: getLabel(label),
                     }

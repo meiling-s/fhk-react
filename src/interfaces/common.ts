@@ -59,7 +59,8 @@ export type recycType = {
     createdAt: string,
     createdBy: string,
     updatedAt: string,
-    updatedBy: string
+    updatedBy: string,
+    backgroundColor?: string
 }
 
 export type recycSubType = {

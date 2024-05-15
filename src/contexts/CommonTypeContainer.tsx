@@ -27,7 +27,7 @@ import {
   GET_CONTRACT_LOGISTIC,
   GET_IMG_SETTINGS,
 } from '../constants/requests'
-import { returnApiToken } from '../utils/utils'
+import { randomBackgroundColor, returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 
 const CommonType = () => {
@@ -107,7 +107,12 @@ const CommonType = () => {
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
       // console.log('Get site type success:', JSON.stringify(response.data))
-      RecycType = response.data
+      RecycType = response.data.map((item:any) => {
+        return{
+          ...item,
+          backgroundColor: randomBackgroundColor()
+        }
+      })
       setRecycType(RecycType)
     } catch (e) {
       console.error('Get site type failed:', e)
