@@ -683,7 +683,8 @@
     "successEditUser": "Success edit user",
     "failedEditUser": "Failed edit user",
     "successDeleteUser": "Success delete user",
-    "failedDeleteUser": "Failed delete user"
+    "failedDeleteUser": "Failed delete user",
+    "resetPasswaitApproval" :"Reset password awaiting approval"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "Check-in and Check-out",

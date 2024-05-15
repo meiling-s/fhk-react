@@ -684,7 +684,8 @@
     "successEditUser": "成功编辑用户",
     "failedEditUser": "编辑用户失败",
     "successDeleteUser": "成功删除用户",
-    "failedDeleteUser": "删除用户失败"
+    "failedDeleteUser": "删除用户失败",
+    "resetPasswaitApproval" :"重置密码等待批准"
   },
   "userGroup": {
     "title": "用戶群組",

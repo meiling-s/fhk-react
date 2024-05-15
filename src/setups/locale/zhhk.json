@@ -682,7 +682,8 @@
     "successEditUser": "成功編輯用戶",
     "failedEditUser": "編輯用戶失敗",
     "successDeleteUser": "成功刪除用戶",
-    "failedDeleteUser": "刪除用戶失敗"
+    "failedDeleteUser": "刪除用戶失敗",
+    "resetPasswaitApproval" :"重置密碼等待批准"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "概覽",
