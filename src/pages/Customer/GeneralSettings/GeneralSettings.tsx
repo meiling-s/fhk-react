@@ -67,6 +67,9 @@ const GeneralSettings: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
+  const [engNameList, setEngNameList] = useState<string[]>([])
+  const [schiNameList, setSchiNameList] = useState<string[]>([])
+  const [tchiNameList, setTchiNameList] = useState<string[]>([])
 
   useEffect(() => {
     getTenantData()
@@ -76,10 +79,19 @@ const GeneralSettings: FunctionComponent = () => {
   const initPackagingUnit = async () => {
     const result = await getAllPackagingUnit(page - 1, pageSize)
     const data = result?.data
+    setEngNameList([])
+    setSchiNameList([])
+    setTchiNameList([])
 
     if (data.content) {
         setPackagingMapping(data.content)
         setTotalData(data.totalPages)
+
+        data.content.map((item: any, index: any) => {
+          setEngNameList((prevEngName: any) => [...prevEngName, item.packagingNameEng]);
+          setSchiNameList((prevSchiName: any) => [...prevSchiName, item.packagingNameSchi]);
+          setTchiNameList((prevTchiName: any) => [...prevTchiName, item.packagingNameTchi]);
+        })
     }
   }
 
@@ -87,7 +99,7 @@ const GeneralSettings: FunctionComponent = () => {
     const token = returnApiToken()
     const result = await getTenantById(parseInt(token.tenantId))
     const data = result?.data
-    setTenantCurrency(data.monetaryValue)
+    setTenantCurrency(data?.monetaryValue || "")
   }
   const columns: GridColDef[] = [
     {
@@ -336,6 +348,9 @@ const GeneralSettings: FunctionComponent = () => {
           action={action}
           onSubmitData={onSubmitData}
           selectedItem={selectedRow}
+          engNameList={engNameList}
+          schiNameList={schiNameList}
+          tchiNameList={tchiNameList}
         />
         <UpdateCurrency
           drawerOpen={currencyDrawerOpen}

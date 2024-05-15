@@ -48,6 +48,7 @@ export const formErr = {
   exceedsMaxLength: 'exceedsMaxLength',
   minMoreOneImgUploded: 'minMoreOneImgUploded',
   startDateBehindEndDate: 'startDateBehidEndDate',
+  endDateEarlyThanStartDate: 'endDateEarlyThanStartDate',
   timeCantDuplicate: 'timeCantDuplicate',
   loginIdCantContainAdmin: 'loginIdCantContainAdmin'
 }
@@ -93,4 +94,15 @@ export const Languages = {
   ENUS : 'enus',
   ZHCH : 'zhch',
   ZHHK : 'zhhk'
+}
+
+export const TypeRecycables = {
+  RECHARGEABLE_BATTERIES: 'Rechargeable Batteries',
+  GLASS_BOTTLES: 'Glass Bottles',
+  PAPER: 'Paper',
+  FLUORESCENT_LAMPS_AND_TUBES: 'Fluorescent Lamps and Tubes',
+  SMALL_ELETRICAL_APPLIANCES: 'Small Electrical Appliances',
+  PLASTICS: 'Plastics',
+  NON_RECYCLABLE: 'Non-recyclable',
+  CARDBOARD: 'Cardboard',
 }

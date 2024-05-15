@@ -26,7 +26,7 @@ import logo_company from '../logo_company.png'
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
 import { Collapse, createTheme } from '@mui/material'
-import { ExpandLess, ExpandMore, Login } from '@mui/icons-material'
+import { ExpandLess, ExpandMore, Login, StarBorder } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -39,6 +39,7 @@ import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { dynamicpath, returnApiToken } from '../utils/utils'
 
 type MainDrawer = {
@@ -60,12 +61,15 @@ function MainDrawer() {
   const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
   const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false)
   const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false)
+  const [dashboarddGroup, setDashboardGroup] = useState<boolean>(false)
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0)
+  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
+  const [selectedISubIndex, setSelectedSubIndex] = useState<number | null>(null);
   const { realmApiRoute } = returnApiToken()
+  const subMenuDashboard:string[] = ['dashboard'];
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -78,6 +82,8 @@ function MainDrawer() {
   const handleListItemClick = (index: number) => {
     setSelectedIndex(index)
     localStorage.setItem('selectedIndex', String(index))
+    setSelectedSubIndex(null)
+    setDashboardGroup(false)
   }
 
   useEffect(() => {
@@ -197,6 +203,12 @@ function MainDrawer() {
         name: t('driver.sideBarName'),
         icon: <SHIPPING_CAR_ICON />,
         onClick: () => navigate('/logistic/driver'),
+        collapse: false
+      },
+      'Dashboard': {
+        name: t('dashboard_recyclables.data'),
+        icon: <BarChartIcon />,
+        onClick: () => setDashboardGroup(prev => !prev),
         collapse: false
       }
     }
@@ -526,6 +538,28 @@ function MainDrawer() {
               </ListItem>
             )
           )}
+           <Collapse in={dashboarddGroup} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {subMenuDashboard.map((item, index) => {
+                return(
+                    <ListItemButton  
+                      sx={{pl: 7}} 
+                      selected={true}
+                      onClick={() => {
+                        navigate(`${realm}/${item}`)
+                        setSelectedSubIndex(index)
+                      }}
+                    >
+                      <ListItemText 
+                        className={ index === selectedISubIndex ? 'text-menu-active' : ''}
+                        primary={t('dashboard_recyclables.recyclable')} 
+                      />
+                    </ListItemButton>
+                  )
+                })
+              }
+            </List>
+          </Collapse>
         </List>
       </Drawer>
     </>

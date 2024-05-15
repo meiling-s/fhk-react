@@ -20,7 +20,8 @@
     "yes": "是",
     "no": "否",
     "createdDatetime": "建立時間",
-    "lastUpdateDatetime": "上次更新時間"
+    "lastUpdateDatetime": "上次更新時間",
+    "pckgCategory:": "包裝類別"
   },
   "col": {
     "createCP": "建立回收點",
@@ -74,7 +75,8 @@
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
-      "startDateBehindEndDate": "不允許開始時間晚於結束時間",
+      "startDateBehindEndDate": "如果開始日期晚於結束日期則不允許",
+      "endDateEarlyThanStartDate": "如果結束日期早於開始日期則不允許",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字"
     }
   },
@@ -419,7 +421,7 @@
       "invalid_date": "失效日期",
       "invalid_pickup_time": "取件時間無效，請重新選擇時間",
       "not_in_prev_data": "不在先前數據中",
-      "pickup_time":"先前的資料中已經存在接送時間",
+      "pickup_time": "先前的資料中已經存在接送時間",
       "not_same_as_receiverr": "與接收者不同",
       "sender_address": "寄件者地址不能與收件者地址相同",
       "sender_address_exists": "寄件者地址已存在於先前的資料中",
@@ -1012,14 +1014,14 @@
       "order_info": "訂單資料",
       "pico_id": "回收運單編號"
     },
-    "create" : {
+    "create": {
       "create_order": "建立訂單",
       "contact_information": "聯絡資料",
       "receiving_company_name": "收件公司名稱",
       "sender_company_name": "寄件者公司名稱",
       "receiving_company_name_placeholder": "請輸入公司名稱",
-      "contact_name":"聯絡人姓名",
-      "contact_name_placeholder":"請填寫聯絡人姓名",
+      "contact_name": "聯絡人姓名",
+      "contact_name_placeholder": "請填寫聯絡人姓名",
       "contact_number": "聯絡人號碼",
       "contact_number_placeholder": "請填寫手機號碼",
       "payment_method": "付款方式",
@@ -1105,5 +1107,42 @@
     "offsite": "上門回收服務",
     "community": "社區收集點",
     "service_type": "服務種類"
+  },
+  "logisticDashboard": {
+    "searchDriver": "搜索司機方向",
+    "driverInfo": "您正在搜索的司機",
+    "driverNumb": "司機號碼",
+    "driverLicense": "駕駛證",
+    "vehicleCategory": "車輛類別",
+    "receivingLocation": "接收位置",
+    "receiptDate": "收據日期",
+    "received": "已收到",
+    "notReceived": "未收到",
+    "logisticsCompany": "物流公司",
+    "poNumber": "採購訂單號",
+    "shippingAddress": "送貨地址",
+    "recyclingCategory:": "回收類別",
+    "packingQty": "包裝數量",
+    "packingWeight": "包裝重量",
+    "recyc": "回收類別",
+    "packageName": "包裝類別",
+    "inputDriverNumber": "請輸入司機號碼"
+  },
+  "dashboard_recyclables": {
+    "data": "數據",
+    "recyclable": "回收物",
+    "recycling_data": "回收物数据",
+    "different_recycling_weights": "不同回收物重量",
+    "date_range": "日期范围",
+    "recycling_point": "回收点",
+    "plastic": "塑料",
+    "waste_paper": "废纸",
+    "metal": "金属",
+    "glass_bottle": "玻璃樽",
+    "regulated_electrical": "受管制电器(四电一脑)",
+    "unregulated_electrical": "非受管制电器",
+    "rechargeable_battery": "可充电电池",
+    "compact_fluorescent": "悭电胆和光管",
+    "paper_drink_box": "纸包饮品盒"
   }
 }

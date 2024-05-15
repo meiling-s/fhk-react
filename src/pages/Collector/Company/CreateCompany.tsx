@@ -9,15 +9,20 @@ import { formValidate } from '../../../interfaces/common'
 import { editCompany, createCompany } from '../../../APICalls/Collector/company'
 import { returnErrorMsg } from '../../../utils/utils'
 import { formErr, localStorgeKeyName } from '../../../constants/constant'
-import { Company, CreateCompany as CreateCompanyItem, UpdateCompany } from '../../../interfaces/company'
+import {
+  Company,
+  CreateCompany as CreateCompanyItem,
+  UpdateCompany
+} from '../../../interfaces/company'
 
 interface CreateCompany {
-  companyType: string,
+  companyType: string
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
   selectedItem?: Company | null
+  selectedCompanyList?: Company[]
 }
 
 interface FormValues {
@@ -30,7 +35,8 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  selectedItem
+  selectedItem,
+  selectedCompanyList = []
 }) => {
   const { t } = useTranslation()
   const initialFormValues = {
@@ -39,13 +45,15 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     nameSchi: '',
     brNo: '',
     description: '',
-    remark: '',
+    remark: ''
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const loginName : string = localStorage.getItem(localStorgeKeyName.username) ?? ''
+  const loginName: string =
+    localStorage.getItem(localStorgeKeyName.username) ?? ''
   const [prefixItemName, setPrefixItemName] = useState<string>('')
+  const [existingCompanyList, setExistingCompanyList] = useState<Company[]>([])
   const staffField = [
     {
       label: t('common.traditionalChineseName'),
@@ -93,8 +101,13 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         nameSchi: selectedItem.nameSchi,
         brNo: selectedItem.brNo,
         description: selectedItem.description,
-        remark: selectedItem.remark,
+        remark: selectedItem.remark
       })
+      setExistingCompanyList(
+        selectedCompanyList.filter(
+          (item) => item.companyId === selectedItem.companyId
+        )
+      )
     }
   }
 
@@ -109,11 +122,16 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       mappingData()
     } else {
       resetFormData()
+      setExistingCompanyList(selectedCompanyList)
     }
+   
   }, [drawerOpen])
 
   useEffect(() => {
-    const prefixName = companyType === 'manulist' ? 'manufacturer' : companyType.replace('list', '')
+    const prefixName =
+      companyType === 'manulist'
+        ? 'manufacturer'
+        : companyType.replace('list', '')
     setPrefixItemName(prefixName)
   }, [companyType])
 
@@ -142,8 +160,32 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
           type: 'error'
         })
     })
+    existingCompanyList.forEach((item) => {
+      if (item.nameTchi.toLowerCase() === formData.nameTchi.toLowerCase()) {
+        tempV.push({
+          field: t('common.traditionalChineseName'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      }
+      if (item.nameTchi.toLowerCase() === formData.nameTchi.toLowerCase()) {
+        tempV.push({
+          field: t('common.simplifiedChineseName'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      }
+      if (item.nameEng.toLowerCase() === formData.nameEng.toLowerCase()) {
+        tempV.push({
+          field: t('common.englishName'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      }
+    })
+
     setValidation(tempV)
-    return tempV.length === 0;
+    return tempV.length === 0
   }
 
   useEffect(() => {
@@ -165,7 +207,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
   }
 
   const handleSubmit = async () => {
-    const isValid = await validate();
+    const isValid = await validate()
     if (isValid) {
       const staffData: CreateCompanyItem = {
         nameTchi: formData.nameTchi,
@@ -185,20 +227,20 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         handleEditCompany()
       }
     } else {
-      setTrySubmited(true);
+      setTrySubmited(true)
     }
   }
 
   const handleCreateCompany = async (staffData: CreateCompanyItem) => {
     if (validation.length === 0) {
       const data: {
-        brNo: string,
-        description: string,
-        remark: string,
-        status: string,
-        createdBy: string,
-        updatedBy: string,
-        [key: string]: string,
+        brNo: string
+        description: string
+        remark: string
+        status: string
+        createdBy: string
+        updatedBy: string
+        [key: string]: string
       } = {
         brNo: staffData.brNo,
         description: staffData.description,
@@ -235,16 +277,16 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       remark: formData.remark,
       status: 'ACTIVE',
       createdBy: formData.createdBy,
-      updatedBy: loginName,
+      updatedBy: loginName
     }
     const data: {
-      brNo: string,
-      description: string,
-      remark: string,
-      status: string,
-      createdBy: string,
-      updatedBy: string,
-      [key: string]: string,
+      brNo: string
+      description: string
+      remark: string
+      status: string
+      createdBy: string
+      updatedBy: string
+      [key: string]: string
     } = {
       brNo: editData.brNo,
       description: editData.description,
@@ -258,7 +300,11 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     data[`${prefixItemName}NameEng`] = editData.nameEng
     if (validation.length === 0) {
       if (selectedItem != null) {
-        const result = await editCompany(companyType, selectedItem.companyId, data)
+        const result = await editCompany(
+          companyType,
+          selectedItem.companyId,
+          data
+        )
         if (result) {
           onSubmitData('success', t('common.editSuccessfully'))
           resetFormData()
@@ -281,15 +327,15 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       remark: formData.remark,
       status: 'DELETED',
       createdBy: formData.createdBy,
-      updatedBy: loginName,
+      updatedBy: loginName
     }
     const data: {
-      brNo: string,
-      description: string,
-      remark: string,
-      status: string,
-      updatedBy: string,
-      [key: string]: string,
+      brNo: string
+      description: string
+      remark: string
+      status: string
+      updatedBy: string
+      [key: string]: string
     } = {
       brNo: editData.brNo,
       description: editData.description,
@@ -302,7 +348,11 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     data[`${prefixItemName}NameSchi`] = editData.nameSchi
     data[`${prefixItemName}NameEng`] = editData.nameEng
     if (selectedItem != null) {
-      const result = await editCompany(companyType, selectedItem.companyId, data)
+      const result = await editCompany(
+        companyType,
+        selectedItem.companyId,
+        data
+      )
       if (result) {
         onSubmitData('success', t('common.deletedSuccessfully'))
         resetFormData()
@@ -352,12 +402,13 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            {staffField.map((item, index) =>
+            {staffField.map((item, index) => (
               <Grid item key={index}>
                 <CustomField label={item.label} mandatory>
                   <CustomTextField
                     id={item.label}
-                    value={formData[item.field as keyof FormValues]}
+                    //value={formData[item.field as keyof FormValues]}
+                    defaultValue={formData[item.field as keyof FormValues]}
                     disabled={action === 'delete'}
                     placeholder={item.placeholder}
                     onChange={(event) =>
@@ -372,7 +423,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
                   />
                 </CustomField>
               </Grid>
-            )}
+            ))}
             <Grid item sx={{ width: '100%' }}>
               {trySubmited &&
                 validation.map((val, index) => (

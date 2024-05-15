@@ -56,6 +56,7 @@ import Driver from "./pages/Logistic/Driver";
 import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
+import LogisticDashboard from "./pages/Logistic/Dashboard/dashboard"
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
@@ -63,6 +64,7 @@ import CustomerAccount from './pages/Logistic/Account'
 import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder";
 import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
 import PickupPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder"
+import DashboardRecyclables from "./pages/Collector/Dashboard/Recyclables";
 
 const Router = () => {
   return (
@@ -119,6 +121,7 @@ const Router = () => {
            <Route path="/collector/notice/" element={<Notice />} />
           <Route path="/collector/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/collector/staff" element={<StaffManagement />} />
+          <Route path="/collector/dashboard" element={<DashboardRecyclables />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -159,6 +162,7 @@ const Router = () => {
           <Route path="/logistic/notice/" element={<Notice />} />
           <Route path="/logistic/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/logistic/staff" element={<StaffManagement />} />
+          <Route path="/logistic/dashboard" element={<LogisticDashboard />} />
         </Route>
 
         <Route element={<MainLayout />}>
