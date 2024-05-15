@@ -15,7 +15,7 @@ import Dashboard from "../../../components/Dashboard/Chart";
 import ChartTotalSales from "../../../components/Dashboard/ChartTotalSales";
 import ChartDistrictSales from "../../../components/Dashboard/ChartDistrictSales";
 import { TypeRecycables,fieldNameRecycables, months } from '../../../constants/constant'
-import { getBackgroundColor } from '../../../utils/utils'
+import { getBackgroundColor, randomBackgroundColor } from '../../../utils/utils'
 interface Dataset{
     id: string,
     label: string,
@@ -59,9 +59,9 @@ const Recyclables: FunctionComponent = () => {
     const [datasetProcessing, setDataSetProcessing] = useState<Dataset[]>([]);
     const [frmDateWeight, setFrmDateWeight] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDateWeight, setToDateWeigth] = useState<dayjs.Dayjs>(dayjs())
-    const [frmDateProcessing, setFrmDateProcessing] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
+    const [frmDateProcessing, setFrmDateProcessing] = useState<dayjs.Dayjs>(dayjs().subtract(6, 'month'))
     const [toDateProcessing, setToDateProcessing] = useState<dayjs.Dayjs>(dayjs())
-    const [frmDateProduct, setFrmDateProduct] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
+    const [frmDateProduct, setFrmDateProduct] = useState<dayjs.Dayjs>(dayjs().subtract(6, 'month'))
     const [toDateProduct, setToDateProduct] = useState<dayjs.Dayjs>(dayjs())
     const [colId, setColId] = useState<number | null>(null);
     const processingType = [
@@ -115,13 +115,13 @@ const Recyclables: FunctionComponent = () => {
         return languages
     }
 
-    const getDataWeights = (type: fieldNameRecycables, length: number, response: any): number[] =>{
+    const getDataWeights = (type: any, length: number, response: any): number[] =>{
         const weights:number[]= [];
         if(!response) return weights
         const processing:any =  Object.values(response)
         
         for(let index=0; index<length; index++){
-            const data:TypeRecycable = processing[index];
+            const data:any = processing[index];
             if(data[type]){
                 weights.push(Number(data[type]?.slice(0, -2)) ?? 0)
             } else {
@@ -132,12 +132,12 @@ const Recyclables: FunctionComponent = () => {
         return weights
     }
 
-    const getDataWeightsUsingName = (type: fieldNameRecycables, length: number, response: any): number[] =>{
+    const getDataWeightsUsingName = (type: string, length: number, response: any): number[] =>{
         const weights:number[]= [];
         if(!response) return weights
         const processing:any =  Object.values(response);
         for(let index=0; index<length; index++){
-            const data:TypeRecycable = processing[index];
+            const data:any = processing[index];
             if(data[type]){
                 weights.push(Number(data[type]) ?? 0)
             } else {
@@ -151,70 +151,76 @@ const Recyclables: FunctionComponent = () => {
         const datasets:Dataset[] = [];
         if(!recycType) return datasets
         for(let type of recycType){
-            if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.RECHARGEABLE_BATTERIES)
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.GLASS_BOTTLES){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.GLASS_BOTTLES)
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.PAPER){ 
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.PAPER)
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES){ 
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES)
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.SMALL_ELETRICAL_APPLIANCES){ 
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.SMALL_ELETRICAL_APPLIANCES)
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.PLASTICS){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.PLASTICS)
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.NON_RECYCLABLE){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.NON_RECYCLABLE)
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.CARDBOARD){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD)
-                })
-            }else if(type.recyclableNameEng === TypeRecycables.Metals){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeights(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.Metals)
-                })
-            }
+            datasets.push({
+                id: type.recyclableNameEng,
+                label: getLabel(type.recyclableNameEng),
+                data: getDataWeights(type.recyclableNameEng, length, response),
+                backgroundColor: randomBackgroundColor()
+            })
+            // if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeights(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.RECHARGEABLE_BATTERIES)
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.GLASS_BOTTLES){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeights(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.GLASS_BOTTLES)
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.PAPER){ 
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeights(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.PAPER)
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES){ 
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeights(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES)
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.SMALL_ELETRICAL_APPLIANCES){ 
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeights(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.SMALL_ELETRICAL_APPLIANCES)
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.PLASTICS){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeights(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.PLASTICS)
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.NON_RECYCLABLE){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeights(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.NON_RECYCLABLE)
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.CARDBOARD){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeights(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD)
+            //     })
+            // }else if(type.recyclableNameEng === TypeRecycables.Metals){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeights(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.Metals)
+            //     })
+            // }
         }
         return datasets
     }
@@ -273,106 +279,116 @@ const Recyclables: FunctionComponent = () => {
         const datasets:Dataset[] = [];
         if(!recycType) return datasets
         for(let type of recycType){
-            if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.RECHARGEABLE_BATTERIES),
-                    yAxisID: 'y',
-                    pointStyle: 'circle',
-                    pointRadius: 8,
-                    pointHoverRadius: 15
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.GLASS_BOTTLES){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.GLASS_BOTTLES),
-                    yAxisID: 'y',
-                    pointStyle: 'circle',
-                    pointRadius: 8,
-                    pointHoverRadius: 15
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.PAPER){ 
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.PAPER),
-                    yAxisID: 'y',
-                    pointStyle: 'circle',
-                    pointRadius: 8,
-                    pointHoverRadius: 15
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES){ 
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES),
-                    yAxisID: 'y',
-                    pointStyle: 'circle',
-                    pointRadius: 8,
-                    pointHoverRadius: 15
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.SMALL_ELETRICAL_APPLIANCES){ 
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                    backgroundColor:  getBackgroundColor(TypeRecycables.SMALL_ELETRICAL_APPLIANCES),
-                    yAxisID: 'y',
-                    pointStyle: 'circle',
-                    pointRadius: 8,
-                    pointHoverRadius: 15
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.PLASTICS){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.PLASTICS),
-                    yAxisID: 'y',
-                    pointStyle: 'circle',
-                    pointRadius: 8,
-                    pointHoverRadius: 15
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.NON_RECYCLABLE){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.NON_RECYCLABLE),
-                    yAxisID: 'y',
-                    pointStyle: 'circle',
-                    pointRadius: 8,
-                    pointHoverRadius: 15
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.CARDBOARD){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD),
-                    yAxisID: 'y',
-                    pointStyle: 'circle',
-                    pointRadius: 8,
-                    pointHoverRadius: 15
-                })
-            } else if(type.recyclableNameEng === TypeRecycables.Metals){
-                datasets.push({
-                    id: type.recyclableNameEng,
-                    label: getLabel(type.recyclableNameEng),
-                    data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-                    backgroundColor: getBackgroundColor(TypeRecycables.Metals),
-                    yAxisID: 'y',
-                    pointStyle: 'circle',
-                    pointRadius: 8,
-                    pointHoverRadius: 15
-                })
-            }
+            datasets.push({
+                id: type.recyclableNameEng,
+                label: getLabel(type.recyclableNameEng),
+                data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+                backgroundColor: randomBackgroundColor(),
+                yAxisID: 'y',
+                pointStyle: 'circle',
+                pointRadius: 8,
+                pointHoverRadius: 15
+            })
+            // if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.RECHARGEABLE_BATTERIES),
+            //         yAxisID: 'y',
+            //         pointStyle: 'circle',
+            //         pointRadius: 8,
+            //         pointHoverRadius: 15
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.GLASS_BOTTLES){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.GLASS_BOTTLES),
+            //         yAxisID: 'y',
+            //         pointStyle: 'circle',
+            //         pointRadius: 8,
+            //         pointHoverRadius: 15
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.PAPER){ 
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.PAPER),
+            //         yAxisID: 'y',
+            //         pointStyle: 'circle',
+            //         pointRadius: 8,
+            //         pointHoverRadius: 15
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES){ 
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES),
+            //         yAxisID: 'y',
+            //         pointStyle: 'circle',
+            //         pointRadius: 8,
+            //         pointHoverRadius: 15
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.SMALL_ELETRICAL_APPLIANCES){ 
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+            //         backgroundColor:  getBackgroundColor(TypeRecycables.SMALL_ELETRICAL_APPLIANCES),
+            //         yAxisID: 'y',
+            //         pointStyle: 'circle',
+            //         pointRadius: 8,
+            //         pointHoverRadius: 15
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.PLASTICS){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.PLASTICS),
+            //         yAxisID: 'y',
+            //         pointStyle: 'circle',
+            //         pointRadius: 8,
+            //         pointHoverRadius: 15
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.NON_RECYCLABLE){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.NON_RECYCLABLE),
+            //         yAxisID: 'y',
+            //         pointStyle: 'circle',
+            //         pointRadius: 8,
+            //         pointHoverRadius: 15
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.CARDBOARD){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD),
+            //         yAxisID: 'y',
+            //         pointStyle: 'circle',
+            //         pointRadius: 8,
+            //         pointHoverRadius: 15
+            //     })
+            // } else if(type.recyclableNameEng === TypeRecycables.Metals){
+            //     datasets.push({
+            //         id: type.recyclableNameEng,
+            //         label: getLabel(type.recyclableNameEng),
+            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
+            //         backgroundColor: getBackgroundColor(TypeRecycables.Metals),
+            //         yAxisID: 'y',
+            //         pointStyle: 'circle',
+            //         pointRadius: 8,
+            //         pointHoverRadius: 15
+            //     })
+            // }
         }
         return datasets
     }

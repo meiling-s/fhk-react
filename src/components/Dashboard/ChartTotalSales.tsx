@@ -10,7 +10,7 @@ import { getTotalSalesProductAnalysis } from '../../APICalls/Collector/dashboard
 import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import { useContainer } from 'unstated-next';
 import { Languages } from '../../constants/constant';
-import { getBackgroundColor } from '../../utils/utils';
+import { getBackgroundColor, randomBackgroundColor } from '../../utils/utils';
 import { Dataset } from '@mui/icons-material';
 
 type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard' | 'Metals';
@@ -26,80 +26,6 @@ interface Dataset{
     total_weight: number,
     sales: DataSales[]   
 }
-
-// type props = {
-//     labels: string[]
-//     dataset:Dataset[]|[]
-//     setFrmDate: (value: dayjs.Dayjs ) => void
-//     onChangeToDate:(value: dayjs.Dayjs) => void
-//     onHandleSearch?:() => void
-//     frmDate:dayjs.Dayjs
-//     toDate:dayjs.Dayjs
-//     collectionIds?: number[]
-//     title:string
-//     onChangeColdId: (value: number | null) => void
-//     colId:number | null
-//     typeChart:string
-// }
-
-// [
-    // {
-    //     id: 'Rechargeable Batteries',
-    //     label: 'Rechargeable Batteries',
-    //     data: 30,
-    //     backgroundColor: '#EFE72F',
-    //     width: '20%' 
-    // },
-    // {
-    //     id: 'Glass Bottles',
-    //     label: 'Glass Bottles',
-    //     data: 30,
-    //     backgroundColor: '#4FB5F5',
-    //     width: '20%' 
-    // },
-    // {
-    //     id: 'Paper',
-    //     label: 'Paper',
-    //     data: 30,
-    //     backgroundColor: '#7ADFF1',
-    //     width: '10%' 
-    // },
-    // {
-    //     id: 'Fluorescent Lamps and Tubes',
-    //     label: 'Fluorescent Lamps and Tubes',
-    //     data: 30,
-    //     backgroundColor: '#ECAB05',
-    //     width: '10%' 
-    // },
-    // {
-    //     id: 'Small Electrical Appliances',
-    //     label: 'Small Electrical Appliances',
-    //     data: 30,
-    //     backgroundColor: '#5AE9D8',
-    //     width: '10%' 
-    // },
-    // {
-    //     id: 'Plastics',
-    //     label: 'Plastics',
-    //     data: 30,
-    //     backgroundColor: '#FF9FB7',
-    //     width: '10%' 
-    // },
-    // {
-    //     id: 'Non-recyclable',
-    //     label: 'Non-recyclable',
-    //     data: 30,
-    //     backgroundColor: '#F9B8FF',
-    //     width: '10%' 
-    // },
-    // {
-    //     id: 'Cardboard',
-    //     label: 'Cardboard',
-    //     data: 30,
-    //     backgroundColor: '#C69AFF',
-    //     width: '33%' 
-    // }
-// ]
 
 const ChartTotalSales = () => {
     const { t, i18n } = useTranslation()
@@ -141,7 +67,7 @@ const ChartTotalSales = () => {
                     {
                         label: label,
                         weight: Number(value),
-                        backgroundColor: getBackgroundColor(label),
+                        backgroundColor: randomBackgroundColor(),
                         width: `${Number(value) / dataSales.total_weight*100}%`,
                         description: getLabel(label),
                     }
