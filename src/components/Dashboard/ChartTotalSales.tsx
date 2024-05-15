@@ -138,7 +138,7 @@ const ChartTotalSales = () => {
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">               
                 <Grid style={{width: '100%', height: '340px', padding: '38px, 55px, 38px, 55px', gap: '10px', backgroundColor: '#F4F5F7'}}>
-                    <Grid style={{display: 'flex', flexDirection: 'column', width: '100%', height: '270px', padding: '30px', gap: '10px', backgroundColor: '#FFFFFF', borderRadius: '30px'}}>
+                    <Grid style={{display: 'flex', flexDirection: 'column', width: '100%', height: '320', padding: '30px', gap: '10px', backgroundColor: '#FFFFFF', borderRadius: '30px'}}>
                         <Grid style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                             <Autocomplete
                                 disablePortal
@@ -195,7 +195,7 @@ const ChartTotalSales = () => {
                                 />
                            </Grid>
                         </Grid>
-                        <Grid style={{display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px', marginBottom: '60px'}}>
+                        <Grid style={{display: 'flex', alignItems: 'center', gap: '10px', marginTop: '40px', marginBottom: '60px'}}>
                             <Typography style={{fontSize: '18px', color: '#717171', fontWeight: '700'}}>
                                 {t('dashboard_manufacturer.total_customer_orders')}
                             </Typography>
@@ -225,7 +225,7 @@ const ChartTotalSales = () => {
                                                     <Typography 
                                                         style={
                                                             {
-                                                                fontSize: '10px', 
+                                                                fontSize: '20px', 
                                                                 fontWeight: '500', 
                                                                 alignItems: 'center', 
                                                                 textAlign: 'center'
@@ -237,14 +237,14 @@ const ChartTotalSales = () => {
                                                     <Typography 
                                                         style={
                                                             {
-                                                                fontSize: '10px', 
+                                                                fontSize: '20px', 
                                                                 fontWeight: '500', 
                                                                 alignItems: 'center', 
                                                                 textAlign: 'center'
                                                             }
                                                         }
                                                     >
-                                                        {item.weight}Kg
+                                                        {item.weight} Kg
                                                     </Typography>
                                                 </Box>
                                             } 
@@ -254,7 +254,7 @@ const ChartTotalSales = () => {
                                                 tooltip: {
                                                     sx: localstyles.tooltip(item.backgroundColor)
                                                 },
-                                            }}    
+                                            }}
                                         >
                                         <Box 
                                             sx={{
@@ -289,8 +289,8 @@ const localstyles = {
     }),
     tooltip: (color: string) => ({
         bgcolor: color,
-        width: '100px',
-        height: '48px',
+        width: '150px',
+        height: '60px',
         borderRadius: '10px',
         display: 'flex',
         justifyContent: 'center',

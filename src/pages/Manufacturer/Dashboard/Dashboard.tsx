@@ -53,7 +53,7 @@ const Recyclables: FunctionComponent = () => {
     const { recycType } =useContainer(CommonTypeContainer);
     const [labelWeight, setLabelWeigth] = useState<string[]>([]);
     const [datasetWeigth, setDataSetWeight] = useState<Dataset[]>([]);
-    const [labelProduct, setLabelProduct] = useState<string[]>([]);
+    const [labelProduct, setLabelProduct] = useState<{id: number, value: string}[]>([]);
     const [datasetProduct, setDataSetProduct] = useState<Dataset[]>([]);
     const [labelProcessing, setLabelProcessing] = useState<{id: number, value: string}[]>([]);
     const [datasetProcessing, setDataSetProcessing] = useState<Dataset[]>([]);
@@ -415,6 +415,7 @@ const Recyclables: FunctionComponent = () => {
         if (response) {
             let cache:any = {}
             const source:any = {}
+
             for(let product of response){
                 const label = product.month + ' ' + product.year;
                 const data:any = {}
@@ -434,7 +435,15 @@ const Recyclables: FunctionComponent = () => {
                 }
                 source[label]= data 
             }
-            const labels:string[] = Object.keys(source);
+            // const labels:string[] = Object.keys(source);
+            const labels:{id: number, value: string}[] = response?.map((item:any) => {
+                const index = indexMonths.indexOf(item.month) as monthSequence
+                const month = getLangMonth(index)
+                return{
+                    id: index,
+                    value: `${month} ${item.year}`
+                }
+            });
             if(!recycType) return;
             const datasets = getDataSetLineChart(source, labels.length)
             setLabelProduct(labels)
@@ -507,7 +516,17 @@ const Recyclables: FunctionComponent = () => {
                 label: getLabel(item.id)
             }
         })
+
+        const labelsProduct:{id: number, value: string}[] = labelProduct?.map((item:any) => {
+            const month = getLangMonth(item.id)
+            return{
+                id: item?.id,
+                value: `${month} ${item?.value?.split(' ')[1]}`
+            }
+        })
+        
         setDataSetProduct(changeLangProduct);
+        setLabelProduct(labelsProduct)
 
         const changeLangProcessing = datasetProcessing.map(item => {
             return{
@@ -560,7 +579,7 @@ const Recyclables: FunctionComponent = () => {
 
             <Dashboard 
                 key={t('dashboard_manufacturer.recycled_product')}
-                labels={labelProduct}
+                labels={labelProduct.map(item => item.value)}
                 dataset={datasetProduct}
                 onChangeFromDate={setFrmDateProduct}
                 onChangeToDate={setToDateProduct}

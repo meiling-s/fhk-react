@@ -265,15 +265,15 @@ const ChartDistrictSales = () => {
                                         position: 'nearest',
                                         usePointStyle: true,
                                         backgroundColor: '#C3DAAC',
-                                        boxWidth: 30,
-                                        boxHeight: 30,
+                                        boxWidth: 50,
+                                        boxHeight: 50,
                                         bodyColor: '#717171',
                                         footerColor: '#717171',
                                         footerAlign: 'center',
                                         bodyAlign: 'center',
                                         xAlign: 'center',
                                         bodyFont: {
-                                            size: 15
+                                            size: 17
                                         },
                                         
                                     },

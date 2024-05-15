@@ -88,6 +88,10 @@ const Chart = ({
             display: false,
             text: 'Chart.js Bar Chart - Stacked',
           },
+          labels: {
+            align: 'center',
+            
+          },
           legend: {
             labels: {
                 usePointStyle: true,
@@ -113,7 +117,7 @@ const Chart = ({
             ticks: {
                 // Include a dollar sign in the ticks
                 callback: function(value: string) :string{
-                    return value  + 'Kg';
+                    return value  + ' Kg';
                 }
             }
           },
