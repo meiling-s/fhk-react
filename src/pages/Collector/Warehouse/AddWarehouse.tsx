@@ -41,13 +41,33 @@ import { get } from 'http'
 import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 
+interface RecyleItem {
+  recycTypeId: string
+  recycSubTypeId: string
+  recycSubTypeCapacity: number
+  recycTypeCapacity: number
+}
+
+interface Warehouse {
+  id: number
+  warehouseId: number
+  warehouseNameTchi: string
+  warehouseNameSchi: string
+  warehouseNameEng: string
+  location: string
+  physicalFlg: string | boolean
+  contractNo: string[]
+  status: string
+  warehouseRecyc: RecyleItem[]
+}
+
 interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action?: 'add' | 'edit' | 'delete'
   onSubmitData?: (type: string, id?: number, error?: boolean) => void
   rowId: number
-  addressList: string[]
+  warehouseList: Warehouse[]
 }
 
 interface recyleItem {
@@ -119,7 +139,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   action = 'add',
   onSubmitData,
   rowId,
-  addressList
+  warehouseList = []
 }) => {
   const { t } = useTranslation()
   const { i18n } = useTranslation()
@@ -135,6 +155,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
   const [status, setStatus] = useState(true) // status field
   const isInitialRender = useRef(true) // Add this line
+  const [existingWarehouse, setExisitingWarehouse] = useState<Warehouse[]>([])
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -232,6 +253,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         setPysicalLocation(warehouse.physicalFlg)
         setStatus(warehouse.status === 'ACTIVE')
         setRecycleCategory([...warehouse.warehouseRecyc])
+
+        setExisitingWarehouse(
+          warehouseList.filter((item) => item.id != warehouse.warehouseId)
+        )
       }
     } catch (error) {
       console.error(error)
@@ -243,6 +268,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     if (action === 'add') {
       resetForm()
       setTrySubmited(false)
+      setExisitingWarehouse(warehouseList)
     } else if (action === 'edit' || action === 'delete') {
       getWarehousebyId()
     }
@@ -340,19 +366,53 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         })
     })
 
+    existingWarehouse.forEach((item) => {
+      if (
+        item.warehouseNameTchi.toLowerCase() ===
+        nameValue.warehouseNameTchi.toLowerCase()
+      ) {
+        tempV.push({
+          field: nameValue.warehouseNameTchi,
+          error: `${t('common.traditionalChineseName')} ${t(
+            'form.error.alreadyExist'
+          )}`
+        })
+      }
+      if (
+        item.warehouseNameSchi.toLowerCase() ===
+        nameValue.warehouseNameSchi.toLowerCase()
+      ) {
+        tempV.push({
+          field: nameValue.warehouseNameSchi,
+          error: `${t('common.simplifiedChineseName')} ${t(
+            'form.error.alreadyExist'
+          )}`
+        })
+      }
+      if (
+        item.warehouseNameEng.toLowerCase() ===
+        nameValue.warehouseNameEng.toLowerCase()
+      ) {
+        tempV.push({
+          field: nameValue.warehouseNameEng,
+          error: `${t('common.englishName')} ${t('form.error.alreadyExist')}`
+        })
+      }
+      if (item.location.toLowerCase() === place.toLowerCase()) {
+        tempV.push({
+          field: 'place',
+          error: `${t('add_warehouse_page.place')} ${t(
+            'form.error.alreadyExist'
+          )}`
+        })
+      }
+    })
+
     place.trim() === '' &&
       tempV.push({
         field: 'place',
         error: `${t(`add_warehouse_page.place`)} ${t(
           'add_warehouse_page.shouldNotEmpty'
-        )}`
-      })
-
-    addressList.includes(place) &&
-      tempV.push({
-        field: 'place',
-        error: `${t(`add_warehouse_page.place`)} ${t(
-          'add_warehouse_page.shouldNotDuplicated'
         )}`
       })
 
@@ -809,7 +869,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                     }}
                     sx={styles.inputState}
                     disabled={action === 'delete'}
-                    error={checkString(place) && addressList.includes(place)}
+                    error={checkString(place)}
                   />
                 </FormControl>
               </div>
