@@ -322,9 +322,7 @@ type TableRow = {
 function ShipmentManage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const drawerWidth = 246
   const [selectedCheckin, setSelectedCheckin] = useState<number[]>([])
-  const [shipments, setShipments] = useState<CheckIn[]>([])
   const [filterShipments, setFilterShipments] = useState<CheckIn[]>([])
   const [rejFormModal, setRejectModal] = useState<boolean>(false)
   const [approveModal, setApproveModal] = useState<boolean>(false)

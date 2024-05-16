@@ -4,10 +4,12 @@ import PurchaseOrderCreateForm from '../../../components/FormComponents/Purchase
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { Status, localStorgeKeyName } from '../../../constants/constant'
-import { showErrorToast } from '../../../utils/utils'
+import { formatWeight, showErrorToast } from '../../../utils/utils'
 import * as Yup from 'yup'
 import { PurChaseOrder, PurchaseOrderDetail } from '../../../interfaces/purchaseOrder'
 import { UpdatePurchaseOrder } from '../../../APICalls/Customer/purchaseOrder'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 const EditPurchaseOrder = () => {
   const { t } = useTranslation()
@@ -16,9 +18,8 @@ const EditPurchaseOrder = () => {
   const [addRow, setAddRow] = useState<PurchaseOrderDetail[]>([])
   const poInfo: PurChaseOrder = state
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-  const role = localStorage.getItem(localStorgeKeyName.role)
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
-
+  const { decimalVal } = useContainer(CommonTypeContainer)
   const getErrorMsg = (field: string, type: string) => {
     switch (type) {
       case 'empty':
@@ -136,7 +137,7 @@ const EditPurchaseOrder = () => {
         unitNameTchi: item.unitNameTchi,
         unitNameSchi: item.unitNameSchi,
         unitNameEng: item.unitNameEng,
-        weight: item.weight,
+        weight: formatWeight(item.weight, decimalVal),
         createdBy: item.createdBy,
         updatedBy: loginId,
         pickupAt: item.pickupAt,

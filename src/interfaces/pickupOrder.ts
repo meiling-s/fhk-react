@@ -101,7 +101,7 @@ export interface CreatePicoDetail {
     pickupAt:        string;
     recycType:    string;
     recycSubType: string;
-    weight:       number;
+    weight:       string;
     
 }
 

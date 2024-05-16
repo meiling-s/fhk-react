@@ -542,7 +542,8 @@ function MainDrawer() {
             <List component="div" disablePadding>
               {subMenuDashboard.map((item, index) => {
                 return(
-                    <ListItemButton  
+                    <ListItemButton 
+                      key={index} 
                       sx={{pl: 7}} 
                       selected={true}
                       onClick={() => {
