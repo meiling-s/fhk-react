@@ -105,7 +105,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       })
       setExistingCompanyList(
         selectedCompanyList.filter(
-          (item) => item.companyId === selectedItem.companyId
+          (item) => item.companyId != selectedItem.companyId
         )
       )
     }

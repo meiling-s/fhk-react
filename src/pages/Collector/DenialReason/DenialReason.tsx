@@ -101,7 +101,7 @@ const DenialReason: FunctionComponent = () => {
       }
     })
     options.push({
-      label: 'any',
+      label: t("check_out.any"),
       value: ''
     })
     setFunctionList(data);
