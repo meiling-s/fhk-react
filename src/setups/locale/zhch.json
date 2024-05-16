@@ -1020,7 +1020,8 @@
       "estimated_weight": "预计重量",
       "this": "这",
       "is_required": "是必须的",
-      "required_field": "此字段是必需的"
+      "required_field": "此字段是必需的",
+      "unit": "单元"
     }
   },
   "purchase_order_customer": {

@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   Divider,
@@ -6,7 +7,8 @@ import {
   IconButton,
   InputAdornment,
   Stack,
-  Typography
+  Typography,
+  TextField
 } from '@mui/material'
 import React, {
   Dispatch,
@@ -32,11 +34,14 @@ import { useFormik } from 'formik'
 import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesListSingleSelect'
 import { collectorList, manuList } from '../../interfaces/common'
 import dayjs, { Dayjs } from 'dayjs'
-import { format } from '../../constants/constant'
+import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
 import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
 import { PurchaseOrderDetail } from '../../interfaces/purchaseOrder'
 import { DatePicker } from '@mui/x-date-pickers'
+import { getWeightUnit } from '../../APICalls/ASTD/recycling'
+import i18n from '../../setups/i18n'
+import { WeightUnit } from '../../interfaces/weightUnit'
 
 type props = {
   onClose: () => void
@@ -84,7 +89,7 @@ const ErrorMessages:React.FC<{message: string}> = ({message}) => {
 {message}
 </Typography>
 }
-type fieldName = 'receiverAddr' | 'weight' | 'recycTypeId' | 'recycSubTypeId' | 'pickupAt';
+type fieldName = 'receiverAddr' | 'weight' | 'recycTypeId' | 'recycSubTypeId' | 'pickupAt' | 'unitId';
 
 type ErrorsField = Record<
   fieldName,
@@ -120,6 +125,11 @@ const initialErrors = {
     type: 'string',
     status: false,
     required: false
+  },
+  unitId: {
+    type: 'string',
+    status: false,
+    required: true
   }
 }
 
@@ -138,23 +148,14 @@ const CreateRecycleForm = ({
   const [editRow, setEditRow] = useState<PurchaseOrderDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
-
-  //---set custom style each role---
+  const [page, setPage] = useState(1)  
+  const pageSize = 10
+  const [weightUnit, setWeightUnit] = useState<WeightUnit[]>([])
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role) || '#79CA25'
   const customListTheme = getThemeCustomList(role) || '#E4F6DC'
   //---end set custom style each role---
   const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
-  const [errors, setErrors] = useState(
-    {
-      receiverAddr: {type: 'string', status: false,  required: true},
-      weight: {type: 'string', status: false,  required: true},
-      recycTypeId: {type: 'string', status: false,  required: true},
-      recycSubTypeId: {type: 'string', status: false,  required: true},
-      rec: {type: 'string', status: false,  required: true},
-      pickupAt: {type: 'string', status: false,  required: true},
-    }
-  )
 
   const setDefRecyc = (picoDtl: PurchaseOrderDetail) => {
     const defRecyc: singleRecyclable = {
@@ -185,6 +186,9 @@ const CreateRecycleForm = ({
       onClose && onClose()
     }
   }
+  useEffect(() => {
+    initWeightUnit()
+  }, [])
 
   useEffect(() => {
     if (editRow) {
@@ -280,16 +284,6 @@ const CreateRecycleForm = ({
       isValid = false
     } 
     if (formik.values.recycSubTypeId === ''){
-      // setErrors(prev => {
-      //   return{
-      //     ...prev,
-      //     recycSubTypeId: {
-      //       ...prev.recycSubTypeId,
-      //       required: true,
-      //       status: true
-      //     }
-      //   }
-      // })
       setErrorsField(prev => {
         return{
           ...prev,
@@ -326,6 +320,19 @@ const CreateRecycleForm = ({
       })
       isValid = false
     }
+
+    if(formik.values.unitId === 0){
+      setErrorsField(prev => {
+        return{
+          ...prev,
+          'unitId': {
+            ...prev.unitId,
+            status: true
+          }
+        }
+      })
+      isValid = false
+    }
     return isValid
   }
 
@@ -344,8 +351,6 @@ const CreateRecycleForm = ({
         //creating row
         var updatedValues: PurchaseOrderDetail = values
         updatedValues.id = data.length
-        console.log('updatedData', updatedValues)
-        //console.log("data: ",data," updatedValues: ",updatedValues)
         setState([...data, updatedValues])
       }
       resetForm()
@@ -396,9 +401,51 @@ const CreateRecycleForm = ({
   const onhandleSubmit = () => {
     const isValid = validateData()
     if(!isValid) return
-    console.log('isValid', isValid)
-    // return
     formik.handleSubmit()
+  }
+  
+  const initWeightUnit = async () => {
+    const result = await getWeightUnit(page - 1, pageSize)
+    const data = result?.data
+
+    setWeightUnit(data)
+  }
+
+  const getWeightUnits = ():{unitId: number, lang: string}[] => {
+    let units:{unitId: number, lang: string}[] = []
+    if(i18n.language === Languages.ENUS){
+      units = weightUnit.map(item => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameEng
+        }
+      })
+    } else if(i18n.language === Languages.ZHCH){
+      units = weightUnit.map(item => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameSchi
+        }
+      })
+    } else {
+      units = weightUnit.map(item => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameTchi
+        }
+      })
+    }
+
+    return units
+  }
+
+  const getUnitName = (unitId: number):{unitId: number, lang: string} => {
+    let unitName:{unitId: number, lang: string} = {unitId: 0, lang: ''}
+    const unit = getWeightUnits().find(item => item.unitId === unitId);
+    if(unit){
+      unitName = unit
+    }
+    return unitName
   }
  
   return (
@@ -536,13 +583,40 @@ const CreateRecycleForm = ({
                     }
                     sx={{ width: '100%' }}
                     endAdornment={
-                      <InputAdornment position="end">kg</InputAdornment>
+                      <Autocomplete
+                        disablePortal
+                        id="unitId"
+                        sx={{ width: 100, border: 0 }}
+                        value={getUnitName(formik.values.unitId)}
+                        options={getWeightUnits()}
+                        getOptionLabel={(option) => option.lang}
+                        onChange={(event, value) => {
+                         if(value?.unitId){
+                          onChangeContent('unitId', value?.unitId)
+                         } else {
+                          formik.setFieldValue('unitId', 0)
+                         }
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={t('purchase_order.create.unit')}
+                            sx={[localstyles.textField, { width: 400, border: 'none', borderColor: ''}]}
+                            InputProps={{
+                              ...params.InputProps,
+                            }}
+                          />
+                        )}
+                      />
                     }
                   ></CustomTextField>
                 </CustomField>
                 {/* { errors.weight.required && errors.weight.status &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>} */}
                 {
-                  errorsField['weight' as keyof ErrorsField].required && errorsField['weight' as keyof ErrorsField].status ? 
+                  (
+                    errorsField['weight' as keyof ErrorsField].required && errorsField['weight' as keyof ErrorsField].status ||
+                    errorsField['unitId' as keyof ErrorsField].required && errorsField['unitId' as keyof ErrorsField].status
+                  ) ? 
                   <ErrorMessages  message={t('purchase_order.create.required_field')}/> : ''
                 }
               </Grid>
@@ -698,6 +772,18 @@ let localstyles = {
     '& .MuiIconButton-edgeEnd': {
       color: '#79CA25'
     }
+  },
+  textField: {
+    // borderRadius: '12px',
+    width: {
+      xs: '280px',
+      md: '100%'
+    },
+    backgroundColor: 'white',
+    '& fieldset': {
+      borderRadius: '12px'
+    },
+    marginLeft: '13px'
   },
 }
 

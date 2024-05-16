@@ -1045,7 +1045,8 @@
       "estimated_weight": "Estimated weight",
       "this": "This",
       "is_required": "is required",
-      "required_field": "this field is required"
+      "required_field": "this field is required",
+      "unit": "Unit"
     }
   },
   "purchase_order_customer": {
