@@ -143,6 +143,7 @@ function CustomItemList({
                         key={index}
                         variant="outlined"
                         sx={error? localstyles.error : returnTheme(item.id)}
+                        style={{marginRight: '6px', marginBottom: '6px'}}
                         onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}
                         onDoubleClick={() => {dbClickSelect && handleSelect(item.id)}}>
                         {item.name}

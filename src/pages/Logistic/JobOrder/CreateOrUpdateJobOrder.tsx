@@ -19,8 +19,10 @@ import { format } from '../../../constants/constant'
 import { rejectAssginDriver, assignDriver } from '../../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
-import { returnApiToken } from '../../../utils/utils'
+import { formatWeight, returnApiToken } from '../../../utils/utils'
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { useContainer } from 'unstated-next'
 import { getAllVehiclesLogistic, getDriver } from "../../../APICalls/jobOrder";
 
 const JobOrder = () => {
@@ -43,6 +45,7 @@ const JobOrder = () => {
   const [isActive, setIsActive] = useState(false)
   const { t } = useTranslation()
   const { loginId } = returnApiToken()
+  const { decimalVal } = useContainer(CommonTypeContainer)
   const [driverList, setDriverList] = useState<DriverList[]>([])
   const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
 
@@ -110,7 +113,7 @@ const JobOrder = () => {
             receiverAddrGps: item?.receiverAddrGps ?? [],
             recycType: item?.recycType ?? '',
             recycSubType: item?.recycSubType ?? '',
-            weight: item?.weight ?? 0,
+            weight: formatWeight(item?.weight, decimalVal) ?? 0,
             vehicleId: item?.vehicleId ?? 0,
             driverId: item?.driverId ?? '',
             contractNo: response?.data?.contractNo ?? '',
@@ -418,7 +421,7 @@ const JobOrder = () => {
                       </label>
                     </div>
                     <p className="flex-1 font-semibold text-[#535353]">
-                      ${item.weight}kg
+                      {item.weight}kg
                     </p>
                   </div>
                   <div className="flex items-center">

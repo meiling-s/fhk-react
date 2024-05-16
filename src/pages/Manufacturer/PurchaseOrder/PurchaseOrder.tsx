@@ -10,29 +10,20 @@ import {
 import React, { useEffect, useState } from 'react'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import PurchaseOrderForm from './PurchaseOrderForm'
-
 import StatusCard from '../../../components/StatusCard'
-
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { ToastContainer, toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import CustomItemList, {
-  il_item
-} from '../../../components/FormComponents/CustomItemList'
-
+import CustomItemList, { il_item } from '../../../components/FormComponents/CustomItemList'
 import {
   getAllPurchaseOrder,
   updateStatusPurchaseOrder,
   getPurchaseOrderReason,
   getPurchaseOrderById
 } from '../../../APICalls/Manufacturer/purchaseOrder'
-
-import { getStatusList } from '../../../APICalls/status'
-
 import {
   PurChaseOrder,
-  PurchaseOrderDetail,
   queryPurchaseOrder
 } from '../../../interfaces/purchaseOrder'
 import i18n from '../../../setups/i18n'

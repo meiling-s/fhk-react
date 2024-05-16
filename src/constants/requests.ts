@@ -1422,3 +1422,9 @@ export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string): AxiosRequest
   method: 'get',
   url: `api/v1/collectors/dashboard/colPointRecyclables/${tenantId}`
 })
+
+// get decimal value
+export const GET_DECIMAL_VAL = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/decimalVal`
+})
