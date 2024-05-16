@@ -599,8 +599,6 @@ const PurchaseOrderCreateForm = ({
     }
   }, [state])
 
-
-
   const getWeightUnits = ():{unitId: number, lang: string}[] => {
     let units:{unitId: number, lang: string}[] = []
     if(i18n.language === Languages.ENUS){
