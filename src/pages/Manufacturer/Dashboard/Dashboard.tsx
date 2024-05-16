@@ -14,8 +14,7 @@ import i18n from "../../../setups/i18n";
 import Dashboard from "../../../components/Dashboard/Chart";
 import ChartTotalSales from "../../../components/Dashboard/ChartTotalSales";
 import ChartDistrictSales from "../../../components/Dashboard/ChartDistrictSales";
-import { TypeRecycables,fieldNameRecycables, months } from '../../../constants/constant'
-import { getBackgroundColor, randomBackgroundColor } from '../../../utils/utils'
+import { randomBackgroundColor } from '../../../utils/utils'
 interface Dataset{
     id: string,
     label: string,
@@ -46,215 +45,7 @@ type TypeProcessing = {
     'Total amount of recycled material that cannot be used after processing'?: string;
 };
 
-const dummyDataWeight = {
-    "collect1": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect2": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect3": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect4": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect5": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect6": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect7": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect8": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect9": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect10": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect11": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    },
-    "collect12": {
-        "RC00001": Math.floor(Math.random() * 1000),
-        "RC00002": Math.floor(Math.random() * 1000),
-        "RC00003": Math.floor(Math.random() * 1000),
-        "RC00004": Math.floor(Math.random() * 1000),
-        "RC00005": Math.floor(Math.random() * 1000),
-        "RC00006": Math.floor(Math.random() * 1000),
-        "RC00008": Math.floor(Math.random() * 1000),
-        "RC00009": Math.floor(Math.random() * 1000),
-        "RC00017": Math.floor(Math.random() * 1000),
-        "RC00024": Math.floor(Math.random() * 1000),
-        "RC00031": Math.floor(Math.random() * 1000),
-        "RC00032": Math.floor(Math.random() * 1000),
-        "RC00033": Math.floor(Math.random() * 1000),
-        "RC00035": Math.floor(Math.random() * 1000),
-        "RC00036": Math.floor(Math.random() * 1000)
-    }
-  }
   
-
-// type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
 type fieldNameProcssing = 'Total amount of recyclate processed' | 'Total amount of recyclate remaining after processing' | 'Total amount of recycled material that cannot be used after processing';
 const Recyclables: FunctionComponent = () => {
     const { t } = useTranslation()
@@ -364,70 +155,6 @@ const Recyclables: FunctionComponent = () => {
                 data: getDataWeights(type.recycTypeId, length, response),
                 backgroundColor: type?.backgroundColor ? type.backgroundColor : randomBackgroundColor()
             })
-            // if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeights(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.RECHARGEABLE_BATTERIES)
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.GLASS_BOTTLES){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeights(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.GLASS_BOTTLES)
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.PAPER){ 
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeights(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.PAPER)
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES){ 
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeights(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES)
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.SMALL_ELETRICAL_APPLIANCES){ 
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeights(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.SMALL_ELETRICAL_APPLIANCES)
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.PLASTICS){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeights(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.PLASTICS)
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.NON_RECYCLABLE){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeights(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.NON_RECYCLABLE)
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.CARDBOARD){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeights(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD)
-            //     })
-            // }else if(type.recyclableNameEng === TypeRecycables.Metals){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeights(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.Metals)
-            //     })
-            // }
         }
         return datasets
     }
@@ -496,132 +223,26 @@ const Recyclables: FunctionComponent = () => {
                 pointRadius: 8,
                 pointHoverRadius: 15
             })
-            // if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.RECHARGEABLE_BATTERIES),
-            //         yAxisID: 'y',
-            //         pointStyle: 'circle',
-            //         pointRadius: 8,
-            //         pointHoverRadius: 15
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.GLASS_BOTTLES){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.GLASS_BOTTLES),
-            //         yAxisID: 'y',
-            //         pointStyle: 'circle',
-            //         pointRadius: 8,
-            //         pointHoverRadius: 15
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.PAPER){ 
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.PAPER),
-            //         yAxisID: 'y',
-            //         pointStyle: 'circle',
-            //         pointRadius: 8,
-            //         pointHoverRadius: 15
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES){ 
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES),
-            //         yAxisID: 'y',
-            //         pointStyle: 'circle',
-            //         pointRadius: 8,
-            //         pointHoverRadius: 15
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.SMALL_ELETRICAL_APPLIANCES){ 
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-            //         backgroundColor:  getBackgroundColor(TypeRecycables.SMALL_ELETRICAL_APPLIANCES),
-            //         yAxisID: 'y',
-            //         pointStyle: 'circle',
-            //         pointRadius: 8,
-            //         pointHoverRadius: 15
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.PLASTICS){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.PLASTICS),
-            //         yAxisID: 'y',
-            //         pointStyle: 'circle',
-            //         pointRadius: 8,
-            //         pointHoverRadius: 15
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.NON_RECYCLABLE){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.NON_RECYCLABLE),
-            //         yAxisID: 'y',
-            //         pointStyle: 'circle',
-            //         pointRadius: 8,
-            //         pointHoverRadius: 15
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.CARDBOARD){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.CARDBOARD),
-            //         yAxisID: 'y',
-            //         pointStyle: 'circle',
-            //         pointRadius: 8,
-            //         pointHoverRadius: 15
-            //     })
-            // } else if(type.recyclableNameEng === TypeRecycables.Metals){
-            //     datasets.push({
-            //         id: type.recyclableNameEng,
-            //         label: getLabel(type.recyclableNameEng),
-            //         data: getDataWeightsUsingName(type.recyclableNameEng, length, response),
-            //         backgroundColor: getBackgroundColor(TypeRecycables.Metals),
-            //         yAxisID: 'y',
-            //         pointStyle: 'circle',
-            //         pointRadius: 8,
-            //         pointHoverRadius: 15
-            //     })
-            // }
         }
         return datasets
     }
 
     const initWeightRecyclables = async () => {
-        // const response = await getWeightRecyclablesColPointDashboard(frmDateWeight.format('YYYY-MM-DD'), toDateWeight.format('YYYY-MM-DD'))
-        // if (response) {
-        //     const labels:string[] = Object.keys(response);
-        //     if(!recycType) return;
-        //     const datasets = getDataSetBarChart(response, labels.length)
-        //     setLabelWeigth(labels)
-        //     setDataSetWeight(datasets)
-        // }
- 
-        const labels:string[] = Object.keys(dummyDataWeight);
-        if(!recycType) return;
-        const datasets = getDataSetBarChart(dummyDataWeight, labels.length)
-        setLabelWeigth(labels)
-        setDataSetWeight(datasets)
+        const response = await getWeightRecyclablesColPointDashboard(frmDateWeight.format('YYYY-MM-DD'), toDateWeight.format('YYYY-MM-DD'))
+        if (response) {
+            const labels:string[] = Object.keys(response);
+            if(!recycType) return;
+            const datasets = getDataSetBarChart(response, labels.length)
+            setLabelWeigth(labels)
+            setDataSetWeight(datasets)
+        }
     }
 
     useEffect(() => {
         setTimeout(() => {
             initWeightRecyclables()
         }, 1000);
-    }, [frmDateWeight, toDateWeight])
+    }, [frmDateWeight, toDateWeight, recycType])
 
     const initSalesProductAnalysis = async () => {
         const response = await getSalesProductAnalysis(frmDateWeight.format('YYYY-MM-DD'), toDateWeight.format('YYYY-MM-DD'));
@@ -668,7 +289,7 @@ const Recyclables: FunctionComponent = () => {
         setTimeout(() => {
             initSalesProductAnalysis()
         }, 1000);
-    }, [frmDateProduct, toDateProduct])
+    }, [frmDateProduct, toDateProduct, recycType])
 
     const getLangMonth = (value: monthSequence) :string => {
         const months = {
@@ -711,7 +332,7 @@ const Recyclables: FunctionComponent = () => {
         setTimeout(() => {
             initgetRecycProcessAnalysis()
         }, 1000);
-    }, [frmDateProcessing, toDateProcessing])
+    }, [frmDateProcessing, toDateProcessing, recycType])
     
     useEffect(() => {
         const changeLangWeight = datasetWeigth.map(item => {
@@ -760,12 +381,6 @@ const Recyclables: FunctionComponent = () => {
 
     }, [i18n.language])
 
-  
-    useEffect(() => {
-        initWeightRecyclables()
-        initSalesProductAnalysis()
-        initgetRecycProcessAnalysis()
-    }, [recycType])
 
     const onChangeColdId = (value: number | null) => {
         setColId(value)

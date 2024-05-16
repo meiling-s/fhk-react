@@ -10,18 +10,15 @@ import { getTotalSalesProductAnalysis } from '../../APICalls/Collector/dashboard
 import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import { useContainer } from 'unstated-next';
 import { Languages } from '../../constants/constant';
-import { getBackgroundColor, randomBackgroundColor } from '../../utils/utils';
-import { Dataset } from '@mui/icons-material';
+import { randomBackgroundColor } from '../../utils/utils';
 
-type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard' | 'Metals';
 interface DataSales {
-    label: fieldName,
+    label: string,
     weight: number,
     backgroundColor: string,
     width: string,
     description: string
 }
-
 interface Dataset{
     total_weight: number,
     sales: DataSales[]   
@@ -35,6 +32,7 @@ const ChartTotalSales = () => {
     const [dataset, setDataset] = useState<Dataset>({total_weight: 0, sales: []});
     const [recycTypeId, setRecycTypeId] = useState<string|null>(null);
     const [datasetBackup, setDatasetBackup] = useState<Dataset>({total_weight: 0, sales: []});
+
     const getLabel = (type: string): string => {
         let languages:string = ''
         if(i18n.language === Languages.ENUS){
@@ -61,8 +59,8 @@ const ChartTotalSales = () => {
 
             for(let [key, value] of Object.entries(response.sales)){
                 const recycable = recycType?.find(item => item.recycTypeId === key);
-                const label = recycable?.recyclableNameEng as fieldName
                 if(!recycable) continue;
+                const label = recycable?.recyclableNameEng
                 sales.push(
                     {
                         label: label,
@@ -79,9 +77,6 @@ const ChartTotalSales = () => {
         }
     };
   
-    useEffect(() => {
-        initTotalSales()
-    }, [recycType])
 
     useEffect(() => {
         
@@ -91,7 +86,7 @@ const ChartTotalSales = () => {
         }
         const recycable = recycType?.find(item => item.recycTypeId === recycTypeId);
         if(!recycable) return
-        const label = recycable?.recyclableNameEng as fieldName
+        const label = recycable?.recyclableNameEng
         let weight:number = 0;
         const sales:DataSales[] = []
         for(let data of datasetBackup.sales){
@@ -128,7 +123,7 @@ const ChartTotalSales = () => {
        setTimeout(() => {
         initTotalSales()
        }, 1000);
-    }, [frmDate, toDate])
+    }, [frmDate, toDate, recycType])
 
     const onChangeRecycTypeId = (value: string|null) => {
         setRecycTypeId(value)

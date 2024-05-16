@@ -107,7 +107,7 @@ const CommonType = () => {
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
       // console.log('Get site type success:', JSON.stringify(response.data))
-      RecycType = response.data.map((item:any) => {
+      RecycType = response.data.map((item:recycType) => {
         return{
           ...item,
           backgroundColor: randomBackgroundColor()

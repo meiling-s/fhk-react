@@ -5,7 +5,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
 import dayjs from "dayjs";
 import { styles } from '../../constants/styles';
-import { Languages, Realm, localStorgeKeyName } from '../../constants/constant';
 import { useEffect, useState, useRef } from 'react';
 import { Chart } from "react-chartjs-2";
 import * as ChartGeo from "chartjs-chart-geo";
@@ -17,7 +16,6 @@ import {
   Legend
 } from "chart.js";
 import location from './hongkongLocation.json';
-import i18n from '../../setups/i18n';
 import { getTotalSalesProductByDistrictAnalysis } from '../../APICalls/Collector/dashboardRecyables';
 import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import { useContainer } from 'unstated-next';
@@ -33,24 +31,14 @@ ChartJS.register(
     ChartGeo.GeoFeature
 );
 
-type Districts = "Central and Western"|"Eastern"|"Southern"|"Sham Shui Po"|"Kowloon City"|"Wong Tai Sin"|"Kwun Tong"|"Yau Tsim Mong"|"Kwai Tsing"|"Tsuen Wan"|"Tuen Mun"|"Yuen Long"|"North"|"Tai Po"|"Sha Tin"|"Sai Kung"|"Islands"|"Wan Chai";
-type DataDistricts = {
-    district: Districts,
-    percentage: string,
-    total_weight: string,
-    recyc_weight: {}
-}
-
 const ChartDistrictSales = () => {
     const { t } = useTranslation()
-    const realm = localStorage.getItem(localStorgeKeyName.realm);
     const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
     const chartRef = useRef();
     const [data, setData] = useState<any>(location);
     const [dataset, setDataset] = useState<any>([]);
     const [recycTypeId, setRecycTypeId] = useState<string|null>(null);
-    const [sourceData, setSourcaData] = useState<DataDistricts>()
 
     const colors:string[] = ['#6FBD33','#88D13D','#AED982','#D3E3C3','#CCCCCC'];
     const { recycType } = useContainer(CommonTypeContainer);
@@ -71,45 +59,19 @@ const ChartDistrictSales = () => {
                     recyc_weight: region.recyc_weight
                 })
             }
-            // setSourcaData(response)
             setDataset(update)
 
         }
     }
 
-    useEffect(() => {
-        initData()
-    }, []);
-
-    useEffect(() => {
-        initData()
-    }, [frmDate, toDate])
-
-    const getDistirctLabelName = (properties: any):string => {
-        if(i18n.language === Languages.ENUS){
-            return properties.name_english
-        } else if(i18n.language === Languages.ZHCH){
-            return properties.name_simplified
-        } else {
-            return properties.name_traditional
-        }
-    }
-
     // useEffect(() => {
-    //     const changeLang = data.map((item:any) => {
-    //         return{
-    //             ...item,
-    //             properties: {
-    //                 ...item.properties,
-    //                 name: getDistirctLabelName(item.properties)
+    //     initData()
+    // }, []);
 
-    //             }
-    //         }
-    //     })
+    useEffect(() => {
+        initData()
+    }, [frmDate, toDate, recycType])
 
-    //     setData(changeLang)
-    // }, [i18n.language])
-    
     const footerTooltip = (tooltipItems:any[]) => {
         let total:number = 0;
         const weights = tooltipItems[0]?.raw?.recyc_weight;
@@ -125,19 +87,8 @@ const ChartDistrictSales = () => {
            }
         }
  
-        //     tooltipItems.forEach(function(tooltipItem) {
-        //         // console.log('tooltip', tooltipItem.raw.recyc_weight)
-        //       total = tooltipItem.raw.weight;
-        //     });
         return total + ' Kg';
     };
-
-    // const data1 = data.map((d: any) => (
-    //     {
-    //         feature: d,
-    //         value:  Math.round(Math.random() * 100),
-    //     }
-    // ));
 
     const onChangeRecycTypeId = (value: string|null) => {
         setRecycTypeId(value)
