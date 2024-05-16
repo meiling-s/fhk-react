@@ -49,6 +49,7 @@ export const formErr = {
   exceedsMaxLength: 'exceedsMaxLength',
   minMoreOneImgUploded: 'minMoreOneImgUploded',
   startDateBehindEndDate: 'startDateBehidEndDate',
+  endDateEarlyThanStartDate: 'endDateEarlyThanStartDate',
   timeCantDuplicate: 'timeCantDuplicate',
   loginIdCantContainAdmin: 'loginIdCantContainAdmin'
 }

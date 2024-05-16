@@ -2,7 +2,6 @@ import {
   Alert,
   Box,
   Button,
-  Drawer,
   Grid,
   IconButton,
   Autocomplete,
@@ -13,43 +12,34 @@ import {
   Typography
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
-import React, { SyntheticEvent, useEffect, useState } from 'react'
+import React, { SyntheticEvent, useState } from 'react'
 import { styles } from '../../constants/styles'
 import CustomField from './CustomField'
 import CustomSwitch from './CustomSwitch'
 import CustomDatePicker2 from './CustomDatePicker2'
-import RoutineSelect from '../SpecializeComponents/RoutineSelect'
 import CustomTextField from './CustomTextField'
 import CustomItemList, { il_item } from './CustomItemList'
 import CreateRecycleForm from './CreateRecycleForm'
 import { useContainer } from 'unstated-next'
 import {
   CreatePicoDetail,
-  EditPo,
   PickupOrder,
   PickupOrderDetail
 } from '../../interfaces/pickupOrder'
-import { colPtRoutine } from '../../interfaces/common'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import { useNavigate } from 'react-router-dom'
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import {
-  ADD_CIRCLE_ICON,
   DELETE_OUTLINED_ICON,
   EDIT_OUTLINED_ICON
 } from '../../themes/icons'
-import theme from '../../themes/palette'
-import { t, use } from 'i18next'
-import { useFormik } from 'formik'
-import { editPickupOrder } from '../../APICalls/Collector/pickupOrder/pickupOrder'
-import { validate } from 'uuid'
+import { t } from 'i18next'
 import CustomAutoComplete from './CustomAutoComplete'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
 import PickupOrderList from '../../components/PickupOrderList'
-import { amET } from '@mui/material/locale'
 import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'

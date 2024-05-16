@@ -34,7 +34,7 @@ import { collectorList, manuList } from '../../interfaces/common'
 import dayjs, { Dayjs } from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
-import { getThemeColorRole, getThemeCustomList } from '../../utils/utils'
+import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
 import { PurchaseOrderDetail } from '../../interfaces/purchaseOrder'
 import { DatePicker } from '@mui/x-date-pickers'
 
@@ -72,7 +72,7 @@ const initValue = {
     unitNameTchi: '',
     unitNameSchi: '',
     unitNameEng: '',
-    weight: 0,
+    weight: '0',
     pickupAt: dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     receiverAddr: '',
     createdBy: loginId,
@@ -133,11 +133,9 @@ const CreateRecycleForm = ({
   receiverAddr,
   onChangeAddressReceiver
 }: props) => {
-  const { recycType, manuList, collectorList } =
-    useContainer(CommonTypeContainer)
+  const { recycType, decimalVal } = useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<PurchaseOrderDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
-  const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
 
   //---set custom style each role---
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
@@ -207,7 +205,7 @@ const CreateRecycleForm = ({
         unitNameTchi: editRow.unitNameTchi,
         unitNameSchi: editRow.unitNameSchi,
         unitNameEng: editRow.unitNameEng,
-        weight: editRow.weight,
+        weight: formatWeight(editRow.weight, decimalVal),
         pickupAt: editRow?.pickupAt || '',
         createdBy: editRow.createdBy,
         updatedBy: editRow.updatedBy,
@@ -523,11 +521,23 @@ const CreateRecycleForm = ({
                 >
                   <CustomTextField
                     id="weight"
-                    type='number'
                     placeholder={t('userAccount.pleaseEnterNumber')}
                     // onChange={formik.handleChange}
                     onChange={(event) => {
-                      onChangeContent('weight', event.target.value)
+                      // onChangeContent('weight', event.target.value)
+                      onChangeWeight(event.target.value, decimalVal, (value: string) => {
+                        formik.setFieldValue('weight', value)
+                        if (value) {
+                          onHandleError('weight', 'succeed')
+                        }
+                      })
+                    }}
+                    onBlur={(event) => {
+                      const value = formatWeight(event.target.value, decimalVal)
+                      formik.setFieldValue('weight', value)
+                      if (value) {
+                        onHandleError('weight', 'succeed')
+                      }
                     }}
                     value={formik.values.weight}
                     error={

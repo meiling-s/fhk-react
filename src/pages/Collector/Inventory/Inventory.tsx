@@ -22,6 +22,7 @@ import { PickupOrder } from '../../../interfaces/pickupOrder'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
+import { formatWeight } from '../../../utils/utils'
 
 interface Option {
   value: string
@@ -77,7 +78,7 @@ const Inventory: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const {recycType} = useContainer(CommonTypeContainer)
+  const {recycType, decimalVal} = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<recycItem[]>([])
   const [picoList, setPicoList] = useState<PickupOrder[]>([])
   const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([])
@@ -258,7 +259,7 @@ const Inventory: FunctionComponent = () => {
       width: 200,
       type: 'string',
       renderCell: (params) => {
-        return <div>{params.row.weight} kg</div>
+        return <div>{formatWeight(params.row.weight, decimalVal)} kg</div>
       }
     }
   ]

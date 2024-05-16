@@ -1139,6 +1139,15 @@ export const EDIT_CONTRACT = (
   url: `api/v1/${realmApiRoute}/contract/${tenantId}/${contractNo}`
 })
 
+export const DELETE_CONTRACT = (
+  realmApiRoute: string,
+  tenantId: string,
+  contractNo: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/${realmApiRoute}/contract/${tenantId}/${contractNo}/status`
+})
+
 export const GET_PACKAGING_LIST = (
   realmApiRoute: string,
   tenantId: string
@@ -1404,4 +1413,10 @@ export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
 export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/dashboard/colPointRecyclables/${tenantId}`
+})
+
+// get decimal value
+export const GET_DECIMAL_VAL = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/decimalVal`
 })

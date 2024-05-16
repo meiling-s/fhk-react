@@ -6,10 +6,17 @@ import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { createStaffTitle, editStaffTitle } from '../../../APICalls/Collector/staffTitle'
+import {
+  createStaffTitle,
+  editStaffTitle
+} from '../../../APICalls/Collector/staffTitle'
 import { returnErrorMsg } from '../../../utils/utils'
 import { formErr, localStorgeKeyName } from '../../../constants/constant'
-import { StaffTitle, CreateStaffTitle as CreateStaffTitleItem, UpdateStaffTitle } from '../../../interfaces/staffTitle'
+import {
+  StaffTitle,
+  CreateStaffTitle as CreateStaffTitleItem,
+  UpdateStaffTitle
+} from '../../../interfaces/staffTitle'
 
 interface CreateStaffTitle {
   drawerOpen: boolean
@@ -17,6 +24,9 @@ interface CreateStaffTitle {
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
   selectedItem?: StaffTitle | null
+  engNameList: string[]
+  schiNameList: string[]
+  tchiNameList: string[]
 }
 
 interface FormValues {
@@ -28,7 +38,10 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  selectedItem
+  selectedItem,
+  engNameList = [],
+  schiNameList = [],
+  tchiNameList = []
 }) => {
   const { t } = useTranslation()
 
@@ -38,13 +51,16 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     titleNameEng: '',
     duty: '',
     description: '',
-    remark: '',
+    remark: ''
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+  const [engNameExisting, setEngNameExisting] = useState<string[]>([])
+  const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
+  const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
 
   const staffField = [
     {
@@ -94,8 +110,18 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
         titleNameEng: selectedItem.titleNameEng,
         titleNameSchi: selectedItem.titleNameSchi,
         description: selectedItem.description,
-        remark: selectedItem.remark,
+        remark: selectedItem.remark
       })
+
+      setEngNameExisting(
+        engNameList.filter((item) => item != selectedItem.titleNameEng)
+      )
+      setSchiNameExisting(
+        schiNameList.filter((item) => item != selectedItem.titleNameSchi)
+      )
+      setTchiNameExisting(
+        tchiNameList.filter((item) => item != selectedItem.titleNameTchi)
+      )
     }
   }
 
@@ -110,6 +136,9 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       mappingData()
     } else {
       resetFormData()
+      setEngNameExisting(engNameList)
+      setSchiNameExisting(schiNameList)
+      setTchiNameExisting(tchiNameList)
     }
   }, [drawerOpen])
 
@@ -138,8 +167,47 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
           type: 'error'
         })
     })
+
+    if (
+      tchiNameExisting.some(
+        (item) => item.toLowerCase() === formData.titleNameTchi.toLowerCase()
+      )
+    ) {
+      tempV.push({
+        field: t('common.traditionalChineseName'),
+        problem: formErr.alreadyExist,
+        type: 'error'
+      })
+    }
+
+    // Check for existing titles in Simplified Chinese
+    if (
+      schiNameExisting.some(
+        (item) => item.toLowerCase() === formData?.titleNameSchi.toLowerCase()
+      )
+    ) {
+      tempV.push({
+        field: t('common.simplifiedChineseName'),
+        problem: formErr.alreadyExist,
+        type: 'error'
+      })
+    }
+    console.log(engNameExisting, formData.titleNameEng)
+    // Check for existing titles in English
+    if (
+      engNameExisting.some(
+        (item) => item.toLowerCase() === formData.titleNameEng.toLowerCase()
+      )
+    ) {
+      tempV.push({
+        field: t('common.englishName'),
+        problem: formErr.alreadyExist,
+        type: 'error'
+      })
+    }
+
     setValidation(tempV)
-    return tempV.length === 0;
+    return tempV.length === 0
   }
 
   useEffect(() => {
@@ -161,7 +229,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
   }
 
   const handleSubmit = async () => {
-    const isValid = await validate();
+    const isValid = await validate()
     if (isValid) {
       const staffData: CreateStaffTitleItem = {
         tenantId: tenantId.toString(),
@@ -182,7 +250,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
         handleEditStaff()
       }
     } else {
-      setTrySubmited(true);
+      setTrySubmited(true)
     }
   }
 
@@ -292,7 +360,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            {staffField.map((item, index) =>
+            {staffField.map((item, index) => (
               <Grid item key={index}>
                 <CustomField label={item.label} mandatory>
                   <CustomTextField
@@ -312,7 +380,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
                   />
                 </CustomField>
               </Grid>
-            )}
+            ))}
             <Grid item sx={{ width: '100%' }}>
               {trySubmited &&
                 validation.map((val, index) => (

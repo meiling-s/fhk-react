@@ -182,7 +182,7 @@ const CreatePickupOrder = () => {
         pickupAt: dayjs(item?.pickupAt).format('hh:mm:ss') ?? '',
         recycType: item?.recycTypeId ?? '',
         recycSubType: item?.recycSubTypeId ?? '',
-        weight: item.weight
+        weight: item.weight.toString()
       })) || []
 
     setAddRow(picoDetails)

@@ -189,7 +189,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       endDate < startDate &&
         tempV.push({
           field: t('roster.to'),
-          problem: formErr.startDateBehindEndDate,
+          problem: formErr.endDateEarlyThanStartDate,
           type: 'error'
         })
 
