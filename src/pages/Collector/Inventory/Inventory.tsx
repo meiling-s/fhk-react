@@ -25,6 +25,7 @@ import i18n from '../../../setups/i18n'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
 import { returnApiToken } from '../../../utils/utils'
+import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 
 interface Option {
   value: string
@@ -39,6 +40,7 @@ type recycItem = {
 function createInventory(
   itemId: number,
   warehouseId: number,
+  recyclingNumber: string,
   recycTypeId: string,
   recycSubTypeId: string,
   packageTypeId: string,
@@ -55,6 +57,7 @@ function createInventory(
   return {
     itemId,
     warehouseId,
+    recyclingNumber,
     recycTypeId,
     recycSubTypeId,
     packageTypeId,
@@ -73,6 +76,7 @@ function createInventory(
 const Inventory: FunctionComponent = () => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [inventoryData, setInventoryData] = useState<any[]>([])
   const [inventoryList, setInventory] = useState<any[]>([])
   const [filteredInventory, setFilteredInventory] = useState<any[]>([])
   const [selectedRow, setSelectedRow] = useState<any | null>(null)
@@ -173,6 +177,7 @@ const Inventory: FunctionComponent = () => {
       result = await getAllInventory(page - 1, pageSize)
     }
     const data = result?.data
+    setInventoryData(data.content)
 
     if (data) {
       const picoData = await getAllPickupOrder(data.content)
@@ -204,6 +209,7 @@ const Inventory: FunctionComponent = () => {
           createInventory(
             item?.itemId,
             item?.warehouseId,
+            item?.recycTypeId,
             recyName,
             subName,
             item?.packageTypeId,
@@ -255,7 +261,7 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'unitId',
+      field: 'recyclingNumber',
       headerName: t('inventory.recyclingNumber'),
       width: 200,
       type: 'string'
@@ -331,6 +337,7 @@ const Inventory: FunctionComponent = () => {
   }, [])
 
   const handleSearch = (label: string, value: string) => {
+    console.log(label, 'label')
     if (label == 'recycTypeId') {
       const filtered: InventoryItem[] = inventoryList.filter(item => item.recycTypeId == value)
       if (filtered) {
@@ -350,10 +357,8 @@ const Inventory: FunctionComponent = () => {
     }
 
     if (label == "search") {
-      // console.log(label, value)
       if (value == "") return setFilteredInventory(inventoryList)
-
-      const filtered: InventoryItem[] = inventoryList.filter(item => item.recycTypeId == value)
+      const filtered: InventoryItem[] = inventoryList.filter(item => item.recyclingNumber == value)
       
       if (filtered) {
         setFilteredInventory(filtered)
