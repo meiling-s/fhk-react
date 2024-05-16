@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { PickupOrder } from '../../../interfaces/pickupOrder'
 import { returnApiToken } from '../../../utils/utils'
 import { getItemTrackInventory } from '../../../APICalls/Collector/inventory'
+import InventoryShippingCard from '../../../components/InventoryShippingCard'
 
 interface InventoryDetailProps {
   drawerOpen: boolean
@@ -37,6 +38,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   selectedPico
 }) => {
   const { t } = useTranslation()
+  const [shippingData, setShippingData] = useState<any[]>([])
   const getPicoDtl = (picoId: string, dtlId: number) => {
     if(selectedPico) {
     const pico = selectedPico.find((pico) => pico.picoId == picoId)
@@ -89,8 +91,8 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
           result = await getItemTrackInventory(token.realmApiRoute, token.decodeKeycloack, selectedRow?.itemId)
 
           if (result) {
-            const data = result
-            console.log(data, 'dataaa')
+            const data = result.data
+            setShippingData(data)
           }
       }
     }
@@ -142,6 +144,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                   </CustomField>
                 </Grid>
               ))}
+              {selectedRow && selectedRow.inventoryDetail.length > 0 && (
               <Grid item>
                 <Box>
                   <Typography sx={styles.header2}>
@@ -149,6 +152,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                   </Typography>
                 </Box>
               </Grid>
+              )}
               <Grid item>
                 {selectedRow?.inventoryDetail?.map((item, index) => {
                   const pico = selectedPico?.find((p) => p.picoId ==  item.sourcePicoId)
@@ -203,8 +207,15 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                   ) : null
 
                 })}
-              
               </Grid>
+              {shippingData.length > 0 && (
+              <Grid item>
+                <Typography sx={styles.header2}>
+                  {t('pick_up_order.item.shipping_info')}
+                </Typography>
+                <InventoryShippingCard shippingData={shippingData}/>
+              </Grid>
+              )}
             </Grid>
           </Box>
         </RightOverlayForm>
