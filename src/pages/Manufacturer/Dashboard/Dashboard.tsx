@@ -46,6 +46,214 @@ type TypeProcessing = {
     'Total amount of recycled material that cannot be used after processing'?: string;
 };
 
+const dummyDataWeight = {
+    "collect1": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect2": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect3": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect4": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect5": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect6": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect7": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect8": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect9": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect10": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect11": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    },
+    "collect12": {
+        "RC00001": Math.floor(Math.random() * 1000),
+        "RC00002": Math.floor(Math.random() * 1000),
+        "RC00003": Math.floor(Math.random() * 1000),
+        "RC00004": Math.floor(Math.random() * 1000),
+        "RC00005": Math.floor(Math.random() * 1000),
+        "RC00006": Math.floor(Math.random() * 1000),
+        "RC00008": Math.floor(Math.random() * 1000),
+        "RC00009": Math.floor(Math.random() * 1000),
+        "RC00017": Math.floor(Math.random() * 1000),
+        "RC00024": Math.floor(Math.random() * 1000),
+        "RC00031": Math.floor(Math.random() * 1000),
+        "RC00032": Math.floor(Math.random() * 1000),
+        "RC00033": Math.floor(Math.random() * 1000),
+        "RC00035": Math.floor(Math.random() * 1000),
+        "RC00036": Math.floor(Math.random() * 1000)
+    }
+  }
+  
+
 // type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
 type fieldNameProcssing = 'Total amount of recyclate processed' | 'Total amount of recyclate remaining after processing' | 'Total amount of recycled material that cannot be used after processing';
 const Recyclables: FunctionComponent = () => {
@@ -115,15 +323,14 @@ const Recyclables: FunctionComponent = () => {
         return languages
     }
 
-    const getDataWeights = (type: any, length: number, response: any): number[] =>{
+    const getDataWeights = (type: string, length: number, response: any): number[] =>{
         const weights:number[]= [];
         if(!response) return weights
         const processing:any =  Object.values(response)
-        
         for(let index=0; index<length; index++){
             const data:any = processing[index];
             if(data[type]){
-                weights.push(Number(data[type]?.slice(0, -2)) ?? 0)
+                weights.push(Number(data[type]) ?? 0)
             } else {
                 weights.push(0)
             }
@@ -154,7 +361,7 @@ const Recyclables: FunctionComponent = () => {
             datasets.push({
                 id: type.recyclableNameEng,
                 label: getLabel(type.recyclableNameEng),
-                data: getDataWeights(type.recyclableNameEng, length, response),
+                data: getDataWeights(type.recycTypeId, length, response),
                 backgroundColor: type?.backgroundColor ? type.backgroundColor : randomBackgroundColor()
             })
             // if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
@@ -394,14 +601,20 @@ const Recyclables: FunctionComponent = () => {
     }
 
     const initWeightRecyclables = async () => {
-        const response = await getWeightRecyclablesColPointDashboard(frmDateWeight.format('YYYY-MM-DD'), toDateWeight.format('YYYY-MM-DD'))
-        if (response) {
-            const labels:string[] = Object.keys(response);
-            if(!recycType) return;
-            const datasets = getDataSetBarChart(response, labels.length)
-            setLabelWeigth(labels)
-            setDataSetWeight(datasets)
-        }
+        // const response = await getWeightRecyclablesColPointDashboard(frmDateWeight.format('YYYY-MM-DD'), toDateWeight.format('YYYY-MM-DD'))
+        // if (response) {
+        //     const labels:string[] = Object.keys(response);
+        //     if(!recycType) return;
+        //     const datasets = getDataSetBarChart(response, labels.length)
+        //     setLabelWeigth(labels)
+        //     setDataSetWeight(datasets)
+        // }
+ 
+        const labels:string[] = Object.keys(dummyDataWeight);
+        if(!recycType) return;
+        const datasets = getDataSetBarChart(dummyDataWeight, labels.length)
+        setLabelWeigth(labels)
+        setDataSetWeight(datasets)
     }
 
     useEffect(() => {
