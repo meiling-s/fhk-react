@@ -13,7 +13,9 @@ import {
 } from '../../../interfaces/purchaseOrder'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, formatWeight } from '../../../utils/utils'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 const PurchaseOrderCard = ({
   selectedPurchaseOrder,
@@ -23,6 +25,7 @@ const PurchaseOrderCard = ({
   purchaseOrderDetail: PurchaseOrderDetail[]
 }) => {
   const { t } = useTranslation()
+  const { decimalVal } = useContainer(CommonTypeContainer)
 
   const getRecyName = (podetail: PurchaseOrderDetail) => {
     var name = ''
@@ -135,7 +138,7 @@ const PurchaseOrderCard = ({
               </Typography>
             </Box>
             <Typography ml="60px" style={localstyles.mini_value}>
-              {podetail.weight} kg
+              {formatWeight(podetail.weight, decimalVal)} kg
             </Typography>
           </Box>
           <Box display="flex">

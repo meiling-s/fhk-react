@@ -5,8 +5,9 @@ import { PickupOrderDetail } from "../interfaces/pickupOrder";
 import LocalizeRecyctype from "./TableComponents/LocalizeRecyctype";
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { DriverDetail } from "../interfaces/JobOrderInterfaces";
-
-import { useTranslation } from 'react-i18next'
+import { formatWeight } from "../utils/utils";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../contexts/CommonTypeContainer";
 
 const JobOrderCard = ({
   plateNo,
@@ -17,11 +18,8 @@ const JobOrderCard = ({
   pickupOrderDetail: PickupOrderDetail[];
   driverDetail: DriverDetail | undefined;
 }) => {
-  const { t } = useTranslation()
   const recyc = LocalizeRecyctype(pickupOrderDetail);
-  console.log(pickupOrderDetail);
-  console.log(recyc);
-
+  const { decimalVal } = useContainer(CommonTypeContainer)
   return (
     <>
       {pickupOrderDetail.map((podetail, index) => (
@@ -41,7 +39,7 @@ const JobOrderCard = ({
                   <Typography sx={localstyles.title}>{recyc[index].recycType}</Typography>
                   <Typography sx={localstyles.mini_value}>{recyc[index].recycSubType}</Typography>
                 </Box>
-                <Typography sx={localstyles.title}>{podetail.weight}kg</Typography>
+                <Typography sx={localstyles.title}>{formatWeight(podetail.weight, decimalVal)}kg</Typography>
               </Box>
             )}
           </Box>

@@ -26,6 +26,7 @@ import {
   GET_PROCESS_LIST,
   GET_CONTRACT_LOGISTIC,
   GET_IMG_SETTINGS,
+  GET_DECIMAL_VAL,
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -46,6 +47,7 @@ const CommonType = () => {
     ImgQuantity: 3,
     ImgSize: 3 * 1000 * 1000
   })
+  const [decimalVal, setDecimalVal] = useState<number>(0)
 
   const getColPointType = async () => {
     var colPointType = []
@@ -233,7 +235,6 @@ const CommonType = () => {
     }
   }
 
-  
   const getImgSettings = async () => {
     const token = returnApiToken()
     try {
@@ -246,6 +247,19 @@ const CommonType = () => {
         imgSettings.ImgSize *= 1000 * 1000
       }
       setImgSettings(imgSettings)
+    } catch (e) {
+      return null
+    }
+  }
+
+  
+  const getDecimalVal = async () => {
+    try {
+      const response = await axiosInstance({
+        ...GET_DECIMAL_VAL(),
+        baseURL: window.baseURL.administrator
+      })
+      setDecimalVal(response?.data?.decimalVal || 0)
     } catch (e) {
       return null
     }
@@ -264,6 +278,7 @@ const CommonType = () => {
     getProcessList()
     getContractLogistic()
     getImgSettings()
+    getDecimalVal()
   }
 
   useEffect(() => {
@@ -280,6 +295,7 @@ const CommonType = () => {
       getProcessList()
       getContractLogistic()
       getImgSettings()
+      getDecimalVal()
     }
   }, [])
 
@@ -297,6 +313,7 @@ const CommonType = () => {
     processType,
     contractLogistic,
     imgSettings,
+    decimalVal,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -309,7 +326,8 @@ const CommonType = () => {
     getManuList,
     getProcessList,
     getContractLogistic,
-    getImgSettings
+    getImgSettings,
+    getDecimalVal,
   }
 }
 

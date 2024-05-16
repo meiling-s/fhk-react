@@ -1,8 +1,7 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi, Languages } from '../constants/constant'
+import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 
 export const returnApiToken = () => {
   const decodeKeycloack =
@@ -22,7 +21,7 @@ export const returnApiToken = () => {
 
 export const ImageToBase64 = (images: ImageListType) => {
   var base64: string[] = []
-  images.map((image) => {
+  images.forEach((image) => {
     if (image['data_url']) {
       var imageBase64: string = image['data_url'].toString()
       imageBase64 = imageBase64.split(',')[1]
@@ -34,7 +33,6 @@ export const ImageToBase64 = (images: ImageListType) => {
 
 export const returnErrorMsg = (error: string, t: (key: string) => string) => {
   var msg = ''
-  console.log(error)
   switch (error) {
     case formErr.empty:
       msg = t('form.error.shouldNotBeEmpty')
@@ -56,6 +54,9 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
       break
     case formErr.startDateBehindEndDate:
       msg = t('form.error.startDateBehindEndDate')
+      break
+    case formErr.endDateEarlyThanStartDate:
+      msg = t('form.error.endDateEarlyThanStartDate')
       break
     case formErr.loginIdCantContainAdmin:
       msg = t('form.error.loginIdCantContainAdmin')
@@ -203,4 +204,31 @@ export const getBaseUrl = () => {
       break;
   }
   return baseURL
+}
+
+// 格式化重量
+export const formatWeight = (weight: string | number, decimalVal: number) => {
+  if (decimalVal === 0) {
+    return Math.round(parseFloat(weight.toString())).toString(); // 返回整數類型的字串
+  } else {
+    const decimalStr = decimalVal.toString();
+    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
+    return parseFloat(weight.toString()).toFixed(zeroCount); // 返回浮點數類型的字串
+  }
+}
+
+//  重量輸入框change事件，並根據decimalVal格式化重量及限制小數位
+export const onChangeWeight = (value: string, decimalVal: number, cb: (arg0: string) => void) => {
+  let regexStr;
+  if (decimalVal === 0) {
+    regexStr = "^\\d*$"; // 只匹配整數
+  } else {
+    const decimalStr = decimalVal.toString();
+    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
+    regexStr = "^(?!\\.$)\\d*\\.?\\d{0," + zeroCount + "}$"; // 匹配小數，但首字符不能是小數點
+  }
+  const regex = new RegExp(regexStr);
+  if (regex.test(value) || value === '') {
+    cb(value);
+  }
 }

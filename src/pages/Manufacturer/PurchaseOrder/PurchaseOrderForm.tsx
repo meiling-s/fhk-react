@@ -11,12 +11,10 @@ import { styles } from '../../../constants/styles'
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab'
 import CustomField from '../../../components/FormComponents/CustomField'
 import StatusCard from '../../../components/StatusCard'
-import PickupOrderCard from '../../../components/PickupOrderCard'
 import { useNavigate } from 'react-router-dom'
 import { getPurchaseOrderById } from '../../../APICalls/Manufacturer/purchaseOrder'
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../../utils/utils'
-import CustomButton from '../../../components/FormComponents/CustomButton'
 import { Languages, Roles, Status, localStorgeKeyName } from '../../../constants/constant'
 import {
   PurChaseOrder,
@@ -39,11 +37,8 @@ const PurchaseOrderForm = ({
 }) => {
   const { t } = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role)
-  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
-
   const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
   const rolesEnableCreatePO = [Roles.customerAdmin]
-
   const paymentTypes : PaymentType[] = [
     {
       paymentNameTchi: '現金',
@@ -80,14 +75,8 @@ const PurchaseOrderForm = ({
     }
   }
   const navigate = useNavigate()
-
-  const [selectedPurchaseOrder, setSelectedPurchaseOrder] =
-    useState<PurChaseOrder>()
-
-  const [pickupOrderDetail, setPickUpOrderDetail] =
-    useState<PurchaseOrderDetail[]>()
-  const [pickupOrderData, setPickupOrderData] = useState<PurChaseOrder>()
-
+  const [selectedPurchaseOrder, setSelectedPurchaseOrder] = useState<PurChaseOrder>()
+  const [pickupOrderDetail, setPickUpOrderDetail] = useState<PurchaseOrderDetail[]>()
   useEffect(() => {
     if (selectedRow) {
       // refresh the data first
