@@ -143,14 +143,10 @@ const CreateRecycleForm = ({
   receiverAddr,
   onChangeAddressReceiver
 }: props) => {
-  const { recycType, manuList, collectorList } =
-    useContainer(CommonTypeContainer)
+  const { recycType, weightUnits } = useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<PurchaseOrderDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
-  const [page, setPage] = useState(1)  
-  const pageSize = 10
-  const [weightUnit, setWeightUnit] = useState<WeightUnit[]>([])
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role) || '#79CA25'
   const customListTheme = getThemeCustomList(role) || '#E4F6DC'
@@ -186,9 +182,6 @@ const CreateRecycleForm = ({
       onClose && onClose()
     }
   }
-  useEffect(() => {
-    initWeightUnit()
-  }, [])
 
   useEffect(() => {
     if (editRow) {
@@ -404,31 +397,26 @@ const CreateRecycleForm = ({
     formik.handleSubmit()
   }
   
-  const initWeightUnit = async () => {
-    const result = await getWeightUnit(page - 1, pageSize)
-    const data = result?.data
 
-    setWeightUnit(data)
-  }
 
   const getWeightUnits = ():{unitId: number, lang: string}[] => {
     let units:{unitId: number, lang: string}[] = []
     if(i18n.language === Languages.ENUS){
-      units = weightUnit.map(item => {
+      units = weightUnits.map(item => {
         return {
           unitId: item?.unitId,
           lang: item?.unitNameEng
         }
       })
     } else if(i18n.language === Languages.ZHCH){
-      units = weightUnit.map(item => {
+      units = weightUnits.map(item => {
         return {
           unitId: item?.unitId,
           lang: item?.unitNameSchi
         }
       })
     } else {
-      units = weightUnit.map(item => {
+      units = weightUnits.map(item => {
         return {
           unitId: item?.unitId,
           lang: item?.unitNameTchi

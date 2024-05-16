@@ -14,6 +14,9 @@ import {
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { Languages } from '../../../constants/constant'
 
 const PurchaseOrderCard = ({
   selectedPurchaseOrder,
@@ -23,7 +26,44 @@ const PurchaseOrderCard = ({
   purchaseOrderDetail: PurchaseOrderDetail[]
 }) => {
   const { t } = useTranslation()
+  const { weightUnits } = useContainer(CommonTypeContainer)
 
+  const getWeightUnits = ():{unitId: number, lang: string}[] => {
+    let units:{unitId: number, lang: string}[] = []
+    if(i18n.language === Languages.ENUS){
+      units = weightUnits.map(item => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameEng
+        }
+      })
+    } else if(i18n.language === Languages.ZHCH){
+      units = weightUnits.map(item => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameSchi
+        }
+      })
+    } else {
+      units = weightUnits.map(item => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameTchi
+        }
+      })
+    }
+
+    return units
+  }
+
+  const getUnitName = (unitId: number):{unitId: number, lang: string} => {
+    let unitName:{unitId: number, lang: string} = {unitId: 0, lang: ''}
+    const unit = getWeightUnits().find(item => item.unitId === unitId);
+    if(unit){
+      unitName = unit
+    }
+    return unitName
+  }
   const getRecyName = (podetail: PurchaseOrderDetail) => {
     var name = ''
     switch (i18n.language) {
@@ -135,7 +175,7 @@ const PurchaseOrderCard = ({
               </Typography>
             </Box>
             <Typography ml="60px" style={localstyles.mini_value}>
-              {podetail.weight} kg
+              {podetail.weight} {getUnitName(podetail.unitId).lang}
             </Typography>
           </Box>
           <Box display="flex">

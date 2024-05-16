@@ -160,7 +160,7 @@ const PurchaseOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, recycType } = useContainer(CommonTypeContainer)//
+  const { logisticList, weightUnits, recycType } = useContainer(CommonTypeContainer)
   const [manuList, setManuList] = useState<manuList[]>()
   const navigate = useNavigate()
   const [errors, setErrors] = useState(
@@ -392,10 +392,9 @@ const PurchaseOrderCreateForm = ({
       type: 'string',
       width: 150,
       editable: true,
-      valueFormatter: (params) => {
-        if(params) {
-          return `${params.value} kg`
-        }
+      valueGetter: ({ row }) => {
+        const unit =  getUnitName(Number(row.unitId))
+        return `${row.weight} ${unit.lang}`
       }
     },
     {
@@ -599,6 +598,45 @@ const PurchaseOrderCreateForm = ({
       })
     }
   }, [state])
+
+
+
+  const getWeightUnits = ():{unitId: number, lang: string}[] => {
+    let units:{unitId: number, lang: string}[] = []
+    if(i18n.language === Languages.ENUS){
+      units = weightUnits.map(item => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameEng
+        }
+      })
+    } else if(i18n.language === Languages.ZHCH){
+      units = weightUnits.map(item => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameSchi
+        }
+      })
+    } else {
+      units = weightUnits.map(item => {
+        return {
+          unitId: item?.unitId,
+          lang: item?.unitNameTchi
+        }
+      })
+    }
+
+    return units
+  }
+
+  const getUnitName = (unitId: number):{unitId: number, lang: string} => {
+    let unitName:{unitId: number, lang: string} = {unitId: 0, lang: ''}
+    const unit = getWeightUnits().find(item => item.unitId === unitId);
+    if(unit){
+      unitName = unit
+    }
+    return unitName
+  }
 
   return (
     <>
