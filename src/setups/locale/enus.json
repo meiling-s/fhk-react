@@ -21,7 +21,11 @@
     "no": "No",
     "createdDatetime": "Create datetime",
     "lastUpdateDatetime": "Last update datetime",
-    "pckgCategory:": "Packaging category"
+    "pckgCategory:": "Packaging category",
+    "approveSuccess": "Approve request successfully",
+    "approveFailed": "Approve request failed",
+    "rejectSuccess": "Reject request successfully",
+    "rejectFailed": "Reject request failed"
   },
   "col": {
     "createCP": "Create collection point",
@@ -684,7 +688,8 @@
     "failedEditUser": "Failed edit user",
     "successDeleteUser": "Success delete user",
     "failedDeleteUser": "Failed delete user",
-    "resetPasswaitApproval" :"Reset password awaiting approval"
+    "resetPasswaitApproval": "Reset password awaiting approval",
+    "resetPassword": "Reset Password"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "Check-in and Check-out",
@@ -1129,7 +1134,7 @@
     "packingQty": "Packing quantity",
     "packingWeight": "Packing weight",
     "recyc": "Recycling category",
-    "packageName" : "Package category ",
+    "packageName": "Package category ",
     "inputDriverNumber": "Please enter driver Id"
   },
   "dashboard_recyclables": {

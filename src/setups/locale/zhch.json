@@ -21,7 +21,11 @@
     "no": "否",
     "createdDatetime": "建立时间",
     "lastUpdateDatetime": "上次更新时间",
-    "pckgCategory:": "包装类别"
+    "pckgCategory:": "包装类别",
+    "approveSuccess" : "成功批准请求",
+    "approveFailed" : "批准请求失败",
+    "rejectSuccess" : "成功拒绝请求",
+    "rejectFailed" : "拒绝请求失败"
   },
   "col": {
     "createCP": "建立回收点",
@@ -685,7 +689,8 @@
     "failedEditUser": "编辑用户失败",
     "successDeleteUser": "成功删除用户",
     "failedDeleteUser": "删除用户失败",
-    "resetPasswaitApproval" :"重置密码等待批准"
+    "resetPasswaitApproval" :"重置密码等待批准",
+    "resetPassword": "重设密码"
   },
   "userGroup": {
     "title": "用戶群組",

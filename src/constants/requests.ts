@@ -387,7 +387,7 @@ export const APPROVE_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConf
 })
 
 export const REJECT_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
-  method: 'post',
+  method: 'patch',
   url: `api/v1/administrator/forgetpassword/${table}/reject`
 })
 

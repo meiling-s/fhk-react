@@ -1,60 +1,88 @@
 import { FunctionComponent, useState, useEffect } from 'react'
-import {
-  Box,
-  Divider,
-  Grid,
-  Typography,
-  InputLabel,
-  MenuItem,
-  FormControl
-} from '@mui/material'
+import { Box, Divider, Grid, Typography } from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
-import CustomField from '../../../components/FormComponents/CustomField'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import { styles } from '../../../constants/styles'
 
 import { useTranslation } from 'react-i18next'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { formValidate } from '../../../interfaces/common'
-import { formErr } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
-import { il_item } from '../../../components/FormComponents/CustomItemList'
-
-import { localStorgeKeyName } from '../../../constants/constant'
-import Switches from '../../../components/FormComponents/CustomSwitch'
-import LabelField from '../../../components/FormComponents/CustomField'
-import { getUserGroup } from '../../../APICalls/commonManage'
-import { CreateUserAccount, UserAccount } from '../../../interfaces/userAccount'
-import { ToastContainer, toast } from 'react-toastify'
 import {
-  postUserAccount,
-  updateUserAccount,
-  deleteUserAccount
-} from '../../../APICalls/userAccount'
+  ForgetPassUser,
+  UserAccount,
+  ForgetPassForm
+} from '../../../interfaces/userAccount'
+import { ToastContainer, toast } from 'react-toastify'
+import { getUserAccountById } from '../../../APICalls/Collector/userGroup'
+import {
+  approveForgetPasswordRequest,
+  rejectForgetPasswordRequest
+} from '../../../APICalls/forgetPassword'
+import { localStorgeKeyName } from '../../../constants/constant'
+import { showErrorToast, showSuccessToast } from '../../../utils/utils'
 
 interface ApproveRejectForgetPassProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
-
   onSubmitData: () => void
   rowId?: number
-  selectedItem?: UserAccount | null
+  selectedItem?: ForgetPassUser | null
 }
 
 const ApproveRejectForgetPass: FunctionComponent<
   ApproveRejectForgetPassProps
 > = ({ drawerOpen, handleDrawerClose, onSubmitData, selectedItem }) => {
   const { t } = useTranslation()
+  const [userAccount, setUserAccount] = useState<UserAccount | null>(null)
+  const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
 
   useEffect(() => {
-    //getUserGroupList()
+    if (selectedItem) {
+      getUserAccount()
+    }
   }, [drawerOpen])
 
-  const handleApprove = () => {}
+  const getUserAccount = async () => {
+    if (selectedItem) {
+      const result = await getUserAccountById(selectedItem.loginId)
+      if (result) {
+        setUserAccount(result.data)
+      }
+    }
+  }
 
-  const handleReject = async () => {}
+  const handleApprove = async () => {
+    if (selectedItem) {
+      const form: ForgetPassForm = {
+        forgetPWId: selectedItem?.forgetPWId,
+        userName: selectedItem?.loginId,
+        updatedBy: loginName
+      }
+      const result = await approveForgetPasswordRequest(form)
+      if (result) {
+        showSuccessToast(t('common.approveSuccess'))
+        handleDrawerClose()
+        onSubmitData()
+      } else {
+        showErrorToast(t('common.approveFailed'))
+      }
+    }
+  }
+
+  const handleReject = async () => {
+    if (selectedItem) {
+      const form: ForgetPassForm = {
+        forgetPWId: selectedItem?.forgetPWId,
+        userName: selectedItem?.loginId,
+        updatedBy: loginName
+      }
+      const result = await rejectForgetPasswordRequest(form)
+      if (result) {
+        showSuccessToast(t('common.rejectSuccess'))
+        handleDrawerClose()
+        onSubmitData()
+      } else {
+        showErrorToast(t('common.rejectFailed'))
+      }
+    }
+  }
 
   return (
     <div className="add-user-account">
@@ -65,7 +93,7 @@ const ApproveRejectForgetPass: FunctionComponent<
         anchor={'right'}
         action={'edit'}
         headerProps={{
-          title: 'forget pss',
+          title: t('userAccount.resetPassword'),
           subTitle: '',
           submitText: t('check_in.approve'),
           cancelText: t('check_in.reject'),
@@ -91,23 +119,19 @@ const ApproveRejectForgetPass: FunctionComponent<
             className="sm:ml-0 mt-o w-full"
           >
             <Grid item>
-              <Typography
-                sx={{ ...localstyles.typo_fieldTitle, marginBottom: 1 }}
-              >
-                {t('userAccount.userGroup')}
+              <Typography sx={{ ...localstyles.typo_fieldTitle }}>
+                {t('userAccount.staffId')}
               </Typography>
               <Typography sx={{ ...localstyles.typo_fieldContent }}>
-                {t('userAccount.userGroup')}
+                {userAccount?.staffId}
               </Typography>
             </Grid>
             <Grid item>
-              <Typography
-                sx={{ ...localstyles.typo_fieldTitle, marginBottom: 1 }}
-              >
-                {t('userAccount.userGroup')}
+              <Typography sx={{ ...localstyles.typo_fieldTitle }}>
+                {t('userAccount.loginName')}
               </Typography>
               <Typography sx={{ ...localstyles.typo_fieldContent }}>
-                {t('userAccount.userGroup')}
+                {selectedItem?.loginId}
               </Typography>
             </Grid>
           </Grid>

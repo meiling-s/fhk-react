@@ -21,7 +21,11 @@
     "no": "否",
     "createdDatetime": "建立時間",
     "lastUpdateDatetime": "上次更新時間",
-    "pckgCategory:": "包裝類別"
+    "pckgCategory:": "包裝類別",
+    "approveSuccess": "成功批准請求",
+    "approveFailed": "批准請求失敗",
+    "rejectSuccess": "成功拒絕請求",
+    "rejectFailed": "拒絕請求失敗"
   },
   "col": {
     "createCP": "建立回收點",
@@ -683,7 +687,8 @@
     "failedEditUser": "編輯用戶失敗",
     "successDeleteUser": "成功刪除用戶",
     "failedDeleteUser": "刪除用戶失敗",
-    "resetPasswaitApproval" :"重置密碼等待批准"
+    "resetPasswaitApproval": "重置密碼等待批准",
+    "resetPassword": "重新設密碼"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "概覽",

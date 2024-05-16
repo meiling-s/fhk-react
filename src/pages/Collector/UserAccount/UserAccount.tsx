@@ -16,7 +16,7 @@ import {
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
 
-// import TableBase from '../../../components/TableBase'
+import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded'
 import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
 import { getAllUserAccount } from '../../../APICalls/userAccount'
@@ -155,6 +155,11 @@ const UserAccount: FunctionComponent = () => {
     setAction('add')
   }
 
+  const handleApproveOrReject = () => {
+    fetchDataUserAccount()
+    initForgetPassList()
+  }
+
   const handleEdit = (rowId: string) => {
     setDrawerOpen(true)
     setAction('edit')
@@ -191,6 +196,11 @@ const UserAccount: FunctionComponent = () => {
     fetchDataUserAccount()
   }
 
+  const handleDrawerForgetPass = () => {
+    setApproveRejectDrawer(false)
+    //fetchDataUserAccount()
+  }
+
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
@@ -208,32 +218,46 @@ const UserAccount: FunctionComponent = () => {
         <div className="settings-page relative bg-bg-primary w-full h-[2046px] overflow-hidden flex flex-row items-start justify-start text-center text-mini text-grey-darker font-tag-chi-medium">
           <div className=" self-stretch flex-1 bg-white flex flex-col items-start justify-start text-smi text-grey-middle font-noto-sans-cjk-tc">
             <div className="self-stretch flex-1 bg-bg-primary flex flex-col items-start justify-start text-3xl text-black font-tag-chi-medium">
-              <div className="forget-pass-list flex align-middle bg-white p-3 border border-solid rounded-lg border-grey-line mt-8 w-full text-left">
-                <div className="text-[#535353] text-smi font-normal mr-1">
-                  {t('account')}
-                </div>
-                {forgetPassList.length > 0 && (
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    {forgetPassList?.map((item, index) => (
-                      <div
-                        className="user-account text-black text-smi font-bold underline cursor-pointer"
-                        key={item.forgetPWId}
-                        onClick={() => {
-                          setApproveRejectDrawer(true); setForgetPassUser(item)
-                        }}
-                      >
-                        {index > 0 && (
-                          <span style={{ marginLeft: '5px' }}>,</span>
-                        )}{' '}
-                        {item.loginId}
+              {forgetPassList.length > 0 && (
+                <div className="forget-pass-list flex items-center bg-white p-3 border border-solid rounded-lg border-grey-line mt-8 w-full text-left">
+                  <ErrorOutlineRoundedIcon
+                    className="text-[#79CA25]"
+                    fontSize="small"
+                  />
+                  <div className="text-[#535353] text-smi font-normal mx-1">
+                    {t('account')}
+                  </div>
+                  {forgetPassList.length > 0 && (
+                    <Box sx={{ display: 'flex', alignItems: 'center' , flexDirection: 'column'}}>
+                      <div className="user-account cursor-pointer flex flex-wrap items-start" style={{ maxWidth: '1280px' }}>
+                        {forgetPassList?.map((item, index) => (
+                          <p
+                            className="text-black text-smi font-bold underline m-0"
+                            key={index}
+                            onClick={() => {
+                              setApproveRejectDrawer(true)
+                              setForgetPassUser(item)
+                            }}
+                            style={{ 
+                              marginBottom: '5px', 
+                              wordWrap: 'break-word' 
+                            }}
+                          >
+                            {index > 0 && (
+                              <span style={{ marginRight: '5px' }}>,</span>
+                            )}
+                            {item.loginId}
+                          </p>
+                        ))}
                       </div>
-                    ))}
-                  </Box>
-                )}
-                <div className="text-[#535353] text-smi font-normal ml-1 ">
-                  {t('userAccount.resetPasswaitApproval')}
+                    </Box>
+                  )}
+                  <div className="text-[#535353] text-smi font-normal ml-1 ">
+                    {t('userAccount.resetPasswaitApproval')}
+                  </div>
                 </div>
-              </div>
+              )}
+
               <div
                 className={`settings-container self-stretch flex-1 flex flex-col items-start justify-start pt-[30px] pb-[75px] text-mini text-grey-darker ${
                   isMobile
@@ -304,9 +328,9 @@ const UserAccount: FunctionComponent = () => {
           />
           <ApproveRejectForgetPass
             drawerOpen={approveRejectDrawer}
-            handleDrawerClose={handleDrawerClose}
-            selectedItem={selectedAccount}
-            onSubmitData={handleOnSubmitData}
+            handleDrawerClose={handleDrawerForgetPass}
+            selectedItem={forgetPassUser}
+            onSubmitData={handleApproveOrReject}
             rowId={rowId}
           ></ApproveRejectForgetPass>
         </div>

@@ -52,3 +52,9 @@ export type ForgetPassUser = {
     createdBy: string
     updatedBy: string
 }
+
+export type ForgetPassForm ={
+    forgetPWId: number
+    userName: string
+    updatedBy: string
+  }
