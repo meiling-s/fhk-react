@@ -556,7 +556,7 @@ export const ASTD_GET_INVENTORY = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/search/${table}`
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
 })
 
 export const GET_INVENTORY = (
@@ -564,7 +564,7 @@ export const GET_INVENTORY = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/${table}/searching`
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
 })
 
 //process records

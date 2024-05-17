@@ -190,21 +190,11 @@ const Inventory: FunctionComponent = () => {
         const subName = subType ? subType.name : "-"
 
         let selectedPico: PickupOrder[] = []
-        let location: string[] = []
 
         item.inventoryDetail?.map((invDetail: InvDetails) => {
           selectedPico = picoData.filter(pico => pico.picoId == invDetail.sourcePicoId)
         })
 
-
-
-        if (selectedPico.length > 0) {
-          selectedPico.map(pico => {
-            pico.pickupOrderDetail.map(picoDetail => {
-              location.push(picoDetail.senderAddr)
-            })
-          })
-        }
         inventoryMapping.push(
           createInventory(
             item?.itemId,
@@ -221,7 +211,7 @@ const Inventory: FunctionComponent = () => {
             item?.inventoryDetail || '-',
             item?.createdAt,
             item?.updatedAt,
-            location?.join(', ')
+            item?.location,
           )
         )
       })
@@ -359,6 +349,17 @@ const Inventory: FunctionComponent = () => {
     if (label == "search") {
       if (value == "") return setFilteredInventory(inventoryList)
       const filtered: InventoryItem[] = inventoryList.filter(item => item.recyclingNumber == value)
+      
+      if (filtered) {
+        setFilteredInventory(filtered)
+      } else {
+        setFilteredInventory(inventoryList)
+      }
+    }
+
+    if (label == 'location') {
+      if (value == "") return setFilteredInventory(inventoryList)
+      const filtered: InventoryItem[] = inventoryList.filter(item => item.location == value)
       
       if (filtered) {
         setFilteredInventory(filtered)
