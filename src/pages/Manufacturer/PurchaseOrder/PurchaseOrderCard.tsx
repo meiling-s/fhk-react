@@ -13,7 +13,8 @@ import {
 } from '../../../interfaces/purchaseOrder'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate } from '../../../utils/utils'
+
+import { displayCreatedDate, formatWeight } from '../../../utils/utils'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { Languages } from '../../../constants/constant'
@@ -26,7 +27,7 @@ const PurchaseOrderCard = ({
   purchaseOrderDetail: PurchaseOrderDetail[]
 }) => {
   const { t } = useTranslation()
-  const { weightUnits } = useContainer(CommonTypeContainer)
+  const { decimalVal,  weightUnits } = useContainer(CommonTypeContainer)
 
   const getWeightUnits = ():{unitId: number, lang: string}[] => {
     let units:{unitId: number, lang: string}[] = []
@@ -175,7 +176,7 @@ const PurchaseOrderCard = ({
               </Typography>
             </Box>
             <Typography ml="60px" style={localstyles.mini_value}>
-              {podetail.weight} {getUnitName(podetail.unitId).lang}
+              {formatWeight(podetail.weight, decimalVal)} {getUnitName(podetail.unitId).lang}
             </Typography>
           </Box>
           <Box display="flex">

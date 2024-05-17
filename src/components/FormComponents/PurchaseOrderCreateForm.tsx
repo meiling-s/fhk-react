@@ -33,7 +33,7 @@ import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
-import { getThemeColorRole, displayCreatedDate} from '../../utils/utils'
+import { getThemeColorRole, displayCreatedDate, formatWeight} from '../../utils/utils'
 import { manuList } from '../../interfaces/common'
 import { getManuList } from '../../APICalls/Manufacturer/purchaseOrder'
 type DeleteModalProps = {
@@ -160,7 +160,8 @@ const PurchaseOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, weightUnits, recycType } = useContainer(CommonTypeContainer)
+  const { logisticList, weightUnits, recycType, decimalVal } = useContainer(CommonTypeContainer)
+
   const [manuList, setManuList] = useState<manuList[]>()
   const navigate = useNavigate()
   const [errors, setErrors] = useState(
@@ -394,7 +395,7 @@ const PurchaseOrderCreateForm = ({
       editable: true,
       valueGetter: ({ row }) => {
         const unit =  getUnitName(Number(row.unitId))
-        return `${row.weight} ${unit.lang}`
+        return `${formatWeight(row.weight, decimalVal)} ${unit.lang}`
       }
     },
     {

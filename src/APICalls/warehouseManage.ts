@@ -203,3 +203,30 @@ export const manufacturerGetAllWarehouse = async (page: number, size: number) =>
     return null
   }
 }
+
+export const astdSearchWarehouse = async (page: number, size: number, searchValue: string) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_ALL_WAREHOUSE(token.realmApiRoute, searchValue),
+      params: {
+        page: page,
+        size: size
+      },
+    })
+
+    return response
+  } catch (error: any) {
+    console.error('Get all warehouse failed:', error)
+
+    const errCode = error?.response.status
+    if (errCode === 401) {
+      localStorage.clear()
+      window.location.href = '/'
+    }
+
+    return null
+  }
+}

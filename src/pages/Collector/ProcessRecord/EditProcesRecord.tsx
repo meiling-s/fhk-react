@@ -27,7 +27,7 @@ import { createProcessRecordItem,
   deleteProcessOutItem, 
   getProcessRecordDetail, 
 deleteProcessOutRecord} from '../../../APICalls/Collector/processRecords'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, formatWeight } from '../../../utils/utils'
 import { ToastContainer, toast } from 'react-toastify'
 import { ProcessType } from '../../../interfaces/common'
 
@@ -52,7 +52,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   selectedRow
 }) => {
   const { t } = useTranslation()
-  const { recycType } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal } = useContainer(CommonTypeContainer)
   const [drawerRecyclable, setDrawerRecyclable] = useState(false)
   const [action, setAction] = useState<
     'none' | 'add' | 'edit' | 'delete' | undefined
@@ -396,7 +396,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                         </div>
                         <div className="right action flex items-center gap-2">
                           <div className="weight font-bold font-base">
-                            {item.weight}kg
+                            {formatWeight(item.weight, decimalVal)}kg
                           </div>
                           {/* {item.processOutId == 0 && ( */}
                             <Box>

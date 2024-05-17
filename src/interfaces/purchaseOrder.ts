@@ -13,7 +13,7 @@ export type PurchaseOrderDetail = {
   unitNameTchi: string
   unitNameSchi: string
   unitNameEng: string
-  weight: number
+  weight: string
   createdBy: string
   updatedBy: string
   pickupAt?: string
