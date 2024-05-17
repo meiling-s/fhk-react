@@ -19,6 +19,8 @@ import location from './hongkongLocation.json';
 import { getTotalSalesProductByDistrictAnalysis } from '../../APICalls/Collector/dashboardRecyables';
 import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import { useContainer } from 'unstated-next';
+import i18n from '../../setups/i18n';
+import { Languages } from '../../constants/constant';
 
 ChartJS.register(
     Title,
@@ -36,7 +38,6 @@ const ChartDistrictSales = () => {
     const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
     const chartRef = useRef();
-    const [data, setData] = useState<any>(location);
     const [dataset, setDataset] = useState<any>([]);
     const [recycTypeId, setRecycTypeId] = useState<string|null>(null);
 
@@ -47,13 +48,19 @@ const ChartDistrictSales = () => {
         const response = await getTotalSalesProductByDistrictAnalysis(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
 
         if(response){
-            const copyData = [...data];
+            const copyData = [...location];
             const update:any = []
             for(let region of response){
                 const indexOfRegion = copyData.findIndex(item => item.properties.name_english === region.district);
                 const reg = copyData[indexOfRegion]
                 update.push({
-                    feature: reg,
+                    feature: {
+                        ...reg,
+                        properties: {
+                            ...reg.properties,
+                            name: getDistrictName(reg.properties)
+                        }
+                    },
                     value:  Number(region?.percentage),
                     weight:  Number(region?.total_weight),
                     recyc_weight: region.recyc_weight
@@ -63,10 +70,6 @@ const ChartDistrictSales = () => {
 
         }
     }
-
-    // useEffect(() => {
-    //     initData()
-    // }, []);
 
     useEffect(() => {
         initData()
@@ -93,6 +96,38 @@ const ChartDistrictSales = () => {
     const onChangeRecycTypeId = (value: string|null) => {
         setRecycTypeId(value)
     }
+
+    const getDistrictName = (properties:any):string => {
+        let language:string = ''
+        if(i18n.language === Languages.ENUS){
+            language = properties.name_english
+        } else if(i18n.language === Languages.ZHCH){
+            language = properties.name_simplified
+        } else {
+            language = properties.name_traditional
+        }
+        return language
+    }
+
+    const changeDistrictLanguangeName = () => {
+        const district = dataset.map((item:any) => {
+            return{
+                ...item,
+                feature: {
+                    ...item.feature,
+                    properties: {
+                        ...item.feature.properties,
+                        name: getDistrictName(item?.feature?.properties)
+                    }
+                }
+            }
+        })
+        setDataset(district)
+    }
+
+    useEffect(() => {
+        changeDistrictLanguangeName()
+    }, [i18n.language])
 
     return(
         <>
@@ -192,10 +227,10 @@ const ChartDistrictSales = () => {
                                 ref={chartRef}
                                 type="choropleth"
                                 data={{
-                                    labels: data.map((d: any) => d.properties.name),
+                                    labels: location.map((d: any) => d.properties.name),
                                     datasets: [
                                         {
-                                            outline: data,
+                                            outline: location,
                                             label: "Completed",
                                             data: dataset,
                                         },
