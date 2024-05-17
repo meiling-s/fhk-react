@@ -139,12 +139,6 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/jobOrder`),
         collapse: false
       },
-      // 'Warehouse dashboard': {
-      //   name: t('warehouseDashboard.warehouse'),
-      //   icon: <InventoryIcon />,
-      //   onClick: () => navigate('/warehouse'),
-      //   collapse: false
-      // },
       'Request check-in': {
         name: t('check_in.request_check_in'),
         icon: <LoginIcon />,
@@ -167,11 +161,6 @@ function MainDrawer() {
         name: t('reports'),
         icon: <DOCUMENT_ICON />,
         onClick: () => navigate('/collector/report'),
-        collapse: false
-      },
-      Inventory: {
-        name: t('inventory.inventory'),
-        onClick: () => navigate(`/${realm}/inventory`),
         collapse: false
       },
       'Process out recyclables': {
