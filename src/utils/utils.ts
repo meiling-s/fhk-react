@@ -2,7 +2,10 @@ import { ImageListType } from 'react-images-uploading'
 import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
+<<<<<<< HEAD
 import { fieldNameRecycables } from '../constants/constant'
+=======
+>>>>>>> origin/master
 
 export const returnApiToken = () => {
   const decodeKeycloack =
@@ -22,7 +25,7 @@ export const returnApiToken = () => {
 
 export const ImageToBase64 = (images: ImageListType) => {
   var base64: string[] = []
-  images.map((image) => {
+  images.forEach((image) => {
     if (image['data_url']) {
       var imageBase64: string = image['data_url'].toString()
       imageBase64 = imageBase64.split(',')[1]
@@ -34,7 +37,6 @@ export const ImageToBase64 = (images: ImageListType) => {
 
 export const returnErrorMsg = (error: string, t: (key: string) => string) => {
   var msg = ''
-  console.log(error)
   switch (error) {
     case formErr.empty:
       msg = t('form.error.shouldNotBeEmpty')
@@ -208,26 +210,53 @@ export const getBaseUrl = () => {
   return baseURL
 }
 
-export const getBackgroundColor = (fieldName: fieldNameRecycables) :string => {
-    const backgroundColors = {
-        'Rechargeable Batteries': '#FF9FB7',
-        'Glass Bottles': '#7ADFF1',
-        'Paper': '#F9B8FF',
-        'Fluorescent Lamps and Tubes': '#4FB5F5',
-        'Small Electrical Appliances': '#5AE9D8',
-        'Plastics': '#87FDA7',
-        'Non-recyclable': '#EFE72F',
-        'Cardboard': '#ECAB05',
-        'Metals': '#C69AFF'
-    }
+// 格式化重量
+export const formatWeight = (weight: string | number, decimalVal: number) => {
+  if (decimalVal === 0) {
+    return Math.round(parseFloat(weight.toString())).toString(); // 返回整數類型的字串
+  } else {
+    const decimalStr = decimalVal.toString();
+    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
+    return parseFloat(weight.toString()).toFixed(zeroCount); // 返回浮點數類型的字串
+  }
+}
 
-    return backgroundColors[fieldName]
+//  重量輸入框change事件，並根據decimalVal格式化重量及限制小數位
+export const onChangeWeight = (value: string, decimalVal: number, cb: (arg0: string) => void) => {
+  let regexStr;
+  if (decimalVal === 0) {
+    regexStr = "^\\d*$"; // 只匹配整數
+  } else {
+    const decimalStr = decimalVal.toString();
+    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
+    regexStr = "^(?!\\.$)\\d*\\.?\\d{0," + zeroCount + "}$"; // 匹配小數，但首字符不能是小數點
+  }
+  const regex = new RegExp(regexStr);
+  if (regex.test(value) || value === '') {
+    cb(value);
+  }
+}
+
+export const getBackgroundColor = (fieldName: fieldNameRecycables) :string => {
+  const backgroundColors = {
+      'Rechargeable Batteries': '#FF9FB7',
+      'Glass Bottles': '#7ADFF1',
+      'Paper': '#F9B8FF',
+      'Fluorescent Lamps and Tubes': '#4FB5F5',
+      'Small Electrical Appliances': '#5AE9D8',
+      'Plastics': '#87FDA7',
+      'Non-recyclable': '#EFE72F',
+      'Cardboard': '#ECAB05',
+      'Metals': '#C69AFF'
+  }
+
+  return backgroundColors[fieldName]
 }
 
 export const randomBackgroundColor = () :string => {
-  const x = Math.floor(Math.random() * (256 - 150) + 150);
-  const y = Math.floor(Math.random() * (256 - 150) + 150);
-  const z = Math.floor(Math.random() * (256 - 150) + 150);
-  const bgColor = "rgb(" + x + "," + y + "," + z + ")";
-  return bgColor
+const x = Math.floor(Math.random() * (256 - 150) + 150);
+const y = Math.floor(Math.random() * (256 - 150) + 150);
+const z = Math.floor(Math.random() * (256 - 150) + 150);
+const bgColor = "rgb(" + x + "," + y + "," + z + ")";
+return bgColor
 }

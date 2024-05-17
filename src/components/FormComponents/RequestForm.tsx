@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from "../../constants/constant";
+import { formatWeight } from "../../utils/utils";
 
 type recycItem = {
   recycType: il_item;
@@ -43,7 +44,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
       onClose && onClose();
     }
   };
-  const { recycType } = useContainer(CommonTypeContainer);
+  const { recycType, decimalVal } = useContainer(CommonTypeContainer);
   const { t } = useTranslation()
   const [selectedDetail, setSelectedDetail] = useState<CheckinDetail[] | undefined>([]);
   const [recycItem, setRecycItem] = useState<recycItem[]>([]);
@@ -205,7 +206,7 @@ const messageCheckin = `[${loginId}] ${t(
                 name={item.recycType.name}
                 bgcolor="#e1f4ff"
                 fontcolor="#66bff6"
-                weight={item.weight}
+                weight={formatWeight(item.weight, decimalVal)}
                 showImage={false}
                 packageTypeId={item.packageTypeId}
                 recycleName={item.recycSubType.name}

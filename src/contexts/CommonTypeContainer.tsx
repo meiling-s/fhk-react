@@ -10,7 +10,8 @@ import {
   recycType,
   siteType,
   vehicleType,
-  ProcessType
+  ProcessType,
+  weightUnit
 } from '../interfaces/common'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
@@ -26,9 +27,11 @@ import {
   GET_PROCESS_LIST,
   GET_CONTRACT_LOGISTIC,
   GET_IMG_SETTINGS,
+  GET_DECIMAL_VAL,
 } from '../constants/requests'
 import { randomBackgroundColor, returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
+import { getWeightUnit } from '../APICalls/ASTD/recycling'
 
 const CommonType = () => {
   const [colPointType, setColPointType] = useState<colPointType[]>()
@@ -46,6 +49,10 @@ const CommonType = () => {
     ImgQuantity: 3,
     ImgSize: 3 * 1000 * 1000
   })
+  const [weightUnits, setWeightUnits] = useState<weightUnit[]>([])
+  const [page, setPage] = useState(1)  
+  const pageSize = 10
+  const [decimalVal, setDecimalVal] = useState<number>(0)
 
   const getColPointType = async () => {
     var colPointType = []
@@ -238,7 +245,6 @@ const CommonType = () => {
     }
   }
 
-  
   const getImgSettings = async () => {
     const token = returnApiToken()
     try {
@@ -251,6 +257,25 @@ const CommonType = () => {
         imgSettings.ImgSize *= 1000 * 1000
       }
       setImgSettings(imgSettings)
+    } catch (e) {
+      return null
+    }
+  }
+  
+  const initWeightUnit = async () => {
+    const result = await getWeightUnit(page - 1, pageSize)
+    const data = result?.data
+    setWeightUnits(data)
+  }
+
+  
+  const getDecimalVal = async () => {
+    try {
+      const response = await axiosInstance({
+        ...GET_DECIMAL_VAL(),
+        baseURL: window.baseURL.administrator
+      })
+      setDecimalVal(response?.data?.decimalVal || 0)
     } catch (e) {
       return null
     }
@@ -269,6 +294,7 @@ const CommonType = () => {
     getProcessList()
     getContractLogistic()
     getImgSettings()
+    getDecimalVal()
   }
 
   useEffect(() => {
@@ -285,6 +311,8 @@ const CommonType = () => {
       getProcessList()
       getContractLogistic()
       getImgSettings()
+      getDecimalVal()
+      initWeightUnit()
     }
   }, [])
 
@@ -302,6 +330,8 @@ const CommonType = () => {
     processType,
     contractLogistic,
     imgSettings,
+    decimalVal,
+    weightUnits,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -314,7 +344,8 @@ const CommonType = () => {
     getManuList,
     getProcessList,
     getContractLogistic,
-    getImgSettings
+    getImgSettings,
+    getDecimalVal
   }
 }
 

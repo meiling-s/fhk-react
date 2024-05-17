@@ -21,6 +21,7 @@
     "no": "否",
     "createdDatetime": "建立時間",
     "lastUpdateDatetime": "上次更新時間",
+    "details": "詳情",
     "pckgCategory:": "包裝類別"
   },
   "col": {
@@ -75,8 +76,7 @@
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
-      "startDateBehindEndDate": "如果開始日期晚於結束日期則不允許",
-      "endDateEarlyThanStartDate": "如果結束日期早於開始日期則不允許",
+      "startDateBehindEndDate": "不允許開始時間晚於結束時間",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字"
     }
   },
@@ -138,7 +138,8 @@
     "location": "實體地點",
     "place": "地點",
     "status": "狀態",
-    "recyclable_subcategories": "回收物類別"
+    "recyclable_subcategories": "回收物類別",
+    "enter_tenantId": "輸入租戶 ID"
   },
   "add_warehouse_page": {
     "save": "儲存",
@@ -1107,26 +1108,6 @@
     "offsite": "上門回收服務",
     "community": "社區收集點",
     "service_type": "服務種類"
-  },
-  "logisticDashboard": {
-    "searchDriver": "搜索司機方向",
-    "driverInfo": "您正在搜索的司機",
-    "driverNumb": "司機號碼",
-    "driverLicense": "駕駛證",
-    "vehicleCategory": "車輛類別",
-    "receivingLocation": "接收位置",
-    "receiptDate": "收據日期",
-    "received": "已收到",
-    "notReceived": "未收到",
-    "logisticsCompany": "物流公司",
-    "poNumber": "採購訂單號",
-    "shippingAddress": "送貨地址",
-    "recyclingCategory:": "回收類別",
-    "packingQty": "包裝數量",
-    "packingWeight": "包裝重量",
-    "recyc": "回收類別",
-    "packageName": "包裝類別",
-    "inputDriverNumber": "請輸入司機號碼"
   },
   "dashboard_recyclables": {
     "data": "數據",

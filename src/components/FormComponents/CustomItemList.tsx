@@ -61,7 +61,8 @@ function CustomItemList({
         }else if(defaultSelected && !Array.isArray(defaultSelected)){
             setSelectSingle(defaultSelected);
         }
-    },[])
+    },[defaultSelected])
+    
     if(!(singleSelect || multiSelect)){        //if none of the select method exist
         return(
             <></>
@@ -143,6 +144,7 @@ function CustomItemList({
                         key={index}
                         variant="outlined"
                         sx={error? localstyles.error : returnTheme(item.id)}
+                        style={{marginRight: '6px', marginBottom: '6px'}}
                         onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}
                         onDoubleClick={() => {dbClickSelect && handleSelect(item.id)}}>
                         {item.name}
