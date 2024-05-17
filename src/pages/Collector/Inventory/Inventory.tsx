@@ -303,6 +303,10 @@ const Inventory: FunctionComponent = () => {
       value: option,
       label: option,
     }));
+    options.push({
+      value: '',
+      label: "any",
+    })
     return options
   }
 
@@ -327,29 +331,36 @@ const Inventory: FunctionComponent = () => {
   }, [])
 
   const handleSearch = (label: string, value: string) => {
-    console.log(label, 'label')
     if (label == 'recycTypeId') {
-      const filtered: InventoryItem[] = inventoryList.filter(item => item.recycTypeId == value)
-      if (filtered) {
-        setFilteredInventory(filtered)
-      } else {
+      if (value === "") {
         setFilteredInventory(inventoryList)
+      } else {
+        const filtered: InventoryItem[] = inventoryList.filter(item => item.recycTypeId == value)
+        if (filtered) {
+          setFilteredInventory(filtered)
+        } else {
+          setFilteredInventory(inventoryList)
+        }
       }
     }
 
     if (label == "recycSubTypeId") {
-      const filtered: InventoryItem[] = inventoryList.filter(item => item.recycSubTypeId == value)
-      if (filtered) {
-        setFilteredInventory(filtered)
-      } else {
+      if (value === "") {
         setFilteredInventory(inventoryList)
+      } else {
+        const filtered: InventoryItem[] = inventoryList.filter(item => item.recycSubTypeId == value)
+        if (filtered) {
+          setFilteredInventory(filtered)
+        } else {
+          setFilteredInventory(inventoryList)
+        }
       }
     }
 
     if (label == "search") {
       if (value == "") return setFilteredInventory(inventoryList)
       const filtered: InventoryItem[] = inventoryList.filter(item => item.recyclingNumber == value)
-      
+
       if (filtered) {
         setFilteredInventory(filtered)
       } else {
@@ -360,7 +371,7 @@ const Inventory: FunctionComponent = () => {
     if (label == 'location') {
       if (value == "") return setFilteredInventory(inventoryList)
       const filtered: InventoryItem[] = inventoryList.filter(item => item.location == value)
-      
+
       if (filtered) {
         setFilteredInventory(filtered)
       } else {
