@@ -176,7 +176,7 @@ const DenialReason: FunctionComponent = () => {
   };
   useEffect(() => {
     initFunctionList();
-  }, [])
+  }, [i18n.language])
   
   useEffect(() => {
     initDenialReasonList();
@@ -424,6 +424,7 @@ const DenialReason: FunctionComponent = () => {
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}
+            denialReasonlist={DenialReasonList}
           />
         )}
       </Box>

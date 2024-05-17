@@ -6,10 +6,17 @@ import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { editDisposalLocation, createDisposalLocation } from '../../../APICalls/Collector/disposalLocation'
+import {
+  editDisposalLocation,
+  createDisposalLocation
+} from '../../../APICalls/Collector/disposalLocation'
 import { returnErrorMsg } from '../../../utils/utils'
 import { formErr, localStorgeKeyName } from '../../../constants/constant'
-import { DisposalLocation, CreateDisposalLocation as CreateDisposalLocationItem,UpdateDisposalLocation } from '../../../interfaces/disposalLocation'
+import {
+  DisposalLocation,
+  CreateDisposalLocation as CreateDisposalLocationItem,
+  UpdateDisposalLocation
+} from '../../../interfaces/disposalLocation'
 
 interface CreateDisposalLocation {
   drawerOpen: boolean
@@ -17,6 +24,7 @@ interface CreateDisposalLocation {
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
   selectedItem?: DisposalLocation | null
+  disposalList: DisposalLocation[]
 }
 
 interface FormValues {
@@ -28,7 +36,8 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   handleDrawerClose,
   action,
   onSubmitData,
-  selectedItem
+  selectedItem,
+  disposalList = []
 }) => {
   const { t } = useTranslation()
 
@@ -37,12 +46,15 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     disposalLocNameEng: '',
     disposalLocNameSchi: '',
     description: '',
-    remark: '',
+    remark: ''
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
+  const [existingDisposal, setExistingDisposal] = useState<DisposalLocation[]>(
+    []
+  )
 
   const staffField = [
     {
@@ -84,8 +96,15 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
         disposalLocNameEng: selectedItem.disposalLocNameEng,
         disposalLocNameSchi: selectedItem.disposalLocNameSchi,
         description: selectedItem.description,
-        remark: selectedItem.remark,
+        remark: selectedItem.remark
       })
+
+      //set existing disposal
+      setExistingDisposal(
+        disposalList.filter(
+          (item) => item.disposalLocId != selectedItem.disposalLocId
+        )
+      )
     }
   }
 
@@ -97,9 +116,14 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
 
   useEffect(() => {
     if (action !== 'add') {
+      setValidation([])
+      setTrySubmited(false)
       mappingData()
     } else {
       resetFormData()
+      setValidation([])
+      setTrySubmited(false)
+      setExistingDisposal(disposalList)
     }
   }, [drawerOpen])
 
@@ -127,8 +151,41 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
           type: 'error'
         })
     })
+
+    existingDisposal.forEach((item) => {
+      if (
+        item.disposalLocNameTchi.toLowerCase() ===
+        formData.disposalLocNameTchi.toLowerCase()
+      ) {
+        tempV.push({
+          field: t('common.traditionalChineseName'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      }
+      if (
+        item.disposalLocNameSchi.toLowerCase() ===
+        formData.disposalLocNameSchi.toLowerCase()
+      ) {
+        tempV.push({
+          field: t('common.simplifiedChineseName'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      }
+      if (
+        item.disposalLocNameEng.toLowerCase() ===
+        formData.disposalLocNameEng.toLowerCase()
+      ) {
+        tempV.push({
+          field: t('common.englishName'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      }
+    })
     setValidation(tempV)
-    return tempV.length === 0;
+    return tempV.length === 0
   }
 
   useEffect(() => {
@@ -149,7 +206,7 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   }
 
   const handleSubmit = async () => {
-    const isValid = await validate();
+    const isValid = await validate()
     if (isValid) {
       const staffData: CreateDisposalLocationItem = {
         disposalLocNameTchi: formData.disposalLocNameTchi,
@@ -170,11 +227,13 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
         handleEditDisposalLocation()
       }
     } else {
-      setTrySubmited(true);
+      setTrySubmited(true)
     }
   }
 
-  const handleCreateDisposalLocation = async (staffData: CreateDisposalLocationItem) => {
+  const handleCreateDisposalLocation = async (
+    staffData: CreateDisposalLocationItem
+  ) => {
     if (validation.length === 0) {
       const result = await createDisposalLocation(staffData)
       if (result?.data) {
@@ -205,7 +264,10 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     }
     if (validation.length == 0) {
       if (selectedItem != null) {
-        const result = await editDisposalLocation(selectedItem.disposalLocId, editData)
+        const result = await editDisposalLocation(
+          selectedItem.disposalLocId,
+          editData
+        )
         if (result) {
           onSubmitData('success', t('common.editSuccessfully'))
           resetFormData()
@@ -231,7 +293,10 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
       locationGps: []
     }
     if (selectedItem != null) {
-      const result = await editDisposalLocation(selectedItem.disposalLocId, editData)
+      const result = await editDisposalLocation(
+        selectedItem.disposalLocId,
+        editData
+      )
       if (result) {
         onSubmitData('success', t('common.deletedSuccessfully'))
         resetFormData()
@@ -281,7 +346,7 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            {staffField.map((item, index) =>
+            {staffField.map((item, index) => (
               <Grid item key={index}>
                 <CustomField label={item.label} mandatory>
                   <CustomTextField
@@ -301,7 +366,7 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
                   />
                 </CustomField>
               </Grid>
-            )}
+            ))}
             <Grid item>
               {trySubmited &&
                 validation.map((val, index) => (
