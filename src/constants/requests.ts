@@ -50,6 +50,13 @@ export const UPDATE_TENANT_REGISTER = (
   url: `api/v1/account/t/updateInfo/${tenantId}`
 })
 
+export const UPDATE_TENANT_INFO = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/account/t/${tenantId}`
+})
+
 export const GET_TENANT_BY_TENANT_ID = (
   tenantId: number
 ): AxiosRequestConfig => ({

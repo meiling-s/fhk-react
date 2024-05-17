@@ -6,7 +6,8 @@ import {
   GET_TENANT_BY_TENANT_ID,
   UPDATE_TENANT_REGISTER,
   UPDATE_TENANT_STATUS,
-  SEND_EMAIL_INVITATION
+  SEND_EMAIL_INVITATION,
+  UPDATE_TENANT_INFO
 } from '../constants/requests'
 import { RegisterItem } from '../interfaces/account'
 import { CreateTenant, UpdateStatus } from '../interfaces/tenant'
@@ -50,7 +51,7 @@ export const getAllTenant = async (page: number, size: number) => {
       },
       headers: {}
     })
-    console.log('Get all tenant success:', JSON.stringify(response.data))
+    //console.log('Get all tenant success:', JSON.stringify(response.data))
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)
@@ -75,7 +76,7 @@ export const searchTenantById = async (
       },
       headers: {}
     })
-    console.log('Get all tenant success:', JSON.stringify(response.data))
+    //console.log('Get all tenant success:', JSON.stringify(response.data))
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)
@@ -91,7 +92,7 @@ export const getTenantById = async (tenantId: number) => {
       ...GET_TENANT_BY_TENANT_ID(tenantId),
       headers: {}
     })
-    console.log('Get tenant by id success:', JSON.stringify(response.data))
+    //console.log('Get tenant by id success:', JSON.stringify(response.data))
     return response
   } catch (e) {
     console.error('Get tenant by id failed:', e)
@@ -112,10 +113,10 @@ export const updateTenantRegInfo = async (
       ...UPDATE_TENANT_REGISTER(tenantId),
       data: item
     })
-    console.log(
-      'Tenant register info update success:',
-      JSON.stringify(response.data)
-    )
+    // console.log(
+    //   'Tenant register info update success:',
+    //   JSON.stringify(response.data)
+    // )
     return response
   } catch (e) {
     console.error('Tenant register info update failed:', e)
@@ -133,10 +134,10 @@ export const updateTenantStatus = async (
       ...UPDATE_TENANT_STATUS(tenantId),
       data: item
     })
-    console.log(
-      'Tenant register status update success:',
-      JSON.stringify(response.data)
-    )
+    // console.log(
+    //   'Tenant register status update success:',
+    //   JSON.stringify(response.data)
+    // )
     return response
   } catch (e) {
     console.error('Tenant register status update failed:', e)
@@ -166,6 +167,24 @@ export const sendEmailInvitation = async (
     return response
   } catch (e) {
     console.error('send tenant invitation Failed:', e)
+    return null
+  }
+}
+
+export const updateTenantDetail = async (data: any, tenantId: string) => {
+  try {
+    const response = await axiosInstance({
+      baseURL: window.baseURL.account,
+      ...UPDATE_TENANT_INFO(tenantId),
+      data: data
+    })
+    // console.log(
+    //   'Tenant info details update success:',
+    //   JSON.stringify(response.data)
+    // )
+    return response
+  } catch (e) {
+    console.error('Tenant info details update failed:', e)
     return null
   }
 }
