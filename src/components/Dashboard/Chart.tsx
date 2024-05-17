@@ -17,6 +17,9 @@ import { useTranslation } from 'react-i18next'
 import dayjs from "dayjs";
 import { styles } from '../../constants/styles';
 import { Realm, localStorgeKeyName } from '../../constants/constant';
+import { useEffect, useState } from 'react';
+import { collectionPoint } from '../../interfaces/collectionPoint'
+import { getCollectionPoint } from '../../APICalls/collectionPointManage';
 
 ChartJS.register(
     CategoryScale,
@@ -46,12 +49,15 @@ type props = {
     onHandleSearch?:() => void
     frmDate:dayjs.Dayjs
     toDate:dayjs.Dayjs
-    collectionIds?: number[]
     title:string
-    onChangeColdId: (value: number | null) => void
-    colId:number | null
+    onChangeColdId?: (value: number | null) => void
     typeChart:string,
     canvasColor?: string
+}
+
+type Collection = {
+    colId: number,
+    colName: string
 }
 
 const Chart = ({
@@ -61,15 +67,16 @@ const Chart = ({
     onChangeToDate,
     frmDate,
     toDate,
-    collectionIds,
     title,
     onChangeColdId,
-    colId,
     typeChart,
     canvasColor
 }:props) => {
     const { t } = useTranslation()
     const realm = localStorage.getItem(localStorgeKeyName.realm);
+    const [collectionPoint, setCollectionPoint] = useState<Collection[]>([])
+    const [collection, setCollection] = useState<Collection>({colId: 0, colName: ''})
+
     const plugin = {
         id: 'customCanvasBackgroundColor',
         beforeDraw: (chart:any, args:any, options:any) => {
@@ -141,6 +148,27 @@ const Chart = ({
             break;
     }
 
+    const initCollectionPoint = async () => {
+        const result = await getCollectionPoint(0, 1000)
+        const data = result?.data.content
+        
+        if (data && data.length > 0) {
+          const collectionPoint: Collection[] = []
+          data.map((item: collectionPoint) => {
+            if(item?.colId) collectionPoint.push({
+                colId: Number(item.colId),
+                colName: item.colName
+            })
+          })
+    
+          setCollectionPoint(collectionPoint)
+        }
+    }
+
+    useEffect(() => {
+        if(realm === Realm.collector) initCollectionPoint()
+    }, [realm])
+
     return(
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">               
@@ -186,13 +214,20 @@ const Chart = ({
                             <Autocomplete
                                 disablePortal
                                 id="collectionIds"
-                                defaultValue={0}
-                                options={collectionIds ? collectionIds : []}
-                                getOptionLabel={(option) => option.toString()}
+                                defaultValue={collection}
+                                options={collectionPoint}
+                                getOptionLabel={(option) => option.colName}
                                 onChange={(event, value) => {
-                                    onChangeColdId(value)
+                                    if(value){
+                                        setCollection(value)
+                                        onChangeColdId && onChangeColdId(value.colId)
+                                    } else {
+                                        setCollection({colId: 0, colName: ''})
+                                        onChangeColdId && onChangeColdId(null)
+                                    }
                                 }}
-                                value={colId}
+                                sx={{width: 200}}
+                                value={collection}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}

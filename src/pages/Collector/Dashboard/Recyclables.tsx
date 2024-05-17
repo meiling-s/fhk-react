@@ -42,25 +42,7 @@ const Recyclables: FunctionComponent = () => {
     const [dataset, setDataSet] = useState<Dataset[]>([])
     const [collectionIds, setCollectionIds] = useState<number[]>([])
     const [colId, setColId] = useState<number | null>(null)
-   
-    useEffect(() => {
-        initCollectionPoint()
-    }, [])
-
-    const initCollectionPoint = async () => {
-        const result = await getCollectionPoint(0, 1000)
-        const data = result?.data.content
-        
-        if (data && data.length > 0) {
-          const collectionPoint: number[] = []
-          data.map((item: collectionPoint) => {
-            if(item?.colId) collectionPoint.push(Number(item?.colId))
-          })
-    
-          setCollectionIds(collectionPoint)
-        }
-      }
-    
+       
     useEffect(() => {
         const changeLang = dataset.map(item => {
             return{
@@ -121,70 +103,6 @@ const Recyclables: FunctionComponent = () => {
                     data: getDataWeights(type.recyclableNameEng, labels.length),
                     backgroundColor: type?.backgroundColor ? type?.backgroundColor : randomBackgroundColor()
                 })
-                // if(type.recyclableNameEng === TypeRecycables.RECHARGEABLE_BATTERIES){
-                //     datasets.push({
-                //         id: type.recyclableNameEng,
-                //         label: getLabel(type.recyclableNameEng),
-                //         data: getDataWeights(type.recyclableNameEng, labels.length),
-                //         backgroundColor: randomBackgroundColor()
-                //     })
-                // } else if(type.recyclableNameEng === TypeRecycables.GLASS_BOTTLES){
-                //     datasets.push({
-                //         id: type.recyclableNameEng,
-                //         label: getLabel(type.recyclableNameEng),
-                //         data: getDataWeights(type.recyclableNameEng, labels.length),
-                //         backgroundColor: randomBackgroundColor()
-                //     })
-                // } else if(type.recyclableNameEng === TypeRecycables.PAPER){ 
-                //     datasets.push({
-                //         id: type.recyclableNameEng,
-                //         label: getLabel(type.recyclableNameEng),
-                //         data: getDataWeights(type.recyclableNameEng, labels.length),
-                //         backgroundColor: randomBackgroundColor()
-                //     })
-                // } else if(type.recyclableNameEng === TypeRecycables.FLUORESCENT_LAMPS_AND_TUBES){ 
-                //     datasets.push({
-                //         id: type.recyclableNameEng,
-                //         label: getLabel(type.recyclableNameEng),
-                //         data: getDataWeights(type.recyclableNameEng, labels.length),
-                //         backgroundColor: randomBackgroundColor()
-                //     })
-                // } else if(type.recyclableNameEng === TypeRecycables.SMALL_ELETRICAL_APPLIANCES){ 
-                //     datasets.push({
-                //         id: type.recyclableNameEng,
-                //         label: getLabel(type.recyclableNameEng),
-                //         data: getDataWeights(type.recyclableNameEng, labels.length),
-                //         backgroundColor: randomBackgroundColor()
-                //     })
-                // } else if(type.recyclableNameEng === TypeRecycables.PLASTICS){
-                //     datasets.push({
-                //         id: type.recyclableNameEng,
-                //         label: getLabel(type.recyclableNameEng),
-                //         data: getDataWeights(type.recyclableNameEng, labels.length),
-                //         backgroundColor: randomBackgroundColor()
-                //     })
-                // } else if(type.recyclableNameEng === TypeRecycables.NON_RECYCLABLE){
-                //     datasets.push({
-                //         id: type.recyclableNameEng,
-                //         label: getLabel(type.recyclableNameEng),
-                //         data: getDataWeights(type.recyclableNameEng, labels.length),
-                //         backgroundColor: randomBackgroundColor()
-                //     })
-                // } else if(type.recyclableNameEng === TypeRecycables.CARDBOARD){
-                //     datasets.push({
-                //         id: type.recyclableNameEng,
-                //         label: getLabel(type.recyclableNameEng),
-                //         data: getDataWeights(type.recyclableNameEng, labels.length),
-                //         backgroundColor: randomBackgroundColor()
-                //     })
-                // } else if(type.recyclableNameEng === TypeRecycables.Metals){
-                //     datasets.push({
-                //         id: type.recyclableNameEng,
-                //         label: getLabel(type.recyclableNameEng),
-                //         data: getDataWeights(type.recyclableNameEng, labels.length),
-                //         backgroundColor: randomBackgroundColor()
-                //     })
-                // }
             }
 
             setLabels(labels)
@@ -199,6 +117,7 @@ const Recyclables: FunctionComponent = () => {
     const onHandleSearch = () => {
         getRecyclablesDashboard()
     }
+
     const onChangeColdId = (value: number | null) => {
         setColId(value)
     }
@@ -216,9 +135,7 @@ const Recyclables: FunctionComponent = () => {
                 onHandleSearch={onHandleSearch}
                 frmDate={frmDate}
                 toDate={toDate}
-                collectionIds={collectionIds}
                 onChangeColdId={onChangeColdId}
-                colId={colId}
                 title={t('dashboard_recyclables.recycling_data')}
                 typeChart="bar"
             />

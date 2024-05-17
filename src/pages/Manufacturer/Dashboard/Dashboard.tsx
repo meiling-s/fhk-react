@@ -62,7 +62,7 @@ const Recyclables: FunctionComponent = () => {
     const [toDateProcessing, setToDateProcessing] = useState<dayjs.Dayjs>(dayjs())
     const [frmDateProduct, setFrmDateProduct] = useState<dayjs.Dayjs>(dayjs().subtract(6, 'month'))
     const [toDateProduct, setToDateProduct] = useState<dayjs.Dayjs>(dayjs())
-    const [colId, setColId] = useState<number | null>(null);
+
     const processingType = [
         {
             id: '1',
@@ -382,9 +382,9 @@ const Recyclables: FunctionComponent = () => {
     }, [i18n.language])
 
 
-    const onChangeColdId = (value: number | null) => {
-        setColId(value)
-    }
+    // const onChangeColdId = (value: number | null) => {
+    //     setColId(value)
+    // }
     
     return(
         <Box >
@@ -399,8 +399,8 @@ const Recyclables: FunctionComponent = () => {
                 onChangeToDate={setToDateWeigth}
                 frmDate={frmDateWeight}
                 toDate={toDateWeight}
-                onChangeColdId={onChangeColdId}
-                colId={colId}
+                // onChangeColdId={onChangeColdId}
+                // colId={colId}
                 title={t('dashboard_manufacturer.recycling_station')}
                 typeChart="bar"
             />
@@ -413,8 +413,8 @@ const Recyclables: FunctionComponent = () => {
                 onChangeToDate={setToDateProduct}
                 frmDate={frmDateProduct}
                 toDate={toDateProduct}
-                onChangeColdId={onChangeColdId}
-                colId={colId}
+                // onChangeColdId={onChangeColdId}
+                // colId={colId}
                 title={t('dashboard_manufacturer.recycled_product')}
                 typeChart="line"
                 canvasColor="#F4F4F4"
@@ -428,8 +428,8 @@ const Recyclables: FunctionComponent = () => {
                 onChangeToDate={setToDateProcessing}
                 frmDate={frmDateProcessing}
                 toDate={toDateProcessing}
-                onChangeColdId={onChangeColdId}
-                colId={colId}
+                // onChangeColdId={onChangeColdId}
+                // colId={colId}
                 title={t('dashboard_manufacturer.recycling_processing_types')} 
                 typeChart="bar"
             />
