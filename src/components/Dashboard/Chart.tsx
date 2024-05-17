@@ -6,14 +6,20 @@ import {
   Title,
   Tooltip,
   Legend,
+  PointElement,
+  LineElement
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import {Autocomplete, Grid, TextField, Typography } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
 import dayjs from "dayjs";
 import { styles } from '../../constants/styles';
+import { Realm, localStorgeKeyName } from '../../constants/constant';
+import { useEffect, useState } from 'react';
+import { collectionPoint } from '../../interfaces/collectionPoint'
+import { getCollectionPoint } from '../../APICalls/collectionPointManage';
 
 ChartJS.register(
     CategoryScale,
@@ -21,7 +27,9 @@ ChartJS.register(
     BarElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    PointElement,
+    LineElement
 );
 
 interface Dataset{
@@ -29,6 +37,8 @@ interface Dataset{
     label: string,
     data: number[],
     backgroundColor: string,
+    borderColor?: string,
+    yAxisID?: string
 }
 
 type props = {
@@ -36,43 +46,72 @@ type props = {
     dataset:Dataset[]|[]
     onChangeFromDate: (value: dayjs.Dayjs ) => void
     onChangeToDate:(value: dayjs.Dayjs) => void
-    onHandleSearch:() => void
+    onHandleSearch?:() => void
     frmDate:dayjs.Dayjs
     toDate:dayjs.Dayjs
-    collectionIds?: number[]
     title:string
-    onChangeColdId: (value: number | null) => void
-    colId:number | null
+    onChangeColdId?: (value: number | null) => void
+    typeChart:string,
+    canvasColor?: string
 }
 
-const Dashboard = ({
+type Collection = {
+    colId: number,
+    colName: string
+}
+
+const Chart = ({
     labels, 
     dataset, 
     onChangeFromDate,
     onChangeToDate,
     frmDate,
     toDate,
-    collectionIds,
     title,
     onChangeColdId,
-    colId
+    typeChart,
+    canvasColor
 }:props) => {
     const { t } = useTranslation()
+    const realm = localStorage.getItem(localStorgeKeyName.realm);
+    const [collectionPoint, setCollectionPoint] = useState<Collection[]>([])
+    const [collection, setCollection] = useState<Collection>({colId: 0, colName: ''})
 
-    const options: any = {
+    const plugin = {
+        id: 'customCanvasBackgroundColor',
+        beforeDraw: (chart:any, args:any, options:any) => {
+          const {ctx, chartArea} = chart;
+          ctx.save();
+          ctx.globalCompositeOperation = 'destination-over';
+          ctx.fillStyle = canvasColor? canvasColor : 'white';
+          ctx.fillRect(chartArea.left, 0, chartArea.width, chart.height);
+          ctx.restore();
+        }
+      };
+
+    let options: any = {
         plugins: {
           title: {
             display: false,
             text: 'Chart.js Bar Chart - Stacked',
           },
+          labels: {
+            align: 'center',
+            
+          },
           legend: {
             labels: {
                 usePointStyle: true,
+                fontColor: '#717171',
             },
             position: 'right',
+            align: 'start',
             pointStyle: 'circle',
             usePointStyle: true,
           },
+          customCanvasBackgroundColor: {
+            color: '',
+          }
         },
         responsive: true,
         maintainAspectRatio: false,
@@ -85,7 +124,7 @@ const Dashboard = ({
             ticks: {
                 // Include a dollar sign in the ticks
                 callback: function(value: string) :string{
-                    return value  + 'Kg';
+                    return value  + ' Kg';
                 }
             }
           },
@@ -97,19 +136,46 @@ const Dashboard = ({
         datasets: dataset,
     };
 
+    let chart:JSX.Element = <div></div>
+    switch(typeChart){
+        case('bar'):
+            chart =  <Bar options={options} data={data} plugins={[plugin]}/>
+            break;
+        case('line'):
+            chart =  <Line options={options} data={data} plugins={[plugin]}/>
+            break;
+        default:
+            break;
+    }
+
+    const initCollectionPoint = async () => {
+        const result = await getCollectionPoint(0, 1000)
+        const data = result?.data.content
+        
+        if (data && data.length > 0) {
+          const collectionPoint: Collection[] = []
+          data.map((item: collectionPoint) => {
+            if(item?.colId) collectionPoint.push({
+                colId: Number(item.colId),
+                colName: item.colName
+            })
+          })
+    
+          setCollectionPoint(collectionPoint)
+        }
+    }
+
+    useEffect(() => {
+        if(realm === Realm.collector) initCollectionPoint()
+    }, [realm])
+
     return(
         <>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
-                <Grid style={{display: 'flex', alignItems: 'center', height: '80px', padding: '20px, 20px, 0px, 20px', gap: '40px', backgroundColor: '#F4F5F7'}}>
-                    <Typography style={{fontWeight: '700', color: '#000000', fontSize: '22px'}}>
-                        {title}
-                    </Typography>
-                </Grid>
-                
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">               
                 <Grid style={{width: '100%', height: '518px', padding: '38px, 55px, 38px, 55px', gap: '10px', backgroundColor: '#F4F5F7'}}>
                     <Grid style={{display: 'flex', flexDirection: 'column', width: '100%', height: '465px', padding: '30px', gap: '10px', backgroundColor: '#FFFFFF', borderRadius: '30px'}}>
                         <Typography style={{fontWeight: 700, fontSize: '18px', color: '#717171' }}>
-                            {t('dashboard_recyclables.different_recycling_weights')}
+                            {title}
                         </Typography>
                         <Grid style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                             <Grid  item style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: 1, border: '1px solid #E2E2E2', height: '40px', padding: '8px', borderRadius: '6px'}} >
@@ -144,15 +210,24 @@ const Dashboard = ({
                                 />
                            </Grid>
 
+                           {realm === Realm.collector && (
                             <Autocomplete
                                 disablePortal
                                 id="collectionIds"
-                                defaultValue={0}
-                                options={collectionIds ? collectionIds : []}
+                                defaultValue={collection}
+                                options={collectionPoint}
+                                getOptionLabel={(option) => option.colName}
                                 onChange={(event, value) => {
-                                    onChangeColdId(value)
+                                    if(value){
+                                        setCollection(value)
+                                        onChangeColdId && onChangeColdId(value.colId)
+                                    } else {
+                                        setCollection({colId: 0, colName: ''})
+                                        onChangeColdId && onChangeColdId(null)
+                                    }
                                 }}
-                                value={colId}
+                                sx={{width: 200}}
+                                value={collection}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
@@ -166,10 +241,10 @@ const Dashboard = ({
                                     />
                                 )}
                             />
-                        
+                            )}
                         </Grid>
                         <Grid style={{height: '295px', width: '1200px'}}>
-                            <Bar options={options} data={data}/>
+                            {chart}
                         </Grid>
                     </Grid>
                     
@@ -189,4 +264,4 @@ const localstyles = {
     })
   }
 
-export default Dashboard
+export default Chart;
