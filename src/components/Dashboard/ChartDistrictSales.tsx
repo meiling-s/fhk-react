@@ -22,6 +22,31 @@ import { useContainer } from 'unstated-next';
 import i18n from '../../setups/i18n';
 import { Languages } from '../../constants/constant';
 
+interface Properties {
+    name: string,
+    name_english: string,
+    name_simplified: string,
+    name_traditional: string
+}
+
+interface Geometry {
+    type: string
+    coordinates: []
+}
+interface District{
+    type: string,
+    id: string,
+    properties: Properties,
+    geometry: Geometry
+}
+
+interface Dataset {
+    feature: District
+    value?:  number,
+    weight?:  number,
+    recyc_weight: any
+}
+
 ChartJS.register(
     Title,
     Tooltip,
@@ -38,8 +63,8 @@ const ChartDistrictSales = () => {
     const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
     const chartRef = useRef();
-    const [dataset, setDataset] = useState<any>([]);
-    const [recycTypeId, setRecycTypeId] = useState<string|null>(null);
+    const [dataset, setDataset] = useState<Dataset[]>([]);
+    const [recycable, setRecyable] = useState<{recycTypeId: string|null|undefined, text: string}>({recycTypeId: null, text: ''})
 
     const colors:string[] = ['#6FBD33','#88D13D','#AED982','#D3E3C3','#CCCCCC'];
     const { recycType } = useContainer(CommonTypeContainer);
@@ -78,9 +103,9 @@ const ChartDistrictSales = () => {
     const footerTooltip = (tooltipItems:any[]) => {
         let total:number = 0;
         const weights = tooltipItems[0]?.raw?.recyc_weight;
-        if(recycTypeId){
+        if(recycable.recycTypeId){
             for(let [key, value] of  Object.entries(weights)){
-                if(recycTypeId && key === recycTypeId){
+                if(recycable.recycTypeId && key === recycable.recycTypeId){
                     total += Number(value);
                 } 
            }
@@ -93,11 +118,11 @@ const ChartDistrictSales = () => {
         return total + ' Kg';
     };
 
-    const onChangeRecycTypeId = (value: string|null) => {
-        setRecycTypeId(value)
+    const onChangeRecycTypeId = (value: {recycTypeId: string | undefined | null, text: string}) => {
+        setRecyable(value)
     }
 
-    const getDistrictName = (properties:any):string => {
+    const getDistrictName = (properties:Properties):string => {
         let language:string = ''
         if(i18n.language === Languages.ENUS){
             language = properties.name_english
@@ -110,7 +135,7 @@ const ChartDistrictSales = () => {
     }
 
     const changeDistrictLanguangeName = () => {
-        const district = dataset.map((item:any) => {
+        const district = dataset.map((item:Dataset) => {
             return{
                 ...item,
                 feature: {
@@ -129,6 +154,37 @@ const ChartDistrictSales = () => {
         changeDistrictLanguangeName()
     }, [i18n.language])
 
+    const getRecyable = ():{recycTypeId: string, text: string}[] => {
+        let recycables: {recycTypeId: string, text: string}[] = [];
+        if(i18n.language === Languages.ENUS){
+            const recycable = recycType?.map(item => {
+                return{
+                    recycTypeId: item.recycTypeId,
+                    text: item.recyclableNameEng
+                }
+            })
+            if(recycable) recycables = recycable
+        } else if(i18n.language === Languages.ZHCH){
+            const recycable = recycType?.map(item => {
+                return{
+                    recycTypeId: item.recycTypeId,
+                    text: item.recyclableNameSchi
+                }
+            })
+            if(recycable) recycables = recycable
+        } else {
+            const recycable = recycType?.map(item => {
+                return{
+                    recycTypeId: item.recycTypeId,
+                    text: item.recyclableNameTchi
+                }
+            })
+            if(recycable) recycables = recycable
+        }
+
+        return recycables
+    }
+
     return(
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">               
@@ -142,13 +198,15 @@ const ChartDistrictSales = () => {
                                 <Autocomplete
                                     disablePortal
                                     id="recycTypeId"
-                                    defaultValue={recycTypeId}
-                                    options={recycType ? recycType?.map(item =>  item.recycTypeId).sort() : []}
+                                    defaultValue={recycable}
+                                    options={getRecyable()}
+                                    getOptionLabel={(option) => option.text}
                                     onChange={(event, value) => {
-                                        onChangeRecycTypeId(value)
+                                        if(value) onChangeRecycTypeId(value)
+                                        else onChangeRecycTypeId({recycTypeId: null, text: ''})
                                     }}
                                     sx={{width: 170}}
-                                    value={recycTypeId}
+                                    value={recycable}
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}

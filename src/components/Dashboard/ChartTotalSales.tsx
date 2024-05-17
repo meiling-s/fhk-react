@@ -30,8 +30,8 @@ const ChartTotalSales = () => {
     const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
     const [dataset, setDataset] = useState<Dataset>({total_weight: 0, sales: []});
-    const [recycTypeId, setRecycTypeId] = useState<string|null>(null);
     const [datasetBackup, setDatasetBackup] = useState<Dataset>({total_weight: 0, sales: []});
+    const [recycable, setRecyable] = useState<{recycTypeId: string|null|undefined, text: string}>({recycTypeId: null, text: ''})
 
     const getLabel = (type: string): string => {
         let languages:string = ''
@@ -80,13 +80,13 @@ const ChartTotalSales = () => {
 
     useEffect(() => {
         
-        if(!recycTypeId){
+        if(!recycable?.recycTypeId){
             initTotalSales()
             return
         }
-        const recycable = recycType?.find(item => item.recycTypeId === recycTypeId);
-        if(!recycable) return
-        const label = recycable?.recyclableNameEng
+        const recycables = recycType?.find(item => item.recycTypeId === recycable.recycTypeId);
+        if(!recycables) return
+        const label = recycables?.recyclableNameEng
         let weight:number = 0;
         const sales:DataSales[] = []
         for(let data of datasetBackup.sales){
@@ -104,7 +104,7 @@ const ChartTotalSales = () => {
                 sales : sales
             }
         })
-    }, [recycTypeId])
+    }, [recycable.recycTypeId])
 
     useEffect(() => {
         const datsetLang = {
@@ -125,8 +125,39 @@ const ChartTotalSales = () => {
        }, 1000);
     }, [frmDate, toDate, recycType])
 
-    const onChangeRecycTypeId = (value: string|null) => {
-        setRecycTypeId(value)
+    const onChangeRecycTypeId = (value: {recycTypeId: string | undefined | null, text: string}) => {
+        setRecyable(value)
+    }
+
+    const getRecyable = ():{recycTypeId: string, text: string}[] => {
+        let recycables: {recycTypeId: string, text: string}[] = [];
+        if(i18n.language === Languages.ENUS){
+            const recycable = recycType?.map(item => {
+                return{
+                    recycTypeId: item.recycTypeId,
+                    text: item.recyclableNameEng
+                }
+            })
+            if(recycable) recycables = recycable
+        } else if(i18n.language === Languages.ZHCH){
+            const recycable = recycType?.map(item => {
+                return{
+                    recycTypeId: item.recycTypeId,
+                    text: item.recyclableNameSchi
+                }
+            })
+            if(recycable) recycables = recycable
+        } else {
+            const recycable = recycType?.map(item => {
+                return{
+                    recycTypeId: item.recycTypeId,
+                    text: item.recyclableNameTchi
+                }
+            })
+            if(recycable) recycables = recycable
+        }
+
+        return recycables
     }
     
     return(
@@ -138,13 +169,15 @@ const ChartTotalSales = () => {
                             <Autocomplete
                                 disablePortal
                                 id="recycTypeId"
-                                defaultValue={recycTypeId}
-                                options={recycType ? recycType?.map(item =>  item.recycTypeId).sort() : []}
+                                defaultValue={recycable}
+                                options={getRecyable()}
+                                getOptionLabel={(option) => option.text}
                                 sx={{width: 170}}
                                 onChange={(event, value) => {
-                                    onChangeRecycTypeId(value)
+                                    if(value) onChangeRecycTypeId(value)
+                                    else onChangeRecycTypeId({recycTypeId: null, text: ''})
                                 }}
-                                value={recycTypeId}
+                                value={recycable}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
