@@ -20,6 +20,7 @@ import dayjs from 'dayjs'
 import { format } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import { localStorgeKeyName } from '../../../constants/constant'
+import { formatWeight } from '../../../utils/utils'
 
 type RecycItem = {
   recycType: il_item
@@ -41,7 +42,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
   handleDrawerClose
 }) => {
   const { t } = useTranslation()
-  const { recycType } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal } = useContainer(CommonTypeContainer)
   const [selectedDetail, setSelectedDetail] = useState<
     CheckoutDetail[] | undefined
   >([])
@@ -240,7 +241,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                       </div>
                     </div>
                     <div className="weight font-bold font-base">
-                      {item.weight} kg
+                      { formatWeight(item.weight, decimalVal)} kg
                     </div>
                   </div>
                   <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">

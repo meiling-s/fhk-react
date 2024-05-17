@@ -215,7 +215,7 @@ const AssignDriver = ({
                                 <MonitorWeightOutlinedIcon />
                                 <label className='font-bold text-[#717171]'> {t('jobOrder.weight')}</label>
                             </div>
-                            <p className='flex-1 font-semibold text-[#535353]'>${item.weight}kg</p>
+                            <p className='flex-1 font-semibold text-[#535353]'>{item.weight}kg</p>
                         </div>
                         <div className='flex items-center'>
                             <div className='flex flex-1  items-center gap-x-1'>

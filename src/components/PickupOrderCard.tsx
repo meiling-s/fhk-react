@@ -1,15 +1,16 @@
 import { Box, Icon, Stack, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
 import CustomField from './FormComponents/CustomField'
 import StatusCard from './StatusCard'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
-import { PickupOrderDetail, PicoDetail } from '../interfaces/pickupOrder'
-import { getDtlById } from '../APICalls/Collector/pickupOrder/pickupOrder'
+import { PickupOrderDetail } from '../interfaces/pickupOrder'
 import LocalizeRecyctype from './TableComponents/LocalizeRecyctype'
 import { useTranslation } from 'react-i18next'
+import { formatWeight } from '../utils/utils'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../contexts/CommonTypeContainer'
 
 const PickupOrderCard = ({
   pickupOrderDetail
@@ -17,25 +18,9 @@ const PickupOrderCard = ({
   pickupOrderDetail: PickupOrderDetail[]
 }) => {
   const { t } = useTranslation()
-  // const [picoitemDetail, setPicoItemDetail] = useState<PicoDetail[]>([]);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const picoDtl: PicoDetail[] = [];
-  //     if (pickupOrderDetail) {
-  //       for (const podetail of pickupOrderDetail) {
-  //         console.log({})
-  //         const data = await getDtlById();
-  //         picoDtl.push(data);
-  //       }
-  //       setPicoItemDetail(picoDtl);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [pickupOrderDetail]);
 
   const recyc = LocalizeRecyctype(pickupOrderDetail)
-  // console.log(pickupOrderDetail);
-  console.log('recyc', recyc)
+  const { decimalVal } = useContainer(CommonTypeContainer)
 
   return (
     <>
@@ -128,7 +113,7 @@ const PickupOrderCard = ({
               </Typography>
             </Box>
             <Typography ml="60px" style={localstyles.mini_value}>
-              {podetail.weight} kg
+              { formatWeight(podetail.weight, decimalVal)} kg
             </Typography>
           </Box>
           <Box display="flex">

@@ -4,8 +4,10 @@ import axios from "axios";
 import { AXIOS_DEFAULT_CONFIGS } from "../../../constants/configs";
 import { GET_ALL_RECYCLE_TYPE } from "../../../constants/requests";
 import { useEffect, useState } from "react";
-import { returnApiToken } from "../../../utils/utils";
+import { formatWeight, returnApiToken } from "../../../utils/utils";
 import { useTranslation } from "react-i18next";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 
 const request = axios.create({
   baseURL: window.baseURL.collector
@@ -77,6 +79,7 @@ function packageBgColor(packaging: string){
 
 
 function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
+  const { decimalVal } = useContainer(CommonTypeContainer)
 
   const [recycType, setRecycType] = useState([])
   const {t} = useTranslation();
@@ -209,7 +212,7 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
                           <p className="text-gray-middle m-0">{recycleSubType(detail?.recycTypeId, detail?.recycSubTypeId)}</p>
                         </div>
                       </div>
-                      <p className="text-black font-bold">{detail?.weight}{unitName(detail?.unitId)} </p>
+                      <p className="text-black font-bold">{formatWeight(detail?.weight, decimalVal)}{unitName(detail?.unitId)} </p>
                     </div>
                   )
                 })}

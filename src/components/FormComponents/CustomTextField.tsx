@@ -1,5 +1,6 @@
-import { Button, InputAdornment, TextField, makeStyles } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import { styles } from "../../constants/styles";
+import { FocusEventHandler } from "react";
 
 type props = {
   id: string;
@@ -7,6 +8,7 @@ type props = {
   value?: string | number;
   defaultValue?: string | number;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined; 
   endAdornment?: JSX.Element;
   error?: boolean;
   className?: string;
@@ -25,6 +27,7 @@ function CustomTextField({
   value,
   defaultValue,
   onChange,
+  onBlur,
   endAdornment,
   error,
   className,
@@ -49,6 +52,7 @@ function CustomTextField({
       placeholder={placeholder}
       defaultValue={defaultValue ? defaultValue : ""}
       onChange={onChange}
+      onBlur={onBlur}
       sx={{ ...styles.textField, ...sx }}
       helperText={helperText}
       disabled={disabled}
