@@ -76,8 +76,7 @@
       "atLeastOnePicoExist": "至少需要一个 Pico 详细信息",
       "exceedsMaxLength": "不可超过一百个字符",
       "minMoreOneImgUploded": "至少需要上传2张车辆图片",
-      "startDateBehindEndDate": "如果开始日期晚于结束日期则不允许",
-      "endDateEarlyThanStartDate": "如果结束日期早于开始日期则不允许",
+      "startDateBehindEndDate": "不允许开始时间晚于结束时间",
       "loginIdCantContainAdmin": "'admin' 中不允许有单词"
     }
   },
@@ -139,7 +138,8 @@
     "location": "实体地点",
     "place": "地点",
     "status": "状态",
-    "recyclable_subcategories": "回收物类別"
+    "recyclable_subcategories": "回收物类別",
+    "enter_tenantId": "输入租户 ID"
   },
   "add_warehouse_page": {
     "save": "储存",
@@ -497,8 +497,7 @@
       "please_enter_the_reason": "请输入原因",
       "no_preference": "无特别偏好",
       "fifo": "先进先出（FIFO）",
-      "lifo": "后进先出（LIFO）",
-      "default_lang": "默认语言"
+      "lifo": "后进先出（LIFO）"
     }
   },
   "report": {
@@ -1061,7 +1060,6 @@
       "arrived": "到达地点"
     }
   },
-
   "recycling_unit": {
     "recycling_and_related_units": "回收物及相关单位",
     "recyclable_subtype_semi_complete": "回收物、半制成品、制成品类别",
@@ -1087,26 +1085,6 @@
     "offsite": "上门回收服务",
     "community": "社区收集点",
     "service_type": "服务种类"
-  },
-  "logisticDashboard": {
-    "searchDriver": "搜索司机方向",
-    "driverInfo": "您正在搜索的司机",
-    "driverNumb": "司机号码",
-    "driverLicense": "驾驶证",
-    "vehicleCategory": "车辆类别",
-    "receivingLocation": "接收位置",
-    "receiptDate": "收据日期",
-    "received": "已收到",
-    "notReceived": "未收到",
-    "logisticsCompany": "物流公司",
-    "poNumber": "采购订单号",
-    "shippingAddress": "送货地址",
-    "recyclingCategory:": "回收类别",
-    "packingQty": "包装数量",
-    "packingWeight": "包装重量",
-    "recyc": "回收类别",
-    "packageName": "包装类别",
-    "inputDriverNumber": "请输入司机号码"
   },
   "dashboard_recyclables": {
     "data": "数据",

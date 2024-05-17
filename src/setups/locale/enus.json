@@ -76,8 +76,7 @@
       "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
-      "startDateBehindEndDate": "not allowed if the start date is behind than the end date",
-      "endDateEarlyThanStartDate": "not allowed if the end date is earlier than the start date",
+      "startDateBehindEndDate": "not allowed the start time behind the end time",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'"
     }
   },
@@ -139,7 +138,8 @@
     "location": "Physical location",
     "place": "Place",
     "status": "Status",
-    "recyclable_subcategories": "Recyclable subcategories"
+    "recyclable_subcategories": "Recyclable subcategories",
+    "enter_tenantId": "Enter the tenant id"
   },
   "add_warehouse_page": {
     "save": "Save",
@@ -496,8 +496,7 @@
       "please_enter_the_reason": "Please enter the reason",
       "no_preference": "No preference",
       "fifo": "First in first out (FIFO)",
-      "lifo": "Last in, first out (LIFO)",
-      "default_lang": "Default Language"
+      "lifo": "Last in, first out (LIFO)"
     }
   },
   "report": {
@@ -1112,26 +1111,6 @@
     "offsite": "Off-site Collection Service",
     "community": "Community Collection Point",
     "service_type": "Service type"
-  },
-  "logisticDashboard": {
-    "searchDriver": "Search for driver directions",
-    "driverInfo": "The driver you are searching for",
-    "driverNumb": "Driver number",
-    "driverLicense": "Driving license",
-    "vehicleCategory": "Vehicle Category",
-    "receivingLocation": "Receiving location",
-    "receiptDate": "Receipt date",
-    "received": "received",
-    "notReceived": "Not received",
-    "logisticsCompany": "Logistics Company",
-    "poNumber": "PO Number",
-    "shippingAddress": "Shipping address",
-    "recyclingCategory:": "Recycling category",
-    "packingQty": "Packing quantity",
-    "packingWeight": "Packing weight",
-    "recyc": "Recycling category",
-    "packageName" : "Package category ",
-    "inputDriverNumber": "Please enter driver Id"
   },
   "dashboard_recyclables": {
     "data": "Data",
