@@ -2,10 +2,7 @@ import { ImageListType } from 'react-images-uploading'
 import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
-<<<<<<< HEAD
 import { fieldNameRecycables } from '../constants/constant'
-=======
->>>>>>> origin/master
 
 export const returnApiToken = () => {
   const decodeKeycloack =
