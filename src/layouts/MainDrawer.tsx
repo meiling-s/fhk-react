@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import '../styles/MainDrawer.css'
-import { Roles, localStorgeKeyName } from '../constants/constant'
+import { Realm, Roles, localStorgeKeyName } from '../constants/constant'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import InventoryIcon from '@mui/icons-material/Inventory'
@@ -51,7 +51,8 @@ type DrawerItem = {
   icon?: JSX.Element
   onClick: () => void
   collapse: boolean
-  collapseGroup?: boolean
+  collapseGroup?: boolean,
+  path?: string
 }
 
 const drawerWidth = 225
@@ -61,13 +62,13 @@ function MainDrawer() {
   const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
   const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false)
   const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false)
-  const [dashboarddGroup, setDashboardGroup] = useState<boolean>(false)
+  const [dashboardGroup, setDashboardGroup] = useState<boolean>(false)
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
-  const [selectedISubIndex, setSelectedSubIndex] = useState<number | null>(null);
+  const [selectedISubIndex, setSelectedSubIndex] = useState<string>('');
   const { realmApiRoute } = returnApiToken()
 
   const handleDrawerOpen = () => {
@@ -81,8 +82,11 @@ function MainDrawer() {
   const handleListItemClick = (index: number) => {
     setSelectedIndex(index)
     localStorage.setItem('selectedIndex', String(index))
-    setSelectedSubIndex(null)
-    setDashboardGroup(false)
+    setSelectedSubIndex('')
+  }
+
+  const handleListSubItemClick = (path: string) => {
+    setSelectedSubIndex(path)
   }
 
   useEffect(() => {
@@ -209,7 +213,15 @@ function MainDrawer() {
         icon: <BarChartIcon />,
         onClick: () => setDashboardGroup(prev => !prev),
         collapse: false
-      }
+      },
+      'Dashboard-data': {
+        name: t('dashboard_recyclables.recyclable'),
+        onClick: () => navigate(`${realm}/dashboard`),
+        collapse: true,
+        collapseGroup: dashboardGroup,
+        path: `${realm}/dashboard`
+      },
+
     }
   ]
   // 20240129 add function list daniel keung end
@@ -387,7 +399,10 @@ function MainDrawer() {
   var functionListTmp = JSON.parse(
     localStorage.getItem(localStorgeKeyName.functionList) || '[]'
   )
-  // functionListTmp = [...functionListTmp, 'Notification template']
+  if(functionListTmp?.includes('Dashboard')){
+    functionListTmp = ['Dashboard-data', ...functionListTmp].sort()
+  }
+
   if (functionListTmp) {
     for (var functionItem of functionListTmp) {
       for (let deKey in defaultFunctionList[0]) {
@@ -522,11 +537,18 @@ function MainDrawer() {
                       }
                     }}
                     selected={selectedIndex === index}
-                    onClick={(event) => handleListItemClick(index)}
+                    onClick={(event) => {
+                      if(drawerMenu.collapse && drawerMenu.path){
+                        handleListSubItemClick(drawerMenu?.path)
+                      } else {
+                        handleListItemClick(index)
+                      }
+                    }}
                   >
                     <ListItemText
                       sx={{ marginLeft: -2 }}
                       primary={drawerMenu.name}
+                      className={ selectedISubIndex === drawerMenu.path ? 'text-menu-active' : ''}
                     />
                   </ListItemButton>
                 </ListItem>
@@ -570,7 +592,7 @@ function MainDrawer() {
               </ListItem>
             )
           )}
-           <Collapse in={dashboarddGroup} timeout="auto" unmountOnExit>
+           {/* <Collapse in={dashboardGroup} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {subMenuDashboard && subMenuDashboard.length > 0 && subMenuDashboard.map((item, index) => {
                 return(
@@ -592,7 +614,7 @@ function MainDrawer() {
                 })
               }
             </List>
-          </Collapse>
+          </Collapse> */}
         </List>
       </Drawer>
     </>
