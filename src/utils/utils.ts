@@ -2,6 +2,7 @@ import { ImageListType } from 'react-images-uploading'
 import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
+import { fieldNameRecycables } from '../constants/constant'
 
 export const returnApiToken = () => {
   const decodeKeycloack =
@@ -231,4 +232,28 @@ export const onChangeWeight = (value: string, decimalVal: number, cb: (arg0: str
   if (regex.test(value) || value === '') {
     cb(value);
   }
+}
+
+export const getBackgroundColor = (fieldName: fieldNameRecycables) :string => {
+  const backgroundColors = {
+      'Rechargeable Batteries': '#FF9FB7',
+      'Glass Bottles': '#7ADFF1',
+      'Paper': '#F9B8FF',
+      'Fluorescent Lamps and Tubes': '#4FB5F5',
+      'Small Electrical Appliances': '#5AE9D8',
+      'Plastics': '#87FDA7',
+      'Non-recyclable': '#EFE72F',
+      'Cardboard': '#ECAB05',
+      'Metals': '#C69AFF'
+  }
+
+  return backgroundColors[fieldName]
+}
+
+export const randomBackgroundColor = () :string => {
+const x = Math.floor(Math.random() * (256 - 150) + 150);
+const y = Math.floor(Math.random() * (256 - 150) + 150);
+const z = Math.floor(Math.random() * (256 - 150) + 150);
+const bgColor = "rgb(" + x + "," + y + "," + z + ")";
+return bgColor
 }

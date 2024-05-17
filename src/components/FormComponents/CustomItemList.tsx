@@ -61,7 +61,8 @@ function CustomItemList({
         }else if(defaultSelected && !Array.isArray(defaultSelected)){
             setSelectSingle(defaultSelected);
         }
-    },[])
+    },[defaultSelected])
+    
     if(!(singleSelect || multiSelect)){        //if none of the select method exist
         return(
             <></>
