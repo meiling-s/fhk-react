@@ -305,9 +305,9 @@ const CommonType = () => {
       getManuList()
       getProcessList()
       getContractLogistic()
-      getImgSettings(),
-      initWeightUnit(),
+      getImgSettings()
       getDecimalVal()
+      initWeightUnit()
     }
   }, [])
 
@@ -326,6 +326,7 @@ const CommonType = () => {
     contractLogistic,
     imgSettings,
     decimalVal,
+    weightUnits,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -339,7 +340,6 @@ const CommonType = () => {
     getProcessList,
     getContractLogistic,
     getImgSettings,
-    weightUnits,
     getDecimalVal
   }
 }
