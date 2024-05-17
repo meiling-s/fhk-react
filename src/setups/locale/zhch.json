@@ -1092,6 +1092,26 @@
     "community": "社区收集点",
     "service_type": "服务种类"
   },
+  "logisticDashboard": {
+    "searchDriver": "搜索司机方向",
+    "driverInfo": "您正在搜索的司机",
+    "driverNumb": "司机号码",
+    "driverLicense": "驾驶证",
+    "vehicleCategory": "车辆类别",
+    "receivingLocation": "接收位置",
+    "receiptDate": "收据日期",
+    "received": "已收到",
+    "notReceived": "未收到",
+    "logisticsCompany": "物流公司",
+    "poNumber": "采购订单号",
+    "shippingAddress": "送货地址",
+    "recyclingCategory:": "回收类别",
+    "packingQty": "包装数量",
+    "packingWeight": "包装重量",
+    "recyc": "回收类别",
+    "packageName": "包装类别",
+    "inputDriverNumber": "请输入司机号码"
+  },
   "dashboard_recyclables": {
     "data": "数据",
     "recyclable": "回收物",

@@ -1115,6 +1115,26 @@
     "community": "社區收集點",
     "service_type": "服務種類"
   },
+  "logisticDashboard": {
+    "searchDriver": "搜索司機方向",
+    "driverInfo": "您正在搜索的司機",
+    "driverNumb": "司機號碼",
+    "driverLicense": "駕駛證",
+    "vehicleCategory": "車輛類別",
+    "receivingLocation": "接收位置",
+    "receiptDate": "收據日期",
+    "received": "已收到",
+    "notReceived": "未收到",
+    "logisticsCompany": "物流公司",
+    "poNumber": "採購訂單號",
+    "shippingAddress": "送貨地址",
+    "recyclingCategory:": "回收類別",
+    "packingQty": "包裝數量",
+    "packingWeight": "包裝重量",
+    "recyc": "回收類別",
+    "packageName": "包裝類別",
+    "inputDriverNumber": "請輸入司機號碼"
+  },
   "dashboard_recyclables": {
     "data": "數據",
     "recyclable": "回收物",
