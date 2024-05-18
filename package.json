@@ -29,6 +29,7 @@
     "chartjs-chart-geo": "^4.3.0",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.10",
+    "echarts": "^5.5.0",
     "file-saver": "^2.0.5",
     "formik": "^2.4.5",
     "i18next": "^23.6.0",

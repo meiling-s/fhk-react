@@ -378,10 +378,7 @@ function MainDrawer() {
   var functionListTmp = JSON.parse(
     localStorage.getItem(localStorgeKeyName.functionList) || '[]'
   )
-  if(functionListTmp?.includes('Dashboard')){
-    functionListTmp = ['Dashboard-data', ...functionListTmp].sort()
-  }
-
+  functionListTmp.sort()
   if (functionListTmp) {
     for (var functionItem of functionListTmp) {
       for (let deKey in defaultFunctionList[0]) {
@@ -415,6 +412,10 @@ function MainDrawer() {
       {
         name: 'inventory',
         value: t('inventory.inventory')
+      },
+      {
+        name: 'dashboard',
+        value: t('dashboard_recyclables.recyclable')
       },
       {
         name: 'warehouse',
