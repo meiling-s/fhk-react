@@ -393,6 +393,7 @@ const GeneralSettings: FunctionComponent = () => {
           rowId={rowId}
           selectedItem={selectedRow}
           onSubmitData={onSubmitData}
+          contractList={contractList}
         />
         <UpdateCurrency
           drawerOpen={currencyDrawerOpen}

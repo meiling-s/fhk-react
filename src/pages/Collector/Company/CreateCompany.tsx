@@ -122,6 +122,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       mappingData()
     } else {
       resetFormData()
+      setTrySubmited(false)
       setExistingCompanyList(selectedCompanyList)
     }
    

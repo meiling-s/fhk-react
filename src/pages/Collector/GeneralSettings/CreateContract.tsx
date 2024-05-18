@@ -22,7 +22,7 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import {
   Contract,
-  CreateContract as CreateContractProps,
+  CreateContract as CreateContractProps
 } from '../../../interfaces/contract'
 import LabelField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
@@ -40,6 +40,7 @@ interface CreateVehicleProps {
   onSubmitData: (type: string, msg: string) => void
   rowId?: number
   selectedItem?: Contract | null
+  contractList: Contract[]
 }
 
 const CreateContract: FunctionComponent<CreateVehicleProps> = ({
@@ -48,7 +49,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   action,
   onSubmitData,
   rowId,
-  selectedItem
+  selectedItem,
+  contractList = []
 }) => {
   const { t } = useTranslation()
   const [contractNo, setContractNo] = useState('')
@@ -60,6 +62,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const [whether, setWhether] = useState(false)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+  const [existingContract, setExistingContract] = useState<Contract[]>([])
 
   useEffect(() => {
     resetData()
@@ -72,9 +75,16 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         setEndDate(dayjs(selectedItem?.contractToDate))
         setRemark(selectedItem?.remark)
         setWhether(selectedItem?.epdFlg)
+
+        setExistingContract(
+          contractList.filter(
+            (item) => item.contractNo != selectedItem.contractNo
+          )
+        )
       }
     } else if (action === 'add') {
       resetData()
+      setExistingContract(contractList)
     }
   }, [selectedItem, action, drawerOpen])
 
@@ -100,6 +110,15 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      existingContract.forEach((item) => {
+        if (item.contractNo.toLowerCase() === contractNo.toLowerCase()) {
+          tempV.push({
+            field: t('general_settings.name'),
+            problem: formErr.alreadyExist,
+            type: 'error'
+          })
+        }
+      })
       startDate > endDate &&
         tempV.push({
           field: t('general_settings.start_date'),
@@ -117,7 +136,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     }
 
     validate()
-  }, [contractNo, startDate, endDate])
+  }, [contractNo, startDate, endDate, i18n])
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -240,7 +259,9 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 value={contractNo}
                 disabled={action != 'add'}
                 placeholder={t('general_settings.name')}
-                onChange={(event) => setContractNo(event.target.value)}
+                onChange={(event) =>
+                  setContractNo(event.target.value.toUpperCase())
+                }
                 error={checkString(contractNo)}
               />
             </CustomField>

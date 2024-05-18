@@ -27,6 +27,25 @@ export const getUserAccount = async () => {
   }
 }
 
+export const getUserAccountById = async (loginId: string) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+        baseURL: window.baseURL.collector,
+      ...GET_USER_ACCOUNT(loginId),
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+    
+    return response
+  } catch (e) {
+    console.error('Get user group failed:', e)
+    return null
+  }
+}
+
 //get all user group
 export const getAllUserGroup = async () => {
   try {
