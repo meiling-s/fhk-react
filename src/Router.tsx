@@ -141,6 +141,7 @@ const Router = () => {
           <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
           <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
           <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
+          <Route path="/astd/dashboard" element={<DashboardRecyclables />} />
         </Route>
 
         <Route element={<MainLayout />}>

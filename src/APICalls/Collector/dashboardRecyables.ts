@@ -1,5 +1,4 @@
-import { AXIOS_DEFAULT_CONFIGS } from "../../constants/configs";
-import { returnApiToken } from "../../utils/utils";
+import { getBaseUrl, returnApiToken } from "../../utils/utils";
 import axiosInstance from "../../constants/axiosInstance";
 import { 
     GET_COLPOINTRECYCABLES_DASHBOARD, 
@@ -10,17 +9,18 @@ import {
     GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS
  } from "../../constants/requests";
 
-export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: string, colId?: number | null) => {
+export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: string, colId?: number | null, companyNumber?: string | null) => {
     try {
         const token = returnApiToken()
 
         const response = await axiosInstance({
-            baseURL: window.baseURL.collector,
-            ...GET_COLPOINTRECYCABLES_DASHBOARD(token.tenantId),
+            baseURL: getBaseUrl(),
+            ...GET_COLPOINTRECYCABLES_DASHBOARD(token.tenantId, token.realmApiRoute),
             params: {
                 frmDate: frmDate,
                 toDate: toDate,
-                colId
+                colId,
+                companyNumber
               },
             headers: {
                 AuthToken: token.authToken
@@ -38,7 +38,7 @@ export const getWeightRecyclablesColPointDashboard = async (frmDate: string, toD
         const token = returnApiToken()
 
         const response = await axiosInstance({
-            baseURL: window.baseURL.manufacturer,
+            baseURL: getBaseUrl(),
             ...GET_WEIGHT_RECYCABLES_DASHBOARD(token.decodeKeycloack, frmDate, toDate),
             headers: {
                 AuthToken: token.authToken
@@ -56,7 +56,7 @@ export const getSalesProductAnalysis = async (frmDate: string, toDate: string) =
         const token = returnApiToken()
 
         const response = await axiosInstance({
-            baseURL: window.baseURL.manufacturer,
+            baseURL: getBaseUrl(),
             ...GET_SALES_PRODUCT_ANALYSIS(token.tenantId, frmDate, toDate),
             headers: {
                 AuthToken: token.authToken
@@ -74,7 +74,7 @@ export const getRecycProcessAnalysis = async (frmDate: string, toDate: string) =
         const token = returnApiToken()
 
         const response = await axiosInstance({
-            baseURL: window.baseURL.manufacturer,
+            baseURL: getBaseUrl(),
             ...GET_RECYC_PROCESS_ANALYSIS(token.decodeKeycloack, frmDate, toDate),
             headers: {
                 AuthToken: token.authToken
@@ -92,7 +92,7 @@ export const getTotalSalesProductAnalysis = async (frmDate: string, toDate: stri
         const token = returnApiToken()
 
         const response = await axiosInstance({
-            baseURL: window.baseURL.manufacturer,
+            baseURL: getBaseUrl(),
             ...GET_TOTAL_SALES_PRODUCT_ANALYSIS(token.tenantId, frmDate, toDate),
             headers: {
                 AuthToken: token.authToken
@@ -110,7 +110,7 @@ export const getTotalSalesProductByDistrictAnalysis = async (frmDate: string, to
         const token = returnApiToken()
 
         const response = await axiosInstance({
-            baseURL: window.baseURL.manufacturer,
+            baseURL: getBaseUrl(),
             ...GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS(token.tenantId, frmDate, toDate),
             headers: {
                 AuthToken: token.authToken

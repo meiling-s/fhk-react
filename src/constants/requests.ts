@@ -1430,9 +1430,9 @@ export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/po/${poId}`
 })
 
-export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string): AxiosRequestConfig => ({
+export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string, realmApiRoute: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/dashboard/colPointRecyclables/${tenantId}`
+  url: `api/v1/${realmApiRoute}/dashboard/colPointRecyclables/${tenantId}`
 })
 
 // get decimal value
