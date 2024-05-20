@@ -1,12 +1,9 @@
 import { Box, Modal, Stack, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import BackgroundLetterAvatars from './CustomAvatar'
 import { styles } from '../constants/styles';
-interface RecycleCardProps {
-    name: string;
-  }
 
-const RecycleCard = ({ name ,packageTypeId, bgcolor, fontcolor, showImage, recycleName, recycleType, weight}: { name: string, packageTypeId: string, bgcolor :string , fontcolor:string,showImage:boolean,recycleName:string,recycleType:string,weight:number}) => {
+const RecycleCard = ({ name ,packageTypeId, bgcolor, fontcolor, showImage, recycleName, recycleType, weight}: { name: string, packageTypeId: string, bgcolor :string , fontcolor:string,showImage:boolean,recycleName:string,recycleType:string,weight:string}) => {
     
   const [open, setOpen] = useState<boolean>(false);
 

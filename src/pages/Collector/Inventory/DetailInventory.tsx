@@ -20,6 +20,9 @@ import { dateToLocalDate, dayjsToLocalDate } from '../../../components/Formatter
 
 import { useTranslation } from 'react-i18next'
 import { PickupOrder } from '../../../interfaces/pickupOrder'
+import { formatWeight } from '../../../utils/utils'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 interface InventoryDetailProps {
   drawerOpen: boolean
@@ -35,6 +38,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   selectedPico
 }) => {
   const { t } = useTranslation()
+  const { decimalVal } = useContainer(CommonTypeContainer)
   const getPicoDtl = (picoId: string, dtlId: number) => {
     if(selectedPico) {
     const pico = selectedPico.find((pico) => pico.picoId == picoId)
@@ -69,7 +73,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
     },
     {
       label: t('inventory.weight'),
-      value: `${selectedRow?.weight} kg`
+      value: `${formatWeight(selectedRow?.weight || 0, decimalVal)} kg`
     }
   ]
 

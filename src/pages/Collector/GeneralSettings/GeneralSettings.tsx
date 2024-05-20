@@ -119,14 +119,14 @@ const GeneralSettings: FunctionComponent = () => {
         )
       })
       setContractList(contractMapping)
-      setTotalData(data.totalPages)
     }
+    setTotalData(result?.data.totalPages)
   }
   const getTenantData = async () => {
     const token = returnApiToken()
     const result = await getTenantById(parseInt(token.tenantId))
     const data = result?.data
-    setTenantCurrency(data.monetaryValue)
+    setTenantCurrency(data?.monetaryValue || '')
   }
   const columns: GridColDef[] = [
     {
@@ -393,6 +393,7 @@ const GeneralSettings: FunctionComponent = () => {
           rowId={rowId}
           selectedItem={selectedRow}
           onSubmitData={onSubmitData}
+          contractList={contractList}
         />
         <UpdateCurrency
           drawerOpen={currencyDrawerOpen}

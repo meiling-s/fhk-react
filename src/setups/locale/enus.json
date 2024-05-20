@@ -20,7 +20,13 @@
     "yes": "Yes",
     "no": "No",
     "createdDatetime": "Create datetime",
-    "lastUpdateDatetime": "Last update datetime"
+    "lastUpdateDatetime": "Last update datetime",
+    "pckgCategory:": "Packaging category",
+    "approveSuccess": "Approve request successfully",
+    "approveFailed": "Approve request failed",
+    "rejectSuccess": "Reject request successfully",
+    "rejectFailed": "Reject request failed",
+    "details": "Details"
   },
   "col": {
     "createCP": "Create collection point",
@@ -74,7 +80,8 @@
       "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
-      "startDateBehindEndDate": "not allowed the start time behind the end time",
+      "startDateBehindEndDate": "not allowed if the start date is behind than the end date",
+      "endDateEarlyThanStartDate": "not allowed if the end date is earlier than the start date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'"
     }
   },
@@ -421,7 +428,7 @@
       "invalid_date": "invalid-date",
       "invalid_pickup_time": "Invalid pickup time, choose again the time",
       "not_in_prev_data": "not-in-prev-data",
-      "pickup_time":"Pickup time already exists in previous data",
+      "pickup_time": "Pickup time already exists in previous data",
       "not_same_as_receiver": "not-same-as-receiver",
       "sender_address": "Sender address cannot be the same as receiver address",
       "sender_address_exists": "Sender address already exists in previous data",
@@ -682,7 +689,9 @@
     "successEditUser": "Success edit user",
     "failedEditUser": "Failed edit user",
     "successDeleteUser": "Success delete user",
-    "failedDeleteUser": "Failed delete user"
+    "failedDeleteUser": "Failed delete user",
+    "resetPasswaitApproval": "Reset password awaiting approval",
+    "resetPassword": "Reset Password"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "Check-in and Check-out",
@@ -1014,8 +1023,8 @@
       "order_info": "Order information",
       "pico_id": "PO number",
       "message": "Message"
-    }, 
-    "create" : {
+    },
+    "create": {
       "create_order": "Create order",
       "contact_information": "Contact information",
       "receiving_company_name": "Receiving company name",
@@ -1023,8 +1032,8 @@
       "sender_company_name": "Sender company name",
       "contact_number": "Contact number",
       "contact_number_placeholder": "please fill in cell phone number",
-      "contact_name":"Contact name",
-      "contact_name_placeholder":"Please fill contact name",
+      "contact_name": "Contact name",
+      "contact_name_placeholder": "Please fill contact name",
       "payment_method": "Payment method",
       "payment_method_placeholder": "please choose",
       "order_information": "Order information",
@@ -1110,6 +1119,26 @@
     "community": "Community Collection Point",
     "service_type": "Service type"
   },
+  "logisticDashboard": {
+    "searchDriver": "Search for driver directions",
+    "driverInfo": "The driver you are searching for",
+    "driverNumb": "Driver number",
+    "driverLicense": "Driving license",
+    "vehicleCategory": "Vehicle Category",
+    "receivingLocation": "Receiving location",
+    "receiptDate": "Receipt date",
+    "received": "received",
+    "notReceived": "Not received",
+    "logisticsCompany": "Logistics Company",
+    "poNumber": "PO Number",
+    "shippingAddress": "Shipping address",
+    "recyclingCategory:": "Recycling category",
+    "packingQty": "Packing quantity",
+    "packingWeight": "Packing weight",
+    "recyc": "Recycling category",
+    "packageName": "Package category ",
+    "inputDriverNumber": "Please enter driver Id"
+  },
   "dashboard_recyclables": {
     "data": "Data",
     "recyclable": "Recyclable Data",
@@ -1126,5 +1155,35 @@
     "rechargeable_battery": "Rechargeable battery",
     "compact_fluorescent": "Compact fluorescent lamps and light tubes",
     "paper_drink_box": "Paper drink box"
+  },
+  "dashboard_manufacturer": {
+    "data": "Data",
+    "recycling_station": "Recycling weight at each recycling station",
+    "recycled_product": "Recycled product sales data",
+    "recycling_processing_types": "Recycling processing types",
+    "plastic": "Plastic",
+    "Waste_paper": "waste paper",
+    "metal": "Metal",
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "juli": "Juli",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December",
+    "product_category": "Product Category",
+    "total_customer_orders": "Total customer orders",
+    "sales_volume_region": "Sales volume by region",
+    "sales_volume": "Sales volume",
+    "high": "High",
+    "low": "Low",
+    "total_amount_of_recyclate_processed": "Total amount of recyclate processed",
+    "total_amount_of_recyclate_remaining": "Total amount of recyclate remaining after processing",
+    "total_amount_of_recycled_material": "Total amount of recycled material that cannot be used after processing"
   }
 }

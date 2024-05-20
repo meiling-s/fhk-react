@@ -799,6 +799,7 @@ function CreateCollectionPoint() {
                 items={serviceTypeList}
                 singleSelect={setServiceFlg}
                 defaultSelected={serviceFlg}
+                editable={false}
               ></CustomItemList>
             </CustomField>
             <Grid item>

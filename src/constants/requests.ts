@@ -50,6 +50,13 @@ export const UPDATE_TENANT_REGISTER = (
   url: `api/v1/account/t/updateInfo/${tenantId}`
 })
 
+export const UPDATE_TENANT_INFO = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/account/t/${tenantId}`
+})
+
 export const GET_TENANT_BY_TENANT_ID = (
   tenantId: number
 ): AxiosRequestConfig => ({
@@ -262,12 +269,16 @@ export const ADD_PREMISE_TYPE: AxiosRequestConfig = {
   url: 'api/v1/administrator/premiseType'
 }
 
-export const EDIT_PREMISE_TYPE = (premiseTypeId: string): AxiosRequestConfig => ({
+export const EDIT_PREMISE_TYPE = (
+  premiseTypeId: string
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/premiseType/${premiseTypeId}`
 })
 
-export const DELETE_PREMISE_TYPE = (premiseTypeId: string): AxiosRequestConfig => ({
+export const DELETE_PREMISE_TYPE = (
+  premiseTypeId: string
+): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/premiseType/${premiseTypeId}`
 })
@@ -312,17 +323,23 @@ export const DELETE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/recycType/${recycTypeId}`
 })
 
-export const ADD_SUB_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+export const ADD_SUB_RECYC_TYPE = (
+  recycTypeId: string
+): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/recycType/${recycTypeId}`
 })
 
-export const UPDATE_SUB_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+export const UPDATE_SUB_RECYC_TYPE = (
+  recycTypeId: string
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/recycSubType/${recycTypeId}`
 })
 
-export const DELETE_SUB_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
+export const DELETE_SUB_RECYC_TYPE = (
+  recycTypeId: string
+): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/recycSubType/${recycTypeId}`
 })
@@ -364,6 +381,21 @@ export const UPDATE_FLAG_NOTIF = (notiId: number): AxiosRequestConfig => ({
 export const CREATE_FORGET_PASSWORD = (table: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/forgetpassword/${table}`
+})
+
+export const GET_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/forgetpassword/${table}`
+})
+
+export const APPROVE_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/approve`
+})
+
+export const REJECT_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/reject`
 })
 
 //warehouse
@@ -501,6 +533,14 @@ export const GET_VEHICLE = (
 export const GET_LOGISTIC_VEHICLE = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/logistic/vehicle/${table}`
+})
+
+export const GET_LOGISTIC_VEHICLE_BY_ID = (
+  table: string,
+  vehicleId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
 })
 
 export const SEARCH_LOGISTIC_VEHICLE = (
@@ -656,6 +696,11 @@ export const GET_WEIGHT_BY_SUBTYPE_ID = (
   url: `api/v1/${realmApiRoute}/inventory/${table}/getweightbysubtype/${warehouseId}`
 })
 
+export const GET_RECYC_SUB_TYPE_WEIGHT = (realmApiRoute: string, table: string, warehouseId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/recycsubtypeweight/${table}/${warehouseId}`
+})
+
 export const GET_CHECKIN_WAREHOUSE = (
   realmApiRoute: string,
   table: string,
@@ -724,7 +769,10 @@ export const DELETE_USER_GROUP = (userGroupId: number): AxiosRequestConfig => ({
 })
 
 //STAFF MANAGEMENT
-export const GET_STAFF = (tenantId: string, realmApiRoute: string): AxiosRequestConfig => ({
+export const GET_STAFF = (
+  tenantId: string,
+  realmApiRoute: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/staff/${tenantId}`
 })
@@ -1119,6 +1167,15 @@ export const EDIT_CONTRACT = (
   url: `api/v1/${realmApiRoute}/contract/${tenantId}/${contractNo}`
 })
 
+export const DELETE_CONTRACT = (
+  realmApiRoute: string,
+  tenantId: string,
+  contractNo: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/${realmApiRoute}/contract/${tenantId}/${contractNo}/status`
+})
+
 export const GET_PACKAGING_LIST = (
   realmApiRoute: string,
   tenantId: string
@@ -1340,7 +1397,9 @@ export const GET_DECIMAL_VALUE: AxiosRequestConfig = {
   url: `api/v1/administrator/decimalVal`
 }
 
-export const UPDATE_DECIMAL_VALUE = (decimalValId: number): AxiosRequestConfig => ({
+export const UPDATE_DECIMAL_VALUE = (
+  decimalValId: number
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/decimalVal/${decimalValId}`
 })
@@ -1350,7 +1409,9 @@ export const GET_DATE_FORMAT: AxiosRequestConfig = {
   url: `api/v1/administrator/dateFormat`
 }
 
-export const UPDATE_DATE_FORMAT = (dateFormatId: number): AxiosRequestConfig => ({
+export const UPDATE_DATE_FORMAT = (
+  dateFormatId: number
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/dateFormat/${dateFormatId}`
 })
@@ -1360,7 +1421,9 @@ export const GET_WEIGHT_TOLERANCE: AxiosRequestConfig = {
   url: `api/v1/administrator/weightTolerance`
 }
 
-export const UPDATE_WEIGHT_TOLERANCE = (weightId: number): AxiosRequestConfig => ({
+export const UPDATE_WEIGHT_TOLERANCE = (
+  weightId: number
+): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/administrator/weightTolerance/${weightId}`
 })
@@ -1379,3 +1442,35 @@ export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string): AxiosRequest
   method: 'get',
   url: `api/v1/collectors/dashboard/colPointRecyclables/${tenantId}`
 })
+
+// get decimal value
+export const GET_DECIMAL_VAL = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/decimalVal`
+})
+
+export const GET_WEIGHT_RECYCABLES_DASHBOARD = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/weightRecyclablesColPoint/${table}/${frmDate}/${toDate}`
+})
+
+export const GET_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/salesProductAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_RECYC_PROCESS_ANALYSIS = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/recycProcessAnalysis/${table}/${frmDate}/${toDate}`
+})
+
+export const GET_TOTAL_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/ttlSalesProductAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/ttlSalesProductByDistrictAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+

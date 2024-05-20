@@ -56,6 +56,7 @@ import Driver from "./pages/Logistic/Driver";
 import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
+import LogisticDashboard from "./pages/Logistic/Dashboard/dashboard"
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
@@ -64,6 +65,7 @@ import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurcha
 import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
 import PickupPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder"
 import DashboardRecyclables from "./pages/Collector/Dashboard/Recyclables";
+import ManufacturerDashboard from "./pages/Manufacturer/Dashboard/Dashboard";
 
 const Router = () => {
   return (
@@ -121,6 +123,7 @@ const Router = () => {
           <Route path="/collector/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/collector/staff" element={<StaffManagement />} />
           <Route path="/collector/dashboard" element={<DashboardRecyclables />} />
+          <Route path="/collector/warehouse" element={<WarehouseDashboard/>} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -138,6 +141,7 @@ const Router = () => {
           <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
           <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
           <Route path="/astd/inventory/" element={<Inventory/>} />
+          <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -162,6 +166,7 @@ const Router = () => {
           <Route path="/logistic/notice/" element={<Notice />} />
           <Route path="/logistic/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/logistic/staff" element={<StaffManagement />} />
+          <Route path="/logistic/dashboard" element={<LogisticDashboard />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -178,6 +183,8 @@ const Router = () => {
           <Route path="/manufacturer/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/manufacturer/staff" element={<StaffManagement />} />
           <Route path="/manufacturer/approvePurchaseOrder" element={<PickupPurchaseOrder />} />
+          <Route path="/manufacturer/warehouse" element={<WarehouseDashboard/>} />
+          <Route path="/manufacturer/dashboard" element={<ManufacturerDashboard/>} />
         </Route>
 
         <Route element={<MainLayout />}>
