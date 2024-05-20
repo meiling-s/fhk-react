@@ -21,6 +21,7 @@ import CreateDenialReason from "./CreateDenialReason";
 import { getAllFunction } from "../../../APICalls/Collector/userGroup";
 import i18n from "../../../setups/i18n";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
+import { localStorgeKeyName } from "../../../constants/constant";
 
 function createDenialReason(
   reasonId: number,
@@ -70,10 +71,11 @@ const DenialReason: FunctionComponent = () => {
   const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
   const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
+  const role = localStorage.getItem(localStorgeKeyName.role) || ''
 
   const initFunctionList = async () => {
     const result = await getAllFunction();
-    const data = result?.data;
+    const data = result?.data.filter((item: any) => item.tenantTypeId == role);
     if (data.length > 0) {
       let name = ''
       data.map((item: { functionId: string; functionNameEng: string; functionNameSChi: string; functionNameTChi: string; name: string; }) => {
