@@ -2,7 +2,7 @@ import {Box, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import logo_company from '../../logo_company.png'
 
-const PageNotFound = () => {
+const Maintenance = () => {
 const { t } = useTranslation()
 
 return (
@@ -51,5 +51,5 @@ let styles = {
       },
 }
 
-export default PageNotFound
+export default Maintenance
   
