@@ -545,11 +545,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       const response = await createWarehouse(addWarehouseForm)
       if (response) {
         // console.log('added', response)
-        showSuccessToast(t('notify.successCreated'))
+        showSuccessToast(t('common.saveSuccessfully'))
       }
     } catch (error) {
       console.error(error)
-      showErrorToast(t('errorCreated.errorCreated'))
+      showErrorToast(t('common.saveFailed'))
     }
   }
 
@@ -559,15 +559,15 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       if (response) {
         showSuccessToast(
           type == 'edit'
-            ? t('notify.SuccessEdited')
-            : t('notify.successDeleted')
+            ? t('common.editSuccessfully')
+            : t('common.deletedSuccessfully')
         )
         // console.log('edited', response)
         handleDrawerClose()
       }
     } catch (error) {
       showErrorToast(
-        type == 'edit' ? t('notify.errorEdited') : t('notify.errorDeleted')
+        type == 'edit' ? t('common.editFailed') : t('common.deleteFailed')
       )
       console.error(error)
     }
