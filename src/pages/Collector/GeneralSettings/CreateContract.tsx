@@ -260,7 +260,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 disabled={action != 'add'}
                 placeholder={t('general_settings.name')}
                 onChange={(event) =>
-                  setContractNo(event.target.value.toUpperCase())
+                  setContractNo(event.target.value)
                 }
                 error={checkString(contractNo)}
               />

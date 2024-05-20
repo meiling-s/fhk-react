@@ -105,7 +105,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       })
       setExistingCompanyList(
         selectedCompanyList.filter(
-          (item) => item.companyId === selectedItem.companyId
+          (item) => item.companyId != selectedItem.companyId
         )
       )
     }
@@ -169,7 +169,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
           type: 'error'
         })
       }
-      if (item.nameTchi.toLowerCase() === formData.nameTchi.toLowerCase()) {
+      if (item.nameSchi.toLowerCase() === formData.nameSchi.toLowerCase()) {
         tempV.push({
           field: t('common.simplifiedChineseName'),
           problem: formErr.alreadyExist,
