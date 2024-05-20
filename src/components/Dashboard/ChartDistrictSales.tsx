@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next'
 import dayjs from "dayjs";
 import { styles } from '../../constants/styles';
 import { useEffect, useState, useRef } from 'react';
-import { Chart } from "react-chartjs-2";
 import * as ChartGeo from "chartjs-chart-geo";
+import * as echarts from "echarts";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -21,7 +21,7 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import { useContainer } from 'unstated-next';
 import i18n from '../../setups/i18n';
 import { Languages } from '../../constants/constant';
-
+import hongkong from './echartHongkong.json'
 interface Properties {
     name: string,
     name_english: string,
@@ -62,9 +62,266 @@ const ChartDistrictSales = () => {
     const { t } = useTranslation()
     const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
     const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
-    const chartRef = useRef();
+    const [data, setData] = useState<any>(hongkong)
     const [dataset, setDataset] = useState<Dataset[]>([]);
     const [recycable, setRecyable] = useState<{recycTypeId: string|null|undefined, text: string}>({recycTypeId: null, text: ''})
+    const chartRef = useRef<HTMLDivElement>(null);
+    const [dataValue, setDataValue] = useState<{name:string, value: number, select: any}[]>([]);
+    const [dataNameMap, setDataNameMap] = useState<any>({});
+    const [dataSource, setDataSource] = useState<any>([])
+    echarts.registerMap('HK', data);
+    const districtLang = [
+        {
+            "name": "Central and Western",
+            "name_english": "Central and Western",
+            "name_simplified": "中西区",
+            "name_traditional": "中西區"
+        },
+        {
+            "name": "Wan Chai",
+            "name_english": "Wan Chai",
+            "name_simplified": "晚拆",
+            "name_traditional": "晚拆"
+        },
+        {
+            "name": "Eastern",
+            "name_english": "Eastern",
+            "name_simplified": "东",
+            "name_traditional": "東"
+        },
+        {
+            "name": "Southern",
+            "name_english": "Southern",
+            "name_simplified": "南方",
+            "name_traditional": "南方"
+        },
+        {
+            "name": "Yau Tsim Mong",
+            "name_english": "Yau Tsim Mong",
+            "name_simplified": "油尖旺",
+            "name_traditional": "油尖旺"
+        },
+        {
+            "name": "Kowloon City",
+            "name_english": "Kowloon City",
+            "name_simplified": "九龙城",
+            "name_traditional": "九龍城"
+        },
+        {
+            "name": "Sham Shui Po",
+            "name_english": "Sham Shui Po",
+            "name_simplified": "沙漠水泼",
+            "name_traditional": "沙漠水潑"
+        },
+        {
+            "name": "Wong Tai Sin",
+            "name_english": "Wong Tai Sin",
+            "name_simplified": "黄大仙",
+            "name_traditional": "黃大仙"
+        },
+        {
+            "name": "Kwun Tong",
+            "name_english": "Kwun Tong",
+            "name_simplified": "可无奈同",
+            "name_traditional": "可無奈同"
+        },
+        {
+            "name": "Sai Kung",
+            "name_english": "Sai Kung",
+            "name_simplified": "西贡",
+            "name_traditional": "西貢"
+        },
+        {
+            "name": "Sha Tin",
+            "name_english": "Sha Tin",
+            "name_simplified": "沙田",
+            "name_traditional": "沙田"
+        },
+        {
+            "name": "Kwai Tsing",
+            "name_english": "Kwai Tsing",
+            "name_simplified": "葵青区",
+            "name_traditional": "葵青區"
+        },
+        {
+            "name": "Tsuen Wan",
+            "name_english": "Tsuen Wan",
+            "name_simplified": "荃一号",
+            "name_traditional": "荃一號"
+        },
+        {
+            "name": "Tuen Mun",
+            "name_english": "Tuen Mun",
+            "name_simplified": "我支持蒙",
+            "name_traditional": "我支持蒙"
+        },
+        {
+            "name": "Yuen Long",
+            "name_english": "Yuen Long",
+            "name_simplified": "与恩龙",
+            "name_traditional": "與恩龍"
+        },
+        {
+            "name": "North",
+            "name_english": "North",
+            "name_simplified": "北",
+            "name_traditional": "北"
+        },
+        {
+            "name": "Tai Po",
+            "name_english": "Tai Po",
+            "name_simplified": "这是坡",
+            "name_traditional": "這是坡"
+        },
+        {
+            "name": "Islands",
+            "name_english": "Islands",
+            "name_simplified": "岛屿",
+            "name_traditional": "島嶼"
+        },
+    ];
+
+    const option: any = {
+        tooltip: {
+            width: '300px',
+            trigger: 'item',
+            showDelay: 0,
+            transitionDuration: 0.2,
+            formatter: function (params:any, ticket:any, callback:any) {
+                const data = dataSource[params?.dataIndex];
+                const recyc_weight = data?.recyc_weight;
+                if(!recyc_weight) return
+                let total:number = 0
+                if(recycable.recycTypeId){
+                    total = recyc_weight[recycable.recycTypeId] ?? 0
+                } else {
+                    const reduce = Object.values(recyc_weight).reduce((acc, cur) => {
+                        return Number(acc) + Number(cur)
+                    }, 0) as number
+                    total = reduce
+                }
+                const indexLang = districtLang.find(item => item.name === data.district);
+                let lang:string = '';
+                if(indexLang) {
+                    if(i18n.language === Languages.ENUS){
+                        lang = indexLang.name_english
+                    } else if(i18n.language === Languages.ZHCH){
+                        lang = indexLang.name_simplified
+                    } else {
+                        lang = indexLang.name_traditional
+                    }
+                }
+                 return `<div style="width: 120px; height: 40px; display: flex; alignItems: center; flexDirection: column; justifyContent: center; color: black;">
+                    ${lang} <br>
+                    ${total} Kg
+                 </div>`
+            },
+            position: 'inside',
+            backgroundColor: '#C3DAAC',
+            textStyle: {
+                color: '#5d6f80',
+            },            
+        },
+
+
+        toolbox: {
+            show: false,
+            orient: 'vertical',
+            left: 'right',
+            top: 'center',
+            feature: {
+                dataView: { readOnly: false },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        visualMap: {
+            // type:
+            show: false,
+            min: 0,
+            max: 1,
+            text: ['High', 'Low'],
+            realtime: true,
+            calculable: true,
+            inRange: {
+                color: ['#CCCCCC','#D3E3C3','#AED982','#88D13D','#6FBD33']
+            }
+        },
+        series: [
+            {
+                name: '香港18区人口密度',
+                type: 'map',
+                map: 'HK',
+                label: {
+                    show: false
+                },
+                data: dataValue,
+                nameMap: dataNameMap,
+                itemStyle: {
+                    emphasis: {
+                       areaColor: '#C3DAAC',
+                       silent: true
+                    }  
+                },
+                
+            }
+        ]
+    };
+
+    const initChart = async (dom: HTMLDivElement) => {
+        const response = await getTotalSalesProductByDistrictAnalysis(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
+        if(response){
+            let chart = echarts.init(dom);
+            const nameMap:any = {};
+            const values:{name:string, value: number, select: any}[] = []
+            for(let region of response){
+                const name = region.district;
+                const value = Number(region.percentage) / 100;
+                const indexLang = districtLang.find(item => item.name === name);
+                if(!indexLang) continue;
+                let lang:string = '';
+                if(i18n.language === Languages.ENUS){
+                    lang = indexLang.name_english
+                } else if(i18n.language === Languages.ZHCH){
+                    lang = indexLang.name_simplified
+                } else {
+                    lang = indexLang.name_traditional
+                }
+                nameMap[name] = lang;
+                values.push(
+                    {
+                        name: lang, 
+                        value: value , 
+                        select: {
+                            label: {
+                                color: 'black',
+                                // backgroundColor: 'none'
+                                areaColor: '#C3DAAC',
+                            }
+                        }
+                    });
+            }
+            setDataValue(values);
+            setDataNameMap(nameMap)
+            setDataSource(response)
+            chart.setOption(option);
+            window.addEventListener('resize',function(){
+                chart.resize();
+            })
+        }
+
+    }
+
+    useEffect(() => {
+        if (chartRef.current) {
+            const chart = echarts.getInstanceByDom(chartRef.current);
+            chart?.setOption(option);
+        }
+    }, [dataValue, dataNameMap, recycable])
+
+    useEffect(() => {
+        if (chartRef.current) initChart(chartRef.current);
+    }, []);
 
     const colors:string[] = ['#6FBD33','#88D13D','#AED982','#D3E3C3','#CCCCCC'];
     const { recycType } = useContainer(CommonTypeContainer);
@@ -97,7 +354,7 @@ const ChartDistrictSales = () => {
     }
 
     useEffect(() => {
-        initData()
+        if (chartRef.current)  initChart(chartRef.current);
     }, [frmDate, toDate, recycType])
 
     const footerTooltip = (tooltipItems:any[]) => {
@@ -149,10 +406,6 @@ const ChartDistrictSales = () => {
         })
         setDataset(district)
     }
-
-    useEffect(() => {
-        changeDistrictLanguangeName()
-    }, [i18n.language])
 
     const getRecyable = ():{recycTypeId: string, text: string}[] => {
         let recycables: {recycTypeId: string, text: string}[] = [];
@@ -280,8 +533,9 @@ const ChartDistrictSales = () => {
                             </Grid>
                         </Grid>
                         
-                        <Grid style={{height: '295px', width: '1200px'}}>
-                            <Chart
+                        <Grid style={{display: 'flex', justifyContent: 'center', height: '295px', width: '1200px'}}>
+                            <div className="w-[1200px] h-[730px]" ref={chartRef} ></div>
+                            {/* <Chart
                                 ref={chartRef}
                                 type="choropleth"
                                 data={{
@@ -364,7 +618,7 @@ const ChartDistrictSales = () => {
                                         }
                                     }
                                 }}
-                            />
+                            /> */}
                         </Grid>
                     </Grid>
                     

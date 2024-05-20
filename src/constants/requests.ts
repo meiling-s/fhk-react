@@ -383,6 +383,21 @@ export const CREATE_FORGET_PASSWORD = (table: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/forgetpassword/${table}`
 })
 
+export const GET_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/forgetpassword/${table}`
+})
+
+export const APPROVE_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/approve`
+})
+
+export const REJECT_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/reject`
+})
+
 //warehouse
 export const GET_ALL_WAREHOUSE = (
   realmApiRoute: string,

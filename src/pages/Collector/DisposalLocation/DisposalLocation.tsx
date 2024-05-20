@@ -310,6 +310,7 @@ const DisposalLocation: FunctionComponent = () => {
             handleDrawerClose={() => setDrawerOpen(false)}
             action={action}
             selectedItem={selectedRow}
+            disposalList={DisposalLocationList}
             onSubmitData={onSubmitData}
           />
         )}
