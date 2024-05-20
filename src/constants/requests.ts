@@ -50,6 +50,13 @@ export const UPDATE_TENANT_REGISTER = (
   url: `api/v1/account/t/updateInfo/${tenantId}`
 })
 
+export const UPDATE_TENANT_INFO = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/account/t/${tenantId}`
+})
+
 export const GET_TENANT_BY_TENANT_ID = (
   tenantId: number
 ): AxiosRequestConfig => ({
@@ -376,6 +383,21 @@ export const CREATE_FORGET_PASSWORD = (table: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/forgetpassword/${table}`
 })
 
+export const GET_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/forgetpassword/${table}`
+})
+
+export const APPROVE_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/approve`
+})
+
+export const REJECT_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/reject`
+})
+
 //warehouse
 export const GET_ALL_WAREHOUSE = (
   realmApiRoute: string,
@@ -569,12 +591,20 @@ export const EDIT_VEHICLE = (
 })
 
 //inventory
+export const ASTD_GET_INVENTORY = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
+})
+
 export const GET_INVENTORY = (
   realmApiRoute: string,
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/${table}/searching`
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
 })
 
 //process records
@@ -1418,3 +1448,29 @@ export const GET_DECIMAL_VAL = (): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/decimalVal`
 })
+
+export const GET_WEIGHT_RECYCABLES_DASHBOARD = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/weightRecyclablesColPoint/${table}/${frmDate}/${toDate}`
+})
+
+export const GET_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/salesProductAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_RECYC_PROCESS_ANALYSIS = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/recycProcessAnalysis/${table}/${frmDate}/${toDate}`
+})
+
+export const GET_TOTAL_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/ttlSalesProductAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/ttlSalesProductByDistrictAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+

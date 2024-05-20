@@ -125,6 +125,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                   </CustomField>
                 </Grid>
               ))}
+              {selectedRow && selectedRow.inventoryDetail.length > 0 && (
               <Grid item>
                 <Box>
                   <Typography sx={styles.header2}>
@@ -132,6 +133,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                   </Typography>
                 </Box>
               </Grid>
+              )}
               <Grid item>
                 {selectedRow?.inventoryDetail?.map((item, index) => {
                   const pico = selectedPico?.find((p) => p.picoId ==  item.sourcePicoId)

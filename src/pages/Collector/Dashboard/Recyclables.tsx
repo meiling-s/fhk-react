@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next'
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
@@ -7,9 +7,12 @@ import { getcolPointRecyclablesDashboard } from "../../../APICalls/Collector/das
 import dayjs from "dayjs";
 import { Languages } from "../../../constants/constant";
 import i18n from "../../../setups/i18n";
-import Dashboard from "../../../components/Dashboard/Dashboard";
+import Dashboard from "../../../components/Dashboard/Chart";
 import { getCollectionPoint } from "../../../APICalls/Collector/collectionPointManage";
 import { collectionPoint } from '../../../interfaces/collectionPoint'
+import { TypeRecycables, fieldNameRecycables } from '../../../constants/constant'
+import { getBackgroundColor, randomBackgroundColor } from "../../../utils/utils";
+
 interface Dataset{
     id: string,
     label: string,
@@ -26,9 +29,10 @@ type TypeRecycable = {
     'Plastics'?: string;
     'Non-recyclable'?: string;
     'Cardboard'?: string;
+    'Metals'?: string
 };
 
-type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
+// type fieldName = 'Rechargeable Batteries' | 'Glass Bottles' | 'Paper' | 'Fluorescent Lamps and Tubes' | 'Small Electrical Appliances'| 'Plastics' | 'Non-recyclable' | 'Cardboard';
 const Recyclables: FunctionComponent = () => {
     const { t } = useTranslation()
     const { recycType } =useContainer(CommonTypeContainer);
@@ -38,25 +42,7 @@ const Recyclables: FunctionComponent = () => {
     const [dataset, setDataSet] = useState<Dataset[]>([])
     const [collectionIds, setCollectionIds] = useState<number[]>([])
     const [colId, setColId] = useState<number | null>(null)
-    
-    useEffect(() => {
-        initCollectionPoint()
-    }, [])
-
-    const initCollectionPoint = async () => {
-        const result = await getCollectionPoint(0, 1000)
-        const data = result?.data.content
-        
-        if (data && data.length > 0) {
-          const collectionPoint: number[] = []
-          data.map((item: collectionPoint) => {
-            if(item?.colId) collectionPoint.push(Number(item?.colId))
-          })
-    
-          setCollectionIds(collectionPoint)
-        }
-      }
-    
+       
     useEffect(() => {
         const changeLang = dataset.map(item => {
             return{
@@ -86,14 +72,14 @@ const Recyclables: FunctionComponent = () => {
     const getRecyclablesDashboard = async () => {
         const response = await getcolPointRecyclablesDashboard(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'), colId);
 
-        const getDataWeights = (type: fieldName, length: number): number[] =>{
+        const getDataWeights = (type: string, length: number): number[] =>{
             const weights:number[]= [];
             if(!response) return weights
             const recyclables:any =  Object.values(response.data)
             
             
             for(let index=0; index<length; index++){
-                const data:TypeRecycable = recyclables[index];
+                const data:any = recyclables[index];
                 if(data[type]){
                     weights.push(Number(data[type]?.slice(0, -2)) ?? 0)
                 } else {
@@ -111,63 +97,12 @@ const Recyclables: FunctionComponent = () => {
             if(!recycType) return;
 
             for(let type of recycType){
-                if(type.recyclableNameEng === 'Rechargeable Batteries'){
-                    datasets.push({
-                        id: type.recyclableNameEng,
-                        label: getLabel(type.recyclableNameEng),
-                        data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#EFE72F'
-                    })
-                } else if(type.recyclableNameEng === 'Glass Bottles'){
-                    datasets.push({
-                        id: type.recyclableNameEng,
-                        label: getLabel(type.recyclableNameEng),
-                        data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#4FB5F5'
-                    })
-                } else if(type.recyclableNameEng === 'Paper'){ 
-                    datasets.push({
-                        id: type.recyclableNameEng,
-                        label: getLabel(type.recyclableNameEng),
-                        data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#7ADFF1'
-                    })
-                } else if(type.recyclableNameEng === 'Fluorescent Lamps and Tubes'){ 
-                    datasets.push({
-                        id: type.recyclableNameEng,
-                        label: getLabel(type.recyclableNameEng),
-                        data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#ECAB05'
-                    })
-                } else if(type.recyclableNameEng === 'Small Electrical Appliances'){ 
-                    datasets.push({
-                        id: type.recyclableNameEng,
-                        label: getLabel(type.recyclableNameEng),
-                        data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#5AE9D8'
-                    })
-                } else if(type.recyclableNameEng === 'Plastics'){
-                    datasets.push({
-                        id: type.recyclableNameEng,
-                        label: getLabel(type.recyclableNameEng),
-                        data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#FF9FB7'
-                    })
-                } else if(type.recyclableNameEng === 'Non-recyclable'){
-                    datasets.push({
-                        id: type.recyclableNameEng,
-                        label: getLabel(type.recyclableNameEng),
-                        data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#F9B8FF'
-                    })
-                } else if(type.recyclableNameEng === 'Cardboard'){
-                    datasets.push({
-                        id: type.recyclableNameEng,
-                        label: getLabel(type.recyclableNameEng),
-                        data: getDataWeights(type.recyclableNameEng, labels.length),
-                        backgroundColor: '#C69AFF'
-                    })
-                }
+                datasets.push({
+                    id: type.recyclableNameEng,
+                    label: getLabel(type.recyclableNameEng),
+                    data: getDataWeights(type.recyclableNameEng, labels.length),
+                    backgroundColor: type?.backgroundColor ? type?.backgroundColor : randomBackgroundColor()
+                })
             }
 
             setLabels(labels)
@@ -182,12 +117,16 @@ const Recyclables: FunctionComponent = () => {
     const onHandleSearch = () => {
         getRecyclablesDashboard()
     }
+
     const onChangeColdId = (value: number | null) => {
         setColId(value)
     }
 
     return(
         <Box >
+            <Typography style={{fontSize: '32px', fontWeight: '700', color: '#000000', marginBottom: '30px'}}>
+                {t('dashboard_recyclables.recycling_data')}
+            </Typography>
             <Dashboard 
                 labels={labels}
                 dataset={dataset}
@@ -196,10 +135,9 @@ const Recyclables: FunctionComponent = () => {
                 onHandleSearch={onHandleSearch}
                 frmDate={frmDate}
                 toDate={toDate}
-                collectionIds={collectionIds}
                 onChangeColdId={onChangeColdId}
-                colId={colId}
                 title={t('dashboard_recyclables.recycling_data')}
+                typeChart="bar"
             />
         </Box>
     )

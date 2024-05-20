@@ -117,6 +117,7 @@ const WarehouseDashboard: FunctionComponent = () => {
     const [checkInOut, setCheckInOut] = useState<CheckInOutWarehouse[]>([]);
     const [searchText, setSearchText] = useState<string>('');
     const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
+    const role = localStorage.getItem(localStorgeKeyName.role)
     const debouncedSearchValue: string = useDebounce(searchText, 1000);
 
     useEffect(() => {
@@ -740,7 +741,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                             alignItems: 'center',
                             cursor: 'pointer',
                         }}
-                        onClick={() => navigate(`/${realmApi}/inventory`)}
+                        onClick={() => navigate(`/${role}/inventory`)}
                     >
                         <Typography
                             fontSize={13}
@@ -809,7 +810,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                     <Typography fontSize={16} color="#535353" fontWeight="bold">
                         {t('warehouseDashboard.recentEntryAndExitRecords')}
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => navigate(`/${role}/pickupOrder`)}>
                         <Typography
                             fontSize={13}
                             color="gray"

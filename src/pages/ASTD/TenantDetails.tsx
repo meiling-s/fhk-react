@@ -1,32 +1,41 @@
 import { FunctionComponent, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import CheckIcon from '@mui/icons-material/Check'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 import RightOverlayForm from '../../components/RightOverlayForm'
 import {
   Box,
   Stack,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem
+  Typography,
+  MenuItem,
+  Grid,
+  ButtonBase,
+  ImageList,
+  ImageListItem,
+  Card
 } from '@mui/material'
+import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
+import ImageUploading, { ImageListType } from 'react-images-uploading'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomField from '../../components/FormComponents/CustomField'
 import CustomTextField from '../../components/FormComponents/CustomTextField'
-import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import CustomItemList, {
   il_item
 } from '../../components/FormComponents/CustomItemList'
+import {
+  displayCreatedDate,
+  showSuccessToast,
+  showErrorToast
+} from '../../utils/utils'
+import { styles } from '../../constants/styles'
+import { ImageToBase64 } from '../../utils/utils'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import { getTenantById, updateTenantDetail } from '../../APICalls/tenantManage'
+import { Tenant, UpdateTenantForm } from '../../interfaces/account'
 import { useContainer } from 'unstated-next'
-
-import { getTenantById } from '../../APICalls/tenantManage'
-import { Tenant } from '../../interfaces/account'
-import dayjs from 'dayjs'
-import { format } from '../../constants/constant'
-
-interface Company {}
-
+import { localStorgeKeyName } from '../../constants/constant'
+import { ToastContainer, toast } from 'react-toastify'
 interface TenantDetailsProps {
   tenantId: number
   drawerOpen: boolean
@@ -39,19 +48,22 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   handleDrawerClose
 }) => {
   const { t } = useTranslation()
+  const { imgSettings } = useContainer(CommonTypeContainer)
   const [tenantDetail, setTenantDetails] = useState<Tenant>()
+  const [companyLogo, setCompanyLogo] = useState<ImageListType>([])
+  const [numOfAccount, setNumOfAccount] = useState<number>(1)
+  const [inventoryMethod, setInventoryMethod] = useState<string>('')
+  const [numOfUplodedPhoto, setNumOfUplodedPhoto] = useState<number>(0)
+  const [maxUploadSize, setMaxUploadSize] = useState<string>('1')
+  const [defaultLang, setDefaultLang] = useState<string>('ZH-HK')
+  const [selectedStatus, setSelectedStatus] = useState<string>('CREATED')
+  const [deactiveReason, setDeactiveReason] = useState<string>('-')
+  const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
 
-  const getDateFormat = (item: string | undefined) => {
-    if (item) {
-      const dateFormatted = dayjs(new Date(item)).format(format.dateFormat1)
-      return dateFormatted
-    } else {
-      return '-'
-    }
-  }
+  const footerTenant = `[${tenantDetail?.tenantId}] ${t(
+    `status.${tenantDetail?.status.toLocaleLowerCase()}`
+  )} ${displayCreatedDate(tenantDetail?.updatedAt || '')} `
 
-  const approveOn = getDateFormat(tenantDetail?.approvedAt)
-  const messageCheckout = `[UserID] ${t('check_out.approved_on')} ${approveOn} `
   useEffect(() => {
     getCompanyDetail()
   }, [])
@@ -60,6 +72,13 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     const result = await getTenantById(tenantId)
     const data = result?.data
     setTenantDetails(data)
+
+    ///mapping data
+    setNumOfAccount(data.decimalPlace)
+    setNumOfUplodedPhoto(data.allowImgNum)
+    setMaxUploadSize(data.allowImgSize.toString())
+    setDefaultLang(data.lang)
+    setSelectedStatus(data.status)
   }
 
   const mainInfoFields = [
@@ -86,34 +105,114 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   ]
 
   const statuses: il_item[] = [
-    { id: '1', name: t('status.enable') },
-    { id: '2', name: t('status.not_enabled') },
-    { id: '3', name: t('status.terminated') }
+    { id: 'CREATED', name: t('status.created') },
+    { id: 'CONFIRMED', name: t('status.confirmed') },
+    { id: 'REJECTED', name: t('status.rejected') }
   ]
 
   const ways_of_exits: il_item[] = [
-    { id: '1', name: t('tenant.detail.no_preference') },
-    { id: '2', name: t('tenant.detail.fifo') },
-    { id: '3', name: t('tenant.detail.lifo') }
+    { id: '', name: t('tenant.detail.no_preference') },
+    { id: 'FIFO', name: t('tenant.detail.fifo') },
+    { id: 'LIFO', name: t('tenant.detail.lifo') }
   ]
 
-  const setStatus = () => {}
+  const lang_option: il_item[] = [
+    { id: 'EN-US', name: 'EN-US' },
+    { id: 'ZH-HK', name: 'ZH-HK' },
+    { id: 'ZH-CH', name: 'ZH-CH' }
+  ]
 
-  const handleReasonDeact = () => {}
+  const num_option: il_item[] = [
+    { id: '0', name: '0' },
+    { id: '1', name: '1' },
+    { id: '2', name: '2' },
+    { id: '3', name: '3' },
+    { id: '4', name: '4' },
+    { id: '5', name: '5' }
+  ]
 
-  const handleChangeAccount = () => {}
+  const handleUpdateTenant = async () => {
+    console.log('update tenant')
+
+    const companyLogoImg =
+      companyLogo.length > 0 ? ImageToBase64(companyLogo)[0] : ''
+
+    if (tenantDetail) {
+      const dataForm: UpdateTenantForm = {
+        companyNameTchi: tenantDetail.companyNameTchi,
+        companyNameSchi: tenantDetail.companyNameSchi,
+        companyNameEng: tenantDetail.companyNameEng,
+        tenantType: tenantDetail.tenantType,
+        lang: defaultLang,
+        status: selectedStatus,
+        brNo: tenantDetail.brNo,
+        remark: tenantDetail.remark,
+        contactNo: tenantDetail.contactNo,
+        email: tenantDetail.email,
+        contactName: tenantDetail.contactName,
+        brPhoto: tenantDetail.brPhoto,
+        epdPhoto: tenantDetail.epdPhoto,
+        companyLogo: companyLogoImg,
+        decimalPlace: numOfAccount,
+        monetaryValue: tenantDetail.monetaryValue,
+        inventoryMethod: inventoryMethod,
+        allowImgSize: parseInt(maxUploadSize),
+        allowImgNum: numOfUplodedPhoto,
+        effFrmDate: tenantDetail.effFrmDate,
+        effToDate: tenantDetail.effToDate,
+        approvedAt: tenantDetail?.approvedAt,
+        approvedBy: tenantDetail?.approvedBy,
+        rejectedAt: tenantDetail?.rejectedAt,
+        rejectedBy: tenantDetail?.rejectedBy,
+        createdBy: tenantDetail.createdBy,
+        createdAt: tenantDetail.createdAt,
+        updatedAt: tenantDetail.updatedAt,
+        updatedBy: loginName
+      }
+
+      const result = await updateTenantDetail(
+        dataForm,
+        tenantDetail.tenantId.toString()
+      )
+      if (result) {
+        showSuccessToast(t('common.editSuccessfully'))
+        getCompanyDetail()
+        handleDrawerClose()
+      } else {
+        showErrorToast(t('common.editFailed'))
+      }
+    }
+  }
+
+  const onImageChange = (
+    imageList: ImageListType,
+    addUpdateIndex: number[] | undefined
+  ) => {
+    setCompanyLogo(imageList)
+  }
+
+  const removeImage = (index: number) => {
+    const newPictures = [...companyLogo]
+    newPictures.splice(index, 1)
+    setCompanyLogo(newPictures)
+  }
 
   return (
-    <div className="checkin-request-detail">
+    <div className="tenant-detail">
+      <ToastContainer></ToastContainer>
       <RightOverlayForm
         open={drawerOpen}
         onClose={handleDrawerClose}
         anchor={'right'}
-        action={'none'}
+        action={'edit'}
         headerProps={{
-          title: t('check_out.request_check_out'),
+          title: t('common.details'),
           subTitle: tenantId.toString(),
-          onCloseHeader: handleDrawerClose
+          submitText: t('add_warehouse_page.save'),
+          cancelText: t('common.cancel'),
+          onCloseHeader: handleDrawerClose,
+          onSubmit: handleUpdateTenant,
+          onDelete: handleDrawerClose
         }}
       >
         <div
@@ -193,22 +292,76 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.creation_date')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  {getDateFormat(tenantDetail?.createdAt)}
+                  {displayCreatedDate(tenantDetail?.createdAt || '')}
                 </div>
               </div>
             </Box>
             <Box>
               <div className="logo mt-6">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-4">
-                  {t('tenant.detail.epd_contract')}
-                </div>
-                <div className="">
-                  <img
-                    src={tenantDetail?.companyLogo}
-                    alt="logo_company"
-                    style={{ width: '70px' }}
-                  />
-                </div>
+                <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
+                  {t('tenant.detail.company_logo')}
+                </Typography>
+                <ImageUploading
+                  multiple
+                  value={companyLogo}
+                  onChange={(imageList, addUpdateIndex) =>
+                    onImageChange(imageList, addUpdateIndex)
+                  }
+                  maxNumber={1}
+                  maxFileSize={imgSettings?.ImgSize}
+                  dataURLKey="data_url"
+                >
+                  {({ imageList, onImageUpload, onImageRemove }) => (
+                    <Box className="box">
+                      <Card
+                        sx={{
+                          ...localstyles.cardImg
+                        }}
+                      >
+                        <ButtonBase
+                          sx={localstyles.btnBase}
+                          onClick={(event) => onImageUpload()}
+                        >
+                          <CAMERA_OUTLINE_ICON style={{ color: '#ACACAC' }} />
+                          <Typography
+                            sx={[styles.labelField, { fontWeight: 'bold' }]}
+                          >
+                            {t('report.uploadPictures')}
+                          </Typography>
+                        </ButtonBase>
+                      </Card>
+                      <ImageList sx={localstyles.imagesContainer} cols={4}>
+                        {imageList.map((image, index) => (
+                          <ImageListItem
+                            key={image['file']?.name}
+                            style={{ position: 'relative', width: '100px' }}
+                          >
+                            <img
+                              style={localstyles.image}
+                              src={image['data_url']}
+                              alt={image['file']?.name}
+                              loading="lazy"
+                            />
+                            <ButtonBase
+                              onClick={(event) => {
+                                onImageRemove(index)
+                                removeImage(index)
+                              }}
+                              style={{
+                                position: 'absolute',
+                                top: '2px',
+                                right: '2px',
+                                padding: '4px'
+                              }}
+                            >
+                              <CancelRoundedIcon className="text-white" />
+                            </ButtonBase>
+                          </ImageListItem>
+                        ))}
+                      </ImageList>
+                    </Box>
+                  )}
+                </ImageUploading>
               </div>
             </Box>
             <Box>
@@ -217,118 +370,156 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.remark')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  -
+                  {tenantDetail?.remark}
                 </div>
               </div>
             </Box>
+            <Grid item className="field-default-lang">
+              <Typography sx={{ ...styles.header3 }}>
+                {t('tenant.detail.number_of_accounts')}
+              </Typography>
+              <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
+                <Select
+                  labelId="company-label"
+                  id="company-label"
+                  value={numOfAccount.toString()}
+                  sx={{
+                    borderRadius: '12px'
+                  }}
+                  onChange={(event) => {
+                    const selectedValue = num_option.find(
+                      (item) =>
+                        parseInt(item.id) === parseInt(event.target.value)
+                    )
+                    if (selectedValue) {
+                      setNumOfAccount(parseInt(selectedValue.id))
+                    }
+                  }}
+                  defaultValue={tenantDetail?.decimalPlace.toString()}
+                >
+                  {num_option.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
             <Box>
-              <div className="field-status">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('tenant.detail.number_of_accounts')}
-                </div>
-                <div className="items">
-                  <FormControl sx={dropDown}>
-                    <InputLabel>
-                      {t('tenant.detail.number_of_accounts')}
-                    </InputLabel>
-                    <Select
-                      labelId="company-label"
-                      id="company"
-                      value={tenantDetail?.decimalPlace}
-                      label={t('check_out.any')}
-                      onChange={handleChangeAccount}
-                    >
-                      <MenuItem value={tenantDetail?.decimalPlace}>
-                        {tenantDetail?.decimalPlace || 0}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </div>
-              </div>
-            </Box>
-            <Box>
-              <div className="field-status">
+              <div className="field-ways_of_entry_and_exit">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
                   {t('tenant.detail.ways_of_entry_and_exit')}
                 </div>
                 <div className="items">
                   <CustomItemList
                     items={ways_of_exits}
-                    singleSelect={setStatus}
+                    singleSelect={(value) => setInventoryMethod(value)}
+                    value={inventoryMethod}
+                    defaultSelected={tenantDetail?.inventoryMethod}
                   />
                 </div>
               </div>
             </Box>
+            <Grid item className="field-number-of-photo">
+              <Typography sx={{ ...styles.header3 }}>
+                {t('tenant.detail.number_of_photos_uploaded')}
+              </Typography>
+              <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
+                <Select
+                  labelId="company-label"
+                  id="company-label"
+                  value={numOfUplodedPhoto.toString()}
+                  sx={{
+                    borderRadius: '12px'
+                  }}
+                  onChange={(event) => {
+                    const selectedValue = num_option.find(
+                      (item) =>
+                        parseInt(item.id) === parseInt(event.target.value)
+                    )
+                    if (selectedValue) {
+                      setNumOfUplodedPhoto(parseInt(selectedValue.id))
+                    }
+                  }}
+                  defaultValue={tenantDetail?.allowImgNum.toString()}
+                >
+                  {num_option.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
             <Box>
-              <div className="field-status">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('tenant.detail.number_of_photos_uploaded')}
-                </div>
-                <div className="items">
-                  <FormControl sx={dropDown}>
-                    <InputLabel>
-                      {t('tenant.detail.number_of_photos_uploaded')}
-                    </InputLabel>
-                    <Select
-                      labelId="company-label"
-                      id="company"
-                      value={tenantDetail?.allowImgNum}
-                      label={t('check_out.any')}
-                      onChange={handleChangeAccount}
-                    >
-                      <MenuItem value={tenantDetail?.allowImgNum}>
-                        {tenantDetail?.allowImgNum}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </div>
-              </div>
-            </Box>
-            <Box>
-              <CustomField
-                mandatory
-                label={t('tenant.detail.max_photo_upload_capacity')}
-              >
+              <Typography sx={{ ...styles.header3, marginBottom: 3 }}>
+                {t('tenant.detail.max_photo_upload_capacity')}
+              </Typography>
+              <CustomField label="">
                 <CustomTextField
                   id={'please_enter_capacity_mb'}
                   placeholder={t('tenant.detail.please_enter_capacity_mb')}
-                  rows={1}
-                  onChange={handleReasonDeact}
-                  value={tenantDetail?.allowImgSize}
+                  onChange={(event) => setMaxUploadSize(event.target.value)}
+                  value={maxUploadSize}
                   sx={{ width: '100%' }}
                 ></CustomTextField>
               </CustomField>
             </Box>
-            <Box>
-              <div className="field-status">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('tenant.detail.account_status')}
-                </div>
-                <div className="items">
-                  <CustomItemList items={statuses} singleSelect={setStatus} />
-                </div>
+            <Grid item className="field-default-lang">
+              <Typography sx={{ ...styles.header3 }}>
+                {t('tenant.detail.default_lang')}
+              </Typography>
+              <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
+                <Select
+                  labelId="company-label"
+                  id="company-label"
+                  value={defaultLang}
+                  sx={{
+                    borderRadius: '12px'
+                  }}
+                  onChange={(event) => setDefaultLang(event.target.value)}
+                >
+                  {lang_option.map((item, index) => (
+                    <MenuItem key={index + item.id} value={item?.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item className="field-status">
+              <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
+                {t('tenant.detail.account_status')}
+              </Typography>
+              <div className="items">
+                <CustomItemList
+                  items={statuses}
+                  singleSelect={setSelectedStatus}
+                  defaultSelected={tenantDetail?.status}
+                  value={selectedStatus}
+                />
               </div>
-            </Box>
-            <Box>
-              <CustomField
-                mandatory
-                label={t('tenant.detail.reason_for_deactivation')}
-              >
+            </Grid>
+            <Grid item className="field-reason_for_deactivation">
+              <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
+                {t('tenant.detail.reason_for_deactivation')}
+              </Typography>
+              <CustomField label="">
                 <CustomTextField
                   id={'reason_for_deactivation'}
                   placeholder={t('tenant.detail.please_enter_the_reason')}
                   multiline={true}
                   rows={4}
-                  onChange={handleReasonDeact}
-                  value={''}
+                  onChange={(event) => setDeactiveReason(event.target.value)}
+                  value={deactiveReason}
                   sx={{ width: '100%' }}
                 ></CustomTextField>
               </CustomField>
-            </Box>
+            </Grid>
             <Box>
-              <div className="field-remark">
+              <div className="field-tenant-footer">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {messageCheckout}
+                  {footerTenant}
                 </div>
               </div>
             </Box>
@@ -339,34 +530,57 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   )
 }
 
-const categoryRecyle: React.CSSProperties = {
-  height: '25px',
-  width: '25px',
-  padding: '4px',
-  textAlign: 'center',
-  background: 'lightskyblue',
-  lineHeight: '25px',
-  borderRadius: '25px',
-  color: 'darkblue'
-}
-
-let dropDown = {
-  mt: 3,
-  borderRadius: '10px',
-  width: '100%',
-  bgcolor: 'white',
-  '& .MuiOutlinedInput-root': {
+let localstyles = {
+  dropdown: {
+    mt: 3,
     borderRadius: '10px',
-    '& fieldset': {
-      borderColor: 'rgba(0, 0, 0, 0.23)'
-    },
-    '&:hover fieldset': {
-      borderColor: '#79CA25'
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#79CA25'
+    width: '100%',
+    bgcolor: 'white',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '10px',
+      '& fieldset': {
+        borderColor: 'rgba(0, 0, 0, 0.23)'
+      },
+      '&:hover fieldset': {
+        borderColor: '#79CA25'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#79CA25'
+      }
     }
+  },
+  imagesContainer: {
+    width: '100%',
+    height: 'fit-content'
+  },
+  image: {
+    aspectRatio: '1/1',
+    width: '100px',
+    borderRadius: 2
+  },
+  cardImg: {
+    borderRadius: 2,
+    backgroundColor: '#E3E3E3',
+    width: '100%',
+    height: 150,
+    boxShadow: 'none'
+  },
+  btnBase: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    borderRadius: 10
+  },
+  imgError: {
+    border: '1px solid red'
   }
 }
-
 export default TenantDetails

@@ -65,6 +65,7 @@ import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurcha
 import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
 import PickupPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder"
 import DashboardRecyclables from "./pages/Collector/Dashboard/Recyclables";
+import ManufacturerDashboard from "./pages/Manufacturer/Dashboard/Dashboard";
 
 const Router = () => {
   return (
@@ -139,6 +140,7 @@ const Router = () => {
           <Route path="/astd/account" element={<></>} />
           <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
           <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
+          <Route path="/astd/inventory/" element={<Inventory/>} />
           <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
         </Route>
 
@@ -182,6 +184,7 @@ const Router = () => {
           <Route path="/manufacturer/staff" element={<StaffManagement />} />
           <Route path="/manufacturer/approvePurchaseOrder" element={<PickupPurchaseOrder />} />
           <Route path="/manufacturer/warehouse" element={<WarehouseDashboard/>} />
+          <Route path="/manufacturer/dashboard" element={<ManufacturerDashboard/>} />
         </Route>
 
         <Route element={<MainLayout />}>

@@ -29,7 +29,7 @@ import {
   GET_IMG_SETTINGS,
   GET_DECIMAL_VAL,
 } from '../constants/requests'
-import { returnApiToken } from '../utils/utils'
+import { randomBackgroundColor, returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 import { getWeightUnit } from '../APICalls/ASTD/recycling'
 
@@ -114,7 +114,12 @@ const CommonType = () => {
         // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
       })
       // console.log('Get site type success:', JSON.stringify(response.data))
-      RecycType = response.data
+      RecycType = response.data.map((item:recycType) => {
+        return{
+          ...item,
+          backgroundColor: randomBackgroundColor()
+        }
+      })
       setRecycType(RecycType)
     } catch (e) {
       console.error('Get site type failed:', e)
