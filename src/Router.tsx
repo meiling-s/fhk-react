@@ -140,6 +140,7 @@ const Router = () => {
           <Route path="/astd/account" element={<></>} />
           <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
           <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
+          <Route path="/astd/inventory/" element={<Inventory/>} />
           <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
         </Route>
 
