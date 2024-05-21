@@ -199,7 +199,10 @@ export const getBaseUrl = () => {
       break;
     case(Realm.manufacturer):
       baseURL = window.baseURL.manufacturer;
-      break
+      break;
+    case(Realm.astd):
+      baseURL = window.baseURL.account
+      break;
     default:
       baseURL = window.baseURL.administrator
       break;

@@ -6,10 +6,11 @@ import {
     GET_SALES_PRODUCT_ANALYSIS,
     GET_RECYC_PROCESS_ANALYSIS,
     GET_TOTAL_SALES_PRODUCT_ANALYSIS,
-    GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS
+    GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS,
+    GET_WEIGHT_RECYCABLES_DASHBOARD_ASTD
  } from "../../constants/requests";
 
-export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: string, colId?: number | null, companyNumber?: string | null) => {
+export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: string, colId?: number | null) => {
     try {
         const token = returnApiToken()
 
@@ -19,8 +20,7 @@ export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: s
             params: {
                 frmDate: frmDate,
                 toDate: toDate,
-                colId,
-                companyNumber
+                colId
               },
             headers: {
                 AuthToken: token.authToken
@@ -119,6 +119,24 @@ export const getTotalSalesProductByDistrictAnalysis = async (frmDate: string, to
         return response?.data
     } catch (e) {
         console.error('getTotalSalesProductByDistrictAnalysis failed:', e)
+      return null
+    }
+}
+
+export const getWeightRecyclablesColPointAstd = async (tenandId: string, frmDate: string, toDate: string) => {
+    try {
+        const token = returnApiToken()
+
+        const response = await axiosInstance({
+            baseURL: getBaseUrl(),
+            ...GET_WEIGHT_RECYCABLES_DASHBOARD_ASTD(tenandId, frmDate, toDate),
+            headers: {
+                AuthToken: token.authToken
+            }
+        })
+        return response.data
+    } catch (e) {
+        console.error('getWeightRecyclablesColPointDashboard failed:', e)
       return null
     }
 }

@@ -1,11 +1,11 @@
 import  { useEffect, useState } from 'react'
 import { useContainer } from "unstated-next";
-import CommonTypeContainer from '../contexts/CommonTypeContainer';
 import dayjs from 'dayjs';
-import i18n from '../setups/i18n';
-import { Languages, indexMonths, monthSequence } from '../constants/constant';
-import { getRecycProcessAnalysis} from '../APICalls/Collector/dashboardRecyables';
+import { Languages, indexMonths, monthSequence } from '../../../constants/constant';
 import { useTranslation } from 'react-i18next';
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
+import i18n from '../../../setups/i18n';
+import { getRecycProcessAnalysis } from '../../../APICalls/Collector/dashboardRecyables';
 
 interface Dataset{
    id: string,

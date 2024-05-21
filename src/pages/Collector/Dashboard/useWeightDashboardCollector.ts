@@ -1,25 +1,20 @@
 import  { useEffect, useState } from 'react'
 import { useContainer } from "unstated-next";
-import CommonTypeContainer from '../contexts/CommonTypeContainer';
 import dayjs from 'dayjs';
-import i18n from '../setups/i18n';
-import { Languages } from '../constants/constant';
-import { getcolPointRecyclablesDashboard } from '../APICalls/Collector/dashboardRecyables';
-import { randomBackgroundColor } from '../utils/utils';
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
+import i18n from '../../../setups/i18n';
+import { Languages } from '../../../constants/constant';
+import { randomBackgroundColor } from '../../../utils/utils';
+import { getcolPointRecyclablesDashboard } from '../../../APICalls/Collector/dashboardRecyables';
 
 interface Dataset{
    id: string,
    label: string,
    data: number[],
-   backgroundColor: string,
-   borderColor?: string,
-   yAxisID?: string,
-   pointStyle?: string,
-   pointRadius?: number,
-   pointHoverRadius?: number
+   backgroundColor: string
 }
 
-const useWeightDashboardWithNameRecycable = () => {
+const useWeightDashboardWithIdRecycable = () => {
    const { recycType } =useContainer(CommonTypeContainer);
    const [labels, setLabels] = useState<string[]>([]);
    const [frmDate, setFrmDate] = useState<dayjs.Dayjs>(dayjs().startOf('month'))
@@ -55,7 +50,7 @@ const useWeightDashboardWithNameRecycable = () => {
 
 
    const getRecyclablesDashboard = async () => {
-      const response = await getcolPointRecyclablesDashboard(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'), colId, companyNumber);
+      const response = await getcolPointRecyclablesDashboard(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'), colId);
 
       const getDataWeights = (type: string, length: number): number[] =>{
          const weights:number[]= [];
@@ -124,4 +119,4 @@ const useWeightDashboardWithNameRecycable = () => {
   };
 }
 
-export default useWeightDashboardWithNameRecycable
+export default useWeightDashboardWithIdRecycable

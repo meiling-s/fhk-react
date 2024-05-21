@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next'
 import Dashboard from "../../../components/Dashboard/Chart";
 import ChartTotalSales from "../../../components/Dashboard/ChartTotalSales";
 import ChartDistrictSales from "../../../components/Dashboard/ChartDistrictSales";
-import useWeightDashboardWithIdRecycable from "../../../hooks/useWeightDashboardWithIdRecycable";
-import useSalesProductAnalysis from "../../../hooks/useSalesProductAnalysis";
-import useWeightProcessing from "../../../hooks/useWeightProcessing";
+import useWeightDashboard from "./useWeightDashboard";
+import useSalesProductAnalysis from "./useSalesProductAnalysis";
+import useWeightProcessing from "./useWeightProcessing";
 
 const Recyclables: FunctionComponent = () => {
     const { t } = useTranslation()
@@ -18,7 +18,7 @@ const Recyclables: FunctionComponent = () => {
         toDate,
         labels,
         dataset,
-    } = useWeightDashboardWithIdRecycable();
+    } = useWeightDashboard();
 
     const {
         labelProduct,

@@ -1,11 +1,11 @@
 import  { useEffect, useState } from 'react'
 import { useContainer } from "unstated-next";
-import CommonTypeContainer from '../contexts/CommonTypeContainer';
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
 import dayjs from 'dayjs';
-import i18n from '../setups/i18n';
-import { Languages, indexMonths, monthSequence } from '../constants/constant';
-import { getSalesProductAnalysis} from '../APICalls/Collector/dashboardRecyables';
-import { randomBackgroundColor } from '../utils/utils';
+import i18n from '../../../setups/i18n';
+import { Languages, indexMonths, monthSequence } from '../../../constants/constant';
+import { getSalesProductAnalysis} from '../../../APICalls/Collector/dashboardRecyables';
+import { randomBackgroundColor } from '../../../utils/utils';
 import { useTranslation } from 'react-i18next';
 
 interface Dataset{

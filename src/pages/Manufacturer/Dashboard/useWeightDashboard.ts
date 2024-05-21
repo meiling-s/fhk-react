@@ -1,11 +1,11 @@
 import  { useEffect, useState } from 'react'
 import { useContainer } from "unstated-next";
-import CommonTypeContainer from '../contexts/CommonTypeContainer';
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
 import dayjs from 'dayjs';
-import i18n from '../setups/i18n';
-import { Languages } from '../constants/constant';
-import { getWeightRecyclablesColPointDashboard} from '../APICalls/Collector/dashboardRecyables';
-import { randomBackgroundColor } from '../utils/utils';
+import i18n from '../../../setups/i18n';
+import { Languages } from '../../../constants/constant';
+import { randomBackgroundColor } from '../../../utils/utils';
+import { getWeightRecyclablesColPointDashboard } from '../../../APICalls/Collector/dashboardRecyables';
 
 interface Dataset{
    id: string,
