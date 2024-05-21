@@ -1466,3 +1466,7 @@ export const GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS = (tenantId: string, f
   url: `/api/v1/manufacturer/dashboard/ttlSalesProductByDistrictAnalysis/${tenantId}/${frmDate}/${toDate}`
 })
 
+export const GET_SYSTEM_MAINTENANCE_PAGE = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `systemMaintenanceStatus`
+})

@@ -12,7 +12,7 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import logo_company from '../../logo_company.png'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { styled } from '@mui/material/styles'
@@ -30,6 +30,8 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { setLanguage } from '../../setups/i18n'
 import { returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
+import { getSystemMaintenanceStatus } from '../../APICalls/commont'
+import Maintenance from '../Common/Maintenance'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -41,7 +43,8 @@ const Login = () => {
   const [warningMsg, setWarningMsg] = useState<string>(' ')
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const commonTypeContainer = useContainer(CommonTypeContainer)
+  const commonTypeContainer = useContainer(CommonTypeContainer);
+  const [status, setStatus] = useState('');
 
   // overwrite select style
   //todo : make select as component
@@ -184,6 +187,19 @@ const Login = () => {
 
   const navigateToForgotPassword = () => {
     navigate('/resetPassword')
+  }
+
+  const initMaintenanceStatus = async() => {
+    const status = await getSystemMaintenanceStatus();
+    setStatus(status)
+  }
+
+  useEffect(() => {
+    initMaintenanceStatus()
+  }, [])
+
+  if(status === 'UNDER_MAINTENANCE'){
+    return <Maintenance />
   }
 
   return (
