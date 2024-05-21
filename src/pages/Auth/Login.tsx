@@ -190,7 +190,10 @@ const Login = () => {
   }
 
   if(maintenanceStatus === MAINTENANCE_STATUS.UNDER_MAINTENANCE){
+    localStorage.setItem('maintenanceStatus', MAINTENANCE_STATUS.UNDER_MAINTENANCE)
     return <Maintenance  message={message}/>
+  } else {
+    localStorage.setItem('maintenanceStatus', MAINTENANCE_STATUS.NOT_UNDER_MAINTENANCE)
   }
 
   return (

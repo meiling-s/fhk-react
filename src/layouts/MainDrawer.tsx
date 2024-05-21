@@ -80,6 +80,26 @@ function MainDrawer() {
     setOpen(false)
   }
 
+  useEffect(() => {
+    const interval = setInterval(async() => {
+      const status = await getSystemMaintenanceStatus();
+      const maintenanceStatus = localStorage.getItem('maintenanceStatus')
+      if(status === MAINTENANCE_STATUS.UNDER_MAINTENANCE && maintenanceStatus === MAINTENANCE_STATUS.NOT_UNDER_MAINTENANCE){
+        localStorage.setItem('maintenanceStatus', status)
+        navigate(`/maintenance`)
+      } else if(status === MAINTENANCE_STATUS.NOT_UNDER_MAINTENANCE && maintenanceStatus === MAINTENANCE_STATUS.UNDER_MAINTENANCE){
+        localStorage.setItem('maintenanceStatus', status)
+        navigate('/')
+      }
+    }, 300000)
+
+    return() => {
+      clearInterval(interval)
+    }
+  }, [])
+
+  
+
 
   const onHandleNavigation = async  (path: string) => {
     const status = await getSystemMaintenanceStatus();
