@@ -6,7 +6,7 @@ import {
   IconButton,
   Typography
 } from '@mui/material'
-import { useEffect, useState, useRef, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { MapContainer, Marker, TileLayer, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet/dist/leaflet.css'
@@ -36,6 +36,7 @@ import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import i18n from '../../../setups/i18n'
+import { localStorgeKeyName } from '../../../constants/constant'
 
 interface PuAndDropOffMarker {
   id: number
@@ -45,7 +46,7 @@ interface PuAndDropOffMarker {
   receiverAddr: string
 }
 
-const LogisticDashboard = () => {
+const VehicleDashboard = () => {
   const { t } = useTranslation()
   const { vehicleType, recycType } = useContainer(CommonTypeContainer)
   const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
@@ -66,6 +67,10 @@ const LogisticDashboard = () => {
     null
   )
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
+  const logisticTableId =
+    localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
+  const [selectedTable, setSelectedTable] = useState<string>(logisticTableId)
   const todayDate = dayjs().format('YYYY-MM-DD')
 
   useEffect(() => {
@@ -213,7 +218,7 @@ const LogisticDashboard = () => {
   }
 
   const getDriverInfo = async (driverIdValue: string) => {
-    const result = await getDriverDetail(parseInt(driverIdValue))
+    const result = await getDriverDetail(selectedTable, parseInt(driverIdValue))
     if (result) {
       setDriverInfo(result.data)
     }
@@ -221,6 +226,7 @@ const LogisticDashboard = () => {
 
   const getPickupPointList = async (driverIdValue: number) => {
     const result = await getDriverPickupPoint(
+      selectedTable,
       driverIdValue,
       todayDate,
       todayDate
@@ -251,6 +257,7 @@ const LogisticDashboard = () => {
     pickupPointList: any
   ) => {
     const result = await getDriverDropOffPoint(
+      selectedTable,
       driverIdValue,
       todayDate,
       todayDate
@@ -282,7 +289,7 @@ const LogisticDashboard = () => {
     }
   }
 
-  const handleSearch = async (value: string) => {
+  const handleSearchDriver = async (value: string) => {
     if (value || value != '') {
       getDriverInfo(value)
       await getPickupPointList(parseInt(value))
@@ -312,10 +319,21 @@ const LogisticDashboard = () => {
     setSelectedMarker(index)
   }
 
+  const handleSearchCompany = (value: string) => {
+    setSelectedTable(`company${value}`)
+    console.log('selectedtable', selectedTable)
+  }
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const numericValue = event.target.value.replace(/\D/g, '')
+    if (numericValue.length === 6) {
+      handleSearchCompany(numericValue)
+    }
+  }
+
   return (
     <Box
       sx={{
-        display: 'flex',
         width: '100%',
         marginLeft: '-31px',
         marginTop: {
@@ -324,68 +342,27 @@ const LogisticDashboard = () => {
         }
       }}
     >
-      <Box sx={{ width: '70%', height: '100%', marginTop: '-32px' }}>
-        <MapContainer
-          center={[22.4241897, 114.2117632]}
-          zoom={13}
-          zoomControl={false}
-        >
-          <FitBoundsOnLoad />
-          <TileLayer
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {puAndDropOffMarker.map((position, index) => (
-            <Marker
-              key={index}
-              position={position.gpsCode}
-              // icon={customIcon(position.type)}
-              icon={
-                selectedMarker === index
-                  ? hoverCustomIcon(
-                      position.type,
-                      position.type == 'pu'
-                        ? position.senderAddr
-                        : position.receiverAddr
-                    )
-                  : customIcon(position.type)
-              }
-              eventHandlers={{
-                click: () => {
-                  showDetailPoint(position)
-                  handleClickMarker(index)
-                }
-              }}
-            />
-          ))}
-        </MapContainer>
-      </Box>
       <Box
         sx={{
-          width: '25%',
-          height: '100%',
-          marginTop: '-32px',
-          paddingInline: 4
+          padding: '16px',
+          marginBottom: '32px',
+          paddingLeft: '32px',
+          paddingBottom: '32px',
+          display: role == 'astd' ? '' : 'none'
         }}
+        className="search-company-number"
       >
         <Grid item>
-          <Typography sx={{ ...style.typo, marginTop: 2 }}>
-            {t('logisticDashboard.searchDriver')}
-          </Typography>
-        </Grid>
-        <Grid item>
           <TextField
-            id="searchShipment"
-            onChange={(event) => {
-              const numericValue = event.target.value.replace(/\D/g, '')
-              handleSearch(numericValue)
-            }}
+            id="searchCompanyNumber"
+            onChange={handleInputChange}
+            label={t('tenant.search')}
             sx={style.inputState}
-            placeholder={t('logisticDashboard.inputDriverNumber')}
+            placeholder={t('tenant.enter_company_number')}
             inputProps={{
               inputMode: 'numeric',
               pattern: '[0-9]*',
-              maxLength: 3
+              maxLength: 6
             }}
             InputProps={{
               endAdornment: (
@@ -398,145 +375,230 @@ const LogisticDashboard = () => {
             }}
           />
         </Grid>
-        {driverInfo && (
-          <Grid
-            item
-            sx={{ paddingBottom: 2, borderBottom: '2px solid #ACACAC' }}
+      </Box>
+      <Box sx={{ display: 'flex', marginTop: '-32px' }}>
+        <Box
+          className="map"
+          sx={{
+            width: '70%',
+            height: 'calc(100vh - 64px)'
+            // marginTop: '-32px'
+          }}
+        >
+          <MapContainer
+            center={[22.4241897, 114.2117632]}
+            zoom={13}
+            zoomControl={false}
           >
+            <FitBoundsOnLoad />
+            <TileLayer
+              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {puAndDropOffMarker.map((position, index) => (
+              <Marker
+                key={index}
+                position={position.gpsCode}
+                // icon={customIcon(position.type)}
+                icon={
+                  selectedMarker === index
+                    ? hoverCustomIcon(
+                        position.type,
+                        position.type == 'pu'
+                          ? position.senderAddr
+                          : position.receiverAddr
+                      )
+                    : customIcon(position.type)
+                }
+                eventHandlers={{
+                  click: () => {
+                    showDetailPoint(position)
+                    handleClickMarker(index)
+                  }
+                }}
+              />
+            ))}
+          </MapContainer>
+        </Box>
+        <Box
+          sx={{
+            width: '25%',
+            height: '100%',
+            // marginTop: '-32px',
+            paddingInline: 4
+          }}
+        >
+          <Grid item>
             <Typography sx={{ ...style.typo, marginTop: 2 }}>
-              {t('logisticDashboard.driverInfo')}
-            </Typography>
-            <Typography sx={{ ...style.typo2, marginTop: 1 }}>
-              {t('logisticDashboard.driverNumb')} {' : '} {driverInfo.contactNo}
-            </Typography>
-            <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
-              {t('logisticDashboard.driverLicense')} {' : '}
-              {driverInfo.licenseNo}
-            </Typography>
-            <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
-              {t('logisticDashboard.vehicleCategory')} {' : '}
-              {vehicleName}
+              {t('logisticDashboard.searchDriver')}
             </Typography>
           </Grid>
-        )}
-        {showPuDropPoint && (
           <Grid item>
-            <Typography sx={{ ...style.typo, marginTop: 2, marginBottom: 2 }}>
-              {t('logisticDashboard.receivingLocation')}
-            </Typography>
-            <Box
-              sx={{
-                ...style.driverDetail,
-                backgroundColor: typePoint == 'pu' ? '#E4F6DC' : '#FFF0F4'
+            <TextField
+              id="searchShipment"
+              onChange={(event) => {
+                const numericValue = event.target.value.replace(/\D/g, '')
+                handleSearchDriver(numericValue)
               }}
+              sx={style.inputState}
+              placeholder={t('logisticDashboard.inputDriverNumber')}
+              inputProps={{
+                inputMode: 'numeric',
+                pattern: '[0-9]*',
+                maxLength: 3
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => {}}>
+                      <SEARCH_ICON style={{ color: '#79CA25' }} />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Grid>
+          {driverInfo && (
+            <Grid
+              item
+              sx={{ paddingBottom: 2, borderBottom: '2px solid #ACACAC' }}
             >
-              <Typography sx={{ ...style.typo3, marginTop: 0.5 }}>
-                {typePoint == 'pu'
-                  ? selectedPuPoint?.senderName
-                  : selectedDrofPoint?.puHeader.receiverName}
+              <Typography sx={{ ...style.typo, marginTop: 2 }}>
+                {t('logisticDashboard.driverInfo')}
+              </Typography>
+              <Typography sx={{ ...style.typo2, marginTop: 1 }}>
+                {t('logisticDashboard.driverNumb')} {' : '}{' '}
+                {driverInfo.contactNo}
               </Typography>
               <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
-                {t('logisticDashboard.receiptDate')} {' : '}
-                {typePoint == 'pu'
-                  ? displayLocalDate(selectedPuPoint?.puAt || '')
-                  : displayLocalDate(selectedDrofPoint?.drofAt || '')}
+                {t('logisticDashboard.driverLicense')} {' : '}
+                {driverInfo.licenseNo}
               </Typography>
-              <Typography
+              <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
+                {t('logisticDashboard.vehicleCategory')} {' : '}
+                {vehicleName}
+              </Typography>
+            </Grid>
+          )}
+          {showPuDropPoint && (
+            <Grid item>
+              <Typography sx={{ ...style.typo, marginTop: 2, marginBottom: 2 }}>
+                {t('logisticDashboard.receivingLocation')}
+              </Typography>
+              <Box
                 sx={{
-                  fontSize: 13,
-                  color: typePoint == 'pu' ? '#58C33C' : '#FF4242',
-                  fontWeight: '500',
-                  display: 'flex',
-                  justifyContent: 'start',
-                  alignItems: 'center'
+                  ...style.driverDetail,
+                  backgroundColor: typePoint == 'pu' ? '#E4F6DC' : '#FFF0F4'
                 }}
               >
-                <Box sx={{ marginRight: 1, marginTop: '4px' }}>
-                  {typePoint == 'pu' ? (
-                    selectedPuPoint?.jo.status.toLocaleLowerCase() !=
-                    'rejected' ? (
+                <Typography sx={{ ...style.typo3, marginTop: 0.5 }}>
+                  {typePoint == 'pu'
+                    ? selectedPuPoint?.senderName
+                    : selectedDrofPoint?.puHeader.receiverName}
+                </Typography>
+                <Typography sx={{ ...style.typo2, marginTop: 0.5 }}>
+                  {t('logisticDashboard.receiptDate')} {' : '}
+                  {typePoint == 'pu'
+                    ? displayLocalDate(selectedPuPoint?.puAt || '')
+                    : displayLocalDate(selectedDrofPoint?.drofAt || '')}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: 13,
+                    color: typePoint == 'pu' ? '#58C33C' : '#FF4242',
+                    fontWeight: '500',
+                    display: 'flex',
+                    justifyContent: 'start',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Box sx={{ marginRight: 1, marginTop: '4px' }}>
+                    {typePoint == 'pu' ? (
+                      selectedPuPoint?.jo.status.toLocaleLowerCase() !=
+                      'rejected' ? (
+                        <CheckCircleRoundedIcon
+                          fontSize="small"
+                          style={{ color: '#58C33C' }}
+                        />
+                      ) : (
+                        <CheckCircleRoundedIcon
+                          fontSize="small"
+                          style={{ color: '#58C33C' }}
+                        />
+                      )
+                    ) : selectedDrofPoint?.puHeader.jo.status.toLocaleLowerCase() !=
+                      'rejected' ? (
                       <CheckCircleRoundedIcon
                         fontSize="small"
                         style={{ color: '#58C33C' }}
                       />
                     ) : (
-                      <CheckCircleRoundedIcon
+                      <ErrorRoundedIcon
                         fontSize="small"
-                        style={{ color: '#58C33C' }}
+                        style={{ color: '#FF6166' }}
                       />
-                    )
-                  ) : selectedDrofPoint?.puHeader.jo.status.toLocaleLowerCase() !=
-                    'rejected' ? (
-                    <CheckCircleRoundedIcon
-                      fontSize="small"
-                      style={{ color: '#58C33C' }}
-                    />
-                  ) : (
-                    <ErrorRoundedIcon
-                      fontSize="small"
-                      style={{ color: '#FF6166' }}
-                    />
-                  )}
-                </Box>
-
-                {typePoint == 'pu'
-                  ? t(
-                      `status.${selectedPuPoint?.jo.status.toLocaleLowerCase()}`
-                    )
-                  : t(
-                      `status.${selectedDrofPoint?.puHeader.jo.status.toLocaleLowerCase()}`
                     )}
-                {'  '}
-                {typePoint == 'pu'
-                  ? displayCreatedDate(selectedPuPoint?.puAt || '')
-                  : displayCreatedDate(selectedDrofPoint?.drofAt || '')}
-              </Typography>
-              <Box sx={{ marginY: 2 }}>
-                <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.logisticsCompany')} {' : '}
+                  </Box>
+
                   {typePoint == 'pu'
-                    ? selectedPuPoint?.senderName
-                    : selectedDrofPoint?.puHeader.receiverName}
-                </Typography>
-                <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.poNumber')} {' : '}
-                  {typePoint == 'pu'
-                    ? selectedPuPoint?.jo.picoId
-                    : selectedDrofPoint?.puHeader.jo.picoId}
-                </Typography>
-                <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.shippingAddress')} {' : '}
-                  {typePoint == 'pu'
-                    ? selectedPuPoint?.senderAddr
-                    : selectedDrofPoint?.puHeader.receiverAddr}
-                </Typography>
-                <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.recyc')} {' : '}
-                  {typePoint == 'pu'
-                    ? mappingRecyName(selectedPuPoint?.jo.recycType || '-')
-                    : mappingRecyName(
-                        selectedDrofPoint?.puHeader.jo.recycType || '-'
+                    ? t(
+                        `status.${selectedPuPoint?.jo.status.toLocaleLowerCase()}`
+                      )
+                    : t(
+                        `status.${selectedDrofPoint?.puHeader.jo.status.toLocaleLowerCase()}`
                       )}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.packageName')} {' : '}
-                  {getPackageName(
-                    selectedPuPoint?.puDetail[0].packageTypeId || ''
-                  )}
-                </Typography>
-                <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
-                  {t('logisticDashboard.packingWeight')} {' : '}
+                  {'  '}
                   {typePoint == 'pu'
-                    ? selectedPuPoint?.jo.weight.toString()
-                    : selectedDrofPoint?.puHeader.jo.weight.toString()}
-                  Kg
+                    ? displayCreatedDate(selectedPuPoint?.puAt || '')
+                    : displayCreatedDate(selectedDrofPoint?.drofAt || '')}
                 </Typography>
+                <Box sx={{ marginY: 2 }}>
+                  <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
+                    {t('logisticDashboard.logisticsCompany')} {' : '}
+                    {typePoint == 'pu'
+                      ? selectedPuPoint?.senderName
+                      : selectedDrofPoint?.puHeader.receiverName}
+                  </Typography>
+                  <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
+                    {t('logisticDashboard.poNumber')} {' : '}
+                    {typePoint == 'pu'
+                      ? selectedPuPoint?.jo.picoId
+                      : selectedDrofPoint?.puHeader.jo.picoId}
+                  </Typography>
+                  <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
+                    {t('logisticDashboard.shippingAddress')} {' : '}
+                    {typePoint == 'pu'
+                      ? selectedPuPoint?.senderAddr
+                      : selectedDrofPoint?.puHeader.receiverAddr}
+                  </Typography>
+                  <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
+                    {t('logisticDashboard.recyc')} {' : '}
+                    {typePoint == 'pu'
+                      ? mappingRecyName(selectedPuPoint?.jo.recycType || '-')
+                      : mappingRecyName(
+                          selectedDrofPoint?.puHeader.jo.recycType || '-'
+                        )}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
+                    {t('logisticDashboard.packageName')} {' : '}
+                    {getPackageName(
+                      selectedPuPoint?.puDetail[0].packageTypeId || ''
+                    )}
+                  </Typography>
+                  <Typography sx={{ ...style.typo4, marginTop: 0.5 }}>
+                    {t('logisticDashboard.packingWeight')} {' : '}
+                    {typePoint == 'pu'
+                      ? selectedPuPoint?.jo.weight.toString()
+                      : selectedDrofPoint?.puHeader.jo.weight.toString()}
+                    Kg
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          </Grid>
-        )}
+            </Grid>
+          )}
+        </Box>
       </Box>
     </Box>
   )
@@ -596,4 +658,4 @@ let style = {
   }
 }
 
-export default LogisticDashboard
+export default VehicleDashboard

@@ -8,6 +8,7 @@ import ConfirmResetPassword from "./pages/Auth/ConfirmResetPassword";
 import ChangePassword from "./pages/Auth/ChangePassword";
 //ASTD admin
 import CompanyManage from "./pages/ASTD/CompanyManage";
+import AstdVehicleDashboard from "./pages/Logistic/Dashboard/dashboard"
 
 //collection point
 import CollectionPoint from "./pages/Collector/CollectionPoint/CollectionPoint/CollectionPoint";
@@ -56,7 +57,7 @@ import Driver from "./pages/Logistic/Driver";
 import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
-import LogisticDashboard from "./pages/Logistic/Dashboard/dashboard"
+import LogisticVehicleDashboard from "./pages/Logistic/Dashboard/dashboard"
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
@@ -142,6 +143,7 @@ const Router = () => {
           <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
           <Route path="/astd/inventory/" element={<Inventory/>} />
           <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
+          <Route path="/astd/dashboard" element={<AstdVehicleDashboard />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -166,7 +168,7 @@ const Router = () => {
           <Route path="/logistic/notice/" element={<Notice />} />
           <Route path="/logistic/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/logistic/staff" element={<StaffManagement />} />
-          <Route path="/logistic/dashboard" element={<LogisticDashboard />} />
+          <Route path="/logistic/dashboard" element={<LogisticVehicleDashboard />} />
         </Route>
 
         <Route element={<MainLayout />}>

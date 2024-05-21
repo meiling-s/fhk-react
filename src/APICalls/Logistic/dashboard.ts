@@ -7,13 +7,13 @@ import {
 import { returnApiToken } from '../../utils/utils'
 import axiosInstance from '../../constants/axiosInstance'
 
-export const getDriverDetail = async (driverId: number) => {
+export const getDriverDetail = async (table: string, driverId: number) => {
   try {
     const token = returnApiToken()
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_DRIVER_DETAIL(token.decodeKeycloack, driverId)
+      ...GET_DRIVER_DETAIL(table, driverId)
     })
     return response
   } catch (e) {
@@ -23,6 +23,7 @@ export const getDriverDetail = async (driverId: number) => {
 }
 
 export const getDriverPickupPoint = async (
+  table: string,
   driverId: number,
   frmDate: string,
   toDate: string
@@ -33,7 +34,7 @@ export const getDriverPickupPoint = async (
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
       ...GET_DRIVER_PICKUP_POINT(
-        token.decodeKeycloack,
+        table,
         driverId,
         frmDate,
         toDate
@@ -47,9 +48,10 @@ export const getDriverPickupPoint = async (
 }
 
 export const getDriverDropOffPoint = async (
+  table: string,
   driverId: number,
   frmDate: string,
-  toDate: string
+  toDate: string,
 ) => {
   try {
     const token = returnApiToken()
@@ -57,7 +59,7 @@ export const getDriverDropOffPoint = async (
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
       ...GET_DRIVER_DROPOFF_POINT(
-        token.decodeKeycloack,
+        table,
         driverId,
         frmDate,
         toDate
