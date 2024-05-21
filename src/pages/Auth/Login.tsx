@@ -24,21 +24,25 @@ import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { useTranslation } from 'react-i18next'
-import { jwtDecode } from "jwt-decode";
-import { useContainer } from 'unstated-next';
+import { jwtDecode } from 'jwt-decode'
+import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import { setLanguage } from '../../setups/i18n'
+import { returnApiToken } from '../../utils/utils'
+import { getTenantById } from '../../APICalls/tenantManage'
 
 const Login = () => {
+  const { i18n } = useTranslation()
   const [userName, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = React.useState(false)
   //const [loginTo, setLoginTo] = useState('astd')
-  const [loggingIn, setLogginIn] = useState(false);
-  const [warningMsg, setWarningMsg] = useState<string>(" ");
+  const [loggingIn, setLogginIn] = useState(false)
+  const [warningMsg, setWarningMsg] = useState<string>(' ')
   const navigate = useNavigate()
   const { t } = useTranslation()
   const commonTypeContainer = useContainer(CommonTypeContainer)
-  
+
   // overwrite select style
   //todo : make select as component
   const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -52,34 +56,53 @@ const Login = () => {
     }
   }))
 
+  const getTenantData = async () => {
+    const token = returnApiToken()
+    const result = await getTenantById(parseInt(token.tenantId))
+    const data = result?.data
+    return data.lang
+  }
+
   const onLoginButtonClick = async (userName: string, password: string) => {
-    setLogginIn(true);
+    setLogginIn(true)
     //login for astd testing
-    var realm = 'astd';   //default realm is astd
-    var loginTo = 'astd';
+    var realm = 'astd' //default realm is astd
+    var loginTo = 'astd'
 
-    if(realm!=''){
-      const result = await login({ 
+    if (realm != '') {
+      const result = await login({
         username: userName,
-        password: password,
-      });
+        password: password
+      })
       console.log(result, 'result login')
-      if(result && result.access_token){
-        setWarningMsg(" ");
+      if (result && result.access_token) {
+        setWarningMsg(' ')
         //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
-        localStorage.setItem(localStorgeKeyName.keycloakToken, result?.access_token || '');
-        localStorage.setItem(localStorgeKeyName.refreshToken, result?.refresh_token || '');
-        localStorage.setItem(localStorgeKeyName.realm, result?.realm || '');
-        localStorage.setItem(localStorgeKeyName.role, result?.realm || '');
-        localStorage.setItem(localStorgeKeyName.username, result?.username || '');
+        localStorage.setItem(
+          localStorgeKeyName.keycloakToken,
+          result?.access_token || ''
+        )
+        localStorage.setItem(
+          localStorgeKeyName.refreshToken,
+          result?.refresh_token || ''
+        )
+        localStorage.setItem(localStorgeKeyName.realm, result?.realm || '')
+        localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
+        localStorage.setItem(
+          localStorgeKeyName.username,
+          result?.username || ''
+        )
         // 20240129 add function list daniel keung start
-        const functionList = result?.functionList || [];
-        const uniqueFunctionList = Array.from(new Set(functionList));
+        const functionList = result?.functionList || []
+        const uniqueFunctionList = Array.from(new Set(functionList))
 
-        localStorage.setItem(localStorgeKeyName.functionList, JSON.stringify(uniqueFunctionList));
+        localStorage.setItem(
+          localStorgeKeyName.functionList,
+          JSON.stringify(uniqueFunctionList)
+        )
         // 20240129 add function list daniel keung end
-        const decodedToken: any = jwtDecode(result?.access_token);
-        const azpValue = decodedToken.azp;
+        const decodedToken: any = jwtDecode(result?.access_token)
+        const azpValue = decodedToken.azp
         localStorage.setItem(localStorgeKeyName.decodeKeycloack, azpValue || '')
         // 20240129 add function list daniel keung start
         const tenantID = azpValue.substring(7)
@@ -87,46 +110,74 @@ const Login = () => {
         loginTo = result?.realm
         // 20240129 add function list daniel keung end
         let realmApiRoute = ''
-        switch(loginTo){
-          case "astd":
+        switch (loginTo) {
+          case 'astd':
             realmApiRoute = 'account'
-            navigate("/astd");
-            break;
-          case "collector":
+            navigate('/astd')
+            break
+          case 'collector':
             realmApiRoute = 'collectors'
-            navigate("/collector");
-            break;
-          case "logistic":
+            navigate('/collector')
+            break
+          case 'logistic':
             realmApiRoute = 'logistic'
-            navigate("/logistic/pickupOrder");
-            break;
-          case "manufacturer":
+            navigate('/logistic/pickupOrder')
+            break
+          case 'manufacturer':
             realmApiRoute = 'manufacturer'
-            navigate("/manufacturer/pickupOrder");
-            break;
-          case "customer":
+            navigate('/manufacturer/pickupOrder')
+            break
+          case 'customer':
             realmApiRoute = 'customer'
-            navigate("/customer/account");
-            break;
+            navigate('/customer/account')
+            break
           default:
             realmApiRoute = 'collectors'
-            break;
+            break
         }
-        localStorage.setItem(localStorgeKeyName.realmApiRoute, realmApiRoute);
-        
+        localStorage.setItem(localStorgeKeyName.realmApiRoute, realmApiRoute)
+
+        //set selected lang
+        const tenantLang = await getTenantData()
+        const selectedLang = getSelectedLanguange(tenantLang)
+
+        localStorage.setItem(localStorgeKeyName.selectedLanguage, selectedLang)
+        i18n.changeLanguage(selectedLang)
+        setLanguage(selectedLang)
+
         commonTypeContainer.updateCommonTypeContainer()
-      }else{
+      } else {
         const errCode = result
-        if(errCode == '004') {
+        if (errCode == '004') {
           //navigate to reset pass firsttime login
           localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
-          return navigate('/changePassword')  
+          return navigate('/changePassword')
         }
-        setWarningMsg(t(`login.err_msg_${errCode}`));
+        setWarningMsg(t(`login.err_msg_${errCode}`))
       }
     }
-    
-    setLogginIn(false);
+
+    setLogginIn(false)
+  }
+
+  const getSelectedLanguange = (lang: string) => {
+    var selectedLang = 'zhhk'
+    switch (lang) {
+      case 'ZH-HK':
+        selectedLang = 'zhhk'
+        break
+      case 'ZH-CH':
+        selectedLang = 'zhch'
+        break
+      case 'EN-US':
+        selectedLang = 'enus'
+        break
+      default:
+        selectedLang = 'zhhk'
+        break
+    }
+
+    return selectedLang
   }
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
@@ -137,14 +188,14 @@ const Login = () => {
 
   return (
     <Box
-        sx={constantStyle.loginPageBg}
-        component="form"
-        onSubmit={(event) => {
-          event.preventDefault();
-          onLoginButtonClick(userName, password);
-        }}
-      >
-        <Box sx={constantStyle.loginBox}>
+      sx={constantStyle.loginPageBg}
+      component="form"
+      onSubmit={(event) => {
+        event.preventDefault()
+        onLoginButtonClick(userName, password)
+      }}
+    >
+      <Box sx={constantStyle.loginBox}>
         <img src={logo_company} alt="logo_company" style={{ width: '70px' }} />
         <Typography
           sx={{ marginTop: '30px', marginBottom: '30px' }}
@@ -212,22 +263,19 @@ const Login = () => {
               loading={loggingIn}
               type="submit"
               sx={{
-                borderRadius: "20px",
-                backgroundColor: "#79ca25",
-                '&.MuiButton-root:hover':{bgcolor: '#79ca25'},
-                height: "40px",
+                borderRadius: '20px',
+                backgroundColor: '#79ca25',
+                '&.MuiButton-root:hover': { bgcolor: '#79ca25' },
+                height: '40px'
               }}
               variant="contained"
             >
               登入
             </LoadingButton>
           </Box>
-          {
-            warningMsg!=" "&&
-              <FormHelperText error>
-                {warningMsg}
-              </FormHelperText>
-          }
+          {warningMsg != ' ' && (
+            <FormHelperText error>{warningMsg}</FormHelperText>
+          )}
           <Box>
             <Button
               sx={{ color: 'grey', textDecoration: 'underline' }}

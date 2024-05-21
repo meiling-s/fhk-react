@@ -21,7 +21,12 @@
     "no": "否",
     "createdDatetime": "建立時間",
     "lastUpdateDatetime": "上次更新時間",
-    "pckgCategory:": "包裝類別"
+    "pckgCategory:": "包裝類別",
+    "approveSuccess": "成功批准請求",
+    "approveFailed": "批准請求失敗",
+    "rejectSuccess": "成功拒絕請求",
+    "rejectFailed": "拒絕請求失敗",
+    "details": "詳情"
   },
   "col": {
     "createCP": "建立回收點",
@@ -75,7 +80,8 @@
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
-      "startDateBehindEndDate": "不允許開始時間晚於結束時間",
+      "startDateBehindEndDate": "如果開始日期晚於結束日期則不允許",
+      "endDateEarlyThanStartDate": "如果結束日期早於開始日期則不允許",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字"
     }
   },
@@ -137,7 +143,8 @@
     "location": "實體地點",
     "place": "地點",
     "status": "狀態",
-    "recyclable_subcategories": "回收物類別"
+    "recyclable_subcategories": "回收物類別",
+    "enter_tenantId": "輸入租戶 ID"
   },
   "add_warehouse_page": {
     "save": "儲存",
@@ -683,7 +690,9 @@
     "successEditUser": "成功編輯用戶",
     "failedEditUser": "編輯用戶失敗",
     "successDeleteUser": "成功刪除用戶",
-    "failedDeleteUser": "刪除用戶失敗"
+    "failedDeleteUser": "刪除用戶失敗",
+    "resetPasswaitApproval": "重置密碼等待批准",
+    "resetPassword": "重新設密碼"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "概覽",
@@ -1145,5 +1154,35 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒"
+  },
+  "dashboard_manufacturer": {
+    "data": "數據",
+    "recycling_station": "各個回收站的回收物重量",
+    "recycled_product": "回收產品銷售數據",
+    "recycling_processing_types": "回收加工種類",
+    "plastic": "塑膠",
+    "Waste_paper": "廢紙",
+    "metal": "金屬",
+    "january": "一月",
+    "february": "二月",
+    "march": "三月",
+    "april": "四月",
+    "may": "五月",
+    "june": "六月",
+    "juli": "七月",
+    "august": "八月",
+    "september": "九月",
+    "october": "十月",
+    "november": "十一月",
+    "december": "十二月",
+    "product_category": "產品種類",
+    "total_customer_orders": "客戶訂單總量",
+    "sales_volume_region": "各地區銷售量",
+    "sales_volume": "銷售量",
+    "high": "高",
+    "low": "低",
+    "total_amount_of_recyclate_processed": "已處理的回收物總量",
+    "total_amount_of_recyclate_remaining": "處理後剩餘的回收物總量",
+    "total_amount_of_recycled_material": "處理後無法使用的回收物總量"
   }
 }

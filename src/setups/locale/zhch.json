@@ -21,7 +21,12 @@
     "no": "否",
     "createdDatetime": "建立时间",
     "lastUpdateDatetime": "上次更新时间",
-    "pckgCategory:": "包装类别"
+    "pckgCategory:": "包装类别",
+    "approveSuccess": "成功批准请求",
+    "approveFailed": "批准请求失败",
+    "rejectSuccess": "成功拒绝请求",
+    "rejectFailed": "拒绝请求失败",
+    "details": "细节"
   },
   "col": {
     "createCP": "建立回收点",
@@ -75,7 +80,8 @@
       "atLeastOnePicoExist": "至少需要一个 Pico 详细信息",
       "exceedsMaxLength": "不可超过一百个字符",
       "minMoreOneImgUploded": "至少需要上传2张车辆图片",
-      "startDateBehindEndDate": "不允许开始时间晚于结束时间",
+      "startDateBehindEndDate": "如果开始日期晚于结束日期则不允许",
+      "endDateEarlyThanStartDate": "如果结束日期早于开始日期则不允许",
       "loginIdCantContainAdmin": "'admin' 中不允许有单词"
     }
   },
@@ -137,7 +143,8 @@
     "location": "实体地点",
     "place": "地点",
     "status": "状态",
-    "recyclable_subcategories": "回收物类別"
+    "recyclable_subcategories": "回收物类別",
+    "enter_tenantId": "输入租户 ID"
   },
   "add_warehouse_page": {
     "save": "储存",
@@ -685,7 +692,9 @@
     "successEditUser": "成功编辑用户",
     "failedEditUser": "编辑用户失败",
     "successDeleteUser": "成功删除用户",
-    "failedDeleteUser": "删除用户失败"
+    "failedDeleteUser": "删除用户失败",
+    "resetPasswaitApproval": "重置密码等待批准",
+    "resetPassword": "重设密码"
   },
   "userGroup": {
     "title": "用戶群組",
@@ -1060,7 +1069,6 @@
       "arrived": "到达地点"
     }
   },
-
   "recycling_unit": {
     "recycling_and_related_units": "回收物及相关单位",
     "recyclable_subtype_semi_complete": "回收物、半制成品、制成品类别",
@@ -1123,5 +1131,35 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒"
+  },
+  "dashboard_manufacturer": {
+    "data": "数据",
+    "recycling_station": "各个回收站的回收物重量",
+    "recycled_product": "回收产品销售数据",
+    "recycling_processing_types": "回收加工种类",
+    "plastic": "塑料",
+    "Waste_paper": "废纸",
+    "metal": "金属",
+    "january": "一月",
+    "february": "二月",
+    "march": "三月",
+    "april": "四月",
+    "may": "五月",
+    "june": "六月",
+    "juli": "七月",
+    "august": "八月",
+    "september": "九月",
+    "october": "十月",
+    "november": "十一月",
+    "december": "十二月",
+    "product_category": "产品种类",
+    "total_customer_orders": "客户订单总量",
+    "sales_volume_region": "各地区销售量",
+    "sales_volume": "销售量",
+    "high": "高",
+    "low": "低",
+    "total_amount_of_recyclate_processed": "已处理的回收物总量",
+    "total_amount_of_recyclate_remaining": "处理后剩余的回收物总量",
+    "total_amount_of_recycled_material": "处理后无法使用的回收物总量"
   }
 }

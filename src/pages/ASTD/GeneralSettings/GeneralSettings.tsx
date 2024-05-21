@@ -92,7 +92,9 @@ const ASTDSettings: FunctionComponent = () => {
   const [weightDrawerOpen, setWeightDrawerOpen] = useState(false)
   const [currencyDrawerOpen, setCurrencyDrawerOpen] = useState<boolean>(false)
   const [dateFormat, setDateFormat] = useState<DateFormatProps | null>(null)
-  const [weightFormat, setWeightFormat] = useState<WeightToleranceProps | null>(null)
+  const [weightFormat, setWeightFormat] = useState<WeightToleranceProps | null>(
+    null
+  )
   const [currencyList, setCurrencyList] = useState<CurrencyListProps[]>([])
   const [selectedRow, setSelectedRow] = useState<CurrencyListProps | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
@@ -101,7 +103,9 @@ const ASTDSettings: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
-  const [decimalValue, setDecimalValue] = useState<DecimalValueProps | null>(null)
+  const [decimalValue, setDecimalValue] = useState<DecimalValueProps | null>(
+    null
+  )
 
   useEffect(() => {
     initCurrencyList()
@@ -125,7 +129,7 @@ const ASTDSettings: FunctionComponent = () => {
 
     setDecimalValue(data)
   }
-  
+
   const initDateFormat = async () => {
     const result = await getDateFormat()
     const data = result?.data
@@ -232,32 +236,6 @@ const ASTDSettings: FunctionComponent = () => {
     }
   }
 
-  const showErrorToast = (msg: string) => {
-    toast.error(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
-
-  const showSuccessToast = (msg: string) => {
-    toast.info(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
-
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
@@ -310,7 +288,7 @@ const ASTDSettings: FunctionComponent = () => {
             }}
           >
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {decimalValue !== null  && decimalValue.decimalVal}
+              {decimalValue !== null && decimalValue.decimalVal}
             </Typography>
             <IconButton onClick={() => handleOpenSidebar('number')}>
               <EditIcon />
@@ -341,7 +319,7 @@ const ASTDSettings: FunctionComponent = () => {
             }}
           >
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {dateFormat !== null && dateFormat.dateFormat}
+              {dateFormat !== null && dateFormat?.dateFormat}
             </Typography>
             <IconButton onClick={() => handleOpenSidebar('date')}>
               <EditIcon />
@@ -372,7 +350,7 @@ const ASTDSettings: FunctionComponent = () => {
             }}
           >
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {weightFormat !== null  && weightFormat.weightVariance}
+              {weightFormat !== null && weightFormat?.weightVariance}
             </Typography>
             <IconButton onClick={() => handleOpenSidebar('weight')}>
               <EditIcon />
@@ -447,21 +425,21 @@ const ASTDSettings: FunctionComponent = () => {
       <NumberFormat
         drawerOpen={numberDrawerOpen}
         handleDrawerClose={() => setNumberDrawerOpen(false)}
-        action='edit'
+        action="edit"
         onSubmitData={onSubmitData}
         numberFormat={decimalValue}
       />
       <DateFormat
         drawerOpen={dateDrawerOpen}
         handleDrawerClose={() => setDateDrawerOpen(false)}
-        action='edit'
+        action="edit"
         onSubmitData={onSubmitData}
         dateformat={dateFormat}
       />
       <WeightFormat
         drawerOpen={weightDrawerOpen}
         handleDrawerClose={() => setWeightDrawerOpen(false)}
-        action='edit'
+        action="edit"
         onSubmitData={onSubmitData}
         weightformat={weightFormat}
       />

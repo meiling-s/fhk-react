@@ -50,6 +50,13 @@ export const UPDATE_TENANT_REGISTER = (
   url: `api/v1/account/t/updateInfo/${tenantId}`
 })
 
+export const UPDATE_TENANT_INFO = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/account/t/${tenantId}`
+})
+
 export const GET_TENANT_BY_TENANT_ID = (
   tenantId: number
 ): AxiosRequestConfig => ({
@@ -376,6 +383,21 @@ export const CREATE_FORGET_PASSWORD = (table: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/forgetpassword/${table}`
 })
 
+export const GET_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/forgetpassword/${table}`
+})
+
+export const APPROVE_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/approve`
+})
+
+export const REJECT_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/reject`
+})
+
 //warehouse
 export const GET_ALL_WAREHOUSE = (
   realmApiRoute: string,
@@ -569,12 +591,20 @@ export const EDIT_VEHICLE = (
 })
 
 //inventory
+export const ASTD_GET_INVENTORY = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
+})
+
 export const GET_INVENTORY = (
   realmApiRoute: string,
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/${table}/searching`
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
 })
 
 export const GET_ITEM_TRACK_INVENTORY = (
@@ -673,6 +703,11 @@ export const GET_WEIGHT_BY_SUBTYPE_ID = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/inventory/${table}/getweightbysubtype/${warehouseId}`
+})
+
+export const GET_RECYC_SUB_TYPE_WEIGHT = (realmApiRoute: string, table: string, warehouseId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/recycsubtypeweight/${table}/${warehouseId}`
 })
 
 export const GET_CHECKIN_WAREHOUSE = (
@@ -1141,6 +1176,15 @@ export const EDIT_CONTRACT = (
   url: `api/v1/${realmApiRoute}/contract/${tenantId}/${contractNo}`
 })
 
+export const DELETE_CONTRACT = (
+  realmApiRoute: string,
+  tenantId: string,
+  contractNo: string
+): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/${realmApiRoute}/contract/${tenantId}/${contractNo}/status`
+})
+
 export const GET_PACKAGING_LIST = (
   realmApiRoute: string,
   tenantId: string
@@ -1407,3 +1451,35 @@ export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string): AxiosRequest
   method: 'get',
   url: `api/v1/collectors/dashboard/colPointRecyclables/${tenantId}`
 })
+
+// get decimal value
+export const GET_DECIMAL_VAL = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/decimalVal`
+})
+
+export const GET_WEIGHT_RECYCABLES_DASHBOARD = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/weightRecyclablesColPoint/${table}/${frmDate}/${toDate}`
+})
+
+export const GET_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/salesProductAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_RECYC_PROCESS_ANALYSIS = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/recycProcessAnalysis/${table}/${frmDate}/${toDate}`
+})
+
+export const GET_TOTAL_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/ttlSalesProductAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/manufacturer/dashboard/ttlSalesProductByDistrictAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+

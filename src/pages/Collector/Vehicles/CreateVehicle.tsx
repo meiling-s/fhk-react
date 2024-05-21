@@ -277,11 +277,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     if (validation.length === 0) {
       const result = await addVehicle(formData)
       if (result) {
-        onSubmitData('success', 'Success created data')
+        onSubmitData('success', t('common.saveSuccessfully'))
         resetData()
         handleDrawerClose()
       } else {
-        onSubmitData('error', 'Failed created data')
+        onSubmitData('error', t('common.saveFailed'))
       }
     } else {
       setTrySubmited(true)
@@ -293,13 +293,14 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       if (selectedItem != null) {
         const result = await editVehicle(formData, selectedItem.vehicleId!)
         if (result) {
-          onSubmitData('success', 'Edit data success')
+          onSubmitData('success', t('common.editSuccessfully'))
           resetData()
           handleDrawerClose()
         }
       }
     } else {
       setTrySubmited(true)
+
     }
   }
 
@@ -308,11 +309,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     if (selectedItem != null) {
       const result = await deleteVehicle(status, selectedItem.vehicleId)
       if (result) {
-        onSubmitData('success', 'Deleted data success')
+        onSubmitData('success', t('common.deletedSuccessfully'))
         resetData()
         handleDrawerClose()
       } else {
-        onSubmitData('error', 'Deleted data success')
+        onSubmitData('error', t('common.deleteFailed'))
       }
     }
   }

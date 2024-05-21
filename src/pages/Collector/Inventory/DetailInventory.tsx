@@ -23,6 +23,9 @@ import { PickupOrder } from '../../../interfaces/pickupOrder'
 import { returnApiToken } from '../../../utils/utils'
 import { getItemTrackInventory } from '../../../APICalls/Collector/inventory'
 import InventoryShippingCard from '../../../components/InventoryShippingCard'
+import { formatWeight } from '../../../utils/utils'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 interface InventoryDetailProps {
   drawerOpen: boolean
@@ -39,6 +42,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
 }) => {
   const { t } = useTranslation()
   const [shippingData, setShippingData] = useState<any[]>([])
+  const { decimalVal } = useContainer(CommonTypeContainer)
   const getPicoDtl = (picoId: string, dtlId: number) => {
     if(selectedPico) {
     const pico = selectedPico.find((pico) => pico.picoId == picoId)
@@ -73,7 +77,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
     },
     {
       label: t('inventory.weight'),
-      value: `${selectedRow?.weight} kg`
+      value: `${formatWeight(selectedRow?.weight || 0, decimalVal)} kg`
     }
   ]
 

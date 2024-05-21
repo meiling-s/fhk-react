@@ -59,7 +59,8 @@ export type recycType = {
     createdAt: string,
     createdBy: string,
     updatedAt: string,
-    updatedBy: string
+    updatedBy: string,
+    backgroundColor?: string
 }
 
 export type recycSubType = {
@@ -190,4 +191,14 @@ export type ProcessType = {
 export type itemList = {
     bgColor: string
     borderColor: string
+}
+
+export type weightUnit = {
+    unitId: number
+    unitNameEng: string
+    unitNameSchi: string
+    unitNameTchi: string
+    receiverName: string
+    weight: number
+    description: true
 }

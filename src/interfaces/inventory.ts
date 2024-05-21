@@ -7,6 +7,7 @@ export type InventoryDetail = {
 export type InventoryItem = {
     itemId: number
     warehouseId: number
+    recyclingNumber?: string
     recycTypeId: string
     recycSubTypeId: string
     packageTypeId: string

@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import '../styles/MainDrawer.css'
-import { Roles, localStorgeKeyName } from '../constants/constant'
+import { Realm, Roles, localStorgeKeyName } from '../constants/constant'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import InventoryIcon from '@mui/icons-material/Inventory'
@@ -51,7 +51,8 @@ type DrawerItem = {
   icon?: JSX.Element
   onClick: () => void
   collapse: boolean
-  collapseGroup?: boolean
+  collapseGroup?: boolean,
+  path?: string
 }
 
 const drawerWidth = 225
@@ -61,15 +62,14 @@ function MainDrawer() {
   const [CPDrawer, setCPDrawer] = useState<boolean>(false) //CP = collection point, this state determine collection point drawer group expand or not
   const [ASTDStatsDrawer, setASTDStatsDrawer] = useState<boolean>(false)
   const [WHManageDrawer, setWHManageDrawer] = useState<boolean>(false)
-  const [dashboarddGroup, setDashboardGroup] = useState<boolean>(false)
+  const [dashboardGroup, setDashboardGroup] = useState<boolean>(false)
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
-  const [selectedISubIndex, setSelectedSubIndex] = useState<number | null>(null);
+  const [selectedISubIndex, setSelectedSubIndex] = useState<number | 0>(0);
   const { realmApiRoute } = returnApiToken()
-  const subMenuDashboard:string[] = ['dashboard'];
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -82,7 +82,7 @@ function MainDrawer() {
   const handleListItemClick = (index: number) => {
     setSelectedIndex(index)
     localStorage.setItem('selectedIndex', String(index))
-    setSelectedSubIndex(null)
+    setSelectedSubIndex(0)
     setDashboardGroup(false)
   }
 
@@ -140,12 +140,6 @@ function MainDrawer() {
         onClick: () => navigate(`/${realm}/jobOrder`),
         collapse: false
       },
-      'Warehouse dashboard': {
-        name: t('warehouseDashboard.warehouse'),
-        icon: <InventoryIcon />,
-        onClick: () => navigate('/warehouse'),
-        collapse: false
-      },
       'Request check-in': {
         name: t('check_in.request_check_in'),
         icon: <LoginIcon />,
@@ -168,11 +162,6 @@ function MainDrawer() {
         name: t('reports'),
         icon: <DOCUMENT_ICON />,
         onClick: () => navigate('/collector/report'),
-        collapse: false
-      },
-      Inventory: {
-        name: t('inventory.inventory'),
-        onClick: () => navigate(`/${realm}/inventory`),
         collapse: false
       },
       'Process out recyclables': {
@@ -209,8 +198,9 @@ function MainDrawer() {
         name: t('dashboard_recyclables.data'),
         icon: <BarChartIcon />,
         onClick: () => setDashboardGroup(prev => !prev),
-        collapse: false
-      }
+        collapse: true,
+        collapseGroup: dashboardGroup,
+      },
     }
   ]
   // 20240129 add function list daniel keung end
@@ -388,7 +378,7 @@ function MainDrawer() {
   var functionListTmp = JSON.parse(
     localStorage.getItem(localStorgeKeyName.functionList) || '[]'
   )
-  // functionListTmp = [...functionListTmp, 'Notification template']
+  functionListTmp.sort()
   if (functionListTmp) {
     for (var functionItem of functionListTmp) {
       for (let deKey in defaultFunctionList[0]) {
@@ -398,6 +388,42 @@ function MainDrawer() {
       }
     }
   }
+
+  var subMenuDashboard: any[];
+  let subMenuDashboardTmp: { name: string; value: string }[] = []
+
+  if (role === 'collector') {
+    subMenuDashboardTmp = [
+      {
+        name: 'inventory',
+        value: t('inventory.inventory'),
+      },
+      {
+        name: 'dashboard',
+        value: t('dashboard_recyclables.recyclable')
+      },
+      {
+        name: 'warehouse',
+        value: t('warehouseDashboard.warehouse'),
+      },
+    ];
+  } else if (role === 'manufacturer' || role === 'astd') {
+    subMenuDashboardTmp = [
+      {
+        name: 'inventory',
+        value: t('inventory.inventory')
+      },
+      {
+        name: 'dashboard',
+        value: t('dashboard_recyclables.recyclable')
+      },
+      {
+        name: 'warehouse',
+        value: t('warehouseDashboard.warehouse'),
+      },
+    ]
+  }
+  
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
   /*   switch (role) {
@@ -425,6 +451,7 @@ function MainDrawer() {
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
   drawerMenus = drawerMenusTmp
+  subMenuDashboard = subMenuDashboardTmp
   // 20240129 add function list daniel keung end
   return (
     <>
@@ -469,36 +496,61 @@ function MainDrawer() {
           </Box>
           {drawerMenus.map((drawerMenu, index) =>
             drawerMenu.collapse ? (
-              <Collapse
-                key={index}
-                sx={[styles.drawerSubItem]}
-                in={drawerMenu.collapseGroup}
-                timeout="auto"
-                unmountOnExit
-              >
+              <>
                 <ListItem
-                  sx={{ marginTop: 2 }}
-                  key={drawerMenu.name}
-                  onClick={drawerMenu.onClick}
+                sx={{ marginTop: 2 }}
+                key={drawerMenu.name}
+                onClick={drawerMenu.onClick}
+                disablePadding
+              >
+                <ListItemButton
                   selected={selectedIndex === index}
-                  disablePadding
-                >
-                  <ListItemButton
-                    sx={{
-                      '&:hover .MuiSvgIcon-root': {
-                        color: '#79ca25'
+                  onClick={(event) => handleListItemClick(index)}
+                  sx={{
+                    '&:hover': {
+                      '.MuiSvgIcon-root': {
+                        color: '#79ca25' // Change color on hover
                       }
-                    }}
-                    selected={selectedIndex === index}
-                    onClick={(event) => handleListItemClick(index)}
+                    }
+                  }}
+                >
+                  <ListItemIcon
+                    className={
+                      selectedIndex === index ? 'icon-menu-active' : ''
+                    }
                   >
-                    <ListItemText
-                      sx={{ marginLeft: -2 }}
-                      primary={drawerMenu.name}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </Collapse>
+                    {drawerMenu.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    sx={{ marginLeft: -2 }}
+                    primary={drawerMenu.name}
+                  />
+                </ListItemButton>
+              </ListItem>
+              <Collapse in={dashboardGroup} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {subMenuDashboard && subMenuDashboard.length > 0 && subMenuDashboard.map((item, index) => {
+                return(
+                    <ListItemButton 
+                      key={index} 
+                      sx={{pl: 7}} 
+                      selected={true}
+                      onClick={() => {
+                        navigate(`${realm}/${item.name}`)
+                        setSelectedSubIndex(index)
+                      }}
+                    >
+                      <ListItemText 
+                        className={ index === selectedISubIndex ? 'text-menu-active' : ''}
+                        primary={item.value} 
+                      />
+                    </ListItemButton>
+                  )
+                })
+              }
+            </List>
+          </Collapse>
+              </>
             ) : (
               <ListItem
                 sx={{ marginTop: 2 }}
@@ -538,28 +590,6 @@ function MainDrawer() {
               </ListItem>
             )
           )}
-           <Collapse in={dashboarddGroup} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              {subMenuDashboard.map((item, index) => {
-                return(
-                    <ListItemButton  
-                      sx={{pl: 7}} 
-                      selected={true}
-                      onClick={() => {
-                        navigate(`${realm}/${item}`)
-                        setSelectedSubIndex(index)
-                      }}
-                    >
-                      <ListItemText 
-                        className={ index === selectedISubIndex ? 'text-menu-active' : ''}
-                        primary={t('dashboard_recyclables.recyclable')} 
-                      />
-                    </ListItemButton>
-                  )
-                })
-              }
-            </List>
-          </Collapse>
         </List>
       </Drawer>
     </>
