@@ -19,7 +19,7 @@ import { styled } from '@mui/material/styles'
 import InputBase from '@mui/material/InputBase'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../../APICalls/login'
-import { localStorgeKeyName } from '../../constants/constant'
+import { MAINTENANCE_STATUS, localStorgeKeyName } from '../../constants/constant'
 import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -30,8 +30,8 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { setLanguage } from '../../setups/i18n'
 import { returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
-import { getSystemMaintenanceStatus } from '../../APICalls/commont'
 import Maintenance from '../Common/Maintenance'
+import useMaintenanceMode from '../../hooks/useMaintenanceMode'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -44,7 +44,7 @@ const Login = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const commonTypeContainer = useContainer(CommonTypeContainer);
-  const [status, setStatus] = useState('');
+ const { maintenanceStatus, message } = useMaintenanceMode();
 
   // overwrite select style
   //todo : make select as component
@@ -189,17 +189,8 @@ const Login = () => {
     navigate('/resetPassword')
   }
 
-  const initMaintenanceStatus = async() => {
-    const status = await getSystemMaintenanceStatus();
-    setStatus(status)
-  }
-
-  useEffect(() => {
-    initMaintenanceStatus()
-  }, [])
-
-  if(status === 'UNDER_MAINTENANCE'){
-    return <Maintenance />
+  if(maintenanceStatus === MAINTENANCE_STATUS.UNDER_MAINTENANCE){
+    return <Maintenance  message={message}/>
   }
 
   return (

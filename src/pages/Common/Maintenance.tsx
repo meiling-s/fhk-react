@@ -2,7 +2,11 @@ import {Box, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import logo_company from '../../logo_company.png'
 
-const Maintenance = () => {
+type props = {
+  message: string
+}
+
+const Maintenance = ({message}:props) => {
 const { t } = useTranslation()
 
 return (
@@ -10,7 +14,7 @@ return (
         <Box sx={styles.maintenanceBox}>
             <img src={logo_company} alt="logo_company" style={{ width: '70px' }} className='p-[10px]'/>
             <Typography style={{fontSize: '22px', fontWeight: 700, color: '#000000', padding: '10px'}}>
-                {t('common.maintenance')}
+                {message? t(message): t('common.maintenance')}
             </Typography>
         </Box>
     </Box>

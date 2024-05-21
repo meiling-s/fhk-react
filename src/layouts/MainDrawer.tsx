@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import '../styles/MainDrawer.css'
-import { Realm, Roles, localStorgeKeyName } from '../constants/constant'
+import { MAINTENANCE_STATUS, Realm, Roles, localStorgeKeyName } from '../constants/constant'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import InventoryIcon from '@mui/icons-material/Inventory'
@@ -41,6 +41,7 @@ import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import BarChartIcon from '@mui/icons-material/BarChart';
 import { dynamicpath, returnApiToken } from '../utils/utils'
+import { getSystemMaintenanceStatus } from '../APICalls/commont'
 
 type MainDrawer = {
   role: string
@@ -79,6 +80,16 @@ function MainDrawer() {
     setOpen(false)
   }
 
+
+  const onHandleNavigation = async  (path: string) => {
+    const status = await getSystemMaintenanceStatus();
+    if(status === MAINTENANCE_STATUS.UNDER_MAINTENANCE){
+      navigate(`/maintenance`)
+    } else {
+      navigate(path)
+    }
+  }
+
   const handleListItemClick = (index: number) => {
     setSelectedIndex(index)
     localStorage.setItem('selectedIndex', String(index))
@@ -107,91 +118,91 @@ function MainDrawer() {
       'Tenant management': {
         name: t('tenant.company'),
         icon: <FolderCopyOutlinedIcon />,
-        onClick: () => navigate('/astd'),
+        onClick: () => onHandleNavigation('/astd'),
         collapse: false
       },
       'User account': {
         name: t('processRecord.userGroup'),
         icon: <PERSON_OUTLINE_ICON />,
-        onClick: () => navigate(`/${realm}/account`),
+        onClick: () => onHandleNavigation(`/${realm}/account`),
         collapse: false
       },
       'Collection point': {
         name: t('all_Collection_Point'),
         icon: <PLACE_ICON />,
-        onClick: () => navigate('/collector/collectionPoint'),
+        onClick:async () => onHandleNavigation('/collector/collectionPoint'),
         collapse: false
       },
       'Pickup order': {
         name: t('pick_up_order.enquiry_pickup_order'),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => navigate(`/${realm}/pickupOrder`),
+        onClick: () => onHandleNavigation(`/${realm}/pickupOrder`),
         collapse: false
       },
       'Purchase order': {
         name: t('purchase_order.enquiry_po'),
         icon: <ShoppingCartOutlinedIcon />,
-        onClick: () => navigate(`/${realm}/purchaseOrder`),
+        onClick: () => onHandleNavigation(`/${realm}/purchaseOrder`),
         collapse: false
       },
       'Job order': {
         name: t('job_order.enquiry_job_order'),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => navigate(`/${realm}/jobOrder`),
+        onClick: () => onHandleNavigation(`/${realm}/jobOrder`),
         collapse: false
       },
       'Request check-in': {
         name: t('check_in.request_check_in'),
         icon: <LoginIcon />,
-        onClick: () => navigate('/warehouse/shipment'),
+        onClick: () => onHandleNavigation('/warehouse/shipment'),
         collapse: false
       },
       'Request checkout': {
         name: t('check_out.request_check_out'),
         icon: <LogoutIcon />,
-        onClick: () => navigate('/warehouse/checkout'),
+        onClick: () => onHandleNavigation('/warehouse/checkout'),
         collapse: false
       },
       Settings: {
         name: t('settings'),
         icon: <SETTINGS_ICON />,
-        onClick: () => navigate('/astd/setting'),
+        onClick: () => onHandleNavigation('/astd/setting'),
         collapse: false
       },
       Reports: {
         name: t('reports'),
         icon: <DOCUMENT_ICON />,
-        onClick: () => navigate('/collector/report'),
+        onClick: () => onHandleNavigation('/collector/report'),
         collapse: false
       },
       'Process out recyclables': {
         name: t('processRecord.processingRecords'),
         icon: <DOCUMENT_ICON />,
-        onClick: () => navigate(`/${realmApiRoute}/processRecord`),
+        onClick: () => onHandleNavigation(`/${realmApiRoute}/processRecord`),
         collapse: false
       },
       Staff: {
         name: t('staffManagement.staff'),
         icon: <AccountBoxOutlinedIcon />,
-        onClick: () => navigate(`/${realm}/staff`),
+        onClick: () => onHandleNavigation(`/${realm}/staff`),
         collapse: false
       },
       StaffEnquiry: {
         name: t('staffEnquiry.title'),
         icon: <AccountBoxOutlinedIcon />,
-        onClick: () => navigate('/warehouse/staff-enquiry'),
+        onClick: () => onHandleNavigation('/warehouse/staff-enquiry'),
         collapse: false
       },
       'Notification template': {
         name: t('notification.notification_menu'),
         icon: <ViewQuiltOutlinedIcon />,
-        onClick: () => navigate(`/${realm}/notice`),
+        onClick: () =>  onHandleNavigation(`/${realm}/notice`),
         collapse: false
       },
       Driver: {
         name: t('driver.sideBarName'),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => navigate('/logistic/driver'),
+        onClick: () => onHandleNavigation('/logistic/driver'),
         collapse: false
       },
       'Dashboard': {
@@ -536,7 +547,7 @@ function MainDrawer() {
                       sx={{pl: 7}} 
                       selected={true}
                       onClick={() => {
-                        navigate(`${realm}/${item.name}`)
+                        onHandleNavigation(`${realm}/${item.name}`)
                         setSelectedSubIndex(index)
                       }}
                     >
