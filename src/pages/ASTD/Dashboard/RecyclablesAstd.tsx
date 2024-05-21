@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { Box, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import { Box, Grid, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next'
 import Dashboard from "../../../components/Dashboard/Chart";
 import { primaryColor, styles } from "../../../constants/styles";
@@ -17,33 +17,43 @@ const Recyclables: FunctionComponent = () => {
         toDate,
         labels,
         dataset,
-        tenantId
+        tenantId,
+        errorMessage
     } =  useWeightDashboardAstd()
 
     return(
         <Box >
-             <TextField
-                id="searchShipment"
-                value={tenantId}
-                onChange={(event) =>
-                    onChangeTenandId(event.target.value)
+            <Grid style={{marginBottom: 5}}>
+                <TextField
+                    id="searchShipment"
+                    value={tenantId}
+                    onChange={(event) =>
+                        onChangeTenandId(event.target.value)
+                    }
+                    sx={{...styles.inputStyle}}
+                    label={t('check_in.search')}
+                    placeholder={t('tenant.enter_company_number')}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={() => {}}>
+                                    <SEARCH_ICON
+                                        style={{ color: primaryColor }}
+                                    />
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+                {
+                    errorMessage && (
+                        <Typography style={{color: 'red', fontWeight: 500}}>
+                            {errorMessage}
+                        </Typography>
+                    )
                 }
-                sx={{...styles.inputStyle, marginBottom: 3}}
-                label={t('check_in.search')}
-                placeholder={t('tenant.enter_company_number')}
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton onClick={() => {}}>
-                                <SEARCH_ICON
-                                    style={{ color: primaryColor }}
-                                />
-                            </IconButton>
-                        </InputAdornment>
-                    ),
-                }}
-            />
-            <Typography style={{fontSize: '32px', fontWeight: '700', color: '#000000', marginBottom: '30px'}}>
+           </Grid>
+            <Typography style={{fontSize: '32px', fontWeight: '700', color: '#000000', marginBottom: '10px'}}>
                 {t('dashboard_recyclables.recycling_data')}
             </Typography>
             <Dashboard 

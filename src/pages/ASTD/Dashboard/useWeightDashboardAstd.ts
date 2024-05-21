@@ -2,7 +2,7 @@ import  { useEffect, useState } from 'react'
 import { useContainer } from "unstated-next";
 import dayjs from 'dayjs';
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
-import { Languages } from '../../../constants/constant';
+import { Languages, STATUS_CODE } from '../../../constants/constant';
 import { randomBackgroundColor } from '../../../utils/utils';
 import { getWeightRecyclablesColPointAstd } from '../../../APICalls/Collector/dashboardRecyables';
 import i18n from '../../../setups/i18n';
@@ -21,6 +21,7 @@ const useWeightDashboardWithIdRecycable = () => {
    const [toDate, setToDate] = useState<dayjs.Dayjs>(dayjs())
    const [dataset, setDataSet] = useState<Dataset[]>([])
    const [tenantId, setTenandId] = useState<string>('');
+   const [errorMessage, setErrorMessage] = useState<string>('')
 
    const getLabel = (type: string): string => {
       let languages:string = ''
@@ -80,13 +81,18 @@ const useWeightDashboardWithIdRecycable = () => {
    const getRecyclablesDashboard = async () => {
       if(tenantId !== '' && !tenantId) return
       const response = await getWeightRecyclablesColPointAstd(tenantId, frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'))
-    
-      if (response) {
-          const labels:string[] = Object.keys(response);
+   
+      if (response.status === STATUS_CODE[200]) {
+          const labels:string[] = Object.keys(response?.data);
           if(!recycType) return;
-          const datasets = getDataSetBarChart(response, labels.length)
+          const datasets = getDataSetBarChart(response?.data, labels.length)
           setLabels(labels)
           setDataSet(datasets)
+          setErrorMessage('')
+      } else if(response?.response?.status === STATUS_CODE[400]){
+         setErrorMessage(response?.response?.data?.message || '')
+         setDataSet([])
+         setLabels([])
       }
    }
 
@@ -96,6 +102,7 @@ const useWeightDashboardWithIdRecycable = () => {
             getRecyclablesDashboard()
          }, 1000);
       } else {
+         setErrorMessage('')
          setDataSet([])
          setLabels([])
       }
@@ -125,7 +132,8 @@ const useWeightDashboardWithIdRecycable = () => {
    toDate,
    labels,
    dataset,
-   tenantId
+   tenantId,
+   errorMessage
   };
 }
 

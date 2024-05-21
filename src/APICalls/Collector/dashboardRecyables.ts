@@ -134,9 +134,9 @@ export const getWeightRecyclablesColPointAstd = async (tenandId: string, frmDate
                 AuthToken: token.authToken
             }
         })
-        return response.data
-    } catch (e) {
-        console.error('getWeightRecyclablesColPointDashboard failed:', e)
-      return null
+        return response
+    } catch (error:any) {
+        console.log('getWeightRecyclablesColPointDashboard', error?.response.data.message)
+      return error
     }
 }
