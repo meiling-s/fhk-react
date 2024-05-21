@@ -107,10 +107,10 @@ export const FIND_COLLECTIONPOINT_EXIST_BYNAME: AxiosRequestConfig = {
 }
 
 export const FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS: AxiosRequestConfig =
-  {
-    method: 'get',
-    url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
-  }
+{
+  method: 'get',
+  url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
+}
 
 export const GET_COLLECTIONPOINT_BY_COLID = (
   tenantId: string,
@@ -128,6 +128,15 @@ export const GET_CONTRACT = (
   url: `api/v1/${realmApiRoute}/contract/${tenantId}`
 })
 
+export const NEW_GET_ALL_HEADER_CHECKIN_REQUESTS = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/checkinrequest/header/searching/${table}`
+})
+
+export const NEW_GET_DETAIL_CHECKIN_REQUESTS = (realmApiRoute: string, table: string, checkinId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/checkinrequest/detail/${table}/${checkinId}`
+})
 export const GET_ALL_CHECKIN_REQUESTS = (
   realmApiRoute: string,
   table: string
