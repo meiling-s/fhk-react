@@ -389,47 +389,40 @@ function MainDrawer() {
     }
   }
 
+  //set submenu dashboard
   var subMenuDashboard: any[]
   let subMenuDashboardTmp: { name: string; value: string }[] = []
+  // Base items
+  const baseItems = [
+    {
+      name: 'inventory',
+      value: t('inventory.inventory')
+    },
+    {
+      name: 'dashboard',
+      value: t('dashboard_recyclables.recyclable')
+    },
+    {
+      name: 'warehouse',
+      value: t('warehouseDashboard.warehouse')
+    }
+  ]
 
-  if (role === 'collector') {
+  // Adjust items based on role
+  if (role === 'collector' || role === 'manufacturer') {
+    subMenuDashboardTmp = [...baseItems]
+  } else if (role === 'astd') {
     subMenuDashboardTmp = [
+      ...baseItems,
       {
-        name: 'inventory',
-        value: t('inventory.inventory')
-      },
-      {
-        name: 'dashboard',
-        value: t('dashboard_recyclables.recyclable')
-      },
-      {
-        name: 'warehouse',
-        value: t('warehouseDashboard.warehouse')
-      }
-    ]
-  } else if (role === 'manufacturer' || role === 'astd') {
-    subMenuDashboardTmp = [
-      {
-        name: 'inventory',
-        value: t('inventory.inventory')
-      },
-      {
-        name: 'dashboard',
-        value: t('dashboard_recyclables.recyclable')
-      },
-      {
-        name: 'dashboard',
+        name: 'vehicleDashboard',
         value: t('vehicle.vehicle')
-      },
-      {
-        name: 'warehouse',
-        value: t('warehouseDashboard.warehouse')
       }
     ]
   } else if (role === 'logistic') {
     subMenuDashboardTmp = [
       {
-        name: 'dashboard',
+        name: 'vehicleDashboard',
         value: t('vehicle.vehicle')
       }
     ]

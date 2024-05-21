@@ -143,7 +143,7 @@ const Router = () => {
           <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
           <Route path="/astd/inventory/" element={<Inventory/>} />
           <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
-          <Route path="/astd/dashboard" element={<AstdVehicleDashboard />} />
+          <Route path="/astd/vehicleDashboard" element={<AstdVehicleDashboard />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -168,7 +168,7 @@ const Router = () => {
           <Route path="/logistic/notice/" element={<Notice />} />
           <Route path="/logistic/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/logistic/staff" element={<StaffManagement />} />
-          <Route path="/logistic/dashboard" element={<LogisticVehicleDashboard />} />
+          <Route path="/logistic/vehicleDashboard" element={<LogisticVehicleDashboard />} />
         </Route>
 
         <Route element={<MainLayout />}>

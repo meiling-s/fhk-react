@@ -228,8 +228,10 @@ const VehicleDashboard = () => {
     const result = await getDriverPickupPoint(
       selectedTable,
       driverIdValue,
-      todayDate,
-      todayDate
+      // todayDate,
+      // todayDate
+      '2024-05-08',
+      '2024-05-08'
     )
     if (result) {
       let tempPUpoint: PuAndDropOffMarker[] = []
@@ -259,8 +261,10 @@ const VehicleDashboard = () => {
     const result = await getDriverDropOffPoint(
       selectedTable,
       driverIdValue,
-      todayDate,
-      todayDate
+      // todayDate,
+      // todayDate
+      '2024-05-08',
+      '2024-05-08'
     )
     if (result) {
       let tempDropOffPoint: PuAndDropOffMarker[] = []

@@ -13,7 +13,7 @@ export const getDriverDetail = async (table: string, driverId: number) => {
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_DRIVER_DETAIL(table, driverId)
+      ...GET_DRIVER_DETAIL(table, driverId, token.realmApiRoute)
     })
     return response
   } catch (e) {
@@ -37,7 +37,8 @@ export const getDriverPickupPoint = async (
         table,
         driverId,
         frmDate,
-        toDate
+        toDate,
+        token.realmApiRoute
       )
     })
     return response
@@ -51,7 +52,7 @@ export const getDriverDropOffPoint = async (
   table: string,
   driverId: number,
   frmDate: string,
-  toDate: string,
+  toDate: string
 ) => {
   try {
     const token = returnApiToken()
@@ -62,7 +63,8 @@ export const getDriverDropOffPoint = async (
         table,
         driverId,
         frmDate,
-        toDate
+        toDate,
+        token.realmApiRoute
       )
     })
     return response
