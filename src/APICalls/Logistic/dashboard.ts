@@ -13,7 +13,7 @@ export const getDriverDetail = async (table: string, driverId: number) => {
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_DRIVER_DETAIL(table, driverId, token.realmApiRoute)
+      ...GET_DRIVER_DETAIL(table, driverId)
     })
     return response
   } catch (e) {

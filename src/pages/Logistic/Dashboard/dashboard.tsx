@@ -228,10 +228,8 @@ const VehicleDashboard = () => {
     const result = await getDriverPickupPoint(
       selectedTable,
       driverIdValue,
-      // todayDate,
-      // todayDate
-      '2024-05-08',
-      '2024-05-08'
+      todayDate,
+      todayDate
     )
     if (result) {
       let tempPUpoint: PuAndDropOffMarker[] = []
@@ -261,10 +259,8 @@ const VehicleDashboard = () => {
     const result = await getDriverDropOffPoint(
       selectedTable,
       driverIdValue,
-      // todayDate,
-      // todayDate
-      '2024-05-08',
-      '2024-05-08'
+      todayDate,
+      todayDate
     )
     if (result) {
       let tempDropOffPoint: PuAndDropOffMarker[] = []
@@ -323,13 +319,15 @@ const VehicleDashboard = () => {
     setSelectedMarker(index)
   }
 
-  const handleSearchCompany = (value: string) => {
+  const handleSearchCompany = async (value: string) => {
     setSelectedTable(`company${value}`)
-    console.log('selectedtable', selectedTable)
   }
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const numericValue = event.target.value.replace(/\D/g, '')
+    event.target.value = numericValue
     if (numericValue.length === 6) {
       handleSearchCompany(numericValue)
     }
@@ -386,7 +384,6 @@ const VehicleDashboard = () => {
           sx={{
             width: '70%',
             height: 'calc(100vh - 64px)'
-            // marginTop: '-32px'
           }}
         >
           <MapContainer
@@ -428,7 +425,7 @@ const VehicleDashboard = () => {
           sx={{
             width: '25%',
             height: '100%',
-            // marginTop: '-32px',
+
             paddingInline: 4
           }}
         >
@@ -442,6 +439,7 @@ const VehicleDashboard = () => {
               id="searchShipment"
               onChange={(event) => {
                 const numericValue = event.target.value.replace(/\D/g, '')
+                event.target.value = numericValue
                 handleSearchDriver(numericValue)
               }}
               sx={style.inputState}

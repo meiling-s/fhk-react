@@ -3,8 +3,7 @@ import { AxiosRequestConfig } from 'axios'
 //LOGISTIC DASHBOARD
 export const GET_DRIVER_DETAIL = (
   table: string,
-  driverId: number,
-  realmApiRoute: string
+  driverId: number
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/logistic/driver/${table}/${driverId}`
