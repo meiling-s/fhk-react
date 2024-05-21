@@ -56,7 +56,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
       value: selectedRow ? dayjs(new Date(selectedRow?.createdAt)).format(format.dateFormat1) : "-"
     },
     {
-      label: t('inventory.recycType'),
+      label: t('col.recycType'),
       value: selectedRow?.recycTypeId
     },
     {
