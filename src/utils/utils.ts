@@ -3,6 +3,7 @@ import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { fieldNameRecycables } from '../constants/constant'
+import { errorState } from '../interfaces/common'
 
 export const returnApiToken = () => {
   const decodeKeycloack =
@@ -251,9 +252,19 @@ export const getBackgroundColor = (fieldName: fieldNameRecycables) :string => {
 }
 
 export const randomBackgroundColor = () :string => {
-const x = Math.floor(Math.random() * (256 - 150) + 150);
-const y = Math.floor(Math.random() * (256 - 150) + 150);
-const z = Math.floor(Math.random() * (256 - 150) + 150);
-const bgColor = "rgb(" + x + "," + y + "," + z + ")";
-return bgColor
+  const x = Math.floor(Math.random() * (256 - 150) + 150);
+  const y = Math.floor(Math.random() * (256 - 150) + 150);
+  const z = Math.floor(Math.random() * (256 - 150) + 150);
+  const bgColor = "rgb(" + x + "," + y + "," + z + ")";
+  return bgColor
+}
+
+export const extractError = (error:any):{state:errorState, realm: string} => {
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
+  const state :errorState = {
+    code: error?.response?.status,
+    message: error?.response?.statusText || error?.response?.data?.message,
+  }
+
+  return {state, realm}
 }

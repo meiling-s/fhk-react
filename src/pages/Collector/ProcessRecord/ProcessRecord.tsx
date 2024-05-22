@@ -24,7 +24,7 @@ import { getAllProcessRecord , getProcessIn} from '../../../APICalls/Collector/p
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, extractError } from '../../../utils/utils'
 import { ProcessType } from '../../../interfaces/common'
 import { useNavigate } from 'react-router-dom'
 
@@ -91,42 +91,39 @@ const ProcessRecord: FunctionComponent = () => {
   }
 
   const initProcessRecord = async () => {
-    setTotalData(0)
-    setProcesRecords([])
-    const result = await getAllProcessRecord(page - 1, pageSize)
-    if (result.status === STATUS_CODE[200]) {
-      const data = result?.data
-      var recordsMapping: any[] = []
-      await Promise.all(data.content.map(async (item: any) => {
-        const processIn: any = await getProcessInDetail(item.processInId); // Await here
-        const processName = mappingProcessName( processIn?.processTypeId)
-        recordsMapping.push(
-          createProcessRecord(
-            item?.processOutId,
-            item?.status,
-            item?.processInId,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.processoutDetail,
-            item?.createdAt,
-            item?.updatedAt,
-            processIn ? processIn?.address : "-",
-            processIn ? processIn?.processTypeId : null,
-            processName || ''
-          )
-        );
-      }));
+    try {
+      setTotalData(0)
+      setProcesRecords([])
+      const result = await getAllProcessRecord(page - 1, pageSize)
+      if (result.status === STATUS_CODE[200]) {
+        const data = result?.data
+        var recordsMapping: any[] = []
+        await Promise.all(data.content.map(async (item: any) => {
+          const processIn: any = await getProcessInDetail(item.processInId); // Await here
+          const processName = mappingProcessName( processIn?.processTypeId)
+          recordsMapping.push(
+            createProcessRecord(
+              item?.processOutId,
+              item?.status,
+              item?.processInId,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.processoutDetail,
+              item?.createdAt,
+              item?.updatedAt,
+              processIn ? processIn?.address : "-",
+              processIn ? processIn?.processTypeId : null,
+              processName || ''
+            )
+          );
+        }));
 
-      setTotalData(data.totalPages)
-      setProcesRecords(recordsMapping)
-      setFilteredProcessRecords(recordsMapping)
-    } else {
-      const realm = localStorage.getItem(localStorgeKeyName.realm)
-      const state = {
-        code: result.response.status,
-        message: result.response.statusText,
+        setTotalData(data.totalPages)
+        setProcesRecords(recordsMapping)
+        setFilteredProcessRecords(recordsMapping)
       }
-      
+    } catch (error) {
+      const {state, realm } = extractError(error);
       navigate(`/${realm}/error`, { state: state })
     }
   }

@@ -39,7 +39,7 @@ export const getCollectionPoint = async (page: number, size: number) => {
     return response
   } catch (e:any) {
     // console.error('Get all collection point failed:', e);
-    return e;
+    throw(e);
   }
 
 }

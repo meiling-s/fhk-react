@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Position } from '../../../../interfaces/map';
 import { STATUS_CODES } from 'http';
 import { STATUS_CODE, localStorgeKeyName } from '../../../../constants/constant';
+import { extractError } from '../../../../utils/utils';
 
 const CollectionPoint = () => {
 
@@ -24,12 +25,9 @@ const CollectionPoint = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-
-  
-  
-
     if(action){
       var toastMsg = "";
       switch(action){
@@ -61,28 +59,22 @@ const CollectionPoint = () => {
   }, [page])
 
   async function initCollectionPoint() {
-    const result = await getCollectionPoint(page - 1, pageSize);
-   
-    if(result?.status === STATUS_CODE[200]){
-      setColList([]);
-      const data = result?.data.content;
-      setTotalPages(result?.data.totalPages)
-      if(data && data.length>0){
-          setColList(data);
+    try {
+      const result = await getCollectionPoint(page - 1, pageSize);
+      if(result?.status === STATUS_CODE[200]){
+        setColList([]);
+        const data = result?.data.content;
+        setTotalPages(result?.data.totalPages)
+        if(data && data.length>0){
+            setColList(data);
+        }
       }
-    } else {
-      const realm = localStorage.getItem(localStorgeKeyName.realm)
-      const state = {
-        code: result.response.status,
-        message: result.response.statusText,
-      }
+    } catch (error:any) {
+      const {state, realm} =  extractError(error)
       navigate(`/${realm}/error`, { state: state })
     }
-   
   }
 
-  const navigate = useNavigate();
-  
   return (
     <>
     <ToastContainer/>

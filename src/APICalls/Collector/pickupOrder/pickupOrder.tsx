@@ -29,7 +29,7 @@ import axiosInstance from '../../../constants/axiosInstance'
         return response
       } catch (e) {
         // console.error('Get all collection point failed:', e);
-        return null;
+        throw(e);
       }
     
   }
@@ -61,7 +61,7 @@ import axiosInstance from '../../../constants/axiosInstance'
       return response;
     } catch (e) {
       // console.error('Get all collection point failed:', e);
-      return null;
+      throw(e);
     }
   };
   

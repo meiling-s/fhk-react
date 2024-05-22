@@ -22,7 +22,7 @@ import CustomItemList, { il_item } from '../../../components/FormComponents/Cust
 import { getAllPickUpOrder, getAllLogisticsPickUpOrder, getAllReason } from "../../../APICalls/Collector/pickupOrder/pickupOrder";
 import { editPickupOrderStatus } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, extractError } from '../../../utils/utils'
 import TableOperation from "../../../components/TableOperation";
 import { localStorgeKeyName } from '../../../constants/constant'
 
@@ -353,21 +353,26 @@ const PickupOrders = () => {
   ]
 
   const initPickupOrderRequest = async () => {
-    setPickupOrder([])
-    setTotalData(0)
-    let result = null
-    if (role === 'logistic') {
-      result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query);
-    } else {
-      result = await getAllPickUpOrder(page - 1, pageSize, query);
-    }
-    const data = result?.data.content;
-    if (data && data.length > 0) {
-      setPickupOrder(data);
-    } else {
+    try {
       setPickupOrder([])
+      setTotalData(0)
+      let result = null
+      if (role === 'logistic') {
+        result = await getAllLogisticsPickUpOrder(page - 1, pageSize, query);
+      } else {
+        result = await getAllPickUpOrder(page - 1, pageSize, query);
+      }
+      const data = result?.data.content;
+      if (data && data.length > 0) {
+        setPickupOrder(data);
+      } else {
+        setPickupOrder([])
+      }
+      setTotalData( result?.data.totalPages)
+    } catch (error) {
+      const { state, realm} =  extractError(error);
+      navigate(`/${realm}/error`, { state: state })
     }
-    setTotalData( result?.data.totalPages)
   }
   
   const showApproveModal = (row: any) => {
