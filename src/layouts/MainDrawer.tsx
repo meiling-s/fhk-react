@@ -415,7 +415,7 @@ function MainDrawer() {
       },
       {
         name: 'dashboard',
-        value: t('dashboard_recyclables.recyclable')
+        value: t('dashboard_recyclables.collector')
       },
       {
         name: 'warehouse',

@@ -1128,7 +1128,8 @@
     "unregulated_electrical": "非受管制电器",
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
-    "paper_drink_box": "纸包饮品盒"
+    "paper_drink_box": "纸包饮品盒",
+    "collector": "集电极"
   },
   "dashboard_manufacturer": {
     "data": "数据",
