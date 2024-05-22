@@ -30,7 +30,7 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { setLanguage } from '../../setups/i18n'
 import { returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
-import Maintenance from '../Common/Maintenance'
+import Maintenance from '../Common/MaintenanceCard'
 import useMaintenanceMode from '../../hooks/useMaintenanceMode'
 
 const Login = () => {

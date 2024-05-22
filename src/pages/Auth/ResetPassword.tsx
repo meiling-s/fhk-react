@@ -9,7 +9,7 @@ import { forgetPassword } from '../../APICalls/forgetPassword'
 import { forgetPasswordForm } from '../../interfaces/forgetPassword'
 import useMaintenanceMode from '../../hooks/useMaintenanceMode'
 import { MAINTENANCE_STATUS } from '../../constants/constant'
-import Maintenance from '../Common/Maintenance'
+import Maintenance from '../Common/MaintenanceCard'
 
 interface FormValues {
   [key: string]: string

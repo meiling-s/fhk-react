@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import Maintenance from './Maintenance'
+import Maintenance from './MaintenanceCard'
 
 const MaintenancePage = () => {
   const { t } = useTranslation()

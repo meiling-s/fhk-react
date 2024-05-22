@@ -5,7 +5,7 @@ import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
 import useMaintenanceMode from '../../hooks/useMaintenanceMode'
 import { MAINTENANCE_STATUS } from '../../constants/constant'
-import Maintenance from '../Common/Maintenance'
+import Maintenance from '../Common/MaintenanceCard'
 
 const ConfirmNewPassword = () => {
   const navigate = useNavigate()

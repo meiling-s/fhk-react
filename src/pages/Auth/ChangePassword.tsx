@@ -4,7 +4,7 @@ import { styles as constantStyle } from '../../constants/styles'
 import ChangePasswordBase from './ChangePasswordBase'
 import useMaintenanceMode from '../../hooks/useMaintenanceMode'
 import { MAINTENANCE_STATUS } from '../../constants/constant'
-import Maintenance from '../Common/Maintenance'
+import Maintenance from '../Common/MaintenanceCard'
 
 // this page is chenage for first time login
 const ChangePassword = () => {
