@@ -19,7 +19,7 @@ export const getAllCollectionPoint = async () => {
       return response
     } catch (e) {
       // console.error('Get all collection point failed:', e);
-      return null;
+      return e;
     }
   
 }

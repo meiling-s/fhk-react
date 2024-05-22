@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Position } from '../../../../interfaces/map';
+import { STATUS_CODES } from 'http';
 
 const CollectionPoint = () => {
 
@@ -61,6 +62,7 @@ const CollectionPoint = () => {
   async function initCollectionPoint() {
     setColList([]);
     const result = await getCollectionPoint(page - 1, pageSize);
+    if(result?.status === 200){}
     const data = result?.data.content;
     setTotalPages(result?.data.totalPages)
     if(data && data.length>0){
