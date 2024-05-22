@@ -47,7 +47,6 @@ import { queryCheckIn } from '../../interfaces/checkin'
 import CustomButton from '../../components/FormComponents/CustomButton'
 import i18n from '../../setups/i18n'
 
-
 const Required = () => {
   return (
     <Typography
@@ -633,13 +632,14 @@ function ShipmentManage() {
       >
         <Grid container alignItems="center">
           <Grid item>
-          
             <div
               className="header-page flex justify-start items-center mb-4 cursor-pointer"
               onClick={() => navigate('/warehouse')}
             >
               <LEFT_ARROW_ICON fontSize="large" />
-              <div className="title font-bold text-3xl pl-4 ">{t('check_in.request_check_in')}</div>
+              <div className="title font-bold text-3xl pl-4 ">
+                {t('check_in.request_check_in')}
+              </div>
             </div>
           </Grid>
         </Grid>
@@ -651,9 +651,12 @@ function ShipmentManage() {
                 mt: 3,
                 width: '90px',
                 height: '40px',
-                m: 0.5
+                m: 0.5,
+                background: selectedCheckin.length === 0 ? 'white' : '',
+                cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer'
               }
             ]}
+            disabled={selectedCheckin.length === 0}
             variant="outlined"
             onClick={() => {
               //handleApproveOnClick();
@@ -674,6 +677,7 @@ function ShipmentManage() {
               }
             ]}
             variant="outlined"
+            disabled={selectedCheckin.length === 0}
             onClick={() => setRejectModal(selectedCheckin.length > 0)}
           >
             {' '}

@@ -591,12 +591,29 @@ export const EDIT_VEHICLE = (
 })
 
 //inventory
+export const ASTD_GET_INVENTORY = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
+})
+
 export const GET_INVENTORY = (
   realmApiRoute: string,
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/${table}/searching`
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
+})
+
+export const GET_ITEM_TRACK_INVENTORY = (
+  realmApiRoute: string,
+  table: string,
+  itemId: number,
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/tracking/${table}/${itemId}`
 })
 
 //process records
