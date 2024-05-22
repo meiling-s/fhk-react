@@ -1,5 +1,4 @@
-import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
-import { ASTD_GET_INVENTORY, GET_INVENTORY } from "../../constants/requests";
+import { ASTD_GET_INVENTORY, GET_INVENTORY, GET_ITEM_TRACK_INVENTORY } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import axiosInstance from '../../constants/axiosInstance'
 
@@ -27,6 +26,19 @@ export const getAllInventory = async (page: number, size: number) => {
     }
   }
 
+export const getItemTrackInventory = async (realmApiRoute: string, table: string, itemId: number) => {
+  try {
+      const response = await axiosInstance({
+        baseURL: window.baseURL.collector,
+        ...GET_ITEM_TRACK_INVENTORY(realmApiRoute, table, itemId)
+      })
+
+      return response
+  } catch (error) {
+    console.error('Get all vehicle failed:', error)
+    return null
+  }
+}
   export const astdGetAllInventory = async (page: number, size: number, table: string) => {
     try {
       const token = returnApiToken()
