@@ -12,7 +12,7 @@ import CustomSearchField from '../../../components/TableComponents/CustomSearchF
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import EditProcessRecord from './EditProcesRecord'
-import { format } from '../../../constants/constant'
+import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant'
 import dayjs from 'dayjs'
 import StatusCard from '../../../components/StatusCard'
 import {
@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import { ProcessType } from '../../../interfaces/common'
+import { useNavigate } from 'react-router-dom'
 
 
 interface Option {
@@ -74,6 +75,7 @@ const ProcessRecord: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
+  const navigate = useNavigate();
 
   useEffect(() => {
     initProcessRecord()
@@ -92,8 +94,8 @@ const ProcessRecord: FunctionComponent = () => {
     setTotalData(0)
     setProcesRecords([])
     const result = await getAllProcessRecord(page - 1, pageSize)
-    const data = result?.data
-    if (data) {
+    if (result.status === STATUS_CODE[200]) {
+      const data = result?.data
       var recordsMapping: any[] = []
       await Promise.all(data.content.map(async (item: any) => {
         const processIn: any = await getProcessInDetail(item.processInId); // Await here
@@ -118,6 +120,14 @@ const ProcessRecord: FunctionComponent = () => {
       setTotalData(data.totalPages)
       setProcesRecords(recordsMapping)
       setFilteredProcessRecords(recordsMapping)
+    } else {
+      const realm = localStorage.getItem(localStorgeKeyName.realm)
+      const state = {
+        code: result.response.status,
+        message: result.response.statusText,
+      }
+      
+      navigate(`/${realm}/error`, { state: state })
     }
   }
 

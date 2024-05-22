@@ -37,9 +37,9 @@ export const getCollectionPoint = async (page: number, size: number) => {
     });
     // console.log('Get all collection point success:', JSON.stringify(response.data));
     return response
-  } catch (e) {
+  } catch (e:any) {
     // console.error('Get all collection point failed:', e);
-    return null;
+    return e;
   }
 
 }

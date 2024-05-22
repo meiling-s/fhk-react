@@ -22,25 +22,25 @@ return (
 }
   
 let styles = {
-    maintenanceBox: {
-        paddingX: 4,
-        paddingY: 5,
-        margin: {
-          sm: '0 auto',
-          md: 'auto'
-        },
-        borderRadius: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: 'white',
-        height: 'fit-content',
-        // width: '20%',
-        minHeight: 200,
-        minWidth: 430,
-        transition: 'height 0.3s ease-in-out',
-        gap: '20px'
-    },
-    maintenancePage: {
+  maintenanceBox: {
+      paddingX: 4,
+      paddingY: 5,
+      margin: {
+        sm: '0 auto',
+        md: 'auto'
+      },
+      borderRadius: '20px',
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: 'white',
+      height: 'fit-content',
+      // width: '20%',
+      minHeight: 200,
+      minWidth: 430,
+      transition: 'height 0.3s ease-in-out',
+      gap: '20px'
+  },
+  maintenancePage: {
         backgroundImage:
           'linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)',
         minHeight: '100vh',
@@ -52,7 +52,7 @@ let styles = {
           sm: 'flex-start',
           md: 'center'
         }
-      },
+  },
 }
 
 export default Maintenance

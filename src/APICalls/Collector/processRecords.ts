@@ -25,9 +25,9 @@ export const getAllProcessRecord = async (page: number, size: number) => {
     })
 
     return response
-  } catch (e) {
+  } catch (e:any) {
     console.error('Get all process record failed:', e)
-    return null
+    return e
   }
 }
 
