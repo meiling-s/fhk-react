@@ -356,7 +356,7 @@ const VehicleDashboard = () => {
   return (
     <Box
       sx={{
-        width: '100%',
+        width: '102%',
         marginLeft: '-31px',
         marginTop: {
           xs: '62px',
@@ -366,7 +366,7 @@ const VehicleDashboard = () => {
     >
       <Box
         sx={{
-          padding: '16px',
+          paddingRight: '32px',
           marginBottom: '32px',
           paddingLeft: '32px',
           paddingBottom: '32px',
@@ -398,7 +398,14 @@ const VehicleDashboard = () => {
           />
         </Grid>
       </Box>
-      <Box sx={{ display: 'flex', marginTop: '-32px' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          marginTop: '-32px',
+          justifyContent: 'space-between',
+          background: 'white'
+        }}
+      >
         <Box
           className="map"
           sx={{
@@ -443,7 +450,7 @@ const VehicleDashboard = () => {
         </Box>
         <Box
           sx={{
-            width: '25%',
+            width: '30%',
             height: '100%',
 
             paddingInline: 4
