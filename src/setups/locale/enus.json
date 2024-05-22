@@ -558,7 +558,9 @@
     "package": "Package",
     "recyclingNumber": "Recycling number",
     "inventoryLocation": "Inventory location",
-    "weight": "Weight"
+    "weight": "Weight",
+    "at": "at",
+    "handover": "hand over"
   },
   "processRecord": {
     "processing": "Processing",

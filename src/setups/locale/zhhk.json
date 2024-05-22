@@ -557,7 +557,9 @@
     "package": "包裝",
     "recyclingNumber": "回收編號",
     "inventoryLocation": "庫存位置",
-    "weight": "重量"
+    "weight": "重量",
+    "at": "於",
+    "handover": "交給"
   },
   "processRecord": {
     "processing": "處理中",
