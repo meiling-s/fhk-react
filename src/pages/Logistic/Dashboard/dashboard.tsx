@@ -50,6 +50,7 @@ const VehicleDashboard = () => {
   const { t } = useTranslation()
   const { vehicleType, recycType } = useContainer(CommonTypeContainer)
   const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
+  const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null)
   const [driverInfo, setDriverInfo] = useState<DriverInfo | null>(null)
   const [vehicleCategory, setVehicleCategory] = useState<number | null>(null)
   const [vehicleName, setVehicleName] = useState<string | null>('-')
@@ -83,31 +84,42 @@ const VehicleDashboard = () => {
     initPackageList()
   }, [puAndDropOffMarker])
 
-  const getVehicleName = async (vehicleId: number) => {
-    const result = await getVehicleLogistic(vehicleId)
-    if (result?.data) {
-      const selectedVehicle = vehicleType?.find(
-        (item) => item.vehicleTypeId == result.data.vehicleTypeId
-      )
-
-      if (selectedVehicle) {
-        var name = '-'
-        switch (i18n.language) {
-          case 'enus':
-            name = selectedVehicle.vehicleTypeNameEng
-            break
-          case 'zhch':
-            name = selectedVehicle.vehicleTypeNameSchi
-            break
-          case 'zhhk':
-            name = selectedVehicle.vehicleTypeNameTchi
-            break
-          default:
-            name = selectedVehicle.vehicleTypeNameTchi
-            break
-        }
-        setVehicleName(name)
+  useEffect(() => {
+    const fetchPickupPointList = async () => {
+      if (selectedDriverId) {
+        await getPickupPointList(parseInt(selectedDriverId))
       }
+    }
+
+    fetchPickupPointList()
+  }, [selectedDriverId, selectedTable])
+
+  const getVehicleName = async (vehicleId: number) => {
+    const result = await getVehicleLogistic(vehicleId, selectedTable)
+    if (result?.data) {
+      setVehicleName(result.data.vehicleTypeId)
+      // const selectedVehicle = vehicleType?.find(
+      //   (item) => item.vehicleTypeId == result.data.vehicleTypeId
+      // )
+
+      // if (selectedVehicle) {
+      //   var name = '-'
+      //   switch (i18n.language) {
+      //     case 'enus':
+      //       name = selectedVehicle.vehicleTypeNameEng
+      //       break
+      //     case 'zhch':
+      //       name = selectedVehicle.vehicleTypeNameSchi
+      //       break
+      //     case 'zhhk':
+      //       name = selectedVehicle.vehicleTypeNameTchi
+      //       break
+      //     default:
+      //       name = selectedVehicle.vehicleTypeNameTchi
+      //       break
+      //   }
+      //   setVehicleName(name)
+      // }
     }
   }
 
@@ -289,14 +301,19 @@ const VehicleDashboard = () => {
     }
   }
 
+  const resetData = () => {
+    setDriverInfo(null)
+    setPuAndDropOffMarker([])
+    setShowPuDropPoint(false)
+  }
+
   const handleSearchDriver = async (value: string) => {
     if (value || value != '') {
       getDriverInfo(value)
-      await getPickupPointList(parseInt(value))
+      setSelectedDriverId(value)
     } else {
-      setDriverInfo(null)
-      setPuAndDropOffMarker([])
-      setShowPuDropPoint(false)
+      setSelectedDriverId(null)
+      resetData()
     }
   }
 
@@ -314,7 +331,6 @@ const VehicleDashboard = () => {
     }
   }
 
-  // Function to handle mouseover event
   const handleClickMarker = (index: number) => {
     setSelectedMarker(index)
   }
@@ -328,8 +344,12 @@ const VehicleDashboard = () => {
   ) => {
     const numericValue = event.target.value.replace(/\D/g, '')
     event.target.value = numericValue
+    resetData()
+
     if (numericValue.length === 6) {
       handleSearchCompany(numericValue)
+    } else {
+      setSelectedTable(logisticTableId)
     }
   }
 
