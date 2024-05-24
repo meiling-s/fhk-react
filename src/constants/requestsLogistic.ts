@@ -13,18 +13,20 @@ export const GET_DRIVER_PICKUP_POINT = (
   table: string,
   driverId: number,
   frmDate: string,
-  toDate: string
+  toDate: string,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/logistic/pu/driver/${table}/${driverId}/${frmDate}/${toDate}`
+  url: `api/v1/${realmApiRoute}/pu/driver/${table}/${driverId}/${frmDate}/${toDate}`
 })
 
 export const GET_DRIVER_DROPOFF_POINT = (
   table: string,
   driverId: number,
   frmDate: string,
-  toDate: string
+  toDate: string,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/logistic/drop/driver/${table}/${driverId}/${frmDate}/${toDate}`
+  url: `api/v1/${realmApiRoute}/drop/driver/${table}/${driverId}/${frmDate}/${toDate}`
 })
