@@ -39,7 +39,7 @@ import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined'
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
-import BarChartIcon from '@mui/icons-material/BarChart';
+import BarChartIcon from '@mui/icons-material/BarChart'
 import { dynamicpath, returnApiToken } from '../utils/utils'
 
 type MainDrawer = {
@@ -51,7 +51,7 @@ type DrawerItem = {
   icon?: JSX.Element
   onClick: () => void
   collapse: boolean
-  collapseGroup?: boolean,
+  collapseGroup?: boolean
   path?: string
 }
 
@@ -67,8 +67,8 @@ function MainDrawer() {
   const [open, setOpen] = useState(false)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0);
-  const [selectedISubIndex, setSelectedSubIndex] = useState<number | 0>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | 0>(0)
+  const [selectedISubIndex, setSelectedSubIndex] = useState<number | 0>(0)
   const { realmApiRoute } = returnApiToken()
 
   const handleDrawerOpen = () => {
@@ -152,6 +152,12 @@ function MainDrawer() {
         onClick: () => navigate('/warehouse/checkout'),
         collapse: false
       },
+      'Check-in and check-out': {
+        name: t('checkinandcheckout.checkinandcheckout'),
+        icon: <LogoutIcon />,
+        onClick: () => navigate('/collector/checkInAndCheckout'),
+        collapse: false
+      },
       Settings: {
         name: t('settings'),
         icon: <SETTINGS_ICON />,
@@ -194,13 +200,13 @@ function MainDrawer() {
         onClick: () => navigate('/logistic/driver'),
         collapse: false
       },
-      'Dashboard': {
+      Dashboard: {
         name: t('dashboard_recyclables.data'),
         icon: <BarChartIcon />,
-        onClick: () => setDashboardGroup(prev => !prev),
+        onClick: () => setDashboardGroup((prev) => !prev),
         collapse: true,
-        collapseGroup: dashboardGroup,
-      },
+        collapseGroup: dashboardGroup
+      }
     }
   ]
   // 20240129 add function list daniel keung end
@@ -389,41 +395,44 @@ function MainDrawer() {
     }
   }
 
-  var subMenuDashboard: any[];
+  var subMenuDashboard: any[]
   let subMenuDashboardTmp: { name: string; value: string }[] = []
+  // Base items
+  const baseItems = [
+    {
+      name: 'inventory',
+      value: t('inventory.inventory')
+    },
+    {
+      name: 'dashboard',
+      value: t('dashboard_recyclables.recyclable')
+    },
+    {
+      name: 'warehouse',
+      value: t('warehouseDashboard.warehouse')
+    }
+  ]
 
-  if (role === 'collector') {
+  // Adjust items based on role
+  if (role === 'collector' || role === 'manufacturer') {
+    subMenuDashboardTmp = [...baseItems]
+  } else if (role === 'astd') {
+    subMenuDashboardTmp = [
+      ...baseItems,
+      {
+        name: 'vehicleDashboard',
+        value: t('vehicle.vehicle')
+      }
+    ]
+  } else if (role === 'logistic') {
     subMenuDashboardTmp = [
       {
-        name: 'inventory',
-        value: t('inventory.inventory'),
-      },
-      {
-        name: 'dashboard',
-        value: t('dashboard_recyclables.recyclable')
-      },
-      {
-        name: 'warehouse',
-        value: t('warehouseDashboard.warehouse'),
-      },
-    ];
-  } else if (role === 'manufacturer' || role === 'astd') {
-    subMenuDashboardTmp = [
-      {
-        name: 'inventory',
-        value: t('inventory.inventory')
-      },
-      {
-        name: 'dashboard',
-        value: t('dashboard_recyclables.recyclable')
-      },
-      {
-        name: 'warehouse',
-        value: t('warehouseDashboard.warehouse'),
-      },
+        name: 'vehicleDashboard',
+        value: t('vehicle.vehicle')
+      }
     ]
   }
-  
+
   // 20240129 add function list daniel keung end
   // 20240129 add function list daniel keung start
   /*   switch (role) {
@@ -498,58 +507,63 @@ function MainDrawer() {
             drawerMenu.collapse ? (
               <>
                 <ListItem
-                sx={{ marginTop: 2 }}
-                key={drawerMenu.name}
-                onClick={drawerMenu.onClick}
-                disablePadding
-              >
-                <ListItemButton
-                  selected={selectedIndex === index}
-                  onClick={(event) => handleListItemClick(index)}
-                  sx={{
-                    '&:hover': {
-                      '.MuiSvgIcon-root': {
-                        color: '#79ca25' // Change color on hover
-                      }
-                    }
-                  }}
+                  sx={{ marginTop: 2 }}
+                  key={drawerMenu.name}
+                  onClick={drawerMenu.onClick}
+                  disablePadding
                 >
-                  <ListItemIcon
-                    className={
-                      selectedIndex === index ? 'icon-menu-active' : ''
-                    }
+                  <ListItemButton
+                    selected={selectedIndex === index}
+                    onClick={(event) => handleListItemClick(index)}
+                    sx={{
+                      '&:hover': {
+                        '.MuiSvgIcon-root': {
+                          color: '#79ca25' // Change color on hover
+                        }
+                      }
+                    }}
                   >
-                    {drawerMenu.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    sx={{ marginLeft: -2 }}
-                    primary={drawerMenu.name}
-                  />
-                </ListItemButton>
-              </ListItem>
-              <Collapse in={dashboardGroup} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              {subMenuDashboard && subMenuDashboard.length > 0 && subMenuDashboard.map((item, index) => {
-                return(
-                    <ListItemButton 
-                      key={index} 
-                      sx={{pl: 7}} 
-                      selected={true}
-                      onClick={() => {
-                        navigate(`${realm}/${item.name}`)
-                        setSelectedSubIndex(index)
-                      }}
+                    <ListItemIcon
+                      className={
+                        selectedIndex === index ? 'icon-menu-active' : ''
+                      }
                     >
-                      <ListItemText 
-                        className={ index === selectedISubIndex ? 'text-menu-active' : ''}
-                        primary={item.value} 
-                      />
-                    </ListItemButton>
-                  )
-                })
-              }
-            </List>
-          </Collapse>
+                      {drawerMenu.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      sx={{ marginLeft: -2 }}
+                      primary={drawerMenu.name}
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <Collapse in={dashboardGroup} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {subMenuDashboard &&
+                      subMenuDashboard.length > 0 &&
+                      subMenuDashboard.map((item, index) => {
+                        return (
+                          <ListItemButton
+                            key={index}
+                            sx={{ pl: 7 }}
+                            selected={true}
+                            onClick={() => {
+                              navigate(`${realm}/${item.name}`)
+                              setSelectedSubIndex(index)
+                            }}
+                          >
+                            <ListItemText
+                              className={
+                                index === selectedISubIndex
+                                  ? 'text-menu-active'
+                                  : ''
+                              }
+                              primary={item.value}
+                            />
+                          </ListItemButton>
+                        )
+                      })}
+                  </List>
+                </Collapse>
               </>
             ) : (
               <ListItem
