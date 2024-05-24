@@ -28,7 +28,10 @@
     "rejectFailed": "拒绝请求失败",
     "details": "细节",
     "maintenance": "系统正在维护中，请稍后。",
-    "pageNotFound": "找不到网页"
+    "pageNotFound": "找不到网页",
+    "errorMessage": "错误信息",
+    "message": "留言",
+    "statusCode": "状态码"
   },
   "col": {
     "createCP": "建立回收点",

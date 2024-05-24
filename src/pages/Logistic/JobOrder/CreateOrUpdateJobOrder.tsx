@@ -15,11 +15,11 @@ import { OrderJobHeader, AssignJobDriver, DriverList, VehicleList } from '../../
 import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { format } from '../../../constants/constant'
+import { STATUS_CODE, format } from '../../../constants/constant'
 import { rejectAssginDriver, assignDriver } from '../../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
-import { formatWeight, returnApiToken } from '../../../utils/utils'
+import { extractError, formatWeight, returnApiToken } from '../../../utils/utils'
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -57,23 +57,33 @@ const JobOrder = () => {
 
   
   const initListDriver = async () => {
-    const result = await getDriver(0, 10, 'string')
-    if (result) {
-      const data = result?.data?.content
-      const mappingDriver : DriverList[] = []
-      data.forEach((item: any) => {
-        mappingDriver.push({
-          driverId: item.driverId,
-          driverNameEng:  item.driverNameEng,
-          driverNameSchi:  item.driverNameSchi,
-          driverNameTchi:  item.driverNameTchi,
+    try {
+      const result = await getDriver(0, 10, 'string')
+      if (result) {
+        const data = result?.data?.content
+        const mappingDriver : DriverList[] = []
+        data.forEach((item: any) => {
+          mappingDriver.push({
+            driverId: item.driverId,
+            driverNameEng:  item.driverNameEng,
+            driverNameSchi:  item.driverNameSchi,
+            driverNameTchi:  item.driverNameTchi,
+          })
         })
-      })
-      setDriverList(mappingDriver)
+        setDriverList(mappingDriver)
+      }
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
     }
   }
 
   const initListVehicle = async () => {
+   try {
     const result = await getAllVehiclesLogistic(0, 10)
     if (result) {
       const data = result?.data?.content
@@ -86,6 +96,14 @@ const JobOrder = () => {
       })
       setVehicleList(mappingVehicle)
     }
+   } catch (error) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      navigate(`/${realm}/error`, {state: state})
+    }
+   }
   }
 
   useEffect(() => {

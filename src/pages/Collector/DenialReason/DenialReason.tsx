@@ -21,6 +21,9 @@ import CreateDenialReason from "./CreateDenialReason";
 import { getAllFunction } from "../../../APICalls/Collector/userGroup";
 import i18n from "../../../setups/i18n";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
+import { useNavigate } from "react-router-dom";
+import { extractError } from "../../../utils/utils";
+import { STATUS_CODE } from "../../../constants/constant";
 
 function createDenialReason(
   reasonId: number,
@@ -70,42 +73,52 @@ const DenialReason: FunctionComponent = () => {
   const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
   const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
+  const navigate = useNavigate();
 
   const initFunctionList = async () => {
-    const result = await getAllFunction();
-    const data = result?.data;
-    if (data.length > 0) {
-      let name = ''
-      data.map((item: { functionId: string; functionNameEng: string; functionNameSChi: string; functionNameTChi: string; name: string; }) => {
-        switch (i18n.language) {
-          case 'enus':
-            name = item.functionNameEng
-            break
-          case 'zhch':
-            name = item.functionNameSChi
-            break
-          case 'zhhk':
-            name = item.functionNameTChi
-            break
-          default:
-            name = item.functionNameTChi
-            break
-        }
-        item.name = name
-      })
-    }
-    const options = data.map((item: { name: string; functionId: string; }) => {
-      return {
-        label: item.name,
-        value: item.functionId
+    try {
+      const result = await getAllFunction();
+      const data = result?.data;
+      if (data.length > 0) {
+        let name = ''
+        data.map((item: { functionId: string; functionNameEng: string; functionNameSChi: string; functionNameTChi: string; name: string; }) => {
+          switch (i18n.language) {
+            case 'enus':
+              name = item.functionNameEng
+              break
+            case 'zhch':
+              name = item.functionNameSChi
+              break
+            case 'zhhk':
+              name = item.functionNameTChi
+              break
+            default:
+              name = item.functionNameTChi
+              break
+          }
+          item.name = name
+        })
       }
-    })
-    options.push({
-      label: 'any',
-      value: ''
-    })
-    setFunctionList(data);
-    setFunctionOptions(options)
+      const options = data.map((item: { name: string; functionId: string; }) => {
+        return {
+          label: item.name,
+          value: item.functionId
+        }
+      })
+      options.push({
+        label: 'any',
+        value: ''
+      })
+      setFunctionList(data);
+      setFunctionOptions(options)
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
+    }
   };
 
   const initDenialReasonList = async () => {

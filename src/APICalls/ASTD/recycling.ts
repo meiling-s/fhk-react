@@ -128,7 +128,7 @@ export const getAllPackagingUnit = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -178,7 +178,7 @@ export const getRecycCode = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -199,7 +199,7 @@ export const getWeightUnit = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -259,7 +259,7 @@ export const getSiteTypeData = async () => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -288,7 +288,7 @@ export const getEngineData = async () => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 

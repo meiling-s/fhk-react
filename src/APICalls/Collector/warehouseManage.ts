@@ -29,7 +29,7 @@ export const getAllCheckInRequests = async (page: number, size: number, query?: 
     return response
   } catch (e: any) {
     // console.error('Get all check-in request failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -67,7 +67,7 @@ export const getCheckinReasons = async () => {
     return response
   } catch (e) {
     console.error('get checkin reasons failed:', e)
-    return null
+    throw(e)
   }
 }
 

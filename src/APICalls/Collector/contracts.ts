@@ -22,7 +22,7 @@ export const getAllContract = async (page: number, size: number) => {
       return response
     } catch (e) {
       console.error('Get all contract failed:', e)
-      return null
+      throw(e)
     }
   }
   //create contract

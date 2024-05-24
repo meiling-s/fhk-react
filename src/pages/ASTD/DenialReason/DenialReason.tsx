@@ -20,6 +20,9 @@ import { DenialReason as DenialReasonItem } from "../../../interfaces/denialReas
 import CreateDenialReason from "./CreateDenialReason";
 import { getAllFunction } from "../../../APICalls/Collector/userGroup";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
+import { useNavigate } from "react-router-dom";
+import { extractError } from "../../../utils/utils";
+import { STATUS_CODE } from "../../../constants/constant";
 
 function createDenialReason(
   reasonId: number,
@@ -71,7 +74,8 @@ const DenialReason: FunctionComponent = () => {
   const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
   const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
-
+  const navigate =  useNavigate()
+  
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
     initFunctionList()
@@ -79,6 +83,7 @@ const DenialReason: FunctionComponent = () => {
 
 
   const initFunctionList = async () => {
+   try {
     const result = await getAllFunction();
     const data = result?.data;
     if (data.length > 0) {
@@ -113,6 +118,14 @@ const DenialReason: FunctionComponent = () => {
     })
     setFunctionList(data);
     setFunctionOptions(options)
+   } catch (error) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      navigate(`/${realm}/error`, {state: state})
+    }
+   }
   };
 
   const initDenialReasonList = async () => {

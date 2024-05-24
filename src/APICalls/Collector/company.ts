@@ -27,7 +27,7 @@ export const getAllCompany = async (companyType: string, page: number, size: num
     return response;
   } catch (e) {
     console.error("Get all company failed:", e);
-    return null;
+    throw(e)
   }
 };
 

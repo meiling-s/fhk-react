@@ -26,11 +26,13 @@ import {
   ADD_ICON,
   SEARCH_ICON,
 } from "../../../themes/icons";
-import { displayCreatedDate } from "../../../utils/utils";
+import { displayCreatedDate, extractError } from "../../../utils/utils";
 import { Staff } from "../../../interfaces/staff";
 import { getStaffEnquiryList } from "../../../APICalls/staffEnquiry";
 import StaffEnquiryDetail from "./StaffEnquiryDetail";
 import { StaffEnquiry as StaffEnquiryProps } from "../../../interfaces/staffEnquiry";
+import { useNavigate } from "react-router-dom";
+import { STATUS_CODE } from "../../../constants/constant";
 
 function createStaff(
   staffId: string,
@@ -88,42 +90,52 @@ const StaffEnquiry: FunctionComponent = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [totalData, setTotalData] = useState<number>(0);
-
+  const navigate = useNavigate()
+    
   useEffect(() => {
     initStaffList();
   }, [page]);
 
   const initStaffList = async () => {
-    const result = await getStaffEnquiryList(page - 1, pageSize);
-    if (result) {
-      const data = result.data.content;
-      var staffMapping: StaffEnquiryProps[] = [];
-      data.map((item: any) => {
-        staffMapping.push(
-          createStaff(
-            item?.staffId,
-            item?.tenantId,
-            item?.staffNameTchi,
-            item?.staffNameSchi,
-            item?.staffNameEng,
-            item?.titleId,
-            item?.contractNo,
-            item?.fullTimeFlg,
-            item?.loginId,
-            item?.status,
-            item?.gender,
-            item?.email,
-            item?.salutation,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
-          )
-        );
-      });
-      setStaffList(staffMapping);
-      setFillteredStaff(staffMapping);
-      setTotalData(result.data.totalPages);
+    try {
+      const result = await getStaffEnquiryList(page - 1, pageSize);
+      if (result) {
+        const data = result.data.content;
+        var staffMapping: StaffEnquiryProps[] = [];
+        data.map((item: any) => {
+          staffMapping.push(
+            createStaff(
+              item?.staffId,
+              item?.tenantId,
+              item?.staffNameTchi,
+              item?.staffNameSchi,
+              item?.staffNameEng,
+              item?.titleId,
+              item?.contractNo,
+              item?.fullTimeFlg,
+              item?.loginId,
+              item?.status,
+              item?.gender,
+              item?.email,
+              item?.salutation,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
+          );
+        });
+        setStaffList(staffMapping);
+        setFillteredStaff(staffMapping);
+        setTotalData(result.data.totalPages);
+      }
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
     }
   };
 

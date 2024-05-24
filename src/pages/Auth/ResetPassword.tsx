@@ -7,7 +7,6 @@ import { styles as constantStyle } from '../../constants/styles'
 import { WARNING_ICON } from '../../themes/icons'
 import { forgetPassword } from '../../APICalls/forgetPassword'
 import { forgetPasswordForm } from '../../interfaces/forgetPassword'
-import useMaintenanceMode from '../../hooks/useMaintenanceMode'
 import { MAINTENANCE_STATUS } from '../../constants/constant'
 import Maintenance from '../Common/MaintenanceCard'
 
@@ -34,7 +33,6 @@ const ForgetPassword = () => {
   const [erorSubmit, setErorSubmit] = useState<boolean>(false)
   const [showModalConfirm, setModalConfirm] = useState<boolean>(false)
   const [showModal, setShowModal] = useState<boolean>(false)
-  const {maintenanceStatus, message} = useMaintenanceMode();
 
   useEffect(() => {
     const tempV: { field: string; error: string }[] = []
@@ -183,10 +181,6 @@ const ForgetPassword = () => {
         </Box>
       </Modal>
     )
-  }
-
-  if(MAINTENANCE_STATUS.UNDER_MAINTENANCE === maintenanceStatus){
-    return <Maintenance message={message} />
   }
 
   return (

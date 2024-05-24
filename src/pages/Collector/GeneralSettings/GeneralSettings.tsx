@@ -35,9 +35,11 @@ import { ToastContainer, toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import CreateContract from './CreateContract'
 import UpdateCurrency from './UpdateCurrency'
-import { returnApiToken } from '../../../utils/utils'
+import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
+import { useNavigate } from 'react-router-dom'
+import { STATUS_CODE } from '../../../constants/constant'
 
 type TableRow = {
   id: number
@@ -88,6 +90,7 @@ const GeneralSettings: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
+  const navigate = useNavigate();
 
   useEffect(() => {
     initContractList()
@@ -95,38 +98,56 @@ const GeneralSettings: FunctionComponent = () => {
   }, [page])
 
   const initContractList = async () => {
-    const result = await getAllContract(page - 1, pageSize)
-    const data = result?.data.content
-    if (data) {
-      var contractMapping: ContractItem[] = []
-      data.map((item: any, index: any) => {
-        contractMapping.push(
-          createContract(
-            item?.id !== undefined ? item?.id : index,
-            item?.contractNo,
-            item?.tenantId,
-            item?.contractFrmDate,
-            item?.contractToDate,
-            item?.epdFlg,
-            item?.remark,
-            item?.parentContractNo,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
+    try {
+      const result = await getAllContract(page - 1, pageSize)
+      const data = result?.data.content
+      if (data) {
+        var contractMapping: ContractItem[] = []
+        data.map((item: any, index: any) => {
+          contractMapping.push(
+            createContract(
+              item?.id !== undefined ? item?.id : index,
+              item?.contractNo,
+              item?.tenantId,
+              item?.contractFrmDate,
+              item?.contractToDate,
+              item?.epdFlg,
+              item?.remark,
+              item?.parentContractNo,
+              item?.status,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
           )
-        )
-      })
-      setContractList(contractMapping)
+        })
+        setContractList(contractMapping)
+      }
+      setTotalData(result?.data.totalPages)
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
     }
-    setTotalData(result?.data.totalPages)
   }
   const getTenantData = async () => {
+   try {
     const token = returnApiToken()
     const result = await getTenantById(parseInt(token.tenantId))
     const data = result?.data
     setTenantCurrency(data?.monetaryValue || '')
+   } catch (error) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      navigate(`/${realm}/error`, {state: state})
+    }
+   }
   }
   const columns: GridColDef[] = [
     {

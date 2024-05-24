@@ -24,7 +24,7 @@ import { editPickupOrderStatus } from '../../../APICalls/Collector/pickupOrder/p
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate, extractError } from '../../../utils/utils'
 import TableOperation from "../../../components/TableOperation";
-import { localStorgeKeyName } from '../../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 
 type Approve = {
   open: boolean
@@ -371,7 +371,11 @@ const PickupOrders = () => {
       setTotalData( result?.data.totalPages)
     } catch (error) {
       const { state, realm} =  extractError(error);
-      navigate(`/${realm}/error`, { state: state })
+      if(state.code === STATUS_CODE[503]){
+         navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, { state: state })
+      }
     }
   }
   
@@ -393,28 +397,37 @@ const PickupOrders = () => {
   }
 
   const getRejectReason = async() => {
-    let result = await getAllReason()
-    if (result && result?.data && result?.data.length > 0) {
-      let reasonName = ""
-      switch (i18n.language) {
-        case 'enus':
-          reasonName = 'reasonNameEng'
-          break
-        case 'zhch':
-          reasonName = 'reasonNameSchi'
-          break
-        case 'zhhk':
-          reasonName = 'reasonNameTchi'
-          break
-        default:
-          reasonName = 'reasonNameEng'
-          break
+    try {
+      let result = await getAllReason()
+      if (result && result?.data && result?.data.length > 0) {
+        let reasonName = ""
+        switch (i18n.language) {
+          case 'enus':
+            reasonName = 'reasonNameEng'
+            break
+          case 'zhch':
+            reasonName = 'reasonNameSchi'
+            break
+          case 'zhhk':
+            reasonName = 'reasonNameTchi'
+            break
+          default:
+            reasonName = 'reasonNameEng'
+            break
+        }
+        result?.data.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
+          item.id = item.reasonId
+          item.name = item[reasonName]
+        })
+        setReasonList(result?.data)
       }
-      result?.data.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
-        item.id = item.reasonId
-        item.name = item[reasonName]
-      })
-      setReasonList(result?.data)
+    } catch (error) {
+      const { state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state})
+      }
     }
   }
 

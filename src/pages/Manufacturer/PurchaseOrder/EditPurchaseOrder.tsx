@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import PurchaseOrderCreateForm from '../../../components/FormComponents/PurchaseOrderCreateForm'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { Status, localStorgeKeyName } from '../../../constants/constant'
-import { formatWeight, showErrorToast } from '../../../utils/utils'
+import { STATUS_CODE, Status, localStorgeKeyName } from '../../../constants/constant'
+import { extractError, formatWeight, showErrorToast } from '../../../utils/utils'
 import * as Yup from 'yup'
 import { PurChaseOrder, PurchaseOrderDetail } from '../../../interfaces/purchaseOrder'
 import { UpdatePurchaseOrder } from '../../../APICalls/Customer/purchaseOrder'
@@ -81,6 +81,19 @@ const EditPurchaseOrder = () => {
         }
       )
   })
+
+  const submitUpdatePurchaseOrder = async (poId: string, values: PurChaseOrder) => {
+    try {
+      return await UpdatePurchaseOrder(poId, values)
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      return null
+    }
+    }
+  }
   
   const currentDate = new Date().toISOString()
   const updatePickupOrder = useFormik({
@@ -111,7 +124,7 @@ const EditPurchaseOrder = () => {
     // validationSchema: validateSchema,
     onSubmit: async (values: PurChaseOrder) => {
       values.purchaseOrderDetail = addRow
-      const result = await UpdatePurchaseOrder(values.poId, values)
+      const result = await submitUpdatePurchaseOrder(values.poId, values)
       if (result) {
         navigate(`/${realm}/purchaseOrder`, { state: 'updated' })
       } else {

@@ -33,7 +33,7 @@ import ProgressLine from '../../../components/ProgressLine';
 import StatusCard from '../../../components/StatusCard';
 import { il_item } from '../../../components/FormComponents/CustomItemList';
 
-import { format, localStorgeKeyName } from '../../../constants/constant';
+import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant';
 import dayjs from 'dayjs';
 
 import {
@@ -59,7 +59,7 @@ import { useContainer } from 'unstated-next';
 import { primaryColor, styles } from '../../../constants/styles';
 import { SEARCH_ICON } from '../../../themes/icons';
 import useDebounce from '../../../hooks/useDebounce';
-import { returnApiToken } from '../../../utils/utils';
+import { extractError, returnApiToken } from '../../../utils/utils';
 
 function createCheckInOutWarehouse(
     id: number,
@@ -135,6 +135,7 @@ const WarehouseDashboard: FunctionComponent = () => {
     }, [selectedWarehouse, i18n.language]);
 
     const initWarehouse = async () => {
+       try {
         let result;
         if (realmApi === 'account') {
             result = await astdSearchWarehouse(0, 1000, searchText)
@@ -173,6 +174,14 @@ const WarehouseDashboard: FunctionComponent = () => {
             if (warehouse.length > 0) setSelectedWarehouse(warehouse[0]);
             setTotalCapacity(capacityTotal);
         }
+       } catch (error) {
+            const { state, realm } = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                navigate(`/${realm}/error`, {state: state})
+            }
+       }
     };
 
     const getWeightSubtypeWarehouse = async () => {
@@ -204,36 +213,55 @@ const WarehouseDashboard: FunctionComponent = () => {
     };
 
     const initCapacity = async () => {
-        const token = returnApiToken()
-        if (selectedWarehouse) {
-            let result;
-            if (realmApi === 'account') {
-                result = await getCapacityWarehouse(
-                    parseInt(selectedWarehouse.id), debouncedSearchValue
-                );
-            } else {
-                result = await getCapacityWarehouse(
-                    parseInt(selectedWarehouse.id), token.decodeKeycloack
-                );
+        try {
+            const token = returnApiToken()
+            if (selectedWarehouse) {
+                let result;
+                if (realmApi === 'account') {
+                    result = await getCapacityWarehouse(
+                        parseInt(selectedWarehouse.id), debouncedSearchValue
+                    );
+                } else {
+                    result = await getCapacityWarehouse(
+                        parseInt(selectedWarehouse.id), token.decodeKeycloack
+                    );
+                }
+                if (result) setTotalCapacity(result.data);
             }
-            if (result) setTotalCapacity(result.data);
+        } catch (error) {
+            const { state, realm } =  extractError(error);
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                navigate(`/${realm}/error`, {state})
+            }
         }
     };
 
     const initCheckIn = async () => {
-        const token = returnApiToken()
-        if (selectedWarehouse) {
-            let result;
-            if (realmApi === 'account') {
-                result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), debouncedSearchValue)
-            } else {
-                result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), token.decodeKeycloack);
+        try {
+            const token = returnApiToken()
+            if (selectedWarehouse) {
+                let result;
+                if (realmApi === 'account') {
+                    result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), debouncedSearchValue)
+                } else {
+                    result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), token.decodeKeycloack);
+                }
+                if (result) setCheckIn(result.data);
             }
-            if (result) setCheckIn(result.data);
+        } catch (error) {
+            const { state, realm } = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                navigate(`/${realm}/error`, {state: state})
+            }
         }
     };
 
     const initCheckOut = async () => {
+       try {
         const token = returnApiToken()
         if (selectedWarehouse) {
             let result;
@@ -248,6 +276,14 @@ const WarehouseDashboard: FunctionComponent = () => {
             }
             if (result) setCheckOut(result.data);
         }
+       } catch (error) {
+            const { state, realm } = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                navigate(`/${realm}/error`, {state: state})
+            }
+       }
     };
 
     const mappingRecyName = (recycTypeId: string, recycSubTypeId: string) => {
@@ -371,41 +407,50 @@ const WarehouseDashboard: FunctionComponent = () => {
     };
 
     const initCheckInOut = async () => {
-        const token = returnApiToken()
-        if (selectedWarehouse) {
-            let result;
-            if (realmApi === 'account') {
-                result = await getCheckInOutWarehouse(
-                    parseInt(selectedWarehouse.id), debouncedSearchValue
-                );
-            } else{
-                result = await getCheckInOutWarehouse(
-                    parseInt(selectedWarehouse.id), token.decodeKeycloack
-                );
-            }
-            if (result) {
-                const data = result.data;
-                let checkinoutMapping: CheckInOutWarehouse[] = [];
-                data.map((item: any, index: number) => {
-                    checkinoutMapping.push(
-                        createCheckInOutWarehouse(
-                            item?.chkInId || index + item?.chkInId,
-                            item?.createdAt,
-                            item?.status,
-                            item?.senderName,
-                            item?.receiverName,
-                            item?.picoId,
-                            item?.adjustmentFlg,
-                            item?.logisticName,
-                            item?.senderAddr,
-                            item?.receiverAddr
-                        )
+       try {
+            const token = returnApiToken()
+            if (selectedWarehouse) {
+                let result;
+                if (realmApi === 'account') {
+                    result = await getCheckInOutWarehouse(
+                        parseInt(selectedWarehouse.id), debouncedSearchValue
                     );
-                });
+                } else{
+                    result = await getCheckInOutWarehouse(
+                        parseInt(selectedWarehouse.id), token.decodeKeycloack
+                    );
+                }
+                if (result) {
+                    const data = result.data;
+                    let checkinoutMapping: CheckInOutWarehouse[] = [];
+                    data.map((item: any, index: number) => {
+                        checkinoutMapping.push(
+                            createCheckInOutWarehouse(
+                                item?.chkInId || index + item?.chkInId,
+                                item?.createdAt,
+                                item?.status,
+                                item?.senderName,
+                                item?.receiverName,
+                                item?.picoId,
+                                item?.adjustmentFlg,
+                                item?.logisticName,
+                                item?.senderAddr,
+                                item?.receiverAddr
+                            )
+                        );
+                    });
 
-                setCheckInOut(checkinoutMapping);
+                    setCheckInOut(checkinoutMapping);
+                }
             }
-        }
+       } catch (error) {
+            const { state, realm } = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                navigate(`/${realm}/error`, {state: state})
+            }
+       }
     };
 
     const initGetRecycSubTypeWeight = async () => {

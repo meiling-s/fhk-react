@@ -21,8 +21,8 @@ export const getAllInventory = async (page: number, size: number) => {
       })
       
       return response
-    } catch (e) {
+    } catch (e:any) {
       console.error('Get all vehicle failed:', e)
-      return null
+     throw(e)
     }
   }

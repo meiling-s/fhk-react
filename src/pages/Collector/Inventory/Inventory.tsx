@@ -14,7 +14,7 @@ import { useContainer } from "unstated-next";
 import { InventoryItem, InventoryDetail as InvDetails} from '../../../interfaces/inventory'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { getAllInventory } from '../../../APICalls/Collector/inventory'
-import { format } from "../../../constants/constant";
+import { STATUS_CODE, format } from "../../../constants/constant";
 import dayjs from 'dayjs'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
@@ -22,7 +22,9 @@ import { PickupOrder } from '../../../interfaces/pickupOrder'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
-import { formatWeight } from '../../../utils/utils'
+import { extractError, formatWeight } from '../../../utils/utils'
+import { useNavigate } from 'react-router-dom'
+import { STATUS_CODES } from 'http'
 
 interface Option {
   value: string
@@ -82,6 +84,7 @@ const Inventory: FunctionComponent = () => {
   const [recycItem, setRecycItem] = useState<recycItem[]>([])
   const [picoList, setPicoList] = useState<PickupOrder[]>([])
   const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([])
+  const navigate = useNavigate();
 
   useEffect(() =>{
     mappingRecyleItem()
@@ -158,6 +161,7 @@ const Inventory: FunctionComponent = () => {
   }
 
   const initInventory = async () => {
+   try {
     const result = await getAllInventory(page - 1, pageSize)
     const data = result?.data
 
@@ -210,6 +214,15 @@ const Inventory: FunctionComponent = () => {
       setFilteredInventory(inventoryMapping)
       setTotalData(data.totalPages)
     }
+   } catch (error) {
+    const {state, realm } =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      navigate(`/${realm}/error`, {state: state})
+    }
+    
+   }
   }
 
   const columns: GridColDef[] = [

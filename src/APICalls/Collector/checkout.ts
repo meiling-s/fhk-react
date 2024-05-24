@@ -84,6 +84,6 @@ export const getCheckoutReasons = async () => {
     return response
   } catch (e) {
     console.error('get checkout reasons failed:', e)
-    return null
+    throw(e)
   }
 }

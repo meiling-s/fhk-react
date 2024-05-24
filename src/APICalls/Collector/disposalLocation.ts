@@ -28,7 +28,7 @@ export const getAllDisposalLocation = async (page: number, size: number) => {
     return response;
   } catch (e) {
     console.error("Get all disposal location failed:", e);
-    return null;
+    throw(e)
   }
 };
 

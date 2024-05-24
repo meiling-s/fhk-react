@@ -83,11 +83,15 @@ const ProcessRecord: FunctionComponent = () => {
 
 
   const getProcessInDetail = async (processInId: number) =>{
+   try {
     const result = await getProcessIn(processInId)
     if (result) {
       // console.log("getProcessInDetail",result)
       return result.data
     }
+   } catch (error) {
+    throw(error)
+   }
   }
 
   const initProcessRecord = async () => {
@@ -124,7 +128,12 @@ const ProcessRecord: FunctionComponent = () => {
       }
     } catch (error) {
       const {state, realm } = extractError(error);
-      navigate(`/${realm}/error`, { state: state })
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, { state: state })
+      }
+      
     }
   }
 

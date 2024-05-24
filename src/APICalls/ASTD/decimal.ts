@@ -15,7 +15,7 @@ export const getDecimalValue = async () => {
     return response
   } catch (e: any) {
     console.error('Get Currency Failed:', e)
-    return null
+    throw(e)
   }
 }
 

@@ -32,7 +32,7 @@ import {
   updateTenantStatus,
   sendEmailInvitation
 } from '../../APICalls/tenantManage'
-import { defaultPath, format } from '../../constants/constant'
+import { STATUS_CODE, defaultPath, format } from '../../constants/constant'
 import { styles } from '../../constants/styles'
 import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers'
@@ -51,7 +51,7 @@ import { ErrorMessage, useFormik, validateYupSchema } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 import CustomAutoComplete from '../../components/FormComponents/CustomAutoComplete'
-import { returnApiToken, showErrorToast } from '../../utils/utils'
+import { extractError, returnApiToken, showErrorToast } from '../../utils/utils'
 import { ToastContainer } from 'react-toastify'
 
 function createCompany(
@@ -710,6 +710,7 @@ function CompanyManage() {
       label: 'Customer'
     }
   ]
+  const navigate = useNavigate();
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -902,29 +903,47 @@ function CompanyManage() {
   }
 
   async function initCompaniesData() {
-    const result = await getAllTenant(page - 1, pageSize)
-    const data = result?.data.content
-    if (data.length > 0) {
-      const tenantList = mappingTenantData(data)
-      setCompanies(tenantList)
-      setFilterCompanies(tenantList)
-    }
-    setTotalData(result?.data.totalPages)
-  }
-
-  const handleFilterCompanies = async (searchWord: string) => {
-    if (searchWord != '') {
-      const tenantId = parseInt(searchWord)
-      const result = await searchTenantById(page - 1, pageSize, tenantId)
+    try {
+      const result = await getAllTenant(page - 1, pageSize)
       const data = result?.data.content
-      if (data?.length > 0) {
+      if (data.length > 0) {
         const tenantList = mappingTenantData(data)
         setCompanies(tenantList)
         setFilterCompanies(tenantList)
-        setTotalData(result?.data.totalPages)
       }
-    } else {
-      initCompaniesData()
+      setTotalData(result?.data.totalPages)
+    } catch (error) {
+      const { state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
+    }
+  }
+
+  const handleFilterCompanies = async (searchWord: string) => {
+    try {
+      if (searchWord != '') {
+        const tenantId = parseInt(searchWord)
+        const result = await searchTenantById(page - 1, pageSize, tenantId)
+        const data = result?.data.content
+        if (data?.length > 0) {
+          const tenantList = mappingTenantData(data)
+          setCompanies(tenantList)
+          setFilterCompanies(tenantList)
+          setTotalData(result?.data.totalPages)
+        }
+      } else {
+        initCompaniesData()
+      }
+    } catch (error) {
+      const { state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
     }
   }
 

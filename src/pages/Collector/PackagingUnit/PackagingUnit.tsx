@@ -33,10 +33,12 @@ import { PackagingUnit as PackagingUnitItem } from '../../../interfaces/packagin
 import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
-import { returnApiToken } from '../../../utils/utils'
+import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import CreatePackaging from './CreatePackaging'
+import { STATUS_CODE } from '../../../constants/constant'
+import { useNavigate } from 'react-router-dom'
 
 function createPackagingUnit(
   id: number,
@@ -87,6 +89,7 @@ const PackagingUnit: FunctionComponent = () => {
   const [engNameList, setEngNameList] = useState<string[]>([])
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
+  const navigate = useNavigate();
 
   useEffect(() => {
     initPackagingUnitList()
@@ -94,57 +97,75 @@ const PackagingUnit: FunctionComponent = () => {
   }, [page])
 
   const initPackagingUnitList = async () => {
-    const result = await getAllPackagingUnit(page - 1, pageSize)
-    const data = result?.data
-    if (data) {
-      var packagingMapping: PackagingUnitItem[] = []
-      setEngNameList([])
-      setSchiNameList([])
-      setTchiNameList([])
+    try {
+      const result = await getAllPackagingUnit(page - 1, pageSize)
+      const data = result?.data
+      if (data) {
+        var packagingMapping: PackagingUnitItem[] = []
+        setEngNameList([])
+        setSchiNameList([])
+        setTchiNameList([])
 
-      data.content.map((item: any, index: any) => {
-        packagingMapping.push(
-          createPackagingUnit(
-            item?.id !== undefined ? item?.id : index,
-            item?.description,
-            item?.packagingNameEng,
-            item?.packagingNameSchi,
-            item?.packagingNameTchi,
-            item?.packagingTypeId,
-            item?.remark,
-            item?.status,
-            item?.tenantId,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
+        data.content.map((item: any, index: any) => {
+          packagingMapping.push(
+            createPackagingUnit(
+              item?.id !== undefined ? item?.id : index,
+              item?.description,
+              item?.packagingNameEng,
+              item?.packagingNameSchi,
+              item?.packagingNameTchi,
+              item?.packagingTypeId,
+              item?.remark,
+              item?.status,
+              item?.tenantId,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
           )
-        )
 
-        setEngNameList((prevEngName: any) => [
-          ...prevEngName,
-          item.packagingNameEng
-        ])
-        setSchiNameList((prevSchiName: any) => [
-          ...prevSchiName,
-          item.packagingNameSchi
-        ])
-        setTchiNameList((prevTchiName: any) => [
-          ...prevTchiName,
-          item.packagingNameTchi
-        ])
-      })
-      // console.log(packagingMapping, 'packagingMapping')
-      setPackagingMapping(packagingMapping)
-      setTotalData(data.totalPages)
+          setEngNameList((prevEngName: any) => [
+            ...prevEngName,
+            item.packagingNameEng
+          ])
+          setSchiNameList((prevSchiName: any) => [
+            ...prevSchiName,
+            item.packagingNameSchi
+          ])
+          setTchiNameList((prevTchiName: any) => [
+            ...prevTchiName,
+            item.packagingNameTchi
+          ])
+        })
+        // console.log(packagingMapping, 'packagingMapping')
+        setPackagingMapping(packagingMapping)
+        setTotalData(data.totalPages)
+      }
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
     }
   }
   const getTenantData = async () => {
-    const token = returnApiToken()
-    const result = await getTenantById(parseInt(token.tenantId))
-    const data = result?.data
-    console.log('tenant Data', data)
-    setTenantCurrency(data?.monetaryValue || '')
+    try {
+      const token = returnApiToken()
+      const result = await getTenantById(parseInt(token.tenantId))
+      const data = result?.data
+      console.log('tenant Data', data)
+      setTenantCurrency(data?.monetaryValue || '')
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
+    }
   }
   const columns: GridColDef[] = [
     {

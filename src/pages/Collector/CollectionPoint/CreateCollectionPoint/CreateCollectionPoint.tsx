@@ -38,7 +38,7 @@ import {
   createCollectionPoint
 } from '../../../../APICalls/collectionPointManage'
 
-import { formErr, format } from '../../../../constants/constant'
+import { STATUS_CODE, formErr, format } from '../../../../constants/constant'
 import { useTranslation } from 'react-i18next'
 import { getCommonTypes } from '../../../../APICalls/commonManage'
 import {
@@ -58,6 +58,7 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { localStorgeKeyName } from '../../../../constants/constant'
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
+import { extractError } from '../../../../utils/utils'
 
 dayjs.extend(isBetween)
 
@@ -113,6 +114,7 @@ function CreateCollectionPoint() {
   }, [])
 
   const initType = async () => {
+   try {
     const result = await getCommonTypes()
     if (result) {
       setTypeList(result)
@@ -135,6 +137,14 @@ function CreateCollectionPoint() {
       })
       setContractList(conList)
     }
+   } catch (error) {
+    const { state, realm } = extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      navigate(`/${realm}/error`, {state})
+    }
+   }
   }
 
   useEffect(() => {
@@ -503,46 +513,53 @@ function CreateCollectionPoint() {
   }
 
   const handleCreateOnClick = async () => {
-    console.log('colPtRoutine', colPtRoutine)
-    const loginId = localStorage.getItem(localStorgeKeyName.username)
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
-
-    if (validation.length == 0) {
-      const cp: createCP = {
-        tenantId: tenantId,
-        colName: colName,
-        colPointTypeId: colType,
-        effFrmDate: dayjsToLocalDate(openingPeriod.startDate),
-        effToDate: dayjsToLocalDate(openingPeriod.endDate),
-        routine: colPtRoutine,
-        address: address,
-        gpsCode: toGpsCode(gpsCode[0], gpsCode[1]),
-        epdFlg: EPDFlg,
-        //extraServiceFlg: !serviceType,
-        serviceFlg: serviceFlg,
-        siteTypeId: siteType,
-        contractNo: contractNo,
-        noOfStaff: parseInt(staffNum),
-        status: status ? 'CREATED' : 'CLOSED',
-        premiseName: premiseName,
-        premiseTypeId: premiseType,
-        premiseRemark: premiseRemark,
-        normalFlg: true,
-        createdBy: loginId,
-        updatedBy: loginId,
-        colPtRecyc: recyclables,
-        roster: []
+    try {
+      console.log('colPtRoutine', colPtRoutine)
+      const loginId = localStorage.getItem(localStorgeKeyName.username)
+      const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
+  
+      if (validation.length == 0) {
+        const cp: createCP = {
+          tenantId: tenantId,
+          colName: colName,
+          colPointTypeId: colType,
+          effFrmDate: dayjsToLocalDate(openingPeriod.startDate),
+          effToDate: dayjsToLocalDate(openingPeriod.endDate),
+          routine: colPtRoutine,
+          address: address,
+          gpsCode: toGpsCode(gpsCode[0], gpsCode[1]),
+          epdFlg: EPDFlg,
+          //extraServiceFlg: !serviceType,
+          serviceFlg: serviceFlg,
+          siteTypeId: siteType,
+          contractNo: contractNo,
+          noOfStaff: parseInt(staffNum),
+          status: status ? 'CREATED' : 'CLOSED',
+          premiseName: premiseName,
+          premiseTypeId: premiseType,
+          premiseRemark: premiseRemark,
+          normalFlg: true,
+          createdBy: loginId,
+          updatedBy: loginId,
+          colPtRecyc: recyclables,
+          roster: []
+        }
+        const result = await createCollectionPoint(cp)
+        const data = result?.data
+        if (data) {
+          console.log('all collection point: ', data)
+        }
+        navigate('/collector/collectionPoint', { state: 'created' }) //goback to collection point with action "created"
+      } else {
+        console.log(validation)
+        setTrySubmited(true)
+        //if(validation.incl)
       }
-      const result = await createCollectionPoint(cp)
-      const data = result?.data
-      if (data) {
-        console.log('all collection point: ', data)
-      }
-      navigate('/collector/collectionPoint', { state: 'created' }) //goback to collection point with action "created"
-    } else {
-      console.log(validation)
-      setTrySubmited(true)
-      //if(validation.incl)
+    } catch (error) {
+     const { state, realm}  =  extractError(error);
+     if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+     }
     }
   }
 

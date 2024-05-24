@@ -41,7 +41,6 @@ import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import BarChartIcon from '@mui/icons-material/BarChart';
 import { dynamicpath, returnApiToken } from '../utils/utils'
-import { getSystemMaintenanceStatus } from '../APICalls/commont'
 
 type MainDrawer = {
   role: string
@@ -80,36 +79,6 @@ function MainDrawer() {
     setOpen(false)
   }
 
-  useEffect(() => {
-    const interval = setInterval(async() => {
-      const status = await getSystemMaintenanceStatus();
-      const maintenanceStatus = localStorage.getItem('maintenanceStatus')
-      if(status === MAINTENANCE_STATUS.UNDER_MAINTENANCE && maintenanceStatus === MAINTENANCE_STATUS.NOT_UNDER_MAINTENANCE){
-        localStorage.setItem('maintenanceStatus', status)
-        navigate(`/maintenance`)
-      } else if(status === MAINTENANCE_STATUS.NOT_UNDER_MAINTENANCE && maintenanceStatus === MAINTENANCE_STATUS.UNDER_MAINTENANCE){
-        localStorage.setItem('maintenanceStatus', status)
-        navigate('/')
-      }
-    }, 300000)
-
-    return() => {
-      clearInterval(interval)
-    }
-  }, [])
-
-  
-
-
-  const onHandleNavigation = async  (path: string) => {
-    const status = await getSystemMaintenanceStatus();
-    if(status === MAINTENANCE_STATUS.UNDER_MAINTENANCE){
-      navigate(`/maintenance`)
-    } else {
-      navigate(path)
-    }
-  }
-
   const handleListItemClick = (index: number) => {
     setSelectedIndex(index)
     localStorage.setItem('selectedIndex', String(index))
@@ -138,91 +107,91 @@ function MainDrawer() {
       'Tenant management': {
         name: t('tenant.company'),
         icon: <FolderCopyOutlinedIcon />,
-        onClick: () => onHandleNavigation('/astd'),
+        onClick: () => navigate('/astd'),
         collapse: false
       },
       'User account': {
         name: t('processRecord.userGroup'),
         icon: <PERSON_OUTLINE_ICON />,
-        onClick: () => onHandleNavigation(`/${realm}/account`),
+        onClick: () => navigate(`/${realm}/account`),
         collapse: false
       },
       'Collection point': {
         name: t('all_Collection_Point'),
         icon: <PLACE_ICON />,
-        onClick:async () => onHandleNavigation('/collector/collectionPoint'),
+        onClick:async () => navigate('/collector/collectionPoint'),
         collapse: false
       },
       'Pickup order': {
         name: t('pick_up_order.enquiry_pickup_order'),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => onHandleNavigation(`/${realm}/pickupOrder`),
+        onClick: () => navigate(`/${realm}/pickupOrder`),
         collapse: false
       },
       'Purchase order': {
         name: t('purchase_order.enquiry_po'),
         icon: <ShoppingCartOutlinedIcon />,
-        onClick: () => onHandleNavigation(`/${realm}/purchaseOrder`),
+        onClick: () => navigate(`/${realm}/purchaseOrder`),
         collapse: false
       },
       'Job order': {
         name: t('job_order.enquiry_job_order'),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => onHandleNavigation(`/${realm}/jobOrder`),
+        onClick: () => navigate(`/${realm}/jobOrder`),
         collapse: false
       },
       'Request check-in': {
         name: t('check_in.request_check_in'),
         icon: <LoginIcon />,
-        onClick: () => onHandleNavigation('/warehouse/shipment'),
+        onClick: () => navigate('/warehouse/shipment'),
         collapse: false
       },
       'Request checkout': {
         name: t('check_out.request_check_out'),
         icon: <LogoutIcon />,
-        onClick: () => onHandleNavigation('/warehouse/checkout'),
+        onClick: () => navigate('/warehouse/checkout'),
         collapse: false
       },
       Settings: {
         name: t('settings'),
         icon: <SETTINGS_ICON />,
-        onClick: () => onHandleNavigation('/astd/setting'),
+        onClick: () => navigate('/astd/setting'),
         collapse: false
       },
       Reports: {
         name: t('reports'),
         icon: <DOCUMENT_ICON />,
-        onClick: () => onHandleNavigation('/collector/report'),
+        onClick: () => navigate('/collector/report'),
         collapse: false
       },
       'Process out recyclables': {
         name: t('processRecord.processingRecords'),
         icon: <DOCUMENT_ICON />,
-        onClick: () => onHandleNavigation(`/${realmApiRoute}/processRecord`),
+        onClick: () => navigate(`/${realmApiRoute}/processRecord`),
         collapse: false
       },
       Staff: {
         name: t('staffManagement.staff'),
         icon: <AccountBoxOutlinedIcon />,
-        onClick: () => onHandleNavigation(`/${realm}/staff`),
+        onClick: () => navigate(`/${realm}/staff`),
         collapse: false
       },
       StaffEnquiry: {
         name: t('staffEnquiry.title'),
         icon: <AccountBoxOutlinedIcon />,
-        onClick: () => onHandleNavigation('/warehouse/staff-enquiry'),
+        onClick: () => navigate('/warehouse/staff-enquiry'),
         collapse: false
       },
       'Notification template': {
         name: t('notification.notification_menu'),
         icon: <ViewQuiltOutlinedIcon />,
-        onClick: () =>  onHandleNavigation(`/${realm}/notice`),
+        onClick: () =>  navigate(`/${realm}/notice`),
         collapse: false
       },
       Driver: {
         name: t('driver.sideBarName'),
         icon: <SHIPPING_CAR_ICON />,
-        onClick: () => onHandleNavigation('/logistic/driver'),
+        onClick: () => navigate('/logistic/driver'),
         collapse: false
       },
       'Dashboard': {
@@ -567,7 +536,7 @@ function MainDrawer() {
                       sx={{pl: 7}} 
                       selected={true}
                       onClick={() => {
-                        onHandleNavigation(`${realm}/${item.name}`)
+                        navigate(`${realm}/${item.name}`)
                         setSelectedSubIndex(index)
                       }}
                     >

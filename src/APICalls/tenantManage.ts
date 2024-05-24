@@ -55,7 +55,7 @@ export const getAllTenant = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -80,7 +80,7 @@ export const searchTenantById = async (
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -96,7 +96,7 @@ export const getTenantById = async (tenantId: number) => {
     return response
   } catch (e) {
     console.error('Get tenant by id failed:', e)
-    return null
+    throw(e)
   }
 }
 

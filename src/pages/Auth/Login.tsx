@@ -19,7 +19,7 @@ import { styled } from '@mui/material/styles'
 import InputBase from '@mui/material/InputBase'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../../APICalls/login'
-import { MAINTENANCE_STATUS, localStorgeKeyName } from '../../constants/constant'
+import { MAINTENANCE_STATUS, STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
 import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -30,8 +30,6 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { setLanguage } from '../../setups/i18n'
 import { returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
-import Maintenance from '../Common/MaintenanceCard'
-import useMaintenanceMode from '../../hooks/useMaintenanceMode'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -44,7 +42,6 @@ const Login = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const commonTypeContainer = useContainer(CommonTypeContainer);
- const { maintenanceStatus, message } = useMaintenanceMode();
 
   // overwrite select style
   //todo : make select as component
@@ -151,7 +148,9 @@ const Login = () => {
         commonTypeContainer.updateCommonTypeContainer()
       } else {
         const errCode = result
-        if (errCode == '004') {
+        if(errCode === STATUS_CODE[503]){
+          return navigate('/maintenance')
+        } else if (errCode == '004') {
           //navigate to reset pass firsttime login
           localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
           return navigate('/changePassword')
@@ -189,12 +188,6 @@ const Login = () => {
     navigate('/resetPassword')
   }
 
-  if(maintenanceStatus === MAINTENANCE_STATUS.UNDER_MAINTENANCE){
-    localStorage.setItem('maintenanceStatus', MAINTENANCE_STATUS.UNDER_MAINTENANCE)
-    return <Maintenance  message={message}/>
-  } else {
-    localStorage.setItem('maintenanceStatus', MAINTENANCE_STATUS.NOT_UNDER_MAINTENANCE)
-  }
 
   return (
     <Box

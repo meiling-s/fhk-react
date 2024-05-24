@@ -12,8 +12,8 @@ import {
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
-import { localStorgeKeyName } from '../../../constants/constant'
-import { formatWeight, showErrorToast } from '../../../utils/utils'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import { extractError, formatWeight, showErrorToast } from '../../../utils/utils'
 import * as Yup from 'yup'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
@@ -88,6 +88,19 @@ const EditPickupOrder = () => {
       )
   })
 
+  const submitEditPickUpOrder = async (pickupOrderId: string, values:EditPo) => {
+    try {
+      return await editPickupOrder(pickupOrderId, values)
+    } catch (error) {
+      const { state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        return null
+      }
+    }
+  }
+
   const updatePickupOrder = useFormik({
     initialValues: {
       tenantId: '',
@@ -116,7 +129,7 @@ const EditPickupOrder = () => {
     validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
       values.createPicoDetail = addRow
-      const result = await editPickupOrder(poInfo.picoId, values)
+      const result = await submitEditPickUpOrder(poInfo.picoId, values)
 
       const data = result?.data
       if (data) {

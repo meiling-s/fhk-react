@@ -34,7 +34,7 @@ import { getAllContract } from '../../../APICalls/Collector/contracts'
 import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
-import { returnApiToken } from '../../../utils/utils'
+import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
 import { GET_ALL_RECYCLE_TYPE, GET_RECYC_TYPE } from '../../../constants/requests'
@@ -46,6 +46,8 @@ import { t } from 'i18next'
 import { getEngineData, getSiteTypeData } from '../../../APICalls/ASTD/recycling'
 import CreateRecyclingPoint from './CreateRecyclingPoint'
 import CreateEngineData from './CreateEngineData'
+import { useNavigate } from 'react-router-dom'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface siteTypeDataProps {
     createdAt: string
@@ -90,6 +92,7 @@ const RecyclingPoint: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [engineDrawerOpen, setEngineDrawerOpen] = useState<boolean>(false)
+  const  navigate = useNavigate();
 
   useEffect(() => {
     initSiteTypeData()
@@ -97,17 +100,35 @@ const RecyclingPoint: FunctionComponent = () => {
   }, [page])
 
   const initSiteTypeData = async () => {
-    const result = await getSiteTypeData()
-    const data = result?.data
+    try {
+      const result = await getSiteTypeData()
+      const data = result?.data
 
-    setSiteTypeData(data)
+      setSiteTypeData(data)
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
+    }
   }
 
   const initEngineData = async () => {
+   try {
     const result = await getEngineData()
     const data = result?.data
 
     setEngineData(data)
+   } catch (error) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      navigate(`/${realm}/error`, {state: state})
+    }
+   }
   }
 
   const columns: GridColDef[] = [

@@ -70,8 +70,13 @@ const CollectionPoint = () => {
         }
       }
     } catch (error:any) {
-      const {state, realm} =  extractError(error)
-      navigate(`/${realm}/error`, { state: state })
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, { state: state })
+      }
+      
     }
   }
 

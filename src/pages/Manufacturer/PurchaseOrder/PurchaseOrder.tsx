@@ -27,9 +27,9 @@ import {
   queryPurchaseOrder
 } from '../../../interfaces/purchaseOrder'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, extractError } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
-import { Languages, Roles, Status, localStorgeKeyName } from '../../../constants/constant'
+import { Languages, Roles, STATUS_CODE, Status, localStorgeKeyName } from '../../../constants/constant'
 import dayjs from 'dayjs'
 
 type Approve = {
@@ -423,19 +423,28 @@ const PurchaseOrder = () => {
   ]
 
   const initPurchaseOrderRequest = async () => {
-    setPurchaseOrder([])
-    setTotalData(0)
-    let result = null
-
-    result = await getAllPurchaseOrder(page - 1, pageSize, query)
-
-    const data = result?.data.content
-    if (data && data.length > 0) {
-      setPurchaseOrder(data)
-    } else {
+    try {
       setPurchaseOrder([])
+      setTotalData(0)
+      let result = null
+
+      result = await getAllPurchaseOrder(page - 1, pageSize, query)
+
+      const data = result?.data.content
+      if (data && data.length > 0) {
+        setPurchaseOrder(data)
+      } else {
+        setPurchaseOrder([])
+      }
+      setTotalData(result?.data.totalPages)
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
     }
-    setTotalData(result?.data.totalPages)
   }
 
   const showApproveModal = async (row: any) => {

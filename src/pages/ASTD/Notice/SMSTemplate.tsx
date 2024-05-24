@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next";
 import { FunctionComponent, useEffect, useState, SyntheticEvent } from "react";
 import { getDetailNotifTemplate, updateNotifTemplate } from "../../../APICalls/notify";
 import { ToastContainer } from 'react-toastify'
-import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
+import { extractError, getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 import { styles } from "../../../constants/styles";
-import { Languages, localStorgeKeyName } from "../../../constants/constant";
+import { Languages, STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
 
@@ -100,23 +100,33 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
     }
 
     const getDetailTemplate = async () => {
-        const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
-        if (notif) {
-            setNotifTemplate(prev => {
-                return {
-                    ...prev,
-                    templateId: notif?.templateId,
-                    notiType: notif?.notiType,
-                    lang: notif?.lang,
-                    title: notif?.title,
-                    content: notif?.content,
-                    senders: notif?.senders,
-                    receivers: notif?.receivers,
-                    updatedBy: notif?.updatedBy,
-                    variables: notif?.variables
-                }
-            })
-            setCurrentLanguage(notif.lang)
+        try {
+            const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
+            if (notif) {
+                setNotifTemplate(prev => {
+                    return {
+                        ...prev,
+                        templateId: notif?.templateId,
+                        notiType: notif?.notiType,
+                        lang: notif?.lang,
+                        title: notif?.title,
+                        content: notif?.content,
+                        senders: notif?.senders,
+                        receivers: notif?.receivers,
+                        updatedBy: notif?.updatedBy,
+                        variables: notif?.variables
+                    }
+                })
+                setCurrentLanguage(notif.lang)
+            }
+        } catch (error) {
+            const {state, realm} =  extractError(error);
+            if(state.code === STATUS_CODE[503]){
+              navigate('/maintenance')
+            } else {
+              navigate(`/${realm}/error`, {state: state})
+            }
+        
         }
     }
 

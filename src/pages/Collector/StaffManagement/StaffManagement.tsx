@@ -34,9 +34,10 @@ import { Staff } from '../../../interfaces/staff'
 import { getStaffList } from '../../../APICalls/staff'
 
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, extractError } from '../../../utils/utils'
 import UserGroup from '../UserGroup/UserGroup'
-import { Realm, localStorgeKeyName } from '../../../constants/constant'
+import { Realm, STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import { useNavigate } from 'react-router-dom'
 
 function createStaff(
   staffId: string,
@@ -94,12 +95,14 @@ const StaffManagement: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const realm = localStorage.getItem(localStorgeKeyName.realm)
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const navigate = useNavigate();
 
   useEffect(() => {
     initStaffList()
   }, [page])
 
   const initStaffList = async () => {
+   try {
     const result = await getStaffList(page - 1, pageSize)
 
     if (result) {
@@ -132,6 +135,14 @@ const StaffManagement: FunctionComponent = () => {
       setFillteredStaff(staffMapping)
       setTotalData(result.data.totalPages)
     }
+   } catch (error) {
+    const { state, realm } = extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      navigate(`/${realm}/error`, {state: state})
+    }
+   }
   }
 
   let columns: GridColDef[] = [

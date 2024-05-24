@@ -40,8 +40,8 @@ import {
 import { updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
 import { CheckIn } from '../../interfaces/checkin'
-import { localStorgeKeyName } from '../../constants/constant'
-import { displayCreatedDate, showSuccessToast } from '../../utils/utils'
+import { STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
+import { displayCreatedDate, extractError, showSuccessToast } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 import { queryCheckIn } from '../../interfaces/checkin'
 import CustomButton from '../../components/FormComponents/CustomButton'
@@ -345,30 +345,39 @@ function ShipmentManage() {
   const [reasonList, setReasonList] = useState<any>([])
 
   const getRejectReason = async () => {
-    let result = await getCheckinReasons()
-    if (result?.data?.content.length > 0) {
-      let reasonName = ''
-      switch (i18n.language) {
-        case 'enus':
-          reasonName = 'reasonNameEng'
-          break
-        case 'zhch':
-          reasonName = 'reasonNameSchi'
-          break
-        case 'zhhk':
-          reasonName = 'reasonNameTchi'
-          break
-        default:
-          reasonName = 'reasonNameEng'
-          break
-      }
-      result?.data?.content.map(
-        (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
-          item.id = item.reasonId
-          item.name = item[reasonName]
+    try {
+      let result = await getCheckinReasons()
+      if (result?.data?.content.length > 0) {
+        let reasonName = ''
+        switch (i18n.language) {
+          case 'enus':
+            reasonName = 'reasonNameEng'
+            break
+          case 'zhch':
+            reasonName = 'reasonNameSchi'
+            break
+          case 'zhhk':
+            reasonName = 'reasonNameTchi'
+            break
+          default:
+            reasonName = 'reasonNameEng'
+            break
         }
-      )
-      setReasonList(result?.data?.content)
+        result?.data?.content.map(
+          (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
+            item.id = item.reasonId
+            item.name = item[reasonName]
+          }
+        )
+        setReasonList(result?.data?.content)
+      }
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
     }
   }
   useEffect(() => {
@@ -394,17 +403,26 @@ function ShipmentManage() {
   }
 
   const initCheckInRequest = async () => {
-    const result = await getAllCheckInRequests(page - 1, pageSize, query)
-    if (result) {
-      const data = result?.data?.content
-      if (data && data.length > 0) {
-        const checkinData = data.map(transformToTableRow)
-        setCheckInRequest(data)
-        setFilterShipments(checkinData)
-      } else {
-        setFilterShipments([])
+    try {
+      const result = await getAllCheckInRequests(page - 1, pageSize, query)
+      if (result) {
+        const data = result?.data?.content
+        if (data && data.length > 0) {
+          const checkinData = data.map(transformToTableRow)
+          setCheckInRequest(data)
+          setFilterShipments(checkinData)
+        } else {
+          setFilterShipments([])
+        }
+        setTotalData(result?.data.totalPages)
       }
-      setTotalData(result?.data.totalPages)
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
     }
   }
 

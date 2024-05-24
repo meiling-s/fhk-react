@@ -51,13 +51,13 @@ import RecyclablesList from '../../../../components/SpecializeComponents/Recycla
 import PremiseTypeList from '../../../../components/SpecializeComponents/PremiseTypeList'
 import ColPointTypeList from '../../../../components/SpecializeComponents/CollectionPointTypeList'
 import SiteTypeList from '../../../../components/SpecializeComponents/SiteTypeList'
-import { formErr } from '../../../../constants/constant'
+import { STATUS_CODE, formErr } from '../../../../constants/constant'
 import RoutineSelect from '../../../../components/SpecializeComponents/RoutineSelect'
 import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg'
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import { localStorgeKeyName } from '../../../../constants/constant'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
-import { displayCreatedDate } from '../../../../utils/utils'
+import { displayCreatedDate, extractError } from '../../../../utils/utils'
 
 function CreateCollectionPoint() {
   const { state } = useLocation()
@@ -122,26 +122,35 @@ function CreateCollectionPoint() {
   }, [])
 
   const initType = async () => {
-    const result = await getCommonTypes()
-    if (result) {
-      setTypeList(result)
-    }
-    if (result?.contract) {
-      var conList: {
-        contractNo: string
-        isEpd: boolean
-        frmDate: string
-        toDate: string
-      }[] = []
-      result?.contract?.content?.map((con) => {
-        conList.push({
-          contractNo: con.contractNo,
-          isEpd: con.epdFlg,
-          frmDate: con.contractFrmDate,
-          toDate: con.contractToDate
+    try {
+      const result = await getCommonTypes()
+      if (result) {
+        setTypeList(result)
+      }
+      if (result?.contract) {
+        var conList: {
+          contractNo: string
+          isEpd: boolean
+          frmDate: string
+          toDate: string
+        }[] = []
+        result?.contract?.content?.map((con) => {
+          conList.push({
+            contractNo: con.contractNo,
+            isEpd: con.epdFlg,
+            frmDate: con.contractFrmDate,
+            toDate: con.contractToDate
+          })
         })
-      })
-      setContractList(conList)
+        setContractList(conList)
+      }
+    } catch (error) {
+      const { state, realm} = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state})
+      }
     }
   }
 
@@ -468,41 +477,48 @@ function CreateCollectionPoint() {
   }
 
   const handleSaveOnClick = async () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+    try {
+      const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 
-    if (validation.length == 0) {
-      const cp: updateCP = {
-        colPointTypeId: colType,
-        effFrmDate: dayjsToLocalDate(openingPeriod.startDate),
-        effToDate: dayjsToLocalDate(openingPeriod.endDate),
-        routine: colPtRoutine,
-        address: address,
-        gpsCode: toGpsCode(gpsCode[0], gpsCode[1]),
-        epdFlg: EPDEnable,
-        // extraServiceFlg: !serviceType,
-        serviceFlg: serviceFlg,
-        siteTypeId: siteType,
-        contractNo: contractNo,
-        noOfStaff: parseInt(staffNum),
-        status: status ? 'CREATED' : 'CLOSED',
-        premiseName: premiseName,
-        premiseTypeId: premiseType,
-        premiseRemark: premiseRemark,
-        normalFlg: true,
-        updatedBy: loginId,
-        colPtRecyc: recyclables,
-        roster: []
+      if (validation.length == 0) {
+        const cp: updateCP = {
+          colPointTypeId: colType,
+          effFrmDate: dayjsToLocalDate(openingPeriod.startDate),
+          effToDate: dayjsToLocalDate(openingPeriod.endDate),
+          routine: colPtRoutine,
+          address: address,
+          gpsCode: toGpsCode(gpsCode[0], gpsCode[1]),
+          epdFlg: EPDEnable,
+          // extraServiceFlg: !serviceType,
+          serviceFlg: serviceFlg,
+          siteTypeId: siteType,
+          contractNo: contractNo,
+          noOfStaff: parseInt(staffNum),
+          status: status ? 'CREATED' : 'CLOSED',
+          premiseName: premiseName,
+          premiseTypeId: premiseType,
+          premiseRemark: premiseRemark,
+          normalFlg: true,
+          updatedBy: loginId,
+          colPtRecyc: recyclables,
+          roster: []
+        }
+        const result = await updateCollectionPoint(colInfo.colId, cp)
+        const data = result?.data
+        if (data) {
+          //console.log('updated collection point: ', data)
+          navigate('/collector/collectionPoint', { state: 'updated' })
+        }
+      } else {
+        //console.log('recyclables', recyclables)
+        //console.log(validation)
+        setTrySubmited(true)
       }
-      const result = await updateCollectionPoint(colInfo.colId, cp)
-      const data = result?.data
-      if (data) {
-        //console.log('updated collection point: ', data)
-        navigate('/collector/collectionPoint', { state: 'updated' })
+    } catch (error) {
+      const { state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
       }
-    } else {
-      //console.log('recyclables', recyclables)
-      //console.log(validation)
-      setTrySubmited(true)
     }
   }
 

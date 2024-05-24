@@ -28,7 +28,7 @@ export const getAllStaffTitle = async (page: number, size: number) => {
     return response;
   } catch (e) {
     console.error("Get all staff title failed:", e);
-    return null;
+    throw(e)
   }
 };
 

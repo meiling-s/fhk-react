@@ -16,7 +16,8 @@ export const createServiceInfo = async (data: any) => {
     console.log('creates service user Success:', JSON.stringify(response.data))
     return response.data
   
-  } catch (e) {
+  } catch (e:any) {
     console.error('Login user Failed:', e)
+    throw(e)
   }
 }

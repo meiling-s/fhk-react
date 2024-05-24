@@ -21,7 +21,7 @@ export const getAllPackagingUnit = async (page: number, size: number) => {
       return response
     } catch (e) {
       console.error('Get all packaging unit failed:', e)
-      return null
+      throw(e)
     }
   }
 

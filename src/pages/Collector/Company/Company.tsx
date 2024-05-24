@@ -18,6 +18,9 @@ import {
 import { getAllCompany } from '../../../APICalls/Collector/company'
 import { Company as CompanyItem } from '../../../interfaces/company'
 import CreateCompany from './CreateCompany'
+import { extractError } from '../../../utils/utils'
+import { useNavigate } from 'react-router-dom'
+import { STATUS_CODE } from '../../../constants/constant'
 
 function createCompany(
   companyId: string,
@@ -75,8 +78,10 @@ const Company: FunctionComponent = () => {
   const [logisticData, setLogisticData] = useState<number>(0)
   const [manuData, setManuData] = useState<number>(0)
   const [customerData, setCustomerData] = useState<number>(0)
-
+  const navigate = useNavigate();
+  
   const initCompanyList = async (companyType: string) => {
+   try {
     const result = await getAllCompany(companyType, page - 1, pageSize)
     const data = result?.data
     // setCompanyList(data);
@@ -126,6 +131,14 @@ const Company: FunctionComponent = () => {
       }
       setTotalData(data.totalPages)
     }
+   } catch (error) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      navigate(`/${realm}/error`, {state: state})
+    }
+   }
   }
 
   const getSelectedCompanyList = useCallback(

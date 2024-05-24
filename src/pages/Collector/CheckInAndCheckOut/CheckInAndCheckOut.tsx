@@ -14,7 +14,7 @@ import {
   import { DataGrid, GridColDef, GridRowSpacingParams } from "@mui/x-data-grid";
   import dayjs from "dayjs";
   import { useTranslation } from "react-i18next";
-  import { format } from "../../../constants/constant";
+  import { STATUS_CODE, format } from "../../../constants/constant";
   import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
   import { SEARCH_ICON } from "../../../themes/icons";
   import {CheckInAndCheckOutDetails} from "../CheckInAndCheckOut";
@@ -22,7 +22,8 @@ import { useCallback, useEffect, useState } from "react";
 import { AXIOS_DEFAULT_CONFIGS } from "../../../constants/configs";
 import axios from "axios";
 import { GET_CHECKIN_BY_ID, GET_CHECKIN_CHECKOUT_LIST, GET_CHECKOUT_BY_ID } from "../../../constants/requests";
-import { returnApiToken } from "../../../utils/utils";
+import { extractError, returnApiToken } from "../../../utils/utils";
+import { useNavigate } from "react-router-dom";
 
 
   function onlyUnique(value:any, index:any, array:any) {
@@ -42,6 +43,7 @@ import { returnApiToken } from "../../../utils/utils";
       location: '',
       outin: '',
     })
+    const navigate = useNavigate();
 
     useEffect(() => {
       getData() // eslint-disable-next-line
@@ -53,6 +55,7 @@ import { returnApiToken } from "../../../utils/utils";
   
 
     const getData = async () => {
+     try {
       const token = returnApiToken()
 
       const table = token.decodeKeycloack
@@ -61,14 +64,22 @@ import { returnApiToken } from "../../../utils/utils";
         ...GET_CHECKIN_CHECKOUT_LIST(table, keyword, page -1, 10)
       })
 
-     const {content, totalPages} = dataRes
-     setData(content.map((item:any, index:number) => {
+      const {content, totalPages} = dataRes
+      setData(content.map((item:any, index:number) => {
       return {
         ...item,
         id: index
       }
-     }))
-     setTotalData(totalPages)
+      }))
+      setTotalData(totalPages)
+     } catch (error) {
+      const {state, realm} = extractError(error)
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
+     }
 
     }
 

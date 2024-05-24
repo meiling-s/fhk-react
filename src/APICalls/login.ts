@@ -2,6 +2,7 @@ import { LOGIN } from '../constants/requests'
 import axiosInstance from '../constants/axiosInstance'
 import { LoginItem } from '../interfaces/account'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
+import { STATUS_CODE } from '../constants/constant'
 
 const removeNonJsonChar = (dataString:  string) => {
   return dataString.substring(dataString.indexOf('{'), dataString.lastIndexOf('}') + 1);
@@ -40,6 +41,9 @@ export const login = async (item: LoginItem) => {
     if (e.response) {
       // console.error('Login user Failed with msg 1:', e.response.data);
       //handling error msg 
+      if(e?.response?.status === STATUS_CODE[503]){
+        return e?.response?.status 
+      }
       const response = e.response.data.message
       const errMsgString = removeNonJsonChar(response)
       const errMsgJSON = JSON.parse(errMsgString);

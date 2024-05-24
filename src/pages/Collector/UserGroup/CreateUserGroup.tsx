@@ -7,8 +7,8 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 
 import { useTranslation } from 'react-i18next'
 import { formValidate } from '../../../interfaces/common'
-import { formErr } from '../../../constants/constant'
-import { returnApiToken, returnErrorMsg } from '../../../utils/utils'
+import { STATUS_CODE, formErr } from '../../../constants/constant'
+import { extractError, returnApiToken, returnErrorMsg } from '../../../utils/utils'
 import { localStorgeKeyName } from '../../../constants/constant'
 
 import {
@@ -24,6 +24,7 @@ import {
   deleteUserGroup,
   editUserGroup
 } from '../../../APICalls/Collector/userGroup'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   drawerOpen: boolean
@@ -55,6 +56,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   const [groupList, setGroupList] = useState<string[]>([])
   const [functions, setFunctions] = useState<number[]>([])
   var realm = localStorage.getItem(localStorgeKeyName.realm) || 'collector'
+  const navigate = useNavigate();
 
   const mappingData = () => {
     if (selectedItem != null) {
@@ -166,22 +168,30 @@ const CreateUserGroup: FunctionComponent<Props> = ({
   }
 
   const handleCreateUserGroup = async (formData: CreateUserGroupProps) => {
-    console.log('handleCreateUserGroup', functions)
-    if (validation.length === 0) {
-      const result = await createUserGroup(formData)
-      if (result) {
-        onSubmitData('success', t('notify.successCreated'))
-        resetData()
-        handleDrawerClose()
+    try {
+      console.log('handleCreateUserGroup', functions)
+      if (validation.length === 0) {
+        const result = await createUserGroup(formData)
+        if (result) {
+          onSubmitData('success', t('notify.successCreated'))
+          resetData()
+          handleDrawerClose()
+        } else {
+          onSubmitData('error', t('notify.errorCreated'))
+        }
       } else {
-        onSubmitData('error', t('notify.errorCreated'))
+        setTrySubmited(true)
       }
-    } else {
-      setTrySubmited(true)
+    } catch (error) {
+     const { state, realm } =  extractError(error);
+     if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+     }
     }
   }
 
   const handleEditUserGroup = async (formData: EditUserGroupProps) => {
+   try {
     if (validation.length === 0) {
       if (selectedItem != null) {
         const result = await editUserGroup(formData, selectedItem.groupId!)
@@ -197,6 +207,12 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     } else {
       setTrySubmited(true)
     }
+   } catch (error) {
+    const { state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const handleDelete = async () => {

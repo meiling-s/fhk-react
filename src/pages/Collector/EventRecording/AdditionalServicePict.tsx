@@ -30,12 +30,14 @@ import { ToastContainer, toast } from 'react-toastify'
 
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { formErr } from '../../../constants/constant'
+import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { extractError } from '../../../utils/utils'
+import { useNavigate } from 'react-router-dom'
 
 type ServiceName = 'SRV00001' | 'SRV00002' | 'SRV00003' | 'SRV00004'
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
@@ -167,6 +169,8 @@ const AdditionalServicePict = () => {
       label: t('report.promotionalAndEducationalEventLocations')
     }
   ]
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const validate = async () => {
@@ -403,20 +407,27 @@ const AdditionalServicePict = () => {
           additionalFlg: serviceItem.serviceId === 4 && serviceFlg === 0 ? true : false
         }
         
-        const result = await createServiceInfo(formData)
-        if (result) {
-          itemData++
-          const toastMsg = 'created additional service success'
-          toast.info(toastMsg, {
-            position: 'top-center',
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light'
-          })
+        try {
+          const result = await createServiceInfo(formData)
+          if (result) {
+            itemData++
+            const toastMsg = 'created additional service success'
+            toast.info(toastMsg, {
+              position: 'top-center',
+              autoClose: 3000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: 'light'
+            })
+          } 
+        } catch (error) {
+          const {state, realm} = extractError(error);
+          if(state.code === STATUS_CODE[503]){
+            navigate('/maintenance')
+          }
         }
      }
     }
