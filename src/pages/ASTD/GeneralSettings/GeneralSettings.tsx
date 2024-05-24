@@ -358,7 +358,7 @@ const ASTDSettings: FunctionComponent = () => {
             }}
           >
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {dateFormat !== null && dateFormat.dateFormat}
+              {dateFormat !== null && dateFormat?.dateFormat}
             </Typography>
             <IconButton onClick={() => handleOpenSidebar('date')}>
               <EditIcon />
@@ -389,7 +389,7 @@ const ASTDSettings: FunctionComponent = () => {
             }}
           >
             <Typography variant="body1" sx={{ flexGrow: 1 }}>
-              {weightFormat !== null && weightFormat.weightVariance}
+              {weightFormat !== null && weightFormat?.weightVariance}
             </Typography>
             <IconButton onClick={() => handleOpenSidebar('weight')}>
               <EditIcon />

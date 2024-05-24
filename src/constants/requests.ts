@@ -591,12 +591,29 @@ export const EDIT_VEHICLE = (
 })
 
 //inventory
+export const ASTD_GET_INVENTORY = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
+})
+
 export const GET_INVENTORY = (
   realmApiRoute: string,
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/${table}/searching`
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
+})
+
+export const GET_ITEM_TRACK_INVENTORY = (
+  realmApiRoute: string,
+  table: string,
+  itemId: number,
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/tracking/${table}/${itemId}`
 })
 
 //process records
@@ -1430,7 +1447,7 @@ export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/po/${poId}`
 })
 
-export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string): AxiosRequestConfig => ({
+export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string, realmApiRoute: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/dashboard/colPointRecyclables/${tenantId}`
 })
@@ -1464,4 +1481,9 @@ export const GET_TOTAL_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: stri
 export const GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
   method: 'get',
   url: `/api/v1/manufacturer/dashboard/ttlSalesProductByDistrictAnalysis/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_WEIGHT_RECYCABLES_DASHBOARD_ASTD = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/account/dashboard/weightRecyclablesColPoint/${tenantId}/${frmDate}/${toDate}`
 })

@@ -23,7 +23,7 @@ import i18n from "../../../setups/i18n";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 import { useNavigate } from "react-router-dom";
 import { extractError } from "../../../utils/utils";
-import { STATUS_CODE } from "../../../constants/constant";
+import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 
 function createDenialReason(
   reasonId: number,
@@ -74,11 +74,12 @@ const DenialReason: FunctionComponent = () => {
   const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
   const navigate = useNavigate();
+  const role = localStorage.getItem(localStorgeKeyName.role) || ''
 
   const initFunctionList = async () => {
     try {
       const result = await getAllFunction();
-      const data = result?.data;
+      const data = result?.data.filter((item: any) => item.tenantTypeId == role);
       if (data.length > 0) {
         let name = ''
         data.map((item: { functionId: string; functionNameEng: string; functionNameSChi: string; functionNameTChi: string; name: string; }) => {
@@ -119,7 +120,7 @@ const DenialReason: FunctionComponent = () => {
         navigate(`/${realm}/error`, {state: state})
       }
     }
-  };
+  }
 
   const initDenialReasonList = async () => {
     const result = await getAllDenialReason(page - 1, pageSize);

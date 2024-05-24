@@ -56,7 +56,7 @@ import Driver from "./pages/Logistic/Driver";
 import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
-import LogisticDashboard from "./pages/Logistic/Dashboard/dashboard"
+import LogisticVehicleDashboard from "./pages/Logistic/Dashboard/dashboard"  
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
@@ -66,6 +66,7 @@ import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOr
 import PickupPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder"
 import DashboardRecyclables from "./pages/Collector/Dashboard/Recyclables";
 import ManufacturerDashboard from "./pages/Manufacturer/Dashboard/Dashboard";
+import RecyclablesAstd from "./pages/ASTD/Dashboard/RecyclablesAstd";
 import PageNotFound from "./pages/Common/PageNotFound";
 import MaintenancePage from "./pages/Common/MaintenancePage";
 import ErrorPages from "./pages/Common/ErrorPages";
@@ -144,7 +145,9 @@ const Router = () => {
           <Route path="/astd/account" element={<></>} />
           <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
           <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
+          <Route path="/astd/inventory/" element={<Inventory/>} />
           <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
+          <Route path="/astd/dashboard" element={<RecyclablesAstd />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -169,7 +172,7 @@ const Router = () => {
           <Route path="/logistic/notice/" element={<Notice />} />
           <Route path="/logistic/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/logistic/staff" element={<StaffManagement />} />
-          <Route path="/logistic/dashboard" element={<LogisticDashboard />} />
+          <Route path="/logistic/vehicleDashboard" element={<LogisticVehicleDashboard />} />
         </Route>
 
         <Route element={<MainLayout />}>

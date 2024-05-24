@@ -564,7 +564,9 @@
     "package": "包装",
     "recyclingNumber": "回收编号",
     "inventoryLocation": "库存位置",
-    "weight": "重量"
+    "weight": "重量",
+    "at": "于",
+    "handover": "交给"
   },
   "processRecord": {
     "processing": "处理中",
@@ -1133,7 +1135,8 @@
     "unregulated_electrical": "非受管制电器",
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
-    "paper_drink_box": "纸包饮品盒"
+    "paper_drink_box": "纸包饮品盒",
+    "collector": "集电极"
   },
   "dashboard_manufacturer": {
     "data": "数据",

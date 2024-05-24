@@ -381,6 +381,11 @@ const GeneralSettings: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              initialState={{
+                sorting: {
+                  sortModel: [{ field: 'contractNo', sort: 'desc' }]
+                }
+              }}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

@@ -582,8 +582,11 @@ const CheckoutRequest: FunctionComponent = () => {
                 width: "90px",
                 height: "40px",
                 m: 0.5,
+                backgroundPositionXackground: checkedCheckOut.length === 0 ? 'white' : '',
+                cursor: checkedCheckOut.length === 0 ? 'not-allowed' : 'pointer'
               },
             ]}
+            disabled={checkedCheckOut.length === 0}
             variant="outlined"
             onClick={() => setApproveModal(checkedCheckOut.length > 0)}
           >
@@ -599,6 +602,7 @@ const CheckoutRequest: FunctionComponent = () => {
                 m: 0.5,
               },
             ]}
+            disabled={checkedCheckOut.length === 0}
             variant="outlined"
             onClick={() => setRejectModal(checkedCheckOut.length > 0)}
           >
