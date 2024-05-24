@@ -25,6 +25,7 @@ import {
   getRecycleType
 } from '../../../APICalls/warehouseManage'
 
+
 interface RecyleItem {
   recycTypeId: string
   recycSubTypeId: string

@@ -34,7 +34,6 @@ import StatusCard from '../../../components/StatusCard';
 import { il_item } from '../../../components/FormComponents/CustomItemList';
 
 import { format, localStorgeKeyName } from '../../../constants/constant';
-import dayjs from 'dayjs';
 
 import {
     getCapacityWarehouse,
@@ -60,6 +59,12 @@ import { primaryColor, styles } from '../../../constants/styles';
 import { SEARCH_ICON } from '../../../themes/icons';
 import useDebounce from '../../../hooks/useDebounce';
 import { returnApiToken } from '../../../utils/utils';
+
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 function createCheckInOutWarehouse(
     id: number,
@@ -101,7 +106,7 @@ type RecycSubTypeCapacity = {
 const WarehouseDashboard: FunctionComponent = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { recycType } = useContainer(CommonTypeContainer);
+    const { recycType, dateFormat} = useContainer(CommonTypeContainer);
 
     const [currentCapacity, setCurrentCapacity] = useState<number>(0);
     const [totalCapacity, setTotalCapacity] = useState<number>(1000);
@@ -387,10 +392,13 @@ const WarehouseDashboard: FunctionComponent = () => {
                 const data = result.data;
                 let checkinoutMapping: CheckInOutWarehouse[] = [];
                 data.map((item: any, index: number) => {
+                    const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+                    const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+                    console.log(createdAt,'aaa')
                     checkinoutMapping.push(
                         createCheckInOutWarehouse(
                             item?.chkInId || index + item?.chkInId,
-                            item?.createdAt,
+                            createdAt,
                             item?.status,
                             item?.senderName,
                             item?.receiverName,
@@ -428,14 +436,8 @@ const WarehouseDashboard: FunctionComponent = () => {
         {
             field: 'createdAt',
             headerName: t('check_out.created_at'),
-            width: 120,
+            width: 150,
             type: 'string',
-            renderCell: (params) => {
-                const dateFormatted = dayjs(
-                    new Date(params.row.createdAt)
-                ).format(format.dateFormat1);
-                return <div>{dateFormatted}</div>;
-            },
         },
         {
             field: 'status',

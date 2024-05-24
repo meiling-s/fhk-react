@@ -13,7 +13,6 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import EditProcessRecord from './EditProcesRecord'
 import { format } from '../../../constants/constant'
-import dayjs from 'dayjs'
 import StatusCard from '../../../components/StatusCard'
 import {
   ProcessOut,
@@ -27,6 +26,11 @@ import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import { ProcessType } from '../../../interfaces/common'
 
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 interface Option {
   value: string
@@ -70,7 +74,7 @@ const ProcessRecord: FunctionComponent = () => {
   )
   const [selectedRow, setSelectedRow] = useState<ProcessOut | null>(null)
   const [selectedProcessOutId, setProcessOutId] = useState<number>(1)
-  const {processType} = useContainer(CommonTypeContainer)
+  const {processType, dateFormat} = useContainer(CommonTypeContainer)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
@@ -96,6 +100,8 @@ const ProcessRecord: FunctionComponent = () => {
     if (data) {
       var recordsMapping: any[] = []
       await Promise.all(data.content.map(async (item: any) => {
+        const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+        const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
         const processIn: any = await getProcessInDetail(item.processInId); // Await here
         const processName = mappingProcessName( processIn?.processTypeId)
         recordsMapping.push(
@@ -106,7 +112,7 @@ const ProcessRecord: FunctionComponent = () => {
             item?.createdBy,
             item?.updatedBy,
             item?.processoutDetail,
-            item?.createdAt,
+            createdAt,
             item?.updatedAt,
             processIn ? processIn?.address : "-",
             processIn ? processIn?.processTypeId : null,
@@ -150,11 +156,6 @@ const ProcessRecord: FunctionComponent = () => {
       headerName: t('processRecord.creationDate'),
       width: 200,
       type: 'string',
-      renderCell: (params) => {
-        const dateFormatted = displayCreatedDate(params.row.createdAt)
-
-        return <div>{dateFormatted}</div>
-      }
     },
     {
       field: 'packageTypeId',

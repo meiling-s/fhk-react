@@ -47,6 +47,16 @@ import { queryCheckIn } from '../../interfaces/checkin'
 import CustomButton from '../../components/FormComponents/CustomButton'
 import i18n from '../../setups/i18n'
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+
 const Required = () => {
   return (
     <Typography
@@ -342,6 +352,7 @@ function ShipmentManage() {
     senderAddr: ''
   })
   const [reasonList, setReasonList] = useState<any>([])
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   const getRejectReason = async () => {
     let result = await getCheckinReasons()
@@ -376,10 +387,12 @@ function ShipmentManage() {
   }, [page, query])
 
   const transformToTableRow = (item: CheckIn): TableRow => {
+    const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+    const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
     return {
       id: item.chkInId,
       chkInId: item.chkInId,
-      createdAt: displayCreatedDate(item.createdAt) || '-',
+      createdAt: createdAt,
       senderName: item.senderName,
       recipientCompany: '-',
       picoId: item.picoId,

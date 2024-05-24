@@ -41,7 +41,7 @@ const BasicServicePicture = () => {
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginId = localStorage.getItem(localStorgeKeyName.username)
-  const {imgSettings} = useContainer(CommonTypeContainer)
+  const {imgSettings, dateFormat} = useContainer(CommonTypeContainer)
 
   const ImageToBase64 = (images: ImageListType) => {
     var base64: string[] = []
@@ -268,7 +268,7 @@ const BasicServicePicture = () => {
                 <Box sx={{ ...localstyles.DateItem }}>
                   <DatePicker
                     defaultValue={dayjs(startDate)}
-                    format={format.dateFormat2}
+                    format={dateFormat}
                     onChange={(value) => setStartDate(value!!)}
                     sx={{ ...localstyles.datePicker }}
                     maxDate={dayjs(endDate)}
@@ -289,7 +289,7 @@ const BasicServicePicture = () => {
                 <Box sx={{ ...localstyles.DateItem }}>
                   <DatePicker
                     defaultValue={dayjs(endDate)}
-                    format={format.dateFormat2}
+                    format={dateFormat}
                     onChange={(value) => setEndDate(value!!)}
                     sx={{ ...localstyles.datePicker }}
                     minDate={dayjs(startDate)}

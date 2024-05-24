@@ -38,6 +38,13 @@ import UpdateCurrency from './UpdateCurrency'
 import { returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type TableRow = {
   id: number
@@ -88,6 +95,7 @@ const GeneralSettings: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   useEffect(() => {
     initContractList()
@@ -100,13 +108,15 @@ const GeneralSettings: FunctionComponent = () => {
     if (data) {
       var contractMapping: ContractItem[] = []
       data.map((item: any, index: any) => {
+        const contractFrmDate = dayjs(item.contractFrmDate).format(`${dateFormat}`)
+        const contractToDate = dayjs(item.contractToDate).format(`${dateFormat}`)
         contractMapping.push(
           createContract(
             item?.id !== undefined ? item?.id : index,
             item?.contractNo,
             item?.tenantId,
-            item?.contractFrmDate,
-            item?.contractToDate,
+            contractFrmDate,
+            contractToDate,
             item?.epdFlg,
             item?.remark,
             item?.parentContractNo,

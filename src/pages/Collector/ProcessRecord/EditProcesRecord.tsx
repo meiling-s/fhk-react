@@ -61,7 +61,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   const [reloadData, setReloadData] = useState(false);
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
-  const {processType} = useContainer(CommonTypeContainer)
+  const {processType, dateFormat} = useContainer(CommonTypeContainer)
 
 
 
@@ -93,8 +93,6 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     {
       label: t('processRecord.creationDate'),
       value: selectedRow?.createdAt
-        ? displayCreatedDate(selectedRow?.createdAt)
-        : '-'
     },
     {
       label: t('processRecord.handleName'),
