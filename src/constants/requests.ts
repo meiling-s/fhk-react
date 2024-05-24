@@ -465,6 +465,24 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   url: `api/v1/collectors/warehouse/${table}/${warehouseId}/status`
 })
 
+
+export const NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/checkoutrequest/header/searching/${table}`
+})
+
+export const NEW_GET_ALL_DETAIL_CHECKOUT_REQUESTS = (
+  realmApiRoute: string,
+  table: string,
+  chckOutId: number,
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/checkoutrequest/detail/searching/${table}/${chckOutId}`
+})
+
 export const GET_ALL_CHECKOUT_REQUEST = (
   realmApiRoute: string,
   table: string

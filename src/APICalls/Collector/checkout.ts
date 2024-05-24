@@ -3,6 +3,8 @@ import {
   GET_ALL_CHECKOUT_REQUEST,
   GET_CHECKOUT_REASON,
   GET_CHECKOUT_REQUEST_BY_ID,
+  NEW_GET_ALL_DETAIL_CHECKOUT_REQUESTS,
+  NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS,
   UPDATE_CHECKOUT_REQUEST_STATUS
 } from '../../constants/requests'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
@@ -18,7 +20,7 @@ export const getAllCheckoutRequest = async (page: number, size: number, query: q
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...GET_ALL_CHECKOUT_REQUEST(token.realmApiRoute, token.decodeKeycloack),
+      ...NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS(token.realmApiRoute, token.decodeKeycloack),
       baseURL: checkoutAPI.baseURL,
       params: {
         page: page,
@@ -35,6 +37,22 @@ export const getAllCheckoutRequest = async (page: number, size: number, query: q
     return null
   }
 }
+
+export const getDetailCheckoutRequests = async (checkinId: number) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      ...NEW_GET_ALL_DETAIL_CHECKOUT_REQUESTS(token.realmApiRoute, token.decodeKeycloack, checkinId),
+      baseURL: checkoutAPI.baseURL,
+    })
+    return response
+  } catch (e: any) {
+    // console.error('Get all check-in request failed:', e)
+    return null
+  }
+}
+
 export const getCheckoutRequestById = async (chkOutId: number) => {
   try {
     const token = returnApiToken()
