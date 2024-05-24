@@ -383,6 +383,21 @@ export const CREATE_FORGET_PASSWORD = (table: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/forgetpassword/${table}`
 })
 
+export const GET_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/forgetpassword/${table}`
+})
+
+export const APPROVE_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/approve`
+})
+
+export const REJECT_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+  method: 'patch',
+  url: `api/v1/administrator/forgetpassword/${table}/reject`
+})
+
 //warehouse
 export const GET_ALL_WAREHOUSE = (
   realmApiRoute: string,
@@ -576,12 +591,29 @@ export const EDIT_VEHICLE = (
 })
 
 //inventory
+export const ASTD_GET_INVENTORY = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
+})
+
 export const GET_INVENTORY = (
   realmApiRoute: string,
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/inventory/${table}/searching`
+  url: `api/v1/${realmApiRoute}/inventory/${table}/searching/withLocation`
+})
+
+export const GET_ITEM_TRACK_INVENTORY = (
+  realmApiRoute: string,
+  table: string,
+  itemId: number,
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/inventory/tracking/${table}/${itemId}`
 })
 
 //process records

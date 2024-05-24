@@ -56,7 +56,7 @@ import Driver from "./pages/Logistic/Driver";
 import Notice from "./pages/ASTD/Notice/Index";
 import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
 import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
-import LogisticDashboard from "./pages/Logistic/Dashboard/dashboard"
+import LogisticVehicleDashboard from "./pages/Logistic/Dashboard/dashboard"  
 
 //manufacturer
 import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
@@ -140,6 +140,7 @@ const Router = () => {
           <Route path="/astd/account" element={<></>} />
           <Route path="/astd/createPicoLogistic" element={<CreatePickupOrder />} />
           <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
+          <Route path="/astd/inventory/" element={<Inventory/>} />
           <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
         </Route>
 
@@ -165,7 +166,7 @@ const Router = () => {
           <Route path="/logistic/notice/" element={<Notice />} />
           <Route path="/logistic/notice/:type/:templateId" element={<UpdateTemplate />} />
           <Route path="/logistic/staff" element={<StaffManagement />} />
-          <Route path="/logistic/dashboard" element={<LogisticDashboard />} />
+          <Route path="/logistic/vehicleDashboard" element={<LogisticVehicleDashboard />} />
         </Route>
 
         <Route element={<MainLayout />}>

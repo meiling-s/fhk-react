@@ -21,8 +21,12 @@
     "no": "否",
     "createdDatetime": "建立時間",
     "lastUpdateDatetime": "上次更新時間",
-    "details": "詳情",
-    "pckgCategory:": "包裝類別"
+    "pckgCategory:": "包裝類別",
+    "approveSuccess": "成功批准請求",
+    "approveFailed": "批准請求失敗",
+    "rejectSuccess": "成功拒絕請求",
+    "rejectFailed": "拒絕請求失敗",
+    "details": "詳情"
   },
   "col": {
     "createCP": "建立回收點",
@@ -76,7 +80,8 @@
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
-      "startDateBehindEndDate": "不允許開始時間晚於結束時間",
+      "startDateBehindEndDate": "如果開始日期晚於結束日期則不允許",
+      "endDateEarlyThanStartDate": "如果結束日期早於開始日期則不允許",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字"
     }
   },
@@ -552,7 +557,9 @@
     "package": "包裝",
     "recyclingNumber": "回收編號",
     "inventoryLocation": "庫存位置",
-    "weight": "重量"
+    "weight": "重量",
+    "at": "於",
+    "handover": "交給"
   },
   "processRecord": {
     "processing": "處理中",
@@ -683,7 +690,9 @@
     "successEditUser": "成功編輯用戶",
     "failedEditUser": "編輯用戶失敗",
     "successDeleteUser": "成功刪除用戶",
-    "failedDeleteUser": "刪除用戶失敗"
+    "failedDeleteUser": "刪除用戶失敗",
+    "resetPasswaitApproval": "重置密碼等待批准",
+    "resetPassword": "重新設密碼"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "概覽",
@@ -1108,6 +1117,26 @@
     "offsite": "上門回收服務",
     "community": "社區收集點",
     "service_type": "服務種類"
+  },
+  "logisticDashboard": {
+    "searchDriver": "搜索司機方向",
+    "driverInfo": "您正在搜索的司機",
+    "driverNumb": "司機號碼",
+    "driverLicense": "駕駛證",
+    "vehicleCategory": "車輛類別",
+    "receivingLocation": "接收位置",
+    "receiptDate": "收據日期",
+    "received": "已收到",
+    "notReceived": "未收到",
+    "logisticsCompany": "物流公司",
+    "poNumber": "採購訂單號",
+    "shippingAddress": "送貨地址",
+    "recyclingCategory:": "回收類別",
+    "packingQty": "包裝數量",
+    "packingWeight": "包裝重量",
+    "recyc": "回收類別",
+    "packageName": "包裝類別",
+    "inputDriverNumber": "請輸入司機號碼"
   },
   "dashboard_recyclables": {
     "data": "數據",

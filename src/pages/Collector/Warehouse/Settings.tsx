@@ -58,6 +58,9 @@ const Settings: FunctionComponent = () => {
     } else if (role === 'customer') {
       const hideTabIndexArr = [1,2,3,5,7]
       updatedTabList = updatedTabList.filter((_,index) => !hideTabIndexArr.includes(index))
+    } else if(role === 'manufacturer') {
+      const hideTabIndexArr = [3]
+      updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
     }
     setTabList(updatedTabList)
   }
@@ -157,6 +160,28 @@ const Settings: FunctionComponent = () => {
     )
   }
 
+  const manufacturerSettingTab = () => {
+    return (
+      selectedTab === 0 ? (
+        <GeneralSettings/>
+      ) : selectedTab === 1 ? (
+        <PackagingUnit/>
+      ) : selectedTab === 2 ? (
+        <Warehouse />
+      ) : selectedTab === 3 ? (
+        <Company />
+      ) : selectedTab === 4 ? (
+        <DisposalLocation />
+      ) : selectedTab === 5 ? (
+        <StaffTitle />
+      ) : selectedTab === 6? (
+        <DenialReason />
+      ) : (
+        <div className="p-4 text-center">content not available</div>
+      )
+    )
+  }
+
   return (
     <Box className="container-wrapper w-full">
       <div className="settings-page bg-bg-primary">
@@ -168,7 +193,16 @@ const Settings: FunctionComponent = () => {
           className="lg:px-10 sm:px-4 bg-bg-primary"
         />
         {/* rendering content base on tab index */}
-        { role === 'logistic' ? logisticSettingTab() : role === 'astd' ? astdSettingTab() : role === 'customer' ? customerSettingTab() : collectorSettingTab()}
+        { role === 'logistic' ? 
+            logisticSettingTab() : 
+          role === 'astd' ? 
+            astdSettingTab() : 
+          role === 'customer' ? 
+            customerSettingTab() :
+          role === 'manufacturer' ? 
+            manufacturerSettingTab() :
+            collectorSettingTab()
+        }
       </div>
     </Box>
   );
