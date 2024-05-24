@@ -961,6 +961,10 @@ function CompanyManage() {
     setSuccessSendInv(isSend)
   }
 
+  const onChangeStatus = () => {
+    initCompaniesData()
+  }
+
   const onInviteFormSubmit = async (
     formikValues: InviteTenant
     //submitForm: () => void
@@ -1143,6 +1147,7 @@ function CompanyManage() {
             drawerOpen={openDetail}
             handleDrawerClose={handleDrawerClose}
             tenantId={selectedTenanId}
+            onChangeStatus={onChangeStatus}
           />
         )}
       </Box>

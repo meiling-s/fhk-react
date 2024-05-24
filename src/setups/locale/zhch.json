@@ -451,6 +451,8 @@
     "number_of_acc": "帐户数量",
     "photo_blury ": "照片模糊",
     "bussniess_error": "商业编号不匹配",
+    "closed_tenant_title": "您确定将租户状态更改为“已关闭”吗 ?",
+    "closes_success" :"关闭租户状态成功",
     "invite_form": {
       "company_number": "公司编号 ",
       "enter_company": "",

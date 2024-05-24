@@ -451,6 +451,8 @@
     "number_of_acc": "Number of accounts",
     "photo_blury": "Photo is blurry",
     "bussniess_error": "Business number does not match",
+    "closed_tenant_title": "Are you sure to change tenant status to `CLOSED` ? ",
+    "closes_success" :"Closed tenant status success",
     "invite_form": {
       "company_number": "Company number",
       "company_category": "Company category",

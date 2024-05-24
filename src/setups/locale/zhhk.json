@@ -450,6 +450,8 @@
     "number_of_acc": "帳戶數量",
     "photo_blury ": "照片模糊",
     "bussniess_error": "商業編號不匹配",
+    "closed_tenant_title": "您確定將租戶狀態變更為「已關閉」嗎 ?",
+    "closes_success" :"關閉租戶狀態成功",
     "invite_form": {
       "company_number": "公司編號 ",
       "company_category": "公司類別",

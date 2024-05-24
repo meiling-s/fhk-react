@@ -1,67 +1,103 @@
-import { AXIOS_DEFAULT_CONFIGS } from "../../constants/configs";
+import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import {
   GET_DENIAL_REASON,
   GET_DENIAL_REASON_BY_FUNCTION_ID,
   CREATE_DENIAL_REASON,
-  UPDATE_DENIAL_REASON,
-} from "../../constants/requests";
-import { returnApiToken } from "../../utils/utils";
-import axiosInstance from "../../constants/axiosInstance";
-import { CreateDenialReason } from "../../interfaces/denialReason";
+  UPDATE_DENIAL_REASON
+} from '../../constants/requests'
+import { returnApiToken } from '../../utils/utils'
+import axiosInstance from '../../constants/axiosInstance'
+import { CreateDenialReason } from '../../interfaces/denialReason'
 
 //get all denial reasons
 export const getAllDenialReason = async (page: number, size: number) => {
   try {
-    const token = returnApiToken();
+    const token = returnApiToken()
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
       ...GET_DENIAL_REASON(token.realmApiRoute, token.tenantId),
       params: {
         page: page,
-        size: size,
+        size: size
       },
       headers: {
-        AuthToken: token.authToken,
-      },
-    });
+        AuthToken: token.authToken
+      }
+    })
 
-    return response;
+    return response
   } catch (e) {
-    console.error("Get all denial reason failed:", e);
-    return null;
+    console.error('Get all denial reason failed:', e)
+    return null
   }
-};
+}
 
 //get all denial reasons
-export const getAllDenialReasonByFunctionId = async (page: number, size: number, functionId: number) => {
+export const getAllDenialReasonByFunctionId = async (
+  page: number,
+  size: number,
+  functionId: number
+) => {
   try {
-    const token = returnApiToken();
+    const token = returnApiToken()
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_DENIAL_REASON_BY_FUNCTION_ID(token.realmApiRoute, token.tenantId, functionId),
+      ...GET_DENIAL_REASON_BY_FUNCTION_ID(
+        token.realmApiRoute,
+        token.tenantId,
+        functionId
+      ),
       params: {
         page: page,
-        size: size,
+        size: size
       },
       headers: {
-        AuthToken: token.authToken,
-      },
-    });
+        AuthToken: token.authToken
+      }
+    })
 
-    return response;
+    return response
   } catch (e) {
-    console.error("Get all denial reason failed:", e);
-    return null;
+    console.error('Get all denial reason failed:', e)
+    return null
   }
-};
+}
+
+export const getReasonTenant = async (
+  page: number,
+  size: number,
+  tenantId: string,
+  functionId: number
+) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_DENIAL_REASON_BY_FUNCTION_ID('account', tenantId, functionId),
+      params: {
+        page: page,
+        size: size
+      },
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+
+    return response
+  } catch (e) {
+    console.error('Get all denial reason failed:', e)
+    return null
+  }
+}
 
 // create denial reason
 export const createDenialReason = async (data: CreateDenialReason) => {
   try {
     // const userAccount = await getUserAccount();
-    const token = returnApiToken();
+    const token = returnApiToken()
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
@@ -79,30 +115,33 @@ export const createDenialReason = async (data: CreateDenialReason) => {
         updatedBy: data.updatedBy
       },
       headers: {
-        AuthToken: token.authToken,
-      },
-    });
+        AuthToken: token.authToken
+      }
+    })
 
-    return response;
+    return response
   } catch (e) {
-    console.error("create denial reason failed:", e);
-    return null;
+    console.error('create denial reason failed:', e)
+    return null
   }
-};
+}
 
 // update denial reason
-export const editDenialReason = async (reasonId: number, data: CreateDenialReason) => {
+export const editDenialReason = async (
+  reasonId: number,
+  data: CreateDenialReason
+) => {
   try {
-    const token = returnApiToken();
+    const token = returnApiToken()
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
       ...UPDATE_DENIAL_REASON(token.realmApiRoute, token.tenantId, reasonId),
-      data: data,
-    });
+      data: data
+    })
 
-    return response;
+    return response
   } catch (e) {
-    console.error("update denial reason failed:", e);
-    return null;
+    console.error('update denial reason failed:', e)
+    return null
   }
-};
+}
