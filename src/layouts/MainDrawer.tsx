@@ -152,6 +152,12 @@ function MainDrawer() {
         onClick: () => navigate('/warehouse/checkout'),
         collapse: false
       },
+      'Check-in and check-out': {
+        name: t('checkinandcheckout.checkinandcheckout'),
+        icon: <LogoutIcon />,
+        onClick: () => navigate('/collector/checkInAndCheckout'),
+        collapse: false
+      },
       Settings: {
         name: t('settings'),
         icon: <SETTINGS_ICON />,
