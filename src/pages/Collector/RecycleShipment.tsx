@@ -652,7 +652,6 @@ function ShipmentManage() {
                 width: '90px',
                 height: '40px',
                 m: 0.5,
-                background: selectedCheckin.length === 0 ? 'white' : '',
                 cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer'
               }
             ]}
