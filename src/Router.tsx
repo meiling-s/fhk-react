@@ -67,6 +67,7 @@ import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOr
 import PickupPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder"
 import DashboardRecyclables from "./pages/Collector/Dashboard/Recyclables";
 import ManufacturerDashboard from "./pages/Manufacturer/Dashboard/Dashboard";
+import RecyclablesAstd from "./pages/ASTD/Dashboard/RecyclablesAstd";
 
 const Router = () => {
   return (

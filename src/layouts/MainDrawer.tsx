@@ -152,6 +152,12 @@ function MainDrawer() {
         onClick: () => navigate('/warehouse/checkout'),
         collapse: false
       },
+      'Check-in and check-out': {
+        name: t('checkinandcheckout.checkinandcheckout'),
+        icon: <LogoutIcon />,
+        onClick: () => navigate('/collector/checkInAndCheckout'),
+        collapse: false
+      },
       Settings: {
         name: t('settings'),
         icon: <SETTINGS_ICON />,
@@ -400,7 +406,10 @@ function MainDrawer() {
     },
     {
       name: 'dashboard',
-      value: t('dashboard_recyclables.recyclable')
+      value:
+        realm === Realm.astd
+          ? t('dashboard_recyclables.collector')
+          : t('dashboard_recyclables.recyclable')
     },
     {
       name: 'warehouse',
