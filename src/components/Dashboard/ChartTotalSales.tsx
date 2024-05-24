@@ -9,8 +9,9 @@ import { useEffect, useState } from 'react';
 import { getTotalSalesProductAnalysis } from '../../APICalls/Collector/dashboardRecyables';
 import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import { useContainer } from 'unstated-next';
-import { Languages } from '../../constants/constant';
-import { randomBackgroundColor } from '../../utils/utils';
+import { Languages, STATUS_CODE } from '../../constants/constant';
+import { extractError, randomBackgroundColor } from '../../utils/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface DataSales {
     label: string,
@@ -32,6 +33,7 @@ const ChartTotalSales = () => {
     const [dataset, setDataset] = useState<Dataset>({total_weight: 0, sales: []});
     const [datasetBackup, setDatasetBackup] = useState<Dataset>({total_weight: 0, sales: []});
     const [recycable, setRecyable] = useState<{recycTypeId: string|null|undefined, text: string}>({recycTypeId: null, text: ''})
+    const navigate = useNavigate();
 
     const getLabel = (type: string): string => {
         let languages:string = ''
@@ -49,6 +51,7 @@ const ChartTotalSales = () => {
     }
 
     const initTotalSales = async () => {
+       try {
         const response = await getTotalSalesProductAnalysis(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
     
         const dataSales:Dataset = {total_weight: 0, sales: []}
@@ -75,6 +78,12 @@ const ChartTotalSales = () => {
             setDataset(dataSales)
             setDatasetBackup(dataSales)
         }
+       } catch (error) {
+        const { state, realm } = extractError(error);
+        if(state.code === STATUS_CODE[503]){
+            navigate('/maintenance')
+        }
+       }
     };
   
 

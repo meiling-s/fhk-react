@@ -3,9 +3,10 @@ import { useContainer } from "unstated-next";
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
 import dayjs from 'dayjs';
 import i18n from '../../../setups/i18n';
-import { Languages } from '../../../constants/constant';
-import { randomBackgroundColor } from '../../../utils/utils';
+import { Languages, STATUS_CODE } from '../../../constants/constant';
+import { extractError, randomBackgroundColor } from '../../../utils/utils';
 import { getWeightRecyclablesColPointDashboard } from '../../../APICalls/Collector/dashboardRecyables';
+import { useNavigate } from 'react-router-dom';
 
 interface Dataset{
    id: string,
@@ -22,6 +23,7 @@ const useWeightDashboardWithIdRecycable = () => {
    const [dataset, setDataSet] = useState<Dataset[]>([])
    const [colId, setColId] = useState<number | null>(null);
    const [companyNumber, setCompanyNumber] = useState<string | null>(null)
+   const navigate = useNavigate();
 
    const getLabel = (type: string): string => {
       let languages:string = ''
@@ -79,6 +81,7 @@ const useWeightDashboardWithIdRecycable = () => {
   }
    
    const getRecyclablesDashboard = async () => {
+     try {
       const response = await getWeightRecyclablesColPointDashboard(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'))
       if (response) {
           const labels:string[] = Object.keys(response);
@@ -87,6 +90,12 @@ const useWeightDashboardWithIdRecycable = () => {
           setLabels(labels)
           setDataSet(datasets)
       }
+     } catch (error) {
+      const { state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+         navigate('/maintenace')
+      }
+     }
    }
 
     useEffect(() => {

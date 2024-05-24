@@ -96,6 +96,7 @@ type rejectModal = {
 function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
   const { t } = useTranslation()
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
+  const navigate = useNavigate();
 
   const reasons: il_item[] = [
     {
@@ -109,16 +110,23 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
   ]
 
   const handleRejectRequest = async () => {
-    const statData: UpdateStatus = {
-      status: 'REJECTED',
-      updatedBy: 'admin'
-    }
+    try {
+      const statData: UpdateStatus = {
+        status: 'REJECTED',
+        updatedBy: 'admin'
+      }
 
-    const result = await updateTenantStatus(statData, tenantId)
-    const data = result?.data
-    if (data) {
-      // console.log('reject success success')
-      onSubmit()
+      const result = await updateTenantStatus(statData, tenantId)
+      const data = result?.data
+      if (data) {
+        // console.log('reject success success')
+        onSubmit()
+      }
+    } catch (error) {
+      const { state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -736,20 +744,27 @@ function CompanyManage() {
   }
 
   const handleApproveTenant = async (tenantId: number) => {
-    setOpenDetails(false)
-    const statData: UpdateStatus = {
-      status: 'CONFIRMED',
-      updatedBy: 'admin'
-    }
+    try {
+      setOpenDetails(false)
+      const statData: UpdateStatus = {
+        status: 'CONFIRMED',
+        updatedBy: 'admin'
+      }
 
-    const result = await updateTenantStatus(statData, tenantId)
-    const data = result?.data
-    if (data) {
-      console.log('approve success')
-      initCompaniesData()
+      const result = await updateTenantStatus(statData, tenantId)
+      const data = result?.data
+      if (data) {
+        console.log('approve success')
+        initCompaniesData()
+      }
+      window.location.reload()
+      setOpenDetails(false)
+    } catch (error) {
+      const { state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      }
     }
-    window.location.reload()
-    setOpenDetails(false)
   }
 
   const handleRejectTenant = (tenantId: number) => {
@@ -984,46 +999,57 @@ function CompanyManage() {
     formikValues: InviteTenant
     //submitForm: () => void
   ) => {
-    setIsLoadingInvite(true)
-    const realmType =
-      realmOptions.find((item) => item.label == formikValues.companyCategory)
-        ?.key || 'collector'
-
-    const result = await createInvitation(
-      {
-        tenantId: parseInt(formikValues.companyNumber),
-        companyNameTchi: formikValues.companyZhName,
-        companyNameSchi: formikValues.companyCnName,
-        companyNameEng: formikValues.companyEnName,
-        tenantType: realmType,
-        status: 'CREATED',
-        brNo: formikValues.bussinessNumber,
-        remark: formikValues.remark,
-        contactNo: '',
-        email: '',
-        contactName: '',
-        decimalPlace: 0,
-        monetaryValue: '',
-        inventoryMethod: '',
-        allowImgSize: 0,
-        allowImgNum: 0,
-        effFrmDate: formikValues.effFrmDate,
-        effToDate: formikValues.effToDate,
-        createdBy: 'admin',
-        updatedBy: 'admin'
-      },
-      realmType
-    )
-
-    if (result?.data?.tenantId) {
-      console.log(result)
-      setInviteId(result?.data?.tenantId)
-      setInvSendModal(true)
-      setInvFormModal(false)
-      setIsLoadingInvite(false)
-    } else {
-      showErrorToast('failed to create tenant')
-      setIsLoadingInvite(false)
+    try {
+      setIsLoadingInvite(true)
+      const realmType =
+        realmOptions.find((item) => item.label == formikValues.companyCategory)
+          ?.key || 'collector'
+  
+      const result = await createInvitation(
+        {
+          tenantId: parseInt(formikValues.companyNumber),
+          companyNameTchi: formikValues.companyZhName,
+          companyNameSchi: formikValues.companyCnName,
+          companyNameEng: formikValues.companyEnName,
+          tenantType: realmType,
+          status: 'CREATED',
+          brNo: formikValues.bussinessNumber,
+          remark: formikValues.remark,
+          contactNo: '',
+          email: '',
+          contactName: '',
+          decimalPlace: 0,
+          monetaryValue: '',
+          inventoryMethod: '',
+          allowImgSize: 0,
+          allowImgNum: 0,
+          effFrmDate: formikValues.effFrmDate,
+          effToDate: formikValues.effToDate,
+          createdBy: 'admin',
+          updatedBy: 'admin'
+        },
+        realmType
+      )
+  
+      if (result?.data?.tenantId) {
+        console.log(result)
+        setInviteId(result?.data?.tenantId)
+        setInvSendModal(true)
+        setInvFormModal(false)
+        setIsLoadingInvite(false)
+      } else {
+        showErrorToast('failed to create tenant')
+        setIsLoadingInvite(false)
+      }
+    } catch (error) {
+      const { state, realm} = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        showErrorToast('failed to create tenant')
+        setIsLoadingInvite(false)
+      }
+    
     }
   }
 

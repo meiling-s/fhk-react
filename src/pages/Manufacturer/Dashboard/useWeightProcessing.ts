@@ -1,11 +1,13 @@
 import  { useEffect, useState } from 'react'
 import { useContainer } from "unstated-next";
 import dayjs from 'dayjs';
-import { Languages, indexMonths, monthSequence } from '../../../constants/constant';
+import { Languages, STATUS_CODE, indexMonths, monthSequence } from '../../../constants/constant';
 import { useTranslation } from 'react-i18next';
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
 import i18n from '../../../setups/i18n';
 import { getRecycProcessAnalysis } from '../../../APICalls/Collector/dashboardRecyables';
+import { extractError } from '../../../utils/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface Dataset{
    id: string,
@@ -28,6 +30,7 @@ const useWeightProcessing = () => {
    const [datasetProcessing, setDataSetProcessing] = useState<Dataset[]>([]);
    const [frmDateProcessing, setFrmDateProcessing] = useState<dayjs.Dayjs>(dayjs().subtract(6, 'month'))
    const [toDateProcessing, setToDateProcessing] = useState<dayjs.Dayjs>(dayjs())
+   const navigate = useNavigate();
 
    const processingType = [
       {
@@ -134,21 +137,28 @@ const useWeightProcessing = () => {
   }
 
   const initgetRecycProcessAnalysis = async () => {
-      const response = await getRecycProcessAnalysis(frmDateProcessing.format('YYYY-MM-DD'), toDateProcessing.format('YYYY-MM-DD'))
-      if (response) {
-          const labels:{id: number, value: string}[] = response?.map((item:any) => {
-              const index = indexMonths.indexOf(item.month) as monthSequence
-              const month = getLangMonth(index)
-              return{
-                  id: index,
-                  value: `${month} ${item.year}`
-              }
-          });
-         
-          const datasets = getDataSetProsessingBarChart(response, labels.length)
-          setLabelProcessing(labels)
-          setDataSetProcessing(datasets)
-      }
+    try {
+        const response = await getRecycProcessAnalysis(frmDateProcessing.format('YYYY-MM-DD'), toDateProcessing.format('YYYY-MM-DD'))
+        if (response) {
+            const labels:{id: number, value: string}[] = response?.map((item:any) => {
+                const index = indexMonths.indexOf(item.month) as monthSequence
+                const month = getLangMonth(index)
+                return{
+                    id: index,
+                    value: `${month} ${item.year}`
+                }
+            });
+           
+            const datasets = getDataSetProsessingBarChart(response, labels.length)
+            setLabelProcessing(labels)
+            setDataSetProcessing(datasets)
+        }
+    } catch (error) {
+        const { state, realm} =  extractError(error);
+        if(state.code === STATUS_CODE[503]){
+            navigate('/maintenace')
+        }
+    }
   }
 
   useEffect(() => {

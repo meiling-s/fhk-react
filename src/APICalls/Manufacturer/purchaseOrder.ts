@@ -98,7 +98,7 @@ export const getPurchaseOrderReason = async () => {
 
     return response
   } catch (e) {
-    return null
+    throw(e)
   }
 }
 

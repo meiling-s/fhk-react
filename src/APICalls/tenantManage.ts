@@ -32,9 +32,9 @@ export const createInvitation = async (
     })
     console.log('Insert tenant success:', JSON.stringify(response.data))
     return response
-  } catch (e) {
+  } catch (e:any) {
     console.error('Insert tenant Failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -139,9 +139,9 @@ export const updateTenantStatus = async (
     //   JSON.stringify(response.data)
     // )
     return response
-  } catch (e) {
+  } catch (e:any) {
     console.error('Tenant register status update failed:', e)
-    return null
+    throw(e)
   }
 }
 

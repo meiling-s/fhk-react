@@ -473,31 +473,40 @@ const PurchaseOrder = () => {
   }
 
   const getRejectReason = async () => {
-    let result = await getPurchaseOrderReason()
+    try {
+      let result = await getPurchaseOrderReason()
 
-    if (result && result?.data && result?.data.content.length > 0) {
-      let reasonName = ''
-      switch (i18n.language) {
-        case 'enus':
-          reasonName = 'reasonNameEng'
-          break
-        case 'zhch':
-          reasonName = 'reasonNameSchi'
-          break
-        case 'zhhk':
-          reasonName = 'reasonNameTchi'
-          break
-        default:
-          reasonName = 'reasonNameEng'
-          break
-      }
-      result?.data.content.map(
-        (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
-          item.id = item.reasonId
-          item.name = item[reasonName]
+      if (result && result?.data && result?.data.content.length > 0) {
+        let reasonName = ''
+        switch (i18n.language) {
+          case 'enus':
+            reasonName = 'reasonNameEng'
+            break
+          case 'zhch':
+            reasonName = 'reasonNameSchi'
+            break
+          case 'zhhk':
+            reasonName = 'reasonNameTchi'
+            break
+          default:
+            reasonName = 'reasonNameEng'
+            break
         }
-      )
-      setReasonList(result?.data.content)
+        result?.data.content.map(
+          (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
+            item.id = item.reasonId
+            item.name = item[reasonName]
+          }
+        )
+        setReasonList(result?.data.content)
+      }
+    } catch (error) {
+      const { state, realm } = extractError(error)
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        navigate(`/${realm}/error`, {state: state})
+      }
     }
   }
 
