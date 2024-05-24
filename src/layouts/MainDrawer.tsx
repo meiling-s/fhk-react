@@ -394,7 +394,7 @@ function MainDrawer() {
       }
     }
   }
-
+  
   var subMenuDashboard: any[]
   let subMenuDashboardTmp: { name: string; value: string }[] = []
   // Base items
@@ -405,7 +405,7 @@ function MainDrawer() {
     },
     {
       name: 'dashboard',
-      value: t('dashboard_recyclables.recyclable')
+      value: realm === Realm.astd ? t('dashboard_recyclables.collector') : t('dashboard_recyclables.recyclable')
     },
     {
       name: 'warehouse',
