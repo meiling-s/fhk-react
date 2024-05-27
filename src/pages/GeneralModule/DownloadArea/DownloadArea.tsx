@@ -58,7 +58,11 @@ const DownloadArea = () => {
     }
   ]
 
-  const rows: { id: number; report_name: string; typeFile: string }[] = [
+  const collectorsRows: {
+    id: number
+    report_name: string
+    typeFile: string
+  }[] = [
     {
       id: 1,
       report_name: t('generate_report.recycling_point_record'),
@@ -93,8 +97,16 @@ const DownloadArea = () => {
       id: 7,
       report_name: t('generate_report.collection_point_establishment'),
       typeFile: 'XLS'
+    },
+    {
+      id: 8,
+      report_name: t('generate_report.recyle_waste_collection'),
+      typeFile: 'XLS'
     }
   ]
+
+  const rows: { id: number; report_name: string; typeFile: string }[] =
+    collectorsRows
 
   const onHandleModal = (params: any) => {
     setOpenModal((prev) => !prev)
@@ -133,7 +145,7 @@ const DownloadArea = () => {
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
           <DataGrid
             rows={rows}
-            getRowId={(row) => row.report_name}
+            getRowId={(row) => row.id}
             hideFooter
             columns={columns}
             getRowSpacing={getRowSpacing}
