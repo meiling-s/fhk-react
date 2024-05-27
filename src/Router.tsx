@@ -70,7 +70,6 @@ import ManufacturerDashboard from "./pages/Manufacturer/Dashboard/Dashboard";
 import RecyclablesAstd from "./pages/ASTD/Dashboard/RecyclablesAstd";
 import PageNotFound from "./pages/Common/PageNotFound";
 import MaintenancePage from "./pages/Common/MaintenancePage";
-import ErrorPages from "./pages/Common/ErrorPages";
 
 const Router = () => {
   return (
@@ -129,7 +128,6 @@ const Router = () => {
           <Route path="/collector/staff" element={<StaffManagement />} />
           <Route path="/collector/dashboard" element={<DashboardRecyclables />} />
           <Route path="/collector/warehouse" element={<WarehouseDashboard/>} />
-          <Route path="/:realm/error" element={<ErrorPages/>} />
         </Route>
 
         <Route element={<MainLayout />}>
