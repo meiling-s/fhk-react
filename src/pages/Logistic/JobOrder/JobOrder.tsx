@@ -225,8 +225,6 @@ const JobOrder = () => {
     const {state, realm} =  extractError(error);
     if(state.code === STATUS_CODE[503]){
       navigate('/maintenance')
-    } else {
-      navigate(`/${realm}/error`, {state: state})
     }
    }
   }

@@ -129,8 +129,6 @@ const ASTDSettings: FunctionComponent = () => {
     const {state, realm} =  extractError(error);
     if(state.code === STATUS_CODE[503]){
       navigate('/maintenance')
-    } else {
-      navigate(`/${realm}/error`, {state: state})
     }
    }
   }
@@ -145,8 +143,6 @@ const ASTDSettings: FunctionComponent = () => {
     const {state, realm} =  extractError(error);
     if(state.code === STATUS_CODE[503]){
       navigate('/maintenance')
-    } else {
-      navigate(`/${realm}/error`, {state: state})
     }
    }
   }
@@ -161,8 +157,6 @@ const ASTDSettings: FunctionComponent = () => {
     const {state, realm} =  extractError(error);
     if(state.code === STATUS_CODE[503]){
       navigate('/maintenance')
-    } else {
-      navigate(`/${realm}/error`, {state: state})
     }
    }
   }
@@ -177,8 +171,6 @@ const ASTDSettings: FunctionComponent = () => {
     const {state, realm} =  extractError(error);
     if(state.code === STATUS_CODE[503]){
       navigate('/maintenance')
-    } else {
-      navigate(`/${realm}/error`, {state: state})
     }
    }
   }

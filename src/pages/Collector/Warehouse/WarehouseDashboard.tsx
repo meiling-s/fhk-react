@@ -178,8 +178,6 @@ const WarehouseDashboard: FunctionComponent = () => {
             const { state, realm } = extractError(error)
             if(state.code === STATUS_CODE[503]){
                 navigate('/maintenance')
-            } else {
-                navigate(`/${realm}/error`, {state: state})
             }
        }
     };
@@ -232,8 +230,6 @@ const WarehouseDashboard: FunctionComponent = () => {
             const { state, realm } =  extractError(error);
             if(state.code === STATUS_CODE[503]){
                 navigate('/maintenance')
-            } else {
-                navigate(`/${realm}/error`, {state})
             }
         }
     };
@@ -254,8 +250,6 @@ const WarehouseDashboard: FunctionComponent = () => {
             const { state, realm } = extractError(error)
             if(state.code === STATUS_CODE[503]){
                 navigate('/maintenance')
-            } else {
-                navigate(`/${realm}/error`, {state: state})
             }
         }
     };
@@ -280,8 +274,6 @@ const WarehouseDashboard: FunctionComponent = () => {
             const { state, realm } = extractError(error)
             if(state.code === STATUS_CODE[503]){
                 navigate('/maintenance')
-            } else {
-                navigate(`/${realm}/error`, {state: state})
             }
        }
     };
@@ -447,8 +439,6 @@ const WarehouseDashboard: FunctionComponent = () => {
             const { state, realm } = extractError(error)
             if(state.code === STATUS_CODE[503]){
                 navigate('/maintenance')
-            } else {
-                navigate(`/${realm}/error`, {state: state})
             }
        }
     };

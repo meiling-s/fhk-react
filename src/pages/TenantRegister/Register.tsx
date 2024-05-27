@@ -148,8 +148,6 @@ const RegisterTenant = () => {
       const {state, realm} = extractError(error);
       if(state.code === STATUS_CODE[503]){
         return navigate('/maintenance')
-      } else {
-        return navigate(`/${realm}/error`, {state})
       }
     }
   }
