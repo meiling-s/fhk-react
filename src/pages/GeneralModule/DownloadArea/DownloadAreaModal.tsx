@@ -19,6 +19,9 @@ import {
   DOWNLOAD_WORD_REPORT
 } from '../../../constants/requestsReport'
 import { saveAs } from 'file-saver'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
 
 interface DownloadModalProps {
   drawerOpen: boolean
@@ -54,7 +57,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   }, [selectedItem?.id])
 
   const formatToUtc = (value: dayjs.Dayjs) => {
-    return dayjs(value).format('YYYY-MM-DD[T]00:00:00.000[Z]')
+    return dayjs(value).utc().format('YYYY-MM-DDTHH:mm:ss[Z]')
   }
 
   const generateCollectorLink = (reportId: string) => {

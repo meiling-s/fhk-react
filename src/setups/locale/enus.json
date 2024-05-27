@@ -999,6 +999,7 @@
     "recycling_point_establishment": "Recycling point establishment and operation services (first phase follow-up contract) photo records (monthly)",
     "collection_point_establishment": "Collection point establishment and operation services (first phase follow-up contract) Excel records (monthly)",
     "recyle_waste_collection": "The report of recycled waste collection points list",
+    "daily_waste_collection": "The report of daily waste collection list",
     "download": "Download",
     "start_date": "Start Date",
     "end_date": "to"

@@ -975,6 +975,7 @@
     "recycling_point_establishment": "回收点设立及营运服务（第一期后续合约）照片记录（每月)",
     "collection_point_establishment": "回收点设立及营运服务（第一期后续合约）Excel 记录（每月)",
     "recyle_waste_collection": "回收站列表",
+    "daily_waste_collection": "每日收集回收物报表",
     "download": "下载",
     "start_date": "日期由",
     "end_date": "至"

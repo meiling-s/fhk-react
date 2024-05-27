@@ -107,6 +107,11 @@ const DownloadArea = () => {
       id: 8,
       report_name: t('generate_report.recyle_waste_collection'),
       typeFile: 'XLS'
+    },
+    {
+      id: 9,
+      report_name: t('generate_report.daily_waste_collection'),
+      typeFile: 'XLS'
     }
   ]
 
