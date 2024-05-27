@@ -106,11 +106,11 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       setFormData({
         titleId: selectedItem.titleId,
         duty: selectedItem.duty.length > 0 ? selectedItem.duty[0] : '',
-        titleNameTchi: selectedItem.titleNameTchi,
-        titleNameEng: selectedItem.titleNameEng,
-        titleNameSchi: selectedItem.titleNameSchi,
-        description: selectedItem.description,
-        remark: selectedItem.remark
+        titleNameTchi: sanitizeString(selectedItem.titleNameTchi),
+        titleNameEng: sanitizeString(selectedItem.titleNameEng),
+        titleNameSchi: sanitizeString(selectedItem.titleNameSchi),
+        description: sanitizeString(selectedItem.description),
+        remark: sanitizeString(selectedItem.remark)
       })
 
       setEngNameExisting(
@@ -123,6 +123,10 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
         tchiNameList.filter((item) => item != selectedItem.titleNameTchi)
       )
     }
+  }
+
+  const sanitizeString = (str: string) => {
+    return str.replace(/\u0000/g, '')
   }
 
   const resetFormData = () => {
@@ -224,7 +228,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
   const handleFieldChange = (field: keyof FormValues, value: string) => {
     setFormData({
       ...formData,
-      [field]: value
+      [field]: sanitizeString(value)
     })
   }
 
