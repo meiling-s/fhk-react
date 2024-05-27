@@ -11,15 +11,20 @@ import {
   GridRowSpacingParams
 } from '@mui/x-data-grid'
 import DownloadAreaModal from './DownloadAreaModal'
+import { getUserAccountById } from '../../../APICalls/Collector/userGroup'
+import { localStorgeKeyName } from '../../../constants/constant'
 
 const DownloadArea = () => {
   const { t } = useTranslation()
   const [openModal, setOpenModal] = useState(false)
+  const [staffId, setStaffId] = useState('')
   const [selectedRow, setSelectedRow] = useState<{
     id: number
     report_name: string
     typeFile: string
   }>({ id: 0, report_name: '', typeFile: '' })
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   const columns: GridColDef[] = [
     {
@@ -105,8 +110,22 @@ const DownloadArea = () => {
     }
   ]
 
+  // todo : can add another title report list
+
+  // set list based on role
   const rows: { id: number; report_name: string; typeFile: string }[] =
-    collectorsRows
+    role === 'collector' ? collectorsRows : collectorsRows
+
+  useEffect(() => {
+    getUserAccount()
+  }, [])
+
+  const getUserAccount = async () => {
+    const result = await getUserAccountById(loginId)
+    if (result) {
+      setStaffId(result.data?.staffId)
+    }
+  }
 
   const onHandleModal = (params: any) => {
     setOpenModal((prev) => !prev)
@@ -170,6 +189,7 @@ const DownloadArea = () => {
             drawerOpen={openModal}
             handleDrawerClose={() => setOpenModal(false)}
             selectedItem={selectedRow}
+            staffId={staffId}
           />
         </LocalizationProvider>
       </div>
