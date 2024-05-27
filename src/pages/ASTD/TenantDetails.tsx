@@ -171,11 +171,11 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setTenantDetails(data)
 
     ///mapping data
-    setNumOfAccount(data.decimalPlace)
-    setNumOfUplodedPhoto(data.allowImgNum)
-    setMaxUploadSize(data.allowImgSize.toString())
-    setDefaultLang(data.lang)
-    setSelectedStatus(data.status)
+    setNumOfAccount(data?.decimalPlace || 0)
+    setNumOfUplodedPhoto(data?.allowImgNum || 0)
+    setMaxUploadSize(data?.allowImgSize.toString())
+    setDefaultLang(data?.lang || 'ZH-HK')
+    setSelectedStatus(data?.status || 'CREATED')
   }
 
   const mainInfoFields = [
