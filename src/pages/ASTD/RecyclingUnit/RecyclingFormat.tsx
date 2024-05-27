@@ -124,26 +124,31 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     }, [i18n, currentLanguage])
     
     useEffect(() => {
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
+            return;
+        }
+    
         if (action === 'edit') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 if (!mainCategory) {
-                    const parentData = !isMainCategory && recyclableType.filter(value => value.recycSubType.find(value => value.recycSubTypeId === selectedItem.recycSubTypeId))
-                    setSubTypeId(selectedItem.recycSubTypeId)
-                    setChosenRecyclableType(parentData !== false ? parentData[0].recycTypeId : '')
+                    const parentData = recyclableType.find(value => value.recycSubType.some(subType => subType.recycSubTypeId === selectedItem.recycSubTypeId));
+                    setSubTypeId(selectedItem.recycSubTypeId);
+                    setChosenRecyclableType(parentData ? parentData.recycTypeId : '');
                 } else {
-                    setMainTypeId(selectedItem.recycTypeId)
+                    setMainTypeId(selectedItem.recycTypeId);
                 }
-                setTChineseName(selectedItem.recyclableNameTchi)
-                setSChineseName(selectedItem.recyclableNameSchi)
-                setEnglishName(selectedItem.recyclableNameEng)
-                setDescription(selectedItem.description)
-                setRemark(selectedItem.remark)
-                setMainCategory(mainCategory)
+                setTChineseName(selectedItem.recyclableNameTchi);
+                setSChineseName(selectedItem.recyclableNameSchi);
+                setEnglishName(selectedItem.recyclableNameEng);
+                setDescription(selectedItem.description);
+                setRemark(selectedItem.remark);
+                setMainCategory(mainCategory);
             }
         } else if (action === 'add') {
-            resetForm()
+            resetForm();
         }
-    }, [selectedItem, action,drawerOpen, mainCategory])
+    }, [selectedItem, action, mainCategory, recyclableType]);
 
     const resetForm = () => {
         setTChineseName('')
@@ -403,7 +408,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                                 value={chosenRecyclableType}
                                                 onChange={(event: SelectChangeEvent<string>) => setChosenRecyclableType(event.target.value)}
                                                 displayEmpty
-                                                disabled={action === 'delete'}
+                                                disabled={action === 'delete'|| (action === 'edit' && !isMainCategory)}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                                 sx={{ borderRadius: '12px' }}
                                                 error={checkString(chosenRecyclableType)}
