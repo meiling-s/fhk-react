@@ -41,7 +41,7 @@ export const createContract = async (data: CreateContract) => {
 
   } catch (e) {
       console.error('Create a contract failed:', e)
-      return null
+      throw(e)
   }
 }
 export const editContract = async (data: CreateContract) => {
@@ -59,7 +59,7 @@ export const editContract = async (data: CreateContract) => {
     return response
   } catch (e) {
     console.error('Create a contract failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -78,6 +78,6 @@ export const deleteContract = async (data: any, contractNo: string) => {
     return response
   } catch (e) {
     console.error('Create a contract failed:', e)
-    return null
+    throw(e)
   }
 }

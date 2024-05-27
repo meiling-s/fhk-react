@@ -30,6 +30,6 @@ export const updateDecimalValue = async (data: any, decimalValId: number) => {
     return response
   } catch (e: any) {
     console.error('Update Decimal Failed:', e)
-    return null
+    throw(e)
   }
 }

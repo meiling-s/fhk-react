@@ -127,39 +127,47 @@ const DenialReason: FunctionComponent = () => {
   };
 
   const initDenialReasonList = async () => {
-    const result = await getAllDenialReason(page - 1, pageSize);
-    const data = result?.data;
-    if (data) {
-      var denialReasonMapping: DenialReasonItem[] = [];
-      data.content.map((item: any) => {
-        const functionItem = functionList.find((el) => el.functionId === item.functionId)
-        if (functionItem) {
-          item.functionName = functionItem.name
-        }
-        denialReasonMapping.push(
-          createDenialReason(
-            item?.reasonId,
-            item?.tenantId,
-            item?.reasonNameTchi,
-            item?.reasonNameSchi,
-            item?.reasonNameEng,
-            item?.description,
-            item?.remark,
-            item?.functionId,
-            item?.functionName,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
-          )
-        );
-      });
-      setDenialReasonList(denialReasonMapping);
-      setTotalData(data.totalPages);
+    try {
+      const result = await getAllDenialReason(page - 1, pageSize);
+      const data = result?.data;
+      if (data) {
+        var denialReasonMapping: DenialReasonItem[] = [];
+        data.content.map((item: any) => {
+          const functionItem = functionList.find((el) => el.functionId === item.functionId)
+          if (functionItem) {
+            item.functionName = functionItem.name
+          }
+          denialReasonMapping.push(
+            createDenialReason(
+              item?.reasonId,
+              item?.tenantId,
+              item?.reasonNameTchi,
+              item?.reasonNameSchi,
+              item?.reasonNameEng,
+              item?.description,
+              item?.remark,
+              item?.functionId,
+              item?.functionName,
+              item?.status,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
+          );
+        });
+        setDenialReasonList(denialReasonMapping);
+        setTotalData(data.totalPages);
+      }
+    } catch (error) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } 
     }
   };
   const searchByFunctionId = async (functionId: number) => {
+   try {
     const result = await getAllDenialReasonByFunctionId(page - 1, pageSize, functionId);
     const data = result?.data;
     if (data) {
@@ -191,6 +199,12 @@ const DenialReason: FunctionComponent = () => {
       setDenialReasonList(denialReasonMapping);
       setTotalData(data.totalPages);
     }
+   } catch (error) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    }
+   }
   };
   useEffect(() => {
     initFunctionList();

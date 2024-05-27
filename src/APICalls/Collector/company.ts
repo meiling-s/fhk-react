@@ -46,7 +46,7 @@ export const createCompany = async ( companyType: string, data: CreateCompany) =
     return response;
   } catch (e) {
     console.error("create company failed:", e);
-    return null;
+    throw(e)
   }
 };
 
@@ -63,6 +63,6 @@ export const editCompany = async ( companyType: string, companyId: string, data:
     return response;
   } catch (e) {
     console.error("update company failed:", e);
-    return null;
+    throw(e)
   }
 };

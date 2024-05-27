@@ -10,13 +10,14 @@ import {
   editDisposalLocation,
   createDisposalLocation
 } from '../../../APICalls/Collector/disposalLocation'
-import { returnErrorMsg } from '../../../utils/utils'
-import { formErr, localStorgeKeyName } from '../../../constants/constant'
+import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import {
   DisposalLocation,
   CreateDisposalLocation as CreateDisposalLocationItem,
   UpdateDisposalLocation
 } from '../../../interfaces/disposalLocation'
+import { useNavigate } from 'react-router-dom'
 
 interface CreateDisposalLocation {
   drawerOpen: boolean
@@ -55,6 +56,7 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   const [existingDisposal, setExistingDisposal] = useState<DisposalLocation[]>(
     []
   )
+  const navigate = useNavigate();
 
   const staffField = [
     {
@@ -234,22 +236,33 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
   const handleCreateDisposalLocation = async (
     staffData: CreateDisposalLocationItem
   ) => {
-    if (validation.length === 0) {
-      const result = await createDisposalLocation(staffData)
-      if (result?.data) {
-        onSubmitData('success', t('common.saveSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+      if (validation.length === 0) {
+        const result = await createDisposalLocation(staffData)
+        if (result?.data) {
+          onSubmitData('success', t('common.saveSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        } else {
+          setTrySubmited(true)
+          onSubmitData('error', t('common.saveFailed'))
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
       } else {
         setTrySubmited(true)
         onSubmitData('error', t('common.saveFailed'))
       }
-    } else {
-      setTrySubmited(true)
     }
   }
 
   const handleEditDisposalLocation = async () => {
+   try {
     const editData: UpdateDisposalLocation = {
       disposalLocId: selectedItem?.disposalLocId || '',
       disposalLocNameTchi: formData.disposalLocNameTchi,
@@ -277,9 +290,16 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     } else {
       setTrySubmited(true)
     }
+   } catch (error) {
+    const {state} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const handleDelete = async () => {
+   try {
     const editData: UpdateDisposalLocation = {
       disposalLocId: formData?.disposalLocId || '',
       disposalLocNameTchi: formData.disposalLocNameTchi,
@@ -303,6 +323,12 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
         handleDrawerClose()
       }
     }
+   } catch (error) {
+    const {state} =  extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    }
+   }
   }
 
   return (

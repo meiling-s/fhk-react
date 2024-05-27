@@ -10,13 +10,14 @@ import {
   createStaffTitle,
   editStaffTitle
 } from '../../../APICalls/Collector/staffTitle'
-import { returnErrorMsg } from '../../../utils/utils'
-import { formErr, localStorgeKeyName } from '../../../constants/constant'
+import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import {
   StaffTitle,
   CreateStaffTitle as CreateStaffTitleItem,
   UpdateStaffTitle
 } from '../../../interfaces/staffTitle'
+import { useNavigate } from 'react-router-dom'
 
 interface CreateStaffTitle {
   drawerOpen: boolean
@@ -100,6 +101,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       type: 'text'
     }
   ]
+  const navigate = useNavigate();
 
   const mappingData = () => {
     if (selectedItem != null) {
@@ -255,6 +257,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
   }
 
   const handleCreateStaff = async (staffData: CreateStaffTitleItem) => {
+   try {
     validate()
     if (validation.length === 0) {
       const result = await createStaffTitle(staffData)
@@ -269,9 +272,19 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     } else {
       setTrySubmited(true)
     }
+   } catch (error) {
+    const { state } = extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    } else {
+      setTrySubmited(true)
+      onSubmitData('error', t('common.saveFailed'))
+    }
+   }
   }
 
   const handleEditStaff = async () => {
+   try {
     const editData: UpdateStaffTitle = {
       titleId: selectedItem?.titleId || '',
       titleNameTchi: formData.titleNameTchi,
@@ -295,6 +308,12 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     } else {
       setTrySubmited(true)
     }
+   } catch (error) {
+    const { state } = extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const handleDelete = async () => {

@@ -47,7 +47,7 @@ export const createDisposalLocation = async (data: CreateDisposalLocation) => {
     return response;
   } catch (e) {
     console.error("create disposal location failed:", e);
-    return null;
+    throw(e)
   }
 };
 
@@ -64,6 +64,6 @@ export const editDisposalLocation = async (disposalLocId: string, data: CreateDi
     return response;
   } catch (e) {
     console.error("update disposal location failed:", e);
-    return null;
+    throw(e)
   }
 };

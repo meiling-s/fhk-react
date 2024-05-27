@@ -30,6 +30,6 @@ export const updateDateFormat = async (dateFormatId: number, data: any) => {
         return response
     } catch (error) {
         console.error('Get Currency Failed:', error)
-        return null
+        throw(error)
     }
 }

@@ -28,7 +28,7 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
-import { returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import {
     createWarehouse,
     getWarehouseById,
@@ -44,6 +44,7 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createPackagingUnit, createRecyc, editPackagingUnit } from '../../../APICalls/ASTD/recycling'
 import { createCodeData, deleteCodeData, updateCodeData } from '../../../APICalls/ASTD/code'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface CodeFormatProps {
     createdAt: string
@@ -87,6 +88,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const [mainName, setMainName] = useState('')
     const [subName, setSubName] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const navigate = useNavigate();
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
@@ -190,8 +192,13 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 resetForm()
             }
         } catch (error) {
-            console.error(error)
-            showErrorToast(t('notify.errorDeleted'))
+            const {state} = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('notify.errorDeleted'))
+            }
         }
        }
     }
@@ -231,8 +238,13 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 resetForm()
             }
         } catch (error) {
-            console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+            const {state} = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('errorCreated.errorCreated'))
+            }
         }
     }
     const editCode = async (codeForm: any, codeId: number) => {
@@ -244,8 +256,14 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 resetForm()
             }
         } catch (error) {
-            console.error(error)
-            showErrorToast(t('notify.errorEdited'))
+            const {state} = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('notify.errorEdited'))
+            }
+
         }
     }
 

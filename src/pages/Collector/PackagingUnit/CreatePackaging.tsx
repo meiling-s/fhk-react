@@ -14,8 +14,8 @@ import {
   Vehicle,
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
-import { formErr } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
+import { STATUS_CODE, formErr } from '../../../constants/constant'
+import { extractError, returnErrorMsg } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -30,6 +30,7 @@ import {
   createPackaging,
   editPackaging
 } from '../../../APICalls/Collector/packagingUnit'
+import { useNavigate } from 'react-router-dom'
 
 interface CreatePackagingProps {
   drawerOpen: boolean
@@ -67,6 +68,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
   const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
   const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (action === 'edit' || action === 'delete') {
@@ -194,17 +196,26 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   }
 
   const handleCreatePackaging = async (formData: CreatePackagingUnitProps) => {
-    if (validation.length === 0) {
-      const result = await createPackaging(formData)
-      if (result) {
-        onSubmitData('success', t('common.saveSuccessfully'))
-        resetData()
-        handleDrawerClose()
+    try {
+      if (validation.length === 0) {
+        const result = await createPackaging(formData)
+        if (result) {
+          onSubmitData('success', t('common.saveSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        } else {
+          onSubmitData('error', t('common.saveFailed'))
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.saveFailed'))
       }
-    } else {
-      setTrySubmited(true)
     }
   }
 
@@ -212,6 +223,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     formData: CreatePackagingUnitProps,
     packagingTypeId: string
   ) => {
+   try {
     if (validation.length === 0) {
       const result = await editPackaging(formData, packagingTypeId)
       if (result) {
@@ -222,9 +234,16 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     } else {
       setTrySubmited(true)
     }
+   } catch (error) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      }
+   }
   }
 
   const handleDelete = async () => {
+   try {
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
     const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
@@ -250,6 +269,12 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         onSubmitData('error', t('common.deleteFailed'))
       }
     }
+   } catch (error) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      }
+   }
   }
 
   return (

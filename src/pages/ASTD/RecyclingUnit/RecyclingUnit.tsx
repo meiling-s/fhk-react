@@ -589,8 +589,14 @@ const RecyclingUnit: FunctionComponent = () => {
           setDeleteModal(false)
         }
       } catch (error) {
-        console.error(error)
-        showErrorToast(t('notify.errorDeleted'))
+        const {state} = extractError(error)
+        if(state.code === STATUS_CODE[503]){
+          navigate('/maintenance')
+        } else {
+          console.error(error)
+          showErrorToast(t('notify.errorDeleted'))
+        }
+       
       }
     }
   }

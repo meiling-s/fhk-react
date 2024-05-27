@@ -30,8 +30,8 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
-import { formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64, showSuccessToast, showErrorToast } from '../../../utils/utils'
+import { STATUS_CODE, formErr, format } from '../../../constants/constant'
+import { returnErrorMsg, ImageToBase64, showSuccessToast, showErrorToast, extractError } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -44,6 +44,7 @@ import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { createContract, editContract } from '../../../APICalls/Collector/contracts'
 import { updateDateFormat } from '../../../APICalls/ASTD/date'
+import { useNavigate } from 'react-router-dom'
 
 interface DateFormat {
   createdAt: string
@@ -73,7 +74,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
   const [dateFormat, setDateFormat] = useState('')
   const [dateFormatId, setDateFormatId] = useState(0)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-
+  const navigate = useNavigate();
   
   useEffect (() => {
     if (action === 'edit') {
@@ -111,6 +112,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
     }
   }
   const handleUpdateDateFormat = async (formData: any) => {
+   try {
     const result = await updateDateFormat(dateFormatId, formData)
 
     if (result) {
@@ -120,7 +122,13 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
     } else {
       showErrorToast(t('notify.errorEdited'))
     }
-}
+   } catch (error) {
+    const {state } = extractError(error);
+    if(state.code === STATUS_CODE[503]){
+      navigate('/maintenance')
+    }
+   }
+  }
 
   return (
     <div className="add-vehicle">

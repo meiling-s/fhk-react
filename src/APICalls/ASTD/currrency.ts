@@ -34,7 +34,7 @@ export const createCurrency = async (data: any) => {
     return response
   } catch (error) {
     console.error('Create Currency Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -49,7 +49,7 @@ export const editCurrency = async (currencyId: number, data: any) => {
     return response
   } catch (error) {
     console.error('Create Currency Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -64,6 +64,6 @@ export const deleteCurrency = async (currencyId: number, data: any) => {
     return response
   } catch (error) {
     console.error('Create Currency Failed:', error)
-    return null
+    throw(error)
   }
 }

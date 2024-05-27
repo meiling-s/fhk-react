@@ -28,7 +28,7 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
-import { returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import {
     createWarehouse,
     getWarehouseById,
@@ -44,6 +44,7 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, deleteWeightUnit, editWeightUnit, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
 import { paletteColors } from '../../../themes/palette'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface WeightFormat {
     createdAt: string
@@ -94,6 +95,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     const [chosenRecyclableType, setChosenRecyclableType] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
+    const navigate = useNavigate();
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
@@ -200,7 +202,13 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 showSuccessToast(t('notify.successDeleted'))
             }
         } catch (error) {
-            showErrorToast(t('notify.errorDeleted'))
+            const {state} = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                showErrorToast(t('notify.errorDeleted'))
+            }
+            
         }
     }
 
@@ -239,8 +247,14 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 showSuccessToast(t('notify.successCreated'))
             }
         } catch (error) {
-            console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+            const {state} = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('errorCreated.errorCreated'))
+            }
+
         }
     }
     const editWeightData = async (weightForm: any) => {
@@ -251,8 +265,14 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 showSuccessToast(t('notify.SuccessEdited'))
             }
         } catch (error) {
-            console.error(error)
-            showErrorToast(t('errorCreated.errorEdited'))
+            const {state} = extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('errorCreated.errorEdited'))
+            }
+
         }
     }
 

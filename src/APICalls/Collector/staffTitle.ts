@@ -47,7 +47,7 @@ export const createStaffTitle = async (data: CreateStaffTitle) => {
     return response;
   } catch (e) {
     console.error("create staff title failed:", e);
-    return null;
+    throw(e)
   }
 };
 
@@ -64,6 +64,6 @@ export const editStaffTitle = async (titleId: string, data: UpdateStaffTitle) =>
     return response;
   } catch (e) {
     console.error("update staff title failed:", e);
-    return null;
+    throw(e)
   }
 };

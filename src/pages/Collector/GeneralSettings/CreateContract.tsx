@@ -15,8 +15,8 @@ import {
   Vehicle,
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
-import { formErr, format } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
+import { STATUS_CODE, formErr, format } from '../../../constants/constant'
+import { extractError, returnErrorMsg } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
@@ -32,6 +32,7 @@ import {
   editContract,
   deleteContract
 } from '../../../APICalls/Collector/contracts'
+import { useNavigate } from 'react-router-dom'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -63,6 +64,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [existingContract, setExistingContract] = useState<Contract[]>([])
+  const navigate = useNavigate();
 
   useEffect(() => {
     resetData()
@@ -173,55 +175,80 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleCreateContract = async (formData: CreateContractProps) => {
-    if (validation.length === 0) {
-      const result = await createContract(formData)
-      if (result) {
-        onSubmitData('success', t('common.saveSuccessfully'))
-        resetData()
-        handleDrawerClose()
+    try {
+      if (validation.length === 0) {
+        const result = await createContract(formData)
+        if (result) {
+          onSubmitData('success', t('common.saveSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        } else {
+          onSubmitData('error', t('common.saveFailed'))
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error) {
+      const { state, realm} = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.saveFailed'))
       }
-    } else {
-      setTrySubmited(true)
     }
   }
 
   const handleEditContract = async (formData: CreateContractProps) => {
-    if (validation.length === 0) {
-      const result = await editContract(formData)
-      if (result) {
-        onSubmitData('success', t('common.editSuccessfully'))
-        resetData()
-        handleDrawerClose()
+    try {
+      if (validation.length === 0) {
+        const result = await editContract(formData)
+        if (result) {
+          onSubmitData('success', t('common.editSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        }
+      } else {
+        setTrySubmited(true)
       }
-    } else {
-      setTrySubmited(true)
+    } catch (error) {
+      const { state, realm} = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      }
     }
   }
 
   const handleDelete = async () => {
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
-
-    const formData: any = {
-      // tenantId: tenantId,
-      // contractNo: contractNo,
-      // parentContractNo: referenceNumber,
-      status: 'DELETED',
-      // contractFrmDate: startDate.format('YYYY-MM-DD'),
-      // contractToDate: endDate.format('YYYY-MM-DD'),
-      // remark: remark,
-      // epdFlg: whether,
-      // createdBy: loginId,
-      updatedBy: loginId
-    }
-    if (selectedItem != null) {
-      const result = await deleteContract(formData, selectedItem.contractNo)
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetData()
-        handleDrawerClose()
+    try {
+      const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+      const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+  
+      const formData: any = {
+        // tenantId: tenantId,
+        // contractNo: contractNo,
+        // parentContractNo: referenceNumber,
+        status: 'DELETED',
+        // contractFrmDate: startDate.format('YYYY-MM-DD'),
+        // contractToDate: endDate.format('YYYY-MM-DD'),
+        // remark: remark,
+        // epdFlg: whether,
+        // createdBy: loginId,
+        updatedBy: loginId
+      }
+      if (selectedItem != null) {
+        const result = await deleteContract(formData, selectedItem.contractNo)
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        } else {
+          onSubmitData('error', t('common.deleteFailed'))
+        }
+      }
+    } catch (error) {
+      const { state, realm} = extractError(error);
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.deleteFailed'))
       }

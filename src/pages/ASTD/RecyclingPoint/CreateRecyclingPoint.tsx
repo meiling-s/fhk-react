@@ -28,7 +28,7 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
-import { returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import {
     createWarehouse,
     getWarehouseById,
@@ -43,6 +43,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, createRecyclingPoint, deleteRecyclingPoint, editRecyclingPoint, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface siteTypeDataProps {
     createdAt: string
@@ -91,6 +92,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
     const [chosenRecyclableType, setChosenRecyclableType] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
+    const navigate = useNavigate();
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
@@ -191,8 +193,13 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 }
             }
         } catch (error) {
-            console.log(error)
-            showErrorToast(t('notify.errorDeleted'))
+            const {state} =  extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                console.log(error)
+                showErrorToast(t('notify.errorDeleted'))
+            }
         }
     }
 
@@ -230,8 +237,13 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 showSuccessToast(t('notify.successCreated'))
             }
         } catch (error) {
-            console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+            const {state} =  extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('errorCreated.errorCreated'))
+            }
         }
     }
     const editRecyclingPointData = async (data: any) => {
@@ -244,8 +256,14 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 }
             }
         } catch (error) {
-            console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+            const {state} =  extractError(error)
+            if(state.code === STATUS_CODE[503]){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('errorCreated.errorCreated'))
+            }
+            
         }
     }
 
