@@ -4,13 +4,22 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer } from 'react-toastify'
-import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams} from '@mui/x-data-grid'
-import DownloadAreaModal from './DownloadAreaModal';
+import {
+  DataGrid,
+  GridColDef,
+  GridRowParams,
+  GridRowSpacingParams
+} from '@mui/x-data-grid'
+import DownloadAreaModal from './DownloadAreaModal'
 
 const DownloadArea = () => {
   const { t } = useTranslation()
   const [openModal, setOpenModal] = useState(false)
-  const [selectedRow, setSelectedRow] = useState<{id: number, report_name: string, typeFile: string}>({id: 0, report_name: '', typeFile: ''});
+  const [selectedRow, setSelectedRow] = useState<{
+    id: number
+    report_name: string
+    typeFile: string
+  }>({ id: 0, report_name: '', typeFile: '' })
 
   const columns: GridColDef[] = [
     {
@@ -29,7 +38,7 @@ const DownloadArea = () => {
             <Button
               style={{
                 backgroundColor: '#79CA25',
-                color:  '#fff',
+                color: '#fff',
                 borderColor: '#7CE495',
                 borderRadius: '20px',
                 fontSize: '13px',
@@ -47,21 +56,49 @@ const DownloadArea = () => {
         )
       }
     }
-  ];
- 
-  const rows :{id: number, report_name: string, typeFile: string}[] = [
-    {id: 1, report_name: t('generate_report.recycling_point_record'), typeFile: 'XLS'},
-    {id: 2, report_name: t('generate_report.Waste_ecords_daily_'), typeFile: 'XLS'},
-    {id: 3, report_name: t('generate_report.recycling_plant_request_records'),typeFile: 'XLS'},
-    {id: 4, report_name: t('generate_report.recycling_classification_processing'), typeFile: 'XLS'},
-    {id: 5, report_name: t('generate_report.recycling_classification_statistics'), typeFile: 'XLS'},
-    {id: 6, report_name: t('generate_report.recycling_point_establishment'), typeFile: 'WORD'},
-    {id: 7, report_name: t('generate_report.collection_point_establishment'), typeFile: 'XLS'}
-  ];
+  ]
+
+  const rows: { id: number; report_name: string; typeFile: string }[] = [
+    {
+      id: 1,
+      report_name: t('generate_report.recycling_point_record'),
+      typeFile: 'XLS'
+    },
+    {
+      id: 2,
+      report_name: t('generate_report.Waste_ecords_daily_'),
+      typeFile: 'XLS'
+    },
+    {
+      id: 3,
+      report_name: t('generate_report.recycling_plant_request_records'),
+      typeFile: 'XLS'
+    },
+    {
+      id: 4,
+      report_name: t('generate_report.recycling_classification_processing'),
+      typeFile: 'XLS'
+    },
+    {
+      id: 5,
+      report_name: t('generate_report.recycling_classification_statistics'),
+      typeFile: 'XLS'
+    },
+    {
+      id: 6,
+      report_name: t('generate_report.recycling_point_establishment'),
+      typeFile: 'WORD'
+    },
+    {
+      id: 7,
+      report_name: t('generate_report.collection_point_establishment'),
+      typeFile: 'XLS'
+    }
+  ]
 
   const onHandleModal = (params: any) => {
-    setOpenModal(prev => !prev);
-    setSelectedRow(prev => {
+    setOpenModal((prev) => !prev)
+    setSelectedRow((prev) => {
       return {
         ...prev,
         id: params?.row?.id,
@@ -72,8 +109,8 @@ const DownloadArea = () => {
   }
 
   const handleSelectRow = (params: GridRowParams) => {
-    setOpenModal(prev => !prev) 
-    setSelectedRow(prev => {
+    setOpenModal((prev) => !prev)
+    setSelectedRow((prev) => {
       return {
         ...prev,
         id: params?.row?.id,
@@ -82,7 +119,7 @@ const DownloadArea = () => {
       }
     })
   }
-  
+
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 5
@@ -117,7 +154,7 @@ const DownloadArea = () => {
               }
             }}
           />
-          <DownloadAreaModal 
+          <DownloadAreaModal
             drawerOpen={openModal}
             handleDrawerClose={() => setOpenModal(false)}
             selectedItem={selectedRow}
