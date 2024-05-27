@@ -60,7 +60,8 @@ const Login = () => {
     const token = returnApiToken()
     const result = await getTenantById(parseInt(token.tenantId))
     const data = result?.data
-    return data.lang
+    const lang = data?.lang || 'ZH-HK'
+    return lang
   }
 
   const onLoginButtonClick = async (userName: string, password: string) => {
