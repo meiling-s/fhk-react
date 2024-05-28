@@ -105,7 +105,8 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     if (selectedItem != null) {
       setFormData({
         titleId: selectedItem.titleId,
-        duty: selectedItem.duty.length > 0 ? selectedItem.duty[0] : '',
+        // duty: selectedItem.duty.length > 0 ? selectedItem.duty[0] : '',
+        duty: selectedItem.duty.toString(),
         titleNameTchi: sanitizeString(selectedItem.titleNameTchi),
         titleNameEng: sanitizeString(selectedItem.titleNameEng),
         titleNameSchi: sanitizeString(selectedItem.titleNameSchi),
