@@ -100,11 +100,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     // console.log('selectedItem', selectedItem)
     if (selectedItem) {
       const selectedStatus =
-        selectedItem.status == 'ACTIVE'
+        selectedItem.status === 'ACTIVE'
           ? 'ACTIVE'
+          : selectedItem.status === 'INACTIVE'
+          ? 'INACTIVE'
           : 'SUSPEND'
-          ? 'SUSPEND'
-          : 'INACTIVE'
       setLoginId(selectedItem.loginId)
       setUserGroup(selectedItem.userGroup.groupId)
       setUserStatus(selectedStatus)
@@ -262,7 +262,6 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
         setValidation(tempV)
-        
       } else {
         onSubmitData()
         showSuccessToast(t('userAccount.successCreatedUser'))
