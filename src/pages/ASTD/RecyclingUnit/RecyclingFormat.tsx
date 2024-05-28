@@ -377,7 +377,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             <CustomTextField
                                 id="englishName"
                                 value={englishName}
-                                disabled={action === 'delete'}
+                                disabled={action === 'delete' }
                                 placeholder={t('packaging_unit.english_name')}
                                 onChange={(event) => setEnglishName(event.target.value)}
                                 error={checkString(englishName)}
@@ -389,7 +389,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             <Switcher
                                 onText={t('add_warehouse_page.yes')}
                                 offText={t('add_warehouse_page.no')}
-                                disabled={action === 'delete'}
+                                disabled={action === 'delete' || (action === 'edit')}
                                 defaultValue={isMainCategory}
                                 setState={(newValue) => {
                                     setMainCategory(newValue);
@@ -408,7 +408,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                                 value={chosenRecyclableType}
                                                 onChange={(event: SelectChangeEvent<string>) => setChosenRecyclableType(event.target.value)}
                                                 displayEmpty
-                                                disabled={action === 'delete'|| (action === 'edit' && !isMainCategory)}
+                                                disabled={action === 'delete'|| (action === 'edit')}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                                 sx={{ borderRadius: '12px' }}
                                                 error={checkString(chosenRecyclableType)}
