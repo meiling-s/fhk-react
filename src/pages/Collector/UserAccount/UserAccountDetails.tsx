@@ -81,15 +81,15 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const statusList = () => {
     const colList: il_item[] = [
       {
-        name: t('userAccount.active'),
+        name: t('status.active'),
         id: 'ACTIVE'
       },
       {
-        name: t('userAccount.inactive'),
+        name: t('status.inactive'),
         id: 'INACTIVE'
       },
       {
-        name: t('userAccount.suspend'),
+        name: t('status.suspend'),
         id: 'SUSPEND'
       }
     ]
