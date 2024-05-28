@@ -451,7 +451,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
               />
             </div>
             </Grid>  */}
-            <CustomField label={t('userAccount.status')} mandatory={true}>
+            <CustomField label={t('col.status')} mandatory={true}>
               <CustomItemList
                 items={statusList()}
                 singleSelect={(selectedItem) => {
