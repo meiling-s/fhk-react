@@ -79,9 +79,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       })
     }
     setFunctionList(data);
-   } catch (error) {
+   } catch (error:any) {
     const {state} =  extractError(error)
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     }
    }
@@ -260,9 +260,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     } else {
       setTrySubmited(true)
     }
-  } catch (error) {
+  } catch (error:any) {
     const {state} =  extractError(error)
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     } else {
       setTrySubmited(true)
@@ -299,9 +299,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error) {
+    } catch (error:any) {
       const {state} =  extractError(error)
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }

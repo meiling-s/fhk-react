@@ -125,9 +125,9 @@ const ASTDSettings: FunctionComponent = () => {
     console.log(data, 'data currency')
 
     setCurrencyList(data)
-   } catch (error) {
+   } catch (error:any) {
     const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     }
    }
@@ -139,9 +139,9 @@ const ASTDSettings: FunctionComponent = () => {
     const data = result?.data
 
     setDecimalValue(data)
-   } catch (error) {
+   } catch (error:any) {
     const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     }
    }
@@ -153,9 +153,9 @@ const ASTDSettings: FunctionComponent = () => {
     const data = result?.data
 
     setDateFormat(data)
-   } catch (error) {
+   } catch (error:any) {
     const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     }
    }
@@ -167,9 +167,9 @@ const ASTDSettings: FunctionComponent = () => {
     const data = result?.data
 
     setWeightFormat(data)
-   } catch (error) {
+   } catch (error:any) {
     const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     }
    }

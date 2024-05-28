@@ -122,9 +122,9 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
         // console.log('reject success success')
         onSubmit()
       }
-    } catch (error) {
+    } catch (error:any) {
       const { state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -759,9 +759,9 @@ function CompanyManage() {
       }
       window.location.reload()
       setOpenDetails(false)
-    } catch (error) {
+    } catch (error:any) {
       const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -927,9 +927,9 @@ function CompanyManage() {
         setFilterCompanies(tenantList)
       }
       setTotalData(result?.data.totalPages)
-    } catch (error) {
+    } catch (error:any) {
       const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -950,9 +950,9 @@ function CompanyManage() {
       } else {
         initCompaniesData()
       }
-    } catch (error) {
+    } catch (error:any) {
       const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -1037,9 +1037,9 @@ function CompanyManage() {
         showErrorToast('failed to create tenant')
         setIsLoadingInvite(false)
       }
-    } catch (error) {
+    } catch (error:any) {
       const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       } else {
         showErrorToast('failed to create tenant')

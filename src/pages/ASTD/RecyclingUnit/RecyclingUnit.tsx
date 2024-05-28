@@ -181,9 +181,9 @@ const RecyclingUnit: FunctionComponent = () => {
       })
       const data = response.data
       setRecyclableType(data)
-    } catch (error) {
+    } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -196,9 +196,9 @@ const RecyclingUnit: FunctionComponent = () => {
   
   
       setCode(data)
-    } catch (error) {
+    } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -210,9 +210,9 @@ const RecyclingUnit: FunctionComponent = () => {
     const data = result?.data.content
 
     setPackagingUnit(data)
-   } catch (error) {
+   } catch (error:any) {
     const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     }
    }
@@ -224,9 +224,9 @@ const RecyclingUnit: FunctionComponent = () => {
       const data = result?.data
   
       setWeightUnit(data)
-    } catch (error) {
+    } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -588,9 +588,9 @@ const RecyclingUnit: FunctionComponent = () => {
           handleOnSubmitData('recycle')
           setDeleteModal(false)
         }
-      } catch (error) {
+      } catch (error:any) {
         const {state} = extractError(error)
-        if(state.code === STATUS_CODE[503]){
+        if(state.code === STATUS_CODE[503] || !error?.response){
           navigate('/maintenance')
         } else {
           console.error(error)

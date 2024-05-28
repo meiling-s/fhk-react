@@ -437,9 +437,9 @@ const PurchaseOrder = () => {
         setPurchaseOrder([])
       }
       setTotalData(result?.data.totalPages)
-    } catch (error) {
+    } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -498,9 +498,9 @@ const PurchaseOrder = () => {
         )
         setReasonList(result?.data.content)
       }
-    } catch (error) {
+    } catch (error:any) {
       const { state, realm } = extractError(error)
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }

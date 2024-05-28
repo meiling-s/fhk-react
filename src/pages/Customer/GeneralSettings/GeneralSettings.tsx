@@ -97,9 +97,9 @@ const GeneralSettings: FunctionComponent = () => {
             setTchiNameList((prevTchiName: any) => [...prevTchiName, item.packagingNameTchi]);
           })
       }
-    } catch (error) {
+    } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -111,9 +111,9 @@ const GeneralSettings: FunctionComponent = () => {
       const result = await getTenantById(parseInt(token.tenantId))
       const data = result?.data
       setTenantCurrency(data?.monetaryValue || "")
-    } catch (error) {
+    } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }

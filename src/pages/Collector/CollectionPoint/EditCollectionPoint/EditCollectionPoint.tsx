@@ -144,9 +144,9 @@ function CreateCollectionPoint() {
         })
         setContractList(conList)
       }
-    } catch (error) {
+    } catch (error:any) {
       const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -512,9 +512,9 @@ function CreateCollectionPoint() {
         //console.log(validation)
         setTrySubmited(true)
       }
-    } catch (error) {
+    } catch (error:any) {
       const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }

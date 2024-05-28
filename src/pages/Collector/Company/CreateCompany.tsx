@@ -268,9 +268,9 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     } else {
       setTrySubmited(true)
     }
-   } catch (error) {
+   } catch (error:any) {
     const {state} = extractError(error);
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     } else {
       setTrySubmited(true)
@@ -328,9 +328,9 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error) {
+    } catch (error:any) {
       const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }

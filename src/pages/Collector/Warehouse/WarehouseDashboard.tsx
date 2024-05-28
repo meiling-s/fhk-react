@@ -174,9 +174,9 @@ const WarehouseDashboard: FunctionComponent = () => {
             if (warehouse.length > 0) setSelectedWarehouse(warehouse[0]);
             setTotalCapacity(capacityTotal);
         }
-       } catch (error) {
+       } catch (error:any) {
             const { state, realm } = extractError(error)
-            if(state.code === STATUS_CODE[503]){
+            if(state.code === STATUS_CODE[503] || !error?.response){
                 navigate('/maintenance')
             }
        }
@@ -226,9 +226,9 @@ const WarehouseDashboard: FunctionComponent = () => {
                 }
                 if (result) setTotalCapacity(result.data);
             }
-        } catch (error) {
+        } catch (error:any) {
             const { state, realm } =  extractError(error);
-            if(state.code === STATUS_CODE[503]){
+            if(state.code === STATUS_CODE[503] || !error?.response){
                 navigate('/maintenance')
             }
         }
@@ -246,9 +246,9 @@ const WarehouseDashboard: FunctionComponent = () => {
                 }
                 if (result) setCheckIn(result.data);
             }
-        } catch (error) {
+        } catch (error:any) {
             const { state, realm } = extractError(error)
-            if(state.code === STATUS_CODE[503]){
+            if(state.code === STATUS_CODE[503] || !error?.response){
                 navigate('/maintenance')
             }
         }
@@ -270,9 +270,9 @@ const WarehouseDashboard: FunctionComponent = () => {
             }
             if (result) setCheckOut(result.data);
         }
-       } catch (error) {
+       } catch (error:any) {
             const { state, realm } = extractError(error)
-            if(state.code === STATUS_CODE[503]){
+            if(state.code === STATUS_CODE[503] || !error?.response){
                 navigate('/maintenance')
             }
        }
@@ -435,9 +435,9 @@ const WarehouseDashboard: FunctionComponent = () => {
                     setCheckInOut(checkinoutMapping);
                 }
             }
-       } catch (error) {
+       } catch (error:any) {
             const { state, realm } = extractError(error)
-            if(state.code === STATUS_CODE[503]){
+            if(state.code === STATUS_CODE[503] || !error?.response){
                 navigate('/maintenance')
             }
        }

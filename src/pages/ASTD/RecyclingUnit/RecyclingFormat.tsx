@@ -247,9 +247,9 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     onSubmitData('recycle')
                 }
             }
-        } catch (error) {
+        } catch (error:any) {
             const {state} =  extractError(error)
-            if(state.code === STATUS_CODE[503]){
+            if(state.code === STATUS_CODE[503] || !error?.response){
                 navigate('/maintenance')
             } else {
                 console.error(error)
@@ -300,9 +300,9 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     onSubmitData('recycle')
                 }
             }
-        } catch (error) {
+        } catch (error:any) {
             const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503]){
+            if(state.code === STATUS_CODE[503] || !error?.response){
                 navigate('/maintenance')
             } else {
                 console.error(error)
@@ -326,9 +326,9 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     onSubmitData('recycle')
                 }
             }
-        } catch (error) {
+        } catch (error:any) {
             const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503]){
+            if(state.code === STATUS_CODE[503] || !error?.response){
                 navigate('/maintenance')
             } else {
                 console.error(error)

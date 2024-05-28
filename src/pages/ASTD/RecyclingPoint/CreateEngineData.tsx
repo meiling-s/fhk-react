@@ -191,9 +191,9 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                     handleOnSubmitData('premiseType')
                     showSuccessToast(t('notify.successDeleted'))
                 }
-            } catch (error) {
+            } catch (error:any) {
                 const { state } = extractError(error)
-                if(state.code === STATUS_CODE[503]){
+                if(state.code === STATUS_CODE[503] || !error?.response){
                     navigate('/maintenance')
                 } else {
                     console.log(error)
@@ -239,9 +239,9 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 handleOnSubmitData('premiseType')
                 showSuccessToast(t('notify.successCreated'))
             }
-        } catch (error) {
+        } catch (error:any) {
             const {state} =  extractError(error);
-            if(state.code === STATUS_CODE[503]){
+            if(state.code === STATUS_CODE[503] || !error?.response){
                 navigate('/maintenance')
             } else {
                 console.error(error)
@@ -258,9 +258,9 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                     handleOnSubmitData('premiseType')
                     showSuccessToast(t('notify.SuccessEdited'))
                 }
-            } catch (error) {
+            } catch (error:any) {
                 const {state} =  extractError(error);
-                if(state.code === STATUS_CODE[503]){
+                if(state.code === STATUS_CODE[503] || !error?.response){
                     navigate('/maintenance')
                 } else {
                     console.error(error)

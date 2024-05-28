@@ -85,9 +85,9 @@ const EditPurchaseOrder = () => {
   const submitUpdatePurchaseOrder = async (poId: string, values: PurChaseOrder) => {
     try {
       return await UpdatePurchaseOrder(poId, values)
-    } catch (error) {
+    } catch (error:any) {
       const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     } else {
       return null

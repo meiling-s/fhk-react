@@ -70,9 +70,9 @@ const CreatePurchaseOrder = () => {
   const submitPurchaseOrder = async (values: PurChaseOrder) => {
     try {
       return await postPurchaseOrder(values)
-    } catch (error) {
+    } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       } else {
         return null

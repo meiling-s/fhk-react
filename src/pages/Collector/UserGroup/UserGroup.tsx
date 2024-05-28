@@ -88,9 +88,9 @@ const UserGroup: FunctionComponent = () => {
       const result = await getAllFunction()
       const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       setFunctionList(data)
-    } catch (error) {
+    } catch (error:any) {
       const { state , realm } =   extractError(error)
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -125,9 +125,9 @@ const UserGroup: FunctionComponent = () => {
       setUserGroupList(userGroupMapping)
       setGroupNameList(tempGroupList)
     }
-   } catch (error) {
+   } catch (error:any) {
     const { state , realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     }
    }

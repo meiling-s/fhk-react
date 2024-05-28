@@ -289,9 +289,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error) {
+    } catch (error:any) {
       const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.saveFailed'))
@@ -314,9 +314,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         setTrySubmited(true)
 
       }
-    } catch (error) {
+    } catch (error:any) {
       const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }

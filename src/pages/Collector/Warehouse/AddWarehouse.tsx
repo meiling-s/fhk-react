@@ -191,9 +191,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         })
         setContractList(conList)
       }
-    } catch (error) {
+    } catch (error:any) {
       const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -228,9 +228,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         setRecycleType(dataReycleType)
         setSubRecycleType(subTypeMapping)
       }
-    } catch (error) {
+    } catch (error:any) {
       const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -270,9 +270,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           warehouseList.filter((item) => item.id != warehouse.warehouseId)
         )
       }
-    } catch (error) {
+    } catch (error:any) {
      const { state } =  extractError(error);
-     if(state.code === STATUS_CODE[503]){
+     if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
      }
     }
@@ -562,9 +562,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         // console.log('added', response)
         showSuccessToast(t('common.saveSuccessfully'))
       }
-    } catch (error) {
+    } catch (error:any) {
       const {state} = extractError(error)
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       } else {
         console.error(error)
@@ -585,12 +585,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         // console.log('edited', response)
         handleDrawerClose()
       }
-    } catch (error) {
+    } catch (error:any) {
       showErrorToast(
         type == 'edit' ? t('common.editFailed') : t('common.deleteFailed')
       )
       const {state}= extractError(error)
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }

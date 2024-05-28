@@ -138,9 +138,9 @@ const UserAccount: FunctionComponent = () => {
         result.data.map((item: any) => accountlist.push(item.loginId))
         setUserList(accountlist)
       }
-    } catch (error) {
+    } catch (error:any) {
       const { state , realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
@@ -153,9 +153,9 @@ const UserAccount: FunctionComponent = () => {
         setForgetPassList(result?.data)
         console.log('initForgetPassList', result?.data)
       }
-    } catch (error) {
+    } catch (error:any) {
       const { state , realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }

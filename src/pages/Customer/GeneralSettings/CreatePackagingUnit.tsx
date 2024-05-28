@@ -223,9 +223,9 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error) {
+    } catch (error:any) {
       const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.saveFailed'))
@@ -245,9 +245,9 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
     } else {
       setTrySubmited(true)
     }
-   } catch (error) {
+   } catch (error:any) {
     const {state} = extractError(error);
-    if(state.code === STATUS_CODE[503]){
+    if(state.code === STATUS_CODE[503] || !error?.response){
       navigate('/maintenance')
     }
    }
@@ -279,9 +279,9 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
         onSubmitData('error', t('common.deleteFailed'))
       }
     }
-    } catch (error) {
+    } catch (error:any) {
       const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.deleteFailed'))

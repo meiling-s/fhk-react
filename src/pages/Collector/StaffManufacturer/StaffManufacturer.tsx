@@ -130,9 +130,9 @@ const StaffManufacturer: FunctionComponent = () => {
         setFillteredStaff(staffMapping);
         setTotalData(result.data.totalPages);
       }
-    } catch (error) {
+    } catch (error:any) {
       const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503]){
+      if(state.code === STATUS_CODE[503] || !error?.response){
         navigate('/maintenance')
       }
     }
