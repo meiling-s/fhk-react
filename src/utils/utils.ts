@@ -278,8 +278,13 @@ export const extractError = (error:any):{state:errorState, realm: string} => {
       break
   }
 
+  let statusCode = error?.response?.status || STATUS_CODE[404]
+  if(!error?.response) {
+    statusCode = STATUS_CODE[503]
+  }
+
   const state :errorState = {
-    code: error?.response?.status || 404,
+    code: statusCode,
     message: message || 'not found',
   }
 

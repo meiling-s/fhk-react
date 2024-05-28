@@ -193,7 +193,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       }
     } catch (error:any) {
       const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       }
     }
@@ -230,7 +230,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       }
     } catch (error:any) {
       const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       }
     }
@@ -272,7 +272,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       }
     } catch (error:any) {
      const { state } =  extractError(error);
-     if(state.code === STATUS_CODE[503] || !error?.response){
+     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
      }
     }
@@ -564,7 +564,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       }
     } catch (error:any) {
       const {state} = extractError(error)
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       } else {
         console.error(error)
@@ -590,7 +590,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         type == 'edit' ? t('common.editFailed') : t('common.deleteFailed')
       )
       const {state}= extractError(error)
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       }
     }

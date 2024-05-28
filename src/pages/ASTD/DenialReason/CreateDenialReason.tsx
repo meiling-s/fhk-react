@@ -81,7 +81,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     setFunctionList(data);
    } catch (error:any) {
     const {state} =  extractError(error)
-    if(state.code === STATUS_CODE[503] || !error?.response){
+    if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
     }
    }
@@ -262,7 +262,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     }
   } catch (error:any) {
     const {state} =  extractError(error)
-    if(state.code === STATUS_CODE[503] || !error?.response){
+    if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
     } else {
       setTrySubmited(true)
@@ -301,7 +301,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       }
     } catch (error:any) {
       const {state} =  extractError(error)
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       }
     }

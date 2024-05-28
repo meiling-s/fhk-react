@@ -93,9 +93,9 @@ const useWeightDashboardWithIdRecycable = () => {
           setDataSet(datasets)
           setErrorMessage('')
       } 
-     } catch (error:any) {
+     } catch (error) {
       const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
          navigate('/maintenace')
       }  else if(state?.code === STATUS_CODE[400]){
          setErrorMessage(state.message)

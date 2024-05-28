@@ -121,7 +121,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
             }
         } catch (error:any) {
             const {state, realm} =  extractError(error);
-            if(state.code === STATUS_CODE[503] || !error?.response){
+            if(state.code === STATUS_CODE[503] ){
                 navigate('/maintenance')
             }
         }

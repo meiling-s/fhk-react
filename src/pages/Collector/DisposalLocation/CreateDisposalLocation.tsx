@@ -252,7 +252,7 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
       }
     } catch (error:any) {
       const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       } else {
         setTrySubmited(true)
@@ -292,7 +292,7 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     }
    } catch (error:any) {
     const {state} =  extractError(error);
-    if(state.code === STATUS_CODE[503] || !error?.response){
+    if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
     }
    }
@@ -325,7 +325,7 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     }
    } catch (error:any) {
     const {state} =  extractError(error);
-    if(state.code === STATUS_CODE[503] || !error?.response){
+    if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
     }
    }

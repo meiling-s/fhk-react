@@ -203,7 +203,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 }
             } catch (error:any) {
                 const {state} =  extractError(error);
-                if(state.code === STATUS_CODE[503] || !error?.response){
+                if(state.code === STATUS_CODE[503] ){
                     navigate('/maintenance')
                 } else {
                     showErrorToast(t('notify.errorDeleted'))
@@ -250,7 +250,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         } catch (error:any) {
             console.error(error)
             const {state} = extractError(error);
-            if(state.code === STATUS_CODE[503] || !error?.response){
+            if(state.code === STATUS_CODE[503] ){
                 navigate('/maintenance')
             } else {
                 showErrorToast(t('notify.errorCreated'))
@@ -268,7 +268,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         } catch (error:any) {
             console.error(error)
             const {state} = extractError(error);
-            if(state.code === STATUS_CODE[503] || !error?.response){
+            if(state.code === STATUS_CODE[503] ){
                 navigate('/maintenance')
             } else {
                 showErrorToast(t('notify.errorCreated'))

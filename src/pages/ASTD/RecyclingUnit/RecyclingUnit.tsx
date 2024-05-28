@@ -183,7 +183,7 @@ const RecyclingUnit: FunctionComponent = () => {
       setRecyclableType(data)
     } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       }
     }
@@ -198,7 +198,7 @@ const RecyclingUnit: FunctionComponent = () => {
       setCode(data)
     } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       }
     }
@@ -212,7 +212,7 @@ const RecyclingUnit: FunctionComponent = () => {
     setPackagingUnit(data)
    } catch (error:any) {
     const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] || !error?.response){
+    if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
     }
    }
@@ -226,7 +226,7 @@ const RecyclingUnit: FunctionComponent = () => {
       setWeightUnit(data)
     } catch (error:any) {
       const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       }
     }
@@ -590,7 +590,7 @@ const RecyclingUnit: FunctionComponent = () => {
         }
       } catch (error:any) {
         const {state} = extractError(error)
-        if(state.code === STATUS_CODE[503] || !error?.response){
+        if(state.code === STATUS_CODE[503] ){
           navigate('/maintenance')
         } else {
           console.error(error)

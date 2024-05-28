@@ -90,7 +90,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       } catch (error:any) {
         console.error(error)
         const {state} =  extractError(error);
-        if(state.code === STATUS_CODE[503] || !error?.response){
+        if(state.code === STATUS_CODE[503] ){
           navigate('/maintenance')
         } else {
           showErrorToast(t('notify.errorDeleted'))
@@ -132,7 +132,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
     } catch (error:any) {
       console.error(error)
       const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       } else {
         showErrorToast(t('errorCreated.errorCreated'))
@@ -153,7 +153,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
     } catch (error:any) {
       console.error(error)
       const {state} =  extractError(error)
-      if(state.code === STATUS_CODE[503] || !error?.response){
+      if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       } else {
         showErrorToast(t('errorCreated.errorEdited'))
