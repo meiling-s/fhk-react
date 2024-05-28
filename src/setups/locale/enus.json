@@ -1001,7 +1001,11 @@
     "recyle_waste_collection": "The report of recycled waste collection points list",
     "download": "Download",
     "start_date": "Start Date",
-    "end_date": "to"
+    "end_date": "to",
+    "report_of_recycled_waste_pickup_list": "The report of recycled waste collection pickup list",
+    "report_of_recycled_waste_collection_route":"The report of Recycled waste collection route and actual collection route list",
+    "report_of_logistic_service_vehicle": "The report of Logistic service provider vehicle list",
+    "report_of_logistic_service_recycled": "The report of daily logistic service provider recycled waste collection list"
   },
   "purchase_order": {
     "all_order": "All Orders",

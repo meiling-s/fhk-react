@@ -1000,7 +1000,11 @@
     "recyle_waste_collection": "回收站列表",
     "download": "下載",
     "start_date": "日期由",
-    "end_date": "至"
+    "end_date": "至",
+    "report_of_recycled_waste_pickup_list": "回收物提取報表",
+    "report_of_recycled_waste_collection_route":"實際路線列表",
+    "report_of_logistic_service_vehicle": "物流車列表",
+    "report_of_logistic_service_recycled": " 物流公司回收物報告"
   },
   "purchase_order": {
     "all_order": "所有訂單",
