@@ -6,22 +6,30 @@ import BasicServicePicture from '../../Collector/EventRecording/BasicServicePict
 import AdditionalServicePict from '../../Collector/EventRecording/AdditionalServicePict'
 import OtherPict from '../../Collector/EventRecording/OtherPict'
 import DownloadArea from '../DownloadArea/DownloadArea'
+import { Roles, localStorgeKeyName } from '../../../constants/constant'
 
 const Report: FunctionComponent = () => {
   const { t } = useTranslation()
   const [selectedTab, setSelectedTab] = useState(0)
+  const role = localStorage.getItem(localStorgeKeyName.role) || '';
 
   const handleTabChange = (value: number) => {
     setSelectedTab(value)
   }
 
   const titlePage = t('report.report')
-  const tabSettings = [
+  let tabSettings = [
     t('report.downloadArea'),
     t('report.basicServicePictures'),
     t('report.additionalServicePictures'),
     t('report.otherPictures')
   ]
+
+  if(role === Roles.logisticAdmin){
+    tabSettings = [
+      t('report.downloadArea'),
+    ]
+  }
 
   let activeTab = <DownloadArea />
   switch (selectedTab) {
