@@ -8,7 +8,7 @@ export const getDriverList = async (page: number, size: number) => {
         const token = returnApiToken()
         return await axiosInstance({
             baseURL: window.baseURL.collector,
-            ...GET_DRIVER_LIST(),
+            ...GET_DRIVER_LIST(token.decodeKeycloack),
             params: {
                 page,
                 size,
