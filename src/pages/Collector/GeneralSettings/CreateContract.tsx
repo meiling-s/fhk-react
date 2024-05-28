@@ -55,7 +55,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const { t } = useTranslation()
   const [contractNo, setContractNo] = useState('')
   const [referenceNumber, setReferenceNumber] = useState('')
-  const [contractStatus, setContractStatus] = useState(false)
+  const [contractStatus, setContractStatus] = useState(true)
   const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
   const [remark, setRemark] = useState('')
@@ -91,7 +91,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const resetData = () => {
     setContractNo('')
     setReferenceNumber('')
-    setContractStatus(false)
+    setContractStatus(true)
     setStartDate(dayjs())
     setEndDate(dayjs())
     setRemark('')
