@@ -160,6 +160,7 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
         headerProps={{
           title: t('general_settings.number_format'),
           submitText: t('add_warehouse_page.save'),
+          cancelText: '',
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
         }}

@@ -157,6 +157,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
         headerProps={{
           title: t('general_settings.date_format'),
           submitText: t('add_warehouse_page.save'),
+          cancelText: '',
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
         }}
