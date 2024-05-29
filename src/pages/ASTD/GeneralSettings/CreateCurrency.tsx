@@ -52,7 +52,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   useEffect (() => {
     resetData()
     setShowError(false)
-    if (action === 'edit' || 'delete') {
+    if (action === 'edit' || action === 'delete') {
       if (selectedItem !== null && selectedItem !== undefined) {
         setMonetary(selectedItem.monetary)
         setRemark(selectedItem.remark)
