@@ -229,11 +229,11 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     { id: '5', name: '5' }
   ]
 
-  useEffect(() => {
-    if (selectedStatus === 'CLOSED') {
-      setModalClosed(true)
-    }
-  }, [selectedStatus])
+  // useEffect(() => {
+  //   if (selectedStatus === 'CLOSED') {
+  //     setModalClosed(true)
+  //   }
+  // }, [selectedStatus])
 
   const getReasonList = async () => {
     const result = await getReasonTenant(0, 100, tenantId.toString(), 1)
@@ -259,49 +259,54 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     const companyLogoImg =
       companyLogo.length > 0 ? ImageToBase64(companyLogo)[0] : ''
 
-    if (tenantDetail) {
-      const dataForm: UpdateTenantForm = {
-        companyNameTchi: tenantDetail.companyNameTchi,
-        companyNameSchi: tenantDetail.companyNameSchi,
-        companyNameEng: tenantDetail.companyNameEng,
-        tenantType: tenantDetail.tenantType,
-        lang: defaultLang,
-        status: selectedStatus,
-        brNo: tenantDetail.brNo,
-        remark: tenantDetail.remark,
-        contactNo: tenantDetail.contactNo,
-        email: tenantDetail.email,
-        contactName: tenantDetail.contactName,
-        brPhoto: tenantDetail.brPhoto,
-        epdPhoto: tenantDetail.epdPhoto,
-        companyLogo: companyLogoImg,
-        decimalPlace: numOfAccount,
-        monetaryValue: tenantDetail.monetaryValue,
-        inventoryMethod: inventoryMethod,
-        allowImgSize: parseInt(maxUploadSize),
-        allowImgNum: numOfUplodedPhoto,
-        effFrmDate: tenantDetail.effFrmDate,
-        effToDate: tenantDetail.effToDate,
-        approvedAt: tenantDetail?.approvedAt,
-        approvedBy: tenantDetail?.approvedBy,
-        rejectedAt: tenantDetail?.rejectedAt,
-        rejectedBy: tenantDetail?.rejectedBy,
-        createdBy: tenantDetail.createdBy,
-        createdAt: tenantDetail.createdAt,
-        updatedAt: tenantDetail.updatedAt,
-        updatedBy: loginName
-      }
+    if (selectedStatus === 'CLOSED') {
+      setModalClosed(true)
+    } else {
+      if (tenantDetail) {
+        const dataForm: UpdateTenantForm = {
+          companyNameTchi: tenantDetail.companyNameTchi,
+          companyNameSchi: tenantDetail.companyNameSchi,
+          companyNameEng: tenantDetail.companyNameEng,
+          tenantType: tenantDetail.tenantType,
+          lang: defaultLang,
+          status: selectedStatus,
+          brNo: tenantDetail.brNo,
+          remark: tenantDetail.remark,
+          contactNo: tenantDetail.contactNo,
+          email: tenantDetail.email,
+          contactName: tenantDetail.contactName,
+          brPhoto: tenantDetail.brPhoto,
+          epdPhoto: tenantDetail.epdPhoto,
+          companyLogo: companyLogoImg,
+          decimalPlace: numOfAccount,
+          monetaryValue: tenantDetail.monetaryValue,
+          inventoryMethod: inventoryMethod,
+          allowImgSize: parseInt(maxUploadSize),
+          allowImgNum: numOfUplodedPhoto,
+          effFrmDate: tenantDetail.effFrmDate,
+          effToDate: tenantDetail.effToDate,
+          approvedAt: tenantDetail?.approvedAt,
+          approvedBy: tenantDetail?.approvedBy,
+          rejectedAt: tenantDetail?.rejectedAt,
+          rejectedBy: tenantDetail?.rejectedBy,
+          createdBy: tenantDetail.createdBy,
+          createdAt: tenantDetail.createdAt,
+          updatedAt: tenantDetail.updatedAt,
+          updatedBy: loginName
+        }
 
-      const result = await updateTenantDetail(
-        dataForm,
-        tenantDetail.tenantId.toString()
-      )
-      if (result) {
-        showSuccessToast(t('common.editSuccessfully'))
-        getCompanyDetail()
-        handleDrawerClose()
-      } else {
-        showErrorToast(t('common.editFailed'))
+        const result = await updateTenantDetail(
+          dataForm,
+          tenantDetail.tenantId.toString()
+        )
+        if (result) {
+          showSuccessToast(t('common.editSuccessfully'))
+          getCompanyDetail()
+          handleDrawerClose()
+          onChangeStatus()
+        } else {
+          showErrorToast(t('common.editFailed'))
+        }
       }
     }
   }
