@@ -11,7 +11,7 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DOCUMENT_ICON } from '../../../themes/icons'
 import { getDownloadExcel, getDownloadWord } from '../../../APICalls/report'
-import { returnApiToken } from '../../../utils/utils'
+import { getBaseUrl, returnApiToken } from '../../../utils/utils'
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import {
@@ -26,7 +26,7 @@ dayjs.extend(utc)
 interface DownloadModalProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
-  selectedItem?: { id: number; report_name: string; typeFile: string }
+  selectedItem?: { id: number; report_name: string; typeFile: string, reportId: string }
   staffId: string
 }
 
@@ -41,6 +41,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
   const { tenantId, decodeKeycloack } = returnApiToken()
   const [downloads, setDownloads] = useState<{ date: string; url: any }[]>([])
+  const realmApiRoute = localStorage.getItem(localStorgeKeyName.realmApiRoute) || '';
 
   useEffect(() => {
     const isAfter = dayjs(endDate).isAfter(startDate)
@@ -62,8 +63,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
 
   const generateCollectorLink = (reportId: string) => {
     return (
-      window.baseURL.collector +
-      `api/v1/collectors/${reportId}/${tenantId}?frmDate=${formatToUtc(
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatToUtc(
         startDate
       )}&toDate=${formatToUtc(endDate)}&staffId=${staffId}`
     )
@@ -73,8 +74,10 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     let url = ''
     switch (selectedItem?.id) {
       case 1:
+        url = generateCollectorLink(selectedItem.reportId)
         break
       case 2:
+        url = generateCollectorLink(selectedItem.reportId)
         break
       case 3:
         break

@@ -12,7 +12,7 @@ import {
 } from '@mui/x-data-grid'
 import DownloadAreaModal from './DownloadAreaModal'
 import { getUserAccountById } from '../../../APICalls/Collector/userGroup'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { Roles, localStorgeKeyName } from '../../../constants/constant'
 
 const DownloadArea = () => {
   const { t } = useTranslation()
@@ -21,8 +21,9 @@ const DownloadArea = () => {
   const [selectedRow, setSelectedRow] = useState<{
     id: number
     report_name: string
-    typeFile: string
-  }>({ id: 0, report_name: '', typeFile: '' })
+    typeFile: string,
+    reportId: string
+  }>({ id: 0, report_name: '', typeFile: '', reportId: '' })
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
 
@@ -115,11 +116,48 @@ const DownloadArea = () => {
     }
   ]
 
+  const logisticRows: {
+    id: number
+    report_name: string
+    typeFile: string,
+    reportId: string
+  }[] = [
+    {
+      id: 1,
+      report_name: t('generate_report.report_of_recycled_waste_pickup_list'),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000003'
+    },
+    {
+      id: 2,
+      report_name: t('generate_report.report_of_recycled_waste_collection_route'),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000001'
+    },
+    {
+      id: 3,
+      report_name: t('generate_report.report_of_logistic_service_vehicle'),
+      typeFile: 'XLS',
+      reportId: ''
+    },
+    {
+      id: 4,
+      report_name: t('generate_report.report_of_logistic_service_recycled'),
+      typeFile: 'XLS',
+      reportId: ''
+    },
+  ]
+
   // todo : can add another title report list
 
   // set list based on role
-  const rows: { id: number; report_name: string; typeFile: string }[] =
-    role === 'collector' ? collectorsRows : collectorsRows
+  let rows: { id: number; report_name: string; typeFile: string }[] = [];
+
+  if(role === Roles.collectorAdmin){
+    rows = collectorsRows
+  } else if(role === Roles.logisticAdmin){
+    rows = logisticRows
+  }
 
   useEffect(() => {
     getUserAccount()
@@ -139,7 +177,8 @@ const DownloadArea = () => {
         ...prev,
         id: params?.row?.id,
         report_name: params?.row?.report_name,
-        typeFile: params?.row?.typeFile
+        typeFile: params?.row?.typeFile,
+        reportId: params?.row?.reportId,
       }
     })
   }
@@ -151,7 +190,8 @@ const DownloadArea = () => {
         ...prev,
         id: params?.row?.id,
         report_name: params?.row?.report_name,
-        typeFile: params?.row?.typeFile
+        typeFile: params?.row?.typeFile,
+        reportId: params?.row?.reportId,
       }
     })
   }
