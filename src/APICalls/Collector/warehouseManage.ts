@@ -14,7 +14,6 @@ export const getAllCheckInRequests = async (page: number, size: number, query?: 
   try {
     const token = returnApiToken()
     let response;
-    if (token.realmApiRoute === 'collectors') {
       response = await axiosInstance({
         ...NEW_GET_ALL_HEADER_CHECKIN_REQUESTS(token.realmApiRoute, token.decodeKeycloack),
         baseURL: warehouseAPI.baseURL,
@@ -27,20 +26,6 @@ export const getAllCheckInRequests = async (page: number, size: number, query?: 
           senderAddr: query?.senderAddr
         }
       })
-    } else {
-      response = await axiosInstance({
-        ...GET_ALL_CHECKIN_REQUESTS(token.realmApiRoute, token.decodeKeycloack),
-        baseURL: warehouseAPI.baseURL,
-        params:{
-          page: page,
-          size: size,
-          table: token.decodeKeycloack,
-          picoId: query?.picoId,
-          senderName: query?.senderName,
-          senderAddr: query?.senderAddr
-        }
-      })
-    }
     return response
   } catch (e: any) {
     // console.error('Get all check-in request failed:', e)

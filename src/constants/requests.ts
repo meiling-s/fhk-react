@@ -640,7 +640,7 @@ export const GET_PROCESS_OUT = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/processout/${table}`
+  url: `api/v1/${realmApiRoute}/processout/header/searching/${table}`
 })
 
 export const GET_PROCESS_IN_BY_ID = (
@@ -663,7 +663,7 @@ export const GET_PROCESS_OUT_DETAIL = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/processout/${table}/${processOutId}`
+  url: `api/v1/${realmApiRoute}/processout/detail/searching/${table}/${processOutId}`
 })
 
 export const CREATE_PROCESS_OUT_ITEM = (

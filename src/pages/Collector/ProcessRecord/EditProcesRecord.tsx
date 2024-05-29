@@ -192,13 +192,14 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   useEffect(() => {
+    setRecycItem([])
     const getDetail = async () => {
        const processOut = await getProcessDetail();
       if (selectedRow && processOut ) {
       
         const recycItems: RecycItem[] = []
   
-        processOut.processoutDetail.forEach((detail: ProcessOutItem) => {
+        processOut.forEach((detail: ProcessOutItem) => {
           const result = mappingRecyName(
             detail.recycTypeId,
             detail.recycSubTypeId

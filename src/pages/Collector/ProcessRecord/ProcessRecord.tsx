@@ -96,8 +96,7 @@ const ProcessRecord: FunctionComponent = () => {
     if (data) {
       var recordsMapping: any[] = []
       await Promise.all(data.content.map(async (item: any) => {
-        const processIn: any = await getProcessInDetail(item.processInId); // Await here
-        const processName = mappingProcessName( processIn?.processTypeId)
+        const processName = mappingProcessName( item.processTypeId)
         recordsMapping.push(
           createProcessRecord(
             item?.processOutId,
@@ -108,8 +107,8 @@ const ProcessRecord: FunctionComponent = () => {
             item?.processoutDetail,
             item?.createdAt,
             item?.updatedAt,
-            processIn ? processIn?.address : "-",
-            processIn ? processIn?.processTypeId : null,
+            item?.address,
+            item?.processTypeId,
             processName || ''
           )
         );
