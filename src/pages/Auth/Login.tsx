@@ -28,7 +28,7 @@ import { jwtDecode } from 'jwt-decode'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { setLanguage } from '../../setups/i18n'
-import { returnApiToken } from '../../utils/utils'
+import { extractError, returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
 
 const Login = () => {
@@ -64,6 +64,7 @@ const Login = () => {
   }
 
   const onLoginButtonClick = async (userName: string, password: string) => {
+   try {
     setLogginIn(true)
     //login for astd testing
     var realm = 'astd' //default realm is astd
@@ -147,19 +148,28 @@ const Login = () => {
 
         commonTypeContainer.updateCommonTypeContainer()
       } else {
-        const errCode = result
-        if(errCode === STATUS_CODE[503]){
-          return navigate('/maintenance')
-        } else if (errCode == '004') {
-          //navigate to reset pass firsttime login
-          localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
-          return navigate('/changePassword')
-        }
-        setWarningMsg(t(`login.err_msg_${errCode}`))
+        // const errCode = result
+        // if(errCode === STATUS_CODE[503]){
+        //   return navigate('/maintenance')
+        // } else if (errCode == '004') {
+        //   //navigate to reset pass firsttime login
+        //   localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
+        //   return navigate('/changePassword')
+        // }
+        // setWarningMsg(t(`login.err_msg_${errCode}`))
       }
     }
 
     setLogginIn(false)
+   } catch (error:any) {
+      setLogginIn(false)
+      const {state} =  extractError(error)
+      if(state.code === STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        setWarningMsg(t(`login.err_msg_${state.code}`))
+      }
+   }
   }
 
   const getSelectedLanguange = (lang: string) => {
