@@ -25,7 +25,7 @@ const Report: FunctionComponent = () => {
     t('report.otherPictures')
   ]
 
-  if(role === Roles.logisticAdmin){
+  if(role === Roles.logisticAdmin || role === Roles.astd){
     tabSettings = [
       t('report.downloadArea'),
     ]

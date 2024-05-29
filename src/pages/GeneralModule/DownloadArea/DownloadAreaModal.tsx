@@ -20,6 +20,7 @@ import {
 } from '../../../constants/requestsReport'
 import { saveAs } from 'file-saver'
 import utc from 'dayjs/plugin/utc'
+import i18n from '../../../setups/i18n'
 
 dayjs.extend(utc)
 
@@ -72,7 +73,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       getBaseUrl() +
       `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatToUtc(
         startDate
-      )}&toDate=${formatToUtc(endDate)}&staffId=${staffId}`
+      )}&toDate=${formatToUtc(endDate)}&staffId=${staffId}&language=${i18n.language}`
     )
   }
 

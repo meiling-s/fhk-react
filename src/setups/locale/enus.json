@@ -1009,7 +1009,8 @@
     "report_of_recycled_waste_pickup_list": "The report of recycled waste collection pickup list",
     "report_of_recycled_waste_collection_route": "The report of Recycled waste collection route and actual collection route list",
     "report_of_logistic_service_vehicle": "The report of Logistic service provider vehicle list",
-    "report_of_logistic_service_recycled": "The report of daily logistic service provider recycled waste collection list"
+    "report_of_logistic_service_recycled": "The report of daily logistic service provider recycled waste collection list",
+    "report_of_recycled_waste_inventory_manufacturers": "The report of recycled waste inventory list for recycled waste collectors and recycled waste manufacturers"
   },
   "purchase_order": {
     "all_order": "All Orders",

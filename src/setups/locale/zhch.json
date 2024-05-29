@@ -985,7 +985,8 @@
     "report_of_recycled_waste_pickup_list": "回收物提取报表",
     "report_of_recycled_waste_collection_route":"实际路线列表",
     "report_of_logistic_service_vehicle": "物流车列表",
-    "report_of_logistic_service_recycled": "物流公司回收物报告"
+    "report_of_logistic_service_recycled": "物流公司回收物报告",
+    "report_of_recycled_waste_inventory_manufacturers": "回收物庫存報表"
   },
   "purchase_order": {
     "all_order": "所有订单",

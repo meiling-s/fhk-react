@@ -196,6 +196,20 @@ const DownloadArea = () => {
     }
   ]
 
+  const astdRows: {
+    id: number
+    report_name: string
+    typeFile: string
+    reportId: string
+  }[] = [
+    {
+      id: 1,
+      report_name: t('generate_report.report_of_recycled_waste_inventory_manufacturers'),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000010'
+    }
+  ]
+
   // set list based on role
   let rows: { id: number; report_name: string; typeFile: string }[] = []
   if (role === Roles.collectorAdmin) {
@@ -206,6 +220,8 @@ const DownloadArea = () => {
     rows = manufacturerRows
   } else if (role === Roles.customerAdmin) {
     rows = customerRows
+  } else if(role === Roles.astd){
+    rows = astdRows
   }
 
   useEffect(() => {
