@@ -133,6 +133,7 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
         headerProps={{
           title: t('general_settings.weight_tolerance'),
           submitText: t('add_warehouse_page.save'),
+          cancelText: '',
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
         }}

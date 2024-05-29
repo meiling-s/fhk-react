@@ -169,7 +169,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('general_settings.name')}>
+            <CustomField label={t('general_settings.name')} mandatory>
               <CustomTextField
                 id="monetary"
                 value={monetary}
@@ -181,7 +181,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
             </CustomField>
           </Box>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('common.remark')}>
+            <CustomField label={t('common.remark')} mandatory>
               <CustomTextField
                 id="remark"
                 value={remark}
@@ -193,7 +193,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
             </CustomField>
           </Box>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('common.description')}>
+            <CustomField label={t('common.description')} mandatory>
               <CustomTextField
                 id="description"
                 value={description}
