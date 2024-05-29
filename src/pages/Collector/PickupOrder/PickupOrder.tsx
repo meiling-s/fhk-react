@@ -328,44 +328,44 @@ const PickupOrders = () => {
     {
       value: '0',
       labelEng: 'CREATED',
-      labelSchi: '已创建',
-      labelTchi: '已創建'
+      labelSchi: '待处理',
+      labelTchi: '待處理'
     },
     {
       value: '1',
       labelEng: 'STARTED',
-      labelSchi: '开始',
-      labelTchi: '開始'
+      labelSchi: '处理中',
+      labelTchi: '處理中'
     },
     {
       value: '2',
       labelEng: 'CONFIRMED',
-      labelSchi: '确认的',
-      labelTchi: '確認的'
+      labelSchi: '已确认',
+      labelTchi: '已確認'
     },
     {
       value: '3',
       labelEng: 'REJECTED',
-      labelSchi: '拒绝',
-      labelTchi: '拒絕'
+      labelSchi: '已拒绝',
+      labelTchi: '已拒絕'
     },
     {
       value: '4',
       labelEng: 'COMPLETED',
-      labelSchi: '完全的',
-      labelTchi: '完全的'
+      labelSchi: '已完成',
+      labelTchi: '已完成'
     },
     {
       value: '5',
       labelEng: 'CLOSED',
-      labelSchi: '关闭',
-      labelTchi: '關閉'
+      labelSchi: '已取消',
+      labelTchi: '已取消'
     },
     {
       value: '6',
       labelEng: 'OUTSTANDING',
-      labelSchi: '杰出的',
-      labelTchi: '傑出的'
+      labelSchi: '已逾期',
+      labelTchi: '已逾期'
     },
     {
       value: '',
