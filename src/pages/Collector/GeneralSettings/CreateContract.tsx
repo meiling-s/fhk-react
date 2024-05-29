@@ -56,7 +56,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const { t } = useTranslation()
   const [contractNo, setContractNo] = useState('')
   const [referenceNumber, setReferenceNumber] = useState('')
-  const [contractStatus, setContractStatus] = useState(false)
+  const [contractStatus, setContractStatus] = useState(true)
   const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
   const [remark, setRemark] = useState('')
@@ -93,7 +93,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const resetData = () => {
     setContractNo('')
     setReferenceNumber('')
-    setContractStatus(false)
+    setContractStatus(true)
     setStartDate(dayjs())
     setEndDate(dayjs())
     setRemark('')
@@ -286,9 +286,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 value={contractNo}
                 disabled={action != 'add'}
                 placeholder={t('general_settings.name')}
-                onChange={(event) =>
-                  setContractNo(event.target.value)
-                }
+                onChange={(event) => setContractNo(event.target.value)}
                 error={checkString(contractNo)}
               />
             </CustomField>
@@ -308,8 +306,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField label={t('general_settings.state')} />
               <Switcher
-                onText={t('general_settings.activate')}
-                offText={t('general_settings.deactive')}
+                onText={t('status.active')}
+                offText={t('status.inactive')}
                 disabled={action === 'delete'}
                 defaultValue={contractStatus}
                 setState={(newValue) => {

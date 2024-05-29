@@ -185,8 +185,9 @@ function CreateCollectionPoint() {
   const checkTimePeriodNotInvalid = () => {
     return colPtRoutine?.routineContent.every((item) => {
       for (let index = 0; index < item.startTime.length; index++) {
-        const currStartTime = item.startTime[index]
-        const currEndTime = item.endTime[index]
+
+        const currStartTime = new Date(item.startTime[index])
+        const currEndTime = new Date(item.endTime[index])
 
         //console.log('checkTimePeriodNotInvalid', currStartTime, currEndTime)
         if (currEndTime < currStartTime) {
@@ -475,8 +476,30 @@ function CreateCollectionPoint() {
   }
 
   const handleSaveOnClick = async () => {
-    try {
+    try{
       const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+      const cp: updateCP = {
+        colPointTypeId: colType,
+        effFrmDate: dayjsToLocalDate(openingPeriod.startDate),
+        effToDate: dayjsToLocalDate(openingPeriod.endDate),
+        routine: colPtRoutine,
+        address: address,
+        gpsCode: toGpsCode(gpsCode[0], gpsCode[1]),
+        epdFlg: EPDEnable,
+        // extraServiceFlg: !serviceType,
+        serviceFlg: serviceFlg,
+        siteTypeId: siteType,
+        contractNo: contractNo,
+        noOfStaff: parseInt(staffNum),
+        status: status ? 'CREATED' : 'CLOSED',
+        premiseName: premiseName,
+        premiseTypeId: premiseType,
+        premiseRemark: premiseRemark,
+        normalFlg: true,
+        updatedBy: loginId,
+        colPtRecyc: recyclables,
+        roster: []
+      }
 
       if (validation.length == 0) {
         const cp: updateCP = {

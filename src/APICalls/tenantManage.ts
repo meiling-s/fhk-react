@@ -125,7 +125,7 @@ export const updateTenantRegInfo = async (
 }
 
 export const updateTenantStatus = async (
-  item: UpdateStatus,
+  item: any,
   tenantId: number
 ) => {
   try {

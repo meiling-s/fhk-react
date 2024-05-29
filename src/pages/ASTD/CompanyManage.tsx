@@ -821,7 +821,10 @@ function CompanyManage() {
       field: 'status',
       headerName: t('tenant.status'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return t(`status.${params.row.status.toLowerCase()}`).toUpperCase()
+      }
     },
     {
       field: 'type',
@@ -989,6 +992,10 @@ function CompanyManage() {
     setInvSendModal(false)
     setModalNotification(true)
     setSuccessSendInv(isSend)
+  }
+
+  const onChangeStatus = () => {
+    initCompaniesData()
   }
 
   const onInviteFormSubmit = async (
@@ -1184,6 +1191,7 @@ function CompanyManage() {
             drawerOpen={openDetail}
             handleDrawerClose={handleDrawerClose}
             tenantId={selectedTenanId}
+            onChangeStatus={onChangeStatus}
           />
         )}
       </Box>

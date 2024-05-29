@@ -535,12 +535,12 @@ function ShipmentManage() {
       headerName: t('check_in.receiver_addr'),
       width: 200
     },
-    {
-      field: 'status',
-      type: 'string',
-      headerName: t('check_in.receiver_addr'),
-      width: 200
-    }
+    // {
+    //   field: 'status',
+    //   type: 'string',
+    //   headerName: t('processRecord.status'),
+    //   width: 200
+    // }
   ]
 
   const updateQuery = (newQuery: Partial<queryCheckIn>) => {

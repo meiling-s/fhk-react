@@ -20,6 +20,8 @@ import {
 import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
 import i18n from '../../../setups/i18n'
+import CustomItemList from '../../../components/FormComponents/CustomItemList'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { useNavigate } from 'react-router-dom'
 
 interface PackagingUnit {
@@ -68,13 +70,31 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
   const [description, setDescription] = useState('')
   const [remark, setRemark] = useState('')
   const [packagingId, setPackagingId] = useState('')
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState('ACTIVE')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
   const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
   const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
   const navigate = useNavigate();
+
+  const statusList = () => {
+    const colList: il_item[] = [
+      {
+        name: t('status.active'),
+        id: 'ACTIVE'
+      },
+      {
+        name: t('status.inactive'),
+        id: 'INACTIVE'
+      },
+      {
+        name: t('status.deleted'),
+        id: 'DELETED'
+      }
+    ]
+    return colList
+  }
 
   useEffect(() => {
     if (action === 'edit' || action === 'delete') {
@@ -164,12 +184,12 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
           problem: formErr.alreadyExist,
           type: 'error'
         })
-    //   brNo.toString() == '' &&
-    //     tempV.push({
-    //       field: t('general_settings.reference_number'),
-    //       problem: formErr.empty,
-    //       type: 'error'
-    //     })
+      //   brNo.toString() == '' &&
+      //     tempV.push({
+      //       field: t('general_settings.reference_number'),
+      //       problem: formErr.empty,
+      //       type: 'error'
+      //     })
 
       setValidation(tempV)
     }
@@ -386,6 +406,17 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
               onChange={(event) => setRemark(event.target.value)}
               multiline={true}
               defaultValue={remark}
+            />
+          </CustomField>
+          <CustomField label={t('col.status')} mandatory={true}>
+            <CustomItemList
+              items={statusList()}
+              singleSelect={(selectedItem) => {
+                setStatus(selectedItem)
+              }}
+              editable={action != 'delete'}
+              defaultSelected={status}
+              needPrimaryColor={true}
             />
           </CustomField>
           <Grid item>

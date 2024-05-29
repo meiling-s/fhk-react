@@ -21,6 +21,7 @@ import {
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
 import EditIcon from '@mui/icons-material/Edit'
+import StatusCard from '../../../components/StatusCard'
 
 import { styles } from '../../../constants/styles'
 // import CreateVehicle from './CreateVehicle'
@@ -37,6 +38,7 @@ import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import CreatePackaging from './CreatePackaging'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { STATUS_CODE } from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 
@@ -193,6 +195,13 @@ const PackagingUnit: FunctionComponent = () => {
       headerName: t('common.remark'),
       width: 170,
       type: 'string'
+    },
+    {
+      field: 'status',
+      headerName: t('col.status'),
+      width: 170,
+      type: 'string',
+      renderCell: (params) => <StatusCard status={params.row?.status} />
     },
     {
       field: 'edit',

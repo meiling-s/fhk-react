@@ -85,7 +85,7 @@ const UserAccount: FunctionComponent = () => {
     },
     {
       field: 'status',
-      headerName: t('userAccount.status'),
+      headerName: t('col.status'),
       width: 300,
       type: 'string',
       renderCell: (params) => <StatusCard status={params.row?.status} />
