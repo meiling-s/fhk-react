@@ -805,7 +805,10 @@ function CompanyManage() {
       field: 'status',
       headerName: t('tenant.status'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return t(`status.${params.row.status.toLowerCase()}`).toUpperCase()
+      }
     },
     {
       field: 'type',
@@ -915,7 +918,7 @@ function CompanyManage() {
   const handleFilterCompanies = async (searchWord: string) => {
     if (searchWord != '') {
       const tenantId = parseInt(searchWord)
-      const result = await searchTenantById(page - 1, pageSize, tenantId)
+      const result = await searchTenantById(0, pageSize, tenantId)
       const data = result?.data.content
       if (data?.length > 0) {
         const tenantList = mappingTenantData(data)
@@ -959,6 +962,10 @@ function CompanyManage() {
     setInvSendModal(false)
     setModalNotification(true)
     setSuccessSendInv(isSend)
+  }
+
+  const onChangeStatus = () => {
+    initCompaniesData()
   }
 
   const onInviteFormSubmit = async (
@@ -1143,6 +1150,7 @@ function CompanyManage() {
             drawerOpen={openDetail}
             handleDrawerClose={handleDrawerClose}
             tenantId={selectedTenanId}
+            onChangeStatus={onChangeStatus}
           />
         )}
       </Box>

@@ -450,6 +450,8 @@
     "number_of_acc": "帳戶數量",
     "photo_blury ": "照片模糊",
     "bussniess_error": "商業編號不匹配",
+    "closed_tenant_title": "您確定將租戶狀態變更為「已關閉」嗎 ?",
+    "closes_success" :"關閉租戶狀態成功",
     "invite_form": {
       "company_number": "公司編號 ",
       "company_category": "公司類別",
@@ -500,7 +502,8 @@
       "please_enter_the_reason": "請輸入原因",
       "no_preference": "無特別偏好",
       "fifo": "先進先出（FIFO）",
-      "lifo": "後進先出（LIFO）"
+      "lifo": "後進先出（LIFO）",
+      "default_lang": "預設語言"
     }
   },
   "report": {
