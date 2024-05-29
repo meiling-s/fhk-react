@@ -93,7 +93,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
     </Modal>
   )
 }
-type fieldName = 'receiverName' | 'contactName' | 'contactNo' | 'paymentType' | 'details';
+type fieldName = 'receiverName' | 'contactName' | 'contactNo' | 'paymentType' | 'details' | 'senderName';
 
 type ErrorsField = Record<
   fieldName,
@@ -161,7 +161,7 @@ const PurchaseOrderCreateForm = ({
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const { logisticList, weightUnits, recycType, decimalVal } = useContainer(CommonTypeContainer)
-
+  const [prevLang, setPrevLang] = useState('zhhk')
   const [manuList, setManuList] = useState<manuList[]>()
   const navigate = useNavigate()
   const [errors, setErrors] = useState(
@@ -204,6 +204,7 @@ const PurchaseOrderCreateForm = ({
     }
   ]
 
+  const [currentPayment, setCurrentPayment] = useState<{value: string, description: string}>({value: '', description: ''});
   const logisticCompany = logisticList
   const [recycbleLocId, setRecycbleLocId] = useState<CreatePicoDetail | null>(null)
 
@@ -503,6 +504,65 @@ const PurchaseOrderCreateForm = ({
     }
     
   };
+
+  const getCurrentValueManufacturer = (field: fieldName) => {
+    if(!manuList) return
+    if(formik.values?.[field] && i18n.language !== prevLang){
+      for(let item of manuList){
+        if(Languages.ENUS === prevLang && item.manufacturerNameEng === formik.values?.[field]){
+            if(i18n.language === Languages.ZHCH){
+              onChangeContent(field, item.manufacturerNameSchi)
+            } else if(i18n.language === Languages.ZHHK){
+              onChangeContent(field, item.manufacturerNameTchi)
+            } 
+        } else if(Languages.ZHCH === prevLang && item.manufacturerNameSchi === formik.values?.[field]){
+            if(i18n.language === Languages.ENUS){
+              onChangeContent(field, item.manufacturerNameEng)
+            } else if(i18n.language === Languages.ZHHK){
+              onChangeContent(field, item.manufacturerNameTchi)
+            } 
+        } else if(Languages.ZHHK === prevLang && item.manufacturerNameTchi === formik.values?.[field]){
+            if(i18n.language === Languages.ENUS){
+              onChangeContent(field, item.manufacturerNameEng)
+            } else if(i18n.language === Languages.ZHHK){
+              onChangeContent(field, item.manufacturerNameSchi)
+            }
+        }
+      }
+     
+    }
+  }
+
+  const getCurrentValuePaymentType = () => {
+    if(!paymentTypes) return
+    const paymentType = paymentTypes.find(item => item.value === currentPayment.value);
+    if(paymentType){
+      formik.setFieldValue('paymentType', paymentType.value)
+      if(Languages.ENUS === i18n.language){
+        setCurrentPayment({value: paymentType.value, description: paymentType.paymentNameEng})
+      } else if(Languages.ZHCH === i18n.language){
+        setCurrentPayment({value: paymentType.value, description: paymentType.paymentNameSchi})
+      } else {
+        setCurrentPayment({value: paymentType.value, description: paymentType.paymentNameTchi})
+      }
+    }
+  }
+
+  useEffect(() => {
+    if(!manuList) return
+    if(formik.values.receiverName && i18n.language !== prevLang){
+      getCurrentValueManufacturer('receiverName')
+    }
+
+    if(formik.values.senderName && i18n.language !== prevLang){
+      getCurrentValueManufacturer('senderName')   
+    }
+
+    if(currentPayment.value&& i18n.language !== prevLang){
+      getCurrentValuePaymentType()   
+    }
+    setPrevLang(i18n.language)
+  }, [i18n.language])
   
   const onChangeContent = (field: fieldName, value: any) => {
     if(value === '' || value === 0){
@@ -769,21 +829,36 @@ const PurchaseOrderCreateForm = ({
                       disablePortal
                       id="paymentType"
                       sx={{ width: 400 }}
-                      defaultValue={formik.values.paymentType}
-                      value={formik.values.paymentType}
+                      // defaultValue={formik.values.paymentType}
+                      value={currentPayment}
+                      getOptionLabel={(option) => option.description}
                       options={
                         paymentTypes.map(payment => {
                           if(i18n.language === Languages.ENUS) {
-                            return payment.paymentNameEng
+                            return {
+                              value: payment.value,
+                              description: payment.paymentNameEng
+                            }
                           } else if(i18n.language === Languages.ZHCH){
-                            return payment.paymentNameSchi
+                            return {
+                              value: payment.value,
+                              description:payment.paymentNameSchi
+                            }
                           } else {
-                            return payment.paymentNameTchi
+                            return {
+                              value: payment.value,
+                              description:payment.paymentNameTchi
+                            }
                           }
                         })
                       }
                       onChange={(event, value) => {
-                        onChangePaymentType(value)
+                        if(value) {
+                          setCurrentPayment(value)
+                          formik.setFieldValue('paymentType', value.value)
+                          // onChangePaymentType(value?.value)
+                        }
+                       
                       }}
                       renderInput={(params) => (
                         <TextField
