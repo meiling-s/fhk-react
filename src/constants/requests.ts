@@ -1406,10 +1406,15 @@ export const GET_DECIMAL_VALUE: AxiosRequestConfig = {
   url: `api/v1/administrator/decimalVal`
 }
 
+export const GET_ALL_DECIMAL_VALUE: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/all/decimalVal`
+}
+
 export const UPDATE_DECIMAL_VALUE = (
   decimalValId: number
 ): AxiosRequestConfig => ({
-  method: 'put',
+  method: 'patch',
   url: `api/v1/administrator/decimalVal/${decimalValId}`
 })
 
@@ -1418,10 +1423,15 @@ export const GET_DATE_FORMAT: AxiosRequestConfig = {
   url: `api/v1/administrator/dateFormat`
 }
 
+export const GET_ALL_DATE_FORMAT: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/all/dateFormat`
+}
+
 export const UPDATE_DATE_FORMAT = (
   dateFormatId: number
 ): AxiosRequestConfig => ({
-  method: 'put',
+  method: 'patch',
   url: `api/v1/administrator/dateFormat/${dateFormatId}`
 })
 
