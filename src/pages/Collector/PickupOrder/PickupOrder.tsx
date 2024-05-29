@@ -24,7 +24,7 @@ import { editPickupOrderStatus } from '../../../APICalls/Collector/pickupOrder/p
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate } from '../../../utils/utils'
 import TableOperation from "../../../components/TableOperation";
-import { localStorgeKeyName } from '../../../constants/constant'
+import { Languages, localStorgeKeyName } from '../../../constants/constant'
 
 type Approve = {
   open: boolean
@@ -225,6 +225,13 @@ interface Option {
   label: string;
 }
 
+interface StatusPickUpOrder {
+  value: string
+  labelEng: string,
+  labelSchi: string,
+  labelTchi: string
+}
+
 const PickupOrders = () => {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -317,38 +324,54 @@ const PickupOrders = () => {
   const [reasonList, setReasonList] = useState<any>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
-  const statusList: Option[] = [
-    {
-      value: '',
-      label: 'any'
-    },
+  const statusList: StatusPickUpOrder[] = [
     {
       value: '0',
-      label: 'CREATED'
+      labelEng: 'CREATED',
+      labelSchi: '待处理',
+      labelTchi: '待處理'
     },
     {
       value: '1',
-      label: 'STARTED'
+      labelEng: 'STARTED',
+      labelSchi: '处理中',
+      labelTchi: '處理中'
     },
     {
       value: '2',
-      label: 'CONFIRMED'
+      labelEng: 'CONFIRMED',
+      labelSchi: '已确认',
+      labelTchi: '已確認'
     },
     {
       value: '3',
-      label: 'REJECTED'
+      labelEng: 'REJECTED',
+      labelSchi: '已拒绝',
+      labelTchi: '已拒絕'
     },
     {
       value: '4',
-      label: 'COMPLETED'
+      labelEng: 'COMPLETED',
+      labelSchi: '已完成',
+      labelTchi: '已完成'
     },
     {
       value: '5',
-      label: 'CLOSED'
+      labelEng: 'CLOSED',
+      labelSchi: '已取消',
+      labelTchi: '已取消'
     },
     {
       value: '6',
-      label: 'OUTSTANDING'
+      labelEng: 'OUTSTANDING',
+      labelSchi: '已逾期',
+      labelTchi: '已逾期'
+    },
+    {
+      value: '',
+      labelEng: 'any',
+      labelSchi: '任何',
+      labelTchi: '任何'
     },
   ]
 
@@ -458,13 +481,13 @@ const PickupOrders = () => {
    recycType?.forEach((item) =>{
     var name = ""
     switch (i18n.language) {
-      case 'enus':
+      case Languages.ENUS:
         name = item.recyclableNameEng
         break
-      case 'zhch':
+      case Languages.ZHCH:
         name = item.recyclableNameSchi
         break
-      case 'zhhk':
+      case Languages.ZHHK:
         name = item.recyclableNameTchi
         break
       default:
@@ -478,7 +501,7 @@ const PickupOrders = () => {
    })
 
    setRecycItem(recycItems)
-  }, [recycType]);
+  }, [i18n.language]);
 
   const getDeliveryDate = (row: PickupOrder) => {
     if( row.picoType === 'AD_HOC') {
@@ -532,7 +555,7 @@ const PickupOrders = () => {
     {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticName"},
     {label:t('pick_up_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderCompany'), field:"senderName"},
     {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recycType"},
-    {label:t('pick_up_order.filter.status'),width:'14%',options:statusList, field:"status"}
+    {label:t('pick_up_order.filter.status'),width:'14%',options:getStatusOpion(), field:"status"}
     
   ]
 
@@ -562,7 +585,10 @@ const PickupOrders = () => {
       value: item.id,
       label: item.name,
     }));
-  
+    options.push({
+      value: '',
+      label: 'any'
+    })
     return options;
   }
   const getRowSpacing = React.useCallback((params: GridRowSpacingParams) => {
@@ -601,6 +627,29 @@ const PickupOrders = () => {
       updateQuery({[keyName]: value})
     }
   }
+
+  function getStatusOpion() {
+    const options: Option[] = statusList.map((item) => {
+      if(i18n.language === Languages.ENUS){
+        return {
+          value: item.value,
+          label: item.labelEng
+        }
+      } else if(i18n.language === Languages.ZHCH){
+        return{
+          value: item.value,
+          label: item.labelSchi
+        }
+      } else {
+        return{
+          value: item.value,
+          label: item.labelTchi
+        }
+      }
+    })
+    return options
+  }
+
   return (
     <>
     <ToastContainer/>
