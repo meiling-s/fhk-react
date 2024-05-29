@@ -503,7 +503,8 @@
       "please_enter_the_reason": "Please enter the reason",
       "no_preference": "No preference",
       "fifo": "First in first out (FIFO)",
-      "lifo": "Last in, first out (LIFO)"
+      "lifo": "Last in, first out (LIFO)",
+      "default_lang": "Default language"
     }
   },
   "report": {

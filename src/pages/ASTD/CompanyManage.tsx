@@ -805,7 +805,10 @@ function CompanyManage() {
       field: 'status',
       headerName: t('tenant.status'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return t(`status.${params.row.status.toLowerCase()}`).toUpperCase()
+      }
     },
     {
       field: 'type',
