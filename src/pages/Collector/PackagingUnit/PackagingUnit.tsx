@@ -21,6 +21,7 @@ import {
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
 import EditIcon from '@mui/icons-material/Edit'
+import StatusCard from '../../../components/StatusCard'
 
 import { styles } from '../../../constants/styles'
 // import CreateVehicle from './CreateVehicle'
@@ -37,6 +38,7 @@ import { returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import CreatePackaging from './CreatePackaging'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
 
 function createPackagingUnit(
   id: number,
@@ -87,7 +89,7 @@ const PackagingUnit: FunctionComponent = () => {
   const [engNameList, setEngNameList] = useState<string[]>([])
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
-
+  
   useEffect(() => {
     initPackagingUnitList()
     getTenantData()
@@ -176,6 +178,13 @@ const PackagingUnit: FunctionComponent = () => {
       headerName: t('common.remark'),
       width: 170,
       type: 'string'
+    },
+    {
+      field: 'status',
+      headerName: t('col.status'),
+      width: 170,
+      type: 'string',
+      renderCell: (params) => <StatusCard status={params.row?.status} />
     },
     {
       field: 'edit',

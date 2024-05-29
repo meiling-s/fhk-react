@@ -682,7 +682,7 @@
     "pleaseEnterNumber": "请输入编号",
     "pleaseEnterName": "请输入名称",
     "pleaseEnterEmailAddress": "请输入电子邮箱地址",
-    "active": "激活",
+    "active": "启用",
     "inactive": "未激活",
     "suspend": "暂停",
     "deleted": "已删除",

@@ -39,6 +39,7 @@ import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import CreatePackagingUnit from './CreatePackagingUnit'
+import StatusCard from '../../../components/StatusCard'
 
 interface PackagingUnit {
   packagingTypeId: string
@@ -131,6 +132,13 @@ const GeneralSettings: FunctionComponent = () => {
       headerName: t('packaging_unit.remark'),
       width: 100,
       type: 'string'
+    },
+    {
+      field: 'status',
+      headerName: t('col.status'),
+      width: 170,
+      type: 'string',
+      renderCell: (params) => <StatusCard status={params.row?.status} />
     },
     {
       field: 'edit',
