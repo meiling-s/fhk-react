@@ -1,7 +1,5 @@
-import axios from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { localStorgeKeyName } from '../constants/constant'
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
-import { showErrorToast } from "../utils/utils";
 
 const axiosInstance = axios.create()
 const refreshTokenAxiosInstance = axios.create({
@@ -30,35 +28,30 @@ const isTokenExpired = (authToken: string) => {
 
 const getNewToken = async () => {
     try {
+        // console.log('getNewToken start')
         const refreshToken = localStorage.getItem(localStorgeKeyName.refreshToken) || ''
-
         const req = await refreshTokenAxiosInstance.post(`/api/v1/administrator/refreshToken/${refreshToken}`);
-
         const data = req.data;
-
         localStorage.setItem(localStorgeKeyName.keycloakToken, data.access_token);
         localStorage.setItem(localStorgeKeyName.refreshToken, data.refresh_token);
-
+        // console.log('getNewToken finished')
         return data.access_token;
     } catch (e: any) {
-        console.log('Failed to refresh the token: ', e.response.data);
-        localStorage.clear();
-        window.location.href = '/';
+        console.log('Failed to refresh the token: ', e.response.data)
         throw e
     }
 }
 
 axiosInstance.interceptors.request.use(
     async (config) => {
-        const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || '';
-        config.headers.AuthToken = accessToken;
-        // console.log('isTokenExpired: ' +  isTokenExpired(accessToken))
+        const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
+        config.headers.AuthToken = accessToken
         if (config.url !== '/api/v1/administrator/login' && isTokenExpired(accessToken)) {
             try {
-                const newAccessToken = await getNewToken();
-                config.headers.AuthToken = newAccessToken;
+                await getNewToken();
+                config.headers.AuthToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || ''   // Tricky not using the result. Instead trust the updated one in storage
             } catch (error) {
-            throw error;
+                throw error;
             }
         }
         
@@ -78,17 +71,14 @@ axiosInstance.interceptors.response.use(
 
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
-        
-            const newAccessToken = await getNewToken();
-
-            originalRequest.headers.AuthToken = newAccessToken;
+            await getNewToken();
+            originalRequest.headers.AuthToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || ''   // Tricky not using the result. Instead trust the updated one in storage
             return axios(originalRequest);
         }
         
         if (error.response.status === 403) {
-            const newAccessToken = await getNewToken();
-        
-            originalRequest.headers.AuthToken = newAccessToken;
+            await getNewToken();
+            originalRequest.headers.AuthToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || ''   // Tricky not using the result. Instead trust the updated one in storage
             return axios(originalRequest);
         }
         
@@ -96,9 +86,6 @@ axiosInstance.interceptors.response.use(
             localStorage.clear();
             window.location.href = '/';
         }
-        // else if (error?.response?.data?.message !== '') {
-        //     showErrorToast(error?.response?.data?.message)
-        // }
         
         return Promise.reject(error);
     }
