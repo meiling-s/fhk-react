@@ -21,7 +21,7 @@ const DownloadArea = () => {
   const [selectedRow, setSelectedRow] = useState<{
     id: number
     report_name: string
-    typeFile: string,
+    typeFile: string
     reportId: string
   }>({ id: 0, report_name: '', typeFile: '', reportId: '' })
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
@@ -64,62 +64,80 @@ const DownloadArea = () => {
     }
   ]
 
+  //report for each role
+
   const collectorsRows: {
     id: number
     report_name: string
     typeFile: string
+    reportId: string
   }[] = [
-    {
-      id: 1,
-      report_name: t('generate_report.recycling_point_record'),
-      typeFile: 'XLS'
-    },
-    {
-      id: 2,
-      report_name: t('generate_report.Waste_ecords_daily_'),
-      typeFile: 'XLS'
-    },
-    {
-      id: 3,
-      report_name: t('generate_report.recycling_plant_request_records'),
-      typeFile: 'XLS'
-    },
-    {
-      id: 4,
-      report_name: t('generate_report.recycling_classification_processing'),
-      typeFile: 'XLS'
-    },
-    {
-      id: 5,
-      report_name: t('generate_report.recycling_classification_statistics'),
-      typeFile: 'XLS'
-    },
+    // {
+    //   id: 1,
+    //   report_name: t('generate_report.recycling_point_record'),
+    //   typeFile: 'XLS',
+    //   reportId: ''
+    // },
+    // {
+    //   id: 2,
+    //   report_name: t('generate_report.Waste_ecords_daily_'),
+    //   typeFile: 'XLS',
+    //   reportId: ''
+    // },
+    // {
+    //   id: 3,
+    //   report_name: t('generate_report.recycling_plant_request_records'),
+    //   typeFile: 'XLS',
+    //   reportId: ''
+    // },
+    // {
+    //   id: 4,
+    //   report_name: t('generate_report.recycling_classification_processing'),
+    //   typeFile: 'XLS',
+    //   reportId: ''
+    // },
+    // {
+    //   id: 5,
+    //   report_name: t('generate_report.recycling_classification_statistics'),
+    //   typeFile: 'XLS',
+    //   reportId: ''
+    // },
     {
       id: 6,
       report_name: t('generate_report.recycling_point_establishment'),
-      typeFile: 'WORD'
+      typeFile: 'WORD',
+      reportId: ''
     },
     {
       id: 7,
       report_name: t('generate_report.collection_point_establishment'),
-      typeFile: 'XLS'
+      typeFile: 'XLS',
+      reportId: ''
     },
     {
       id: 8,
       report_name: t('generate_report.recyle_waste_collection'),
-      typeFile: 'XLS'
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000002'
     },
     {
       id: 9,
       report_name: t('generate_report.daily_waste_collection'),
-      typeFile: 'XLS'
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000004'
+    },
+    {
+      id: 10,
+      report_name: t('generate_report.recycled_waste_inspection'),
+      typeFile: 'WORD',
+      reportId: 'downloadWordFnRpt000009'
     }
   ]
 
   const logisticRows: {
     id: number
     report_name: string
-    typeFile: string,
+    typeFile: string
     reportId: string
   }[] = [
     {
@@ -130,7 +148,9 @@ const DownloadArea = () => {
     },
     {
       id: 2,
-      report_name: t('generate_report.report_of_recycled_waste_collection_route'),
+      report_name: t(
+        'generate_report.report_of_recycled_waste_collection_route'
+      ),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000001'
     },
@@ -145,18 +165,47 @@ const DownloadArea = () => {
       report_name: t('generate_report.report_of_logistic_service_recycled'),
       typeFile: 'XLS',
       reportId: ''
-    },
+    }
   ]
 
-  // todo : can add another title report list
+  const manufacturerRows: {
+    id: number
+    report_name: string
+    typeFile: string
+    reportId: string
+  }[] = [
+    {
+      id: 1,
+      report_name: t('generate_report.recycled_waste_request_list_manufacturer'),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000011'
+    }
+  ]
+
+  const customerRows: {
+    id: number
+    report_name: string
+    typeFile: string
+    reportId: string
+  }[] = [
+    {
+      id: 1,
+      report_name: t('generate_report.recycled_waste_request_list_customer'),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000008'
+    }
+  ]
 
   // set list based on role
-  let rows: { id: number; report_name: string; typeFile: string }[] = [];
-
-  if(role === Roles.collectorAdmin){
+  let rows: { id: number; report_name: string; typeFile: string }[] = []
+  if (role === Roles.collectorAdmin) {
     rows = collectorsRows
-  } else if(role === Roles.logisticAdmin){
+  } else if (role === Roles.logisticAdmin) {
     rows = logisticRows
+  } else if (role === Roles.manufacturerAdmin) {
+    rows = manufacturerRows
+  } else if (role === Roles.customerAdmin) {
+    rows = customerRows
   }
 
   useEffect(() => {
@@ -178,7 +227,7 @@ const DownloadArea = () => {
         id: params?.row?.id,
         report_name: params?.row?.report_name,
         typeFile: params?.row?.typeFile,
-        reportId: params?.row?.reportId,
+        reportId: params?.row?.reportId
       }
     })
   }
@@ -191,7 +240,7 @@ const DownloadArea = () => {
         id: params?.row?.id,
         report_name: params?.row?.report_name,
         typeFile: params?.row?.typeFile,
-        reportId: params?.row?.reportId,
+        reportId: params?.row?.reportId
       }
     })
   }

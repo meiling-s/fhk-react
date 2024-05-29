@@ -26,7 +26,12 @@ dayjs.extend(utc)
 interface DownloadModalProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
-  selectedItem?: { id: number; report_name: string; typeFile: string, reportId: string }
+  selectedItem?: {
+    id: number
+    report_name: string
+    typeFile: string
+    reportId: string
+  }
   staffId: string
 }
 
@@ -41,7 +46,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
   const { tenantId, decodeKeycloack } = returnApiToken()
   const [downloads, setDownloads] = useState<{ date: string; url: any }[]>([])
-  const realmApiRoute = localStorage.getItem(localStorgeKeyName.realmApiRoute) || '';
+  const realmApiRoute =
+    localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
 
   useEffect(() => {
     const isAfter = dayjs(endDate).isAfter(startDate)
@@ -72,47 +78,47 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
 
   const getReport = async () => {
     let url = ''
-    switch (selectedItem?.id) {
-      case 1:
-        url = generateCollectorLink(selectedItem.reportId)
-        break
-      case 2:
-        url = generateCollectorLink(selectedItem.reportId)
-        break
-      case 3:
-        break
-      case 4:
-        break
-      case 5:
-        break
-      case 6:
-        url =
-          window.baseURL.collector +
-          `api/v1/collectors/downloadWord/${decodeKeycloack}?from=${dayjs(
-            startDate
-          ).format('YYYY-MM-DD 00:00:00')}&to=${dayjs(endDate).format(
-            'YYYY-MM-DD 23:59:59'
-          )}`
-        break
-      case 7:
-        url =
-          window.baseURL.collector +
-          `api/v1/collectors/downloadExcel/${tenantId}?frmDate=${dayjs(
-            startDate
-          ).format('YYYY-MM-DD 00:00:00')}&toDate=${dayjs(endDate).format(
-            'YYYY-MM-DD 23:59:59'
-          )}`
-        break
-      case 8:
-        url = generateCollectorLink('downloadWordFnRpt000009')
-        break
-      case 9:
-        break
-    }
+    if (selectedItem) {
+      switch (selectedItem?.id) {
+        // case 1:
+        //   url = generateCollectorLink(selectedItem.reportId)
+        //   break
+        // case 2:
+        //   url = generateCollectorLink(selectedItem.reportId)
+        //   break
+        // case 3:
+        //   break
+        // case 4:
+        //   break
+        // case 5:
+        //   break
+        case 6:
+          url =
+            window.baseURL.collector +
+            `api/v1/collectors/downloadWord/${decodeKeycloack}?from=${dayjs(
+              startDate
+            ).format('YYYY-MM-DD 00:00:00')}&to=${dayjs(endDate).format(
+              'YYYY-MM-DD 23:59:59'
+            )}`
+          break
+        case 7:
+          url =
+            window.baseURL.collector +
+            `api/v1/collectors/downloadExcel/${tenantId}?frmDate=${dayjs(
+              startDate
+            ).format('YYYY-MM-DD 00:00:00')}&toDate=${dayjs(endDate).format(
+              'YYYY-MM-DD 23:59:59'
+            )}`
+          break
+        default:
+          url = generateCollectorLink(selectedItem.reportId)
+          break
+      }
 
-    setDownloads((prev) => {
-      return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
-    })
+      setDownloads((prev) => {
+        return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
+      })
+    }
   }
 
   const onCloseDrawer = () => {
