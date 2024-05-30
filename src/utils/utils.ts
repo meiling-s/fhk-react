@@ -260,3 +260,20 @@ export const randomBackgroundColor = () :string => {
   const bgColor = "rgb(" + x + "," + y + "," + z + ")";
   return bgColor
 }
+
+export const getLanguageCode = (lang: string) : string => {
+  let languageCode:string = ''
+  switch(lang){
+    case 'enus':
+      languageCode = 'EN-US';
+      break;
+    case 'zhch':
+      languageCode = 'ZH-CH';
+      break;
+    default:
+      languageCode = 'ZH-HK'
+      break
+  }
+
+  return languageCode
+}
