@@ -23,7 +23,7 @@ export const getAllUserManufacturer = async (page: number, size: number) => {
     return response;
   } catch (e) {
     console.error("Get all User Account failed:", e);
-    return null;
+    throw(e)
   }
 };
 

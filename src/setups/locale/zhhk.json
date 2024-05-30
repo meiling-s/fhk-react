@@ -26,7 +26,12 @@
     "approveFailed": "批准請求失敗",
     "rejectSuccess": "成功拒絕請求",
     "rejectFailed": "拒絕請求失敗",
-    "details": "詳情"
+    "details": "詳情",
+    "maintenance": "系統正在維護中，請稍後。",
+    "pageNotFound": "找不到網頁",
+    "errorMessage": "錯誤訊息",
+    "message": "留言",
+    "statusCode": "狀態碼"
   },
   "col": {
     "createCP": "建立回收點",

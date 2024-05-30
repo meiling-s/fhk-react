@@ -202,3 +202,8 @@ export type weightUnit = {
     weight: number
     description: true
 }
+
+export type errorState = {
+    code: number,
+    message: string
+}

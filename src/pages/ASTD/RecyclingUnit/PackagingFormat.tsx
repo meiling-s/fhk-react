@@ -28,7 +28,7 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
-import { returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import {
     createWarehouse,
     getWarehouseById,
@@ -43,6 +43,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createPackagingUnit, createRecyc, editPackagingUnit } from '../../../APICalls/ASTD/recycling'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface PackagingUnitProps {
     createdAt: string
@@ -87,6 +88,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const [remark, setRemark] = useState('')
     const [packagingId, setPackagingId] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const navigate = useNavigate();
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
@@ -228,9 +230,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 showSuccessToast(t('notify.successCreated'))
                 onSubmitData('packaging')
             }
-        } catch (error) {
-            console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+        } catch (error:any) {
+            const {state} =  extractError(error)
+            if(state.code === STATUS_CODE[503] ){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('errorCreated.errorCreated'))
+            }
+
         }
     }
     const editPackagingData = async (packagingForm: any, value: string) => {
@@ -244,9 +252,14 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     showSuccessToast(t('notify.successDeleted'))
                 }
             }
-        } catch (error) {
-            console.error(error)
-            showErrorToast(t('notify.errorEdited'))
+        } catch (error:any) {
+            const {state} = extractError(error)
+            if(state.code === STATUS_CODE[503] ){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('notify.errorEdited'))
+            }
         }
     }
 

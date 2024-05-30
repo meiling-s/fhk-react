@@ -28,8 +28,8 @@ export const getAllDenialReason = async (page: number, size: number) => {
 
     return response
   } catch (e) {
-    console.error('Get all denial reason failed:', e)
-    return null
+    console.error("Get all denial reason failed:", e);
+    throw(e)
   }
 }
 
@@ -60,8 +60,8 @@ export const getAllDenialReasonByFunctionId = async (
 
     return response
   } catch (e) {
-    console.error('Get all denial reason failed:', e)
-    return null
+    console.error("Get all denial reason failed:", e);
+    throw(e)
   }
 }
 
@@ -121,8 +121,8 @@ export const createDenialReason = async (data: CreateDenialReason) => {
 
     return response
   } catch (e) {
-    console.error('create denial reason failed:', e)
-    return null
+    console.error("create denial reason failed:", e);
+    throw(e)
   }
 }
 
@@ -141,7 +141,7 @@ export const editDenialReason = async (
 
     return response
   } catch (e) {
-    console.error('update denial reason failed:', e)
-    return null
+    console.error("update denial reason failed:", e);
+    throw(e)
   }
 }

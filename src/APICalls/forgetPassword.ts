@@ -43,7 +43,7 @@ export const getForgetPasswordRequest = async () => {
     return response
   } catch (e) {
     console.error('get forget password request list failed:', e)
-    return null
+    throw(e)
   }
 }
 

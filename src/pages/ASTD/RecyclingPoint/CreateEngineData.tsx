@@ -14,11 +14,13 @@ import {
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
-import { returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, deleteEngineData, editEngineData, sendEngineData, sendWeightUnit } from '../../../APICalls/ASTD/recycling'
 import { styles } from '../../../constants/styles'
+import { useNavigate } from 'react-router-dom'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface engineDataProps {
     createdAt: string
@@ -68,6 +70,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const [remark, setRemark] = useState('')
     const [selectedService, setSelectedService] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const navigate = useNavigate();
 
     const serviceTypeSelect = [
         {
@@ -188,9 +191,14 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                     handleOnSubmitData('premiseType')
                     showSuccessToast(t('notify.successDeleted'))
                 }
-            } catch (error) {
-                console.log(error)
-                showErrorToast(t('notify.errorDeleted'))
+            } catch (error:any) {
+                const { state } = extractError(error)
+                if(state.code === STATUS_CODE[503] ){
+                    navigate('/maintenance')
+                } else {
+                    console.log(error)
+                    showErrorToast(t('notify.errorDeleted'))
+                }
             }
         }
     }
@@ -231,9 +239,14 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 handleOnSubmitData('premiseType')
                 showSuccessToast(t('notify.successCreated'))
             }
-        } catch (error) {
-            console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+        } catch (error:any) {
+            const {state} =  extractError(error);
+            if(state.code === STATUS_CODE[503] ){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('errorCreated.errorCreated'))
+            }
         }
     }
 
@@ -245,9 +258,14 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                     handleOnSubmitData('premiseType')
                     showSuccessToast(t('notify.SuccessEdited'))
                 }
-            } catch (error) {
-                console.error(error)
-                showErrorToast(t('notify.errorEdited'))
+            } catch (error:any) {
+                const {state} =  extractError(error);
+                if(state.code === STATUS_CODE[503] ){
+                    navigate('/maintenance')
+                } else {
+                    console.error(error)
+                    showErrorToast(t('notify.errorEdited'))
+                }
             }
         }
     }

@@ -127,6 +127,11 @@ export const TypeRecycables:TypeRecycable = {
 
 export const indexMonths: string[] = ['January','February','March','April','May','June','Juli','August','September','October','November','December']
 
+export const MAINTENANCE_STATUS = {
+  NOT_UNDER_MAINTENANCE : 'NOT_UNDER_MAINTENANCE',
+  UNDER_MAINTENANCE : 'UNDER_MAINTENANCE'
+}
+
 export const STATUS_CODE = {
   200: 200,
   201: 201,

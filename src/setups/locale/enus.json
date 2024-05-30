@@ -26,7 +26,12 @@
     "approveFailed": "Approve request failed",
     "rejectSuccess": "Reject request successfully",
     "rejectFailed": "Reject request failed",
-    "details": "Details"
+    "details": "Details",
+    "maintenance": "The system is under maintenance, please wait.",
+    "pageNotFound": "Page Not Found",
+    "errorMessage": "Error Message",
+    "message": "Message",
+    "statusCode": "status Code"
   },
   "col": {
     "createCP": "Create collection point",

@@ -37,7 +37,7 @@ import { getAllContract } from '../../../APICalls/Collector/contracts'
 import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
-import { returnApiToken } from '../../../utils/utils'
+import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
 import { GET_ALL_RECYCLE_TYPE, GET_RECYC_TYPE } from '../../../constants/requests'
@@ -51,8 +51,9 @@ import { deleteRecyc, deleteSubRecyc, getAllPackagingUnit, getRecycCode, getWeig
 import WeightFormat from './WeightFormat'
 import PackagingFormat from './PackagingFormat'
 import CodeFormat from './CodeFormat'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import CustomButton from '../../../components/FormComponents/CustomButton'
+import { useNavigate } from 'react-router-dom'
 
 interface CodeFormatProps {
   createdAt: string
@@ -162,6 +163,7 @@ const RecyclingUnit: FunctionComponent = () => {
   const [isMainCategory, setMainCategory] = useState<boolean>(false)
   const [delFormModal, setDeleteModal] = useState<boolean>(false)
   const [switchValue, setSwitchValue] = useState<any>(null)
+  const navigate = useNavigate();
 
   useEffect(() => {
     initRecycTypeList()
@@ -171,35 +173,63 @@ const RecyclingUnit: FunctionComponent = () => {
   }, [page])
 
   const initRecycTypeList = async () => {
-    var response = await axiosInstance({
-      baseURL: window.baseURL.administrator,
-      ...GET_RECYC_TYPE
-      // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
-    })
-    const data = response.data
-    setRecyclableType(data)
+    try {
+      var response = await axiosInstance({
+        baseURL: window.baseURL.administrator,
+        ...GET_RECYC_TYPE
+        // headers: { Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`, },
+      })
+      const data = response.data
+      setRecyclableType(data)
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+    }
   }
 
   const initRecycCode = async () => {
-    const result = await getRecycCode(page - 1, pageSize)
-    const data = result?.data
-
-
-    setCode(data)
+    try {
+      const result = await getRecycCode(page - 1, pageSize)
+      const data = result?.data
+  
+  
+      setCode(data)
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+    }
   }
 
   const initPackagingUnit = async () => {
+   try {
     const result = await getAllPackagingUnit(page - 1, pageSize)
     const data = result?.data.content
 
     setPackagingUnit(data)
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const initWeightUnit = async () => {
-    const result = await getWeightUnit(page - 1, pageSize)
-    const data = result?.data
-
-    setWeightUnit(data)
+    try {
+      const result = await getWeightUnit(page - 1, pageSize)
+      const data = result?.data
+  
+      setWeightUnit(data)
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+    }
   }
 
   const codeColumns: GridColDef[] = [
@@ -558,9 +588,15 @@ const RecyclingUnit: FunctionComponent = () => {
           handleOnSubmitData('recycle')
           setDeleteModal(false)
         }
-      } catch (error) {
-        console.error(error)
-        showErrorToast(t('notify.errorDeleted'))
+      } catch (error:any) {
+        const {state} = extractError(error)
+        if(state.code === STATUS_CODE[503] ){
+          navigate('/maintenance')
+        } else {
+          console.error(error)
+          showErrorToast(t('notify.errorDeleted'))
+        }
+       
       }
     }
   }

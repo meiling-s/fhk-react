@@ -8,10 +8,11 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { styles } from '../../../constants/styles'
 import { useTranslation } from 'react-i18next'
-import { showErrorToast, showSuccessToast, returnApiToken } from '../../../utils/utils'
-import { localStorgeKeyName } from "../../../constants/constant";
+import { showErrorToast, showSuccessToast, returnApiToken, extractError } from '../../../utils/utils'
+import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import { createCurrency, deleteCurrency, editCurrency } from '../../../APICalls/ASTD/currrency'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
+import { useNavigate } from 'react-router-dom'
 
 interface CurrencyListProps {
   createdAt: string
@@ -47,7 +48,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<{field: string; error: string}[]>([])
   const [showError, setShowError] = useState<boolean>(false)
-
+  const navigate = useNavigate();
   
   useEffect (() => {
     resetData()
@@ -90,9 +91,15 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
           showSuccessToast(t('notify.successDeleted'))
           resetData()
         }
-      } catch (error) {
+      } catch (error:any) {
         console.error(error)
-        showErrorToast(t('notify.errorDeleted'))
+        const {state} =  extractError(error);
+        if(state.code === STATUS_CODE[503] ){
+          navigate('/maintenance')
+        } else {
+          showErrorToast(t('notify.errorDeleted'))
+        }
+       
       }
     }
   }
@@ -127,9 +134,14 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         showSuccessToast(t('notify.successCreated'))
         resetData()
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error(error)
-      showErrorToast(t('errorCreated.errorCreated'))
+      const {state} = extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      } else {
+        showErrorToast(t('errorCreated.errorCreated'))
+      }
     }
   }
 
@@ -143,9 +155,14 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         showSuccessToast(t('notify.SuccessEdited'))
         resetData()
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error(error)
+      const {state} =  extractError(error)
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      } else {
         showErrorToast(t('errorCreated.errorEdited'))
+      }
     }
    }
   }

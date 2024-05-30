@@ -27,9 +27,9 @@ import {
   queryPurchaseOrder
 } from '../../../interfaces/purchaseOrder'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, extractError } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
-import { Languages, Roles, Status, localStorgeKeyName } from '../../../constants/constant'
+import { Languages, Roles, STATUS_CODE, Status, localStorgeKeyName } from '../../../constants/constant'
 import dayjs from 'dayjs'
 
 type Approve = {
@@ -423,19 +423,26 @@ const PurchaseOrder = () => {
   ]
 
   const initPurchaseOrderRequest = async () => {
-    setPurchaseOrder([])
-    setTotalData(0)
-    let result = null
-
-    result = await getAllPurchaseOrder(page - 1, pageSize, query)
-
-    const data = result?.data.content
-    if (data && data.length > 0) {
-      setPurchaseOrder(data)
-    } else {
+    try {
       setPurchaseOrder([])
+      setTotalData(0)
+      let result = null
+
+      result = await getAllPurchaseOrder(page - 1, pageSize, query)
+
+      const data = result?.data.content
+      if (data && data.length > 0) {
+        setPurchaseOrder(data)
+      } else {
+        setPurchaseOrder([])
+      }
+      setTotalData(result?.data.totalPages)
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
-    setTotalData(result?.data.totalPages)
   }
 
   const showApproveModal = async (row: any) => {
@@ -464,31 +471,38 @@ const PurchaseOrder = () => {
   }
 
   const getRejectReason = async () => {
-    let result = await getPurchaseOrderReason()
+    try {
+      let result = await getPurchaseOrderReason()
 
-    if (result && result?.data && result?.data.content.length > 0) {
-      let reasonName = ''
-      switch (i18n.language) {
-        case 'enus':
-          reasonName = 'reasonNameEng'
-          break
-        case 'zhch':
-          reasonName = 'reasonNameSchi'
-          break
-        case 'zhhk':
-          reasonName = 'reasonNameTchi'
-          break
-        default:
-          reasonName = 'reasonNameEng'
-          break
-      }
-      result?.data.content.map(
-        (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
-          item.id = item.reasonId
-          item.name = item[reasonName]
+      if (result && result?.data && result?.data.content.length > 0) {
+        let reasonName = ''
+        switch (i18n.language) {
+          case 'enus':
+            reasonName = 'reasonNameEng'
+            break
+          case 'zhch':
+            reasonName = 'reasonNameSchi'
+            break
+          case 'zhhk':
+            reasonName = 'reasonNameTchi'
+            break
+          default:
+            reasonName = 'reasonNameEng'
+            break
         }
-      )
-      setReasonList(result?.data.content)
+        result?.data.content.map(
+          (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
+            item.id = item.reasonId
+            item.name = item[reasonName]
+          }
+        )
+        setReasonList(result?.data.content)
+      }
+    } catch (error:any) {
+      const { state, realm } = extractError(error)
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 

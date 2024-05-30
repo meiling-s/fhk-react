@@ -17,7 +17,7 @@ export const getDecimalValue = async () => {
     return response
   } catch (e: any) {
     console.error('Get Currency Failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -46,6 +46,6 @@ export const updateDecimalValue = async (data: any, decimalValId: number) => {
     return response
   } catch (e: any) {
     console.error('Update Decimal Failed:', e)
-    return null
+    throw(e)
   }
 }
