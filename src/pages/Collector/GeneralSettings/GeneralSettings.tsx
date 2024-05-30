@@ -43,10 +43,12 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
-dayjs.extend(utc)
-dayjs.extend(timezone)
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type TableRow = {
   id: number
