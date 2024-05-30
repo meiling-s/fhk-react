@@ -144,7 +144,7 @@ const DownloadArea = () => {
       id: 1,
       report_name: t('generate_report.report_of_recycled_waste_pickup_list'),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000003'
+      reportId: 'downloadExcelFnRpt000001'
     },
     {
       id: 2,
@@ -152,19 +152,19 @@ const DownloadArea = () => {
         'generate_report.report_of_recycled_waste_collection_route'
       ),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000001'
+      reportId: 'downloadExcelFnRpt000003'
     },
     {
       id: 3,
       report_name: t('generate_report.report_of_logistic_service_vehicle'),
       typeFile: 'XLS',
-      reportId: ''
+      reportId: 'downloadExcelFnRpt000005'
     },
     {
       id: 4,
       report_name: t('generate_report.report_of_logistic_service_recycled'),
       typeFile: 'XLS',
-      reportId: ''
+      reportId: 'downloadExcelFnRpt000006'
     }
   ]
 
