@@ -163,6 +163,7 @@ const Router = () => {
             path="/astd/vehicleDashboard"
             element={<AstdVehicleDashboard />}
           />
+          <Route path="/astd/report" element={<Report />} />
         </Route>
 
         <Route element={<MainLayout />}>
