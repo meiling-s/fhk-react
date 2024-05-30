@@ -27,9 +27,9 @@ export const getcolPointRecyclablesDashboard = async (frmDate: string, toDate: s
             }
         })
         return response
-    } catch (e) {
+    } catch (e:any) {
         console.error('getcolPointRecyclablesDashboard failed:', e)
-      return null
+        throw(e)
     }
 }
 
@@ -45,9 +45,9 @@ export const getWeightRecyclablesColPointDashboard = async (frmDate: string, toD
             }
         })
         return response.data
-    } catch (e) {
+    } catch (e:any) {
         console.error('getWeightRecyclablesColPointDashboard failed:', e)
-      return null
+        throw(e)
     }
 }
 
@@ -63,9 +63,9 @@ export const getSalesProductAnalysis = async (frmDate: string, toDate: string) =
             }
         })
         return response?.data
-    } catch (e) {
+    } catch (e:any) {
         console.error('getSalesProductAnalysis failed:', e)
-      return null
+        throw(e)
     }
 }
 
@@ -81,9 +81,9 @@ export const getRecycProcessAnalysis = async (frmDate: string, toDate: string) =
             }
         })
         return response?.data
-    } catch (e) {
+    } catch (e:any) {
         console.error('getrecycProcessAnalysis failed:', e)
-      return null
+        throw(e)
     }
 }
 
@@ -99,9 +99,9 @@ export const getTotalSalesProductAnalysis = async (frmDate: string, toDate: stri
             }
         })
         return response?.data
-    } catch (e) {
+    } catch (e:any) {
         console.error('getrecycProcessAnalysis failed:', e)
-      return null
+        throw(e)
     }
 }
 
@@ -117,9 +117,9 @@ export const getTotalSalesProductByDistrictAnalysis = async (frmDate: string, to
             }
         })
         return response?.data
-    } catch (e) {
+    } catch (e:any) {
         console.error('getTotalSalesProductByDistrictAnalysis failed:', e)
-      return null
+        throw(e)
     }
 }
 
@@ -137,6 +137,6 @@ export const getWeightRecyclablesColPointAstd = async (tenandId: string, frmDate
         return response
     } catch (error:any) {
         console.log('getWeightRecyclablesColPointDashboard', error?.response.data.message)
-      return error
+        throw(error)
     }
 }

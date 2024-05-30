@@ -24,7 +24,7 @@ export const getCapacityWarehouse = async (
     return response
   } catch (e) {
     console.error(`Get capacity warehouse ${warehouseId} failed:`, e)
-    return null
+    throw(e)
   }
 }
 
@@ -65,7 +65,7 @@ export const getCheckInWarehouse = async (warehouseId: number, table: string) =>
     return response
   } catch (e) {
     console.error(`Get capacity warehouse ${warehouseId} checkin  failed:`, e)
-    return null
+    throw(e)
   }
 }
 
@@ -98,7 +98,7 @@ export const getCheckInOutWarehouse = async (warehouseId: number, table: string)
     return response
   } catch (e) {
     console.error(`Get capacity warehouse ${warehouseId} checkinout failed:`, e)
-    return null
+    throw(e)
   }
 }
 

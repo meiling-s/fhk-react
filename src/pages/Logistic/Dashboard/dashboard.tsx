@@ -27,7 +27,7 @@ import {
   DropOffPoint
 } from '../../../interfaces/dashboardLogistic'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { displayCreatedDate, displayLocalDate } from '../../../utils/utils'
+import { displayCreatedDate, displayLocalDate, extractError } from '../../../utils/utils'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import { PackagingUnit } from '../../../interfaces/packagingUnit'
 import { getVehicleLogistic } from '../../../APICalls/Logistic/vehicles'
@@ -36,8 +36,8 @@ import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import i18n from '../../../setups/i18n'
-import { localStorgeKeyName } from '../../../constants/constant'
-
+import { useNavigate } from 'react-router-dom'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 interface PuAndDropOffMarker {
   id: number
   type: string
@@ -73,6 +73,7 @@ const VehicleDashboard = () => {
     localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
   const [selectedTable, setSelectedTable] = useState<string>(logisticTableId)
   const todayDate = dayjs().format('YYYY-MM-DD')
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (vehicleCategory != null) {
@@ -124,12 +125,19 @@ const VehicleDashboard = () => {
   }
 
   const initPackageList = async () => {
+   try {
     const result = await getAllPackagingUnit(0, 1000)
     const data = result?.data
 
     if (data) {
       setPackagingMapping(data.content)
     }
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const getPackageName = (packagingTypeId: string) => {

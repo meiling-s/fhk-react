@@ -18,6 +18,9 @@ import {
 import { getAllStaffTitle } from '../../../APICalls/Collector/staffTitle'
 import { StaffTitle as StaffTitleItem } from '../../../interfaces/staffTitle'
 import CreateStaffTitle from './CreateStaffTitle'
+import { useNavigate } from 'react-router-dom'
+import { STATUS_CODE } from '../../../constants/constant'
+import { extractError } from '../../../utils/utils'
 
 function createStaffTitle(
   titleId: string,
@@ -64,8 +67,10 @@ const StaffTitle: FunctionComponent = () => {
   const [engNameList, setEngNameList] = useState<string[]>([])
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
+  const navigate = useNavigate();
 
   const initStaffTitleList = async () => {
+   try {
     const result = await getAllStaffTitle(page - 1, pageSize)
     const data = result?.data
     // setStaffTitleList(data);
@@ -101,6 +106,12 @@ const StaffTitle: FunctionComponent = () => {
       setStaffTitleList(staffTitleMapping)
       setTotalData(data.totalPages)
     }
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
   useEffect(() => {
     initStaffTitleList()

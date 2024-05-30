@@ -20,6 +20,9 @@ import { DenialReason as DenialReasonItem } from "../../../interfaces/denialReas
 import CreateDenialReason from "./CreateDenialReason";
 import { getAllFunction } from "../../../APICalls/Collector/userGroup";
 import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
+import { useNavigate } from "react-router-dom";
+import { extractError } from "../../../utils/utils";
+import { STATUS_CODE } from "../../../constants/constant";
 
 function createDenialReason(
   reasonId: number,
@@ -71,7 +74,8 @@ const DenialReason: FunctionComponent = () => {
   const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
   const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
-
+  const navigate =  useNavigate()
+  
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
     initFunctionList()
@@ -79,6 +83,7 @@ const DenialReason: FunctionComponent = () => {
 
 
   const initFunctionList = async () => {
+   try {
     const result = await getAllFunction();
     const data = result?.data;
     if (data.length > 0) {
@@ -113,42 +118,56 @@ const DenialReason: FunctionComponent = () => {
     })
     setFunctionList(data);
     setFunctionOptions(options)
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    } 
+   }
   };
 
   const initDenialReasonList = async () => {
-    const result = await getAllDenialReason(page - 1, pageSize);
-    const data = result?.data;
-    if (data) {
-      var denialReasonMapping: DenialReasonItem[] = [];
-      data.content.map((item: any) => {
-        const functionItem = functionList.find((el) => el.functionId === item.functionId)
-        if (functionItem) {
-          item.functionName = functionItem.name
-        }
-        denialReasonMapping.push(
-          createDenialReason(
-            item?.reasonId,
-            item?.tenantId,
-            item?.reasonNameTchi,
-            item?.reasonNameSchi,
-            item?.reasonNameEng,
-            item?.description,
-            item?.remark,
-            item?.functionId,
-            item?.functionName,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
-          )
-        );
-      });
-      setDenialReasonList(denialReasonMapping);
-      setTotalData(data.totalPages);
+    try {
+      const result = await getAllDenialReason(page - 1, pageSize);
+      const data = result?.data;
+      if (data) {
+        var denialReasonMapping: DenialReasonItem[] = [];
+        data.content.map((item: any) => {
+          const functionItem = functionList.find((el) => el.functionId === item.functionId)
+          if (functionItem) {
+            item.functionName = functionItem.name
+          }
+          denialReasonMapping.push(
+            createDenialReason(
+              item?.reasonId,
+              item?.tenantId,
+              item?.reasonNameTchi,
+              item?.reasonNameSchi,
+              item?.reasonNameEng,
+              item?.description,
+              item?.remark,
+              item?.functionId,
+              item?.functionName,
+              item?.status,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
+          );
+        });
+        setDenialReasonList(denialReasonMapping);
+        setTotalData(data.totalPages);
+      }
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      } 
     }
   };
   const searchByFunctionId = async (functionId: number) => {
+   try {
     const result = await getAllDenialReasonByFunctionId(page - 1, pageSize, functionId);
     const data = result?.data;
     if (data) {
@@ -180,6 +199,12 @@ const DenialReason: FunctionComponent = () => {
       setDenialReasonList(denialReasonMapping);
       setTotalData(data.totalPages);
     }
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   };
   useEffect(() => {
     initFunctionList();

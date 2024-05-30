@@ -29,6 +29,8 @@ import ApproveRejectForgetPass from './ApproveRejectForgetPass'
 import StatusCard from '../../../components/StatusCard'
 import { styles } from '../../../constants/styles'
 import { getForgetPasswordRequest } from '../../../APICalls/forgetPassword'
+import { extractError } from '../../../utils/utils'
+import { STATUS_CODE } from '../../../constants/constant'
 
 type TableRow = {
   id: number
@@ -128,20 +130,34 @@ const UserAccount: FunctionComponent = () => {
   }
 
   async function fetchDataUserAccount() {
-    const result = await getAllUserAccount()
-    const accountlist: string[] = []
-    if (result?.data) {
-      setUserAccountItems(result.data)
-      result.data.map((item: any) => accountlist.push(item.loginId))
-      setUserList(accountlist)
+    try {
+      const result = await getAllUserAccount()
+      const accountlist: string[] = []
+      if (result?.data) {
+        setUserAccountItems(result.data)
+        result.data.map((item: any) => accountlist.push(item.loginId))
+        setUserList(accountlist)
+      }
+    } catch (error:any) {
+      const { state , realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 
   async function initForgetPassList() {
-    const result = await getForgetPasswordRequest()
-    if (result?.data) {
-      setForgetPassList(result?.data)
-      console.log('initForgetPassList', result?.data)
+    try {
+      const result = await getForgetPasswordRequest()
+      if (result?.data) {
+        setForgetPassList(result?.data)
+        console.log('initForgetPassList', result?.data)
+      }
+    } catch (error:any) {
+      const { state , realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 

@@ -20,6 +20,9 @@ import { getAllVehicles } from '../../../APICalls/Collector/vehicles'
 import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { extractError } from '../../../utils/utils'
+import { STATUS_CODE } from '../../../constants/constant'
 
 type TableRow = {
   id: number
@@ -55,12 +58,14 @@ const Vehicle: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [plateList, setPlateList] = useState<string[]>([])
+  const navigate = useNavigate();
 
   useEffect(() => {
     initVehicleList()
   }, [page])
 
   const initVehicleList = async () => {
+   try {
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
     // console.log("initVehicleList", data)
@@ -90,6 +95,12 @@ const Vehicle: FunctionComponent = () => {
       setVehicleList(vehicleMapping)
       setTotalData(data.totalPages)
     }
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const columns: GridColDef[] = [

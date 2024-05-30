@@ -12,6 +12,6 @@ export const changePassword = async (data: any) => {
     return response
   } catch (e) {
     console.error('change password failed:', e)
-    return null
+    throw(e)
   }
 }

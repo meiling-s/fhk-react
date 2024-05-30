@@ -15,7 +15,7 @@ import {
 } from '../../themes/icons'
 import { useNavigate } from 'react-router-dom'
 import { changePassword } from '../../APICalls/changePassword'
-import { localStorgeKeyName } from '../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
 import { styles as constantStyle } from '../../constants/styles'
 import { useTranslation } from 'react-i18next'
 
@@ -181,7 +181,10 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
               setErrorUpdate(true)
             }
           }
-        } catch (error) {
+        } catch (error:any) {
+          if(error?.response?.status === STATUS_CODE[503]){
+            return navigate('/maintenance')
+          }
           console.error(error)
           setErrorUpdate(true)
         }
