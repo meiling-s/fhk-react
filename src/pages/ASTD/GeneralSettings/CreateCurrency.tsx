@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { showErrorToast, showSuccessToast, returnApiToken, extractError } from '../../../utils/utils'
 import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import { createCurrency, deleteCurrency, editCurrency } from '../../../APICalls/ASTD/currrency'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { useNavigate } from 'react-router-dom'
 
 interface CurrencyListProps {
@@ -46,11 +47,13 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   const [description, setDescription] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<{field: string; error: string}[]>([])
+  const [showError, setShowError] = useState<boolean>(false)
   const navigate = useNavigate();
   
   useEffect (() => {
     resetData()
-    if (action === 'edit') {
+    setShowError(false)
+    if (action === 'edit' || action === 'delete') {
       if (selectedItem !== null && selectedItem !== undefined) {
         setMonetary(selectedItem.monetary)
         setRemark(selectedItem.remark)
@@ -66,12 +69,13 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   }
 
   const checkString = (s: string) => {
-    if (!trySubmited) {
-      //before first submit, don't check the validation
-      return false
-    }
     return s == ''
   }
+
+  const isInputFieldsEmpty = () => {
+    const isEmpty = !monetary || !description || !remark;
+    return isEmpty;
+  };
 
   const handleDelete = async () => {
     const token = returnApiToken()
@@ -111,9 +115,10 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       createdBy: loginId,
       updatedBy: loginId
     }
-
-    if (validation.length == 0) {
-      action == 'add' ? createCurrencyData(currencyProps) : editCurrencyData(currencyProps)
+    if (isInputFieldsEmpty()){
+      setShowError(true)
+    } else if (validation.length === 0) {
+      action === 'add' ? createCurrencyData(currencyProps) : editCurrencyData(currencyProps)
 
       setValidation([])
     } else {
@@ -181,41 +186,62 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('general_settings.name')}>
+            <CustomField label={t('general_settings.name')} mandatory>
               <CustomTextField
                 id="monetary"
                 value={monetary}
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.name')}
                 onChange={(event) => setMonetary(event.target.value)}
-                error={checkString(monetary)}
+                error={showError && checkString(monetary)}
               />
             </CustomField>
           </Box>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('common.remark')}>
+            <CustomField label={t('common.remark')} mandatory>
               <CustomTextField
                 id="remark"
                 value={remark}
                 disabled={action === 'delete'}
                 placeholder={t('common.remark')}
                 onChange={(event) => setRemark(event.target.value)}
-                error={checkString(remark)}
+                error={showError && checkString(remark)}
               />
             </CustomField>
           </Box>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('common.description')}>
+            <CustomField label={t('common.description')} mandatory>
               <CustomTextField
                 id="description"
                 value={description}
                 disabled={action === 'delete'}
                 placeholder={t('common.description')}
                 onChange={(event) => setDescription(event.target.value)}
-                error={checkString(description)}
+                error={showError && checkString(description)}
               />
             </CustomField>
           </Box>
+          {showError && checkString(monetary) && (
+              <FormErrorMsg
+                field={t('general_settings.name')}
+                errorMsg={t('form.error.shouldNotBeEmpty')}
+                type={'error'}
+              />
+            )}
+          {showError && checkString(remark) && (
+              <FormErrorMsg
+                field={t('common.remark')}
+                errorMsg={t('form.error.shouldNotBeEmpty')}
+                type={'error'}
+              />
+            )}
+          {showError && checkString(description) && (
+            <FormErrorMsg
+              field={t('common.description')}
+              errorMsg={t('form.error.shouldNotBeEmpty')}
+              type={'error'}
+            />
+          )}
         </Box>
       </RightOverlayForm>
     </div>

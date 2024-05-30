@@ -1,6 +1,8 @@
 import axiosInstance from '../../constants/axiosInstance'
 import {
-    GET_DATE_FORMAT, UPDATE_DATE_FORMAT,
+    GET_ALL_DATE_FORMAT,
+    GET_DATE_FORMAT, 
+    UPDATE_DATE_FORMAT,
 } from '../../constants/requests'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import { returnApiToken } from '../../utils/utils';
@@ -16,6 +18,20 @@ export const getDateFormat = async () => {
   } catch (e: any) {
     console.error('Get Currency Failed:', e)
     throw(e)
+  }
+}
+
+export const getAllDateFormat = async () => {
+  try {
+    const response = await axiosInstance({
+        baseURL: window.baseURL.administrator,
+      ...GET_ALL_DATE_FORMAT,
+    });
+
+    return response
+  } catch (e: any) {
+    console.error('Get Currency Failed:', e)
+    return null
   }
 }
 

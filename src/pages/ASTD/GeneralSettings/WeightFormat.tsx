@@ -73,12 +73,14 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
   const { t } = useTranslation()
   const [weightFormat, setWeightFormat] = useState('')
   const [weightFormatId, setWeightFormatId] = useState(0)
+  const [showError, setShowError] = useState<boolean>(false)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const navigate = useNavigate();
   
   useEffect (() => {
     if (action === 'edit') {
       if (weightformat) {
+        setShowError(false)
         setWeightFormat(weightformat.weightVariance)
         setWeightFormatId(weightformat.weightVarianceId)
       }
@@ -91,11 +93,7 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
   
 
   const checkString = (s: string) => {
-    if (!trySubmited) {
-      //before first submit, don't check the validation
-      return false
-    }
-    return s == ''
+    return s === ''
   }
 
   const handleSubmit = () => {
@@ -107,7 +105,11 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
       updatedBy: loginId
     }
 
-    if (formData) {
+    if (weightFormat.trim() === '') {
+      showErrorToast(t('notify.errorCreated')); 
+      setShowError(true);
+      return;
+    } else if (formData) {
       handleUpdateWeight(formData)
     }
   }
@@ -143,6 +145,7 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
         headerProps={{
           title: t('general_settings.weight_tolerance'),
           submitText: t('add_warehouse_page.save'),
+          cancelText: '',
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
         }}
@@ -157,10 +160,19 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
                 disabled={action === 'delete'}
                 placeholder={t('general_settings.weight_tolerance')}
                 onChange={(event) => setWeightFormat(event.target.value)}
-                error={checkString(weightFormat)}
+                error={showError}
               />
             </CustomField>
           </Box>
+          {showError && (
+            <FormErrorMsg
+              key={0}
+              field={t('general_settings.weight_tolerance')}
+              errorMsg={t('form.error.shouldNotBeEmpty')}
+              type={'error'}
+            />
+            )
+          }
         </Box>
       </RightOverlayForm>
     </div>
