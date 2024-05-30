@@ -63,12 +63,12 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     if (isAfter || isSame) {
       getReport()
     }
-  }, [startDate, endDate])
+  }, [startDate, endDate, i18n.language])
 
   useEffect(() => {
     //defaultReport()
     getReport()
-  }, [selectedItem?.id])
+  }, [selectedItem?.id, i18n.language])
 
   const formatToUtc = (value: dayjs.Dayjs) => {
     return dayjs(value).utc().format('YYYY-MM-DDTHH:mm:ss[Z]')
@@ -124,6 +124,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           break
       }
 
+      console.log("urllll", url)
+
       setDownloads((prev) => {
         return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
       })
@@ -143,6 +145,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
         headerProps={{
           title: t('report.report'),
           subTitle: selectedItem?.report_name,
+          onCloseHeader: onCloseDrawer,
           isButtonCancel: false,
           isButtonFinish: false
         }}
