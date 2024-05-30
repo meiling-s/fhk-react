@@ -411,14 +411,6 @@ const ASTDSettings: FunctionComponent = () => {
                 }
               }}
             />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
           </Box>
         </div>
       </Box>
