@@ -12,7 +12,7 @@ import CustomSearchField from '../../../components/TableComponents/CustomSearchF
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import EditProcessRecord from './EditProcesRecord'
-import { format } from '../../../constants/constant'
+import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant'
 import dayjs from 'dayjs'
 import StatusCard from '../../../components/StatusCard'
 import {
@@ -24,8 +24,9 @@ import { getAllProcessRecord , getProcessIn} from '../../../APICalls/Collector/p
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate } from '../../../utils/utils'
+import { displayCreatedDate, extractError } from '../../../utils/utils'
 import { ProcessType } from '../../../interfaces/common'
+import { useNavigate } from 'react-router-dom'
 
 
 interface Option {
@@ -74,6 +75,7 @@ const ProcessRecord: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
+  const navigate = useNavigate();
 
   useEffect(() => {
     initProcessRecord()
@@ -81,43 +83,55 @@ const ProcessRecord: FunctionComponent = () => {
 
 
   const getProcessInDetail = async (processInId: number) =>{
+   try {
     const result = await getProcessIn(processInId)
     if (result) {
       // console.log("getProcessInDetail",result)
       return result.data
     }
+   } catch (error) {
+    throw(error)
+   }
   }
 
   const initProcessRecord = async () => {
-    setTotalData(0)
-    setProcesRecords([])
-    const result = await getAllProcessRecord(page - 1, pageSize)
-    const data = result?.data
-    if (data) {
-      var recordsMapping: any[] = []
-      await Promise.all(data.content.map(async (item: any) => {
-        const processIn: any = await getProcessInDetail(item.processInId); // Await here
-        const processName = mappingProcessName( processIn?.processTypeId)
-        recordsMapping.push(
-          createProcessRecord(
-            item?.processOutId,
-            item?.status,
-            item?.processInId,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.processoutDetail,
-            item?.createdAt,
-            item?.updatedAt,
-            processIn ? processIn?.address : "-",
-            processIn ? processIn?.processTypeId : null,
-            processName || ''
-          )
-        );
-      }));
+    try {
+      setTotalData(0)
+      setProcesRecords([])
+      const result = await getAllProcessRecord(page - 1, pageSize)
+      if (result.status === STATUS_CODE[200]) {
+        const data = result?.data
+        var recordsMapping: any[] = []
+        await Promise.all(data.content.map(async (item: any) => {
+          const processIn: any = await getProcessInDetail(item.processInId); // Await here
+          const processName = mappingProcessName( processIn?.processTypeId)
+          recordsMapping.push(
+            createProcessRecord(
+              item?.processOutId,
+              item?.status,
+              item?.processInId,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.processoutDetail,
+              item?.createdAt,
+              item?.updatedAt,
+              processIn ? processIn?.address : "-",
+              processIn ? processIn?.processTypeId : null,
+              processName || ''
+            )
+          );
+        }));
 
-      setTotalData(data.totalPages)
-      setProcesRecords(recordsMapping)
-      setFilteredProcessRecords(recordsMapping)
+        setTotalData(data.totalPages)
+        setProcesRecords(recordsMapping)
+        setFilteredProcessRecords(recordsMapping)
+      }
+    } catch (error:any) {
+      const {state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+      
     }
   }
 

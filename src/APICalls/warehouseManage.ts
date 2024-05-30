@@ -44,7 +44,7 @@ export const getAllWarehouse = async (page: number, size: number) => {
 
     return response
   } catch (e: any) {
-    return null
+    throw(e)
   }
 }
 
@@ -64,7 +64,7 @@ export const getWarehouseById = async (warehouseId: number) => {
     return response
   } catch (e: any) {
     console.error('Get a warehouse failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -84,7 +84,7 @@ export const createWarehouse = async (data: any) => {
     return response
   } catch (e) {
     console.error('Create a warehouse failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -104,7 +104,7 @@ export const editWarehouse = async (data: any, warehouseId: number) => {
     return response
   } catch (e) {
     console.error('Edit a warehouse failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -155,7 +155,7 @@ export const getRecycleType = async () => {
     return response
   } catch (e) {
     console.error('Get recycle type failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -227,6 +227,6 @@ export const astdSearchWarehouse = async (page: number, size: number, searchValu
       window.location.href = '/'
     }
 
-    return null
+    throw(error)
   }
 }

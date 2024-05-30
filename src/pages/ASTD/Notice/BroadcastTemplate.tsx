@@ -9,12 +9,12 @@ import dayjs from "dayjs";
 import { styles } from "../../../constants/styles";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
+import { extractError, getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
 import CustomField from "../../../components/FormComponents/CustomField";
 import CustomTextField from "../../../components/FormComponents/CustomTextField";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 import { toast } from 'react-toastify'
-import { Languages, localStorgeKeyName } from "../../../constants/constant";
+import { Languages, STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
 interface TemplateProps {
@@ -103,6 +103,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
     }
 
     const getDetailTemplate = async () => {
+      try {
         const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
         if (notif) {
             setNotifTemplate(prev => {
@@ -122,6 +123,12 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
             })
             setCurrentLanguage(notif.lang)
         }
+      } catch (error:any) {
+        const {state, realm} =  extractError(error);
+        if(state.code === STATUS_CODE[503] ){
+          navigate('/maintenance')
+        }
+      }
     }
 
     useEffect(() => {

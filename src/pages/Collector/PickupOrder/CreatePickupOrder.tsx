@@ -10,8 +10,8 @@ import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { returnApiToken, showErrorToast } from '../../../utils/utils'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
@@ -109,6 +109,20 @@ const CreatePickupOrder = () => {
       )
   })
 
+
+  const submitPickUpOrder = async (values: CreatePO) => {
+    try {
+      return await createPickUpOrder(values)
+    } catch (error) {
+      const { state, realm} = extractError(error);
+      if(state.code == STATUS_CODE[503]){
+        navigate('/maintenance')
+      } else {
+        return null
+      }
+    }
+  }
+
   const currentDate = new Date().toISOString()
   const createPickupOrder = useFormik({
     initialValues: {
@@ -134,7 +148,7 @@ const CreatePickupOrder = () => {
     validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow
-      const result = await createPickUpOrder(values)
+      const result = await submitPickUpOrder(values)
       const data = result?.data
       if (data) {
         //console.log('all pickup order: ', data)

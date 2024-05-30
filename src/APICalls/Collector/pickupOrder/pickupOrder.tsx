@@ -29,7 +29,7 @@ import axiosInstance from '../../../constants/axiosInstance'
         return response
       } catch (e) {
         // console.error('Get all collection point failed:', e);
-        return null;
+        throw(e);
       }
     
   }
@@ -61,7 +61,7 @@ import axiosInstance from '../../../constants/axiosInstance'
       return response;
     } catch (e) {
       // console.error('Get all collection point failed:', e);
-      return null;
+      throw(e);
     }
   };
   
@@ -75,7 +75,7 @@ import axiosInstance from '../../../constants/axiosInstance'
       return response
     } catch (e) {
       // console.error('Get all vehicle failed:', e)
-      return null
+      throw(e)
     }
   }
 
@@ -114,7 +114,7 @@ import axiosInstance from '../../../constants/axiosInstance'
         return response
     } catch (e) {
         // console.error('Create pick up order failed:', e);
-        return null;
+        throw(e)
     }
 
 }
@@ -138,7 +138,7 @@ export const editPickupOrder = async (pickupOrderId: string, data:EditPo) => {
       return response
   } catch (e) {
       // console.error('Update pickup order  failed:', e);
-      return null;
+      throw(e)
   }
 
 }
@@ -201,7 +201,7 @@ export const getAllReason = async () => {
     return response
   } catch (e) {
     // console.error('Get all vehicle failed:', e)
-    return null
+   throw(e)
   }
 }
 

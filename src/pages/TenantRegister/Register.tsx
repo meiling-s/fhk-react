@@ -25,6 +25,8 @@ import { styles as constantStyle } from '../../constants/styles'
 import { RegisterItem } from '../../interfaces/account'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import { extractError } from '../../utils/utils'
+import { STATUS_CODE } from '../../constants/constant'
 
 interface FormValues {
   [key: string]: string
@@ -127,19 +129,26 @@ const RegisterTenant = () => {
   }, [])
 
   async function initRegisterForm() {
-    if (tenantId) {
-      const result = await getTenantById(parseInt(tenantId))
-      const data = result?.data
-      console.log('initRegisterForm', data)
-      setTenantIdNumber(data?.tenantId)
-      setFormValues({
-        company_category: data?.tenantType,
-        company_cn_name: data?.companyNameTchi,
-        company_en_name: data?.companyNameEng,
-        company_number: data?.brNo
-      })
-      setEDPImages(data?.EPDImages)
-      console.log(result?.data)
+    try {
+      if (tenantId) {
+        const result = await getTenantById(parseInt(tenantId))
+        const data = result?.data
+        console.log('initRegisterForm', data)
+        setTenantIdNumber(data?.tenantId)
+        setFormValues({
+          company_category: data?.tenantType,
+          company_cn_name: data?.companyNameTchi,
+          company_en_name: data?.companyNameEng,
+          company_number: data?.brNo
+        })
+        setEDPImages(data?.EPDImages)
+        console.log(result?.data)
+      }
+    } catch (error:any) {
+      const {state, realm} = extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        return navigate('/maintenance')
+      }
     }
   }
 

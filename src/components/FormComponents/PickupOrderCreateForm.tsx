@@ -12,7 +12,7 @@ import {
   Typography
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { styles } from '../../constants/styles'
 import CustomField from './CustomField'
 import CustomSwitch from './CustomSwitch'
@@ -132,7 +132,7 @@ const PickupOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType, recycType } =
+  const { logisticList, contractType, vehicleType, recycType, getLogisticlist } =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
 
@@ -200,6 +200,10 @@ const PickupOrderCreateForm = ({
     }
   }
   //-- end custom style --
+
+  useEffect(() => {
+    getLogisticlist()
+  }, [])
 
   const handleCloses = () => {
     setIsEditing(false)
