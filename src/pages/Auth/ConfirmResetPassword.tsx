@@ -9,11 +9,11 @@ const ConfirmNewPassword = () => {
   const titlePage = '你已成功申請密碼重設'
   const msgConfirmation = '新密碼經批核後將以SMS 形式傳送給你'
   const backToLogin = '回到登入'
-
   const backToLoginPage = () => {
     navigate('/')
   }
 
+  
   return (
     <Box
       sx={{

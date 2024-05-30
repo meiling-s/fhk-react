@@ -28,7 +28,7 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
-import { returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import {
     createWarehouse,
     getWarehouseById,
@@ -44,6 +44,7 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, createVehicleData, deleteVehicleData, sendWeightUnit, updateVehicleData } from '../../../APICalls/ASTD/recycling'
 import { paletteColors } from '../../../themes/palette'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface VehicleDataProps {
     createdAt: string
@@ -91,6 +92,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const [vehicleTypeId, setVehicleTypeId] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
+    const navigate = useNavigate();
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
@@ -199,8 +201,14 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                     showSuccessToast(t('notify.successDeleted'))
                     onSubmit('vehicle')
                 }
-            } catch (error) {
-                showErrorToast(t('notify.errorDeleted'))
+            } catch (error:any) {
+                const {state} =  extractError(error);
+                if(state.code === STATUS_CODE[503] ){
+                    navigate('/maintenance')
+                } else {
+                    showErrorToast(t('notify.errorDeleted'))
+                }
+                
             }
         }
     }
@@ -239,9 +247,14 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 showSuccessToast(t('notify.successCreated'))
                 onSubmit('vehicle')
             }
-        } catch (error) {
+        } catch (error:any) {
             console.error(error)
-            showErrorToast(t('notify.errorCreated'))
+            const {state} = extractError(error);
+            if(state.code === STATUS_CODE[503] ){
+                navigate('/maintenance')
+            } else {
+                showErrorToast(t('notify.errorCreated'))
+            }
         }
     }
 
@@ -252,8 +265,14 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 showSuccessToast(t('notify.SuccessEdited'))
                 onSubmit('vehicle')
             }
-        } catch (error) {
-            showErrorToast(t('notify.errorUpdated'))
+        } catch (error:any) {
+            console.error(error)
+            const {state} = extractError(error);
+            if(state.code === STATUS_CODE[503] ){
+                navigate('/maintenance')
+            } else {
+                showErrorToast(t('notify.errorCreated'))
+            }
         }
     }
 

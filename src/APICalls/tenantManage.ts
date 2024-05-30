@@ -32,9 +32,9 @@ export const createInvitation = async (
     })
     console.log('Insert tenant success:', JSON.stringify(response.data))
     return response
-  } catch (e) {
+  } catch (e:any) {
     console.error('Insert tenant Failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -55,7 +55,7 @@ export const getAllTenant = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -80,7 +80,7 @@ export const searchTenantById = async (
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -96,7 +96,7 @@ export const getTenantById = async (tenantId: number) => {
     return response
   } catch (e) {
     console.error('Get tenant by id failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -125,7 +125,7 @@ export const updateTenantRegInfo = async (
 }
 
 export const updateTenantStatus = async (
-  item: UpdateStatus,
+  item: any,
   tenantId: number
 ) => {
   try {
@@ -139,9 +139,9 @@ export const updateTenantStatus = async (
     //   JSON.stringify(response.data)
     // )
     return response
-  } catch (e) {
+  } catch (e:any) {
     console.error('Tenant register status update failed:', e)
-    return null
+    throw(e)
   }
 }
 

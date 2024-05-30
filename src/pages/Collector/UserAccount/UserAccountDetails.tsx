@@ -81,15 +81,15 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const statusList = () => {
     const colList: il_item[] = [
       {
-        name: t('userAccount.active'),
+        name: t('status.active'),
         id: 'ACTIVE'
       },
       {
-        name: t('userAccount.inactive'),
+        name: t('status.inactive'),
         id: 'INACTIVE'
       },
       {
-        name: t('userAccount.suspend'),
+        name: t('status.suspend'),
         id: 'SUSPEND'
       }
     ]
@@ -100,11 +100,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     // console.log('selectedItem', selectedItem)
     if (selectedItem) {
       const selectedStatus =
-        selectedItem.status == 'ACTIVE'
+        selectedItem.status === 'ACTIVE'
           ? 'ACTIVE'
+          : selectedItem.status === 'INACTIVE'
+          ? 'INACTIVE'
           : 'SUSPEND'
-          ? 'SUSPEND'
-          : 'INACTIVE'
       setLoginId(selectedItem.loginId)
       setUserGroup(selectedItem.userGroup.groupId)
       setUserStatus(selectedStatus)
@@ -262,7 +262,6 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
         setValidation(tempV)
-        
       } else {
         onSubmitData()
         showSuccessToast(t('userAccount.successCreatedUser'))
@@ -452,7 +451,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
               />
             </div>
             </Grid>  */}
-            <CustomField label={t('userAccount.status')} mandatory={true}>
+            <CustomField label={t('col.status')} mandatory={true}>
               <CustomItemList
                 items={statusList()}
                 singleSelect={(selectedItem) => {

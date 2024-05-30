@@ -40,9 +40,9 @@ export const getCollectionPoint = async (page: number, size: number) => {
     });
     // console.log('Get all collection point success:', JSON.stringify(response.data));
     return response
-  } catch (e) {
+  } catch (e:any) {
     // console.error('Get all collection point failed:', e);
-    return null;
+    throw(e)
   }
 
 }
@@ -60,9 +60,9 @@ export const createCollectionPoint = async (data: createCP) => {
     });
     console.log('Create collection point success:', JSON.stringify(response.data));
     return response
-  } catch (e) {
+  } catch (e:any) {
     console.error('Create collection point failed:', e);
-    return null;
+    throw(e)
   }
 
 }
@@ -84,9 +84,9 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
     });
     console.log('Update collection point success:', JSON.stringify(response.data));
     return response
-  } catch (e) {
+  } catch (e:any) {
     console.error('Update collection point failed:', e);
-    return null;
+    throw(e)
   }
 
 }

@@ -68,6 +68,8 @@ import PickupPurchaseOrder from './pages/Manufacturer/PurchaseOrder/PickupPurcha
 import DashboardRecyclables from './pages/Collector/Dashboard/Recyclables'
 import ManufacturerDashboard from './pages/Manufacturer/Dashboard/Dashboard'
 import RecyclablesAstd from './pages/ASTD/Dashboard/RecyclablesAstd'
+import PageNotFound from './pages/Common/PageNotFound'
+import MaintenancePage from './pages/Common/MaintenancePage'
 
 const Router = () => {
   return (
@@ -159,11 +161,11 @@ const Router = () => {
           <Route path="/astd/editPicoLogistic" element={<EditPickupOrder />} />
           <Route path="/astd/inventory/" element={<Inventory />} />
           <Route path="/astd/warehouse" element={<WarehouseDashboard />} />
+          <Route path="/astd/dashboard" element={<RecyclablesAstd />} />
           <Route
             path="/astd/vehicleDashboard"
             element={<AstdVehicleDashboard />}
           />
-          <Route path="/astd/report" element={<Report />} />
         </Route>
 
         <Route element={<MainLayout />}>
@@ -263,6 +265,8 @@ const Router = () => {
           />
           <Route path="/customer/staff" element={<StaffManagement />} />
         </Route>
+        <Route path="/maintenance" element={<MaintenancePage />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
   )

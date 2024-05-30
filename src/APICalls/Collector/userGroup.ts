@@ -64,7 +64,7 @@ export const getAllUserGroup = async () => {
     return response
   } catch (e) {
     console.error('Get all vehicle failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -86,7 +86,7 @@ export const getAllFunction = async () => {
     return response
   } catch (e) {
     console.error('Get all vehicle failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -107,9 +107,9 @@ export const createUserGroup = async (data: CreateUserGroupProps) => {
     })
     
     return response
-  } catch (e) {
+  } catch (e:any) {
     console.error('Get all vehicle failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -129,9 +129,9 @@ export const editUserGroup = async (data: EditUserGroupProps, groupId: number) =
     })
     
     return response
-  } catch (e) {
+  } catch (e:any) {
     console.error('Edit user group failed:', e)
-    return null
+    throw(e)
   }
 }
 

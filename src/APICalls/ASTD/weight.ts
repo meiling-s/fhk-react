@@ -15,7 +15,7 @@ export const getWeightTolerance = async () => {
     return response
   } catch (e: any) {
     console.error('Get Currency Failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -30,6 +30,6 @@ export const updateWeightTolerance = async (weightId: number, data: any) => {
         return response
     } catch (error) {
         console.error('Get Currency Failed:', error)
-        return null
+        throw(error)
     }
 }

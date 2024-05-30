@@ -17,7 +17,7 @@ export const createRecyc = async (data: any) => {
     return response
   } catch (e: any) {
     console.error('Post Recycling Failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -47,7 +47,7 @@ export const updateRecyc = async (data: any, recycTypeId: string) => {
   return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -62,7 +62,7 @@ export const deleteRecyc = async (data: any, recycTypeId: string) => {
   return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -92,7 +92,7 @@ export const updateSubRecyc = async (data: any, recycTypeId: string) => {
   return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -107,7 +107,7 @@ export const deleteSubRecyc = async (data: any, recycTypeId: string) => {
     return response
     } catch (error) {
       console.error('Post Recycling Failed:', error)
-      return null
+      throw(error)
     }
 }
 
@@ -128,7 +128,7 @@ export const getAllPackagingUnit = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -142,7 +142,7 @@ export const createPackagingUnit = async (data: any) => {
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -157,7 +157,7 @@ export const editPackagingUnit = async (data: any, packagingId: string) => {
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+   throw(e)
   }
 }
 
@@ -178,7 +178,7 @@ export const getRecycCode = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -199,7 +199,7 @@ export const getWeightUnit = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -214,7 +214,7 @@ export const sendWeightUnit = async (data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -230,7 +230,7 @@ export const deleteWeightUnit = async (unitId: number, data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -245,7 +245,7 @@ export const editWeightUnit = async (unitId: number, data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -259,7 +259,7 @@ export const getSiteTypeData = async () => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -288,7 +288,7 @@ export const getEngineData = async () => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -303,7 +303,7 @@ export const sendEngineData = async (data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -318,7 +318,7 @@ export const editEngineData = async (siteTypeId: string, data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -333,7 +333,7 @@ export const deleteEngineData = async (siteTypeId: string, data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -362,7 +362,7 @@ export const createVehicleData = async (data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -377,7 +377,7 @@ export const updateVehicleData = async (vehicleId: string, data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -392,7 +392,7 @@ export const deleteVehicleData = async (vehicleId: string, data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -407,7 +407,7 @@ export const createRecyclingPoint = async (data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -422,7 +422,7 @@ export const editRecyclingPoint = async (siteTypeId: string, data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }
 
@@ -437,6 +437,6 @@ export const deleteRecyclingPoint = async (siteTypeId: string, data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
-    return null
+    throw(error)
   }
 }

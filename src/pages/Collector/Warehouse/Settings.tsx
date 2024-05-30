@@ -10,7 +10,7 @@ import DisposalLocation from "../DisposalLocation/DisposalLocation";
 import DenialReason from "../DenialReason/DenialReason";
 import StaffTitle from "../StaffTitle/StaffTitle";
 import Company from "../Company/Company";
-import { localStorgeKeyName } from "../../../constants/constant";
+import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import ASTDSettings from "../../ASTD/GeneralSettings/GeneralSettings";
 import RecyclingUnit from "../../ASTD/RecyclingUnit/RecyclingUnit";
 import RecyclingPoint from "../../ASTD/RecyclingPoint/RecyclingPoint";
@@ -18,6 +18,8 @@ import ASTDVehicle from '../../ASTD/Vehicle/Vehicle'
 import ASTDStaff from '../../ASTD/Staff/Staff'
 import ASTDDenialReason from '../../ASTD/DenialReason/DenialReason'
 import CustomerGeneralSettings from '../../Customer/GeneralSettings/GeneralSettings'
+import { useNavigate } from "react-router-dom";
+import { extractError } from "../../../utils/utils";
 
 const Settings: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -49,6 +51,8 @@ const Settings: FunctionComponent = () => {
 
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [tabList, setTabList] = useState<string[]>([]);
+  const navigate = useNavigate();
+  
   const getTabList = () => {
     let updatedTabList = [...defaultTabList]
 
@@ -62,8 +66,8 @@ const Settings: FunctionComponent = () => {
       const hideTabIndexArr = [3]
       updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
     }
-    setTabList(updatedTabList)
   }
+
   const getASTDTabList = () => {
     let updatedTabList = [...astdTabList]
 

@@ -11,7 +11,11 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DOCUMENT_ICON } from '../../../themes/icons'
 import { getDownloadExcel, getDownloadWord } from '../../../APICalls/report'
-import { getBaseUrl, returnApiToken , getSelectedLanguange} from '../../../utils/utils'
+import {
+  getBaseUrl,
+  returnApiToken,
+  getSelectedLanguange
+} from '../../../utils/utils'
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import {
@@ -49,7 +53,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const [downloads, setDownloads] = useState<{ date: string; url: any }[]>([])
   const realmApiRoute =
     localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
-  const defaultLang = localStorage.getItem(localStorgeKeyName.selectedLanguage) || 'zhhk'
+  const defaultLang =
+    localStorage.getItem(localStorgeKeyName.selectedLanguage) || 'zhhk'
 
   useEffect(() => {
     const isAfter = dayjs(endDate).isAfter(startDate)
@@ -74,11 +79,9 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       getBaseUrl() +
       `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatToUtc(
         startDate
-<<<<<<< HEAD
-      )}&toDate=${formatToUtc(endDate)}&staffId=${staffId}&language=${getSelectedLanguange(defaultLang)}`
-=======
-      )}&toDate=${formatToUtc(endDate)}&staffId=${staffId}&language=${i18n.language}`
->>>>>>> c71dba93121c67ef29a4ca21f72fb4af824dcd18
+      )}&toDate=${formatToUtc(
+        endDate
+      )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
     )
   }
 
