@@ -57,7 +57,7 @@ export const getAllPurchaseOrder = async (
 
     return response
   } catch (e) {
-    return null
+    throw(e)
   }
 }
 
@@ -98,7 +98,7 @@ export const getPurchaseOrderReason = async () => {
 
     return response
   } catch (e) {
-    return null
+    throw(e)
   }
 }
 
@@ -112,7 +112,7 @@ export const postPurchaseOrder = async (data:PurChaseOrder) => {
       });
       return response
   } catch (e) {
-      return null;
+      throw(e)
   }
 
 }

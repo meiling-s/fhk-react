@@ -3,9 +3,10 @@ import { useContainer } from "unstated-next";
 import dayjs from 'dayjs';
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
 import i18n from '../../../setups/i18n';
-import { Languages } from '../../../constants/constant';
-import { randomBackgroundColor } from '../../../utils/utils';
+import { Languages, STATUS_CODE } from '../../../constants/constant';
+import { extractError, randomBackgroundColor } from '../../../utils/utils';
 import { getcolPointRecyclablesDashboard } from '../../../APICalls/Collector/dashboardRecyables';
+import { useNavigate } from 'react-router-dom';
 
 interface Dataset{
    id: string,
@@ -22,6 +23,7 @@ const useWeightDashboardWithIdRecycable = () => {
    const [dataset, setDataSet] = useState<Dataset[]>([])
    const [colId, setColId] = useState<number | null>(null);
    const [companyNumber, setCompanyNumber] = useState<string | null>(null)
+   const navigate = useNavigate();
 
    const getLabel = (type: string): string => {
       let languages:string = ''
@@ -50,43 +52,50 @@ const useWeightDashboardWithIdRecycable = () => {
 
 
    const getRecyclablesDashboard = async () => {
-      const response = await getcolPointRecyclablesDashboard(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'), colId);
+      try {
+         const response = await getcolPointRecyclablesDashboard(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'), colId);
 
-      const getDataWeights = (type: string, length: number): number[] =>{
-         const weights:number[]= [];
-         if(!response) return weights
-         const recyclables:any =  Object.values(response.data)
-         
-         
-         for(let index=0; index<length; index++){
-            const data:any = recyclables[index];
-            if(data[type]){
-                  weights.push(Number(data[type]?.slice(0, -2)) ?? 0)
-            } else {
-                  weights.push(0)
+         const getDataWeights = (type: string, length: number): number[] =>{
+            const weights:number[]= [];
+            if(!response) return weights
+            const recyclables:any =  Object.values(response.data)
+            
+            
+            for(let index=0; index<length; index++){
+               const data:any = recyclables[index];
+               if(data[type]){
+                     weights.push(Number(data[type]?.slice(0, -2)) ?? 0)
+               } else {
+                     weights.push(0)
+               }
             }
+            
+            return weights
          }
          
-         return weights
-      }
-      
-      if(response){
-         const labels:string[] = Object.keys(response.data);
-
-         const datasets:Dataset[] = []
-         if(!recycType) return;
-
-         for(let type of recycType){
-            datasets.push({
-                  id: type.recyclableNameEng,
-                  label: getLabel(type.recyclableNameEng),
-                  data: getDataWeights(type.recyclableNameEng, labels.length),
-                  backgroundColor: type?.backgroundColor ? type?.backgroundColor : randomBackgroundColor()
-            })
+         if(response){
+            const labels:string[] = Object.keys(response.data);
+   
+            const datasets:Dataset[] = []
+            if(!recycType) return;
+   
+            for(let type of recycType){
+               datasets.push({
+                     id: type.recyclableNameEng,
+                     label: getLabel(type.recyclableNameEng),
+                     data: getDataWeights(type.recyclableNameEng, labels.length),
+                     backgroundColor: type?.backgroundColor ? type?.backgroundColor : randomBackgroundColor()
+               })
+            }
+   
+            setLabels(labels)
+            setDataSet(datasets)
          }
-
-         setLabels(labels)
-         setDataSet(datasets)
+      } catch (error:any) {
+         const  {state, realm } = extractError(error);
+         if(state.code === STATUS_CODE[503] ){
+            navigate('/maintenance')
+         }
       }
    }
 

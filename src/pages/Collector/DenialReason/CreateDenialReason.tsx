@@ -11,8 +11,8 @@ import {
   createDenialReason
 } from '../../../APICalls/Collector/denialReason'
 import { styles } from '../../../constants/styles'
-import { formErr } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
+import { STATUS_CODE, formErr } from '../../../constants/constant'
+import { extractError, returnErrorMsg } from '../../../utils/utils'
 import {
   DenialReason,
   CreateDenialReason,
@@ -21,6 +21,7 @@ import {
 import { localStorgeKeyName } from '../../../constants/constant'
 import { getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
+import { useNavigate } from 'react-router-dom'
 
 interface CreateDenialReasonProps {
   drawerOpen: boolean
@@ -70,40 +71,48 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   >([])
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [existingDenialReason, setExistingDenialReason] = useState<DenialReason[]>([])
+  const navigate = useNavigate();
 
   const initFunctionList = async () => {
-    const result = await getAllFunction()
-    // const data = result?.data;
-    const data = result?.data.filter((item: any) => item.tenantTypeId == role)
-    if (data.length > 0) {
-      let name = ''
-      data.map(
-        (item: {
-          functionId: string
-          functionNameEng: string
-          functionNameSChi: string
-          functionNameTChi: string
-          name: string
-        }) => {
-          switch (i18n.language) {
-            case 'enus':
-              name = item.functionNameEng
-              break
-            case 'zhch':
-              name = item.functionNameSChi
-              break
-            case 'zhhk':
-              name = item.functionNameTChi
-              break
-            default:
-              name = item.functionNameTChi
-              break
+    try {
+      const result = await getAllFunction()
+      // const data = result?.data;
+      const data = result?.data.filter((item: any) => item.tenantTypeId == role)
+      if (data.length > 0) {
+        let name = ''
+        data.map(
+          (item: {
+            functionId: string
+            functionNameEng: string
+            functionNameSChi: string
+            functionNameTChi: string
+            name: string
+          }) => {
+            switch (i18n.language) {
+              case 'enus':
+                name = item.functionNameEng
+                break
+              case 'zhch':
+                name = item.functionNameSChi
+                break
+              case 'zhhk':
+                name = item.functionNameTChi
+                break
+              default:
+                name = item.functionNameTChi
+                break
+            }
+            item.name = name
           }
-          item.name = name
-        }
-      )
+        )
+      }
+      setFunctionList(data)
+    } catch (error:any) {
+      const {state} = extractError(error)
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
-    setFunctionList(data)
   }
   const denialReasonField = [
     {
@@ -298,49 +307,66 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   const handleCreateDenialReason = async (
     denialReasonData: CreateDenialReason
   ) => {
-    if (validation.length === 0) {
-      const result = await createDenialReason(denialReasonData)
-      if (result?.data) {
-        onSubmitData('success', t('common.saveSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+        if (validation.length === 0) {
+        const result = await createDenialReason(denialReasonData)
+        if (result?.data) {
+          onSubmitData('success', t('common.saveSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        } else {
+          setTrySubmited(true)
+          onSubmitData('error', t('common.saveFailed'))
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error:any) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
       } else {
         setTrySubmited(true)
         onSubmitData('error', t('common.saveFailed'))
       }
-    } else {
-      setTrySubmited(true)
     }
   }
 
   const handleEditDenialReason = async () => {
-    const selectedValue = functionList.find(
-      (el) => el.name === formData.functionId
-    )
-    if (selectedValue) {
-      formData.functionId = selectedValue.functionId
-    }
-    const editData: UpdateDenialReason = {
-      reasonNameTchi: formData.reasonNameTchi,
-      reasonNameSchi: formData.reasonNameSchi,
-      reasonNameEng: formData.reasonNameEng,
-      description: formData.description,
-      functionId: formData.functionId,
-      status: 'ACTIVE',
-      remark: formData.remark,
-      updatedBy: loginName
-    }
-    if (validation.length === 0) {
-      if (selectedItem != null) {
-        const result = await editDenialReason(selectedItem.reasonId, editData)
-        if (result) {
-          onSubmitData('success', t('common.editSuccessfully'))
-          resetFormData()
-          handleDrawerClose()
-        }
+    try {
+      const selectedValue = functionList.find(
+        (el) => el.name === formData.functionId
+      )
+      if (selectedValue) {
+        formData.functionId = selectedValue.functionId
       }
-    } else {
-      setTrySubmited(true)
+      const editData: UpdateDenialReason = {
+        reasonNameTchi: formData.reasonNameTchi,
+        reasonNameSchi: formData.reasonNameSchi,
+        reasonNameEng: formData.reasonNameEng,
+        description: formData.description,
+        functionId: formData.functionId,
+        status: 'ACTIVE',
+        remark: formData.remark,
+        updatedBy: loginName
+      }
+      if (validation.length === 0) {
+        if (selectedItem != null) {
+          const result = await editDenialReason(selectedItem.reasonId, editData)
+          if (result) {
+            onSubmitData('success', t('common.editSuccessfully'))
+            resetFormData()
+            handleDrawerClose()
+          }
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error:any) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 

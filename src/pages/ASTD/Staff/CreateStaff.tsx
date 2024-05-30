@@ -7,9 +7,10 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { createStaffTitle, editStaffTitle } from '../../../APICalls/Collector/staffTitle'
-import { returnErrorMsg } from '../../../utils/utils'
-import { formErr, localStorgeKeyName } from '../../../constants/constant'
+import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import { StaffTitle, CreateStaffTitle as CreateStaffTitleItem, UpdateStaffTitle } from '../../../interfaces/staffTitle'
+import { useNavigate } from 'react-router-dom'
 
 interface CreateStaffTitle {
   drawerOpen: boolean
@@ -45,6 +46,7 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+  const navigate = useNavigate();
 
   const staffField = [
     {
@@ -187,23 +189,34 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
   }
 
   const handleCreateStaff = async (staffData: CreateStaffTitleItem) => {
-    validate()
-    if (validation.length === 0) {
-      const result = await createStaffTitle(staffData)
-      if (result?.data) {
-        onSubmitData('success', t('common.saveSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+      validate()
+      if (validation.length === 0) {
+        const result = await createStaffTitle(staffData)
+        if (result?.data) {
+          onSubmitData('success', t('common.saveSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        } else {
+          setTrySubmited(true)
+          onSubmitData('error', t('common.saveFailed'))
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error:any) {
+      const {state} =  extractError(error)
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
       } else {
         setTrySubmited(true)
         onSubmitData('error', t('common.saveFailed'))
       }
-    } else {
-      setTrySubmited(true)
     }
   }
 
   const handleEditStaff = async () => {
+   try {
     const editData: UpdateStaffTitle = {
       titleId: selectedItem?.titleId || '',
       titleNameTchi: formData.titleNameTchi,
@@ -227,6 +240,12 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
     } else {
       setTrySubmited(true)
     }
+   } catch (error:any) {
+    const {state} =  extractError(error)
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+   }
   }
 
   const handleDelete = async () => {

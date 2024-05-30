@@ -156,9 +156,9 @@ export const getCommonTypes = async () => {
 
         return types;
 
-    } catch (e) {
+    } catch (e:any) {
         console.error('Get common types failed:', e);
-        return null;
+        throw(e)
     }
   
 }

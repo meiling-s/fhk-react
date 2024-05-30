@@ -21,6 +21,7 @@ import {
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
 import EditIcon from '@mui/icons-material/Edit'
+import StatusCard from '../../../components/StatusCard'
 
 import { styles } from '../../../constants/styles'
 // import CreateVehicle from './CreateVehicle'
@@ -33,10 +34,13 @@ import { PackagingUnit as PackagingUnitItem } from '../../../interfaces/packagin
 import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
-import { returnApiToken } from '../../../utils/utils'
+import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import CreatePackaging from './CreatePackaging'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
+import { STATUS_CODE } from '../../../constants/constant'
+import { useNavigate } from 'react-router-dom'
 
 function createPackagingUnit(
   id: number,
@@ -87,6 +91,7 @@ const PackagingUnit: FunctionComponent = () => {
   const [engNameList, setEngNameList] = useState<string[]>([])
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
+  const navigate = useNavigate();
 
   useEffect(() => {
     initPackagingUnitList()
@@ -94,57 +99,71 @@ const PackagingUnit: FunctionComponent = () => {
   }, [page])
 
   const initPackagingUnitList = async () => {
-    const result = await getAllPackagingUnit(page - 1, pageSize)
-    const data = result?.data
-    if (data) {
-      var packagingMapping: PackagingUnitItem[] = []
-      setEngNameList([])
-      setSchiNameList([])
-      setTchiNameList([])
+    try {
+      const result = await getAllPackagingUnit(page - 1, pageSize)
+      const data = result?.data
+      if (data) {
+        var packagingMapping: PackagingUnitItem[] = []
+        setEngNameList([])
+        setSchiNameList([])
+        setTchiNameList([])
 
-      data.content.map((item: any, index: any) => {
-        packagingMapping.push(
-          createPackagingUnit(
-            item?.id !== undefined ? item?.id : index,
-            item?.description,
-            item?.packagingNameEng,
-            item?.packagingNameSchi,
-            item?.packagingNameTchi,
-            item?.packagingTypeId,
-            item?.remark,
-            item?.status,
-            item?.tenantId,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
+        data.content.map((item: any, index: any) => {
+          packagingMapping.push(
+            createPackagingUnit(
+              item?.id !== undefined ? item?.id : index,
+              item?.description,
+              item?.packagingNameEng,
+              item?.packagingNameSchi,
+              item?.packagingNameTchi,
+              item?.packagingTypeId,
+              item?.remark,
+              item?.status,
+              item?.tenantId,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
           )
-        )
 
-        setEngNameList((prevEngName: any) => [
-          ...prevEngName,
-          item.packagingNameEng
-        ])
-        setSchiNameList((prevSchiName: any) => [
-          ...prevSchiName,
-          item.packagingNameSchi
-        ])
-        setTchiNameList((prevTchiName: any) => [
-          ...prevTchiName,
-          item.packagingNameTchi
-        ])
-      })
-      // console.log(packagingMapping, 'packagingMapping')
-      setPackagingMapping(packagingMapping)
-      setTotalData(data.totalPages)
+          setEngNameList((prevEngName: any) => [
+            ...prevEngName,
+            item.packagingNameEng
+          ])
+          setSchiNameList((prevSchiName: any) => [
+            ...prevSchiName,
+            item.packagingNameSchi
+          ])
+          setTchiNameList((prevTchiName: any) => [
+            ...prevTchiName,
+            item.packagingNameTchi
+          ])
+        })
+        // console.log(packagingMapping, 'packagingMapping')
+        setPackagingMapping(packagingMapping)
+        setTotalData(data.totalPages)
+      }
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
   const getTenantData = async () => {
-    const token = returnApiToken()
-    const result = await getTenantById(parseInt(token.tenantId))
-    const data = result?.data
-    console.log('tenant Data', data)
-    setTenantCurrency(data?.monetaryValue || '')
+    try {
+      const token = returnApiToken()
+      const result = await getTenantById(parseInt(token.tenantId))
+      const data = result?.data
+      console.log('tenant Data', data)
+      setTenantCurrency(data?.monetaryValue || '')
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+    }
   }
   const columns: GridColDef[] = [
     {
@@ -176,6 +195,13 @@ const PackagingUnit: FunctionComponent = () => {
       headerName: t('common.remark'),
       width: 170,
       type: 'string'
+    },
+    {
+      field: 'status',
+      headerName: t('col.status'),
+      width: 170,
+      type: 'string',
+      renderCell: (params) => <StatusCard status={params.row?.status} />
     },
     {
       field: 'edit',

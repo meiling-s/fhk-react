@@ -28,7 +28,7 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
-import { returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import {
     createWarehouse,
     getWarehouseById,
@@ -43,6 +43,7 @@ import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { createRecyc, createSubRecyc, deleteRecyc, deleteSubRecyc, updateRecyc, updateSubRecyc } from '../../../APICalls/ASTD/recycling'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface recyleSubtyeData {
     recycSubTypeId: string
@@ -118,32 +119,38 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const [mainTypeId, setMainTypeId] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
+    const navigate = useNavigate();
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
     }, [i18n, currentLanguage])
     
     useEffect(() => {
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
+            return;
+        }
+    
         if (action === 'edit') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 if (!mainCategory) {
-                    const parentData = !isMainCategory && recyclableType.filter(value => value.recycSubType.find(value => value.recycSubTypeId === selectedItem.recycSubTypeId))
-                    setSubTypeId(selectedItem.recycSubTypeId)
-                    setChosenRecyclableType(parentData !== false ? parentData[0].recycTypeId : '')
+                    const parentData = recyclableType.find(value => value.recycSubType.some(subType => subType.recycSubTypeId === selectedItem.recycSubTypeId));
+                    setSubTypeId(selectedItem.recycSubTypeId);
+                    setChosenRecyclableType(parentData ? parentData.recycTypeId : '');
                 } else {
-                    setMainTypeId(selectedItem.recycTypeId)
+                    setMainTypeId(selectedItem.recycTypeId);
                 }
-                setTChineseName(selectedItem.recyclableNameTchi)
-                setSChineseName(selectedItem.recyclableNameSchi)
-                setEnglishName(selectedItem.recyclableNameEng)
-                setDescription(selectedItem.description)
-                setRemark(selectedItem.remark)
-                setMainCategory(mainCategory)
+                setTChineseName(selectedItem.recyclableNameTchi);
+                setSChineseName(selectedItem.recyclableNameSchi);
+                setEnglishName(selectedItem.recyclableNameEng);
+                setDescription(selectedItem.description);
+                setRemark(selectedItem.remark);
+                setMainCategory(mainCategory);
             }
         } else if (action === 'add') {
-            resetForm()
+            resetForm();
         }
-    }, [selectedItem, action,drawerOpen, mainCategory])
+    }, [selectedItem, action, mainCategory, recyclableType]);
 
     const resetForm = () => {
         setTChineseName('')
@@ -245,9 +252,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     onSubmitData('recycle')
                 }
             }
-        } catch (error) {
-            console.error(error)
-            showErrorToast(t('notify.errorDeleted'))
+        } catch (error:any) {
+            const {state} =  extractError(error)
+            if(state.code === STATUS_CODE[503] ){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('notify.errorDeleted'))
+            }
+           
         }
     }
     
@@ -292,9 +305,14 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     onSubmitData('recycle')
                 }
             }
-        } catch (error) {
-            console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+        } catch (error:any) {
+            const {state} = extractError(error)
+            if(state.code === STATUS_CODE[503] ){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('errorCreated.errorCreated'))
+            }
         }
     }
     const editRecycData = async (addRecyclingForm: any) => {
@@ -313,9 +331,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     onSubmitData('recycle')
                 }
             }
-        } catch (error) {
-            console.error(error)
-            showErrorToast(t('errorCreated.errorCreated'))
+        } catch (error:any) {
+            const {state} = extractError(error)
+            if(state.code === STATUS_CODE[503] ){
+                navigate('/maintenance')
+            } else {
+                console.error(error)
+                showErrorToast(t('errorCreated.errorCreated'))
+            }
+            
         }
     }
 
@@ -372,7 +396,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             <CustomTextField
                                 id="englishName"
                                 value={englishName}
-                                disabled={action === 'delete'}
+                                disabled={action === 'delete' }
                                 placeholder={t('packaging_unit.english_name')}
                                 onChange={(event) => setEnglishName(event.target.value)}
                                 error={checkString(englishName)}
@@ -384,7 +408,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             <Switcher
                                 onText={t('add_warehouse_page.yes')}
                                 offText={t('add_warehouse_page.no')}
-                                disabled={action === 'delete'}
+                                disabled={action === 'delete' || (action === 'edit')}
                                 defaultValue={isMainCategory}
                                 setState={(newValue) => {
                                     setMainCategory(newValue);
@@ -403,7 +427,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                                 value={chosenRecyclableType}
                                                 onChange={(event: SelectChangeEvent<string>) => setChosenRecyclableType(event.target.value)}
                                                 displayEmpty
-                                                disabled={action === 'delete'}
+                                                disabled={action === 'delete'|| (action === 'edit')}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                                 sx={{ borderRadius: '12px' }}
                                                 error={checkString(chosenRecyclableType)}

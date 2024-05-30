@@ -65,7 +65,7 @@ export const getListNotifTemplatePO = async () => {
     })
     return response
   } catch (e) {
-    return null
+    throw(e)
   }
 }
 
@@ -77,8 +77,8 @@ export const getListNotifTemplateStaff = async () => {
       baseURL: administratorAPI.baseURL
     })
     return response
-  } catch (e) {
-    return null
+  } catch (e:any) {
+    throw(e)
   }
 }
 
@@ -91,7 +91,7 @@ export const getDetailNotifTemplate = async (templateId: string, path: string) =
     })
     return response.data
   } catch (e) {
-    return null
+    throw(e)
   }
 }
 

@@ -18,7 +18,7 @@ export const createCodeData = async (data: any) => {
     return response
   } catch (e: any) {
     console.error('Get Currency Failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -33,7 +33,7 @@ export const updateCodeData = async (data: any, codeId: number) => {
       return response
     } catch (e: any) {
       console.error('Get Currency Failed:', e)
-      return null
+      throw(e)
     }
   }
 
@@ -48,6 +48,6 @@ export const updateCodeData = async (data: any, codeId: number) => {
       return response
     } catch (e: any) {
       console.error('Get Currency Failed:', e)
-      return null
+      throw(e)
     }
   }

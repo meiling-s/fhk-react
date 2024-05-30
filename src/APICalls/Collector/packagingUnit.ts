@@ -21,7 +21,7 @@ export const getAllPackagingUnit = async (page: number, size: number) => {
       return response
     } catch (e) {
       console.error('Get all packaging unit failed:', e)
-      return null
+      throw(e)
     }
   }
 
@@ -39,7 +39,7 @@ export const createPackaging = async (data: CreatePackagingUnit) => {
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+    throw(e)
   }
 }
 
@@ -57,6 +57,6 @@ export const editPackaging = async (data: CreatePackagingUnit, packagingTypeId: 
     return response
   } catch (e) {
     console.error('Get all packaging unit failed:', e)
-    return null
+    throw(e)
   }
 }

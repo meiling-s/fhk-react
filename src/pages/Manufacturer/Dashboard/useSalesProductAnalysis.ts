@@ -3,10 +3,11 @@ import { useContainer } from "unstated-next";
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
 import dayjs from 'dayjs';
 import i18n from '../../../setups/i18n';
-import { Languages, indexMonths, monthSequence } from '../../../constants/constant';
+import { Languages, STATUS_CODE, indexMonths, monthSequence } from '../../../constants/constant';
 import { getSalesProductAnalysis} from '../../../APICalls/Collector/dashboardRecyables';
-import { randomBackgroundColor } from '../../../utils/utils';
+import { extractError, randomBackgroundColor } from '../../../utils/utils';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 interface Dataset{
    id: string,
@@ -27,6 +28,7 @@ const useSalesProductAnalysis = () => {
    const [datasetProduct, setDataSetProduct] = useState<Dataset[]>([]);
    const [frmDateProduct, setFrmDateProduct] = useState<dayjs.Dayjs>(dayjs().subtract(6, 'month'))
    const [toDateProduct, setToDateProduct] = useState<dayjs.Dayjs>(dayjs())
+   const navigate = useNavigate();
 
    const getLabel = (type: string): string => {
       let languages:string = ''
@@ -95,6 +97,7 @@ const useSalesProductAnalysis = () => {
    }
 
    const initSalesProductAnalysis = async () => {
+     try {
       const response = await getSalesProductAnalysis(frmDateProduct.format('YYYY-MM-DD'), toDateProduct.format('YYYY-MM-DD'));
       if (response) {
             let cache:any = {}
@@ -133,6 +136,12 @@ const useSalesProductAnalysis = () => {
             setLabelProduct(labels)
             setDataSetProduct(datasets)
       }
+     } catch (error:any) {
+      const { state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+         navigate('/maintenace')
+      }
+     }
    }
 
    useEffect(() => {

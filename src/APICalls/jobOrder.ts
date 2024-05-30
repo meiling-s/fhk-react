@@ -18,7 +18,7 @@ export const getAllJobOrder = async (query?: queryJobOrder) => {
     });
     return response
   } catch (e) {
-    return null;
+    throw(e)
   }
 
 }
@@ -102,7 +102,7 @@ export const getDriver = async (page: number, size: number, sort: string) => {
 
     return response
   } catch (e) {
-    return null
+    throw(e)
   }
 }
 
@@ -125,6 +125,6 @@ export const getAllVehiclesLogistic = async (page: number, size: number) => {
     
     return response
   } catch (e) {
-    return null
+    throw(e)
   }
 }
