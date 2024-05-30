@@ -33,7 +33,7 @@ import { getAllContract } from '../../../APICalls/Collector/contracts'
 import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
-import { returnApiToken } from '../../../utils/utils'
+import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
 import NumberFormat from './NumberFormat'
@@ -44,6 +44,8 @@ import CreateCurrency from './CreateCurrency'
 import { getDecimalValue } from '../../../APICalls/ASTD/decimal'
 import { getDateFormat } from '../../../APICalls/ASTD/date'
 import { getWeightTolerance } from '../../../APICalls/ASTD/weight'
+import { useNavigate } from 'react-router-dom'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface CurrencyListProps {
   createdAt: string
@@ -106,6 +108,7 @@ const ASTDSettings: FunctionComponent = () => {
   const [decimalValue, setDecimalValue] = useState<DecimalValueProps | null>(
     null
   )
+  const navigate = useNavigate();
 
   useEffect(() => {
     initCurrencyList()
@@ -115,33 +118,61 @@ const ASTDSettings: FunctionComponent = () => {
   }, [page])
 
   const initCurrencyList = async () => {
+   try {
     const result = await getCurrencyList()
     const data = result?.data
 
     console.log(data, 'data currency')
 
     setCurrencyList(data)
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const initDecimalValue = async () => {
+   try {
     const result = await getDecimalValue()
     const data = result?.data
 
     setDecimalValue(data)
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const initDateFormat = async () => {
+   try {
     const result = await getDateFormat()
     const data = result?.data
 
     setDateFormat(data)
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const initWeightTolerance = async () => {
+   try {
     const result = await getWeightTolerance()
     const data = result?.data
 
     setWeightFormat(data)
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const columns: GridColDef[] = [
@@ -409,14 +440,6 @@ const ASTDSettings: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
               }}
             />
           </Box>

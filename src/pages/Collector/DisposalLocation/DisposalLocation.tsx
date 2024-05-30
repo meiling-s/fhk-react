@@ -18,6 +18,9 @@ import {
 import { getAllDisposalLocation } from "../../../APICalls/Collector/disposalLocation";
 import { DisposalLocation as DisposalLocationItem } from "../../../interfaces/disposalLocation";
 import CreateDisposalLocation from "./CreateDisposalLocation";
+import { useNavigate } from "react-router-dom";
+import { extractError } from "../../../utils/utils";
+import { STATUS_CODE } from "../../../constants/constant";
 
 function createDisposalLocation(
   disposalLocId: string,
@@ -63,8 +66,10 @@ const DisposalLocation: FunctionComponent = () => {
     []
   );
   const [selectedRow, setSelectedRow] = useState<DisposalLocationItem | null>(null);
+  const navigate = useNavigate();
 
   const initDisposalLocationList = async () => {
+   try {
     const result = await getAllDisposalLocation(page - 1, pageSize);
     const data = result?.data;
     // setDisposalLocationList(data);
@@ -92,6 +97,12 @@ const DisposalLocation: FunctionComponent = () => {
       setDisposalLocationList(disposalLocationMapping);
       setTotalData(data.totalPages);
     }
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   };
   useEffect(() => {
     initDisposalLocationList();

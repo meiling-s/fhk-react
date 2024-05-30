@@ -14,8 +14,8 @@ import {
   Vehicle,
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
-import { formErr } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
+import { STATUS_CODE, formErr } from '../../../constants/constant'
+import { extractError, returnErrorMsg } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -30,6 +30,8 @@ import {
   createPackaging,
   editPackaging
 } from '../../../APICalls/Collector/packagingUnit'
+import CustomItemList from '../../../components/FormComponents/CustomItemList'
+import { useNavigate } from 'react-router-dom'
 
 interface CreatePackagingProps {
   drawerOpen: boolean
@@ -67,6 +69,24 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
   const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
   const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
+  const navigate = useNavigate();
+  const statusList = () => {
+    const colList: il_item[] = [
+      {
+        name: t('status.active'),
+        id: 'ACTIVE'
+      },
+      {
+        name: t('status.inactive'),
+        id: 'INACTIVE'
+      },
+      {
+        name: t('status.deleted'),
+        id: 'DELETED'
+      }
+    ]
+    return colList
+  }
 
   useEffect(() => {
     if (action === 'edit' || action === 'delete') {
@@ -179,7 +199,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
       packagingNameEng: englishName,
       description: description,
       remark: remark,
-      status: 'ACTIVE',
+      status: status,
       createdBy: loginId,
       updatedBy: loginId
     }
@@ -194,17 +214,26 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   }
 
   const handleCreatePackaging = async (formData: CreatePackagingUnitProps) => {
-    if (validation.length === 0) {
-      const result = await createPackaging(formData)
-      if (result) {
-        onSubmitData('success', t('common.saveSuccessfully'))
-        resetData()
-        handleDrawerClose()
+    try {
+      if (validation.length === 0) {
+        const result = await createPackaging(formData)
+        if (result) {
+          onSubmitData('success', t('common.saveSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        } else {
+          onSubmitData('error', t('common.saveFailed'))
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error:any) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.saveFailed'))
       }
-    } else {
-      setTrySubmited(true)
     }
   }
 
@@ -212,6 +241,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     formData: CreatePackagingUnitProps,
     packagingTypeId: string
   ) => {
+   try {
     if (validation.length === 0) {
       const result = await editPackaging(formData, packagingTypeId)
       if (result) {
@@ -222,9 +252,16 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
     } else {
       setTrySubmited(true)
     }
+   } catch (error:any) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+   }
   }
 
   const handleDelete = async () => {
+   try {
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
     const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
 
@@ -250,6 +287,12 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         onSubmitData('error', t('common.deleteFailed'))
       }
     }
+   } catch (error:any) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+   }
   }
 
   return (
@@ -337,6 +380,17 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
               onChange={(event) => setRemark(event.target.value)}
               multiline={true}
               defaultValue={remark}
+            />
+          </CustomField>
+          <CustomField label={t('col.status')} mandatory={true}>
+            <CustomItemList
+              items={statusList()}
+              singleSelect={(selectedItem) => {
+                setStatus(selectedItem)
+              }}
+              editable={action != 'delete'}
+              defaultSelected={status}
+              needPrimaryColor={true}
             />
           </CustomField>
           <Grid item>

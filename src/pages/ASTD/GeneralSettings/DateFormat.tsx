@@ -12,7 +12,9 @@ import {
   ButtonBase,
   ImageList,
   ImageListItem,
-  OutlinedInput
+  OutlinedInput,
+  Autocomplete,
+  TextField
 } from '@mui/material'
 import dayjs from 'dayjs'
 import { CAMERA_OUTLINE_ICON } from '../../../themes/icons'
@@ -30,8 +32,8 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { Vehicle, CreateVehicle as CreateVehicleForm } from '../../../interfaces/vehicles'
-import { formErr, format } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64, showSuccessToast, showErrorToast } from '../../../utils/utils'
+import { STATUS_CODE, formErr, format } from '../../../constants/constant'
+import { returnErrorMsg, ImageToBase64, showSuccessToast, showErrorToast, extractError } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -43,8 +45,8 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { createContract, editContract } from '../../../APICalls/Collector/contracts'
-import { updateDateFormat } from '../../../APICalls/ASTD/date'
-
+import { updateDateFormat, getAllDateFormat } from '../../../APICalls/ASTD/date'
+import { useNavigate } from 'react-router-dom'
 interface DateFormat {
   createdAt: string
   createdBy: string
@@ -71,11 +73,13 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
 }) => {
   const { t } = useTranslation()
   const [dateFormat, setDateFormat] = useState('')
+  const [dateFormatList, setDateFormatList] = useState<DateFormat[]>([])
   const [dateFormatId, setDateFormatId] = useState(0)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-
+  const navigate = useNavigate();
   
   useEffect (() => {
+    fetchDateFormats()
     if (action === 'edit') {
       if (dateformat) {
         setDateFormat(dateformat.dateFormat)
@@ -88,6 +92,28 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
     setDateFormat('')
   }
   
+  const fetchDateFormats = async () => {
+    try {
+      const response = await getAllDateFormat()
+    if (response) {
+      const data = response.data
+      const dateList: DateFormat[] = []
+      data.forEach((item: any) => {
+        dateList.push({
+          createdAt: item.createdAt,
+          createdBy: item.createdBy,
+          dateFormat: item.dateFormat,
+          dateFormatId: item.dateFormatId,
+          updatedAt: item.updatedAt,
+          updatedBy: item.updatedBy,
+        })
+      })
+      setDateFormatList(dateList);
+      }
+    } catch (error) {
+      showErrorToast(t('notify.errorFetchingData'))
+    }
+  }
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -102,7 +128,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
     const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ""
 
     const formData = {
-      dateFormat: dateFormat,
+      status: "ACTIVE",
       updatedBy: loginId
     }
 
@@ -111,6 +137,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
     }
   }
   const handleUpdateDateFormat = async (formData: any) => {
+   try {
     const result = await updateDateFormat(dateFormatId, formData)
 
     if (result) {
@@ -120,7 +147,13 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
     } else {
       showErrorToast(t('notify.errorEdited'))
     }
-}
+   } catch (error:any) {
+    const {state } = extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
+  }
 
   return (
     <div className="add-vehicle">
@@ -132,6 +165,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
         headerProps={{
           title: t('general_settings.date_format'),
           submitText: t('add_warehouse_page.save'),
+          cancelText: '',
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
         }}
@@ -140,14 +174,35 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
         <Box sx={{ marginX: 2 }}>
           <Box sx={{marginY: 2}}>
             <CustomField label={t('general_settings.date_format')}>
-              <CustomTextField
+              <Autocomplete
+                disablePortal
                 id="dateFormat"
+                defaultValue={dateFormat}
+                options={dateFormatList.map((functionItem) => functionItem.dateFormat)}
+                onChange={(event, value) => {
+                  if (value) {
+                    const selectedDateFormat = dateFormatList.find((item) => item.dateFormat === value);
+                      if (selectedDateFormat) {
+                        setDateFormat(selectedDateFormat.dateFormat);
+                        setDateFormatId(selectedDateFormat.dateFormatId);
+                      }
+                    }
+                }}
                 value={dateFormat}
                 disabled={action === 'delete'}
-                placeholder={t('general_settings.date_format')}
-                onChange={(event) => setDateFormat(event.target.value)}
-                error={checkString(dateFormat)}
-              />
+                renderInput={(params) => (
+                <TextField
+                    {...params}
+                    placeholder={t('general_settings.date_format')}
+                    sx={[styles.textField, { width: 320 }]}
+                    InputProps={{
+                    ...params.InputProps,
+                    sx: styles.inputProps
+                    }}
+                    error={checkString(dateFormat)}
+                />
+                )}
+            />
             </CustomField>
           </Box>
         </Box>

@@ -19,8 +19,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
 import { getAllJobOrder, editJobOrderStatus } from "../../../APICalls/jobOrder";
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate, returnApiToken } from '../../../utils/utils'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { displayCreatedDate, extractError, returnApiToken } from '../../../utils/utils'
+import { localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
 import CustomButton from "../../../components/FormComponents/CustomButton";
 
 type Approve = {
@@ -204,6 +204,7 @@ const JobOrder = () => {
   const [approveModal, setApproveModal] = useState(false)
   
   const initJobOrderRequest = async () => {
+   try {
     setJobOrder([])
     setTotalData(0)
     let result = null
@@ -220,6 +221,12 @@ const JobOrder = () => {
       setJobOrder([])
     }
     setTotalData( result?.data.totalPages)
+   } catch (error:any) {
+    const {state, realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
   
   const showApproveModal = (row: any) => {

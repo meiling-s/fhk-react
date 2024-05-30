@@ -4,7 +4,7 @@ import { styles as constantStyle } from '../../constants/styles'
 import ChangePasswordBase from './ChangePasswordBase'
 
 // this page is chenage for first time login
-const ChangePassword = () => {
+const ChangePassword = () => {  
   return (
     <Box sx={constantStyle.loginPageBg}>
       <ChangePasswordBase />

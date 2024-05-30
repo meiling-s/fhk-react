@@ -12,7 +12,9 @@ import {
   ButtonBase,
   ImageList,
   ImageListItem,
-  Card
+  Card,
+  Modal,
+  Divider
 } from '@mui/material'
 import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
@@ -31,21 +33,111 @@ import {
 import { styles } from '../../constants/styles'
 import { ImageToBase64 } from '../../utils/utils'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
-import { getTenantById, updateTenantDetail } from '../../APICalls/tenantManage'
+import {
+  getTenantById,
+  updateTenantDetail,
+  updateTenantStatus
+} from '../../APICalls/tenantManage'
 import { Tenant, UpdateTenantForm } from '../../interfaces/account'
+import { getReasonTenant } from '../../APICalls/Collector/denialReason'
 import { useContainer } from 'unstated-next'
 import { localStorgeKeyName } from '../../constants/constant'
 import { ToastContainer, toast } from 'react-toastify'
+
+type closedTenantModalProps = {
+  tenantId: number
+  open: boolean
+  onClose: () => void
+  onSubmit: () => void
+  reasons: il_item[]
+}
+
+function ClosedTenantModal({
+  tenantId,
+  open,
+  onClose,
+  onSubmit,
+  reasons = []
+}: closedTenantModalProps) {
+  const { t } = useTranslation()
+  const [reasonId, setReasonId] = useState<string | null>(null)
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+
+  const handleRejectRequest = async () => {
+    const statData: any = {
+      status: 'CLOSED',
+      reasonId: reasonId,
+      updatedBy: loginId
+    }
+
+    const result = await updateTenantStatus(statData, tenantId)
+    const data = result?.data
+    onSubmit()
+  }
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h3"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('tenant.closed_tenant_title')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography sx={localstyles.typo}>
+              {t('check_out.reject_reasons')}
+            </Typography>
+            <CustomItemList items={reasons} singleSelect={setReasonId} />
+          </Box>
+
+          <Box sx={{ alignSelf: 'center', paddingY: 3 }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                handleRejectRequest()
+                onClose()
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_in.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
 interface TenantDetailsProps {
   tenantId: number
   drawerOpen: boolean
   handleDrawerClose: () => void
+  onChangeStatus: () => void
 }
 
 const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   tenantId,
   drawerOpen = false,
-  handleDrawerClose
+  handleDrawerClose,
+  onChangeStatus
 }) => {
   const { t } = useTranslation()
   const { imgSettings } = useContainer(CommonTypeContainer)
@@ -58,7 +150,11 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const [defaultLang, setDefaultLang] = useState<string>('ZH-HK')
   const [selectedStatus, setSelectedStatus] = useState<string>('CREATED')
   const [deactiveReason, setDeactiveReason] = useState<string>('-')
+  const [modalClosedStatus, setModalClosed] = useState<boolean>(false)
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
+  const [reasons, setReasons] = useState<il_item[]>([])
+  const { i18n } = useTranslation()
+  const role = localStorage.getItem(localStorgeKeyName.role) || ''
 
   const footerTenant = `[${tenantDetail?.tenantId}] ${t(
     `status.${tenantDetail?.status.toLocaleLowerCase()}`
@@ -66,6 +162,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
 
   useEffect(() => {
     getCompanyDetail()
+    getReasonList()
   }, [])
 
   const getCompanyDetail = async () => {
@@ -74,11 +171,11 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setTenantDetails(data)
 
     ///mapping data
-    setNumOfAccount(data.decimalPlace)
-    setNumOfUplodedPhoto(data.allowImgNum)
-    setMaxUploadSize(data.allowImgSize.toString())
-    setDefaultLang(data.lang)
-    setSelectedStatus(data.status)
+    setNumOfAccount(data?.decimalPlace || 0)
+    setNumOfUplodedPhoto(data?.allowImgNum || 0)
+    setMaxUploadSize(data?.allowImgSize.toString())
+    setDefaultLang(data?.lang || 'ZH-HK')
+    setSelectedStatus(data?.status || 'CREATED')
   }
 
   const mainInfoFields = [
@@ -107,7 +204,8 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const statuses: il_item[] = [
     { id: 'CREATED', name: t('status.created') },
     { id: 'CONFIRMED', name: t('status.confirmed') },
-    { id: 'REJECTED', name: t('status.rejected') }
+    { id: 'REJECTED', name: t('status.rejected') },
+    { id: 'CLOSED', name: t('status.closed') }
   ]
 
   const ways_of_exits: il_item[] = [
@@ -131,55 +229,84 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     { id: '5', name: '5' }
   ]
 
-  const handleUpdateTenant = async () => {
-    console.log('update tenant')
+  // useEffect(() => {
+  //   if (selectedStatus === 'CLOSED') {
+  //     setModalClosed(true)
+  //   }
+  // }, [selectedStatus])
 
+  const getReasonList = async () => {
+    const result = await getReasonTenant(0, 100, tenantId.toString(), 1)
+    const data = result?.data
+    if (data) {
+      var tempReasons: il_item[] = []
+      data.content.map((item: any) => {
+        tempReasons.push({
+          id: item.reasonId,
+          name:
+            i18n.language === 'zhhk'
+              ? item?.reasonNameTchi
+              : i18n.language === 'zhhk'
+              ? item?.reasonNameSchi
+              : item?.reasonNameEng
+        })
+      })
+      setReasons(tempReasons)
+    }
+  }
+
+  const handleUpdateTenant = async () => {
     const companyLogoImg =
       companyLogo.length > 0 ? ImageToBase64(companyLogo)[0] : ''
 
-    if (tenantDetail) {
-      const dataForm: UpdateTenantForm = {
-        companyNameTchi: tenantDetail.companyNameTchi,
-        companyNameSchi: tenantDetail.companyNameSchi,
-        companyNameEng: tenantDetail.companyNameEng,
-        tenantType: tenantDetail.tenantType,
-        lang: defaultLang,
-        status: selectedStatus,
-        brNo: tenantDetail.brNo,
-        remark: tenantDetail.remark,
-        contactNo: tenantDetail.contactNo,
-        email: tenantDetail.email,
-        contactName: tenantDetail.contactName,
-        brPhoto: tenantDetail.brPhoto,
-        epdPhoto: tenantDetail.epdPhoto,
-        companyLogo: companyLogoImg,
-        decimalPlace: numOfAccount,
-        monetaryValue: tenantDetail.monetaryValue,
-        inventoryMethod: inventoryMethod,
-        allowImgSize: parseInt(maxUploadSize),
-        allowImgNum: numOfUplodedPhoto,
-        effFrmDate: tenantDetail.effFrmDate,
-        effToDate: tenantDetail.effToDate,
-        approvedAt: tenantDetail?.approvedAt,
-        approvedBy: tenantDetail?.approvedBy,
-        rejectedAt: tenantDetail?.rejectedAt,
-        rejectedBy: tenantDetail?.rejectedBy,
-        createdBy: tenantDetail.createdBy,
-        createdAt: tenantDetail.createdAt,
-        updatedAt: tenantDetail.updatedAt,
-        updatedBy: loginName
-      }
+    if (selectedStatus === 'CLOSED') {
+      setModalClosed(true)
+    } else {
+      if (tenantDetail) {
+        const dataForm: UpdateTenantForm = {
+          companyNameTchi: tenantDetail.companyNameTchi,
+          companyNameSchi: tenantDetail.companyNameSchi,
+          companyNameEng: tenantDetail.companyNameEng,
+          tenantType: tenantDetail.tenantType,
+          lang: defaultLang,
+          status: selectedStatus,
+          brNo: tenantDetail.brNo,
+          remark: tenantDetail.remark,
+          contactNo: tenantDetail.contactNo,
+          email: tenantDetail.email,
+          contactName: tenantDetail.contactName,
+          brPhoto: tenantDetail.brPhoto,
+          epdPhoto: tenantDetail.epdPhoto,
+          companyLogo: companyLogoImg,
+          decimalPlace: numOfAccount,
+          monetaryValue: tenantDetail.monetaryValue,
+          inventoryMethod: inventoryMethod,
+          allowImgSize: parseInt(maxUploadSize),
+          allowImgNum: numOfUplodedPhoto,
+          effFrmDate: tenantDetail.effFrmDate,
+          effToDate: tenantDetail.effToDate,
+          approvedAt: tenantDetail?.approvedAt,
+          approvedBy: tenantDetail?.approvedBy,
+          rejectedAt: tenantDetail?.rejectedAt,
+          rejectedBy: tenantDetail?.rejectedBy,
+          createdBy: tenantDetail.createdBy,
+          createdAt: tenantDetail.createdAt,
+          updatedAt: tenantDetail.updatedAt,
+          updatedBy: loginName
+        }
 
-      const result = await updateTenantDetail(
-        dataForm,
-        tenantDetail.tenantId.toString()
-      )
-      if (result) {
-        showSuccessToast(t('common.editSuccessfully'))
-        getCompanyDetail()
-        handleDrawerClose()
-      } else {
-        showErrorToast(t('common.editFailed'))
+        const result = await updateTenantDetail(
+          dataForm,
+          tenantDetail.tenantId.toString()
+        )
+        if (result) {
+          showSuccessToast(t('common.editSuccessfully'))
+          getCompanyDetail()
+          handleDrawerClose()
+          onChangeStatus()
+        } else {
+          showErrorToast(t('common.editFailed'))
+        }
       }
     }
   }
@@ -195,6 +322,12 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     const newPictures = [...companyLogo]
     newPictures.splice(index, 1)
     setCompanyLogo(newPictures)
+  }
+
+  const onSubmitClosedTenant = () => {
+    showSuccessToast(t('tenant.closes_success'))
+    handleDrawerClose()
+    onChangeStatus()
   }
 
   return (
@@ -524,6 +657,13 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
               </div>
             </Box>
           </Stack>
+          <ClosedTenantModal
+            tenantId={tenantId}
+            open={modalClosedStatus}
+            onClose={() => setModalClosed(false)}
+            onSubmit={onSubmitClosedTenant}
+            reasons={reasons}
+          />
         </div>
       </RightOverlayForm>
     </div>
@@ -581,6 +721,23 @@ let localstyles = {
   },
   imgError: {
     border: '1px solid red'
+  },
+  typo: {
+    color: 'grey',
+    fontSize: 14,
+    display: 'flex'
+  },
+  modal: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: '34%',
+    height: 'fit-content',
+    backgroundColor: 'white',
+    border: 'none',
+    borderRadius: 5
   }
 }
+
 export default TenantDetails

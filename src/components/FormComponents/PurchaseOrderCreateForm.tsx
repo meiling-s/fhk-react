@@ -160,7 +160,7 @@ const PurchaseOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, weightUnits, recycType, decimalVal } = useContainer(CommonTypeContainer)
+  const { logisticList, weightUnits, recycType, decimalVal, initWeightUnit } = useContainer(CommonTypeContainer)
   const [prevLang, setPrevLang] = useState('zhhk')
   const [manuList, setManuList] = useState<manuList[]>()
   const navigate = useNavigate()
@@ -221,6 +221,7 @@ const PurchaseOrderCreateForm = ({
 
   useEffect(() => {
     fetchManuList()
+    if(weightUnits.length === 0) initWeightUnit()
   }, [])
   
   const buttonFilledCustom = {
@@ -637,6 +638,33 @@ const PurchaseOrderCreateForm = ({
       })
       isValid = false
     }
+
+    if(formik.values.senderName === formik.values.receiverName){
+      
+      setErrorsField(prev => {
+        return{
+          ...prev,
+          'senderName': {
+            ...prev.senderName,
+            status: true,
+            required: true
+          }
+        }
+      })
+      isValid = false
+    } else if(formik.values.senderName !== formik.values.receiverName){
+      setErrorsField(prev => {
+        return{
+          ...prev,
+          'senderName': {
+            ...prev.senderName,
+            status: false,
+            required: false
+          }
+        }
+      })
+    }
+    
     return isValid
   }
 
@@ -928,7 +956,7 @@ const PurchaseOrderCreateForm = ({
                 </Box>
                 {
                   errorsField['senderName' as keyof ErrorsField].required && errorsField['senderName' as keyof ErrorsField].status ? 
-                  <ErrorMessage  message={t('purchase_order.create.required_field')}/> : ''
+                  <ErrorMessage  message={t('purchase_order.create.senderNameEqualToReceiverName')}/> : ''
                 }
               </Grid>
               <Grid item>

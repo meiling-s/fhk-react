@@ -27,8 +27,8 @@ import {
   Vehicle,
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
-import { formErr } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64 } from '../../../utils/utils'
+import { STATUS_CODE, formErr } from '../../../constants/constant'
+import { returnErrorMsg, ImageToBase64, extractError } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -39,6 +39,7 @@ import {
 } from '../../../APICalls/Collector/vehicles'
 import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
+import { useNavigate } from 'react-router-dom'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -86,6 +87,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const [validation, setValidation] = useState<formValidate[]>([])
   const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
   const [listedPlate, setListedPlate] = useState<string[]>([])
+  const navigate = useNavigate();
 
   const mappingData = () => {
     if (selectedItem != null) {
@@ -274,33 +276,49 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleCreateVehicle = async (formData: CreateVehicleForm) => {
-    if (validation.length === 0) {
-      const result = await addVehicle(formData)
-      if (result) {
-        onSubmitData('success', t('common.saveSuccessfully'))
-        resetData()
-        handleDrawerClose()
+    try {
+      if (validation.length === 0) {
+        const result = await addVehicle(formData)
+        if (result) {
+          onSubmitData('success', t('common.saveSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        } else {
+          onSubmitData('error', t('common.saveFailed'))
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error:any) {
+      const {state} = extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.saveFailed'))
       }
-    } else {
-      setTrySubmited(true)
     }
   }
 
   const handleEditVehicle = async (formData: CreateVehicleForm) => {
-    if (validation.length === 0) {
-      if (selectedItem != null) {
-        const result = await editVehicle(formData, selectedItem.vehicleId!)
-        if (result) {
-          onSubmitData('success', t('common.editSuccessfully'))
-          resetData()
-          handleDrawerClose()
+    try {
+      if (validation.length === 0) {
+        if (selectedItem != null) {
+          const result = await editVehicle(formData, selectedItem.vehicleId!)
+          if (result) {
+            onSubmitData('success', t('common.editSuccessfully'))
+            resetData()
+            handleDrawerClose()
+          }
         }
-      }
-    } else {
-      setTrySubmited(true)
+      } else {
+        setTrySubmited(true)
 
+      }
+    } catch (error:any) {
+      const {state} = extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 

@@ -34,11 +34,14 @@ import { ToastContainer, toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
 import UpdateCurrency from './UpdateCurrency'
-import { returnApiToken } from '../../../utils/utils'
+import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import CreatePackagingUnit from './CreatePackagingUnit'
+import StatusCard from '../../../components/StatusCard'
+import { useNavigate } from 'react-router-dom'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface PackagingUnit {
   packagingTypeId: string
@@ -70,36 +73,51 @@ const GeneralSettings: FunctionComponent = () => {
   const [engNameList, setEngNameList] = useState<string[]>([])
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
-
+  const navigate = useNavigate()
+  
   useEffect(() => {
     getTenantData()
     initPackagingUnit()
   }, [page])
 
   const initPackagingUnit = async () => {
-    const result = await getAllPackagingUnit(page - 1, pageSize)
-    const data = result?.data
-    setEngNameList([])
-    setSchiNameList([])
-    setTchiNameList([])
+    try {
+      const result = await getAllPackagingUnit(page - 1, pageSize)
+      const data = result?.data
+      setEngNameList([])
+      setSchiNameList([])
+      setTchiNameList([])
 
-    if (data.content) {
-        setPackagingMapping(data.content)
-        setTotalData(data.totalPages)
+      if (data.content) {
+          setPackagingMapping(data.content)
+          setTotalData(data.totalPages)
 
-        data.content.map((item: any, index: any) => {
-          setEngNameList((prevEngName: any) => [...prevEngName, item.packagingNameEng]);
-          setSchiNameList((prevSchiName: any) => [...prevSchiName, item.packagingNameSchi]);
-          setTchiNameList((prevTchiName: any) => [...prevTchiName, item.packagingNameTchi]);
-        })
+          data.content.map((item: any, index: any) => {
+            setEngNameList((prevEngName: any) => [...prevEngName, item.packagingNameEng]);
+            setSchiNameList((prevSchiName: any) => [...prevSchiName, item.packagingNameSchi]);
+            setTchiNameList((prevTchiName: any) => [...prevTchiName, item.packagingNameTchi]);
+          })
+      }
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 
   const getTenantData = async () => {
-    const token = returnApiToken()
-    const result = await getTenantById(parseInt(token.tenantId))
-    const data = result?.data
-    setTenantCurrency(data?.monetaryValue || "")
+    try {
+      const token = returnApiToken()
+      const result = await getTenantById(parseInt(token.tenantId))
+      const data = result?.data
+      setTenantCurrency(data?.monetaryValue || "")
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+    }
   }
   const columns: GridColDef[] = [
     {
@@ -131,6 +149,13 @@ const GeneralSettings: FunctionComponent = () => {
       headerName: t('packaging_unit.remark'),
       width: 100,
       type: 'string'
+    },
+    {
+      field: 'status',
+      headerName: t('col.status'),
+      width: 170,
+      type: 'string',
+      renderCell: (params) => <StatusCard status={params.row?.status} />
     },
     {
       field: 'edit',
