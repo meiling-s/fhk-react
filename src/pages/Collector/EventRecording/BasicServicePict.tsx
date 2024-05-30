@@ -25,11 +25,13 @@ import dayjs from 'dayjs'
 import { ToastContainer, toast } from 'react-toastify'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { formErr } from '../../../constants/constant'
+import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { useNavigate } from 'react-router-dom'
+import { extractError } from '../../../utils/utils'
 
 const BasicServicePicture = () => {
   const { t } = useTranslation()
@@ -42,6 +44,7 @@ const BasicServicePicture = () => {
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginId = localStorage.getItem(localStorgeKeyName.username)
   const {imgSettings, dateFormat} = useContainer(CommonTypeContainer)
+  const navigate = useNavigate();
 
   const ImageToBase64 = (images: ImageListType) => {
     var base64: string[] = []
@@ -145,13 +148,22 @@ const BasicServicePicture = () => {
         updatedBy: loginId || 'admin'
       }
 
-      const result = await createServiceInfo(formData)
-      if (result) {
-        showSuccessToast()
-        setTrySubmited(false)
-        resetData()
-      } else {
-        showErrorToast()
+      try {
+        const result = await createServiceInfo(formData)
+        if (result) {
+          showSuccessToast()
+          setTrySubmited(false)
+          resetData()
+        } else {
+          showErrorToast()
+        }
+      } catch (error:any) {
+        const { state, realm } = extractError(error);
+        if(state.code === STATUS_CODE[503] ){
+          navigate('/maintenance')
+        } else {
+          showErrorToast()
+        }
       }
     } else {
       setTrySubmited(true)

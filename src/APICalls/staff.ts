@@ -27,7 +27,7 @@ export const getStaffList = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all staff failed:', e)
-    return null
+    throw(e)
   }
 }
 

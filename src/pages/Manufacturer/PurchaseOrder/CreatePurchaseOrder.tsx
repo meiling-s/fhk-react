@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router'
 import { useState } from 'react'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { returnApiToken, showErrorToast } from '../../../utils/utils'
-import { Status, localStorgeKeyName } from '../../../constants/constant'
+import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
+import { STATUS_CODE, Status, localStorgeKeyName } from '../../../constants/constant'
 import { postPurchaseOrder } from '../../../APICalls/Manufacturer/purchaseOrder'
 
 const CreatePurchaseOrder = () => {
@@ -66,6 +66,19 @@ const CreatePurchaseOrder = () => {
         }
       )
   })
+
+  const submitPurchaseOrder = async (values: PurChaseOrder) => {
+    try {
+      return await postPurchaseOrder(values)
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      } else {
+        return null
+      }
+    }
+  }
   
 
   const currentDate = new Date().toISOString()
@@ -99,7 +112,7 @@ const CreatePurchaseOrder = () => {
     onSubmit: async (values: PurChaseOrder) => {
 
       values.purchaseOrderDetail = addRow
-      const result = await postPurchaseOrder(values)
+      const result = await submitPurchaseOrder(values)
       const data = result?.data
 
       if (data) {

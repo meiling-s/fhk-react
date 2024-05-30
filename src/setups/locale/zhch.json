@@ -26,7 +26,12 @@
     "approveFailed": "批准请求失败",
     "rejectSuccess": "成功拒绝请求",
     "rejectFailed": "拒绝请求失败",
-    "details": "细节"
+    "details": "细节",
+    "maintenance": "系统正在维护中，请稍后。",
+    "pageNotFound": "找不到网页",
+    "errorMessage": "错误信息",
+    "message": "留言",
+    "statusCode": "状态码"
   },
   "col": {
     "createCP": "建立回收点",
@@ -451,6 +456,8 @@
     "number_of_acc": "帐户数量",
     "photo_blury ": "照片模糊",
     "bussniess_error": "商业编号不匹配",
+    "closed_tenant_title": "您确定将租户状态更改为“已关闭”吗 ?",
+    "closes_success" :"关闭租户状态成功",
     "invite_form": {
       "company_number": "公司编号 ",
       "enter_company": "",
@@ -502,7 +509,8 @@
       "please_enter_the_reason": "请输入原因",
       "no_preference": "无特别偏好",
       "fifo": "先进先出（FIFO）",
-      "lifo": "后进先出（LIFO）"
+      "lifo": "后进先出（LIFO）",
+      "default_lang": "默认语言"
     }
   },
   "report": {
@@ -682,7 +690,7 @@
     "pleaseEnterNumber": "请输入编号",
     "pleaseEnterName": "请输入名称",
     "pleaseEnterEmailAddress": "请输入电子邮箱地址",
-    "active": "激活",
+    "active": "启用",
     "inactive": "未激活",
     "suspend": "暂停",
     "deleted": "已删除",
@@ -1130,7 +1138,8 @@
     "unregulated_electrical": "非受管制电器",
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
-    "paper_drink_box": "纸包饮品盒"
+    "paper_drink_box": "纸包饮品盒",
+    "collector": "集电极"
   },
   "dashboard_manufacturer": {
     "data": "数据",

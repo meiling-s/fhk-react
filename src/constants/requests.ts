@@ -50,9 +50,7 @@ export const UPDATE_TENANT_REGISTER = (
   url: `api/v1/account/t/updateInfo/${tenantId}`
 })
 
-export const UPDATE_TENANT_INFO = (
-  tenantId: string
-): AxiosRequestConfig => ({
+export const UPDATE_TENANT_INFO = (tenantId: string): AxiosRequestConfig => ({
   method: 'put',
   url: `api/v1/account/t/${tenantId}`
 })
@@ -383,17 +381,23 @@ export const CREATE_FORGET_PASSWORD = (table: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/forgetpassword/${table}`
 })
 
-export const GET_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+export const GET_FORGET_PASSWORD_REQUEST = (
+  table: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/forgetpassword/${table}`
 })
 
-export const APPROVE_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+export const APPROVE_FORGET_PASSWORD_REQUEST = (
+  table: string
+): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/forgetpassword/${table}/approve`
 })
 
-export const REJECT_FORGET_PASSWORD_REQUEST = (table: string): AxiosRequestConfig => ({
+export const REJECT_FORGET_PASSWORD_REQUEST = (
+  table: string
+): AxiosRequestConfig => ({
   method: 'patch',
   url: `api/v1/administrator/forgetpassword/${table}/reject`
 })
@@ -610,7 +614,7 @@ export const GET_INVENTORY = (
 export const GET_ITEM_TRACK_INVENTORY = (
   realmApiRoute: string,
   table: string,
-  itemId: number,
+  itemId: number
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/inventory/tracking/${table}/${itemId}`
@@ -705,7 +709,11 @@ export const GET_WEIGHT_BY_SUBTYPE_ID = (
   url: `api/v1/${realmApiRoute}/inventory/${table}/getweightbysubtype/${warehouseId}`
 })
 
-export const GET_RECYC_SUB_TYPE_WEIGHT = (realmApiRoute: string, table: string, warehouseId: number): AxiosRequestConfig => ({
+export const GET_RECYC_SUB_TYPE_WEIGHT = (
+  realmApiRoute: string,
+  table: string,
+  warehouseId: number
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/recycsubtypeweight/${table}/${warehouseId}`
 })
@@ -1228,9 +1236,9 @@ export const UPDATE_NOTIF_TEMPLATE = (
 })
 
 //logistics driver
-export const GET_DRIVER_LIST = (): AxiosRequestConfig => ({
+export const GET_DRIVER_LIST = (table: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/logistic/driver/{table}`
+  url: `api/v1/logistic/driver/${table}`
 })
 
 export const CREATE_DRIVER = (tenantId: string): AxiosRequestConfig => ({
@@ -1406,10 +1414,15 @@ export const GET_DECIMAL_VALUE: AxiosRequestConfig = {
   url: `api/v1/administrator/decimalVal`
 }
 
+export const GET_ALL_DECIMAL_VALUE: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/all/decimalVal`
+}
+
 export const UPDATE_DECIMAL_VALUE = (
   decimalValId: number
 ): AxiosRequestConfig => ({
-  method: 'put',
+  method: 'patch',
   url: `api/v1/administrator/decimalVal/${decimalValId}`
 })
 
@@ -1418,10 +1431,15 @@ export const GET_DATE_FORMAT: AxiosRequestConfig = {
   url: `api/v1/administrator/dateFormat`
 }
 
+export const GET_ALL_DATE_FORMAT: AxiosRequestConfig = {
+  method: 'get',
+  url: `api/v1/administrator/all/dateFormat`
+}
+
 export const UPDATE_DATE_FORMAT = (
   dateFormatId: number
 ): AxiosRequestConfig => ({
-  method: 'put',
+  method: 'patch',
   url: `api/v1/administrator/dateFormat/${dateFormatId}`
 })
 
@@ -1447,7 +1465,10 @@ export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
   url: `api/v1/administrator/po/${poId}`
 })
 
-export const GET_COLPOINTRECYCABLES_DASHBOARD = (tenantId: string): AxiosRequestConfig => ({
+export const GET_COLPOINTRECYCABLES_DASHBOARD = (
+  tenantId: string,
+  realmApiRoute: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/dashboard/colPointRecyclables/${tenantId}`
 })
@@ -1458,28 +1479,56 @@ export const GET_DECIMAL_VAL = (): AxiosRequestConfig => ({
   url: `api/v1/administrator/decimalVal`
 })
 
-export const GET_WEIGHT_RECYCABLES_DASHBOARD = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+export const GET_WEIGHT_RECYCABLES_DASHBOARD = (
+  table: string,
+  frmDate: string,
+  toDate: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `/api/v1/manufacturer/dashboard/weightRecyclablesColPoint/${table}/${frmDate}/${toDate}`
 })
 
-export const GET_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+export const GET_SALES_PRODUCT_ANALYSIS = (
+  tenantId: string,
+  frmDate: string,
+  toDate: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `/api/v1/manufacturer/dashboard/salesProductAnalysis/${tenantId}/${frmDate}/${toDate}`
 })
 
-export const GET_RECYC_PROCESS_ANALYSIS = (table: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+export const GET_RECYC_PROCESS_ANALYSIS = (
+  table: string,
+  frmDate: string,
+  toDate: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `/api/v1/manufacturer/dashboard/recycProcessAnalysis/${table}/${frmDate}/${toDate}`
 })
 
-export const GET_TOTAL_SALES_PRODUCT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+export const GET_TOTAL_SALES_PRODUCT_ANALYSIS = (
+  tenantId: string,
+  frmDate: string,
+  toDate: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `/api/v1/manufacturer/dashboard/ttlSalesProductAnalysis/${tenantId}/${frmDate}/${toDate}`
 })
 
-export const GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS = (tenantId: string, frmDate: string, toDate: string): AxiosRequestConfig => ({
+export const GET_TOTAL_SALES_PRODUCT_BY_DISTRICT_ANALYSIS = (
+  tenantId: string,
+  frmDate: string,
+  toDate: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `/api/v1/manufacturer/dashboard/ttlSalesProductByDistrictAnalysis/${tenantId}/${frmDate}/${toDate}`
 })
 
+export const GET_WEIGHT_RECYCABLES_DASHBOARD_ASTD = (
+  tenantId: string,
+  frmDate: string,
+  toDate: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/account/dashboard/weightRecyclablesColPoint/${tenantId}/${frmDate}/${toDate}`
+})

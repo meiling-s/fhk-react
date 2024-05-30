@@ -26,7 +26,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       return response
     } catch (e) {
       console.error('Get all vehicle failed:', e)
-      return null
+      throw(e)
     }
   }
   //create warehouse
@@ -65,7 +65,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       return response
     } catch (e) {
       console.error('Edit a vehicle failed:', e)
-      return null
+      throw(e)
     }
   }
   

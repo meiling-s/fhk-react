@@ -7,7 +7,7 @@ import { ADD_ICON } from '../../../themes/icons'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { format } from '../../../constants/constant'
+import { STATUS_CODE, format } from '../../../constants/constant'
 import { useTranslation } from 'react-i18next'
 import RosterDetail from './RosterDetail'
 
@@ -18,6 +18,8 @@ import { collectionPoint } from '../../../interfaces/collectionPoint'
 import dayjs from 'dayjs'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { extractError } from '../../../utils/utils'
+import { useNavigate } from 'react-router-dom'
 
 const Rosters: FunctionComponent = () => {
   const { t } = useTranslation()
@@ -31,6 +33,7 @@ const Rosters: FunctionComponent = () => {
   const [rosterColId, setRosterColId] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const {dateFormat} = useContainer(CommonTypeContainer)
+  const navigate = useNavigate();
 
   useEffect(() => {
     initRosterData()
@@ -42,11 +45,12 @@ const Rosters: FunctionComponent = () => {
   }, [filterDate])
 
   const initRosterData = async (filteredDate?: string) => {
+   try {
     setIsLoading(true)
     const collectionPointResult = await getCollectionPoint(0, 1000)
-    const collectionPointData = collectionPointResult?.data.content
+    const collectionPointData = collectionPointResult?.data?.content
 
-    if (collectionPointData && collectionPointData.length > 0) {
+    if (collectionPointData && collectionPointData?.length > 0) {
       const today = dayjs().format('YYYY-MM-DD[T]00:00:00.000[Z]')
       const rosterResult = await getRosterList(
         filteredDate ? filteredDate : today
@@ -71,6 +75,12 @@ const Rosters: FunctionComponent = () => {
       }
     }
     setIsLoading(false)
+   } catch (error:any) {
+    const {state, realm} = extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const formattedTime = (value: string) => {

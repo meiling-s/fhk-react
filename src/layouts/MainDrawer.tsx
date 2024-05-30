@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import '../styles/MainDrawer.css'
-import { Realm, Roles, localStorgeKeyName } from '../constants/constant'
+import { MAINTENANCE_STATUS, Realm, Roles, localStorgeKeyName } from '../constants/constant'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import InventoryIcon from '@mui/icons-material/Inventory'
@@ -119,7 +119,7 @@ function MainDrawer() {
       'Collection point': {
         name: t('all_Collection_Point'),
         icon: <PLACE_ICON />,
-        onClick: () => navigate('/collector/collectionPoint'),
+        onClick:async () => navigate('/collector/collectionPoint'),
         collapse: false
       },
       'Pickup order': {
@@ -191,7 +191,7 @@ function MainDrawer() {
       'Notification template': {
         name: t('notification.notification_menu'),
         icon: <ViewQuiltOutlinedIcon />,
-        onClick: () => navigate(`/${realm}/notice`),
+        onClick: () =>  navigate(`/${realm}/notice`),
         collapse: false
       },
       Driver: {
@@ -395,6 +395,7 @@ function MainDrawer() {
     }
   }
 
+  //set submenu dashboard
   var subMenuDashboard: any[]
   let subMenuDashboardTmp: { name: string; value: string }[] = []
   // Base items
@@ -405,7 +406,10 @@ function MainDrawer() {
     },
     {
       name: 'dashboard',
-      value: t('dashboard_recyclables.recyclable')
+      value:
+        realm === Realm.astd
+          ? t('dashboard_recyclables.collector')
+          : t('dashboard_recyclables.recyclable')
     },
     {
       name: 'warehouse',
@@ -568,7 +572,7 @@ function MainDrawer() {
             ) : (
               <ListItem
                 sx={{ marginTop: 2 }}
-                key={drawerMenu.name}
+                key={index}
                 onClick={drawerMenu.onClick}
                 disablePadding
               >

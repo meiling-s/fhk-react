@@ -28,8 +28,10 @@ import {
   getAllUserGroup
 } from '../../../APICalls/Collector/userGroup'
 import { IconButton } from '@mui/joy'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
+import { extractError } from '../../../utils/utils'
+import { useNavigate } from 'react-router-dom'
 
 type TableRow = {
   id: number
@@ -74,6 +76,7 @@ const UserGroup: FunctionComponent = () => {
   const [functionList, setFunctionList] = useState<Functions[]>([])
   const [groupNameList, setGroupNameList] = useState<string[]>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const navigate = useNavigate();
 
   useEffect(() => {
     initFunctionList()
@@ -81,12 +84,20 @@ const UserGroup: FunctionComponent = () => {
   }, [])
 
   const initFunctionList = async () => {
-    const result = await getAllFunction()
-    const data = result?.data.filter((item: any) => item.tenantTypeId == role)
-    setFunctionList(data)
+    try {
+      const result = await getAllFunction()
+      const data = result?.data.filter((item: any) => item.tenantTypeId == role)
+      setFunctionList(data)
+    } catch (error:any) {
+      const { state , realm } =   extractError(error)
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+    }
   }
 
   const initUserGroupList = async () => {
+   try {
     const result = await getAllUserGroup()
     const data = result?.data
     let tempGroupList: string[] = []
@@ -114,6 +125,12 @@ const UserGroup: FunctionComponent = () => {
       setUserGroupList(userGroupMapping)
       setGroupNameList(tempGroupList)
     }
+   } catch (error:any) {
+    const { state , realm} =  extractError(error);
+    if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+    }
+   }
   }
 
   const columns: GridColDef[] = [

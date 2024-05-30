@@ -26,7 +26,12 @@
     "approveFailed": "Approve request failed",
     "rejectSuccess": "Reject request successfully",
     "rejectFailed": "Reject request failed",
-    "details": "Details"
+    "details": "Details",
+    "maintenance": "The system is under maintenance, please wait.",
+    "pageNotFound": "Page Not Found",
+    "errorMessage": "Error Message",
+    "message": "Message",
+    "statusCode": "status Code"
   },
   "col": {
     "createCP": "Create collection point",
@@ -451,6 +456,8 @@
     "number_of_acc": "Number of accounts",
     "photo_blury": "Photo is blurry",
     "bussniess_error": "Business number does not match",
+    "closed_tenant_title": "Are you sure to change tenant status to `CLOSED` ? ",
+    "closes_success" :"Closed tenant status success",
     "invite_form": {
       "company_number": "Company number",
       "company_category": "Company category",
@@ -501,7 +508,8 @@
       "please_enter_the_reason": "Please enter the reason",
       "no_preference": "No preference",
       "fifo": "First in first out (FIFO)",
-      "lifo": "Last in, first out (LIFO)"
+      "lifo": "Last in, first out (LIFO)",
+      "default_lang": "Default language"
     }
   },
   "report": {
@@ -1156,7 +1164,8 @@
     "unregulated_electrical": "Unregulated electrical appliances",
     "rechargeable_battery": "Rechargeable battery",
     "compact_fluorescent": "Compact fluorescent lamps and light tubes",
-    "paper_drink_box": "Paper drink box"
+    "paper_drink_box": "Paper drink box",
+    "collector": "Collector"
   },
   "dashboard_manufacturer": {
     "data": "Data",

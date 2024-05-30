@@ -10,6 +10,9 @@ import { useTranslation } from 'react-i18next';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Position } from '../../../../interfaces/map';
+import { STATUS_CODES } from 'http';
+import { STATUS_CODE, localStorgeKeyName } from '../../../../constants/constant';
+import { extractError } from '../../../../utils/utils';
 
 const CollectionPoint = () => {
 
@@ -22,12 +25,9 @@ const CollectionPoint = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-
-  
-  
-
     if(action){
       var toastMsg = "";
       switch(action){
@@ -59,19 +59,25 @@ const CollectionPoint = () => {
   }, [page])
 
   async function initCollectionPoint() {
-    setColList([]);
-    const result = await getCollectionPoint(page - 1, pageSize);
-    const data = result?.data.content;
-    setTotalPages(result?.data.totalPages)
-    if(data && data.length>0){
-        //console.log("all collection point: ",data);
-        setColList(data);
-
+    try {
+      const result = await getCollectionPoint(page - 1, pageSize);
+      if(result?.status === STATUS_CODE[200]){
+        setColList([]);
+        const data = result?.data.content;
+        setTotalPages(result?.data.totalPages)
+        if(data && data.length>0){
+            setColList(data);
+        }
+      }
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+      
     }
   }
 
-  const navigate = useNavigate();
-  
   return (
     <>
     <ToastContainer/>

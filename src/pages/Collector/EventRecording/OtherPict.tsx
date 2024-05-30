@@ -23,11 +23,13 @@ import { ServiceInfo } from '../../../interfaces/serviceInfo'
 import { ToastContainer, toast } from 'react-toastify'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { formErr } from '../../../constants/constant'
+import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import { extractError } from '../../../utils/utils'
+import { useNavigate } from 'react-router-dom'
 
 type ServiceName = 'SRV00005' | 'SRV00006' | 'SRV00007'
 type ServiceData = Record<
@@ -42,7 +44,7 @@ const OtherPict = () => {
     SRV00006: {serviceId: 6, startDate: dayjs(), photoImage: [] },
     SRV00007: {serviceId: 7, startDate: dayjs(), photoImage: [] }
   })
-
+  const navigate = useNavigate();
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const {imgSettings, dateFormat} = useContainer(CommonTypeContainer)
@@ -184,20 +186,27 @@ const OtherPict = () => {
             createdBy: loginId,
             updatedBy: loginId
           }
-          const result = await createServiceInfo(formData)
-          if (result) {
-            resetServiceDataWithKey(key, serviceItem.serviceId)
-            const toastMsg = 'created other service success'
-            toast.info(toastMsg, {
-              position: 'top-center',
-              autoClose: 3000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: 'light'
-            })
+          try {
+            const result = await createServiceInfo(formData)
+            if (result) {
+              resetServiceDataWithKey(key, serviceItem.serviceId)
+              const toastMsg = 'created other service success'
+              toast.info(toastMsg, {
+                position: 'top-center',
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+              })
+            }
+          } catch (error:any) {
+            const { state, realm } = extractError(error);
+            if(state.code === STATUS_CODE[503] ){
+              navigate('/maintenance')
+            }
           }
           
         }

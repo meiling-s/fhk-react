@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { NotifTemplate } from '../../../interfaces/notif'
 import { getListNotifTemplatePO, getListNotifTemplateStaff } from '../../../APICalls/notify'
 import { useNavigate } from 'react-router-dom'
-import { Languages, Roles, localStorgeKeyName } from '../../../constants/constant'
-import { returnApiToken } from '../../../utils/utils'
+import { Languages, Roles, STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import { extractError, returnApiToken } from '../../../utils/utils'
 import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from '../../../setups/i18n'
 
@@ -89,57 +89,71 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   }, [selectedTab])
 
   const initStaffList = async () => {
-    const result = await getListNotifTemplateStaff();
-    if (result) {
-      const data = result.data
-    
-      let notifMappingTemplate: NotifTemplate[] = []
-      data.map((item: any) => {
-        notifMappingTemplate.push(
-          createNotifTemplate(
-            item?.templateId,
-            item?.notiType,
-            item?.variables,
-            item?.lang,
-            item?.title,
-            item?.senders,
-            item?.receivers,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt,
+    try {
+      const result = await getListNotifTemplateStaff();
+      if (result) {
+        const data = result.data
+      
+        let notifMappingTemplate: NotifTemplate[] = []
+        data.map((item: any) => {
+          notifMappingTemplate.push(
+            createNotifTemplate(
+              item?.templateId,
+              item?.notiType,
+              item?.variables,
+              item?.lang,
+              item?.title,
+              item?.senders,
+              item?.receivers,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt,
+            )
           )
-        )
-      })
-      setNotifTemplateList(notifMappingTemplate)
-      setFillteredTemplate(notifMappingTemplate)
+        })
+        setNotifTemplateList(notifMappingTemplate)
+        setFillteredTemplate(notifMappingTemplate)
+      }
+    } catch (error:any) {
+      const { state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 
   const initRecyclablesList = async () => {
-    const result = await getListNotifTemplatePO()
-    if (result) {
-      const data = result.data
-      var notifMappingTemplate: NotifTemplate[] = []
-      data.map((item: any) => {
-        notifMappingTemplate.push(
-          createNotifTemplate(
-            item?.templateId,
-            item?.notiType,
-            item?.variables,
-            item?.lang,
-            item?.title,
-            item?.senders,
-            item?.receivers,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt,
+    try {
+      const result = await getListNotifTemplatePO()
+      if (result) {
+        const data = result.data
+        var notifMappingTemplate: NotifTemplate[] = []
+        data.map((item: any) => {
+          notifMappingTemplate.push(
+            createNotifTemplate(
+              item?.templateId,
+              item?.notiType,
+              item?.variables,
+              item?.lang,
+              item?.title,
+              item?.senders,
+              item?.receivers,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt,
+            )
           )
-        )
-      })
-      setNotifTemplateList(notifMappingTemplate)
-      setFillteredTemplate(notifMappingTemplate)
+        })
+        setNotifTemplateList(notifMappingTemplate)
+        setFillteredTemplate(notifMappingTemplate)
+      }
+    } catch (error:any) {
+      const { state, realm } = extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 

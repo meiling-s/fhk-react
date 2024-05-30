@@ -28,7 +28,7 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
-import { showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { extractError, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import {
   createWarehouse,
   getWarehouseById,
@@ -40,6 +40,7 @@ import { getLocation } from '../../../APICalls/getLocation'
 import { get } from 'http'
 import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
+import { STATUS_CODE } from '../../../constants/constant'
 
 interface RecyleItem {
   recycTypeId: string
@@ -156,6 +157,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [status, setStatus] = useState(true) // status field
   const isInitialRender = useRef(true) // Add this line
   const [existingWarehouse, setExisitingWarehouse] = useState<Warehouse[]>([])
+  const navigate = useNavigate();
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -170,23 +172,30 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }, [])
 
   const initType = async () => {
-    const result = await getCommonTypes()
-    if (result?.contract) {
-      var conList: {
-        contractNo: string
-        isEpd: boolean
-        frmDate: string
-        toDate: string
-      }[] = []
-      result.contract.map((con) => {
-        conList.push({
-          contractNo: con.contractNo,
-          isEpd: con.epdFlg,
-          frmDate: con.contractFrmDate,
-          toDate: con.contractToDate
+    try {
+      const result = await getCommonTypes()
+      if (result?.contract) {
+        var conList: {
+          contractNo: string
+          isEpd: boolean
+          frmDate: string
+          toDate: string
+        }[] = []
+        result.contract.map((con) => {
+          conList.push({
+            contractNo: con.contractNo,
+            isEpd: con.epdFlg,
+            frmDate: con.contractFrmDate,
+            toDate: con.contractToDate
+          })
         })
-      })
-      setContractList(conList)
+        setContractList(conList)
+      }
+    } catch (error:any) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -219,8 +228,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         setRecycleType(dataReycleType)
         setSubRecycleType(subTypeMapping)
       }
-    } catch (error) {
-      console.error(error)
+    } catch (error:any) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
   const resetForm = () => {
@@ -258,8 +270,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           warehouseList.filter((item) => item.id != warehouse.warehouseId)
         )
       }
-    } catch (error) {
-      console.error(error)
+    } catch (error:any) {
+     const { state } =  extractError(error);
+     if(state.code === STATUS_CODE[503] ){
+      navigate('/maintenance')
+     }
     }
   }
 
@@ -547,9 +562,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         // console.log('added', response)
         showSuccessToast(t('common.saveSuccessfully'))
       }
-    } catch (error) {
-      console.error(error)
-      showErrorToast(t('common.saveFailed'))
+    } catch (error:any) {
+      const {state} = extractError(error)
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      } else {
+        console.error(error)
+        showErrorToast(t('common.saveFailed'))
+      }
     }
   }
 
@@ -565,11 +585,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         // console.log('edited', response)
         handleDrawerClose()
       }
-    } catch (error) {
+    } catch (error:any) {
       showErrorToast(
         type == 'edit' ? t('common.editFailed') : t('common.deleteFailed')
       )
-      console.error(error)
+      const {state}= extractError(error)
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 

@@ -32,8 +32,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ProgressLine from '../../../components/ProgressLine';
 import StatusCard from '../../../components/StatusCard';
 import { il_item } from '../../../components/FormComponents/CustomItemList';
-
-import { format, localStorgeKeyName } from '../../../constants/constant';
+import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant';
 
 import {
     getCapacityWarehouse,
@@ -58,7 +57,7 @@ import { useContainer } from 'unstated-next';
 import { primaryColor, styles } from '../../../constants/styles';
 import { SEARCH_ICON } from '../../../themes/icons';
 import useDebounce from '../../../hooks/useDebounce';
-import { returnApiToken } from '../../../utils/utils';
+import { extractError, returnApiToken } from '../../../utils/utils';
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -106,7 +105,7 @@ type RecycSubTypeCapacity = {
 const WarehouseDashboard: FunctionComponent = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { recycType, dateFormat} = useContainer(CommonTypeContainer);
+    const { recycType, dateFormat } = useContainer(CommonTypeContainer);
 
     const [currentCapacity, setCurrentCapacity] = useState<number>(0);
     const [totalCapacity, setTotalCapacity] = useState<number>(1000);
@@ -140,43 +139,50 @@ const WarehouseDashboard: FunctionComponent = () => {
     }, [selectedWarehouse, i18n.language]);
 
     const initWarehouse = async () => {
-        let result;
-        if (realmApi === 'account') {
-            result = await astdSearchWarehouse(0, 1000, searchText)
-        } else {
-            result = await getAllWarehouse(0, 1000);
-        }
-        if (result) {
-            let capacityTotal = 0;
-            let warehouse: il_item[] = [];
-            const data = result.data.content;
-            data.forEach((item: any) => {
-                item.warehouseRecyc?.forEach((recy: any) => {
-                    capacityTotal += recy.recycSubTypeCapacity;
+        try {
+            let result;
+            if (realmApi === 'account') {
+                result = await astdSearchWarehouse(0, 1000, searchText)
+            } else {
+                result = await getAllWarehouse(0, 1000);
+            }
+            if (result) {
+                let capacityTotal = 0;
+                let warehouse: il_item[] = [];
+                const data = result.data.content;
+                data.forEach((item: any) => {
+                    item.warehouseRecyc?.forEach((recy: any) => {
+                        capacityTotal += recy.recycSubTypeCapacity;
+                    });
+                    var warehouseName = '';
+                    switch (i18n.language) {
+                        case 'enus':
+                            warehouseName = item.warehouseNameTchi;
+                            break;
+                        case 'zhch':
+                            warehouseName = item.warehouseNameSchi;
+                            break;
+                        case 'zhhk':
+                            warehouseName = item.warehouseNameEng;
+                            break;
+                        default:
+                            warehouseName = item.warehouseNameTchi;
+                            break;
+                    }
+                    warehouse.push({
+                        id: item.warehouseId,
+                        name: warehouseName,
+                    });
                 });
-                var warehouseName = '';
-                switch (i18n.language) {
-                    case 'enus':
-                        warehouseName = item.warehouseNameTchi;
-                        break;
-                    case 'zhch':
-                        warehouseName = item.warehouseNameSchi;
-                        break;
-                    case 'zhhk':
-                        warehouseName = item.warehouseNameEng;
-                        break;
-                    default:
-                        warehouseName = item.warehouseNameTchi;
-                        break;
-                }
-                warehouse.push({
-                    id: item.warehouseId,
-                    name: warehouseName,
-                });
-            });
-            setWarehouseList(warehouse);
-            if (warehouse.length > 0) setSelectedWarehouse(warehouse[0]);
-            setTotalCapacity(capacityTotal);
+                setWarehouseList(warehouse);
+                if (warehouse.length > 0) setSelectedWarehouse(warehouse[0]);
+                setTotalCapacity(capacityTotal);
+            }
+        } catch (error: any) {
+            const { state, realm } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance')
+            }
         }
     };
 
@@ -209,49 +215,70 @@ const WarehouseDashboard: FunctionComponent = () => {
     };
 
     const initCapacity = async () => {
-        const token = returnApiToken()
-        if (selectedWarehouse) {
-            let result;
-            if (realmApi === 'account') {
-                result = await getCapacityWarehouse(
-                    parseInt(selectedWarehouse.id), debouncedSearchValue
-                );
-            } else {
-                result = await getCapacityWarehouse(
-                    parseInt(selectedWarehouse.id), token.decodeKeycloack
-                );
+        try {
+            const token = returnApiToken()
+            if (selectedWarehouse) {
+                let result;
+                if (realmApi === 'account') {
+                    result = await getCapacityWarehouse(
+                        parseInt(selectedWarehouse.id), debouncedSearchValue
+                    );
+                } else {
+                    result = await getCapacityWarehouse(
+                        parseInt(selectedWarehouse.id), token.decodeKeycloack
+                    );
+                }
+                if (result) setTotalCapacity(result.data);
             }
-            if (result) setTotalCapacity(result.data);
+        } catch (error: any) {
+            const { state, realm } = extractError(error);
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance')
+            }
         }
     };
 
     const initCheckIn = async () => {
-        const token = returnApiToken()
-        if (selectedWarehouse) {
-            let result;
-            if (realmApi === 'account') {
-                result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), debouncedSearchValue)
-            } else {
-                result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), token.decodeKeycloack);
+        try {
+            const token = returnApiToken()
+            if (selectedWarehouse) {
+                let result;
+                if (realmApi === 'account') {
+                    result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), debouncedSearchValue)
+                } else {
+                    result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), token.decodeKeycloack);
+                }
+                if (result) setCheckIn(result.data);
             }
-            if (result) setCheckIn(result.data);
+        } catch (error: any) {
+            const { state, realm } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance')
+            }
         }
     };
 
     const initCheckOut = async () => {
-        const token = returnApiToken()
-        if (selectedWarehouse) {
-            let result;
-            if (realmApi === 'account') {
-                result = await getCheckOutWarehouse(
-                    parseInt(selectedWarehouse.id), debouncedSearchValue
-                );
-            } else {
-                result = await getCheckOutWarehouse(
-                    parseInt(selectedWarehouse.id), token.decodeKeycloack
-                );
+        try {
+            const token = returnApiToken()
+            if (selectedWarehouse) {
+                let result;
+                if (realmApi === 'account') {
+                    result = await getCheckOutWarehouse(
+                        parseInt(selectedWarehouse.id), debouncedSearchValue
+                    );
+                } else {
+                    result = await getCheckOutWarehouse(
+                        parseInt(selectedWarehouse.id), token.decodeKeycloack
+                    );
+                }
+                if (result) setCheckOut(result.data);
             }
-            if (result) setCheckOut(result.data);
+        } catch (error: any) {
+            const { state, realm } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance')
+            }
         }
     };
 
@@ -324,7 +351,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                                             ? weightSubtype[item.recycSubTypeId]
                                             : 0;
                                 }
-            
+
                                 subtypeWarehouse.push({
                                     subTypeId: item.recycSubTypeId,
                                     subtypeName: recyItem ? recyItem.subName : '-',
@@ -344,7 +371,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                     parseInt(selectedWarehouse.id)
                 );
                 // console.log("weightSubtype",weightSubtype)
-    
+
                 if (result) {
                     const data = result.data;
                     let subtypeWarehouse: warehouseSubtype[] = [];
@@ -360,7 +387,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                                     ? weightSubtype[item.recycSubTypeId]
                                     : 0;
                         }
-    
+
                         subtypeWarehouse.push({
                             subTypeId: item.recycSubTypeId,
                             subtypeName: recyItem ? recyItem.subName : '-',
@@ -376,42 +403,48 @@ const WarehouseDashboard: FunctionComponent = () => {
     };
 
     const initCheckInOut = async () => {
-        const token = returnApiToken()
-        if (selectedWarehouse) {
-            let result;
-            if (realmApi === 'account') {
-                result = await getCheckInOutWarehouse(
-                    parseInt(selectedWarehouse.id), debouncedSearchValue
-                );
-            } else{
-                result = await getCheckInOutWarehouse(
-                    parseInt(selectedWarehouse.id), token.decodeKeycloack
-                );
-            }
-            if (result) {
-                const data = result.data;
-                let checkinoutMapping: CheckInOutWarehouse[] = [];
-                data.map((item: any, index: number) => {
-                    const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-                    const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
-                    console.log(createdAt,'aaa')
-                    checkinoutMapping.push(
-                        createCheckInOutWarehouse(
-                            item?.chkInId || index + item?.chkInId,
-                            createdAt,
-                            item?.status,
-                            item?.senderName,
-                            item?.receiverName,
-                            item?.picoId,
-                            item?.adjustmentFlg,
-                            item?.logisticName,
-                            item?.senderAddr,
-                            item?.receiverAddr
-                        )
+        try {
+            const token = returnApiToken()
+            if (selectedWarehouse) {
+                let result;
+                if (realmApi === 'account') {
+                    result = await getCheckInOutWarehouse(
+                        parseInt(selectedWarehouse.id), debouncedSearchValue
                     );
-                });
+                } else {
+                    result = await getCheckInOutWarehouse(
+                        parseInt(selectedWarehouse.id), token.decodeKeycloack
+                    );
+                }
+                if (result) {
+                    const data = result.data;
+                    let checkinoutMapping: CheckInOutWarehouse[] = [];
+                    data.map((item: any, index: number) => {
+                        const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+                        const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+                        checkinoutMapping.push(
+                            createCheckInOutWarehouse(
+                                item?.chkInId || index + item?.chkInId,
+                                createdAt,
+                                item?.status,
+                                item?.senderName,
+                                item?.receiverName,
+                                item?.picoId,
+                                item?.adjustmentFlg,
+                                item?.logisticName,
+                                item?.senderAddr,
+                                item?.receiverAddr
+                            )
+                        );
+                    });
 
-                setCheckInOut(checkinoutMapping);
+                    setCheckInOut(checkinoutMapping);
+                }
+            }
+        } catch (error: any) {
+            const { state, realm } = extractError(error)
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance')
             }
         }
     };
@@ -561,7 +594,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
-                                    <IconButton onClick={() => {}}>
+                                    <IconButton onClick={() => { }}>
                                         <SEARCH_ICON
                                             style={{ color: primaryColor }}
                                         />

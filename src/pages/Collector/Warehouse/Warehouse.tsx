@@ -24,6 +24,8 @@ import {
   getAllWarehouse,
   getRecycleType
 } from '../../../APICalls/warehouseManage'
+import { extractError } from '../../../utils/utils'
+import { STATUS_CODE } from '../../../constants/constant'
 
 
 interface RecyleItem {
@@ -182,8 +184,11 @@ const Warehouse: FunctionComponent = () => {
         })
         fetchData()
       }
-    } catch (error) {
-      console.error(error)
+    } catch (error:any) {
+      const {state , realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 

@@ -265,11 +265,14 @@ const CommonType = () => {
   }
   
   const initWeightUnit = async () => {
+   try {
     const result = await getWeightUnit(page - 1, pageSize)
     const data = result?.data
     setWeightUnits(data)
+   } catch (error) {
+    return null
+   }
   }
-
   
   const getDecimalVal = async () => {
     try {

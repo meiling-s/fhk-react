@@ -43,8 +43,8 @@ import { CheckOut } from '../../../interfaces/checkout'
 import { useTranslation } from 'react-i18next'
 import { styles, primaryColor } from '../../../constants/styles'
 import { queryCheckout } from '../../../interfaces/checkout'
-import { localStorgeKeyName } from "../../../constants/constant";
-import { displayCreatedDate, showSuccessToast } from '../../../utils/utils'
+import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
+import { displayCreatedDate, extractError, showSuccessToast } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import i18n from '../../../setups/i18n'
 import { useContainer } from 'unstated-next'
@@ -319,28 +319,35 @@ const CheckoutRequest: FunctionComponent = () => {
   const {dateFormat} = useContainer(CommonTypeContainer)
 
   const getRejectReason = async() => {
-    let result = await getCheckoutReasons()
-    if ( result?.data?.content.length > 0) {
-      let reasonName = ""
-      switch (i18n.language) {
-        case 'enus':
-          reasonName = 'reasonNameEng'
-          break
-        case 'zhch':
-          reasonName = 'reasonNameSchi'
-          break
-        case 'zhhk':
-          reasonName = 'reasonNameTchi'
-          break
-        default:
-          reasonName = 'reasonNameEng'
-          break
+    try {
+      let result = await getCheckoutReasons()
+      if ( result?.data?.content.length > 0) {
+        let reasonName = ""
+        switch (i18n.language) {
+          case 'enus':
+            reasonName = 'reasonNameEng'
+            break
+          case 'zhch':
+            reasonName = 'reasonNameSchi'
+            break
+          case 'zhhk':
+            reasonName = 'reasonNameTchi'
+            break
+          default:
+            reasonName = 'reasonNameEng'
+            break
+        }
+        result?.data?.content.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
+          item.id = item.reasonId
+          item.name = item[reasonName]
+        })
+        setReasonList(result?.data?.content)
       }
-      result?.data?.content.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
-        item.id = item.reasonId
-        item.name = item[reasonName]
-      })
-      setReasonList(result?.data?.content)
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -482,20 +489,27 @@ const CheckoutRequest: FunctionComponent = () => {
   }
 
   const getCheckoutRequest = async () => {
-    const result = await getAllCheckoutRequest(page - 1, pageSize, query)
-    const data = result?.data.content
-    if (data && data.length > 0) {
-      const checkoutData = data
-        .map(transformToTableRow)
-        .filter((item: CheckOut) => item.status === 'CREATED')
-      setCheckoutRequest(
-        data.filter((item: CheckOut) => item.status === 'CREATED')
-      )
-      setFilterCheckOut(checkoutData)
-    } else {
-      setFilterCheckOut([])
+    try {
+      const result = await getAllCheckoutRequest(page - 1, pageSize, query)
+      const data = result?.data.content
+      if (data && data.length > 0) {
+        const checkoutData = data
+          .map(transformToTableRow)
+          .filter((item: CheckOut) => item.status === 'CREATED')
+        setCheckoutRequest(
+          data.filter((item: CheckOut) => item.status === 'CREATED')
+        )
+        setFilterCheckOut(checkoutData)
+      } else {
+        setFilterCheckOut([])
+      }
+      setTotalData(result?.data.totalPages)
+    } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
     }
-    setTotalData(result?.data.totalPages)
   }
 
   useEffect(() => {

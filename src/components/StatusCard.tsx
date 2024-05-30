@@ -38,7 +38,6 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       bgColor = '#6BC7FF'
       fontColor = '#FFFFFF'
       name = t('status.completed')
-
       break
     case 'CLOSED':
       bgColor = '#ACACAC'
@@ -54,7 +53,7 @@ const StatusCard = ({ status }: { status: string | undefined }) => {
       bgColor = '#ACACAC'
       fontColor = '#F4F4F4'
       name = t('status.suspend')
-      break 
+      break
     case 'INACTIVE':
       bgColor = '#F4F4F4'
       fontColor = '#ACACAC'

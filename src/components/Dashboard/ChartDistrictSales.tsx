@@ -20,8 +20,10 @@ import { getTotalSalesProductByDistrictAnalysis } from '../../APICalls/Collector
 import CommonTypeContainer from '../../contexts/CommonTypeContainer';
 import { useContainer } from 'unstated-next';
 import i18n from '../../setups/i18n';
-import { Languages } from '../../constants/constant';
+import { Languages, STATUS_CODE } from '../../constants/constant';
 import hongkong from './echartHongkong.json'
+import { useNavigate } from 'react-router-dom';
+import { extractError } from '../../utils/utils';
 interface Properties {
     name: string,
     name_english: string,
@@ -180,6 +182,7 @@ const ChartDistrictSales = () => {
             "name_traditional": "島嶼"
         },
     ];
+    const navigate = useNavigate();
 
     const option: any = {
         tooltip: {
@@ -269,47 +272,53 @@ const ChartDistrictSales = () => {
     };
 
     const initChart = async (dom: HTMLDivElement) => {
-        const response = await getTotalSalesProductByDistrictAnalysis(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
-        if(response){
-            let chart = echarts.init(dom);
-            const nameMap:any = {};
-            const values:{name:string, value: number, select: any}[] = []
-            for(let region of response){
-                const name = region.district;
-                const value = Number(region.percentage) / 100;
-                const indexLang = districtLang.find(item => item.name === name);
-                if(!indexLang) continue;
-                let lang:string = '';
-                if(i18n.language === Languages.ENUS){
-                    lang = indexLang.name_english
-                } else if(i18n.language === Languages.ZHCH){
-                    lang = indexLang.name_simplified
-                } else {
-                    lang = indexLang.name_traditional
-                }
-                nameMap[name] = lang;
-                values.push(
-                    {
-                        name: lang, 
-                        value: value , 
-                        select: {
-                            label: {
-                                color: 'black',
-                                // backgroundColor: 'none'
-                                areaColor: '#C3DAAC',
+        try {
+            const response = await getTotalSalesProductByDistrictAnalysis(frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
+            if(response){
+                let chart = echarts.init(dom);
+                const nameMap:any = {};
+                const values:{name:string, value: number, select: any}[] = []
+                for(let region of response){
+                    const name = region.district;
+                    const value = Number(region.percentage) / 100;
+                    const indexLang = districtLang.find(item => item.name === name);
+                    if(!indexLang) continue;
+                    let lang:string = '';
+                    if(i18n.language === Languages.ENUS){
+                        lang = indexLang.name_english
+                    } else if(i18n.language === Languages.ZHCH){
+                        lang = indexLang.name_simplified
+                    } else {
+                        lang = indexLang.name_traditional
+                    }
+                    nameMap[name] = lang;
+                    values.push(
+                        {
+                            name: lang, 
+                            value: value , 
+                            select: {
+                                label: {
+                                    color: 'black',
+                                    // backgroundColor: 'none'
+                                    areaColor: '#C3DAAC',
+                                }
                             }
-                        }
-                    });
+                        });
+                }
+                setDataValue(values);
+                setDataNameMap(nameMap)
+                setDataSource(response)
+                chart.setOption(option);
+                window.addEventListener('resize',function(){
+                    chart.resize();
+                })
             }
-            setDataValue(values);
-            setDataNameMap(nameMap)
-            setDataSource(response)
-            chart.setOption(option);
-            window.addEventListener('resize',function(){
-                chart.resize();
-            })
+        } catch (error:any) {
+            const { state, realm } =  extractError(error);
+            if(state.code === STATUS_CODE[503] ){
+                navigate('/maintenance')
+            }
         }
-
     }
 
     useEffect(() => {
