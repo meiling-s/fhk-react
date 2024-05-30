@@ -1,5 +1,12 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi } from '../constants/constant'
+import {
+  formErr,
+  localStorgeKeyName,
+  format,
+  Roles,
+  Realm,
+  RealmApi
+} from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { fieldNameRecycables } from '../constants/constant'
@@ -10,7 +17,8 @@ export const returnApiToken = () => {
   const authToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-  const realmApiRoute = localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
+  const realmApiRoute =
+    localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
   return {
     decodeKeycloack: decodeKeycloack,
     authToken: authToken,
@@ -121,7 +129,7 @@ export const getThemeColorRole = (role: string) => {
     collector: '#79CA25',
     logistic: '#7CE495',
     manufacturer: '#6BC7FF',
-    customer: '#6BC7FF',
+    customer: '#6BC7FF'
   }
 
   return colorList[role as keyof typeof colorList]
@@ -151,33 +159,33 @@ export const getThemeCustomList = (role: string) => {
     }
   }
 
-  return  customListRole[role as keyof typeof customListRole]
+  return customListRole[role as keyof typeof customListRole]
 }
 
 export const dynamicpath = () => {
-  const userRole = localStorage.getItem(localStorgeKeyName.role) || "";
-  let pathRole: string = "";
+  const userRole = localStorage.getItem(localStorgeKeyName.role) || ''
+  let pathRole: string = ''
 
-  switch(userRole){
-    case(Roles.collectorAdmin):
-      pathRole = RealmApi.collector;
-      break;
-    case(Roles.logisticAdmin):
-      pathRole = RealmApi.logistic;
-      break;
-    case(Roles.manufacturerAdmin):
-      pathRole = RealmApi.manufacturer;
-      break;
-    case(Roles.astd):
+  switch (userRole) {
+    case Roles.collectorAdmin:
+      pathRole = RealmApi.collector
+      break
+    case Roles.logisticAdmin:
+      pathRole = RealmApi.logistic
+      break
+    case Roles.manufacturerAdmin:
+      pathRole = RealmApi.manufacturer
+      break
+    case Roles.astd:
       pathRole = RealmApi.astd
-      break;
-    case(Roles.customerAdmin):
+      break
+    case Roles.customerAdmin:
       pathRole = RealmApi.customer
-      break;
+      break
     default:
-      break;
+      break
   }
-  
+
   return {
     pathRole,
     userRole
@@ -185,27 +193,27 @@ export const dynamicpath = () => {
 }
 
 export const getBaseUrl = () => {
-  const realm = localStorage.getItem(localStorgeKeyName.realm);
-  let baseURL: string = '';
-  switch(realm){
-    case(Realm.collector):
-      baseURL = window.baseURL.collector;
-      break;
-    case(Realm.customer):
+  const realm = localStorage.getItem(localStorgeKeyName.realm)
+  let baseURL: string = ''
+  switch (realm) {
+    case Realm.collector:
+      baseURL = window.baseURL.collector
+      break
+    case Realm.customer:
       baseURL = window.baseURL.customer
-      break;
-    case(Realm.logistic):
-      baseURL = window.baseURL.logistic;
-      break;
-    case(Realm.manufacturer):
-      baseURL = window.baseURL.manufacturer;
-      break;
-    case(Realm.astd):
+      break
+    case Realm.logistic:
+      baseURL = window.baseURL.logistic
+      break
+    case Realm.manufacturer:
+      baseURL = window.baseURL.manufacturer
+      break
+    case Realm.astd:
       baseURL = window.baseURL.account
-      break;
+      break
     default:
       baseURL = window.baseURL.administrator
-      break;
+      break
   }
   return baseURL
 }
@@ -213,50 +221,74 @@ export const getBaseUrl = () => {
 // 格式化重量
 export const formatWeight = (weight: string | number, decimalVal: number) => {
   if (decimalVal === 0) {
-    return Math.round(parseFloat(weight.toString())).toString(); // 返回整數類型的字串
+    return Math.round(parseFloat(weight.toString())).toString() // 返回整數類型的字串
   } else {
-    const decimalStr = decimalVal.toString();
-    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
-    return parseFloat(weight.toString()).toFixed(zeroCount); // 返回浮點數類型的字串
+    const decimalStr = decimalVal.toString()
+    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length
+    return parseFloat(weight.toString()).toFixed(zeroCount) // 返回浮點數類型的字串
   }
 }
 
 //  重量輸入框change事件，並根據decimalVal格式化重量及限制小數位
-export const onChangeWeight = (value: string, decimalVal: number, cb: (arg0: string) => void) => {
-  let regexStr;
+export const onChangeWeight = (
+  value: string,
+  decimalVal: number,
+  cb: (arg0: string) => void
+) => {
+  let regexStr
   if (decimalVal === 0) {
-    regexStr = "^\\d*$"; // 只匹配整數
+    regexStr = '^\\d*$' // 只匹配整數
   } else {
-    const decimalStr = decimalVal.toString();
-    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length;
-    regexStr = "^(?!\\.$)\\d*\\.?\\d{0," + zeroCount + "}$"; // 匹配小數，但首字符不能是小數點
+    const decimalStr = decimalVal.toString()
+    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length
+    regexStr = '^(?!\\.$)\\d*\\.?\\d{0,' + zeroCount + '}$' // 匹配小數，但首字符不能是小數點
   }
-  const regex = new RegExp(regexStr);
+  const regex = new RegExp(regexStr)
   if (regex.test(value) || value === '') {
-    cb(value);
+    cb(value)
   }
 }
 
-export const getBackgroundColor = (fieldName: fieldNameRecycables) :string => {
+export const getBackgroundColor = (fieldName: fieldNameRecycables): string => {
   const backgroundColors = {
-      'Rechargeable Batteries': '#FF9FB7',
-      'Glass Bottles': '#7ADFF1',
-      'Paper': '#F9B8FF',
-      'Fluorescent Lamps and Tubes': '#4FB5F5',
-      'Small Electrical Appliances': '#5AE9D8',
-      'Plastics': '#87FDA7',
-      'Non-recyclable': '#EFE72F',
-      'Cardboard': '#ECAB05',
-      'Metals': '#C69AFF'
+    'Rechargeable Batteries': '#FF9FB7',
+    'Glass Bottles': '#7ADFF1',
+    Paper: '#F9B8FF',
+    'Fluorescent Lamps and Tubes': '#4FB5F5',
+    'Small Electrical Appliances': '#5AE9D8',
+    Plastics: '#87FDA7',
+    'Non-recyclable': '#EFE72F',
+    Cardboard: '#ECAB05',
+    Metals: '#C69AFF'
   }
 
   return backgroundColors[fieldName]
 }
 
-export const randomBackgroundColor = () :string => {
-  const x = Math.floor(Math.random() * (256 - 150) + 150);
-  const y = Math.floor(Math.random() * (256 - 150) + 150);
-  const z = Math.floor(Math.random() * (256 - 150) + 150);
-  const bgColor = "rgb(" + x + "," + y + "," + z + ")";
+export const randomBackgroundColor = (): string => {
+  const x = Math.floor(Math.random() * (256 - 150) + 150)
+  const y = Math.floor(Math.random() * (256 - 150) + 150)
+  const z = Math.floor(Math.random() * (256 - 150) + 150)
+  const bgColor = 'rgb(' + x + ',' + y + ',' + z + ')'
   return bgColor
+}
+
+export const getSelectedLanguange = (lang: string) => {
+  var selectedLang = 'zhhk'
+  switch (lang) {
+    case 'zhhk':
+      selectedLang = 'ZH-HK'
+      break
+    case 'zhch':
+      selectedLang = 'ZH-CH'
+      break
+    case 'enus':
+      selectedLang = 'EN-US'
+      break
+    default:
+      selectedLang = 'ZH-HK'
+      break
+  }
+
+  return selectedLang
 }
