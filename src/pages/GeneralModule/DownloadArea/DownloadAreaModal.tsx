@@ -25,7 +25,10 @@ import {
 import { saveAs } from 'file-saver'
 import utc from 'dayjs/plugin/utc'
 import i18n from '../../../setups/i18n'
-
+import { formValidate } from '../../../interfaces/common'
+import { formErr } from '../../../constants/constant'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
+import { returnErrorMsg } from '../../../utils/utils'
 dayjs.extend(utc)
 
 interface DownloadModalProps {
@@ -53,33 +56,81 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const [downloads, setDownloads] = useState<{ date: string; url: any }[]>([])
   const realmApiRoute =
     localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
-  const defaultLang =
-    localStorage.getItem(localStorgeKeyName.selectedLanguage) || 'zhhk'
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<formValidate[]>([])
+  // useEffect(() => {
+  //   const isAfter = dayjs(endDate).isAfter(startDate)
+  //   const isSame = dayjs(endDate).isSame(startDate)
+
+  //   if (isAfter || isSame) {
+  //     getReport()
+  //   }
+  // }, [startDate, endDate, i18n.language])
 
   useEffect(() => {
-    const isAfter = dayjs(endDate).isAfter(startDate)
-    const isSame = dayjs(endDate).isSame(startDate)
+    const validate = async () => {
+      const tempV: formValidate[] = [];
+      if (startDate.isAfter(endDate)) {
+        tempV.push({
+          field: t('generate_report.start_date'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        });
+      }
+      if (endDate.isBefore(startDate)) {
+        tempV.push({
+          field: t('generate_report.end_date'),
+          problem: formErr.endDateEarlyThanStartDate,
+          type: 'error'
+        });
+      }
+      setValidation(tempV);
+      // setIsButtonDisabled(tempV.length > 0);
+    };
 
-    if (isAfter || isSame) {
-      getReport()
-    }
-  }, [startDate, endDate, i18n.language])
+    validate();
+  }, [startDate, endDate]);
 
   useEffect(() => {
     //defaultReport()
     getReport()
   }, [selectedItem?.id, i18n.language])
 
-  const formatToUtc = (value: dayjs.Dayjs) => {
-    return dayjs(value).utc().format('YYYY-MM-DDTHH:mm:ss[Z]')
+  useEffect(() => {
+    const validate = async () => {
+      const tempV: formValidate[] = []
+      startDate > endDate &&
+        tempV.push({
+          field: t('roster.timeBy'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
+      endDate < startDate &&
+        tempV.push({
+          field: t('roster.to'),
+          problem: formErr.endDateEarlyThanStartDate,
+          type: 'error'
+        })
+
+      setValidation(tempV)
+    }
+
+    validate()
+  }, [startDate, endDate])
+
+  const formatUtcStartDate = (value: dayjs.Dayjs) => {
+    return dayjs(value).utc().format('YYYY-MM-DD[T]00:00:00.000[Z]')
+  }
+  const formatUtcEndDate = (value: dayjs.Dayjs) => {
+    return dayjs(value).utc().format('YYYY-MM-DD[T]23:59:59.999[Z]')
   }
 
   const generateCollectorLink = (reportId: string) => {
     return (
       getBaseUrl() +
-      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatToUtc(
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatUtcStartDate(
         startDate
-      )}&toDate=${formatToUtc(
+      )}&toDate=${formatUtcEndDate(
         endDate
       )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
     )
@@ -89,18 +140,6 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     let url = ''
     if (selectedItem) {
       switch (selectedItem?.id) {
-        // case 1:
-        //   url = generateCollectorLink(selectedItem.reportId)
-        //   break
-        // case 2:
-        //   url = generateCollectorLink(selectedItem.reportId)
-        //   break
-        // case 3:
-        //   break
-        // case 4:
-        //   break
-        // case 5:
-        //   break
         case 6:
           url =
             window.baseURL.collector +
@@ -124,11 +163,13 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           break
       }
 
-      console.log("urllll", url)
-
-      setDownloads((prev) => {
-        return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
-      })
+      if (validation.length === 0) {
+        setDownloads((prev) => {
+          return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
+        })
+      } else {
+        setTrySubmited(true)
+      }
     }
   }
 
@@ -210,6 +251,17 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             ))}
           </Grid>
         </Box>
+        <Grid item>
+          {trySubmited &&
+            validation.map((val, index) => (
+              <FormErrorMsg
+                key={index}
+                field={t(val.field)}
+                errorMsg={returnErrorMsg(val.problem, t)}
+                type={val.type}
+              />
+            ))}
+        </Grid>
       </RightOverlayFormCustom>
     </div>
   )
