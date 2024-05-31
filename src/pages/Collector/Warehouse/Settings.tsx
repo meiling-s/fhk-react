@@ -67,6 +67,8 @@ const Settings: FunctionComponent = () => {
       const hideTabIndexArr = [3]
       updatedTabList = updatedTabList.filter((_, index) => !hideTabIndexArr.includes(index))
     }
+
+    setTabList(updatedTabList)
   }
 
   const getASTDTabList = () => {
