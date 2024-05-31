@@ -62,20 +62,20 @@ import LogisticVehicleDashboard from './pages/Logistic/Dashboard/dashboard'
 //manufacturer
 import PurchaseOrder from './pages/Manufacturer/PurchaseOrder/PurchaseOrder'
 import CustomerAccount from './pages/Logistic/Account'
-import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder";
-import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
-import PickupPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder"
-import DashboardRecyclables from "./pages/Collector/Dashboard/Recyclables";
-import ManufacturerDashboard from "./pages/Manufacturer/Dashboard/Dashboard";
-import RecyclablesAstd from "./pages/ASTD/Dashboard/RecyclablesAstd";
-import PageNotFound from "./pages/Common/PageNotFound";
-import MaintenancePage from "./pages/Common/MaintenancePage";
+import CreatePurchaseOrder from './pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder'
+import EditPurchaseOrder from './pages/Manufacturer/PurchaseOrder/EditPurchaseOrder'
+import PickupPurchaseOrder from './pages/Manufacturer/PurchaseOrder/PickupPurchaseOrder'
+import DashboardRecyclables from './pages/Collector/Dashboard/Recyclables'
+import ManufacturerDashboard from './pages/Manufacturer/Dashboard/Dashboard'
+import RecyclablesAstd from './pages/ASTD/Dashboard/RecyclablesAstd'
+import PageNotFound from './pages/Common/PageNotFound'
+import MaintenancePage from './pages/Common/MaintenancePage'
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} /> 
+        <Route path="/" element={<Login />} />
         <Route path="/changePassword" element={<ChangePassword />} />
         <Route path="/resetPassword" element={<ResetPassword />} />
         <Route path="/confirmNewPassword" element={<ConfirmResetPassword />} />
@@ -167,7 +167,7 @@ const Router = () => {
             path="/astd/vehicleDashboard"
             element={<AstdVehicleDashboard />}
           />
-          <Route path="/astd/report" element={<Report />} />
+            <Route path="/astd/report" element={<Report />} />
         </Route>
 
         <Route element={<MainLayout />}>

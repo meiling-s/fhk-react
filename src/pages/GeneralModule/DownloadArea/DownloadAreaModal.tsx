@@ -11,7 +11,12 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DOCUMENT_ICON } from '../../../themes/icons'
 import { getDownloadExcel, getDownloadWord } from '../../../APICalls/report'
-import { getBaseUrl, getLanguageCode, returnApiToken } from '../../../utils/utils'
+import {
+  getBaseUrl,
+  returnApiToken,
+  getSelectedLanguange
+} from '../../../utils/utils'
+
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import {
@@ -49,6 +54,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const [downloads, setDownloads] = useState<{ date: string; url: any }[]>([])
   const realmApiRoute =
     localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
+  const defaultLang =
+    localStorage.getItem(localStorgeKeyName.selectedLanguage) || 'zhhk'
 
   useEffect(() => {
     const isAfter = dayjs(endDate).isAfter(startDate)
@@ -57,13 +64,12 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     if (isAfter || isSame) {
       getReport()
     }
-  }, [startDate, endDate])
- 
-  
+  }, [startDate, endDate, i18n.language])
+
   useEffect(() => {
     //defaultReport()
     getReport()
-  }, [selectedItem?.id])
+  }, [selectedItem?.id, i18n.language])
 
   const formatToUtc = (value: dayjs.Dayjs) => {
     return dayjs(value).utc().format('YYYY-MM-DDTHH:mm:ss[Z]')
@@ -74,7 +80,9 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       getBaseUrl() +
       `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatToUtc(
         startDate
-      )}&toDate=${formatToUtc(endDate)}&staffId=${staffId}&language=${getLanguageCode(i18n.language)}`
+      )}&toDate=${formatToUtc(
+        endDate
+      )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
     )
   }
 
@@ -117,6 +125,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           break
       }
 
+      console.log("urllll", url)
+
       setDownloads((prev) => {
         return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
       })
@@ -136,6 +146,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
         headerProps={{
           title: t('report.report'),
           subTitle: selectedItem?.report_name,
+          onCloseHeader: onCloseDrawer,
           isButtonCancel: false,
           isButtonFinish: false
         }}
