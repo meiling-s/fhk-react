@@ -612,7 +612,7 @@ const PurchaseOrder = () => {
     {
       label: t('pick_up_order.filter.to'),
       width: '10%',
-      options: getUniqueOptionsDate('approvedAt'),
+      options: getUniqueOptionsDate('createdAt'),
       field: 'toCreatedAt'
     },
     {
