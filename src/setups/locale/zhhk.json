@@ -1116,6 +1116,7 @@
   "recycling_point": {
     "recycling_point": "回收點",
     "engineering_land": "工程用地類別",
+    "house_or_place": "房屋或場所類別",
     "place": "地點",
     "capacity": "容量",
     "state": "狀態",
