@@ -1,96 +1,192 @@
-import { IconButton, InputAdornment, MenuItem, TextField } from "@mui/material";
-import React, {useEffect, useState} from "react";
-import { SEARCH_ICON } from "../../themes/icons";
-import { t } from "i18next";
-import { localStorgeKeyName } from "../../constants/constant";
+import {
+  Box,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  TextField
+} from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { SEARCH_ICON } from '../../themes/icons'
+import { t } from 'i18next'
+import { localStorgeKeyName } from '../../constants/constant'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import dayjs, { Dayjs } from 'dayjs'
+import { styles } from '../../constants/styles'
+import { format } from './../../constants/constant'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 interface Option {
-  value: string;
-  label: string;
+  value: string
+  label: string
 }
 
-const CustomSearchField = ({ label, width, options, onChange, field, placeholder, handleSearch }: { 
-  label: string; 
-  width: string; 
-  options?: Option[]; 
-  onChange?: (labelField: string, value: string) => void;
-  field?: string;
-  placeholder?: string;
-  handleSearch?: (value: string) => void;
+const CustomSearchField = ({
+  label,
+  width,
+  options,
+  onChange,
+  field,
+  placeholder,
+  handleSearch,
+  inputType
+}: {
+  label: string
+  width?: string
+  options?: Option[]
+  onChange?: (labelField: string, value: string) => void
+  field?: string
+  placeholder?: string
+  handleSearch?: (value: string) => void
+  inputType?: string
 }) => {
-  const hasOptions = options && options.length>0
-  const [selectedValue, setSelectedValue] = useState<string>("")
-  const handleChange = (event: React.ChangeEvent<{value: any}>) => {
+  const hasOptions = options && options.length > 0
+  //const [selectedValue, setSelectedValue] = useState<string>("")
+  const initialSelectedValue =
+    inputType === 'date' ? dayjs().format('YY-MM-DD') : ''
+  const [selectedValue, setSelectedValue] =
+    useState<string>(initialSelectedValue)
+  const handleChange = (event: React.ChangeEvent<{ value: any }>) => {
     const newValue = event.target.value as string
     setSelectedValue(newValue)
 
-    // if(options) {
-    //   const selectedOpt = options?.find((item) => item.value == newValue) 
-      
-    // }
-
-    if(onChange ){
+    if (onChange) {
       onChange(field ? field : label, newValue)
     }
   }
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const role = localStorage.getItem(localStorgeKeyName.role)
 
+  const handleDateChange = (date: Dayjs | null) => {
+    if (date) {
+      const formattedDate = date.format('YYYY-MM-DD')
+      setSelectedValue(formattedDate)
+      if (onChange) {
+        onChange(field ? field : label, formattedDate)
+      }
+    }
+  }
+
+  const handleSearchClick = () => {
+    if (handleSearch) {
+      handleSearch(selectedValue)
+    }
+  }
+
   useEffect(() => {
-    setPrimaryColor(role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25')
+    setPrimaryColor(
+      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
+    )
   }, [role])
 
   return (
-    <TextField
-      sx={{
-        mt: 3,
-        m: 1,
-        width: width,
-        bgcolor: "white",
-        "& .MuiOutlinedInput-root": {
-          "& fieldset": {
-            borderColor: "#grey",
-          },
-          "&:hover fieldset": {
-            borderColor: primaryColor,
-          },
-          "&.Mui-focused fieldset": {
-            borderColor: primaryColor,
-          },
-          "& label.Mui-focused": {
-            color: primaryColor, // Change label color when input is focused
-          },
-        },
-      }}
-     
-      label={label}
-      InputLabelProps={{
-        style: { color: primaryColor },
-        focused: true,
-      }}
-      value={selectedValue}
-      placeholder={placeholder ? placeholder : t("pick_up_order.filter.search")}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-           {!hasOptions && ( 
-            <IconButton onClick={handleSearch ? () => handleSearch(selectedValue) : undefined}>
-              <SEARCH_ICON style={{ color: primaryColor }} />
-            </IconButton>
-          )}
-        </InputAdornment>
-      ),
-    }}
-      select={hasOptions}
-      onChange={handleChange}
-    >
-      {hasOptions &&options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          {option.label}
-        </MenuItem>
-      ))}
-    </TextField>
-  );
-};
+    <Box>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
+        {inputType === 'date' ? (
+          <Box sx={{ ...localstyles.DateItem }}>
+            <DatePicker
+              defaultValue={dayjs()}
+              label={label}
+              format={format.dateFormat2}
+              onChange={handleDateChange}
+              sx={{
+                ...localstyles.datePicker,
+                '& .MuiIconButton-edgeEnd': {
+                  color: primaryColor
+                }
+              }}
+            />
+          </Box>
+        ) : (
+          <TextField
+            sx={{
+              mt: 3,
+              m: 1,
+              width: width ? width : '250px',
+              bgcolor: 'white',
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: '#grey'
+                },
+                '&:hover fieldset': {
+                  borderColor: primaryColor
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: primaryColor
+                },
+                '& label.Mui-focused': {
+                  color: primaryColor // Change label color when input is focused
+                }
+              }
+            }}
+            label={label}
+            InputLabelProps={{
+              style: { color: primaryColor },
+              focused: true
+            }}
+            value={selectedValue}
+            placeholder={
+              placeholder ? placeholder : t('pick_up_order.filter.search')
+            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {!hasOptions && (
+                    <IconButton
+                      onClick={
+                        handleSearch ? () => handleSearchClick() : undefined
+                      }
+                    >
+                      <SEARCH_ICON style={{ color: primaryColor }} />
+                    </IconButton>
+                  )}
+                </InputAdornment>
+              )
+            }}
+            select={hasOptions}
+            onChange={handleChange}
+          >
+            {hasOptions &&
+              options.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+          </TextField>
+        )}
+      </LocalizationProvider>
+    </Box>
+  )
+}
 
-export default CustomSearchField;
+let localstyles = {
+  timePeriodItem: {
+    display: 'flex',
+    height: 'fit-content',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    border: 2,
+    borderRadius: 1,
+    borderColor: '#E2E2E2'
+  },
+  datePicker: {
+    width: {
+      xs: '280px',
+      md: '100%'
+    },
+    backgroundColor: 'white',
+    '& fieldset': {
+      borderRadius: '4px'
+    },
+    borderRadius: '4px'
+  },
+  DateItem: {
+    display: 'flex',
+    height: 'fit-content',
+    alignItems: 'center',
+    marginTop: '8px',
+    marginRight: '8px'
+  }
+}
+
+export default CustomSearchField
