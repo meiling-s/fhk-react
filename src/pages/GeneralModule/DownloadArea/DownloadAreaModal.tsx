@@ -58,41 +58,21 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  // useEffect(() => {
-  //   const isAfter = dayjs(endDate).isAfter(startDate)
-  //   const isSame = dayjs(endDate).isSame(startDate)
+  useEffect(() => {
+    // const isAfter = dayjs(endDate).isAfter(startDate)
+    // const isSame = dayjs(endDate).isSame(startDate)
 
-  //   if (isAfter || isSame) {
-  //     getReport()
-  //   }
-  // }, [startDate, endDate, i18n.language])
+    if (validation.length === 0) {
+      getReport()
+    } else {
+      setTrySubmited(true)
+    }
+    // if (isAfter || isSame) {
+    //   getReport()
+    // }
+  }, [startDate, endDate, i18n.language, validation])
 
   useEffect(() => {
-    const validate = async () => {
-      const tempV: formValidate[] = [];
-      if (startDate.isAfter(endDate)) {
-        tempV.push({
-          field: t('generate_report.start_date'),
-          problem: formErr.startDateBehindEndDate,
-          type: 'error'
-        });
-      }
-      if (endDate.isBefore(startDate)) {
-        tempV.push({
-          field: t('generate_report.end_date'),
-          problem: formErr.endDateEarlyThanStartDate,
-          type: 'error'
-        });
-      }
-      setValidation(tempV);
-      // setIsButtonDisabled(tempV.length > 0);
-    };
-
-    validate();
-  }, [startDate, endDate]);
-
-  useEffect(() => {
-    //defaultReport()
     getReport()
   }, [selectedItem?.id, i18n.language])
 
@@ -101,14 +81,26 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       const tempV: formValidate[] = []
       startDate > endDate &&
         tempV.push({
-          field: t('roster.timeBy'),
+          field: t('generate_report.start_date'),
           problem: formErr.startDateBehindEndDate,
           type: 'error'
         })
       endDate < startDate &&
         tempV.push({
-          field: t('roster.to'),
+          field: t('generate_report.end_date'),
           problem: formErr.endDateEarlyThanStartDate,
+          type: 'error'
+        })
+      startDate == null &&
+        tempV.push({
+          field: t('generate_report.start_date'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      endDate == null &&
+        tempV.push({
+          field: t('generate_report.end_date'),
+          problem: formErr.empty,
           type: 'error'
         })
 
@@ -163,13 +155,9 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           break
       }
 
-      if (validation.length === 0) {
-        setDownloads((prev) => {
-          return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
-        })
-      } else {
-        setTrySubmited(true)
-      }
+      setDownloads((prev) => {
+        return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
+      })
     }
   }
 
@@ -247,21 +235,22 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                 date={item.date}
                 url={item.url}
                 typeFile={selectedItem?.typeFile}
+                validation={validation}
               />
             ))}
           </Grid>
+          <Grid item>
+            {trySubmited &&
+              validation.map((val, index) => (
+                <FormErrorMsg
+                  key={index}
+                  field={t(val.field)}
+                  errorMsg={returnErrorMsg(val.problem, t)}
+                  type={val.type}
+                />
+              ))}
+          </Grid>
         </Box>
-        <Grid item>
-          {trySubmited &&
-            validation.map((val, index) => (
-              <FormErrorMsg
-                key={index}
-                field={t(val.field)}
-                errorMsg={returnErrorMsg(val.problem, t)}
-                type={val.type}
-              />
-            ))}
-        </Grid>
       </RightOverlayFormCustom>
     </div>
   )
@@ -271,7 +260,8 @@ const DownloadItem: FunctionComponent<{
   date: string
   url: string
   typeFile: string | undefined
-}> = ({ date, url, typeFile }) => {
+  validation: formValidate[]
+}> = ({ date, url, typeFile, validation = [] }) => {
   const downloadfile = (blob: any, type: string | undefined) => {
     let extention = ''
     switch (type) {
@@ -320,7 +310,7 @@ const DownloadItem: FunctionComponent<{
         }}
         underline="none"
         target="_blank"
-        href={url}
+        href={validation.length === 0 ? url : ''}
         // onClick={() => downloadfile(url, typeFile)}
       >
         <DOCUMENT_ICON style={{ color: '#79CA25' }} />
