@@ -44,6 +44,7 @@ import { useNavigate } from "react-router-dom";
       outin: '',
     })
     const navigate = useNavigate();
+    const [totalElements, setTotalElements] = useState<number>(0);
 
     useEffect(() => {
       getData() // eslint-disable-next-line
@@ -64,7 +65,8 @@ import { useNavigate } from "react-router-dom";
         ...GET_CHECKIN_CHECKOUT_LIST(table, keyword, page -1, 10)
       })
 
-      const {content, totalPages} = dataRes
+      const {content, totalPages, totalElements} = dataRes
+      console.log('dataRes', dataRes)
       setData(content.map((item:any, index:number) => {
       return {
         ...item,
@@ -72,6 +74,8 @@ import { useNavigate } from "react-router-dom";
       }
       }))
       setTotalData(totalPages)
+      setTotalElements(totalElements);
+
      } catch (error:any) {
       const {state, realm} = extractError(error)
       if(state.code === STATUS_CODE[503] ){
@@ -254,6 +258,9 @@ import { useNavigate } from "react-router-dom";
           >
             {t("checkinandcheckout.title")}
           </Typography>
+          <Box sx={styles.totalElements}>
+            <Typography style={{color: 'white', fontSize: '12px'}} >{totalElements}</Typography>
+          </Box>
         </Box>
         <Box>
           <div className="flex items-center">
@@ -489,6 +496,16 @@ import { useNavigate } from "react-router-dom";
         color: "#79CA25",
       },
     },
+    totalElements : {
+      display: 'flex', 
+      justifyContent: "center", 
+      alignItems: 'center', 
+      backgroundColor: '#79CA25', 
+      padding: '3px', 
+      borderRadius: '20px', 
+      width: '20px', 
+      height: '20px'
+    }
   };
   
   export default CheckInAndCheckOut;
