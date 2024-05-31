@@ -102,7 +102,7 @@ const CustomSearchField = ({
             sx={{
               mt: 3,
               m: 1,
-              width: width ? width : '250px',
+              width: '250px',
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
@@ -163,6 +163,7 @@ let localstyles = {
   timePeriodItem: {
     display: 'flex',
     height: 'fit-content',
+    // paddingX: 2,
     alignItems: 'center',
     backgroundColor: 'white',
     border: 2,
@@ -185,7 +186,8 @@ let localstyles = {
     height: 'fit-content',
     alignItems: 'center',
     marginTop: '8px',
-    marginRight: '8px'
+    marginRight: '8px',
+    width: '250px'
   }
 }
 
