@@ -15,6 +15,7 @@ import ASTDSettings from "../../ASTD/GeneralSettings/GeneralSettings";
 import RecyclingUnit from "../../ASTD/RecyclingUnit/RecyclingUnit";
 import RecyclingPoint from "../../ASTD/RecyclingPoint/RecyclingPoint";
 import ASTDVehicle from '../../ASTD/Vehicle/Vehicle'
+import ASTDCompany from '../../ASTD/Company/Company'
 import ASTDStaff from '../../ASTD/Staff/Staff'
 import ASTDDenialReason from '../../ASTD/DenialReason/DenialReason'
 import CustomerGeneralSettings from '../../Customer/GeneralSettings/GeneralSettings'
@@ -138,7 +139,7 @@ const Settings: FunctionComponent = () => {
         ) : selectedTab === 3 ? (
           <ASTDVehicle/>
         ) : selectedTab === 4 ? (
-          <Company />
+          <ASTDCompany />
         ) : selectedTab === 5 ? (
           <ASTDStaff />
         ) : selectedTab === 6 ? (

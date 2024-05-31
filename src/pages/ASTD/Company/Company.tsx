@@ -52,12 +52,22 @@ function createCompany(
 
 const Company: FunctionComponent = () => {
   const { t } = useTranslation();
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState<{ [key: string]: number }>({
+    collectorlist: 1,
+    logisticlist: 1,
+    manulist: 1,
+    customerlist: 1,
+  });  
   const pageSize = 10;
   const [action, setAction] = useState<"add" | "edit" | "delete">("add");
   const [rowId, setRowId] = useState<number>(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [totalData, setTotalData] = useState<number>(0);
+  const [totalData, setTotalData] = useState<{ [key: string]: number }>({
+    collectorlist: 0,
+    logisticlist: 0,
+    manulist: 0,
+    customerlist: 0,
+  });
   // const [companyList, setCompanyList] = useState<CompanyItem[]>([]);
   const [selectedRow, setSelectedRow] = useState<CompanyItem | null>(null);
   const companyTypeList: string[] = ['collectorlist', 'logisticlist', 'manulist', 'customerlist']
@@ -67,7 +77,7 @@ const Company: FunctionComponent = () => {
   const [manuList, setManuList] = useState<CompanyItem[]>([]);
   const [customerList, setCustomerList] = useState<CompanyItem[]>([]);
   const initCompanyList = async (companyType: string) => {
-    const result = await getAllCompany(companyType, page - 1, pageSize);
+    const result = await getAllCompany(companyType, page[companyType] - 1, pageSize);
     const data = result?.data;
     // setCompanyList(data);
     if (data) {
@@ -107,7 +117,11 @@ const Company: FunctionComponent = () => {
         default:
           break;
       }
-      setTotalData(data.totalPages);
+      setTotalData((prevTotalData) => ({
+        ...prevTotalData,
+        [companyType]: data.totalPages,
+      }));
+      console.log('data', totalData, "page", page)
     }
   };
 
@@ -138,9 +152,17 @@ const Company: FunctionComponent = () => {
       initCompanyList(type);
     }
   }
+  
   useEffect(() => {
     initAllData()
-  }, [page])
+  }, [])
+
+  useEffect(() => {
+    if (selectCompanyType) {
+      initCompanyList(selectCompanyType);
+    }
+  }, [page, selectCompanyType]);
+  
 
   const columns: GridColDef[] = [
     {
@@ -357,10 +379,14 @@ const Company: FunctionComponent = () => {
                   />
                   <Pagination
                     className="mt-4"
-                    count={Math.ceil(totalData)}
-                    page={page}
+                    count={Math.ceil(totalData[item])}
+                    page={page[item]}
                     onChange={(_, newPage) => {
-                      setPage(newPage);
+                      setSelectCompanyType(item)
+                      setPage((prevPage) => ({
+                        ...prevPage,
+                        [item]: newPage,
+                      }));
                     }}
                   />
                 </Box>
