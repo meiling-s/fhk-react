@@ -826,11 +826,7 @@ const PurchaseOrderCreateForm = ({
                 >
                   <CustomAutoComplete
                     placeholder={t('purchase_order.create.contact_number_placeholder')}
-                    option={
-                      logisticCompany?.map(
-                        (option) => option.logisticNameTchi
-                      ) ?? []
-                    }
+                    option={[]}
                     sx={{ width: '400px' }}
                     onChange={(_: SyntheticEvent, newValue: string | null) =>
                       formik.setFieldValue('contactNo', newValue)
