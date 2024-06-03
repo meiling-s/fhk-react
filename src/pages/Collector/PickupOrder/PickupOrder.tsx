@@ -564,8 +564,8 @@ const PickupOrders = () => {
   }
   const searchfield = [
     {label:t('pick_up_order.filter.search'),width:'14%', field: 'picoId'},
-    {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('createdAt'), field:"effFromDate"},
-    {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('deliveryDate'), field:"effToDate"},
+    {label:t('pick_up_order.filter.dateby'),width:'10%', field:"effFromDate", inputType: 'date'},
+    {label:t('pick_up_order.filter.to'),width:'10%', field:"effToDate", inputType: 'date'},
     {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticName"},
     {label:t('pick_up_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderCompany'), field:"senderName"},
     {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recycType"},
@@ -699,7 +699,7 @@ const PickupOrders = () => {
           <CustomSearchField
             key={s.field}
             label={s.label} 
-            width={s.width} 
+            inputType={s.inputType}
             field={s.field}
             options={s.options || []} 
             onChange={handleSearch} />

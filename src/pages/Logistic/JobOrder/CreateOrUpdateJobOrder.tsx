@@ -82,7 +82,7 @@ const JobOrder = () => {
 
   const initListVehicle = async () => {
    try {
-    const result = await getAllVehiclesLogistic(0, 10)
+    const result = await getAllVehiclesLogistic(0, 1000)
     if (result) {
       const data = result?.data?.content
       const mappingVehicle : VehicleList[] = []
