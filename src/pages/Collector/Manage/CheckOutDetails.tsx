@@ -17,10 +17,15 @@ import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { useContainer } from 'unstated-next'
 
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import { format } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import { localStorgeKeyName } from '../../../constants/constant'
 import { formatWeight } from '../../../utils/utils'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type RecycItem = {
   recycType: il_item
@@ -42,7 +47,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
   handleDrawerClose
 }) => {
   const { t } = useTranslation()
-  const { recycType, decimalVal } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat } = useContainer(CommonTypeContainer)
   const [selectedDetail, setSelectedDetail] = useState<
     CheckoutDetail[] | undefined
   >([])
@@ -68,7 +73,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
 
   const updatedDate = selectedCheckOut?.updatedAt
-    ? dayjs(new Date(selectedCheckOut?.updatedAt)).format(format.dateFormat1)
+    ? dayjs.utc(new Date(selectedCheckOut?.updatedAt)).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
     : '-'
   const messageCheckout = `[${loginId}] ${t(
     'check_out.approved_on'
