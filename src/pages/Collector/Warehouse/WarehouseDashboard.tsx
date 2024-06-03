@@ -452,10 +452,12 @@ const WarehouseDashboard: FunctionComponent = () => {
                     const data = result.data;
                     let checkinoutMapping: CheckInOutWarehouse[] = [];
                     data.map((item: any, index: number) => {
+                        const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+                        const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
                         checkinoutMapping.push(
                             createCheckInOutWarehouse(
                                 item?.chkInId || index + item?.chkInId,
-                                item?.createdAt,
+                                createdAt,
                                 item?.status,
                                 item?.senderName,
                                 item?.receiverName,
@@ -502,14 +504,8 @@ const WarehouseDashboard: FunctionComponent = () => {
         {
             field: 'createdAt',
             headerName: t('check_out.created_at'),
-            width: 120,
-            type: 'string',
-            renderCell: (params) => {
-                const dateFormatted = dayjs(
-                    new Date(params.row.createdAt)
-                ).format(format.dateFormat1);
-                return <div>{dateFormatted}</div>;
-            },
+            width: 150,
+            type: 'string'
         },
         {
             field: 'status',
