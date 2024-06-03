@@ -418,14 +418,6 @@ const RecyclingPoint: FunctionComponent = () => {
                 }
               }}
             />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
           </Box>
         </div>
         <Box
@@ -477,14 +469,6 @@ const RecyclingPoint: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
               }}
             />
           </Box>
