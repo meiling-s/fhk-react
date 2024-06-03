@@ -376,7 +376,7 @@ const RecyclingPoint: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t(`recycling_point.recycling_point`)}
+            {t(`recycling_point.engineering_land`)}
           </Typography>
           <Button
             sx={[
@@ -429,7 +429,7 @@ const RecyclingPoint: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t(`recycling_point.engineering_land`)}
+            {t(`recycling_point.house_or_place`)}
           </Typography>
           <Button
             sx={[
