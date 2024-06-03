@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   IconButton,
   InputAdornment,
   MenuItem,
@@ -58,26 +59,17 @@ const CustomSearchField = ({
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   const handleDateChange = (date: Dayjs | null) => {
-    if (date) {
-      const today = dayjs().startOf('day')
-      const formattedDate = date.isSame(today, 'day')
-        ? ''
-        : date.format('YYYY-MM-DD')
+    const formattedDate = date ? date.format('YYYY-MM-DD') : ''
+    setSelectedValue(formattedDate)
 
-      if (date.isSame(today, 'day')) {
-        setSelectedValue('')
-      } else {
-        setSelectedValue(formattedDate)
-      }
-      if (onChange) {
-        onChange(field ? field : label, formattedDate)
-      }
+    if (onChange) {
+      onChange(field ? field : label, formattedDate)
     }
+    // }
   }
 
   const handleSearchClick = () => {
     if (handleSearch) {
-      console.log('selectedValue', selectedValue)
       handleSearch(selectedValue)
     }
   }
@@ -94,7 +86,7 @@ const CustomSearchField = ({
         {inputType === 'date' ? (
           <Box sx={{ ...localstyles.DateItem }}>
             <DatePicker
-              defaultValue={dayjs()}
+              defaultValue={null}
               label={label}
               format={format.dateFormat2}
               onChange={handleDateChange}
@@ -104,7 +96,7 @@ const CustomSearchField = ({
                   color: primaryColor
                 }
               }}
-            />
+            ></DatePicker>
           </Box>
         ) : (
           <TextField
