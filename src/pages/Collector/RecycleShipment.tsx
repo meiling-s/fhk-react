@@ -736,8 +736,8 @@ function ShipmentManage() {
                 <em>{t('check_in.any')}</em>
               </MenuItem>
               {checkInRequest?.map((item, index) => (
-                <MenuItem key={index} value={item.senderAddr}>
-                  {item.senderAddr}
+                <MenuItem key={index} value={item.senderName}>
+                  {item.senderName}
                 </MenuItem>
               ))}
             </Select>
