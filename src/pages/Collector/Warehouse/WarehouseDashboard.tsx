@@ -153,13 +153,13 @@ const WarehouseDashboard: FunctionComponent = () => {
                 var warehouseName = '';
                 switch (i18n.language) {
                     case 'enus':
-                        warehouseName = item.warehouseNameTchi;
+                        warehouseName = item.warehouseNameEng;
                         break;
                     case 'zhch':
                         warehouseName = item.warehouseNameSchi;
                         break;
                     case 'zhhk':
-                        warehouseName = item.warehouseNameEng;
+                        warehouseName = item.warehouseNameTchi;
                         break;
                     default:
                         warehouseName = item.warehouseNameTchi;
@@ -333,7 +333,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                         const filteredWarehouse = data.filter((value: { warehouseId: string; }) => value.warehouseId === selectedWarehouse.id)[0]
                         if (filteredWarehouse) {
                             const chosenWarehouseRecyc = filteredWarehouse.warehouseRecyc
-                            console.log(chosenWarehouseRecyc, 'chosenWarehouseRecyc')
+                            // console.log(chosenWarehouseRecyc, 'chosenWarehouseRecyc')
                             let subtypeWarehouse: warehouseSubtype[] = [];
                             var subTypeWeight = 0;
                             chosenWarehouseRecyc.forEach((item: any) => {
@@ -362,7 +362,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                 }
             } else {
                 const weightSubtype = await getWeightSubtypeWarehouse();
-                console.log(weightSubtype, 'weightSubType')
+                // console.log(weightSubtype, 'weightSubType')
                 const result = await getWarehouseById(
                     parseInt(selectedWarehouse.id)
                 );
@@ -391,7 +391,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                             capacity: item.recycSubTypeCapacity,
                         });
                     });
-                    console.log(subtypeWarehouse, 'subtypewarehouse')
+                    // console.log(subtypeWarehouse, 'subtypewarehouse')
                     setWarehouseSubtype(subtypeWarehouse);
                 }
             }
