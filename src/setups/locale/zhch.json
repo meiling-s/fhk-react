@@ -1039,7 +1039,8 @@
       "this": "这",
       "is_required": "是必须的",
       "required_field": "此字段是必需的",
-      "senderNameEqualToReceiverName": "发件人姓名不能等于收件人姓名"
+      "senderNameEqualToReceiverName": "发件人姓名不能等于收件人姓名",
+      "unit": "单元"
     }
   },
   "purchase_order_customer": {

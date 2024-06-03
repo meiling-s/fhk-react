@@ -24,6 +24,15 @@ import {
 import PurchaseOrderCard from './PurchaseOrderCard'
 import { PaymentType } from '../../../interfaces/purchaseOrder'
 import i18n from '../../../setups/i18n'
+
+interface StatusPurchaseOrder {
+  value: string
+  labelEng: string,
+  labelSchi: string,
+  labelTchi: string
+}
+
+
 const PurchaseOrderForm = ({
   onClose,
   selectedRow,
@@ -77,6 +86,60 @@ const PurchaseOrderForm = ({
   const navigate = useNavigate()
   const [selectedPurchaseOrder, setSelectedPurchaseOrder] = useState<PurChaseOrder>()
   const [pickupOrderDetail, setPickUpOrderDetail] = useState<PurchaseOrderDetail[]>()
+
+  const statusList: StatusPurchaseOrder[] = [
+    {
+      value: '0',
+      labelEng: 'CREATED',
+      labelSchi: '已创建',
+      labelTchi: '已創建'
+    },
+    {
+      value: '1',
+      labelEng: 'CONFIRMED',
+      labelSchi: '确认的',
+      labelTchi: '確認的'
+    },
+    {
+      value: '2',
+      labelEng: 'REJECTED',
+      labelSchi: '拒絕',
+      labelTchi: '拒绝'
+    },
+    {
+      value: '3',
+      labelEng: 'COMPLETED',
+      labelSchi: '完全的',
+      labelTchi: '完全的'
+    },
+    {
+      value: '4',
+      labelEng: 'CLOSED',
+      labelSchi: '关闭',
+      labelTchi: '關閉'
+    },
+    {
+      value: '',
+      labelEng: 'any',
+      labelSchi: '任何',
+      labelTchi: '任何'
+    },
+  ];
+
+  const getSatusLabel = (status: string):string => {
+    let labelStatus:string = '';
+    const label = statusList.find(item => item.labelEng === status);
+    if(!status) return labelStatus;
+    if(i18n.language === Languages.ENUS){
+      labelStatus =  label?.labelEng || ''
+    } else if(i18n.language === Languages.ZHCH){
+      labelStatus =  label?.labelSchi || ''
+    } else {
+      labelStatus =  label?.labelTchi || ''
+    }
+    return labelStatus
+  }
+
   useEffect(() => {
     if (selectedRow) {
       // refresh the data first
@@ -214,7 +277,7 @@ const PurchaseOrderForm = ({
             <CustomField label={t('check_in.message')}>
               <Typography sx={localstyles.typo_fieldContentGray}>
                 {selectedPurchaseOrder?.approvedBy}{' '}
-                {selectedPurchaseOrder?.status}{' '}
+                {selectedPurchaseOrder?.status ? getSatusLabel(selectedPurchaseOrder?.status) : ''}{' '}
                 {selectedPurchaseOrder?.approvedAt
                   ? displayCreatedDate(selectedPurchaseOrder?.approvedAt)
                   : ''}
