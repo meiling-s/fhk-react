@@ -59,8 +59,16 @@ const CustomSearchField = ({
 
   const handleDateChange = (date: Dayjs | null) => {
     if (date) {
-      const formattedDate = date.format('YYYY-MM-DD')
-      setSelectedValue(formattedDate)
+      const today = dayjs().startOf('day')
+      const formattedDate = date.isSame(today, 'day')
+        ? ''
+        : date.format('YYYY-MM-DD')
+
+      if (date.isSame(today, 'day')) {
+        setSelectedValue('')
+      } else {
+        setSelectedValue(formattedDate)
+      }
       if (onChange) {
         onChange(field ? field : label, formattedDate)
       }
@@ -69,6 +77,7 @@ const CustomSearchField = ({
 
   const handleSearchClick = () => {
     if (handleSearch) {
+      console.log('selectedValue', selectedValue)
       handleSearch(selectedValue)
     }
   }
