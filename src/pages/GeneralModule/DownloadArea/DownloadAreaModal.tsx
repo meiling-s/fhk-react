@@ -230,7 +230,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
               alignItems: 'center'
             }}
           >
-            {downloads.map((item) => (
+            { validation.length === 0 && downloads.map((item) => (
               <DownloadItem
                 key={item.url}
                 date={item.date}
