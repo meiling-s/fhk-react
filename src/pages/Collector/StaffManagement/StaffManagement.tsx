@@ -39,6 +39,15 @@ import UserGroup from '../UserGroup/UserGroup'
 import { Realm, STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 function createStaff(
   staffId: string,
   tenantId: string,
@@ -96,6 +105,7 @@ const StaffManagement: FunctionComponent = () => {
   const realm = localStorage.getItem(localStorgeKeyName.realm)
   const role = localStorage.getItem(localStorgeKeyName.role)
   const navigate = useNavigate();
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   useEffect(() => {
     initStaffList()
@@ -109,6 +119,8 @@ const StaffManagement: FunctionComponent = () => {
       const data = result.data.content
       var staffMapping: Staff[] = []
       data.map((item: any) => {
+        const dateInHK = dayjs.utc(item.updatedAt).tz('Asia/Hong_Kong')
+        const updatedAt = dateInHK.format(`${dateFormat} HH:mm`)
         staffMapping.push(
           createStaff(
             item?.staffId,
@@ -126,7 +138,7 @@ const StaffManagement: FunctionComponent = () => {
             item?.createdBy,
             item?.updatedBy,
             item?.createdAt,
-            item?.updatedAt,
+            updatedAt,
             item?.fullTimeFlg
           )
         )
@@ -185,9 +197,6 @@ const StaffManagement: FunctionComponent = () => {
       headerName: t('staffManagement.lastLogin'),
       width: 200,
       type: 'string',
-      renderCell: (params) => {
-        return displayCreatedDate(params.row.updatedAt)
-      }
     },
     {
       field: 'edit',
@@ -281,10 +290,7 @@ const StaffManagement: FunctionComponent = () => {
         field: 'updatedAt',
         headerName: t('staffManagement.lastLogin'),
         width: 200,
-        type: 'string',
-        renderCell: (params) => {
-          return displayCreatedDate(params.row.updatedAt)
-        }
+        type: 'string'
       },
       {
         field: 'edit',

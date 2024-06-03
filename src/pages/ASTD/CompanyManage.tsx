@@ -53,6 +53,13 @@ import { useNavigate } from 'react-router-dom'
 import CustomAutoComplete from '../../components/FormComponents/CustomAutoComplete'
 import { extractError, returnApiToken, showErrorToast } from '../../utils/utils'
 import { ToastContainer } from 'react-toastify'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 function createCompany(
   id: number,
@@ -60,7 +67,7 @@ function createCompany(
   eName: string,
   status: string,
   type: string,
-  createDate: Date,
+  createDate: string,
   accountNum: number
 ): Company {
   return { id, cName, eName, status, type, createDate, accountNum }
@@ -700,6 +707,7 @@ function CompanyManage() {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
+  const {dateFormat} = useContainer(CommonTypeContainer)
   const realmOptions = [
     {
       key: 'collector',
@@ -911,7 +919,7 @@ function CompanyManage() {
           com?.companyNameEng,
           com?.status,
           com?.tenantType,
-          new Date(com?.createdAt),
+          dayjs.utc(new Date(com?.createdAt)).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`),
           0
         )
       )

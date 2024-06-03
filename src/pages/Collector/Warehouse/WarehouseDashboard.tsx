@@ -38,7 +38,6 @@ import {
     format,
     localStorgeKeyName,
 } from '../../../constants/constant';
-import dayjs from 'dayjs';
 
 import {
     getCapacityWarehouse,

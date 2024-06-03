@@ -21,6 +21,14 @@ import { getPicoById } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import JobOrderCard from '../JobOrderCard'
 import CustomButton from './CustomButton'
 import { getDriverDetailById } from '../../APICalls/jobOrder'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const JobOrderForm = ({
   onClose,
@@ -45,9 +53,9 @@ const JobOrderForm = ({
   const navigate = useNavigate()
 
   const [selectedJobOrder, setSelectedJobOrder] = useState<Row>()
-  console.log(selectedJobOrder)
   const [pickupOrderDetail, setPickUpOrderDetail] = useState<PickupOrderDetail[]>()
   const [driverDetail, setDriverDetail] = useState<DriverDetail>()
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   const getPicoDetail = async() => {
     if (selectedRow?.picoId) {
@@ -109,7 +117,7 @@ const JobOrderForm = ({
 
             <CustomField label= {t('job_order.item.date_time')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedJobOrder?.createdAt ? displayCreatedDate(selectedJobOrder?.createdAt): ''}
+                {selectedJobOrder?.createdAt ? dayjs.utc(selectedJobOrder?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`): ''}
               </Typography>
             </CustomField>
 

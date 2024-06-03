@@ -31,11 +31,17 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
 import { getThemeColorRole, displayCreatedDate, formatWeight} from '../../utils/utils'
 import { manuList } from '../../interfaces/common'
 import { getManuList } from '../../APICalls/Manufacturer/purchaseOrder'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 type DeleteModalProps = {
   open: boolean
   selectedRecycLoc?: CreatePicoDetail | null
@@ -160,7 +166,7 @@ const PurchaseOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, weightUnits, recycType, decimalVal } = useContainer(CommonTypeContainer)
+  const { logisticList, weightUnits, recycType, decimalVal, dateFormat } = useContainer(CommonTypeContainer)
 
   const [manuList, setManuList] = useState<manuList[]>()
   const navigate = useNavigate()
@@ -293,8 +299,8 @@ const PurchaseOrderCreateForm = ({
   }
 
   const createdDate = selectedPo
-    ? displayCreatedDate(selectedPo.createdAt)
-    : dayjs(new Date()).format(format.dateFormat1)
+    ? dayjs.utc(selectedPo.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+    : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   const handleHeaderOnClick = () => {
     navigate(-1) //goback to last page

@@ -6,7 +6,7 @@ export type Company = {
   eName: string
   status: string
   type: string
-  createDate: Date
+  createDate: string
   accountNum: number
 }
 
