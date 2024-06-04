@@ -8,6 +8,7 @@ import { formatWeight, returnApiToken } from "../../../utils/utils";
 import { useTranslation } from "react-i18next";
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import axiosInstance from "../../../constants/axiosInstance";
 
 const request = axios.create({
   baseURL: window.baseURL.collector
@@ -95,7 +96,8 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
     const token = returnApiToken()
     const AuthToken = token.authToken
 
-    const {data} = await await request({
+    const {data} = await axiosInstance({
+      baseURL: window.baseURL.collector,
       ...GET_ALL_RECYCLE_TYPE(),
       headers: {
         AuthToken

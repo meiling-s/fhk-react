@@ -24,6 +24,7 @@ import axios from "axios";
 import { GET_CHECKIN_BY_ID, GET_CHECKIN_CHECKOUT_LIST, GET_CHECKOUT_BY_ID } from "../../../constants/requests";
 import { extractError, returnApiToken } from "../../../utils/utils";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../../constants/axiosInstance";
 
 
   function onlyUnique(value:any, index:any, array:any) {
@@ -61,7 +62,8 @@ import { useNavigate } from "react-router-dom";
 
       const table = token.decodeKeycloack
 
-      const {data: dataRes} = await request({
+      const {data: dataRes} = await axiosInstance({
+        baseURL: window.baseURL.collector,
         ...GET_CHECKIN_CHECKOUT_LIST(table, keyword, page -1, 10)
       })
 
@@ -197,7 +199,8 @@ import { useNavigate } from "react-router-dom";
       if (row.chkInId)  {
 
         
-       dataRes = await request({
+       dataRes = await axiosInstance({
+        baseURL: window.baseURL.collector,
         ...GET_CHECKIN_BY_ID(table, row.chkInId),
         headers: {
           AuthToken
@@ -207,7 +210,8 @@ import { useNavigate } from "react-router-dom";
 
       } else if (row.chkOutId) {
         
-        dataRes = await request({
+        dataRes = await axiosInstance({
+          baseURL: window.baseURL.collector,
           ...GET_CHECKOUT_BY_ID(table, row.chkOutId),
           headers: {
             AuthToken
