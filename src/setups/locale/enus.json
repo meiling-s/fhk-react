@@ -1063,7 +1063,9 @@
       "estimated_weight": "Estimated weight",
       "this": "This",
       "is_required": "is required",
-      "required_field": "this field is required"
+      "required_field": "this field is required",
+      "senderNameEqualToReceiverName": "Sender name can not equal to receiver name",
+      "unit": "unit"
     }
   },
   "purchase_order_customer": {

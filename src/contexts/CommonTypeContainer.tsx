@@ -348,7 +348,8 @@ const CommonType = () => {
     getProcessList,
     getContractLogistic,
     getImgSettings,
-    getDecimalVal
+    getDecimalVal,
+    initWeightUnit
   }
 }
 
