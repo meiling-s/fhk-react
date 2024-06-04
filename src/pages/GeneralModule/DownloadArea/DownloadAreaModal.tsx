@@ -75,13 +75,14 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   useEffect(() => {
     getReport()
   }, [selectedItem?.id, i18n.language])
+  
 
   useEffect(() => {
     const validate = async () => {
       const tempV: formValidate[] = []
       startDate > endDate &&
         tempV.push({
-          field: t('generate_report.start_date'),
+          field: t('general_settings.start_date'),
           problem: formErr.startDateBehindEndDate,
           type: 'error'
         })
@@ -93,7 +94,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
         })
       startDate == null &&
         tempV.push({
-          field: t('generate_report.start_date'),
+          field: t('general_settings.start_date'),
           problem: formErr.empty,
           type: 'error'
         })
@@ -108,7 +109,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     }
 
     validate()
-  }, [startDate, endDate])
+  }, [startDate, endDate, i18n.language])
 
   const formatUtcStartDate = (value: dayjs.Dayjs) => {
     return dayjs(value).utc().format('YYYY-MM-DD[T]00:00:00.000[Z]')
@@ -195,7 +196,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
               }}
             >
               <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
-                <LabelField label={t('generate_report.start_date')} />
+                <LabelField label={t('general_settings.start_date')} />
                 <DatePicker
                   defaultValue={dayjs(startDate)}
                   format={format.dateFormat2}
@@ -229,7 +230,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
               alignItems: 'center'
             }}
           >
-            {downloads.map((item) => (
+            {validation.length === 0 && downloads.map((item) => (
               <DownloadItem
                 key={item.url}
                 date={item.date}
