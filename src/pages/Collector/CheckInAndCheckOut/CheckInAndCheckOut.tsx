@@ -25,6 +25,7 @@ import { GET_CHECKIN_BY_ID, GET_CHECKIN_CHECKOUT_LIST, GET_CHECKOUT_BY_ID } from
 import { extractError, returnApiToken } from "../../../utils/utils";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../constants/axiosInstance";
+import { getCheckInDetailByID, getCheckOutDetailByID } from "../../../APICalls/Collector/inout";
 
 
   function onlyUnique(value:any, index:any, array:any) {
@@ -34,6 +35,7 @@ import axiosInstance from "../../../constants/axiosInstance";
   function CheckInAndCheckOut() {
     const { t } = useTranslation();
     const [data, setData] = useState([]);
+    const [selectedRow, setSelectedRow] = useState<any | null>(null)
     const [totalData, setTotalData] = useState(0)
     const [page, setPage] = useState(1)
     const [isShow, setIsShow] = useState(false)
@@ -190,39 +192,7 @@ import axiosInstance from "../../../constants/axiosInstance";
     ];
 
     const handleSelectRow = async ({row}:any) => {
-      
-      let dataRes
-      const token = returnApiToken()
-      const table = token.decodeKeycloack
-      const AuthToken = token.authToken
-
-      if (row.chkInId)  {
-
-        
-       dataRes = await axiosInstance({
-        baseURL: window.baseURL.collector,
-        ...GET_CHECKIN_BY_ID(table, row.chkInId),
-        headers: {
-          AuthToken
-        }
-      })
-
-
-      } else if (row.chkOutId) {
-        
-        dataRes = await axiosInstance({
-          baseURL: window.baseURL.collector,
-          ...GET_CHECKOUT_BY_ID(table, row.chkOutId),
-          headers: {
-            AuthToken
-          }
-        })
-  
-      }
-
-      const {data:res}:any = dataRes
-
-      setDetails(res)
+      setSelectedRow(row)
       setIsShow(true)
     }
 
@@ -232,8 +202,6 @@ import axiosInstance from "../../../constants/axiosInstance";
         
       };
     }, []);
-
-    console.log(filter, 'filter')
   
     return (
       <Box
@@ -480,7 +448,7 @@ import axiosInstance from "../../../constants/axiosInstance";
                 }}
             />
           </Box>
-          <CheckInAndCheckOutDetails isShow={isShow} setIsShow={setIsShow} data={details} />
+          <CheckInAndCheckOutDetails isShow={isShow} setIsShow={setIsShow} selectedRow={selectedRow} />
         </div>
       </Box>
     );

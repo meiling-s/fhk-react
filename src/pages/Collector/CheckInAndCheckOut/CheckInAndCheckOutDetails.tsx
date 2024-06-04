@@ -9,12 +9,54 @@ import { useTranslation } from "react-i18next";
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import axiosInstance from "../../../constants/axiosInstance";
+import { getCheckInDetailByID, getCheckOutDetailByID } from "../../../APICalls/Collector/inout";
 
-const request = axios.create({
-  baseURL: window.baseURL.collector
-})
-
-
+interface CheckInOutDetail {
+    chkInId: number,
+    logisticName: string,
+    logisticId: string,
+    vehicleTypeId: string,
+    plateNo: string,
+    senderName: string,
+    senderId: string,
+    senderAddr: string,
+    senderAddrGps: number[],
+    receiverName: string,
+    receiverAddr: string,
+    warehouseId: number,
+    colId: number,
+    status: string,
+    reason: string[],
+    picoId: string,
+    signature: string
+    normalFlg: boolean,
+    adjustmentFlg: boolean,
+    nightFlg: boolean,
+    createdBy: string,
+    updatedBy: string,
+    checkinDetail?: [
+        {
+            chkInDtlId: number,
+            recycTypeId: string,
+            recycSubTypeId: string,
+            packageTypeId: string,
+            weight: number,
+            unitId: string,
+            itemId: number,
+            picoDtlId: number | string,
+            checkinDetailPhoto?: [
+                {
+                    sid: number,
+                    photo: string 
+                }
+            ],
+            createdBy: string,
+            updatedBy: string
+        }
+    ],
+    createdAt: string,
+    updatedAt: string
+}
 
 function unitName(unit: string) {
   var name = '';
@@ -79,18 +121,34 @@ function packageBgColor(packaging: string){
 
 
 
-function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
+function CheckInAndCheckOutDetails({isShow, setIsShow, selectedRow}:any) {
   const { decimalVal } = useContainer(CommonTypeContainer)
 
   const [recycType, setRecycType] = useState([])
+  const [checkInOutData, setCheckInOutData] = useState<CheckInOutDetail | null>(null)
   const {t} = useTranslation();
 
   useEffect(() => {
-    if (data) {
-      initRecycType()
-    }
-  }, [data])
+      initCheckinoutDetail()
+  }, [selectedRow])
 
+  const initCheckinoutDetail = async () => {
+    if (selectedRow !== null && selectedRow !== undefined) {
+      let result;
+  
+        if (selectedRow.chkInId)  {
+          result = await getCheckInDetailByID(selectedRow.chkInId)
+        } else if (selectedRow.chkOutId) {
+          result = await getCheckOutDetailByID(selectedRow.chkOutId)
+        }
+        const data = result?.data;
+  
+        if (data) {
+          initRecycType()
+          setCheckInOutData(data)
+        }
+    }
+  }
   const initRecycType = async () => {
     
     const token = returnApiToken()
@@ -130,7 +188,7 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
         action={"none"}
         headerProps={{
           title: t('checkinandcheckout.send_request'),
-          subTitle: data?.picoId,
+          subTitle: checkInOutData?.picoId,
           onCloseHeader: () => setIsShow(false),
         }}
       >
@@ -160,17 +218,17 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
               <p className="text-grey-dark font-bold">{t('checkinandcheckout.shipping_info')}</p>
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.shipping_company')}</p>
-                <p className="text-black font-bold">{data?.senderName}</p>
+                <p className="text-black font-bold">{checkInOutData?.senderName}</p>
               </div>
 
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.receiver')}</p>
-                <p className="text-black font-bold">{data?.receiverName}</p>
+                <p className="text-black font-bold">{checkInOutData?.receiverName}</p>
               </div>
 
               <div className="flex flex-col">
                 <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.logistics_company')}</p>
-                <p className="text-black font-bold">{data?.logisticName}</p>
+                <p className="text-black font-bold">{checkInOutData?.logisticName}</p>
               </div>
 
               <p className="text-grey-dark font-bold">{t('checkinandcheckout.recyle_loc_info')}</p>
@@ -178,7 +236,7 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
               <div className="flex">
                 <div className="flex flex-col flex-1">
                   <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.delivery_location')}</p>
-                  <p className="text-black font-bold">{data?.senderAddr}</p>
+                  <p className="text-black font-bold">{checkInOutData?.senderAddr}</p>
                 </div>
                 <svg
                   width="24"
@@ -196,13 +254,13 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, data}:any) {
                 </svg>
                 <div className="flex flex-col flex-1 ml-6">
                   <p className="text-gray-middle text-smi m-0">{t('checkinandcheckout.arrived')}</p>
-                  <p className="text-black font-bold">{data?.receiverAddr}</p>
+                  <p className="text-black font-bold">{checkInOutData?.receiverAddr}</p>
                 </div>
               </div>
 
               <div className="flex flex-col gap-4">
                 <p className="text-grey-dark text-smi -mb-1">{t('checkinandcheckout.recyc_loc_info')}</p>
-                {data?.checkinDetail?.map((detail:any) => {
+                {checkInOutData?.checkinDetail?.map((detail:any) => {
                   return (
                     <div className="flex px-4 py-2 border border-solid border-grey-line rounded-xl items-center justify-between">
                       <div className="flex items-center">

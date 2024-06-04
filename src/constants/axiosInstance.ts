@@ -30,14 +30,16 @@ const isTokenExpired = (authToken: string) => {
 
 axiosInstance.interceptors.request.use(
     async (config) => {
-        const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
-        config.headers.AuthToken = accessToken
+        const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || '';
+        config.headers.AuthToken = accessToken;
+
+        // Check if the access token is expired
         if (config.url !== '/api/v1/administrator/login' && isTokenExpired(accessToken)) {
             try {
-                // exclude certain endpoints that we be called before login
-                __isDebug && console.log('interceptors getNewToken start')
-                config.headers.AuthToken =  __getNewAccessToken()
-                __isDebug && console.log('interceptors getNewToken fninish')
+                __isDebug && console.log('Token expired, refreshing...');
+                const newAccessToken = await __getNewAccessToken(); // Retrieve the new access token
+                config.headers.AuthToken = newAccessToken; // Update the request headers with the new access token
+                __isDebug && console.log('Token refreshed successfully.');
             } catch (error) {
                 throw error;
             }
@@ -49,6 +51,7 @@ axiosInstance.interceptors.request.use(
         return Promise.reject(error);
     },
 );
+
 
 const __apiNewToken = async () => {
     try {
@@ -73,7 +76,7 @@ const __apiNewToken = async () => {
 const __getNewAccessToken = async () => {
     await __apiNewToken()
     return localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
-  }
+}
 
 axiosInstance.interceptors.response.use(
     response => {
