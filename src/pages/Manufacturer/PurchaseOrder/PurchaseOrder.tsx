@@ -15,7 +15,9 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { ToastContainer, toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import CustomItemList, { il_item } from '../../../components/FormComponents/CustomItemList'
+import CustomItemList, {
+  il_item
+} from '../../../components/FormComponents/CustomItemList'
 import {
   getAllPurchaseOrder,
   updateStatusPurchaseOrder,
@@ -29,7 +31,13 @@ import {
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate, extractError } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
-import { Languages, Roles, STATUS_CODE, Status, localStorgeKeyName } from '../../../constants/constant'
+import {
+  Languages,
+  Roles,
+  STATUS_CODE,
+  Status,
+  localStorgeKeyName
+} from '../../../constants/constant'
 import dayjs from 'dayjs'
 
 type Approve = {
@@ -227,26 +235,27 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
 
 interface StatusPurchaseOrder {
   value: string
-  labelEng: string,
-  labelSchi: string,
+  labelEng: string
+  labelSchi: string
   labelTchi: string
 }
 
 interface Option {
   value: string
-  label: string,
+  label: string
 }
 
 const PurchaseOrder = () => {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const pageSize = 10
-  const [totalData, setTotalData] = useState<number>(0);
-  const realm = localStorage.getItem(localStorgeKeyName.realm) || '';
-  const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
+  const [totalData, setTotalData] = useState<number>(0)
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
+  const userRole = localStorage.getItem(localStorgeKeyName.role) || ''
   const rolesEnableCreatePO = [Roles.customerAdmin]
 
-  let columns: GridColDef[] = [ //
+  let columns: GridColDef[] = [
+    //
     {
       field: 'createdAt',
       headerName: t('purchase_order.table.created_datetime'),
@@ -308,7 +317,7 @@ const PurchaseOrder = () => {
     }
   ]
 
-  if(rolesEnableCreatePO.includes(userRole)){
+  if (rolesEnableCreatePO.includes(userRole)) {
     columns = [
       {
         field: 'createdAt',
@@ -347,9 +356,11 @@ const PurchaseOrder = () => {
         width: 260,
         editable: true,
         valueGetter: (params) => {
-          if(params?.row?.purchaseOrderDetail[0]?.pickupAt){
-            return dayjs(params?.row?.purchaseOrderDetail[0]?.pickupAt).format('YYYY/MM/DD hh:mm')
-          } 
+          if (params?.row?.purchaseOrderDetail[0]?.pickupAt) {
+            return dayjs(params?.row?.purchaseOrderDetail[0]?.pickupAt).format(
+              'YYYY/MM/DD hh:mm'
+            )
+          }
         }
       },
       {
@@ -359,7 +370,7 @@ const PurchaseOrder = () => {
         width: 150,
         editable: true,
         renderCell: (params) => <StatusCard status={params.value} />
-      },
+      }
     ]
   }
 
@@ -419,7 +430,7 @@ const PurchaseOrder = () => {
       labelEng: 'any',
       labelSchi: '任何',
       labelTchi: '任何'
-    },
+    }
   ]
 
   const initPurchaseOrderRequest = async () => {
@@ -437,16 +448,16 @@ const PurchaseOrder = () => {
         setPurchaseOrder([])
       }
       setTotalData(result?.data.totalPages)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
 
   const showApproveModal = async (row: any) => {
-    if(row?.poId){
+    if (row?.poId) {
       const routeName = role
       const result = await getPurchaseOrderById(row?.poId)
       if (result) {
@@ -498,9 +509,9 @@ const PurchaseOrder = () => {
         )
         setReasonList(result?.data.content)
       }
-    } catch (error:any) {
+    } catch (error: any) {
       const { state, realm } = extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -517,6 +528,7 @@ const PurchaseOrder = () => {
   }, [i18n.language])
 
   useEffect(() => {
+    console.log('initPurchaseOrderRequest', query)
     initPurchaseOrderRequest()
     getRejectReason()
 
@@ -605,32 +617,27 @@ const PurchaseOrder = () => {
     { label: t('pick_up_order.filter.search'), width: '14%', field: 'poId' },
     {
       label: t('pick_up_order.filter.dateby'),
-      width: '10%',
-      options: getUniqueOptionsDate('createdAt'),
-      field: 'fromCreatedAt'
+      field: 'fromCreatedAt',
+      inputType: 'date'
     },
     {
       label: t('pick_up_order.filter.to'),
-      width: '10%',
-      options: getUniqueOptionsDate('createdAt'),
-      field: 'toCreatedAt'
+      field: 'toCreatedAt',
+      inputType: 'date'
     },
     {
       label: t('warehouse_page.place'),
-      width: '14%',
       options: getUniqueOptions('receiverAddr'),
       field: 'receiverAddr'
     },
 
     {
       label: t('pick_up_order.filter.recycling_category'),
-      width: '14%',
       options: getReycleOption(),
       field: 'recycType'
     },
     {
       label: t('pick_up_order.filter.status'),
-      width: '14%',
       options: getStatusOpion(),
       field: 'status'
     }
@@ -640,32 +647,11 @@ const PurchaseOrder = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<Row | null>(null)
 
-  function getUniqueOptionsDate(propertyName: keyof Row) {
-    const optionMap = new Map()
-   
-    rows.forEach((row) => {
-      if(row[propertyName] !== '') {
-        const date = dayjs(row[propertyName]).format('YYYY-MM-DD')
-        optionMap.set(date, date)
-      }
-    })
-
-    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
-      value: option,
-      label: option
-    }))
-    options.push({
-      value: '',
-      label: 'any'
-    })
-    return options
-  }
-
   function getUniqueOptions(propertyName: keyof Row) {
     const optionMap = new Map()
 
     rows.forEach((row) => {
-      if(row[propertyName] !== '') {
+      if (row[propertyName] !== '') {
         optionMap.set(row[propertyName], row[propertyName])
       }
     })
@@ -695,18 +681,18 @@ const PurchaseOrder = () => {
 
   function getStatusOpion() {
     const options: Option[] = statusList.map((item) => {
-      if(i18n.language === Languages.ENUS){
+      if (i18n.language === Languages.ENUS) {
         return {
           value: item.value,
           label: item.labelEng
         }
-      } else if(i18n.language === Languages.ZHCH){
-        return{
+      } else if (i18n.language === Languages.ZHCH) {
+        return {
           value: item.value,
           label: item.labelSchi
         }
       } else {
-        return{
+        return {
           value: item.value,
           label: item.labelTchi
         }
@@ -730,13 +716,14 @@ const PurchaseOrder = () => {
   }
 
   const updateQuery = (newQuery: Partial<queryPurchaseOrder>) => {
+    console.log('newQuery', query)
     setQuery({ ...query, ...newQuery })
   }
 
   const handleSearch = (keyName: string, value: string) => {
     updateQuery({ [keyName]: value })
   }
-  
+
   return (
     <>
       <ToastContainer />
@@ -755,22 +742,21 @@ const PurchaseOrder = () => {
           </Typography>
 
           {rolesEnableCreatePO.includes(userRole) && (
-             <Button
-                onClick={() => navigate(`/${realm}/createPurchaseOrder`)}
-                sx={{
-                  borderRadius: "20px",
-                  backgroundColor: "#6BC7FF",
-                  '&.MuiButton-root:hover':{bgcolor: '#6BC7FF'},
-                  width:'fit-content',
-                  height: "40px",
-                  marginLeft:'20px'
-                }}
-                variant='contained'
-              >
-                + {t("col.create")}
+            <Button
+              onClick={() => navigate(`/${realm}/createPurchaseOrder`)}
+              sx={{
+                borderRadius: '20px',
+                backgroundColor: '#6BC7FF',
+                '&.MuiButton-root:hover': { bgcolor: '#6BC7FF' },
+                width: 'fit-content',
+                height: '40px',
+                marginLeft: '20px'
+              }}
+              variant="contained"
+            >
+              + {t('col.create')}
             </Button>
           )}
-         
         </Box>
         <Box />
         <Stack direction="row" mt={3}>
@@ -778,7 +764,7 @@ const PurchaseOrder = () => {
             <CustomSearchField
               key={s.field}
               label={s.label}
-              width={s.width}
+              inputType={s?.inputType}
               field={s.field}
               options={s.options || []}
               onChange={handleSearch}

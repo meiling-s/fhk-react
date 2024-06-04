@@ -1121,6 +1121,7 @@
   "recycling_point": {
     "recycling_point": "Recycling Point",
     "engineering_land": "Engineering Land Category",
+    "house_or_place": "House or Place Category",
     "place": "Place",
     "capacity": "Capacity",
     "state": "State",

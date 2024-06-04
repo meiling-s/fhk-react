@@ -376,7 +376,7 @@ const RecyclingPoint: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t(`recycling_point.recycling_point`)}
+            {t(`recycling_point.engineering_land`)}
           </Typography>
           <Button
             sx={[
@@ -418,14 +418,6 @@ const RecyclingPoint: FunctionComponent = () => {
                 }
               }}
             />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
           </Box>
         </div>
         <Box
@@ -437,7 +429,7 @@ const RecyclingPoint: FunctionComponent = () => {
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t(`recycling_point.engineering_land`)}
+            {t(`recycling_point.house_or_place`)}
           </Typography>
           <Button
             sx={[
@@ -477,14 +469,6 @@ const RecyclingPoint: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
               }}
             />
           </Box>

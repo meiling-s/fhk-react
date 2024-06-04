@@ -1118,6 +1118,7 @@
   "recycling_point": {
     "recycling_point": "回收點",
     "engineering_land": "工程用地類別",
+    "house_or_place": "房屋或場所類別",
     "place": "地點",
     "capacity": "容量",
     "state": "狀態",
@@ -1153,7 +1154,7 @@
     "recyclable": "回收物",
     "recycling_data": "回收物数据",
     "different_recycling_weights": "不同回收物重量",
-    "date_range": "日期范围",
+    "date_range": "日期範圍",
     "recycling_point": "回收点",
     "plastic": "塑料",
     "waste_paper": "废纸",

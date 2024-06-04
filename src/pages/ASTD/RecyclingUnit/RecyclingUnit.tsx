@@ -641,14 +641,7 @@ const RecyclingUnit: FunctionComponent = () => {
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
             <CustomDataGrid data={recyclableType} customGridHandleAction={customGridHandleAction} handleClickSwitch={handleClickSwitch}/>
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage);
-              }}
-            />
+        
           </Box>
         </div>
         <Box
@@ -700,14 +693,6 @@ const RecyclingUnit: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
               }}
             />
           </Box>
@@ -764,14 +749,6 @@ const RecyclingUnit: FunctionComponent = () => {
               }}
             />
           </Box>
-          <Pagination
-            className="mt-4"
-            count={Math.ceil(totalData)}
-            page={page}
-            onChange={(_, newPage) => {
-              setPage(newPage)
-            }}
-          />
           <Box
             sx={{
               display: "flex",
@@ -822,14 +799,6 @@ const RecyclingUnit: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
               }}
             />
           </Box>
