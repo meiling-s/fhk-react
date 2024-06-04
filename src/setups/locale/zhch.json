@@ -85,8 +85,8 @@
       "atLeastOnePicoExist": "至少需要一个 Pico 详细信息",
       "exceedsMaxLength": "不可超过一百个字符",
       "minMoreOneImgUploded": "至少需要上传2张车辆图片",
-      "startDateBehindEndDate": "如果开始日期晚于结束日期则不允许",
-      "endDateEarlyThanStartDate": "如果结束日期早于开始日期则不允许",
+      "startDateBehindEndDate": "如果开始日期晚于截止日期，则不允许开始日期",
+      "endDateEarlyThanStartDate": "如果“截止日期”早于“开始日期”，则不允许截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允许有单词"
     }
   },
@@ -457,7 +457,7 @@
     "photo_blury ": "照片模糊",
     "bussniess_error": "商业编号不匹配",
     "closed_tenant_title": "您确定将租户状态更改为“已关闭”吗 ?",
-    "closes_success" :"关闭租户状态成功",
+    "closes_success": "关闭租户状态成功",
     "invite_form": {
       "company_number": "公司编号 ",
       "enter_company": "",
@@ -985,13 +985,13 @@
     "recyle_waste_collection": "回收站列表",
     "daily_waste_collection": "每日收集回收物报表",
     "recycled_waste_inspection": "回收物调查和分类报表",
-    "recycled_waste_request_list_manufacturer":"回收物待处理列表",
+    "recycled_waste_request_list_manufacturer": "回收物待处理列表",
     "recycled_waste_request_list_customer": "工埸请求回收物列表",
     "download": "下载",
     "start_date": "日期由",
     "end_date": "至",
     "report_of_recycled_waste_pickup_list": "回收物提取报表",
-    "report_of_recycled_waste_collection_route":"实际路线列表",
+    "report_of_recycled_waste_collection_route": "实际路线列表",
     "report_of_logistic_service_vehicle": "物流车列表",
     "report_of_logistic_service_recycled": "物流公司回收物报告",
     "report_of_recycled_waste_inventory_manufacturers": "回收物庫存報表"
