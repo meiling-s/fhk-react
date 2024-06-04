@@ -253,7 +253,7 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                 spacing={2.5}
             >
                 <Typography style={{ color: '#717171', fontSize: '16px', fontWeight: '700' }}>
-                    {t('notification.modify_template.app.Recycling_delivery_request')}
+                    {t('notification.modify_template.broadcast.Recycling_delivery_request')}
                 </Typography>
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
                     <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
@@ -299,14 +299,14 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                     </Typography>
                 </Grid>
 
-                <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
+                {/* <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
                     <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                         {t(`notification.drag_drop_content`)}
                     </Typography>
                     <FileUploadCard 
                          onHandleUpload={onHandleUpload}
                     />
-                </Grid>
+                </Grid> */}
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
                     <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>

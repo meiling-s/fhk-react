@@ -7,14 +7,12 @@ import PizZip from "pizzip";
 import { DOMParser } from "@xmldom/xmldom";
 
 type props = {
-  onHandleUpload: (content: string) => void,
+  onHandleUpload: (content: string, index: number) => void,
+  index:number,
+  item:string
 }
 
-const FileUploadCard = (
-  {
-    onHandleUpload
-  }:props
-  ) => {
+const FileUploadCard = ({ onHandleUpload, index, item }:props ) => {
   const { t } = useTranslation();
 
   const str2xml = (str: any) => {
@@ -53,7 +51,7 @@ const FileUploadCard = (
       reader.onload = (event) => {
         const content = event?.target?.result;
         if(content){
-          onHandleUpload(content?.toString())
+          onHandleUpload(content?.toString(), index)
         }
       };
       reader.onerror = (err) => console.error(err);
@@ -64,7 +62,7 @@ const FileUploadCard = (
         const result = event?.target?.result;
         const content = getParagraphs(result);
         if(content){
-          onHandleUpload(content.toString())
+          onHandleUpload(content.toString(), index)
         }
         
       };
@@ -75,18 +73,26 @@ const FileUploadCard = (
 
   return (
       <FileUploader
-      handleChange={handleChangeFile}
-      types={['docx', 'txt']}
+        handleChange={handleChangeFile}
+        types={['docx', 'txt']}
       >
-        <Box sx={{width: 300}}>
-          <Card sx={{
+        <Box sx={{width: 100}}>
+        <button
+            key={index}
+            className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
+            style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
+            // onClick={(event) => onChangeContent(index)}
+        > [{item}] </button>
+        
+          {/* <button>variable</button> */}
+          {/* <Card sx={{
               width: "100%",
               borderRadius: 2,
               backgroundColor: '#E3E3E3',
               height: 150,
               boxShadow: 'none'
-          }}>
-            <ButtonBase
+          }}> */}
+            {/* <ButtonBase
               sx={{
                   width: "100%",
                   height: "100%",
@@ -98,8 +104,8 @@ const FileUploadCard = (
               >
                 <CloudUploadOutlinedIcon style={{color: "#ACACAC"}}/>
                 <Typography sx={styles.typo} style={{fontSize: 'large'}}>{t(`notification.drag_drop_content`)}</Typography>
-            </ButtonBase>
-          </Card>
+            </ButtonBase> */}
+          {/* </Card> */}
         </Box>
       </FileUploader>
   )
