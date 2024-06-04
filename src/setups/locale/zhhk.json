@@ -1061,7 +1061,9 @@
       "estimated_weight": "預計重量",
       "this": "這",
       "is_required": "是必須的",
-      "required_field": "此欄位是必需的"
+      "required_field": "此欄位是必需的",
+      "senderNameEqualToReceiverName": "寄件者姓名不能與收件人姓名相同",
+      "unit": "單元"
     }
   },
   "purchase_order_customer": {
