@@ -175,8 +175,26 @@ const DownloadArea = () => {
     reportId: string
   }[] = [
     {
-      id: 1,
+      id: 0,
       report_name: t('generate_report.recycled_waste_request_list_manufacturer'),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000011'
+    },
+    {
+      id: 1,
+      report_name: t('generate_report.report_of_manu_recycled_order_list'),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000011'
+    },
+    {
+      id: 2,
+      report_name: t('generate_report.report_of_manu_recycled_waste_tracing_list'),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000011'
+    },
+    {
+      id: 3,
+      report_name: t('generate_report.report_of_manu_recycled_waste_classification_list'),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000011'
     }
