@@ -14,7 +14,7 @@ import CustomField from "../../../components/FormComponents/CustomField";
 import CustomTextField from "../../../components/FormComponents/CustomTextField";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 import { toast } from 'react-toastify'
-import { Languages, STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
+import { Languages, Realm, STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
 interface TemplateProps {
@@ -23,7 +23,21 @@ interface TemplateProps {
 }
 
 const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRoute }) => {
-    const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '', effFromDate: dayjs().format('YYYY-MM-DD'), effToDate: dayjs().format('YYYY-MM-DD') })
+    const [notifTemplate, setNotifTemplate] = useState(
+        { 
+            templateId: '', 
+            notiType: '', 
+            variables: [], 
+            lang: '', 
+            title: '', 
+            content: '', 
+            senders: [], 
+            receivers: [], 
+            updatedBy: '', 
+            effFromDate: dayjs().format('YYYY-MM-DD'), 
+            effToDate: dayjs().format('YYYY-MM-DD') 
+        }
+    );
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}, title: {status: false, message: ''}})
@@ -170,7 +184,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
         } else {
             const response = await updateNotifTemplateBroadcast(templateId, notifTemplate, realmApiRoute)
             if (response) {
-                showSuccessToast(t('common.editSuccessfully' + ' ' + notifTemplate.content))
+                showSuccessToast(t('common.editSuccessfully'))
                 setTimeout(() => {
                     navigate(`/${realm}/notice`)
                 }, 2000);
@@ -230,12 +244,6 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
 
     const onHandleUpload = (content: string, index: number) => {
         onChangeContent(content, index)
-    //    setNotifTemplate(prev => {
-    //     return{
-    //         ...prev,
-    //         content: content
-    //     }
-    //    })
     };
 
     const showErrorToast = (msg: string) => {
@@ -261,7 +269,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
           draggable: true,
           progress: undefined,
           theme: 'light',
-          style: {width: 800}
+          style: {width: 300}
         })
     }
 
@@ -276,7 +284,6 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
     }
 
     const onChangeContent = (text:string, index: number) => {
-        console.log('content', text)
         if (isPreviousContentArea) {
             let content = ''
             const contentLength = notifTemplate.content.length;
@@ -295,6 +302,13 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                 return {
                     ...prev,
                     content
+                }
+            })
+        } else {
+            setNotifTemplate(prev => {
+                return {
+                    ...prev,
+                    content : text
                 }
             })
         }
@@ -377,7 +391,8 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                             {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}
                         </Typography>
                     </Grid>
-                    <Grid display={'flex'} direction={'row'} rowGap={1} >
+                    
+                    { realm === Realm.astd && <Grid display={'flex'} direction={'row'} rowGap={1} >
                         <Grid display={'flex'} direction={'column'} rowGap={1} style={{ width: '180px' }}>
                             <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                                 {t('notification.modify_template.broadcast.start_valid_date')}
@@ -403,7 +418,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                             />
                         </Grid>
 
-                    </Grid>
+                    </Grid>}
 
                     {/* <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
                         <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>

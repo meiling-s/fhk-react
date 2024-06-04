@@ -77,12 +77,14 @@ const FileUploadCard = ({ onHandleUpload, index, item }:props ) => {
         types={['docx', 'txt']}
       >
         <Box sx={{width: 100}}>
-        <button
+          <button
             key={index}
             className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
             style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
             // onClick={(event) => onChangeContent(index)}
-        > [{item}] </button>
+          > 
+            [{item}] 
+          </button>
         
           {/* <button>variable</button> */}
           {/* <Card sx={{

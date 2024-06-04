@@ -8,9 +8,11 @@ import { ToastContainer } from 'react-toastify'
 import { extractError, getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 import { styles } from "../../../constants/styles";
-import { Languages, STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
+import { Languages, Realm, STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import dayjs from "dayjs";
 
 interface TemplateProps {
     templateId: string,
@@ -18,7 +20,21 @@ interface TemplateProps {
 }
 
 const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRoute }) => {
-    const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '' })
+    const [notifTemplate, setNotifTemplate] = useState(
+        { 
+            templateId: '', 
+            notiType: '', 
+            variables: [], 
+            lang: '', 
+            title: '', 
+            content: '', 
+            senders: [], 
+            receivers: [], 
+            updatedBy: '',
+            effFromDate: dayjs().format('YYYY-MM-DD'), 
+            effToDate: dayjs().format('YYYY-MM-DD')  
+        }
+    )
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [isPreviousContentArea, setIsPreviouscontentArea] = useState(false);
@@ -174,25 +190,32 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
 
     const variables = ["CheckInId", "ReceiverCompanyName", "ReceivedDateTime", "PickupOrder", "SenderCompanyName"]
 
-    const onChangeContent = (index: number) => {
+    const onChangeContent = (text:string, index: number) => {
         if (isPreviousContentArea) {
             let content = ''
             const contentLength = notifTemplate.content.length;
             const activeButton = `[${notifTemplate.variables[index]}]`
             if (cursorPosition === 0) {
-                content = activeButton + ' ' + notifTemplate.content
+                content = text + ' ' + notifTemplate.content
             } else if (cursorPosition >= contentLength) {
-                content = notifTemplate.content + ' ' + activeButton
+                content = notifTemplate.content + ' ' + text
             } else {
                 const start = notifTemplate.content.slice(0, cursorPosition);
                 const end = notifTemplate.content.slice(cursorPosition);
-                content = start + ' ' + activeButton + ' ' + end
+                content = start + ' ' + text + ' ' + end
             }
 
             setNotifTemplate(prev => {
                 return {
                     ...prev,
                     content
+                }
+            })
+        } else {
+            setNotifTemplate(prev => {
+                return {
+                    ...prev,
+                    content : text
                 }
             })
         }
@@ -238,14 +261,26 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
         if (cursorPosition) setCursorPosition(cursorPosition)
     }
 
-    const onHandleUpload = (content: string) => {
-        setNotifTemplate(prev => {
-         return{
-             ...prev,
-             content: content
-         }
-        })
+    const onHandleUpload = (content: string, index: number) => {
+        onChangeContent(content, index)
+        // setNotifTemplate(prev => {
+        //  return{
+        //      ...prev,
+        //      content: content
+        //  }
+        // })
     };
+
+    const onChangeDate = (value: dayjs.Dayjs | null, type: string) => {
+        if (value) {
+            setNotifTemplate(prev => {
+                return {
+                    ...prev,
+                    [type]: dayjs(value).format('YYYY-MM-DD')
+                }
+            })
+        }
+    }
 
     return (
         <Box className="container-wrapper w-full mr-11">
@@ -322,6 +357,33 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                         onHandleUpload={onHandleUpload}
                     />
                 </Grid> */}
+                 { realm === Realm.astd && <Grid display={'flex'} direction={'row'} rowGap={1} >
+                    <Grid display={'flex'} direction={'column'} rowGap={1} style={{ width: '180px' }}>
+                        <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
+                            {t('notification.modify_template.broadcast.start_valid_date')}
+                        </Typography>
+                        <DatePicker
+                            value={dayjs(notifTemplate.effFromDate)}
+                            sx={localstyles.datePicker(false)}
+                            maxDate={dayjs(notifTemplate.effToDate)}
+                            onChange={(event) => onChangeDate(event, 'effFromDate')}
+                        />
+
+                    </Grid>
+
+                    <Grid display={'flex'} direction={'column'} rowGap={1} style={{ width: '180px' }}>
+                        <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
+                            {t('notification.modify_template.broadcast.end_valid_date')}
+                        </Typography>
+                        <DatePicker
+                            value={dayjs(notifTemplate.effToDate)}
+                            sx={localstyles.datePicker(false)}
+                            minDate={dayjs(notifTemplate.effFromDate)}
+                            onChange={(event) => onChangeDate(event, 'effToDate')}
+                        />
+                    </Grid>
+
+                </Grid>}
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
                     <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
@@ -354,12 +416,17 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                     </Typography>
                     <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
                         {notifTemplate.variables.map((item, index) => {
-                            return <button
-                                key={index}
-                                className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
-                                style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
-                                onClick={(event) => onChangeContent(index)}
-                            > [{item}] </button>
+                            // return <button
+                            //     key={index}
+                            //     className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
+                            //     style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
+                            //     onClick={(event) => onChangeContent(index)}
+                            // > [{item}] </button>
+                            return <FileUploadCard
+                                index={index}
+                                item={item} 
+                                onHandleUpload={onHandleUpload}
+                            />
                         })}
                     </Grid>
                 </Grid>
@@ -387,5 +454,15 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
         </Box>
     )
 };
+
+const localstyles = {
+    datePicker: (showOne: boolean) => ({
+        ...styles.textField,
+        width: showOne ? '310px' : '160px',
+        '& .MuiIconButton-edgeEnd': {
+            color: '#79CA25'
+        }
+    })
+}
 
 export default SMSTemplate;
