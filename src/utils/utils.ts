@@ -64,6 +64,12 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
     case formErr.loginIdCantContainAdmin:
       msg = t('form.error.loginIdCantContainAdmin')
       break
+    case formErr.startDateIsLaterThanToDate:
+      msg = t('form.error.startDateIsLaterThanToDate')
+      break
+    case formErr.toDateIsEarlierThanStartDate:
+      msg = t('form.error.toDateIsEarlierThanStartDate')
+      break
   }
   return msg
 }

@@ -87,7 +87,9 @@
       "minMoreOneImgUploded": "至少需要上传2张车辆图片",
       "startDateBehindEndDate": "如果开始日期晚于结束日期则不允许",
       "endDateEarlyThanStartDate": "如果结束日期早于开始日期则不允许",
-      "loginIdCantContainAdmin": "'admin' 中不允许有单词"
+      "loginIdCantContainAdmin": "'admin' 中不允许有单词",
+      "startDateIsLaterThanToDate": "如果开始日期晚于截止日期，则不允许使用开始日期",
+      "toDateIsEarlierThanStartDate": "如果截止日期早于开始日期，则不允许使用截止日期"
     }
   },
   "component": {

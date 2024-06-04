@@ -87,7 +87,9 @@
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
       "startDateBehindEndDate": "如果開始日期晚於結束日期則不允許",
       "endDateEarlyThanStartDate": "如果結束日期早於開始日期則不允許",
-      "loginIdCantContainAdmin": "'admin' 中不允許有單字"
+      "loginIdCantContainAdmin": "'admin' 中不允許有單字",
+      "startDateIsLaterThanToDate": "如果開始日期晚於截止日期，則不允許開始日期",
+      "toDateIsEarlierThanStartDate": "如果截止日期早於開始日期，則不允許截止日期"
     }
   },
   "component": {

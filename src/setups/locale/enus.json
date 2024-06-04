@@ -87,7 +87,9 @@
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
       "startDateBehindEndDate": "not allowed if the start date is behind than the end date",
       "endDateEarlyThanStartDate": "not allowed if the end date is earlier than the start date",
-      "loginIdCantContainAdmin": "not allowed have words in 'admin'"
+      "loginIdCantContainAdmin": "not allowed have words in 'admin'",
+      "startDateIsLaterThanToDate": "is not allowed if the Start Date is later than to Date",
+      "toDateIsEarlierThanStartDate": "date is not allowed if To Date is earlier than Start Date"
     }
   },
   "component": {
