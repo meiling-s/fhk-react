@@ -1,5 +1,5 @@
 import axiosInstance from '../../constants/axiosInstance'
-import { GET_ALL_CHECKIN_REQUESTS, GET_CHECKIN_REASON, UPDATE_CHECK_IN_STATUS } from '../../constants/requests';
+import { GET_ALL_CHECKIN_REQUESTS, GET_CHECKIN_REASON, NEW_GET_ALL_HEADER_CHECKIN_REQUESTS, NEW_GET_DETAIL_CHECKIN_REQUESTS, UPDATE_CHECK_IN_STATUS } from '../../constants/requests';
 import { updateStatus} from '../../interfaces/warehouse';
 import {localStorgeKeyName} from '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
@@ -13,18 +13,33 @@ const warehouseAPI = {
 export const getAllCheckInRequests = async (page: number, size: number, query?: queryCheckIn ) => {
   try {
     const token = returnApiToken()
+    let response;
+      response = await axiosInstance({
+        ...NEW_GET_ALL_HEADER_CHECKIN_REQUESTS(token.realmApiRoute, token.decodeKeycloack),
+        baseURL: warehouseAPI.baseURL,
+        params:{
+          page: page,
+          size: size,
+          table: token.decodeKeycloack,
+          picoId: query?.picoId,
+          senderName: query?.senderName,
+          senderAddr: query?.senderAddr
+        }
+      })
+    return response
+  } catch (e: any) {
+    // console.error('Get all check-in request failed:', e)
+    return null
+  }
+}
+
+export const getDetailCheckInRequests = async (checkinId: number) => {
+  try {
+    const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...GET_ALL_CHECKIN_REQUESTS(token.realmApiRoute, token.decodeKeycloack),
+      ...NEW_GET_DETAIL_CHECKIN_REQUESTS(token.realmApiRoute, token.decodeKeycloack, checkinId),
       baseURL: warehouseAPI.baseURL,
-      params:{
-        page: page,
-        size: size,
-        table: token.decodeKeycloack,
-        picoId: query?.picoId,
-        senderName: query?.senderName,
-        senderAddr: query?.senderAddr
-      }
     })
     return response
   } catch (e: any) {

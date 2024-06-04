@@ -6,6 +6,8 @@ import { useState } from 'react'
 import { openingPeriod } from '../../interfaces/collectionPoint'
 import { format } from '../../constants/constant'
 import { useTranslation } from 'react-i18next'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 
 type DatePicker = {
   setDate: (period: openingPeriod) => void
@@ -20,6 +22,7 @@ function CustomPeriodSelect({
 }: DatePicker) {
   const startDate = defaultStartDate ? defaultStartDate : new Date()
   const endDate = defaultEndDate ? defaultEndDate : new Date()
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   const [period, setPeriod] = useState<openingPeriod>({
     startDate: dayjs(startDate),
@@ -49,7 +52,7 @@ function CustomPeriodSelect({
           maxDate={period.endDate}
           onChange={(value) => onChangeDate(true, value)}
           sx={localstyles.datePicker}
-          format={format.dateFormat2}
+          format={dateFormat}
         />
         <Typography sx={{ marginX: 1 }}>{t('to')}</Typography>
         <DatePicker
@@ -57,7 +60,7 @@ function CustomPeriodSelect({
           minDate={period.startDate}
           onChange={(value) => onChangeDate(false, value)}
           sx={localstyles.datePicker}
-          format={format.dateFormat2}
+          format={dateFormat}
         />
       </Box>
     </>

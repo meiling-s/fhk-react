@@ -28,6 +28,7 @@ import {
   GET_CONTRACT_LOGISTIC,
   GET_IMG_SETTINGS,
   GET_DECIMAL_VAL,
+  GET_DATE_FORMAT,
 } from '../constants/requests'
 import { randomBackgroundColor, returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -53,6 +54,7 @@ const CommonType = () => {
   const [page, setPage] = useState(1)  
   const pageSize = 10
   const [decimalVal, setDecimalVal] = useState<number>(0)
+  const [dateFormat, setDateFormat] = useState<string>('')
 
   const getColPointType = async () => {
     var colPointType = []
@@ -284,6 +286,18 @@ const CommonType = () => {
     }
   }
 
+  const getDateFormat = async () => {
+    try {
+      const response = await axiosInstance({
+        ...GET_DATE_FORMAT,
+        baseURL: window.baseURL.administrator,
+      })
+      setDateFormat(response.data.dateFormat)
+    } catch (error) {
+      return null
+    }
+  }
+
   const updateCommonTypeContainer = () => {
     getColPointType()
     getPremiseType()
@@ -298,6 +312,7 @@ const CommonType = () => {
     getContractLogistic()
     getImgSettings()
     getDecimalVal()
+    getDateFormat()
   }
 
   useEffect(() => {
@@ -316,6 +331,7 @@ const CommonType = () => {
       getImgSettings()
       getDecimalVal()
       initWeightUnit()
+      getDateFormat()
     }
   }, [])
 
@@ -335,6 +351,7 @@ const CommonType = () => {
     imgSettings,
     decimalVal,
     weightUnits,
+    dateFormat,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -349,6 +366,7 @@ const CommonType = () => {
     getContractLogistic,
     getImgSettings,
     getDecimalVal,
+    getDateFormat,
     initWeightUnit
   }
 }

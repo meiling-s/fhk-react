@@ -39,6 +39,11 @@ import {
   localStorgeKeyName
 } from '../../../constants/constant'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type Approve = {
   open: boolean
@@ -288,7 +293,7 @@ const PurchaseOrder = () => {
       width: 200,
       editable: true,
       valueGetter: (params) => {
-        return params?.row?.purchaseOrderDetail[0]?.pickupAt
+        return dayjs.utc(params?.row?.purchaseOrderDetail[0]?.pickupAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
       }
     },
     {
@@ -356,11 +361,9 @@ const PurchaseOrder = () => {
         width: 260,
         editable: true,
         valueGetter: (params) => {
-          if (params?.row?.purchaseOrderDetail[0]?.pickupAt) {
-            return dayjs(params?.row?.purchaseOrderDetail[0]?.pickupAt).format(
-              'YYYY/MM/DD hh:mm'
-            )
-          }
+          if(params?.row?.purchaseOrderDetail[0]?.pickupAt){
+            return dayjs.utc(params?.row?.purchaseOrderDetail[0]?.pickupAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+          } 
         }
       },
       {
@@ -374,7 +377,7 @@ const PurchaseOrder = () => {
     ]
   }
 
-  const { recycType } = useContainer(CommonTypeContainer)
+  const { recycType, dateFormat } = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation()
   const action: string = location.state
@@ -588,11 +591,11 @@ const PurchaseOrder = () => {
       purchaseOrder?.map((item) => ({
         ...item,
         id: item.poId,
-        createdAt: displayCreatedDate(item.createdAt),
+        createdAt: dayjs.utc(item.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`),
         poId: item.poId,
         picoId: item.picoId,
         receiverAddr: item.receiverAddr,
-        approvedAt: displayCreatedDate(item.approvedAt),
+        approvedAt: dayjs.utc(item.approvedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`),
         status: item.status,
         recyType: item.purchaseOrderDetail.map((item) => {
           return item.recycTypeId

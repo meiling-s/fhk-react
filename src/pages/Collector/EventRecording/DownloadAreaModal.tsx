@@ -17,6 +17,8 @@ import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import { DOWNLOAD_EXCEL_REPORT, DOWNLOAD_WORD_REPORT } from '../../../constants/requestsReport'
 import { blob } from 'node:stream/consumers'
 import { saveAs } from 'file-saver'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 interface DownloadModalProps {
   drawerOpen: boolean
@@ -34,6 +36,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs());
   const {tenantId, decodeKeycloack} = returnApiToken() 
   const [downloads, setDownloads] = useState<{date: string, url: any}[]>([])
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   useEffect(() => {
     const isAfter = dayjs(endDate).isAfter(startDate);
@@ -122,7 +125,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                 <LabelField label={t('generate_report.start_date')} />
                   <DatePicker
                     defaultValue={dayjs(startDate)}
-                    format={format.dateFormat2}
+                    format={dateFormat}
                     onChange={(value) => setStartDate(value!!)}
                     sx={{ ...localstyles.datePicker }}
                     maxDate={dayjs(endDate)}
@@ -132,7 +135,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                 <LabelField label={t('generate_report.end_date')} />
                 <DatePicker
                   defaultValue={dayjs(endDate)}
-                  format={format.dateFormat2}
+                  format={dateFormat}
                   onChange={(value) => setEndDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
                   minDate={dayjs(startDate)}

@@ -24,6 +24,14 @@ import {
 import PurchaseOrderCard from './PurchaseOrderCard'
 import { PaymentType } from '../../../interfaces/purchaseOrder'
 import i18n from '../../../setups/i18n'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 interface StatusPurchaseOrder {
   value: string
@@ -48,6 +56,7 @@ const PurchaseOrderForm = ({
   const role = localStorage.getItem(localStorgeKeyName.role)
   const userRole = localStorage.getItem(localStorgeKeyName.role) || '';
   const rolesEnableCreatePO = [Roles.customerAdmin]
+  const {dateFormat} = useContainer(CommonTypeContainer)
   const paymentTypes : PaymentType[] = [
     {
       paymentNameTchi: '現金',
@@ -279,7 +288,7 @@ const PurchaseOrderForm = ({
                 {selectedPurchaseOrder?.approvedBy}{' '}
                 {selectedPurchaseOrder?.status ? getSatusLabel(selectedPurchaseOrder?.status) : ''}{' '}
                 {selectedPurchaseOrder?.approvedAt
-                  ? displayCreatedDate(selectedPurchaseOrder?.approvedAt)
+                  ? dayjs.utc(selectedPurchaseOrder?.approvedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
                   : ''}
               </Typography>
             </CustomField>
