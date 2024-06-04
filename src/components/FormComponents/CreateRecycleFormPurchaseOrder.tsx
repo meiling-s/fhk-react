@@ -155,6 +155,7 @@ const CreateRecycleForm = ({
   const customListTheme = getThemeCustomList(role) || '#E4F6DC'
   //---end set custom style each role---
   const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   const setDefRecyc = (picoDtl: PurchaseOrderDetail) => {
     const defRecyc: singleRecyclable = {
@@ -500,7 +501,7 @@ const CreateRecycleForm = ({
                       <Box sx={{ ...localstyles.DateItem }}>
                         <DatePicker
                           value={dayjs(formik.values.pickupAt)}
-                          format={format.dateFormat2}
+                          format={dateFormat}
                           onChange={(value) => {
                               formik.setFieldValue(
                                 'pickupAt',

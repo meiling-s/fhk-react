@@ -1073,7 +1073,9 @@
       "estimated_weight": "Estimated weight",
       "this": "This",
       "is_required": "is required",
-      "required_field": "this field is required"
+      "required_field": "this field is required",
+      "senderNameEqualToReceiverName": "Sender name can not equal to receiver name",
+      "unit": "unit"
     }
   },
   "purchase_order_customer": {
@@ -1129,6 +1131,7 @@
   "recycling_point": {
     "recycling_point": "Recycling Point",
     "engineering_land": "Engineering Land Category",
+    "house_or_place": "House or Place Category",
     "place": "Place",
     "capacity": "Capacity",
     "state": "State",

@@ -17,10 +17,16 @@ import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { useContainer } from 'unstated-next'
 
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import { format } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import { localStorgeKeyName } from '../../../constants/constant'
 import { formatWeight } from '../../../utils/utils'
+import { getDetailCheckoutRequests } from '../../../APICalls/Collector/checkout'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type RecycItem = {
   recycType: il_item
@@ -42,7 +48,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
   handleDrawerClose
 }) => {
   const { t } = useTranslation()
-  const { recycType, decimalVal } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat } = useContainer(CommonTypeContainer)
   const [selectedDetail, setSelectedDetail] = useState<
     CheckoutDetail[] | undefined
   >([])
@@ -68,7 +74,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
 
   const updatedDate = selectedCheckOut?.updatedAt
-    ? dayjs(new Date(selectedCheckOut?.updatedAt)).format(format.dateFormat1)
+    ? dayjs.utc(new Date(selectedCheckOut?.updatedAt)).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
     : '-'
   const messageCheckout = `[${loginId}] ${t(
     'check_out.approved_on'
@@ -76,69 +82,74 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
 
   useEffect(() => {
     setSelectedDetail(selectedCheckOut?.checkoutDetail)
+    initCheckoutDetail(selectedCheckOut?.chkOutId)
   }, [selectedCheckOut])
 
-  useEffect(() => {
-    if (selectedDetail && selectedDetail.length > 0) {
-      const recycItems: RecycItem[] = []
+  const initCheckoutDetail = async (chkOutId: number | undefined) => {
+    if (chkOutId !== undefined) {
+      const result = await getDetailCheckoutRequests(chkOutId)
+      if (result) {
+        const recycItems: RecycItem[] = []
+        const data = result.data
+        
+        data.forEach((detail: CheckoutDetail) => {
+          const matchingRecycType = recycType?.find(
+            (recyc) => detail.recycTypeId === recyc.recycTypeId
+          );
+          if (matchingRecycType) {
+            const matchrecycSubType = matchingRecycType.recycSubType?.find(
+              (subtype) => subtype.recycSubTypeId === detail.recycSubTypeId
+            );
+            var name = "";
+            switch (i18n.language) {
+              case 'enus':
+                name = matchingRecycType.recyclableNameEng
+                break
+              case 'zhch':
+                name = matchingRecycType.recyclableNameSchi
+                break
+              case 'zhhk':
+                name = matchingRecycType.recyclableNameTchi
+                break
+              default:
+                name = matchingRecycType.recyclableNameTchi
+                break
+            }
+            var subName = ''
+            switch (i18n.language) {
+              case 'enus':
+                subName = matchrecycSubType?.recyclableNameEng ?? ''
+                break
+              case 'zhch':
+                subName = matchrecycSubType?.recyclableNameSchi ?? ''
+                break
+              case 'zhhk':
+                subName = matchrecycSubType?.recyclableNameTchi ?? ''
+                break
+              default:
+                subName = matchrecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+                break
+            }
+            recycItems.push({
+              recycType: {
+                name: name,
+                id: detail.chkOutDtlId.toString()
+              },
+              recycSubtype: {
+                name: subName,
+                id: detail.chkOutDtlId.toString()
+              },
+              weight: detail.weight,
+              images: detail.checkoutDetailPhoto,
+              packageTypeId: detail.packageTypeId
+            })
 
-      selectedDetail.forEach((detail) => {
-        const matchingRecycType = recycType?.find(
-          (recyc) => detail.recycTypeId === recyc.recycTypeId
-        )
-
-        if (matchingRecycType) {
-          const matchRecycSubType = matchingRecycType.recycSubType?.find(
-            (subtype) => subtype.recycSubTypeId === detail.recycSubtypeId
-          )
-          var name = ''
-          switch (i18n.language) {
-            case 'enus':
-              name = matchingRecycType.recyclableNameEng
-              break
-            case 'zhch':
-              name = matchingRecycType.recyclableNameSchi
-              break
-            case 'zhhk':
-              name = matchingRecycType.recyclableNameTchi
-              break
-            default:
-              name = matchingRecycType.recyclableNameTchi
-              break
           }
-          var subName = ''
-          switch (i18n.language) {
-            case 'enus':
-              subName = matchRecycSubType?.recyclableNameEng ?? ''
-              break
-            case 'zhch':
-              subName = matchRecycSubType?.recyclableNameSchi ?? ''
-              break
-            case 'zhhk':
-              subName = matchRecycSubType?.recyclableNameTchi ?? ''
-              break
-            default:
-              subName = matchRecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
-              break
-          }
-          recycItems.push({
-            recycType: {
-              name: name,
-              id: detail.chkOutDtlId.toString()
-            },
-            recycSubtype: {
-              name: subName,
-              id: detail.chkOutDtlId.toString()
-            },
-            weight: detail.weight,
-            images: detail.checkoutDetailPhoto,
-            packageTypeId: detail.packageTypeId
-          })
-        }
-      })
-      setRecycItem(recycItems)
+        })
+        setRecycItem(recycItems)
+      }
     }
-  }, [selectedDetail, recycType])
+  }
 
   return (
     <div className="checkin-request-detail">
@@ -173,9 +184,8 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               {shippingInfo.map((item, index) => (
                 <div
                   key={index}
-                  className={`wrapper ${
-                    index === shippingInfo.length - 1 ? '' : 'mb-6'
-                  }`}
+                  className={`wrapper ${index === shippingInfo.length - 1 ? '' : 'mb-6'
+                    }`}
                 >
                   <div className="shiping-information text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
                     {item.label}
@@ -241,7 +251,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                       </div>
                     </div>
                     <div className="weight font-bold font-base">
-                      { formatWeight(item.weight, decimalVal)} kg
+                      {formatWeight(item.weight, decimalVal)} kg
                     </div>
                   </div>
                   <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">

@@ -1048,7 +1048,9 @@
       "estimated_weight": "预计重量",
       "this": "这",
       "is_required": "是必须的",
-      "required_field": "此字段是必需的"
+      "required_field": "此字段是必需的",
+      "senderNameEqualToReceiverName": "发件人姓名不能等于收件人姓名",
+      "unit": "单元"
     }
   },
   "purchase_order_customer": {
@@ -1103,6 +1105,7 @@
   "recycling_point": {
     "recycling_point": "回收点",
     "engineering_land": "工程用地类别",
+    "house_or_place": "房屋或场所类别",
     "place": "地点",
     "capacity": "容量",
     "state": "状态",
@@ -1138,7 +1141,7 @@
     "recyclable": "回收物",
     "recycling_data": "回收物数据",
     "different_recycling_weights": "不同回收物重量",
-    "date_range": "日期范围",
+    "date_range": "时间范围",
     "recycling_point": "回收点",
     "plastic": "塑料",
     "waste_paper": "废纸",

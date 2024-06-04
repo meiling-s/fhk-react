@@ -47,6 +47,14 @@ import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import { displayCreatedDate, extractError, showSuccessToast } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import i18n from '../../../setups/i18n'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type TableRow = {
   id: number
@@ -308,6 +316,7 @@ const CheckoutRequest: FunctionComponent = () => {
     receiverAddr: "",
   });
   const [reasonList, setReasonList] = useState<any>([])
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   const getRejectReason = async() => {
     try {
@@ -462,10 +471,12 @@ const CheckoutRequest: FunctionComponent = () => {
   ]
 
   const transformToTableRow = (item: CheckOut): TableRow => {
+    const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+    const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
     return {
       id: item.chkOutId,
       chkOutId: item.chkOutId,
-      createdAt: displayCreatedDate(item.createdAt) || "-",
+      createdAt: createdAt,
       vehicleTypeId: item.vehicleTypeId,
       receiverName: item.receiverName,
       picoId: item.picoId,

@@ -13,14 +13,13 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import EditProcessRecord from './EditProcesRecord'
 import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant'
-import dayjs from 'dayjs'
 import StatusCard from '../../../components/StatusCard'
 import {
   ProcessOut,
   processOutImage,
   ProcessOutItem
 } from '../../../interfaces/processRecords'
-import { getAllProcessRecord , getProcessIn} from '../../../APICalls/Collector/processRecords'
+import { getAllProcessRecord, getProcessIn } from '../../../APICalls/Collector/processRecords'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
@@ -28,6 +27,11 @@ import { displayCreatedDate, extractError } from '../../../utils/utils'
 import { ProcessType } from '../../../interfaces/common'
 import { useNavigate } from 'react-router-dom'
 
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 interface Option {
   value: string
@@ -71,7 +75,7 @@ const ProcessRecord: FunctionComponent = () => {
   )
   const [selectedRow, setSelectedRow] = useState<ProcessOut | null>(null)
   const [selectedProcessOutId, setProcessOutId] = useState<number>(1)
-  const {processType} = useContainer(CommonTypeContainer)
+  const { processType, dateFormat } = useContainer(CommonTypeContainer)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
@@ -82,16 +86,16 @@ const ProcessRecord: FunctionComponent = () => {
   }, [page])
 
 
-  const getProcessInDetail = async (processInId: number) =>{
-   try {
-    const result = await getProcessIn(processInId)
-    if (result) {
-      // console.log("getProcessInDetail",result)
-      return result.data
+  const getProcessInDetail = async (processInId: number) => {
+    try {
+      const result = await getProcessIn(processInId)
+      if (result) {
+        // console.log("getProcessInDetail",result)
+        return result.data
+      }
+    } catch (error) {
+      throw (error)
     }
-   } catch (error) {
-    throw(error)
-   }
   }
 
   const initProcessRecord = async () => {
@@ -103,8 +107,9 @@ const ProcessRecord: FunctionComponent = () => {
         const data = result?.data
         var recordsMapping: any[] = []
         await Promise.all(data.content.map(async (item: any) => {
-          const processIn: any = await getProcessInDetail(item.processInId); // Await here
-          const processName = mappingProcessName( processIn?.processTypeId)
+          const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+          const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+          const processName = mappingProcessName(item?.processTypeId)
           recordsMapping.push(
             createProcessRecord(
               item?.processOutId,
@@ -113,49 +118,49 @@ const ProcessRecord: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.processoutDetail,
-              item?.createdAt,
+              createdAt,
               item?.updatedAt,
-              processIn ? processIn?.address : "-",
-              processIn ? processIn?.processTypeId : null,
+              item?.address,
+              item?.processTypeId,
               processName || ''
             )
-          );
+          )
         }));
 
         setTotalData(data.totalPages)
         setProcesRecords(recordsMapping)
         setFilteredProcessRecords(recordsMapping)
       }
-    } catch (error:any) {
-      const {state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
-      
+
     }
   }
 
   const mappingProcessName = (processTypeId: string) => {
-   const  matchingProcess = processType?.find((item: ProcessType)=> item.processTypeId == processTypeId)
+    const matchingProcess = processType?.find((item: ProcessType) => item.processTypeId == processTypeId)
 
-   if(matchingProcess) {
-   var name = ""
-   switch (i18n.language) {
-    case 'enus':
-      name = matchingProcess.processTypeNameEng
-      break
-    case 'zhch':
-      name = matchingProcess.processTypeNameSchi
-      break
-    case 'zhhk':
-      name = matchingProcess.processTypeNameTchi
-      break
-    default:
-      name = matchingProcess.processTypeNameTchi
-      break
+    if (matchingProcess) {
+      var name = ""
+      switch (i18n.language) {
+        case 'enus':
+          name = matchingProcess.processTypeNameEng
+          break
+        case 'zhch':
+          name = matchingProcess.processTypeNameSchi
+          break
+        case 'zhhk':
+          name = matchingProcess.processTypeNameTchi
+          break
+        default:
+          name = matchingProcess.processTypeNameTchi
+          break
+      }
+      return name
     }
-    return name
-  }
   }
 
   const columns: GridColDef[] = [
@@ -164,11 +169,6 @@ const ProcessRecord: FunctionComponent = () => {
       headerName: t('processRecord.creationDate'),
       width: 200,
       type: 'string',
-      renderCell: (params) => {
-        const dateFormatted = displayCreatedDate(params.row.createdAt)
-
-        return <div>{dateFormatted}</div>
-      }
     },
     {
       field: 'packageTypeId',
