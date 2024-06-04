@@ -20,7 +20,7 @@ export type CheckoutDetailPhoto = {
 export type CheckoutDetail = {
   chkOutDtlId: number
   recycTypeId: string
-  recycSubtypeId: string
+  recycSubTypeId: string
   packageTypeId: string
   weight: number
   unitId: string

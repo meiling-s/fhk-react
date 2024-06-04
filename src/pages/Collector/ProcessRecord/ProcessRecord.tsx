@@ -109,8 +109,7 @@ const ProcessRecord: FunctionComponent = () => {
         await Promise.all(data.content.map(async (item: any) => {
           const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
           const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
-          const processIn: any = await getProcessInDetail(item.processInId); // Await here
-          const processName = mappingProcessName(processIn?.processTypeId)
+          const processName = mappingProcessName(item?.processTypeId)
           recordsMapping.push(
             createProcessRecord(
               item?.processOutId,
@@ -121,8 +120,8 @@ const ProcessRecord: FunctionComponent = () => {
               item?.processoutDetail,
               createdAt,
               item?.updatedAt,
-              processIn ? processIn?.address : "-",
-              processIn ? processIn?.processTypeId : null,
+              item?.address,
+              item?.processTypeId,
               processName || ''
             )
           )
