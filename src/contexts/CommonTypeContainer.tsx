@@ -367,6 +367,7 @@ const CommonType = () => {
     getImgSettings,
     getDecimalVal,
     getDateFormat,
+    initWeightUnit
   }
 }
 
