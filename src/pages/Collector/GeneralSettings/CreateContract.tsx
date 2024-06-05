@@ -32,6 +32,8 @@ import {
   editContract,
   deleteContract
 } from '../../../APICalls/Collector/contracts'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useNavigate } from 'react-router-dom'
 
 interface CreateVehicleProps {
@@ -64,6 +66,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [existingContract, setExistingContract] = useState<Contract[]>([])
+  const {dateFormat} = useContainer(CommonTypeContainer)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -333,7 +336,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 <LabelField label={t('general_settings.start_date')} />
                 <DatePicker
                   defaultValue={dayjs(startDate)}
-                  format={format.dateFormat2}
+                  format={dateFormat}
                   onChange={(value) => setStartDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
                 />
@@ -342,7 +345,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 <LabelField label={t('general_settings.end_date')} />
                 <DatePicker
                   defaultValue={dayjs(endDate)}
-                  format={format.dateFormat2}
+                  format={dateFormat}
                   onChange={(value) => setEndDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
                 />

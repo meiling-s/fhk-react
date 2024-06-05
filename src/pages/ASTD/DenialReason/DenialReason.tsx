@@ -409,7 +409,6 @@ const DenialReason: FunctionComponent = () => {
               <CustomSearchField
                 key={i}
                 label={s.label} 
-                width={s.width}
                 options={s.options || []} 
                 onChange={handleSearch} />
             ))}

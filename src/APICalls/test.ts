@@ -42,36 +42,3 @@ export const getAllWarehouse = async (page: number, size: number) => {
         return null;
     }
 };
-
-// const axiosConfig = GET_ALL_USERNAME;
-// axiosConfig.url = GET_TENANT_BY_TENANT_ID.url+`/${tenantId}`;
-
-// try {
-//     const response = await axiosInstance({
-//     ...axiosConfig
-//     });
-//     console.log('Get tenant by id success:', JSON.stringify(response.data));
-//     return response
-// } catch (e) {
-//     console.error('Get tenant by id failed:', e);
-//     return null;
-// }
-
-// try {
-//     const response = await axiosInstance({
-//       ...GET_ALL_COLLECTIONPOINT,
-//       baseURL: collectionPointAPI.baseURL,
-//       params:{
-//         page: page,
-//         size: size
-//       }
-//       // headers: {
-//       //   Authorization: `Bearer ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`,
-//       // },
-//     });
-//     console.log('Get all collection point success:', JSON.stringify(response.data));
-//     return response
-//   } catch (e) {
-//     console.error('Get all collection point failed:', e);
-//     return null;
-//   }

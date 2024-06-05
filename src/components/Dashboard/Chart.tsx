@@ -20,6 +20,8 @@ import { Realm, localStorgeKeyName } from '../../constants/constant';
 import { useEffect, useState } from 'react';
 import { collectionPoint } from '../../interfaces/collectionPoint'
 import { getCollectionPoint } from '../../APICalls/collectionPointManage';
+import CommonTypeContainer from '../../contexts/CommonTypeContainer';
+import { useContainer } from 'unstated-next';
 
 ChartJS.register(
     CategoryScale,
@@ -73,6 +75,7 @@ const Chart = ({
     canvasColor
 }:props) => {
     const { t } = useTranslation()
+    const {dateFormat} = useContainer(CommonTypeContainer)
     const realm = localStorage.getItem(localStorgeKeyName.realm);
     const [collectionPoint, setCollectionPoint] = useState<Collection[]>([])
     const [collection, setCollection] = useState<Collection>({colId: 0, colName: ''})
@@ -194,7 +197,7 @@ const Chart = ({
                                     onChange={(value) => {
                                         if(value) onChangeFromDate(value)
                                     }}
-                                    format="DD/MM/YYYY"
+                                    format={dateFormat}
                                 />
                                 <Typography>-</Typography>
                                 <DatePicker
@@ -206,7 +209,7 @@ const Chart = ({
                                     onChange={(value) => {
                                         if(value) onChangeToDate(value)
                                     }}
-                                    format="DD/MM/YYYY"
+                                    format={dateFormat}
                                 />
                            </Grid>
 

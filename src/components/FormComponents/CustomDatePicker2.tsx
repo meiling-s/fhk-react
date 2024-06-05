@@ -8,6 +8,8 @@ import { format } from "../../constants/constant";
 import { useTranslation } from "react-i18next";
 import CustomTextField from "./CustomTextField";
 import CustomField from "./CustomField";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 
 type DatePicker = {
   setDate: (period: openingPeriod) => void;
@@ -26,6 +28,7 @@ function CustomDatePicker2({
 }: DatePicker) {
   const startDate = defaultStartDate? new Date(defaultStartDate): new Date();
   const endDate = defaultEndDate ? new Date(defaultEndDate) : new Date();
+  const {dateFormat} = useContainer(CommonTypeContainer)
   
   const [period, setPeriod] = useState<any>({
     startDate: dayjs(startDate),
@@ -68,7 +71,7 @@ function CustomDatePicker2({
          maxDate={period.endDate}
          onChange={(value) => onChangeDate(true, value)}
          sx={localstyles.datePicker(pickupOrderForm!)}
-         format={format.dateFormat2}
+         format={dateFormat}
        />
        </CustomField>
        <Box ml='15px'>
@@ -78,7 +81,7 @@ function CustomDatePicker2({
          minDate={period.startDate}
          onChange={(value) => onChangeDate(false, value)}
          sx={localstyles.datePicker(pickupOrderForm!)}
-         format={format.dateFormat2}
+         format={dateFormat}
        />
        </CustomField>
        </Box>
@@ -91,7 +94,7 @@ function CustomDatePicker2({
             maxDate={period.endDate}
             onChange={(value) => onChangeDate(true, value)}
             sx={localstyles.datePicker(pickupOrderForm!)}
-            format={format.dateFormat2}
+            format={dateFormat}
           />
           <Typography sx={{ marginX: 1 }}>{t("to")}</Typography>
           <DatePicker
@@ -99,7 +102,7 @@ function CustomDatePicker2({
             minDate={period.startDate}
             onChange={(value) => onChangeDate(false, value)}
             sx={localstyles.datePicker(pickupOrderForm!)}
-            format={format.dateFormat2}
+            format={dateFormat}
           />
         </Box>
       )}

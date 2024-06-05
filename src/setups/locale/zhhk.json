@@ -70,7 +70,8 @@
     "save": "儲存",
     "cancel": "取消",
     "collectionPoint_created": "回收點已建立",
-    "collectionPoint_updated": "回收點已更新"
+    "collectionPoint_updated": "回收點已更新",
+    "addressNotes": "請輸入座位數、街道名稱、屋苑等訊息"
   },
   "form": {
     "error": {
@@ -1061,7 +1062,9 @@
       "estimated_weight": "預計重量",
       "this": "這",
       "is_required": "是必須的",
-      "required_field": "此欄位是必需的"
+      "required_field": "此欄位是必需的",
+      "senderNameEqualToReceiverName": "寄件者姓名不能與收件人姓名相同",
+      "unit": "單元"
     }
   },
   "purchase_order_customer": {
@@ -1116,6 +1119,7 @@
   "recycling_point": {
     "recycling_point": "回收點",
     "engineering_land": "工程用地類別",
+    "house_or_place": "房屋或場所類別",
     "place": "地點",
     "capacity": "容量",
     "state": "狀態",

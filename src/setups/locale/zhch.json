@@ -70,7 +70,8 @@
     "save": "储存",
     "cancel": "取消",
     "collectionPoint_created": "回收点已建立",
-    "collectionPoint_updated": "回收点已更新"
+    "collectionPoint_updated": "回收点已更新",
+    "addressNotes": "请输入座位数、街道名称、屋苑等信息"
   },
   "form": {
     "error": {
@@ -1038,7 +1039,9 @@
       "estimated_weight": "预计重量",
       "this": "这",
       "is_required": "是必须的",
-      "required_field": "此字段是必需的"
+      "required_field": "此字段是必需的",
+      "senderNameEqualToReceiverName": "发件人姓名不能等于收件人姓名",
+      "unit": "单元"
     }
   },
   "purchase_order_customer": {
@@ -1093,6 +1096,7 @@
   "recycling_point": {
     "recycling_point": "回收点",
     "engineering_land": "工程用地类别",
+    "house_or_place": "房屋或场所类别",
     "place": "地点",
     "capacity": "容量",
     "state": "状态",
