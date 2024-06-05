@@ -1018,7 +1018,10 @@
     "report_of_recycled_waste_collection_route":"實際路線列表",
     "report_of_logistic_service_vehicle": "物流車列表",
     "report_of_logistic_service_recycled": " 物流公司回收物報告",
-    "report_of_recycled_waste_inventory_manufacturers": "回收物库存报表"
+    "report_of_recycled_waste_inventory_manufacturers": "回收物库存报表",
+    "report_of_manu_recycled_order_list" :"顧客訂單列表",
+    "report_of_manu_recycled_waste_tracing_list": "回收物追蹤列表",
+    "report_of_manu_recycled_waste_classification_list":"回收物類別分析表"
   },
   "purchase_order": {
     "all_order": "所有訂單",
