@@ -39,6 +39,7 @@ interface DownloadModalProps {
     report_name: string
     typeFile: string
     reportId: string
+    dateOption?: string
   }
   staffId: string
 }
@@ -59,23 +60,16 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   useEffect(() => {
-    // const isAfter = dayjs(endDate).isAfter(startDate)
-    // const isSame = dayjs(endDate).isSame(startDate)
-
-    if (validation.length === 0) {
+    if (validation.length === 0 && selectedItem?.dateOption != 'daterange') {
       getReport()
     } else {
       setTrySubmited(true)
     }
-    // if (isAfter || isSame) {
-    //   getReport()
-    // }
   }, [startDate, endDate, i18n.language, validation])
 
   useEffect(() => {
     getReport()
   }, [selectedItem?.id, i18n.language])
-  
 
   useEffect(() => {
     const validate = async () => {
@@ -118,7 +112,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     return dayjs(value).utc().format('YYYY-MM-DD[T]23:59:59.999[Z]')
   }
 
-  const generateCollectorLink = (reportId: string) => {
+  const generateDateRangeLink = (reportId: string) => {
     return (
       getBaseUrl() +
       `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatUtcStartDate(
@@ -126,6 +120,15 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       )}&toDate=${formatUtcEndDate(
         endDate
       )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
+    )
+  }
+
+  const generateNoDateLink = (reportId: string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}&staffId=${staffId}&language=${getSelectedLanguange(
+        i18n.language
+      )}`
     )
   }
 
@@ -152,7 +155,10 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             )}`
           break
         default:
-          url = generateCollectorLink(selectedItem.reportId)
+          url =
+            selectedItem?.dateOption === 'none'
+              ? generateNoDateLink(selectedItem.reportId)
+              : generateDateRangeLink(selectedItem.reportId)
           break
       }
 
@@ -186,36 +192,42 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             dateAdapter={AdapterDayjs}
             adapterLocale="zh-cn"
           >
-            <Box
-              className="filter-date"
-              sx={{
-                marginY: 2,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-evenly'
-              }}
-            >
-              <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
-                <LabelField label={t('general_settings.start_date')} />
-                <DatePicker
-                  defaultValue={dayjs(startDate)}
-                  format={format.dateFormat2}
-                  onChange={(value) => setStartDate(value!!)}
-                  sx={{ ...localstyles.datePicker }}
-                  maxDate={dayjs(endDate)}
-                />
+            {selectedItem?.dateOption == 'datetime' ? (
+              <div>syala</div>
+            ) : selectedItem?.dateOption == 'none' ? (
+              <></>
+            ) : (
+              <Box
+                className="filter-date"
+                sx={{
+                  marginY: 2,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly'
+                }}
+              >
+                <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
+                  <LabelField label={t('general_settings.start_date')} />
+                  <DatePicker
+                    defaultValue={dayjs(startDate)}
+                    format={format.dateFormat2}
+                    onChange={(value) => setStartDate(value!!)}
+                    sx={{ ...localstyles.datePicker }}
+                    maxDate={dayjs(endDate)}
+                  />
+                </Box>
+                <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
+                  <LabelField label={t('generate_report.end_date')} />
+                  <DatePicker
+                    defaultValue={dayjs(endDate)}
+                    format={format.dateFormat2}
+                    onChange={(value) => setEndDate(value!!)}
+                    sx={{ ...localstyles.datePicker }}
+                    minDate={dayjs(startDate)}
+                  />
+                </Box>
               </Box>
-              <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
-                <LabelField label={t('generate_report.end_date')} />
-                <DatePicker
-                  defaultValue={dayjs(endDate)}
-                  format={format.dateFormat2}
-                  onChange={(value) => setEndDate(value!!)}
-                  sx={{ ...localstyles.datePicker }}
-                  minDate={dayjs(startDate)}
-                />
-              </Box>
-            </Box>
+            )}
           </LocalizationProvider>
           <Grid
             sx={{ borderBottom: 1, borderBottomColor: '#E2E2E2' }}
@@ -230,15 +242,16 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
               alignItems: 'center'
             }}
           >
-            {validation.length === 0 && downloads.map((item) => (
-              <DownloadItem
-                key={item.url}
-                date={item.date}
-                url={item.url}
-                typeFile={selectedItem?.typeFile}
-                validation={validation}
-              />
-            ))}
+            {validation.length === 0 &&
+              downloads.map((item) => (
+                <DownloadItem
+                  key={item.url}
+                  date={item.date}
+                  url={item.url}
+                  typeFile={selectedItem?.typeFile}
+                  validation={validation}
+                />
+              ))}
           </Grid>
           <Grid item>
             {trySubmited &&
