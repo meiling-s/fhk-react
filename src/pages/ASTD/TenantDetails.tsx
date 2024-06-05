@@ -44,6 +44,13 @@ import { useContainer } from 'unstated-next'
 import { localStorgeKeyName } from '../../constants/constant'
 import { ToastContainer, toast } from 'react-toastify'
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 type closedTenantModalProps = {
   tenantId: number
   open: boolean
@@ -140,7 +147,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   onChangeStatus
 }) => {
   const { t } = useTranslation()
-  const { imgSettings } = useContainer(CommonTypeContainer)
+  const { imgSettings, dateFormat } = useContainer(CommonTypeContainer)
   const [tenantDetail, setTenantDetails] = useState<Tenant>()
   const [companyLogo, setCompanyLogo] = useState<ImageListType>([])
   const [numOfAccount, setNumOfAccount] = useState<number>(1)
@@ -158,7 +165,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
 
   const footerTenant = `[${tenantDetail?.tenantId}] ${t(
     `status.${tenantDetail?.status.toLocaleLowerCase()}`
-  )} ${displayCreatedDate(tenantDetail?.updatedAt || '')} `
+  )} ${dayjs.utc(tenantDetail?.updatedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)} `
 
   useEffect(() => {
     getCompanyDetail()
@@ -425,7 +432,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.creation_date')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  {displayCreatedDate(tenantDetail?.createdAt || '')}
+                  {dayjs.utc(tenantDetail?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`) || ''}
                 </div>
               </div>
             </Box>

@@ -24,6 +24,8 @@ import axios from "axios";
 import { GET_CHECKIN_BY_ID, GET_CHECKIN_CHECKOUT_LIST, GET_CHECKOUT_BY_ID } from "../../../constants/requests";
 import { extractError, returnApiToken } from "../../../utils/utils";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../../constants/axiosInstance";
+import { getCheckInDetailByID, getCheckOutDetailByID } from "../../../APICalls/Collector/inout";
 
 
   function onlyUnique(value:any, index:any, array:any) {
@@ -33,6 +35,7 @@ import { useNavigate } from "react-router-dom";
   function CheckInAndCheckOut() {
     const { t } = useTranslation();
     const [data, setData] = useState([]);
+    const [selectedRow, setSelectedRow] = useState<any | null>(null)
     const [totalData, setTotalData] = useState(0)
     const [page, setPage] = useState(1)
     const [isShow, setIsShow] = useState(false)
@@ -44,6 +47,7 @@ import { useNavigate } from "react-router-dom";
       outin: '',
     })
     const navigate = useNavigate();
+    const [totalElements, setTotalElements] = useState<number>(0);
 
     useEffect(() => {
       getData() // eslint-disable-next-line
@@ -60,11 +64,13 @@ import { useNavigate } from "react-router-dom";
 
       const table = token.decodeKeycloack
 
-      const {data: dataRes} = await request({
+      const {data: dataRes} = await axiosInstance({
+        baseURL: window.baseURL.collector,
         ...GET_CHECKIN_CHECKOUT_LIST(table, keyword, page -1, 10)
       })
 
-      const {content, totalPages} = dataRes
+      const {content, totalPages, totalElements} = dataRes
+      console.log('dataRes', dataRes)
       setData(content.map((item:any, index:number) => {
       return {
         ...item,
@@ -72,6 +78,8 @@ import { useNavigate } from "react-router-dom";
       }
       }))
       setTotalData(totalPages)
+      setTotalElements(totalElements);
+
      } catch (error:any) {
       const {state, realm} = extractError(error)
       if(state.code === STATUS_CODE[503] ){
@@ -184,37 +192,7 @@ import { useNavigate } from "react-router-dom";
     ];
 
     const handleSelectRow = async ({row}:any) => {
-      
-      let dataRes
-      const token = returnApiToken()
-      const table = token.decodeKeycloack
-      const AuthToken = token.authToken
-
-      if (row.chkInId)  {
-
-        
-       dataRes = await request({
-        ...GET_CHECKIN_BY_ID(table, row.chkInId),
-        headers: {
-          AuthToken
-        }
-      })
-
-
-      } else if (row.chkOutId) {
-        
-        dataRes = await request({
-          ...GET_CHECKOUT_BY_ID(table, row.chkOutId),
-          headers: {
-            AuthToken
-          }
-        })
-  
-      }
-
-      const {data:res}:any = dataRes
-
-      setDetails(res)
+      setSelectedRow(row)
       setIsShow(true)
     }
 
@@ -224,8 +202,6 @@ import { useNavigate } from "react-router-dom";
         
       };
     }, []);
-
-    console.log(filter, 'filter')
   
     return (
       <Box
@@ -254,6 +230,9 @@ import { useNavigate } from "react-router-dom";
           >
             {t("checkinandcheckout.title")}
           </Typography>
+          <Box sx={styles.totalElements}>
+            <Typography style={{color: 'white', fontSize: '12px'}} >{totalElements}</Typography>
+          </Box>
         </Box>
         <Box>
           <div className="flex items-center">
@@ -469,7 +448,7 @@ import { useNavigate } from "react-router-dom";
                 }}
             />
           </Box>
-          <CheckInAndCheckOutDetails isShow={isShow} setIsShow={setIsShow} data={details} />
+          <CheckInAndCheckOutDetails isShow={isShow} setIsShow={setIsShow} selectedRow={selectedRow} />
         </div>
       </Box>
     );
@@ -489,6 +468,16 @@ import { useNavigate } from "react-router-dom";
         color: "#79CA25",
       },
     },
+    totalElements : {
+      display: 'flex', 
+      justifyContent: "center", 
+      alignItems: 'center', 
+      backgroundColor: '#79CA25', 
+      padding: '3px', 
+      borderRadius: '20px', 
+      width: '20px', 
+      height: '20px'
+    }
   };
   
   export default CheckInAndCheckOut;

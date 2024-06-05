@@ -25,6 +25,8 @@ import {
 import CustomTextField from '../../../../components/FormComponents/CustomTextField'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import useDebounce from '../../../../hooks/useDebounce'
@@ -59,8 +61,12 @@ import { localStorgeKeyName } from '../../../../constants/constant'
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
 import { extractError } from '../../../../utils/utils'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 
 dayjs.extend(isBetween)
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 function CreateCollectionPoint() {
   const [colType, setCOLType] = useState<string>('')
@@ -97,6 +103,7 @@ function CreateCollectionPoint() {
     { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
   >([])
   const debouncedSearchValue: string = useDebounce(searchText, 1000)
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   const navigate = useNavigate()
 
@@ -587,7 +594,7 @@ function CreateCollectionPoint() {
   ]
   const [serviceFlg, setServiceFlg] = useState<string>('basic')
 
-  const createdDate = dayjs(new Date()).format(format.dateFormat1)
+  const createdDate = dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   return (
     <>
@@ -666,7 +673,7 @@ function CreateCollectionPoint() {
                 error={checkString(address)}
               />
               <Typography sx={{ marginTop: 1, fontSize: 16, color: '#ACACAC' }}>
-                請輸入座數,街名,屋苑等資料
+                {t('col.addressNotes')}
               </Typography>
 
               <Box

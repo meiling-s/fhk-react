@@ -23,6 +23,14 @@ import { displayCreatedDate, extractError, returnApiToken } from '../../../utils
 import { localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
 import CustomButton from "../../../components/FormComponents/CustomButton";
 
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 type Approve = {
   open: boolean
   onClose: () => void
@@ -115,11 +123,15 @@ const JobOrder = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10 
   const [totalData , setTotalData] = useState<number>(0)
+  const {dateFormat} = useContainer(CommonTypeContainer)
   const columns: GridColDef[] = [
     {
       field: "createdAt", 
       headerName: t('job_order.table.created_datetime'), 
-      width: 150 
+      width: 150,
+      renderCell: (params) => {
+        return dayjs.utc(params.row.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+      }
     },
     {
       field: "driverId",

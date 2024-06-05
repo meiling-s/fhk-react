@@ -22,11 +22,12 @@ import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from "../../constants/constant";
 import { formatWeight } from "../../utils/utils";
+import { getDetailCheckInRequests } from "../../APICalls/Collector/warehouseManage";
 
 type recycItem = {
   recycType: il_item;
   recycSubType: il_item;
-  weight:number;
+  weight: number;
   packageTypeId: string;
 };
 
@@ -49,79 +50,145 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
   const [selectedDetail, setSelectedDetail] = useState<CheckinDetail[] | undefined>([]);
   const [recycItem, setRecycItem] = useState<recycItem[]>([]);
 
-useEffect(() => {
-  setSelectedDetail(selectedItem?.checkinDetail);
-}, [selectedItem]);
+  useEffect(() => {
+    initCheckinDetail(selectedItem?.chkInId)
+    setSelectedDetail(selectedItem?.checkinDetail);
+  }, [selectedItem]);
 
-useEffect(() => {
-  if (selectedDetail && selectedDetail.length > 0) {
-    const recycItems: recycItem[] = [];
-    
-    selectedDetail.forEach((detail) => {
-      const matchingRecycType = recycType?.find(
-        (recyc) => detail.recycTypeId === recyc.recycTypeId
-      );
-      if (matchingRecycType) {
-        const matchrecycSubType = matchingRecycType.recycSubType?.find(
-          (subtype) => subtype.recycSubTypeId === detail.recycSubTypeId
-        );
-        var name = "";
-        switch(i18n.language){
-            case "enus":
+  const initCheckinDetail = async (chkInId: number | undefined) => {
+    if (chkInId !== undefined) {
+      const result = await getDetailCheckInRequests(chkInId)
+      if (result) {
+        const recycItems: recycItem[] = [];
+        const data = result.data;
+
+        data.forEach((detail: CheckinDetail) => {
+          const matchingRecycType = recycType?.find(
+            (recyc) => detail.recycTypeId === recyc.recycTypeId
+          );
+          if (matchingRecycType) {
+            const matchrecycSubType = matchingRecycType.recycSubType?.find(
+              (subtype) => subtype.recycSubTypeId === detail.recycSubTypeId
+            );
+            var name = "";
+            switch (i18n.language) {
+              case "enus":
                 name = matchingRecycType.recyclableNameEng;
                 break;
-            case "zhch":
+              case "zhch":
                 name = matchingRecycType.recyclableNameSchi;
                 break;
-            case "zhhk":
+              case "zhhk":
                 name = matchingRecycType.recyclableNameTchi;
                 break;
-            default:
+              default:
                 name = matchingRecycType.recyclableNameTchi;        //default fallback language is zhhk
                 break;
-        }
-        var subName = "";
-                switch(i18n.language){
-                    case "enus":
-                        subName = matchrecycSubType?.recyclableNameEng ?? "";
-                        break;
-                    case "zhch":
-                        subName = matchrecycSubType?.recyclableNameSchi ?? "";
-                        break;
-                    case "zhhk":
-                        subName = matchrecycSubType?.recyclableNameTchi ?? "";
-                        break;
-                    default:
-                        subName = matchrecycSubType?.recyclableNameTchi ?? "";       //default fallback language is zhhk
-                        break;
-                }
-        recycItems.push({
-          recycType: {
-            name: name,
-            id: detail.chkInDtlId.toString(),
-          },
-          recycSubType: {
-            name: subName,
-            id: detail.chkInDtlId.toString(),
-          },
-          weight:detail.weight,
-          packageTypeId: detail.packageTypeId
+            }
+            var subName = "";
+            switch (i18n.language) {
+              case "enus":
+                subName = matchrecycSubType?.recyclableNameEng ?? "";
+                break;
+              case "zhch":
+                subName = matchrecycSubType?.recyclableNameSchi ?? "";
+                break;
+              case "zhhk":
+                subName = matchrecycSubType?.recyclableNameTchi ?? "";
+                break;
+              default:
+                subName = matchrecycSubType?.recyclableNameTchi ?? "";       //default fallback language is zhhk
+                break;
+            }
+            recycItems.push({
+              recycType: {
+                name: name,
+                id: detail.chkInDtlId.toString(),
+              },
+              recycSubType: {
+                name: subName,
+                id: detail.chkInDtlId.toString(),
+              },
+              weight: detail.weight,
+              packageTypeId: detail.packageTypeId
+            });
+          }
         });
+        setRecycItem(recycItems);
+
       }
-    });
-    setRecycItem(recycItems);
+    }
   }
-}, [selectedDetail, recycType]);
 
-const updatedDate = selectedItem?.updatedAt
-? dayjs(new Date(selectedItem?.updatedAt)).format(format.dateFormat1)
-: '-'
+  // useEffect(() => {
+  //   if (selectedDetail && selectedDetail.length > 0) {
+  //     const recycItems: recycItem[] = [];
 
-const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+  //     selectedDetail.forEach((detail) => {
+  //       const matchingRecycType = recycType?.find(
+  //         (recyc) => detail.recycTypeId === recyc.recycTypeId
+  //       );
+  //       if (matchingRecycType) {
+  //         const matchrecycSubType = matchingRecycType.recycSubType?.find(
+  //           (subtype) => subtype.recycSubTypeId === detail.recycSubTypeId
+  //         );
+  //         var name = "";
+  //         switch(i18n.language){
+  //             case "enus":
+  //                 name = matchingRecycType.recyclableNameEng;
+  //                 break;
+  //             case "zhch":
+  //                 name = matchingRecycType.recyclableNameSchi;
+  //                 break;
+  //             case "zhhk":
+  //                 name = matchingRecycType.recyclableNameTchi;
+  //                 break;
+  //             default:
+  //                 name = matchingRecycType.recyclableNameTchi;        //default fallback language is zhhk
+  //                 break;
+  //         }
+  //         var subName = "";
+  //                 switch(i18n.language){
+  //                     case "enus":
+  //                         subName = matchrecycSubType?.recyclableNameEng ?? "";
+  //                         break;
+  //                     case "zhch":
+  //                         subName = matchrecycSubType?.recyclableNameSchi ?? "";
+  //                         break;
+  //                     case "zhhk":
+  //                         subName = matchrecycSubType?.recyclableNameTchi ?? "";
+  //                         break;
+  //                     default:
+  //                         subName = matchrecycSubType?.recyclableNameTchi ?? "";       //default fallback language is zhhk
+  //                         break;
+  //                 }
+  //         recycItems.push({
+  //           recycType: {
+  //             name: name,
+  //             id: detail.chkInDtlId.toString(),
+  //           },
+  //           recycSubType: {
+  //             name: subName,
+  //             id: detail.chkInDtlId.toString(),
+  //           },
+  //           weight:detail.weight,
+  //           packageTypeId: detail.packageTypeId
+  //         });
+  //       }
+  //     });
+  //     setRecycItem(recycItems);
+  //   }
+  // }, [selectedDetail, recycType]);
 
-const messageCheckin = `[${loginId}] ${t(
-  'check_out.approved_on'
-)} ${updatedDate} ${t('check_out.reason_is')} ${selectedItem?.reason}`
+  const updatedDate = selectedItem?.updatedAt
+    ? dayjs(new Date(selectedItem?.updatedAt)).format(format.dateFormat1)
+    : '-'
+
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+
+  const messageCheckin = `[${loginId}] ${t(
+    'check_out.approved_on'
+  )} ${updatedDate} ${t('check_out.reason_is')} ${selectedItem?.reason}`
 
 
   return (
@@ -171,11 +238,11 @@ const messageCheckin = `[${loginId}] ${t(
               </Typography>
             </Box>
 
-            <Typography sx={localstyles.typo_header}>{t('check_in.recyc_loc_info')} ddsfds</Typography>
+            <Typography sx={localstyles.typo_header}>{t('check_in.recyc_loc_info')}</Typography>
             <Box display="flex" flexDirection="row">
               <Box sx={{ flex: 1 }}>
                 <Typography sx={localstyles.typo_fieldTitle}>
-                {t('check_in.sender_addr')}
+                  {t('check_in.sender_addr')}
                 </Typography>
                 <Typography sx={localstyles.typo_fieldContent}>
                   {selectedItem?.senderAddr}
@@ -190,7 +257,7 @@ const messageCheckin = `[${loginId}] ${t(
                 </Box>
                 <Box>
                   <Typography sx={localstyles.typo_fieldTitle}>
-                  {t('check_in.receiver_addr')}
+                    {t('check_in.receiver_addr')}
                   </Typography>
                   <Typography sx={localstyles.typo_fieldContent}>-</Typography>
                 </Box>
@@ -198,7 +265,7 @@ const messageCheckin = `[${loginId}] ${t(
             </Box>
 
             <Typography sx={localstyles.typo_fieldTitle}>
-            {t('check_in.recyclable_type_weight')}
+              {t('check_in.recyclable_type_weight')}
             </Typography>
             {recycItem.map((item, index) => (
               <RecycleCard
@@ -213,7 +280,7 @@ const messageCheckin = `[${loginId}] ${t(
                 recycleType={item.recycType.name}
               />
             ))}
-             <Box>
+            <Box>
               <div className="message">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
                   {t('check_out.message')}
@@ -224,7 +291,7 @@ const messageCheckin = `[${loginId}] ${t(
               </div>
             </Box>
           </Stack>
-         
+
         </Box>
       </Box>
     </>
