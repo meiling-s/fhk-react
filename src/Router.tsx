@@ -1,66 +1,66 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-import MainLayout from "./layouts/MainLayout";
-import Login from "./pages/Auth/Login";
-import ResetPassword from "./pages/Auth/ResetPassword";
-import ConfirmResetPassword from "./pages/Auth/ConfirmResetPassword";
-import ChangePassword from "./pages/Auth/ChangePassword";
+import MainLayout from './layouts/MainLayout'
+import Login from './pages/Auth/Login'
+import ResetPassword from './pages/Auth/ResetPassword'
+import ConfirmResetPassword from './pages/Auth/ConfirmResetPassword'
+import ChangePassword from './pages/Auth/ChangePassword'
 //ASTD admin
-import CompanyManage from "./pages/ASTD/CompanyManage";
-import AstdVehicleDashboard from "./pages/Logistic/Dashboard/dashboard"
+import CompanyManage from './pages/ASTD/CompanyManage'
+import AstdVehicleDashboard from './pages/Logistic/Dashboard/dashboard'
 
 //collection point
-import CollectionPoint from "./pages/Collector/CollectionPoint/CollectionPoint/CollectionPoint";
-import CreateCollectionPoint from "./pages/Collector/CollectionPoint/CreateCollectionPoint/CreateCollectionPoint";
-import EditCollectionPoint from "./pages/Collector/CollectionPoint/EditCollectionPoint/EditCollectionPoint";
+import CollectionPoint from './pages/Collector/CollectionPoint/CollectionPoint/CollectionPoint'
+import CreateCollectionPoint from './pages/Collector/CollectionPoint/CreateCollectionPoint/CreateCollectionPoint'
+import EditCollectionPoint from './pages/Collector/CollectionPoint/EditCollectionPoint/EditCollectionPoint'
 //warehouse
-import Overview from "./pages/Collector/Manage/CheckoutRequest";
-import Settings from "./pages/Collector/Warehouse/Settings";
-import Vehicles from "./pages/Collector/Vehicles/Vechicles";
-import WarehouseDashboard from "./pages/Collector/Warehouse/WarehouseDashboard";
+import Overview from './pages/Collector/Manage/CheckoutRequest'
+import Settings from './pages/Collector/Warehouse/Settings'
+import Vehicles from './pages/Collector/Vehicles/Vechicles'
+import WarehouseDashboard from './pages/Collector/Warehouse/WarehouseDashboard'
 //Tenant Register
 // import CompanyDetails from "./pages/TenantRegister/CompanyDetails";
 // import CompanyContact from "./pages/TenantRegister/CompanyContact";
-import RegisterResult from "./pages/TenantRegister/RegisterResult";
+import RegisterResult from './pages/TenantRegister/RegisterResult'
 //new tenantpage
-import TenantRegister from "./pages/TenantRegister/Register";
+import TenantRegister from './pages/TenantRegister/Register'
 // import RegisterStepOne from "./pages/TenantRegister/RegisterStepOne";
 // import RegisterStepTwo from "./pages/TenantRegister/RegisterStepTwo";
 
 //general
-import Staff from "./pages/Collector/Staff";
+import Staff from './pages/Collector/Staff'
 //import Report from "./pages/Collector/Report";
-import Report from "./pages/Collector/EventRecording/Report";
-import RecycleShipment from "./pages/Collector/RecycleShipment";
+import Report from './pages/GeneralModule/Report/Report'
+import RecycleShipment from './pages/Collector/RecycleShipment'
 
 //import ProcessRecord from "./pages/Collector/Manage/ProcessRecord";
-import ProcessRecord from "./pages/Collector/ProcessRecord/ProcessRecord";
-import PickupOrder from "./pages/Collector/PickupOrder/PickupOrder";
-import CreatePickupOrder from "./pages/Collector/PickupOrder/CreatePickupOrder";
-import EditPickupOrder from "./pages/Collector/PickupOrder/EditPickupOrder";
-import Inventory from "./pages/Collector/Inventory/Inventory";
-import StaffManagement from "./pages/Collector/StaffManagement/StaffParent";
+import ProcessRecord from './pages/Collector/ProcessRecord/ProcessRecord'
+import PickupOrder from './pages/Collector/PickupOrder/PickupOrder'
+import CreatePickupOrder from './pages/Collector/PickupOrder/CreatePickupOrder'
+import EditPickupOrder from './pages/Collector/PickupOrder/EditPickupOrder'
+import Inventory from './pages/Collector/Inventory/Inventory'
+import StaffManagement from './pages/Collector/StaffManagement/StaffParent'
 
 // import AuthGuard from "./components/Guards/AuthGuard";
 // import AutoLogout from "./components/AutoLogout";
 
-import CheckoutRequest from "./pages/Collector/Manage/CheckoutRequest";
-import UserGroup from "./pages/Collector/UserGroup/UserGroup";
-import { CheckInAndCheckOut } from "./pages/Collector/CheckInAndCheckOut";
+import CheckoutRequest from './pages/Collector/Manage/CheckoutRequest'
+import UserGroup from './pages/Collector/UserGroup/UserGroup'
+import { CheckInAndCheckOut } from './pages/Collector/CheckInAndCheckOut'
 
 //logistic
-import JobOrder from "./pages/Logistic/JobOrder/JobOrder";
+import JobOrder from './pages/Logistic/JobOrder/JobOrder'
 import CreateOrUpdateJobOrder from './pages/Logistic/JobOrder/CreateOrUpdateJobOrder'
 import LogisticAccount from './pages/Logistic/Account'
-import Driver from "./pages/Logistic/Driver";
-import Notice from "./pages/ASTD/Notice/Index";
-import UpdateTemplate from "./pages/ASTD/Notice/UpdateTemplate";
-import StaffEnquiry from "./pages/Collector/StaffEnquiry/StaffEnquiry";
-import LogisticVehicleDashboard from "./pages/Logistic/Dashboard/dashboard"
+import Driver from './pages/Logistic/Driver'
+import Notice from './pages/ASTD/Notice/Index'
+import UpdateTemplate from './pages/ASTD/Notice/UpdateTemplate'
+import StaffEnquiry from './pages/Collector/StaffEnquiry/StaffEnquiry'
+import LogisticVehicleDashboard from './pages/Logistic/Dashboard/dashboard'
 
 //manufacturer
-import PurchaseOrder from "./pages/Manufacturer/PurchaseOrder/PurchaseOrder";
+import PurchaseOrder from './pages/Manufacturer/PurchaseOrder/PurchaseOrder'
 import CustomerAccount from './pages/Logistic/Account'
 import CreatePurchaseOrder from "./pages/Manufacturer/PurchaseOrder/CreatePurchaseOrder";
 import EditPurchaseOrder from "./pages/Manufacturer/PurchaseOrder/EditPurchaseOrder";
@@ -209,7 +209,7 @@ const Router = () => {
         </Routes>
       </AuthCheck>
     </BrowserRouter>
-  );
-};
+  )
+}
 
-export default Router;
+export default Router
