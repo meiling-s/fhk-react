@@ -14,6 +14,14 @@ import DownloadAreaModal from './DownloadAreaModal'
 import { getUserAccountById } from '../../../APICalls/Collector/userGroup'
 import { Roles, localStorgeKeyName } from '../../../constants/constant'
 
+interface reportItem {
+  id: number
+  report_name: string
+  typeFile: string
+  reportId: string
+  dateOption?: string // daterange, datetime, none
+}
+
 const DownloadArea = () => {
   const { t } = useTranslation()
   const [openModal, setOpenModal] = useState(false)
@@ -66,12 +74,7 @@ const DownloadArea = () => {
 
   //report for each role
 
-  const collectorsRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const collectorsRows: reportItem[] = [
     // {
     //   id: 1,
     //   report_name: t('generate_report.recycling_point_record'),
@@ -134,12 +137,7 @@ const DownloadArea = () => {
     }
   ]
 
-  const logisticRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const logisticRows: reportItem[] = [
     {
       id: 1,
       report_name: t('generate_report.report_of_recycled_waste_pickup_list'),
@@ -168,12 +166,7 @@ const DownloadArea = () => {
     }
   ]
 
-  const manufacturerRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const manufacturerRows: reportItem[] = [
     {
       id: 0,
       report_name: t('generate_report.recycled_waste_request_list_manufacturer'),
@@ -200,12 +193,7 @@ const DownloadArea = () => {
     }
   ]
 
-  const customerRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const customerRows: reportItem[] = [
     {
       id: 1,
       report_name: t('generate_report.recycled_waste_request_list_customer'),
@@ -214,12 +202,7 @@ const DownloadArea = () => {
     }
   ]
 
-  const astdRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const astdRows: reportItem[] = [
     {
       id: 1,
       report_name: t('generate_report.report_of_recycled_waste_inventory_manufacturers'),
