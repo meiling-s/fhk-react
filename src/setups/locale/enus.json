@@ -70,7 +70,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "collectionPoint_created": "Collection point created",
-    "collectionPoint_updated": "Collection point updated"
+    "collectionPoint_updated": "Collection point updated",
+    "addressNotes": "Please enter the number of seats, street name, housing estate and other information"
   },
   "form": {
     "error": {
@@ -457,7 +458,7 @@
     "photo_blury": "Photo is blurry",
     "bussniess_error": "Business number does not match",
     "closed_tenant_title": "Are you sure to change tenant status to `CLOSED` ? ",
-    "closes_success" :"Closed tenant status success",
+    "closes_success": "Closed tenant status success",
     "invite_form": {
       "company_number": "Company number",
       "company_category": "Company category",

@@ -2,8 +2,31 @@ import { Box, Modal, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
 import BackgroundLetterAvatars from './CustomAvatar'
 import { styles } from '../constants/styles';
+import { CheckinDetailPhoto } from '../interfaces/checkin';
 
-const RecycleCard = ({ name ,packageTypeId, bgcolor, fontcolor, showImage, recycleName, recycleType, weight}: { name: string, packageTypeId: string, bgcolor :string , fontcolor:string,showImage:boolean,recycleName:string,recycleType:string,weight:string}) => {
+type props = { 
+  name: string, 
+  packageTypeId: string, 
+  bgcolor :string , 
+  fontcolor:string, 
+  showImage:boolean, 
+  recycleName:string, 
+  recycleType:string, 
+  weight:string, 
+  images: CheckinDetailPhoto[]
+}
+
+const RecycleCard = (
+  { name ,
+    packageTypeId, 
+    bgcolor, 
+    fontcolor, 
+    showImage, 
+    recycleName, 
+    recycleType, 
+    weight, 
+    images
+  }: props) => {
     
   const [open, setOpen] = useState<boolean>(false);
 
@@ -49,7 +72,7 @@ const RecycleCard = ({ name ,packageTypeId, bgcolor, fontcolor, showImage, recyc
     </Box>
     {showImage&&(<Stack mt="10px" spacing={3} direction="row">
      {
-        fakeImagae.map((i)=>(
+        images.map((image:CheckinDetailPhoto)=>(
           <Box
           height="100px"
           bgcolor="red"
@@ -57,7 +80,7 @@ const RecycleCard = ({ name ,packageTypeId, bgcolor, fontcolor, showImage, recyc
           borderRadius="10px"
         >
           <img
-          src={i.imageUrl}
+          src={image.photo}
           alt="Example Image"
           style={{ objectFit: "cover", width: "100%", height: "100%" ,borderRadius:'5px'}}
           onClick={()=>{
@@ -68,9 +91,8 @@ const RecycleCard = ({ name ,packageTypeId, bgcolor, fontcolor, showImage, recyc
         <Modal  open={open} onClose={()=>{
             setOpen(false)
           }}>
-      <Box sx={styles.imageContainer}>
-          <img src={i.imageUrl}  style={{ width: "100%", height: "100%" }} alt="Example Image" />
-          
+        <Box sx={styles.imageContainer}>
+          <img src={image.photo}  style={{ width: "100%", height: "100%" }} alt="Example Image" />
         </Box>
         </Modal>
       </Box>

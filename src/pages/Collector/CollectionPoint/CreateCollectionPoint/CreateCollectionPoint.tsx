@@ -673,7 +673,7 @@ function CreateCollectionPoint() {
                 error={checkString(address)}
               />
               <Typography sx={{ marginTop: 1, fontSize: 16, color: '#ACACAC' }}>
-                請輸入座數,街名,屋苑等資料
+                {t('col.addressNotes')}
               </Typography>
 
               <Box
