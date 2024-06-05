@@ -85,6 +85,7 @@ export const getListNotifTemplateStaff = async () => {
 export const getDetailNotifTemplate = async (templateId: string, path: string) => {
   try {
     const token = returnApiToken();
+    console.log('token', token.tenantId, templateId)
     const response = await axiosInstance({
       ...GET_DETAIL_NOTIF_TEMPLATE(token.tenantId, templateId, path),
       baseURL: administratorAPI.baseURL
