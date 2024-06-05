@@ -131,6 +131,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
   useEffect(() => {
     initLoginIdList();
     initStaffTitle();
+    resetFormData()
   }, [drawerOpen]);
 
   const initLoginIdList = async () => {
@@ -272,7 +273,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
   };
 
   const handleCreateStaff = async (staffData: CreateStaffEnquiry) => {
-    validate();
+    // validate();
     if (validation.length === 0) {
       const result = await createStaffEnquiry(staffData);
       if (result?.data) {
