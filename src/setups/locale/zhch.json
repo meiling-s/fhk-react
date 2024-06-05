@@ -70,7 +70,8 @@
     "save": "储存",
     "cancel": "取消",
     "collectionPoint_created": "回收点已建立",
-    "collectionPoint_updated": "回收点已更新"
+    "collectionPoint_updated": "回收点已更新",
+    "addressNotes": "请输入座位数、街道名称、屋苑等信息"
   },
   "form": {
     "error": {
