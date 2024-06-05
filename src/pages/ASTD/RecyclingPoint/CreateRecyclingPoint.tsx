@@ -281,7 +281,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                             : action == 'delete'
                                 ? t('common.delete')
                                 : '',
-                    subTitle: t('recycling_point.recycling_point'),
+                    subTitle: t('recycling_point.engineering_land'),
                     submitText: t('add_warehouse_page.save'),
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,

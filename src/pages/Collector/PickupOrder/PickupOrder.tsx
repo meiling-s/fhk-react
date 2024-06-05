@@ -26,6 +26,14 @@ import { displayCreatedDate, extractError } from '../../../utils/utils'
 import TableOperation from "../../../components/TableOperation";
 import { STATUS_CODE, localStorgeKeyName, Languages } from '../../../constants/constant'
 
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+
 type Approve = {
   open: boolean
   onClose: () => void
@@ -239,7 +247,9 @@ const PickupOrders = () => {
   const [totalData , setTotalData] = useState<number>(0)
   const [showOperationColumn, setShowOperationColumn] = useState<Boolean>(false)
   const columns: GridColDef[] = [
-    { field: "createdAt", headerName: t('pick_up_order.table.created_datetime'), width: 150 },
+    { field: "createdAt", headerName: t('pick_up_order.table.created_datetime'), width: 150, renderCell: (params) => {
+      return dayjs.utc(params.row.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+    } },
     {
       field: "logisticCompany",
       headerName: t('pick_up_order.table.logistic_company'),
@@ -303,7 +313,7 @@ const PickupOrders = () => {
 
  
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
-  const {recycType} = useContainer(CommonTypeContainer)
+  const {recycType, dateFormat} = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation();
   const action: string = location.state;
@@ -519,7 +529,7 @@ const PickupOrders = () => {
 
   const getDeliveryDate = (row: PickupOrder) => {
     if( row.picoType === 'AD_HOC') {
-      return `${row.effFrmDate} - ${row.effToDate}`
+      return `${dayjs.utc(row.effFrmDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)} - ${dayjs.utc(row.effToDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)}`
     } else if(row.routineType === 'daily'){
       return "Daily"
     } else {
@@ -564,8 +574,8 @@ const PickupOrders = () => {
   }
   const searchfield = [
     {label:t('pick_up_order.filter.search'),width:'14%', field: 'picoId'},
-    {label:t('pick_up_order.filter.dateby'),width:'10%',options:getUniqueOptions('createdAt'), field:"effFromDate"},
-    {label:t('pick_up_order.filter.to'),width:'10%',options:getUniqueOptions('deliveryDate'), field:"effToDate"},
+    {label:t('pick_up_order.filter.dateby'),width:'10%', field:"effFromDate", inputType: 'date'},
+    {label:t('pick_up_order.filter.to'),width:'10%', field:"effToDate", inputType: 'date'},
     {label:t('pick_up_order.filter.logistic_company'),width:'14%',options:getUniqueOptions('logisticCompany'), field:"logisticName"},
     {label:t('pick_up_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderCompany'), field:"senderName"},
     {label:t('pick_up_order.filter.recycling_category'),width:'14%',options:getReycleOption(), field:"recycType"},
@@ -699,7 +709,7 @@ const PickupOrders = () => {
           <CustomSearchField
             key={s.field}
             label={s.label} 
-            width={s.width} 
+            inputType={s.inputType}
             field={s.field}
             options={s.options || []} 
             onChange={handleSearch} />

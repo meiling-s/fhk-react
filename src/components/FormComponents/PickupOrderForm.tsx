@@ -31,6 +31,15 @@ import { displayCreatedDate } from '../../utils/utils'
 import CustomButton from './CustomButton'
 import { localStorgeKeyName } from '../../constants/constant'
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 const PickupOrderForm = ({
   onClose,
   selectedRow,
@@ -47,6 +56,7 @@ const PickupOrderForm = ({
   const { t } = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role)
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
+  const {dateFormat} = useContainer(CommonTypeContainer)
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -194,7 +204,7 @@ const PickupOrderForm = ({
             <CustomField label={t('pick_up_order.item.date_time')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.createdAt
-                  ? displayCreatedDate(selectedPickupOrder?.createdAt)
+                  ? dayjs.utc(selectedPickupOrder?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
                   : ''}
               </Typography>
             </CustomField>
@@ -211,8 +221,7 @@ const PickupOrderForm = ({
 
             <CustomField label={t('pick_up_order.item.shipping_validity')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.effFrmDate} To{' '}
-                {selectedPickupOrder?.effToDate}
+                {dayjs.utc(selectedPickupOrder?.effFrmDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)} To{' '} {dayjs.utc(selectedPickupOrder?.effToDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)}
               </Typography>
             </CustomField>
             <CustomField label={t('pick_up_order.item.recycling_week')}>

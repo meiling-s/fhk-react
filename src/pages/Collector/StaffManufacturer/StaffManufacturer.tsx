@@ -39,6 +39,15 @@ import UserGroup from "../UserGroup/UserGroup";
 import { getAllUserManufacturer } from "../../../APICalls/userManufacturer";
 import { useNavigate } from "react-router-dom";
 import { STATUS_CODE } from "../../../constants/constant";
+import { useContainer } from "unstated-next";
+import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 
 function createStaff(
   staffId: string,
@@ -92,6 +101,7 @@ const StaffManufacturer: FunctionComponent = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [totalData, setTotalData] = useState<number>(0);
+  const {dateFormat} = useContainer(CommonTypeContainer)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -105,6 +115,8 @@ const StaffManufacturer: FunctionComponent = () => {
         const data = result.data.content;
         var staffMapping: Staff[] = [];
         data.map((item: any) => {
+          const dateInHK = dayjs.utc(item.updatedAt).tz('Asia/Hong_Kong')
+          const updatedAt = dateInHK.format(`${dateFormat} HH:mm`)
           staffMapping.push(
             createStaff(
               item?.staffId,
@@ -122,7 +134,7 @@ const StaffManufacturer: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              updatedAt
             )
           );
         });
@@ -180,9 +192,6 @@ const StaffManufacturer: FunctionComponent = () => {
       headerName: t("staffManagement.lastLogin"),
       width: 200,
       type: "string",
-      renderCell: (params) => {
-        return displayCreatedDate(params.row.updatedAt);
-      },
     },
     {
       field: "edit",
