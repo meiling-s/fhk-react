@@ -218,7 +218,8 @@ const DownloadArea = () => {
         'generate_report.report_of_recycled_waste_inventory_manufacturers'
       ),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000010'
+      reportId: 'downloadExcelFnRpt000010',
+      dateOption: 'none'
     }
   ]
 
