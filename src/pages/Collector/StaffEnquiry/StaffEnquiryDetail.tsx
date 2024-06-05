@@ -273,7 +273,8 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
   };
 
   const handleCreateStaff = async (staffData: CreateStaffEnquiry) => {
-    // validate();
+    validate();
+    console.log("validation", validation)
     if (validation.length === 0) {
       const result = await createStaffEnquiry(staffData);
       if (result?.data) {
