@@ -206,65 +206,59 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     return s == ''
   }
 
-  useEffect(() => {
-    const validate = async () => {
-      const tempV: formValidate[] = []
-      const fieldMapping: FormValues = {
-        loginId: t('staffManagement.loginName'),
-        staffNameTchi: t('staffManagement.employeeChineseName'),
-        staffNameSchi: t('staffManagement.employeeChineseName'),
-        staffNameEng: t('staffManagement.employeeEnglishName'),
-        titleId: t('staffManagement.position'),
-        contactNo: t('staffManagement.contactNumber'),
-        email: t('staffManagement.email')
-      }
-      if (selectedLoginId && action === 'add') {
-        const filteredData = staffList.filter(
-          (value) => value.loginId === selectedLoginId
-        )
-        if (filteredData.length > 0) {
-          tempV.push({
-            field: fieldMapping['loginId'],
-            problem: formErr.hasBeenUsed,
-            type: 'error'
-          })
-          showErrorToast(
-            `${t('staffManagement.loginName')} ${t('form.error.hasBeenUsed')}`
-          )
-        }
-      }
-      Object.keys(formData).forEach((fieldName) => {
-        const fieldValue = formData[fieldName as keyof FormValues]?.trim()
-
-        if (fieldValue === '') {
-          tempV.push({
-            field: fieldMapping[fieldName as keyof FormValues],
-            problem: formErr.empty,
-            type: 'error'
-          })
-        }
-        if (fieldName === 'email' && !fieldValue.includes('@')) {
-          tempV.push({
-            field: fieldMapping[fieldName as keyof FormValues],
-            problem: formErr.wrongFormat,
-            type: 'error'
-          })
-        }
-      })
-
-      setValidation(tempV)
+  const validate = () => {
+    const tempV: formValidate[] = []
+    const fieldMapping: FormValues = {
+      loginId: t('staffManagement.loginName'),
+      staffNameTchi: t('staffManagement.employeeChineseName'),
+      staffNameSchi: t('staffManagement.employeeChineseName'),
+      staffNameEng: t('staffManagement.employeeEnglishName'),
+      titleId: t('staffManagement.position'),
+      contactNo: t('staffManagement.contactNumber'),
+      email: t('staffManagement.email')
     }
+
+    if (selectedLoginId && action === 'add') {
+      const filteredData = staffList.filter(
+        (value) => value.loginId === selectedLoginId
+      )
+      if (filteredData.length > 0) {
+        tempV.push({
+          field: fieldMapping['loginId'],
+          problem: formErr.hasBeenUsed,
+          type: 'error'
+        })
+        showErrorToast(
+          `${t('staffManagement.loginName')} ${t('form.error.hasBeenUsed')}`
+        )
+      }
+    }
+
+    Object.keys(formData).forEach((fieldName) => {
+      const fieldValue = formData[fieldName as keyof FormValues]?.trim()
+
+      if (fieldValue === '') {
+        tempV.push({
+          field: fieldMapping[fieldName as keyof FormValues],
+          problem: formErr.empty,
+          type: 'error'
+        })
+      }
+      if (fieldName === 'email' && !fieldValue.includes('@')) {
+        tempV.push({
+          field: fieldMapping[fieldName as keyof FormValues],
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      }
+    })
+
+    setValidation(tempV)
+  }
+
+  useEffect(() => {
     validate()
-  }, [
-    formData
-    // formData.loginId,
-    // formData.staffNameTchi,
-    // formData.staffNameEng,
-    // formData.staffNameSchi,
-    // formData.contactNo,
-    // formData.email,
-    // formData.titleId
-  ])
+  }, [formData])
 
   const handleFieldChange = (field: keyof FormValues, value: string) => {
     setFormData({
@@ -274,6 +268,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleSubmit = () => {
+    
     const staffData: CreateStaff = {
       tenantId: tenantId.toString(),
       staffNameTchi: formData.staffNameTchi,
