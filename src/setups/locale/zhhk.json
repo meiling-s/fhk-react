@@ -86,8 +86,8 @@
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
-      "startDateBehindEndDate": "如果開始日期晚於結束日期則不允許",
-      "endDateEarlyThanStartDate": "如果結束日期早於開始日期則不允許",
+      "startDateBehindEndDate": "如果開始日期晚於截止日期，則不允許開始日期",
+      "endDateEarlyThanStartDate": "如果“截止日期”早於“開始日期”，則不允許截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字"
     }
   },
@@ -1006,9 +1006,22 @@
     "recycling_classification_statistics": "回收物分類統計數據",
     "recycling_point_establishment": "回收點設立及營運服務（第一期後續合約）照片記錄（每月)",
     "collection_point_establishment": "回收點設立及營運服務（第一期後續合約）Excel 記錄（每月)",
+    "recyle_waste_collection": "回收站列表",
+    "daily_waste_collection": "每日收集回收物報表",
+    "recycled_waste_inspection": "回收物調查和分類報表",
+    "recycled_waste_request_list_manufacturer":"回收物待處理列表",
+    "recycled_waste_request_list_customer": " 工埸請求回收物列表",
     "download": "下載",
     "start_date": "日期由",
-    "end_date": "至"
+    "end_date": "至",
+    "report_of_recycled_waste_pickup_list": "回收物提取報表",
+    "report_of_recycled_waste_collection_route":"實際路線列表",
+    "report_of_logistic_service_vehicle": "物流車列表",
+    "report_of_logistic_service_recycled": " 物流公司回收物報告",
+    "report_of_recycled_waste_inventory_manufacturers": "回收物库存报表",
+    "report_of_manu_recycled_order_list" :"顧客訂單列表",
+    "report_of_manu_recycled_waste_tracing_list": "回收物追蹤列表",
+    "report_of_manu_recycled_waste_classification_list":"回收物類別分析表"
   },
   "purchase_order": {
     "all_order": "所有訂單",

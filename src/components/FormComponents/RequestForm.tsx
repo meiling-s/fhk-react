@@ -11,7 +11,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RecycleCard from "../RecycleCard";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
-import { CheckIn, CheckinDetail } from "../../interfaces/checkin";
+import { CheckIn, CheckinDetail, CheckinDetailPhoto } from "../../interfaces/checkin";
 import { styles } from "../../constants/styles";
 import CommonTypeContainer from "../../contexts/CommonTypeContainer";
 import { useContainer } from "unstated-next";
@@ -29,6 +29,7 @@ type recycItem = {
   recycSubType: il_item;
   weight: number;
   packageTypeId: string;
+  checkinDetailPhoto: CheckinDetailPhoto[]
 };
 
 type props = {
@@ -110,7 +111,8 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                 id: detail.chkInDtlId.toString(),
               },
               weight: detail.weight,
-              packageTypeId: detail.packageTypeId
+              packageTypeId: detail.packageTypeId,
+              checkinDetailPhoto: detail.checkinDetailPhoto
             });
           }
         });
@@ -274,10 +276,11 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                 bgcolor="#e1f4ff"
                 fontcolor="#66bff6"
                 weight={formatWeight(item.weight, decimalVal)}
-                showImage={false}
+                showImage={true}
                 packageTypeId={item.packageTypeId}
                 recycleName={item.recycSubType.name}
                 recycleType={item.recycType.name}
+                images={item.checkinDetailPhoto}
               />
             ))}
             <Box>
