@@ -105,10 +105,10 @@ export const FIND_COLLECTIONPOINT_EXIST_BYNAME: AxiosRequestConfig = {
 }
 
 export const FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS: AxiosRequestConfig =
-  {
-    method: 'get',
-    url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
-  }
+{
+  method: 'get',
+  url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
+}
 
 export const GET_COLLECTIONPOINT_BY_COLID = (
   tenantId: string,
@@ -126,6 +126,15 @@ export const GET_CONTRACT = (
   url: `api/v1/${realmApiRoute}/contract/${tenantId}`
 })
 
+export const NEW_GET_ALL_HEADER_CHECKIN_REQUESTS = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/checkinrequest/header/searching/${table}`
+})
+
+export const NEW_GET_DETAIL_CHECKIN_REQUESTS = (realmApiRoute: string, table: string, checkinId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/checkinrequest/detail/${table}/${checkinId}`
+})
 export const GET_ALL_CHECKIN_REQUESTS = (
   realmApiRoute: string,
   table: string
@@ -460,6 +469,24 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   url: `api/v1/collectors/warehouse/${table}/${warehouseId}/status`
 })
 
+
+export const NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/checkoutrequest/header/searching/${table}`
+})
+
+export const NEW_GET_ALL_DETAIL_CHECKOUT_REQUESTS = (
+  realmApiRoute: string,
+  table: string,
+  chckOutId: number,
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/checkoutrequest/detail/searching/${table}/${chckOutId}`
+})
+
 export const GET_ALL_CHECKOUT_REQUEST = (
   realmApiRoute: string,
   table: string
@@ -626,7 +653,7 @@ export const GET_PROCESS_OUT = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/processout/${table}`
+  url: `api/v1/${realmApiRoute}/processout/header/searching/${table}`
 })
 
 export const GET_PROCESS_IN_BY_ID = (
@@ -649,7 +676,7 @@ export const GET_PROCESS_OUT_DETAIL = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/processout/${table}/${processOutId}`
+  url: `api/v1/${realmApiRoute}/processout/detail/searching/${table}/${processOutId}`
 })
 
 export const CREATE_PROCESS_OUT_ITEM = (

@@ -55,13 +55,22 @@ function CustomItemList({
     const [selectSingle, setSelectSingle] = useState<string>("");
     const [selectMulti, setSelectMulti] = useState<string[]>([]);
     const [LS, setLS] = useState<string>(" ");      //last select
-    useEffect(()=>{
+
+    const setSelectedItem = () => {
         if(defaultSelected && Array.isArray(defaultSelected) && multiSelect){
             setSelectMulti(defaultSelected);
         }else if(defaultSelected && !Array.isArray(defaultSelected)){
             setSelectSingle(defaultSelected);
         }
-    },[defaultSelected])
+    }
+
+    useEffect(()=>{
+        setSelectedItem()
+    },[])
+
+    // useEffect(()=>{
+    //     setSelectedItem()
+    // },[defaultSelected])
     
     if(!(singleSelect || multiSelect)){        //if none of the select method exist
         return(

@@ -199,6 +199,31 @@ const Login = () => {
     navigate('/resetPassword')
   }
 
+  useEffect(() => {
+    const access_token = localStorage.getItem(localStorgeKeyName.keycloakToken)
+    if (access_token) {
+      const role = localStorage.getItem(localStorgeKeyName.realm)
+      switch (role) {
+        case 'astd':
+          window.location.href = '/astd'
+          break
+        case 'collector':
+          window.location.href = '/collector'
+          break
+        case 'logistic':
+          window.location.href = '/logistic/pickupOrder'
+          break
+        case 'manufacturer':
+          window.location.href = '/manufacturer/pickupOrder'
+          break
+        case 'customer':
+          window.location.href = '/customer/account'
+          break
+        default:
+          break
+      }
+    }
+  }, [])
 
   return (
     <Box

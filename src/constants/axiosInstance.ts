@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { localStorgeKeyName } from '../constants/constant'
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
-import { showErrorToast } from "../utils/utils";
+
+const __isDebug = false
 
 const axiosInstance = axios.create()
 const refreshTokenAxiosInstance = axios.create({
@@ -28,37 +28,20 @@ const isTokenExpired = (authToken: string) => {
     return decodedToken.exp < currentTime;
 }
 
-const getNewToken = async () => {
-    try {
-        const refreshToken = localStorage.getItem(localStorgeKeyName.refreshToken) || ''
-
-        const req = await refreshTokenAxiosInstance.post(`/api/v1/administrator/refreshToken/${refreshToken}`);
-
-        const data = req.data;
-
-        localStorage.setItem(localStorgeKeyName.keycloakToken, data.access_token);
-        localStorage.setItem(localStorgeKeyName.refreshToken, data.refresh_token);
-
-        return data.access_token;
-    } catch (e: any) {
-        console.log('Failed to refresh the token: ', e.response.data);
-        localStorage.clear();
-        window.location.href = '/';
-        throw e
-    }
-}
-
 axiosInstance.interceptors.request.use(
     async (config) => {
         const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || '';
         config.headers.AuthToken = accessToken;
-        // console.log('isTokenExpired: ' +  isTokenExpired(accessToken))
+
+        // Check if the access token is expired
         if (config.url !== '/api/v1/administrator/login' && isTokenExpired(accessToken)) {
             try {
-                const newAccessToken = await getNewToken();
-                config.headers.AuthToken = newAccessToken;
+                __isDebug && console.log('Token expired, refreshing...');
+                const newAccessToken = await __getNewAccessToken(); // Retrieve the new access token
+                config.headers.AuthToken = newAccessToken; // Update the request headers with the new access token
+                __isDebug && console.log('Token refreshed successfully.');
             } catch (error) {
-            throw error;
+                throw error;
             }
         }
         
@@ -69,6 +52,32 @@ axiosInstance.interceptors.request.use(
     },
 );
 
+
+const __apiNewToken = async () => {
+    try {
+      __isDebug && console.log('__apiNewToken started')
+      const refreshToken = localStorage.getItem(localStorgeKeyName.refreshToken) || ''
+      const req = await refreshTokenAxiosInstance.post(`/api/v1/administrator/refreshToken/${refreshToken}`);
+      const data = req.data;
+
+      localStorage.setItem(localStorgeKeyName.keycloakToken, data.access_token);
+      localStorage.setItem(localStorgeKeyName.refreshToken, data.refresh_token);
+
+      __isDebug && console.log('__apiNewToken finished')
+      return data.access_token;
+    } catch (e) {
+      console.log('__apiNewToken failed');
+      throw e
+    }
+  };
+
+// This is a trikcy way to by-pass multiple request with > 1 request failure and force logout
+// TODO: implement in a way that only 1 refresh token request is triggered with retry mechanism
+const __getNewAccessToken = async () => {
+    await __apiNewToken()
+    return localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
+}
+
 axiosInstance.interceptors.response.use(
     response => {
         return response
@@ -78,17 +87,12 @@ axiosInstance.interceptors.response.use(
 
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
-        
-            const newAccessToken = await getNewToken();
-
-            originalRequest.headers.AuthToken = newAccessToken;
+            originalRequest.headers.AuthToken = __getNewAccessToken()
             return axios(originalRequest);
         }
         
         if (error.response.status === 403) {
-            const newAccessToken = await getNewToken();
-        
-            originalRequest.headers.AuthToken = newAccessToken;
+            originalRequest.headers.AuthToken = __getNewAccessToken()
             return axios(originalRequest);
         }
         
@@ -96,9 +100,6 @@ axiosInstance.interceptors.response.use(
             localStorage.clear();
             window.location.href = '/';
         }
-        // else if (error?.response?.data?.message !== '') {
-        //     showErrorToast(error?.response?.data?.message)
-        // }
         
         return Promise.reject(error);
     }

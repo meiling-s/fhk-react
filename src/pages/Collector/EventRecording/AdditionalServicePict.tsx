@@ -141,7 +141,7 @@ const AdditionalServicePict = () => {
   const [activeObj, setActiveObj] = useState<string>('')
   const [nature, setNature] = useState<string>('')
   const [speaker, setSpeaker] = useState<string>('')
-  const {imgSettings} = useContainer(CommonTypeContainer)
+  const {imgSettings, dateFormat} = useContainer(CommonTypeContainer)
   const [errorsOptions, setErrorOptions] = useState(
     {
       targetParticipants: {status: false, message: ''}, 
@@ -540,7 +540,7 @@ const AdditionalServicePict = () => {
                             .startDate
                         )}
                         maxDate={serviceData[item.serviceName as keyof ServiceData].endDate}
-                        format={format.dateFormat2}
+                        format={dateFormat}
                         onChange={(value) =>
                           updateDateTime(
                             item.serviceName as ServiceName,
@@ -583,7 +583,7 @@ const AdditionalServicePict = () => {
                           serviceData[item.serviceName as keyof ServiceData]
                             .startDate
                         )}
-                        format={format.dateFormat2}
+                        format={dateFormat}
                         minDate={serviceData[item.serviceName as keyof ServiceData].startDate}
                         onChange={(value) =>
                           updateDateTime(

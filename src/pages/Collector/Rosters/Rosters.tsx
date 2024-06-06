@@ -16,6 +16,8 @@ import { getCollectionPoint } from '../../../APICalls/collectionPointManage'
 import { GroupedRoster, Roster } from '../../../interfaces/roster'
 import { collectionPoint } from '../../../interfaces/collectionPoint'
 import dayjs from 'dayjs'
+import { useContainer } from 'unstated-next'
+import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { extractError } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 
@@ -30,6 +32,7 @@ const Rosters: FunctionComponent = () => {
   const [selectedRosterDate, setRosterDate] = useState<string>('')
   const [rosterColId, setRosterColId] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const {dateFormat} = useContainer(CommonTypeContainer)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -115,7 +118,7 @@ const Rosters: FunctionComponent = () => {
               <Box sx={{ ...localstyles.DateItem }}>
                 <DatePicker
                   value={filterDate}
-                  format={format.dateFormat2}
+                  format={dateFormat}
                   onChange={(value) => setFilterDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
                 />

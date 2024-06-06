@@ -42,7 +42,6 @@ import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
 import PickupOrderList from '../../components/PickupOrderList'
 import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
-import dayjs from 'dayjs'
 import { format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
 import {
@@ -50,6 +49,13 @@ import {
   getThemeCustomList,
   displayCreatedDate
 } from '../../utils/utils'
+
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type DeleteModalProps = {
   open: boolean
@@ -132,7 +138,7 @@ const PickupOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType, recycType, getLogisticlist } =
+  const { logisticList, contractType, vehicleType, recycType, dateFormat, getLogisticlist } =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
 
@@ -229,12 +235,12 @@ const PickupOrderCreateForm = ({
   }
 
   const createdDate = selectedPo
-    ? displayCreatedDate(selectedPo.createdAt)
-    : dayjs(new Date()).format(format.dateFormat1)
+    ? dayjs.utc(selectedPo.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+    : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   const updatedDate = selectedPo
-    ? displayCreatedDate(selectedPo.updatedAt)
-    : dayjs(new Date()).format(format.dateFormat1)
+    ? dayjs.utc(selectedPo.updatedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+    : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   const handleHeaderOnClick = () => {
     //console.log('Header click')

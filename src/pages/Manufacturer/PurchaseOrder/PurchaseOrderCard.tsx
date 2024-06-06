@@ -19,6 +19,13 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { Languages } from '../../../constants/constant'
 
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 const PurchaseOrderCard = ({
   selectedPurchaseOrder,
   purchaseOrderDetail
@@ -27,7 +34,7 @@ const PurchaseOrderCard = ({
   purchaseOrderDetail: PurchaseOrderDetail[]
 }) => {
   const { t } = useTranslation()
-  const { decimalVal,  weightUnits } = useContainer(CommonTypeContainer)
+  const { decimalVal,  weightUnits, dateFormat } = useContainer(CommonTypeContainer)
 
   const getWeightUnits = ():{unitId: number, lang: string}[] => {
     let units:{unitId: number, lang: string}[] = []
@@ -155,7 +162,7 @@ const PurchaseOrderCard = ({
             </Box>
             <Typography ml="60px" style={localstyles.mini_value}>
               {podetail?.pickupAt
-                ? displayCreatedDate(podetail.pickupAt)
+                ? dayjs.utc(podetail.pickupAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
                 : ''}
             </Typography>
           </Box>

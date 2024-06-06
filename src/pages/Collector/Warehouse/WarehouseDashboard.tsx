@@ -33,8 +33,11 @@ import ProgressLine from '../../../components/ProgressLine';
 import StatusCard from '../../../components/StatusCard';
 import { il_item } from '../../../components/FormComponents/CustomItemList';
 
-import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant';
-import dayjs from 'dayjs';
+import {
+    STATUS_CODE,
+    format,
+    localStorgeKeyName,
+} from '../../../constants/constant';
 
 import {
     getCapacityWarehouse,
@@ -60,6 +63,12 @@ import { primaryColor, styles } from '../../../constants/styles';
 import { SEARCH_ICON } from '../../../themes/icons';
 import useDebounce from '../../../hooks/useDebounce';
 import { extractError, returnApiToken } from '../../../utils/utils';
+
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 function createCheckInOutWarehouse(
     id: number,
@@ -101,7 +110,7 @@ type RecycSubTypeCapacity = {
 const WarehouseDashboard: FunctionComponent = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { recycType } = useContainer(CommonTypeContainer);
+    const { recycType, dateFormat } = useContainer(CommonTypeContainer);
 
     const [currentCapacity, setCurrentCapacity] = useState<number>(0);
     const [totalCapacity, setTotalCapacity] = useState<number>(1000);
@@ -117,7 +126,7 @@ const WarehouseDashboard: FunctionComponent = () => {
     const [checkInOut, setCheckInOut] = useState<CheckInOutWarehouse[]>([]);
     const [searchText, setSearchText] = useState<string>('');
     const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
-    const role = localStorage.getItem(localStorgeKeyName.role)
+    const role = localStorage.getItem(localStorgeKeyName.role);
     const debouncedSearchValue: string = useDebounce(searchText, 1000);
 
     useEffect(() => {
@@ -135,65 +144,67 @@ const WarehouseDashboard: FunctionComponent = () => {
     }, [selectedWarehouse, i18n.language]);
 
     const initWarehouse = async () => {
-       try {
-        let result;
-        if (realmApi === 'account') {
-            result = await astdSearchWarehouse(0, 1000, searchText)
-        } else {
-            result = await getAllWarehouse(0, 1000);
-        }
-        if (result) {
-            let capacityTotal = 0;
-            let warehouse: il_item[] = [];
-            const data = result.data.content;
-            data.forEach((item: any) => {
-                item.warehouseRecyc?.forEach((recy: any) => {
-                    capacityTotal += recy.recycSubTypeCapacity;
-                });
-                var warehouseName = '';
-                switch (i18n.language) {
-                    case 'enus':
-                        warehouseName = item.warehouseNameEng;
-                        break;
-                    case 'zhch':
-                        warehouseName = item.warehouseNameSchi;
-                        break;
-                    case 'zhhk':
-                        warehouseName = item.warehouseNameTchi;
-                        break;
-                    default:
-                        warehouseName = item.warehouseNameTchi;
-                        break;
-                }
-                warehouse.push({
-                    id: item.warehouseId,
-                    name: warehouseName,
-                });
-            });
-            setWarehouseList(warehouse);
-            if (warehouse.length > 0) setSelectedWarehouse(warehouse[0]);
-            setTotalCapacity(capacityTotal);
-        }
-       } catch (error:any) {
-            const { state, realm } = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
-                navigate('/maintenance')
+        try {
+            let result;
+            if (realmApi === 'account') {
+                result = await astdSearchWarehouse(0, 1000, searchText);
+            } else {
+                result = await getAllWarehouse(0, 1000);
             }
-       }
+            if (result) {
+                let capacityTotal = 0;
+                let warehouse: il_item[] = [];
+                const data = result.data.content;
+                data.forEach((item: any) => {
+                    item.warehouseRecyc?.forEach((recy: any) => {
+                        capacityTotal += recy.recycSubTypeCapacity;
+                    });
+                    var warehouseName = '';
+                    switch (i18n.language) {
+                        case 'zhhk':
+                            warehouseName = item.warehouseNameTchi;
+                            break;
+                        case 'zhch':
+                            warehouseName = item.warehouseNameSchi;
+                            break;
+                        case 'enus':
+                            warehouseName = item.warehouseNameEng;
+                            break;
+                        default:
+                            warehouseName = item.warehouseNameTchi;
+                            break;
+                    }
+                    warehouse.push({
+                        id: item.warehouseId,
+                        name: warehouseName,
+                    });
+                });
+                setWarehouseList(warehouse);
+                if (warehouse.length > 0) setSelectedWarehouse(warehouse[0]);
+                setTotalCapacity(capacityTotal);
+            }
+        } catch (error: any) {
+            const { state, realm } = extractError(error);
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance');
+            }
+        }
     };
 
     const getWeightSubtypeWarehouse = async () => {
         //init weight for each subtype also calculate current subtype
-        const token = returnApiToken()
+        const token = returnApiToken();
         if (selectedWarehouse) {
             let result;
             if (realmApi === 'account') {
                 result = await getWeightbySubtype(
-                    parseInt(selectedWarehouse.id), debouncedSearchValue
+                    parseInt(selectedWarehouse.id),
+                    debouncedSearchValue
                 );
             } else {
                 result = await getWeightbySubtype(
-                    parseInt(selectedWarehouse.id), token.decodeKeycloack
+                    parseInt(selectedWarehouse.id),
+                    token.decodeKeycloack
                 );
             }
             if (result) {
@@ -212,70 +223,80 @@ const WarehouseDashboard: FunctionComponent = () => {
 
     const initCapacity = async () => {
         try {
-            const token = returnApiToken()
+            const token = returnApiToken();
             if (selectedWarehouse) {
                 let result;
                 if (realmApi === 'account') {
                     result = await getCapacityWarehouse(
-                        parseInt(selectedWarehouse.id), debouncedSearchValue
+                        parseInt(selectedWarehouse.id),
+                        debouncedSearchValue
                     );
                 } else {
                     result = await getCapacityWarehouse(
-                        parseInt(selectedWarehouse.id), token.decodeKeycloack
+                        parseInt(selectedWarehouse.id),
+                        token.decodeKeycloack
                     );
                 }
                 if (result) setTotalCapacity(result.data);
             }
-        } catch (error:any) {
-            const { state, realm } =  extractError(error);
-            if(state.code === STATUS_CODE[503] ){
-                navigate('/maintenance')
+        } catch (error: any) {
+            const { state, realm } = extractError(error);
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance');
             }
         }
     };
 
     const initCheckIn = async () => {
         try {
-            const token = returnApiToken()
+            const token = returnApiToken();
             if (selectedWarehouse) {
                 let result;
                 if (realmApi === 'account') {
-                    result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), debouncedSearchValue)
+                    result = await getCheckInWarehouse(
+                        parseInt(selectedWarehouse.id),
+                        debouncedSearchValue
+                    );
                 } else {
-                    result = await getCheckInWarehouse(parseInt(selectedWarehouse.id), token.decodeKeycloack);
+                    result = await getCheckInWarehouse(
+                        parseInt(selectedWarehouse.id),
+                        token.decodeKeycloack
+                    );
                 }
                 if (result) setCheckIn(result.data);
             }
-        } catch (error:any) {
-            const { state, realm } = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
-                navigate('/maintenance')
+        } catch (error: any) {
+            const { state, realm } = extractError(error);
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance');
             }
         }
     };
 
     const initCheckOut = async () => {
-       try {
-        const token = returnApiToken()
-        if (selectedWarehouse) {
-            let result;
-            if (realmApi === 'account') {
-                result = await getCheckOutWarehouse(
-                    parseInt(selectedWarehouse.id), debouncedSearchValue
-                );
-            } else {
-                result = await getCheckOutWarehouse(
-                    parseInt(selectedWarehouse.id), token.decodeKeycloack
-                );
+        try {
+            const token = returnApiToken();
+            if (selectedWarehouse) {
+                let result;
+                if (realmApi === 'account') {
+                    result = await getCheckOutWarehouse(
+                        parseInt(selectedWarehouse.id),
+                        debouncedSearchValue
+                    );
+                } else {
+                    result = await getCheckOutWarehouse(
+                        parseInt(selectedWarehouse.id),
+                        token.decodeKeycloack
+                    );
+                }
+                if (result) setCheckOut(result.data);
             }
-            if (result) setCheckOut(result.data);
+        } catch (error: any) {
+            const { state, realm } = extractError(error);
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance');
+            }
         }
-       } catch (error:any) {
-            const { state, realm } = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
-                navigate('/maintenance')
-            }
-       }
     };
 
     const mappingRecyName = (recycTypeId: string, recycSubTypeId: string) => {
@@ -325,15 +346,26 @@ const WarehouseDashboard: FunctionComponent = () => {
     const initWarehouseSubType = async () => {
         if (selectedWarehouse) {
             if (realmApi === 'account') {
-                const weightSubtype = await initGetRecycSubTypeWeight()
-                const result = await astdSearchWarehouse(0, 1000, debouncedSearchValue)
+                const weightSubtype = await initGetRecycSubTypeWeight();
+                const result = await astdSearchWarehouse(
+                    0,
+                    1000,
+                    debouncedSearchValue
+                );
                 if (result) {
-                    const data = result.data.content
+                    const data = result.data.content;
                     if (data.length > 0) {
-                        const filteredWarehouse = data.filter((value: { warehouseId: string; }) => value.warehouseId === selectedWarehouse.id)[0]
+                        const filteredWarehouse = data.filter(
+                            (value: { warehouseId: string }) =>
+                                value.warehouseId === selectedWarehouse.id
+                        )[0];
                         if (filteredWarehouse) {
-                            const chosenWarehouseRecyc = filteredWarehouse.warehouseRecyc
-                            // console.log(chosenWarehouseRecyc, 'chosenWarehouseRecyc')
+                            const chosenWarehouseRecyc =
+                                filteredWarehouse.warehouseRecyc;
+                            console.log(
+                                chosenWarehouseRecyc,
+                                'chosenWarehouseRecyc'
+                            );
                             let subtypeWarehouse: warehouseSubtype[] = [];
                             var subTypeWeight = 0;
                             chosenWarehouseRecyc.forEach((item: any) => {
@@ -347,14 +379,16 @@ const WarehouseDashboard: FunctionComponent = () => {
                                             ? weightSubtype[item.recycSubTypeId]
                                             : 0;
                                 }
-            
+
                                 subtypeWarehouse.push({
                                     subTypeId: item.recycSubTypeId,
-                                    subtypeName: recyItem ? recyItem.subName : '-',
+                                    subtypeName: recyItem
+                                        ? recyItem.subName
+                                        : '-',
                                     weight: 0,
                                     capacity: item.recycSubTypeCapacity,
                                 });
-                            })
+                            });
 
                             setWarehouseSubtype(subtypeWarehouse);
                         }
@@ -362,12 +396,12 @@ const WarehouseDashboard: FunctionComponent = () => {
                 }
             } else {
                 const weightSubtype = await getWeightSubtypeWarehouse();
-                // console.log(weightSubtype, 'weightSubType')
+                console.log(weightSubtype, 'weightSubType');
                 const result = await getWarehouseById(
                     parseInt(selectedWarehouse.id)
                 );
                 // console.log("weightSubtype",weightSubtype)
-    
+
                 if (result) {
                     const data = result.data;
                     let subtypeWarehouse: warehouseSubtype[] = [];
@@ -383,7 +417,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                                     ? weightSubtype[item.recycSubTypeId]
                                     : 0;
                         }
-    
+
                         subtypeWarehouse.push({
                             subTypeId: item.recycSubTypeId,
                             subtypeName: recyItem ? recyItem.subName : '-',
@@ -391,7 +425,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                             capacity: item.recycSubTypeCapacity,
                         });
                     });
-                    // console.log(subtypeWarehouse, 'subtypewarehouse')
+                    console.log(subtypeWarehouse, 'subtypewarehouse');
                     setWarehouseSubtype(subtypeWarehouse);
                 }
             }
@@ -399,27 +433,31 @@ const WarehouseDashboard: FunctionComponent = () => {
     };
 
     const initCheckInOut = async () => {
-       try {
-            const token = returnApiToken()
+        try {
+            const token = returnApiToken();
             if (selectedWarehouse) {
                 let result;
                 if (realmApi === 'account') {
                     result = await getCheckInOutWarehouse(
-                        parseInt(selectedWarehouse.id), debouncedSearchValue
+                        parseInt(selectedWarehouse.id),
+                        debouncedSearchValue
                     );
-                } else{
+                } else {
                     result = await getCheckInOutWarehouse(
-                        parseInt(selectedWarehouse.id), token.decodeKeycloack
+                        parseInt(selectedWarehouse.id),
+                        token.decodeKeycloack
                     );
                 }
                 if (result) {
                     const data = result.data;
                     let checkinoutMapping: CheckInOutWarehouse[] = [];
                     data.map((item: any, index: number) => {
+                        const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+                        const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
                         checkinoutMapping.push(
                             createCheckInOutWarehouse(
                                 item?.chkInId || index + item?.chkInId,
-                                item?.createdAt,
+                                createdAt,
                                 item?.status,
                                 item?.senderName,
                                 item?.receiverName,
@@ -435,18 +473,21 @@ const WarehouseDashboard: FunctionComponent = () => {
                     setCheckInOut(checkinoutMapping);
                 }
             }
-       } catch (error:any) {
-            const { state, realm } = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
-                navigate('/maintenance')
+        } catch (error: any) {
+            const { state, realm } = extractError(error);
+            if (state.code === STATUS_CODE[503]) {
+                navigate('/maintenance');
             }
-       }
+        }
     };
 
     const initGetRecycSubTypeWeight = async () => {
-        const token = returnApiToken()
+        const token = returnApiToken();
         if (selectedWarehouse) {
-            const result = await getRecycSubTypeWeight(parseInt(selectedWarehouse.id), debouncedSearchValue)
+            const result = await getRecycSubTypeWeight(
+                parseInt(selectedWarehouse.id),
+                debouncedSearchValue
+            );
             if (result) {
                 const data = result.data;
                 var currCapacityWarehouse = 0;
@@ -457,20 +498,14 @@ const WarehouseDashboard: FunctionComponent = () => {
                 return result.data;
             }
         }
-    }
+    };
 
     const columns: GridColDef[] = [
         {
             field: 'createdAt',
             headerName: t('check_out.created_at'),
-            width: 120,
-            type: 'string',
-            renderCell: (params) => {
-                const dateFormatted = dayjs(
-                    new Date(params.row.createdAt)
-                ).format(format.dateFormat1);
-                return <div>{dateFormatted}</div>;
-            },
+            width: 150,
+            type: 'string'
         },
         {
             field: 'status',
@@ -567,17 +602,17 @@ const WarehouseDashboard: FunctionComponent = () => {
 
     useEffect(() => {
         if (debouncedSearchValue) {
-            setWarehouseList([])
-            setCurrentCapacity(0)
-            setTotalCapacity(0)
-            setCheckIn(0)
-            setCheckOut(0)
-            setSelectedWarehouse(null)
-            setWarehouseSubtype([])
-            setCheckInOut([])
-            initWarehouse()
+            setWarehouseList([]);
+            setCurrentCapacity(0);
+            setTotalCapacity(0);
+            setCheckIn(0);
+            setCheckOut(0);
+            setSelectedWarehouse(null);
+            setWarehouseSubtype([]);
+            setCheckInOut([]);
+            initWarehouse();
         }
-    }, [debouncedSearchValue]);
+    }, [debouncedSearchValue, i18n.language]);
 
     return (
         <Box className="container-wrapper w-[1283px] mt-4">
@@ -845,7 +880,14 @@ const WarehouseDashboard: FunctionComponent = () => {
                     <Typography fontSize={16} color="#535353" fontWeight="bold">
                         {t('warehouseDashboard.recentEntryAndExitRecords')}
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => navigate(`/${role}/pickupOrder`)}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => navigate(`/${role}/pickupOrder`)}
+                    >
                         <Typography
                             fontSize={13}
                             color="gray"

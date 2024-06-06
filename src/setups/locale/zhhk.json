@@ -70,7 +70,8 @@
     "save": "儲存",
     "cancel": "取消",
     "collectionPoint_created": "回收點已建立",
-    "collectionPoint_updated": "回收點已更新"
+    "collectionPoint_updated": "回收點已更新",
+    "addressNotes": "請輸入座位數、街道名稱、屋苑等訊息"
   },
   "form": {
     "error": {
@@ -85,11 +86,9 @@
       "atLeastOnePicoExist": "至少需要一個 Pico 詳細信息",
       "exceedsMaxLength": "不可超過一百個字符",
       "minMoreOneImgUploded": "至少需要上傳2張車輛圖片",
-      "startDateBehindEndDate": "如果開始日期晚於結束日期則不允許",
-      "endDateEarlyThanStartDate": "如果結束日期早於開始日期則不允許",
-      "loginIdCantContainAdmin": "'admin' 中不允許有單字",
-      "startDateIsLaterThanToDate": "如果開始日期晚於截止日期，則不允許開始日期",
-      "toDateIsEarlierThanStartDate": "如果截止日期早於開始日期，則不允許截止日期"
+      "startDateBehindEndDate": "如果開始日期晚於截止日期，則不允許開始日期",
+      "endDateEarlyThanStartDate": "如果“截止日期”早於“開始日期”，則不允許截止日期",
+      "loginIdCantContainAdmin": "'admin' 中不允許有單字"
     }
   },
   "component": {
@@ -1019,7 +1018,11 @@
     "report_of_recycled_waste_collection_route":"實際路線列表",
     "report_of_logistic_service_vehicle": "物流車列表",
     "report_of_logistic_service_recycled": " 物流公司回收物報告",
-    "report_of_recycled_waste_inventory_manufacturers": "回收物库存报表"
+    "report_of_recycled_waste_inventory_manufacturers": "回收物库存报表",
+    "report_of_manu_recycled_order_list" :"顧客訂單列表",
+    "report_of_manu_recycled_waste_tracing_list": "回收物追蹤列表",
+    "report_of_manu_recycled_waste_classification_list":"回收物類別分析表",
+    "report_of_user_management_list": "用户报表"
   },
   "purchase_order": {
     "all_order": "所有訂單",
@@ -1073,7 +1076,9 @@
       "estimated_weight": "預計重量",
       "this": "這",
       "is_required": "是必須的",
-      "required_field": "此欄位是必需的"
+      "required_field": "此欄位是必需的",
+      "senderNameEqualToReceiverName": "寄件者姓名不能與收件人姓名相同",
+      "unit": "單元"
     }
   },
   "purchase_order_customer": {
@@ -1128,6 +1133,7 @@
   "recycling_point": {
     "recycling_point": "回收點",
     "engineering_land": "工程用地類別",
+    "house_or_place": "房屋或場所類別",
     "place": "地點",
     "capacity": "容量",
     "state": "狀態",
@@ -1163,7 +1169,7 @@
     "recyclable": "回收物",
     "recycling_data": "回收物数据",
     "different_recycling_weights": "不同回收物重量",
-    "date_range": "日期范围",
+    "date_range": "日期範圍",
     "recycling_point": "回收点",
     "plastic": "塑料",
     "waste_paper": "废纸",

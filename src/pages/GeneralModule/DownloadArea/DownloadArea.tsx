@@ -14,16 +14,25 @@ import DownloadAreaModal from './DownloadAreaModal'
 import { getUserAccountById } from '../../../APICalls/Collector/userGroup'
 import { Roles, localStorgeKeyName } from '../../../constants/constant'
 
+interface reportItem {
+  id: number
+  report_name: string
+  typeFile: string
+  reportId: string
+  dateOption?: string // daterange, datetime, none
+}
+
 const DownloadArea = () => {
   const { t } = useTranslation()
   const [openModal, setOpenModal] = useState(false)
   const [staffId, setStaffId] = useState('')
-  const [selectedRow, setSelectedRow] = useState<{
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }>({ id: 0, report_name: '', typeFile: '', reportId: '' })
+  const [selectedRow, setSelectedRow] = useState<reportItem>({
+    id: 0,
+    report_name: '',
+    typeFile: '',
+    reportId: '',
+    dateOption: ''
+  })
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
 
@@ -66,12 +75,7 @@ const DownloadArea = () => {
 
   //report for each role
 
-  const collectorsRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const collectorsRows: reportItem[] = [
     // {
     //   id: 1,
     //   report_name: t('generate_report.recycling_point_record'),
@@ -124,7 +128,7 @@ const DownloadArea = () => {
       id: 9,
       report_name: t('generate_report.daily_waste_collection'),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000004'
+      reportId: 'downloadExcelFnRpt000004',
     },
     {
       id: 10,
@@ -134,12 +138,7 @@ const DownloadArea = () => {
     }
   ]
 
-  const logisticRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const logisticRows: reportItem[] = [
     {
       id: 1,
       report_name: t('generate_report.report_of_recycled_waste_pickup_list'),
@@ -168,26 +167,42 @@ const DownloadArea = () => {
     }
   ]
 
-  const manufacturerRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const manufacturerRows: reportItem[] = [
     {
-      id: 1,
-      report_name: t('generate_report.recycled_waste_request_list_manufacturer'),
+      id: 0,
+      report_name: t(
+        'generate_report.recycled_waste_request_list_manufacturer'
+      ),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000011'
+    },
+    {
+      id: 1,
+      report_name: t('generate_report.report_of_manu_recycled_order_list'),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000012',
+      dateOption: 'none'
+    },
+    {
+      id: 2,
+      report_name: t(
+        'generate_report.report_of_manu_recycled_waste_tracing_list'
+      ),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000013'
+    },
+    {
+      id: 3,
+      report_name: t(
+        'generate_report.report_of_manu_recycled_waste_classification_list'
+      ),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000014',
+      dateOption: 'none'
     }
   ]
 
-  const customerRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const customerRows: reportItem[] = [
     {
       id: 1,
       report_name: t('generate_report.recycled_waste_request_list_customer'),
@@ -196,17 +211,24 @@ const DownloadArea = () => {
     }
   ]
 
-  const astdRows: {
-    id: number
-    report_name: string
-    typeFile: string
-    reportId: string
-  }[] = [
+  const astdRows: reportItem[] = [
     {
       id: 1,
-      report_name: t('generate_report.report_of_recycled_waste_inventory_manufacturers'),
+      report_name: t(
+        'generate_report.report_of_recycled_waste_inventory_manufacturers'
+      ),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000010'
+      reportId: 'downloadExcelFnRpt000010',
+      dateOption: 'none'
+    },
+    {
+      id: 2,
+      report_name: t(
+        'generate_report.report_of_user_management_list'
+      ),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000010',
+      dateOption: 'none'
     }
   ]
 
@@ -220,7 +242,7 @@ const DownloadArea = () => {
     rows = manufacturerRows
   } else if (role === Roles.customerAdmin) {
     rows = customerRows
-  } else if(role === Roles.astd){
+  } else if (role === Roles.astd) {
     rows = astdRows
   }
 
@@ -243,7 +265,8 @@ const DownloadArea = () => {
         id: params?.row?.id,
         report_name: params?.row?.report_name,
         typeFile: params?.row?.typeFile,
-        reportId: params?.row?.reportId
+        reportId: params?.row?.reportId,
+        dateOption: params?.row?.dateOption
       }
     })
   }
@@ -256,7 +279,8 @@ const DownloadArea = () => {
         id: params?.row?.id,
         report_name: params?.row?.report_name,
         typeFile: params?.row?.typeFile,
-        reportId: params?.row?.reportId
+        reportId: params?.row?.reportId,
+        dateOption: params?.row?.dateOption
       }
     })
   }
