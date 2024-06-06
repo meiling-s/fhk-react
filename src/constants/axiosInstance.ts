@@ -28,6 +28,15 @@ const isTokenExpired = (authToken: string) => {
     return decodedToken.exp < currentTime;
 }
 
+const isRefreshTokenExpired = (refreshToken: string) => {
+    if (refreshToken === '') return false;
+    
+    const decodedToken = parseJwtToken(refreshToken, 1);
+    const currentTime = Date.now() / 1000;
+    
+    return decodedToken.exp < currentTime;
+};
+
 axiosInstance.interceptors.request.use(
     async (config) => {
         const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || '';
@@ -36,10 +45,21 @@ axiosInstance.interceptors.request.use(
         // Check if the access token is expired
         if (config.url !== '/api/v1/administrator/login' && isTokenExpired(accessToken)) {
             try {
-                __isDebug && console.log('Token expired, refreshing...');
-                const newAccessToken = await __getNewAccessToken(); // Retrieve the new access token
-                config.headers.AuthToken = newAccessToken; // Update the request headers with the new access token
-                __isDebug && console.log('Token refreshed successfully.');
+                __isDebug && console.log('Access token expired, refreshing...');
+                
+                // Check if the refresh token is expired
+                const refreshToken = localStorage.getItem(localStorgeKeyName.refreshToken) || '';
+                if (!isRefreshTokenExpired(refreshToken)) {
+                    const newAccessToken = await __getNewAccessToken(); // Retrieve the new access token
+                    config.headers.AuthToken = newAccessToken; // Update the request headers with the new access token
+                    __isDebug && console.log('Access token refreshed successfully.');
+                } else {
+                    // Handle refresh token expired scenario
+                    // For example, redirect to login page
+                    __isDebug && console.log('Refresh token expired. Redirecting to login page...');
+                    localStorage.clear();
+                    window.location.href = '/';
+                }
             } catch (error) {
                 throw error;
             }
