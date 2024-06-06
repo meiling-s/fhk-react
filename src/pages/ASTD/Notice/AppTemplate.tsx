@@ -2,7 +2,7 @@ import { Autocomplete, Box, Button, Grid, TextField, TextareaAutosize, Typograph
 import { LEFT_ARROW_ICON } from "../../../themes/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FunctionComponent, useEffect, useState, SyntheticEvent } from "react";
+import { FunctionComponent, useEffect, useState, SyntheticEvent, useRef } from "react";
 import { ToastContainer } from 'react-toastify'
 import { getDetailNotifTemplate, updateNotifTemplate } from "../../../APICalls/notify";
 import { extractError, getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
@@ -13,6 +13,10 @@ import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs from "dayjs";
+import DragItem from "../../../components/DragItem";
+import DropZone from "../../../components/DropZone";
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 interface TemplateProps {
     templateId: string,
@@ -44,6 +48,8 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
     const themeColor:string = getThemeColorRole(userRole);
     const realm = localStorage.getItem(localStorgeKeyName.realm);
     const [currentLang, setCurrentLang] = useState<Option>({value: '', lang: ''})
+    const inputRef = useRef(null);
+
     const languages: readonly LanguagesNotif[] = [
         {
             value: "ZH-CH",
@@ -65,7 +71,6 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
         }
     ];
     
-
     const getCurrentLang = () => {
         if(i18n.language === Languages.ENUS){
             let options: Option[] = languages.map(item => {
@@ -135,6 +140,7 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                     }
                 })
                 setCurrentLanguage(notif.lang)
+                inputRef.current = notif?.content
             }
        } catch (error:any) {
         const {state, realm} =  extractError(error);
@@ -210,22 +216,25 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
     }
 
     const onSubmitUpdateTemplate = async () => {
+        // console.log('inputRef', inputRef)
+        const content = document.getElementById('content');
+        console.log('content', inputRef)
 
-        if(errors.content.status || errors.lang.status){
-            showErrorToast(t('common.editFailed'))
-            return
-        } else {
-            const response = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
-            if (response) {
-                showSuccessToast(t('common.editSuccessfully'))
-                setTimeout(() => {
-                    navigate(`/${realm}/notice`)
-                }, 1000);
+        // if(errors.content.status || errors.lang.status){
+        //     showErrorToast(t('common.editFailed'))
+        //     return
+        // } else {
+        //     const response = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
+        //     if (response) {
+        //         showSuccessToast(t('common.editSuccessfully'))
+        //         setTimeout(() => {
+        //             navigate(`/${realm}/notice`)
+        //         }, 1000);
 
-            } else {
-                showErrorToast(t('common.editFailed'))
-            }
-        }
+        //     } else {
+        //         showErrorToast(t('common.editFailed'))
+        //     }
+        // }
     }
 
     const onChangeLanguage = (value: string, lang: string) => {
@@ -241,9 +250,12 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
     }
 
     const handleSelect = (event: React.SyntheticEvent<HTMLTextAreaElement, Event>) => {
+      
         const target = event.target as HTMLInputElement;
+        console.log('event', target.select)
         const cursorPosition = target?.selectionStart;
-        if (cursorPosition) setCursorPosition(cursorPosition)
+        // if (cursorPosition) setCursorPosition(cursorPosition)
+        console.log('cursorPosition',cursorPosition)
     }
 
     const onHandleUpload = (content: string, index: number) => {
@@ -266,7 +278,36 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
             })
         }
     }
+
+    const onDrop = (item: any) => {
+        console.log('onDrop', item.name)
+        // handleSelect()
+        setNotifTemplate(prev => {
+            return {
+                ...prev,
+                content: prev.content + item.name
+            }
+        })
+    }
     
+    const onDragHandler = (event: any, item: string) => {
+        // event.preventDefault();
+        // console.log('event', item)
+        event.dataTransfer.setData("text/plain", item);
+        const data = event.dataTransfer.getData("text");
+        console.log('event after', data)
+    }
+    // console.log('inputRef', inputRef.current)
+
+    const onDragEndHandler = (event:any) => {
+        // event.preventDefault();
+        const target = event.target as HTMLInputElement;
+        console.log('target', target.selectionStart)
+        const data = event.dataTransfer.getData("text");
+        const source = document.getElementById(data);
+        // console.log('onDragEndHandler', data, source)
+    };
+
     return (
         <Box className="container-wrapper w-full mr-11">
             <div className="overview-page bg-bg-primary">
@@ -362,59 +403,45 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
 
                 </Grid>}
 
-                {/* <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
-                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
-                        {t(`notification.drag_drop_content`)}
-                    </Typography>
-                    <FileUploadCard 
-                         onHandleUpload={onHandleUpload}
-                    />
-                </Grid> */}
-
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
-                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
-                        {t('notification.modify_template.app.content')}
-                    </Typography>
-                    <TextareaAutosize
-                        id="content"
-                        style={{ width: '1200px', backgroundColor: 'white', padding: '10px', borderRadius: '12px' }}
-                        value={notifTemplate?.content}
-                        minRows={7}
-                        onChange={(event) => {
-                            setNotifTemplate(prev => {
-                                return {
-                                    ...prev,
-                                    content: event.target.value
-                                }
-                            })
-                        }}
-                        onFocusCapture={onChangeCursor}
-                        onClick={(event) => handleSelect(event)}
-                    />
-                    <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
-                        {errors.content.status ? t('form.error.shouldNotBeEmpty') : ''}
-                    </Typography>
-                </Grid>
+            <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
+                {t('notification.modify_template.app.content')}
+            </Typography>
+            <TextareaAutosize
+                id="content"
+                ref={inputRef}
+                style={{ width: '1200px', backgroundColor: 'white', padding: '10px', borderRadius: '12px' }}
+                // value={notifTemplate.content}
+                defaultValue={notifTemplate.content}
+                minRows={7}
+                onDragOver={onDragEndHandler}
+                onChange={(event) => {
+                    // setNotifTemplate(prev => {
+                    //     return {
+                    //         ...prev,
+                    //         content: event.target.value
+                    //     }
+                    // })
+                }}
+            />
+            </Grid>
+
+                {/* <label>Text:</label>
+                <input id="title-message" type="text" /> */}
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
                     <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                         {t('notification.modify_template.app.variables')}
                     </Typography>
                     <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
-                        {notifTemplate.variables.map((item, index) => {
-                            // return <button
-                            //     key={index}
-                            //     className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
-                            //     style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
-                            //     onClick={(event) => onChangeContent(index)}
-                            // > [{item}] </button>
-                            return <FileUploadCard
-                                index={index}
-                                item={item} 
-                                onHandleUpload={onHandleUpload}
-                            />
+                        {['variables 1','variables 2','variables 3','variables 4','variables 5','variables 6'].map((item, index) => {
+                            return <Box 
+                                 key={index} 
+                                 id ={`drag-${index}`} 
+                                 onDragStart={(event) => onDragHandler(event, item)}
+                                 draggable="true">{item}
+                            </Box>
                         })}
-
                     </Grid>
                 </Grid>
 
