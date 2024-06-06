@@ -2,21 +2,17 @@ import { Autocomplete, Box, Button, Grid, TextField, TextareaAutosize, Typograph
 import { LEFT_ARROW_ICON } from "../../../themes/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FunctionComponent, useEffect, useState, SyntheticEvent, useRef } from "react";
+import { FunctionComponent, useEffect, useState, useRef } from "react";
 import { ToastContainer } from 'react-toastify'
 import { getDetailNotifTemplate, updateNotifTemplate } from "../../../APICalls/notify";
 import { extractError, getThemeColorRole, showErrorToast, showSuccessToast } from "../../../utils/utils";
-import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 import { styles } from "../../../constants/styles";
 import { Languages, Realm, STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs from "dayjs";
-import DragItem from "../../../components/DragItem";
-import DropZone from "../../../components/DropZone";
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 interface TemplateProps {
     templateId: string,
@@ -178,8 +174,6 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
         }
     }, [notifTemplate.content, notifTemplate.lang])
 
-    const variables = ["CheckInId", "Requester", "RequestDateTime", "PickupOrder", "LogisticProvider", "ReceiverCompanyName"]
-
     const onChangeContent = (text:string, index: number) => {
         if (isPreviousContentArea) {
             let content = ''
@@ -216,25 +210,21 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
     }
 
     const onSubmitUpdateTemplate = async () => {
-        // console.log('inputRef', inputRef)
-        const content = document.getElementById('content');
-        console.log('content', inputRef)
+        if(errors.content.status || errors.lang.status){
+            showErrorToast(t('common.editFailed'))
+            return
+        } else {
+            const response = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
+            if (response) {
+                showSuccessToast(t('common.editSuccessfully'))
+                setTimeout(() => {
+                    navigate(`/${realm}/notice`)
+                }, 1000);
 
-        // if(errors.content.status || errors.lang.status){
-        //     showErrorToast(t('common.editFailed'))
-        //     return
-        // } else {
-        //     const response = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
-        //     if (response) {
-        //         showSuccessToast(t('common.editSuccessfully'))
-        //         setTimeout(() => {
-        //             navigate(`/${realm}/notice`)
-        //         }, 1000);
-
-        //     } else {
-        //         showErrorToast(t('common.editFailed'))
-        //     }
-        // }
+            } else {
+                showErrorToast(t('common.editFailed'))
+            }
+        }
     }
 
     const onChangeLanguage = (value: string, lang: string) => {
@@ -249,25 +239,6 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
         }
     }
 
-    const handleSelect = (event: React.SyntheticEvent<HTMLTextAreaElement, Event>) => {
-      
-        const target = event.target as HTMLInputElement;
-        console.log('event', target.select)
-        const cursorPosition = target?.selectionStart;
-        // if (cursorPosition) setCursorPosition(cursorPosition)
-        console.log('cursorPosition',cursorPosition)
-    }
-
-    const onHandleUpload = (content: string, index: number) => {
-        onChangeContent(content, index)
-        // setNotifTemplate(prev => {
-        //  return{
-        //      ...prev,
-        //      content: content
-        //  }
-        // })
-    };
-
     const onChangeDate = (value: dayjs.Dayjs | null, type: string) => {
         if (value) {
             setNotifTemplate(prev => {
@@ -278,38 +249,26 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
             })
         }
     }
+    
+    const onDragHandler = (event: any, item: string) => {
+        event.dataTransfer.setData("text/plain", item);
+    }
 
-    const onDrop = (item: any) => {
-        console.log('onDrop', item.name)
-        // handleSelect()
+    const onChangeContentDragDrop = (value:string) => {
         setNotifTemplate(prev => {
-            return {
+            return{
                 ...prev,
-                content: prev.content + item.name
+                content: value
             }
         })
     }
-    
-    const onDragHandler = (event: any, item: string) => {
-        // event.preventDefault();
-        // console.log('event', item)
-        event.dataTransfer.setData("text/plain", item);
-        const data = event.dataTransfer.getData("text");
-        console.log('event after', data)
-    }
-    // console.log('inputRef', inputRef.current)
-
-    const onDragEndHandler = (event:any) => {
-        // event.preventDefault();
-        const target = event.target as HTMLInputElement;
-        console.log('target', target.selectionStart)
-        const data = event.dataTransfer.getData("text");
-        const source = document.getElementById(data);
-        // console.log('onDragEndHandler', data, source)
-    };
 
     return (
         <Box className="container-wrapper w-full mr-11">
+            <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="zh-cn"
+            >
             <div className="overview-page bg-bg-primary">
                 <div
                     className="header-page flex justify-start items-center mb-4 cursor-pointer"
@@ -409,38 +368,30 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
             </Typography>
             <TextareaAutosize
                 id="content"
+                className="hover:cursor-pointer"
                 ref={inputRef}
                 style={{ width: '1200px', backgroundColor: 'white', padding: '10px', borderRadius: '12px' }}
-                // value={notifTemplate.content}
                 defaultValue={notifTemplate.content}
                 minRows={7}
-                onDragOver={onDragEndHandler}
                 onChange={(event) => {
-                    // setNotifTemplate(prev => {
-                    //     return {
-                    //         ...prev,
-                    //         content: event.target.value
-                    //     }
-                    // })
+                    onChangeContentDragDrop(event.target.value)
                 }}
             />
             </Grid>
-
-                {/* <label>Text:</label>
-                <input id="title-message" type="text" /> */}
 
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
                     <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                         {t('notification.modify_template.app.variables')}
                     </Typography>
                     <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
-                        {['variables 1','variables 2','variables 3','variables 4','variables 5','variables 6'].map((item, index) => {
-                            return <Box 
+                        {notifTemplate.variables.map((item, index) => {
+                            return <div 
                                  key={index} 
+                                 className="mr-2 text-[#717171] text-md py-1 px-2 hover:cursor-pointer  bg-[#FBFBFB]"
                                  id ={`drag-${index}`} 
-                                 onDragStart={(event) => onDragHandler(event, item)}
-                                 draggable="true">{item}
-                            </Box>
+                                 onDragStart={(event) => onDragHandler(event, ` [${item}] `)}
+                                 draggable="true">{`[${item}]`}
+                            </div>
                         })}
                     </Grid>
                 </Grid>
@@ -464,6 +415,7 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                     </Button>
                 </Grid>
             </Grid>
+            </LocalizationProvider>
         </Box>
     )
 };
