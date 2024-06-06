@@ -31,6 +31,7 @@ import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
 import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
 import { returnApiToken } from '../utils/utils'
+import { Notif } from '../interfaces/notif'
 
 const MainAppBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -48,9 +49,10 @@ const MainAppBar = () => {
   const { loginId } = returnApiToken()
   useEffect(() => {
     updateNotifications(loginId)
-  }, [])
+  }, [loginId])
  
-
+  console.log('notifList',notifList)
+  console.log('numOfNotif', numOfNotif)
   const handleLanguageChange = (lng: string) => {
     console.log('change language: ', lng)
     i18n.changeLanguage(lng)
@@ -115,6 +117,12 @@ const MainAppBar = () => {
     }
   }
 
+  const onClickNotif = (notif: Notif) => {
+    if(notif.messageType !== 'broadcast'){
+      handleClickNotif(notif.notiRecordId)
+    }
+  }
+
   return (
     //<Box flexDirection={"row"} sx={{ flexGrow: 1 }}>
     <AppBar
@@ -172,7 +180,7 @@ const MainAppBar = () => {
                     title={notif.title}
                     content={notif.content}
                     datetime={notif.createdAt}
-                    handleItem={() => handleClickNotif(notif.notiRecordId)}
+                    handleItem={() => onClickNotif(notif)}
                     readFlg={notif.readFlg}
                   ></NotifItem>
                 ))}
