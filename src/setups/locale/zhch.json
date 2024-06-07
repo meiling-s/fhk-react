@@ -332,7 +332,9 @@
       "van": "小型货车",
       "large_truck": "大型货车",
       "regular_shipping": "常规运输",
-      "one-transport": "一次性运输"
+      "one-transport": "一次性运输",
+      "sender_and_receiver_company": "寄件和收件公司",
+      "sender_and_receiver_location": "回收和到达地点"
     },
     "item": {
       "detail": "运单详情",
@@ -348,7 +350,8 @@
       "contact_number": "请填写手机号码",
       "sender_name": "寄件公司",
       "exp_opration": "已过期操作",
-      "rec_loc_info": "回收地点资料"
+      "rec_loc_info": "回收地点资料",
+      "logistic_company": "物流公司"
     },
     "create_pick_up_order": "建立",
     "edit_pick_up_order": "编辑取件订单",

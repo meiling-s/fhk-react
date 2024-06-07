@@ -1559,3 +1559,8 @@ export const GET_WEIGHT_RECYCABLES_DASHBOARD_ASTD = (
   method: 'get',
   url: `/api/v1/account/dashboard/weightRecyclablesColPoint/${tenantId}/${frmDate}/${toDate}`
 })
+
+export const GET_BROADCAST_MESSAGE = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/notiTemplate/broadcastMessage`
+})

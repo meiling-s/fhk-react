@@ -252,7 +252,7 @@ const PickupOrderForm = ({
               </Typography>
             </CustomField>
 
-            <CustomField label={t('pick_up_order.item.sender_name')}>
+            <CustomField label={t('pick_up_order.item.logistic_company')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {selectedPickupOrder?.logisticName}
               </Typography>
