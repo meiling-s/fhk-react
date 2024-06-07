@@ -314,6 +314,10 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
         }
     }
 
+    const onDragHandler = (event: any, item: string) => {
+        event.dataTransfer.setData("text/plain", item);
+    }
+
     return (
         <Box className="container-wrapper w-full mr-11">
             <LocalizationProvider
@@ -484,17 +488,24 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
 
                     <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
                         {notifTemplate.variables.map((item, index) => {
-                            // return <button
-                            //     key={index}
-                            //     className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
-                            //     style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
-                            //     onClick={(event) => onChangeContent(index)}
-                            // > [{item}] </button>
-                            return <FileUploadCard
-                                index={index}
-                                item={item} 
-                                onHandleUpload={onHandleUpload}
-                            />
+                            // // return <button
+                            // //     key={index}
+                            // //     className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
+                            // //     style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
+                            // //     onClick={(event) => onChangeContent(index)}
+                            // // > [{item}] </button>
+                            // return <FileUploadCard
+                            //     index={index}
+                            //     item={item} 
+                            //     onHandleUpload={onHandleUpload}
+                            return <div 
+                                key={index} 
+                                className="mr-2 text-[#717171] text-md py-1 px-2 hover:cursor-pointer  bg-[#FBFBFB]"
+                                id ={`drag-${index}`} 
+                                onDragStart={(event) => onDragHandler(event, ` [${item}] `)}
+                                draggable="true">{`[${item}]`}
+                            </div>
+                            // />
                         })}
 
                     </Grid>
