@@ -1,6 +1,7 @@
 import { Collapse } from '@mui/material'
 import CustomField from '../FormComponents/CustomField'
-import CustomItemList, { il_item } from '../FormComponents/CustomItemList'
+import { il_item } from '../FormComponents/CustomItemList'
+import CustomItemListRecyble from '../FormComponents/CustomItemListRecyble'
 import { useEffect, useState } from 'react'
 import { recycType } from '../../interfaces/common'
 import { useTranslation } from 'react-i18next'
@@ -35,7 +36,6 @@ export default function RecyclablesList({
   const { t, i18n } = useTranslation()
 
   useEffect(() => {
-   
     if (defaultRecycL) {
       setRecycTypeList(recyclables_getRecycTypes(defaultRecycL))
       setSubTypeList(recyclables_getSubTypes(defaultRecycL))
@@ -43,7 +43,6 @@ export default function RecyclablesList({
   }, [])
 
   useEffect(() => {
-    //console.log(toRecyclables());
     setState(toRecyclables())
   }, [recycTypeList, subTypeList, defaultRecycL, recycL])
 
@@ -108,12 +107,10 @@ export default function RecyclablesList({
 
   const returnSubRecyclables = (recycId: string) => {
     //return sub items of recyc
-    //console.log("recycTypeList", recycTypeList)
     const recyTypeId = recycId != undefined ? recycId : recycTypeList?.[0]
     const item: recycItem | undefined = returnRecycTypes().find((recycType) => {
       return recycType.recycType.id === recyTypeId
     })
-    //console.log('returnSubRecyclables', recycTypeList?.[0])
     if (item) {
       const subItems = item.recycSubType
       return subItems
@@ -230,36 +227,40 @@ export default function RecyclablesList({
 
   return (
     <>
-      <CustomItemList
+      <CustomItemListRecyble
         items={returnRecyclables(returnRecycTypes())}
         withSubItems={returnWithSubItem()}
         multiSelect={selectRecyc}
         setLastSelect={setCurRecyc}
-        dbClickSelect={true}
+        dbClickSelect={false}
         error={showError && recycTypeList.length == 0}
         defaultSelected={
           defaultRecycL ? recyclables_getRecycTypes(defaultRecycL) : []
         }
       />
-      <Collapse sx={{ mt: 1 }} in={recycTypeList.length > 0} unmountOnExit>
-        <CustomField
-          label={
-            curRecyc == ' '
-              ? getNameFromRecycId(recycTypeList[0])
-              : getNameFromRecycId(curRecyc) + t('col.category')
-          }
-          mandatory={subTypeRequired}
-        >
-          <CustomItemList
-            items={returnSubRecyclables(
-              curRecyc == ' ' ? recycTypeList[0] : curRecyc
-            )}
-            multiSelect={selectSubRecyc}
-            defaultSelected={subTypeList}
-            dbClickSelect={true}
-          />
-        </CustomField>
-      </Collapse>
+      {curRecyc && (
+        <Collapse sx={{ mt: 1 }} in={recycTypeList.length > 0} unmountOnExit>
+          <CustomField
+            // label={
+            //   curRecyc == ' '
+            //     ? getNameFromRecycId(recycTypeList[0])
+            //     : getNameFromRecycId(curRecyc) + t('col.category')
+            // }
+            label={getNameFromRecycId(curRecyc) + t('col.category')}
+            mandatory={subTypeRequired}
+          >
+            <CustomItemListRecyble
+              // items={returnSubRecyclables(
+              //   curRecyc == ' ' ? recycTypeList[0] : curRecyc
+              // )}
+              items={returnSubRecyclables(curRecyc)}
+              multiSelect={selectSubRecyc}
+              defaultSelected={subTypeList}
+              dbClickSelect={false}
+            />
+          </CustomField>
+        </Collapse>
+      )}
     </>
   )
 }

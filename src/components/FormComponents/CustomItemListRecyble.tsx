@@ -151,7 +151,8 @@ function CustomItemList({
                         sx={error? localstyles.error : returnTheme(item.id)}
                         style={{marginRight: '6px', marginBottom: '6px'}}
                         onClick={()=>{dbClickSelect? handleSingleClick(item.id) : handleSelect(item.id)}}
-                        onDoubleClick={() => {dbClickSelect && handleSelect(item.id)}}>
+                        //onClick={()=>{ handleSingleClick(item.id)}}
+                        onDoubleClick={() => {handleSelect(item.id)}}>
                         {item.name}
                     </Button>
                 ))
@@ -176,16 +177,6 @@ const localstyles = {
             borderColor: "#D1D1D1"
         }
     },
-    // triggered: {
-    //     ...styles.listItemTemp,
-    //     backgroundColor: "#E4F6DC",
-    //     borderColor: "#79CA25",
-    //     color: "#535353",
-    //     '&.MuiButton-root:hover':{
-    //         //bgcolor: "#F4F4F4",
-    //         borderColor: "#79CA25"
-    //     }
-    // },
     withSubItems: {
         ...styles.listItemTemp,
         backgroundColor: "#79CA25",
