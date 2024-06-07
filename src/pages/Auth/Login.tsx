@@ -105,7 +105,7 @@ const Login = () => {
           username: userName,
           password: password
         })
-        console.log(result, 'result login')
+        //console.log(result, 'result login')
         if (result && result.access_token) {
           setWarningMsg(' ')
           //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
@@ -213,9 +213,9 @@ const Login = () => {
         /**handling err code from BE for reset PW and showing err category */
         if (error?.response) {
           const errCode = returnErrCode(error)
-          console.group('errrrr', errCode)
-          if (errCode == '004') {
+          if (errCode === '004') {
             //navigate to reset pass firsttime login
+            console.group('errrr2r', errCode)
             localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
             return navigate('/changePassword')
           }
