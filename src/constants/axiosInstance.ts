@@ -77,7 +77,7 @@ const __apiNewToken = async () => {
     try {
       __isDebug && console.log('__apiNewToken started')
       const refreshToken = localStorage.getItem(localStorgeKeyName.refreshToken) || ''
-      const req = await refreshTokenAxiosInstance.post(`/api/v1/administrator/refreshToken/${refreshToken}`);
+      const req = await refreshTokenAxiosInstance.post(`/api/v1/administrator/refreshToken`, {refreshToken: refreshToken});
       const data = req.data;
 
       localStorage.setItem(localStorgeKeyName.keycloakToken, data.access_token);
