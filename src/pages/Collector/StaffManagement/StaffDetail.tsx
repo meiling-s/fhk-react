@@ -222,6 +222,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       const filteredData = staffList.filter(
         (value) => value.loginId === selectedLoginId
       )
+      console.log("staffList", staffList)
       if (filteredData.length > 0) {
         tempV.push({
           field: fieldMapping['loginId'],
@@ -268,7 +269,6 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleSubmit = () => {
-    
     const staffData: CreateStaff = {
       tenantId: tenantId.toString(),
       staffNameTchi: formData.staffNameTchi,

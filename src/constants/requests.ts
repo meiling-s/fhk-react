@@ -1111,6 +1111,15 @@ export const GET_STAFF_TITLE = (
   url: `/api/v1/${realmApiRoute}/stafftitle/${table}`
 })
 
+// export const GET_STAFF_TITLE_BY_ID = (
+//   realmApiRoute: string,
+//   table: string,
+//   titleId: string
+// ): AxiosRequestConfig => ({
+//   method: 'get',
+//   url: `/api/v1/${realmApiRoute}/stafftitle/${table}/${titleId}`
+// })
+
 //create staff title
 export const CREATE_STAFF_TITLE = (
   realmApiRoute: string,
