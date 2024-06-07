@@ -13,7 +13,7 @@ import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs from "dayjs";
-
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 interface TemplateProps {
     templateId: string,
     realmApiRoute: string
@@ -282,8 +282,16 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
         }
     }
 
+    const onDragHandler = (event: any, item: string) => {
+        event.dataTransfer.setData("text/plain", item);
+    }
+
     return (
         <Box className="container-wrapper w-full mr-11">
+            <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="zh-cn"
+            >
             <div className="overview-page bg-bg-primary">
                 <div
                     className="header-page flex justify-start items-center mb-4 cursor-pointer"
@@ -422,11 +430,13 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                             //     style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
                             //     onClick={(event) => onChangeContent(index)}
                             // > [{item}] </button>
-                            return <FileUploadCard
-                                index={index}
-                                item={item} 
-                                onHandleUpload={onHandleUpload}
-                            />
+                            return <div 
+                                key={index} 
+                                className="mr-2 text-[#717171] text-md py-1 px-2 hover:cursor-pointer  bg-[#FBFBFB]"
+                                id ={`drag-${index}`} 
+                                onDragStart={(event) => onDragHandler(event, ` [${item}] `)}
+                                draggable="true">{`[${item}]`}
+                            </div>
                         })}
                     </Grid>
                 </Grid>
@@ -451,6 +461,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                 </Grid>
 
             </Grid>
+            </LocalizationProvider>
         </Box>
     )
 };
