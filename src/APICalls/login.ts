@@ -4,9 +4,7 @@ import { LoginItem } from '../interfaces/account'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import { STATUS_CODE } from '../constants/constant'
 
-const removeNonJsonChar = (dataString:  string) => {
-  return dataString.substring(dataString.indexOf('{'), dataString.lastIndexOf('}') + 1);
-}
+
 
 export const login = async (item: LoginItem) => {
   const axiosConfig = Object.assign({}, LOGIN)
@@ -39,7 +37,7 @@ export const login = async (item: LoginItem) => {
       
   } catch (e: any) {
     throw(e)
-    // console.log('errMsgJSON', e)
+    // this function for handling error code to do action for user
     // if (e?.response) {
     //   // console.error('Login user Failed with msg 1:', e.response.data);
     //   //handling error msg 
