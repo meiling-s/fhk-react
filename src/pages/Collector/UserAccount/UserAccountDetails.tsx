@@ -123,10 +123,10 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   }, [drawerOpen])
 
   const getUserGroupList = async () => {
-    const result = await getUserGroup()
+    const result = await getUserGroup(0, 1000)
     const groupList: DropdownOption[] = []
     if (result) {
-      result.map((item: any) => {
+      result.content.map((item: any) => {
         groupList.push({
           groupId: item.groupId,
           roleName: item.roleName

@@ -278,11 +278,10 @@ export const randomBackgroundColor = (): string => {
   return bgColor
 }
 
-export const extractError = (
-  error: any
-): { state: errorState; realm: string } => {
-  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
-  let message: string = ''
+
+export const extractError = (error:any):{state:errorState, realm: string} => {
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || '';
+  let message:string = '';
 
   switch (error?.response?.status) {
     case STATUS_CODE[401]:
@@ -306,5 +305,25 @@ export const extractError = (
     message: message || 'not found'
   }
 
-  return { state, realm }
+  return {state, realm}
+}
+
+export const getSelectedLanguange = (lang: string) => {
+  var selectedLang = 'zhhk'
+  switch (lang) {
+    case 'zhhk':
+      selectedLang = 'ZH-HK'
+      break
+    case 'zhch':
+      selectedLang = 'ZH-CH'
+      break
+    case 'enus':
+      selectedLang = 'EN-US'
+      break
+    default:
+      selectedLang = 'ZH-HK'
+      break
+  }
+
+  return selectedLang
 }

@@ -70,7 +70,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "collectionPoint_created": "Collection point created",
-    "collectionPoint_updated": "Collection point updated"
+    "collectionPoint_updated": "Collection point updated",
+    "addressNotes": "Please enter the number of seats, street name, housing estate and other information"
   },
   "form": {
     "error": {
@@ -85,8 +86,8 @@
       "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
-      "startDateBehindEndDate": "not allowed if the start date is behind than the end date",
-      "endDateEarlyThanStartDate": "not allowed if the end date is earlier than the start date",
+      "startDateBehindEndDate": "Start Date is not allowed if the Start Date is later than to Date",
+      "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'"
     }
   },
@@ -457,7 +458,7 @@
     "photo_blury": "Photo is blurry",
     "bussniess_error": "Business number does not match",
     "closed_tenant_title": "Are you sure to change tenant status to `CLOSED` ? ",
-    "closes_success" :"Closed tenant status success",
+    "closes_success": "Closed tenant status success",
     "invite_form": {
       "company_number": "Company number",
       "company_category": "Company category",
@@ -1006,9 +1007,22 @@
     "recycling_classification_statistics": "Recycling classification statistics",
     "recycling_point_establishment": "Recycling point establishment and operation services (first phase follow-up contract) photo records (monthly)",
     "collection_point_establishment": "Collection point establishment and operation services (first phase follow-up contract) Excel records (monthly)",
+    "recyle_waste_collection": "The report of recycled waste collection points list",
+    "daily_waste_collection": "The report of daily waste collection list",
+    "recycled_waste_inspection": "The report of recycled waste inspection and sorting list",
+    "recycled_waste_request_list_manufacturer": "The report of recycled waste request list from recycled manufacturers",
+    "recycled_waste_request_list_customer": "The report of recycled waste request list from recycled customer",
     "download": "Download",
     "start_date": "Start Date",
-    "end_date": "to"
+    "end_date": "to",
+    "report_of_recycled_waste_pickup_list": "The report of recycled waste collection pickup list",
+    "report_of_recycled_waste_collection_route": "The report of Recycled waste collection route and actual collection route list",
+    "report_of_logistic_service_vehicle": "The report of Logistic service provider vehicle list",
+    "report_of_logistic_service_recycled": "The report of daily logistic service provider recycled waste collection list",
+    "report_of_recycled_waste_inventory_manufacturers": "The report of recycled waste inventory list for recycled waste collectors and recycled waste manufacturers",
+    "report_of_manu_recycled_order_list" :"The report of recycled customer order list",
+    "report_of_manu_recycled_waste_tracing_list": "The report of recycled waste tracing list",
+    "report_of_manu_recycled_waste_classification_list":"The report of recycled waste classification statistic"
   },
   "purchase_order": {
     "all_order": "All Orders",
