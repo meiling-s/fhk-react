@@ -144,7 +144,7 @@ const StaffManagement: FunctionComponent = () => {
       })
       setStaffTitleList(staffTitle)
     }
-    setIsTitleInitialized(true) 
+    setIsTitleInitialized(true)
   }
 
   const initStaffList = async () => {
@@ -168,7 +168,8 @@ const StaffManagement: FunctionComponent = () => {
               item?.staffNameTchi,
               item?.staffNameSchi,
               item?.staffNameEng,
-              position?.name || '-',
+              item?.titleId,
+              //position?.name || '-',
               item?.contactNo,
               item?.loginId,
               item?.status,
@@ -197,12 +198,12 @@ const StaffManagement: FunctionComponent = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      setIsTitleInitialized(false) 
+      setIsTitleInitialized(false)
       await initStaffTitle()
       // `initStaffList` will be called in the next `useEffect` once `isTitleInitialized` is true
     }
     initialize()
-  }, [page, i18n.language]) 
+  }, [page, i18n.language])
 
   useEffect(() => {
     if (isTitleInitialized) {
@@ -233,7 +234,15 @@ const StaffManagement: FunctionComponent = () => {
       field: 'titleId',
       headerName: t('staffManagement.position'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        const position = staffTitleList.find(
+          (title) => title.id == params.row.titleId
+        )
+        return (
+          <div>{position?.name}</div>
+        )
+      }
     },
     {
       field: 'loginId',

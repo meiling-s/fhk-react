@@ -222,7 +222,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       const filteredData = staffList.filter(
         (value) => value.loginId === selectedLoginId
       )
-      console.log("staffList", staffList)
+
       if (filteredData.length > 0) {
         tempV.push({
           field: fieldMapping['loginId'],
@@ -245,6 +245,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
           type: 'error'
         })
       }
+
       if (fieldName === 'email' && !fieldValue.includes('@')) {
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
@@ -255,6 +256,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     })
 
     setValidation(tempV)
+    
   }
 
   useEffect(() => {
@@ -266,6 +268,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       ...formData,
       [field]: value
     })
+    console.log("formData", formData)
   }
 
   const handleSubmit = () => {
@@ -298,9 +301,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
 
   const handleCreateStaff = async (staffData: CreateStaff) => {
     //validate()
+    console.log("staffData", staffData)
     if (validation.length === 0) {
       const result = await createStaff(staffData)
-      console.log(result)
+
       if (result) {
         onSubmitData()
         resetFormData()
@@ -501,8 +505,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                     singleSelect={(values) => {
                       handleFieldChange(item.field as keyof FormValues, values)
                     }}
-                    value={formData[item.field as keyof FormValues]}
-                    defaultSelected={selectedItem?.titleId}
+                    //value={formData[item.field as keyof FormValues]}
+                    defaultSelected={formData.titleId}
+                    needPrimaryColor={true}
+                    error={trySubmited && formData.titleId.toString() === ''}
                   />
                 </CustomField>
               ) : (
