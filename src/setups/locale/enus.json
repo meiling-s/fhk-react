@@ -333,7 +333,9 @@
       "van": "Van",
       "large_truck": "Large truck",
       "regular_shipping": "Regular shipping",
-      "one-transport": "One time transport"
+      "one-transport": "One time transport",
+      "sender_and_receiver_company": "Sender and receiver company",
+      "sender_and_receiver_location": "Sender and receiver location"
     },
     "item": {
       "detail": "Pickup order details",
@@ -349,7 +351,8 @@
       "contact_number": "Contact no.",
       "sender_name": "Shipping company",
       "exp_opration": "Expired operation",
-      "rec_loc_info": "Recycling location information"
+      "rec_loc_info": "Recycling location information",
+      "logistic_company": "Logistic company"
     },
     "create_pick_up_order": "Create",
     "edit_pick_up_order": "Edit pickup Order",
@@ -401,10 +404,10 @@
       "recycle_category": "Recycling category",
       "waste_paper_category": "Waste paper category",
       "weight": "Estimated weight",
-      "shipping_company": "Shipping company",
-      "receiver": "receiver",
-      "recycling_location": "Recycling location",
-      "arrived": "Arrived",
+      "shipping_company": "Sender company",
+      "receiver": "Receiver company",
+      "recycling_location": "Sender location",
+      "arrived": "Receiver location",
       "placeholder": "Please enter location"
     },
     "select_po": "Choose pickup order",
