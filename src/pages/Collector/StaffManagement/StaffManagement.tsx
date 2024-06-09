@@ -31,19 +31,25 @@ import { styles } from '../../../constants/styles'
 import { ToastContainer, toast } from 'react-toastify'
 import Tabs from '../../../components/Tabs'
 import { Staff } from '../../../interfaces/staff'
-import { getStaffList } from '../../../APICalls/staff'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
+import { getStaffList, getStaffTitle } from '../../../APICalls/staff'
 
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate, extractError } from '../../../utils/utils'
 import UserGroup from '../UserGroup/UserGroup'
-import { Realm, STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import {
+  Realm,
+  STATUS_CODE,
+  localStorgeKeyName
+} from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import i18n from '../../../setups/i18n'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -99,61 +105,111 @@ const StaffManagement: FunctionComponent = () => {
   const [filteredStaff, setFillteredStaff] = useState<Staff[]>([])
   const [selectedRow, setSelectedRow] = useState<Staff | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
+  const [staffTitleList, setStaffTitleList] = useState<il_item[]>([])
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const realm = localStorage.getItem(localStorgeKeyName.realm)
   const role = localStorage.getItem(localStorgeKeyName.role)
-  const navigate = useNavigate();
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const [isTitleInitialized, setIsTitleInitialized] = useState(false)
 
-  useEffect(() => {
-    initStaffList()
-  }, [page])
-
-  const initStaffList = async () => {
-   try {
-    const result = await getStaffList(page - 1, pageSize)
-
+  const initStaffTitle = async () => {
+    const result = await getStaffTitle()
     if (result) {
       const data = result.data.content
-      var staffMapping: Staff[] = []
-      data.map((item: any) => {
-        const dateInHK = dayjs.utc(item.updatedAt).tz('Asia/Hong_Kong')
-        const updatedAt = dateInHK.format(`${dateFormat} HH:mm`)
-        staffMapping.push(
-          createStaff(
-            item?.staffId,
-            item?.tenantId,
-            item?.staffNameTchi,
-            item?.staffNameSchi,
-            item?.staffNameEng,
-            item?.titleId,
-            item?.contactNo,
-            item?.loginId,
-            item?.status,
-            item?.gender,
-            item?.email,
-            item?.salutation,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            updatedAt,
-            item?.fullTimeFlg
-          )
-        )
+      var staffTitle: il_item[] = []
+      data.forEach((item: any) => {
+        var name = ''
+        switch (i18n.language) {
+          case 'enus':
+            name = item.titleNameEng
+            break
+          case 'zhch':
+            name = item.titleNameSchi
+            break
+          case 'zhhk':
+            name = item.titleNameTchi
+            break
+          default:
+            name = item.titleNameTchi
+            break
+        }
+
+        staffTitle.push({
+          id: item.titleId,
+          name: name
+        })
       })
-      setStaffList(staffMapping)
-      setFillteredStaff(staffMapping)
-      setTotalData(result.data.totalPages)
+      setStaffTitleList(staffTitle)
     }
-   } catch (error:any) {
-    const { state, realm } = extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
+    setIsTitleInitialized(true)
   }
+
+  const initStaffList = async () => {
+    try {
+      const result = await getStaffList(page - 1, pageSize)
+
+      if (result) {
+        const data = result.data.content
+        var staffMapping: Staff[] = []
+        data.map((item: any) => {
+          const dateInHK = dayjs.utc(item.updatedAt).tz('Asia/Hong_Kong')
+          const updatedAt = dateInHK.format(`${dateFormat} HH:mm`)
+          const position = staffTitleList.find(
+            (title) => title.id == item.titleId
+          )
+
+          staffMapping.push(
+            createStaff(
+              item?.staffId,
+              item?.tenantId,
+              item?.staffNameTchi,
+              item?.staffNameSchi,
+              item?.staffNameEng,
+              item?.titleId,
+              //position?.name || '-',
+              item?.contactNo,
+              item?.loginId,
+              item?.status,
+              item?.gender,
+              item?.email,
+              item?.salutation,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              updatedAt,
+              item?.fullTimeFlg
+            )
+          )
+        })
+        setStaffList(staffMapping)
+        setFillteredStaff(staffMapping)
+        setTotalData(result.data.totalPages)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
+
+  useEffect(() => {
+    const initialize = async () => {
+      setIsTitleInitialized(false)
+      await initStaffTitle()
+      // `initStaffList` will be called in the next `useEffect` once `isTitleInitialized` is true
+    }
+    initialize()
+  }, [page, i18n.language])
+
+  useEffect(() => {
+    if (isTitleInitialized) {
+      initStaffList()
+    }
+  }, [isTitleInitialized, page, i18n.language])
 
   let columns: GridColDef[] = [
     {
@@ -178,7 +234,15 @@ const StaffManagement: FunctionComponent = () => {
       field: 'titleId',
       headerName: t('staffManagement.position'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        const position = staffTitleList.find(
+          (title) => title.id == params.row.titleId
+        )
+        return (
+          <div>{position?.name}</div>
+        )
+      }
     },
     {
       field: 'loginId',
@@ -196,7 +260,7 @@ const StaffManagement: FunctionComponent = () => {
       field: 'updatedAt',
       headerName: t('staffManagement.lastLogin'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'edit',
@@ -516,6 +580,11 @@ const StaffManagement: FunctionComponent = () => {
                   checkboxSelection
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
+                  initialState={{
+                    sorting: {
+                      sortModel: [{ field: 'staffId', sort: 'asc' }]
+                    }
+                  }}
                   sx={{
                     border: 'none',
                     '& .MuiDataGrid-cell': {

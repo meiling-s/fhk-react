@@ -129,7 +129,7 @@ const PickupOrderCard = ({
                 <Inventory2OutlinedIcon />
               </Icon>
               <Typography style={localstyles.mini_title}>
-                {t('pick_up_order.card_detail.shipping_receiver')}
+                {t('pick_up_order.card_detail.sender_and_receiver_company')}
               </Typography>
             </Box>
             <Box
@@ -158,7 +158,7 @@ const PickupOrderCard = ({
                 <PlaceOutlinedIcon />
               </Icon>
               <Typography style={localstyles.mini_title}>
-                {t('pick_up_order.card_detail.deliver_location')}
+                {t('pick_up_order.card_detail.sender_and_receiver_location')}
               </Typography>
             </Box>
             <Box

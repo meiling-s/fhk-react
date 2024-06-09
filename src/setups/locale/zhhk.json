@@ -331,7 +331,9 @@
       "van": "小型貨車",
       "large_truck": "大型貨車",
       "regular_shipping": "常規運輸",
-      "one-transport": "一次性運輸"
+      "one-transport": "一次性運輸",
+      "sender_and_receiver_company": "寄件和收件公司",
+      "sender_and_receiver_location": "回收和到達地點"
     },
     "item": {
       "detail": "運單詳情",
@@ -347,7 +349,8 @@
       "contact_number": "聯絡人號碼",
       "sender_name": "寄件公司",
       "exp_opration": "已過期操作",
-      "rec_loc_info": "回收地點資料"
+      "rec_loc_info": "回收地點資料",
+      "logistic_company": "物流公司"
     },
     "create_pick_up_order": "建立",
     "edit_pick_up_order": "編輯取件訂單",
