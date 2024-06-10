@@ -17,7 +17,11 @@ import {
 import { styles } from '../../../constants/styles'
 
 import { formErr } from '../../../constants/constant'
-import { returnErrorMsg, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import {
+  returnErrorMsg,
+  showErrorToast,
+  showSuccessToast
+} from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
@@ -63,7 +67,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
-  const realm = localStorage.getItem(localStorgeKeyName.realm);
+  const realm = localStorage.getItem(localStorgeKeyName.realm)
   const [contractType, setContractType] = useState<number>(0)
 
   let staffField = [
@@ -111,9 +115,9 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     }
   ]
 
-  if(realm === Realm.collector){
+  if (realm === Realm.collector) {
     staffField = [
-      ...staffField, 
+      ...staffField,
       {
         label: t('staffManagement.fullTimeFlg'),
         placeholder: t('staffManagement.fullTimeFlg'),
@@ -170,9 +174,9 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         titleId: selectedItem.titleId
       })
       setSelectedLoginId(selectedItem.loginId)
-      if(realm === Realm.collector && selectedItem?.fullTimeFlg){
+      if (realm === Realm.collector && selectedItem?.fullTimeFlg) {
         setContractType(0)
-      } else if(realm === Realm.collector && !selectedItem?.fullTimeFlg) {
+      } else if (realm === Realm.collector && !selectedItem?.fullTimeFlg) {
         setContractType(1)
       }
     }
@@ -186,9 +190,11 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   }
 
   useEffect(() => {
+    setValidation([])
     if (action !== 'add') {
       mappingData()
     } else {
+      setTrySubmited(false)
       resetFormData()
     }
   }, [drawerOpen])
@@ -200,7 +206,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     return s == ''
   }
 
-  const validate = async () => {
+  const validate = () => {
     const tempV: formValidate[] = []
     const fieldMapping: FormValues = {
       loginId: t('staffManagement.loginName'),
@@ -211,56 +217,58 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       contactNo: t('staffManagement.contactNumber'),
       email: t('staffManagement.email')
     }
+
     if (selectedLoginId && action === 'add') {
-      const filteredData = staffList.filter(value => value.loginId === selectedLoginId)
+      const filteredData = staffList.filter(
+        (value) => value.loginId === selectedLoginId
+      )
+
       if (filteredData.length > 0) {
         tempV.push({
           field: fieldMapping['loginId'],
           problem: formErr.hasBeenUsed,
           type: 'error'
-        });
-        showErrorToast(`${t('staffManagement.loginName')} ${t('form.error.hasBeenUsed')}`)
+        })
+        showErrorToast(
+          `${t('staffManagement.loginName')} ${t('form.error.hasBeenUsed')}`
+        )
       }
     }
+
     Object.keys(formData).forEach((fieldName) => {
-      const fieldValue = formData[fieldName as keyof FormValues]?.trim();
-      
+      const fieldValue = formData[fieldName as keyof FormValues]?.trim()
+
       if (fieldValue === '') {
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
           problem: formErr.empty,
           type: 'error'
-        });
+        })
       }
+
       if (fieldName === 'email' && !fieldValue.includes('@')) {
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
           problem: formErr.wrongFormat,
           type: 'error'
-        });
+        })
       }
-    });
+    })
 
-    setValidation(tempV);
+    setValidation(tempV)
+    
   }
 
   useEffect(() => {
     validate()
-  }, [
-    formData.loginId,
-    formData.staffNameTchi,
-    formData.staffNameEng,
-    formData.staffNameSchi,
-    formData.contactNo,
-    formData.email,
-    formData.titleId
-  ])
+  }, [formData])
 
   const handleFieldChange = (field: keyof FormValues, value: string) => {
     setFormData({
       ...formData,
       [field]: value
     })
+    console.log("formData", formData)
   }
 
   const handleSubmit = () => {
@@ -280,8 +288,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       updatedBy: loginName
     }
 
-    if(realm === Realm.collector) {
-      staffData.fullTimeFlg = contractType === 0 ? true: false
+    if (realm === Realm.collector) {
+      staffData.fullTimeFlg = contractType === 0 ? true : false
     }
 
     if (action == 'add') {
@@ -292,10 +300,12 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleCreateStaff = async (staffData: CreateStaff) => {
-    validate()
+    //validate()
+    console.log("staffData", staffData)
     if (validation.length === 0) {
       const result = await createStaff(staffData)
-      if (result?.data) {
+
+      if (result) {
         onSubmitData()
         resetFormData()
         handleDrawerClose()
@@ -325,7 +335,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       updatedBy: loginName
     }
 
-    if(realm === Realm.collector){
+    if (realm === Realm.collector) {
       editData.fullTimeFlg = contractType === 0 ? true : false
     }
 
@@ -378,7 +388,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     {
       id: 'partime',
       name: t('staffManagement.partTime')
-    },
+    }
   ]
 
   return (
@@ -495,18 +505,20 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                     singleSelect={(values) => {
                       handleFieldChange(item.field as keyof FormValues, values)
                     }}
-                    value={formData[item.field as keyof FormValues]}
-                    defaultSelected={selectedItem?.titleId}
+                    //value={formData[item.field as keyof FormValues]}
+                    defaultSelected={formData.titleId}
+                    needPrimaryColor={true}
+                    error={trySubmited && formData.titleId.toString() === ''}
                   />
                 </CustomField>
-              ):(
+              ) : (
                 <CustomField label={t('staffManagement.contractType')}>
-                    <CustomItemListBoolean
-                      items={contractTypeList}
-                      setServiceFlg={setContractType}
-                      value={contractType}
-                    ></CustomItemListBoolean>
-                  </CustomField>
+                  <CustomItemListBoolean
+                    items={contractTypeList}
+                    setServiceFlg={setContractType}
+                    value={contractType}
+                  ></CustomItemListBoolean>
+                </CustomField>
               )
             )}
             <Grid item sx={{ width: '100%' }}>

@@ -1,5 +1,13 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi, STATUS_CODE } from '../constants/constant'
+import {
+  formErr,
+  localStorgeKeyName,
+  format,
+  Roles,
+  Realm,
+  RealmApi,
+  STATUS_CODE
+} from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { fieldNameRecycables } from '../constants/constant'
@@ -63,6 +71,9 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
       break
     case formErr.loginIdCantContainAdmin:
       msg = t('form.error.loginIdCantContainAdmin')
+      break
+    case formErr.hasBeenUsed:
+      msg = t('form.error.hasBeenUsed')
       break
   }
   return msg
@@ -272,10 +283,10 @@ export const extractError = (error:any):{state:errorState, realm: string} => {
   const realm = localStorage.getItem(localStorgeKeyName.realm) || '';
   let message:string = '';
 
-  switch(error?.response?.status){
+  switch (error?.response?.status) {
     case STATUS_CODE[401]:
       message = error?.response?.data
-      break;
+      break
     case STATUS_CODE[404]:
       message = error?.message
       break
@@ -285,13 +296,13 @@ export const extractError = (error:any):{state:errorState, realm: string} => {
   }
 
   let statusCode = error?.response?.status || STATUS_CODE[404]
-  if(!error?.response) {
+  if (!error?.response) {
     statusCode = STATUS_CODE[503]
   }
 
-  const state :errorState = {
+  const state: errorState = {
     code: statusCode,
-    message: message || 'not found',
+    message: message || 'not found'
   }
 
   return {state, realm}
