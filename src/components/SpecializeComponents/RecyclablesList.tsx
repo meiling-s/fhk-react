@@ -27,12 +27,12 @@ export default function RecyclablesList({
   defaultRecycL,
   recycL,
   setState,
-  value,
   subTypeRequired = false
 }: props) {
   const [recycTypeList, setRecycTypeList] = useState<string[]>([])
   const [curRecyc, setCurRecyc] = useState<string>(' ') //Current selected recyclables
   const [subTypeList, setSubTypeList] = useState<string[]>([]) //all selected sub type
+  const [recyWithNoSubItems, setRecyWithNoSubItems] = useState<string[]>([])
   const { t, i18n } = useTranslation()
 
   useEffect(() => {
@@ -46,9 +46,16 @@ export default function RecyclablesList({
     setState(toRecyclables())
   }, [recycTypeList, subTypeList, defaultRecycL, recycL])
 
+  useEffect(() => {
+    const recycTypes = returnRecycTypes()
+    const noSubItems = recycTypes
+      .filter((item) => item.recycSubType.length === 0)
+      .map((item) => item.recycType.id)
+    setRecyWithNoSubItems(noSubItems)
+  }, [recycL, i18n.language])
+
   const returnRecycTypes = () => {
     const recycItem: recycItem[] = []
-    //console.log("recycL: ", recycL);
     recycL.map((re) => {
       var reItem: recycItem = {
         recycType: { name: '', id: '' },
@@ -94,6 +101,8 @@ export default function RecyclablesList({
 
       recycItem.push(reItem)
     })
+
+    //set recycItem
     return recycItem
   }
 
@@ -163,19 +172,18 @@ export default function RecyclablesList({
           //remove the sub items of unselected item from sub type list
           return !subId.includes(sub)
         })
-        //console.log(subList);
         setSubTypeList(subList)
       }
       setRecycTypeList(str)
     }
   }
   const selectSubRecyc = (selectedSubType: string[]) => {
+    console.log('selectedSubType', selectedSubType)
     setSubTypeList(selectedSubType)
   }
 
   const recyclables_getRecycTypes = (recycs: recyclable[]) => {
     const reTypes: string[] = recycs.map((recyc) => {
-      //console.log('reTypes', recyc.recycTypeId)
       return recyc.recycTypeId
     })
     return reTypes
@@ -200,9 +208,9 @@ export default function RecyclablesList({
         //get the selected sub types of corresponding recyc type
         return subId.includes(sub)
       })
-      console.log('subList', subList)
       recyclableS.push({ recycTypeId: recyc, recycSubTypeId: subList })
     })
+
     return recyclableS
   }
 
@@ -232,31 +240,23 @@ export default function RecyclablesList({
         withSubItems={returnWithSubItem()}
         multiSelect={selectRecyc}
         setLastSelect={setCurRecyc}
-        dbClickSelect={false}
         error={showError && recycTypeList.length == 0}
         defaultSelected={
           defaultRecycL ? recyclables_getRecycTypes(defaultRecycL) : []
         }
+        noSubItems={recyWithNoSubItems}
       />
-      {curRecyc && (
+      {}
+      {curRecyc != ' ' && !recyWithNoSubItems.includes(curRecyc) && (
         <Collapse sx={{ mt: 1 }} in={recycTypeList.length > 0} unmountOnExit>
           <CustomField
-            // label={
-            //   curRecyc == ' '
-            //     ? getNameFromRecycId(recycTypeList[0])
-            //     : getNameFromRecycId(curRecyc) + t('col.category')
-            // }
             label={getNameFromRecycId(curRecyc) + t('col.category')}
             mandatory={subTypeRequired}
           >
             <CustomItemListRecyble
-              // items={returnSubRecyclables(
-              //   curRecyc == ' ' ? recycTypeList[0] : curRecyc
-              // )}
               items={returnSubRecyclables(curRecyc)}
               multiSelect={selectSubRecyc}
               defaultSelected={subTypeList}
-              dbClickSelect={false}
             />
           </CustomField>
         </Collapse>
