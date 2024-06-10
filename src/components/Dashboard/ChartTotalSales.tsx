@@ -249,38 +249,11 @@ const ChartTotalSales = () => {
                                     return(
                                         <Tooltip 
                                             title={
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        maxWidth: 320,
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                        p: 1,
-                                                    }}
-                                                >
-                                                    <Typography 
-                                                        style={
-                                                            {
-                                                                fontSize: '20px', 
-                                                                fontWeight: '500', 
-                                                                alignItems: 'center', 
-                                                                textAlign: 'center'
-                                                        }
-                                                        }
-                                                    >
+                                                <Box sx={{...localstyles.boxStyle}}>
+                                                    <Typography sx={{...localstyles.textStyle}}>
                                                         {item.description}
                                                     </Typography>
-                                                    <Typography 
-                                                        style={
-                                                            {
-                                                                fontSize: '20px', 
-                                                                fontWeight: '500', 
-                                                                alignItems: 'center', 
-                                                                textAlign: 'center'
-                                                            }
-                                                        }
-                                                    >
+                                                    <Typography sx={{...localstyles.textStyle}} >
                                                         {item.weight} Kg
                                                     </Typography>
                                                 </Box>
@@ -336,7 +309,21 @@ const localstyles = {
         '& .MuiTooltip-arrow': {
             color: color,
         },
-    })
+    }),
+    textStyle: {
+        fontSize: '20px', 
+        fontWeight: '500', 
+        alignItems: 'center', 
+        textAlign: 'center'
+    },
+    boxStyle: {
+        display: 'flex',
+        flexDirection: 'column',
+        maxWidth: 320,
+        justifyContent: 'center',
+        alignItems: 'center',
+        p: 1,
+    }
   }
 
 export default ChartTotalSales;
