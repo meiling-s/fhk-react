@@ -371,11 +371,30 @@ const ChartDistrictSales = () => {
             }
             chart?.setOption(option);
         }
-    }, [dataValue, dataNameMap, recycable])
+    }, [dataValue, dataNameMap, recycable, i18n.language])
 
     useEffect(() => {
         if (chartRef.current) initChart(chartRef.current);
-    }, []);
+        if(recycable.recycTypeId){
+            const recycableDetail = recycType?.find(item => item.recycTypeId);
+            if(recycableDetail){
+                setRecyable(prev => {
+                    let text = prev.text
+                    if(i18n.language === Languages.ENUS){
+                        text = recycableDetail.recyclableNameEng
+                    } else if(i18n.language === Languages.ZHCH){
+                        text = recycableDetail.recyclableNameSchi
+                    } else {
+                        text = recycableDetail.recyclableNameTchi
+                    }
+                    return {
+                        ...prev,
+                        text, 
+                    }
+                })
+            }
+        }
+    }, [i18n.language]);
 
     const colors:string[] = ['#6FBD33','#88D13D','#AED982','#D3E3C3','#CCCCCC'];
     const { recycType } = useContainer(CommonTypeContainer);
