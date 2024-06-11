@@ -294,30 +294,19 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 error={checkString(vehicleTypeId)}
               />
             </CustomField>
-            {/* <CustomField label={t('driver.vehicleMenu.vehicle_cargo_capacity')}>
-              <CustomTextField
-                id="vehicleWeight"
-                value={vehicleWeight}
-                disabled={action === 'delete'}
-                placeholder={t(
-                  'driver.vehicleMenu.vehicle_cargo_capacity_placeholder'
-                )}
-                onChange={(event) => setVehicleWeight(event.target.value)}
-                error={checkString(vehicleWeight.toString())}
-                endAdornment={<Typography>kg</Typography>}
-              />
-            </CustomField> */}
             <Grid item>
             <Typography sx={{ ...localstyles.typo }}>
                 {t('driver.vehicleMenu.vehicle_cargo_capacity')}
               </Typography>
               <TextField
                 id="vehicleWeight"
+                value={vehicleWeight}
                 onChange={(event) => {
                   const numericValue = event.target.value.replace(/\D/g, '')
                   event.target.value = numericValue
                   setVehicleWeight(numericValue)
                 }}
+                disabled={action === 'delete'}
                 sx={{ ...localstyles.inputState, margin: 0 }}
                 placeholder={t(
                   'driver.vehicleMenu.vehicle_cargo_capacity_placeholder'
