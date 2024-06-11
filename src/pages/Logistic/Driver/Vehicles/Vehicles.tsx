@@ -1,5 +1,12 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Button, Checkbox, Typography, Pagination } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Typography,
+  Pagination,
+  CircularProgress
+} from '@mui/material'
 import {
   DataGrid,
   GridColDef,
@@ -77,12 +84,14 @@ const Vehicles: FunctionComponent = () => {
   const [plateList, setPlateList] = useState<string[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
   const [isSearching, setSearching] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initVehicleList()
   }, [page])
 
   const initVehicleList = useCallback(async () => {
+    setIsLoading(true)
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
     if (data) {
@@ -108,6 +117,7 @@ const Vehicles: FunctionComponent = () => {
       })
       setVehicleList(vehicleMapping)
       setTotalData(data.totalPages)
+      setIsLoading(false)
     }
   }, [page, pageSize])
 
@@ -130,11 +140,13 @@ const Vehicles: FunctionComponent = () => {
       width: 200,
       type: 'string',
       renderCell: (params) => {
-        var vehicleName = ""
-        if(vehicleType){
-          const selectedVehicle = vehicleType.find((item: any) => item.vehicleTypeId == params.row.vehicleTypeId)
-         
-          if(selectedVehicle) {
+        var vehicleName = ''
+        if (vehicleType) {
+          const selectedVehicle = vehicleType.find(
+            (item: any) => item.vehicleTypeId == params.row.vehicleTypeId
+          )
+
+          if (selectedVehicle) {
             switch (i18n.language) {
               case 'enus':
                 vehicleName = selectedVehicle.vehicleTypeNameEng
@@ -151,7 +163,7 @@ const Vehicles: FunctionComponent = () => {
             }
           }
         }
-       
+
         return <div>{vehicleName}</div>
       }
     },
@@ -353,42 +365,49 @@ const Vehicles: FunctionComponent = () => {
           handleSearch={(value) => handleSearch(value)}
           onChange={handleChange}
         />
-        <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={vehicleList}
-              getRowId={(row) => row.vehicleId}
-              hideFooter
-              columns={columns}
-              checkboxSelection
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+        {isLoading ? (
+          <Box sx={{ textAlign: 'center', paddingY: 2 }}>
+            <CircularProgress color="success" />
           </Box>
-        </div>
+        ) : (
+          <div className="table-vehicle">
+            <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
+              <DataGrid
+                rows={vehicleList}
+                getRowId={(row) => row.vehicleId}
+                hideFooter
+                columns={columns}
+                checkboxSelection
+                onRowClick={handleSelectRow}
+                getRowSpacing={getRowSpacing}
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  }
+                }}
+              />
+              <Pagination
+                className="mt-4"
+                count={Math.ceil(totalData)}
+                page={page}
+                onChange={(_, newPage) => {
+                  setPage(newPage)
+                }}
+              />
+            </Box>
+          </div>
+        )}
+
         {rowId != 0 && (
           <CreateVehicles
             drawerOpen={drawerOpen}
