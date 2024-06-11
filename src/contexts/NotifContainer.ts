@@ -24,7 +24,7 @@ const Notification = () => {
       setNumOfNotif(0)
       getNumNotif(loginId)
       getNotifList(loginId)
-    }, 50000);
+    }, 10000);
 
     return() => {
       clearInterval(interval)
