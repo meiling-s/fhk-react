@@ -17,11 +17,20 @@ const Notification = () => {
   const [notifList, setNotifList] = useState<Notif[]>([])
 
   useEffect(() => {
-    setNotifList([])
-    setNumOfNotif(0)
-    getNumNotif(loginId)
-    getNotifList(loginId)
-    initBroadcastMessage()
+   if(loginId){
+    const interval = setInterval(() => {
+      initBroadcastMessage()
+      setNotifList([])
+      setNumOfNotif(0)
+      getNumNotif(loginId)
+      getNotifList(loginId)
+    }, 50000);
+
+    return() => {
+      clearInterval(interval)
+    }
+
+   } 
   }, [loginId])
 
   const getNumNotif = async (loginId: string) => {
@@ -79,7 +88,6 @@ const Notification = () => {
       setNotifList(prev => {
         return [...prev, ...filterEffToDate]
       })
-      console.log('filterEffToDate', filterEffToDate)
     }
   }
 
