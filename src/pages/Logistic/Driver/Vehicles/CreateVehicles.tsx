@@ -8,11 +8,15 @@ import {
   ButtonBase,
   ImageList,
   ImageListItem,
-  TextField
+  TextField,
+  FormControl,
+  InputLabel,
+  MenuItem
 } from '@mui/material'
 import { CAMERA_OUTLINE_ICON } from '../../../../themes/icons'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
 import ImageUploading, { ImageListType } from 'react-images-uploading'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import RightOverlayForm from '../../../../components/RightOverlayForm'
 import CustomField from '../../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../../components/FormComponents/CustomTextField'
@@ -32,6 +36,8 @@ import {
   deleteVehicle,
   editVehicle
 } from '../../../../APICalls/Logistic/vehicles'
+import i18n from '../../../../setups/i18n'
+import { il_item } from '../../../../components/FormComponents/CustomItemList'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 
@@ -56,12 +62,17 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 }) => {
   const { t } = useTranslation()
   const [vehicleTypeId, setVehicleTypeId] = useState<string>('')
+  const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
+    id: '1',
+    name: 'Van'
+  })
   const [licensePlate, setLicensePlate] = useState('')
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [vehicleWeight, setVehicleWeight] = useState<string>('')
-  const { imgSettings } = useContainer(CommonTypeContainer)
+  const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
+  const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const mappingData = () => {
     if (selectedItem != null) {
       setLicensePlate(selectedItem.plateNo)
@@ -90,6 +101,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   useEffect(() => {
     getserviceList()
+    getVehiclesLogisticType()
     setValidation([])
     if (action !== 'add') {
       mappingData()
@@ -107,6 +119,35 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     setVehicleWeight('')
     setPictures([])
     setValidation([])
+  }
+
+  const getVehiclesLogisticType = () => {
+    if (vehicleType) {
+      const carType: il_item[] = []
+      vehicleType?.forEach((vehicle) => {
+        var name = ''
+        switch (i18n.language) {
+          case 'enus':
+            name = vehicle.vehicleTypeNameEng
+            break
+          case 'zhch':
+            name = vehicle.vehicleTypeNameSchi
+            break
+          case 'zhhk':
+            name = vehicle.vehicleTypeNameTchi
+            break
+          default:
+            name = vehicle.vehicleTypeNameTchi
+            break
+        }
+        const vehicleType: il_item = {
+          id: vehicle.vehicleTypeId,
+          name: name
+        }
+        carType.push(vehicleType)
+      })
+      setVehicleType(carType)
+    }
   }
 
   const onImageChange = (
@@ -284,7 +325,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 error={checkString(licensePlate)}
               />
             </CustomField>
-            <CustomField label={t('driver.vehicleMenu.vehicle_type')}>
+            {/* <CustomField label={t('driver.vehicleMenu.vehicle_type')}>
               <CustomTextField
                 id="vehicleTypeId"
                 value={vehicleTypeId}
@@ -293,9 +334,44 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 onChange={(event) => setVehicleTypeId(event.target.value)}
                 error={checkString(vehicleTypeId)}
               />
-            </CustomField>
+            </CustomField> */}
+
+            <Grid item className="vehicle_type">
+              <Typography sx={{ ...styles.header3 }}>
+                {t('driver.vehicleMenu.vehicle_type')}
+              </Typography>
+              <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
+                <Select
+                  labelId="vehicleType"
+                  id="vehicleType"
+                  value={vehicleTypeId}
+                  sx={{
+                    borderRadius: '12px'
+                  }}
+                  onChange={(event: SelectChangeEvent<string>) => {
+                    const selectedValue = vehicleTypeList.find(
+                      (item) => item.id === event.target.value
+                    )
+                    if (selectedValue) {
+                      setVehicleTypeId(selectedValue.id)
+                    }
+                  }}
+                  defaultValue={selectedItem?.vehicleTypeId}
+                >
+                  <MenuItem value="">
+                    <em>{t('check_in.any')}</em>
+                  </MenuItem>
+                  {vehicleTypeList.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
             <Grid item>
-            <Typography sx={{ ...localstyles.typo }}>
+              <Typography sx={{ ...localstyles.typo }}>
                 {t('driver.vehicleMenu.vehicle_cargo_capacity')}
               </Typography>
               <TextField
@@ -479,6 +555,23 @@ const localstyles = {
       },
       '& label.Mui-focused': {
         color: '#79CA25'
+      }
+    }
+  },
+  dropdown: {
+    borderRadius: '10px',
+    width: '100%',
+    bgcolor: 'white',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '10px',
+      '& fieldset': {
+        borderColor: 'rgba(0, 0, 0, 0.23)'
+      },
+      '&:hover fieldset': {
+        borderColor: '#79CA25'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#79CA25'
       }
     }
   }
