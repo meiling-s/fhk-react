@@ -1111,6 +1111,15 @@ export const GET_STAFF_TITLE = (
   url: `/api/v1/${realmApiRoute}/stafftitle/${table}`
 })
 
+// export const GET_STAFF_TITLE_BY_ID = (
+//   realmApiRoute: string,
+//   table: string,
+//   titleId: string
+// ): AxiosRequestConfig => ({
+//   method: 'get',
+//   url: `/api/v1/${realmApiRoute}/stafftitle/${table}/${titleId}`
+// })
+
 //create staff title
 export const CREATE_STAFF_TITLE = (
   realmApiRoute: string,
@@ -1558,4 +1567,9 @@ export const GET_WEIGHT_RECYCABLES_DASHBOARD_ASTD = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `/api/v1/account/dashboard/weightRecyclablesColPoint/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_BROADCAST_MESSAGE = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/notiTemplate/broadcastMessage`
 })

@@ -62,7 +62,7 @@ const UserAccount: FunctionComponent = () => {
     null
   )
   const [approveRejectDrawer, setApproveRejectDrawer] = useState<boolean>(false)
-
+  
   const columns: GridColDef[] = [
     {
       field: 'loginId',
