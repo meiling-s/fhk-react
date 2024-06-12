@@ -13,6 +13,7 @@ import {
 import DownloadAreaModal from './DownloadAreaModal'
 import { getUserAccountById } from '../../../APICalls/Collector/userGroup'
 import { Roles, localStorgeKeyName } from '../../../constants/constant'
+import { primaryColor } from '../../../constants/styles'
 
 interface reportItem {
   id: number
@@ -52,7 +53,7 @@ const DownloadArea = () => {
           <div style={{ display: 'flex', gap: '8px' }}>
             <Button
               style={{
-                backgroundColor: '#79CA25',
+                backgroundColor: primaryColor,
                 color: '#fff',
                 borderColor: '#7CE495',
                 borderRadius: '20px',
@@ -180,8 +181,7 @@ const DownloadArea = () => {
       id: 1,
       report_name: t('generate_report.report_of_manu_recycled_order_list'),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000012',
-      dateOption: 'none'
+      reportId: 'downloadExcelFnRpt000012'
     },
     {
       id: 2,

@@ -11,6 +11,7 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DOCUMENT_ICON } from '../../../themes/icons'
 import { getDownloadExcel, getDownloadWord } from '../../../APICalls/report'
+import { primaryColor } from '../../../constants/styles'
 import {
   getBaseUrl,
   returnApiToken,
@@ -388,7 +389,7 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: primaryColor
     }
   },
   DateItem: {
