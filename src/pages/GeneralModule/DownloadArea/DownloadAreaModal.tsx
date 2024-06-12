@@ -17,6 +17,7 @@ import {
   returnApiToken,
   getSelectedLanguange
 } from '../../../utils/utils'
+
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import {
@@ -84,7 +85,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       endDate < startDate &&
         tempV.push({
           field: t('generate_report.end_date'),
-          problem: formErr.endDateEarlyThanStartDate,
+          problem: formErr.toDateIsEarlierThanStartDate,
           type: 'error'
         })
       startDate == null &&
