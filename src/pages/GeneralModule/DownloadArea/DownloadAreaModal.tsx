@@ -127,7 +127,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const generateNoDateLink = (reportId: string) => {
     return (
       getBaseUrl() +
-      `api/v1/${realmApiRoute}/${reportId}/${tenantId}&staffId=${staffId}&language=${getSelectedLanguange(
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?staffId=${staffId}&language=${getSelectedLanguange(
         i18n.language
       )}`
     )
