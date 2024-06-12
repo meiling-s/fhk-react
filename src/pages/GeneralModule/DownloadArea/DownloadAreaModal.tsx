@@ -205,7 +205,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             adapterLocale="zh-cn"
           >
             {selectedItem?.dateOption == 'datetime' ? (
-              <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
+              <Box sx={{ ...localstyles.DateItem, flexDirection: 'column',  marginY: 2, }}>
                 <LabelField label={t('general_settings.start_date')} />
                 <DatePicker
                   defaultValue={dayjs(startDate)}
