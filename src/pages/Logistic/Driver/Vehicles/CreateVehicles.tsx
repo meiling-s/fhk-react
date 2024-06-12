@@ -178,7 +178,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       const tempV: formValidate[] = []
       licensePlate?.toString() == '' &&
         tempV.push({
-          field: t('driver.vehicleMenu.licensePlate'),
+          field: t('driver.vehicleMenu.license_plate_number'),
           problem: formErr.empty,
           type: 'error'
         })
@@ -313,7 +313,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            <CustomField label={t('driver.vehicleMenu.license_plate_number')}>
+            <CustomField label={t('driver.vehicleMenu.license_plate_number')} mandatory>
               <CustomTextField
                 id="licensePlate"
                 value={licensePlate}
@@ -325,21 +325,10 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 error={checkString(licensePlate)}
               />
             </CustomField>
-            {/* <CustomField label={t('driver.vehicleMenu.vehicle_type')}>
-              <CustomTextField
-                id="vehicleTypeId"
-                value={vehicleTypeId}
-                disabled={action === 'delete'}
-                placeholder={t('driver.vehicleMenu.vehicle_type_placeholder')}
-                onChange={(event) => setVehicleTypeId(event.target.value)}
-                error={checkString(vehicleTypeId)}
-              />
-            </CustomField> */}
-
             <Grid item className="vehicle_type">
-              <Typography sx={{ ...styles.header3 }}>
-                {t('driver.vehicleMenu.vehicle_type')}
-              </Typography>
+              <CustomField
+                label={t('driver.vehicleMenu.vehicle_type')} mandatory
+              ></CustomField>
               <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
                 <Select
                   labelId="vehicleType"
@@ -348,6 +337,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   sx={{
                     borderRadius: '12px'
                   }}
+                  disabled={action === 'delete'}
                   onChange={(event: SelectChangeEvent<string>) => {
                     const selectedValue = vehicleTypeList.find(
                       (item) => item.id === event.target.value
@@ -356,6 +346,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                       setVehicleTypeId(selectedValue.id)
                     }
                   }}
+                  error={checkString(vehicleTypeId)}
                   defaultValue={selectedItem?.vehicleTypeId}
                 >
                   <MenuItem value="">
@@ -371,9 +362,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             </Grid>
 
             <Grid item>
-              <Typography sx={{ ...localstyles.typo }}>
-                {t('driver.vehicleMenu.vehicle_cargo_capacity')}
-              </Typography>
+              <CustomField
+                label={t('driver.vehicleMenu.vehicle_cargo_capacity')} mandatory
+              ></CustomField>
               <TextField
                 id="vehicleWeight"
                 value={vehicleWeight}
@@ -400,9 +391,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             <Grid item>
               {/* image field */}
               <Box key={t('report.picture')}>
-                <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
-                  {t('report.picture')}
-                </Typography>
+              <CustomField
+                label= {t('report.picture')} mandatory
+              ></CustomField>
                 <ImageUploading
                   multiple
                   value={pictures}
