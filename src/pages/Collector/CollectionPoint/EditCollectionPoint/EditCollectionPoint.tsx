@@ -644,7 +644,12 @@ function CreateCollectionPoint() {
               <CustomTextField
                 id="address"
                 placeholder={t('col.enterAddress')}
-                onChange={(event) => handleSearchTextChange(event)}
+                // onChange={(event) => handleSearchTextChange(event)}
+                //hardcode the gps
+                onChange={(e) => { // Handle the onClick event here
+                  setAddress(e.target.value); // Set the hardcoded address
+                  setGPSCode([22.426887, 114.211165]); // Set the hardcoded GPS coordinates
+                }}
                 // endAdornment={locationSelect(setCPLocation)}
                 value={address ? address : searchText}
                 error={checkString(address)}
