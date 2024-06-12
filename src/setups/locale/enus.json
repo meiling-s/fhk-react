@@ -86,8 +86,8 @@
       "atLeastOnePicoExist": "At least one Pico Detail is required",
       "exceedsMaxLength": "should not exceed 100 characters",
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
-      "startDateBehindEndDate": "not allowed if the start date is behind than the end date",
-      "endDateEarlyThanStartDate": "not allowed if the end date is earlier than the start date",
+      "startDateBehindEndDate": "Start Date is not allowed if the Start Date is later than to Date",
+      "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'"
     }
   },
@@ -333,7 +333,9 @@
       "van": "Van",
       "large_truck": "Large truck",
       "regular_shipping": "Regular shipping",
-      "one-transport": "One time transport"
+      "one-transport": "One time transport",
+      "sender_and_receiver_company": "Sender and receiver company",
+      "sender_and_receiver_location": "Sender and receiver location"
     },
     "item": {
       "detail": "Pickup order details",
@@ -349,7 +351,8 @@
       "contact_number": "Contact no.",
       "sender_name": "Shipping company",
       "exp_opration": "Expired operation",
-      "rec_loc_info": "Recycling location information"
+      "rec_loc_info": "Recycling location information",
+      "logistic_company": "Logistic company"
     },
     "create_pick_up_order": "Create",
     "edit_pick_up_order": "Edit pickup Order",
@@ -401,10 +404,10 @@
       "recycle_category": "Recycling category",
       "waste_paper_category": "Waste paper category",
       "weight": "Estimated weight",
-      "shipping_company": "Shipping company",
-      "receiver": "receiver",
-      "recycling_location": "Recycling location",
-      "arrived": "Arrived",
+      "shipping_company": "Sender company",
+      "receiver": "Receiver company",
+      "recycling_location": "Sender location",
+      "arrived": "Receiver location",
       "placeholder": "Please enter location"
     },
     "select_po": "Choose pickup order",
@@ -1007,9 +1010,22 @@
     "recycling_classification_statistics": "Recycling classification statistics",
     "recycling_point_establishment": "Recycling point establishment and operation services (first phase follow-up contract) photo records (monthly)",
     "collection_point_establishment": "Collection point establishment and operation services (first phase follow-up contract) Excel records (monthly)",
+    "recyle_waste_collection": "The report of recycled waste collection points list",
+    "daily_waste_collection": "The report of daily waste collection list",
+    "recycled_waste_inspection": "The report of recycled waste inspection and sorting list",
+    "recycled_waste_request_list_manufacturer": "The report of recycled waste request list from recycled manufacturers",
+    "recycled_waste_request_list_customer": "The report of recycled waste request list from recycled customer",
     "download": "Download",
     "start_date": "Start Date",
-    "end_date": "to"
+    "end_date": "to",
+    "report_of_recycled_waste_pickup_list": "The report of recycled waste collection pickup list",
+    "report_of_recycled_waste_collection_route": "The report of Recycled waste collection route and actual collection route list",
+    "report_of_logistic_service_vehicle": "The report of Logistic service provider vehicle list",
+    "report_of_logistic_service_recycled": "The report of daily logistic service provider recycled waste collection list",
+    "report_of_recycled_waste_inventory_manufacturers": "The report of recycled waste inventory list for recycled waste collectors and recycled waste manufacturers",
+    "report_of_manu_recycled_order_list" :"The report of recycled customer order list",
+    "report_of_manu_recycled_waste_tracing_list": "The report of recycled waste tracing list",
+    "report_of_manu_recycled_waste_classification_list":"The report of recycled waste classification statistic"
   },
   "purchase_order": {
     "all_order": "All Orders",

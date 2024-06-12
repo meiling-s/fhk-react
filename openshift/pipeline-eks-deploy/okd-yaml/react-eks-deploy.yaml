@@ -33,7 +33,7 @@ spec:
       - name: IAM_ROLE
         value: astd-eks-ProjectEdit_fhk
       - name: WORKLOAD_YAML
-        value: eks/workload.yaml
+        value: eks/prod/workload.yaml
       - name: AWS_ACCESS_KEY_ID
         value: null
       - name: AWS_SECRET_ACCESS_KEY

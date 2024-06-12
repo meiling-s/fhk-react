@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Grid, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Grid, TextField, Typography, TextareaAutosize } from "@mui/material";
 import { LEFT_ARROW_ICON } from "../../../themes/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -14,7 +14,7 @@ import CustomField from "../../../components/FormComponents/CustomField";
 import CustomTextField from "../../../components/FormComponents/CustomTextField";
 import FileUploadCard from "../../../components/FormComponents/FileUploadCard";
 import { toast } from 'react-toastify'
-import { Languages, STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
+import { Languages, Realm, STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
 import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
 interface TemplateProps {
@@ -23,7 +23,21 @@ interface TemplateProps {
 }
 
 const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRoute }) => {
-    const [notifTemplate, setNotifTemplate] = useState({ templateId: '', notiType: '', variables: [], lang: '', title: '', content: '', senders: [], receivers: [], updatedBy: '', effFromDate: dayjs().format('YYYY-MM-DD'), effToDate: dayjs().format('YYYY-MM-DD') })
+    const [notifTemplate, setNotifTemplate] = useState(
+        { 
+            templateId: '', 
+            notiType: '', 
+            variables: [], 
+            lang: '', 
+            title: '', 
+            content: '', 
+            senders: [], 
+            receivers: [], 
+            updatedBy: '', 
+            effFromDate: dayjs().format('YYYY-MM-DD'), 
+            effToDate: dayjs().format('YYYY-MM-DD') 
+        }
+    );
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [errors, setErrors] = useState({content: {status: false, message: ''}, lang: {status: false, message: ''}, title: {status: false, message: ''}})
@@ -31,6 +45,8 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
     const themeColor:string = getThemeColorRole(userRole);
     const realm = localStorage.getItem(localStorgeKeyName.realm);
     const [currentLang, setCurrentLang] = useState<Option>({value: '', lang: ''})
+    const [isPreviousContentArea, setIsPreviouscontentArea] = useState(false);
+    const [cursorPosition, setCursorPosition] = useState(0);
     const languages: readonly LanguagesNotif[] = [
         {
             value: "ZH-CH",
@@ -105,6 +121,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
     const getDetailTemplate = async () => {
       try {
         const notif = await getDetailNotifTemplate(templateId, realmApiRoute);
+        console.log('notif', notif)
         if (notif) {
             setNotifTemplate(prev => {
                 return {
@@ -119,6 +136,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                     updatedBy: notif?.updatedBy,
                     effFromDate: notif?.effFromDate,
                     effToDate: notif?.effToDate,
+                    variables: notif?.variables
                 }
             })
             setCurrentLanguage(notif.lang)
@@ -166,7 +184,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
         } else {
             const response = await updateNotifTemplateBroadcast(templateId, notifTemplate, realmApiRoute)
             if (response) {
-                showSuccessToast(t('common.editSuccessfully' + ' ' + notifTemplate.content))
+                showSuccessToast(t('common.editSuccessfully'))
                 setTimeout(() => {
                     navigate(`/${realm}/notice`)
                 }, 2000);
@@ -224,13 +242,8 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
         }
     }
 
-    const onHandleUpload = (content: string) => {
-       setNotifTemplate(prev => {
-        return{
-            ...prev,
-            content: content
-        }
-       })
+    const onHandleUpload = (content: string, index: number) => {
+        onChangeContent(content, index)
     };
 
     const showErrorToast = (msg: string) => {
@@ -256,9 +269,54 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
           draggable: true,
           progress: undefined,
           theme: 'light',
-          style: {width: 800}
+          style: {width: 300}
         })
-      }
+    }
+
+    const onChangeCursor = () => {
+        setIsPreviouscontentArea(true)
+    }
+
+    const handleSelect = (event: React.SyntheticEvent<HTMLTextAreaElement, Event>) => {
+        const target = event.target as HTMLInputElement;
+        const cursorPosition = target?.selectionStart;
+        if (cursorPosition) setCursorPosition(cursorPosition)
+    }
+
+    const onChangeContent = (text:string, index: number) => {
+        if (isPreviousContentArea) {
+            let content = ''
+            const contentLength = notifTemplate.content.length;
+            const activeButton = `[${notifTemplate.variables[index]}]`
+            if (cursorPosition === 0) {
+                content = text + ' ' + notifTemplate.content
+            } else if (cursorPosition >= contentLength) {
+                content = notifTemplate.content + ' ' + text
+            } else {
+                const start = notifTemplate.content.slice(0, cursorPosition);
+                const end = notifTemplate.content.slice(cursorPosition);
+                content = start + ' ' + text + ' ' + end
+            }
+
+            setNotifTemplate(prev => {
+                return {
+                    ...prev,
+                    content
+                }
+            })
+        } else {
+            setNotifTemplate(prev => {
+                return {
+                    ...prev,
+                    content : text
+                }
+            })
+        }
+    }
+
+    const onDragHandler = (event: any, item: string) => {
+        event.dataTransfer.setData("text/plain", item);
+    }
 
     return (
         <Box className="container-wrapper w-full mr-11">
@@ -337,7 +395,8 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                             {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}
                         </Typography>
                     </Grid>
-                    <Grid display={'flex'} direction={'row'} rowGap={1} >
+                    
+                    { realm === Realm.astd && <Grid display={'flex'} direction={'row'} rowGap={1} >
                         <Grid display={'flex'} direction={'column'} rowGap={1} style={{ width: '180px' }}>
                             <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                                 {t('notification.modify_template.broadcast.start_valid_date')}
@@ -363,17 +422,18 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                             />
                         </Grid>
 
-                    </Grid>
+                    </Grid>}
 
-                    <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
+                    {/* <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
                         <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
                             {t(`notification.drag_drop_content`)}
                         </Typography>
                         <FileUploadCard 
                              onHandleUpload={onHandleUpload}
                         />
-                    </Grid>
-                    <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
+                    </Grid> */}
+
+                    {/* <Grid display={'flex'} justifyContent={'left'} direction={'column'} rowGap={1}>
                         <CustomField label={t('notification.modify_template.broadcast.content')}>
                             <CustomTextField
                                 id="content"
@@ -394,7 +454,62 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                         <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
                             {errors.content.status ? t('form.error.shouldNotBeEmpty') : ''}
                         </Typography>
+                    </Grid> */}
+
+                <Grid display={'flex'} direction={'column'} rowGap={1}>
+                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
+                        {t('notification.modify_template.app.content')}
+                    </Typography>
+                    <TextareaAutosize
+                        id="content"
+                        style={{ width: '1200px', backgroundColor: 'white', padding: '10px', borderRadius: '12px' }}
+                        value={notifTemplate?.content}
+                        minRows={7}
+                        onChange={(event) => {
+                            setNotifTemplate(prev => {
+                                return {
+                                    ...prev,
+                                    content: event.target.value
+                                }
+                            })
+                        }}
+                        onFocusCapture={onChangeCursor}
+                        onClick={(event) => handleSelect(event)}
+                    />
+                    <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
+                        {errors.content.status ? t('form.error.shouldNotBeEmpty') : ''}
+                    </Typography>
+                </Grid>
+
+                    <Grid display={'flex'} direction={'column'} rowGap={1}>
+                    <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
+                        {t('notification.modify_template.app.variables')}
+                    </Typography>
+
+                    <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
+                        {notifTemplate.variables.map((item, index) => {
+                            // // return <button
+                            // //     key={index}
+                            // //     className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
+                            // //     style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
+                            // //     onClick={(event) => onChangeContent(index)}
+                            // // > [{item}] </button>
+                            // return <FileUploadCard
+                            //     index={index}
+                            //     item={item} 
+                            //     onHandleUpload={onHandleUpload}
+                            return <div 
+                                key={index} 
+                                className="mr-2 text-[#717171] text-md py-1 px-2 hover:cursor-pointer  bg-[#FBFBFB]"
+                                id ={`drag-${index}`} 
+                                onDragStart={(event) => onDragHandler(event, ` [${item}] `)}
+                                draggable="true">{`[${item}]`}
+                            </div>
+                            // />
+                        })}
+
                     </Grid>
+                </Grid>
 
                     <Grid display={'flex'} direction={'column'}>
                         <Button
