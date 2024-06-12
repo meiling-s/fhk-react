@@ -30,6 +30,8 @@ import {
 } from '../../../APICalls/Collector/inventory';
 import { format, localStorgeKeyName } from '../../../constants/constant';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer';
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder';
 import { PickupOrder } from '../../../interfaces/pickupOrder';
@@ -40,6 +42,9 @@ import { SEARCH_ICON } from '../../../themes/icons';
 import useDebounce from '../../../hooks/useDebounce';
 import { returnApiToken } from '../../../utils/utils';
 import { getAllWarehouse } from '../../../APICalls/warehouseManage';
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 interface Option {
     value: string;
@@ -98,7 +103,7 @@ const Inventory: FunctionComponent = () => {
     const [page, setPage] = useState(1);
     const pageSize = 10;
     const [totalData, setTotalData] = useState<number>(0);
-    const { recycType } = useContainer(CommonTypeContainer);
+    const { recycType, dateFormat } = useContainer(CommonTypeContainer);
     const [recycItem, setRecycItem] = useState<recycItem[]>([]);
     const [picoList, setPicoList] = useState<PickupOrder[]>([]);
     const [selectedPico, setSelectedPico] = useState<PickupOrder[]>([]);
@@ -212,6 +217,8 @@ const Inventory: FunctionComponent = () => {
                       )
                     : null;
                 const subName = subType ? subType.name : '-';
+                const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+                const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
 
                 let selectedPico: PickupOrder[] = [];
 
@@ -235,7 +242,7 @@ const Inventory: FunctionComponent = () => {
                         item?.updatedBy,
                         item?.createdBy,
                         item?.inventoryDetail || '-',
-                        item?.createdAt,
+                        createdAt,
                         item?.updatedAt,
                         item?.location
                     )
@@ -253,12 +260,6 @@ const Inventory: FunctionComponent = () => {
             headerName: t('inventory.date'),
             width: 200,
             type: 'string',
-            renderCell: (params) => {
-                const dateFormatted = dayjs(
-                    new Date(params.row.createdAt)
-                ).format(format.dateFormat1);
-                return <div>{dateFormatted}</div>;
-            },
         },
         {
             field: 'recycTypeId',

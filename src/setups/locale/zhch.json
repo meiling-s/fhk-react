@@ -70,7 +70,8 @@
     "save": "储存",
     "cancel": "取消",
     "collectionPoint_created": "回收点已建立",
-    "collectionPoint_updated": "回收点已更新"
+    "collectionPoint_updated": "回收点已更新",
+    "addressNotes": "请输入座位数、街道名称、屋苑等信息"
   },
   "form": {
     "error": {
@@ -85,8 +86,8 @@
       "atLeastOnePicoExist": "至少需要一个 Pico 详细信息",
       "exceedsMaxLength": "不可超过一百个字符",
       "minMoreOneImgUploded": "至少需要上传2张车辆图片",
-      "startDateBehindEndDate": "如果开始日期晚于结束日期则不允许",
-      "endDateEarlyThanStartDate": "如果结束日期早于开始日期则不允许",
+      "startDateBehindEndDate": "如果开始日期晚于截止日期，则不允许开始日期",
+      "endDateEarlyThanStartDate": "如果“截止日期”早于“开始日期”，则不允许截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允许有单词"
     }
   },
@@ -331,7 +332,9 @@
       "van": "小型货车",
       "large_truck": "大型货车",
       "regular_shipping": "常规运输",
-      "one-transport": "一次性运输"
+      "one-transport": "一次性运输",
+      "sender_and_receiver_company": "寄件和收件公司",
+      "sender_and_receiver_location": "回收和到达地点"
     },
     "item": {
       "detail": "运单详情",
@@ -347,7 +350,8 @@
       "contact_number": "请填写手机号码",
       "sender_name": "寄件公司",
       "exp_opration": "已过期操作",
-      "rec_loc_info": "回收地点资料"
+      "rec_loc_info": "回收地点资料",
+      "logistic_company": "物流公司"
     },
     "create_pick_up_order": "建立",
     "edit_pick_up_order": "编辑取件订单",
@@ -457,7 +461,7 @@
     "photo_blury ": "照片模糊",
     "bussniess_error": "商业编号不匹配",
     "closed_tenant_title": "您确定将租户状态更改为“已关闭”吗 ?",
-    "closes_success" :"关闭租户状态成功",
+    "closes_success": "关闭租户状态成功",
     "invite_form": {
       "company_number": "公司编号 ",
       "enter_company": "",
@@ -982,9 +986,22 @@
     "recycling_classification_statistics": "回收物分类统计数据",
     "recycling_point_establishment": "回收点设立及营运服务（第一期后续合约）照片记录（每月)",
     "collection_point_establishment": "回收点设立及营运服务（第一期后续合约）Excel 记录（每月)",
+    "recyle_waste_collection": "回收站列表",
+    "daily_waste_collection": "每日收集回收物报表",
+    "recycled_waste_inspection": "回收物调查和分类报表",
+    "recycled_waste_request_list_manufacturer": "回收物待处理列表",
+    "recycled_waste_request_list_customer": "工埸请求回收物列表",
     "download": "下载",
     "start_date": "日期由",
-    "end_date": "至"
+    "end_date": "至",
+    "report_of_recycled_waste_pickup_list": "回收物提取报表",
+    "report_of_recycled_waste_collection_route": "实际路线列表",
+    "report_of_logistic_service_vehicle": "物流车列表",
+    "report_of_logistic_service_recycled": "物流公司回收物报告",
+    "report_of_recycled_waste_inventory_manufacturers": "回收物庫存報表",
+    "report_of_manu_recycled_order_list" :"顾客订单列表",
+    "report_of_manu_recycled_waste_tracing_list": "回收物追踪列表",
+    "report_of_manu_recycled_waste_classification_list":"回收物类别分析表"
   },
   "purchase_order": {
     "all_order": "所有订单",
@@ -1038,7 +1055,9 @@
       "estimated_weight": "预计重量",
       "this": "这",
       "is_required": "是必须的",
-      "required_field": "此字段是必需的"
+      "required_field": "此字段是必需的",
+      "senderNameEqualToReceiverName": "发件人姓名不能等于收件人姓名",
+      "unit": "单元"
     }
   },
   "purchase_order_customer": {

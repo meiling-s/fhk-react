@@ -19,7 +19,11 @@ import { styled } from '@mui/material/styles'
 import InputBase from '@mui/material/InputBase'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../../APICalls/login'
-import { MAINTENANCE_STATUS, STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
+import {
+  MAINTENANCE_STATUS,
+  STATUS_CODE,
+  localStorgeKeyName
+} from '../../constants/constant'
 import CustomCopyrightSection from '../../components/CustomCopyrightSection'
 import { styles as constantStyle } from '../../constants/styles'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -30,6 +34,7 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { setLanguage } from '../../setups/i18n'
 import { extractError, returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
+import { parseJwtToken } from '../../constants/axiosInstance'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -41,7 +46,7 @@ const Login = () => {
   const [warningMsg, setWarningMsg] = useState<string>(' ')
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const commonTypeContainer = useContainer(CommonTypeContainer);
+  const commonTypeContainer = useContainer(CommonTypeContainer)
 
   // overwrite select style
   //todo : make select as component
@@ -64,113 +69,160 @@ const Login = () => {
     return lang
   }
 
-  const onLoginButtonClick = async (userName: string, password: string) => {
-   try {
-    setLogginIn(true)
-    //login for astd testing
-    var realm = 'astd' //default realm is astd
-    var loginTo = 'astd'
+  const removeNonJsonChar = (dataString: string) => {
+    return dataString.substring(
+      dataString.indexOf('{'),
+      dataString.lastIndexOf('}') + 1
+    )
+  }
 
-    if (realm != '') {
-      const result = await login({
-        username: userName,
-        password: password
-      })
-      console.log(result, 'result login')
-      if (result && result.access_token) {
-        setWarningMsg(' ')
-        //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
-        localStorage.setItem(
-          localStorgeKeyName.keycloakToken,
-          result?.access_token || ''
-        )
-        localStorage.setItem(
-          localStorgeKeyName.refreshToken,
-          result?.refresh_token || ''
-        )
-        localStorage.setItem(localStorgeKeyName.realm, result?.realm || '')
-        localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
-        localStorage.setItem(
-          localStorgeKeyName.username,
-          result?.username || ''
-        )
-        // 20240129 add function list daniel keung start
-        const functionList = result?.functionList || []
-        const uniqueFunctionList = Array.from(new Set(functionList))
-
-        localStorage.setItem(
-          localStorgeKeyName.functionList,
-          JSON.stringify(uniqueFunctionList)
-        )
-        // 20240129 add function list daniel keung end
-        const decodedToken: any = jwtDecode(result?.access_token)
-        const azpValue = decodedToken.azp
-        localStorage.setItem(localStorgeKeyName.decodeKeycloack, azpValue || '')
-        // 20240129 add function list daniel keung start
-        const tenantID = azpValue.substring(7)
-        localStorage.setItem(localStorgeKeyName.tenantId, tenantID || '')
-        loginTo = result?.realm
-        // 20240129 add function list daniel keung end
-        let realmApiRoute = ''
-        switch (loginTo) {
-          case 'astd':
-            realmApiRoute = 'account'
-            navigate('/astd')
-            break
-          case 'collector':
-            realmApiRoute = 'collectors'
-            navigate('/collector')
-            break
-          case 'logistic':
-            realmApiRoute = 'logistic'
-            navigate('/logistic/pickupOrder')
-            break
-          case 'manufacturer':
-            realmApiRoute = 'manufacturer'
-            navigate('/manufacturer/pickupOrder')
-            break
-          case 'customer':
-            realmApiRoute = 'customer'
-            navigate('/customer/account')
-            break
-          default:
-            realmApiRoute = 'collectors'
-            break
-        }
-        localStorage.setItem(localStorgeKeyName.realmApiRoute, realmApiRoute)
-
-        //set selected lang
-        const tenantLang = await getTenantData()
-        const selectedLang = getSelectedLanguange(tenantLang)
-
-        localStorage.setItem(localStorgeKeyName.selectedLanguage, selectedLang)
-        i18n.changeLanguage(selectedLang)
-        setLanguage(selectedLang)
-
-        commonTypeContainer.updateCommonTypeContainer()
-      } else {
-        // const errCode = result
-        // if(errCode === STATUS_CODE[503]){
-        //   return navigate('/maintenance')
-        // } else if (errCode == '004') {
-        //   //navigate to reset pass firsttime login
-        //   localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
-        //   return navigate('/changePassword')
-        // }
-        // setWarningMsg(t(`login.err_msg_${errCode}`))
+  const returnErrCode = (error: any) => {
+    const response = error.response.data.message
+    const errMsgString = removeNonJsonChar(response)
+    const errMsgJSON = JSON.parse(errMsgString)
+    if (errMsgJSON.message) {
+      const errSecondInnerString = removeNonJsonChar(errMsgJSON.message)
+      try {
+        const result = JSON.parse(errSecondInnerString)
+        return result.errorCode
+      } catch (e: any) {
+        return e.response.data.status
       }
+    } else {
+      return errMsgJSON.errorCode
     }
+  }
 
-    setLogginIn(false)
-   } catch (error:any) {
+  const onLoginButtonClick = async (userName: string, password: string) => {
+    try {
+      setLogginIn(true)
+      //login for astd testing
+      var realm = 'astd' //default realm is astd
+      var loginTo = 'astd'
+
+      if (realm != '') {
+        const result = await login({
+          username: userName,
+          password: password
+        })
+        //console.log(result, 'result login')
+        if (result && result.access_token) {
+          setWarningMsg(' ')
+          //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
+          localStorage.setItem(
+            localStorgeKeyName.keycloakToken,
+            result?.access_token || ''
+          )
+          localStorage.setItem(
+            localStorgeKeyName.refreshToken,
+            result?.refresh_token || ''
+          )
+          localStorage.setItem(localStorgeKeyName.realm, result?.realm || '')
+          localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
+          localStorage.setItem(
+            localStorgeKeyName.username,
+            result?.username || ''
+          )
+          // 20240129 add function list daniel keung start
+          const functionList = result?.functionList || []
+          const uniqueFunctionList = Array.from(new Set(functionList))
+
+          localStorage.setItem(
+            localStorgeKeyName.functionList,
+            JSON.stringify(uniqueFunctionList)
+          )
+          // 20240129 add function list daniel keung end
+          const decodedToken: any = jwtDecode(result?.access_token)
+          const azpValue = decodedToken.azp
+          localStorage.setItem(
+            localStorgeKeyName.decodeKeycloack,
+            azpValue || ''
+          )
+          // 20240129 add function list daniel keung start
+          const tenantID = azpValue.substring(7)
+          localStorage.setItem(localStorgeKeyName.tenantId, tenantID || '')
+          loginTo = result?.realm
+          // 20240129 add function list daniel keung end
+          let realmApiRoute = ''
+          switch (loginTo) {
+            case 'astd':
+              realmApiRoute = 'account'
+              navigate('/astd')
+              break
+            case 'collector':
+              realmApiRoute = 'collectors'
+              navigate('/collector')
+              break
+            case 'logistic':
+              realmApiRoute = 'logistic'
+              navigate('/logistic/pickupOrder')
+              break
+            case 'manufacturer':
+              realmApiRoute = 'manufacturer'
+              navigate('/manufacturer/pickupOrder')
+              break
+            case 'customer':
+              realmApiRoute = 'customer'
+              navigate('/customer/account')
+              break
+            default:
+              realmApiRoute = 'collectors'
+              break
+          }
+          localStorage.setItem(localStorgeKeyName.realmApiRoute, realmApiRoute)
+
+          //set selected lang
+          const tenantLang = await getTenantData()
+          const selectedLang = getSelectedLanguange(tenantLang)
+
+          localStorage.setItem(
+            localStorgeKeyName.selectedLanguage,
+            selectedLang
+          )
+          i18n.changeLanguage(selectedLang)
+          setLanguage(selectedLang)
+
+          commonTypeContainer.updateCommonTypeContainer()
+        } else {
+          // if(errCode === STATUS_CODE[503]){
+          //   return navigate('/maintenance')
+          // } else if (errCode == '004') {
+          //   //navigate to reset pass firsttime login
+          //   localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
+          //   return navigate('/changePassword')
+          // }
+          // setWarningMsg(t(`login.err_msg_${errCode}`))
+          //   if (errCode == '004') {
+          //       //navigate to reset pass firsttime login
+          //       localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
+          //       return navigate('/changePassword')
+          //     }
+          //     setWarningMsg(t(`login.err_msg_${errCode}`))
+        }
+      }
+
       setLogginIn(false)
-      const {state} =  extractError(error)
-      if(state.code === STATUS_CODE[503]){
+    } catch (error: any) {
+      setLogginIn(false)
+      /**Handling err for response 503 maintenance system */
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        setWarningMsg(t(`login.err_msg_${state.code}`))
+        
+        /**handling err code from BE for reset PW and showing err category */
+        if (error?.response) {
+          const errCode = returnErrCode(error)
+          if (errCode === '004') {
+            //navigate to reset pass firsttime login
+            console.group('errrr2r', errCode)
+            localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
+            return navigate('/changePassword')
+          }
+          setWarningMsg(t(`login.err_msg_${errCode}`))
+        }
       }
-   }
+    }
   }
 
   const getSelectedLanguange = (lang: string) => {
@@ -200,27 +252,38 @@ const Login = () => {
   }
 
   useEffect(() => {
-    const access_token = localStorage.getItem(localStorgeKeyName.keycloakToken)
+    const access_token =
+      localStorage.getItem(localStorgeKeyName.keycloakToken) || ''
+    const refresh_token =
+      localStorage.getItem(localStorgeKeyName.refreshToken) || ''
     if (access_token) {
-      const role = localStorage.getItem(localStorgeKeyName.realm)
-      switch (role) {
-        case 'astd':
-          window.location.href = '/astd'
-          break
-        case 'collector':
-          window.location.href = '/collector'
-          break
-        case 'logistic':
-          window.location.href = '/logistic/pickupOrder'
-          break
-        case 'manufacturer':
-          window.location.href = '/manufacturer/pickupOrder'
-          break
-        case 'customer':
-          window.location.href = '/customer/account'
-          break
-        default:
-          break
+      const decodedRefreshToken = parseJwtToken(refresh_token, 1)
+      const currentTime = Date.now() / 1000
+      // only need to check refresh token, bcs when refresh token expired then system can't do anything.
+      // when access token expired, system can get new access token when hit any api.
+      if (decodedRefreshToken.exp < currentTime) {
+        localStorage.clear()
+      } else {
+        const role = localStorage.getItem(localStorgeKeyName.realm)
+        switch (role) {
+          case 'astd':
+            window.location.href = '/astd'
+            break
+          case 'collector':
+            window.location.href = '/collector'
+            break
+          case 'logistic':
+            window.location.href = '/logistic/pickupOrder'
+            break
+          case 'manufacturer':
+            window.location.href = '/manufacturer/pickupOrder'
+            break
+          case 'customer':
+            window.location.href = '/customer/account'
+            break
+          default:
+            break
+        }
       }
     }
   }, [])
@@ -348,3 +411,6 @@ let styles = {
 }
 
 export default Login
+function __getNewAccessToken() {
+  throw new Error('Function not implemented.')
+}

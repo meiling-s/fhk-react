@@ -51,8 +51,6 @@ const MainAppBar = () => {
     updateNotifications(loginId)
   }, [loginId])
  
-  console.log('notifList',notifList)
-  console.log('numOfNotif', numOfNotif)
   const handleLanguageChange = (lng: string) => {
     console.log('change language: ', lng)
     i18n.changeLanguage(lng)

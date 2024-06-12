@@ -47,18 +47,21 @@ export const getUserAccountById = async (loginId: string) => {
 }
 
 //get all user group
-export const getAllUserGroup = async () => {
+export const getAllUserGroup = async (page: number, size: number) => {
   try {
     // const userAccount = await getUserAccount();
     const token = returnApiToken()
 
     const response = await axiosInstance({
         baseURL: window.baseURL.collector,
-      // ...GET_USER_GROUP(userAccount?.data?.userGroup?.groupId),
       ...GET_USER_GROUP(token.tenantId),
       headers: {
         AuthToken: token.authToken
-      }
+      },
+      params: {
+        page: page,
+        size: size
+    }
     })
     
     return response

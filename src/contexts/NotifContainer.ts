@@ -63,8 +63,8 @@ const Notification = () => {
     const result = await getBroadcastMessage()
     if (result) {
       const filterEffToDate : Notif [] = result.filter((broadcast:{content: string, effFromDate: string, effToDate: string, title:string}) => {
-        const isBefore = dayjs().isBefore(broadcast.effToDate);
-        const isSame = dayjs().isSame(broadcast.effToDate);
+        const isBefore = dayjs().isBefore(broadcast.effToDate, 'day');
+        const isSame = dayjs().isSame(broadcast.effToDate, 'day');
         if(isBefore || isSame){
           return {
             notiRecordId: 0,

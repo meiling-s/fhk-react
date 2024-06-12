@@ -125,7 +125,7 @@ export const TypeRecycables:TypeRecycable = {
   Metals: 'Metals'
 }
 
-export const indexMonths: string[] = ['January','February','March','April','May','June','Juli','August','September','October','November','December']
+export const indexMonths: string[] = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 export const MAINTENANCE_STATUS = {
   NOT_UNDER_MAINTENANCE : 'NOT_UNDER_MAINTENANCE',

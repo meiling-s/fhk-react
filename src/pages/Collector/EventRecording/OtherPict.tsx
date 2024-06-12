@@ -47,7 +47,7 @@ const OtherPict = () => {
   const navigate = useNavigate();
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
-  const {imgSettings} = useContainer(CommonTypeContainer)
+  const {imgSettings, dateFormat} = useContainer(CommonTypeContainer)
 
   const serviceOthersField = [
     {
@@ -288,7 +288,7 @@ const OtherPict = () => {
                         serviceData[item.serviceName as keyof ServiceData]
                           .startDate
                       )}
-                      format={format.dateFormat2}
+                      format={dateFormat}
                       onChange={(value) =>
                         updateDateTime(
                           item.serviceName as ServiceName,
