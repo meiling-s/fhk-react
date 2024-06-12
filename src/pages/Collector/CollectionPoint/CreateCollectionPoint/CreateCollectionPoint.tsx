@@ -106,6 +106,8 @@ function CreateCollectionPoint() {
   const {dateFormat} = useContainer(CommonTypeContainer)
 
   const navigate = useNavigate()
+  console.log(address)
+  console.log(gpsCode)
 
   const { t, i18n } = useTranslation()
 
@@ -666,7 +668,13 @@ function CreateCollectionPoint() {
               <CustomTextField
                 id="address"
                 placeholder={t('col.enterAddress')}
-                onChange={(event) => handleSearchTextChange(event)}
+                // onChange={(event) => handleSearchTextChange(event)}
+                
+                //hardcode the gps 
+                onChange={(e) => { // Handle the onClick event here
+                  setAddress(e.target.value); // Set the hardcoded address
+                  setGPSCode([22.426887, 114.211165]); // Set the hardcoded GPS coordinates
+                }}
                 multiline={true}
                 // endAdornment={locationSelect(setCPLocation)}
                 value={address ? address : searchText}
