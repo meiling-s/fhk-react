@@ -210,7 +210,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
 
     validate()
-  }, [licensePlate, pictures, vehicleWeight, vehicleTypeId])
+  }, [licensePlate, pictures, vehicleWeight, vehicleTypeId, i18n.language])
 
   const handleSubmit = () => {
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
@@ -224,7 +224,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       vehicleTypeId: vehicleTypeId,
       netWeight: Number(vehicleWeight)
     }
-    console.log('iamge', ImageToBase64(pictures))
+    //console.log('iamge', ImageToBase64(pictures))
     if (action == 'add') {
       handleCreateVehicle(formData)
     } else {
@@ -236,11 +236,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     if (validation.length === 0) {
       const result = await createVehicles(formData)
       if (result) {
-        onSubmitData('success', 'Success created data')
+        onSubmitData('success', t('common.saveSuccessfully'))
         resetData()
         handleDrawerClose()
       } else {
-        onSubmitData('error', 'Failed created data')
+        onSubmitData('error', t('common.saveFailed'))
       }
     } else {
       setTrySubmited(true)
@@ -252,7 +252,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       if (selectedItem != null) {
         const result = await editVehicle(formData, selectedItem.vehicleId)
         if (result) {
-          onSubmitData('success', 'Edit data success')
+          onSubmitData('success', t('common.editSuccessfully'))
           resetData()
           handleDrawerClose()
         }
@@ -267,11 +267,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     if (selectedItem != null) {
       const result = await deleteVehicle(status, selectedItem.vehicleId)
       if (result) {
-        onSubmitData('success', 'Deleted data success')
+        onSubmitData('success', t('common.deletedSuccessfully'))
         resetData()
         handleDrawerClose()
       } else {
-        onSubmitData('error', 'Deleted data fail')
+        onSubmitData('error', t('common.deleteFailed'))
       }
     }
   }

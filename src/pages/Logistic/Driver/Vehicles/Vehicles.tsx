@@ -358,8 +358,8 @@ const Vehicles: FunctionComponent = () => {
           </Button>
         </Box>
         <CustomSearchField
-          label={'Search'}
-          width={'70%'}
+          label={t('check_in.search')}
+          width={'100%'}
           field={'searchValue'}
           placeholder={t('driver.vehicleMenu.vehicle_number')}
           handleSearch={(value) => handleSearch(value)}
