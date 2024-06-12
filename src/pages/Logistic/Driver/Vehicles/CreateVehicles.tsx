@@ -7,7 +7,8 @@ import {
   Card,
   ButtonBase,
   ImageList,
-  ImageListItem
+  ImageListItem,
+  TextField
 } from '@mui/material'
 import { CAMERA_OUTLINE_ICON } from '../../../../themes/icons'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
@@ -26,7 +27,11 @@ import {
 import { formErr } from '../../../../constants/constant'
 import { returnErrorMsg, ImageToBase64 } from '../../../../utils/utils'
 import { localStorgeKeyName } from '../../../../constants/constant'
-import { createVehicles, deleteVehicle, editVehicle } from '../../../../APICalls/Logistic/vehicles'
+import {
+  createVehicles,
+  deleteVehicle,
+  editVehicle
+} from '../../../../APICalls/Logistic/vehicles'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 
@@ -56,7 +61,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [vehicleWeight, setVehicleWeight] = useState<string>('')
-  const {imgSettings} = useContainer(CommonTypeContainer)
+  const { imgSettings } = useContainer(CommonTypeContainer)
   const mappingData = () => {
     if (selectedItem != null) {
       setLicensePlate(selectedItem.plateNo)
@@ -156,7 +161,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
         })
       vehicleTypeId?.toString() == '' &&
         tempV.push({
-        field: t('driver.vehicleMenu.vehicle_type'),
+          field: t('driver.vehicleMenu.vehicle_type'),
           problem: formErr.empty,
           type: 'error'
         })
@@ -272,7 +277,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 id="licensePlate"
                 value={licensePlate}
                 disabled={action === 'delete'}
-                placeholder={t('driver.vehicleMenu.license_plate_number_placeholder')}
+                placeholder={t(
+                  'driver.vehicleMenu.license_plate_number_placeholder'
+                )}
                 onChange={(event) => setLicensePlate(event.target.value)}
                 error={checkString(licensePlate)}
               />
@@ -287,19 +294,44 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 error={checkString(vehicleTypeId)}
               />
             </CustomField>
-            <CustomField label={t('driver.vehicleMenu.vehicle_cargo_capacity')}>
+            {/* <CustomField label={t('driver.vehicleMenu.vehicle_cargo_capacity')}>
               <CustomTextField
                 id="vehicleWeight"
                 value={vehicleWeight}
                 disabled={action === 'delete'}
-                placeholder={t('driver.vehicleMenu.vehicle_cargo_capacity_placeholder')}
+                placeholder={t(
+                  'driver.vehicleMenu.vehicle_cargo_capacity_placeholder'
+                )}
                 onChange={(event) => setVehicleWeight(event.target.value)}
                 error={checkString(vehicleWeight.toString())}
-                endAdornment={(
-                  <Typography>kg</Typography>
-                )}
+                endAdornment={<Typography>kg</Typography>}
               />
-            </CustomField>
+            </CustomField> */}
+            <Grid item>
+            <Typography sx={{ ...localstyles.typo }}>
+                {t('driver.vehicleMenu.vehicle_cargo_capacity')}
+              </Typography>
+              <TextField
+                id="vehicleWeight"
+                onChange={(event) => {
+                  const numericValue = event.target.value.replace(/\D/g, '')
+                  event.target.value = numericValue
+                  setVehicleWeight(numericValue)
+                }}
+                sx={{ ...localstyles.inputState, margin: 0 }}
+                placeholder={t(
+                  'driver.vehicleMenu.vehicle_cargo_capacity_placeholder'
+                )}
+                error={checkString(vehicleWeight.toString())}
+                inputProps={{
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*'
+                }}
+                InputProps={{
+                  endAdornment: <Typography>kg</Typography>
+                }}
+              />
+            </Grid>
             <Grid item>
               {/* image field */}
               <Box key={t('report.picture')}>
@@ -394,6 +426,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 }
 
 const localstyles = {
+  typo: {
+    color: '#ACACAC',
+    fontSize: 13,
+    fontWeight: '500'
+  },
   textField: {
     borderRadius: '10px',
     fontWeight: '500',
@@ -433,6 +470,28 @@ const localstyles = {
   },
   imgError: {
     border: '1px solid red'
+  },
+  inputState: {
+    mt: 0,
+    width: '100%',
+
+    borderRadius: '10px',
+    bgcolor: 'white',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '10px',
+      '& fieldset': {
+        borderColor: '#C4C4C4'
+      },
+      '&:hover fieldset': {
+        borderColor: '#79CA25'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#79CA25'
+      },
+      '& label.Mui-focused': {
+        color: '#79CA25'
+      }
+    }
   }
 }
 
