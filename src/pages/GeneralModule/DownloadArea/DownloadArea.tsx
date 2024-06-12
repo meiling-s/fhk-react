@@ -130,6 +130,7 @@ const DownloadArea = () => {
       report_name: t('generate_report.daily_waste_collection'),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000004',
+      dateOption: 'datetime'
     },
     {
       id: 10,

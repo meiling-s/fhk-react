@@ -133,6 +133,15 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     )
   }
 
+  const generateDatetimeLink = (reportId: string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatUtcStartDate(
+        startDate
+      )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
+    )
+  }
+
   const getReport = async () => {
     let url = ''
     if (selectedItem) {
@@ -159,6 +168,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           url =
             selectedItem?.dateOption === 'none'
               ? generateNoDateLink(selectedItem.reportId)
+              : selectedItem?.dateOption === 'datetime'
+              ? generateDatetimeLink(selectedItem.reportId)
               : generateDateRangeLink(selectedItem.reportId)
           break
       }
@@ -194,7 +205,16 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             adapterLocale="zh-cn"
           >
             {selectedItem?.dateOption == 'datetime' ? (
-              <div>syala</div>
+              <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
+                <LabelField label={t('general_settings.start_date')} />
+                <DatePicker
+                  defaultValue={dayjs(startDate)}
+                  format={format.dateFormat2}
+                  onChange={(value) => setStartDate(value!!)}
+                  sx={{ ...localstyles.datePicker, width: '100%' }}
+                  maxDate={dayjs(endDate)}
+                />
+              </Box>
             ) : selectedItem?.dateOption == 'none' ? (
               <></>
             ) : (
