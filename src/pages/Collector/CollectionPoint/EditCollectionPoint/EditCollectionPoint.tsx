@@ -307,12 +307,12 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      !checkRecyclable() &&
-        tempV.push({
-          field: 'inventory.recyleSubType',
-          problem: formErr.empty,
-          type: 'error'
-        })
+      // !checkRecyclable() &&
+      //   tempV.push({
+      //     field: 'inventory.recyleSubType',
+      //     problem: formErr.empty,
+      //     type: 'error'
+      //   })
       staffNum == '' &&
         tempV.push({
           field: 'col.numOfStaff',

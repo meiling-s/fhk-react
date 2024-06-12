@@ -126,6 +126,25 @@ const ChartTotalSales = () => {
             })
         }
         setDataset(datsetLang)
+        if(recycable.recycTypeId){
+            const recycableDetail = recycType?.find(item => item.recycTypeId);
+            if(recycableDetail){
+                setRecyable(prev => {
+                    let text = prev.text
+                    if(i18n.language === Languages.ENUS){
+                        text = recycableDetail.recyclableNameEng
+                    } else if(i18n.language === Languages.ZHCH){
+                        text = recycableDetail.recyclableNameSchi
+                    } else {
+                        text = recycableDetail.recyclableNameTchi
+                    }
+                    return {
+                        ...prev,
+                        text, 
+                    }
+                })
+            }
+        }
     }, [i18n.language])
 
     useEffect(() => {
@@ -249,38 +268,11 @@ const ChartTotalSales = () => {
                                     return(
                                         <Tooltip 
                                             title={
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        maxWidth: 320,
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                        p: 1,
-                                                    }}
-                                                >
-                                                    <Typography 
-                                                        style={
-                                                            {
-                                                                fontSize: '20px', 
-                                                                fontWeight: '500', 
-                                                                alignItems: 'center', 
-                                                                textAlign: 'center'
-                                                        }
-                                                        }
-                                                    >
+                                                <Box sx={{...localstyles.boxStyle}}>
+                                                    <Typography sx={{...localstyles.textStyle}}>
                                                         {item.description}
                                                     </Typography>
-                                                    <Typography 
-                                                        style={
-                                                            {
-                                                                fontSize: '20px', 
-                                                                fontWeight: '500', 
-                                                                alignItems: 'center', 
-                                                                textAlign: 'center'
-                                                            }
-                                                        }
-                                                    >
+                                                    <Typography sx={{...localstyles.textStyle}} >
                                                         {item.weight} Kg
                                                     </Typography>
                                                 </Box>
@@ -336,7 +328,21 @@ const localstyles = {
         '& .MuiTooltip-arrow': {
             color: color,
         },
-    })
+    }),
+    textStyle: {
+        fontSize: '20px', 
+        fontWeight: '500', 
+        alignItems: 'center', 
+        textAlign: 'center'
+    },
+    boxStyle: {
+        display: 'flex',
+        flexDirection: 'column',
+        maxWidth: 320,
+        justifyContent: 'center',
+        alignItems: 'center',
+        p: 1,
+    }
   }
 
 export default ChartTotalSales;
