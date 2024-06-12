@@ -116,9 +116,9 @@ const Vehicles: FunctionComponent = () => {
         plateList.push(item?.plateNo)
       })
       setVehicleList(vehicleMapping)
-      setTotalData(data.totalPages)
-      setIsLoading(false)
     }
+    setTotalData(data.totalPages)
+    setIsLoading(false)
   }, [page, pageSize])
 
   const columns: GridColDef[] = [
@@ -313,8 +313,9 @@ const Vehicles: FunctionComponent = () => {
   }
 
   const handleChange = async (keyName: string, value: string) => {
-    if (value.length == 0 && isSearching) {
-      setSearching(false)
+    console.log('handleChange', value.length)
+    if (value.length == 0) {
+      //setSearching(false)
       setVehicleList([])
       initVehicleList()
     }
