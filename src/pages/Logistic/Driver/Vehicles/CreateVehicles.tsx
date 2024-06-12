@@ -8,11 +8,15 @@ import {
   ButtonBase,
   ImageList,
   ImageListItem,
-  TextField
+  TextField,
+  FormControl,
+  InputLabel,
+  MenuItem
 } from '@mui/material'
 import { CAMERA_OUTLINE_ICON } from '../../../../themes/icons'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
 import ImageUploading, { ImageListType } from 'react-images-uploading'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import RightOverlayForm from '../../../../components/RightOverlayForm'
 import CustomField from '../../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../../components/FormComponents/CustomTextField'
@@ -32,6 +36,8 @@ import {
   deleteVehicle,
   editVehicle
 } from '../../../../APICalls/Logistic/vehicles'
+import i18n from '../../../../setups/i18n'
+import { il_item } from '../../../../components/FormComponents/CustomItemList'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 
@@ -56,12 +62,17 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 }) => {
   const { t } = useTranslation()
   const [vehicleTypeId, setVehicleTypeId] = useState<string>('')
+  const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
+    id: '1',
+    name: 'Van'
+  })
   const [licensePlate, setLicensePlate] = useState('')
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [vehicleWeight, setVehicleWeight] = useState<string>('')
-  const { imgSettings } = useContainer(CommonTypeContainer)
+  const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
+  const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const mappingData = () => {
     if (selectedItem != null) {
       setLicensePlate(selectedItem.plateNo)
@@ -90,6 +101,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   useEffect(() => {
     getserviceList()
+    getVehiclesLogisticType()
     setValidation([])
     if (action !== 'add') {
       mappingData()
@@ -107,6 +119,35 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     setVehicleWeight('')
     setPictures([])
     setValidation([])
+  }
+
+  const getVehiclesLogisticType = () => {
+    if (vehicleType) {
+      const carType: il_item[] = []
+      vehicleType?.forEach((vehicle) => {
+        var name = ''
+        switch (i18n.language) {
+          case 'enus':
+            name = vehicle.vehicleTypeNameEng
+            break
+          case 'zhch':
+            name = vehicle.vehicleTypeNameSchi
+            break
+          case 'zhhk':
+            name = vehicle.vehicleTypeNameTchi
+            break
+          default:
+            name = vehicle.vehicleTypeNameTchi
+            break
+        }
+        const vehicleType: il_item = {
+          id: vehicle.vehicleTypeId,
+          name: name
+        }
+        carType.push(vehicleType)
+      })
+      setVehicleType(carType)
+    }
   }
 
   const onImageChange = (
@@ -137,7 +178,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       const tempV: formValidate[] = []
       licensePlate?.toString() == '' &&
         tempV.push({
-          field: t('driver.vehicleMenu.licensePlate'),
+          field: t('driver.vehicleMenu.license_plate_number'),
           problem: formErr.empty,
           type: 'error'
         })
@@ -169,7 +210,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     }
 
     validate()
-  }, [licensePlate, pictures, vehicleWeight, vehicleTypeId])
+  }, [licensePlate, pictures, vehicleWeight, vehicleTypeId, i18n.language])
 
   const handleSubmit = () => {
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
@@ -183,7 +224,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       vehicleTypeId: vehicleTypeId,
       netWeight: Number(vehicleWeight)
     }
-    console.log('iamge', ImageToBase64(pictures))
+    //console.log('iamge', ImageToBase64(pictures))
     if (action == 'add') {
       handleCreateVehicle(formData)
     } else {
@@ -195,11 +236,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     if (validation.length === 0) {
       const result = await createVehicles(formData)
       if (result) {
-        onSubmitData('success', 'Success created data')
+        onSubmitData('success', t('common.saveSuccessfully'))
         resetData()
         handleDrawerClose()
       } else {
-        onSubmitData('error', 'Failed created data')
+        onSubmitData('error', t('common.saveFailed'))
       }
     } else {
       setTrySubmited(true)
@@ -211,7 +252,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       if (selectedItem != null) {
         const result = await editVehicle(formData, selectedItem.vehicleId)
         if (result) {
-          onSubmitData('success', 'Edit data success')
+          onSubmitData('success', t('common.editSuccessfully'))
           resetData()
           handleDrawerClose()
         }
@@ -226,11 +267,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     if (selectedItem != null) {
       const result = await deleteVehicle(status, selectedItem.vehicleId)
       if (result) {
-        onSubmitData('success', 'Deleted data success')
+        onSubmitData('success', t('common.deletedSuccessfully'))
         resetData()
         handleDrawerClose()
       } else {
-        onSubmitData('error', 'Deleted data fail')
+        onSubmitData('error', t('common.deleteFailed'))
       }
     }
   }
@@ -272,7 +313,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            <CustomField label={t('driver.vehicleMenu.license_plate_number')}>
+            <CustomField label={t('driver.vehicleMenu.license_plate_number')} mandatory>
               <CustomTextField
                 id="licensePlate"
                 value={licensePlate}
@@ -284,40 +325,55 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 error={checkString(licensePlate)}
               />
             </CustomField>
-            <CustomField label={t('driver.vehicleMenu.vehicle_type')}>
-              <CustomTextField
-                id="vehicleTypeId"
-                value={vehicleTypeId}
-                disabled={action === 'delete'}
-                placeholder={t('driver.vehicleMenu.vehicle_type_placeholder')}
-                onChange={(event) => setVehicleTypeId(event.target.value)}
-                error={checkString(vehicleTypeId)}
-              />
-            </CustomField>
-            {/* <CustomField label={t('driver.vehicleMenu.vehicle_cargo_capacity')}>
-              <CustomTextField
-                id="vehicleWeight"
-                value={vehicleWeight}
-                disabled={action === 'delete'}
-                placeholder={t(
-                  'driver.vehicleMenu.vehicle_cargo_capacity_placeholder'
-                )}
-                onChange={(event) => setVehicleWeight(event.target.value)}
-                error={checkString(vehicleWeight.toString())}
-                endAdornment={<Typography>kg</Typography>}
-              />
-            </CustomField> */}
+            <Grid item className="vehicle_type">
+              <CustomField
+                label={t('driver.vehicleMenu.vehicle_type')} mandatory
+              ></CustomField>
+              <FormControl sx={{ ...localstyles.dropdown, width: '100%' }}>
+                <Select
+                  labelId="vehicleType"
+                  id="vehicleType"
+                  value={vehicleTypeId}
+                  sx={{
+                    borderRadius: '12px'
+                  }}
+                  disabled={action === 'delete'}
+                  onChange={(event: SelectChangeEvent<string>) => {
+                    const selectedValue = vehicleTypeList.find(
+                      (item) => item.id === event.target.value
+                    )
+                    if (selectedValue) {
+                      setVehicleTypeId(selectedValue.id)
+                    }
+                  }}
+                  error={checkString(vehicleTypeId)}
+                  defaultValue={selectedItem?.vehicleTypeId}
+                >
+                  <MenuItem value="">
+                    <em>{t('check_in.any')}</em>
+                  </MenuItem>
+                  {vehicleTypeList.map((item, index) => (
+                    <MenuItem key={index} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
             <Grid item>
-            <Typography sx={{ ...localstyles.typo }}>
-                {t('driver.vehicleMenu.vehicle_cargo_capacity')}
-              </Typography>
+              <CustomField
+                label={t('driver.vehicleMenu.vehicle_cargo_capacity')} mandatory
+              ></CustomField>
               <TextField
                 id="vehicleWeight"
+                value={vehicleWeight}
                 onChange={(event) => {
                   const numericValue = event.target.value.replace(/\D/g, '')
                   event.target.value = numericValue
                   setVehicleWeight(numericValue)
                 }}
+                disabled={action === 'delete'}
                 sx={{ ...localstyles.inputState, margin: 0 }}
                 placeholder={t(
                   'driver.vehicleMenu.vehicle_cargo_capacity_placeholder'
@@ -335,9 +391,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
             <Grid item>
               {/* image field */}
               <Box key={t('report.picture')}>
-                <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
-                  {t('report.picture')}
-                </Typography>
+              <CustomField
+                label= {t('report.picture')} mandatory
+              ></CustomField>
                 <ImageUploading
                   multiple
                   value={pictures}
@@ -490,6 +546,23 @@ const localstyles = {
       },
       '& label.Mui-focused': {
         color: '#79CA25'
+      }
+    }
+  },
+  dropdown: {
+    borderRadius: '10px',
+    width: '100%',
+    bgcolor: 'white',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '10px',
+      '& fieldset': {
+        borderColor: 'rgba(0, 0, 0, 0.23)'
+      },
+      '&:hover fieldset': {
+        borderColor: '#79CA25'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#79CA25'
       }
     }
   }
