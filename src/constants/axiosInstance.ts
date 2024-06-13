@@ -22,7 +22,7 @@ const isTokenExpired = (authToken: string) => {
     // return false if access token in localStorage is not yet initialized
     if (authToken === '') return false;
     const decodedToken = parseJwtToken(authToken, 1);
-    const currentTime = (Date.now() / 1000) + 0.5;
+    const currentTime = (Date.now() + 30000) / 1000;
     // For ease of testing, simulated tokens expire
     // console.log('Token expiration time: ' + (decodedToken.exp - currentTime - 7130))
     return decodedToken.exp < currentTime;
@@ -32,7 +32,7 @@ const isRefreshTokenExpired = (refreshToken: string) => {
     if (refreshToken === '') return false;
     
     const decodedToken = parseJwtToken(refreshToken, 1);
-    const currentTime = (Date.now() / 1000) + 0.5;
+    const currentTime = (Date.now() + 30000) / 1000;
     return decodedToken.exp < currentTime;
 };
 
@@ -141,14 +141,14 @@ axiosInstance.interceptors.response.use(
         const exipredTokenStatus = [STATUS_CODE[400], STATUS_CODE[401],  STATUS_CODE[403]]
         if (error?.response && exipredTokenStatus.includes(error?.response?.status)) {
             originalRequest._retry = true;
-
-            if(!expiredAccessToken) {
+            const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || '';
+            if(isTokenExpired(accessToken)) {
                 expiredAccessToken = true
                 await __getNewAccessToken()
             }
            
             const retryOriginalRequest = new Promise(resolve => {
-                originalRequest.headers.AuthToken = localStorage.getItem(localStorgeKeyName.decodeKeycloack)
+                originalRequest.headers.AuthToken = localStorage.getItem(localStorgeKeyName.keycloakToken)
                 resolve(axiosInstance(originalRequest))
             })
 
