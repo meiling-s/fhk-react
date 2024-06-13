@@ -30,6 +30,9 @@ import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { returnErrorMsg } from '../../../utils/utils'
+import CustomField from '../../../components/FormComponents/CustomField'
+import CustomTextField from '../../../components/FormComponents/CustomTextField'
+import { getTenantById } from '../../../APICalls/tenantManage'
 dayjs.extend(utc)
 
 interface DownloadModalProps {
@@ -41,6 +44,7 @@ interface DownloadModalProps {
     typeFile: string
     reportId: string
     dateOption?: string
+    manualTenantId: boolean
   }
   staffId: string
 }
@@ -59,7 +63,9 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const realmApiRoute =
     localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
-  const [validation, setValidation] = useState<formValidate[]>([])
+  const [validation, setValidation] = useState<formValidate[]>([]);
+  const [tenant, setTenant] = useState<string>('');
+
   useEffect(() => {
     if (validation.length === 0 && selectedItem?.dateOption != 'daterange') {
       getReport()
@@ -133,7 +139,63 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     )
   }
 
+  const generateNoDateLinkManualTenantId = (reportId: string, tenant:string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}/${tenant}?staffId=${staffId}&language=${getSelectedLanguange(
+        i18n.language
+      )}`
+    )
+  }
+
+  const onChangeTenantId = (value: string) => {
+    const isNumber = Number(value)
+    if(typeof isNumber === 'number' && isNumber.toString() !== 'NaN' && value.length <= 6){
+      setTenant(value)
+    }
+  }
+
+  const getTenantDetail = async () => {
+     try {
+      const tenantDetail = await getTenantById(Number(tenant));
+      if(tenantDetail && selectedItem?.reportId){
+        const url = generateNoDateLinkManualTenantId(selectedItem?.reportId, tenant)
+        setDownloads([{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }])
+        setValidation([])
+      } 
+     } catch (error) {
+      setValidation(
+        [
+          {
+            field: t('report.invalidTenantId'),
+            problem: formErr.tenantIdNotFound,
+            type: 'error'
+          }
+        ]
+      )
+     }
+  }
+
+  useEffect(() => {
+    if(tenant.length === 6){
+      getTenantDetail()
+    } else if(selectedItem?.manualTenantId && tenant.length >=1 && tenant.length < 6){
+      setValidation(
+        [
+          {
+            field: t('report.invalidTenantId'),
+            problem: formErr.tenantIdShouldBeSixDigit,
+            type: 'error'
+          }
+        ]
+      )
+    } else if(selectedItem?.manualTenantId && tenant.length === 6){
+      setValidation([])
+    }
+  }, [tenant])
+
   const getReport = async () => {
+    if(selectedItem?.manualTenantId) return
     let url = ''
     if (selectedItem) {
       switch (selectedItem?.id) {
@@ -195,9 +257,29 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           >
             {selectedItem?.dateOption == 'datetime' ? (
               <div>syala</div>
+            ) : selectedItem?.manualTenantId && selectedItem.dateOption === 'none' ? (
+              <CustomField
+              label={t('report.tenantId')}
+              mandatory
+            >
+              <CustomTextField
+                id="tenantId"
+                placeholder={t('report.tenantIdPlaceHolder')}
+                sx={{ ...localstyles.textFieldTenantId }}
+                onChange={(event) => {
+                  if(event.target.value){
+                    onChangeTenantId(event.target.value)
+                  } else {
+                    setTenant('')
+                  }
+                }}
+                value={tenant}                
+              ></CustomTextField>
+            </CustomField>
+             
             ) : selectedItem?.dateOption == 'none' ? (
               <></>
-            ) : (
+            ):(
               <Box
                 className="filter-date"
                 sx={{
@@ -243,7 +325,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
               alignItems: 'center'
             }}
           >
-            {validation.length === 0 &&
+            {validation.length === 0 && selectedItem?.manualTenantId && tenant.length === 6 &&
               downloads.map((item) => (
                 <DownloadItem
                   key={item.url}
@@ -252,7 +334,18 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   typeFile={selectedItem?.typeFile}
                   validation={validation}
                 />
-              ))}
+            ))}
+
+            {validation.length === 0 && !selectedItem?.manualTenantId &&
+              downloads.map((item) => (
+                <DownloadItem
+                  key={item.url}
+                  date={item.date}
+                  url={item.url}
+                  typeFile={selectedItem?.typeFile}
+                  validation={validation}
+                />
+            ))}
           </Grid>
           <Grid item>
             {trySubmited &&
@@ -395,7 +488,19 @@ const localstyles = {
   DateItem: {
     display: 'flex',
     height: 'fit-content'
-  }
+  },
+  textFieldTenantId: {
+    borderRadius: '12px',
+    width: {
+      xs: '1000px',
+      md: '100%'
+    },
+    backgroundColor: 'white',
+    '& fieldset': {
+      borderRadius: '12px',
+      width: '93%'
+    },
+  },
 }
 
 export default DownloadAreaModal

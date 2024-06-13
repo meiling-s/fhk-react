@@ -53,7 +53,9 @@ export const formErr = {
   timeCantDuplicate: 'timeCantDuplicate',
   loginIdCantContainAdmin: 'loginIdCantContainAdmin',
   startDateIsLaterThanToDate: 'startDateIsLaterThanToDate',
-  toDateIsEarlierThanStartDate: 'toDateIsEarlierThanStartDate'
+  toDateIsEarlierThanStartDate: 'toDateIsEarlierThanStartDate',
+  tenantIdShouldBeSixDigit: 'tenantIdShouldBeSixDigit',
+  tenantIdNotFound: 'tenantIdNotFound',
 }
 
 export const Notiftemplate = {
