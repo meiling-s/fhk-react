@@ -51,7 +51,9 @@ export const formErr = {
   startDateBehindEndDate: 'startDateBehidEndDate',
   endDateEarlyThanStartDate: 'endDateEarlyThanStartDate',
   timeCantDuplicate: 'timeCantDuplicate',
-  loginIdCantContainAdmin: 'loginIdCantContainAdmin'
+  loginIdCantContainAdmin: 'loginIdCantContainAdmin',
+  startDateIsLaterThanToDate: 'startDateIsLaterThanToDate',
+  toDateIsEarlierThanStartDate: 'toDateIsEarlierThanStartDate'
 }
 
 export const Notiftemplate = {

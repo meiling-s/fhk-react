@@ -11,11 +11,13 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DOCUMENT_ICON } from '../../../themes/icons'
 import { getDownloadExcel, getDownloadWord } from '../../../APICalls/report'
+import { primaryColor } from '../../../constants/styles'
 import {
   getBaseUrl,
   returnApiToken,
   getSelectedLanguange
 } from '../../../utils/utils'
+
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import {
@@ -83,7 +85,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       endDate < startDate &&
         tempV.push({
           field: t('generate_report.end_date'),
-          problem: formErr.endDateEarlyThanStartDate,
+          problem: formErr.toDateIsEarlierThanStartDate,
           type: 'error'
         })
       startDate == null &&
@@ -126,9 +128,18 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const generateNoDateLink = (reportId: string) => {
     return (
       getBaseUrl() +
-      `api/v1/${realmApiRoute}/${reportId}/${tenantId}&staffId=${staffId}&language=${getSelectedLanguange(
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?staffId=${staffId}&language=${getSelectedLanguange(
         i18n.language
       )}`
+    )
+  }
+
+  const generateDatetimeLink = (reportId: string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatUtcStartDate(
+        startDate
+      )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
     )
   }
 
@@ -158,6 +169,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           url =
             selectedItem?.dateOption === 'none'
               ? generateNoDateLink(selectedItem.reportId)
+              : selectedItem?.dateOption === 'datetime'
+              ? generateDatetimeLink(selectedItem.reportId)
               : generateDateRangeLink(selectedItem.reportId)
           break
       }
@@ -193,7 +206,16 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             adapterLocale="zh-cn"
           >
             {selectedItem?.dateOption == 'datetime' ? (
-              <div>syala</div>
+              <Box sx={{ ...localstyles.DateItem, flexDirection: 'column',  marginY: 2, }}>
+                <LabelField label={t('general_settings.start_date')} />
+                <DatePicker
+                  defaultValue={dayjs(startDate)}
+                  format={format.dateFormat2}
+                  onChange={(value) => setStartDate(value!!)}
+                  sx={{ ...localstyles.datePicker, width: '100%' }}
+                  maxDate={dayjs(endDate)}
+                />
+              </Box>
             ) : selectedItem?.dateOption == 'none' ? (
               <></>
             ) : (
@@ -388,7 +410,7 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: primaryColor
     }
   },
   DateItem: {
