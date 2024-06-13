@@ -217,13 +217,11 @@ const ProcessRecord: FunctionComponent = () => {
     { label: t('processRecord.enterProcessingNumber'), field: 'search', width: '20%' },
     {
       label: t('processRecord.handleName'),
-      width: '20%',
       options: getUniqueOptions('createdBy'),
       field: 'createdBy'
     },
     {
       label: t('processRecord.location'),
-      width: '20%',
       options: getUniqueOptions('address'),
       field: 'address'
     }
@@ -337,7 +335,6 @@ const ProcessRecord: FunctionComponent = () => {
               key={index}
               label={s.label}
               field={s.field}
-              width={s.width}
               options={s.options || []}
               onChange={handleSearch}
             />
