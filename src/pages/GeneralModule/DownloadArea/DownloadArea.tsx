@@ -195,7 +195,6 @@ const DownloadArea = () => {
       report_name: t('generate_report.report_of_manu_recycled_order_list'),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000012',
-      dateOption: 'none',
       manualTenantId: false
     },
     {
