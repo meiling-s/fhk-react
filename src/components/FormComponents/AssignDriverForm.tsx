@@ -342,15 +342,15 @@ props) => {
                             options={driverList.map((driver) => {
                               if (currentLang === 'enus') {
                                 return (
-                                  driver.driverId + '-' + driver.driverNameEng
+                                   driver.driverNameEng
                                 )
                               } else if (currentLang === 'zhch') {
                                 return (
-                                  driver.driverId + '-' + driver.driverNameSchi
+                                 driver.driverNameSchi
                                 )
                               } else if (currentLang === 'zhhk') {
                                 return (
-                                  driver.driverId + '-' + driver.driverNameTchi
+                                  driver.driverNameTchi
                                 )
                               }
                             })}
