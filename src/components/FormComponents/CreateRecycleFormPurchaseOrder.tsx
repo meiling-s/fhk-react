@@ -32,7 +32,7 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import CustomTextField from './CustomTextField'
 import { useFormik } from 'formik'
 import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesListSingleSelect'
-import { collectorList, manuList } from '../../interfaces/common'
+import { collectorList, manuList, recycType } from '../../interfaces/common'
 import dayjs, { Dayjs } from 'dayjs'
 import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
@@ -281,16 +281,19 @@ const CreateRecycleForm = ({
       isValid = false
     } 
     if (formik.values.recycSubTypeId === ''){
-      setErrorsField(prev => {
-        return{
-          ...prev,
-          'recycSubTypeId': {
-            ...prev.recycSubTypeId,
-            status: true
+      const filteredRecyc = recycType?.filter(value => value.recycTypeId === formik.values.recycTypeId) as recycType[]
+      if (filteredRecyc !== undefined && filteredRecyc.length > 0 && filteredRecyc[0].recycSubType.length > 0) {
+        setErrorsField(prev => {
+          return{
+            ...prev,
+            'recycSubTypeId': {
+              ...prev.recycSubTypeId,
+              status: true
+            }
           }
-        }
-      })
-      isValid = false
+        })
+        isValid = false
+      }
     } 
     if(Number(formik.values.weight) <= 0){
       setErrorsField(prev => {
