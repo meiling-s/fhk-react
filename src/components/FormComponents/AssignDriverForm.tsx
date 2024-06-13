@@ -6,7 +6,8 @@ import {
   IconButton,
   Stack,
   TextField,
-  Typography
+  Typography,
+  Grid
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { styles } from '../../constants/styles'
@@ -22,6 +23,10 @@ import {
   DriverList,
   VehicleList
 } from '../../interfaces/pickupOrder'
+import { returnErrorMsg } from '../../utils/utils'
+import { FormErrorMsg } from './FormErrorMsg'
+import { formErr } from '../../constants/constant'
+import { formValidate } from '../../interfaces/common'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
@@ -33,6 +38,7 @@ import { useTranslation } from 'react-i18next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { mappingRecyName } from '../../utils/utils'
+import i18n from '../../setups/i18n'
 
 type props = {
   onClose: () => void
@@ -71,6 +77,8 @@ props) => {
   })
   const currentLang = i18n.language
   const { recycType } = useContainer(CommonTypeContainer)
+  const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [validation, setValidation] = useState<formValidate[]>([])
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -107,19 +115,41 @@ props) => {
     }
   }, [isEdit])
 
+  useEffect(() => {
+    const validate = async () => {
+      const tempV: formValidate[] = []
+      assignField.driverId?.toString() == '' &&
+        tempV.push({
+          field: t('jobOrder.driver'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      assignField.plateNo.toString() == '' &&
+        tempV.push({
+          field: t('jobOrder.plat_number'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      setValidation(tempV)
+    }
+
+    validate()
+  }, [assignField.driverId,assignField.plateNo ,i18n.language])
+
   const getRecyName = (recycTypeId: string, recycSubTypeId: string) => {
     if (recycType) {
       return mappingRecyName(recycTypeId, recycSubTypeId, recycType)
-
     }
   }
 
   const onHandleAssign = () => {
     if (
-      assignField.driverId === '' ||
-      assignField.plateNo === '' ||
+      // assignField.driverId === '' ||
+      // assignField.plateNo === '' ||
+      validation.length != 0 ||
       assignField.vehicleId === 0
     ) {
+      setTrySubmited(true)
       if (assignField.driverId === '') {
         setErrors((prev) => {
           return {
@@ -174,6 +204,14 @@ props) => {
         })
       }
     }
+  }
+
+  const checkString = (s: string) => {
+    if (!trySubmited) {
+      //before first submit, don't check the validation
+      return false
+    }
+    return s == ''
   }
 
   return (
@@ -236,7 +274,10 @@ props) => {
                               {t('jobOrder.main_category')}
                             </label>
                             <p className="font-semibold text-black">
-                              {getRecyName(item.recycType, item.recycSubType)?.name}
+                              {
+                                getRecyName(item.recycType, item.recycSubType)
+                                  ?.name
+                              }
                             </p>
                           </div>
                           <div className="flex justify-start flex-col">
@@ -245,7 +286,10 @@ props) => {
                               {t('jobOrder.subcategory')}
                             </label>
                             <p className="font-semibold text-black">
-                              {getRecyName(item.recycType, item.recycSubType)?.subName}
+                              {
+                                getRecyName(item.recycType, item.recycSubType)
+                                  ?.subName
+                              }
                             </p>
                           </div>
                           <div className="flex items-center">
@@ -341,17 +385,11 @@ props) => {
                             value={assignField.driverId}
                             options={driverList.map((driver) => {
                               if (currentLang === 'enus') {
-                                return (
-                                   driver.driverNameEng
-                                )
+                                return driver.driverNameEng
                               } else if (currentLang === 'zhch') {
-                                return (
-                                 driver.driverNameSchi
-                                )
+                                return driver.driverNameSchi
                               } else if (currentLang === 'zhhk') {
-                                return (
-                                  driver.driverNameTchi
-                                )
+                                return driver.driverNameTchi
                               }
                             })}
                             onChange={(event, value) => {
@@ -361,7 +399,7 @@ props) => {
                             }}
                             renderInput={(params) => (
                               <TextField
-                                error={errors.driverId}
+                                error={checkString(assignField.driverId)}
                                 {...params}
                                 placeholder={t('jobOrder.driver')}
                                 sx={[styles.textField, { width: 400 }]}
@@ -393,7 +431,7 @@ props) => {
                             }}
                             renderInput={(params) => (
                               <TextField
-                                error={errors.vehicleId}
+                                error={checkString(assignField.plateNo)}
                                 {...params}
                                 placeholder={t('jobOrder.plat_number')}
                                 sx={[styles.textField, { width: 400 }]}
@@ -405,6 +443,17 @@ props) => {
                             )}
                           />
                         </CustomField>
+                        <Grid item sx={{ width: '100%' }}>
+                          {trySubmited &&
+                            validation.map((val, index) => (
+                              <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={returnErrorMsg(val.problem, t)}
+                                type={val.type}
+                              />
+                            ))}
+                        </Grid>
                       </div>
                     )
                   }
