@@ -138,7 +138,7 @@ axiosInstance.interceptors.response.use(
         //     window.location.href = '/';
         // }
 
-        const exipredTokenStatus = [STATUS_CODE[400], STATUS_CODE[401],  STATUS_CODE[403]]
+        const exipredTokenStatus = [STATUS_CODE[401],  STATUS_CODE[403]]
         if (error?.response && exipredTokenStatus.includes(error?.response?.status)) {
             originalRequest._retry = true;
             const accessToken = localStorage.getItem(localStorgeKeyName.keycloakToken) || '';
