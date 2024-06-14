@@ -305,24 +305,20 @@ const Inventory: FunctionComponent = () => {
     const searchfield = [
         {
             label: t('pick_up_order.filter.search'),
-            width: '14%',
             field: 'search',
         },
         {
             label: t('inventory.recyleType'),
-            width: '15%',
             options: getUniqueOptions('recycTypeId'),
             field: 'recycTypeId',
         },
         {
             label: t('inventory.recyleSubType'),
-            width: '15%',
             options: getUniqueOptions('recycSubTypeId'),
             field: 'recycSubTypeId',
         },
         {
             label: t('inventory.inventoryLocation'),
-            width: '15%',
             field: 'location',
         },
     ];
@@ -495,7 +491,6 @@ const Inventory: FunctionComponent = () => {
                             key={index}
                             label={s.label}
                             field={s.field}
-                            width={s.width}
                             options={s.options || []}
                             onChange={handleSearch}
                         />

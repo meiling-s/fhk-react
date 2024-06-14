@@ -932,7 +932,7 @@ export const GET_CHECKIN_CHECKOUT_LIST = (
   picoId: string,
   page: number,
   size: number,
-  realmApiRoute: string,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/checkinout/searching/${table}`,
@@ -945,7 +945,8 @@ export const GET_CHECKIN_CHECKOUT_LIST = (
 
 export const GET_CHECKIN_BY_ID = (
   table: string,
-  chkInId: number
+  chkInId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/checkin/${table}/${chkInId}`
@@ -953,7 +954,8 @@ export const GET_CHECKIN_BY_ID = (
 
 export const GET_CHECKOUT_BY_ID = (
   table: string,
-  chkOutId: number
+  chkOutId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/checkout/${table}/${chkOutId}`
