@@ -88,7 +88,9 @@
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
       "startDateBehindEndDate": "Start Date is not allowed if the Start Date is later than to Date",
       "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
-      "loginIdCantContainAdmin": "not allowed have words in 'admin'"
+      "loginIdCantContainAdmin": "not allowed have words in 'admin'",
+      "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
+      "tenantIdNotFound": "Tenant Id not found"
     }
   },
   "component": {
@@ -548,7 +550,10 @@
     "speaker": "Speaker",
     "service_type": "Service type",
     "additional": "Additional",
-    "other_services": "Other services"
+    "other_services": "Other services",
+    "tenantIdPlaceHolder": "Enter tenant Id",
+    "tenantId": "Tenant Id",
+    "invalidTenantId": "Invalid Tenant ID"
   },
   "vehicle": {
     "vehicle": "Vehicle",
