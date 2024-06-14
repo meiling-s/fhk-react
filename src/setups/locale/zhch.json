@@ -928,7 +928,7 @@
     "vehicleMenu": {
       "vehicle_number": "车辆号码",
       "license_plate_number": "车牌号",
-      "vehicle_type": "Vehicle Type",
+      "vehicle_type": "车辆类型",
       "vehicle_cargo_capacity": "车辆类型",
       "picture": "图片",
       "license_plate_number_placeholder": "请输入车牌号",
@@ -1001,7 +1001,8 @@
     "report_of_recycled_waste_inventory_manufacturers": "回收物庫存報表",
     "report_of_manu_recycled_order_list" :"顾客订单列表",
     "report_of_manu_recycled_waste_tracing_list": "回收物追踪列表",
-    "report_of_manu_recycled_waste_classification_list":"回收物类别分析表"
+    "report_of_manu_recycled_waste_classification_list":"回收物类别分析表",
+    "report_of_user_management_list": " 用戶報表"
   },
   "purchase_order": {
     "all_order": "所有订单",

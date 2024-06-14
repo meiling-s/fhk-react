@@ -1025,7 +1025,8 @@
     "report_of_recycled_waste_inventory_manufacturers": "The report of recycled waste inventory list for recycled waste collectors and recycled waste manufacturers",
     "report_of_manu_recycled_order_list" :"The report of recycled customer order list",
     "report_of_manu_recycled_waste_tracing_list": "The report of recycled waste tracing list",
-    "report_of_manu_recycled_waste_classification_list":"The report of recycled waste classification statistic"
+    "report_of_manu_recycled_waste_classification_list":"The report of recycled waste classification statistic",
+    "report_of_user_management_list": "The report of user management list"
   },
   "purchase_order": {
     "all_order": "All Orders",

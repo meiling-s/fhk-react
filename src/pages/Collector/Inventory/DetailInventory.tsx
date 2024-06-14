@@ -68,8 +68,8 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
       value: selectedRow?.recycSubTypeId
     },
     {
-      label: t('inventory.recyclingNumber'),
-      value: selectedRow?.unitId
+      label: t('inventory.package'),
+      value: selectedRow?.packageTypeId
     },
     {
       label: t('inventory.inventoryLocation'),
@@ -111,8 +111,8 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
           anchor={'right'}
           action={'none'}
           headerProps={{
-            title: t('inventory.inventory'),
-            subTitle: selectedRow?.unitId,
+            title: t('recyclables'),
+            subTitle: selectedRow?.recyclingNumber,
             onCloseHeader: handleDrawerClose
           }}
         >
@@ -135,7 +135,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
               <Grid item>
                 <Box>
                   <Typography sx={styles.header2}>
-                    {t('pick_up_order.item.shipping_info')}
+                    {t('warehouseDashboard.recyclingInformation')}
                   </Typography>
                 </Box>
               </Grid>
@@ -152,7 +152,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
               <Grid item>
                 <Box>
                   <Typography sx={styles.header2}>
-                    {t('inventory.recyclingInformation')}
+                    {t('job_order.item.shipping_info')}
                   </Typography>
                 </Box>
               </Grid>
@@ -182,7 +182,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                           className="text-gray"
                         />
                         <div className="text-sm text-grey-darker">
-                          {pico?.routineType}
+                          {pico?.logisticName}
                         </div>
                       </div>
                       <div className="shiping-loc flex items-center gap-2 mb-2">

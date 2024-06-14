@@ -135,7 +135,7 @@ const Vehicle: FunctionComponent = () => {
 
         return (
           <div style={{ display: 'flex', gap: '8px' }}>{
-            params.row.photo.map((item: string) =>{
+            params.row.photo.map((item: string, index:number) =>{
               const format = item.startsWith("data:image/png") ? 'png' : 'jpeg'
               const imgdata = `data:image/${format};base64,${item}`
               return (

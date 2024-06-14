@@ -13,6 +13,7 @@ import {
 import DownloadAreaModal from './DownloadAreaModal'
 import { getUserAccountById } from '../../../APICalls/Collector/userGroup'
 import { Roles, localStorgeKeyName } from '../../../constants/constant'
+import { primaryColor } from '../../../constants/styles'
 
 interface reportItem {
   id: number
@@ -52,7 +53,7 @@ const DownloadArea = () => {
           <div style={{ display: 'flex', gap: '8px' }}>
             <Button
               style={{
-                backgroundColor: '#79CA25',
+                backgroundColor: primaryColor,
                 color: '#fff',
                 borderColor: '#7CE495',
                 borderRadius: '20px',
@@ -129,6 +130,7 @@ const DownloadArea = () => {
       report_name: t('generate_report.daily_waste_collection'),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000004',
+      dateOption: 'datetime'
     },
     {
       id: 10,
@@ -143,7 +145,7 @@ const DownloadArea = () => {
       id: 1,
       report_name: t('generate_report.report_of_recycled_waste_pickup_list'),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000003'
+      reportId: 'downloadExcelFnRpt000001'
     },
     {
       id: 2,
@@ -151,19 +153,19 @@ const DownloadArea = () => {
         'generate_report.report_of_recycled_waste_collection_route'
       ),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000001'
+      reportId: 'downloadExcelFnRpt000003'
     },
     {
       id: 3,
       report_name: t('generate_report.report_of_logistic_service_vehicle'),
       typeFile: 'XLS',
-      reportId: ''
+      reportId: 'downloadExcelFnRpt000005'
     },
     {
       id: 4,
       report_name: t('generate_report.report_of_logistic_service_recycled'),
       typeFile: 'XLS',
-      reportId: ''
+      reportId: 'downloadExcelFnRpt000006'
     }
   ]
 
@@ -180,8 +182,7 @@ const DownloadArea = () => {
       id: 1,
       report_name: t('generate_report.report_of_manu_recycled_order_list'),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000012',
-      dateOption: 'none'
+      reportId: 'downloadExcelFnRpt000012'
     },
     {
       id: 2,
@@ -216,6 +217,15 @@ const DownloadArea = () => {
       id: 1,
       report_name: t(
         'generate_report.report_of_recycled_waste_inventory_manufacturers'
+      ),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000010',
+      dateOption: 'none'
+    },
+    {
+      id: 2,
+      report_name: t(
+        'generate_report.report_of_user_management_list'
       ),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000010',
