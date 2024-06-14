@@ -134,7 +134,7 @@ props) => {
     }
 
     validate()
-  }, [assignField.driverId,assignField.plateNo ,i18n.language])
+  }, [assignField.driverId, assignField.plateNo, i18n.language])
 
   const getRecyName = (recycTypeId: string, recycSubTypeId: string) => {
     if (recycType) {
@@ -256,7 +256,10 @@ props) => {
                   >
                     {t('jobOrder.cancel')}
                   </Button>
-                  <IconButton sx={{ ml: '25px' }}>
+                  <IconButton
+                    sx={{ ml: '25px' }}
+                    onClick={() => onClose && onClose()}
+                  >
                     <KeyboardTabIcon sx={{ fontSize: '30px' }} />
                   </IconButton>
                 </Box>

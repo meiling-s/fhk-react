@@ -214,13 +214,13 @@ const JobOrder = () => {
         if (response?.status === 201) {
           onSubmitData(
             'success',
-            `Success Assign Job Order ${orderDetail.picoId}`
+            `${t('jobOrder.success_assign')} ${orderDetail.picoId}`
           )
           setTimeout(() => {
             onHandleCancel()
           }, 1000)
         } else {
-          onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+          onSubmitData('error', `${t('jobOrder.failed_assign')} ${order.picoDtlId}`)
         }
       }
     } else {
@@ -235,7 +235,7 @@ const JobOrder = () => {
             onHandleCancel()
           }, 1000)
         } else {
-          onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+          onSubmitData('error', `${t('jobOrder.failed_assign')} ${order.picoDtlId}`)
         }
       }
     }

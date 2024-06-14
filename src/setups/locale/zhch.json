@@ -781,7 +781,9 @@
     "driver": "司机",
     "plat_number": "车牌号码",
     "assign_driver": "指派司机",
-    "shippingDateAndTime": "运输日期及时间"
+    "shippingDateAndTime": "运输日期及时间",
+    "success_assign": "成功分配工作订单",
+    "failed_assign": "分配作业订单失败"
   },
   "notification": {
     "notification_menu": "通知范本",

@@ -190,24 +190,24 @@ const JobOrder = () => {
       for (let order of pickupOrderDetail) {
         const response = await assignDriver(order)
         if (response?.status === 201) {
-          onSubmitData('success', `Success Assign Job Order ${order.picoDtlId}`)
+          onSubmitData('success', `${t('jobOrder.success_assign')} ${order.picoDtlId}`)
           setTimeout(() => {
             onHandleCancel()
           }, 1000)
         } else {
-          onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+          onSubmitData('error', `${t('failed_assign.success_assign')} ${order.picoDtlId}`)
         }
       }
     } else {
       for (let order of pickupOrderDetail) {
         const response = await rejectAssginDriver(order, order.joId)
         if (response?.status === 201) {
-          onSubmitData('success', `Success Assign Job Order ${order.picoDtlId}`)
+          onSubmitData('success', `${t('jobOrder.success_assign')} ${order.picoDtlId}`)
           setTimeout(() => {
             onHandleCancel()
           }, 1000)
         } else {
-          onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+          onSubmitData('error', `${t('failed_assign.success_assign')} ${order.picoDtlId}`)
         }
       }
     }

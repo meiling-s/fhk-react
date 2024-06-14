@@ -803,7 +803,9 @@
     "driver": "司機",
     "plat_number": "車牌號碼",
     "assign_driver": "指派司機",
-    "shippingDateAndTime": "運輸日期及時間"
+    "shippingDateAndTime": "運輸日期及時間",
+    "success_assign": "成功分配工作訂單",
+    "failed_assign": "分配作業訂單失敗"
   },
   "notification": {
     "notification_menu": "通知範本",
