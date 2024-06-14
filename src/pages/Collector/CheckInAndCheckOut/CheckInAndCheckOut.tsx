@@ -66,7 +66,7 @@ import { getCheckInDetailByID, getCheckOutDetailByID } from "../../../APICalls/C
 
       const {data: dataRes} = await axiosInstance({
         baseURL: window.baseURL.collector,
-        ...GET_CHECKIN_CHECKOUT_LIST(table, keyword, page -1, 10)
+        ...GET_CHECKIN_CHECKOUT_LIST(table, keyword, page -1, 10, token.realmApiRoute)
       })
 
       const {content, totalPages, totalElements} = dataRes
