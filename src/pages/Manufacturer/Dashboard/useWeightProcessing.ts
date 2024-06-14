@@ -135,12 +135,76 @@ const useWeightProcessing = () => {
       }
       return months[value]
   }
+  const sortingBasedOnYear = (array: any[]) => {
+    const length = array.length;
+
+    for(let i = 0; i < length; i++){
+        // set current index as minimum
+        let min = i;
+        let temp = array[i];
+
+        for(let j = i+1; j < length; j++){
+            if (Number(array[j].year) < (array[min].year)){
+                //update minimum if current is lower that what we had previously
+                min = j;
+            }
+        };
+
+        array[i] = array[min];
+        array[min] = temp;
+    };
+
+    return array;
+  };
+
+  const sortingBasedOnMonth = (array: any[]) => {
+    const length = array.length;
+ 
+    for(let i = 0; i < length; i++){
+          // set current index as minimum
+          let min = i;
+          let temp = array[i];
+ 
+          for(let j = i+1; j < length; j++){
+             if (array[j].index < array[min].index){
+                //update minimum if current is lower that what we had previously
+                min = j;
+             }
+          };
+ 
+          array[i] = array[min];
+          array[min] = temp;
+    };
+    return array;
+ };
 
   const initgetRecycProcessAnalysis = async () => {
     try {
         const response = await getRecycProcessAnalysis(frmDateProcessing.format('YYYY-MM-DD'), toDateProcessing.format('YYYY-MM-DD'))
         if (response) {
-            const labels:{id: number, value: string}[] = response?.map((item:any) => {
+            //sort data by year
+            const sortByYear = sortingBasedOnYear(response)
+            const source:any = {}
+
+            // sort data by month
+            for(let product of sortByYear){
+                const year= Number(product.year);
+                if(year in source){
+                   let data = source[year];
+                   const currentIndex = indexMonths.indexOf(product.month) as monthSequence
+                   data = [{index: currentIndex, ...product}, ...data]
+                   data = sortingBasedOnMonth(data)
+                   
+                   source[year] = data;
+                } else {
+                   const currentIndex = indexMonths.indexOf(product.month) as monthSequence
+                   source[year] = [{index: currentIndex, ...product}]
+                }
+            }
+            
+            let allData = Object.values(source).flatMap(item => item)
+
+            const labels:{id: number, value: string}[] = allData?.map((item:any) => {
                 const index = indexMonths.indexOf(item.month) as monthSequence
                 const month = getLangMonth(index)
                 return{
@@ -149,7 +213,7 @@ const useWeightProcessing = () => {
                 }
             });
            
-            const datasets = getDataSetProsessingBarChart(response, labels.length)
+            const datasets = getDataSetProsessingBarChart(allData, labels.length)
             setLabelProcessing(labels)
             setDataSetProcessing(datasets)
         }
