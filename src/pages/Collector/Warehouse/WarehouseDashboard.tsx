@@ -886,7 +886,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                             alignItems: 'center',
                             cursor: 'pointer',
                         }}
-                        onClick={() => navigate(`/collector/checkInAndCheckout`)}
+                        onClick={() => navigate(`/${role}/checkInAndCheckout`)}
                     >
                         <Typography
                             fontSize={13}
