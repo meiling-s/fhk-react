@@ -931,10 +931,11 @@ export const GET_CHECKIN_CHECKOUT_LIST = (
   table: string,
   picoId: string,
   page: number,
-  size: number
+  size: number,
+  realmApiRoute: string,
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkinout/searching/${table}`,
+  url: `api/v1/${realmApiRoute}/checkinout/searching/${table}`,
   params: {
     picoId: picoId ?? '',
     page,
