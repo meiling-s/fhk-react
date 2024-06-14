@@ -928,7 +928,7 @@
     "vehicleMenu": {
       "vehicle_number": "车辆号码",
       "license_plate_number": "车牌号",
-      "vehicle_type": "Vehicle Type",
+      "vehicle_type": "车辆类型",
       "vehicle_cargo_capacity": "车辆类型",
       "picture": "图片",
       "license_plate_number_placeholder": "请输入车牌号",
