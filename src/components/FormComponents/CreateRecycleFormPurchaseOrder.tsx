@@ -32,7 +32,7 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import CustomTextField from './CustomTextField'
 import { useFormik } from 'formik'
 import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesListSingleSelect'
-import { collectorList, manuList } from '../../interfaces/common'
+import { collectorList, manuList, recycType } from '../../interfaces/common'
 import dayjs, { Dayjs } from 'dayjs'
 import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
@@ -190,7 +190,6 @@ const CreateRecycleForm = ({
   useEffect(() => {
     if (editRow) {
       // Set the form field values based on the editRow data
-
       const index = data.indexOf(editRow)
 
       formik.setValues({
@@ -281,16 +280,19 @@ const CreateRecycleForm = ({
       isValid = false
     } 
     if (formik.values.recycSubTypeId === ''){
-      setErrorsField(prev => {
-        return{
-          ...prev,
-          'recycSubTypeId': {
-            ...prev.recycSubTypeId,
-            status: true
+      const filteredRecyc = recycType?.filter(value => value.recycTypeId === formik.values.recycTypeId) as recycType[]
+      if (filteredRecyc !== undefined && filteredRecyc.length > 0 && filteredRecyc[0].recycSubType.length > 0) {
+        setErrorsField(prev => {
+          return{
+            ...prev,
+            'recycSubTypeId': {
+              ...prev.recycSubTypeId,
+              status: true
+            }
           }
-        }
-      })
-      isValid = false
+        })
+        isValid = false
+      }
     } 
     if(Number(formik.values.weight) <= 0){
       setErrorsField(prev => {
@@ -639,7 +641,7 @@ const CreateRecycleForm = ({
                       // formik.setFieldValue('receiverAddr', event.target.value)
                       onChangeAddressReceiver && onChangeAddressReceiver(event.target.value)
                     }}
-                    value={receiverAddr}
+                    value={formik.values.receiverAddr}
                     sx={{ width: '100%', height: '100%' }}
                     error={
                       (formik.errors?.receiverAddr && formik.touched?.receiverAddr) ||
