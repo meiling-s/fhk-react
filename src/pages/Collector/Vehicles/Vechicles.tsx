@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { extractError } from '../../../utils/utils'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 type TableRow = {
   id: number
@@ -59,6 +60,7 @@ const Vehicle: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [plateList, setPlateList] = useState<string[]>([])
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   useEffect(() => {
     initVehicleList()
@@ -285,6 +287,7 @@ const Vehicle: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

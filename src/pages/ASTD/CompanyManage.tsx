@@ -57,6 +57,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -727,6 +728,7 @@ function CompanyManage() {
     }
   ]
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -1143,6 +1145,7 @@ function CompanyManage() {
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

@@ -10,6 +10,7 @@ import { Languages, Roles, STATUS_CODE, localStorgeKeyName } from '../../../cons
 import { extractError, returnApiToken } from '../../../utils/utils'
 import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from '../../../setups/i18n'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 function createNotifTemplate(
   templateId: string,
@@ -56,7 +57,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
   const navigate = useNavigate();
   const { realmApiRoute,  } = returnApiToken()
   const realm = localStorage.getItem(localStorgeKeyName.realm);
-
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
   const languages: readonly LanguagesNotif[] = [
     {
         value: "ZH-CH",
@@ -268,6 +269,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
               // checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

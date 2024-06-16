@@ -21,6 +21,7 @@ import CreateStaff from "./CreateStaff";
 import { useNavigate } from "react-router-dom";
 import { STATUS_CODE } from "../../../constants/constant";
 import { extractError } from "../../../utils/utils";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 function createStaffTitle(
   titleId: string,
@@ -67,6 +68,7 @@ const StaffTitle: FunctionComponent = () => {
   );
   const [selectedRow, setSelectedRow] = useState<StaffTitleItem | null>(null);
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const initStaffTitleList = async () => {
    try {
@@ -295,6 +297,7 @@ const StaffTitle: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: "none",
                 "& .MuiDataGrid-cell": {

@@ -32,6 +32,7 @@ import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import { extractError } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 type TableRow = {
   id: number
@@ -80,6 +81,7 @@ const UserGroup: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   useEffect(() => {
     initFunctionList()
@@ -328,6 +330,7 @@ const UserGroup: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

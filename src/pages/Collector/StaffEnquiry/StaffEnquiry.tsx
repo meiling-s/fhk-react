@@ -33,6 +33,7 @@ import StaffEnquiryDetail from "./StaffEnquiryDetail";
 import { StaffEnquiry as StaffEnquiryProps } from "../../../interfaces/staffEnquiry";
 import { useNavigate } from "react-router-dom";
 import { STATUS_CODE } from "../../../constants/constant";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 function createStaff(
   staffId: string,
@@ -91,7 +92,8 @@ const StaffEnquiry: FunctionComponent = () => {
   const pageSize = 10;
   const [totalData, setTotalData] = useState<number>(0);
   const navigate = useNavigate()
-    
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
+
   useEffect(() => {
     initStaffList();
   }, [page]);
@@ -416,6 +418,7 @@ const StaffEnquiry: FunctionComponent = () => {
                     checkboxSelection
                     onRowClick={handleSelectRow}
                     getRowSpacing={getRowSpacing}
+                    localeText={localeTextDataGrid}
                     sx={{
                       border: "none",
                       "& .MuiDataGrid-cell": {

@@ -38,6 +38,7 @@ import { localStorgeKeyName } from '../../constants/constant'
 import { getThemeColorRole, displayCreatedDate, formatWeight} from '../../utils/utils'
 import { manuList } from '../../interfaces/common'
 import { getManuList } from '../../APICalls/Manufacturer/purchaseOrder'
+import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -180,7 +181,7 @@ const PurchaseOrderCreateForm = ({
       details: {type: 'string',  status: false, required: true}
     }
   )
-
+  const {localeTextDataGrid } = useLocaleTextDataGrid()
   const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
   
   const paymentTypes : PaymentType[] = [
@@ -973,6 +974,7 @@ const PurchaseOrderCreateForm = ({
                     columns={columns}
                     disableRowSelectionOnClick
                     getRowSpacing={getRowSpacing}
+                    localeText={localeTextDataGrid}
                     sx={{
                       border: 'none',
                       '& .MuiDataGrid-cell': {

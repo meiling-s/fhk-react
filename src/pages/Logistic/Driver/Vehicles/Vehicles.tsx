@@ -38,6 +38,7 @@ import CustomSearchField from '../../../../components/TableComponents/CustomSear
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 import i18n from '../../../../setups/i18n'
 import { useContainer } from 'unstated-next'
+import useLocaleTextDataGrid from '../../../../hooks/useLocaleTextDataGrid'
 
 type TableRow = {
   id: number
@@ -85,6 +86,7 @@ const Vehicles: FunctionComponent = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [isSearching, setSearching] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   useEffect(() => {
     initVehicleList()
@@ -381,6 +383,7 @@ const Vehicles: FunctionComponent = () => {
                 checkboxSelection
                 onRowClick={handleSelectRow}
                 getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
                 sx={{
                   border: 'none',
                   '& .MuiDataGrid-cell': {

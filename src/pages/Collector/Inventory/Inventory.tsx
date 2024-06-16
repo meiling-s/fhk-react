@@ -42,6 +42,7 @@ import { SEARCH_ICON } from '../../../themes/icons';
 import useDebounce from '../../../hooks/useDebounce';
 import { returnApiToken } from '../../../utils/utils';
 import { getAllWarehouse } from '../../../APICalls/warehouseManage';
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid';
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -110,6 +111,7 @@ const Inventory: FunctionComponent = () => {
     const [searchText, setSearchText] = useState<string>('');
     const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
     const debouncedSearchValue: string = useDebounce(searchText, 1000);
+    const {  localeTextDataGrid } = useLocaleTextDataGrid();
 
     useEffect(() => {
         mappingRecyleItem();
@@ -506,6 +508,7 @@ const Inventory: FunctionComponent = () => {
                             checkboxSelection={false}
                             onRowClick={handleSelectRow}
                             getRowSpacing={getRowSpacing}
+                            localeText={localeTextDataGrid}
                             sx={{
                                 border: 'none',
                                 '& .MuiDataGrid-cell': {

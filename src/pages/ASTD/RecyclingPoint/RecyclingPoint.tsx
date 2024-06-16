@@ -48,6 +48,7 @@ import CreateRecyclingPoint from './CreateRecyclingPoint'
 import CreateEngineData from './CreateEngineData'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface siteTypeDataProps {
     createdAt: string
@@ -93,7 +94,7 @@ const RecyclingPoint: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [engineDrawerOpen, setEngineDrawerOpen] = useState<boolean>(false)
   const  navigate = useNavigate();
-
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
   useEffect(() => {
     initSiteTypeData()
     initEngineData()
@@ -402,6 +403,7 @@ const RecyclingPoint: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -455,6 +457,7 @@ const RecyclingPoint: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleEngineSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

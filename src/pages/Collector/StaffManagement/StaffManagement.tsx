@@ -50,6 +50,7 @@ import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import i18n from '../../../setups/i18n'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -114,6 +115,7 @@ const StaffManagement: FunctionComponent = () => {
   const navigate = useNavigate()
   const { dateFormat } = useContainer(CommonTypeContainer)
   const [isTitleInitialized, setIsTitleInitialized] = useState(false)
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   const initStaffTitle = async () => {
     const result = await getStaffTitle()
@@ -580,6 +582,7 @@ const StaffManagement: FunctionComponent = () => {
                   checkboxSelection
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
                   initialState={{
                     sorting: {
                       sortModel: [{ field: 'staffId', sort: 'asc' }]

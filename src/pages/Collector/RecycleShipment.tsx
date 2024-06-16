@@ -52,6 +52,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -353,6 +354,7 @@ function ShipmentManage() {
   })
   const [reasonList, setReasonList] = useState<any>([])
   const {dateFormat} = useContainer(CommonTypeContainer)
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const getRejectReason = async () => {
     try {
@@ -789,6 +791,7 @@ function ShipmentManage() {
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

@@ -45,6 +45,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 
 dayjs.extend(utc)
@@ -101,6 +102,7 @@ const GeneralSettings: FunctionComponent = () => {
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
   const {dateFormat} = useContainer(CommonTypeContainer)
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   useEffect(() => {
     initContractList()
@@ -389,6 +391,7 @@ const GeneralSettings: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               initialState={{
                 sorting: {
                   sortModel: [{ field: 'contractNo', sort: 'desc' }]

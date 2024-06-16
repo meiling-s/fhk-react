@@ -46,6 +46,7 @@ import { getDateFormat } from '../../../APICalls/ASTD/date'
 import { getWeightTolerance } from '../../../APICalls/ASTD/weight'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface CurrencyListProps {
   createdAt: string
@@ -109,6 +110,7 @@ const ASTDSettings: FunctionComponent = () => {
     null
   )
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initCurrencyList()
@@ -426,6 +428,7 @@ const ASTDSettings: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

@@ -29,6 +29,7 @@ import { STATUS_CODE, localStorgeKeyName, Languages } from '../../../constants/c
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import useLocaleText from "../../../hooks/useLocaleTextDataGrid";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -384,6 +385,8 @@ const PickupOrders = () => {
       labelTchi: '任何'
     },
   ]
+  const { localeTextDataGrid } = useLocaleText();
+
 
   const initPickupOrderRequest = async () => {
     try {
@@ -724,6 +727,7 @@ const PickupOrders = () => {
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
           hideFooter
+          localeText={localeTextDataGrid}
           sx={{
             border: "none",
             "& .MuiDataGrid-cell": {

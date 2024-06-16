@@ -26,6 +26,7 @@ import {
 } from '../../../APICalls/warehouseManage'
 import { extractError } from '../../../utils/utils'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 
 interface RecyleItem {
@@ -73,6 +74,7 @@ const Warehouse: FunctionComponent = () => {
   const pageSize = 10 // change page size lowerg to testing
   const [totalData, setTotalData] = useState<number>(0)
   const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const columns: GridColDef[] = [
     {
@@ -328,6 +330,7 @@ const Warehouse: FunctionComponent = () => {
                       disableRowSelectionOnClick
                       onRowClick={handleRowClick}
                       getRowSpacing={getRowSpacing}
+                      localeText={localeTextDataGrid}
                       sx={{
                         border: 'none',
                         '& .MuiDataGrid-cell': {

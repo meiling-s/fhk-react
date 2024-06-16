@@ -31,6 +31,7 @@ import { styles } from '../../../constants/styles'
 import { getForgetPasswordRequest } from '../../../APICalls/forgetPassword'
 import { extractError } from '../../../utils/utils'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 type TableRow = {
   id: number
@@ -62,7 +63,8 @@ const UserAccount: FunctionComponent = () => {
     null
   )
   const [approveRejectDrawer, setApproveRejectDrawer] = useState<boolean>(false)
-  
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
+
   const columns: GridColDef[] = [
     {
       field: 'loginId',
@@ -312,6 +314,7 @@ const UserAccount: FunctionComponent = () => {
                       disableRowSelectionOnClick
                       onRowClick={handleRowClick}
                       getRowSpacing={getRowSpacing}
+                      localeText={localeTextDataGrid}
                       sx={{
                         border: 'none',
                         '& .MuiDataGrid-cell': {
