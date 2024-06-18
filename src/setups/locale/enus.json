@@ -1319,7 +1319,8 @@
     "aggregationFunctionLabelAvg" : "avg",
     "aggregationFunctionLabelMin" : "min",
     "aggregationFunctionLabelMax" : "max",
-    "aggregationFunctionLabelSize" : "size"
+    "aggregationFunctionLabelSize" : "size",
+    "columnMenuManageColumns": "Manage columns"
   }
 
 }

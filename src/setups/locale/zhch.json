@@ -1292,6 +1292,7 @@
     "aggregationFunctionLabelAvg" : "平均",
     "aggregationFunctionLabelMin" : "分钟",
     "aggregationFunctionLabelMax" : "最大限度",
-    "aggregationFunctionLabelSize" : "尺寸"
+    "aggregationFunctionLabelSize" : "尺寸",
+    "columnMenuManageColumns": "管理列"
   }
 }

@@ -11,7 +11,7 @@ const useLocaleTextDataGrid = () => {
         noRowsLabel: t('localizedTexts.noRowsLabel'),
         noResultsOverlayLabel: t('localizedTexts.noResultsOverlayLabel'),
         errorOverlayDefaultLabel: t('localizedTexts.errorOverlayDefaultLabel'),
-        columnMenuManageColumns: t('labelDataGrid.manageColumn'),
+        columnMenuManageColumns: t('localizedTexts.columnMenuManageColumns'),
         // Density selector toolbar button text
         toolbarDensity: t('localizedTexts.toolbarDensity'),
         toolbarDensityLabel: t('localizedTexts.toolbarDensityLabel'),
