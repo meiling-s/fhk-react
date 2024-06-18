@@ -418,6 +418,7 @@ const PurchaseOrderCreateForm = ({
       field: 'edit',
       headerName: '',
       width: 100,
+      filterable: false,
       renderCell: (params) => (
         <IconButton>
           <EDIT_OUTLINED_ICON onClick={() => handleEditRow(params.row.id)} />
@@ -428,6 +429,7 @@ const PurchaseOrderCreateForm = ({
       field: 'delete',
       headerName: '',
       width: 100,
+      filterable: false,
       renderCell: (params) => (
         <IconButton
           onClick={() => {

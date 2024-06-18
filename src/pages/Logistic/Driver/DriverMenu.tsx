@@ -83,6 +83,7 @@ const DriverMenu = () => {
         {
             field: 'edit',
             headerName: '',
+            filterable: false,
             renderCell: (params) => {
                 return (
                     <div style={{ display: 'flex', gap: '8px' }}>
@@ -102,6 +103,7 @@ const DriverMenu = () => {
         {
             field: 'delete',
             headerName: '',
+            filterable: false,
             renderCell: (params) => {
                 return (
                     <div style={{ display: 'flex', gap: '8px' }}>

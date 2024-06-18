@@ -205,6 +205,7 @@ const Vehicles: FunctionComponent = () => {
     {
       field: 'edit',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -224,6 +225,7 @@ const Vehicles: FunctionComponent = () => {
     {
       field: 'delete',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>

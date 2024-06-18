@@ -291,6 +291,7 @@ const PickupOrders = () => {
       type: "string",
       width: 120,
       editable: true,
+      filterable: false,
       renderCell: (params) => (
         <StatusCard status={params.value}/>
       ),
@@ -301,6 +302,7 @@ const PickupOrders = () => {
       type: "string",
       width: 220,
       editable: true,
+      filterable: false,
       renderCell: (params) => (
         <TableOperation
           row={params.row}

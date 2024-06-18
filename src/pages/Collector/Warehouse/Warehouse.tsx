@@ -123,6 +123,7 @@ const Warehouse: FunctionComponent = () => {
     {
       field: 'actions',
       headerName: 'actions',
+      filterable: false,
       renderCell: (params) => {
         //console.log(params, 'params warehouse')
         return (

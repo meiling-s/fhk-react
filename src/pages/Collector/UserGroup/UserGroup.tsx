@@ -183,6 +183,7 @@ const UserGroup: FunctionComponent = () => {
     {
       field: 'edit',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -203,6 +204,7 @@ const UserGroup: FunctionComponent = () => {
     {
       field: 'delete',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button

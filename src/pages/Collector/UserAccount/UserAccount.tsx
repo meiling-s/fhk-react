@@ -96,6 +96,7 @@ const UserAccount: FunctionComponent = () => {
       field: 'actions',
       headerName: '',
       width: 300,
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>

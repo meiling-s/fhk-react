@@ -236,6 +236,7 @@ const DenialReason: FunctionComponent = () => {
     {
       field: "edit",
       headerName: "",
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -256,6 +257,7 @@ const DenialReason: FunctionComponent = () => {
     {
       field: "delete",
       headerName: "",
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button

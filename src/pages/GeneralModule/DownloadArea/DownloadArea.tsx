@@ -51,6 +51,7 @@ const DownloadArea = () => {
     {
       field: 'edit',
       headerName: '',
+      filterable: false,
       width: 200,
       renderCell: (params) => {
         return (

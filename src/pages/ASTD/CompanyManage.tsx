@@ -859,6 +859,7 @@ function CompanyManage() {
       headerName: '',
       width: 250,
       type: 'string',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>

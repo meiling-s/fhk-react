@@ -256,6 +256,7 @@ const RecyclingUnit: FunctionComponent = () => {
     {
       field: 'edit',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -275,6 +276,7 @@ const RecyclingUnit: FunctionComponent = () => {
     {
       field: 'delete',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -327,6 +329,7 @@ const RecyclingUnit: FunctionComponent = () => {
     {
       field: 'edit',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -346,6 +349,7 @@ const RecyclingUnit: FunctionComponent = () => {
     {
       field: 'delete',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -404,6 +408,7 @@ const RecyclingUnit: FunctionComponent = () => {
     {
       field: 'edit',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -423,6 +428,7 @@ const RecyclingUnit: FunctionComponent = () => {
     {
       field: 'delete',
       headerName: '',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>

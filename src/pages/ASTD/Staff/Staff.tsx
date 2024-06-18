@@ -150,6 +150,7 @@ const StaffTitle: FunctionComponent = () => {
     {
       field: "edit",
       headerName: "",
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -170,6 +171,7 @@ const StaffTitle: FunctionComponent = () => {
     {
       field: "delete",
       headerName: "",
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button

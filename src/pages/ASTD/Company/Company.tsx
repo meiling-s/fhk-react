@@ -205,6 +205,7 @@ const Company: FunctionComponent = () => {
     {
       field: "edit",
       headerName: "",
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button

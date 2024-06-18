@@ -190,6 +190,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
       field: 'edit',
       headerName: '',
       width: 300,
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>

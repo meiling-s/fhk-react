@@ -438,6 +438,7 @@ const PickupOrderCreateForm = ({
       field: 'edit',
       headerName: '',
       width: 100,
+      filterable: false,
       renderCell: (params) => (
         <IconButton>
           <EDIT_OUTLINED_ICON onClick={() => handleEditRow(params.row.id)} />
@@ -447,6 +448,7 @@ const PickupOrderCreateForm = ({
     {
       field: 'delete',
       headerName: '',
+      filterable: false,
       width: 100,
       renderCell: (params) => (
         // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
