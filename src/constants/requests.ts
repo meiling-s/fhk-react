@@ -1573,3 +1573,12 @@ export const GET_BROADCAST_MESSAGE = (): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/account/notiTemplate/broadcastMessage`
 })
+
+export const GET_STAFF_ID = (
+  realmApiRoute:string, 
+  tenantId: string,
+  loginId: string, 
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/staff/login/${tenantId}/${loginId}`
+})
