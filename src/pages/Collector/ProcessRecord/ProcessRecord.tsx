@@ -12,14 +12,21 @@ import CustomSearchField from '../../../components/TableComponents/CustomSearchF
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import EditProcessRecord from './EditProcesRecord'
-import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant'
+import {
+  STATUS_CODE,
+  format,
+  localStorgeKeyName
+} from '../../../constants/constant'
 import StatusCard from '../../../components/StatusCard'
 import {
   ProcessOut,
   processOutImage,
   ProcessOutItem
 } from '../../../interfaces/processRecords'
-import { getAllProcessRecord, getProcessIn } from '../../../APICalls/Collector/processRecords'
+import {
+  getAllProcessRecord,
+  getProcessIn
+} from '../../../APICalls/Collector/processRecords'
 
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
@@ -30,6 +37,7 @@ import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -62,7 +70,7 @@ function createProcessRecord(
     updatedAt,
     address,
     packageTypeId,
-    packageName,
+    packageName
   }
 }
 
@@ -79,12 +87,11 @@ const ProcessRecord: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
     initProcessRecord()
   }, [page])
-
 
   const getProcessInDetail = async (processInId: number) => {
     try {
@@ -94,7 +101,7 @@ const ProcessRecord: FunctionComponent = () => {
         return result.data
       }
     } catch (error) {
-      throw (error)
+      throw error
     }
   }
 
@@ -106,45 +113,48 @@ const ProcessRecord: FunctionComponent = () => {
       if (result.status === STATUS_CODE[200]) {
         const data = result?.data
         var recordsMapping: any[] = []
-        await Promise.all(data.content.map(async (item: any) => {
-          const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-          const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
-          const processName = mappingProcessName(item?.processTypeId)
-          recordsMapping.push(
-            createProcessRecord(
-              item?.processOutId,
-              item?.status,
-              item?.processInId,
-              item?.createdBy,
-              item?.updatedBy,
-              item?.processoutDetail,
-              createdAt,
-              item?.updatedAt,
-              item?.address,
-              item?.processTypeId,
-              processName || ''
+        await Promise.all(
+          data.content.map(async (item: any) => {
+            const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+            const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+            const processName = mappingProcessName(item?.processTypeId)
+            recordsMapping.push(
+              createProcessRecord(
+                item?.processOutId,
+                item?.status,
+                item?.processInId,
+                item?.createdBy,
+                item?.updatedBy,
+                item?.processoutDetail,
+                createdAt,
+                item?.updatedAt,
+                item?.address,
+                item?.processTypeId,
+                processName || '-'
+              )
             )
-          )
-        }));
+          })
+        )
 
         setTotalData(data.totalPages)
         setProcesRecords(recordsMapping)
         setFilteredProcessRecords(recordsMapping)
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error);
+      const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
-
     }
   }
 
   const mappingProcessName = (processTypeId: string) => {
-    const matchingProcess = processType?.find((item: ProcessType) => item.processTypeId == processTypeId)
+    const matchingProcess = processType?.find(
+      (item: ProcessType) => item.processTypeId == processTypeId
+    )
 
     if (matchingProcess) {
-      var name = ""
+      var name = ''
       switch (i18n.language) {
         case 'enus':
           name = matchingProcess.processTypeNameEng
@@ -168,7 +178,7 @@ const ProcessRecord: FunctionComponent = () => {
       field: 'createdAt',
       headerName: t('processRecord.creationDate'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'packageTypeId',
@@ -191,7 +201,7 @@ const ProcessRecord: FunctionComponent = () => {
       field: 'address',
       headerName: t('processRecord.processingLocation'),
       width: 200,
-      type: 'string',
+      type: 'string'
       // renderCell: (params) => {
       //   return '-'
       // }
@@ -214,16 +224,18 @@ const ProcessRecord: FunctionComponent = () => {
   ]
 
   const searchfield = [
-    { label: t('processRecord.enterProcessingNumber'), field: 'search', width: '20%' },
+    {
+      label: t('processRecord.enterProcessingNumber'),
+      field: 'search',
+      width: '20%'
+    },
     {
       label: t('processRecord.handleName'),
-      width: '20%',
-      options: getUniqueOptions('createdBy'),
-      field: 'createdBy'
+      options: getUniqueOptions('packageTypeId'),
+      field: 'packageTypeId'
     },
     {
       label: t('processRecord.location'),
-      width: '20%',
       options: getUniqueOptions('address'),
       field: 'address'
     }
@@ -236,11 +248,12 @@ const ProcessRecord: FunctionComponent = () => {
     })
     const options: Option[] = Array.from(optionMap.values()).map((option) => ({
       value: option,
-      label: option
+      label:
+        propertyName === 'packageTypeId' ? mappingProcessName(option) : option
     }))
 
     options.push({
-      value: "",
+      value: '',
       label: t('check_in.any')
     })
     return options
@@ -337,7 +350,6 @@ const ProcessRecord: FunctionComponent = () => {
               key={index}
               label={s.label}
               field={s.field}
-              width={s.width}
               options={s.options || []}
               onChange={handleSearch}
             />
