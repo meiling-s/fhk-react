@@ -83,6 +83,12 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
     case formErr.toDateIsEarlierThanStartDate:
       msg = t('form.error.toDateIsEarlierThanStartDate')
       break
+    case formErr.tenantIdShouldBeSixDigit:
+      msg = t('form.error.tenatIdShouldBeSixDigit')
+      break
+    case formErr.tenantIdNotFound:
+      msg = t('form.error.tenantIdNotFound')
+      break
   }
   return msg
 }
