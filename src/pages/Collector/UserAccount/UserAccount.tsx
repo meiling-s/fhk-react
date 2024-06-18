@@ -8,7 +8,7 @@ import {
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 // import { useNavigate } from 'react-router-dom'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Typography, Pagination } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import {
   ADD_ICON,
@@ -19,7 +19,7 @@ import {
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded'
 import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
-import { getAllUserAccount } from '../../../APICalls/userAccount'
+import { getUserAccountPaging } from '../../../APICalls/userAccount'
 import {
   UserAccount as UserAccountItem,
   ForgetPassUser
@@ -62,7 +62,10 @@ const UserAccount: FunctionComponent = () => {
     null
   )
   const [approveRejectDrawer, setApproveRejectDrawer] = useState<boolean>(false)
-  
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [totalData, setTotalData] = useState<number>(0)
+
   const columns: GridColDef[] = [
     {
       field: 'loginId',
@@ -131,16 +134,17 @@ const UserAccount: FunctionComponent = () => {
 
   async function fetchDataUserAccount() {
     try {
-      const result = await getAllUserAccount()
+      const result = await getUserAccountPaging(page - 1, pageSize)
       const accountlist: string[] = []
       if (result?.data) {
-        setUserAccountItems(result.data)
-        result.data.map((item: any) => accountlist.push(item.loginId))
+       setUserAccountItems(result.data.content)
+        result.data.content.map((item: any) => accountlist.push(item.loginId))
         setUserList(accountlist)
+        setTotalData(result.data.totalPages)
       }
-    } catch (error:any) {
-      const { state , realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -153,9 +157,9 @@ const UserAccount: FunctionComponent = () => {
         setForgetPassList(result?.data)
         console.log('initForgetPassList', result?.data)
       }
-    } catch (error:any) {
-      const { state , realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -164,7 +168,7 @@ const UserAccount: FunctionComponent = () => {
   useEffect(() => {
     fetchDataUserAccount()
     initForgetPassList()
-  }, [action, drawerOpen, currentLanguage, i18n, currentLanguage])
+  }, [action, drawerOpen, currentLanguage, i18n, currentLanguage, page])
 
   const addDataWarehouse = () => {
     setDrawerOpen(true)
@@ -244,8 +248,17 @@ const UserAccount: FunctionComponent = () => {
                     {t('account')}
                   </div>
                   {forgetPassList.length > 0 && (
-                    <Box sx={{ display: 'flex', alignItems: 'center' , flexDirection: 'column'}}>
-                      <div className="user-account cursor-pointer flex flex-wrap items-start" style={{ maxWidth: '1280px' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexDirection: 'column'
+                      }}
+                    >
+                      <div
+                        className="user-account cursor-pointer flex flex-wrap items-start"
+                        style={{ maxWidth: '1280px' }}
+                      >
                         {forgetPassList?.map((item, index) => (
                           <p
                             className="text-black text-smi font-bold underline m-0"
@@ -254,9 +267,9 @@ const UserAccount: FunctionComponent = () => {
                               setApproveRejectDrawer(true)
                               setForgetPassUser(item)
                             }}
-                            style={{ 
-                              marginBottom: '5px', 
-                              wordWrap: 'break-word' 
+                            style={{
+                              marginBottom: '5px',
+                              wordWrap: 'break-word'
                             }}
                           >
                             {index > 0 && (
@@ -326,6 +339,14 @@ const UserAccount: FunctionComponent = () => {
                             borderBottom: 'none'
                           }
                         }
+                      }}
+                    />
+                    <Pagination
+                      className="mt-4"
+                      count={Math.ceil(totalData)}
+                      page={page}
+                      onChange={(_, newPage) => {
+                        setPage(newPage)
                       }}
                     />
                   </Box>
