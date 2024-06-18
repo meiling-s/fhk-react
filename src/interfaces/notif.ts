@@ -64,3 +64,10 @@ export interface Option {
   value: string
   lang: string,
 }
+
+export type Broadcast = {
+  title: string
+  content: string
+  effFromDate: string
+  effToDate: string
+}

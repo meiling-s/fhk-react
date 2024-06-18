@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createContainer } from 'unstated-next'
-import { Notif } from '../interfaces/notif'
+import { Broadcast, Notif } from '../interfaces/notif'
 import {
   getNumUnreadNotif,
   getNotifByUserId,
@@ -15,23 +15,40 @@ const Notification = () => {
   // const loginId: string = localStorage.getItem('loginId') || 'string' //change key based on fixed key for loginId
   const [numOfNotif, setNumOfNotif] = useState(0)
   const [notifList, setNotifList] = useState<Notif[]>([])
-  const [broadcast, setBroadcast] = useState<Notif[]>([])
+  const [broadcast, setBroadcast] = useState<Broadcast | null>(null)
+
+  // useEffect(() => {
+  //  if(loginId){
+  //   const interval = setInterval((a) => {
+  //     setNotifList([])
+  //     setNumOfNotif(0)
+  //     getNumNotif(loginId)
+  //     getNotifList(loginId)
+  //   }, 10000);
+
+  //   return() => {
+  //     clearInterval(interval)
+  //   }
+
+  //  } 
+  // }, [loginId])
 
   useEffect(() => {
-   if(loginId){
-    const interval = setInterval((a) => {
-      initBroadcastMessage()
+    if(loginId){
       setNotifList([])
       setNumOfNotif(0)
       getNumNotif(loginId)
       getNotifList(loginId)
+    }
+
+    const interval = setInterval((a) => {
+      initBroadcastMessage()
     }, 10000);
 
     return() => {
       clearInterval(interval)
     }
 
-   } 
   }, [loginId])
 
   const getNumNotif = async (loginId: string) => {
@@ -56,38 +73,31 @@ const Notification = () => {
   const updateNotifications = async (loginId: string) => {
     await getNumNotif(loginId)
     await getNotifList(loginId)
-    await getBroadcastMessage()
   }
 
   const initBroadcastMessage = async () => {
     const result = await getBroadcastMessage()
-    if (result) {
-      const notifications:Notif [] = [];
-      for(let broadcast of result){
-        const isBefore = dayjs().isBefore(broadcast.effToDate, 'day');
-        const isSame = dayjs().isSame(broadcast.effToDate, 'day');
-        if(isSame || isBefore){
-          notifications.push(
-            {
-              notiRecordId: 0,
-              loginId: loginId,
-              messageType: 'broadcast',
-              title: broadcast.title,
-              content: broadcast.content,
-              sender: '',
-              receiver: '',
-              exeDatetime: '',
-              status: '',
-              createdBy: '',
-              updatedBy: '',
-              readFlg: false,
-              createdAt: '',
-              updatedAt: '',
+      if (result) {
+        let broadcast:Broadcast = {
+          title: '',
+          content: '',
+          effFromDate: '',
+          effToDate: ''
+        };
+
+        for(let message of result){
+          const isBefore = dayjs().isBefore(message.effToDate, 'day');
+          const isSame = dayjs().isSame(message.effToDate, 'day');
+          if(isSame || isBefore){
+            broadcast = {
+              title: message?.title,
+              content: message.content,
+              effFromDate: message.effFromDate,
+              effToDate: message.effToDate
             }
-          )
         }
+        setBroadcast(broadcast)
       }
-      setBroadcast(notifications)
     }
   }
 
@@ -100,6 +110,7 @@ const Notification = () => {
     broadcast
   }
 }
+
 
 const NotifContainer = createContainer(Notification)
 

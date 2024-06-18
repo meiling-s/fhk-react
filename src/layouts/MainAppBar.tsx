@@ -43,12 +43,10 @@ const MainAppBar = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList, broadcast } = useContainer(
+  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList } = useContainer(
     NotifContainerContext
   )
   const { loginId } = returnApiToken()
-  let notications:Notif[]= [...notifList, ...broadcast];
-  let totalNotif = numOfNotif + broadcast.length ?? 0
 
   useEffect(() => {
     updateNotifications(loginId)
@@ -151,7 +149,7 @@ const MainAppBar = () => {
                 <NOTIFICATION_ICON />
               </Badge>
             )} */}
-            {totalNotif === 0 ? <NOTIFICATION_ICON /> : <Badge badgeContent={totalNotif.toString()} color="error"> <NOTIFICATION_ICON /></Badge>}
+            {numOfNotif === 0 ? <NOTIFICATION_ICON /> : <Badge badgeContent={numOfNotif.toString()} color="error"> <NOTIFICATION_ICON /></Badge>}
 
             <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
               <Box className="md:w-[500px] w-[100vw]">
@@ -163,9 +161,9 @@ const MainAppBar = () => {
                   >
                     {t('appBar.notify')}
                   </Typography>
-                  {totalNotif !== 0 && (
+                  {numOfNotif !== 0 && (
                     <BackgroundLetterAvatars
-                      name={totalNotif.toString()!}
+                      name={numOfNotif.toString()!}
                       size={23}
                       backgroundColor="red"
                       fontColor="white"
@@ -175,7 +173,7 @@ const MainAppBar = () => {
                   )}
                 </Box>
                 <Divider />
-                {notications?.map((notif) => (
+                {notifList?.map((notif) => (
                   <NotifItem
                     notifId={notif.notiRecordId}
                     title={notif.title}
