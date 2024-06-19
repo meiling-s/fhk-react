@@ -1296,6 +1296,6 @@
     "aggregationFunctionLabelMax" : "最大限度",
     "aggregationFunctionLabelSize" : "尺寸",
     "columnMenuManageColumns": "管理列",
-    "select": "选择"
+    "select": "复选框选择"
   }
 }

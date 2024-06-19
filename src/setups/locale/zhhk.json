@@ -1319,6 +1319,6 @@
     "aggregationFunctionLabelMax" : "最大限度",
     "aggregationFunctionLabelSize" : "尺寸",
     "columnMenuManageColumns": "管理欄目",
-    "select": "選擇"
+    "select": "複選框選擇"
   }
 }

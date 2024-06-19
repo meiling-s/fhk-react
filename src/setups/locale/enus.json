@@ -1323,7 +1323,7 @@
     "aggregationFunctionLabelMax" : "max",
     "aggregationFunctionLabelSize" : "size",
     "columnMenuManageColumns": "Manage columns",
-    "select": "Select"
+    "select": "Checkbox selection"
   }
 
 }
