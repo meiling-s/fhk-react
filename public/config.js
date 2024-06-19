@@ -10,7 +10,7 @@ window.baseURL = {
     collector: 'https://uat.greenhoopapp.com/',
     logistic: 'https://uat.greenhoopapp.com/',
     manufacturer: 'https://uat.greenhoopapp.com/',
-    customer: 'https://uat.greenhoopapp.com/'
+    customer: 'https://uat.greenhoopapp.com/',
     // account: 'https://www.greenhoopapp.com/',
     // administrator: 'https://www.greenhoopapp.com/',
     // collector: 'https://www.greenhoopapp.com/',
