@@ -22,6 +22,7 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import { getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import { useNavigate } from 'react-router-dom'
+import Switcher from '../../../components/FormComponents/CustomSwitch'
 
 interface CreateDenialReasonProps {
   drawerOpen: boolean
@@ -55,6 +56,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     remark: ''
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
+  const [weatherFlg, setWeatherFlg] = useState<boolean>(true)
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
@@ -70,8 +72,10 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     }[]
   >([])
   const role = localStorage.getItem(localStorgeKeyName.role)
-  const [existingDenialReason, setExistingDenialReason] = useState<DenialReason[]>([])
-  const navigate = useNavigate();
+  const [existingDenialReason, setExistingDenialReason] = useState<
+    DenialReason[]
+  >([])
+  const navigate = useNavigate()
 
   const initFunctionList = async () => {
     try {
@@ -107,9 +111,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         )
       }
       setFunctionList(data)
-    } catch (error:any) {
-      const {state} = extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -152,6 +156,12 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       field: 'remark',
       type: 'text',
       textarea: true
+    },
+    {
+      label: t('denial_reason.weatherFlg'),
+      placeholder: '',
+      field: 'weatherFlg',
+      type: 'boolean'
     }
   ]
 
@@ -178,7 +188,11 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         remark: selectedItem.remark
       })
 
-      setExistingDenialReason(denialReasonlist.filter((item) => item.reasonId != selectedItem.reasonId))
+      setExistingDenialReason(
+        denialReasonlist.filter(
+          (item) => item.reasonId != selectedItem.reasonId
+        )
+      )
     }
   }
 
@@ -227,21 +241,30 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     })
 
     existingDenialReason.forEach((item) => {
-      if (item.reasonNameTchi.toLowerCase() === formData.reasonNameTchi.toLowerCase()) {
+      if (
+        item.reasonNameTchi.toLowerCase() ===
+        formData.reasonNameTchi.toLowerCase()
+      ) {
         tempV.push({
           field: t('common.traditionalChineseName'),
           problem: formErr.alreadyExist,
           type: 'error'
         })
       }
-      if (item.reasonNameSchi.toLowerCase() === formData.reasonNameSchi.toLowerCase()) {
+      if (
+        item.reasonNameSchi.toLowerCase() ===
+        formData.reasonNameSchi.toLowerCase()
+      ) {
         tempV.push({
           field: t('common.simplifiedChineseName'),
           problem: formErr.alreadyExist,
           type: 'error'
         })
       }
-      if (item.reasonNameEng.toLowerCase() === formData.reasonNameEng.toLowerCase()) {
+      if (
+        item.reasonNameEng.toLowerCase() ===
+        formData.reasonNameEng.toLowerCase()
+      ) {
         tempV.push({
           field: t('common.englishName'),
           problem: formErr.alreadyExist,
@@ -308,7 +331,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     denialReasonData: CreateDenialReason
   ) => {
     try {
-        if (validation.length === 0) {
+      if (validation.length === 0) {
         const result = await createDenialReason(denialReasonData)
         if (result?.data) {
           onSubmitData('success', t('common.saveSuccessfully'))
@@ -321,9 +344,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         setTrySubmited(true)
@@ -362,9 +385,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -493,6 +516,19 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                       )}
                     />
                   </CustomField>
+                </Grid>
+              ) : item.type == 'boolean' ? (
+                <Grid item key={index}>
+                  <CustomField label={item.label} mandatory></CustomField>
+                  <Switcher
+                    onText={t('common.yes')}
+                    offText={t('common.no')}
+                    disabled={action === 'delete'}
+                    defaultValue={weatherFlg}
+                    setState={(newValue) => {
+                      setWeatherFlg(newValue)
+                    }}
+                  />
                 </Grid>
               ) : (
                 <></>
