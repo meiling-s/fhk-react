@@ -90,7 +90,8 @@
       "endDateEarlyThanStartDate": "如果“截止日期”早於“開始日期”，則不允許截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字",
       "tenatIdShouldBeSixDigit": "租戶 ID 應為六位數",
-      "tenantIdNotFound": "未找到租戶 ID"
+      "tenantIdNotFound": "未找到租戶 ID",
+      "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'"
     }
   },
   "component": {
