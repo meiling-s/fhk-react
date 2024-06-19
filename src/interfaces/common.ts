@@ -207,3 +207,10 @@ export type errorState = {
     code: number,
     message: string
 }
+
+export type UserActivity = {
+    operation: string
+    ip: string
+    createdBy: string
+    updatedBy: string
+}

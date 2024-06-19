@@ -1585,3 +1585,10 @@ export const GET_STAFF_ID = (
   method: 'get',
   url: `api/v1/${realmApiRoute}/staff/login/${tenantId}/${loginId}`
 })
+
+export const CREATE_USER_ACTIVITY = (
+  loginId: string, 
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/administrator/userActivity/${loginId}`
+})

@@ -32,6 +32,8 @@ import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
 import { returnApiToken } from '../utils/utils'
 import { Notif } from '../interfaces/notif'
+import { createUserActivity } from '../APICalls/userAccount'
+import { UserActivity } from '../interfaces/common'
 
 const MainAppBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -47,6 +49,8 @@ const MainAppBar = () => {
     NotifContainerContext
   )
   const { loginId } = returnApiToken()
+  const ipAddress = localStorage.getItem('ipAddress');
+
   useEffect(() => {
     updateNotifications(loginId)
   }, [loginId])
@@ -94,8 +98,19 @@ const MainAppBar = () => {
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false)
   }
+  
   const handleLogout = () => {
     console.log("on logout")
+    if(ipAddress){
+      const userActivity: UserActivity = {
+        operation: 'logout',
+        ip: ipAddress,
+        createdBy: loginId,
+        updatedBy: loginId
+      }
+      createUserActivity(loginId, userActivity)
+    }
+   
     setNumOfNotif(0)
     setNotifList([])
     localStorage.clear()

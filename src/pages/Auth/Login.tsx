@@ -35,6 +35,9 @@ import { setLanguage } from '../../setups/i18n'
 import { extractError, returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
 import { parseJwtToken } from '../../constants/axiosInstance'
+import axios from 'axios'
+import { createUserActivity } from '../../APICalls/userAccount'
+import { UserActivity } from '../../interfaces/common'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -74,6 +77,13 @@ const Login = () => {
       dataString.indexOf('{'),
       dataString.lastIndexOf('}') + 1
     )
+  }
+
+  const getIpAddress = async () => {
+    const response = await axios.get("https://api.ipify.org/?format=json");
+    if(response){
+      localStorage.setItem('ipAddress', response?.data?.ip)
+    }
   }
 
   const returnErrCode = (error: any) => {
@@ -183,6 +193,17 @@ const Login = () => {
           setLanguage(selectedLang)
 
           commonTypeContainer.updateCommonTypeContainer()
+          const ipAddress = localStorage.getItem('ipAddress')
+          if(ipAddress){
+            const userActivity:UserActivity = {
+              operation: 'login',
+              ip: ipAddress,
+              createdBy: result?.username,
+              updatedBy: result?.username
+            }
+            createUserActivity(result.username, userActivity)
+          }
+         
         } else {
           // if(errCode === STATUS_CODE[503]){
           //   return navigate('/maintenance')
@@ -286,6 +307,7 @@ const Login = () => {
         }
       }
     }
+    getIpAddress();
   }, [])
 
   return (
