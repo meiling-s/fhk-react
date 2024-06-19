@@ -122,7 +122,7 @@ const Warehouse: FunctionComponent = () => {
     },
     {
       field: 'actions',
-      headerName: 'actions',
+      headerName: t('pick_up_order.item.actions'),
       filterable: false,
       renderCell: (params) => {
         //console.log(params, 'params warehouse')

@@ -393,7 +393,7 @@ const CheckoutRequest: FunctionComponent = () => {
 
   const checkboxColumn: GridColDef = {
     field: 'customCheckbox',
-    headerName: 'Select',
+    headerName: t('localizedTexts.select'),
     width: 80,
     sortable: false,
     filterable: false,

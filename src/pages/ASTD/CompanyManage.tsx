@@ -856,7 +856,7 @@ function CompanyManage() {
     },
     {
       field: 'action',
-      headerName: '',
+      headerName: t('pick_up_order.item.actions'),
       width: 250,
       type: 'string',
       filterable: false,

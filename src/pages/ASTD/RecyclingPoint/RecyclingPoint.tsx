@@ -161,7 +161,7 @@ const RecyclingPoint: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('notification.menu_staff.edit'),
       filterable: false,
       renderCell: (params) => {
         return (
@@ -181,7 +181,7 @@ const RecyclingPoint: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
       filterable: false,
       renderCell: (params) => {
         return (
@@ -239,7 +239,7 @@ const RecyclingPoint: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('notification.menu_staff.edit'),
       filterable: false,
       renderCell: (params) => {
         return (
@@ -259,7 +259,7 @@ const RecyclingPoint: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
       filterable: false,
       renderCell: (params) => {
         return (

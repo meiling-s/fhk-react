@@ -188,7 +188,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('notification.menu_staff.edit'),
       width: 300,
       filterable: false,
       renderCell: (params) => {

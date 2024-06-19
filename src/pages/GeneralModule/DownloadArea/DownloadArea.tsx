@@ -50,7 +50,7 @@ const DownloadArea = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
       filterable: false,
       width: 200,
       renderCell: (params) => {

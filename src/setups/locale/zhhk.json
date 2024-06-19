@@ -352,7 +352,8 @@
       "sender_name": "寄件公司",
       "exp_opration": "已過期操作",
       "rec_loc_info": "回收地點資料",
-      "logistic_company": "物流公司"
+      "logistic_company": "物流公司",
+      "actions": "行動"
     },
     "create_pick_up_order": "建立",
     "edit_pick_up_order": "編輯取件訂單",
@@ -828,7 +829,8 @@
       "name": "名稱",
       "type": "種類",
       "title": "標題",
-      "language": "語言"
+      "language": "語言",
+      "edit": "編輯"
     },
     "modify_template": {
       "header": "修改範本",
@@ -1316,6 +1318,7 @@
     "aggregationFunctionLabelMin" : "分分鐘",
     "aggregationFunctionLabelMax" : "最大限度",
     "aggregationFunctionLabelSize" : "尺寸",
-    "columnMenuManageColumns": "管理欄目"
+    "columnMenuManageColumns": "管理欄目",
+    "select": "選擇"
   }
 }

@@ -354,7 +354,8 @@
       "sender_name": "Shipping company",
       "exp_opration": "Expired operation",
       "rec_loc_info": "Recycling location information",
-      "logistic_company": "Logistic company"
+      "logistic_company": "Logistic company",
+      "actions": "Actions"
     },
     "create_pick_up_order": "Create",
     "edit_pick_up_order": "Edit pickup Order",
@@ -829,7 +830,8 @@
       "name": "Name",
       "type": "Type",
       "title": "Title",
-      "language": "Language"
+      "language": "Language",
+      "edit": "Edit"
     },
     "modify_template": {
       "header": "Modify Template",
@@ -1320,7 +1322,8 @@
     "aggregationFunctionLabelMin" : "min",
     "aggregationFunctionLabelMax" : "max",
     "aggregationFunctionLabelSize" : "size",
-    "columnMenuManageColumns": "Manage columns"
+    "columnMenuManageColumns": "Manage columns",
+    "select": "Select"
   }
 
 }

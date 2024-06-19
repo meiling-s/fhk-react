@@ -161,7 +161,7 @@ const GeneralSettings: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
       filterable: false,
       renderCell: (params) => {
         return (
@@ -181,7 +181,7 @@ const GeneralSettings: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
       filterable: false,
       renderCell: (params) => {
         return (

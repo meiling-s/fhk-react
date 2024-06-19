@@ -415,7 +415,7 @@ const PurchaseOrderCreateForm = ({
       editable: true
     },
     {
-      field: 'edit',
+      field: t('pick_up_order.item.edit'),
       headerName: '',
       width: 100,
       filterable: false,
@@ -427,7 +427,7 @@ const PurchaseOrderCreateForm = ({
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
       width: 100,
       filterable: false,
       renderCell: (params) => (

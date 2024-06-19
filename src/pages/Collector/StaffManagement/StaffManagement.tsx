@@ -266,7 +266,7 @@ const StaffManagement: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
       filterable: false,
       renderCell: (params) => {
         return (
@@ -290,7 +290,7 @@ const StaffManagement: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
       filterable: false,
       renderCell: (params) => {
         return (
@@ -362,7 +362,7 @@ const StaffManagement: FunctionComponent = () => {
       },
       {
         field: 'edit',
-        headerName: '',
+        headerName: t('pick_up_order.item.edit'),
         renderCell: (params) => {
           return (
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -385,7 +385,7 @@ const StaffManagement: FunctionComponent = () => {
       },
       {
         field: 'delete',
-        headerName: '',
+        headerName: t('pick_up_order.item.delete'),
         renderCell: (params) => {
           return (
             <div style={{ display: 'flex', gap: '8px' }}>

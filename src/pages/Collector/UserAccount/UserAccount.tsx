@@ -94,7 +94,7 @@ const UserAccount: FunctionComponent = () => {
     },
     {
       field: 'actions',
-      headerName: '',
+      headerName: t('pick_up_order.item.actions'),
       width: 300,
       filterable: false,
       renderCell: (params) => {

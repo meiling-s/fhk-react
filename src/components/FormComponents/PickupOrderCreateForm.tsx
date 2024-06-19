@@ -436,7 +436,7 @@ const PickupOrderCreateForm = ({
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('notification.menu_staff.edit'),
       width: 100,
       filterable: false,
       renderCell: (params) => (
@@ -447,7 +447,7 @@ const PickupOrderCreateForm = ({
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
       filterable: false,
       width: 100,
       renderCell: (params) => (

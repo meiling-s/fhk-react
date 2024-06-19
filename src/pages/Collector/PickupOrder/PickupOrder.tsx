@@ -247,7 +247,8 @@ const PickupOrders = () => {
   const pageSize = 10 
   const [totalData , setTotalData] = useState<number>(0)
   const [showOperationColumn, setShowOperationColumn] = useState<Boolean>(false)
-  const columns: GridColDef[] = [
+  const role = localStorage.getItem(localStorgeKeyName.role)
+  let columns: GridColDef[] = [
     { field: "createdAt", headerName: t('pick_up_order.table.created_datetime'), width: 150, renderCell: (params) => {
       return dayjs.utc(params.row.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
     } },
@@ -291,29 +292,49 @@ const PickupOrders = () => {
       type: "string",
       width: 120,
       editable: true,
-      filterable: false,
       renderCell: (params) => (
         <StatusCard status={params.value}/>
       ),
     },
-    showOperationColumn && {
-      field: "operation",
-      headerName: t('pick_up_order.table.operation'),
-      type: "string",
-      width: 220,
-      editable: true,
-      filterable: false,
-      renderCell: (params) => (
-        <TableOperation
-          row={params.row}
-          onApprove={showApproveModal}
-          onReject={showRejectModal}
-          navigateToJobOrder={navigateToJobOrder}
-        />
-      ),
-    },
+    // showOperationColumn && {
+    //   field: "operation",
+    //   headerName: t('pick_up_order.table.operation'),
+    //   type: "string",
+    //   width: 220,
+    //   editable: true,
+    //   filterable: false,
+    //   renderCell: (params) => (
+    //     <TableOperation
+    //       row={params.row}
+    //       onApprove={showApproveModal}
+    //       onReject={showRejectModal}
+    //       navigateToJobOrder={navigateToJobOrder}
+    //     />
+    //   ),
+    // },
   ];
-
+ 
+  if(role === 'logistic'){
+    columns = [
+      ...columns,
+      {
+        field: "operation",
+        headerName: t('pick_up_order.table.operation'),
+        type: "string",
+        width: 220,
+        editable: true,
+        filterable: false,
+        renderCell: (params) => (
+          <TableOperation
+            row={params.row}
+            onApprove={showApproveModal}
+            onReject={showRejectModal}
+            navigateToJobOrder={navigateToJobOrder}
+          />
+        ),
+      },
+    ]
+  }
  
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
   const {recycType, dateFormat} = useContainer(CommonTypeContainer)
@@ -335,7 +356,7 @@ const PickupOrders = () => {
   const [approveModal, setApproveModal] = useState(false)
   const [rejectModal, setRejectModal] = useState(false)
   const [reasonList, setReasonList] = useState<any>([])
-  const role = localStorage.getItem(localStorgeKeyName.role)
+
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const statusList: StatusPickUpOrder[] = [
     {
