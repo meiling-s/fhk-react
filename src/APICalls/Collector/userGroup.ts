@@ -1,7 +1,7 @@
 import { CreateVehicle } from "../../interfaces/vehicles";
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import {
-  CREATE_VEHICLE, DELETE_VEHICLE, EDIT_VEHICLE, GET_USER_GROUP, GET_USER_ACCOUNT, GET_FUNCTION, CREATE_USER_GROUP, EDIT_USER_GROUP, DELETE_USER_GROUP
+  CREATE_VEHICLE, DELETE_VEHICLE, EDIT_VEHICLE, GET_USER_GROUP, GET_USER_ACCOUNT, GET_FUNCTION, CREATE_USER_GROUP, EDIT_USER_GROUP, DELETE_USER_GROUP, GET_STAFF_ID
 } from "../../constants/requests";
 import { returnApiToken } from "../../utils/utils";
 import { CreateUserGroupProps, DeleteUserGroupProps, EditUserGroupProps } from "../../interfaces/userGroup";
@@ -222,6 +222,21 @@ export const deleteVehicle = async (data: string, vehicleId: number) => {
     return response
   } catch (e) {
     console.error('Edit a vehicle failed:', e)
+    return null
+  }
+}
+
+export const getStaffID = async (loginId: string) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+        baseURL: window.baseURL.collector,
+      ...GET_STAFF_ID(token.realmApiRoute, token.tenantId, loginId),
+    })
+    return response
+  } catch (e) {
+    console.error('getStaffID failed:', e)
     return null
   }
 }
