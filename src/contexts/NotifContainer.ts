@@ -77,14 +77,8 @@ const Notification = () => {
 
   const initBroadcastMessage = async () => {
     const result = await getBroadcastMessage()
-      if (result) {
-        let broadcast:Broadcast = {
-          title: '',
-          content: '',
-          effFromDate: '',
-          effToDate: ''
-        };
-
+      if (result?.length >= 1) {
+        let broadcast: Broadcast | null = null
         for(let message of result){
           const isBefore = dayjs().isBefore(message.effToDate, 'day');
           const isSame = dayjs().isSame(message.effToDate, 'day');
@@ -96,9 +90,11 @@ const Notification = () => {
               effToDate: message.effToDate
             }
         }
-        setBroadcast(broadcast)
+          setBroadcast(broadcast)
+        }
+      } else {
+        setBroadcast(null)
       }
-    }
   }
 
   return {
@@ -107,7 +103,8 @@ const Notification = () => {
     updateNotifications,
     setNumOfNotif,
     setNotifList,
-    broadcast
+    broadcast,
+    setBroadcast
   }
 }
 

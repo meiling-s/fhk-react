@@ -41,6 +41,8 @@ import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import { dynamicpath, returnApiToken } from '../utils/utils'
+import { useContainer } from 'unstated-next'
+import NotifContainer from '../contexts/NotifContainer'
 
 type MainDrawer = {
   role: string
@@ -70,6 +72,7 @@ function MainDrawer() {
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0)
   const [selectedISubIndex, setSelectedSubIndex] = useState<number | 0>(0)
   const { realmApiRoute } = returnApiToken()
+  const { broadcast } =  useContainer(NotifContainer);
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -484,7 +487,8 @@ function MainDrawer() {
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
-            padding: '10px'
+            padding: '10px',
+            marginTop: `${broadcast ? '30px' : ''}`
           }
         }}
         variant={isMobile ? 'temporary' : 'permanent'}

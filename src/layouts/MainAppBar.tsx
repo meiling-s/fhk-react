@@ -43,7 +43,7 @@ const MainAppBar = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList } = useContainer(
+  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList, broadcast } = useContainer(
     NotifContainerContext
   )
   const { loginId } = returnApiToken()
@@ -129,7 +129,8 @@ const MainAppBar = () => {
       position="fixed"
       sx={{
         width: `calc(100% - ${isMobile ? 0 : drawerWidth}px)`,
-        ml: `${drawerWidth}px`
+        ml: `${drawerWidth}px`,
+        marginTop: `${broadcast ? '30px': ''}`
       }}
     >
       <Toolbar
