@@ -42,6 +42,7 @@ import CreatePackagingUnit from './CreatePackagingUnit'
 import StatusCard from '../../../components/StatusCard'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface PackagingUnit {
   packagingTypeId: string
@@ -74,7 +75,8 @@ const GeneralSettings: FunctionComponent = () => {
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
   const navigate = useNavigate()
-  
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
+
   useEffect(() => {
     getTenantData()
     initPackagingUnit()
@@ -159,7 +161,8 @@ const GeneralSettings: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -178,7 +181,8 @@ const GeneralSettings: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -341,6 +345,7 @@ const GeneralSettings: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

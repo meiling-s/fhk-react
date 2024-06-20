@@ -42,6 +42,7 @@ import { SEARCH_ICON } from '../../../themes/icons';
 import useDebounce from '../../../hooks/useDebounce';
 import { returnApiToken } from '../../../utils/utils';
 import { getAllWarehouse } from '../../../APICalls/warehouseManage';
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid';
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -110,6 +111,7 @@ const Inventory: FunctionComponent = () => {
     const [searchText, setSearchText] = useState<string>('');
     const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
     const debouncedSearchValue: string = useDebounce(searchText, 1000);
+    const {  localeTextDataGrid } = useLocaleTextDataGrid();
 
     useEffect(() => {
         mappingRecyleItem();
@@ -306,20 +308,24 @@ const Inventory: FunctionComponent = () => {
         {
             label: t('pick_up_order.filter.search'),
             field: 'search',
+            placeholder : t('placeHolder.enterRecyclingNumber'),
         },
         {
-            label: t('inventory.recyleType'),
+            label: t('placeHolder.classification'),
             options: getUniqueOptions('recycTypeId'),
             field: 'recycTypeId',
+            placeholder : t('placeHolder.any'),
         },
         {
-            label: t('inventory.recyleSubType'),
+            label: t('placeHolder.subclassification'),
             options: getUniqueOptions('recycSubTypeId'),
             field: 'recycSubTypeId',
+            placeholder :  t('placeHolder.any'),
         },
         {
-            label: t('inventory.inventoryLocation'),
+            label: t('placeHolder.place'),
             field: 'location',
+            placeholder :  t('placeHolder.any'),
         },
     ];
 
@@ -490,6 +496,7 @@ const Inventory: FunctionComponent = () => {
                         <CustomSearchField
                             key={index}
                             label={s.label}
+                            placeholder={s.placeholder}
                             field={s.field}
                             options={s.options || []}
                             onChange={handleSearch}
@@ -506,6 +513,7 @@ const Inventory: FunctionComponent = () => {
                             checkboxSelection={false}
                             onRowClick={handleSelectRow}
                             getRowSpacing={getRowSpacing}
+                            localeText={localeTextDataGrid}
                             sx={{
                                 border: 'none',
                                 '& .MuiDataGrid-cell': {
