@@ -288,7 +288,8 @@
     "failed": "失败",
     "enable": "启用",
     "not_enabled": "未启用",
-    "terminated": "已终止"
+    "terminated": "已终止",
+    "deactivate": "停用"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -516,7 +517,10 @@
       "no_preference": "无特别偏好",
       "fifo": "先进先出（FIFO）",
       "lifo": "后进先出（LIFO）",
-      "default_lang": "默认语言"
+      "default_lang": "默认语言",
+      "confirm": "启用",
+      "suspend": "未启用",
+      "closed": "已停用"
     }
   },
   "report": {

@@ -289,7 +289,8 @@
     "failed": "Failed",
     "enable": "Enable",
     "not_enabled": "Not enabled",
-    "terminated": "Terminated"
+    "terminated": "Terminated",
+    "deactivate": "Deactivate"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -515,7 +516,10 @@
       "no_preference": "No preference",
       "fifo": "First in first out (FIFO)",
       "lifo": "Last in, first out (LIFO)",
-      "default_lang": "Default language"
+      "default_lang": "Default language",
+      "confirm": "ACTIVATED",
+      "suspend": "SUSPEND",
+      "closed": "DEACTIVE"
     }
   },
   "report": {

@@ -155,7 +155,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const [numOfUplodedPhoto, setNumOfUplodedPhoto] = useState<number>(0)
   const [maxUploadSize, setMaxUploadSize] = useState<string>('1')
   const [defaultLang, setDefaultLang] = useState<string>('ZH-HK')
-  const [selectedStatus, setSelectedStatus] = useState<string>('CREATED')
+  const [selectedStatus, setSelectedStatus] = useState<string>('')
   const [deactiveReason, setDeactiveReason] = useState<string>('-')
   const [modalClosedStatus, setModalClosed] = useState<boolean>(false)
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
@@ -182,7 +182,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setNumOfUplodedPhoto(data?.allowImgNum || 0)
     setMaxUploadSize(data?.allowImgSize.toString())
     setDefaultLang(data?.lang || 'ZH-HK')
-    setSelectedStatus(data?.status || 'CREATED')
+    setSelectedStatus(data?.status || '')
   }
 
   const mainInfoFields = [
@@ -209,10 +209,10 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   ]
 
   const statuses: il_item[] = [
-    { id: 'CREATED', name: t('status.created') },
-    { id: 'CONFIRMED', name: t('status.confirmed') },
-    { id: 'REJECTED', name: t('status.rejected') },
-    { id: 'CLOSED', name: t('status.closed') }
+    // { id: 'CREATED', name: t('status.created') },
+    { id: 'CONFIRMED', name: t('tenant.detail.confirm') },
+    { id: 'SUSPEND', name: t('tenant.detail.suspend') },
+    { id: 'CLOSED', name: t('tenant.detail.closed') }
   ]
 
   const ways_of_exits: il_item[] = [
@@ -640,7 +640,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 />
               </div>
             </Grid>
-            <Grid item className="field-reason_for_deactivation">
+            {/* <Grid item className="field-reason_for_deactivation">
               <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
                 {t('tenant.detail.reason_for_deactivation')}
               </Typography>
@@ -655,7 +655,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   sx={{ width: '100%' }}
                 ></CustomTextField>
               </CustomField>
-            </Grid>
+            </Grid> */}
             <Box>
               <div className="field-tenant-footer">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
