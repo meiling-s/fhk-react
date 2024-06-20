@@ -51,7 +51,12 @@ import { ErrorMessage, useFormik, validateYupSchema } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 import CustomAutoComplete from '../../components/FormComponents/CustomAutoComplete'
-import { extractError, returnApiToken, showErrorToast } from '../../utils/utils'
+import {
+  extractError,
+  returnApiToken,
+  showErrorToast,
+  showSuccessToast
+} from '../../utils/utils'
 import { ToastContainer } from 'react-toastify'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
@@ -103,7 +108,7 @@ type rejectModal = {
 function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
   const { t } = useTranslation()
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const reasons: il_item[] = [
     {
@@ -124,14 +129,13 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
       }
 
       const result = await updateTenantStatus(statData, tenantId)
-      const data = result?.data
-      if (data) {
-        // console.log('reject success success')
+      // const data = result?.data
+      if (result.status === 200) {
         onSubmit()
       }
-    } catch (error:any) {
-      const { state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -153,7 +157,7 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
               component="h3"
               sx={{ fontWeight: 'bold' }}
             >
-              Are you sure to reject the T0001 application?
+              {`Are you sure to reject the ${tenantId}?`}
             </Typography>
           </Box>
           <Divider />
@@ -707,7 +711,7 @@ function CompanyManage() {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const { dateFormat } = useContainer(CommonTypeContainer)
   const realmOptions = [
     {
       key: 'collector',
@@ -726,7 +730,7 @@ function CompanyManage() {
       label: 'Customer'
     }
   ]
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -760,16 +764,15 @@ function CompanyManage() {
       }
 
       const result = await updateTenantStatus(statData, tenantId)
-      const data = result?.data
-      if (data) {
-        console.log('approve success')
+      if (result?.status == 200) {
+        showSuccessToast(t('common.approveSuccess'))
         initCompaniesData()
       }
-      window.location.reload()
+    //  window.location.reload()
       setOpenDetails(false)
-    } catch (error:any) {
-      const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -919,7 +922,10 @@ function CompanyManage() {
           com?.companyNameEng,
           com?.status,
           com?.tenantType,
-          dayjs.utc(new Date(com?.createdAt)).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`),
+          dayjs
+            .utc(new Date(com?.createdAt))
+            .tz('Asia/Hong_Kong')
+            .format(`${dateFormat} HH:mm`),
           0
         )
       )
@@ -938,9 +944,9 @@ function CompanyManage() {
         setFilterCompanies(tenantList)
       }
       setTotalData(result?.data.totalPages)
-    } catch (error:any) {
-      const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -961,9 +967,9 @@ function CompanyManage() {
       } else {
         initCompaniesData()
       }
-    } catch (error:any) {
-      const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -971,6 +977,8 @@ function CompanyManage() {
 
   const onRejectModal = () => {
     initCompaniesData()
+    console.log("onRejectModal", onRejectModal)
+    showSuccessToast(t('common.rejectSuccess'))
     setOpenDetails(false)
   }
 
@@ -1015,7 +1023,7 @@ function CompanyManage() {
       const realmType =
         realmOptions.find((item) => item.label == formikValues.companyCategory)
           ?.key || 'collector'
-  
+
       const result = await createInvitation(
         {
           tenantId: parseInt(formikValues.companyNumber),
@@ -1041,7 +1049,7 @@ function CompanyManage() {
         },
         realmType
       )
-  
+
       if (result?.data?.tenantId) {
         console.log(result)
         setInviteId(result?.data?.tenantId)
@@ -1049,18 +1057,17 @@ function CompanyManage() {
         setInvFormModal(false)
         setIsLoadingInvite(false)
       } else {
-        showErrorToast('failed to create tenant')
+        showErrorToast(t('common.saveFailed'))
         setIsLoadingInvite(false)
       }
-    } catch (error:any) {
-      const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        showErrorToast('failed to create tenant')
+        showErrorToast(t('common.saveFailed'))
         setIsLoadingInvite(false)
       }
-    
     }
   }
 

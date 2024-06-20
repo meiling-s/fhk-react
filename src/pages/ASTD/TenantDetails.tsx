@@ -209,7 +209,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   ]
 
   const statuses: il_item[] = [
-    // { id: 'CREATED', name: t('status.created') },
+    { id: 'CREATED', name: t('status.created') },
     { id: 'CONFIRMED', name: t('tenant.detail.confirm') },
     { id: 'SUSPEND', name: t('tenant.detail.suspend') },
     { id: 'CLOSED', name: t('tenant.detail.closed') }
