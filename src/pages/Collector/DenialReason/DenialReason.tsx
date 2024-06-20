@@ -1,106 +1,111 @@
-import { useEffect, useState, FunctionComponent, useCallback } from "react";
-import { Box, Button, Checkbox, Typography, Pagination, Stack } from "@mui/material";
+import { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Typography,
+  Pagination,
+  Stack
+} from '@mui/material'
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridRenderCellParams,
-} from "@mui/x-data-grid";
-import { ToastContainer, toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { styles } from "../../../constants/styles";
+  GridRenderCellParams
+} from '@mui/x-data-grid'
+import { ToastContainer, toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
+import { styles } from '../../../constants/styles'
 import {
   ADD_ICON,
   EDIT_OUTLINED_ICON,
-  DELETE_OUTLINED_ICON,
-} from "../../../themes/icons";
-import { getAllDenialReason, getAllDenialReasonByFunctionId } from "../../../APICalls/Collector/denialReason";
-import { DenialReason as DenialReasonItem } from "../../../interfaces/denialReason";
-import CreateDenialReason from "./CreateDenialReason";
-import { getAllFunction } from "../../../APICalls/Collector/userGroup";
-import i18n from "../../../setups/i18n";
-import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
-import { useNavigate } from "react-router-dom";
-import { extractError } from "../../../utils/utils";
-import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
+  DELETE_OUTLINED_ICON
+} from '../../../themes/icons'
+import {
+  getAllDenialReason,
+  getAllDenialReasonByFunctionId
+} from '../../../APICalls/Collector/denialReason'
+import {
+  getDenialReasonCollectors,
+  getDenialReasonByFunctionIdCollectors
+} from '../../../APICalls/Collector/denialReasonCollectors'
+import {
+  DenialReason as DenialReasonItem,
+  DenialReasonCollectors
+} from '../../../interfaces/denialReason'
+import CreateDenialReason from './CreateDenialReason'
+import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import i18n from '../../../setups/i18n'
+import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
+import { useNavigate } from 'react-router-dom'
+import { extractError } from '../../../utils/utils'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 
-function createDenialReason(
-  reasonId: number,
-  tenantId: string,
-  reasonNameTchi: string,
-  reasonNameSchi: string,
-  reasonNameEng: string,
-  description: string,
-  remark: string,
-  functionId: string,
-  functionName: string,
-  status: string,
-  createdBy: string,
-  updatedBy: string,
-  createdAt: string,
-  updatedAt: string
-): DenialReasonItem {
-  return {
-    reasonId,
-    tenantId,
-    reasonNameTchi,
-    reasonNameSchi,
-    reasonNameEng,
-    description,
-    remark,
-    functionId,
-    functionName,
-    status,
-    createdBy,
-    updatedBy,
-    createdAt,
-    updatedAt,
-  };
-}
 
 const DenialReason: FunctionComponent = () => {
-  const { t } = useTranslation();
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const [action, setAction] = useState<"add" | "edit" | "delete">("add");
-  const [rowId, setRowId] = useState<number>(1);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [totalData, setTotalData] = useState<number>(0);
-  const [DenialReasonList, setDenialReasonList] = useState<DenialReasonItem[]>(
-    []
-  );
-  const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
-  const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
-  const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
-  const navigate = useNavigate();
+  const { t } = useTranslation()
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
+  const [rowId, setRowId] = useState<number>(1)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [totalData, setTotalData] = useState<number>(0)
+  const [DenialReasonList, setDenialReasonList] = useState<
+    DenialReasonItem[] | DenialReasonCollectors[]
+  >([])
+  const [functionList, setFunctionList] = useState<
+    {
+      functionId: string
+      functionNameEng: string
+      functionNameSChi: string
+      reasonTchi: string
+      name: string
+    }[]
+  >([])
+  const [functionOptions, setFunctionOptions] = useState<
+    { value: string; label: string }[]
+  >([])
+  const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null)
+  const navigate = useNavigate()
   const role = localStorage.getItem(localStorgeKeyName.role) || ''
+  const isCollectors = () => {
+    return role === 'collector'
+  }
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction();
-      const data = result?.data.filter((item: any) => item.tenantTypeId == role);
+      const result = await getAllFunction()
+      const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       if (data.length > 0) {
         let name = ''
-        data.map((item: { functionId: string; functionNameEng: string; functionNameSChi: string; functionNameTChi: string; name: string; }) => {
-          switch (i18n.language) {
-            case 'enus':
-              name = item.functionNameEng
-              break
-            case 'zhch':
-              name = item.functionNameSChi
-              break
-            case 'zhhk':
-              name = item.functionNameTChi
-              break
-            default:
-              name = item.functionNameTChi
-              break
+        data.map(
+          (item: {
+            functionId: string
+            functionNameEng: string
+            functionNameSChi: string
+            functionNameTChi: string
+            name: string
+          }) => {
+            switch (i18n.language) {
+              case 'enus':
+                name = item.functionNameEng
+                break
+              case 'zhch':
+                name = item.functionNameSChi
+                break
+              case 'zhhk':
+                name = item.functionNameTChi
+                break
+              default:
+                name = item.functionNameTChi
+                break
+            }
+            item.name = name
           }
-          item.name = name
-        })
+        )
       }
-      const options = data.map((item: { name: string; functionId: string; }) => {
+      const options = data.map((item: { name: string; functionId: string }) => {
         return {
           label: item.name,
           value: item.functionId
@@ -110,230 +115,229 @@ const DenialReason: FunctionComponent = () => {
         label: 'any',
         value: ''
       })
-      setFunctionList(data);
+      setFunctionList(data)
       setFunctionOptions(options)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
 
   const initDenialReasonList = async () => {
-    const result = await getAllDenialReason(page - 1, pageSize);
-    const data = result?.data;
+    let result = null
+    if (isCollectors()) {
+      result = await getDenialReasonCollectors(page - 1, pageSize)
+    } else {
+      result = await getAllDenialReason(page - 1, pageSize)
+    }
+
+    const data = result?.data
     if (data) {
-      var denialReasonMapping: DenialReasonItem[] = [];
+      var denialReasonMapping: DenialReasonCollectors[] | DenialReasonItem[] =
+        []
+
       data.content.map((item: any) => {
-        const functionItem = functionList.find((el) => el.functionId === item.functionId)
+        const functionItem = functionList.find(
+          (el) => el.functionId === item.functionId
+        )
         if (functionItem) {
           item.functionName = functionItem.name
         }
-        denialReasonMapping.push(
-          createDenialReason(
-            item?.reasonId,
-            item?.tenantId,
-            item?.reasonNameTchi,
-            item?.reasonNameSchi,
-            item?.reasonNameEng,
-            item?.description,
-            item?.remark,
-            item?.functionId,
-            item?.functionName,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
-          )
-        );
-      });
-      setDenialReasonList(denialReasonMapping);
-      setTotalData(data.totalPages);
+        denialReasonMapping.push(item)
+
+      })
+      console.log('denialReasonMapping', denialReasonMapping)
+      setDenialReasonList(denialReasonMapping)
+      setTotalData(data.totalPages)
     }
-  };
+  }
   const searchByFunctionId = async (functionId: number) => {
-    const result = await getAllDenialReasonByFunctionId(page - 1, pageSize, functionId);
-    const data = result?.data;
+    let result = null
+    if (isCollectors()) {
+      result = await getDenialReasonByFunctionIdCollectors(
+        page - 1,
+        pageSize,
+        functionId
+      )
+    } else {
+      result = await getAllDenialReasonByFunctionId(
+        page - 1,
+        pageSize,
+        functionId
+      )
+    }
+
+    const data = result?.data
     if (data) {
-      var denialReasonMapping: DenialReasonItem[] = [];
+      var denialReasonMapping: DenialReasonItem[] | DenialReasonCollectors[] =
+        []
       data.content.map((item: any) => {
-        const functionItem = functionList.find((el) => el.functionId === item.functionId)
+        const functionItem = functionList.find(
+          (el) => el.functionId === item.functionId
+        )
         if (functionItem) {
           item.functionName = functionItem.name
         }
-        denialReasonMapping.push(
-          createDenialReason(
-            item?.reasonId,
-            item?.tenantId,
-            item?.reasonNameTchi,
-            item?.reasonNameSchi,
-            item?.reasonNameEng,
-            item?.description,
-            item?.remark,
-            item?.functionId,
-            item?.functionName,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
-          )
-        );
-      });
-      setDenialReasonList(denialReasonMapping);
-      setTotalData(data.totalPages);
+        denialReasonMapping.push(item)
+      })
+      setDenialReasonList(denialReasonMapping)
+      setTotalData(data.totalPages)
     }
-  };
+  }
   useEffect(() => {
-    initFunctionList();
+    initFunctionList()
   }, [i18n.language])
-  
+
   useEffect(() => {
-    initDenialReasonList();
-  }, [functionList, page]);
+    initDenialReasonList()
+  }, [functionList, page])
 
   const columns: GridColDef[] = [
     {
-      field: "reasonNameTchi",
-      headerName: t("denial_reason.reason_name_tchi"),
+      field: 'reasonNameTchi',
+      headerName: t('denial_reason.reason_name_tchi'),
       width: 200,
-      type: "string",
+      type: 'string'
     },
     {
-      field: "reasonNameSchi",
-      headerName: t("denial_reason.reason_name_schi"),
+      field: 'reasonNameSchi',
+      headerName: t('denial_reason.reason_name_schi'),
       width: 200,
-      type: "string",
+      type: 'string'
     },
     {
-      field: "reasonNameEng",
-      headerName: t("denial_reason.reason_name_eng"),
+      field: 'reasonNameEng',
+      headerName: t('denial_reason.reason_name_eng'),
       width: 200,
-      type: "string",
+      type: 'string'
     },
     {
-      field: "functionName",
-      headerName: t("denial_reason.corresponding_functions"),
+      field: 'functionName',
+      headerName: t('denial_reason.corresponding_functions'),
       width: 100,
-      type: "number",
+      type: 'number'
     },
     {
-      field: "description",
-      headerName: t("denial_reason.description"),
+      field: 'description',
+      headerName: t('denial_reason.description'),
       width: 100,
-      type: "string",
+      type: 'string'
     },
     {
-      field: "remark",
-      headerName: t("denial_reason.remark"),
+      field: 'remark',
+      headerName: t('denial_reason.remark'),
       width: 100,
-      type: "string",
+      type: 'string'
     },
     {
-      field: "edit",
-      headerName: "",
+      field: 'edit',
+      headerName: '',
       renderCell: (params) => {
         return (
           <Button
             onClick={(event) => {
-              event.stopPropagation();
-              handleAction(params, "edit");
+              event.stopPropagation()
+              handleAction(params, 'edit')
             }}
           >
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
             />
           </Button>
-        );
-      },
+        )
+      }
     },
     {
-      field: "delete",
-      headerName: "",
+      field: 'delete',
+      headerName: '',
       renderCell: (params) => {
         return (
           <Button
             onClick={(event) => {
-              event.stopPropagation();
-              handleAction(params, "delete");
+              event.stopPropagation()
+              handleAction(params, 'delete')
             }}
           >
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
             />
           </Button>
-        );
-      },
-    },
-  ];
+        )
+      }
+    }
+  ]
 
   const searchfield = [
-    {label:t('denial_reason.corresponding_functions'),width:'100%',options: functionOptions}
+    {
+      label: t('denial_reason.corresponding_functions'),
+      width: '100%',
+      options: functionOptions
+    }
   ]
 
   const handleAction = (
     params: GridRenderCellParams,
-    action: "add" | "edit" | "delete"
+    action: 'add' | 'edit' | 'delete'
   ) => {
-    setAction(action);
-    setRowId(params.row.id);
-    setSelectedRow(params.row);
-    setDrawerOpen(true);
-  };
+    setAction(action)
+    setRowId(params.row.id)
+    setSelectedRow(params.row)
+    setDrawerOpen(true)
+  }
 
   const handleSelectRow = (params: GridRowParams) => {
-    setAction("edit");
-    setRowId(params.row.id);
-    setSelectedRow(params.row);
-    setDrawerOpen(true);
-  };
+    setAction('edit')
+    setRowId(params.row.id)
+    setSelectedRow(params.row)
+    setDrawerOpen(true)
+  }
 
   const showErrorToast = (msg: string) => {
     toast.error(msg, {
-      position: "top-center",
+      position: 'top-center',
       autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: "light",
-    });
-  };
+      theme: 'light'
+    })
+  }
 
   const showSuccessToast = (msg: string) => {
     toast.info(msg, {
-      position: "top-center",
+      position: 'top-center',
       autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: "light",
-    });
-  };
+      theme: 'light'
+    })
+  }
 
   const onSubmitData = (type: string, msg: string) => {
-    initDenialReasonList();
-    if (type == "success") {
-      showSuccessToast(msg);
+    initDenialReasonList()
+    if (type == 'success') {
+      showSuccessToast(msg)
     } else {
-      showErrorToast(msg);
+      showErrorToast(msg)
     }
-  };
+  }
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
-      top: params.isFirstVisible ? 0 : 10,
-    };
-  }, []);
+      top: params.isFirstVisible ? 0 : 10
+    }
+  }, [])
 
   const handleSearch = (keyName: string, value: string) => {
     if (value) {
@@ -347,53 +351,55 @@ const DenialReason: FunctionComponent = () => {
     <>
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          pr: 4,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          pr: 4
         }}
       >
         <ToastContainer></ToastContainer>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            marginY: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginY: 4
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t("top_menu.denial_reason")}
+            {t('top_menu.denial_reason')}
           </Typography>
           <Button
             sx={[
               styles.buttonOutlinedGreen,
               {
-                width: "max-content",
-                height: "40px",
-              },
+                width: 'max-content',
+                height: '40px'
+              }
             ]}
             variant="outlined"
             onClick={() => {
-              setDrawerOpen(true);
-              setAction("add");
+              setDrawerOpen(true)
+              setAction('add')
             }}
           >
-            <ADD_ICON /> {t("top_menu.add_new")}
+            <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
-          <Stack direction='row' mt={3} >
-            {searchfield.map((s, i)=>(
+          <Stack direction="row" mt={3}>
+            {searchfield.map((s, i) => (
               <CustomSearchField
                 key={i}
-                label={s.label} 
-                options={s.options || []} 
-                onChange={handleSearch} />
+                width="100%"
+                label={s.label}
+                options={s.options || []}
+                onChange={handleSearch}
+              />
             ))}
           </Stack>
-          <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
               rows={DenialReasonList}
               getRowId={(row) => row.reasonId}
@@ -403,19 +409,19 @@ const DenialReason: FunctionComponent = () => {
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               sx={{
-                border: "none",
-                "& .MuiDataGrid-cell": {
-                  border: "none",
+                border: 'none',
+                '& .MuiDataGrid-cell': {
+                  border: 'none'
                 },
-                "& .MuiDataGrid-row": {
-                  bgcolor: "white",
-                  borderRadius: "10px",
+                '& .MuiDataGrid-row': {
+                  bgcolor: 'white',
+                  borderRadius: '10px'
                 },
-                "&>.MuiDataGrid-main": {
-                  "&>.MuiDataGrid-columnHeaders": {
-                    borderBottom: "none",
-                  },
-                },
+                '&>.MuiDataGrid-main': {
+                  '&>.MuiDataGrid-columnHeaders': {
+                    borderBottom: 'none'
+                  }
+                }
               }}
             />
             <Pagination
@@ -423,7 +429,7 @@ const DenialReason: FunctionComponent = () => {
               count={Math.ceil(totalData)}
               page={page}
               onChange={(_, newPage) => {
-                setPage(newPage);
+                setPage(newPage)
               }}
             />
           </Box>
@@ -440,7 +446,7 @@ const DenialReason: FunctionComponent = () => {
         )}
       </Box>
     </>
-  );
-};
+  )
+}
 
-export default DenialReason;
+export default DenialReason

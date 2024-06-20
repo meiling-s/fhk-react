@@ -16,7 +16,10 @@ import { extractError, returnErrorMsg } from '../../../utils/utils'
 import {
   DenialReason,
   CreateDenialReason,
-  UpdateDenialReason
+  UpdateDenialReason,
+  DenialReasonCollectors,
+  CreateDenialReasonCollectors,
+  UpdateDenialReasonCollectors
 } from '../../../interfaces/denialReason'
 import { localStorgeKeyName } from '../../../constants/constant'
 import { getAllFunction } from '../../../APICalls/Collector/userGroup'
@@ -30,7 +33,7 @@ interface CreateDenialReasonProps {
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
   selectedItem?: DenialReason | null
-  denialReasonlist: DenialReason[]
+  denialReasonlist: DenialReason[] | DenialReasonCollectors[]
 }
 
 interface FormValues {
@@ -317,6 +320,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         updatedBy: loginName
       }
 
+
       if (action == 'add') {
         handleCreateDenialReason(denialReasonData)
       } else {
@@ -517,7 +521,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
-              ) : item.type == 'boolean' ? (
+              ) : item.type == 'boolean' && role === 'collector' ? (
                 <Grid item key={index}>
                   <CustomField label={item.label} mandatory></CustomField>
                   <Switcher
