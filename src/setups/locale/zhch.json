@@ -354,7 +354,8 @@
       "exp_opration": "已过期操作",
       "rec_loc_info": "回收地点资料",
       "logistic_company": "物流公司",
-      "actions": "行动"
+      "actions": "行动",
+      "download": "下载"
     },
     "create_pick_up_order": "建立",
     "edit_pick_up_order": "编辑取件订单",
@@ -572,8 +573,8 @@
     "inventory": "存货",
     "recyclingInformation": "回收信息",
     "date": "日期",
-    "recyleType": "子类别",
-    "recyleSubType": "子类别",
+    "recyleType": "可回收型",
+    "recyleSubType": "可回收子类型",
     "package": "包装",
     "recyclingNumber": "回收编号",
     "inventoryLocation": "库存位置",

@@ -355,7 +355,8 @@
       "exp_opration": "Expired operation",
       "rec_loc_info": "Recycling location information",
       "logistic_company": "Logistic company",
-      "actions": "Actions"
+      "actions": "Actions",
+      "download": "Download"
     },
     "create_pick_up_order": "Create",
     "edit_pick_up_order": "Edit pickup Order",

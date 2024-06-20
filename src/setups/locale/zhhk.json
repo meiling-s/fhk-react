@@ -353,7 +353,8 @@
       "exp_opration": "已過期操作",
       "rec_loc_info": "回收地點資料",
       "logistic_company": "物流公司",
-      "actions": "行動"
+      "actions": "行動",
+      "download": "下載"
     },
     "create_pick_up_order": "建立",
     "edit_pick_up_order": "編輯取件訂單",
@@ -570,8 +571,8 @@
     "inventory": "存貨",
     "recyclingInformation": "回收資訊",
     "date": "日期",
-    "recyleType": "子類別",
-    "recyleSubType": "子類別",
+    "recyleType": "可回收型",
+    "recyleSubType": "可回收子類型",
     "package": "包裝",
     "recyclingNumber": "回收編號",
     "inventoryLocation": "庫存位置",

@@ -49,8 +49,8 @@ const DownloadArea = () => {
       type: 'string'
     },
     {
-      field: 'edit',
-      headerName: t('pick_up_order.item.edit'),
+      field: 'download',
+      headerName: t('pick_up_order.item.download'),
       filterable: false,
       width: 200,
       renderCell: (params) => {
