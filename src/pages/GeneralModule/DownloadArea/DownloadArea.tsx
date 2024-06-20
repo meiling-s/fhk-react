@@ -11,7 +11,7 @@ import {
   GridRowSpacingParams
 } from '@mui/x-data-grid'
 import DownloadAreaModal from './DownloadAreaModal'
-import { getUserAccountById } from '../../../APICalls/Collector/userGroup'
+import { getStaffID, getUserAccountById } from '../../../APICalls/Collector/userGroup'
 import { Roles, localStorgeKeyName } from '../../../constants/constant'
 import { primaryColor } from '../../../constants/styles'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
@@ -273,9 +273,9 @@ const DownloadArea = () => {
   }, [])
 
   const getUserAccount = async () => {
-    const result = await getUserAccountById(loginId)
+    const result = await getStaffID(loginId)
     if (result) {
-      setStaffId(result.data?.staffId)
+      setStaffId(result.data)
     }
   }
 

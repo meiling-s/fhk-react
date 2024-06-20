@@ -912,6 +912,13 @@ export const GET_USER_ACCOUNT_LIST = (
   url: `api/v1/administrator/userAccount/t/${tenantId}`
 })
 
+export const GET_USER_ACCOUNT_LIST_PAGING = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userAccount/t/pageable/${tenantId}`
+})
+
 export const CREATE_USER_ACCOUNT: AxiosRequestConfig = {
   method: 'post',
   url: `api/v1/administrator/register`
@@ -1575,4 +1582,13 @@ export const GET_WEIGHT_RECYCABLES_DASHBOARD_ASTD = (
 export const GET_BROADCAST_MESSAGE = (): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/account/notiTemplate/broadcastMessage`
+})
+
+export const GET_STAFF_ID = (
+  realmApiRoute:string, 
+  tenantId: string,
+  loginId: string, 
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/staff/login/${tenantId}/${loginId}`
 })

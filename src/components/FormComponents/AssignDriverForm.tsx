@@ -183,12 +183,12 @@ props) => {
   }
 
   const onChangeField = (field: string, value: any) => {
-    const driverId = value.split('-')[0]
+    // const driverId = value.split('-')[0]
     if (field === 'driverId') {
       setAssignField((prev: AssignJobField) => {
         return {
           ...prev,
-          [field]: driverId
+          [field]: value
         }
       })
     } else {
@@ -385,19 +385,29 @@ props) => {
                             disablePortal
                             id="driver"
                             sx={{ width: '100%' }}
-                            value={assignField.driverId}
+                            // value={assignField.driverId}
+                            getOptionLabel={(option) => option?.driverName}
                             options={driverList.map((driver) => {
                               if (currentLang === 'enus') {
-                                return driver.driverNameEng
+                                return {
+                                  driverId: driver.driverId,
+                                  driverName: driver.driverNameEng
+                                }
                               } else if (currentLang === 'zhch') {
-                                return driver.driverNameSchi
-                              } else if (currentLang === 'zhhk') {
-                                return driver.driverNameTchi
+                                return {
+                                  driverId: driver.driverId,
+                                  driverName: driver.driverNameSchi
+                                }
+                              } else {
+                                return {
+                                  driverId:  driver.driverId,
+                                  driverName: driver.driverNameTchi
+                                }
                               }
                             })}
                             onChange={(event, value) => {
                               if (value) {
-                                onChangeField('driverId', value)
+                                onChangeField('driverId', value.driverId)
                               }
                             }}
                             renderInput={(params) => (
