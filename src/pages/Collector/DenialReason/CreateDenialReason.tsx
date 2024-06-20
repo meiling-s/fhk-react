@@ -406,7 +406,6 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
           result = await editDenialReason(selectedItem.reasonId, editData as UpdateDenialReason)
         }
 
-         // const result = await editDenialReason(selectedItem.reasonId, editData)
           if (result) {
             onSubmitData('success', t('common.editSuccessfully'))
             resetFormData()

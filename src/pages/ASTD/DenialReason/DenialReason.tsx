@@ -404,15 +404,16 @@ const DenialReason: FunctionComponent = () => {
           </Button>
         </Box>
         <div className="table-vehicle">
-          <Stack direction='row' mt={3} >
+          {/* <Stack direction='row' mt={3} > */}
             {searchfield.map((s, i)=>(
               <CustomSearchField
                 key={i}
+                width="100%"
                 label={s.label} 
                 options={s.options || []} 
                 onChange={handleSearch} />
             ))}
-          </Stack>
+          {/* </Stack> */}
           <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
             <DataGrid
               rows={DenialReasonList}
