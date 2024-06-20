@@ -22,7 +22,7 @@ function MainLayout() {
     styles.innerScreen.pt = '32px'
   };
 
-  if(broadcast) {
+  if(broadcast && showBroadcast) {
     styles.innerScreen.pt = '62px'
   }  else {
     styles.innerScreen.pt = '32px'

@@ -39,6 +39,7 @@ const Notification = () => {
       setNumOfNotif(0)
       getNumNotif(loginId)
       getNotifList(loginId)
+      setShowBroadcast(true)
     }
 
     const interval = setInterval((a) => {
@@ -99,9 +100,7 @@ const Notification = () => {
             }
           })
         }
-      } else {
-        setBroadcast(null)
-      }
+      } 
   }
 
   return {
