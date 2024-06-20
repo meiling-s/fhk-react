@@ -1298,5 +1298,12 @@
     "aggregationFunctionLabelSize" : "尺寸",
     "columnMenuManageColumns": "管理列",
     "select": "复选框选择"
+  },
+  "placeHolder": {
+    "enterRecyclingNumber": "输入回收物编号",
+    "any": "任何",
+    "classification": "分类",
+    "subclassification": "子分類",
+    "place": "地方"
   }
 }

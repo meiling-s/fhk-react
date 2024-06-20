@@ -1321,5 +1321,12 @@
     "aggregationFunctionLabelSize" : "尺寸",
     "columnMenuManageColumns": "管理欄目",
     "select": "複選框選擇"
+  },
+  "placeHolder": {
+    "enterRecyclingNumber": "輸入回收物編號",
+    "any": "任何",
+    "classification": "分類",
+    "subclassification": "兒童分類",
+    "place": "地方"
   }
 }

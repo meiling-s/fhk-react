@@ -1325,6 +1325,13 @@
     "aggregationFunctionLabelSize" : "size",
     "columnMenuManageColumns": "Manage columns",
     "select": "Checkbox selection"
+  },
+  "placeHolder": {
+    "enterRecyclingNumber": "Enter the recycling number",
+    "any": "Any",
+    "classification": "Slassification",
+    "subclassification": "Subclassification",
+    "place": "Place"
   }
 
 }

@@ -308,20 +308,24 @@ const Inventory: FunctionComponent = () => {
         {
             label: t('pick_up_order.filter.search'),
             field: 'search',
+            placeholder : t('placeHolder.enterRecyclingNumber'),
         },
         {
-            label: t('inventory.recyleType'),
+            label: t('placeHolder.classification'),
             options: getUniqueOptions('recycTypeId'),
             field: 'recycTypeId',
+            placeholder : t('placeHolder.any'),
         },
         {
-            label: t('inventory.recyleSubType'),
+            label: t('placeHolder.subclassification'),
             options: getUniqueOptions('recycSubTypeId'),
             field: 'recycSubTypeId',
+            placeholder :  t('placeHolder.any'),
         },
         {
-            label: t('inventory.inventoryLocation'),
+            label: t('placeHolder.place'),
             field: 'location',
+            placeholder :  t('placeHolder.any'),
         },
     ];
 
@@ -492,6 +496,7 @@ const Inventory: FunctionComponent = () => {
                         <CustomSearchField
                             key={index}
                             label={s.label}
+                            placeholder={s.placeholder}
                             field={s.field}
                             options={s.options || []}
                             onChange={handleSearch}
