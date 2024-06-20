@@ -14,10 +14,11 @@ function MainLayout() {
   const theme = useTheme()
   //todo move to global utils
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const { broadcast, setBroadcast } =  useContainer(NotifContainer);
+  const { broadcast, setBroadcast, setShowBroadcast, showBroadcast } =  useContainer(NotifContainer);
 
   const onCloseBroadcastMessage = () => {
-    setBroadcast(null)
+    // setBroadcast(null)
+    setShowBroadcast(false)
     styles.innerScreen.pt = '32px'
   };
 
@@ -29,7 +30,7 @@ function MainLayout() {
 
   return (
     <Box>
-      {broadcast &&
+      {showBroadcast && broadcast &&
         <Box sx={{...localStyle.broadcast}}>
           <Box sx={{marginLeft: '30px', display: 'flex', gap: 2}}>
             <Typography style={{fontSize: '13px', color: '#FFFFFF'}}>{broadcast.title}</Typography>

@@ -16,7 +16,7 @@ const Notification = () => {
   const [numOfNotif, setNumOfNotif] = useState(0)
   const [notifList, setNotifList] = useState<Notif[]>([])
   const [broadcast, setBroadcast] = useState<Broadcast | null>(null)
-
+  const [showBroadcast, setShowBroadcast] = useState<boolean>(true)
   // useEffect(() => {
   //  if(loginId){
   //   const interval = setInterval((a) => {
@@ -90,7 +90,14 @@ const Notification = () => {
               effToDate: message.effToDate
             }
         }
-          setBroadcast(broadcast)
+          setBroadcast(prev => {
+            if(prev?.content === broadcast?.content && prev?.title === broadcast?.title){
+              return prev
+            } else {
+              setShowBroadcast(true)
+              return broadcast
+            }
+          })
         }
       } else {
         setBroadcast(null)
@@ -104,7 +111,9 @@ const Notification = () => {
     setNumOfNotif,
     setNotifList,
     broadcast,
-    setBroadcast
+    setBroadcast,
+    showBroadcast, 
+    setShowBroadcast
   }
 }
 
