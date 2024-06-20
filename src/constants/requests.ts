@@ -912,6 +912,13 @@ export const GET_USER_ACCOUNT_LIST = (
   url: `api/v1/administrator/userAccount/t/${tenantId}`
 })
 
+export const GET_USER_ACCOUNT_LIST_PAGING = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userAccount/t/pageable/${tenantId}`
+})
+
 export const CREATE_USER_ACCOUNT: AxiosRequestConfig = {
   method: 'post',
   url: `api/v1/administrator/register`
@@ -931,10 +938,11 @@ export const GET_CHECKIN_CHECKOUT_LIST = (
   table: string,
   picoId: string,
   page: number,
-  size: number
+  size: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkinout/searching/${table}`,
+  url: `api/v1/${realmApiRoute}/checkinout/searching/${table}`,
   params: {
     picoId: picoId ?? '',
     page,
@@ -944,7 +952,8 @@ export const GET_CHECKIN_CHECKOUT_LIST = (
 
 export const GET_CHECKIN_BY_ID = (
   table: string,
-  chkInId: number
+  chkInId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/checkin/${table}/${chkInId}`
@@ -952,7 +961,8 @@ export const GET_CHECKIN_BY_ID = (
 
 export const GET_CHECKOUT_BY_ID = (
   table: string,
-  chkOutId: number
+  chkOutId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/checkout/${table}/${chkOutId}`
@@ -1572,4 +1582,13 @@ export const GET_WEIGHT_RECYCABLES_DASHBOARD_ASTD = (
 export const GET_BROADCAST_MESSAGE = (): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/account/notiTemplate/broadcastMessage`
+})
+
+export const GET_STAFF_ID = (
+  realmApiRoute:string, 
+  tenantId: string,
+  loginId: string, 
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/staff/login/${tenantId}/${loginId}`
 })

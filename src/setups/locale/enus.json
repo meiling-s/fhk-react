@@ -88,7 +88,9 @@
       "minMoreOneImgUploded": "At least 2 image for vehicle need to be uploaded",
       "startDateBehindEndDate": "Start Date is not allowed if the Start Date is later than to Date",
       "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
-      "loginIdCantContainAdmin": "not allowed have words in 'admin'"
+      "loginIdCantContainAdmin": "not allowed have words in 'admin'",
+      "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
+      "tenantIdNotFound": "Tenant Id not found"
     }
   },
   "component": {
@@ -548,7 +550,10 @@
     "speaker": "Speaker",
     "service_type": "Service type",
     "additional": "Additional",
-    "other_services": "Other services"
+    "other_services": "Other services",
+    "tenantIdPlaceHolder": "Enter tenant Id",
+    "tenantId": "Tenant Id",
+    "invalidTenantId": "Invalid Tenant ID"
   },
   "vehicle": {
     "vehicle": "Vehicle",
@@ -792,8 +797,8 @@
     "shipping_validity_date_to": "to",
     "shipping_company_name": "Shipping company",
     "recycling_location_information": "Recycling location information",
-    "main_category": "Type",
-    "subcategory": "Subtype",
+    "main_category": "Recyclable Type",
+    "subcategory": "Recyclable Subtype",
     "estimated_shipping_time": "Estimated shipping time",
     "weight": "weight",
     "shipping_and_receiving_companies": "Shipping and receiving",
@@ -804,7 +809,9 @@
     "driver": "Driver",
     "plat_number": "Plate number",
     "assign_driver": "Assign a driver",
-    "shippingDateAndTime": "Shipping Date And Time"
+    "shippingDateAndTime": "Shipping Date And Time",
+    "success_assign": "Success Assign Job Order",
+    "failed_assign": "Failed Assign Job Order"
   },
   "notification": {
     "notification_menu": "Notice template",
@@ -1025,7 +1032,8 @@
     "report_of_recycled_waste_inventory_manufacturers": "The report of recycled waste inventory list for recycled waste collectors and recycled waste manufacturers",
     "report_of_manu_recycled_order_list" :"The report of recycled customer order list",
     "report_of_manu_recycled_waste_tracing_list": "The report of recycled waste tracing list",
-    "report_of_manu_recycled_waste_classification_list":"The report of recycled waste classification statistic"
+    "report_of_manu_recycled_waste_classification_list":"The report of recycled waste classification statistic",
+    "report_of_user_management_list": "The report of user management list"
   },
   "purchase_order": {
     "all_order": "All Orders",

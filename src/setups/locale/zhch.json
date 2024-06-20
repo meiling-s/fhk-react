@@ -88,7 +88,9 @@
       "minMoreOneImgUploded": "至少需要上传2张车辆图片",
       "startDateBehindEndDate": "如果开始日期晚于截止日期，则不允许开始日期",
       "endDateEarlyThanStartDate": "如果“截止日期”早于“开始日期”，则不允许截止日期",
-      "loginIdCantContainAdmin": "'admin' 中不允许有单词"
+      "loginIdCantContainAdmin": "'admin' 中不允许有单词",
+      "tenatIdShouldBeSixDigit": "租户 ID 应为六位数字",
+      "tenantIdNotFound": "未找到租户 ID"
     }
   },
   "component": {
@@ -291,7 +293,7 @@
   "appBar": {
     "simplified_cn": "简体中文",
     "traditional_cn": "繁體中文",
-    "english": "英语",
+    "english": "English",
     "notify": "通知"
   },
   "pick_up_order": {
@@ -549,7 +551,10 @@
     "speaker": "讲者",
     "service_type": "服务种类",
     "additional": "额外的",
-    "other_services": "其他服务"
+    "other_services": "其他服务",
+    "tenantIdPlaceHolder": "输入租户 ID",
+    "tenantId": "租户 ID",
+    "invalidTenantId": "租户 ID 无效"
   },
   "vehicle": {
     "vehicle": "车辆",
@@ -769,8 +774,8 @@
     "shipping_validity_date_to": "至",
     "shipping_company_name": "寄件公司名称",
     "recycling_location_information": "回收地点资料",
-    "main_category": "主类别",
-    "subcategory": "次类别",
+    "main_category": "回收物主类別",
+    "subcategory": "回收物次类別",
     "estimated_shipping_time": "预计运送时间",
     "weight": "重量",
     "shipping_and_receiving_companies": "寄件及收件公司",
@@ -781,7 +786,9 @@
     "driver": "司机",
     "plat_number": "车牌号码",
     "assign_driver": "指派司机",
-    "shippingDateAndTime": "运输日期及时间"
+    "shippingDateAndTime": "运输日期及时间",
+    "success_assign": "成功分配工作订单",
+    "failed_assign": "分配作业订单失败"
   },
   "notification": {
     "notification_menu": "通知范本",
@@ -928,7 +935,7 @@
     "vehicleMenu": {
       "vehicle_number": "车辆号码",
       "license_plate_number": "车牌号",
-      "vehicle_type": "Vehicle Type",
+      "vehicle_type": "车辆类型",
       "vehicle_cargo_capacity": "车辆类型",
       "picture": "图片",
       "license_plate_number_placeholder": "请输入车牌号",
@@ -1001,7 +1008,8 @@
     "report_of_recycled_waste_inventory_manufacturers": "回收物庫存報表",
     "report_of_manu_recycled_order_list" :"顾客订单列表",
     "report_of_manu_recycled_waste_tracing_list": "回收物追踪列表",
-    "report_of_manu_recycled_waste_classification_list":"回收物类别分析表"
+    "report_of_manu_recycled_waste_classification_list":"回收物类别分析表",
+    "report_of_user_management_list": " 用戶報表"
   },
   "purchase_order": {
     "all_order": "所有订单",

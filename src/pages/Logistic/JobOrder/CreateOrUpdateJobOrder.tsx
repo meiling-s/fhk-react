@@ -11,7 +11,12 @@ import CardTravelIcon from '@mui/icons-material/CardTravel'
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined'
 import { useTranslation } from 'react-i18next'
 import AssignDriverForm from '../../../components/FormComponents/AssignDriverForm'
-import { OrderJobHeader, AssignJobDriver, DriverList, VehicleList } from '../../../interfaces/pickupOrder'
+import {
+  OrderJobHeader,
+  AssignJobDriver,
+  DriverList,
+  VehicleList
+} from '../../../interfaces/pickupOrder'
 import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
@@ -19,11 +24,16 @@ import { STATUS_CODE, format } from '../../../constants/constant'
 import { rejectAssginDriver, assignDriver } from '../../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
-import { extractError, formatWeight, returnApiToken } from '../../../utils/utils'
+import {
+  extractError,
+  formatWeight,
+  returnApiToken
+} from '../../../utils/utils'
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
-import { getAllVehiclesLogistic, getDriver } from "../../../APICalls/jobOrder";
+import { getAllVehiclesLogistic, getDriver } from '../../../APICalls/jobOrder'
+import { mappingRecyName } from '../../../utils/utils'
 
 const JobOrder = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -48,6 +58,7 @@ const JobOrder = () => {
   const { decimalVal } = useContainer(CommonTypeContainer)
   const [driverList, setDriverList] = useState<DriverList[]>([])
   const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
+  const { recycType } = useContainer(CommonTypeContainer)
 
   const handleCloses = () => {
     setId(0)
@@ -55,51 +66,50 @@ const JobOrder = () => {
     setIsActive(false)
   }
 
-  
   const initListDriver = async () => {
     try {
       const result = await getDriver(0, 1000, 'string')
       if (result) {
         const data = result?.data?.content
-        const mappingDriver : DriverList[] = []
+        const mappingDriver: DriverList[] = []
         data.forEach((item: any) => {
           mappingDriver.push({
             driverId: item.driverId,
-            driverNameEng:  item.driverNameEng,
-            driverNameSchi:  item.driverNameSchi,
-            driverNameTchi:  item.driverNameTchi,
+            driverNameEng: item.driverNameEng,
+            driverNameSchi: item.driverNameSchi,
+            driverNameTchi: item.driverNameTchi
           })
         })
         setDriverList(mappingDriver)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
 
   const initListVehicle = async () => {
-   try {
-    const result = await getAllVehiclesLogistic(0, 1000)
-    if (result) {
-      const data = result?.data?.content
-      const mappingVehicle : VehicleList[] = []
-      data.forEach((item: any) => {
-        mappingVehicle.push({
-          vehicleId: item.vehicleId,
-          plateNo:  item.plateNo,
+    try {
+      const result = await getAllVehiclesLogistic(0, 1000)
+      if (result) {
+        const data = result?.data?.content
+        const mappingVehicle: VehicleList[] = []
+        data.forEach((item: any) => {
+          mappingVehicle.push({
+            vehicleId: item.vehicleId,
+            plateNo: item.plateNo
+          })
         })
-      })
-      setVehicleList(mappingVehicle)
+        setVehicleList(mappingVehicle)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
   }
 
   useEffect(() => {
@@ -204,13 +214,13 @@ const JobOrder = () => {
         if (response?.status === 201) {
           onSubmitData(
             'success',
-            `Success Assign Job Order ${orderDetail.picoId}`
+            `${t('jobOrder.success_assign')} ${orderDetail.picoId}`
           )
           setTimeout(() => {
             onHandleCancel()
           }, 1000)
         } else {
-          onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+          onSubmitData('error', `${t('jobOrder.failed_assign')} ${order.picoDtlId}`)
         }
       }
     } else {
@@ -225,7 +235,7 @@ const JobOrder = () => {
             onHandleCancel()
           }, 1000)
         } else {
-          onSubmitData('error', `Failed Assign Job Order ${order.picoDtlId}`)
+          onSubmitData('error', `${t('jobOrder.failed_assign')} ${order.picoDtlId}`)
         }
       }
     }
@@ -282,6 +292,12 @@ const JobOrder = () => {
       showSuccessToast(msg)
     } else {
       showErrorToast(msg)
+    }
+  }
+
+  const getRecyName = (recycTypeId: string, recycSubTypeId: string) => {
+    if (recycType) {
+      return mappingRecyName(recycTypeId, recycSubTypeId, recycType)
     }
   }
 
@@ -403,7 +419,9 @@ const JobOrder = () => {
                       {' '}
                       {t('jobOrder.main_category')}
                     </label>
-                    <p className="font-semibold text-black">{item.recycType}</p>
+                    <p className="font-semibold text-black">
+                      {getRecyName(item.recycType, item.recycSubType)?.name}
+                    </p>
                   </div>
                   <div className="flex justify-start flex-col">
                     <label className="font-bold text-[#717171]">
@@ -411,7 +429,7 @@ const JobOrder = () => {
                       {t('jobOrder.subcategory')}
                     </label>
                     <p className="font-semibold text-black">
-                      {item.recycSubType}
+                      {getRecyName(item.recycType, item.recycSubType)?.subName}
                     </p>
                   </div>
                   <div className="flex items-center">

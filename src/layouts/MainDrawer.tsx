@@ -158,7 +158,7 @@ function MainDrawer() {
       'Check-in and check-out': {
         name: t('checkinandcheckout.checkinandcheckout'),
         icon: <LogoutIcon />,
-        onClick: () => navigate('/collector/checkInAndCheckout'),
+        onClick: () => navigate(`/${realm}/checkInAndCheckout`),
         collapse: false
       },
       Settings: {
