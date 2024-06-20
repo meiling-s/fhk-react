@@ -46,6 +46,7 @@ import { getDateFormat } from '../../../APICalls/ASTD/date'
 import { getWeightTolerance } from '../../../APICalls/ASTD/weight'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface CurrencyListProps {
   createdAt: string
@@ -109,6 +110,7 @@ const ASTDSettings: FunctionComponent = () => {
     null
   )
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initCurrencyList()
@@ -196,7 +198,8 @@ const ASTDSettings: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('notification.menu_staff.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -215,7 +218,8 @@ const ASTDSettings: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -426,6 +430,7 @@ const ASTDSettings: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

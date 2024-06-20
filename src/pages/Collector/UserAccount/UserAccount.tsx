@@ -31,6 +31,7 @@ import { styles } from '../../../constants/styles'
 import { getForgetPasswordRequest } from '../../../APICalls/forgetPassword'
 import { extractError } from '../../../utils/utils'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 type TableRow = {
   id: number
@@ -65,6 +66,7 @@ const UserAccount: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   const columns: GridColDef[] = [
     {
@@ -95,8 +97,9 @@ const UserAccount: FunctionComponent = () => {
     },
     {
       field: 'actions',
-      headerName: '',
+      headerName: t('pick_up_order.item.actions'),
       width: 300,
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -325,6 +328,7 @@ const UserAccount: FunctionComponent = () => {
                       disableRowSelectionOnClick
                       onRowClick={handleRowClick}
                       getRowSpacing={getRowSpacing}
+                      localeText={localeTextDataGrid}
                       sx={{
                         border: 'none',
                         '& .MuiDataGrid-cell': {
