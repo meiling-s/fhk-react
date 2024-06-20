@@ -1610,7 +1610,7 @@ export const GET_DENIAL_REASON_BY_FUNCTION_ID_COLLECTORS = (
 
 export const CREATE_DENIAL_REASON_COLLECTORS: AxiosRequestConfig = {
   method: 'post',
-  url: `/api/v1/collectors/reason/NEW`
+  url: `/api/v1/collectors/reason/new`
 }
 
 export const UPDATE_DENIAL_REASON_COLLECTORS = (

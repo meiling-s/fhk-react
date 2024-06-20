@@ -10,6 +10,7 @@ import {
   editDenialReason,
   createDenialReason
 } from '../../../APICalls/Collector/denialReason'
+import { createDenialReasonCollectors, editDenialReasonCollectors } from '../../../APICalls/Collector/denialReasonCollectors'
 import { styles } from '../../../constants/styles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { extractError, returnErrorMsg } from '../../../utils/utils'
@@ -27,12 +28,13 @@ import i18n from '../../../setups/i18n'
 import { useNavigate } from 'react-router-dom'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 
+
 interface CreateDenialReasonProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
-  selectedItem?: DenialReason | null
+  selectedItem?: DenialReason | DenialReasonCollectors | null
   denialReasonlist: DenialReason[] | DenialReasonCollectors[]
 }
 
@@ -76,14 +78,17 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   >([])
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [existingDenialReason, setExistingDenialReason] = useState<
-    DenialReason[]
+    DenialReason[] | DenialReasonCollectors[]
   >([])
+  const isCollectors = () => {
+    return role === 'collector'
+  }
+
   const navigate = useNavigate()
 
   const initFunctionList = async () => {
     try {
       const result = await getAllFunction()
-      // const data = result?.data;
       const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       if (data.length > 0) {
         let name = ''
@@ -176,6 +181,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
 
   const mappingData = () => {
     if (selectedItem != null) {
+      console.log("selectedItem", selectedItem)
       const selectedValue = functionList.find(
         (el) => el.functionId === selectedItem.functionId
       )
@@ -191,6 +197,12 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         remark: selectedItem.remark
       })
 
+      //set weather Flag
+      if (isCollectors() && (selectedItem as DenialReasonCollectors).weatherFlg !== undefined) {
+        setWeatherFlg((selectedItem as DenialReasonCollectors).weatherFlg)
+      } else {
+        setWeatherFlg(false)
+      }
       setExistingDenialReason(
         denialReasonlist.filter(
           (item) => item.reasonId != selectedItem.reasonId
@@ -307,7 +319,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       if (selectedValue) {
         formData.functionId = selectedValue.functionId
       }
-      const denialReasonData: CreateDenialReason = {
+      const denialReasonData: CreateDenialReason | CreateDenialReasonCollectors = {
         tenantId: tenantId.toString(),
         reasonNameTchi: formData.reasonNameTchi,
         reasonNameSchi: formData.reasonNameSchi,
@@ -317,7 +329,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         remark: formData.remark,
         status: 'ACTIVE',
         createdBy: loginName,
-        updatedBy: loginName
+        updatedBy: loginName,
+        ...(isCollectors() && { weatherFlg: weatherFlg })
       }
 
 
@@ -332,11 +345,17 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   }
 
   const handleCreateDenialReason = async (
-    denialReasonData: CreateDenialReason
+    denialReasonData: CreateDenialReason | CreateDenialReasonCollectors
   ) => {
     try {
       if (validation.length === 0) {
-        const result = await createDenialReason(denialReasonData)
+        let result = null
+        if (isCollectors()) {
+          result = await createDenialReasonCollectors(denialReasonData as CreateDenialReasonCollectors);
+        } else {
+          result = await createDenialReason(denialReasonData as CreateDenialReason);
+        }
+        
         if (result?.data) {
           onSubmitData('success', t('common.saveSuccessfully'))
           resetFormData()
@@ -367,7 +386,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       if (selectedValue) {
         formData.functionId = selectedValue.functionId
       }
-      const editData: UpdateDenialReason = {
+      const editData: UpdateDenialReason | UpdateDenialReasonCollectors = {
         reasonNameTchi: formData.reasonNameTchi,
         reasonNameSchi: formData.reasonNameSchi,
         reasonNameEng: formData.reasonNameEng,
@@ -375,11 +394,19 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         functionId: formData.functionId,
         status: 'ACTIVE',
         remark: formData.remark,
-        updatedBy: loginName
+        updatedBy: loginName,
+        ...(isCollectors() && { weatherFlg: weatherFlg })
       }
       if (validation.length === 0) {
         if (selectedItem != null) {
-          const result = await editDenialReason(selectedItem.reasonId, editData)
+          let result = null
+        if (isCollectors()) {
+          result = await editDenialReasonCollectors(selectedItem.reasonId, editData as UpdateDenialReasonCollectors);
+        } else {
+          result = await editDenialReason(selectedItem.reasonId, editData as UpdateDenialReason)
+        }
+
+         // const result = await editDenialReason(selectedItem.reasonId, editData)
           if (result) {
             onSubmitData('success', t('common.editSuccessfully'))
             resetFormData()

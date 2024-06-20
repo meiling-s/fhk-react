@@ -148,7 +148,7 @@ const DenialReason: FunctionComponent = () => {
         denialReasonMapping.push(item)
 
       })
-      console.log('denialReasonMapping', denialReasonMapping)
+     
       setDenialReasonList(denialReasonMapping)
       setTotalData(data.totalPages)
     }
