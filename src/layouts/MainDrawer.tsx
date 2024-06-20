@@ -72,7 +72,7 @@ function MainDrawer() {
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0)
   const [selectedISubIndex, setSelectedSubIndex] = useState<number | 0>(0)
   const { realmApiRoute } = returnApiToken()
-  const { broadcast } =  useContainer(NotifContainer);
+  const { broadcast, showBroadcast } =  useContainer(NotifContainer);
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -488,7 +488,7 @@ function MainDrawer() {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             padding: '10px',
-            marginTop: `${broadcast ? '30px' : ''}`
+            marginTop: `${broadcast && showBroadcast ? '30px' : ''}`
           }
         }}
         variant={isMobile ? 'temporary' : 'permanent'}
