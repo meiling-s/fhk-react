@@ -414,9 +414,10 @@ type inviteForm = {
   isLoading: boolean
   onClose: () => void
   onSubmitForm: (formikValues: InviteTenant) => void
+  isDuplicated: boolean
 }
 
-function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
+function InviteForm({ open, isLoading, onClose, onSubmitForm, isDuplicated }: inviteForm) {
   const { t } = useTranslation()
   //const [submitable, setSubmitable] = useState<boolean>(false)
 
@@ -512,7 +513,7 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
       try {
         await onSubmitForm(values)
         resetForm()
-        onClose && onClose()
+        //onClose && onClose()
       } catch (error) {
         console.error('Error submitting form:', error)
       }
@@ -791,6 +792,9 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
                   {formik.errors.remark && formik.touched.remark && (
                     <Alert severity="error">{formik.errors.remark} </Alert>
                   )}
+                  {isDuplicated &&(
+                    <Alert severity="error">{t('tenant.invite_modal.err_duplicated')} </Alert>
+                  )}
                 </Stack>
               </Box>
               <Box sx={{ alignSelf: 'center' }}>
@@ -798,7 +802,7 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
               </Box>
               <Box sx={{ alignSelf: 'center', paddingBottom: '16px' }}>
                 <Button
-                  //disabled={!formik.isValid || isLoading}
+                  disabled={!formik.isValid || isLoading}
                   onClick={handleSubmit}
                   type="submit"
                   // onClick={async () => {
@@ -849,6 +853,7 @@ function CompanyManage() {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const { dateFormat } = useContainer(CommonTypeContainer)
+  const [duplicatedData, setDuplicatedData] = useState<boolean>(false)
   const realmOptions = [
     {
       key: 'collector',
@@ -1138,6 +1143,7 @@ function CompanyManage() {
 
   const handleCloseInvite = () => {
     setInvSendModal(false)
+    setDuplicatedData(false)
     initCompaniesData()
   }
 
@@ -1193,6 +1199,7 @@ function CompanyManage() {
         setInvSendModal(true)
         setInvFormModal(false)
         setIsLoadingInvite(false)
+        setDuplicatedData(false)
       } else {
         showErrorToast(t('common.saveFailed'))
         setIsLoadingInvite(false)
@@ -1202,7 +1209,9 @@ function CompanyManage() {
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        showErrorToast(t('common.saveFailed'))
+        showErrorToast(`${t('common.saveFailed')}`)
+        setDuplicatedData(true)
+        // console.log("test", "lalal2")
         setIsLoadingInvite(false)
       }
     }
@@ -1233,7 +1242,7 @@ function CompanyManage() {
             }
           ]}
           variant="outlined"
-          onClick={() => setInvFormModal(true)}
+          onClick={() => {setInvFormModal(true); setDuplicatedData(false)}}
         >
           <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t('tenant.invite')}
         </Button>
@@ -1318,6 +1327,7 @@ function CompanyManage() {
           isLoading={isLoadingInvite}
           onClose={() => setInvFormModal(false)}
           onSubmitForm={onInviteFormSubmit}
+          isDuplicated={duplicatedData}
         />
 
         <InviteModal

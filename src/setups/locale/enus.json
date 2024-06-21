@@ -496,7 +496,8 @@
       "send": "send",
       "invite_success": "Success send invitation",
       "invite_failed": "Failed send invitation",
-      "err_date": "Invalid Shipping validity date. Ensure To date is later than the Start date"
+      "err_date": "Invalid Shipping validity date. Ensure To date is later than the Start date",
+      "err_duplicated": "Company number/Company name/Business Reg. No. already exist"
     },
     "detail": {
       "company_category": "Company category",
