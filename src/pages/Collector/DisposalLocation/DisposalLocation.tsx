@@ -21,6 +21,7 @@ import CreateDisposalLocation from "./CreateDisposalLocation";
 import { useNavigate } from "react-router-dom";
 import { extractError } from "../../../utils/utils";
 import { STATUS_CODE } from "../../../constants/constant";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 function createDisposalLocation(
   disposalLocId: string,
@@ -67,6 +68,7 @@ const DisposalLocation: FunctionComponent = () => {
   );
   const [selectedRow, setSelectedRow] = useState<DisposalLocationItem | null>(null);
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   const initDisposalLocationList = async () => {
    try {
@@ -141,7 +143,8 @@ const DisposalLocation: FunctionComponent = () => {
     },
     {
       field: "edit",
-      headerName: "",
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -161,7 +164,8 @@ const DisposalLocation: FunctionComponent = () => {
     },
     {
       field: "delete",
-      headerName: "",
+      headerName:  t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -289,6 +293,7 @@ const DisposalLocation: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: "none",
                 "& .MuiDataGrid-cell": {

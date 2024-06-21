@@ -21,6 +21,7 @@ import CreateCompany from './CreateCompany'
 import { extractError } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 function createCompany(
   companyId: string,
@@ -79,6 +80,7 @@ const Company: FunctionComponent = () => {
   const [manuData, setManuData] = useState<number>(0)
   const [customerData, setCustomerData] = useState<number>(0)
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
   
   const initCompanyList = async (companyType: string) => {
    try {
@@ -237,7 +239,8 @@ const Company: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -257,7 +260,8 @@ const Company: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -422,6 +426,7 @@ const Company: FunctionComponent = () => {
                     handleSelectRow(params, item)
                   }}
                   getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
                   sx={{
                     border: 'none',
                     '& .MuiDataGrid-cell': {

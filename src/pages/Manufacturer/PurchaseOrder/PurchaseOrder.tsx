@@ -41,6 +41,7 @@ import {
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -258,6 +259,7 @@ const PurchaseOrder = () => {
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
   const userRole = localStorage.getItem(localStorgeKeyName.role) || ''
   const rolesEnableCreatePO = [Roles.customerAdmin]
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   let columns: GridColDef[] = [
     //
@@ -782,6 +784,7 @@ const PurchaseOrder = () => {
             disableRowSelectionOnClick
             onRowClick={handleRowClick}
             getRowSpacing={getRowSpacing}
+            localeText={localeTextDataGrid}
             hideFooter
             sx={{
               border: 'none',
