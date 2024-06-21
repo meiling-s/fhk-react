@@ -12,7 +12,9 @@ import {
   Divider,
   Pagination,
   CircularProgress,
-  Alert
+  Alert,
+  FormControl,
+  MenuItem
 } from '@mui/material'
 import {
   DataGrid,
@@ -21,9 +23,11 @@ import {
   GridRowSpacingParams,
   GridCellParams
 } from '@mui/x-data-grid'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { ADD_PERSON_ICON, SEARCH_ICON } from '../../themes/icons'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { visuallyHidden } from '@mui/utils'
+import CloseIcon from '@mui/icons-material/Close'
 import React from 'react'
 import {
   createInvitation,
@@ -50,7 +54,6 @@ import { useTranslation } from 'react-i18next'
 import { ErrorMessage, useFormik, validateYupSchema } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
-import CustomAutoComplete from '../../components/FormComponents/CustomAutoComplete'
 import {
   extractError,
   returnApiToken,
@@ -62,6 +65,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import i18n from '../../setups/i18n'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -110,17 +114,46 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
   const navigate = useNavigate()
 
-  const reasons: il_item[] = [
-    {
-      id: '1',
-      name: t('tenant.photo_blury')
-    },
-    {
-      id: '2',
-      name: t('tenant.bussniess_error')
-    }
-  ]
-
+  const getReason = () => {
+    const reasonList = [
+      {
+        id: '1',
+        reasonEn: 'Photo is blurry',
+        reasonSchi: '照片模糊"',
+        reasonTchi: '照片模糊'
+      },
+      {
+        id: '2',
+        reasonEn: 'Business number does not match',
+        reasonSchi: '商业编号不匹配',
+        reasonTchi: '商業編號不匹配'
+      }
+    ]
+    const reasons: il_item[] = []
+    reasonList.forEach((item) => {
+      var name = ''
+      switch (i18n.language) {
+        case 'enus':
+          name = item.reasonEn
+          break
+        case 'zhch':
+          name = item.reasonSchi
+          break
+        case 'zhhk':
+          name = item.reasonTchi
+          break
+        default:
+          name = item.reasonTchi //default fallback language is zhhk
+          break
+      }
+      const reasonItem: il_item = {
+        id: item.id,
+        name: name
+      }
+      reasons.push(reasonItem)
+    })
+    return reasons
+  }
   const handleRejectRequest = async () => {
     try {
       const statData: UpdateStatus = {
@@ -157,7 +190,7 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
               component="h3"
               sx={{ fontWeight: 'bold' }}
             >
-              {`Are you sure to reject the ${tenantId}?`}
+              {`${t('tenant.are_sure_to_reject')} ${tenantId}?`}
             </Typography>
           </Box>
           <Divider />
@@ -165,7 +198,10 @@ function RejectModal({ tenantId, open, onClose, onSubmit }: rejectModal) {
             <Typography sx={localstyles.typo}>
               {t('check_out.reject_reasons')}
             </Typography>
-            <CustomItemList items={reasons} multiSelect={setRejectReasonId} />
+            <CustomItemList
+              items={getReason() || []}
+              multiSelect={setRejectReasonId}
+            />
           </Box>
 
           <Box sx={{ alignSelf: 'center', paddingY: 3 }}>
@@ -382,42 +418,89 @@ type inviteForm = {
 
 function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
   const { t } = useTranslation()
-  const [submitable, setSubmitable] = useState<boolean>(false)
+  //const [submitable, setSubmitable] = useState<boolean>(false)
 
   const validateSchema = Yup.object().shape({
     companyNumber: Yup.number().required(
-      `${t('tenant.invite_form.company_number')} is required`
+      `${t('tenant.invite_form.company_number')} ${t(
+        'purchase_order.create.is_required'
+      )} `
     ),
     companyCategory: Yup.string().required(
-      `${t('tenant.invite_form.company_category')} is required`
+      `${t('tenant.invite_form.company_category')} ${t(
+        'purchase_order.create.is_required'
+      )}`
     ),
     companyZhName: Yup.string().required(
-      `${t('tenant.invite_form.company_zh_name')} is required`
+      `${t('tenant.invite_form.company_zh_name')} ${t(
+        'purchase_order.create.is_required'
+      )}`
     ),
     companyCnName: Yup.string().required(
-      `${t('tenant.invite_form.company_cn_name')} is required`
+      `${t('tenant.invite_form.company_cn_name')} ${t(
+        'purchase_order.create.is_required'
+      )}`
     ),
     companyEnName: Yup.string().required(
-      `${t('tenant.invite_form.company_en_name')} is required`
+      `${t('tenant.invite_form.company_en_name')} ${t(
+        'purchase_order.create.is_required'
+      )}`
     ),
     bussinessNumber: Yup.string().required(
-      `${t('tenant.invite_form.bussiness_number')} is required`
+      `${t('tenant.invite_form.bussiness_number')} ${t(
+        'purchase_order.create.is_required'
+      )}`
     ),
     remark: Yup.string().required(
-      `${t('tenant.invite_form.remark')} is required`
-    )
+      `${t('tenant.invite_form.remark')} ${t(
+        'purchase_order.create.is_required'
+      )}`
+    ),
+    effFrmDate: Yup.date()
+      .nullable()
+      .required(
+        `${t('pick_up_order.shipping_validity')} ${t(
+          'purchase_order.create.is_required'
+        )}`
+      )
+      .test(
+        'is-before-end-date',
+        `${t('pick_up_order.shipping_validity')} ${t(
+          'tenant.invite_modal.err_date'
+        )} `,
+        function (value) {
+          const { effToDate } = this.parent
+          return !effToDate || !value || new Date(value) <= new Date(effToDate)
+        }
+      ),
+    effToDate: Yup.date()
+      .nullable()
+      .required(
+        `${t('pick_up_order.to')} ${t('purchase_order.create.is_required')}`
+      )
+      .test(
+        'is-after-start-date',
+        `${t('pick_up_order.to')} ${t('tenant.invite_modal.err_date')} `,
+        function (value) {
+          const { effFrmDate } = this.parent
+
+          return (
+            !effFrmDate || !value || new Date(value) >= new Date(effFrmDate)
+          )
+        }
+      )
   })
 
   const initialValues = {
     tenantId: 0,
     companyNumber: '',
-    companyCategory: '',
+    companyCategory: 'Collector',
     companyZhName: '',
     companyCnName: '',
     companyEnName: '',
     bussinessNumber: '',
-    effFrmDate: '',
-    effToDate: '',
+    effFrmDate: new Date().toDateString(),
+    effToDate: new Date().toDateString(),
     remark: ''
   }
 
@@ -456,7 +539,24 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
       id: 'companyCategory',
       value: formik.values.companyCategory,
       error: formik.errors.companyCategory && formik.touched.companyCategory,
-      options: ['Collector', 'Logistic', 'Manufacturer', 'Customer']
+      options: [
+        {
+          key: 'Collector',
+          label: t('tenant.invite_form.collector_company')
+        },
+        {
+          key: 'Logistic',
+          label: t('tenant.invite_form.logistic_company')
+        },
+        {
+          key: 'Manufacturer',
+          label: t('tenant.invite_form.manufacturer_company')
+        },
+        {
+          key: 'Customer',
+          label: t('tenant.invite_form.customer_company')
+        }
+      ]
     },
     {
       label: t('tenant.invite_form.company_zh_name'),
@@ -507,13 +607,21 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
               localstyles.modal,
               {
                 height: '90%',
-                width: '40%',
+                width: 'max-content',
                 overflowY: 'auto'
               }
             ]}
           >
             <Stack spacing={2}>
-              <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+              <Box
+                sx={{
+                  paddingX: 3,
+                  paddingTop: 3,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
@@ -522,6 +630,10 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
                 >
                   {t('tenant.invite_modal.invite_company')}
                 </Typography>
+                <CloseIcon
+                  className="text-black cursor-pointer"
+                  onClick={onClose}
+                />
               </Box>
               <Divider />
               <Box sx={{ paddingX: 3, paddingTop: 3 }}>
@@ -529,20 +641,39 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
                   <Grid item sx={{ marginBottom: 3 }} key={index}>
                     <CustomField mandatory label={t.label}>
                       {t.id === 'companyCategory' ? (
-                        <CustomAutoComplete
-                          placeholder={t.placeholder}
-                          option={t.options?.map((option) => option)}
-                          sx={{ width: '100%' }}
-                          onChange={(
-                            _: SyntheticEvent,
-                            newValue: string | null
-                          ) => {
-                            formik.setFieldValue('companyCategory', newValue)
-                          }}
-                          value={t.value}
-                          inputValue={t.value}
-                          error={t.error || undefined}
-                        />
+                        <Grid item>
+                          <FormControl
+                            sx={{
+                              width: '100%'
+                            }}
+                          >
+                            <Select
+                              labelId="userGroup"
+                              id="userGroup"
+                              value={t.value}
+                              sx={{
+                                borderRadius: '12px'
+                              }}
+                              onChange={(event: SelectChangeEvent<string>) => {
+                                const selectedValue = t?.options?.find(
+                                  (item) => item.key === event.target.value
+                                )
+                                if (selectedValue) {
+                                  formik.setFieldValue(
+                                    'companyCategory',
+                                    selectedValue.key
+                                  )
+                                }
+                              }}
+                            >
+                              {t?.options?.map((item, index) => (
+                                <MenuItem key={index} value={item.key}>
+                                  {item.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Grid>
                       ) : t.id === 'companyNumber' ? (
                         <Box>
                           <TextField
@@ -651,6 +782,12 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
                         {formik.errors.bussinessNumber}{' '}
                       </Alert>
                     )}
+                  {formik.errors.effFrmDate && formik.touched.effFrmDate && (
+                    <Alert severity="error">{formik.errors.effFrmDate} </Alert>
+                  )}
+                  {formik.errors.effToDate && formik.touched.effToDate && (
+                    <Alert severity="error">{formik.errors.effToDate} </Alert>
+                  )}
                   {formik.errors.remark && formik.touched.remark && (
                     <Alert severity="error">{formik.errors.remark} </Alert>
                   )}
@@ -661,7 +798,7 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
               </Box>
               <Box sx={{ alignSelf: 'center', paddingBottom: '16px' }}>
                 <Button
-                  disabled={!formik.isValid || isLoading}
+                  //disabled={!formik.isValid || isLoading}
                   onClick={handleSubmit}
                   type="submit"
                   // onClick={async () => {
@@ -678,7 +815,7 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm }: inviteForm) {
                     }
                   ]}
                 >
-                  提交
+                  {t('changePass.submitPassword')}
                 </Button>
               </Box>
             </Stack>
@@ -715,19 +852,19 @@ function CompanyManage() {
   const realmOptions = [
     {
       key: 'collector',
-      label: 'Collector'
+      label: t('tenant.invite_form.collector_company')
     },
     {
       key: 'logistic',
-      label: 'Logistic'
+      label: t('tenant.invite_form.logistics_company')
     },
     {
       key: 'manufacturer',
-      label: 'Manufacturer'
+      label: t('tenant.invite_form.manufacturing_company')
     },
     {
       key: 'customer',
-      label: 'Customer'
+      label: t('tenant.invite_form.customer_company')
     }
   ]
   const navigate = useNavigate()
@@ -768,7 +905,7 @@ function CompanyManage() {
         showSuccessToast(t('common.approveSuccess'))
         initCompaniesData()
       }
-    //  window.location.reload()
+      //  window.location.reload()
       setOpenDetails(false)
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -926,7 +1063,7 @@ function CompanyManage() {
             .utc(new Date(com?.createdAt))
             .tz('Asia/Hong_Kong')
             .format(`${dateFormat} HH:mm`),
-          0
+          com?.decimalPlace || 0
         )
       )
     })
@@ -977,7 +1114,7 @@ function CompanyManage() {
 
   const onRejectModal = () => {
     initCompaniesData()
-    console.log("onRejectModal", onRejectModal)
+    console.log('onRejectModal', onRejectModal)
     showSuccessToast(t('common.rejectSuccess'))
     setOpenDetails(false)
   }

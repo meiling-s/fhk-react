@@ -463,8 +463,9 @@
     "number_of_acc": "帐户数量",
     "photo_blury ": "照片模糊",
     "bussniess_error": "商业编号不匹配",
-    "closed_tenant_title": "您确定将租户状态更改为“已关闭”吗 ?",
+    "closed_tenant_title": "您确定要将状态更改为“已停用”吗?",
     "closes_success": "关闭租户状态成功",
+    "are_sure_to_reject": "您确定要拒绝该申请吗",
     "invite_form": {
       "company_number": "公司编号 ",
       "enter_company": "",
@@ -476,11 +477,15 @@
       "remark": "备注",
       "enter_company_number": "请输入公司编号",
       "enter_company_category": "请输入公司类别",
-      "enter_company_zh_name": "请输入公司繁体中文",
-      "enter_company_cn_name": "请输入公司中文名称",
+      "enter_company_zh_name": "请输入公司繁体中文名称",
+      "enter_company_cn_name": "请输入公司简体中文名称",
       "enter_company_en_name": "请输入公司英文名称",
       "enter_bussiness_number": "请输入商业登记号码",
-      "enter_remark": "请输入文字"
+      "enter_remark": "请输入文字",
+      "collector_company": "回收公司",
+      "logistic_company": "物流公司",
+      "manufacturer_company": "回收厂",
+      "customer_company": "顾客公司"
     },
     "invite_modal": {
       "invite_company": "邀请公司",
@@ -491,7 +496,8 @@
       "copy": "复制",
       "send": "发送",
       "invite_success": "成功发送邀请",
-      "invite_failed": "发送邀请失败"
+      "invite_failed": "发送邀请失败",
+      "err_date": " 运送有效期无效。确保截止日期晚于开始日期"
     },
     "detail": {
       "company_category": "公司类别",
@@ -520,7 +526,8 @@
       "default_lang": "默认语言",
       "confirm": "启用",
       "suspend": "未启用",
-      "closed": "已停用"
+      "closed": "已停用",
+      "deactivated_reason": "停用原因”"
     }
   },
   "report": {

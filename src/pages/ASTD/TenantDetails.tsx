@@ -14,7 +14,8 @@ import {
   ImageListItem,
   Card,
   Modal,
-  Divider
+  Divider,
+  TextField
 } from '@mui/material'
 import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
@@ -44,7 +45,7 @@ import { useContainer } from 'unstated-next'
 import { localStorgeKeyName } from '../../constants/constant'
 import { ToastContainer, toast } from 'react-toastify'
 
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 
@@ -104,7 +105,7 @@ function ClosedTenantModal({
           <Divider />
           <Box sx={{ paddingX: 3, paddingTop: 3 }}>
             <Typography sx={localstyles.typo}>
-              {t('check_out.reject_reasons')}
+              {t('tenant.detail.deactivated_reason')}
             </Typography>
             <CustomItemList items={reasons} singleSelect={setReasonId} />
           </Box>
@@ -162,10 +163,14 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const [reasons, setReasons] = useState<il_item[]>([])
   const { i18n } = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role) || ''
+  const [translatedTenantType, setTranslatedTenantType] = useState('...')
 
   const footerTenant = `[${tenantDetail?.tenantId}] ${t(
     `status.${tenantDetail?.status.toLocaleLowerCase()}`
-  )} ${dayjs.utc(tenantDetail?.updatedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)} `
+  )} ${dayjs
+    .utc(tenantDetail?.updatedAt)
+    .tz('Asia/Hong_Kong')
+    .format(`${dateFormat} HH:mm`)} `
 
   useEffect(() => {
     getCompanyDetail()
@@ -185,10 +190,24 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setSelectedStatus(data?.status || '')
   }
 
+  useEffect(() => {
+    setTranslatedTenantType('...')
+
+    // Memperbarui state dengan terjemahan setelah render pertama
+    const translatedValue = getTranslatorTenantType() || ''
+    setTranslatedTenantType(translatedValue)
+  }, [tenantDetail, t])
+
+  const getTranslatorTenantType = () => {
+    if (tenantDetail) {
+      return t(`tenant.invite_form.${tenantDetail?.tenantType}_company`)
+    }
+  }
+
   const mainInfoFields = [
     {
       label: t('tenant.detail.company_category'),
-      value: tenantDetail?.tenantType
+      value: translatedTenantType
     },
     {
       label: t('tenant.detail.company_name_traditional_chinese'),
@@ -209,7 +228,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   ]
 
   const statuses: il_item[] = [
-    { id: 'CREATED', name: t('status.created') },
+    // { id: 'CREATED', name: t('status.created') },
     { id: 'CONFIRMED', name: t('tenant.detail.confirm') },
     { id: 'SUSPEND', name: t('tenant.detail.suspend') },
     { id: 'CLOSED', name: t('tenant.detail.closed') }
@@ -235,12 +254,6 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     { id: '4', name: '4' },
     { id: '5', name: '5' }
   ]
-
-  // useEffect(() => {
-  //   if (selectedStatus === 'CLOSED') {
-  //     setModalClosed(true)
-  //   }
-  // }, [selectedStatus])
 
   const getReasonList = async () => {
     const result = await getReasonTenant(0, 100, tenantId.toString(), 1)
@@ -432,7 +445,10 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.creation_date')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  {dayjs.utc(tenantDetail?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`) || ''}
+                  {dayjs
+                    .utc(tenantDetail?.createdAt)
+                    .tz('Asia/Hong_Kong')
+                    .format(`${dateFormat} HH:mm`) || ''}
                 </div>
               </div>
             </Box>
@@ -596,13 +612,23 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 {t('tenant.detail.max_photo_upload_capacity')}
               </Typography>
               <CustomField label="">
-                <CustomTextField
-                  id={'please_enter_capacity_mb'}
-                  placeholder={t('tenant.detail.please_enter_capacity_mb')}
-                  onChange={(event) => setMaxUploadSize(event.target.value)}
+                <TextField
+                  fullWidth
+                  InputProps={{
+                    sx: styles.textField
+                  }}
+                  onChange={(event) => {
+                    const numericValue = event.target.value.replace(/\D/g, '')
+                    setMaxUploadSize(numericValue)
+                  }}
+                  sx={localstyles.inputState}
                   value={maxUploadSize}
-                  sx={{ width: '100%' }}
-                ></CustomTextField>
+                  inputProps={{
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*',
+                    maxLength: 6
+                  }}
+                />
               </CustomField>
             </Box>
             <Grid item className="field-default-lang">
@@ -744,6 +770,21 @@ let localstyles = {
     backgroundColor: 'white',
     border: 'none',
     borderRadius: 5
+  },
+  inputState: {
+    '& .MuiInputLabel-root': {
+      color: '#ACACAC'
+      /* Add any other custom styles here */
+    },
+    '& .MuiOutlinedInput-root': {
+      margin: 0,
+      '&:not(.Mui-disabled):hover fieldset': {
+        borderColor: '#79CA25'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#79CA25'
+      }
+    }
   }
 }
 

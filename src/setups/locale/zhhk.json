@@ -461,8 +461,9 @@
     "created_date": "建立日期",
     "number_of_acc": "帳戶數量",
     "photo_blury ": "照片模糊",
+    "are_sure_to_reject": "您确定要拒绝该申请吗",
     "bussniess_error": "商業編號不匹配",
-    "closed_tenant_title": "您確定將租戶狀態變更為「已關閉」嗎 ?",
+    "closed_tenant_title": "您確定要將狀態變更為「已停用」嗎?",
     "closes_success" :"關閉租戶狀態成功",
     "invite_form": {
       "company_number": "公司編號 ",
@@ -474,11 +475,15 @@
       "remark": "備註",
       "enter_company_number": "請輸入公司編號",
       "enter_company_category": "請輸入公司類別",
-      "enter_company_zh_name": "請輸入公司繁體中文",
-      "enter_company_cn_name": "請輸入公司中文名稱",
+      "enter_company_zh_name": "請輸入公司繁體中文名稱",
+      "enter_company_cn_name": "請輸入公司簡體中文名稱",
       "enter_company_en_name": "請輸入公司英文名稱",
       "enter_bussiness_number": "請輸入商業登記號碼",
-      "enter_remark": "請輸入文字"
+      "enter_remark": "請輸入文字",
+      "collector_company": "回收公司",
+      "logistic_company": "物流公司",
+      "manufacturer_company": "回收廠",
+      "customer_company": "顧客公司"
     },
     "invite_modal": {
       "invite_company": "邀請公司",
@@ -489,7 +494,8 @@
       "copy": "複製",
       "send": "傳送",
       "invite_success": "成功發送邀請",
-      "invite_failed": "發送邀請失敗"
+      "invite_failed": "發送邀請失敗",
+      "err_date": "運送有效期限無效。確保截止日期晚於開始日期"
     },
     "detail": {
       "company_category": "公司類別",
@@ -518,7 +524,8 @@
       "default_lang": "預設語言",
       "confirm": "啟用",
       "suspend": "未啟用",
-      "closed": "已停用"
+      "closed": "已停用",
+      "deactivated_reason": "停用原因”"
     }
   },
   "report": {
