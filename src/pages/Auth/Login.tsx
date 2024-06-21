@@ -117,6 +117,16 @@ const Login = () => {
         })
         //console.log(result, 'result login')
         if (result && result.access_token) {
+          const ipAddress = localStorage.getItem('ipAddress')
+          if(ipAddress){
+            const userActivity:UserActivity = {
+              operation: 'login',
+              ip: ipAddress,
+              createdBy: userName,
+              updatedBy: userName
+            }
+            createUserActivity(userName, userActivity)
+          }
           setWarningMsg(' ')
           //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
           localStorage.setItem(
@@ -161,7 +171,7 @@ const Login = () => {
               break
             case 'collector':
               realmApiRoute = 'collectors'
-              navigate('/collector')
+              navigate('/collector/collectionPoint')
               break
             case 'logistic':
               realmApiRoute = 'logistic'
@@ -193,16 +203,6 @@ const Login = () => {
           setLanguage(selectedLang)
 
           commonTypeContainer.updateCommonTypeContainer()
-          const ipAddress = localStorage.getItem('ipAddress')
-          if(ipAddress){
-            const userActivity:UserActivity = {
-              operation: 'login',
-              ip: ipAddress,
-              createdBy: result?.username,
-              updatedBy: result?.username
-            }
-            createUserActivity(result.username, userActivity)
-          }
          
         } else {
           // if(errCode === STATUS_CODE[503]){
