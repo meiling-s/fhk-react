@@ -234,17 +234,20 @@ const ProcessRecord: FunctionComponent = () => {
     {
       label: t('processRecord.enterProcessingNumber'),
       field: 'processOutId',
-      numberOnly: true
+      numberOnly: true,
+      width: '100%'
     },
     {
       label: t('processRecord.handleName'),
       options: getUniqueOptions('packageTypeId'),
-      field: 'processType'
+      field: 'processType',
+      width: '100%'
     },
     {
-      label: t('processRecord.location'),
+      label: t('warehouse_page.place'),
       options: getUniqueOptions('address'),
-      field: 'processAddress'
+      field: 'processAddress',
+      width: '100%'
     }
   ]
 
