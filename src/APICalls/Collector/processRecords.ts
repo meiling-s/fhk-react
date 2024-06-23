@@ -10,18 +10,24 @@ import {
 } from '../../constants/requests'
 import { returnApiToken } from '../../utils/utils'
 import axiosInstance from '../../constants/axiosInstance'
+import { queryProcessRecord } from '../../interfaces/processRecords'
 
-export const getAllProcessRecord = async (page: number, size: number) => {
+export const getAllProcessRecord = async (page: number, size: number, query?:queryProcessRecord ) => {
   try {
     const token = returnApiToken()
+
+    const params: any = {
+      page: page,
+      size: size
+    }
+    if (query?.processOutId) params.processOutId = query.processOutId
+    if (query?.processType) params.processType = query.processType
+    if (query?.processAddress) params.processAddress = query.processAddress
 
     const response = await axiosInstance({
         baseURL: window.baseURL.collector,
       ...GET_PROCESS_OUT(token.decodeKeycloack, token.realmApiRoute),
-      params: {
-        page: page,
-        size: size
-      }
+      params: params
     })
 
     return response
@@ -30,6 +36,7 @@ export const getAllProcessRecord = async (page: number, size: number) => {
     throw(e)
   }
 }
+
 
 export const getProcessRecordDetail = async (processOutId: number) => {
   try {
