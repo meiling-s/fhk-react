@@ -20,19 +20,17 @@ import { styles } from '../../../constants/styles'
 import {
   ADD_ICON,
   EDIT_OUTLINED_ICON,
-  DELETE_OUTLINED_ICON
-} from '../../../themes/icons'
-import {
-  getAllDenialReason,
-  getAllDenialReasonByFunctionId
-} from '../../../APICalls/Collector/denialReason'
-import { DenialReason as DenialReasonItem } from '../../../interfaces/denialReason'
-import CreateDenialReason from './CreateDenialReason'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
-import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
-import { useNavigate } from 'react-router-dom'
-import { extractError } from '../../../utils/utils'
-import { STATUS_CODE } from '../../../constants/constant'
+  DELETE_OUTLINED_ICON,
+} from "../../../themes/icons";
+import { getAllDenialReason, getAllDenialReasonByFunctionId } from "../../../APICalls/Collector/denialReason";
+import { DenialReason as DenialReasonItem } from "../../../interfaces/denialReason";
+import CreateDenialReason from "./CreateDenialReason";
+import { getAllFunction } from "../../../APICalls/Collector/userGroup";
+import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
+import { useNavigate } from "react-router-dom";
+import { extractError } from "../../../utils/utils";
+import { STATUS_CODE } from "../../../constants/constant";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 function createDenialReason(
   reasonId: number,
@@ -80,22 +78,12 @@ const DenialReason: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [DenialReasonList, setDenialReasonList] = useState<DenialReasonItem[]>(
     []
-  )
-  const [functionList, setFunctionList] = useState<
-    {
-      functionId: string
-      functionNameEng: string
-      functionNameSChi: string
-      reasonTchi: string
-      name: string
-    }[]
-  >([])
-  const [functionOptions, setFunctionOptions] = useState<
-    { value: string; label: string }[]
-  >([])
-  const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null)
-  const navigate = useNavigate()
-
+  );
+  const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
+  const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
+  const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
+  const navigate =  useNavigate()
+  const { localeTextDataGrid } =  useLocaleTextDataGrid()
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
     initFunctionList()
@@ -287,8 +275,9 @@ const DenialReason: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'edit',
-      headerName: '',
+      field: "edit",
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -307,8 +296,9 @@ const DenialReason: FunctionComponent = () => {
       }
     },
     {
-      field: 'delete',
-      headerName: '',
+      field: "delete",
+      headerName:t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -465,6 +455,7 @@ const DenialReason: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

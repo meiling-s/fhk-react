@@ -39,6 +39,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -94,6 +95,7 @@ const ProcessRecord: FunctionComponent = () => {
     processType: '',
     processAddress: ''
   })
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   useEffect(() => {
     initProcessRecord()
@@ -356,6 +358,7 @@ const ProcessRecord: FunctionComponent = () => {
               checkboxSelection={false}
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

@@ -53,6 +53,7 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -317,6 +318,7 @@ const CheckoutRequest: FunctionComponent = () => {
   });
   const [reasonList, setReasonList] = useState<any>([])
   const {dateFormat} = useContainer(CommonTypeContainer)
+  const { localeTextDataGrid} = useLocaleTextDataGrid();
 
   const getRejectReason = async() => {
     try {
@@ -391,7 +393,7 @@ const CheckoutRequest: FunctionComponent = () => {
 
   const checkboxColumn: GridColDef = {
     field: 'customCheckbox',
-    headerName: 'Select',
+    headerName: t('localizedTexts.select'),
     width: 80,
     sortable: false,
     filterable: false,
@@ -685,6 +687,7 @@ const CheckoutRequest: FunctionComponent = () => {
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

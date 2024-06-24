@@ -67,6 +67,7 @@ import { extractError, returnApiToken } from '../../../utils/utils';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -128,6 +129,7 @@ const WarehouseDashboard: FunctionComponent = () => {
     const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
     const role = localStorage.getItem(localStorgeKeyName.role);
     const debouncedSearchValue: string = useDebounce(searchText, 1000);
+    const { localeTextDataGrid} = useLocaleTextDataGrid();
 
     useEffect(() => {
         if (realmApi !== 'account') {
@@ -914,6 +916,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                         columns={columns}
                         checkboxSelection={false}
                         getRowSpacing={getRowSpacing}
+                        localeText={localeTextDataGrid}
                         sx={{
                             border: 'none',
                             '& .MuiDataGrid-cell': {

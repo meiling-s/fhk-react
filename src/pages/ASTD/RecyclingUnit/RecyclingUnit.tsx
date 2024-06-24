@@ -54,6 +54,7 @@ import CodeFormat from './CodeFormat'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import { useNavigate } from 'react-router-dom'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface CodeFormatProps {
   createdAt: string
@@ -164,6 +165,7 @@ const RecyclingUnit: FunctionComponent = () => {
   const [delFormModal, setDeleteModal] = useState<boolean>(false)
   const [switchValue, setSwitchValue] = useState<any>(null)
   const navigate = useNavigate();
+  const {  localeTextDataGrid } = useLocaleTextDataGrid();
 
   useEffect(() => {
     initRecycTypeList()
@@ -253,7 +255,8 @@ const RecyclingUnit: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -272,7 +275,8 @@ const RecyclingUnit: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -324,7 +328,8 @@ const RecyclingUnit: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -343,7 +348,8 @@ const RecyclingUnit: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -401,7 +407,8 @@ const RecyclingUnit: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -420,7 +427,8 @@ const RecyclingUnit: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -679,6 +687,7 @@ const RecyclingUnit: FunctionComponent = () => {
               checkboxSelection
               onRowClick={codeHandleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -732,6 +741,7 @@ const RecyclingUnit: FunctionComponent = () => {
               checkboxSelection
               onRowClick={packagingHandleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -785,6 +795,7 @@ const RecyclingUnit: FunctionComponent = () => {
               checkboxSelection
               onRowClick={weightHandleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

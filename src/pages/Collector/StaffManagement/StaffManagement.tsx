@@ -52,6 +52,7 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import i18n from '../../../setups/i18n'
 import { staffQuery } from '../../../interfaces/staff'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -120,6 +121,7 @@ const StaffManagement: FunctionComponent = () => {
     staffId: '',
     staffName: ''
   })
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   const initStaffTitle = async () => {
     const result = await getStaffTitle()
@@ -268,7 +270,8 @@ const StaffManagement: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -291,7 +294,8 @@ const StaffManagement: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -360,48 +364,48 @@ const StaffManagement: FunctionComponent = () => {
         width: 200,
         type: 'string'
       },
-      {
-        field: 'edit',
-        headerName: '',
-        renderCell: (params) => {
-          return (
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <EDIT_OUTLINED_ICON
-                fontSize="small"
-                className="cursor-pointer text-grey-dark mr-2"
-                onClick={(event) => {
-                  const selected = staffList.find(
-                    (item) => item.loginId == params.row.loginId
-                  )
-                  event.stopPropagation()
-                  handleAction(params, 'edit')
-                  if (selected) setSelectedRow(selected)
-                }}
-                style={{ cursor: 'pointer' }}
-              />
-            </div>
-          )
-        }
-      },
-      {
-        field: 'delete',
-        headerName: '',
-        renderCell: (params) => {
-          return (
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <DELETE_OUTLINED_ICON
-                fontSize="small"
-                className="cursor-pointer text-grey-dark"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  handleAction(params, 'delete')
-                }}
-                style={{ cursor: 'pointer' }}
-              />
-            </div>
-          )
-        }
-      }
+      // {
+      //   field: 'edit',
+      //   headerName: t('pick_up_order.item.edit'),
+      //   renderCell: (params) => {
+      //     return (
+      //       <div style={{ display: 'flex', gap: '8px' }}>
+      //         <EDIT_OUTLINED_ICON
+      //           fontSize="small"
+      //           className="cursor-pointer text-grey-dark mr-2"
+      //           onClick={(event) => {
+      //             const selected = staffList.find(
+      //               (item) => item.loginId == params.row.loginId
+      //             )
+      //             event.stopPropagation()
+      //             handleAction(params, 'edit')
+      //             if (selected) setSelectedRow(selected)
+      //           }}
+      //           style={{ cursor: 'pointer' }}
+      //         />
+      //       </div>
+      //     )
+      //   }
+      // },
+      // {
+      //   field: 'delete',
+      //   headerName: t('pick_up_order.item.delete'),
+      //   renderCell: (params) => {
+      //     return (
+      //       <div style={{ display: 'flex', gap: '8px' }}>
+      //         <DELETE_OUTLINED_ICON
+      //           fontSize="small"
+      //           className="cursor-pointer text-grey-dark"
+      //           onClick={(event) => {
+      //             event.stopPropagation()
+      //             handleAction(params, 'delete')
+      //           }}
+      //           style={{ cursor: 'pointer' }}
+      //         />
+      //       </div>
+      //     )
+      //   }
+      // }
     ]
   }
 
@@ -526,6 +530,7 @@ const StaffManagement: FunctionComponent = () => {
                   checkboxSelection
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
                   initialState={{
                     sorting: {
                       sortModel: [{ field: 'staffId', sort: 'asc' }]

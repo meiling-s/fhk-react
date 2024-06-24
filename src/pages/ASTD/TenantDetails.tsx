@@ -70,6 +70,7 @@ function ClosedTenantModal({
   const { t } = useTranslation()
   const [reasonId, setReasonId] = useState<string | null>(null)
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  
 
   const handleRejectRequest = async () => {
     const statData: any = {
@@ -445,7 +446,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.creation_date')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  {dayjs
+                  {tenantDetail?.createdAt && dayjs
                     .utc(tenantDetail?.createdAt)
                     .tz('Asia/Hong_Kong')
                     .format(`${dateFormat} HH:mm`) || ''}

@@ -44,6 +44,7 @@ import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -103,6 +104,7 @@ const StaffManufacturer: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0);
   const {dateFormat} = useContainer(CommonTypeContainer)
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   useEffect(() => {
     initStaffList();
@@ -195,7 +197,8 @@ const StaffManufacturer: FunctionComponent = () => {
     },
     {
       field: "edit",
-      headerName: "",
+      headerName:t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: "flex", gap: "8px" }}>
@@ -218,7 +221,8 @@ const StaffManufacturer: FunctionComponent = () => {
     },
     {
       field: "delete",
-      headerName: "",
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: "flex", gap: "8px" }}>
@@ -420,6 +424,7 @@ const StaffManufacturer: FunctionComponent = () => {
                   checkboxSelection
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
                   sx={{
                     border: "none",
                     "& .MuiDataGrid-cell": {

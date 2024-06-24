@@ -66,6 +66,7 @@ import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import i18n from '../../setups/i18n'
+import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -417,7 +418,13 @@ type inviteForm = {
   isDuplicated: boolean
 }
 
-function InviteForm({ open, isLoading, onClose, onSubmitForm, isDuplicated }: inviteForm) {
+function InviteForm({
+  open,
+  isLoading,
+  onClose,
+  onSubmitForm,
+  isDuplicated
+}: inviteForm) {
   const { t } = useTranslation()
   //const [submitable, setSubmitable] = useState<boolean>(false)
 
@@ -792,8 +799,10 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm, isDuplicated }: in
                   {formik.errors.remark && formik.touched.remark && (
                     <Alert severity="error">{formik.errors.remark} </Alert>
                   )}
-                  {isDuplicated &&(
-                    <Alert severity="error">{t('tenant.invite_modal.err_duplicated')} </Alert>
+                  {isDuplicated && (
+                    <Alert severity="error">
+                      {t('tenant.invite_modal.err_duplicated')}{' '}
+                    </Alert>
                   )}
                 </Stack>
               </Box>
@@ -872,7 +881,8 @@ function CompanyManage() {
       label: t('tenant.invite_form.customer_company')
     }
   ]
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked
@@ -936,7 +946,7 @@ function CompanyManage() {
 
   const checkboxColumn: GridColDef = {
     field: 'customCheckbox',
-    headerName: 'Select',
+    headerName: t('localizedTexts.select'),
     width: 80,
     sortable: false,
     filterable: false,
@@ -985,18 +995,21 @@ function CompanyManage() {
       width: 150,
       type: 'string',
       valueGetter: (params) => {
-        return realmOptions.find(item => item.key === params.row.type)?.label || ""
+        return (
+          realmOptions.find((item) => item.key === params.row.type)?.label || ''
+        )
       }
-      // renderCell: (params) => {
-      //   const tenantType = realmOptions.find(item => item.key === params.row.type)
-      //   return {tenantType}
-      // }
     },
     {
       field: 'createDate',
       headerName: t('tenant.created_date'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      valueGetter: (params) => {
+        return dayjs.utc((params.row?.createDate))
+          .tz('Asia/Hong_Kong')
+          .format(`${dateFormat} HH:mm`)
+      }
     },
     {
       field: 'accountNum',
@@ -1006,9 +1019,10 @@ function CompanyManage() {
     },
     {
       field: 'action',
-      headerName: '',
+      headerName: t('pick_up_order.item.actions'),
       width: 250,
       type: 'string',
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -1071,10 +1085,7 @@ function CompanyManage() {
           com?.companyNameEng,
           com?.status,
           com?.tenantType,
-          dayjs
-            .utc(new Date(com?.createdAt))
-            .tz('Asia/Hong_Kong')
-            .format(`${dateFormat} HH:mm`),
+          com?.createdAt,
           com?.decimalPlace || 0
         )
       )
@@ -1173,7 +1184,6 @@ function CompanyManage() {
       const realmType =
         realmOptions.find((item) => item.key == formikValues.companyCategory)
           ?.key || 'collector'
-      
 
       const result = await createInvitation(
         {
@@ -1250,7 +1260,10 @@ function CompanyManage() {
             }
           ]}
           variant="outlined"
-          onClick={() => {setInvFormModal(true); setDuplicatedData(false)}}
+          onClick={() => {
+            setInvFormModal(true)
+            setDuplicatedData(false)
+          }}
         >
           <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t('tenant.invite')}
         </Button>
@@ -1304,6 +1317,7 @@ function CompanyManage() {
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
