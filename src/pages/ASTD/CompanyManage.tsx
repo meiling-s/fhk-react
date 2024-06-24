@@ -495,7 +495,7 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm, isDuplicated }: in
   const initialValues = {
     tenantId: 0,
     companyNumber: '',
-    companyCategory: 'Collector',
+    companyCategory: 'collector',
     companyZhName: '',
     companyCnName: '',
     companyEnName: '',
@@ -542,19 +542,19 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm, isDuplicated }: in
       error: formik.errors.companyCategory && formik.touched.companyCategory,
       options: [
         {
-          key: 'Collector',
+          key: 'collector',
           label: t('tenant.invite_form.collector_company')
         },
         {
-          key: 'Logistic',
+          key: 'logistic',
           label: t('tenant.invite_form.logistic_company')
         },
         {
-          key: 'Manufacturer',
+          key: 'manufacturer',
           label: t('tenant.invite_form.manufacturer_company')
         },
         {
-          key: 'Customer',
+          key: 'customer',
           label: t('tenant.invite_form.customer_company')
         }
       ]
@@ -861,11 +861,11 @@ function CompanyManage() {
     },
     {
       key: 'logistic',
-      label: t('tenant.invite_form.logistics_company')
+      label: t('tenant.invite_form.logistic_company')
     },
     {
       key: 'manufacturer',
-      label: t('tenant.invite_form.manufacturing_company')
+      label: t('tenant.invite_form.manufacturer_company')
     },
     {
       key: 'customer',
@@ -983,7 +983,14 @@ function CompanyManage() {
       field: 'type',
       headerName: t('tenant.company_category'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      valueGetter: (params) => {
+        return realmOptions.find(item => item.key === params.row.type)?.label || ""
+      }
+      // renderCell: (params) => {
+      //   const tenantType = realmOptions.find(item => item.key === params.row.type)
+      //   return {tenantType}
+      // }
     },
     {
       field: 'createDate',
@@ -1164,8 +1171,9 @@ function CompanyManage() {
     try {
       setIsLoadingInvite(true)
       const realmType =
-        realmOptions.find((item) => item.label == formikValues.companyCategory)
+        realmOptions.find((item) => item.key == formikValues.companyCategory)
           ?.key || 'collector'
+      
 
       const result = await createInvitation(
         {
