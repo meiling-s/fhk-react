@@ -47,6 +47,7 @@ import { getVehicleData } from '../../../APICalls/ASTD/recycling'
 import CreateVehicle from './CreateVehicle'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface VehicleDataProps {
     createdAt: string
@@ -73,7 +74,8 @@ const Vehicle: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
- const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { localeTextDataGrid} = useLocaleTextDataGrid()
 
   useEffect(() => {
     initVehicleData()
@@ -132,7 +134,8 @@ const Vehicle: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -151,7 +154,8 @@ const Vehicle: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -272,6 +276,7 @@ const Vehicle: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

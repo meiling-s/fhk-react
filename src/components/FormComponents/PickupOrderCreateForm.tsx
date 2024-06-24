@@ -53,6 +53,7 @@ import {
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -141,7 +142,7 @@ const PickupOrderCreateForm = ({
   const { logisticList, contractType, vehicleType, recycType, dateFormat, getLogisticlist } =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
-
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
   const logisticCompany = logisticList
   const contractRole = contractType
 
@@ -159,7 +160,7 @@ const PickupOrderCreateForm = ({
   // set custom style each role
   const colorTheme: string = getThemeColorRole(role)
   const customListTheme = getThemeCustomList(role)
-
+  
   const buttonFilledCustom = {
     borderRadius: '40px',
     borderColor: '#7CE495',
@@ -435,8 +436,9 @@ const PickupOrderCreateForm = ({
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('notification.menu_staff.edit'),
       width: 100,
+      filterable: false,
       renderCell: (params) => (
         <IconButton>
           <EDIT_OUTLINED_ICON onClick={() => handleEditRow(params.row.id)} />
@@ -445,7 +447,8 @@ const PickupOrderCreateForm = ({
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       width: 100,
       renderCell: (params) => (
         // <IconButton onClick={() => handleDeleteRow(params.row.id)}>
@@ -773,6 +776,7 @@ const PickupOrderCreateForm = ({
                     columns={columns}
                     disableRowSelectionOnClick
                     getRowSpacing={getRowSpacing}
+                    localeText={localeTextDataGrid}
                     sx={{
                       border: 'none',
                       '& .MuiDataGrid-cell': {

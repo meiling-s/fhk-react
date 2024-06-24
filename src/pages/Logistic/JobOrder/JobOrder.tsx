@@ -27,6 +27,7 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -214,7 +215,8 @@ const JobOrder = () => {
     status: ''
   });
   const [approveModal, setApproveModal] = useState(false)
-  
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
+
   const initJobOrderRequest = async () => {
    try {
     setJobOrder([])
@@ -390,6 +392,7 @@ const JobOrder = () => {
           disableRowSelectionOnClick
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
+          localeText={localeTextDataGrid}
           hideFooter
           sx={{
             border: "none",

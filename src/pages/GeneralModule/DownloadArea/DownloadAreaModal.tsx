@@ -46,6 +46,7 @@ interface DownloadModalProps {
     reportId: string
     dateOption?: string
     manualTenantId: boolean
+    tenantId?: string
   }
   staffId: string
 }
@@ -161,6 +162,15 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     )
   }
 
+  const generateNoDateNoTenandIdLink = (reportId: string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}?staffId=${staffId}&language=${getSelectedLanguange(
+        i18n.language
+      )}`
+    )
+  }
+
   const onChangeTenantId = (value: string) => {
     const isNumber = Number(value)
     if (
@@ -240,8 +250,9 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             )}`
           break
         default:
-          url =
-            selectedItem?.dateOption === 'none'
+          url = selectedItem.dateOption === 'none' && selectedItem.tenantId === 'none' 
+              ? generateNoDateNoTenandIdLink(selectedItem.reportId) 
+              : selectedItem?.dateOption === 'none'
               ? generateNoDateLink(selectedItem.reportId)
               : selectedItem?.dateOption === 'datetime'
               ? generateDatetimeLink(selectedItem.reportId)
