@@ -232,22 +232,23 @@ const ProcessRecord: FunctionComponent = () => {
 
   const searchfield = [
     {
-      label: t('processRecord.enterProcessingNumber'),
+      label: t('processRecord.search'),
+      placeholder: t('processRecord.enterProcessingNumber'),
       field: 'processOutId',
       numberOnly: true,
-      width: '100%'
+      width: '300px'
     },
     {
       label: t('processRecord.handleName'),
       options: getUniqueOptions('packageTypeId'),
       field: 'processType',
-      width: '100%'
+      width: '300px'
     },
     {
       label: t('warehouse_page.place'),
       options: getUniqueOptions('address'),
       field: 'processAddress',
-      width: '100%'
+      width: '300px'
     }
   ]
 
@@ -337,6 +338,8 @@ const ProcessRecord: FunctionComponent = () => {
               key={index}
               label={s.label}
               field={s.field}
+              placeholder={s?.placeholder}
+              width={s.width}
               numberOnly={s.numberOnly || false}
               options={s.options || []}
               onChange={handleSearch}
