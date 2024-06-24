@@ -617,6 +617,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   InputProps={{
                     sx: styles.textField
                   }}
+                  placeholder={t('tenant.detail.please_enter_capacity_mb')}
                   onChange={(event) => {
                     const numericValue = event.target.value.replace(/\D/g, '')
                     setMaxUploadSize(numericValue)

@@ -526,7 +526,7 @@
       "default_lang": "Default language",
       "confirm": "ACTIVATED",
       "suspend": "SUSPEND",
-      "closed": "DEACTIVE",
+      "closed": "DEACTIVATE",
       "deactivated_reason": "Deactivated reason(s)"
     }
   },
