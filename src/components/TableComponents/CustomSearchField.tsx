@@ -110,7 +110,7 @@ const CustomSearchField = ({
             sx={{
               mt: 3,
               m: 1,
-              width: '250px',
+              width: width? width: '250px',
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
