@@ -64,12 +64,23 @@ const PurchaseOrderCard = ({
     return units
   }
 
-  const getUnitName = (unitId: number):{unitId: number, lang: string} => {
-    let unitName:{unitId: number, lang: string} = {unitId: 0, lang: ''}
-    const unit = getWeightUnits().find(item => item.unitId === unitId);
-    if(unit){
-      unitName = unit
+  const getUnitName = (podetail: PurchaseOrderDetail) => {
+    let unitName = ''
+    switch(i18n.language) {
+      case 'enus':
+        unitName = podetail.unitNameEng
+        break;
+      case 'zhch':
+        unitName = podetail.unitNameSchi
+        break;
+      case 'zhhk':
+        unitName = podetail.unitNameTchi
+        break;
+      default:
+        unitName = podetail.unitNameTchi
+        break;
     }
+    
     return unitName
   }
   const getRecyName = (podetail: PurchaseOrderDetail) => {
@@ -111,7 +122,7 @@ const PurchaseOrderCard = ({
 
     return name
   }
-
+    
   return (
     <>
       {purchaseOrderDetail.map((podetail, index) => (
@@ -183,7 +194,7 @@ const PurchaseOrderCard = ({
               </Typography>
             </Box>
             <Typography ml="60px" style={localstyles.mini_value}>
-              {formatWeight(podetail.weight, decimalVal)} {getUnitName(podetail.unitId).lang}
+              {formatWeight(podetail.weight, decimalVal)} {getUnitName(podetail)}
             </Typography>
           </Box>
           <Box display="flex">

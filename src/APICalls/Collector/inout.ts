@@ -3,12 +3,12 @@ import { returnApiToken } from "../../utils/utils";
 import axiosInstance from '../../constants/axiosInstance'
 
 
-export const getCheckInDetailByID = async (chkInId: number) => {
+export const getCheckInDetailByID = async (chkInId: number, realmApiRoute: string) => {
     try {
         const token = returnApiToken()
         const response = await axiosInstance({
             baseURL: window.baseURL.collector,
-            ...GET_CHECKIN_BY_ID(token.decodeKeycloack, chkInId),
+            ...GET_CHECKIN_BY_ID(token.decodeKeycloack, chkInId, realmApiRoute),
         })
 
         return response
@@ -18,13 +18,13 @@ export const getCheckInDetailByID = async (chkInId: number) => {
     }
 }
 
-export const getCheckOutDetailByID = async (chkOutId: number) => {
+export const getCheckOutDetailByID = async (chkOutId: number, realmApiRoute: string) => {
     try {
         const token = returnApiToken()
         
         const response = await axiosInstance({
             baseURL: window.baseURL.collector,
-            ...GET_CHECKOUT_BY_ID(token.decodeKeycloack, chkOutId),
+            ...GET_CHECKOUT_BY_ID(token.decodeKeycloack, chkOutId, realmApiRoute),
         })
 
         return response

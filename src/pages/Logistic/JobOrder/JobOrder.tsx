@@ -27,6 +27,7 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -214,7 +215,8 @@ const JobOrder = () => {
     status: ''
   });
   const [approveModal, setApproveModal] = useState(false)
-  
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
+
   const initJobOrderRequest = async () => {
    try {
     setJobOrder([])
@@ -305,11 +307,11 @@ const JobOrder = () => {
 
 
   const searchfield = [
-    {label:t('job_order.filter.search'),width:'14%', field: 'picoId'},
-    {label:t('job_order.table.sender_company'),width:'14%',options:getUniqueOptions('senderName'), field:"senderName"},
-    {label:t('job_order.table.receiver_company'),width:'14%',options:getUniqueOptions('receiverName'), field:"receiverName"},
-    {label:t('job_order.table.driver_id'),width:'14%',options:getUniqueOptions('driverId'), field:"driverId"},
-    {label:t('job_order.table.status'),width:'14%',options:getUniqueOptions('status'), field:"status"}
+    {label:t('job_order.filter.search'), field: 'picoId'},
+    {label:t('job_order.table.sender_company'),options:getUniqueOptions('senderName'), field:"senderName"},
+    {label:t('job_order.table.receiver_company'),options:getUniqueOptions('receiverName'), field:"receiverName"},
+    {label:t('job_order.table.driver_id'),options:getUniqueOptions('driverId'), field:"driverId"},
+    {label:t('job_order.table.status'),options:getUniqueOptions('status'), field:"status"}
   ]
 
   const navigate = useNavigate()
@@ -376,7 +378,7 @@ const JobOrder = () => {
           <CustomSearchField
             key={s.field}
             label={s.label} 
-            width={s.width} 
+            // width={s.width} 
             field={s.field}
             options={s.options || []} 
             onChange={handleSearch} />
@@ -390,6 +392,7 @@ const JobOrder = () => {
           disableRowSelectionOnClick
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
+          localeText={localeTextDataGrid}
           hideFooter
           sx={{
             border: "none",

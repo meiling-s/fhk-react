@@ -135,11 +135,11 @@ function CheckInAndCheckOutDetails({isShow, setIsShow, selectedRow}:any) {
   const initCheckinoutDetail = async () => {
     if (selectedRow !== null && selectedRow !== undefined) {
       let result;
-  
+        const token = returnApiToken()
         if (selectedRow.chkInId)  {
-          result = await getCheckInDetailByID(selectedRow.chkInId)
+          result = await getCheckInDetailByID(selectedRow.chkInId, token.realmApiRoute)
         } else if (selectedRow.chkOutId) {
-          result = await getCheckOutDetailByID(selectedRow.chkOutId)
+          result = await getCheckOutDetailByID(selectedRow.chkOutId, token.realmApiRoute)
         }
         const data = result?.data;
   

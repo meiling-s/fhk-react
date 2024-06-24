@@ -18,6 +18,7 @@ import {
 import { getAllCompany } from "../../../APICalls/Collector/company";
 import { Company as CompanyItem } from "../../../interfaces/company";
 import CreateCompany from "../../Collector/Company/CreateCompany";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 // import CreateCompany from "./CreateCompany";
 
 function createCompany(
@@ -124,7 +125,7 @@ const Company: FunctionComponent = () => {
       console.log('data', totalData, "page", page)
     }
   };
-
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
   const getSelectedCompanyList = useCallback((companyType: string) => {
     let selectedList: CompanyItem[] = [];
     switch (companyType) {
@@ -203,7 +204,8 @@ const Company: FunctionComponent = () => {
     },
     {
       field: "edit",
-      headerName: "",
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -225,7 +227,7 @@ const Company: FunctionComponent = () => {
     },
     {
       field: "delete",
-      headerName: "",
+      headerName: t('pick_up_order.item.delete'),
       renderCell: (params) => {
         return (
           <Button
@@ -361,6 +363,7 @@ const Company: FunctionComponent = () => {
                       handleSelectRow(params, item)
                     }}
                     getRowSpacing={getRowSpacing}
+                    localeText={localeTextDataGrid}
                     sx={{
                       border: "none",
                       "& .MuiDataGrid-cell": {
