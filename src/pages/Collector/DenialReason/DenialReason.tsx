@@ -114,7 +114,7 @@ const DenialReason: FunctionComponent = () => {
         }
       })
       options.push({
-        label: 'any',
+        label: t('placeHolder.any'),
         value: ''
       })
       setFunctionList(data)
@@ -213,13 +213,14 @@ const DenialReason: FunctionComponent = () => {
       field: 'reasonNameEng',
       headerName: t('denial_reason.reason_name_eng'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      align: 'left'
     },
     {
       field: 'functionName',
       headerName: t('denial_reason.corresponding_functions'),
-      width: 100,
-      type: 'number'
+      width: 200,
+      type: 'string'
     },
     {
       field: 'description',
