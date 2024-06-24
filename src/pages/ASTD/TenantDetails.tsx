@@ -447,7 +447,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
                   {tenantDetail?.createdAt && dayjs
-                    .utc(new Date(tenantDetail?.createdAt))
+                    .utc(tenantDetail?.createdAt)
                     .tz('Asia/Hong_Kong')
                     .format(`${dateFormat} HH:mm`) || ''}
                 </div>

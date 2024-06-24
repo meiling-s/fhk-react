@@ -1004,8 +1004,7 @@ function CompanyManage() {
       width: 150,
       type: 'string',
       valueGetter: (params) => {
-        return dayjs
-          .utc(new Date(params.row?.createDate))
+        return dayjs.utc((params.row?.createDate))
           .tz('Asia/Hong_Kong')
           .format(`${dateFormat} HH:mm`)
       }
