@@ -987,10 +987,6 @@ function CompanyManage() {
       valueGetter: (params) => {
         return realmOptions.find(item => item.key === params.row.type)?.label || ""
       }
-      // renderCell: (params) => {
-      //   const tenantType = realmOptions.find(item => item.key === params.row.type)
-      //   return {tenantType}
-      // }
     },
     {
       field: 'createDate',
