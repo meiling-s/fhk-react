@@ -918,6 +918,13 @@ export const GET_USER_ACCOUNT_LIST = (
   url: `api/v1/administrator/userAccount/t/${tenantId}`
 })
 
+export const GET_USER_ACCOUNT_LIST_PAGING = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userAccount/t/pageable/${tenantId}`
+})
+
 export const CREATE_USER_ACCOUNT: AxiosRequestConfig = {
   method: 'post',
   url: `api/v1/administrator/register`
