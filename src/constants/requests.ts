@@ -829,9 +829,9 @@ export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
 export const EDIT_STAFF = (
   tenantId: string,
   staffId: string,
-  realmApi: string
+  realmApi: string,
 ): AxiosRequestConfig => ({
-  method: 'patch',
+  method: realmApi === 'logistic' ? 'put' : 'patch',
   url: `api/v1/${realmApi}/staff/${tenantId}/${staffId}`
 })
 
