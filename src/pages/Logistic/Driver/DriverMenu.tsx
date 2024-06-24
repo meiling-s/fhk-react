@@ -8,6 +8,7 @@ import { Driver } from "../../../interfaces/driver"
 import { ADD_ICON, DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON, SEARCH_ICON } from "../../../themes/icons"
 import { showErrorToast, showSuccessToast } from "../../../utils/utils"
 import DriverDetail from "./DriverDetail"
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid"
 
 const localstyles = {
     inputState: {
@@ -46,7 +47,7 @@ const DriverMenu = () => {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [driverLists, setDriverLists] = useState<Driver[]>([])
     const [filterDriverLists, setFilterDriverLists] = useState<Driver[]>([])
-
+    const { localeTextDataGrid } = useLocaleTextDataGrid()
 
     const columns: GridColDef[] = useMemo(() => ([
         {
@@ -81,7 +82,8 @@ const DriverMenu = () => {
         },
         {
             field: 'edit',
-            headerName: '',
+            headerName: t('pick_up_order.item.edit'),
+            filterable: false,
             renderCell: (params) => {
                 return (
                     <div style={{ display: 'flex', gap: '8px' }}>
@@ -100,7 +102,8 @@ const DriverMenu = () => {
         },
         {
             field: 'delete',
-            headerName: '',
+            headerName: t('pick_up_order.item.delete'),
+            filterable: false,
             renderCell: (params) => {
                 return (
                     <div style={{ display: 'flex', gap: '8px' }}>
@@ -229,6 +232,7 @@ const DriverMenu = () => {
                         checkboxSelection
                         onRowClick={handleSelectRow}
                         getRowSpacing={getRowSpacing}
+                        localeText={localeTextDataGrid}
                         sx={{
                             border: 'none',
                             '& .MuiDataGrid-cell': {

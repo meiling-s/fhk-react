@@ -24,6 +24,7 @@ import CustomSearchField from "../../../components/TableComponents/CustomSearchF
 import { useNavigate } from "react-router-dom";
 import { extractError } from "../../../utils/utils";
 import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 function createDenialReason(
   reasonId: number,
@@ -75,6 +76,7 @@ const DenialReason: FunctionComponent = () => {
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
   const navigate = useNavigate();
   const role = localStorage.getItem(localStorgeKeyName.role) || ''
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   const initFunctionList = async () => {
     try {
@@ -233,7 +235,8 @@ const DenialReason: FunctionComponent = () => {
     },
     {
       field: "edit",
-      headerName: "",
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -253,7 +256,8 @@ const DenialReason: FunctionComponent = () => {
     },
     {
       field: "delete",
-      headerName: "",
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -402,6 +406,7 @@ const DenialReason: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: "none",
                 "& .MuiDataGrid-cell": {

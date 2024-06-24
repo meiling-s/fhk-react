@@ -14,6 +14,7 @@ import DownloadAreaModal from './DownloadAreaModal'
 import { getStaffID, getUserAccountById } from '../../../APICalls/Collector/userGroup'
 import { Roles, localStorgeKeyName } from '../../../constants/constant'
 import { primaryColor } from '../../../constants/styles'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface reportItem {
   id: number
@@ -40,6 +41,7 @@ const DownloadArea = () => {
   })
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   const columns: GridColDef[] = [
     {
@@ -49,8 +51,9 @@ const DownloadArea = () => {
       type: 'string'
     },
     {
-      field: 'edit',
-      headerName: '',
+      field: 'download',
+      headerName: t('pick_up_order.item.download'),
+      filterable: false,
       width: 200,
       renderCell: (params) => {
         return (
@@ -329,6 +332,7 @@ const DownloadArea = () => {
             columns={columns}
             getRowSpacing={getRowSpacing}
             onRowClick={handleSelectRow}
+            localeText={localeTextDataGrid}
             sx={{
               border: 'none',
               '& .MuiDataGrid-cell': {
