@@ -417,7 +417,13 @@ type inviteForm = {
   isDuplicated: boolean
 }
 
-function InviteForm({ open, isLoading, onClose, onSubmitForm, isDuplicated }: inviteForm) {
+function InviteForm({
+  open,
+  isLoading,
+  onClose,
+  onSubmitForm,
+  isDuplicated
+}: inviteForm) {
   const { t } = useTranslation()
   //const [submitable, setSubmitable] = useState<boolean>(false)
 
@@ -792,8 +798,10 @@ function InviteForm({ open, isLoading, onClose, onSubmitForm, isDuplicated }: in
                   {formik.errors.remark && formik.touched.remark && (
                     <Alert severity="error">{formik.errors.remark} </Alert>
                   )}
-                  {isDuplicated &&(
-                    <Alert severity="error">{t('tenant.invite_modal.err_duplicated')} </Alert>
+                  {isDuplicated && (
+                    <Alert severity="error">
+                      {t('tenant.invite_modal.err_duplicated')}{' '}
+                    </Alert>
                   )}
                 </Stack>
               </Box>
@@ -985,14 +993,22 @@ function CompanyManage() {
       width: 150,
       type: 'string',
       valueGetter: (params) => {
-        return realmOptions.find(item => item.key === params.row.type)?.label || ""
+        return (
+          realmOptions.find((item) => item.key === params.row.type)?.label || ''
+        )
       }
     },
     {
       field: 'createDate',
       headerName: t('tenant.created_date'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      valueGetter: (params) => {
+        return dayjs
+          .utc(new Date(params.row?.createDate))
+          .tz('Asia/Hong_Kong')
+          .format(`${dateFormat} HH:mm`)
+      }
     },
     {
       field: 'accountNum',
@@ -1067,10 +1083,7 @@ function CompanyManage() {
           com?.companyNameEng,
           com?.status,
           com?.tenantType,
-          dayjs
-            .utc(new Date(com?.createdAt))
-            .tz('Asia/Hong_Kong')
-            .format(`${dateFormat} HH:mm`),
+          com?.createdAt,
           com?.decimalPlace || 0
         )
       )
@@ -1169,7 +1182,6 @@ function CompanyManage() {
       const realmType =
         realmOptions.find((item) => item.key == formikValues.companyCategory)
           ?.key || 'collector'
-      
 
       const result = await createInvitation(
         {
@@ -1246,7 +1258,10 @@ function CompanyManage() {
             }
           ]}
           variant="outlined"
-          onClick={() => {setInvFormModal(true); setDuplicatedData(false)}}
+          onClick={() => {
+            setInvFormModal(true)
+            setDuplicatedData(false)
+          }}
         >
           <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t('tenant.invite')}
         </Button>
