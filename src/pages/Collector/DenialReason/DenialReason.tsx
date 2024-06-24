@@ -388,10 +388,11 @@ const DenialReason: FunctionComponent = () => {
           </Button>
         </Box>
         <div className="table-vehicle">
-          <Stack direction='row' mt={3} >
+          <Stack mt={3} >
             {searchfield.map((s, i)=>(
               <CustomSearchField
                 key={i}
+                width="100%"
                 label={s.label} 
                 options={s.options || []} 
                 onChange={handleSearch} />

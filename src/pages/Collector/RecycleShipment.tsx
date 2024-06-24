@@ -41,13 +41,17 @@ import { updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
 import { CheckIn } from '../../interfaces/checkin'
 import { STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
-import { displayCreatedDate, extractError, showSuccessToast } from '../../utils/utils'
+import {
+  displayCreatedDate,
+  extractError,
+  showSuccessToast
+} from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 import { queryCheckIn } from '../../interfaces/checkin'
 import CustomButton from '../../components/FormComponents/CustomButton'
 import i18n from '../../setups/i18n'
 
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
@@ -56,7 +60,6 @@ import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
-
 
 const Required = () => {
   return (
@@ -353,7 +356,7 @@ function ShipmentManage() {
     senderAddr: ''
   })
   const [reasonList, setReasonList] = useState<any>([])
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const { dateFormat } = useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const getRejectReason = async () => {
@@ -383,9 +386,9 @@ function ShipmentManage() {
         )
         setReasonList(result?.data?.content)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -428,9 +431,9 @@ function ShipmentManage() {
         }
         setTotalData(result?.data.totalPages)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -549,7 +552,7 @@ function ShipmentManage() {
       type: 'string',
       headerName: t('check_in.receiver_addr'),
       width: 200
-    },
+    }
     // {
     //   field: 'status',
     //   type: 'string',
@@ -750,11 +753,17 @@ function ShipmentManage() {
                 {' '}
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {checkInRequest?.map((item, index) => (
-                <MenuItem key={index} value={item.senderName}>
-                  {item.senderName}
-                </MenuItem>
-              ))}
+              {checkInRequest
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.senderName === item.senderName)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.senderName}>
+                    {item.senderName}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
@@ -772,11 +781,17 @@ function ShipmentManage() {
                 {' '}
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {checkInRequest?.map((item, index) => (
-                <MenuItem key={index} value={item.senderAddr}>
-                  {item.senderAddr}
-                </MenuItem>
-              ))}
+              {checkInRequest
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.senderAddr === item.senderAddr)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.senderAddr}>
+                    {item.senderAddr}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
         </Box>
