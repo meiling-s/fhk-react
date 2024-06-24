@@ -655,7 +655,7 @@ const PickupOrderCreateForm = ({
               <Grid item>
                 <CustomField
                   label={t('pick_up_order.contact_number')}
-                  mandatory
+                  mandatory={false}
                 >
                   <CustomTextField
                     id="contactNo"
@@ -682,9 +682,7 @@ const PickupOrderCreateForm = ({
                           ) || []
                         }
                         onChange={(event, value) => {
-                          if (value) {
                             formik.setFieldValue('contractNo', value)
-                          }
                         }}
                         renderInput={(params) => (
                           <TextField
