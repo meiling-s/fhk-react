@@ -35,6 +35,7 @@ import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { getStaffList, getStaffTitle } from '../../../APICalls/staff'
 
 import { useTranslation } from 'react-i18next'
+import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import { displayCreatedDate, extractError } from '../../../utils/utils'
 import UserGroup from '../UserGroup/UserGroup'
 import {
@@ -50,6 +51,7 @@ import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import i18n from '../../../setups/i18n'
+import { staffQuery } from '../../../interfaces/staff'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -114,6 +116,10 @@ const StaffManagement: FunctionComponent = () => {
   const navigate = useNavigate()
   const { dateFormat } = useContainer(CommonTypeContainer)
   const [isTitleInitialized, setIsTitleInitialized] = useState(false)
+  const [query, setQuery] = useState<staffQuery>({
+    staffId: '',
+    staffName: ''
+  })
 
   const initStaffTitle = async () => {
     const result = await getStaffTitle()
@@ -149,7 +155,7 @@ const StaffManagement: FunctionComponent = () => {
 
   const initStaffList = async () => {
     try {
-      const result = await getStaffList(page - 1, pageSize)
+      const result = await getStaffList(page - 1, pageSize, query)
 
       if (result) {
         const data = result.data.content
@@ -203,13 +209,13 @@ const StaffManagement: FunctionComponent = () => {
       // `initStaffList` will be called in the next `useEffect` once `isTitleInitialized` is true
     }
     initialize()
-  }, [page, i18n.language])
+  }, [page, i18n.language, query])
 
   useEffect(() => {
     if (isTitleInitialized) {
       initStaffList()
     }
-  }, [isTitleInitialized, page, i18n.language])
+  }, [isTitleInitialized, page, i18n.language, query])
 
   let columns: GridColDef[] = [
     {
@@ -239,9 +245,7 @@ const StaffManagement: FunctionComponent = () => {
         const position = staffTitleList.find(
           (title) => title.id == params.row.titleId
         )
-        return (
-          <div>{position?.name}</div>
-        )
+        return <div>{position?.name}</div>
       }
     },
     {
@@ -424,63 +428,37 @@ const StaffManagement: FunctionComponent = () => {
     setDrawerOpen(true)
   }
 
-  const showErrorToast = (msg: string) => {
-    toast.error(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
 
   // const handleTabChange = () => {}
   const handleTabChange = (tab: number) => {
     setSelectedTab(tab)
   }
 
-  const showSuccessToast = (msg: string) => {
-    toast.info(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
 
   const onSubmitData = () => {
     initStaffList()
   }
 
-  const onChangeSearch = (searchWord: string) => {
-    const newData = staffList
-    if (searchWord.trim() !== '') {
-      const filteredData: Staff[] = newData.filter((item) => {
-        const lowerCaseSearchWord = searchWord.toLowerCase()
-        const lowerCaseStaffId = item.staffId.toLowerCase()
-        const staffNameEng = item.staffNameEng.toLowerCase()
-        const staffNameTchi = item.staffNameTchi.toLowerCase()
-
-        // Check if staffId starts with the search word
-        return (
-          lowerCaseStaffId.startsWith(lowerCaseSearchWord) ||
-          staffNameEng.startsWith(lowerCaseSearchWord) ||
-          staffNameTchi.startsWith(lowerCaseSearchWord)
-        )
-      })
-      setFillteredStaff(filteredData)
-    } else {
-      setFillteredStaff(staffList)
-    }
+  const updateQuery = (newQuery: Partial<staffQuery>) => {
+    setQuery({ ...query, ...newQuery })
   }
 
+  const handleSearch = (keyName: string, value: string) => {
+    updateQuery({ [keyName]: value })
+  }
+
+  const searchfield = [
+    {
+      label: t('staffManagement.employeeId'),
+      placeholder: t('staffManagement.enterEmployeeNumber'),
+      field: 'staffId'
+    },
+    {
+      label: t('staffManagement.employeeName'),
+      placeholder: t('staffManagement.enterEmployeeNumber'),
+      field: 'staffName'
+    }
+  ]
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
@@ -499,19 +477,7 @@ const StaffManagement: FunctionComponent = () => {
         }}
       >
         <ToastContainer></ToastContainer>
-        {/* <Box>
-          <Typography fontSize={16} color="black" fontWeight="bold">
-            {t('staffManagement.staff')}
-          </Typography>
-        </Box>
-        <Box>
-          <Tabs
-            tabs={tabStaff}
-            navigate={handleTabChange}
-            selectedProp={selectedTab}
-            className="lg:px-10 sm:px-4 bg-bg-primary"
-          />
-        </Box> */}
+
         {selectedTab === 0 && (
           <>
             <Box
@@ -536,40 +502,20 @@ const StaffManagement: FunctionComponent = () => {
                 <ADD_ICON /> {t('staffManagement.addNewEmployees')}
               </Button>
             </Box>
-            <Box sx={{ display: 'flex', gap: '8px', maxWidth: '1460px' }}>
-              <TextField
-                id="staffId"
-                onChange={(event) => onChangeSearch(event.target.value)}
-                sx={[localstyles.inputState, { width: '450px' }]}
-                label={t('staffManagement.employeeId')}
-                placeholder={t('staffManagement.enterEmployeeNumber')}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => {}}>
-                        <SEARCH_ICON style={{ color: '#79CA25' }} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
-              <TextField
-                id="staffName"
-                onChange={(event) => onChangeSearch(event.target.value)}
-                sx={[localstyles.inputState, { width: '450px' }]}
-                label={t('staffManagement.employeeName')}
-                placeholder={t('staffManagement.enterEmployeeName')}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => {}}>
-                        <SEARCH_ICON style={{ color: '#79CA25' }} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
+            <Box sx={{ mt: 3, display: 'flex' }}>
+              {searchfield.map((s) => (
+                <CustomSearchField
+                  key={s.field}
+                  label={s.label}
+                  placeholder={s?.placeholder}
+                  field={s.field}
+                  options={[]}
+                  width="400px"
+                  onChange={handleSearch}
+                />
+              ))}
             </Box>
+
             <div className="table-vehicle">
               <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
                 <DataGrid

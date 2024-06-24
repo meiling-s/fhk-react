@@ -820,7 +820,7 @@ export const GET_STAFF = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/staff/${tenantId}`
+  url: `api/v1/${realmApiRoute}/staff/search/${tenantId}`
 })
 
 export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
