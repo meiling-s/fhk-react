@@ -524,7 +524,7 @@
       "fifo": "First in first out (FIFO)",
       "lifo": "Last in, first out (LIFO)",
       "default_lang": "Default language",
-      "confirm": "ACTIVATED",
+      "confirm": "ACTIVATE",
       "suspend": "SUSPEND",
       "closed": "DEACTIVATE",
       "deactivated_reason": "Deactivated reason(s)"

@@ -861,11 +861,11 @@ function CompanyManage() {
     },
     {
       key: 'logistic',
-      label: t('tenant.invite_form.logistics_company')
+      label: t('tenant.invite_form.logistic_company')
     },
     {
       key: 'manufacturer',
-      label: t('tenant.invite_form.manufacturing_company')
+      label: t('tenant.invite_form.manufacturer_company')
     },
     {
       key: 'customer',
@@ -983,7 +983,14 @@ function CompanyManage() {
       field: 'type',
       headerName: t('tenant.company_category'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      valueGetter: (params) => {
+        return realmOptions.find(item => item.key === params.row.type)?.label || ""
+      }
+      // renderCell: (params) => {
+      //   const tenantType = realmOptions.find(item => item.key === params.row.type)
+      //   return {tenantType}
+      // }
     },
     {
       field: 'createDate',
