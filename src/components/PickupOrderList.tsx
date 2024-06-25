@@ -49,6 +49,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   const { t } = useTranslation()
   const [picoList, setPicoList] = useState<PicoRefrenceList[]>([])
   const [filteredPico, setFilteredPico] = useState<PicoRefrenceList[]>([])
+  const [filtered, setFiltered] = useState<PicoRefrenceList[]>([])
   const [pickupOrder, setPickupOrder] = useState<PickupOrder[]>()
   const [query, setQuery] = useState<queryPickupOrder>({
     picoId: '',
@@ -60,6 +61,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     status: null
   })
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const [search, setSearch] = useState<string| undefined>(undefined);
 
   const initPickupOrderRequest = async () => {
     let result = null
@@ -101,20 +103,28 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   }, [drawerOpen])
 
   const handleSearch = (searchWord: string) => {
-    if (searchWord != '') {
+    if(searchWord === '') {
+      setSearch(undefined)
+    } else {
+      setSearch(searchWord)
+    }
+  }
+
+  useEffect(() => {
+    if (search) {
       const filteredData: PicoRefrenceList[] = []
       filteredPico.map((item) => {
-        if (item.senderName.includes(searchWord)) {
+        if (item.senderName.includes(search) || item.picoId.includes(search)) {
           filteredData.push(item)
         }
       })
       if (filteredData) {
-        setFilteredPico(filteredData)
+        setFiltered(filteredData)
       }
     } else {
-      setFilteredPico(picoList)
+      setFiltered(picoList)
     }
-  }
+  }, [search])
 
   const handleSelectedPicoId = (
     pickupOrderDetail: PickupOrderDetail,
@@ -191,18 +201,23 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     return name
   }
 
+  const onCloseDrawer = () => {
+    handleDrawerClose()
+    setSearch(undefined)
+  }
+
   return (
     <>
       <div>
         <RightOverlayForm
           open={drawerOpen}
-          onClose={handleDrawerClose}
+          onClose={onCloseDrawer}
           anchor={'right'}
           action="none"
           headerProps={{
             title: t('pick_up_order.select_po'),
             subTitle: '',
-            onCloseHeader: handleDrawerClose
+            onCloseHeader: onCloseDrawer
           }}
         >
           <Box>
@@ -227,7 +242,58 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                   />
                 </div>
                 <Box>
-                  {filteredPico.map((item, index) =>
+                  {!search && filteredPico.map((item, index) =>
+                    item.status != 'CLOSED' ? (
+                      <div
+                        key={index}
+                        onClick={() => {
+                          handleSelectedPicoId(
+                            item.pickupOrderDetail,
+                            item.picoId
+                          )
+                        }}
+                        className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4"
+                      >
+                        <div className="font-bold text-mini mb-2">
+                          {item.type}
+                        </div>
+                        <div className="text-smi mb-2 text-[#717171]">
+                          {item.picoId}
+                        </div>
+                        <div className="date-type mb-2 flex items-center gap-2">
+                          <div className="text-smi bg-green-200 text-green-600 px-2 py-3 rounded-[50%]">
+                            {getStatus(item.status)}
+                          </div>
+                          <div className="text-smi text-[#717171]">
+                            {item.effFrmDate}
+                          </div>
+                          <div className="text-smi text-[#717171]">
+                            {t('pick_up_order.to')}
+                          </div>
+                          <div className="text-smi text-[#717171]">
+                            {item.effToDate}
+                          </div>
+                          <div className="text-smi text-[#717171]">
+                            {item.routine}
+                          </div>
+                        </div>
+                        <div className="mb- flex items-center gap-2">
+                          <div>
+                            <img src="../Delivery.svg" alt="" />
+                          </div>
+                          <div className="text-xs text-[#717171]">
+                            {item.senderName}
+                          </div>
+                          <div className="text-xs text-[#717171]">
+                            {item.receiver}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <></>
+                    )
+                  )}
+                  {search && filtered.map((item, index) =>
                     item.status != 'CLOSED' ? (
                       <div
                         key={index}
