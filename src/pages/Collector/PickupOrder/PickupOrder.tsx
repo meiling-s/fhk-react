@@ -241,6 +241,12 @@ interface StatusPickUpOrder {
   labelTchi: string
 }
 
+interface Company {
+  nameEng?: string,
+  nameSchi?: string,
+  nameTchi?: string
+}
+
 const PickupOrders = () => {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -337,7 +343,7 @@ const PickupOrders = () => {
   }
  
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
-  const {recycType, dateFormat} = useContainer(CommonTypeContainer)
+  const {recycType, dateFormat, manuList, collectorList, logisticList} = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation();
   const action: string = location.state;
@@ -410,6 +416,28 @@ const PickupOrders = () => {
   ]
   const { localeTextDataGrid } = useLocaleText();
 
+  let listCompany:Company[] = [];
+  if(collectorList && collectorList?.length >= 1){
+    const collectors:Company[] = collectorList?.map(item => {
+      return {
+        nameEng: item.collectorNameEng,
+        nameSchi: item.collectorNameSchi,
+        nameTchi: item.collectorNameTchi
+      }
+    })
+    listCompany = [...listCompany, ...collectors]
+  }
+
+  if(manuList && manuList.length >= 1){
+    const manus:Company[] = manuList?.map(item => {
+      return{
+        nameEng: item.manufacturerNameEng,
+        nameSchi: item.manufacturerNameSchi,
+        nameTchi: item.manufacturerNameTchi
+      }
+    });
+    listCompany = [...listCompany, ...manus]
+  }
 
   const initPickupOrderRequest = async () => {
     try {
@@ -421,8 +449,58 @@ const PickupOrders = () => {
       } else {
         result = await getAllPickUpOrder(page - 1, pageSize, query);
       }
-      const data = result?.data.content;
+      let data = result?.data.content;
       if (data && data.length > 0) {
+        data = data.map((item:any) => {
+          const pickupOrderDetail = item?.pickupOrderDetail[0];
+          const logisticName = item.logisticName;
+          const logistic = logisticList?.find(item => {
+            if(item.logisticNameEng === logisticName ||  item.logisticNameSchi === logisticName || 
+              item.logisticNameTchi === logisticName){
+              return item
+            } 
+          });
+
+          if(logistic && i18n.language === Languages.ENUS){
+            item.logisticName = logistic.logisticNameEng
+          } else if(logistic && i18n.language === Languages.ZHCH){
+            item.logisticName = logistic.logisticNameSchi
+          } else if (logistic && i18n.language === Languages.ZHHK){
+            item.logisticName = logistic.logisticNameTchi
+          }
+
+          const receiver = listCompany.find(item => {
+          if(item.nameEng === pickupOrderDetail?.receiverName || item.nameSchi === pickupOrderDetail.receiverName || 
+            item.nameTchi === pickupOrderDetail.receiverName) {
+              return item
+            }
+          })
+
+          if(receiver && i18n.language === Languages.ENUS){
+            pickupOrderDetail.receiverName = receiver.nameEng
+          } else if(receiver && i18n.language === Languages.ZHCH){
+            pickupOrderDetail.receiverName = receiver.nameSchi
+          } else if(receiver && i18n.language === Languages.ZHHK){
+            pickupOrderDetail.receiverName = receiver.nameTchi
+          }
+        
+          const senderName = listCompany.find(item => {
+            if(item.nameEng === pickupOrderDetail?.senderName || item.nameSchi === pickupOrderDetail.senderName || 
+              item.nameTchi === pickupOrderDetail.senderName) {
+                return item
+              }
+          })
+          
+          if(senderName && i18n.language === Languages.ENUS){
+            pickupOrderDetail.senderName = senderName.nameEng
+          } else if(senderName && i18n.language === Languages.ZHCH){
+            pickupOrderDetail.senderName = senderName.nameSchi
+          } else if(senderName && i18n.language === Languages.ZHHK){
+            pickupOrderDetail.senderName = senderName.nameTchi
+          }
+          item.pickupOrderDetail[0] = pickupOrderDetail;
+          return item
+        })
         setPickupOrder(data);
       } else {
         setPickupOrder([])
