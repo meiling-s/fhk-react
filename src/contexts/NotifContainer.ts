@@ -40,14 +40,13 @@ const Notification = () => {
       getNumNotif(loginId)
       getNotifList(loginId)
       setShowBroadcast(true)
-    }
-
-    const interval = setInterval((a) => {
-      initBroadcastMessage()
-    }, 10000);
-
-    return() => {
-      clearInterval(interval)
+      const interval = setInterval((a) => {
+        initBroadcastMessage()
+      }, 10000);
+  
+      return() => {
+        clearInterval(interval)
+      }
     }
 
   }, [loginId])

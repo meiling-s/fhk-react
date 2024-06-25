@@ -120,7 +120,7 @@ const Login = () => {
           const ipAddress = localStorage.getItem('ipAddress')
           if(ipAddress){
             const userActivity:UserActivity = {
-              operation: 'login',
+              operation: 'Login',
               ip: ipAddress,
               createdBy: userName,
               updatedBy: userName

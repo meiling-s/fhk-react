@@ -101,7 +101,7 @@ const MainAppBar = () => {
     console.log("on logout")
     if(ipAddress){
       const userActivity: UserActivity = {
-        operation: 'logout',
+        operation: 'Logout',
         ip: ipAddress,
         createdBy: loginId,
         updatedBy: loginId
