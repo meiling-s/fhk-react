@@ -29,13 +29,15 @@ import {
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../utils/utils'
 import CustomButton from './CustomButton'
-import { localStorgeKeyName } from '../../constants/constant'
+import { Languages, localStorgeKeyName } from '../../constants/constant'
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import { getVehicleDetail } from '../../APICalls/ASTD/recycling'
+import i18n from '../../setups/i18n'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -57,6 +59,7 @@ const PickupOrderForm = ({
   const role = localStorage.getItem(localStorgeKeyName.role)
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
   const {dateFormat} = useContainer(CommonTypeContainer)
+  const [vehicleType, setVehicleType] = useState<string>('');
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -136,6 +139,32 @@ const PickupOrderForm = ({
       alert('No selected pickup order')
     }
   }
+
+  const initVehicleDetail = async () => {
+    try {
+      if(selectedPickupOrder?.vehicleTypeId){
+        const vehicle = await getVehicleDetail(selectedPickupOrder.vehicleTypeId);
+        if(vehicle){
+          let vehicleLang:string = '';
+          if(i18n.language === Languages.ENUS){
+            vehicleLang = vehicle?.data?.vehicleTypeNameEng
+          } else if(i18n.language === Languages.ZHCH){
+            vehicleLang = vehicle?.data?.vehicleTypeNameSchi
+          } else {
+            vehicleLang = vehicle?.data?.vehicleTypeNameTchi
+          }
+          setVehicleType(vehicleLang)
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+
+  useEffect(() => {
+    initVehicleDetail()
+  }, [selectedPickupOrder?.vehicleTypeId])
+  
   return (
     <>
       <Box sx={localstyles.modal} onClick={handleOverlayClick}>
@@ -234,11 +263,12 @@ const PickupOrderForm = ({
 
             <CustomField label={t('pick_up_order.item.vehicle_category')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.vehicleTypeId === '1'
+                {/* {selectedPickupOrder?.vehicleTypeId === '1'
                   ? t('pick_up_order.card_detail.van')
                   : selectedPickupOrder?.vehicleTypeId === '2'
                   ? t('pick_up_order.card_detail.large_truck')
-                  : ''}
+                  : ''} */}
+                  {vehicleType}
               </Typography>
             </CustomField>
             <CustomField label={t('pick_up_order.item.plat_number')}>

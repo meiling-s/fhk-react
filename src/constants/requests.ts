@@ -1592,3 +1592,8 @@ export const GET_STAFF_ID = (
   method: 'get',
   url: `api/v1/${realmApiRoute}/staff/login/${tenantId}/${loginId}`
 })
+
+export const GET_VEHICLE_DETAIL = (vehicleId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/vehicleType/${vehicleId}`
+})

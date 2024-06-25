@@ -42,7 +42,7 @@ import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
 import PickupOrderList from '../../components/PickupOrderList'
 import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
-import { format } from '../../constants/constant'
+import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
 import {
   getThemeColorRole,
@@ -331,7 +331,7 @@ const PickupOrderCreateForm = ({
   const columns: GridColDef[] = [
     {
       field: 'pickupAt',
-      headerName: t('pick_up_order.detail.shipping_time'),
+      headerName: t('pick_up_order.recyclForm.shipping_time'),
       width: 150
     },
     {
@@ -597,7 +597,15 @@ const PickupOrderCreateForm = ({
                     placeholder={t('pick_up_order.enter_company_name')}
                     option={
                       logisticCompany?.map(
-                        (option) => option.logisticNameTchi
+                        (option) => {
+                          if(i18n.language === Languages.ENUS){
+                            return option.logisticNameEng
+                          } else if(i18n.language === Languages.ZHCH){
+                            return option.logisticNameSchi
+                          } else {
+                            return option.logisticNameTchi
+                          }
+                        }
                       ) ?? []
                     }
                     sx={{ width: '400px' }}

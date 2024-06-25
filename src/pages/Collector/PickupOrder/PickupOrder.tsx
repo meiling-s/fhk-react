@@ -250,7 +250,7 @@ const PickupOrders = () => {
   const role = localStorage.getItem(localStorgeKeyName.role)
   let columns: GridColDef[] = [
     { field: "createdAt", headerName: t('pick_up_order.table.created_datetime'), width: 150, renderCell: (params) => {
-      return dayjs.utc(params.row.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+      return dayjs.utc(params.row.createdAt).format(`${dateFormat} HH:mm`)
     } },
     {
       field: "logisticCompany",
@@ -403,7 +403,7 @@ const PickupOrders = () => {
     },
     {
       value: '',
-      labelEng: 'any',
+      labelEng: t('localizedTexts.filterValueAny'),
       labelSchi: '任何',
       labelTchi: '任何'
     },
@@ -625,7 +625,7 @@ const PickupOrders = () => {
     }));
     options.push({
       value: '',
-      label: "any",
+      label: t('localizedTexts.filterValueAny'),
     })
     return options
   }
@@ -637,7 +637,7 @@ const PickupOrders = () => {
     }));
     options.push({
       value: '',
-      label: 'any'
+      label: t('localizedTexts.filterValueAny'),
     })
     return options;
   }

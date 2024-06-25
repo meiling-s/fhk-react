@@ -19,8 +19,17 @@ import { useTranslation } from 'react-i18next'
 import { useContainer } from 'unstated-next'
 import { getAllPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
 import { queryPickupOrder } from '../interfaces/pickupOrder'
-import { localStorgeKeyName } from '../constants/constant'
+import { Languages, localStorgeKeyName } from '../constants/constant'
 import { getAllLogisticsPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
+import i18n from '../setups/i18n'
+
+interface StatusPickUpOrder {
+  value: string
+  labelEng: string,
+  labelSchi: string,
+  labelTchi: string
+}
+
 interface AddWarehouseProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
@@ -116,6 +125,72 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
+  const getStatus = (status:string) :string => {
+    let name = ''
+  
+    const statusList: StatusPickUpOrder[] = [
+      {
+        value: '0',
+        labelEng: 'CREATED',
+        labelSchi: '待处理',
+        labelTchi: '待處理'
+      },
+      {
+        value: '1',
+        labelEng: 'STARTED',
+        labelSchi: '处理中',
+        labelTchi: '處理中'
+      },
+      {
+        value: '2',
+        labelEng: 'CONFIRMED',
+        labelSchi: '已确认',
+        labelTchi: '已確認'
+      },
+      {
+        value: '3',
+        labelEng: 'REJECTED',
+        labelSchi: '已拒绝',
+        labelTchi: '已拒絕'
+      },
+      {
+        value: '4',
+        labelEng: 'COMPLETED',
+        labelSchi: '已完成',
+        labelTchi: '已完成'
+      },
+      {
+        value: '5',
+        labelEng: 'CLOSED',
+        labelSchi: '已取消',
+        labelTchi: '已取消'
+      },
+      {
+        value: '6',
+        labelEng: 'OUTSTANDING',
+        labelSchi: '已逾期',
+        labelTchi: '已逾期'
+      },
+      {
+        value: '',
+        labelEng: t('localizedTexts.filterValueAny'),
+        labelSchi: '任何',
+        labelTchi: '任何'
+      },
+    ]
+
+    const data = statusList.find(item => item.labelEng === status)
+    if(data && i18n.language === Languages.ENUS){
+      name = data.labelEng
+    } else if(data && i18n.language === Languages.ZHCH){
+      name = data.labelSchi
+    } else if(data){
+      name = data.labelTchi
+    }
+    
+    return name
+  }
+
   return (
     <>
       <div>
@@ -172,7 +247,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                         </div>
                         <div className="date-type mb-2 flex items-center gap-2">
                           <div className="text-smi bg-green-200 text-green-600 px-2 py-3 rounded-[50%]">
-                            {item.status}
+                            {getStatus(item.status)}
                           </div>
                           <div className="text-smi text-[#717171]">
                             {item.effFrmDate}

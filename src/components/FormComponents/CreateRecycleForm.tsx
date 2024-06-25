@@ -32,9 +32,10 @@ import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesList
 import { collectorList, manuList } from '../../interfaces/common'
 import CustomAutoComplete from './CustomAutoComplete'
 import dayjs from 'dayjs'
-import { localStorgeKeyName } from '../../constants/constant'
+import { Languages, localStorgeKeyName } from '../../constants/constant'
 import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
+import i18n from '../../setups/i18n'
 
 type props = {
   onClose: () => void
@@ -252,7 +253,7 @@ const CreateRecycleForm = ({
 
   const TextFields = [
     {
-      label: t('pick_up_order.recyclForm.shipping_company'),
+      label: t('pick_up_order.item.sender_name'),
       id: 'senderName',
       value: formik.values.senderName,
       error: formik.errors.senderName && formik.touched.senderName
@@ -264,7 +265,7 @@ const CreateRecycleForm = ({
       error: formik.errors.receiverName && formik.touched.receiverName
     },
     {
-      label: t('pick_up_order.recyclForm.recycling_location'),
+      label: t('check_out.shipping_location'),
       id: 'senderAddr',
       value: formik.values.senderAddr,
       error: formik.errors.senderAddr && formik.touched.senderAddr
@@ -411,10 +412,26 @@ const CreateRecycleForm = ({
                         placeholder={''}
                         option={[
                           ...(collectorList?.map(
-                            (option) => option.collectorNameTchi
+                            (option) => {
+                              if(i18n.language === Languages.ENUS){
+                                return option.collectorNameEng
+                              } else if(i18n.language === Languages.ZHCH){
+                                return option.collectorNameSchi
+                              } else {
+                                return option.collectorNameTchi
+                              }
+                            }
                           ) ?? []),
                           ...(manuList?.map(
-                            (option) => option.manufacturerNameTchi
+                            (option) => {
+                              if(i18n.language === Languages.ENUS){
+                                return option.manufacturerNameEng
+                              } else if(i18n.language === Languages.ZHCH){
+                                return option.manufacturerNameSchi
+                              } else {
+                                return option.manufacturerNameTchi
+                              }
+                            }
                           ) ?? [])
                         ]}
                         sx={{ width: '100%' }}
