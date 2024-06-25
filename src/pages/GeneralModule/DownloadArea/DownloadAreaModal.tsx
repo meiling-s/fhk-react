@@ -289,7 +289,6 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           break
       }
 
-      console.log('url', url)
       setDownloads((prev) => {
         return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
       })
