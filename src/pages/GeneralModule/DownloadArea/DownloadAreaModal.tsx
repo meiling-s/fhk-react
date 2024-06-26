@@ -130,7 +130,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       endDate &&
         !isValidDayjsISODate(endDate) &&
         tempV.push({
-          field: t('general_settings.end_date'),
+          field: t('generate_report.end_date'),
           problem: formErr.wrongFormat,
           type: 'error'
         })
@@ -295,7 +295,15 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     }
   }
 
+  const resetData = () => {
+    setValidation([])
+    setTrySubmited(false)
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+  }
+
   const onCloseDrawer = () => {
+    resetData()
     handleDrawerClose()
   }
 
