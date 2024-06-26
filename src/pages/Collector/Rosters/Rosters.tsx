@@ -203,7 +203,7 @@ const Rosters: FunctionComponent = () => {
                                 {staffItem.lang}
                               </div>
                               <div className="text-xs font-normal text-[#717171]">
-                                {staffItem.staffId}
+                                {staffItem.titleId}
                               </div>
                             </div>
                           </div>

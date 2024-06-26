@@ -352,6 +352,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }
 
   const handleRemoveStaff = (indexToRemove: number) => {
+    if(indexToRemove === 0 && selectedStaff.length === 1) return
     const updatedContractNum = selectedStaff.filter(
       (_, index) => index !== indexToRemove
     )
@@ -547,6 +548,18 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                       />
                     )
                   )}
+                  { index == selectedStaff.length - 1 && 
+                      <REMOVE_CIRCLE_ICON
+                        fontSize="small"
+                        className={`text-grey-light ${
+                          selectedStaff.length === 1
+                            ? 'cursor-not-allowed'
+                            : 'cursor-pointer'
+                        } `}
+                        onClick={() => handleRemoveStaff(index)}
+                      />
+
+                  }
                 </Box>
               ))}
               <Grid item>
