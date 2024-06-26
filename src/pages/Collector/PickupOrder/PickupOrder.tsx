@@ -689,7 +689,7 @@ const PickupOrders = () => {
 
   const navigate = useNavigate()
   const [openModal,setOpenModal] =useState<boolean>(false)
-  const [selectedRow, setSelectedRow] = useState<Row | null>(null);
+  const [selectedRow, setSelectedRow] = useState<PickupOrder | null>(null);
   function getUniqueOptions(propertyName:keyof Row) {
     const optionMap = new Map();
   
@@ -729,7 +729,7 @@ const PickupOrders = () => {
     setOpenModal(false)
   }
   const handleRowClick = (params: GridRowParams) => {
-    const row = params.row as Row;
+    const row = params.row as PickupOrder;
     setSelectedRow(row);
     setOpenModal(true);
   };

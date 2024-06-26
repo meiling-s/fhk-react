@@ -50,7 +50,7 @@ const PickupOrderForm = ({
 }: // navigateToJobOrder
 {
   onClose?: () => void
-  selectedRow?: Row | null | undefined
+  selectedRow?: PickupOrder | null | undefined
   pickupOrder?: PickupOrder[] | null
   initPickupOrderRequest: () => void
   // navigateToJobOrder: () => void;
@@ -95,7 +95,7 @@ const PickupOrderForm = ({
     }
   }, [selectedRow])
 
-  const initGetPickUpOrderData = async (picoId: number) => {
+  const initGetPickUpOrderData = async (picoId: string) => {
     const result = await getPicoById(picoId.toString())
     if (result) {
       setSelectedPickupOrder(result.data)
@@ -298,7 +298,7 @@ const PickupOrderForm = ({
               {t('pick_up_order.item.rec_loc_info')}
             </Typography>
 
-            <PickupOrderCard pickupOrderDetail={pickupOrderDetail ?? []} />
+            <PickupOrderCard pickupOrderDetail={selectedRow?.pickupOrderDetail ?? []} />
           </Stack>
         </Box>
       </Box>
