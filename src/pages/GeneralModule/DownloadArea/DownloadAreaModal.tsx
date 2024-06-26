@@ -306,6 +306,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     setTrySubmited(false)
     setStartDate(dayjs())
     setEndDate(dayjs())
+    setTenant('')
   }
 
   const onCloseDrawer = () => {
