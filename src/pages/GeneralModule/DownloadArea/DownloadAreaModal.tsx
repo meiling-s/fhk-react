@@ -347,7 +347,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   format={format.dateFormat2}
                   onChange={(value) => setStartDate(value!!)}
                   sx={{ ...localstyles.datePicker, width: '100%' }}
-                  maxDate={dayjs(endDate)}
+                  maxDate={selectedItem?.dateOption != 'datetime' ? dayjs(endDate) : null}
                 />
               </Box>
             ) : selectedItem?.manualTenantId &&
