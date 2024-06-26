@@ -104,7 +104,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       endDate < startDate &&
         tempV.push({
           field: t('generate_report.end_date'),
-          problem: formErr.toDateIsEarlierThanStartDate,
+          problem: formErr.endDateEarlyThanStartDate,
           type: 'error'
         })
       startDate == null &&
