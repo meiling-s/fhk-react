@@ -932,7 +932,8 @@
         "gender": "gender",
         "loginName": "Login Name",
         "contactNo": "Contact number",
-        "lastLogin": "Last login"
+        "lastLogin": "Last login",
+        "enterDriverId": "Enter driver number"
         }
     },
     "vehicleMenu": {

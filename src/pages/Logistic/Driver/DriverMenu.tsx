@@ -207,8 +207,8 @@ const DriverMenu = () => {
             </Box>
             <Box>
                 <TextField
-                    label={t('driver.DriverMenu.search.label')}
-                    placeholder={t('driver.DriverMenu.search.placeholder')}
+                    label={t('tenant.search')}
+                    placeholder={t('driver.DriverMenu.table.enterDriverId')}
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">

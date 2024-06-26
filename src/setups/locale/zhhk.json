@@ -935,7 +935,8 @@
         "gender": "性别",
         "loginName": "登入名稱",
         "contactNo": "聯絡電話",
-        "lastLogin": "上次登入"
+        "lastLogin": "上次登入",
+        "enterDriverId": "Enter driver number"
       },
       "popUp": {
         "addTitle": "新增司機",

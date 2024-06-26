@@ -912,7 +912,8 @@
         "gender": "性别",
         "loginName": "登入名称",
         "contactNo": "联络电话",
-        "lastLogin": "上次登入"
+        "lastLogin": "上次登入",
+        "enterDriverId": "输入司机编号"
       },
       "popUp": {
         "addTitle": "新增司机",
