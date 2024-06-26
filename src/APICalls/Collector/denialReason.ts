@@ -96,7 +96,7 @@ export const getReasonTenant = async (
 // create denial reason
 export const createDenialReason = async (data: CreateDenialReason) => {
   try {
-    // const userAccount = await getUserAccount();
+   
     const token = returnApiToken()
 
     const response = await axiosInstance({

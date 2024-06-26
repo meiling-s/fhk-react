@@ -11,8 +11,10 @@ import {
   GridRowSpacingParams
 } from '@mui/x-data-grid'
 import DownloadAreaModal from './DownloadAreaModal'
-import { getUserAccountById } from '../../../APICalls/Collector/userGroup'
+import { getStaffID, getUserAccountById } from '../../../APICalls/Collector/userGroup'
 import { Roles, localStorgeKeyName } from '../../../constants/constant'
+import { primaryColor } from '../../../constants/styles'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface reportItem {
   id: number
@@ -20,6 +22,8 @@ interface reportItem {
   typeFile: string
   reportId: string
   dateOption?: string // daterange, datetime, none
+  manualTenantId: boolean,
+  tenantId?:string
 }
 
 const DownloadArea = () => {
@@ -31,10 +35,13 @@ const DownloadArea = () => {
     report_name: '',
     typeFile: '',
     reportId: '',
-    dateOption: ''
+    dateOption: '',
+    manualTenantId: false,
+    tenantId: ''
   })
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   const columns: GridColDef[] = [
     {
@@ -44,15 +51,16 @@ const DownloadArea = () => {
       type: 'string'
     },
     {
-      field: 'edit',
-      headerName: '',
+      field: 'download',
+      headerName: t('pick_up_order.item.download'),
+      filterable: false,
       width: 200,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
             <Button
               style={{
-                backgroundColor: '#79CA25',
+                backgroundColor: primaryColor,
                 color: '#fff',
                 borderColor: '#7CE495',
                 borderRadius: '20px',
@@ -110,31 +118,37 @@ const DownloadArea = () => {
       id: 6,
       report_name: t('generate_report.recycling_point_establishment'),
       typeFile: 'WORD',
-      reportId: ''
+      reportId: '',
+      manualTenantId: false
     },
     {
       id: 7,
       report_name: t('generate_report.collection_point_establishment'),
       typeFile: 'XLS',
-      reportId: ''
+      reportId: '',
+      manualTenantId: false
     },
     {
       id: 8,
       report_name: t('generate_report.recyle_waste_collection'),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000002'
+      reportId: 'downloadExcelFnRpt000002',
+      manualTenantId: false
     },
     {
       id: 9,
       report_name: t('generate_report.daily_waste_collection'),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000004',
+      dateOption: 'datetime',
+      manualTenantId: false
     },
     {
       id: 10,
       report_name: t('generate_report.recycled_waste_inspection'),
       typeFile: 'WORD',
-      reportId: 'downloadWordFnRpt000009'
+      reportId: 'downloadWordFnRpt000009',
+      manualTenantId: false
     }
   ]
 
@@ -143,7 +157,8 @@ const DownloadArea = () => {
       id: 1,
       report_name: t('generate_report.report_of_recycled_waste_pickup_list'),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000003'
+      reportId: 'downloadExcelFnRpt000001',
+      manualTenantId: false
     },
     {
       id: 2,
@@ -151,19 +166,22 @@ const DownloadArea = () => {
         'generate_report.report_of_recycled_waste_collection_route'
       ),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000001'
+      reportId: 'downloadExcelFnRpt000003',
+      manualTenantId: false
     },
     {
       id: 3,
       report_name: t('generate_report.report_of_logistic_service_vehicle'),
       typeFile: 'XLS',
-      reportId: ''
+      reportId: 'downloadExcelFnRpt000005',
+      manualTenantId: false
     },
     {
       id: 4,
       report_name: t('generate_report.report_of_logistic_service_recycled'),
       typeFile: 'XLS',
-      reportId: ''
+      reportId: 'downloadExcelFnRpt000006',
+      manualTenantId: false
     }
   ]
 
@@ -174,14 +192,15 @@ const DownloadArea = () => {
         'generate_report.recycled_waste_request_list_manufacturer'
       ),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000011'
+      reportId: 'downloadExcelFnRpt000011',
+      manualTenantId: false
     },
     {
       id: 1,
       report_name: t('generate_report.report_of_manu_recycled_order_list'),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000012',
-      dateOption: 'none'
+      manualTenantId: false
     },
     {
       id: 2,
@@ -189,7 +208,8 @@ const DownloadArea = () => {
         'generate_report.report_of_manu_recycled_waste_tracing_list'
       ),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000013'
+      reportId: 'downloadExcelFnRpt000013',
+      manualTenantId: false
     },
     {
       id: 3,
@@ -198,7 +218,8 @@ const DownloadArea = () => {
       ),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000014',
-      dateOption: 'none'
+      dateOption: 'none',
+      manualTenantId: false
     }
   ]
 
@@ -207,7 +228,8 @@ const DownloadArea = () => {
       id: 1,
       report_name: t('generate_report.recycled_waste_request_list_customer'),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000008'
+      reportId: 'downloadExcelFnRpt000008',
+      manualTenantId: false
     }
   ]
 
@@ -219,7 +241,19 @@ const DownloadArea = () => {
       ),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000010',
-      dateOption: 'none'
+      dateOption: 'none',
+      manualTenantId: true
+    },
+    {
+      id: 2,
+      report_name: t(
+        'generate_report.report_of_user_management_list'
+      ),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000015',
+      dateOption: 'none',
+      manualTenantId: false,
+      tenantId: 'none'
     }
   ]
 
@@ -242,9 +276,9 @@ const DownloadArea = () => {
   }, [])
 
   const getUserAccount = async () => {
-    const result = await getUserAccountById(loginId)
+    const result = await getStaffID(loginId)
     if (result) {
-      setStaffId(result.data?.staffId)
+      setStaffId(result.data)
     }
   }
 
@@ -257,7 +291,9 @@ const DownloadArea = () => {
         report_name: params?.row?.report_name,
         typeFile: params?.row?.typeFile,
         reportId: params?.row?.reportId,
-        dateOption: params?.row?.dateOption
+        dateOption: params?.row?.dateOption,
+        manualTenantId: params?.row?.manualTenantId,
+        tenantId: params?.row?.tenantId,
       }
     })
   }
@@ -271,7 +307,9 @@ const DownloadArea = () => {
         report_name: params?.row?.report_name,
         typeFile: params?.row?.typeFile,
         reportId: params?.row?.reportId,
-        dateOption: params?.row?.dateOption
+        dateOption: params?.row?.dateOption,
+        manualTenantId: params?.row?.manualTenantId,
+        tenantId: params?.row?.tenantId,
       }
     })
   }
@@ -294,6 +332,7 @@ const DownloadArea = () => {
             columns={columns}
             getRowSpacing={getRowSpacing}
             onRowClick={handleSelectRow}
+            localeText={localeTextDataGrid}
             sx={{
               border: 'none',
               '& .MuiDataGrid-cell': {

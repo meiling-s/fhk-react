@@ -1,9 +1,19 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi, STATUS_CODE } from '../constants/constant'
+import {
+  formErr,
+  localStorgeKeyName,
+  format,
+  Roles,
+  Realm,
+  RealmApi,
+  STATUS_CODE
+} from '../constants/constant'
 import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { fieldNameRecycables } from '../constants/constant'
 import { errorState } from '../interfaces/common'
+import i18n from '../setups/i18n';
+import { recycType } from '../interfaces/common'
 
 export const returnApiToken = () => {
   const decodeKeycloack =
@@ -63,6 +73,21 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
       break
     case formErr.loginIdCantContainAdmin:
       msg = t('form.error.loginIdCantContainAdmin')
+      break
+    case formErr.hasBeenUsed:
+      msg = t('form.error.hasBeenUsed')
+      break
+    case formErr.startDateIsLaterThanToDate:
+      msg = t('form.error.startDateIsLaterThanToDate')
+      break
+    case formErr.toDateIsEarlierThanStartDate:
+      msg = t('form.error.toDateIsEarlierThanStartDate')
+      break
+    case formErr.tenantIdShouldBeSixDigit:
+      msg = t('form.error.tenatIdShouldBeSixDigit')
+      break
+    case formErr.tenantIdNotFound:
+      msg = t('form.error.tenantIdNotFound')
       break
   }
   return msg
@@ -272,10 +297,10 @@ export const extractError = (error:any):{state:errorState, realm: string} => {
   const realm = localStorage.getItem(localStorgeKeyName.realm) || '';
   let message:string = '';
 
-  switch(error?.response?.status){
+  switch (error?.response?.status) {
     case STATUS_CODE[401]:
       message = error?.response?.data
-      break;
+      break
     case STATUS_CODE[404]:
       message = error?.message
       break
@@ -285,13 +310,13 @@ export const extractError = (error:any):{state:errorState, realm: string} => {
   }
 
   let statusCode = error?.response?.status || STATUS_CODE[404]
-  if(!error?.response) {
+  if (!error?.response) {
     statusCode = STATUS_CODE[503]
   }
 
-  const state :errorState = {
+  const state: errorState = {
     code: statusCode,
-    message: message || 'not found',
+    message: message || 'not found'
   }
 
   return {state, realm}
@@ -316,3 +341,47 @@ export const getSelectedLanguange = (lang: string) => {
 
   return selectedLang
 }
+
+export const mappingRecyName = (recycTypeId: string, recycSubTypeId: string, recycType: recycType[]) => {
+  const matchingRecycType = recycType?.find(
+      (recyc) => recycTypeId === recyc.recycTypeId
+  );
+
+  if (matchingRecycType) {
+      const matchRecycSubType = matchingRecycType.recycSubType?.find(
+          (subtype) => subtype.recycSubTypeId === recycSubTypeId
+      );
+      var name = '';
+      switch (i18n.language) {
+          case 'enus':
+              name = matchingRecycType.recyclableNameEng;
+              break;
+          case 'zhch':
+              name = matchingRecycType.recyclableNameSchi;
+              break;
+          case 'zhhk':
+              name = matchingRecycType.recyclableNameTchi;
+              break;
+          default:
+              name = matchingRecycType.recyclableNameTchi;
+              break;
+      }
+      var subName = '';
+      switch (i18n.language) {
+          case 'enus':
+              subName = matchRecycSubType?.recyclableNameEng ?? '';
+              break;
+          case 'zhch':
+              subName = matchRecycSubType?.recyclableNameSchi ?? '';
+              break;
+          case 'zhhk':
+              subName = matchRecycSubType?.recyclableNameTchi ?? '';
+              break;
+          default:
+              subName = matchRecycSubType?.recyclableNameTchi ?? ''; //default fallback language is zhhk
+              break;
+      }
+
+      return { name, subName };
+  }
+};

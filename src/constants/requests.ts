@@ -105,10 +105,10 @@ export const FIND_COLLECTIONPOINT_EXIST_BYNAME: AxiosRequestConfig = {
 }
 
 export const FIND_COLLECTIONPOINT_EXIST_BYCONTRACT_ADDRESS: AxiosRequestConfig =
-{
-  method: 'get',
-  url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
-}
+  {
+    method: 'get',
+    url: 'api/v1/collectors/collectionPoint/byContractAndAddress'
+  }
 
 export const GET_COLLECTIONPOINT_BY_COLID = (
   tenantId: string,
@@ -126,12 +126,19 @@ export const GET_CONTRACT = (
   url: `api/v1/${realmApiRoute}/contract/${tenantId}`
 })
 
-export const NEW_GET_ALL_HEADER_CHECKIN_REQUESTS = (realmApiRoute: string, table: string): AxiosRequestConfig => ({
+export const NEW_GET_ALL_HEADER_CHECKIN_REQUESTS = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/checkinrequest/header/searching/${table}`
 })
 
-export const NEW_GET_DETAIL_CHECKIN_REQUESTS = (realmApiRoute: string, table: string, checkinId: number): AxiosRequestConfig => ({
+export const NEW_GET_DETAIL_CHECKIN_REQUESTS = (
+  realmApiRoute: string,
+  table: string,
+  checkinId: number
+): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/checkinrequest/detail/${table}/${checkinId}`
 })
@@ -469,7 +476,6 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   url: `api/v1/collectors/warehouse/${table}/${warehouseId}/status`
 })
 
-
 export const NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS = (
   realmApiRoute: string,
   table: string
@@ -481,7 +487,7 @@ export const NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS = (
 export const NEW_GET_ALL_DETAIL_CHECKOUT_REQUESTS = (
   realmApiRoute: string,
   table: string,
-  chckOutId: number,
+  chckOutId: number
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/checkoutrequest/detail/searching/${table}/${chckOutId}`
@@ -829,9 +835,9 @@ export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
 export const EDIT_STAFF = (
   tenantId: string,
   staffId: string,
-  realmApi: string
+  realmApi: string,
 ): AxiosRequestConfig => ({
-  method: 'patch',
+  method: realmApi === 'logistic' ? 'put' : 'patch',
   url: `api/v1/${realmApi}/staff/${tenantId}/${staffId}`
 })
 
@@ -912,6 +918,13 @@ export const GET_USER_ACCOUNT_LIST = (
   url: `api/v1/administrator/userAccount/t/${tenantId}`
 })
 
+export const GET_USER_ACCOUNT_LIST_PAGING = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/userAccount/t/pageable/${tenantId}`
+})
+
 export const CREATE_USER_ACCOUNT: AxiosRequestConfig = {
   method: 'post',
   url: `api/v1/administrator/register`
@@ -931,10 +944,11 @@ export const GET_CHECKIN_CHECKOUT_LIST = (
   table: string,
   picoId: string,
   page: number,
-  size: number
+  size: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkinout/searching/${table}`,
+  url: `api/v1/${realmApiRoute}/checkinout/searching/${table}`,
   params: {
     picoId: picoId ?? '',
     page,
@@ -944,7 +958,8 @@ export const GET_CHECKIN_CHECKOUT_LIST = (
 
 export const GET_CHECKIN_BY_ID = (
   table: string,
-  chkInId: number
+  chkInId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/checkin/${table}/${chkInId}`
@@ -952,7 +967,8 @@ export const GET_CHECKIN_BY_ID = (
 
 export const GET_CHECKOUT_BY_ID = (
   table: string,
-  chkOutId: number
+  chkOutId: number,
+  realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/checkout/${table}/${chkOutId}`
@@ -1110,6 +1126,15 @@ export const GET_STAFF_TITLE = (
   method: 'get',
   url: `/api/v1/${realmApiRoute}/stafftitle/${table}`
 })
+
+// export const GET_STAFF_TITLE_BY_ID = (
+//   realmApiRoute: string,
+//   table: string,
+//   titleId: string
+// ): AxiosRequestConfig => ({
+//   method: 'get',
+//   url: `/api/v1/${realmApiRoute}/stafftitle/${table}/${titleId}`
+// })
 
 //create staff title
 export const CREATE_STAFF_TITLE = (
@@ -1558,4 +1583,47 @@ export const GET_WEIGHT_RECYCABLES_DASHBOARD_ASTD = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `/api/v1/account/dashboard/weightRecyclablesColPoint/${tenantId}/${frmDate}/${toDate}`
+})
+
+export const GET_BROADCAST_MESSAGE = (): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/account/notiTemplate/broadcastMessage`
+})
+
+export const GET_STAFF_ID = (
+  realmApiRoute: string,
+  tenantId: string,
+  loginId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/${realmApiRoute}/staff/login/${tenantId}/${loginId}`
+})
+
+//NEW DENIAL REASON API FOR COLLECTORS
+export const GET_DENIAL_REASON_COLLECTORS = (
+  tenantId: string
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/collectors/reason/${tenantId}/new`
+})
+
+export const GET_DENIAL_REASON_BY_FUNCTION_ID_COLLECTORS = (
+  tenantId: string,
+  functionId: number
+): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/collectors/reason/${tenantId}/${functionId}/new`
+})
+
+export const CREATE_DENIAL_REASON_COLLECTORS: AxiosRequestConfig = {
+  method: 'post',
+  url: `/api/v1/collectors/reason/new`
+}
+
+export const UPDATE_DENIAL_REASON_COLLECTORS = (
+  tenantId: string,
+  reasonId: number
+): AxiosRequestConfig => ({
+  method: 'PUT',
+  url: `/api/v1/collectors/reason/${tenantId}/${reasonId}/new`
 })

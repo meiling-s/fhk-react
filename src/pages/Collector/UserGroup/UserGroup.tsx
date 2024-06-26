@@ -32,6 +32,7 @@ import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import { extractError } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 type TableRow = {
   id: number
@@ -76,61 +77,66 @@ const UserGroup: FunctionComponent = () => {
   const [functionList, setFunctionList] = useState<Functions[]>([])
   const [groupNameList, setGroupNameList] = useState<string[]>([])
   const role = localStorage.getItem(localStorgeKeyName.role)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [totalData, setTotalData] = useState<number>(0)
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   useEffect(() => {
     initFunctionList()
     initUserGroupList()
-  }, [])
+  }, [page])
 
   const initFunctionList = async () => {
     try {
       const result = await getAllFunction()
       const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       setFunctionList(data)
-    } catch (error:any) {
-      const { state , realm } =   extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
 
   const initUserGroupList = async () => {
-   try {
-    const result = await getAllUserGroup()
-    const data = result?.data
-    let tempGroupList: string[] = []
-    if (data) {
-      var userGroupMapping: UserGroupItem[] = []
-      data.map((item: any) => {
-        userGroupMapping.push(
-          createUserGroup(
-            item?.groupId,
-            item?.tenantId,
-            item?.roleName,
-            item?.description,
-            item?.status,
-            item?.createdBy,
-            item?.createdAt,
-            item?.updatedBy,
-            item?.updatedAt,
-            item?.userAccount,
-            item?.functions
+    try {
+      const result = await getAllUserGroup(page - 1, pageSize)
+      const data = result?.data
+      let tempGroupList: string[] = []
+      if (data) {
+        var userGroupMapping: UserGroupItem[] = []
+        data.content.map((item: any) => {
+          userGroupMapping.push(
+            createUserGroup(
+              item?.groupId,
+              item?.tenantId,
+              item?.roleName,
+              item?.description,
+              item?.status,
+              item?.createdBy,
+              item?.createdAt,
+              item?.updatedBy,
+              item?.updatedAt,
+              item?.userAccount,
+              item?.functions
+            )
           )
-        )
 
-        tempGroupList.push(item?.roleName)
-      })
-      setUserGroupList(userGroupMapping)
-      setGroupNameList(tempGroupList)
+          tempGroupList.push(item?.roleName)
+        })
+        setUserGroupList(userGroupMapping)
+        setGroupNameList(tempGroupList)
+        setTotalData(result.data.totalPages)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const { state , realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
   }
 
   const columns: GridColDef[] = [
@@ -176,7 +182,8 @@ const UserGroup: FunctionComponent = () => {
 
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -196,7 +203,8 @@ const UserGroup: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -324,6 +332,7 @@ const UserGroup: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -338,6 +347,14 @@ const UserGroup: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 }
+              }}
+            />
+            <Pagination
+              className="mt-4"
+              count={Math.ceil(totalData)}
+              page={page}
+              onChange={(_, newPage) => {
+                setPage(newPage)
               }}
             />
           </Box>

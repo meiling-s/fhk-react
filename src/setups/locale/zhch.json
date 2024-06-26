@@ -88,7 +88,9 @@
       "minMoreOneImgUploded": "至少需要上传2张车辆图片",
       "startDateBehindEndDate": "如果开始日期晚于截止日期，则不允许开始日期",
       "endDateEarlyThanStartDate": "如果“截止日期”早于“开始日期”，则不允许截止日期",
-      "loginIdCantContainAdmin": "'admin' 中不允许有单词"
+      "loginIdCantContainAdmin": "'admin' 中不允许有单词",
+      "tenatIdShouldBeSixDigit": "租户 ID 应为六位数字",
+      "tenantIdNotFound": "未找到租户 ID"
     }
   },
   "component": {
@@ -286,12 +288,13 @@
     "failed": "失败",
     "enable": "启用",
     "not_enabled": "未启用",
-    "terminated": "已终止"
+    "terminated": "已终止",
+    "deactivate": "停用"
   },
   "appBar": {
     "simplified_cn": "简体中文",
     "traditional_cn": "繁體中文",
-    "english": "英语",
+    "english": "English",
     "notify": "通知"
   },
   "pick_up_order": {
@@ -332,7 +335,9 @@
       "van": "小型货车",
       "large_truck": "大型货车",
       "regular_shipping": "常规运输",
-      "one-transport": "一次性运输"
+      "one-transport": "一次性运输",
+      "sender_and_receiver_company": "寄件和收件公司",
+      "sender_and_receiver_location": "回收和到达地点"
     },
     "item": {
       "detail": "运单详情",
@@ -348,7 +353,10 @@
       "contact_number": "请填写手机号码",
       "sender_name": "寄件公司",
       "exp_opration": "已过期操作",
-      "rec_loc_info": "回收地点资料"
+      "rec_loc_info": "回收地点资料",
+      "logistic_company": "物流公司",
+      "actions": "行动",
+      "download": "下载"
     },
     "create_pick_up_order": "建立",
     "edit_pick_up_order": "编辑取件订单",
@@ -457,8 +465,9 @@
     "number_of_acc": "帐户数量",
     "photo_blury ": "照片模糊",
     "bussniess_error": "商业编号不匹配",
-    "closed_tenant_title": "您确定将租户状态更改为“已关闭”吗 ?",
+    "closed_tenant_title": "您确定要将状态更改为“已停用”吗?",
     "closes_success": "关闭租户状态成功",
+    "are_sure_to_reject": "您确定要拒绝该申请吗",
     "invite_form": {
       "company_number": "公司编号 ",
       "enter_company": "",
@@ -470,11 +479,15 @@
       "remark": "备注",
       "enter_company_number": "请输入公司编号",
       "enter_company_category": "请输入公司类别",
-      "enter_company_zh_name": "请输入公司繁体中文",
-      "enter_company_cn_name": "请输入公司中文名称",
+      "enter_company_zh_name": "请输入公司繁体中文名称",
+      "enter_company_cn_name": "请输入公司简体中文名称",
       "enter_company_en_name": "请输入公司英文名称",
       "enter_bussiness_number": "请输入商业登记号码",
-      "enter_remark": "请输入文字"
+      "enter_remark": "请输入文字",
+      "collector_company": "回收公司",
+      "logistic_company": "物流公司",
+      "manufacturer_company": "回收厂",
+      "customer_company": "顾客公司"
     },
     "invite_modal": {
       "invite_company": "邀请公司",
@@ -485,7 +498,9 @@
       "copy": "复制",
       "send": "发送",
       "invite_success": "成功发送邀请",
-      "invite_failed": "发送邀请失败"
+      "invite_failed": "发送邀请失败",
+      "err_date": " 运送有效期无效。确保截止日期晚于开始日期",
+      "err_duplicated": "公司号码/公司名称/商业注册。编号已存在"
     },
     "detail": {
       "company_category": "公司类别",
@@ -511,7 +526,11 @@
       "no_preference": "无特别偏好",
       "fifo": "先进先出（FIFO）",
       "lifo": "后进先出（LIFO）",
-      "default_lang": "默认语言"
+      "default_lang": "默认语言",
+      "confirm": "启用",
+      "suspend": "未启用",
+      "closed": "已停用",
+      "deactivated_reason": "停用原因”"
     }
   },
   "report": {
@@ -546,7 +565,10 @@
     "speaker": "讲者",
     "service_type": "服务种类",
     "additional": "额外的",
-    "other_services": "其他服务"
+    "other_services": "其他服务",
+    "tenantIdPlaceHolder": "输入租户 ID",
+    "tenantId": "租户 ID",
+    "invalidTenantId": "租户 ID 无效"
   },
   "vehicle": {
     "vehicle": "车辆",
@@ -563,8 +585,8 @@
     "inventory": "存货",
     "recyclingInformation": "回收信息",
     "date": "日期",
-    "recyleType": "子类别",
-    "recyleSubType": "子类别",
+    "recyleType": "主类别",
+    "recyleSubType": "次类别",
     "package": "包装",
     "recyclingNumber": "回收编号",
     "inventoryLocation": "库存位置",
@@ -766,8 +788,8 @@
     "shipping_validity_date_to": "至",
     "shipping_company_name": "寄件公司名称",
     "recycling_location_information": "回收地点资料",
-    "main_category": "主类别",
-    "subcategory": "次类别",
+    "main_category": "回收物主类別",
+    "subcategory": "回收物次类別",
     "estimated_shipping_time": "预计运送时间",
     "weight": "重量",
     "shipping_and_receiving_companies": "寄件及收件公司",
@@ -778,7 +800,9 @@
     "driver": "司机",
     "plat_number": "车牌号码",
     "assign_driver": "指派司机",
-    "shippingDateAndTime": "运输日期及时间"
+    "shippingDateAndTime": "运输日期及时间",
+    "success_assign": "成功分配工作订单",
+    "failed_assign": "分配作业订单失败"
   },
   "notification": {
     "notification_menu": "通知范本",
@@ -796,7 +820,8 @@
       "name": "名称",
       "type": "种类",
       "title": "标题",
-      "language": "语言"
+      "language": "语言",
+      "edit": "编辑"
     },
     "modify_template": {
       "header": "修改范本",
@@ -848,7 +873,8 @@
     "remark": "备注",
     "enter_name": "请输入名称",
     "select_function": "请选择功能",
-    "enter_text": "请输入文字"
+    "enter_text": "请输入文字",
+    "weatherFlg": "天气原因"
   },
   "staff_title": {
     "staff_title_tchi": "繁体中文名称",
@@ -925,7 +951,7 @@
     "vehicleMenu": {
       "vehicle_number": "车辆号码",
       "license_plate_number": "车牌号",
-      "vehicle_type": "Vehicle Type",
+      "vehicle_type": "车辆类型",
       "vehicle_cargo_capacity": "车辆类型",
       "picture": "图片",
       "license_plate_number_placeholder": "请输入车牌号",
@@ -998,7 +1024,8 @@
     "report_of_recycled_waste_inventory_manufacturers": "回收物庫存報表",
     "report_of_manu_recycled_order_list" :"顾客订单列表",
     "report_of_manu_recycled_waste_tracing_list": "回收物追踪列表",
-    "report_of_manu_recycled_waste_classification_list":"回收物类别分析表"
+    "report_of_manu_recycled_waste_classification_list":"回收物类别分析表",
+    "report_of_user_management_list": " 用戶報表"
   },
   "purchase_order": {
     "all_order": "所有订单",
@@ -1187,5 +1214,109 @@
     "total_amount_of_recyclate_processed": "已处理的回收物总量",
     "total_amount_of_recyclate_remaining": "处理后剩余的回收物总量",
     "total_amount_of_recycled_material": "处理后无法使用的回收物总量"
+  },
+  "localizedTexts" : {
+    "noRowsLabel" : "没有行",
+    "noResultsOverlayLabel" : "未找到结果。",
+    "errorOverlayDefaultLabel" : "出現錯誤。",
+    "toolbarDensity" : "密度",
+    "toolbarDensityLabel" : "密度",
+    "toolbarDensityCompact" : "袖珍的",
+    "toolbarDensityStandard" : "标准",
+    "toolbarDensityComfortable" : "舒服的",
+    "toolbarColumns" : "列",
+    "toolbarColumnsLabel" : "选择列",
+    "toolbarFilters" : "筛选器",
+    "toolbarFiltersLabel" : "显示筛选器",
+    "toolbarFiltersTooltipHide" : "隐藏筛选条件",
+    "toolbarFiltersTooltipShow" : "显示筛选器",
+    "toolbarFiltersTooltipActiveFilters " : "有源滤波器",
+    "toolbarFiltersTooltipActiveFilter " : "有源滤波器",
+    "toolbarQuickFilterPlaceholder" : "搜索…",
+    "toolbarQuickFilterLabel" : "搜索",
+    "toolbarQuickFilterDeleteIconLabel" : "清除",
+    "toolbarExport" : "出口",
+    "toolbarExportLabel" : "出口",
+    "toolbarExportCSV" : "下载为 CSV",
+    "toolbarExportPrint" : "打印",
+    "toolbarExportExcel" : "下载为 Excel",
+    "columnsPanelTextFieldLabel" : "查找列",
+    "columnsPanelTextFieldPlaceholder" : "列标题",
+    "columnsPanelDragIconLabel" : "重新排序列",
+    "columnsPanelShowAllButton" : "显示所有",
+    "columnsPanelHideAllButton" : "全部藏起来",
+    "filterPanelAddFilter" : "添加筛选器",
+    "filterPanelDeleteIconLabel" : "删除",
+    "filterPanelLinkOperator" : "逻辑运算符",
+    "filterPanelOperators" : "操作员",
+    "filterPanelOperatorAnd" : "和",
+    "filterPanelOperatorOr" : "或者",
+    "filterPanelColumns" : "列",
+    "filterPanelInputLabel" : "价值",
+    "filterPanelInputPlaceholder" : "筛选值",
+    "filterOperatorContains" : "包含",
+    "filterOperatorEquals" : "等于",
+    "filterOperatorStartsWith" : "以...开始",
+    "filterOperatorEndsWith" : "以...结束",
+    "filterOperatorIs" : "是",
+    "filterOperatorNot" : "不是",
+    "filterOperatorAfter" : "之后",
+    "filterOperatorOnOrAfter" : "在或之后",
+    "filterOperatorBefore" : "之前",
+    "filterOperatorOnOrBefore" : "在或之前",
+    "filterOperatorIsEmpty" : "是空的",
+    "filterOperatorIsNotEmpty" : "不为空",
+    "filterOperatorIsAnyOf" : "是以下任意一个",
+    "filterValueAny" : "任何",
+    "filterValueTrue" : "真的",
+    "filterValueFalse" : "错误的",
+    "columnMenuLabel" : "菜单",
+    "columnMenuShowColumns" : "显示列",
+    "columnMenuFilter" : "筛选",
+    "columnMenuHideColumn" : "隐藏",
+    "columnMenuUnsort" : "取消排序",
+    "columnMenuSortAsc" : "按升序排序",
+    "columnMenuSortDesc" : "按降序排序",
+    "columnHeaderFiltersLabel" : "显示筛选器",
+    "columnHeaderSortIconLabel" : "种类",
+    "rowsSelected" : "选定的行",
+    "footerTotalRows" : "总行数",
+    "of" : "的",
+    "checkboxSelectionHeaderName" : "复选框选择",
+    "checkboxSelectionSelectAllRows" : "选择所有行",
+    "checkboxSelectionUnselectAllRows" : "取消选择所有行",
+    "checkboxSelectionSelectRow" : "选择行",
+    "checkboxSelectionUnselectRow" : "取消选择行",
+    "booleanCellTrueLabel" : "是的",
+    "booleanCellFalseLabel" : "不",
+    "actionsCellMore" : "更多的",
+    "pinToLeft" : "固定到左侧",
+    "pinToRight" : "固定到右侧",
+    "unpin" : "取消固定",
+    "treeDataGroupingHeaderName" : "团体",
+    "treeDataExpand" : "看望孩子",
+    "treeDataCollapse" : "隐藏孩子",
+    "groupingColumnHeaderName" : "团体",
+    "groupColumn" : "通过...分组",
+    "unGroupColumn" : "停止分组依据",
+    "detailPanelToggle" : "详细信息面板切换",
+    "expandDetailPanel" : "扩张",
+    "collapseDetailPanel" : "坍塌",
+    "rowReorderingHeaderName" : "行重新排序",
+    "aggregationMenuItemHeader" : "聚合",
+    "aggregationFunctionLabelSum" : "和",
+    "aggregationFunctionLabelAvg" : "平均",
+    "aggregationFunctionLabelMin" : "分钟",
+    "aggregationFunctionLabelMax" : "最大限度",
+    "aggregationFunctionLabelSize" : "尺寸",
+    "columnMenuManageColumns": "管理列",
+    "select": "复选框选择"
+  },
+  "placeHolder": {
+    "enterRecyclingNumber": "输入回收物编号",
+    "any": "任何",
+    "classification": "分类",
+    "subclassification": "子分類",
+    "place": "地方"
   }
 }

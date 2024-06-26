@@ -67,6 +67,7 @@ import { extractError, returnApiToken } from '../../../utils/utils';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -128,6 +129,7 @@ const WarehouseDashboard: FunctionComponent = () => {
     const realmApi = localStorage.getItem(localStorgeKeyName.realmApiRoute);
     const role = localStorage.getItem(localStorgeKeyName.role);
     const debouncedSearchValue: string = useDebounce(searchText, 1000);
+    const { localeTextDataGrid} = useLocaleTextDataGrid();
 
     useEffect(() => {
         if (realmApi !== 'account') {
@@ -367,25 +369,27 @@ const WarehouseDashboard: FunctionComponent = () => {
                                 'chosenWarehouseRecyc'
                             );
                             let subtypeWarehouse: warehouseSubtype[] = [];
-                            var subTypeWeight = 0;
+                            // var subTypeWeight = 0;
                             chosenWarehouseRecyc.forEach((item: any) => {
                                 const recyItem = mappingRecyName(
                                     item.recycTypeId,
                                     item.recycSubTypeId
                                 );
-                                if (subTypeWeight) {
-                                    subTypeWeight =
-                                        item.recycSubTypeId in weightSubtype
-                                            ? weightSubtype[item.recycSubTypeId]
-                                            : 0;
-                                }
+                                const recycSubTypeId = item.recycSubTypeId;
+                                let subTypeWeight =  weightSubtype[recycSubTypeId] ?  weightSubtype[recycSubTypeId] : 0;
+                                // if (subTypeWeight) {
+                                //     subTypeWeight =
+                                //         item.recycSubTypeId in weightSubtype
+                                //             ? weightSubtype[item.recycSubTypeId]
+                                //             : 0;
+                                // }
 
                                 subtypeWarehouse.push({
                                     subTypeId: item.recycSubTypeId,
                                     subtypeName: recyItem
                                         ? recyItem.subName
                                         : '-',
-                                    weight: 0,
+                                    weight: subTypeWeight,
                                     capacity: item.recycSubTypeCapacity,
                                 });
                             });
@@ -405,19 +409,22 @@ const WarehouseDashboard: FunctionComponent = () => {
                 if (result) {
                     const data = result.data;
                     let subtypeWarehouse: warehouseSubtype[] = [];
-                    var subTypeWeight = 0;
+                    // var subTypeWeight = 0;
                     data?.warehouseRecyc.forEach((item: any) => {
                         const recyItem = mappingRecyName(
                             item.recycTypeId,
                             item.recycSubTypeId
                         );
-                        if (subTypeWeight) {
-                            subTypeWeight =
-                                item.recycSubTypeId in weightSubtype
-                                    ? weightSubtype[item.recycSubTypeId]
-                                    : 0;
-                        }
+                        const recycSubTypeId = item.recycSubTypeId;
+                        let subTypeWeight =  weightSubtype[recycSubTypeId] ?  weightSubtype[recycSubTypeId] : 0;
 
+                        // if (subTypeWeight) {
+                        //     subTypeWeight =
+                        //         item.recycSubTypeId in weightSubtype
+                        //             ? weightSubtype[item.recycSubTypeId]
+                        //             : 0;
+                        // }
+                        // here
                         subtypeWarehouse.push({
                             subTypeId: item.recycSubTypeId,
                             subtypeName: recyItem ? recyItem.subName : '-',
@@ -886,7 +893,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                             alignItems: 'center',
                             cursor: 'pointer',
                         }}
-                        onClick={() => navigate(`/${role}/pickupOrder`)}
+                        onClick={() => navigate(`/${role}/checkInAndCheckout`)}
                     >
                         <Typography
                             fontSize={13}
@@ -909,6 +916,7 @@ const WarehouseDashboard: FunctionComponent = () => {
                         columns={columns}
                         checkboxSelection={false}
                         getRowSpacing={getRowSpacing}
+                        localeText={localeTextDataGrid}
                         sx={{
                             border: 'none',
                             '& .MuiDataGrid-cell': {

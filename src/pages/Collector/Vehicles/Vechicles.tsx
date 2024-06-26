@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { extractError } from '../../../utils/utils'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 type TableRow = {
   id: number
@@ -59,6 +60,7 @@ const Vehicle: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [plateList, setPlateList] = useState<string[]>([])
   const navigate = useNavigate();
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   useEffect(() => {
     initVehicleList()
@@ -135,7 +137,7 @@ const Vehicle: FunctionComponent = () => {
 
         return (
           <div style={{ display: 'flex', gap: '8px' }}>{
-            params.row.photo.map((item: string) =>{
+            params.row.photo.map((item: string, index:number) =>{
               const format = item.startsWith("data:image/png") ? 'png' : 'jpeg'
               const imgdata = `data:image/${format};base64,${item}`
               return (
@@ -151,7 +153,8 @@ const Vehicle: FunctionComponent = () => {
 
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -167,7 +170,8 @@ const Vehicle: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -285,6 +289,7 @@ const Vehicle: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {

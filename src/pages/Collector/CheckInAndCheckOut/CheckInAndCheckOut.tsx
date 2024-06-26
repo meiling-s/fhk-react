@@ -26,6 +26,7 @@ import { extractError, returnApiToken } from "../../../utils/utils";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../constants/axiosInstance";
 import { getCheckInDetailByID, getCheckOutDetailByID } from "../../../APICalls/Collector/inout";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 
   function onlyUnique(value:any, index:any, array:any) {
@@ -48,6 +49,7 @@ import { getCheckInDetailByID, getCheckOutDetailByID } from "../../../APICalls/C
     })
     const navigate = useNavigate();
     const [totalElements, setTotalElements] = useState<number>(0);
+    const { localeTextDataGrid } = useLocaleTextDataGrid();
 
     useEffect(() => {
       getData() // eslint-disable-next-line
@@ -66,7 +68,7 @@ import { getCheckInDetailByID, getCheckOutDetailByID } from "../../../APICalls/C
 
       const {data: dataRes} = await axiosInstance({
         baseURL: window.baseURL.collector,
-        ...GET_CHECKIN_CHECKOUT_LIST(table, keyword, page -1, 10)
+        ...GET_CHECKIN_CHECKOUT_LIST(table, keyword, page -1, 10, token.realmApiRoute)
       })
 
       const {content, totalPages, totalElements} = dataRes
@@ -420,8 +422,9 @@ import { getCheckInDetailByID, getCheckOutDetailByID } from "../../../APICalls/C
               hideFooter
               columns={columns}
               checkboxSelection={false}
-                onRowClick={handleSelectRow}
-                getRowSpacing={getRowSpacing}
+              onRowClick={handleSelectRow}
+              getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
               sx={{
                 border: "none",
                 "& .MuiDataGrid-cell": {

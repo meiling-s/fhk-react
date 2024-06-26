@@ -37,7 +37,18 @@ export default function RecyclablesListSingleSelect({
   const [curRecyc, setCurRecyc] = useState<string>(' ') //Current selected recyclables
   const [recycType, setRecycType] = useState<string>('')
   const [subType, setSubType] = useState<string>('') //selected sub type
-  const { t, i18n } = useTranslation()
+  const [choosenRecycType, setChoosenRecycType] = useState<recycType | null>(null)
+  const { t, i18n } = useTranslation()  
+
+  useEffect(() => {
+    if (curRecyc !== null) {
+      const filteredRecyc = recycL.filter(value => value.recycTypeId === curRecyc) as recycType[]
+      if (filteredRecyc !== undefined && filteredRecyc.length > 0) {
+        setChoosenRecycType(filteredRecyc[0])
+      }
+    }
+
+  }, [curRecyc])
   useEffect(() => {
     //console.log("defaultRecycL:",defaultRecycL);
     if (defaultRecycL) {
@@ -46,7 +57,7 @@ export default function RecyclablesListSingleSelect({
       setCurRecyc(defaultRecycL.recycTypeId)
     }
   }, [])
-
+  
   useEffect(() => {
     //console.log(toSingleRecyclable());
     setState(toSingleRecyclable())
@@ -166,7 +177,7 @@ export default function RecyclablesListSingleSelect({
       />
       <Collapse
         sx={{ mt: 1 }}
-        in={curRecyc != ' ' && recycType.length > 0}
+        in={curRecyc != ' ' && recycType.length > 0 && choosenRecycType?.recycSubType !== undefined && choosenRecycType?.recycSubType.length > 0}
         unmountOnExit
       >
         <CustomField

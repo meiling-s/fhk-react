@@ -31,6 +31,7 @@ import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
 import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
 import { returnApiToken } from '../utils/utils'
+import { Notif } from '../interfaces/notif'
 
 const MainAppBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -42,15 +43,15 @@ const MainAppBar = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList } = useContainer(
+  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList, broadcast, showBroadcast } = useContainer(
     NotifContainerContext
   )
   const { loginId } = returnApiToken()
+
   useEffect(() => {
     updateNotifications(loginId)
-  }, [])
+  }, [loginId])
  
-
   const handleLanguageChange = (lng: string) => {
     console.log('change language: ', lng)
     i18n.changeLanguage(lng)
@@ -115,6 +116,12 @@ const MainAppBar = () => {
     }
   }
 
+  const onClickNotif = (notif: Notif) => {
+    if(notif.messageType !== 'broadcast'){
+      handleClickNotif(notif.notiRecordId)
+    }
+  }
+
   return (
     //<Box flexDirection={"row"} sx={{ flexGrow: 1 }}>
     <AppBar
@@ -122,7 +129,8 @@ const MainAppBar = () => {
       position="fixed"
       sx={{
         width: `calc(100% - ${isMobile ? 0 : drawerWidth}px)`,
-        ml: `${drawerWidth}px`
+        ml: `${drawerWidth}px`,
+        marginTop: `${showBroadcast && broadcast ? '30px': ''}`
       }}
     >
       <Toolbar
@@ -172,7 +180,7 @@ const MainAppBar = () => {
                     title={notif.title}
                     content={notif.content}
                     datetime={notif.createdAt}
-                    handleItem={() => handleClickNotif(notif.notiRecordId)}
+                    handleItem={() => onClickNotif(notif)}
                     readFlg={notif.readFlg}
                   ></NotifItem>
                 ))}
