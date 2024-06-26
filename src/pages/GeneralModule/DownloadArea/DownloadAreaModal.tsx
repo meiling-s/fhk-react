@@ -93,29 +93,32 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
 
   useEffect(() => {
     const validate = async () => {
-      console.log('startDate', startDate)
+      
       const tempV: formValidate[] = []
       startDate > endDate &&
+        selectedItem?.dateOption != 'datetime' &&
         tempV.push({
           field: t('general_settings.start_date'),
           problem: formErr.startDateBehindEndDate,
           type: 'error'
         })
-      endDate < startDate &&
-        selectedItem?.dateOption != 'daterange' &&
-        tempV.push({
-          field: t('generate_report.end_date'),
-          problem: formErr.endDateEarlyThanStartDate,
-          type: 'error'
-        })
+      if (selectedItem?.dateOption != 'datetime') {
+        console.log('startDate', selectedItem?.dateOption)
+        endDate < startDate &&
+          tempV.push({
+            field: t('generate_report.end_date'),
+            problem: formErr.endDateEarlyThanStartDate,
+            type: 'error'
+          })
+      }
+
       startDate == null &&
         tempV.push({
           field: t('general_settings.start_date'),
           problem: formErr.empty,
           type: 'error'
         })
-      endDate == null &&
-        selectedItem?.dateOption != 'daterange' &&
+      endDate == null  &&
         tempV.push({
           field: t('generate_report.end_date'),
           problem: formErr.empty,
@@ -130,7 +133,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           type: 'error'
         })
       endDate &&
-        selectedItem?.dateOption != 'daterange' &&
+        selectedItem?.dateOption != 'datetime' &&
         !isValidDayjsISODate(endDate) &&
         tempV.push({
           field: t('generate_report.end_date'),
