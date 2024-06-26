@@ -102,6 +102,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           type: 'error'
         })
       endDate < startDate &&
+        selectedItem?.dateOption != 'daterange' &&
         tempV.push({
           field: t('generate_report.end_date'),
           problem: formErr.endDateEarlyThanStartDate,
@@ -114,6 +115,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           type: 'error'
         })
       endDate == null &&
+        selectedItem?.dateOption != 'daterange' &&
         tempV.push({
           field: t('generate_report.end_date'),
           problem: formErr.empty,
@@ -128,6 +130,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           type: 'error'
         })
       endDate &&
+        selectedItem?.dateOption != 'daterange' &&
         !isValidDayjsISODate(endDate) &&
         tempV.push({
           field: t('generate_report.end_date'),
