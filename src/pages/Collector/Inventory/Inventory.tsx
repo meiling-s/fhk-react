@@ -383,64 +383,6 @@ const Inventory: FunctionComponent = () => {
     updateQuery({ [keyName]: value })
   }
 
-  // const handleSearch = (label: string, value: string) => {
-  //     if (label == 'recycTypeId') {
-  //         if (value === '') {
-  //             setFilteredInventory(inventoryList);
-  //         } else {
-  //             const filtered: InventoryItem[] = inventoryList.filter(
-  //                 (item) => item.recycTypeId == value
-  //             );
-  //             if (filtered) {
-  //                 setFilteredInventory(filtered);
-  //             } else {
-  //                 setFilteredInventory(inventoryList);
-  //             }
-  //         }
-  //     }
-
-  //     if (label == 'recycSubTypeId') {
-  //         if (value === '') {
-  //             setFilteredInventory(inventoryList);
-  //         } else {
-  //             const filtered: InventoryItem[] = inventoryList.filter(
-  //                 (item) => item.recycSubTypeId == value
-  //             );
-  //             if (filtered) {
-  //                 setFilteredInventory(filtered);
-  //             } else {
-  //                 setFilteredInventory(inventoryList);
-  //             }
-  //         }
-  //     }
-
-  //     if (label == 'search') {
-  //         if (value == '') return setFilteredInventory(inventoryList);
-  //         const filtered: InventoryItem[] = inventoryList.filter(
-  //             (item) => item.recyclingNumber == value
-  //         );
-
-  //         if (filtered) {
-  //             setFilteredInventory(filtered);
-  //         } else {
-  //             setFilteredInventory(inventoryList);
-  //         }
-  //     }
-
-  //     if (label == 'location') {
-  //         if (value == '') return setFilteredInventory(inventoryList);
-  //         const filtered: InventoryItem[] = inventoryList.filter(
-  //             (item) => item.location == value
-  //         );
-
-  //         if (filtered) {
-  //             setFilteredInventory(filtered);
-  //         } else {
-  //             setFilteredInventory(inventoryList);
-  //         }
-  //     }
-  // };
-
   const handleSearchByPoNumb = (value: string) => {
     setSearchText(value)
   }
