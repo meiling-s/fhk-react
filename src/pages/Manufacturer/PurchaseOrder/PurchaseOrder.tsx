@@ -633,7 +633,7 @@ const PurchaseOrder = () => {
   const searchfield = [
     {
       label: t('pick_up_order.filter.search'),
-      placeholder: t('check_in.search_input'),
+      placeholder: t('placeHolder.po_number'),
       width: '14%',
       field: 'poId'
     },

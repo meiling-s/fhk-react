@@ -1340,6 +1340,7 @@
     "any": "任何",
     "classification": "分類",
     "subclassification": "兒童分類",
-    "place": "地方"
+    "place": "地方",
+    "po_number": "輸入採購訂單編號"
   }
 }

@@ -383,9 +383,17 @@ const Inventory: FunctionComponent = () => {
     updateQuery({ [keyName]: value })
   }
 
-  const handleSearchByPoNumb = (value: string) => {
-    setSearchText(value)
+  const handleSearchByPoNumb = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const numericValue = event.target.value.replace(/\D/g, '')
+    event.target.value = numericValue
+
+    if (numericValue.length === 6) {
+      setSearchText(numericValue)
+    }
   }
+
 
   useEffect(() => {
     if (debouncedSearchValue) {
@@ -413,11 +421,16 @@ const Inventory: FunctionComponent = () => {
       >
         {realmApi === 'account' && (
           <TextField
-            id="searchShipment"
-            onChange={(event) => handleSearchByPoNumb(event.target.value)}
+            id="search-tenantId-inventory"
+            onChange={handleSearchByPoNumb}
             sx={styles.inputStyle}
             label={t('check_in.search')}
-            placeholder={t('warehouse_page.enter_tenantId')}
+            placeholder={t('tenant.enter_company_number')}
+            inputProps={{
+              inputMode: 'numeric',
+              pattern: '[0-9]*',
+              maxLength: 6
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
