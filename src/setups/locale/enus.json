@@ -924,7 +924,16 @@
       "cars": "Vehicles"
     },
     "DriverMenu": {
-      "AddBtn": "Add Driver"
+      "AddBtn": "Add Driver",
+      "table": {
+        "driverId": "Driver ID",
+        "driverName": "Driver's Chinese name",
+        "driverEngName": "Driver English Name",
+        "gender": "gender",
+        "loginName": "Login Name",
+        "contactNo": "Contact number",
+        "lastLogin": "Last login"
+        }
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle Number",
