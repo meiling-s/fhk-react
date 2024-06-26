@@ -743,6 +743,7 @@ const PurchaseOrder = () => {
   }
 
   const handleSearch = (keyName: string, value: string) => {
+    setPage(1)
     updateQuery({ [keyName]: value })
   }
 

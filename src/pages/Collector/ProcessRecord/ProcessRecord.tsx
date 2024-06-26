@@ -291,6 +291,7 @@ const ProcessRecord: FunctionComponent = () => {
   }
 
   const handleSearch = (label: string, value: string) => {
+    setPage(1)
     updateQuery({ [label]: value })
   }
 

@@ -448,6 +448,7 @@ const StaffManagement: FunctionComponent = () => {
   }
 
   const handleSearch = (keyName: string, value: string) => {
+    setPage(1)
     updateQuery({ [keyName]: value })
   }
 

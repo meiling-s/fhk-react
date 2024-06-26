@@ -718,6 +718,7 @@ const PickupOrders = () => {
   }
 
   const handleSearch = (keyName: string, value: string) => {
+    setPage(1)
     if (keyName == 'status') {
       // const statusMapping: { [key: string]: number } = {
       //   CREATED: 0,
