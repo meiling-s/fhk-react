@@ -29,7 +29,11 @@ import {
   astdGetAllInventory,
   getAllInventory
 } from '../../../APICalls/Collector/inventory'
-import { format, localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
+import {
+  format,
+  localStorgeKeyName,
+  STATUS_CODE
+} from '../../../constants/constant'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
@@ -41,7 +45,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
-import { returnApiToken , extractError} from '../../../utils/utils'
+import { returnApiToken, extractError } from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { InventoryQuery } from '../../../interfaces/inventory'
@@ -366,7 +370,6 @@ const Inventory: FunctionComponent = () => {
     }
   }
 
-
   const searchfield = [
     {
       label: t('pick_up_order.filter.search'),
@@ -396,34 +399,34 @@ const Inventory: FunctionComponent = () => {
 
   function getUniqueOptions(propertyName: keyof InventoryItem) {
     const optionMap = new Map()
-   
+
     if (propertyName === 'recycTypeId') {
       inventoryList.forEach((row) => {
         if (row[propertyName]) {
-          optionMap.set(row[propertyName], row.recyName);
+          optionMap.set(row[propertyName], row.recyName)
         }
-      });
-    } else if(propertyName === 'recycSubTypeId'){
+      })
+    } else if (propertyName === 'recycSubTypeId') {
       inventoryList.forEach((row) => {
         if (row[propertyName]) {
-          optionMap.set(row[propertyName], row.subName);
+          optionMap.set(row[propertyName], row.subName)
         }
-      });
+      })
     } else {
       inventoryList.forEach((row) => {
         optionMap.set(row[propertyName], row[propertyName])
       })
     }
-   
+
     const options = Array.from(optionMap.entries()).map(([key, value]) => ({
       value: key,
       label: value
-    }));
+    }))
     options.push({
       value: '',
       label: t('check_in.any')
     })
-    console.log("options", options)
+
     return options
   }
 
