@@ -1355,7 +1355,8 @@
     "classification": "Slassification",
     "subclassification": "Subclassification",
     "place": "Place",
-    "po_number": "Enter PO number"
+    "po_number": "Enter PO number",
+    "jo_number": "Enter JO number"
   }
 
 }

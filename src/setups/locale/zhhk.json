@@ -1342,6 +1342,7 @@
     "classification": "分類",
     "subclassification": "兒童分類",
     "place": "地方",
-    "po_number": "輸入採購訂單編號"
+    "po_number": "輸入採購訂單編號",
+    "jo_number": "輸入工作編號"
   }
 }

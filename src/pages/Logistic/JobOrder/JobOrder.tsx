@@ -351,7 +351,7 @@ const JobOrder = () => {
 
 
   const searchfield = [
-    {label:t('job_order.filter.search'), placeholder: t('check_in.search_input') , field: 'joId'},
+    {label:t('job_order.filter.search'), placeholder: t('placeHolder.jo_number') , field: 'joId'},
     {label:t('job_order.table.sender_company'),options:getUniqueOptions('senderName'), field:"senderName"},
     {label:t('job_order.table.receiver_company'),options:getUniqueOptions('receiverName'), field:"receiverName"},
     {label:t('job_order.table.driver_id'),options:getUniqueOptions('driverId'), field:"driverId"},
