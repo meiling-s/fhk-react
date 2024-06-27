@@ -329,7 +329,7 @@ const Inventory: FunctionComponent = () => {
       placeholder: t('placeHolder.any')
     },
     {
-      label: t('placeHolder.place'),
+      label: t('placeHolder.inventory_location'),
       field: 'warehouseId',
       options: getUniqueOptions('warehouseId'),
       placeholder: t('placeHolder.any')

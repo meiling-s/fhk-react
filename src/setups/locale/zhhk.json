@@ -743,6 +743,7 @@
     "place": "地點",
     "search_placeholder": "輸入運單編號",
     "any": "任何",
+    "send": "送出",
     "send_in": "送入",
     "ship": "出貨",
     "send_request": "送出請求",
@@ -1341,8 +1342,10 @@
     "enterRecyclingNumber": "輸入回收物編號",
     "any": "任何",
     "classification": "分類",
-    "subclassification": "兒童分類",
+    "subclassification": "子分類",
+    "inventory_location" : "地點",
     "place": "地方",
-    "po_number": "輸入採購訂單編號"
+    "po_number": "輸入採購訂單編號",
+    "ship": "Ship"
   }
 }
