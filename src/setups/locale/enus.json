@@ -90,7 +90,8 @@
       "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'",
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
-      "tenantIdNotFound": "Tenant Id not found"
+      "tenantIdNotFound": "Tenant Id not found",
+      "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed"
     }
   },
   "component": {
@@ -200,7 +201,7 @@
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "search_input": "Enter the waybill number"
+    "search_input": "Enter PO number"
   },
   "check_out": {
     "request_check_out": "Checkout request",
@@ -290,7 +291,8 @@
     "failed": "Failed",
     "enable": "Enable",
     "not_enabled": "Not enabled",
-    "terminated": "Terminated"
+    "terminated": "Terminated",
+    "deactivate": "Deactivate"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -465,23 +467,28 @@
     "number_of_acc": "Number of accounts",
     "photo_blury": "Photo is blurry",
     "bussniess_error": "Business number does not match",
-    "closed_tenant_title": "Are you sure to change tenant status to `CLOSED` ? ",
+    "closed_tenant_title": "Are you sure to change tenant status to `DEACTIVATED` ? ",
     "closes_success": "Closed tenant status success",
+    "are_sure_to_reject": "Are you sure want to reject the application for",
     "invite_form": {
       "company_number": "Company number",
       "company_category": "Company category",
-      "company_zh_name": "Company traditional Chinese",
-      "company_cn_name": "Company Chinese name",
+      "company_zh_name": "Company traditional Chinese name",
+      "company_cn_name": "Company simplified Chinese name ",
       "company_en_name": "Company English name",
       "bussiness_number": "Business registration number",
       "remark": "Remark",
       "enter_company_number": "Please enter company number",
       "enter_company_category": "Please enter company category",
-      "enter_company_zh_name": "Please enter company traditional Chinese",
-      "enter_company_cn_name": "Please enter company Chinese name",
+      "enter_company_zh_name": "Please enter company traditional Chinese name",
+      "enter_company_cn_name": "Please enter company simplified Chinese name",
       "enter_company_en_name": "Please enter company English name",
       "enter_bussiness_number": "Please enter business registration number",
-      "enter_remark": "Please enter text"
+      "enter_remark": "Please enter text",
+      "collector_company": "Collector Company",
+      "logistic_company": "Logistics Company",
+      "manufacturer_company": "Manufacturing Company",
+      "customer_company": "Customer Company"
     },
     "invite_modal": {
       "invite_company": "Invite company",
@@ -492,7 +499,9 @@
       "copy": "copy",
       "send": "send",
       "invite_success": "Success send invitation",
-      "invite_failed": "Failed send invitation"
+      "invite_failed": "Failed send invitation",
+      "err_date": "Invalid Shipping validity date. Ensure To date is later than the Start date",
+      "err_duplicated": "Company number/Company name/Business Reg. No. already exist"
     },
     "detail": {
       "company_category": "Company category",
@@ -518,7 +527,11 @@
       "no_preference": "No preference",
       "fifo": "First in first out (FIFO)",
       "lifo": "Last in, first out (LIFO)",
-      "default_lang": "Default language"
+      "default_lang": "Default language",
+      "confirm": "ACTIVATE",
+      "suspend": "SUSPEND",
+      "closed": "DEACTIVATE",
+      "deactivated_reason": "Deactivated reason(s)"
     }
   },
   "report": {
@@ -599,7 +612,7 @@
     "location": "Location",
     "creationDate": "Created at",
     "handleName": "Process type name",
-    "processingNumb": "Process Id",
+    "processingNumb": "Process number",
     "processingLocation": "Process address",
     "handler": "Handled by",
     "status": "Status",
@@ -730,7 +743,7 @@
     "search": "Search",
     "company": "Company",
     "place": "Delivery Location",
-    "search_placeholder": "Enter the waybill number",
+    "search_placeholder": "Enter PO number",
     "any": "Any",
     "send_in": "Send In",
     "ship": "Ship",
@@ -886,7 +899,8 @@
     "remark": "Remark",
     "enter_name": "Please enter name",
     "select_function": "Please select function",
-    "enter_text": "Please enter text"
+    "enter_text": "Please enter text",
+    "weatherFlg": "Weather Reason"
   },
   "staff_title": {
     "staff_title_tchi": "Traditional Chinese Name",
@@ -913,7 +927,17 @@
       "cars": "Vehicles"
     },
     "DriverMenu": {
-      "AddBtn": "Add Driver"
+      "AddBtn": "Add Driver",
+      "table": {
+        "driverId": "Driver Number",
+        "driverName": "Driver's Chinese name",
+        "driverEngName": "Driver English Name",
+        "gender": "gender",
+        "loginName": "Login Name",
+        "contactNo": "Contact number",
+        "lastLogin": "Last login",
+        "enterDriverId": "Enter driver number"
+        }
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle Number",
@@ -1332,7 +1356,8 @@
     "any": "Any",
     "classification": "Slassification",
     "subclassification": "Subclassification",
-    "place": "Place"
+    "place": "Place",
+    "po_number": "Enter PO number"
   }
 
 }

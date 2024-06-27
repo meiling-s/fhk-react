@@ -33,6 +33,7 @@ import i18n from '../../../setups/i18n'
 import { displayCreatedDate, extractError } from '../../../utils/utils'
 import { ProcessType } from '../../../interfaces/common'
 import { useNavigate } from 'react-router-dom'
+import { queryProcessRecord } from '../../../interfaces/processRecords'
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -89,11 +90,16 @@ const ProcessRecord: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const navigate = useNavigate()
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const [query, setQuery] = useState<queryProcessRecord>({
+    processOutId: null,
+    processType: '',
+    processAddress: ''
+  })
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initProcessRecord()
-  }, [page])
+  }, [page, query])
 
   const getProcessInDetail = async (processInId: number) => {
     try {
@@ -111,7 +117,7 @@ const ProcessRecord: FunctionComponent = () => {
     try {
       setTotalData(0)
       setProcesRecords([])
-      const result = await getAllProcessRecord(page - 1, pageSize)
+      const result = await getAllProcessRecord(page - 1, pageSize, query)
       if (result.status === STATUS_CODE[200]) {
         const data = result?.data
         var recordsMapping: any[] = []
@@ -146,6 +152,10 @@ const ProcessRecord: FunctionComponent = () => {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else {
+        setTotalData(0)
+        setProcesRecords([])
+        setFilteredProcessRecords([])
       }
     }
   }
@@ -204,9 +214,6 @@ const ProcessRecord: FunctionComponent = () => {
       headerName: t('processRecord.processingLocation'),
       width: 200,
       type: 'string'
-      // renderCell: (params) => {
-      //   return '-'
-      // }
     },
     {
       field: 'createdBy',
@@ -227,19 +234,23 @@ const ProcessRecord: FunctionComponent = () => {
 
   const searchfield = [
     {
-      label: t('processRecord.enterProcessingNumber'),
-      field: 'search',
-      width: '20%'
+      label: t('processRecord.search'),
+      placeholder: t('processRecord.enterProcessingNumber'),
+      field: 'processOutId',
+      numberOnly: true,
+      width: '300px'
     },
     {
       label: t('processRecord.handleName'),
       options: getUniqueOptions('packageTypeId'),
-      field: 'packageTypeId'
+      field: 'processType',
+      width: '300px'
     },
     {
-      label: t('processRecord.location'),
+      label: t('warehouse_page.place'),
       options: getUniqueOptions('address'),
-      field: 'address'
+      field: 'processAddress',
+      width: '300px'
     }
   ]
 
@@ -248,12 +259,15 @@ const ProcessRecord: FunctionComponent = () => {
     procesRecords.forEach((row) => {
       optionMap.set(row[propertyName], row[propertyName])
     })
-    const options: Option[] = Array.from(optionMap.values()).map((option) => ({
-      value: option,
-      label:
-        propertyName === 'packageTypeId' ? mappingProcessName(option) : option
-    }))
+    const options: Option[] = Array.from(optionMap.values())
+      .map((option) => {
+        const label =
+          propertyName === 'packageTypeId' ? mappingProcessName(option) : option
+        return label !== undefined ? { value: option, label: label } : undefined
+      })
+      .filter((option): option is Option => option !== undefined)
 
+    console.log('option', options)
     options.push({
       value: '',
       label: t('check_in.any')
@@ -275,35 +289,13 @@ const ProcessRecord: FunctionComponent = () => {
     }
   }, [])
 
+  const updateQuery = (newQuery: Partial<queryProcessRecord>) => {
+    setQuery({ ...query, ...newQuery })
+  }
+
   const handleSearch = (label: string, value: string) => {
-    // console.log('hanlde search', label, value)
-    if (value == '') return setFilteredProcessRecords(procesRecords)
-    if (label == 'search') {
-      const filtered: ProcessOut[] = procesRecords.filter(
-        (item) => item.processOutId == value
-      )
-      filtered
-        ? setFilteredProcessRecords(filtered)
-        : setFilteredProcessRecords(procesRecords)
-    }
-
-    if (label == 'createdBy') {
-      const filtered: ProcessOut[] = procesRecords.filter(
-        (item) => item.createdBy == value
-      )
-      filtered
-        ? setFilteredProcessRecords(filtered)
-        : setFilteredProcessRecords(procesRecords)
-    }
-
-    if (label == 'adress') {
-      const filtered: ProcessOut[] = procesRecords.filter(
-        (item) => item.address == value
-      )
-      filtered
-        ? setFilteredProcessRecords(filtered)
-        : setFilteredProcessRecords(procesRecords)
-    }
+    setPage(1)
+    updateQuery({ [label]: value })
   }
 
   return (
@@ -352,6 +344,9 @@ const ProcessRecord: FunctionComponent = () => {
               key={index}
               label={s.label}
               field={s.field}
+              placeholder={s?.placeholder}
+              width={s.width}
+              numberOnly={s.numberOnly || false}
               options={s.options || []}
               onChange={handleSearch}
             />

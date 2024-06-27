@@ -90,7 +90,8 @@
       "endDateEarlyThanStartDate": "如果“截止日期”早于“开始日期”，则不允许截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允许有单词",
       "tenatIdShouldBeSixDigit": "租户 ID 应为六位数字",
-      "tenantIdNotFound": "未找到租户 ID"
+      "tenantIdNotFound": "未找到租户 ID",
+      "loginIdProhibited": "不允许在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'"
     }
   },
   "component": {
@@ -289,7 +290,8 @@
     "failed": "失败",
     "enable": "启用",
     "not_enabled": "未启用",
-    "terminated": "已终止"
+    "terminated": "已终止",
+    "deactivate": "停用"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -465,8 +467,9 @@
     "number_of_acc": "帐户数量",
     "photo_blury ": "照片模糊",
     "bussniess_error": "商业编号不匹配",
-    "closed_tenant_title": "您确定将租户状态更改为“已关闭”吗 ?",
+    "closed_tenant_title": "您确定要将状态更改为“已停用”吗?",
     "closes_success": "关闭租户状态成功",
+    "are_sure_to_reject": "您确定要拒绝该申请吗",
     "invite_form": {
       "company_number": "公司编号 ",
       "enter_company": "",
@@ -478,11 +481,15 @@
       "remark": "备注",
       "enter_company_number": "请输入公司编号",
       "enter_company_category": "请输入公司类别",
-      "enter_company_zh_name": "请输入公司繁体中文",
-      "enter_company_cn_name": "请输入公司中文名称",
+      "enter_company_zh_name": "请输入公司繁体中文名称",
+      "enter_company_cn_name": "请输入公司简体中文名称",
       "enter_company_en_name": "请输入公司英文名称",
       "enter_bussiness_number": "请输入商业登记号码",
-      "enter_remark": "请输入文字"
+      "enter_remark": "请输入文字",
+      "collector_company": "回收公司",
+      "logistic_company": "物流公司",
+      "manufacturer_company": "回收厂",
+      "customer_company": "顾客公司"
     },
     "invite_modal": {
       "invite_company": "邀请公司",
@@ -493,7 +500,9 @@
       "copy": "复制",
       "send": "发送",
       "invite_success": "成功发送邀请",
-      "invite_failed": "发送邀请失败"
+      "invite_failed": "发送邀请失败",
+      "err_date": " 运送有效期无效。确保截止日期晚于开始日期",
+      "err_duplicated": "公司号码/公司名称/商业注册。编号已存在"
     },
     "detail": {
       "company_category": "公司类别",
@@ -519,7 +528,11 @@
       "no_preference": "无特别偏好",
       "fifo": "先进先出（FIFO）",
       "lifo": "后进先出（LIFO）",
-      "default_lang": "默认语言"
+      "default_lang": "默认语言",
+      "confirm": "启用",
+      "suspend": "未启用",
+      "closed": "已停用",
+      "deactivated_reason": "停用原因”"
     }
   },
   "report": {
@@ -862,7 +875,8 @@
     "remark": "备注",
     "enter_name": "请输入名称",
     "select_function": "请选择功能",
-    "enter_text": "请输入文字"
+    "enter_text": "请输入文字",
+    "weatherFlg": "天气原因"
   },
   "staff_title": {
     "staff_title_tchi": "繁体中文名称",
@@ -895,13 +909,14 @@
         "placeholder": "输入司机编号"
       },
       "table": {
-        "driverId": "司机编号",
+        "driverId": "司机号码",
         "driverName": "司机中文名",
         "driverEngName": "Driver English Name",
         "gender": "性别",
         "loginName": "登入名称",
         "contactNo": "联络电话",
-        "lastLogin": "上次登入"
+        "lastLogin": "上次登入",
+        "enterDriverId": "输入司机编号"
       },
       "popUp": {
         "addTitle": "新增司机",
@@ -1305,6 +1320,7 @@
     "any": "任何",
     "classification": "分类",
     "subclassification": "子分類",
-    "place": "地方"
+    "place": "地方",
+    "po_number": "输入采购订单号"
   }
 }

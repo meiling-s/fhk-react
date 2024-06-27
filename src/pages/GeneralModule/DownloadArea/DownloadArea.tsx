@@ -22,7 +22,8 @@ interface reportItem {
   typeFile: string
   reportId: string
   dateOption?: string // daterange, datetime, none
-  manualTenantId: boolean
+  manualTenantId: boolean,
+  tenantId?:string
 }
 
 const DownloadArea = () => {
@@ -35,7 +36,8 @@ const DownloadArea = () => {
     typeFile: '',
     reportId: '',
     dateOption: '',
-    manualTenantId: false
+    manualTenantId: false,
+    tenantId: ''
   })
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
@@ -248,9 +250,10 @@ const DownloadArea = () => {
         'generate_report.report_of_user_management_list'
       ),
       typeFile: 'XLS',
-      reportId: 'downloadExcelFnRpt000011',
+      reportId: 'downloadExcelFnRpt000015',
       dateOption: 'none',
-      manualTenantId: false
+      manualTenantId: false,
+      tenantId: 'none'
     }
   ]
 
@@ -289,7 +292,8 @@ const DownloadArea = () => {
         typeFile: params?.row?.typeFile,
         reportId: params?.row?.reportId,
         dateOption: params?.row?.dateOption,
-        manualTenantId: params?.row?.manualTenantId
+        manualTenantId: params?.row?.manualTenantId,
+        tenantId: params?.row?.tenantId,
       }
     })
   }
@@ -304,7 +308,8 @@ const DownloadArea = () => {
         typeFile: params?.row?.typeFile,
         reportId: params?.row?.reportId,
         dateOption: params?.row?.dateOption,
-        manualTenantId: params?.row?.manualTenantId
+        manualTenantId: params?.row?.manualTenantId,
+        tenantId: params?.row?.tenantId,
       }
     })
   }

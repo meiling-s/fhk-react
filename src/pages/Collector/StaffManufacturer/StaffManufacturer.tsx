@@ -26,7 +26,7 @@ import {
 } from "../../../themes/icons";
 
 import StaffManufacturerDetail from "./StaffManufacturerDetails";
-
+import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
 import { styles } from "../../../constants/styles";
 import { ToastContainer, toast } from "react-toastify";
 import Tabs from "../../../components/Tabs";
@@ -45,6 +45,7 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
+import { staffQuery } from "../../../interfaces/staff";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -105,14 +106,17 @@ const StaffManufacturer: FunctionComponent = () => {
   const {dateFormat} = useContainer(CommonTypeContainer)
   const navigate = useNavigate();
   const { localeTextDataGrid } = useLocaleTextDataGrid();
-
+  const [query, setQuery] = useState<staffQuery>({
+    staffId: '',
+    staffName: ''
+  })
   useEffect(() => {
     initStaffList();
-  }, [page]);
+  }, [page, query]);
 
   const initStaffList = async () => {
     try {
-      const result = await getAllUserManufacturer(page - 1, pageSize);
+      const result = await getAllUserManufacturer(page - 1, pageSize, query);
       if (result) {
         const data = result.data.content;
         var staffMapping: Staff[] = [];
@@ -304,26 +308,48 @@ const StaffManufacturer: FunctionComponent = () => {
     }
   };
 
-  const onChangeSearch = (searchWord: string) => {
-    if (searchWord.trim() !== "") {
-      const filteredData: Staff[] = filteredStaff.filter((item) => {
-        const lowerCaseSearchWord = searchWord.toLowerCase();
-        const lowerCaseStaffId = item.staffId.toLowerCase();
-        const staffNameEng = item.staffNameEng.toLowerCase();
-        const staffNameTchi = item.staffNameTchi.toLowerCase();
-
-        // Check if staffId starts with the search word
-        return (
-          lowerCaseStaffId.startsWith(lowerCaseSearchWord) ||
-          staffNameEng.startsWith(lowerCaseSearchWord) ||
-          staffNameTchi.startsWith(lowerCaseSearchWord)
-        );
-      });
-      setFillteredStaff(filteredData);
-    } else {
-      setFillteredStaff(staffList);
+  const searchfield = [
+    {
+      label: t('staffManagement.employeeId'),
+      placeholder: t('staffManagement.enterEmployeeNumber'),
+      field: 'staffId'
+    },
+    {
+      label: t('staffManagement.employeeName'),
+      placeholder: t('staffManagement.enterEmployeeName'),
+      field: 'staffName'
     }
-  };
+  ]
+
+  const updateQuery = (newQuery: Partial<staffQuery>) => {
+    setQuery({ ...query, ...newQuery })
+  }
+
+  const handleSearch = (keyName: string, value: string) => {
+    setPage(1)
+    updateQuery({ [keyName]: value })
+  }
+
+  // const onChangeSearch = (searchWord: string) => {
+  //   if (searchWord.trim() !== "") {
+  //     const filteredData: Staff[] = filteredStaff.filter((item) => {
+  //       const lowerCaseSearchWord = searchWord.toLowerCase();
+  //       const lowerCaseStaffId = item.staffId.toLowerCase();
+  //       const staffNameEng = item.staffNameEng.toLowerCase();
+  //       const staffNameTchi = item.staffNameTchi.toLowerCase();
+
+  //       // Check if staffId starts with the search word
+  //       return (
+  //         lowerCaseStaffId.startsWith(lowerCaseSearchWord) ||
+  //         staffNameEng.startsWith(lowerCaseSearchWord) ||
+  //         staffNameTchi.startsWith(lowerCaseSearchWord)
+  //       );
+  //     });
+  //     setFillteredStaff(filteredData);
+  //   } else {
+  //     setFillteredStaff(staffList);
+  //   }
+  // };
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
@@ -380,7 +406,7 @@ const StaffManufacturer: FunctionComponent = () => {
                 <ADD_ICON /> {t("staffManagement.addNewEmployees")}
               </Button>
             </Box>
-            <Box sx={{ display: "flex", gap: "8px", maxWidth: "1460px" }}>
+            {/* <Box sx={{ display: "flex", gap: "8px", maxWidth: "1460px" }}>
               <TextField
                 id="staffId"
                 onChange={(event) => onChangeSearch(event.target.value)}
@@ -413,6 +439,19 @@ const StaffManufacturer: FunctionComponent = () => {
                   ),
                 }}
               />
+            </Box> */}
+             <Box sx={{ mt: 3, display: 'flex' }}>
+              {searchfield.map((s) => (
+                <CustomSearchField
+                  key={s.field}
+                  label={s.label}
+                  placeholder={s?.placeholder}
+                  field={s.field}
+                  options={[]}
+                  width="400px"
+                  onChange={handleSearch}
+                />
+              ))}
             </Box>
             <div className="table-vehicle">
               <Box pr={4} sx={{ flexGrow: 1, maxWidth: "1460px" }}>

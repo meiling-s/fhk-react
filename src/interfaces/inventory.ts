@@ -21,3 +21,10 @@ export type InventoryItem = {
     updatedAt: string
     location: string
 }
+
+export type InventoryQuery = {
+    itemId: number | null
+    warehouseId: number | null
+    recycTypeId: string
+    recycSubTypeId: string
+}

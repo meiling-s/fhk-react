@@ -42,3 +42,9 @@ export type processOutImage = {
     createdBy: string
     updatedBy: string
   }
+
+  export type queryProcessRecord = {
+    processOutId: number | null;
+    processType: string;
+    processAddress: string;
+  }
