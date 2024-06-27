@@ -200,7 +200,7 @@
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "search_input": "Enter the waybill number"
+    "search_input": "Enter PO number"
   },
   "check_out": {
     "request_check_out": "Checkout request",
@@ -610,7 +610,7 @@
     "location": "Location",
     "creationDate": "Created at",
     "handleName": "Process type name",
-    "processingNumb": "Process Id",
+    "processingNumb": "Process number",
     "processingLocation": "Process address",
     "handler": "Handled by",
     "status": "Status",
@@ -741,7 +741,7 @@
     "search": "Search",
     "company": "Company",
     "place": "Delivery Location",
-    "search_placeholder": "Enter the waybill number",
+    "search_placeholder": "Enter PO number",
     "any": "Any",
     "send_in": "Send In",
     "ship": "Ship",
@@ -925,7 +925,17 @@
       "cars": "Vehicles"
     },
     "DriverMenu": {
-      "AddBtn": "Add Driver"
+      "AddBtn": "Add Driver",
+      "table": {
+        "driverId": "Driver Number",
+        "driverName": "Driver's Chinese name",
+        "driverEngName": "Driver English Name",
+        "gender": "gender",
+        "loginName": "Login Name",
+        "contactNo": "Contact number",
+        "lastLogin": "Last login",
+        "enterDriverId": "Enter driver number"
+        }
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle Number",
@@ -1344,7 +1354,8 @@
     "any": "Any",
     "classification": "Slassification",
     "subclassification": "Subclassification",
-    "place": "Place"
+    "place": "Place",
+    "po_number": "Enter PO number"
   }
 
 }

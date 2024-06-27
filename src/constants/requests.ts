@@ -662,6 +662,8 @@ export const GET_PROCESS_OUT = (
   url: `api/v1/${realmApiRoute}/processout/header/searching/${table}`
 })
 
+
+
 export const GET_PROCESS_IN_BY_ID = (
   table: string,
   processInId: number,
@@ -824,7 +826,7 @@ export const GET_STAFF = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/staff/${tenantId}`
+  url: `api/v1/${realmApiRoute}/staff/search/${tenantId}`
 })
 
 export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
@@ -1355,7 +1357,7 @@ export const GET_USER_MANUFACTURER_LIST = (
   tenantId: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/manufacturer/staff/${tenantId}`
+  url: `api/v1/manufacturer/staff/search/${tenantId}`
 })
 
 export const CREATE_USER_MANUFACTURER: AxiosRequestConfig = {

@@ -660,7 +660,7 @@
     "employeeId": "員工編號",
     "enterEmployeeNumber": "輸入員工編號",
     "employeeName": "員工姓名",
-    "enterEmployeeName": "輸入員工姓名",
+    "enterEmployeeName": "輸入員工名稱",
     "employeeChineseName": "中文 員工繁體中文姓名",
     "employeeEnglishName": "員工英文姓名",
     "employeeChineseCn": "員工中文簡體中文姓名",
@@ -930,13 +930,14 @@
         "placeholder": "輸入司機編號"
       },
       "table": {
-        "driverId": "司機編號",
+        "driverId": "司機號碼",
         "driverName": "司機中文名",
         "driverEngName": "Driver English Name",
         "gender": "性别",
         "loginName": "登入名稱",
         "contactNo": "聯絡電話",
-        "lastLogin": "上次登入"
+        "lastLogin": "上次登入",
+        "enterDriverId": "輸入司機號碼"
       },
       "popUp": {
         "addTitle": "新增司機",
@@ -1340,6 +1341,7 @@
     "any": "任何",
     "classification": "分類",
     "subclassification": "兒童分類",
-    "place": "地方"
+    "place": "地方",
+    "po_number": "輸入採購訂單編號"
   }
 }

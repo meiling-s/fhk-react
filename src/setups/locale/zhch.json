@@ -907,13 +907,14 @@
         "placeholder": "输入司机编号"
       },
       "table": {
-        "driverId": "司机编号",
+        "driverId": "司机号码",
         "driverName": "司机中文名",
         "driverEngName": "Driver English Name",
         "gender": "性别",
         "loginName": "登入名称",
         "contactNo": "联络电话",
-        "lastLogin": "上次登入"
+        "lastLogin": "上次登入",
+        "enterDriverId": "输入司机编号"
       },
       "popUp": {
         "addTitle": "新增司机",
@@ -1317,6 +1318,7 @@
     "any": "任何",
     "classification": "分类",
     "subclassification": "子分類",
-    "place": "地方"
+    "place": "地方",
+    "po_number": "输入采购订单号"
   }
 }
