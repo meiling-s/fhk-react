@@ -906,7 +906,7 @@
         "placeholder": "输入司机编号"
       },
       "table": {
-        "driverId": "司机编号",
+        "driverId": "司机号码",
         "driverName": "司机中文名",
         "driverEngName": "Driver English Name",
         "gender": "性别",

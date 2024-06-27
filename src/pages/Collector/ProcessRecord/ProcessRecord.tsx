@@ -95,7 +95,7 @@ const ProcessRecord: FunctionComponent = () => {
     processType: '',
     processAddress: ''
   })
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initProcessRecord()
@@ -259,12 +259,15 @@ const ProcessRecord: FunctionComponent = () => {
     procesRecords.forEach((row) => {
       optionMap.set(row[propertyName], row[propertyName])
     })
-    const options: Option[] = Array.from(optionMap.values()).map((option) => ({
-      value: option,
-      label:
-        propertyName === 'packageTypeId' ? mappingProcessName(option) : option
-    }))
+    const options: Option[] = Array.from(optionMap.values())
+      .map((option) => {
+        const label =
+          propertyName === 'packageTypeId' ? mappingProcessName(option) : option
+        return label !== undefined ? { value: option, label: label } : undefined
+      })
+      .filter((option): option is Option => option !== undefined)
 
+    console.log('option', options)
     options.push({
       value: '',
       label: t('check_in.any')

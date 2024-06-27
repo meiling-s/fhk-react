@@ -460,7 +460,7 @@ const StaffManagement: FunctionComponent = () => {
     },
     {
       label: t('staffManagement.employeeName'),
-      placeholder: t('staffManagement.enterEmployeeNumber'),
+      placeholder: t('staffManagement.enterEmployeeName'),
       field: 'staffName'
     }
   ]

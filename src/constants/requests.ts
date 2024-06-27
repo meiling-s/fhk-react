@@ -1351,7 +1351,7 @@ export const GET_USER_MANUFACTURER_LIST = (
   tenantId: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/manufacturer/staff/${tenantId}`
+  url: `api/v1/manufacturer/staff/search/${tenantId}`
 })
 
 export const CREATE_USER_MANUFACTURER: AxiosRequestConfig = {
