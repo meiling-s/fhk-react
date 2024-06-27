@@ -8,6 +8,7 @@ import {
   InputAdornment,
   IconButton
 } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import {
   DataGrid,
   GridColDef,
@@ -28,19 +29,19 @@ import {
   astdGetAllInventory,
   getAllInventory
 } from '../../../APICalls/Collector/inventory'
-import { format, localStorgeKeyName } from '../../../constants/constant'
+import { format, localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { PickupOrder } from '../../../interfaces/pickupOrder'
-
+import { astdSearchWarehouse } from '../../../APICalls/warehouseManage'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
-import { returnApiToken } from '../../../utils/utils'
+import { returnApiToken , extractError} from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { InventoryQuery } from '../../../interfaces/inventory'
@@ -64,6 +65,8 @@ function createInventory(
   recyclingNumber: string,
   recycTypeId: string,
   recycSubTypeId: string,
+  recyName: string,
+  subName: string,
   packageTypeId: string,
   weight: number,
   unitId: string,
@@ -81,6 +84,8 @@ function createInventory(
     recyclingNumber,
     recycTypeId,
     recycSubTypeId,
+    recyName,
+    subName,
     packageTypeId,
     weight,
     unitId,
@@ -96,6 +101,7 @@ function createInventory(
 
 const Inventory: FunctionComponent = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [inventoryData, setInventoryData] = useState<any[]>([])
   const [inventoryList, setInventory] = useState<any[]>([])
@@ -119,6 +125,8 @@ const Inventory: FunctionComponent = () => {
     recycTypeId: '',
     recycSubTypeId: ''
   })
+  const [warehouseList, setWarehouseList] = useState<Option[]>([])
+  const [recycList, setRecycList] = useState<Option[]>([])
 
   useEffect(() => {
     mappingRecyleItem()
@@ -126,7 +134,10 @@ const Inventory: FunctionComponent = () => {
 
   useEffect(() => {
     if (realmApi !== 'account') {
-      if (recycItem.length > 0) initInventory() //init dat when recyleitem done mapping
+      if (recycItem.length > 0) {
+        initInventory()
+        initWarehouse()
+      } //init dat when recyleitem done mapping
     }
   }, [recycItem, page, realmApi, query])
 
@@ -237,6 +248,8 @@ const Inventory: FunctionComponent = () => {
             item?.itemId,
             item?.warehouseId,
             item?.recycTypeId,
+            item?.recycTypeId,
+            item?.recycSubTypeId,
             recyName,
             subName,
             item?.packageTypeId,
@@ -266,13 +279,13 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'recycTypeId',
+      field: 'recyName',
       headerName: t('inventory.recyleType'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'recycSubTypeId',
+      field: 'subName',
       headerName: t('inventory.recyleSubType'),
       width: 200,
       type: 'string'
@@ -306,6 +319,54 @@ const Inventory: FunctionComponent = () => {
     }
   ]
 
+  const initWarehouse = async () => {
+    try {
+      let result
+      if (realmApi === 'account') {
+        result = await astdSearchWarehouse(0, 1000, searchText)
+      } else {
+        result = await getAllWarehouse(0, 1000)
+      }
+      if (result) {
+        let capacityTotal = 0
+        let warehouse: { label: string; value: string }[] = []
+        const data = result.data.content
+        data.forEach((item: any) => {
+          item.warehouseRecyc?.forEach((recy: any) => {
+            capacityTotal += recy.recycSubTypeCapacity
+          })
+          var warehouseName = ''
+          switch (i18n.language) {
+            case 'zhhk':
+              warehouseName = item.warehouseNameTchi
+              break
+            case 'zhch':
+              warehouseName = item.warehouseNameSchi
+              break
+            case 'enus':
+              warehouseName = item.warehouseNameEng
+              break
+            default:
+              warehouseName = item.warehouseNameTchi
+              break
+          }
+          warehouse.push({
+            value: item.warehouseId,
+            label: warehouseName
+          })
+        })
+
+        setWarehouseList(warehouse)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
+
+
   const searchfield = [
     {
       label: t('pick_up_order.filter.search'),
@@ -326,27 +387,43 @@ const Inventory: FunctionComponent = () => {
       placeholder: t('placeHolder.any')
     },
     {
-      label: t('placeHolder.place'),
+      label: t('top_menu.workshop'),
       field: 'warehouseId',
-      options: getUniqueOptions('warehouseId'),
+      options: warehouseList,
       placeholder: t('placeHolder.any')
     }
   ]
 
   function getUniqueOptions(propertyName: keyof InventoryItem) {
     const optionMap = new Map()
-    inventoryList.forEach((row) => {
-      optionMap.set(row[propertyName], row[propertyName])
-    })
-    const options: Option[] = Array.from(optionMap.values()).map((option) => ({
-      value: option,
-      label: option
-    }))
+   
+    if (propertyName === 'recycTypeId') {
+      inventoryList.forEach((row) => {
+        if (row[propertyName]) {
+          optionMap.set(row[propertyName], row.recyName);
+        }
+      });
+    } else if(propertyName === 'recycSubTypeId'){
+      inventoryList.forEach((row) => {
+        if (row[propertyName]) {
+          optionMap.set(row[propertyName], row.subName);
+        }
+      });
+    } else {
+      inventoryList.forEach((row) => {
+        optionMap.set(row[propertyName], row[propertyName])
+      })
+    }
+   
+    const options = Array.from(optionMap.entries()).map(([key, value]) => ({
+      value: key,
+      label: value
+    }));
     options.push({
       value: '',
       label: t('check_in.any')
     })
-    console.log('options', inventoryList)
+    console.log("options", options)
     return options
   }
 
@@ -406,6 +483,7 @@ const Inventory: FunctionComponent = () => {
       setPicoList([])
       setSelectedPico([])
       initInventory()
+      initWarehouse()
     }
   }, [debouncedSearchValue, query])
 

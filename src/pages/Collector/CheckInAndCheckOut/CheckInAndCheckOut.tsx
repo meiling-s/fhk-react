@@ -144,7 +144,7 @@ import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
         field: "picoId",
         width: 300,
         type: "string",
-        headerName: t("checkinandcheckout.waybill_number"),
+        headerName: t("logisticDashboard.poNumber"),
       },
       {
         field: "adjustmentFlg",

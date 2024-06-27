@@ -10,6 +10,8 @@ export type InventoryItem = {
     recyclingNumber?: string
     recycTypeId: string
     recycSubTypeId: string
+    recyName: string
+    subName: string
     packageTypeId: string
     weight: number
     unitId: string
