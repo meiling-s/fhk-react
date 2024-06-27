@@ -91,7 +91,7 @@
       "loginIdCantContainAdmin": "not allowed have words in 'admin'",
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
       "tenantIdNotFound": "Tenant Id not found",
-      "loginIdProhibited": "Using 'admin' in loginid is not allowed"
+      "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed"
     }
   },
   "component": {
