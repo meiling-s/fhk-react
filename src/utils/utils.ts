@@ -89,6 +89,8 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
     case formErr.tenantIdNotFound:
       msg = t('form.error.tenantIdNotFound')
       break
+    case formErr.loginIdProhibited:
+      msg = t('form.error.loginIdProhibited')
   }
   return msg
 }
