@@ -10,19 +10,12 @@ import {
   Typography,
   TextField
 } from '@mui/material'
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState
-} from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { styles } from '../../constants/styles'
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab'
 import theme from '../../themes/palette'
 import CustomField from './CustomField'
-import {
-  singleRecyclable,
-} from '../../interfaces/collectionPoint'
+import { singleRecyclable } from '../../interfaces/collectionPoint'
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { t } from 'i18next'
@@ -36,12 +29,22 @@ import { collectorList, manuList, recycType } from '../../interfaces/common'
 import dayjs, { Dayjs } from 'dayjs'
 import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
-import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
+import {
+  formatWeight,
+  getThemeColorRole,
+  getThemeCustomList,
+  onChangeWeight
+} from '../../utils/utils'
 import { PurchaseOrderDetail } from '../../interfaces/purchaseOrder'
 import { DatePicker } from '@mui/x-date-pickers'
 import { getWeightUnit } from '../../APICalls/ASTD/recycling'
 import i18n from '../../setups/i18n'
 import { WeightUnit } from '../../interfaces/weightUnit'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type props = {
   onClose: () => void
@@ -52,44 +55,52 @@ type props = {
   editRowId: number | null
   isEditing: boolean
   receiverAddr?: string
-  onChangeAddressReceiver? : (value: string) => void
+  onChangeAddressReceiver?: (value: string) => void
 }
 type CombinedType = manuList[] | collectorList[]
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 const initialTime: dayjs.Dayjs = dayjs()
 
-const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
-  return pickupAtValue.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+const formattedTimeToUTC = (pickupAtValue: dayjs.Dayjs) => {
+  return pickupAtValue.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
 }
 
 const initValue = {
-    id: -1,
-    poDtlId: 0,
-    recycTypeId: '',
-    recyclableNameTchi: '',
-    recyclableNameSchi: '',
-    recyclableNameEng: '',
-    recycSubTypeId: '',
-    recyclableSubNameTchi: '',
-    recyclableSubNameSchi: '',
-    recyclableSubNameEng: '',
-    unitId: 0,
-    unitNameTchi: '',
-    unitNameSchi: '',
-    unitNameEng: '',
-    weight: '0',
-    pickupAt: dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-    receiverAddr: '',
-    createdBy: loginId,
-    updatedBy: loginId,
+  id: -1,
+  poDtlId: 0,
+  recycTypeId: '',
+  recyclableNameTchi: '',
+  recyclableNameSchi: '',
+  recyclableNameEng: '',
+  recycSubTypeId: '',
+  recyclableSubNameTchi: '',
+  recyclableSubNameSchi: '',
+  recyclableSubNameEng: '',
+  unitId: 0,
+  unitNameTchi: '',
+  unitNameSchi: '',
+  unitNameEng: '',
+  weight: '0',
+  pickupAt: dayjs.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+  receiverAddr: '',
+  createdBy: loginId,
+  updatedBy: loginId
 }
 
-const ErrorMessages:React.FC<{message: string}> = ({message}) => {
-  return <Typography style={{color: 'red', fontWeight: '400'}}>
-{message}
-</Typography>
+const ErrorMessages: React.FC<{ message: string }> = ({ message }) => {
+  return (
+    <Typography style={{ color: 'red', fontWeight: '400' }}>
+      {message}
+    </Typography>
+  )
 }
-type fieldName = 'receiverAddr' | 'weight' | 'recycTypeId' | 'recycSubTypeId' | 'pickupAt' | 'unitId';
+type fieldName =
+  | 'receiverAddr'
+  | 'weight'
+  | 'recycTypeId'
+  | 'recycSubTypeId'
+  | 'pickupAt'
+  | 'unitId'
 
 type ErrorsField = Record<
   fieldName,
@@ -143,7 +154,8 @@ const CreateRecycleForm = ({
   receiverAddr,
   onChangeAddressReceiver
 }: props) => {
-  const { recycType, weightUnits, decimalVal } = useContainer(CommonTypeContainer)
+  const { recycType, weightUnits, decimalVal } =
+    useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<PurchaseOrderDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
@@ -155,7 +167,7 @@ const CreateRecycleForm = ({
   const customListTheme = getThemeCustomList(role) || '#E4F6DC'
   //---end set custom style each role---
   const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const { dateFormat } = useContainer(CommonTypeContainer)
 
   const setDefRecyc = (picoDtl: PurchaseOrderDetail) => {
     const defRecyc: singleRecyclable = {
@@ -167,13 +179,18 @@ const CreateRecycleForm = ({
 
   useEffect(() => {
     if (editRowId == null) {
-      setDefaultRecyc(undefined)
       formik.setValues(initValue)
     } else {
       const editR = data.at(editRowId)
       if (editR) {
         setDefRecyc(editR)
         setEditRow(editR)
+        formik.setFieldValue(
+          'pickupAt',
+          editR.pickupAt
+            ? dayjs.utc(editR.pickupAt).tz('Asia/Hong_Kong').format()
+            : ''
+        )
       }
     }
   }, [editRowId])
@@ -211,7 +228,7 @@ const CreateRecycleForm = ({
         pickupAt: editRow?.pickupAt || '',
         createdBy: editRow.createdBy,
         updatedBy: editRow.updatedBy,
-        receiverAddr:  editRow.receiverAddr || '' 
+        receiverAddr: editRow.receiverAddr || ''
       })
     }
   }, [editRow])
@@ -226,66 +243,83 @@ const CreateRecycleForm = ({
 
     return Yup.object().shape({
       pickupAt: Yup.string().required(
-        t('purchase_order.create.this') + ' ' + 
-        t('purchase_order.create.receipt_date_and_time') + ' ' + 
-        t('purchase_order.create.is_required')
+        t('purchase_order.create.this') +
+          ' ' +
+          t('purchase_order.create.receipt_date_and_time') +
+          ' ' +
+          t('purchase_order.create.is_required')
       ),
       recycTypeId: Yup.string().required(
-        t('purchase_order.create.this') + ' ' + 
-        t('col.recycType') + ' ' + 
-        t('purchase_order.create.is_required')
+        t('purchase_order.create.this') +
+          ' ' +
+          t('col.recycType') +
+          ' ' +
+          t('purchase_order.create.is_required')
       ),
       recycSubTypeId: Yup.string().required(
-        t('purchase_order.create.this') + ' ' + 
-        t('col.recycType') + ' ' + 
-        t('purchase_order.create.is_required')
+        t('purchase_order.create.this') +
+          ' ' +
+          t('col.recycType') +
+          ' ' +
+          t('purchase_order.create.is_required')
       ),
       weight: Yup.number().required(
-        t('purchase_order.create.this') + ' ' + 
-        t('purchase_order.create.weight') + ' ' + 
-        t('purchase_order.create.is_required')
+        t('purchase_order.create.this') +
+          ' ' +
+          t('purchase_order.create.weight') +
+          ' ' +
+          t('purchase_order.create.is_required')
       ),
       receiverAddr: Yup.string().required(
-        t('purchase_order.create.this') + ' ' + 
-        t('purchase_order.create.arrived') + ' ' + 
-        t('purchase_order.create.is_required')
-      ),
+        t('purchase_order.create.this') +
+          ' ' +
+          t('purchase_order.create.arrived') +
+          ' ' +
+          t('purchase_order.create.is_required')
+      )
     })
   })
- 
+
   const validateData = () => {
-    let isValid = true;
-    if(formik.values.pickupAt === ''){
-      setErrorsField(prev => {
-        return{
+    let isValid = true
+
+    if (formik.values.pickupAt === '') {
+      setErrorsField((prev) => {
+        return {
           ...prev,
-          'pickupAt': {
+          pickupAt: {
             ...prev.pickupAt,
             status: true
           }
         }
       })
       isValid = false
-    }  
-    if (formik.values.recycTypeId === ''){
-      setErrorsField(prev => {
-        return{
+    }
+    if (formik.values.recycTypeId === '') {
+      setErrorsField((prev) => {
+        return {
           ...prev,
-          'recycTypeId': {
+          recycTypeId: {
             ...prev.recycTypeId,
             status: true
           }
         }
       })
       isValid = false
-    } 
-    if (formik.values.recycSubTypeId === ''){
-      const filteredRecyc = recycType?.filter(value => value.recycTypeId === formik.values.recycTypeId) as recycType[]
-      if (filteredRecyc !== undefined && filteredRecyc.length > 0 && filteredRecyc[0].recycSubType.length > 0) {
-        setErrorsField(prev => {
-          return{
+    }
+    if (formik.values.recycSubTypeId === '') {
+      const filteredRecyc = recycType?.filter(
+        (value) => value.recycTypeId === formik.values.recycTypeId
+      ) as recycType[]
+      if (
+        filteredRecyc !== undefined &&
+        filteredRecyc.length > 0 &&
+        filteredRecyc[0].recycSubType.length > 0
+      ) {
+        setErrorsField((prev) => {
+          return {
             ...prev,
-            'recycSubTypeId': {
+            recycSubTypeId: {
               ...prev.recycSubTypeId,
               status: true
             }
@@ -293,25 +327,25 @@ const CreateRecycleForm = ({
         })
         isValid = false
       }
-    } 
-    if(Number(formik.values.weight) <= 0){
-      setErrorsField(prev => {
-        return{
+    }
+    if (Number(formik.values.weight) <= 0) {
+      setErrorsField((prev) => {
+        return {
           ...prev,
-          'weight': {
+          weight: {
             ...prev.weight,
             status: true
           }
         }
       })
       isValid = false
-    } 
-    
-    if(formik.values.receiverAddr === ''){
-      setErrorsField(prev => {
-        return{
+    }
+
+    if (formik.values.receiverAddr === '') {
+      setErrorsField((prev) => {
+        return {
           ...prev,
-          'receiverAddr': {
+          receiverAddr: {
             ...prev.receiverAddr,
             status: true
           }
@@ -320,11 +354,11 @@ const CreateRecycleForm = ({
       isValid = false
     }
 
-    if(formik.values.unitId === 0){
-      setErrorsField(prev => {
-        return{
+    if (formik.values.unitId === 0) {
+      setErrorsField((prev) => {
+        return {
           ...prev,
-          'unitId': {
+          unitId: {
             ...prev.unitId,
             status: true
           }
@@ -334,7 +368,6 @@ const CreateRecycleForm = ({
     }
     return isValid
   }
-
 
   const formik = useFormik({
     initialValues: initValue,
@@ -357,10 +390,10 @@ const CreateRecycleForm = ({
     }
   })
 
-  const onHandleError = (serviceName: fieldName, message: string) => {    
-    if(message === 'succeed') {
-      setErrorsField(prev => {
-        return{
+  const onHandleError = (serviceName: fieldName, message: string) => {
+    if (message === 'succeed') {
+      setErrorsField((prev) => {
+        return {
           ...prev,
           [serviceName]: {
             ...prev[serviceName],
@@ -369,8 +402,8 @@ const CreateRecycleForm = ({
         }
       })
     } else {
-      setErrorsField(prev => {
-        return{
+      setErrorsField((prev) => {
+        return {
           ...prev,
           [serviceName]: {
             ...prev[serviceName],
@@ -379,14 +412,13 @@ const CreateRecycleForm = ({
         }
       })
     }
-    
-  };
+  }
 
   const onChangeContent = (field: fieldName, value: any) => {
-    if(value === '' || value === 0){
+    if (value === '' || value === 0) {
       formik.setFieldValue(field, '')
       onHandleError(field, 'failed')
-    } else if(field === 'recycTypeId'){
+    } else if (field === 'recycTypeId') {
       formik.setFieldValue('recycTypeId', value)
       formik.setFieldValue('recycSubTypeId', '')
       onHandleError('recycTypeId', 'succeed')
@@ -399,30 +431,28 @@ const CreateRecycleForm = ({
 
   const onhandleSubmit = () => {
     const isValid = validateData()
-    if(!isValid) return
+    if (!isValid) return
     formik.handleSubmit()
   }
-  
 
-
-  const getWeightUnits = ():{unitId: number, lang: string}[] => {
-    let units:{unitId: number, lang: string}[] = []
-    if(i18n.language === Languages.ENUS){
-      units = weightUnits.map(item => {
+  const getWeightUnits = (): { unitId: number; lang: string }[] => {
+    let units: { unitId: number; lang: string }[] = []
+    if (i18n.language === Languages.ENUS) {
+      units = weightUnits.map((item) => {
         return {
           unitId: item?.unitId,
           lang: item?.unitNameEng
         }
       })
-    } else if(i18n.language === Languages.ZHCH){
-      units = weightUnits.map(item => {
+    } else if (i18n.language === Languages.ZHCH) {
+      units = weightUnits.map((item) => {
         return {
           unitId: item?.unitId,
           lang: item?.unitNameSchi
         }
       })
     } else {
-      units = weightUnits.map(item => {
+      units = weightUnits.map((item) => {
         return {
           unitId: item?.unitId,
           lang: item?.unitNameTchi
@@ -433,129 +463,176 @@ const CreateRecycleForm = ({
     return units
   }
 
-  const getUnitName = (unitId: number):{unitId: number, lang: string} => {
-    let unitName:{unitId: number, lang: string} = {unitId: 0, lang: ''}
-    const unit = getWeightUnits().find(item => item.unitId === unitId);
-    if(unit){
+  const getUnitName = (unitId: number): { unitId: number; lang: string } => {
+    let unitName: { unitId: number; lang: string } = { unitId: 0, lang: '' }
+    const unit = getWeightUnits().find((item) => item.unitId === unitId)
+    if (unit) {
       unitName = unit
     }
     return unitName
   }
- 
+
   return (
     <>
       {/* <form onSubmit={onhandleSubmit}> */}
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box sx={localstyles.modal} onClick={handleOverlayClick}>
-            <Box sx={localstyles.container}>
-              <Box sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}>
-                <Box>
-                  <Typography sx={styles.header4}>
-                    {isEditing ? t('userGroup.change') : t('top_menu.add_new')}
-                  </Typography>
-                  <Typography sx={styles.header3}>
-                    {t('purchase_order.create.expected_recycling')}
-                  </Typography>
-                </Box>
-
-                <Box sx={{ marginLeft: 'auto' }}>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      ...localstyles.button,
-                      color: 'white',
-                      bgcolor: colorTheme,
-                      borderColor: colorTheme
-                    }}
-                    onClick={onhandleSubmit}
-                    // type="submit"
-                  >
-                    {t('col.save')}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      ...localstyles.button,
-                      color: colorTheme,
-                      bgcolor: 'white',
-                      borderColor: colorTheme
-                    }}
-                    onClick={() => onClose && onClose()}
-                  >
-                    {t('col.cancel')}
-                  </Button>
-                  <IconButton
-                    sx={{ ml: '25px' }}
-                    onClick={() => onClose && onClose()}
-                  >
-                    <KeyboardTabIcon sx={{ fontSize: '30px' }} />
-                  </IconButton>
-                </Box>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Box sx={localstyles.modal} onClick={handleOverlayClick}>
+          <Box sx={localstyles.container}>
+            <Box
+              sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}
+            >
+              <Box>
+                <Typography sx={styles.header4}>
+                  {isEditing ? t('userGroup.change') : t('top_menu.add_new')}
+                </Typography>
+                <Typography sx={styles.header3}>
+                  {t('purchase_order.create.expected_recycling')}
+                </Typography>
               </Box>
-              <Divider />
-              <Stack spacing={2} sx={localstyles.content}>
-               <Grid item>
-                  <CustomField
-                    label={t('purchase_order.create.receipt_date_and_time')}
-                    mandatory
-                  >
-                    <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%' }}>
-                      <Box sx={{ ...localstyles.DateItem }}>
-                        <DatePicker
-                          value={dayjs(formik.values.pickupAt)}
-                          format={dateFormat}
-                          onChange={(value) => {
-                              formik.setFieldValue(
-                                'pickupAt',
-                                value ? formattedTime(value) : ''
-                              )
-                            }}
-                          sx={{ ...localstyles.datePicker }}
-                        />
-                      </Box>
-                      <Box sx={{ ...localstyles.timePeriodItem }}>
-                        <TimePicker
-                          value={dayjs(formik.values.pickupAt)}
-                          onChange={(value) => {
-                              formik.setFieldValue(
-                                'pickupAt',
-                                value ? formattedTime(value) : ''
-                              )
-                            }}
-                          sx={{ ...localstyles.timePicker }}
-                        />
-                      </Box>
-                    </Box>
-                  </CustomField>
-                  {
-                    errorsField['pickupAt' as keyof ErrorsField].required && errorsField['pickupAt' as keyof ErrorsField].status ? 
-                    <ErrorMessages  message={t('purchase_order.create.required_field')}/> : ''
-                  }
-               </Grid>
+
+              <Box sx={{ marginLeft: 'auto' }}>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    ...localstyles.button,
+                    color: 'white',
+                    bgcolor: colorTheme,
+                    borderColor: colorTheme
+                  }}
+                  onClick={onhandleSubmit}
+                  // type="submit"
+                >
+                  {t('col.save')}
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    ...localstyles.button,
+                    color: colorTheme,
+                    bgcolor: 'white',
+                    borderColor: colorTheme
+                  }}
+                  onClick={() => onClose && onClose()}
+                >
+                  {t('col.cancel')}
+                </Button>
+                <IconButton
+                  sx={{ ml: '25px' }}
+                  onClick={() => onClose && onClose()}
+                >
+                  <KeyboardTabIcon sx={{ fontSize: '30px' }} />
+                </IconButton>
+              </Box>
+            </Box>
+            <Divider />
+            <Stack spacing={2} sx={localstyles.content}>
               <Grid item>
-                  <CustomField label={t('col.recycType')} mandatory>
-                    <RecyclablesListSingleSelect
-                      showError={
-                        (formik.errors?.recycTypeId && formik.touched?.recycTypeId) ||
-                        undefined
-                      }
-                      recycL={recycType ?? []}
-                      setState={(values) => {
-                        if(values.recycTypeId) onChangeContent('recycTypeId', values?.recycTypeId)
-                        if(values.recycSubTypeId) onChangeContent('recycSubTypeId', values?.recycSubTypeId)
-                      }}
-                      itemColor={{
-                        bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
-                        borderColor: customListTheme ? customListTheme.border: '79CA25'
-                      }}
-                      defaultRecycL={defaultRecyc}
-                      key={formik.values.id}
-                    />
-                  </CustomField>
-                  {
-                    errorsField['recycSubTypeId' as keyof ErrorsField].required && errorsField['recycSubTypeId' as keyof ErrorsField].status ? 
-                    <ErrorMessages  message={t('purchase_order.create.required_field')}/> : ''
-                  }
+                <CustomField
+                  label={t('purchase_order.create.receipt_date_and_time')}
+                  mandatory
+                >
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      gap: '8px',
+                      alignItems: 'center',
+                      width: '100%'
+                    }}
+                  >
+                    <Box sx={{ ...localstyles.DateItem }}>
+                      <DatePicker
+                        value={
+                          formik.values.pickupAt
+                            ? dayjs
+                                .utc(formik.values.pickupAt)
+                                .tz('Asia/Hong_Kong')
+                            : dayjs().tz('Asia/Hong_Kong')
+                        }
+                        format={dateFormat}
+                        timezone="Asia/Hong_Kong"
+                        onChange={(value) => {
+                          const utcValue = value
+                            ? formattedTimeToUTC(
+                                dayjs(value).tz('Asia/Hong_Kong')
+                              )
+                            : dayjs.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+                          formik.setFieldValue('pickupAt', utcValue)
+                        }}
+                        sx={{ ...localstyles.datePicker }}
+                      />
+                    </Box>
+                    <Box sx={{ ...localstyles.timePeriodItem }}>
+                      <TimePicker
+                        value={
+                          formik.values.pickupAt
+                            ? dayjs
+                                .utc(formik.values.pickupAt)
+                                .tz('Asia/Hong_Kong')
+                            : dayjs().tz('Asia/Hong_Kong')
+                        }
+                        timezone="Asia/Hong_Kong"
+                        onChange={(value) => {
+                          const utcValue = value
+                            ? formattedTimeToUTC(
+                                dayjs(value).tz('Asia/Hong_Kong')
+                              )
+                            : dayjs.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+
+                          formik.setFieldValue('pickupAt', utcValue)
+                          console.log('utcValue', utcValue)
+                        }}
+                        sx={{ ...localstyles.timePicker }}
+                      />
+                    </Box>
+                  </Box>
+                </CustomField>
+                {errorsField['pickupAt' as keyof ErrorsField].required &&
+                errorsField['pickupAt' as keyof ErrorsField].status ? (
+                  <ErrorMessages
+                    message={t('purchase_order.create.required_field')}
+                  />
+                ) : (
+                  ''
+                )}
+              </Grid>
+              <Grid item>
+                <CustomField label={t('col.recycType')} mandatory>
+                  <RecyclablesListSingleSelect
+                    showError={
+                      (formik.errors?.recycTypeId &&
+                        formik.touched?.recycTypeId) ||
+                      undefined
+                    }
+                    recycL={recycType ?? []}
+                    setState={(values) => {
+                      if (values.recycTypeId)
+                        onChangeContent('recycTypeId', values?.recycTypeId)
+                      if (values.recycSubTypeId)
+                        onChangeContent(
+                          'recycSubTypeId',
+                          values?.recycSubTypeId
+                        )
+                    }}
+                    itemColor={{
+                      bgColor: customListTheme
+                        ? customListTheme.bgColor
+                        : '#E4F6DC',
+                      borderColor: customListTheme
+                        ? customListTheme.border
+                        : '79CA25'
+                    }}
+                    defaultRecycL={defaultRecyc}
+                    key={formik.values.id}
+                  />
+                </CustomField>
+                {errorsField['recycSubTypeId' as keyof ErrorsField].required &&
+                errorsField['recycSubTypeId' as keyof ErrorsField].status ? (
+                  <ErrorMessages
+                    message={t('purchase_order.create.required_field')}
+                  />
+                ) : (
+                  ''
+                )}
               </Grid>
               <Grid item>
                 <CustomField
@@ -568,12 +645,16 @@ const CreateRecycleForm = ({
                     // onChange={formik.handleChange}
                     onChange={(event) => {
                       // onChangeContent('weight', event.target.value)
-                      onChangeWeight(event.target.value, decimalVal, (value: string) => {
-                        formik.setFieldValue('weight', value)
-                        if (value) {
-                          onHandleError('weight', 'succeed')
+                      onChangeWeight(
+                        event.target.value,
+                        decimalVal,
+                        (value: string) => {
+                          formik.setFieldValue('weight', value)
+                          if (value) {
+                            onHandleError('weight', 'succeed')
+                          }
                         }
-                      })
+                      )
                     }}
                     onBlur={(event) => {
                       const value = formatWeight(event.target.value, decimalVal)
@@ -597,19 +678,22 @@ const CreateRecycleForm = ({
                         options={getWeightUnits()}
                         getOptionLabel={(option) => option.lang}
                         onChange={(event, value) => {
-                         if(value?.unitId){
-                          onChangeContent('unitId', value?.unitId)
-                         } else {
-                          formik.setFieldValue('unitId', 0)
-                         }
+                          if (value?.unitId) {
+                            onChangeContent('unitId', value?.unitId)
+                          } else {
+                            formik.setFieldValue('unitId', 0)
+                          }
                         }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             placeholder={t('purchase_order.create.unit')}
-                            sx={[localstyles.textField, { width: 400, border: 'none', borderColor: ''}]}
+                            sx={[
+                              localstyles.textField,
+                              { width: 400, border: 'none', borderColor: '' }
+                            ]}
                             InputProps={{
-                              ...params.InputProps,
+                              ...params.InputProps
                             }}
                           />
                         )}
@@ -618,20 +702,23 @@ const CreateRecycleForm = ({
                   ></CustomTextField>
                 </CustomField>
                 {/* { errors.weight.required && errors.weight.status &&  <ErrorMessages  message={t('purchase_order.create.required_field')}/>} */}
-                {
-                  (
-                    errorsField['weight' as keyof ErrorsField].required && errorsField['weight' as keyof ErrorsField].status ||
-                    errorsField['unitId' as keyof ErrorsField].required && errorsField['unitId' as keyof ErrorsField].status
-                  ) ? 
-                  <ErrorMessages  message={t('purchase_order.create.required_field')}/> : ''
-                }
+                {(errorsField['weight' as keyof ErrorsField].required &&
+                  errorsField['weight' as keyof ErrorsField].status) ||
+                (errorsField['unitId' as keyof ErrorsField].required &&
+                  errorsField['unitId' as keyof ErrorsField].status) ? (
+                  <ErrorMessages
+                    message={t('purchase_order.create.required_field')}
+                  />
+                ) : (
+                  ''
+                )}
               </Grid>
               <Grid item>
                 <CustomField
                   label={t('purchase_order.create.arrived')}
                   mandatory
                 >
-                 <CustomTextField
+                  <CustomTextField
                     id={'receiverAddr'}
                     placeholder={t('purchase_order.create.arrived')}
                     rows={4}
@@ -639,22 +726,28 @@ const CreateRecycleForm = ({
                     onChange={(event) => {
                       onChangeContent('receiverAddr', event.target.value)
                       // formik.setFieldValue('receiverAddr', event.target.value)
-                      onChangeAddressReceiver && onChangeAddressReceiver(event.target.value)
+                      onChangeAddressReceiver &&
+                        onChangeAddressReceiver(event.target.value)
                     }}
                     value={formik.values.receiverAddr}
                     sx={{ width: '100%', height: '100%' }}
                     error={
-                      (formik.errors?.receiverAddr && formik.touched?.receiverAddr) ||
+                      (formik.errors?.receiverAddr &&
+                        formik.touched?.receiverAddr) ||
                       undefined
                     }
                   />
                 </CustomField>
-                {
-                  errorsField['receiverAddr' as keyof ErrorsField].required && errorsField['receiverAddr' as keyof ErrorsField].status ? 
-                  <ErrorMessages  message={t('purchase_order.create.required_field')}/> : ''
-                }
+                {errorsField['receiverAddr' as keyof ErrorsField].required &&
+                errorsField['receiverAddr' as keyof ErrorsField].status ? (
+                  <ErrorMessages
+                    message={t('purchase_order.create.required_field')}
+                  />
+                ) : (
+                  ''
+                )}
               </Grid>
-                {/* <Stack spacing={2}>
+              {/* <Stack spacing={2}>
                   {formik.errors.createdBy && formik.touched.createdBy && (
                     <Alert severity="error">{formik.errors.createdBy} </Alert>
                   )}
@@ -689,10 +782,10 @@ const CreateRecycleForm = ({
                       </Alert>
                     )}
                 </Stack> */}
-              </Stack>
-            </Box>
+            </Stack>
           </Box>
-        </LocalizationProvider>
+        </Box>
+      </LocalizationProvider>
       {/* </form> */}
     </>
   )
@@ -790,7 +883,7 @@ let localstyles = {
       borderRadius: '12px'
     },
     marginLeft: '13px'
-  },
+  }
 }
 
 export default CreateRecycleForm

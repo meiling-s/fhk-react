@@ -20,13 +20,14 @@ import { useTranslation } from 'react-i18next'
 import { getAllJobOrder, editJobOrderStatus } from "../../../APICalls/jobOrder";
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate, extractError, returnApiToken } from '../../../utils/utils'
-import { localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
+import { localStorgeKeyName, STATUS_CODE, Languages } from '../../../constants/constant'
 import CustomButton from "../../../components/FormComponents/CustomButton";
 
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
+import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -124,6 +125,50 @@ const JobOrder = () => {
   const pageSize = 10 
   const [totalData , setTotalData] = useState<number>(0)
   const {dateFormat} = useContainer(CommonTypeContainer)
+  const statusList: {
+    value: string
+    labelEng: string
+    labelSchi: string
+    labelTchi: string
+  }[] = [
+    {
+      value: 'CREATED',
+      labelEng: 'CREATED',
+      labelSchi: '待处理',
+      labelTchi: '待處理'
+    },
+    {
+      value: 'REJECTED',
+      labelEng: 'REJECTED',
+      labelSchi: '已拒绝',
+      labelTchi: '已拒絕'
+    },
+    {
+      value: 'COMPLETED',
+      labelEng: 'COMPLETED',
+      labelSchi: '已完成',
+      labelTchi: '已完成'
+    },
+    {
+      value: 'CLOSED',
+      labelEng: 'CLOSED',
+      labelSchi: '已取消',
+      labelTchi: '已取消'
+    },
+    {
+      value: 'OUTSTANDING',
+      labelEng: 'OUTSTANDING',
+      labelSchi: '已逾期',
+      labelTchi: '已逾期'
+    },
+    {
+      value: '',
+      labelEng: 'any',
+      labelSchi: '任何',
+      labelTchi: '任何'
+    }
+  ]
+
   const columns: GridColDef[] = [
     {
       field: "createdAt", 
@@ -179,7 +224,7 @@ const JobOrder = () => {
       field: "status",
       headerName: t('job_order.table.status'),
       type: "string",
-      width: 100,
+      width: 150,
       editable: true,
       renderCell: (params) => (
         <StatusCard status={params.value}/>
@@ -214,7 +259,8 @@ const JobOrder = () => {
     status: ''
   });
   const [approveModal, setApproveModal] = useState(false)
-  
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
+
   const initJobOrderRequest = async () => {
    try {
     setJobOrder([])
@@ -256,29 +302,29 @@ const JobOrder = () => {
 
   useEffect(() => {
     initJobOrderRequest();
-    // if(action){
-    //   var toastMsg = "";
-    //   switch(action){
-    //     case "created":
-    //       toastMsg = t("pick_up_order.created_pickup_order");
-    //       break;
-    //     case "updated":
-    //       toastMsg = t("pick_up_order.changed_pickup_order");
-    //       break;
-    //   }
-    //   toast.info(toastMsg, {
-    //     position: "top-right",
-    //     autoClose: 3000,
-    //     hideProgressBar: true,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //     theme: "light",
-    //   });
-    // }
-    // navigate(location.pathname, { replace: true });
   }, [page, query]);
+
+  function getStatusOpion() {
+    const options: Option[] = statusList.map((item) => {
+      if (i18n.language === Languages.ENUS) {
+        return {
+          value: item.value,
+          label: item.labelEng
+        }
+      } else if (i18n.language === Languages.ZHCH) {
+        return {
+          value: item.value,
+          label: item.labelSchi
+        }
+      } else {
+        return {
+          value: item.value,
+          label: item.labelTchi
+        }
+      }
+    })
+    return options
+  }
 
 
   useEffect (() => {
@@ -305,11 +351,11 @@ const JobOrder = () => {
 
 
   const searchfield = [
-    {label:t('job_order.filter.search'), field: 'picoId'},
+    {label:t('job_order.filter.search'), placeholder: t('check_in.search_input') , field: 'joId'},
     {label:t('job_order.table.sender_company'),options:getUniqueOptions('senderName'), field:"senderName"},
     {label:t('job_order.table.receiver_company'),options:getUniqueOptions('receiverName'), field:"receiverName"},
     {label:t('job_order.table.driver_id'),options:getUniqueOptions('driverId'), field:"driverId"},
-    {label:t('job_order.table.status'),options:getUniqueOptions('status'), field:"status"}
+    {label:t('job_order.table.status'),options:getStatusOpion(), field:"status"}
   ]
 
   const navigate = useNavigate()
@@ -350,13 +396,11 @@ const JobOrder = () => {
 
   const updateQuery = (newQuery: Partial<queryJobOrder>) => {
     setQuery({ ...query, ...newQuery });
-    initJobOrderRequest()
+    // initJobOrderRequest()
   }
 
   const handleSearch = (keyName: string, value: string) => {
-    if(keyName == 'status') {
-      updateQuery({[keyName]: value})
-    }
+    updateQuery({ [keyName]: value })
   }
   return (
     <>
@@ -377,6 +421,7 @@ const JobOrder = () => {
             key={s.field}
             label={s.label} 
             // width={s.width} 
+            placeholder={s?.placeholder}
             field={s.field}
             options={s.options || []} 
             onChange={handleSearch} />
@@ -390,6 +435,7 @@ const JobOrder = () => {
           disableRowSelectionOnClick
           onRowClick={handleRowClick} 
           getRowSpacing={getRowSpacing}
+          localeText={localeTextDataGrid}
           hideFooter
           sx={{
             border: "none",
