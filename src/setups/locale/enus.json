@@ -90,7 +90,8 @@
       "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'",
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
-      "tenantIdNotFound": "Tenant Id not found"
+      "tenantIdNotFound": "Tenant Id not found",
+      "mustDifferent": "must be different"
     }
   },
   "component": {
@@ -273,7 +274,7 @@
     "overview": "Overview"
   },
   "status": {
-    "active": "Active",
+    "active": "Activate",
     "inactive": "Inactive",
     "deleted": "Deleted",
     "started": "Started",
@@ -993,7 +994,7 @@
     "start_date": "Start Date",
     "end_date": "End Date",
     "remark": "Remark",
-    "whether": "Whether EPD",
+    "whether": "Is EPD",
     "default_currency": "Default Currency",
     "activate": "Activate",
     "deactive": "Inactive",
@@ -1004,7 +1005,8 @@
     "weight_tolerance": "Weight Tolerance (kg)",
     "currency_category": "Currency Category",
     "introduction": "Introduction",
-    "monetary": "Monetary"
+    "monetary": "Monetary",
+    "contract_number": "Contract Number"
   },
   "packaging_unit": {
     "packaging_unit": "Packaging Unit",

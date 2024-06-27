@@ -90,7 +90,8 @@
       "endDateEarlyThanStartDate": "如果“截止日期”早於“開始日期”，則不允許截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字",
       "tenatIdShouldBeSixDigit": "租戶 ID 應為六位數",
-      "tenantIdNotFound": "未找到租戶 ID"
+      "tenantIdNotFound": "未找到租戶 ID",
+      "mustDifferent": "一定是不同的"
     }
   },
   "component": {
@@ -1003,7 +1004,8 @@
     "weight_tolerance": "允許重量誤差 (kg)",
     "currency_category": "貨幣類別",
     "introduction": "備註",
-    "monetary": "名稱"
+    "monetary": "名稱",
+    "contract_number": "合約編號"
   },
   "packaging_unit": {
     "packaging_unit": "包裝單位",
