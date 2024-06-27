@@ -90,7 +90,8 @@
       "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'",
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
-      "tenantIdNotFound": "Tenant Id not found"
+      "tenantIdNotFound": "Tenant Id not found",
+      "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed"
     }
   },
   "component": {

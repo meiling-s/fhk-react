@@ -35,6 +35,7 @@ import { setLanguage } from '../../setups/i18n'
 import { extractError, returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
 import { parseJwtToken } from '../../constants/axiosInstance'
+import NotifContainer from '../../contexts/NotifContainer'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -47,7 +48,7 @@ const Login = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const commonTypeContainer = useContainer(CommonTypeContainer)
-
+  const { initBroadcastMessage } = useContainer(NotifContainer)
   // overwrite select style
   //todo : make select as component
   const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -107,6 +108,7 @@ const Login = () => {
         })
         //console.log(result, 'result login')
         if (result && result.access_token) {
+          initBroadcastMessage();
           setWarningMsg(' ')
           //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
           localStorage.setItem(
