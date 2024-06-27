@@ -199,18 +199,15 @@ const Inventory: FunctionComponent = () => {
   }
 
   const initInventory = async () => {
+    setFilteredInventory([])
     let result
     if (realmApi === 'account') {
-      result = await astdGetAllInventory(
-        page - 1,
-        pageSize,
-        debouncedSearchValue
-      )
+      result = await astdGetAllInventory(page - 1, pageSize, searchText)
     } else {
       result = await getAllInventory(page - 1, pageSize, query)
     }
     const data = result?.data
-    setInventoryData(data.content)
+    setInventoryData(data?.content || [])
 
     if (data) {
       const picoData = await getAllPickupOrder(data.content)
@@ -349,7 +346,7 @@ const Inventory: FunctionComponent = () => {
       value: '',
       label: t('check_in.any')
     })
-    console.log("options", inventoryList)
+    console.log('options', inventoryList)
     return options
   }
 
@@ -386,14 +383,18 @@ const Inventory: FunctionComponent = () => {
   const handleSearchByPoNumb = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    if (event.target.value === '') {
+      setFilteredInventory([])
+    }
     const numericValue = event.target.value.replace(/\D/g, '')
     event.target.value = numericValue
 
     if (numericValue.length === 6) {
-      setSearchText(numericValue)
+      setSearchText(`company${numericValue}`)
+    } else {
+      setSearchText('')
     }
   }
-
 
   useEffect(() => {
     if (debouncedSearchValue) {

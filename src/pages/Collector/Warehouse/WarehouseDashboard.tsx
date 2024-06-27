@@ -595,14 +595,19 @@ const WarehouseDashboard: FunctionComponent = () => {
     return color
   }
 
-  const handleSearchByPoNumb = async (
+  const handleSearchByTenantId = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+
+    if (event.target.value === '') {
+      setWarehouseList([])
+    }
+
     const numericValue = event.target.value.replace(/\D/g, '')
     event.target.value = numericValue
 
     if (numericValue.length === 6) {
-      setSearchText(numericValue)
+      setSearchText(`company${numericValue}`)
     }
   }
 
@@ -626,7 +631,7 @@ const WarehouseDashboard: FunctionComponent = () => {
         {realmApi === 'account' && (
           <TextField
             id="search-tenantId-warehouse"
-            onChange={handleSearchByPoNumb}
+            onChange={handleSearchByTenantId}
             sx={styles.inputStyle}
             label={t('check_in.search')}
             placeholder={t('tenant.enter_company_number')}
