@@ -4,6 +4,7 @@ export type Staff = {
     staffNameTchi: string
     staffNameSchi: string
     staffNameEng: string
+    titleValue: string
     titleId: string
     contactNo: string
     loginId: string

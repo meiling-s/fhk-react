@@ -66,7 +66,8 @@ function createStaff(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  titleValue: string,
 ): Staff {
   return {
     staffId,
@@ -85,6 +86,7 @@ function createStaff(
     updatedBy,
     createdAt,
     updatedAt,
+    titleValue
   };
 }
 
@@ -136,6 +138,7 @@ const StaffManufacturer: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
+              item?.titleValue,
               updatedAt
             )
           );
