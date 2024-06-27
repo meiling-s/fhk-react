@@ -897,7 +897,8 @@
     "remark": "Remark",
     "enter_name": "Please enter name",
     "select_function": "Please select function",
-    "enter_text": "Please enter text"
+    "enter_text": "Please enter text",
+    "weatherFlg": "Weather Reason"
   },
   "staff_title": {
     "staff_title_tchi": "Traditional Chinese Name",

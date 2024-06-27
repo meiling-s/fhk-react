@@ -896,7 +896,8 @@
     "remark": "備註",
     "enter_name": "請輸入名稱",
     "select_function": "請選擇功能",
-    "enter_text": "請輸入文字"
+    "enter_text": "請輸入文字",
+    "weatherFlg": "天氣原因"
   },
   "staff_title": {
     "staff_title_tchi": "繁體中文名稱",
