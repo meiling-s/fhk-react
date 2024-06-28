@@ -630,7 +630,7 @@ const PickupOrders = () => {
   }
   const searchfield = [
     {
-      label: t('pick_up_order.filter.search'),
+      label:t('purchase_order.table.pico_id'),
       placeholder: t('check_in.search_input'),
       field: 'picoId',
       width: '260px'

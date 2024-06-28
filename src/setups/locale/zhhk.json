@@ -1059,7 +1059,7 @@
     "table": {
       "created_datetime": "建立日期",
       "order_number": "訂單編號",
-      "pico_id": "運單編號",
+      "pico_id": "訂單編號",
       "place_receipt": "收貨地點",
       "receipt_date_time": "收貨日期及時間",
       "status": "狀態",

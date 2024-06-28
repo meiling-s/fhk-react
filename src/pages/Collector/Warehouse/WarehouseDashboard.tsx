@@ -633,7 +633,7 @@ const WarehouseDashboard: FunctionComponent = () => {
             id="search-tenantId-warehouse"
             onChange={handleSearchByTenantId}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
+            label={t('tenant.invite_form.company_number')}
             placeholder={t('tenant.enter_company_number')}
             inputProps={{
               inputMode: 'numeric',

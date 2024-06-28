@@ -722,7 +722,7 @@ function ShipmentManage() {
               handleFilterPoNum(event.target.value)
             }}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
+            label={t('check_in.pickup_order_no')}
             InputLabelProps={{
               style: { color: primaryColor },
               focused: true

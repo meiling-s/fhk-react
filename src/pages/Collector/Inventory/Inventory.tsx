@@ -372,7 +372,7 @@ const Inventory: FunctionComponent = () => {
 
   const searchfield = [
     {
-      label: t('pick_up_order.filter.search'),
+      label: t('inventory.recyclingNumber'),
       field: 'itemId',
       placeholder: t('placeHolder.enterRecyclingNumber'),
       width: '280px'
@@ -506,7 +506,7 @@ const Inventory: FunctionComponent = () => {
             id="search-tenantId-inventory"
             onChange={handleSearchByPoNumb}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
+            label={t('tenant.invite_form.company_number')}
             placeholder={t('tenant.enter_company_number')}
             inputProps={{
               inputMode: 'numeric',

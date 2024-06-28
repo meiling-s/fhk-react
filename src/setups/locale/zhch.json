@@ -989,7 +989,7 @@
   "general_settings": {
     "new": "新的",
     "currency": "货币",
-    "contracts": "合同",
+    "contracts": "合约",
     "name": "名称",
     "reference_number": "参考编号",
     "state": "状态",
@@ -997,7 +997,7 @@
     "end_date": "结束日期",
     "remark": "评论",
     "whether": "是否EPD",
-    "default_currency": "默认货币",
+    "default_currency": "预设货币",
     "activate": "活性",
     "deactive": "停用",
     "true": "真的",
@@ -1060,7 +1060,7 @@
     "table": {
       "created_datetime": "建立日期",
       "order_number": "訂單編號",
-      "pico_id": "回收運單編號",
+      "pico_id": "订单号",
       "place_receipt": "收貨地點",
       "receipt_date_time": "收貨日期及時間",
       "status": "状态",

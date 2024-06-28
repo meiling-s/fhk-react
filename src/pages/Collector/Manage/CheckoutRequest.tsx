@@ -658,8 +658,8 @@ const CheckoutRequest: FunctionComponent = () => {
             id="searchShipment"
             onChange={(event) => handleSearchByPoNumb(event.target.value)}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
-            placeholder={t('check_in.search_input')}
+            label={t('check_in.pickup_order_no')}
+            placeholder={t('check_in.input_po_no')}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

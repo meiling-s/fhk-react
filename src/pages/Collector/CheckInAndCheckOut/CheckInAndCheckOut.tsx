@@ -263,7 +263,7 @@ import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
                   },
                 },
               }}
-              label={t("checkinandcheckout.search")}
+              label={ t('purchase_order.table.pico_id')}
               InputLabelProps={{
                 style: { color: "#79CA25" },
                 focused: true,
