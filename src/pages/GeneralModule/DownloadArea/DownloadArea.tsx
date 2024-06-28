@@ -287,6 +287,7 @@ const DownloadArea = () => {
       reportId: 'downloadExcelFnRpt000023',
       tenantId: 'none',
       manualTenantId: false,
+      dateOption: 'datetime',
       // loginId: loginId
 
     }
