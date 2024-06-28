@@ -234,7 +234,7 @@ const StaffManagement: FunctionComponent = () => {
     },
     {
       field: 'staffNameEng',
-      headerName: 'Employee English Name',
+      headerName: 'Employee english name',
       width: 200,
       type: 'string'
     },
@@ -330,7 +330,7 @@ const StaffManagement: FunctionComponent = () => {
       },
       {
         field: 'staffNameEng',
-        headerName: 'Employee English Name',
+        headerName: 'Employee english name',
         width: 200,
         type: 'string'
       },
