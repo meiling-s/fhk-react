@@ -1051,7 +1051,10 @@
     "report_of_manu_recycled_order_list" :"顧客訂單列表",
     "report_of_manu_recycled_waste_tracing_list": "回收物追蹤列表",
     "report_of_manu_recycled_waste_classification_list":"回收物類別分析表",
-    "report_of_user_management_list": "用户报表"
+    "report_of_user_management_list": "用户报表",
+    "report_of_audit_trail": "审计追踪报表",
+    "report_of_user_activity": "用戶活動報表",
+    "report_of_notification": "通知報表"
   },
   "purchase_order": {
     "all_order": "所有訂單",
