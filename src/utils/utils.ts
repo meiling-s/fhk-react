@@ -91,6 +91,9 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
       break
     case formErr.mustDifferent:
       msg = t('form.error.mustDifferent')
+      break
+    case formErr.loginIdProhibited:
+      msg = t('form.error.loginIdProhibited')
   }
   return msg
 }

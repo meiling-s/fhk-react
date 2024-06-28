@@ -91,7 +91,8 @@
       "loginIdCantContainAdmin": "'admin' 中不允許有單字",
       "tenatIdShouldBeSixDigit": "租戶 ID 應為六位數",
       "tenantIdNotFound": "未找到租戶 ID",
-      "mustDifferent": "一定是不同的"
+      "mustDifferent": "一定是不同的",
+      "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'"
     }
   },
   "component": {
@@ -584,8 +585,8 @@
     "inventory": "存貨",
     "recyclingInformation": "回收資訊",
     "date": "日期",
-    "recyleType": "主類別",
-    "recyleSubType": "次類別",
+    "recyleType": "子分類",
+    "recyleSubType": "兒童分類",
     "package": "包裝",
     "recyclingNumber": "回收編號",
     "inventoryLocation": "庫存位置",
@@ -661,7 +662,7 @@
     "employeeId": "員工編號",
     "enterEmployeeNumber": "輸入員工編號",
     "employeeName": "員工姓名",
-    "enterEmployeeName": "輸入員工姓名",
+    "enterEmployeeName": "輸入員工名稱",
     "employeeChineseName": "中文 員工繁體中文姓名",
     "employeeEnglishName": "員工英文姓名",
     "employeeChineseCn": "員工中文簡體中文姓名",
@@ -743,6 +744,7 @@
     "place": "地點",
     "search_placeholder": "輸入運單編號",
     "any": "任何",
+    "send": "送出",
     "send_in": "送入",
     "ship": "出貨",
     "send_request": "送出請求",
@@ -931,13 +933,14 @@
         "placeholder": "輸入司機編號"
       },
       "table": {
-        "driverId": "司機編號",
+        "driverId": "司機號碼",
         "driverName": "司機中文名",
         "driverEngName": "Driver English Name",
         "gender": "性别",
         "loginName": "登入名稱",
         "contactNo": "聯絡電話",
-        "lastLogin": "上次登入"
+        "lastLogin": "上次登入",
+        "enterDriverId": "輸入司機號碼"
       },
       "popUp": {
         "addTitle": "新增司機",
@@ -1341,7 +1344,10 @@
     "enterRecyclingNumber": "輸入回收物編號",
     "any": "任何",
     "classification": "分類",
-    "subclassification": "兒童分類",
-    "place": "地方"
+    "subclassification": "子分類",
+    "inventory_location" : "地點",
+    "place": "地方",
+    "po_number": "輸入採購訂單編號",
+    "ship": "Ship"
   }
 }

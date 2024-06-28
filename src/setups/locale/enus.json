@@ -91,7 +91,8 @@
       "loginIdCantContainAdmin": "not allowed have words in 'admin'",
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
       "tenantIdNotFound": "Tenant Id not found",
-      "mustDifferent": "must be different"
+      "mustDifferent": "must be different",
+      "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed"
     }
   },
   "component": {
@@ -201,7 +202,7 @@
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "search_input": "Enter the waybill number"
+    "search_input": "Enter PO number"
   },
   "check_out": {
     "request_check_out": "Checkout request",
@@ -585,8 +586,8 @@
     "inventory": "Inventory",
     "recyclingInformation": "Recycling information",
     "date": "Date",
-    "recyleType": "Recyclable type",
-    "recyleSubType": "Recyclable sub-type",
+    "recyleType": "Subclassification",
+    "recyleSubType": "Subclassification",
     "package": "Package",
     "recyclingNumber": "Recycling number",
     "inventoryLocation": "Inventory location",
@@ -611,7 +612,7 @@
     "location": "Location",
     "creationDate": "Created at",
     "handleName": "Process type name",
-    "processingNumb": "Process Id",
+    "processingNumb": "Process number",
     "processingLocation": "Process address",
     "handler": "Handled by",
     "status": "Status",
@@ -742,7 +743,7 @@
     "search": "Search",
     "company": "Company",
     "place": "Delivery Location",
-    "search_placeholder": "Enter the waybill number",
+    "search_placeholder": "Enter PO number",
     "any": "Any",
     "send_in": "Send In",
     "ship": "Ship",
@@ -926,7 +927,17 @@
       "cars": "Vehicles"
     },
     "DriverMenu": {
-      "AddBtn": "Add Driver"
+      "AddBtn": "Add Driver",
+      "table": {
+        "driverId": "Driver Number",
+        "driverName": "Driver's Chinese name",
+        "driverEngName": "Driver English Name",
+        "gender": "gender",
+        "loginName": "Login Name",
+        "contactNo": "Contact number",
+        "lastLogin": "Last login",
+        "enterDriverId": "Enter driver number"
+        }
     },
     "vehicleMenu": {
       "vehicle_number": "Vehicle Number",
@@ -1344,9 +1355,12 @@
   "placeHolder": {
     "enterRecyclingNumber": "Enter the recycling number",
     "any": "Any",
-    "classification": "Slassification",
-    "subclassification": "Subclassification",
-    "place": "Place"
+    "classification": "Recyclable type",
+    "subclassification": "Recyclable sub-type",
+    "inventory_location" : "Inventory location",
+    "place": "Place",
+    "po_number": "Enter PO number",
+    "ship": "Ship"
   }
 
 }

@@ -78,6 +78,8 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const logginUser = localStorage.getItem(localStorgeKeyName.username) || ''
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
+  const prohibitedLoginId: string[] = ["_astdadmin", "_superadmin", "_fhkadmin"];
+
   const statusList = () => {
     const colList: il_item[] = [
       {
@@ -157,6 +159,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     return s == ''
   }
 
+  const hasProhibitedSubstring = (loginId: string, prohibitedLoginId: string[]) => {
+    const lowerCaseLoginId = loginId?.toLowerCase();
+    return prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase())
+  };
+
   useEffect(() => {
     const validate = async () => {
       //do validation here
@@ -167,6 +174,14 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+
+      if(hasProhibitedSubstring(loginId, prohibitedLoginId)) { 
+        tempV.push({
+          field: t('userAccount.loginName'),
+          problem: formErr.loginIdProhibited,
+          type: 'error'
+        });
+      }
       userList?.includes(loginId) &&
         tempV.push({
           field: t('userAccount.loginName'),
