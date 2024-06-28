@@ -135,6 +135,16 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                     })
                 }
             }
+            if (key == 'photo' && pictures.length == 0) {
+                const item = driverField.find((d) => d.field === key)
+                if (item) {
+                    tempV.push({
+                        field: item.label,
+                        problem: formErr.empty,
+                        type: 'error'
+                    })
+                }
+            }
         })
         driverDetailList.forEach((item: DriverInfo, index: number) => {
             console.log({item})
@@ -418,7 +428,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                 </Grid>
                             ) : driver.type === 'upload' ? (
                                 <Grid item key={driverIndex.toString()}>
-                                    <CustomField label={driver.label}>
+                                    <CustomField label={driver.label} mandatory>
                                         <ImageUploading
                                             multiple
                                             value={pictures}
