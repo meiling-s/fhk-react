@@ -90,7 +90,8 @@
       "endDateEarlyThanStartDate": "To date not allowed if To Date is earlier than Start Date",
       "loginIdCantContainAdmin": "not allowed have words in 'admin'",
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
-      "tenantIdNotFound": "Tenant Id not found"
+      "tenantIdNotFound": "Tenant Id not found",
+      "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed"
     }
   },
   "component": {
@@ -584,8 +585,8 @@
     "inventory": "Inventory",
     "recyclingInformation": "Recycling information",
     "date": "Date",
-    "recyleType": "Recyclable type",
-    "recyleSubType": "Recyclable sub-type",
+    "recyleType": "Subclassification",
+    "recyleSubType": "Subclassification",
     "package": "Package",
     "recyclingNumber": "Recycling number",
     "inventoryLocation": "Inventory location",
@@ -1352,8 +1353,9 @@
   "placeHolder": {
     "enterRecyclingNumber": "Enter the recycling number",
     "any": "Any",
-    "classification": "Slassification",
-    "subclassification": "Subclassification",
+    "classification": "Recyclable type",
+    "subclassification": "Recyclable sub-type",
+    "inventory_location" : "Inventory location",
     "place": "Place",
     "po_number": "Enter PO number",
     "jo_number": "Enter JO number"

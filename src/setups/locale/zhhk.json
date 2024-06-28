@@ -90,7 +90,8 @@
       "endDateEarlyThanStartDate": "如果“截止日期”早於“開始日期”，則不允許截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字",
       "tenatIdShouldBeSixDigit": "租戶 ID 應為六位數",
-      "tenantIdNotFound": "未找到租戶 ID"
+      "tenantIdNotFound": "未找到租戶 ID",
+      "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'"
     }
   },
   "component": {
@@ -583,8 +584,8 @@
     "inventory": "存貨",
     "recyclingInformation": "回收資訊",
     "date": "日期",
-    "recyleType": "主類別",
-    "recyleSubType": "次類別",
+    "recyleType": "子分類",
+    "recyleSubType": "兒童分類",
     "package": "包裝",
     "recyclingNumber": "回收編號",
     "inventoryLocation": "庫存位置",
@@ -742,6 +743,7 @@
     "place": "地點",
     "search_placeholder": "輸入運單編號",
     "any": "任何",
+    "send": "送出",
     "send_in": "送入",
     "ship": "出貨",
     "send_request": "送出請求",
@@ -1340,7 +1342,8 @@
     "enterRecyclingNumber": "輸入回收物編號",
     "any": "任何",
     "classification": "分類",
-    "subclassification": "兒童分類",
+    "subclassification": "子分類",
+    "inventory_location" : "地點",
     "place": "地方",
     "po_number": "輸入採購訂單編號",
     "jo_number": "輸入工作編號"

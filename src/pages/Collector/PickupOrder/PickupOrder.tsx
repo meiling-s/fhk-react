@@ -656,7 +656,7 @@ const PickupOrders = () => {
       field: 'senderName'
     },
     {
-      label: t('pick_up_order.filter.recycling_category'),
+      label: t('placeHolder.classification'),
       options: getReycleOption(),
       field: 'recycType'
     },
