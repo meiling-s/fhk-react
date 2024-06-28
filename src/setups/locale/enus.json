@@ -985,6 +985,7 @@
     }
   },
   "general_settings": {
+    "and": "and",
     "new": "New",
     "currency": "Currency",
     "contracts": "Contracts",
