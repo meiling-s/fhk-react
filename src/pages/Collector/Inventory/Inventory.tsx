@@ -283,13 +283,13 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'recycTypeId',
+      field: 'recyName',
       headerName: t('placeHolder.classification'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'recycSubTypeId',
+      field: 'subName',
       headerName: t('placeHolder.subclassification'),
       width: 200,
       type: 'string'
@@ -359,7 +359,10 @@ const Inventory: FunctionComponent = () => {
             label: warehouseName
           })
         })
-
+        warehouse.push({
+          value: '',
+          label: t('any')
+        })
         setWarehouseList(warehouse)
       }
     } catch (error: any) {

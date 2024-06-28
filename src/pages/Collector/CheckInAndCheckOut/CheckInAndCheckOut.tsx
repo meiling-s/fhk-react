@@ -381,7 +381,7 @@ import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
                 labelId="location-label"
                 id="location"
                 value={filter.outin}
-                label={t("checkinandcheckout.outin")}
+                label={t("check_out.delivery_location")}
                 onChange={(value) => handleChangeFilter('outin', value)}
               >
                 <MenuItem value="">

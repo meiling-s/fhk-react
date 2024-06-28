@@ -651,7 +651,7 @@ const PickupOrders = () => {
       field: 'logisticName'
     },
     {
-      label: t('pick_up_order.table.sender_company'),
+      label: t('check_in.location'),
       options: getUniqueOptions('senderCompany'),
       field: 'senderName'
     },
