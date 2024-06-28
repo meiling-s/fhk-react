@@ -39,6 +39,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleText from '../../../hooks/useLocaleTextDataGrid'
+import { weekDs } from '../../../components/SpecializeComponents/RoutineSelect/predefinedOption'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -648,6 +649,38 @@ const PickupOrders = () => {
     setRecycItem(recycItems)
   }, [i18n.language])
 
+  
+
+  const getDeliveryDay = (deliveryDate:string[]) => {
+    const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat'];
+    let delivery = deliveryDate.map(item => item.trim());
+    let isWeek = false;
+
+    for(let deliv of delivery){
+      if(weeks.includes(deliv)){
+        isWeek = true
+      }
+    }
+
+    if(isWeek){
+      delivery = delivery.map(item => {
+        const days = weekDs.find(day => day.id === item);
+        if(days) {
+          if(i18n.language === Languages.ENUS){
+            return days.engName
+          } else if(i18n.language === Languages.ZHCH){
+            return days.schiName
+          } else {
+            return days.tchiName
+          }
+        } else {
+          return ''
+        }
+      })
+    }
+    return delivery.join(',')
+  }
+
   const getDeliveryDate = (row: PickupOrder) => {
     if (row.picoType === 'AD_HOC') {
       return `${dayjs
@@ -658,9 +691,17 @@ const PickupOrders = () => {
         .tz('Asia/Hong_Kong')
         .format(`${dateFormat}`)}`
     } else if (row.routineType === 'daily') {
-      return 'Daily'
+      if(i18n.language === Languages.ENUS){
+        return 'Daily'
+      } else if(i18n.language === Languages.ZHCH){
+        return '每天'
+      } else {
+        return '每天'
+      }
     } else {
-      return `${row.routine.join(', ')}`
+      console.log('row, routine', row.routine)
+      // return `${row.routine.join(', ')}`
+      return getDeliveryDay(row.routine)
     }
   }
 
@@ -837,7 +878,7 @@ const PickupOrders = () => {
     })
     return options
   }
-console.log('filteredPico', filteredPico)
+  
   return (
     <>
       <ToastContainer />

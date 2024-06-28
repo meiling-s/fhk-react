@@ -38,6 +38,7 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { getVehicleDetail } from '../../APICalls/ASTD/recycling'
 import i18n from '../../setups/i18n'
+import { weekDs } from '../SpecializeComponents/RoutineSelect/predefinedOption'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -60,7 +61,7 @@ const PickupOrderForm = ({
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
   const {dateFormat} = useContainer(CommonTypeContainer)
   const [vehicleType, setVehicleType] = useState<string>('');
-
+  
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -164,6 +165,36 @@ const PickupOrderForm = ({
   useEffect(() => {
     initVehicleDetail()
   }, [selectedPickupOrder?.vehicleTypeId])
+ 
+  const getDeliveryDate = (deliveryDate:string[]) => {
+    const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat'];
+    let delivery = deliveryDate.map(item => item.trim());
+    let isWeek = false;
+
+    for(let deliv of delivery){
+      if(weeks.includes(deliv)){
+        isWeek = true
+      }
+    }
+
+    if(isWeek){
+      delivery = delivery.map(item => {
+        const days = weekDs.find(day => day.id === item);
+        if(days) {
+          if(i18n.language === Languages.ENUS){
+            return days.engName
+          } else if(i18n.language === Languages.ZHCH){
+            return days.schiName
+          } else {
+            return days.tchiName
+          }
+        } else {
+          return ''
+        }
+      })
+    }
+    return delivery.join(',')
+  }
   
   return (
     <>
@@ -255,9 +286,12 @@ const PickupOrderForm = ({
             </CustomField>
             <CustomField label={t('pick_up_order.item.recycling_week')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.routine
+                {/* {selectedPickupOrder?.routine
                   .map((routineItem) => routineItem)
-                  .join(' ')}
+                  .join(' ')} */}
+                  { selectedPickupOrder?.routine 
+                    && getDeliveryDate(selectedPickupOrder.routine)
+                  }
               </Typography>
             </CustomField>
 
