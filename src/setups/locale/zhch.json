@@ -988,6 +988,7 @@
     }
   },
   "general_settings": {
+    "and": "和",
     "new": "新的",
     "currency": "货币",
     "contracts": "合同",

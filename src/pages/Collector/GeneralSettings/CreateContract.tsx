@@ -126,7 +126,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       })
       contractNo !== '' && referenceNumber !== '' && contractNo === referenceNumber &&
         tempV.push({
-          field: `${t('general_settings.name') } and ${t('general_settings.reference_number')}`,
+          field: `${t('general_settings.name') } ${t('general_settings.and')} ${t('general_settings.reference_number')}`,
           problem: formErr.mustDifferent,
           type: 'error'
         })
