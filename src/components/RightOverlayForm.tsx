@@ -3,6 +3,8 @@ import Drawer from '@mui/material/Drawer'
 import StatusCard from './StatusCard'
 import { Button, Typography } from '@mui/material'
 import { styles } from '../constants/styles'
+import { useContainer } from 'unstated-next'
+import NotifContainer from '../contexts/NotifContainer'
 
 type HeaderProps = {
   title?: string
@@ -109,6 +111,7 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   action = 'add'
 }) => {
   const [isOpen, setIsOpen] = useState(open)
+  const { marginTop } = useContainer(NotifContainer);
 
   useEffect(() => {
     setIsOpen(open)
@@ -130,7 +133,7 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
     >
       <div
         className={`border-b-[1px] border-grey-line h-full ${
-          isOpen ? 'md:w-[550px] w-[100vw]' : 'hidden'
+          isOpen ? `md:w-[550px] w-[100vw] mt-[${marginTop}]` : 'hidden'
         }`}
       >
         {showHeader ? (
