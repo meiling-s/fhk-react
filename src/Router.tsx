@@ -137,7 +137,7 @@ const Router = () => {
             <Route path="/astd/company" element={<CompanyManage />} />
             <Route path="/astd/notice/" element={<Notice />} />
             <Route path="/astd/notice/:type/:templateId" element={<UpdateTemplate />} />
-            <Route path="/astd/report" element={<></>} />
+            <Route path="/astd/report" element={<Report />} />
             <Route path="/astd/statistics/recyclables" element={<></>} />
             <Route path="/astd/statistics/convoy" element={<></>} />
             <Route path="/astd/statistics/recycleCompany" element={<></>} />
@@ -175,6 +175,7 @@ const Router = () => {
             <Route path="/logistic/notice/:type/:templateId" element={<UpdateTemplate />} />
             <Route path="/logistic/staff" element={<StaffManagement />} />
             <Route path="/logistic/vehicleDashboard" element={<LogisticVehicleDashboard />} />
+            <Route path="/logistic/report" element={<Report />} />
           </Route>
 
           <Route element={<MainLayout />}>
@@ -194,6 +195,7 @@ const Router = () => {
             <Route path="/manufacturer/warehouse" element={<WarehouseDashboard />} />
             <Route path="/manufacturer/dashboard" element={<ManufacturerDashboard />} />
             <Route path="/manufacturer/checkInAndCheckout" element={<CheckInAndCheckOut />}/>
+            <Route path="/manufacturer/report" element={<Report />} />
           </Route>
 
           <Route element={<MainLayout />}>
@@ -204,6 +206,7 @@ const Router = () => {
             <Route path="/customer/notice/" element={<Notice />} />
             <Route path="/customer/notice/:type/:templateId" element={<UpdateTemplate />} />
             <Route path="/customer/staff" element={<StaffManagement />} />
+            <Route path="/customer/report" element={<Report />} />
           </Route>
           <Route path="/maintenance" element={<MaintenancePage />} />
           <Route path="*" element={<PageNotFound />} />

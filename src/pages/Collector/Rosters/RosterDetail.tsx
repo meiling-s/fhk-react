@@ -133,7 +133,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }
 
   const initStaffList = async () => {
-    const result = await getStaffList(0, 1000)
+    const result = await getStaffList(0, 1000, null)
     if (result) {
       const data = result.data.content
       var staffMapping: StaffName[] = []

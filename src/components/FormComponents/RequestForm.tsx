@@ -23,6 +23,7 @@ import { format } from '../../constants/constant'
 import { localStorgeKeyName } from "../../constants/constant";
 import { formatWeight } from "../../utils/utils";
 import { getDetailCheckInRequests } from "../../APICalls/Collector/warehouseManage";
+import NotifContainer from "../../contexts/NotifContainer";
 
 type recycItem = {
   recycType: il_item;
@@ -50,6 +51,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
   const { t } = useTranslation()
   const [selectedDetail, setSelectedDetail] = useState<CheckinDetail[] | undefined>([]);
   const [recycItem, setRecycItem] = useState<recycItem[]>([]);
+  const { marginTop } = useContainer(NotifContainer);
 
   useEffect(() => {
     initCheckinDetail(selectedItem?.chkInId)
@@ -195,7 +197,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
 
   return (
     <>
-      <Box sx={localstyles.modal} onClick={handleOverlayClick}>
+      <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}>
         <Box sx={localstyles.container} className="md:w-[500px] w-[100vw]">
           <Box sx={localstyles.header}>
             <Box>

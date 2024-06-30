@@ -151,7 +151,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   }
   const initStaffList = async () => {
     try {
-      const result = await getStaffList(1 - 1, 1000)
+      const result = await getStaffList(1 - 1, 1000, null)
 
       if (result) {
         const data = result.data.content

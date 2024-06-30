@@ -32,6 +32,7 @@ import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
 import { returnApiToken } from '../utils/utils'
 import { Notif } from '../interfaces/notif'
+import NotifContainer from '../contexts/NotifContainer'
 
 const MainAppBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -46,7 +47,8 @@ const MainAppBar = () => {
   const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList, broadcast, showBroadcast } = useContainer(
     NotifContainerContext
   )
-  const { loginId } = returnApiToken()
+  const { loginId } = returnApiToken();
+  const { setMarginTop, setBroadcast, setShowBroadcast } = useContainer(NotifContainer)
 
   useEffect(() => {
     updateNotifications(loginId)
@@ -95,6 +97,9 @@ const MainAppBar = () => {
   }
   const handleLogout = () => {
     console.log("on logout")
+    setMarginTop('0px')
+    setBroadcast(null)
+    setShowBroadcast(false)
     setNumOfNotif(0)
     setNotifList([])
     localStorage.clear()

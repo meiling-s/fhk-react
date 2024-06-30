@@ -327,7 +327,7 @@ const PurchaseOrderCreateForm = ({
       width: 200,
       valueFormatter: (params) => {
         if(params){
-          return dayjs(params.value).format('YYYY/MM/DD hh:mm')
+          return dayjs.utc(params.value).tz('Asia/Hong_Kong').format('YYYY/MM/DD hh:mm A');
         }
       }
     },

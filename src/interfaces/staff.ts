@@ -52,4 +52,9 @@ export type Staff = {
     updatedBy: string
     fullTimeFlg?: boolean
   }
+
+export type staffQuery = {
+  staffId: string
+  staffName: string
+}
   

@@ -162,7 +162,7 @@ const GeneralSettings: FunctionComponent = () => {
   const columns: GridColDef[] = [
     {
       field: 'contractNo',
-      headerName: t('general_settings.name'),
+      headerName: t('general_settings.contract_number'),
       width: 150,
       type: 'string'
     },
