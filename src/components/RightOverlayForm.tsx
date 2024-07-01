@@ -130,10 +130,15 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
       onClose={handleClose}
       anchor={anchor}
       variant={'temporary'}
+      sx={{
+        '& .MuiDrawer-paper': {
+          marginTop: `${marginTop}`
+        }
+      }}
     >
       <div
         className={`border-b-[1px] border-grey-line h-full ${
-          isOpen ? `md:w-[550px] w-[100vw] mt-[${marginTop}]` : 'hidden'
+          isOpen ? 'md:w-[550px] w-[100vw]' : 'hidden'
         }`}
       >
         {showHeader ? (
