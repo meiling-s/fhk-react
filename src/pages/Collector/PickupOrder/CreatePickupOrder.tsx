@@ -53,6 +53,7 @@ const CreatePickupOrder = () => {
       if (routineType === 'specificDate') {
         return Yup.array()
           .required('routine is required')
+          .min(1, getErrorMsg(t('pick_up_order.routine.period_should_not_empty'), 'empty'))
           .test(
             'is-in-range',
             t('pick_up_order.out_of_date_range'),
