@@ -372,7 +372,8 @@
       "recycling_week": "回收周次",
       "every_week": "逢星期",
       "contract_number": "合约编号",
-      "enter_contract": "请输入编号"
+      "enter_contract": "请输入编号",
+      "period": "时期"
     },
     "adhoc": {
       "reason_get_off": "下单原因",

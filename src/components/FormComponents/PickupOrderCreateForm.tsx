@@ -42,7 +42,7 @@ import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
 import PickupOrderList from '../../components/PickupOrderList'
 import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
-import { format } from '../../constants/constant'
+import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
 import {
   getThemeColorRole,
@@ -139,7 +139,8 @@ const PickupOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType, recycType, dateFormat, getLogisticlist } =
+  const { 
+    logisticList, contractType, vehicleType, recycType, dateFormat, getLogisticlist,} =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
@@ -160,7 +161,8 @@ const PickupOrderCreateForm = ({
   // set custom style each role
   const colorTheme: string = getThemeColorRole(role)
   const customListTheme = getThemeCustomList(role)
-  
+  const [prevLang, setPrevLang] = useState(i18n.language);
+
   const buttonFilledCustom = {
     borderRadius: '40px',
     borderColor: '#7CE495',
@@ -239,8 +241,8 @@ const PickupOrderCreateForm = ({
     ? dayjs.utc(selectedPo.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
     : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
-  const updatedDate = selectedPo
-    ? dayjs.utc(selectedPo.updatedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+  const approveAt = selectedPo
+    ? dayjs.utc(selectedPo.approvedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
     : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   const handleHeaderOnClick = () => {
@@ -486,6 +488,43 @@ const PickupOrderCreateForm = ({
     setPicoRefId('')
   }
 
+  const getCurrentLogisticName = (value:string) => {
+    let logisticName:string = '';
+    if(!logisticCompany) return logisticName
+    if(prevLang === Languages.ENUS){
+      const logistic = logisticCompany.find(item => item.logisticNameEng === value);
+      if(i18n.language === Languages.ZHCH){
+        logisticName = logistic?.logisticNameSchi ?? ''
+      } else if(i18n.language === Languages.ZHHK){
+        logisticName = logistic?.logisticNameTchi ?? ''
+      }
+    } else if(prevLang === Languages.ZHCH){
+      const logistic = logisticCompany.find(item => item.logisticNameSchi === value);
+      if(i18n.language === Languages.ENUS){
+        logisticName = logistic?.logisticNameEng ?? ''
+      } else if(i18n.language === Languages.ZHHK){
+        logisticName = logistic?.logisticNameTchi ?? ''
+      }
+    } else if(prevLang === Languages.ZHHK){
+      const logistic = logisticCompany.find(item => item.logisticNameTchi === value);
+      if(i18n.language === Languages.ZHCH){
+        logisticName = logistic?.logisticNameSchi ?? ''
+      } else if(i18n.language === Languages.ENUS){
+        logisticName = logistic?.logisticNameEng ?? ''
+      }
+    }
+    formik.setFieldValue('logisticName', logisticName)
+  }
+
+  useEffect(() => {
+    if(formik?.values?.logisticName && prevLang !== i18n.language){
+      getCurrentLogisticName(formik.values.logisticName)
+      // if(i18n.language)
+      // console.log('logisticName', formik.values.logisticName, logisticCompany)
+    }
+    setPrevLang(i18n.language)
+  }, [i18n.language])
+
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
@@ -597,7 +636,15 @@ const PickupOrderCreateForm = ({
                     placeholder={t('pick_up_order.enter_company_name')}
                     option={
                       logisticCompany?.map(
-                        (option) => option.logisticNameTchi
+                        (option) => {
+                          if(i18n.language === Languages.ENUS){
+                            return option.logisticNameEng
+                          } else if(i18n.language === Languages.ZHCH){
+                            return option.logisticNameSchi
+                          } else {
+                            return option.logisticNameTchi
+                          }
+                        }
                       ) ?? []
                     }
                     sx={{ width: '400px' }}
@@ -851,7 +898,8 @@ const PickupOrderCreateForm = ({
                   >
                     {t('common.createdDatetime') + ' : ' + createdDate}
                   </Typography>
-                  <Typography
+                  {selectedPo?.approvedAt &&
+                    <Typography
                     sx={{
                       ...styles.header3,
                       paddingX: '4px',
@@ -859,8 +907,9 @@ const PickupOrderCreateForm = ({
                       borderLeft: '1px solid #ACACAC'
                     }}
                   >
-                    {t('common.lastUpdateDatetime') + ' : ' + updatedDate}
+                    {t('common.lastUpdateDatetime') + ' : ' + approveAt}
                   </Typography>
+                  }
                 </Box>
               </Grid>
               <Grid item>

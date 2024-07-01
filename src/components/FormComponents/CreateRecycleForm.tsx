@@ -32,9 +32,10 @@ import RecyclablesListSingleSelect from '../SpecializeComponents/RecyclablesList
 import { collectorList, manuList } from '../../interfaces/common'
 import CustomAutoComplete from './CustomAutoComplete'
 import dayjs from 'dayjs'
-import { localStorgeKeyName } from '../../constants/constant'
+import { Languages, localStorgeKeyName } from '../../constants/constant'
 import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
+import i18n from '../../setups/i18n'
 
 type props = {
   onClose: () => void
@@ -80,7 +81,7 @@ const CreateRecycleForm = ({
   isEditing,
   picoHisId
 }: props) => {
-  const { recycType, manuList, collectorList, decimalVal } =
+  const { recycType, manuList, collectorList, decimalVal, getManuList, getCollectorList } =
     useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<CreatePicoDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
@@ -99,6 +100,11 @@ const CreateRecycleForm = ({
     //console.log("set def", defRecyc);
     setDefaultRecyc(defRecyc)
   }
+
+  useEffect(() => {
+    getManuList();
+    getCollectorList()
+  }, [])
 
   useEffect(() => {
     if (editRowId == null) {
@@ -411,10 +417,26 @@ const CreateRecycleForm = ({
                         placeholder={''}
                         option={[
                           ...(collectorList?.map(
-                            (option) => option.collectorNameTchi
+                            (option) => {
+                              if(i18n.language === Languages.ENUS){
+                                return option.collectorNameEng
+                              } else if(i18n.language === Languages.ZHCH){
+                                return option.collectorNameSchi
+                              } else {
+                                return option.collectorNameTchi
+                              }
+                            }
                           ) ?? []),
                           ...(manuList?.map(
-                            (option) => option.manufacturerNameTchi
+                            (option) => {
+                              if(i18n.language === Languages.ENUS){
+                                return option.manufacturerNameEng
+                              } else if(i18n.language === Languages.ZHCH){
+                                return option.manufacturerNameSchi
+                              } else {
+                                return option.manufacturerNameTchi
+                              }
+                            }
                           ) ?? [])
                         ]}
                         sx={{ width: '100%' }}

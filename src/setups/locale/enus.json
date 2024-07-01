@@ -373,7 +373,8 @@
       "recycling_week": "recycling week",
       "every_week": "every week",
       "contract_number": "Contract no.",
-      "enter_contract": "Please input contract no."
+      "enter_contract": "Please input contract no.",
+      "period": "Period"
     },
     "adhoc": {
       "reason_get_off": "Ad-hoc reason",
@@ -396,11 +397,11 @@
       "shipping_time": "Pickup time",
       "main_category": "Type",
       "subcategory": "Subtype",
-      "weight": "Weight",
-      "sender_name": "Shipping company",
-      "receiver": "receiver",
-      "recycling_location": "Recycling location",
-      "arrived": "Arrived"
+      "weight": "Estimated weight",
+      "sender_name": "Sender company",
+      "receiver": "Receiver company",
+      "recycling_location": "Sender location",
+      "arrived": "Receiver location"
     },
     "recyclForm": {
       "new": "New",

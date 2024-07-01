@@ -172,7 +172,7 @@ const PickupOrderForm = ({
                     selectedPickupOrder && handleRowClick(selectedPickupOrder)
                   }}
                 ></CustomButton>
-              ) : role !== 'logistic' ? (
+              ) : role !== 'logistic' && selectedRow?.status === 'CREATED'  ? (
                 <>
                   <CustomButton
                     text={t('pick_up_order.item.edit')}
