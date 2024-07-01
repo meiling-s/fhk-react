@@ -75,7 +75,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                 label: t('driver.DriverMenu.popUp.field.loginName'),
                 placeholder: t('driver.DriverMenu.popUp.field.nameText'),
                 field: 'loginId',
-                type: 'autocomplete'
+                type: 'text'
             },
             {
                 label: t('driver.DriverMenu.popUp.field.TchiName'),
@@ -147,7 +147,6 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             }
         })
         driverDetailList.forEach((item: DriverInfo, index: number) => {
-            console.log({item})
             Object.keys(item).forEach((key) => {
                 if (!item[key]) {
                     let field = ''
@@ -323,6 +322,8 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             driverDetail: driverDetailList,
             status: 'ACTIVE'
         }
+
+        console.log(formValues, 'formValues')
         const user = localStorage.getItem('username')
         if (action === 'add' || action === 'edit') {
             setTrySubmited(true)
