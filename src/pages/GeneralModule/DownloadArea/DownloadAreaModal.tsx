@@ -113,6 +113,18 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           })
       }
 
+      if (
+        selectedItem?.dateOption === 'datetime' && 
+        selectedItem.tenantId === 'none' && 
+        endDate < startDate) {
+          tempV.push({
+            field: t('generate_report.end_date'),
+            problem: formErr.endDateEarlyThanStartDate,
+            type: 'error'
+          })
+      }
+
+
       startDate == null &&
         tempV.push({
           field: t('general_settings.start_date'),
@@ -125,22 +137,43 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      
+      if(startDate && 
+        !isValidDayjsISODate(startDate) && 
+        selectedItem?.dateOption === 'dateOption' &&
+        selectedItem.tenantId === 'none'){
+          tempV.push({
+            field: t('general_settings.start_date'),
+            problem: formErr.wrongFormat,
+            type: 'error'
+          })
+      } else if(startDate &&
+        !isValidDayjsISODate(startDate)){
+          tempV.push({
+            field: t('general_settings.start_date'),
+            problem: formErr.wrongFormat,
+            type: 'error'
+          })
+      }
 
-      startDate &&
-        !isValidDayjsISODate(startDate) &&
-        tempV.push({
-          field: t('general_settings.start_date'),
-          problem: formErr.wrongFormat,
-          type: 'error'
-        })
-      endDate &&
+      if( endDate &&
+          selectedItem?.dateOption === 'datetime' &&
+          selectedItem.tenantId === 'none' && 
+          !isValidDayjsISODate(endDate)){
+            tempV.push({
+              field: t('generate_report.end_date'),
+              problem: formErr.wrongFormat,
+              type: 'error'
+            })
+      } else if( endDate &&
         selectedItem?.dateOption != 'datetime' &&
-        !isValidDayjsISODate(endDate) &&
-        tempV.push({
-          field: t('generate_report.end_date'),
-          problem: formErr.wrongFormat,
-          type: 'error'
-        })
+        !isValidDayjsISODate(endDate)){
+          tempV.push({
+            field: t('generate_report.end_date'),
+            problem: formErr.wrongFormat,
+            type: 'error'
+          })
+      }
 
       setValidation(tempV)
     }
