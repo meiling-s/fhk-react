@@ -10,7 +10,8 @@ const useAuthCheck = () => {
     '/resetPassword',
     '/confirmNewPassword',
     '/changePassword/:idReset?',
-    '/register/details/:tenantId'
+    '/register/details/:tenantId',
+    '/register/result'
   ]
 
   useEffect(() => {
