@@ -1,6 +1,8 @@
 import React, { useState, useEffect, ReactNode } from 'react'
 import Drawer from '@mui/material/Drawer'
 import StatusCard from './StatusCard'
+import { useContainer } from 'unstated-next'
+import NotifContainer from '../contexts/NotifContainer'
 
 type HeaderProps = {
   title?: string
@@ -111,6 +113,7 @@ const RightOverlayFormCustom: React.FC<RightOverlayFormProps> = ({
   action = 'add'
 }) => {
   const [isOpen, setIsOpen] = useState(open)
+  const { marginTop } = useContainer(NotifContainer);
 
   useEffect(() => {
     setIsOpen(open)
@@ -129,6 +132,11 @@ const RightOverlayFormCustom: React.FC<RightOverlayFormProps> = ({
       onClose={handleClose}
       anchor={anchor}
       variant={'temporary'}
+      sx={{
+        '& .MuiDrawer-paper': {
+          marginTop: `${marginTop}`
+        }
+      }}
     >
       <div
         className={`border-b-[1px] border-grey-line h-full ${

@@ -18,6 +18,7 @@ export type Staff = {
   updatedAt: string
   createdAt: string
   version: number
+  lang: string
 }
 
 export type CollectionPoint = {
