@@ -52,6 +52,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
   const { t } = useTranslation()
   const [selectedDetail, setSelectedDetail] = useState<CheckinDetail[] | undefined>([]);
   const [recycItem, setRecycItem] = useState<recycItem[]>([]);
+  const { marginTop } = useContainer(NotifContainer);
 
   useEffect(() => {
     initCheckinDetail(selectedItem?.chkInId)

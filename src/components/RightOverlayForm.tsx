@@ -112,7 +112,7 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(open)
   const { marginTop } = useContainer(NotifContainer);
-
+  
   useEffect(() => {
     setIsOpen(open)
   }, [open])
@@ -130,6 +130,11 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
       onClose={handleClose}
       anchor={anchor}
       variant={'temporary'}
+      sx={{
+        '& .MuiDrawer-paper': {
+          marginTop: `${marginTop}`
+        }
+      }}
     >
       <div
         className={`border-b-[1px] border-grey-line h-full ${

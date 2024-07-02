@@ -91,6 +91,7 @@
       "loginIdCantContainAdmin": "'admin' 中不允許有單字",
       "tenatIdShouldBeSixDigit": "租戶 ID 應為六位數",
       "tenantIdNotFound": "未找到租戶 ID",
+      "mustDifferent": "一定是不同的",
       "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'"
     }
   },
@@ -933,7 +934,7 @@
       },
       "table": {
         "driverId": "司機號碼",
-        "driverName": "司機中文名",
+        "driverTchiName": "司機繁體中文名稱",
         "driverEngName": "Driver English Name",
         "gender": "性别",
         "loginName": "登入名稱",
@@ -986,6 +987,7 @@
     }
   },
   "general_settings": {
+    "and": "和",
     "new": "新的",
     "currency": "貨幣",
     "contracts": "合約",
@@ -1006,7 +1008,8 @@
     "weight_tolerance": "允許重量誤差 (kg)",
     "currency_category": "貨幣類別",
     "introduction": "備註",
-    "monetary": "名稱"
+    "monetary": "名稱",
+    "contract_number": "合約編號"
   },
   "packaging_unit": {
     "packaging_unit": "包裝單位",
@@ -1051,7 +1054,10 @@
     "report_of_manu_recycled_order_list" :"顧客訂單列表",
     "report_of_manu_recycled_waste_tracing_list": "回收物追蹤列表",
     "report_of_manu_recycled_waste_classification_list":"回收物類別分析表",
-    "report_of_user_management_list": "用户报表"
+    "report_of_user_management_list": "用户报表",
+    "report_of_audit_trail": "审计追踪报表",
+    "report_of_user_activity": "用戶活動報表",
+    "report_of_notification": "通知報表"
   },
   "purchase_order": {
     "all_order": "所有訂單",

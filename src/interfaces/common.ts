@@ -207,3 +207,25 @@ export type errorState = {
     code: number,
     message: string
 }
+
+export type StaffTitle = {
+    createdAt: string
+    createdBy: string
+    description: string
+    titleName: string
+    duty: string[]
+    remark: string
+    status: string
+    titleId: string
+    titleNameEng: string
+    titleNameSchi: string
+    titleNameTchi: string
+    updatedAt: string
+}
+
+export type UserActivity = {
+    operation: string
+    ip: string
+    createdBy: string
+    updatedBy: string
+}

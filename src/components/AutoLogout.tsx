@@ -1,6 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
+const ipAddress = localStorage.getItem('ipAddress');
 
 import { Outlet, useNavigate } from 'react-router-dom'
+import { createUserActivity } from '../APICalls/userAccount'
+import { returnApiToken } from '../utils/utils';
+import { UserActivity } from '../interfaces/common';
 
 const AutoLogout = () => {
   const [lastActivityTime, setLastActivityTime] = useState<any>(Date.now())
@@ -15,6 +19,17 @@ const AutoLogout = () => {
 
       console.log(`Inactive for ${inactivityTime / 1000} seconds`)
       if (inactivityTime > inactivityPeriod) {
+        const { loginId } = returnApiToken();
+        if(ipAddress){
+          const userActivity:UserActivity = {
+            operation: 'Logout',
+            ip: ipAddress,
+            createdBy: loginId,
+            updatedBy: loginId
+          }
+          createUserActivity(loginId, userActivity)
+        }
+
         console.log('User has been logged out')
         localStorage.clear()
         navigate('/')
