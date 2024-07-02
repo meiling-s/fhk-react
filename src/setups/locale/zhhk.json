@@ -588,8 +588,8 @@
     "inventory": "存貨",
     "recyclingInformation": "回收資訊",
     "date": "日期",
-    "recyleType": "子分類",
-    "recyleSubType": "兒童分類",
+    "recyleType": "主類別",
+    "recyleSubType": "次類別",
     "package": "包裝",
     "recyclingNumber": "回收編號",
     "inventoryLocation": "庫存位置",
@@ -747,7 +747,6 @@
     "place": "地點",
     "search_placeholder": "輸入運單編號",
     "any": "任何",
-    "send": "送出",
     "send_in": "送入",
     "ship": "出貨",
     "send_request": "送出請求",
@@ -1348,10 +1347,8 @@
     "enterRecyclingNumber": "輸入回收物編號",
     "any": "任何",
     "classification": "分類",
-    "subclassification": "子分類",
-    "inventory_location" : "地點",
+    "subclassification": "兒童分類",
     "place": "地方",
-    "po_number": "輸入採購訂單編號",
-    "ship": "Ship"
+    "po_number": "輸入採購訂單編號"
   }
 }

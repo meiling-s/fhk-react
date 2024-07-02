@@ -270,13 +270,13 @@ const Inventory: FunctionComponent = () => {
     },
     {
       field: 'recycTypeId',
-      headerName: t('placeHolder.classification'),
+      headerName: t('inventory.recyleType'),
       width: 200,
       type: 'string'
     },
     {
       field: 'recycSubTypeId',
-      headerName: t('placeHolder.subclassification'),
+      headerName: t('inventory.recyleSubType'),
       width: 200,
       type: 'string'
     },
@@ -329,7 +329,7 @@ const Inventory: FunctionComponent = () => {
       placeholder: t('placeHolder.any')
     },
     {
-      label: t('placeHolder.inventory_location'),
+      label: t('placeHolder.place'),
       field: 'warehouseId',
       options: getUniqueOptions('warehouseId'),
       placeholder: t('placeHolder.any')

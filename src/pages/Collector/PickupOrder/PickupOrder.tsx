@@ -772,7 +772,7 @@ const PickupOrders = () => {
       field: 'senderName'
     },
     {
-      label: t('placeHolder.classification'),
+      label: t('pick_up_order.filter.recycling_category'),
       options: getReycleOption(),
       field: 'recycType'
     },
@@ -873,7 +873,6 @@ const PickupOrders = () => {
     })
     return options
   }
-
   return (
     <>
       <ToastContainer />

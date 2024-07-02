@@ -16,7 +16,9 @@ const Notification = () => {
   const [numOfNotif, setNumOfNotif] = useState(0)
   const [notifList, setNotifList] = useState<Notif[]>([])
   const [broadcast, setBroadcast] = useState<Broadcast | null>(null)
-  const [showBroadcast, setShowBroadcast] = useState<boolean>(true)
+  const [showBroadcast, setShowBroadcast] = useState<boolean>(true);
+  const [marginTop, setMarginTop] = useState<string>('0px');
+
   // useEffect(() => {
   //  if(loginId){
   //   const interval = setInterval((a) => {
@@ -101,6 +103,12 @@ const Notification = () => {
       } 
   }
 
+  useEffect(() => {
+    if(showBroadcast){
+      setMarginTop('30px')
+    }
+  }, [showBroadcast]);
+
   return {
     numOfNotif,
     notifList,
@@ -111,7 +119,8 @@ const Notification = () => {
     setBroadcast,
     showBroadcast, 
     setShowBroadcast,
-    initBroadcastMessage
+    initBroadcastMessage,
+    marginTop
   }
 }
 

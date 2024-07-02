@@ -589,8 +589,8 @@
     "inventory": "Inventory",
     "recyclingInformation": "Recycling information",
     "date": "Date",
-    "recyleType": "Subclassification",
-    "recyleSubType": "Subclassification",
+    "recyleType": "Recyclable type",
+    "recyleSubType": "Recyclable sub-type",
     "package": "Package",
     "recyclingNumber": "Recycling number",
     "inventoryLocation": "Inventory location",
@@ -1359,12 +1359,10 @@
   "placeHolder": {
     "enterRecyclingNumber": "Enter the recycling number",
     "any": "Any",
-    "classification": "Recyclable type",
-    "subclassification": "Recyclable sub-type",
-    "inventory_location" : "Inventory location",
+    "classification": "Slassification",
+    "subclassification": "Subclassification",
     "place": "Place",
-    "po_number": "Enter PO number",
-    "ship": "Ship"
+    "po_number": "Enter PO number"
   }
 
 }
