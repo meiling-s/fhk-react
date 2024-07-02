@@ -227,6 +227,10 @@ const RegisterTenant = () => {
       setBRNImages(newPictures)
     } else if (field === 'company_logo') {
       setLogoImage([])
+    } else if (field === 'edp_contract') {
+      const newPictures = [...EPDImages]
+      newPictures.splice(index, 1)
+      setEPDImages(newPictures)
     }
   }
 
@@ -435,7 +439,7 @@ const RegisterTenant = () => {
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
                 >
-                  {({ imageList, onImageUpload }) => (
+                  {({ imageList, onImageUpload, onImageRemove }) => (
                     <Box className="box">
                       <Card sx={styles.cardImg}>
                         <ButtonBase
@@ -454,7 +458,7 @@ const RegisterTenant = () => {
                         </ButtonBase>
                       </Card>
                       <ImageList sx={styles.imagesContainer} cols={3}>
-                        {imageList.map((image) => (
+                        {imageList.map((image, index) => (
                           <ImageListItem key={image['file']?.name}>
                             <img
                               style={styles.image}
@@ -462,6 +466,20 @@ const RegisterTenant = () => {
                               alt={image['file']?.name}
                               loading="lazy"
                             />
+                            <ButtonBase
+                              onClick={(event) => {
+                                onImageRemove(index)
+                                removeImage(field.name, index)
+                              }}
+                              style={{
+                                position: 'absolute',
+                                top: '0px',
+                                right: '10px',
+                                padding: '4px'
+                              }}
+                            >
+                              <CancelRoundedIcon className="text-black" />
+                            </ButtonBase>
                           </ImageListItem>
                         ))}
                       </ImageList>
