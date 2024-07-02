@@ -118,6 +118,11 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
         selectedItem.tenantId === 'none' && 
         endDate < startDate) {
           tempV.push({
+            field: t('general_settings.start_date'),
+            problem: formErr.startDateBehindEndDate,
+            type: 'error'
+          })
+          tempV.push({
             field: t('generate_report.end_date'),
             problem: formErr.endDateEarlyThanStartDate,
             type: 'error'
