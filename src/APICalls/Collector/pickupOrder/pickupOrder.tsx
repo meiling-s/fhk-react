@@ -195,7 +195,7 @@ export const getAllReason = async () => {
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_ALL_REASON(auth.tenantId, '24')
+      ...GET_ALL_REASON(auth.tenantId, auth.realmApiRoute, '24')
     })
     
     return response

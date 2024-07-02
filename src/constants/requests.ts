@@ -1004,10 +1004,11 @@ export const GET_STATUS_DETAIL = (status: string): AxiosRequestConfig => ({
 //get pickup order reason list
 export const GET_ALL_REASON = (
   tenantId: string,
+  realmApiRoute: string,
   functionId: string | number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/reason/${tenantId}/${functionId}`
+  url: `api/v1/${realmApiRoute}/reason/${tenantId}/${functionId}`
 })
 
 //logistic/jobOrder

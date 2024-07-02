@@ -549,7 +549,7 @@ const PickupOrders = () => {
   const getRejectReason = async () => {
     try {
       let result = await getAllReason()
-      if (result && result?.data && result?.data.length > 0) {
+      if (result && result?.data && result?.data?.content.length > 0) {
         let reasonName = ''
         switch (i18n.language) {
           case 'enus':
@@ -565,13 +565,13 @@ const PickupOrders = () => {
             reasonName = 'reasonNameEng'
             break
         }
-        result?.data.map(
+        result?.data?.content.map(
           (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
             item.id = item.reasonId
             item.name = item[reasonName]
           }
         )
-        setReasonList(result?.data)
+        setReasonList(result?.data?.content)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
