@@ -147,7 +147,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         tChineseName.trim() === '' &&
             tempV.push({
-                field: 'tChineseName',
+                field: `${t('packaging_unit.traditional_chinese_name')}`,
                 error: `${t(`common.traditionalChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -155,7 +155,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         sChineseName.trim() === '' &&
             tempV.push({
-                field: 'sChineseName',
+                field: `${t('packaging_unit.simplified_chinese_name')}`,
                 error: `${t(`common.simplifiedChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -163,7 +163,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         englishName.trim() === '' &&
             tempV.push({
-                field: 'englishName',
+                field: `${t('packaging_unit.english_name')}`,
                 error: `${t(`common.englishName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -171,7 +171,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         selectedService.trim() === '' &&
         tempV.push({
-            field: 'selectedService',
+            field: `${t('recycling_point.service_type')}`,
             error: `${t(`recycling_point.service_type`)} ${t(
                 'add_warehouse_page.shouldNotEmpty'
             )}`
@@ -385,7 +385,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.remark')} mandatory={false}>
+                        <CustomField label={t('packaging_unit.remark')}>
                             <CustomTextField
                                 id="remark"
                                 placeholder={t('packaging_unit.remark')}
@@ -395,7 +395,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                             />
                         </CustomField>
                     </Box>
-                    <Grid item sx={{ width: '100%' }}>
+                    <Grid item sx={{ width: '92%' }}>
                         {trySubmited &&
                             validation.map((val, index) => (
                             <FormErrorMsg

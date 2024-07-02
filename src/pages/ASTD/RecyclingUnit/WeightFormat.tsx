@@ -102,6 +102,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
     }, [i18n, currentLanguage])
 
     useEffect(() => {
+        setTrySubmitted(false)
         if (action === 'edit') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setTChineseName(selectedItem.unitNameTchi)
@@ -157,33 +158,39 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
 
         tChineseName.trim() === '' &&
             tempV.push({
-                field: 'tChineseName',
-                error: `${t(`common.traditionalChineseName`)} ${t(
+                field: `${t(`common.traditionalChineseName`)}`,
+                error: `${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
             })
 
         sChineseName.trim() === '' &&
             tempV.push({
-                field: 'sChineseName',
-                error: `${t(`common.simplifiedChineseName`)} ${t(
+                field: `${t(`common.simplifiedChineseName`)} `,
+                error: `${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
             })
 
         englishName.trim() === '' &&
             tempV.push({
-                field: 'englishName',
-                error: `${t(`common.englishName`)} ${t(
+                field: `${t(`common.englishName`)} `,
+                error: `${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
             })
         
         Number(equivalent) < 0 &&
             tempV.push({
-                field: 'equivalent',
-                error: `${t(`pickup_order.card_detail.weight`)} ${t('recycling_unit.weight_error')}`
+                field: `${t(`pick_up_order.card_detail.weight`)}`,
+                error: `${t('recycling_unit.weight_error')}`
             })
+
+        equivalent === '' &&
+        tempV.push({
+            field: `${t(`pick_up_order.card_detail.weight`)}`,
+            error: `${t( 'add_warehouse_page.shouldNotEmpty')}`
+        })
 
         setValidation(tempV)
     }, [tChineseName, sChineseName, englishName, equivalent])
@@ -301,7 +308,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                 <Divider></Divider>
                 <Box sx={{ marginX: 2 }}>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.traditional_chinese_name')}>
+                        <CustomField label={t('packaging_unit.traditional_chinese_name')} mandatory>
                             <CustomTextField
                                 id="tChineseName"
                                 value={tChineseName}
@@ -313,7 +320,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.simplified_chinese_name')}>
+                        <CustomField label={t('packaging_unit.simplified_chinese_name')} mandatory>
                             <CustomTextField
                                 id="sChineseName"
                                 value={sChineseName}
@@ -325,7 +332,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.english_name')}>
+                        <CustomField label={t('packaging_unit.english_name')} mandatory>
                             <CustomTextField
                                 id="englishName"
                                 value={englishName}
@@ -337,7 +344,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.1kg_equivalent')}>
+                        <CustomField label={t('recycling_unit.1kg_equivalent')} mandatory>
                             <CustomTextField
                                 id="equivalent"
                                 type="number"
@@ -353,29 +360,38 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                         <Typography sx={{color: paletteColors.Red1}}>{t('recycling_unit.weight_error')}</Typography>
                     )}
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.introduction')} mandatory={false}>
+                        <CustomField label={t('packaging_unit.introduction')}>
                             <CustomTextField
                                 id="description"
                                 placeholder={t('packaging_unit.introduction')}
                                 onChange={(event) => setDescription(event.target.value)}
-                                error={checkString(description)}
                                 multiline={true}
                                 defaultValue={description}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.remark')} mandatory={false}>
+                        <CustomField label={t('packaging_unit.remark')}>
                             <CustomTextField
                                 id="remark"
                                 placeholder={t('packaging_unit.remark')}
                                 onChange={(event) => setRemark(event.target.value)}
-                                error={checkString(remark)}
                                 multiline={true}
                                 defaultValue={remark}
                             />
                         </CustomField>
                     </Box>
+                    <Grid item sx={{ width: '92%' }}>
+                        {trySubmited &&
+                            validation.map((val, index) => (
+                            <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={val.error}
+                                type={'error'}
+                            />
+                            ))}
+                    </Grid>
                 </Box>
             </RightOverlayForm>
         </div>

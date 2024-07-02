@@ -99,6 +99,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
     }, [i18n, currentLanguage])
 
     useEffect(() => {
+        setTrySubmitted(false)
         if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setTChineseName(selectedItem.siteTypeNameTchi)
@@ -152,7 +153,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
 
         tChineseName.trim() === '' &&
             tempV.push({
-                field: 'tChineseName',
+                field: `${t('packaging_unit.traditional_chinese_name')}`,
                 error: `${t(`common.traditionalChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -160,7 +161,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
 
         sChineseName.trim() === '' &&
             tempV.push({
-                field: 'sChineseName',
+                field: `${t('packaging_unit.simplified_chinese_name')}`,
                 error: `${t(`common.simplifiedChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -168,7 +169,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
 
         englishName.trim() === '' &&
             tempV.push({
-                field: 'englishName',
+                field: `${t('packaging_unit.english_name')}`,
                 error: `${t(`common.englishName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -292,65 +293,74 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 <Divider></Divider>
                 <Box sx={{ marginX: 2 }}>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.traditional_chinese_name')}>
+                        <CustomField label={t('packaging_unit.traditional_chinese_name')} mandatory>
                             <CustomTextField
                                 id="tChineseName"
                                 value={tChineseName}
                                 disabled={action === 'delete'}
                                 placeholder={t('packaging_unit.traditional_chinese_name')}
                                 onChange={(event) => setTChineseName(event.target.value)}
-                                error={checkString(tChineseName)}
+                                error={trySubmited && checkString(tChineseName)}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.simplified_chinese_name')}>
+                        <CustomField label={t('packaging_unit.simplified_chinese_name')} mandatory>
                             <CustomTextField
                                 id="sChineseName"
                                 value={sChineseName}
                                 disabled={action === 'delete'}
                                 placeholder={t('packaging_unit.simplified_chinese_name')}
                                 onChange={(event) => setSChineseName(event.target.value)}
-                                error={checkString(sChineseName)}
+                                error={trySubmited && checkString(sChineseName)}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.english_name')}>
+                        <CustomField label={t('packaging_unit.english_name')} mandatory>
                             <CustomTextField
                                 id="englishName"
                                 value={englishName}
                                 disabled={action === 'delete'}
                                 placeholder={t('packaging_unit.english_name')}
                                 onChange={(event) => setEnglishName(event.target.value)}
-                                error={checkString(englishName)}
+                                error={trySubmited && checkString(englishName)}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.introduction')} mandatory={false}>
+                        <CustomField label={t('packaging_unit.introduction')}>
                             <CustomTextField
                                 id="description"
                                 placeholder={t('packaging_unit.introduction')}
                                 onChange={(event) => setDescription(event.target.value)}
-                                error={checkString(description)}
                                 multiline={true}
                                 defaultValue={description}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.remark')} mandatory={false}>
+                        <CustomField label={t('packaging_unit.remark')}>
                             <CustomTextField
                                 id="remark"
                                 placeholder={t('packaging_unit.remark')}
                                 onChange={(event) => setRemark(event.target.value)}
-                                error={checkString(remark)}
                                 multiline={true}
                                 defaultValue={remark}
                             />
                         </CustomField>
                     </Box>
+                    <Grid item sx={{ width: '92%' }}>
+                        {trySubmited &&
+                            validation.map((val, index) => (
+                            <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={val.error}
+                                type={'error'}
+                            />
+                            ))}
+                    </Grid>
                 </Box>
             </RightOverlayForm>
         </div>
