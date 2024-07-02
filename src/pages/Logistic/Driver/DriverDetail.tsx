@@ -164,7 +164,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                             break;
                     }
                     tempV.push({
-                        field: field + (index + 1),
+                        field: field,
                         problem: formErr.empty,
                         type: 'error'
                     })
@@ -550,7 +550,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                     />
                                                 </CustomField>
                                             </Grid>
-                                            <Grid item xs>
+                                            <Grid item xs={4}>
                                                 <CustomField
                                                     label={idx === 0 ? t('driver.DriverMenu.popUp.field.driveYear') : ''}
                                                 >

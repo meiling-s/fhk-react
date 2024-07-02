@@ -927,10 +927,11 @@
       "cars": "Vehicles"
     },
     "DriverMenu": {
-      "AddBtn": "Add Driver",
+      "AddBtn": "Add New Driver",
       "table": {
         "driverId": "Driver Number",
-        "driverName": "Driver's Chinese name",
+        "driverSchiName": "Driver Simplified Chinese Name",
+        "driverTchiName": "Driver Traditional Chinese Name",
         "driverEngName": "Driver English Name",
         "gender": "gender",
         "loginName": "Login Name",
@@ -956,9 +957,9 @@
           "uploadLinsence": "Upload Driver's License",
           "carType": "Vehicle Type",
           "carTypeSelect": "Please Select",
-          "carYear": "Years of Holding License",
+          "carYear": "License period",
           "yearInput": "Please enter year",
-          "driveYear": "Years of Driving Experience",
+          "driveYear": "Driving Experience",
           "addvehicleButton": "Add Vehicle Type",
           "contactNo": "Contact Number",
           "contactText": "Please Enter Contact Number",
@@ -983,15 +984,6 @@
       "search": {
         "label": "Search",
         "placeholder": "Please enter Driver No."
-      },
-      "table": {
-        "driverId": "Driver Id",
-        "driverName": "司机中文名",
-        "driverEngName": "Driver English Name",
-        "gender": "Gender",
-        "loginName": "Login Name",
-        "contactNo": "Contact No",
-        "lastLogin": "Last Login"
       }
     }
   },
