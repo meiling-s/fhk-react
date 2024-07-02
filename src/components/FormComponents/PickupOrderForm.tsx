@@ -82,7 +82,7 @@ const PickupOrderForm = ({
     }
   }
 
-  const navigateToJobOrder = (picoId: number) => {
+  const navigateToJobOrder = (picoId: string) => {
     navigate(`/logistic/createJobOrder/${picoId}?isEdit=false`)
   }
 
@@ -225,7 +225,7 @@ const PickupOrderForm = ({
                 <CustomButton
                   text={t('pick_up_order.table.create_job_order')}
                   onClick={() => {
-                    navigateToJobOrder(selectedRow.picoId)
+                    navigateToJobOrder(selectedRow.picoId.toString())
                   }}
                 ></CustomButton>
               ) : role === 'logistic' &&
