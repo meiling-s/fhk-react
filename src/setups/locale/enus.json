@@ -91,6 +91,7 @@
       "loginIdCantContainAdmin": "not allowed have words in 'admin'",
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
       "tenantIdNotFound": "Tenant Id not found",
+      "mustDifferent": "must be different",
       "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed"
     }
   },
@@ -274,7 +275,7 @@
     "overview": "Overview"
   },
   "status": {
-    "active": "Active",
+    "active": "Activate",
     "inactive": "Inactive",
     "deleted": "Deleted",
     "started": "Started",
@@ -926,75 +927,68 @@
       "cars": "Vehicles"
     },
     "DriverMenu": {
-      "AddBtn": "Add Driver",
+      "AddBtn": "Add New Driver",
       "table": {
         "driverId": "Driver Number",
-        "driverName": "Driver's Chinese name",
+        "driverSchiName": "Driver Simplified Chinese Name",
+        "driverTchiName": "Driver Traditional Chinese Name",
         "driverEngName": "Driver English Name",
         "gender": "gender",
         "loginName": "Login Name",
         "contactNo": "Contact number",
         "lastLogin": "Last login",
         "enterDriverId": "Enter driver number"
-      }
-    },
-    "vehicleMenu": {
-      "vehicle_number": "Vehicle number",
-      "license_plate_number": "License plate number",
-      "vehicle_type": "Vehicle type",
-      "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
-      "picture": "Picture",
-      "license_plate_number_placeholder": "Please enter vehicle plate number",
-      "vehicle_type_placeholder": "Please enter vehicle type",
-      "vehicle_cargo_capacity_placeholder": "Please enter weight"
-    },
-    "search": {
-      "label": "Search",
-      "placeholder": "Please enter Driver No."
-    },
-    "table": {
-      "driverId": "Driver Id",
-      "driverName": "司机中文名",
-      "driverEngName": "Driver English Name",
-      "gender": "Gender",
-      "loginName": "Login Name",
-      "contactNo": "Contact No",
-      "lastLogin": "Last Login"
-    },
-    "popUp": {
-      "addTitle": "Add Driver",
-      "editTitle": "Edit Driver",
-      "deleteTitle": "Delete Driver",
-      "saveText": "Save",
-      "removeText": "Remove",
-      "field": {
-        "loginName": "Login Name",
-        "nameText": "Please Enter Name",
-        "TchiName": "Driver Recycling number",
-        "SchiName": "Driver Simplified Chinese Name",
-        "engName": "Driver English Name",
-        "engText": "Please type a name",
-        "linsenceName": "Driver's License Number",
-        "linsenceText": "Driver's License Number",
-        "uploadLinsence": "Upload Driver's License",
-        "carType": "Vehicle Type",
-        "carTypeSelect": "Please Select",
-        "carYear": "Years of Holding License",
-        "yearInput": "Please enter year",
-        "driveYear": "Years of Driving Experience",
-        "addvehicleButton": "Add Vehicle Type",
-        "contactNo": "Contact Number",
-        "contactText": "Please Enter Contact Number",
-        "createSuccessMsg": "Success created driver",
-        "createFailMsg": "Failed created driver",
-        "editSuccessMsg": "Success edited driver",
-        "editFailMsg": "Failed edited driver",
-        "deleteSuccessMsg": "Success deleted driver",
-        "deleteFailMsg": "Failed delete driver"
+      },
+      "popUp": {
+        "addTitle": "Add Driver",
+        "editTitle": "Edit Driver",
+        "deleteTitle": "Delete Driver",
+        "saveText": "Save",
+        "removeText": "Remove",
+        "field": {
+          "loginName": "Login Name",
+          "nameText": "Please Enter Name",
+          "TchiName": "Driver Traditional Chinese Name",
+          "SchiName": "Driver Simplified Chinese Name",
+          "engName": "Driver English Name",
+          "engText": "Please type a name",
+          "linsenceName": "Driver's License Number",
+          "linsenceText": "Driver's License Number",
+          "uploadLinsence": "Upload Driver's License",
+          "carType": "Vehicle Type",
+          "carTypeSelect": "Please Select",
+          "carYear": "License period",
+          "yearInput": "Please enter year",
+          "driveYear": "Driving Experience",
+          "addvehicleButton": "Add Vehicle Type",
+          "contactNo": "Contact Number",
+          "contactText": "Please Enter Contact Number",
+          "createSuccessMsg": "Success created driver",
+          "createFailMsg": "Failed created driver",
+          "editSuccessMsg": "Success edited driver",
+          "editFailMsg": "Failed edited driver",
+          "deleteSuccessMsg": "Success deleted driver",
+          "deleteFailMsg": "Failed delete driver"
+        }
+      },
+      "vehicleMenu": {
+        "vehicle_number": "Vehicle Number",
+        "license_plate_number": "License Plate Number",
+        "vehicle_type": "Vehicle Type",
+        "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
+        "picture": "Picture",
+        "license_plate_number_placeholder": "Please enter vehicle plate number",
+        "vehicle_type_placeholder": "Please enter vehicle type",
+        "vehicle_cargo_capacity_placeholder": "Please enter weight"
+      },
+      "search": {
+        "label": "Search",
+        "placeholder": "Please enter Driver No."
       }
     }
   },
   "general_settings": {
+    "and": "and",
     "new": "New",
     "currency": "Currency",
     "contracts": "Contracts",
@@ -1004,7 +998,7 @@
     "start_date": "Start date",
     "end_date": "End date",
     "remark": "Remark",
-    "whether": "Whether EPD",
+    "whether": "Is EPD",
     "default_currency": "Default Currency",
     "activate": "Activate",
     "deactive": "Inactive",
@@ -1015,7 +1009,8 @@
     "weight_tolerance": "Weight Tolerance (kg)",
     "currency_category": "Currency Category",
     "introduction": "Introduction",
-    "monetary": "Monetary"
+    "monetary": "Monetary",
+    "contract_number": "Contract Number"
   },
   "packaging_unit": {
     "packaging_unit": "Packaging Unit",
@@ -1060,7 +1055,10 @@
     "report_of_manu_recycled_order_list": "The report of recycled customer order list",
     "report_of_manu_recycled_waste_tracing_list": "The report of recycled waste tracing list",
     "report_of_manu_recycled_waste_classification_list": "The report of recycled waste classification statistic",
-    "report_of_user_management_list": "The report of user management list"
+    "report_of_user_management_list": "The report of user management list",
+    "report_of_audit_trail": "The report of audit trail",
+    "report_of_user_activity": "The report of user activity",
+    "report_of_notification": "The report of notification"
   },
   "purchase_order": {
     "all_order": "All Orders",

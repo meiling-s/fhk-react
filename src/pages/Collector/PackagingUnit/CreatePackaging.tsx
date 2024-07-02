@@ -80,10 +80,6 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         name: t('status.inactive'),
         id: 'INACTIVE'
       },
-      {
-        name: t('status.deleted'),
-        id: 'DELETED'
-      }
     ]
     return colList
   }

@@ -35,6 +35,7 @@ import dayjs from 'dayjs'
 import { localStorgeKeyName } from '../../constants/constant'
 import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
+import NotifContainer from '../../contexts/NotifContainer'
 
 type props = {
   onClose: () => void
@@ -84,6 +85,7 @@ const CreateRecycleForm = ({
     useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<CreatePicoDetail>()
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
+  const { marginTop } = useContainer(NotifContainer);
 
   //---set custom style each role---
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
@@ -289,7 +291,7 @@ const CreateRecycleForm = ({
     <>
       <form onSubmit={formik.handleSubmit}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box sx={localstyles.modal} onClick={handleOverlayClick}>
+          <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}>
             <Box sx={localstyles.container}>
               <Box
                 sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}
