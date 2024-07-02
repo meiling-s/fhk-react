@@ -9,6 +9,7 @@ import {
     Autocomplete,
     Box,
     Divider,
+    Grid,
     TextField,
 } from '@mui/material'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
@@ -21,6 +22,7 @@ import { createRecyc, deleteEngineData, editEngineData, sendEngineData, sendWeig
 import { styles } from '../../../constants/styles'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 
 interface engineDataProps {
     createdAt: string
@@ -87,6 +89,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     }, [i18n, currentLanguage])
 
     useEffect(() => {
+        setTrySubmitted(false)
         if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 const newServiceValue = serviceTypeSelect.filter(value => value.value === selectedItem.serviceType)[0]
@@ -392,6 +395,17 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                             />
                         </CustomField>
                     </Box>
+                    <Grid item sx={{ width: '100%' }}>
+                        {trySubmited &&
+                            validation.map((val, index) => (
+                            <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={val.error}
+                                type={'error'}
+                            />
+                            ))}
+                    </Grid>
                 </Box>
             </RightOverlayForm>
         </div>
