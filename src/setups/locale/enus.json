@@ -71,7 +71,8 @@
     "cancel": "Cancel",
     "collectionPoint_created": "Collection point created",
     "collectionPoint_updated": "Collection point updated",
-    "addressNotes": "Please enter the number of seats, street name, housing estate and other information"
+    "addressNotes": "Please enter the number of seats, street name, housing estate and other information",
+    "addressReminder": "Please select an address"
   },
   "form": {
     "error": {

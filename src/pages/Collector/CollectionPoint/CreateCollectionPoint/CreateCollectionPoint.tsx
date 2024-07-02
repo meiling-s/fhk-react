@@ -208,25 +208,34 @@ function CreateCollectionPoint() {
     return value.match(/\d{2}:\d{2}:\d{2}/)[0]
   }
 
-  const checkTimeNotDuplicate = () => {
-    const isvalid = colPtRoutine?.routineContent.every((item) => {
-      for (let index = 0; index < item.startTime.length - 1; index++) {
-        const currPair =
-          getTime(item.startTime[index]) + getTime(item.endTime[index])
-
-        const nextPair =
-          getTime(item.startTime[index + 1]) + getTime(item.endTime[index + 1])
-
-          console.log(currPair, nextPair)
-        if (currPair === nextPair) {
-          return false
+  const checkTimeNotOverlapping = () => {
+    return colPtRoutine?.routineContent.every((item) => {
+      const periods = [];
+      for (let i = 0; i < item.startTime.length; i++) {
+        const start = new Date(`1970-01-01T${getTime(item.startTime[i])}`);
+        const end = new Date(`1970-01-01T${getTime(item.endTime[i])}`);
+        
+        // Check if this period overlaps with any existing periods
+        if (isOverlapping([start, end], periods)) {
+          return false;
         }
+        
+        periods.push([start, end]);
       }
-      return true
-    })
+      return true;
+    });
+  };
 
-    return isvalid
-  }
+  const isOverlapping = (newPeriod, periods) => {
+    const [newStart, newEnd] = newPeriod;
+    for (let period of periods) {
+      const [start, end] = period;
+      if (newStart < end && newEnd > start) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   useEffect(() => {
     //do validation here
@@ -251,18 +260,18 @@ function CreateCollectionPoint() {
           problem: formErr.exceedsMaxLength,
           type: 'error'
         })
-      // ;(await address) == ''
-      //   ? tempV.push({
-      //       field: 'col.address',
-      //       problem: formErr.empty,
-      //       type: 'error'
-      //     })
-      //   : (await checkAddressUsed(contractNo, address)) &&
-      //     tempV.push({
-      //       field: 'col.address',
-      //       problem: formErr.hasBeenUsed,
-      //       type: 'error'
-      //     })
+      ;(await address) == ''
+        ? tempV.push({
+            field: 'col.address',
+            problem: formErr.empty,
+            type: 'error'
+          })
+        : (await checkAddressUsed(contractNo, address)) &&
+          tempV.push({
+            field: 'col.address',
+            problem: formErr.hasBeenUsed,
+            type: 'error'
+          })
       ;(await colName) == ''
         ? tempV.push({
             field: 'col.colName',
@@ -304,7 +313,7 @@ function CreateCollectionPoint() {
         problem: formErr.startDateBehindEndDate,
         type: 'error'
       })
-      !checkTimeNotDuplicate() &&
+      !checkTimeNotOverlapping() &&
         tempV.push({
           field: 'time_Period',
           problem: formErr.timeCantDuplicate,
@@ -664,7 +673,7 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-            <CustomField label={t('col.address')} mandatory={true}>
+            <CustomField label={`${t('col.address')} (${t('col.addressReminder')})`} mandatory={true}>
               <CustomTextField
                 id="address"
                 placeholder={t('col.enterAddress')}
@@ -721,17 +730,19 @@ function CreateCollectionPoint() {
               label={t('col.startTime')}
               mandatory={true}
               style={{ maxWidth: '220px' }}
+              error={!checkTimeNotOverlapping()}
+              helperText={!checkTimeNotOverlapping() ? t('error.timeOverlap') : ''}
             >
               <RoutineSelect
                 setRoutine={setColPtRoutine}
                 requiredTimePeriod={true}
               />
             </CustomField>
-            {!checkTimeNotDuplicate() && (
+            {/* {!checkTimeNotOverlapping() && (
               <div className="ml-5 text-red text-sm">
                 {t('form.error.timeCantDuplicate')}
               </div>
-            )}
+            )} */}
 
             <CustomField label={t('col.premiseName')} mandatory={true}>
               <CustomTextField
