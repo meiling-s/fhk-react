@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, matchPath } from 'react-router-dom'
 import { localStorgeKeyName } from '../constants/constant'
 
 const useAuthCheck = () => {
@@ -9,14 +9,18 @@ const useAuthCheck = () => {
     '/changePassword',
     '/resetPassword',
     '/confirmNewPassword',
-    '/changePassword/:idReset?'
+    '/changePassword/:idReset?',
+    '/register/details/:tenantId'
   ]
 
   useEffect(() => {
-    const currentPath = window.location.pathname
     const checkToken = () => {
+      const currentPath = window.location.pathname
+      const isExcluded = excludePath.some(path => 
+        matchPath({ path, end: false }, currentPath)
+      )
       const token = localStorage.getItem(localStorgeKeyName.keycloakToken)
-      if (!token && !excludePath.includes(currentPath)) {
+      if (!token && !isExcluded) {
         navigate('/')
       }
     }
