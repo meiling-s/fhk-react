@@ -36,6 +36,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import NotifContainer from '../../contexts/NotifContainer'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -57,6 +58,7 @@ const PickupOrderForm = ({
   const role = localStorage.getItem(localStorgeKeyName.role)
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
   const {dateFormat} = useContainer(CommonTypeContainer)
+  const { marginTop} = useContainer(NotifContainer);
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -138,7 +140,7 @@ const PickupOrderForm = ({
   }
   return (
     <>
-      <Box sx={localstyles.modal} onClick={handleOverlayClick}>
+      <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}>
         <Box sx={localstyles.container}>
           <Box sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}>
             <Box>
