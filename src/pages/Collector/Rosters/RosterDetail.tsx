@@ -17,7 +17,7 @@ import { REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import CustomItemList from '../../../components/FormComponents/CustomItemList'
+import CustomItemList, { StaffName } from '../../../components/FormComponents/CustomItemList'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
@@ -30,7 +30,7 @@ import {
   showSuccessToast
 } from '../../../utils/utils'
 
-import { formErr } from '../../../constants/constant'
+import { Languages, formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Roster, Staff } from '../../../interfaces/roster'
@@ -49,6 +49,7 @@ import { collectionPoint } from '../../../interfaces/collectionPoint'
 import { getStaffList } from '../../../APICalls/staff'
 import { setDate } from 'date-fns'
 import { format } from '../../../constants/constant'
+import i18n from '../../../setups/i18n'
 
 interface RosterDetailProps {
   drawerOpen: boolean
@@ -135,11 +136,27 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
     const result = await getStaffList(0, 1000, null)
     if (result) {
       const data = result.data.content
-      var staffMapping: il_item[] = []
+      var staffMapping: StaffName[] = []
       data.map((item: any) => {
+        let name:string = '';
+
+        switch(i18n.language){
+          case Languages.ENUS: 
+            name = item.staffNameEng;
+            break;
+          case Languages.ZHCH:
+            name = item.staffNameSchi
+            break;
+          default: 
+            name = item.staffNameTchi
+            break;
+        }
         staffMapping.push({
           id: item.staffId,
-          name: item.staffNameTchi
+          name: name,
+          nameEng: item.staffNameEng,
+          nameSc: item.staffNameSchi,
+          nameTc: item.staffNameTchi
         })
       })
       setStaffList(staffMapping)
@@ -335,6 +352,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }
 
   const handleRemoveStaff = (indexToRemove: number) => {
+    if(indexToRemove === 0 && selectedStaff.length === 1) return
     const updatedContractNum = selectedStaff.filter(
       (_, index) => index !== indexToRemove
     )
@@ -530,6 +548,18 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                       />
                     )
                   )}
+                  { index == selectedStaff.length - 1 && 
+                      <REMOVE_CIRCLE_ICON
+                        fontSize="small"
+                        className={`text-grey-light ${
+                          selectedStaff.length === 1
+                            ? 'cursor-not-allowed'
+                            : 'cursor-pointer'
+                        } `}
+                        onClick={() => handleRemoveStaff(index)}
+                      />
+
+                  }
                 </Box>
               ))}
               <Grid item>

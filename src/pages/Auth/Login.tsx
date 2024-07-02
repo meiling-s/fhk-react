@@ -36,6 +36,9 @@ import { extractError, returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
 import { parseJwtToken } from '../../constants/axiosInstance'
 import NotifContainer from '../../contexts/NotifContainer'
+import axios from 'axios'
+import { createUserActivity } from '../../APICalls/userAccount'
+import { UserActivity } from '../../interfaces/common'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -77,6 +80,13 @@ const Login = () => {
     )
   }
 
+  const getIpAddress = async () => {
+    const response = await axios.get("https://api.ipify.org/?format=json");
+    if(response){
+      localStorage.setItem('ipAddress', response?.data?.ip)
+    }
+  }
+
   const returnErrCode = (error: any) => {
     const response = error.response.data.message
     const errMsgString = removeNonJsonChar(response)
@@ -108,6 +118,16 @@ const Login = () => {
         })
         //console.log(result, 'result login')
         if (result && result.access_token) {
+          const ipAddress = localStorage.getItem('ipAddress')
+          if(ipAddress){
+            const userActivity:UserActivity = {
+              operation: 'Login',
+              ip: ipAddress,
+              createdBy: userName,
+              updatedBy: userName
+            }
+            createUserActivity(userName, userActivity)
+          }
           initBroadcastMessage();
           setWarningMsg(' ')
           //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
@@ -153,7 +173,7 @@ const Login = () => {
               break
             case 'collector':
               realmApiRoute = 'collectors'
-              navigate('/collector')
+              navigate('/collector/collectionPoint')
               break
             case 'logistic':
               realmApiRoute = 'logistic'
@@ -185,6 +205,7 @@ const Login = () => {
           setLanguage(selectedLang)
 
           commonTypeContainer.updateCommonTypeContainer()
+         
         } else {
           // if(errCode === STATUS_CODE[503]){
           //   return navigate('/maintenance')
@@ -288,6 +309,7 @@ const Login = () => {
         }
       }
     }
+    getIpAddress();
   }, [])
 
   return (

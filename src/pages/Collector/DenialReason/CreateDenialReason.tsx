@@ -62,6 +62,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [weatherFlg, setWeatherFlg] = useState<boolean>(true)
+  const [status, setStatus] = useState<boolean>(true)
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
@@ -170,6 +171,12 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       placeholder: '',
       field: 'weatherFlg',
       type: 'boolean'
+    },
+    {
+      label: t('general_settings.state'),
+      placeholder: '',
+      field: 'status',
+      type: 'boolean'
     }
   ]
 
@@ -194,7 +201,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameEng: selectedItem.reasonNameEng,
         reasonNameSchi: selectedItem.reasonNameSchi,
         description: selectedItem.description,
-        remark: selectedItem.remark
+        remark: selectedItem.remark,
       })
 
       //set weather Flag
@@ -202,6 +209,12 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         setWeatherFlg((selectedItem as DenialReasonCollectors).weatherFlg)
       } else {
         setWeatherFlg(false)
+      }
+
+      if (isCollectors() && (selectedItem as DenialReasonCollectors).status !== undefined) {
+        setStatus((selectedItem as DenialReasonCollectors).status === 'ACTIVE' ? true : false)
+      } else {
+        setStatus(false)
       }
       setExistingDenialReason(
         denialReasonlist.filter(
@@ -327,7 +340,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         description: formData.description,
         functionId: formData.functionId,
         remark: formData.remark,
-        status: 'ACTIVE',
+        status: status === true ? 'ACTIVE' : 'INACTIVE',
         createdBy: loginName,
         updatedBy: loginName,
         ...(isCollectors() && { weatherFlg: weatherFlg })
@@ -355,7 +368,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         } else {
           result = await createDenialReason(denialReasonData as CreateDenialReason);
         }
-        
+
         if (result?.data) {
           onSubmitData('success', t('common.saveSuccessfully'))
           resetFormData()
@@ -392,7 +405,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameEng: formData.reasonNameEng,
         description: formData.description,
         functionId: formData.functionId,
-        status: 'ACTIVE',
+        status: status === true ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
         updatedBy: loginName,
         ...(isCollectors() && { weatherFlg: weatherFlg })
@@ -400,11 +413,11 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       if (validation.length === 0) {
         if (selectedItem != null) {
           let result = null
-        if (isCollectors()) {
-          result = await editDenialReasonCollectors(selectedItem.reasonId, editData as UpdateDenialReasonCollectors);
-        } else {
-          result = await editDenialReason(selectedItem.reasonId, editData as UpdateDenialReason)
-        }
+          if (isCollectors()) {
+            result = await editDenialReasonCollectors(selectedItem.reasonId, editData as UpdateDenialReasonCollectors);
+          } else {
+            result = await editDenialReason(selectedItem.reasonId, editData as UpdateDenialReason)
+          }
 
           if (result) {
             onSubmitData('success', t('common.editSuccessfully'))
@@ -462,8 +475,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
             action == 'add'
               ? t('top_menu.add_new')
               : action == 'delete'
-              ? t('common.delete')
-              : selectedItem?.reasonNameTchi,
+                ? t('common.delete')
+                : selectedItem?.reasonNameTchi,
           subTitle: t('top_menu.denial_reason'),
           submitText: t('common.save'),
           cancelText: t('common.delete'),
@@ -547,7 +560,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
-              ) : item.type == 'boolean' && role === 'collector' ? (
+              ) : item.field == 'weatherFlg' && item.type == 'boolean' && role === 'collector' ? (
                 <Grid item key={index}>
                   <CustomField label={item.label} mandatory></CustomField>
                   <Switcher
@@ -557,6 +570,19 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     defaultValue={weatherFlg}
                     setState={(newValue) => {
                       setWeatherFlg(newValue)
+                    }}
+                  />
+                </Grid>
+              ) : item.field == 'status' && item.type == 'boolean' && role === 'collector' ? (
+                <Grid item key={index}>
+                  <CustomField label={item.label} mandatory></CustomField>
+                  <Switcher
+                    onText={t('status.active')}
+                    offText={t('status.inactive')}
+                    disabled={action === 'delete'}
+                    defaultValue={status}
+                    setState={(newValue) => {
+                      setStatus(newValue)
                     }}
                   />
                 </Grid>

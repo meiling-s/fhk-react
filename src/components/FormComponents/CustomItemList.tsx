@@ -8,6 +8,14 @@ export type il_item = {
     id: string
 }
 
+export type StaffName = {
+    name: string,
+    id: string,
+    nameEng: string,
+    nameSc: string,
+    nameTc: string
+}
+
 export type itemList = {
     bgColor: string
     borderColor: string
