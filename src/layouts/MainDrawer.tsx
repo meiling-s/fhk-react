@@ -154,7 +154,7 @@ function MainDrawer() {
         functionName: 'Purchase order'
       },
       'Job order': {
-        name: t('job_order.enquiry_job_order'),
+        name: t('job_order.item.detail'),
         icon: <SHIPPING_CAR_ICON />,
         onClick: () => navigate(`/${realm}/jobOrder`),
         collapse: false,
