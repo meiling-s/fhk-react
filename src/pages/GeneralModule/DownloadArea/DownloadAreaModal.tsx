@@ -1,6 +1,6 @@
 import { FunctionComponent, useState, useEffect } from 'react'
 import { Box, Divider, Grid, Link, Typography } from '@mui/material'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import RightOverlayFormCustom from '../../../components/RightOverlayFormCustom'
 import { styles } from '../../../constants/styles'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
@@ -46,6 +46,7 @@ interface DownloadModalProps {
     reportId: string
     dateOption?: string
     manualTenantId: boolean
+    tenantId?: string
   }
   staffId: string
 }
@@ -79,31 +80,64 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     getReport()
   }, [selectedItem?.id, i18n.language])
 
+  const isValidDayjsISODate = (date: Dayjs): boolean => {
+    if (!date.isValid()) {
+      return false
+    }
+    // Convert to ISO string and check if it matches the original input
+    const isoString = date.toISOString()
+    // Regex to ensure ISO 8601 format with 'Z' (UTC time)
+    const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+    return iso8601Pattern.test(isoString)
+  }
+
   useEffect(() => {
     const validate = async () => {
+      
       const tempV: formValidate[] = []
       startDate > endDate &&
+        selectedItem?.dateOption != 'datetime' &&
         tempV.push({
           field: t('general_settings.start_date'),
           problem: formErr.startDateBehindEndDate,
           type: 'error'
         })
-      endDate < startDate &&
-        tempV.push({
-          field: t('generate_report.end_date'),
-          problem: formErr.toDateIsEarlierThanStartDate,
-          type: 'error'
-        })
+      if (selectedItem?.dateOption != 'datetime') {
+        console.log('startDate', selectedItem?.dateOption)
+        endDate < startDate &&
+          tempV.push({
+            field: t('generate_report.end_date'),
+            problem: formErr.endDateEarlyThanStartDate,
+            type: 'error'
+          })
+      }
+
       startDate == null &&
         tempV.push({
           field: t('general_settings.start_date'),
           problem: formErr.empty,
           type: 'error'
         })
-      endDate == null &&
+      endDate == null  &&
         tempV.push({
           field: t('generate_report.end_date'),
           problem: formErr.empty,
+          type: 'error'
+        })
+
+      startDate &&
+        !isValidDayjsISODate(startDate) &&
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      endDate &&
+        selectedItem?.dateOption != 'datetime' &&
+        !isValidDayjsISODate(endDate) &&
+        tempV.push({
+          field: t('generate_report.end_date'),
+          problem: formErr.wrongFormat,
           type: 'error'
         })
 
@@ -156,6 +190,15 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     return (
       getBaseUrl() +
       `api/v1/${realmApiRoute}/${reportId}/${tenant}?staffId=${staffId}&language=${getSelectedLanguange(
+        i18n.language
+      )}`
+    )
+  }
+
+  const generateNoDateNoTenandIdLink = (reportId: string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}?staffId=${staffId}&language=${getSelectedLanguange(
         i18n.language
       )}`
     )
@@ -241,7 +284,10 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           break
         default:
           url =
-            selectedItem?.dateOption === 'none'
+            selectedItem.dateOption === 'none' &&
+            selectedItem.tenantId === 'none'
+              ? generateNoDateNoTenandIdLink(selectedItem.reportId)
+              : selectedItem?.dateOption === 'none'
               ? generateNoDateLink(selectedItem.reportId)
               : selectedItem?.dateOption === 'datetime'
               ? generateDatetimeLink(selectedItem.reportId)
@@ -255,7 +301,16 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     }
   }
 
+  const resetData = () => {
+    setValidation([])
+    setTrySubmited(false)
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+    setTenant('')
+  }
+
   const onCloseDrawer = () => {
+    resetData()
     handleDrawerClose()
   }
 
@@ -293,7 +348,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   format={format.dateFormat2}
                   onChange={(value) => setStartDate(value!!)}
                   sx={{ ...localstyles.datePicker, width: '100%' }}
-                  maxDate={dayjs(endDate)}
+                  maxDate={selectedItem?.dateOption != 'datetime' ? dayjs(endDate) : null}
                 />
               </Box>
             ) : selectedItem?.manualTenantId &&

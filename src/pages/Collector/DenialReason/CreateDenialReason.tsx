@@ -10,26 +10,32 @@ import {
   editDenialReason,
   createDenialReason
 } from '../../../APICalls/Collector/denialReason'
+import { createDenialReasonCollectors, editDenialReasonCollectors } from '../../../APICalls/Collector/denialReasonCollectors'
 import { styles } from '../../../constants/styles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { extractError, returnErrorMsg } from '../../../utils/utils'
 import {
   DenialReason,
   CreateDenialReason,
-  UpdateDenialReason
+  UpdateDenialReason,
+  DenialReasonCollectors,
+  CreateDenialReasonCollectors,
+  UpdateDenialReasonCollectors
 } from '../../../interfaces/denialReason'
 import { localStorgeKeyName } from '../../../constants/constant'
 import { getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import { useNavigate } from 'react-router-dom'
+import Switcher from '../../../components/FormComponents/CustomSwitch'
+
 
 interface CreateDenialReasonProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'add' | 'edit' | 'delete' | 'none'
   onSubmitData: (type: string, msg: string) => void
-  selectedItem?: DenialReason | null
-  denialReasonlist: DenialReason[]
+  selectedItem?: DenialReason | DenialReasonCollectors | null
+  denialReasonlist: DenialReason[] | DenialReasonCollectors[]
 }
 
 interface FormValues {
@@ -55,6 +61,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     remark: ''
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
+  const [weatherFlg, setWeatherFlg] = useState<boolean>(true)
+  const [status, setStatus] = useState<boolean>(true)
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
@@ -70,13 +78,18 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     }[]
   >([])
   const role = localStorage.getItem(localStorgeKeyName.role)
-  const [existingDenialReason, setExistingDenialReason] = useState<DenialReason[]>([])
-  const navigate = useNavigate();
+  const [existingDenialReason, setExistingDenialReason] = useState<
+    DenialReason[] | DenialReasonCollectors[]
+  >([])
+  const isCollectors = () => {
+    return role === 'collector'
+  }
+
+  const navigate = useNavigate()
 
   const initFunctionList = async () => {
     try {
       const result = await getAllFunction()
-      // const data = result?.data;
       const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       if (data.length > 0) {
         let name = ''
@@ -107,9 +120,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         )
       }
       setFunctionList(data)
-    } catch (error:any) {
-      const {state} = extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -152,6 +165,18 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       field: 'remark',
       type: 'text',
       textarea: true
+    },
+    {
+      label: t('denial_reason.weatherFlg'),
+      placeholder: '',
+      field: 'weatherFlg',
+      type: 'boolean'
+    },
+    {
+      label: t('general_settings.state'),
+      placeholder: '',
+      field: 'status',
+      type: 'boolean'
     }
   ]
 
@@ -163,6 +188,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
 
   const mappingData = () => {
     if (selectedItem != null) {
+      console.log("selectedItem", selectedItem)
       const selectedValue = functionList.find(
         (el) => el.functionId === selectedItem.functionId
       )
@@ -175,10 +201,26 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameEng: selectedItem.reasonNameEng,
         reasonNameSchi: selectedItem.reasonNameSchi,
         description: selectedItem.description,
-        remark: selectedItem.remark
+        remark: selectedItem.remark,
       })
 
-      setExistingDenialReason(denialReasonlist.filter((item) => item.reasonId != selectedItem.reasonId))
+      //set weather Flag
+      if (isCollectors() && (selectedItem as DenialReasonCollectors).weatherFlg !== undefined) {
+        setWeatherFlg((selectedItem as DenialReasonCollectors).weatherFlg)
+      } else {
+        setWeatherFlg(false)
+      }
+
+      if (isCollectors() && (selectedItem as DenialReasonCollectors).status !== undefined) {
+        setStatus((selectedItem as DenialReasonCollectors).status === 'ACTIVE' ? true : false)
+      } else {
+        setStatus(false)
+      }
+      setExistingDenialReason(
+        denialReasonlist.filter(
+          (item) => item.reasonId != selectedItem.reasonId
+        )
+      )
     }
   }
 
@@ -227,21 +269,30 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     })
 
     existingDenialReason.forEach((item) => {
-      if (item.reasonNameTchi.toLowerCase() === formData.reasonNameTchi.toLowerCase()) {
+      if (
+        item.reasonNameTchi.toLowerCase() ===
+        formData.reasonNameTchi.toLowerCase()
+      ) {
         tempV.push({
           field: t('common.traditionalChineseName'),
           problem: formErr.alreadyExist,
           type: 'error'
         })
       }
-      if (item.reasonNameSchi.toLowerCase() === formData.reasonNameSchi.toLowerCase()) {
+      if (
+        item.reasonNameSchi.toLowerCase() ===
+        formData.reasonNameSchi.toLowerCase()
+      ) {
         tempV.push({
           field: t('common.simplifiedChineseName'),
           problem: formErr.alreadyExist,
           type: 'error'
         })
       }
-      if (item.reasonNameEng.toLowerCase() === formData.reasonNameEng.toLowerCase()) {
+      if (
+        item.reasonNameEng.toLowerCase() ===
+        formData.reasonNameEng.toLowerCase()
+      ) {
         tempV.push({
           field: t('common.englishName'),
           problem: formErr.alreadyExist,
@@ -281,7 +332,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       if (selectedValue) {
         formData.functionId = selectedValue.functionId
       }
-      const denialReasonData: CreateDenialReason = {
+      const denialReasonData: CreateDenialReason | CreateDenialReasonCollectors = {
         tenantId: tenantId.toString(),
         reasonNameTchi: formData.reasonNameTchi,
         reasonNameSchi: formData.reasonNameSchi,
@@ -289,10 +340,12 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         description: formData.description,
         functionId: formData.functionId,
         remark: formData.remark,
-        status: 'ACTIVE',
+        status: status === true ? 'ACTIVE' : 'INACTIVE',
         createdBy: loginName,
-        updatedBy: loginName
+        updatedBy: loginName,
+        ...(isCollectors() && { weatherFlg: weatherFlg })
       }
+
 
       if (action == 'add') {
         handleCreateDenialReason(denialReasonData)
@@ -305,11 +358,17 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   }
 
   const handleCreateDenialReason = async (
-    denialReasonData: CreateDenialReason
+    denialReasonData: CreateDenialReason | CreateDenialReasonCollectors
   ) => {
     try {
-        if (validation.length === 0) {
-        const result = await createDenialReason(denialReasonData)
+      if (validation.length === 0) {
+        let result = null
+        if (isCollectors()) {
+          result = await createDenialReasonCollectors(denialReasonData as CreateDenialReasonCollectors);
+        } else {
+          result = await createDenialReason(denialReasonData as CreateDenialReason);
+        }
+
         if (result?.data) {
           onSubmitData('success', t('common.saveSuccessfully'))
           resetFormData()
@@ -321,9 +380,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         setTrySubmited(true)
@@ -340,19 +399,26 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       if (selectedValue) {
         formData.functionId = selectedValue.functionId
       }
-      const editData: UpdateDenialReason = {
+      const editData: UpdateDenialReason | UpdateDenialReasonCollectors = {
         reasonNameTchi: formData.reasonNameTchi,
         reasonNameSchi: formData.reasonNameSchi,
         reasonNameEng: formData.reasonNameEng,
         description: formData.description,
         functionId: formData.functionId,
-        status: 'ACTIVE',
+        status: status === true ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
-        updatedBy: loginName
+        updatedBy: loginName,
+        ...(isCollectors() && { weatherFlg: weatherFlg })
       }
       if (validation.length === 0) {
         if (selectedItem != null) {
-          const result = await editDenialReason(selectedItem.reasonId, editData)
+          let result = null
+          if (isCollectors()) {
+            result = await editDenialReasonCollectors(selectedItem.reasonId, editData as UpdateDenialReasonCollectors);
+          } else {
+            result = await editDenialReason(selectedItem.reasonId, editData as UpdateDenialReason)
+          }
+
           if (result) {
             onSubmitData('success', t('common.editSuccessfully'))
             resetFormData()
@@ -362,9 +428,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -409,8 +475,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
             action == 'add'
               ? t('top_menu.add_new')
               : action == 'delete'
-              ? t('common.delete')
-              : selectedItem?.reasonNameTchi,
+                ? t('common.delete')
+                : selectedItem?.reasonNameTchi,
           subTitle: t('top_menu.denial_reason'),
           submitText: t('common.save'),
           cancelText: t('common.delete'),
@@ -493,6 +559,32 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                       )}
                     />
                   </CustomField>
+                </Grid>
+              ) : item.field == 'weatherFlg' && item.type == 'boolean' && role === 'collector' ? (
+                <Grid item key={index}>
+                  <CustomField label={item.label} mandatory></CustomField>
+                  <Switcher
+                    onText={t('common.yes')}
+                    offText={t('common.no')}
+                    disabled={action === 'delete'}
+                    defaultValue={weatherFlg}
+                    setState={(newValue) => {
+                      setWeatherFlg(newValue)
+                    }}
+                  />
+                </Grid>
+              ) : item.field == 'status' && item.type == 'boolean' && role === 'collector' ? (
+                <Grid item key={index}>
+                  <CustomField label={item.label} mandatory></CustomField>
+                  <Switcher
+                    onText={t('status.active')}
+                    offText={t('status.inactive')}
+                    disabled={action === 'delete'}
+                    defaultValue={status}
+                    setState={(newValue) => {
+                      setStatus(newValue)
+                    }}
+                  />
                 </Grid>
               ) : (
                 <></>

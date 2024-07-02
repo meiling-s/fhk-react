@@ -90,7 +90,9 @@
       "endDateEarlyThanStartDate": "如果“截止日期”早於“開始日期”，則不允許截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允許有單字",
       "tenatIdShouldBeSixDigit": "租戶 ID 應為六位數",
-      "tenantIdNotFound": "未找到租戶 ID"
+      "tenantIdNotFound": "未找到租戶 ID",
+      "mustDifferent": "一定是不同的",
+      "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'"
     }
   },
   "component": {
@@ -287,7 +289,8 @@
     "failed": "失敗",
     "enable": "啟用",
     "not_enabled": "未啟用",
-    "terminated": "已終止"
+    "terminated": "已終止",
+    "deactivate": "停用"
   },
   "appBar": {
     "simplified_cn": "简体中文",
@@ -462,8 +465,9 @@
     "created_date": "建立日期",
     "number_of_acc": "帳戶數量",
     "photo_blury ": "照片模糊",
+    "are_sure_to_reject": "您确定要拒绝该申请吗",
     "bussniess_error": "商業編號不匹配",
-    "closed_tenant_title": "您確定將租戶狀態變更為「已關閉」嗎 ?",
+    "closed_tenant_title": "您確定要將狀態變更為「已停用」嗎?",
     "closes_success" :"關閉租戶狀態成功",
     "invite_form": {
       "company_number": "公司編號 ",
@@ -475,11 +479,15 @@
       "remark": "備註",
       "enter_company_number": "請輸入公司編號",
       "enter_company_category": "請輸入公司類別",
-      "enter_company_zh_name": "請輸入公司繁體中文",
-      "enter_company_cn_name": "請輸入公司中文名稱",
+      "enter_company_zh_name": "請輸入公司繁體中文名稱",
+      "enter_company_cn_name": "請輸入公司簡體中文名稱",
       "enter_company_en_name": "請輸入公司英文名稱",
       "enter_bussiness_number": "請輸入商業登記號碼",
-      "enter_remark": "請輸入文字"
+      "enter_remark": "請輸入文字",
+      "collector_company": "回收公司",
+      "logistic_company": "物流公司",
+      "manufacturer_company": "回收廠",
+      "customer_company": "顧客公司"
     },
     "invite_modal": {
       "invite_company": "邀請公司",
@@ -490,7 +498,9 @@
       "copy": "複製",
       "send": "傳送",
       "invite_success": "成功發送邀請",
-      "invite_failed": "發送邀請失敗"
+      "invite_failed": "發送邀請失敗",
+      "err_date": "運送有效期限無效。確保截止日期晚於開始日期",
+      "err_duplicated": "公司號碼/公司名稱/商業註冊。編號已存在"
     },
     "detail": {
       "company_category": "公司類別",
@@ -516,7 +526,11 @@
       "no_preference": "無特別偏好",
       "fifo": "先進先出（FIFO）",
       "lifo": "後進先出（LIFO）",
-      "default_lang": "預設語言"
+      "default_lang": "預設語言",
+      "confirm": "啟用",
+      "suspend": "未啟用",
+      "closed": "已停用",
+      "deactivated_reason": "停用原因”"
     }
   },
   "report": {
@@ -571,8 +585,8 @@
     "inventory": "存貨",
     "recyclingInformation": "回收資訊",
     "date": "日期",
-    "recyleType": "主類別",
-    "recyleSubType": "次類別",
+    "recyleType": "子分類",
+    "recyleSubType": "兒童分類",
     "package": "包裝",
     "recyclingNumber": "回收編號",
     "inventoryLocation": "庫存位置",
@@ -648,7 +662,7 @@
     "employeeId": "員工編號",
     "enterEmployeeNumber": "輸入員工編號",
     "employeeName": "員工姓名",
-    "enterEmployeeName": "輸入員工姓名",
+    "enterEmployeeName": "輸入員工名稱",
     "employeeChineseName": "中文 員工繁體中文姓名",
     "employeeEnglishName": "員工英文姓名",
     "employeeChineseCn": "員工中文簡體中文姓名",
@@ -730,6 +744,7 @@
     "place": "地點",
     "search_placeholder": "輸入運單編號",
     "any": "任何",
+    "send": "送出",
     "send_in": "送入",
     "ship": "出貨",
     "send_request": "送出請求",
@@ -884,7 +899,8 @@
     "remark": "備註",
     "enter_name": "請輸入名稱",
     "select_function": "請選擇功能",
-    "enter_text": "請輸入文字"
+    "enter_text": "請輸入文字",
+    "weatherFlg": "天氣原因"
   },
   "staff_title": {
     "staff_title_tchi": "繁體中文名稱",
@@ -917,13 +933,14 @@
         "placeholder": "輸入司機編號"
       },
       "table": {
-        "driverId": "司機編號",
+        "driverId": "司機號碼",
         "driverName": "司機中文名",
         "driverEngName": "Driver English Name",
         "gender": "性别",
         "loginName": "登入名稱",
         "contactNo": "聯絡電話",
-        "lastLogin": "上次登入"
+        "lastLogin": "上次登入",
+        "enterDriverId": "輸入司機號碼"
       },
       "popUp": {
         "addTitle": "新增司機",
@@ -970,6 +987,7 @@
     }
   },
   "general_settings": {
+    "and": "和",
     "new": "新的",
     "currency": "貨幣",
     "contracts": "合約",
@@ -990,7 +1008,8 @@
     "weight_tolerance": "允許重量誤差 (kg)",
     "currency_category": "貨幣類別",
     "introduction": "備註",
-    "monetary": "名稱"
+    "monetary": "名稱",
+    "contract_number": "合約編號"
   },
   "packaging_unit": {
     "packaging_unit": "包裝單位",
@@ -1326,7 +1345,10 @@
     "enterRecyclingNumber": "輸入回收物編號",
     "any": "任何",
     "classification": "分類",
-    "subclassification": "兒童分類",
-    "place": "地方"
+    "subclassification": "子分類",
+    "inventory_location" : "地點",
+    "place": "地方",
+    "po_number": "輸入採購訂單編號",
+    "ship": "Ship"
   }
 }

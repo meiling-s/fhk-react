@@ -196,9 +196,9 @@ function MainDrawer() {
       Reports: {
         name: t('reports'),
         icon: <DOCUMENT_ICON />,
-        onClick: () => navigate('/collector/report'),
+        onClick: () => navigate(`/${realm}/report`),
         collapse: false,
-        path: '/collector/report',
+        path: `/${realm}/report`,
         functionName: 'Reports'
       },
       'Process out recyclables': {

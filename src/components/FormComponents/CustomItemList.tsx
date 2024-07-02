@@ -66,7 +66,7 @@ function CustomItemList({
 
     useEffect(()=>{
         setSelectedItem()
-    },[])
+    },[defaultSelected])
     
     if(!(singleSelect || multiSelect)){        //if none of the select method exist
         return(

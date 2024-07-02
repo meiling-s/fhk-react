@@ -31,7 +31,7 @@ function MainLayout() {
   return (
     <Box>
       {showBroadcast && broadcast &&
-        <Box sx={{...localStyle.broadcast}}>
+        <Box sx={{...localStyle.broadcast, zIndex: 9999}}>
           <Box sx={{marginLeft: '30px', display: 'flex', gap: 2}}>
             <Typography style={{fontSize: '13px', color: '#FFFFFF'}}>{broadcast.title}</Typography>
             <Typography style={{fontSize: '13px', color: '#FFFFFF'}}>{broadcast.content}</Typography>

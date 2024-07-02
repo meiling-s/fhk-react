@@ -30,7 +30,8 @@ const CustomSearchField = ({
   field,
   placeholder,
   handleSearch,
-  inputType
+  inputType,
+  numberOnly = false
 }: {
   label: string
   width?: string
@@ -40,6 +41,7 @@ const CustomSearchField = ({
   placeholder?: string
   handleSearch?: (value: string) => void
   inputType?: string
+  numberOnly?: boolean
 }) => {
   const hasOptions = options && options.length > 0
   //const [selectedValue, setSelectedValue] = useState<string>("")
@@ -47,8 +49,13 @@ const CustomSearchField = ({
     inputType === 'date' ? dayjs().format('YY-MM-DD') : ''
   const [selectedValue, setSelectedValue] =
     useState<string>(initialSelectedValue)
+
   const handleChange = (event: React.ChangeEvent<{ value: any }>) => {
-    const newValue = event.target.value as string
+    let newValue = event.target.value as string
+    if (numberOnly) {
+      // Only allow numeric input
+      newValue = newValue.replace(/\D/g, '')
+    }
     setSelectedValue(newValue)
 
     if (onChange) {
@@ -103,7 +110,7 @@ const CustomSearchField = ({
             sx={{
               mt: 3,
               m: 1,
-              width: '250px',
+              width: width ? width : '250px',
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
@@ -146,6 +153,17 @@ const CustomSearchField = ({
             }}
             select={hasOptions}
             onChange={handleChange}
+            inputProps={
+              numberOnly
+                ? {
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*'
+                  }
+                : {
+                    inputMode: 'text',
+                    pattern: '[A-Za-z0-9]*'
+                  }
+            }
           >
             {hasOptions &&
               options.map((option) => (

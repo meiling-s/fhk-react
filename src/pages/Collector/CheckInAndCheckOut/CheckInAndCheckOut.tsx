@@ -390,7 +390,7 @@ import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
                 </MenuItem>
                 <MenuItem value="out">
                   {" "}
-                  {t('ship')}
+                  {t('checkinandcheckout.ship')}
                 </MenuItem>
                 <MenuItem value="in">
                 {t('checkinandcheckout.send_in')}

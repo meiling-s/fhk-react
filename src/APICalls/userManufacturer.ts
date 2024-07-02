@@ -7,18 +7,23 @@ import {
 } from "../constants/requests";
 import { returnApiToken } from "../utils/utils";
 import axiosInstance from "../constants/axiosInstance";
+import { staffQuery } from "../interfaces/staff";
 
 // get all the user account
-export const getAllUserManufacturer = async (page: number, size: number) => {
+export const getAllUserManufacturer = async (page: number, size: number, query: null | staffQuery ) => {
   const token = returnApiToken();
+  const params: any = {
+    page: page,
+    size: size
+  }
+  if (query?.staffId) params.staffId = query.staffId
+  if (query?.staffName) params.staffName = query.staffName
+
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
       ...GET_USER_MANUFACTURER_LIST(token.tenantId),
-      params: {
-        page: page,
-        size: size,
-      },
+      params: params
     });
     return response;
   } catch (e) {
