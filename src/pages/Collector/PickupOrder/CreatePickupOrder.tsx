@@ -87,15 +87,15 @@ const CreatePickupOrder = () => {
     platNo: Yup.string().required(
       getErrorMsg(t('pick_up_order.plat_number'), 'empty')
     ),
-    contactNo: Yup.number().required(
-      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    ),
-    contractNo:
-      picoTypeValue == 'ROUTINE'
-        ? Yup.string().required(
-            getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty')
-          )
-        : Yup.string(),
+    // contactNo: Yup.number().required(
+    //   getErrorMsg(t('pick_up_order.contact_number'), 'empty')
+    // ),
+    // contractNo:
+    //   picoTypeValue == 'ROUTINE'
+    //     ? Yup.string().required(
+    //         getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty')
+    //       )
+    //     : Yup.string(),
     reason:
       picoTypeValue == 'AD_HOC'
         ? Yup.string().required(

@@ -74,9 +74,9 @@ const EditPickupOrder = () => {
     platNo: Yup.string().required(
       getErrorMsg(t('pick_up_order.plat_number'), 'empty')
     ),
-    contactNo: Yup.number().required(
-      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    ),
+    // contactNo: Yup.number().required(
+    //   getErrorMsg(t('pick_up_order.contact_number'), 'empty')
+    // ),
     createPicoDetail: Yup.array()
       .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
       .test(

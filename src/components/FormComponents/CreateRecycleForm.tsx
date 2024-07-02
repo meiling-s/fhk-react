@@ -258,7 +258,7 @@ const CreateRecycleForm = ({
 
   const TextFields = [
     {
-      label: t('pick_up_order.recyclForm.shipping_company'),
+      label: t('pick_up_order.item.sender_name'),
       id: 'senderName',
       value: formik.values.senderName,
       error: formik.errors.senderName && formik.touched.senderName
@@ -270,7 +270,7 @@ const CreateRecycleForm = ({
       error: formik.errors.receiverName && formik.touched.receiverName
     },
     {
-      label: t('pick_up_order.recyclForm.recycling_location'),
+      label: t('check_out.shipping_location'),
       id: 'senderAddr',
       value: formik.values.senderAddr,
       error: formik.errors.senderAddr && formik.touched.senderAddr

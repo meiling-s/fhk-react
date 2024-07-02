@@ -333,7 +333,7 @@ const PickupOrderCreateForm = ({
   const columns: GridColDef[] = [
     {
       field: 'pickupAt',
-      headerName: t('pick_up_order.detail.shipping_time'),
+      headerName: t('pick_up_order.recyclForm.shipping_time'),
       width: 150
     },
     {
@@ -702,7 +702,7 @@ const PickupOrderCreateForm = ({
               <Grid item>
                 <CustomField
                   label={t('pick_up_order.contact_number')}
-                  mandatory
+                  mandatory={false}
                 >
                   <CustomTextField
                     id="contactNo"
@@ -729,9 +729,7 @@ const PickupOrderCreateForm = ({
                           ) || []
                         }
                         onChange={(event, value) => {
-                          if (value) {
                             formik.setFieldValue('contractNo', value)
-                          }
                         }}
                         renderInput={(params) => (
                           <TextField

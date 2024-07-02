@@ -1601,7 +1601,11 @@ export const GET_STAFF_ID = (
   url: `api/v1/${realmApiRoute}/staff/login/${tenantId}/${loginId}`
 })
 
-//NEW DENIAL REASON API FOR COLLECTORS
+export const GET_VEHICLE_DETAIL = (vehicleId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/vehicleType/${vehicleId}`
+})
+
 export const GET_DENIAL_REASON_COLLECTORS = (
   tenantId: string
 ): AxiosRequestConfig => ({
@@ -1629,3 +1633,4 @@ export const UPDATE_DENIAL_REASON_COLLECTORS = (
   method: 'PUT',
   url: `/api/v1/collectors/reason/${tenantId}/${reasonId}/new`
 })
+
