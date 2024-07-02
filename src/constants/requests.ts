@@ -252,7 +252,7 @@ export const GET_MANULIST = (
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',
-  url: 'api/v1/administrator/pico'
+  url: 'api/v1/administrator/pico/new'
 }
 export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
   method: 'patch',
