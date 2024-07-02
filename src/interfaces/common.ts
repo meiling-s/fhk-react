@@ -221,5 +221,11 @@ export type StaffTitle = {
     titleNameSchi: string
     titleNameTchi: string
     updatedAt: string
+}
+
+export type UserActivity = {
+    operation: string
+    ip: string
+    createdBy: string
     updatedBy: string
 }
