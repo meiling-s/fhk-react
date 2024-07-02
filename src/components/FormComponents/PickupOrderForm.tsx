@@ -169,7 +169,7 @@ const PickupOrderForm = ({
   }, [selectedPickupOrder?.vehicleTypeId])
  
   const getDeliveryDate = (deliveryDate:string[]) => {
-    const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat'];
+    const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat', 'sun'];
     let delivery = deliveryDate.map(item => item.trim());
     let isWeek = false;
 
