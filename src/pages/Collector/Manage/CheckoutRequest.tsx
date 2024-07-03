@@ -681,9 +681,6 @@ const CheckoutRequest: FunctionComponent = () => {
               label={t('check_in.receiver_company')}
               onChange={handleCompanyChange}
             >
-              <MenuItem value="">
-                <em>{t('check_in.any')}</em>
-              </MenuItem>
               {filterCheckOut
                 ?.filter(
                   (item, index, self) =>
@@ -695,6 +692,9 @@ const CheckoutRequest: FunctionComponent = () => {
                     {item.receiverName}
                   </MenuItem>
                 ))}
+              <MenuItem value="">
+                <em>{t('check_in.any')}</em>
+              </MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
@@ -708,9 +708,6 @@ const CheckoutRequest: FunctionComponent = () => {
               label={t('check_out.location')}
               onChange={handleLocChange}
             >
-              <MenuItem value="">
-                <em>{t('check_out.any')}</em>
-              </MenuItem>
               {filterCheckOut
                 ?.filter(
                   (item, index, self) =>
@@ -722,6 +719,9 @@ const CheckoutRequest: FunctionComponent = () => {
                     {item.receiverAddr}
                   </MenuItem>
                 ))}
+              <MenuItem value="">
+                <em>{t('check_out.any')}</em>
+              </MenuItem>
             </Select>
           </FormControl>
         </div>

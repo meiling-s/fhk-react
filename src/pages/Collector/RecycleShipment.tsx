@@ -749,10 +749,6 @@ function ShipmentManage() {
               label={t('check_in.sender_company')}
               onChange={handleComChange}
             >
-              <MenuItem value="">
-                {' '}
-                <em>{t('check_in.any')}</em>
-              </MenuItem>
               {checkInRequest
                 ?.filter(
                   (item, index, self) =>
@@ -764,6 +760,10 @@ function ShipmentManage() {
                     {item.senderName}
                   </MenuItem>
                 ))}
+              <MenuItem value="">
+                {' '}
+                <em>{t('check_in.any')}</em>
+              </MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
@@ -777,10 +777,6 @@ function ShipmentManage() {
               label={t('check_in.location')}
               onChange={handleLocChange}
             >
-              <MenuItem value="">
-                {' '}
-                <em>{t('check_in.any')}</em>
-              </MenuItem>
               {checkInRequest
                 ?.filter(
                   (item, index, self) =>
@@ -792,6 +788,10 @@ function ShipmentManage() {
                     {item.senderAddr}
                   </MenuItem>
                 ))}
+              <MenuItem value="">
+                {' '}
+                <em>{t('check_in.any')}</em>
+              </MenuItem>
             </Select>
           </FormControl>
         </Box>
