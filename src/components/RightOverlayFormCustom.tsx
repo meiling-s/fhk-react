@@ -132,6 +132,11 @@ const RightOverlayFormCustom: React.FC<RightOverlayFormProps> = ({
       onClose={handleClose}
       anchor={anchor}
       variant={'temporary'}
+      sx={{
+        '& .MuiDrawer-paper': {
+          marginTop: `${marginTop}`
+        }
+      }}
     >
       <div
         className={`border-b-[1px] border-grey-line h-full ${

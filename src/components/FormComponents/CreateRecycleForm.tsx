@@ -35,8 +35,8 @@ import dayjs from 'dayjs'
 import { Languages, localStorgeKeyName } from '../../constants/constant'
 import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
-import i18n from '../../setups/i18n'
 import NotifContainer from '../../contexts/NotifContainer'
+import i18n from '../../setups/i18n'
 
 type props = {
   onClose: () => void

@@ -41,7 +41,6 @@ const Notification = () => {
       setNumOfNotif(0)
       getNumNotif(loginId)
       getNotifList(loginId)
-      setShowBroadcast(true)
       const interval = setInterval(() => {
         initBroadcastMessage()
       }, 60 * 60000);
@@ -96,19 +95,26 @@ const Notification = () => {
               return prev
             } else {
               setShowBroadcast(true)
+              setMarginTop('30px')
               return broadcast
             }
           })
         }
-      } 
+      }  else {
+        setShowBroadcast(false)
+        setMarginTop('0px')
+        setBroadcast(null)
+      }
   }
 
-  useEffect(() => {
-    if(showBroadcast){
-      setMarginTop('30px')
-    }
-  }, [showBroadcast]);
-
+  // useEffect(() => {
+  //   if(showBroadcast){
+  //     setMarginTop('30px')
+  //   } else {
+  //     setMarginTop('0px')
+  //   }
+  // }, [showBroadcast]);
+  
   return {
     numOfNotif,
     notifList,
@@ -120,7 +126,8 @@ const Notification = () => {
     showBroadcast, 
     setShowBroadcast,
     initBroadcastMessage,
-    marginTop
+    marginTop,
+    setMarginTop
   }
 }
 

@@ -1635,3 +1635,9 @@ export const UPDATE_DENIAL_REASON_COLLECTORS = (
   url: `/api/v1/collectors/reason/${tenantId}/${reasonId}/new`
 })
 
+export const CREATE_USER_ACTIVITY = (
+  loginId: string, 
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/administrator/userActivity/${loginId}`
+})
