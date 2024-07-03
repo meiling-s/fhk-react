@@ -92,7 +92,8 @@
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
       "tenantIdNotFound": "Tenant Id not found",
       "mustDifferent": "must be different",
-      "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed"
+      "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed",
+      "invalidDate": "invalid date between start  and to date Shipping validity date"
     }
   },
   "component": {
@@ -232,6 +233,7 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "shipping_company": "Shipping company",
+    "shipping_location": "Shipping Location",
     "arrival_location": "Arrival location",
     "success_approve": "Checkout request is success",
     "ok": "Ok",
@@ -433,7 +435,7 @@
       "routineType": "This routine Type is required",
       "routine": "routine is required",
       "pickuAt": "This pickupAt is required",
-      "senderName": "This sendername is required'",
+      "senderName": "This sendername is required",
       "senderAddr": "This sender address is required",
       "receiverName": "This receiver Name is required",
       "receiverAddr": "This receiver address is required",
@@ -588,8 +590,8 @@
     "inventory": "Inventory",
     "recyclingInformation": "Recycling information",
     "date": "Date",
-    "recyleType": "Subclassification",
-    "recyleSubType": "Subclassification",
+    "recyleType": "Recyclable type",
+    "recyleSubType": "Recyclable sub-type",
     "package": "Package",
     "recyclingNumber": "Recycling number",
     "inventoryLocation": "Inventory location",

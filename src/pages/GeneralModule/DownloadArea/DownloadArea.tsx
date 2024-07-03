@@ -188,7 +188,7 @@ const DownloadArea = () => {
 
   const manufacturerRows: reportItem[] = [
     {
-      id: 0,
+      id: 1,
       report_name: t(
         'generate_report.recycled_waste_request_list_manufacturer'
       ),
@@ -197,14 +197,14 @@ const DownloadArea = () => {
       manualTenantId: false
     },
     {
-      id: 1,
+      id: 2,
       report_name: t('generate_report.report_of_manu_recycled_order_list'),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000012',
       manualTenantId: false
     },
     {
-      id: 2,
+      id: 3,
       report_name: t(
         'generate_report.report_of_manu_recycled_waste_tracing_list'
       ),
@@ -213,7 +213,7 @@ const DownloadArea = () => {
       manualTenantId: false
     },
     {
-      id: 3,
+      id: 4,
       report_name: t(
         'generate_report.report_of_manu_recycled_waste_classification_list'
       ),

@@ -40,8 +40,16 @@ const CreatePickupOrder = () => {
   }
 
   const validateSchema = Yup.object().shape({
-    effFrmDate: Yup.string().required('This effFrmDate is required'),
-    effToDate: Yup.string().required('This effToDate is required'),
+    // effFrmDate: Yup.string().required('This effFrmDate is required'),
+    // effToDate: Yup.string().required('This effToDate is required'),
+    effFrmDate: Yup.date().required(),
+    effToDate: Yup.date()
+        .when(
+        'effFrmDate',
+        (effFrmDate, schema) => {
+          return effFrmDate && schema.min(effFrmDate, `${t('form.error.invalidDate') }`)
+        },
+    ),
     routineType:
       picoTypeValue == 'ROUTINE'
         ? Yup.string().required('This routineType is required')
@@ -80,15 +88,15 @@ const CreatePickupOrder = () => {
     platNo: Yup.string().required(
       getErrorMsg(t('pick_up_order.plat_number'), 'empty')
     ),
-    contactNo: Yup.number().required(
-      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    ),
-    contractNo:
-      picoTypeValue == 'ROUTINE'
-        ? Yup.string().required(
-            getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty')
-          )
-        : Yup.string(),
+    // contactNo: Yup.number().required(
+    //   getErrorMsg(t('pick_up_order.contact_number'), 'empty')
+    // ),
+    // contractNo:
+    //   picoTypeValue == 'ROUTINE'
+    //     ? Yup.string().required(
+    //         getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty')
+    //       )
+    //     : Yup.string(),
     reason:
       picoTypeValue == 'AD_HOC'
         ? Yup.string().required(
@@ -148,6 +156,7 @@ const CreatePickupOrder = () => {
     validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow
+      console.log('values', values)
       const result = await submitPickUpOrder(values)
       const data = result?.data
       if (data) {
