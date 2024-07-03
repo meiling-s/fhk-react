@@ -28,6 +28,8 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import CommonTypeContainer from "../../../contexts/CommonTypeContainer";
 import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
+import { getDriverList } from "../../../APICalls/driver";
+import { Driver } from "../../../interfaces/driver";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -120,10 +122,11 @@ interface Option {
 }
 
 const JobOrder = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [page, setPage] = useState(1)
   const pageSize = 10 
   const [totalData , setTotalData] = useState<number>(0)
+  const [driverLists, setDriverLists] = useState<Driver[]>([])
   const {dateFormat} = useContainer(CommonTypeContainer)
   const statusList: {
     value: string
@@ -172,7 +175,7 @@ const JobOrder = () => {
   const columns: GridColDef[] = [
     {
       field: "createdAt", 
-      headerName: t('job_order.table.created_datetime'), 
+      headerName: t('job_order.item.date_time'), 
       width: 150,
       renderCell: (params) => {
         return dayjs.utc(params.row.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
@@ -184,6 +187,17 @@ const JobOrder = () => {
       type:"string",
       width: 150,
       editable: true,
+      renderCell: (params) => {
+        const driverId = params.row.driverId
+        const driverName = driverLists.filter(item => item.driverId == driverId)
+        if (driverName.length > 0) {
+          return (
+            <div>{i18n.language === 'enus' ? driverName[0].driverNameEng : i18n.language === 'zhhk' ? driverName[0].driverNameTchi : driverName[0].driverNameSchi}</div>
+          )
+        } else {
+          return <div>{driverId}</div>
+        }
+      }
     },
     {
       field: "plateNo",
@@ -201,7 +215,7 @@ const JobOrder = () => {
     },
     {
       field: "picoId",
-      headerName: t('job_order.table.pico_id'),
+      headerName: t('job_order.item.reference_po_number'),
       type:"string",
       width: 200,
       editable: true,
@@ -262,31 +276,42 @@ const JobOrder = () => {
   const { localeTextDataGrid } = useLocaleTextDataGrid();
 
   const initJobOrderRequest = async () => {
-   try {
-    setJobOrder([])
-    setTotalData(0)
-    let result = null
-    const params = {
-      page: page -1,
-      pageSize,
-      ...query
-    }
-    result = await getAllJobOrder(params);
-    const data = result?.data.content;
-    if (data && data.length > 0) {
-      setJobOrder(data);
-    } else {
+    try {
       setJobOrder([])
+      const params = {
+        page: page - 1,
+        size: pageSize,
+        ...query
+      }
+      const res = await getAllJobOrder(params)
+      if (res) {
+        const data = res?.data.content
+        setJobOrder(data)
+      }
+      setTotalData(res?.data.totalPages)
+    } catch (error: any) {
+      const { state, realm } = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-    setTotalData( result?.data.totalPages)
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
   }
   
+  const initDriverList = async () => {
+    try {
+      const res = await getDriverList(0, 1000)
+      if (res) {
+        const data = res.data.content
+        setDriverLists(data)
+      }
+    } catch (error) {
+      const { state, realm } = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
+
   const showApproveModal = (row: any) => {
     setSelectedRow(row);
     setApproveModal(true)
@@ -298,6 +323,7 @@ const JobOrder = () => {
 
   useEffect(()=>{
     initJobOrderRequest()
+    initDriverList()
   }, [i18n.language])
 
   useEffect(() => {
@@ -411,7 +437,7 @@ const JobOrder = () => {
         </Modal>
       <Box sx={{ display: "flex", alignItems: "center",ml:'6px'}}>
         <Typography fontSize={20} color="black" fontWeight="bold">
-        {t('job_order.enquiry_job_order')}
+        {t('job_order.item.detail')}
         </Typography>
       </Box>
       <Box />

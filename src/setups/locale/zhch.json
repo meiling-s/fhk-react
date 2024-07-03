@@ -936,7 +936,7 @@
       },
       "table": {
         "driverId": "司机号码",
-        "driverName": "司机中文名",
+        "driverSchiName": "司机简体中文名称",
         "driverEngName": "Driver English Name",
         "gender": "性别",
         "loginName": "登入名称",

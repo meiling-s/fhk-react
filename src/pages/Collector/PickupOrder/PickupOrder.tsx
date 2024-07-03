@@ -591,7 +591,7 @@ const PickupOrders = () => {
       pickupOrder?.map((item) => ({
         ...item,
         id: item.picoId,
-        createdAt: displayCreatedDate(item.createdAt),
+        createdAt: item.createdAt,
         logisticCompany: item.logisticName,
         picoId: item.picoId,
         deliveryDate: getDeliveryDate(item),

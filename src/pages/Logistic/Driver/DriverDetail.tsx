@@ -75,7 +75,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                 label: t('driver.DriverMenu.popUp.field.loginName'),
                 placeholder: t('driver.DriverMenu.popUp.field.nameText'),
                 field: 'loginId',
-                type: 'autocomplete'
+                type: 'text'
             },
             {
                 label: t('driver.DriverMenu.popUp.field.TchiName'),
@@ -135,9 +135,18 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                     })
                 }
             }
+            if (key == 'photo' && pictures.length == 0) {
+                const item = driverField.find((d) => d.field === key)
+                if (item) {
+                    tempV.push({
+                        field: item.label,
+                        problem: formErr.empty,
+                        type: 'error'
+                    })
+                }
+            }
         })
         driverDetailList.forEach((item: DriverInfo, index: number) => {
-            console.log({item})
             Object.keys(item).forEach((key) => {
                 if (!item[key]) {
                     let field = ''
@@ -155,7 +164,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                             break;
                     }
                     tempV.push({
-                        field: field + (index + 1),
+                        field: field,
                         problem: formErr.empty,
                         type: 'error'
                     })
@@ -313,6 +322,8 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             driverDetail: driverDetailList,
             status: 'ACTIVE'
         }
+
+        console.log(formValues, 'formValues')
         const user = localStorage.getItem('username')
         if (action === 'add' || action === 'edit') {
             setTrySubmited(true)
@@ -418,7 +429,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                 </Grid>
                             ) : driver.type === 'upload' ? (
                                 <Grid item key={driverIndex.toString()}>
-                                    <CustomField label={driver.label}>
+                                    <CustomField label={driver.label} mandatory>
                                         <ImageUploading
                                             multiple
                                             value={pictures}
@@ -539,7 +550,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                     />
                                                 </CustomField>
                                             </Grid>
-                                            <Grid item xs>
+                                            <Grid item xs={4}>
                                                 <CustomField
                                                     label={idx === 0 ? t('driver.DriverMenu.popUp.field.driveYear') : ''}
                                                 >
