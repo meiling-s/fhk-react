@@ -547,7 +547,7 @@ const CheckoutRequest: FunctionComponent = () => {
   useEffect(() => {
     getCheckoutRequest()
     getRejectReason()
-  }, [page, query.picoId, query.receiverName, query.receiverName])
+  }, [page, query])
 
   const updateQuery = (newQuery: Partial<queryCheckout>) => {
     setQuery({ ...query, ...newQuery })
