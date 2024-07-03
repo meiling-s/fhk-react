@@ -361,7 +361,7 @@ const Inventory: FunctionComponent = () => {
         })
         warehouse.push({
           value: '',
-          label: t('any')
+          label: t('check_in.any')
         })
         setWarehouseList(warehouse)
       }
