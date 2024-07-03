@@ -95,6 +95,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     }, [i18n, currentLanguage])
     
     useEffect(() => {
+        setTrySubmitted(false)
         if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 setPackagingId(selectedItem.packagingTypeId)
@@ -148,30 +149,30 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
         tChineseName.trim() === '' &&
         tempV.push({
-            field: 'tChineseName',
-            error: `${t(`common.traditionalChineseName`)} ${t(
+            field: `${t('packaging_unit.traditional_chinese_name')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         sChineseName.trim() === '' &&
         tempV.push({
-            field: 'sChineseName',
-            error: `${t(`common.simplifiedChineseName`)} ${t(
+            field: `${t('packaging_unit.simplified_chinese_name')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         englishName.trim() === '' &&
         tempV.push({
-            field: 'englishName',
-            error: `${t(`common.englishName`)} ${t(
+            field: `${t('packaging_unit.english_name')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName])
+    }, [tChineseName, sChineseName, englishName, i18n, currentLanguage])
 
     const handleDelete = () => {
         const { loginId, tenantId } = returnApiToken();
@@ -288,7 +289,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 <Divider></Divider>
                 <Box sx={{ marginX: 2 }}>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.traditional_chinese_name')}>
+                        <CustomField label={t('packaging_unit.traditional_chinese_name')} mandatory>
                             <CustomTextField
                                 id="tChineseName"
                                 value={tChineseName}
@@ -300,7 +301,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.simplified_chinese_name')}>
+                        <CustomField label={t('packaging_unit.simplified_chinese_name')} mandatory>
                             <CustomTextField
                                 id="sChineseName"
                                 value={sChineseName}
@@ -312,7 +313,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.english_name')}>
+                        <CustomField label={t('packaging_unit.english_name')} mandatory>
                             <CustomTextField
                                 id="englishName"
                                 value={englishName}
@@ -323,7 +324,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             />
                         </CustomField>
                     </Box>
-                    <CustomField label={t('packaging_unit.introduction')} mandatory={false}>
+                    <CustomField label={t('packaging_unit.introduction')}>
                         <CustomTextField
                             id="description"
                             placeholder={t('packaging_unit.introduction')}
@@ -332,7 +333,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             defaultValue={description}
                         />
                     </CustomField>
-                    <CustomField label={t('packaging_unit.remark')} mandatory={false}>
+                    <CustomField label={t('packaging_unit.remark')}>
                         <CustomTextField
                             id="remark"
                             placeholder={t('packaging_unit.remark')}
@@ -341,6 +342,17 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             defaultValue={remark}
                         />
                     </CustomField>
+                    <Grid item sx={{ width: '92%' }}>
+                        {trySubmited &&
+                            validation.map((val, index) => (
+                            <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={val.error}
+                                type={'error'}
+                            />
+                            ))}
+                    </Grid>
                 </Box>
             </RightOverlayForm>
         </div>
