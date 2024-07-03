@@ -62,14 +62,16 @@ type DeleteModalProps = {
   open: boolean
   selectedRecycLoc?: CreatePicoDetail | null
   onClose: () => void
-  onDelete: (id: number) => void
+  onDelete: (id: number) => void,
+  editMode: boolean
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
   open,
   selectedRecycLoc,
   onClose,
-  onDelete
+  onDelete,
+  editMode
 }) => {
   const { t } = useTranslation()
   return (
@@ -96,7 +98,12 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
             <button
               className="primary-btn mr-2 cursor-pointer"
               onClick={() => {
-                onDelete(selectedRecycLoc?.id)
+                if(editMode && selectedRecycLoc?.picoDtlId) {
+                  onDelete(selectedRecycLoc?.picoDtlId)
+                } else {
+                  onDelete(selectedRecycLoc?.id)
+                }
+                
               }}
             >
               {t('check_in.confirm')}
@@ -148,6 +155,7 @@ const PickupOrderCreateForm = ({
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const logisticCompany = logisticList
   const contractRole = contractType
+  const [index, setIndex] = useState<number| null>(null)
 
   const unexpiredContracts = contractRole
     ? contractRole?.filter((contract) => {
@@ -222,6 +230,7 @@ const PickupOrderCreateForm = ({
     setEditRowId(null)
     setUpdateRowId(null)
     setOpenModal(false)
+    setIndex(null)
   }
 
   const handleEditRow = (id: number) => {
@@ -231,13 +240,20 @@ const PickupOrderCreateForm = ({
   }
 
   const handleDeleteRow = (id: any) => {
-    var updateDeleteRow = state.filter((row, index) => index != id)
-    updateDeleteRow = updateDeleteRow.map((picoDtl, index) => {
-      picoDtl.id = index
-      return picoDtl
-    })
-    //console.log('deleting: ', id, state, updateDeleteRow)
-    setState(updateDeleteRow)
+    if(editMode){
+      let updateDeleteRow = state.filter((row, index) => index != id)
+      updateDeleteRow = updateDeleteRow.map((picoDtl, index) => {
+        return {
+          ...picoDtl,
+          status: picoDtl.picoDtlId === id ? 'DELETED' : picoDtl.status
+        }
+      })
+      setState(updateDeleteRow)
+    } else {
+      let updateDeleteRow = state.filter((row) => row.id !== id);
+      setState(updateDeleteRow)
+    }
+    
   }
 
   const createdDate = selectedPo
@@ -446,7 +462,10 @@ const PickupOrderCreateForm = ({
       filterable: false,
       renderCell: (params) => (
         <IconButton>
-          <EDIT_OUTLINED_ICON onClick={() => handleEditRow(params.row.id)} />
+          <EDIT_OUTLINED_ICON onClick={() => {
+            setIndex(params.row.id)
+            handleEditRow(params.row.picoDtlId)
+          }} />
         </IconButton>
       )
     },
@@ -461,6 +480,7 @@ const PickupOrderCreateForm = ({
         // </IconButton>
         <IconButton
           onClick={() => {
+            console.log('params delete', params.row.picoDtlId)
             setOpenDelete(true)
             setRecycbleLocId(params.row)
           }}
@@ -816,10 +836,16 @@ const PickupOrderCreateForm = ({
                 <CustomField label={''}>
                   <DataGrid
                     rows={
-                      editMode
-                        ? state.map((row, index) => ({ ...row, id: index }))
-                        : state
+                      state.filter((row, index) => {
+                        if(row.status  !== 'DELETED'){
+                          return { 
+                            ...row, 
+                            id: row.picoDtlId 
+                          }
+                        }
+                      })
                     }
+                    getRowId={(row) => row.pickupAt}
                     hideFooter
                     columns={columns}
                     disableRowSelectionOnClick
@@ -856,6 +882,8 @@ const PickupOrderCreateForm = ({
                       editRowId={editRowId}
                       picoHisId={picoRefId}
                       isEditing={isEditing}
+                      index={index}
+                      editMode={editMode}
                     />
                   </Modal>
 
@@ -872,6 +900,7 @@ const PickupOrderCreateForm = ({
                       <AddCircleIcon sx={{ ...endAdornmentIcon, pr: 1 }} />
                     }
                     onClick={() => {
+                      setIndex(null)
                       setIsEditing(false)
                       setOpenModal(true)
                     }}
@@ -944,6 +973,7 @@ const PickupOrderCreateForm = ({
                 setOpenDelete(false)
               }}
               onDelete={onDeleteModal}
+              editMode={editMode}
             />
           </LocalizationProvider>
         </Box>

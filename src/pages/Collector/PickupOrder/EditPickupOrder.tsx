@@ -38,8 +38,16 @@ const EditPickupOrder = () => {
     }
   }
   const validateSchema = Yup.object().shape({
-    effFrmDate: Yup.string().required('This effFrmDate is required'),
-    effToDate: Yup.string().required('This effToDate is required'),
+    // effFrmDate: Yup.string().required('This effFrmDate is required'),
+    // effToDate: Yup.string().required('This effToDate is required'),
+    effFrmDate: Yup.date().required(),
+    effToDate: Yup.date()
+        .when(
+        'effFrmDate',
+        (effFrmDate, schema) => {
+          return effFrmDate && schema.min(effFrmDate, `${t('form.error.invalidDate') }`)
+        },
+    ),
 
     routine: Yup.lazy((value, schema) => {
       const routineType = schema.parent.routineType
@@ -74,10 +82,10 @@ const EditPickupOrder = () => {
     platNo: Yup.string().required(
       getErrorMsg(t('pick_up_order.plat_number'), 'empty')
     ),
-    // contactNo: Yup.number().required(
-    //   getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    // ),
-    createPicoDetail: Yup.array()
+    contactNo: Yup.number().required(
+      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
+    ),
+    updatePicoDetail: Yup.array()
       .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
       .test(
         'has-rows',
@@ -124,11 +132,11 @@ const EditPickupOrder = () => {
       contractNo: '',
       updatedBy: loginId,
       refPicoId: '',
-      createPicoDetail: []
+      updatePicoDetail: []
     },
     validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
-      values.createPicoDetail = addRow
+      values.updatePicoDetail = addRow
       const result = await submitEditPickUpOrder(poInfo.picoId, values)
 
       const data = result?.data
@@ -144,8 +152,8 @@ const EditPickupOrder = () => {
 
   const setPickupOrderDetail = () => {
     const picoDetails: CreatePicoDetail[] =
-      poInfo?.pickupOrderDetail?.map((item) => ({
-        id: item.picoDtlId,
+      poInfo?.pickupOrderDetail?.map((item, index) => ({
+        picoDtlId: item.picoDtlId,
         picoHisId: item.picoHisId,
         senderId: item.senderId,
         senderName: item.senderName,
@@ -161,7 +169,8 @@ const EditPickupOrder = () => {
         pickupAt: item.pickupAt,
         recycType: item.recycType,
         recycSubType: item.recycSubType,
-        weight: formatWeight(item.weight, decimalVal)
+        weight: formatWeight(item.weight, decimalVal),
+        newDetail: false,
       })) || []
 
     setAddRow(picoDetails)
@@ -194,8 +203,8 @@ const EditPickupOrder = () => {
         rejectedBy: loginId,
         contractNo: poInfo.contractNo,
         updatedBy: loginId,
-        refPicoId: poInfo.refPicoId,
-        createPicoDetail: []
+        refPicoId: poInfo?.refPicoId,
+        updatePicoDetail: []
       })
     }
   }, [poInfo])

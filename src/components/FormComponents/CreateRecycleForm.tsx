@@ -45,7 +45,9 @@ type props = {
   setId: Dispatch<SetStateAction<number>>
   picoHisId: string | null
   editRowId: number | null
-  isEditing: boolean
+  isEditing: boolean,
+  index?: number | null
+  editMode: boolean
 }
 const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 const initialTime: dayjs.Dayjs = dayjs()
@@ -54,8 +56,30 @@ const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
   return pickupAtValue.format('HH:mm:ss')
 }
 
-const initValue = {
-  id: -1,
+export interface InitValue {
+  picoDtlId?:      any;
+  picoHisId:       string;
+  senderId:        string;
+  senderName:      string;
+  senderAddr:      string;
+  senderAddrGps:   number[];
+  receiverId:      string;
+  receiverName:    string;
+  receiverAddr:    string;
+  receiverAddrGps: number[];
+  status:          string;
+  createdBy:       string;
+  updatedBy:       string;
+  pickupAt:        string;
+  recycType:    string;
+  recycSubType: string;
+  weight:       string;
+  newDetail?: boolean;
+  id?: number
+  
+}
+
+const initValue:InitValue  = {
   picoHisId: '',
   senderId: '1',
   senderName: '',
@@ -71,7 +95,10 @@ const initValue = {
   pickupAt: '00:00:00',
   recycType: '',
   recycSubType: '',
-  weight: '0'
+  weight: '0',
+  newDetail: true,
+  id: 0,
+  
 }
 
 const CreateRecycleForm = ({
@@ -80,7 +107,9 @@ const CreateRecycleForm = ({
   data,
   editRowId,
   isEditing,
-  picoHisId
+  picoHisId,
+  index,
+  editMode
 }: props) => {
   const { recycType, manuList, collectorList, decimalVal, getManuList, getCollectorList } =
     useContainer(CommonTypeContainer)
@@ -104,19 +133,29 @@ const CreateRecycleForm = ({
   }
 
   useEffect(() => {
-    getManuList();
-    getCollectorList()
-  }, [])
-
-  useEffect(() => {
-    if (editRowId == null) {
-      setDefaultRecyc(undefined)
-      formik.setValues(initValue)
-    } else {
-      const editR = data.at(editRowId)
+    if(editRowId && editMode){
+      const editR = data.find(item => item.picoDtlId === editRowId)
       if (editR) {
         setDefRecyc(editR)
         setEditRow(editR)
+      }
+    } else if(editRowId == null && index && editMode){
+      const editR = data.find(item => item.id === index)
+      if (editR) {
+       setDefRecyc(editR)
+       setEditRow(editR)
+     }
+    } else if(editMode)  {
+      setDefaultRecyc(undefined)
+      initValue.id = data.length;
+      formik.setValues(initValue)
+    }
+
+    if(!editMode && index !== null && index !== undefined){
+      const edit = data.find(item => item.id === index);
+      if(edit){
+        setDefRecyc(edit)
+        setEditRow(edit)
       }
     }
   }, [editRowId])
@@ -137,7 +176,7 @@ const CreateRecycleForm = ({
       const index = data.indexOf(editRow)
 
       formik.setValues({
-        id: index,
+        picoDtlId: editRowId ?? 0,
         picoHisId: picoHisId ?? '',
         senderId: editRow.senderId,
         senderName: editRow.senderName,
@@ -242,14 +281,35 @@ const CreateRecycleForm = ({
       if (isEditing) {
         //editing row
         //const {id, ...updateValue} = values
-        const updatedData = data.map((row, id) => {
-          return id === values.id ? values : row
-        })
-        setState(updatedData)
+        if(editMode){
+          const updatedData = data.map((row, id) => {
+            if(editRowId === row.picoDtlId){
+              return values
+            } else {
+              return row
+            }
+          })
+          setState(updatedData)
+        } else {
+          const updatedData = data.map((row, id) => {
+            if(index === row.id){
+              return {
+                ...values,
+                id: index
+              }
+            } else {
+              return row
+            }
+          })
+          setState(updatedData)
+        }
+       
       } else {
         //creating row
         var updatedValues: CreatePicoDetail = values
-        updatedValues.id = data.length
+        if(!editMode){
+          updatedValues.id = data.length
+        }
         //console.log("data: ",data," updatedValues: ",updatedValues)
         setState([...data, updatedValues])
       }
@@ -381,7 +441,7 @@ const CreateRecycleForm = ({
                       borderColor: customListTheme ? customListTheme.border: '79CA25'
                     }}
                     defaultRecycL={defaultRecyc}
-                    key={formik.values.id}
+                    key={formik.values.picoDtlId}
                   />
                 </CustomField>
                 <CustomField
