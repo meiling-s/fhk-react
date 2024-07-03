@@ -176,7 +176,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
             })
 
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName])
+    }, [tChineseName, sChineseName, englishName, i18n, currentLanguage])
 
     const handleDelete = async () => {
         const { loginId } = returnApiToken();

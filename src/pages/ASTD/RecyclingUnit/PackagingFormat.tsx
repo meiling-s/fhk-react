@@ -172,7 +172,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         })
 
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName])
+    }, [tChineseName, sChineseName, englishName, i18n, currentLanguage])
 
     const handleDelete = () => {
         const { loginId, tenantId } = returnApiToken();

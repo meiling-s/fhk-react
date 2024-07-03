@@ -178,7 +178,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         })
 
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName, selectedService])
+    }, [tChineseName, sChineseName, englishName, selectedService, i18n, currentLanguage])
 
     const handleDelete = async () => {
         const token = returnApiToken()

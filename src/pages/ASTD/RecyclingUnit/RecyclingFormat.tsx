@@ -229,7 +229,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         }
 
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName, isMainCategory, chosenRecyclableType])
+    }, [tChineseName, sChineseName, englishName, isMainCategory, chosenRecyclableType, i18n, currentLanguage])
 
     const handleDelete = async () => {
         const token = returnApiToken()

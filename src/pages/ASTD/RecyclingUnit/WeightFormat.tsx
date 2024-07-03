@@ -193,7 +193,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
         })
 
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName, equivalent])
+    }, [tChineseName, sChineseName, englishName, equivalent, i18n, currentLanguage])
 
     const handleDelete = async () => {
         const token = returnApiToken()
