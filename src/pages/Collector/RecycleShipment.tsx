@@ -768,13 +768,13 @@ function ShipmentManage() {
           </FormControl>
           <FormControl sx={styles.inputStyle}>
             <InputLabel id="location-label" sx={styles.textFieldLabel}>
-              {t('check_in.sender_addr')}
+              {t('check_in.location')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t('check_in.sender_addr')}
+              label={t('check_in.location')}
               onChange={handleLocChange}
             >
               <MenuItem value="">

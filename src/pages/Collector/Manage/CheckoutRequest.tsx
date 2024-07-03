@@ -699,13 +699,13 @@ const CheckoutRequest: FunctionComponent = () => {
           </FormControl>
           <FormControl sx={styles.inputStyle}>
             <InputLabel id="location-label" sx={styles.textFieldLabel}>
-              {t('check_out.receiver_addr')}
+              {t('check_out.location')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t('check_out.receiver_addr')}
+              label={t('check_out.location')}
               onChange={handleLocChange}
             >
               <MenuItem value="">

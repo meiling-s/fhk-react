@@ -134,7 +134,7 @@ const Inventory: FunctionComponent = () => {
 
   useEffect(() => {
     mappingRecyleItem()
-  }, [recycType])
+  }, [recycType, i18n.language])
 
   useEffect(() => {
     if (realmApi !== 'account') {
@@ -143,7 +143,7 @@ const Inventory: FunctionComponent = () => {
         initWarehouse()
       } //init dat when recyleitem done mapping
     }
-  }, [recycItem, page, realmApi, query])
+  }, [recycItem, page, realmApi, query, i18n.language])
 
   const mappingRecyleItem = () => {
     const recyleMapping: recycItem[] = []
@@ -491,7 +491,7 @@ const Inventory: FunctionComponent = () => {
       initInventory()
       initWarehouse()
     }
-  }, [debouncedSearchValue, query])
+  }, [debouncedSearchValue, query, i18n.language])
 
   return (
     <>

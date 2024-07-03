@@ -630,7 +630,7 @@ const PickupOrders = () => {
   }
   const searchfield = [
     {
-      label:t('purchase_order.table.pico_id'),
+      label: t('purchase_order.table.pico_id'),
       placeholder: t('check_in.search_input'),
       field: 'picoId',
       width: '260px'
@@ -683,7 +683,7 @@ const PickupOrders = () => {
     }))
     options.push({
       value: '',
-      label: 'any'
+      label: t('check_in.any')
     })
     return options
   }
@@ -695,7 +695,7 @@ const PickupOrders = () => {
     }))
     options.push({
       value: '',
-      label: 'any'
+      label: t('check_in.any')
     })
     return options
   }
