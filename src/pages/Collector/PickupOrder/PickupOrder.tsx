@@ -375,7 +375,7 @@ const PickupOrders = () => {
   })
   const [approveModal, setApproveModal] = useState(false)
   const [rejectModal, setRejectModal] = useState(false)
-  const [reasonList, setReasonList] = useState<any>([])
+  const [reasonList, setReasonList] = useState<{reasonId: string, name: string}[]>([])
 
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const statusList: StatusPickUpOrder[] = [
@@ -550,28 +550,42 @@ const PickupOrders = () => {
     try {
       let result = await getAllReason()
       if (result && result?.data && result?.data?.content.length > 0) {
-        let reasonName = ''
-        switch (i18n.language) {
-          case 'enus':
-            reasonName = 'reasonNameEng'
-            break
-          case 'zhch':
-            reasonName = 'reasonNameSchi'
-            break
-          case 'zhhk':
-            reasonName = 'reasonNameTchi'
-            break
-          default:
-            reasonName = 'reasonNameEng'
-            break
-        }
-        result?.data?.content.map(
-          (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
-            item.id = item.reasonId
-            item.name = item[reasonName]
+        // let reasonName = ''
+        // switch (i18n.language) {
+        //   case 'enus':
+        //     reasonName = 'reasonNameEng'
+        //     break
+        //   case 'zhch':
+        //     reasonName = 'reasonNameSchi'
+        //     break
+        //   case 'zhhk':
+        //     reasonName = 'reasonNameTchi'
+        //     break
+        //   default:
+        //     reasonName = 'reasonNameEng'
+        //     break
+        // }
+
+        const reasons: {reasonId: string, name: string}[] = result?.data?.content.map((item: any) => {
+            if(i18n.language === Languages.ENUS){
+              return {
+                id : item.reasonId,
+                name : item.reasonNameEng
+              }
+            } else if(i18n.language === Languages.ZHCH){
+              return {
+                id : item.reasonId,
+                name : item.reasonNameSchi
+              }
+            } else {
+              return {
+                id : item.reasonId,
+                name : item.reasonNameTchi
+              }
+            }
           }
         )
-        setReasonList(result?.data?.content)
+        setReasonList(reasons)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -593,6 +607,7 @@ const PickupOrders = () => {
 
   useEffect(() => {
     initPickupOrderRequest()
+    getRejectReason()
   }, [i18n.language])
 
   useEffect(() => {

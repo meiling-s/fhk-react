@@ -232,12 +232,20 @@ const PickupOrderForm = ({
                 selectedRow &&
                 selectedRow.status === 'CREATED' &&
                 selectedRow?.tenantId === tenantId ? (
-                <CustomButton
+                <>
+                 <CustomButton
                   text={t('pick_up_order.item.edit')}
+                  style={{ marginRight: '12px' }}
                   onClick={() => {
                     selectedPickupOrder && handleRowClick(selectedPickupOrder)
                   }}
-                ></CustomButton>
+                />
+                 <CustomButton
+                    text={t('pick_up_order.item.delete')}
+                    outlined
+                    onClick={onDeleteClick}
+                  />
+                </>
               ) : role !== 'logistic' && selectedRow?.status === 'CREATED'  ? (
                 <>
                   <CustomButton

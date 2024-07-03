@@ -140,7 +140,9 @@ const PickupOrderCreateForm = ({
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const { 
-    logisticList, contractType, vehicleType, recycType, dateFormat, getLogisticlist,} =
+    logisticList, contractType, vehicleType, recycType, dateFormat, getLogisticlist,
+    getContractList  
+  } =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
@@ -212,6 +214,7 @@ const PickupOrderCreateForm = ({
 
   useEffect(() => {
     getLogisticlist()
+    getContractList()
   }, [])
 
   const handleCloses = () => {
