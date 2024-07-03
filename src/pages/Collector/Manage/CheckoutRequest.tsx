@@ -547,7 +547,7 @@ const CheckoutRequest: FunctionComponent = () => {
   useEffect(() => {
     getCheckoutRequest()
     getRejectReason()
-  }, [page, query.picoId, query.receiverName, query.receiverName])
+  }, [page, query])
 
   const updateQuery = (newQuery: Partial<queryCheckout>) => {
     setQuery({ ...query, ...newQuery })
@@ -658,8 +658,8 @@ const CheckoutRequest: FunctionComponent = () => {
             id="searchShipment"
             onChange={(event) => handleSearchByPoNumb(event.target.value)}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
-            placeholder={t('check_in.search_input')}
+            label={t('check_in.pickup_order_no')}
+            placeholder={t('check_in.input_po_no')}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -672,18 +672,15 @@ const CheckoutRequest: FunctionComponent = () => {
           />
           <FormControl sx={styles.inputStyle}>
             <InputLabel id="company-label" sx={styles.textFieldLabel}>
-              {t('check_out.company')}
+              {t('check_out.receiver_company')}
             </InputLabel>
             <Select
               labelId="company-label"
               id="company"
               value={company}
-              label={t('check_out.company')}
+              label={t('check_in.receiver_company')}
               onChange={handleCompanyChange}
             >
-              <MenuItem value="">
-                <em>{t('check_in.any')}</em>
-              </MenuItem>
               {filterCheckOut
                 ?.filter(
                   (item, index, self) =>
@@ -695,22 +692,22 @@ const CheckoutRequest: FunctionComponent = () => {
                     {item.receiverName}
                   </MenuItem>
                 ))}
+              <MenuItem value="">
+                <em>{t('check_in.any')}</em>
+              </MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
             <InputLabel id="location-label" sx={styles.textFieldLabel}>
-              {t('check_out.receiver_addr')}
+              {t('check_out.location')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t('check_out.receiver_addr')}
+              label={t('check_out.location')}
               onChange={handleLocChange}
             >
-              <MenuItem value="">
-                <em>{t('check_out.any')}</em>
-              </MenuItem>
               {filterCheckOut
                 ?.filter(
                   (item, index, self) =>
@@ -722,6 +719,9 @@ const CheckoutRequest: FunctionComponent = () => {
                     {item.receiverAddr}
                   </MenuItem>
                 ))}
+              <MenuItem value="">
+                <em>{t('check_out.any')}</em>
+              </MenuItem>
             </Select>
           </FormControl>
         </div>

@@ -83,7 +83,7 @@ const useWeightDashboardWithIdRecycable = () => {
    const getRecyclablesDashboard = async () => {
      try {
       if(tenantId !== '' && !tenantId) return
-      const response = await getWeightRecyclablesColPointAstd(tenantId, frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'))
+      const response = await getWeightRecyclablesColPointAstd(`company${tenantId}`, frmDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'))
    
       if (response.status === STATUS_CODE[200]) {
           const labels:string[] = Object.keys(response?.data);
