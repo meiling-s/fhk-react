@@ -40,8 +40,16 @@ const CreatePickupOrder = () => {
   }
 
   const validateSchema = Yup.object().shape({
-    effFrmDate: Yup.string().required('This effFrmDate is required'),
-    effToDate: Yup.string().required('This effToDate is required'),
+    // effFrmDate: Yup.string().required('This effFrmDate is required'),
+    // effToDate: Yup.string().required('This effToDate is required'),
+    effFrmDate: Yup.date().required(),
+    effToDate: Yup.date()
+        .when(
+        'effFrmDate',
+        (effFrmDate, schema) => {
+          return effFrmDate && schema.min(effFrmDate, `${t('form.error.invalidDate') }`)
+        },
+    ),
     routineType:
       picoTypeValue == 'ROUTINE'
         ? Yup.string().required('This routineType is required')
