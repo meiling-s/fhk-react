@@ -18,6 +18,7 @@ import { changePassword } from '../../APICalls/changePassword'
 import { STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
 import { styles as constantStyle } from '../../constants/styles'
 import { useTranslation } from 'react-i18next'
+import CustomField from '../../components/FormComponents/CustomField'
 
 interface FormData {
   userName: string
@@ -52,6 +53,7 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   const [isPassIdentical, setIsPassIdentical] = useState<boolean>(false)
   const [erorUpdate, setErrorUpdate] = useState<boolean>(false)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [validation, setValidation] = useState<
     { field: string; error: string }[]
   >([]) //validation for required field
@@ -70,13 +72,15 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
     {
       field: 'userName',
       label: t('changePass.username'),
-      placeholder: t('changePass.placeholder_username')
+      placeholder: t('changePass.placeholder_username'),
+      helperText: t('form.error.shouldNotBeEmpty'),
     },
     {
       field: 'password',
       label: t('changePass.password'),
       placeholder: t('changePass.placeholder_password'),
-      type: 'password'
+      type: 'password',
+      helperText: t('form.error.shouldNotBeEmpty')
     },
     {
       field: 'newPassword',
@@ -119,6 +123,45 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
     )
   }
 
+  // const returnErrMsg = (error: any) => {
+  //   const response = error.response.data.message
+  //   const errMsgString = removeNonJsonChar(response)
+  //   const errMsgJSON = JSON.parse(errMsgString)
+  //   if (errMsgJSON.message) {
+  //     const errSecondInnerString = removeNonJsonChar(errMsgJSON.message)
+  //     try {
+  //       const result = JSON.parse(errSecondInnerString)
+  //       return result.errorCode
+  //     } catch (e: any) {
+  //       return e.response.data.status
+  //     }
+  //   } else {
+  //     return errMsgJSON.errorCode
+  //   }
+  // }
+
+  const returnErrMessage = (errorString: string) => {
+    try {
+      // Extract the JSON part of the string
+      const jsonStringStart = errorString.indexOf('{', errorString.indexOf('{"errorMessage"'));
+      const jsonStringEnd = errorString.lastIndexOf('}') + 1;
+      const jsonString = errorString.slice(jsonStringStart, jsonStringEnd);
+
+      // Parse the JSON string
+      const outerError = JSON.parse(jsonString);
+
+      // Extract and parse the inner JSON string
+      const innerErrorString = outerError.errorMessage;
+      const innerError = JSON.parse(innerErrorString);
+
+      // Get the actual error message
+      setErrorMessage(innerError.errorMessage);
+      setErrorUpdate(true)
+    } catch (e) {
+      console.error('Failed to parse error message:', e);
+    }
+  };
+
   useEffect(() => {
     setRole(localStorage.getItem(localStorgeKeyName.role) || '')
     // console.log(
@@ -142,11 +185,20 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
     const tempV: { field: string; error: string }[] = []
 
     Object.keys(formData).forEach((fieldName) => {
-      formData[fieldName as keyof FormData].trim() === '' &&
-        tempV.push({
-          field: fieldName,
-          error: `fields is required`
-        })
+      if (fieldName === 'confirmPassword') {
+        if (formData.newPassword !== formData.confirmPassword) {
+          tempV.push({
+            field: fieldName,
+            error: `fields is required`
+          })
+        }
+      } else {
+        formData[fieldName as keyof FormData].trim() === '' &&
+          tempV.push({
+            field: fieldName,
+            error: `fields is required`
+          })
+      }
     })
 
     setValidation(tempV)
@@ -155,6 +207,7 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
     const isPassDiffrent = formData.newPassword != formData.password
     setIsPassValid(isComplexPassword && isPassDiffrent)
     setIsPassIdentical(formData.newPassword == formData.confirmPassword)
+
   }, [formData, isPassValid, isPassIdentical])
 
   const submitChangePassword = async () => {
@@ -176,23 +229,20 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
             if (isFirstLogin) {
               localStorage.removeItem('firstTimeLogin')
               navigate('/')
-            } else {
-              //navigate('/')
-              setErrorUpdate(true)
             }
           }
-        } catch (error:any) {
-          if(error?.response?.status === STATUS_CODE[503]){
+        } catch (error: any) {
+          if (error?.response?.status === STATUS_CODE[503]) {
             return navigate('/maintenance')
+          } else if (error?.response) {
+            returnErrMessage(error.response.data.message)
+            // console.log(error.response.data.message, 'message')
           }
-          console.error(error)
-          setErrorUpdate(true)
         }
       }
       resetPassword(passData)
     } else {
       setTrySubmited(true)
-      setErrorUpdate(true)
     }
   }
 
@@ -231,71 +281,94 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
       {erorUpdate && (
         <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2  mb-2 text-2xs">
           <WARNING_ICON />
-          {t('changePass.error')}
+          {errorMessage}
         </div>
       )}
       <Stack spacing={2}>
-        {fields.map((item, index) => (
-          <Box key={index}>
-            <Typography sx={styles.typo}>{item.label}</Typography>
-            <TextField
-              fullWidth
-              placeholder={item.placeholder}
-              type={
-                item.type !== 'password'
-                  ? 'text'
-                  : showPassword[item.field as keyof ShowPasswordState]
-                  ? 'text'
-                  : 'password'
-              }
-              onChange={(event) =>
-                handleInputChange(
-                  item.field as keyof FormData,
-                  event.target.value
-                )
-              }
-              value={formData[item.field as keyof FormData]}
-              sx={styles.inputState}
-              InputProps={{
-                sx: styles.textField,
-                endAdornment:
-                  item.type === 'password' ? (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() =>
-                          handleClickShowPassword(
-                            item.field as keyof ShowPasswordState
-                          )
-                        }
-                      >
-                        {showPassword[item.field as keyof ShowPasswordState] ? (
-                          <VISIBILITY_ICON />
-                        ) : (
-                          <VISIBILITY_OFF_ICON />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ) : null
-              }}
-              disabled={item.field === 'userName' && !isFirstLogin}
-              error={checkString(formData[item.field as keyof FormData])}
-            />
-            {item.field === 'newPassword' && !isPassValid && trySubmited && (
-              <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
-                <WARNING_ICON />
-                {item.helperText}
-              </div>
-            )}
-            {item.field === 'confirmPassword' &&
-              !isPassIdentical &&
-              trySubmited && (
-                <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2 text-2xs">
-                  <WARNING_ICON />
-                  {item.helperText}
-                </div>
-              )}
-          </Box>
-        ))}
+        {fields.map((item, index) => {
+          return (
+            <Box key={index}>
+              <CustomField
+                label={item.label}
+                mandatory
+              >
+                <TextField
+                  fullWidth
+                  placeholder={item.placeholder}
+                  type={
+                    item.type !== 'password'
+                      ? 'text'
+                      : showPassword[item.field as keyof ShowPasswordState]
+                        ? 'text'
+                        : 'password'
+                  }
+                  onChange={(event) =>
+                    handleInputChange(
+                      item.field as keyof FormData,
+                      event.target.value
+                    )
+                  }
+                  value={formData[item.field as keyof FormData]}
+                  sx={styles.inputState}
+                  InputProps={{
+                    sx: styles.textField,
+                    endAdornment:
+                      item.type === 'password' ? (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() =>
+                              handleClickShowPassword(
+                                item.field as keyof ShowPasswordState
+                              )
+                            }
+                          >
+                            {showPassword[item.field as keyof ShowPasswordState] ? (
+                              <VISIBILITY_ICON />
+                            ) : (
+                              <VISIBILITY_OFF_ICON />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ) : null
+                  }}
+                  disabled={item.field === 'userName' && !isFirstLogin}
+                  error={checkString(formData[item.field as keyof FormData])}
+                />
+
+              </CustomField>
+              {validation.map((value) => {
+                if (item.field === 'userName' || item.field === 'password') {
+                  if (value.field === item.field && value.error !== '' && trySubmited) {
+                    return (
+                      <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
+                        <WARNING_ICON />
+                        {item.label} {item.helperText}
+                      </div>
+                    )
+                  }
+                } else if (item.field === 'newPassword') {
+                  if (value.field === item.field && !isPassValid && trySubmited) {
+                    return (
+                      <div className="bg-[#FDF8F8] flex items-center p-2 text-red rounded-lg mt-2 text-2xs">
+                        <WARNING_ICON />
+                        {item.helperText}
+                      </div>
+                    )
+                  }
+                } else if (item.field === 'confirmPassword') {
+                  if (value.field === item.field && !isPassIdentical && trySubmited) {
+                    return (
+                      <div className="bg-[#FDF8F8] flex items-center gap-2 p-2 text-red rounded-lg mt-2 text-2xs">
+                        <WARNING_ICON />
+                        {item.helperText}
+                      </div>
+                    )
+                  }
+                }
+              })}
+            </Box>
+          )
+        })}
         <Box>
           <Button
             fullWidth
