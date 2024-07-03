@@ -115,14 +115,14 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       label: t('denial_reason.description'),
       placeholder: t('denial_reason.enter_text'),
       field: 'description',
-      type: 'text',
+      type: 'text-not-mandatory',
       textarea: true,
     },
     {
       label: t('denial_reason.remark'),
       placeholder: t('denial_reason.enter_text'),
       field: 'remark',
-      type: 'text',
+      type: 'text-not-mandatory',
       textarea: true,
     }
   ]
@@ -393,6 +393,25 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
+              ) :  item.type === 'text-not-mandatory' ? (
+                <Grid item key={index}>
+                  <CustomField label={item.label}>
+                    <CustomTextField
+                      id={item.label}
+                      value={formData[item.field as keyof FormValues]}
+                      disabled={action === 'delete'}
+                      placeholder={item.placeholder}
+                      onChange={(event) =>
+                        handleFieldChange(
+                          item.field as keyof FormValues,
+                          event.target.value
+                        )
+                      }
+                      textarea = {item.textarea}
+                      multiline = {item.textarea}
+                    />
+                  </CustomField>
+                </Grid>
               ) : item.type == 'autocomplete' ? (
                 <CustomField label={item.label} mandatory>
                   <Autocomplete
@@ -429,14 +448,19 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
             )}
             <Grid item sx={{ width: '100%' }}>
               {trySubmited &&
-                validation.map((val, index) => (
-                  <FormErrorMsg
-                    key={index}
-                    field={t(val.field)}
-                    errorMsg={returnErrorMsg(val.problem, t)}
-                    type={val.type}
-                  />
-                ))}
+                validation.map((val, index) => {
+                  if (val.field !== t('denial_reason.description') && val.field !== t('denial_reason.remark')) {
+                    return (
+                      <FormErrorMsg
+                        key={index}
+                        field={t(val.field)}
+                        errorMsg={returnErrorMsg(val.problem, t)}
+                        type={val.type}
+                      />
+                    )
+                  }
+                  return null;
+                })}
             </Grid>
           </Grid>
         </Box>
