@@ -217,7 +217,7 @@ const Inventory: FunctionComponent = () => {
     setFilteredInventory([])
     let result
     if (realmApi === 'account') {
-      result = await astdGetAllInventory(page - 1, pageSize, searchText)
+      result = await astdGetAllInventory(page - 1, pageSize, searchText, query)
     } else {
       result = await getAllInventory(page - 1, pageSize, query)
     }

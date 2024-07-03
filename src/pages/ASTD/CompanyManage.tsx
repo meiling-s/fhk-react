@@ -1289,7 +1289,7 @@ function CompanyManage() {
               }
             }
           }}
-          label={t('tenant.search')}
+          label={t('tenant.company_number')}
           placeholder={t('tenant.enter_company_number')}
           inputProps={{
             inputMode: 'numeric',
