@@ -132,51 +132,58 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       label: t('denial_reason.reason_name_tchi'),
       placeholder: t('denial_reason.enter_name'),
       field: 'reasonNameTchi',
-      type: 'text'
+      type: 'text',
+      mandatory: true
     },
     {
       label: t('denial_reason.reason_name_schi'),
       placeholder: t('denial_reason.enter_name'),
       field: 'reasonNameSchi',
-      type: 'text'
+      type: 'text',
+      mandatory: true
     },
     {
       label: t('denial_reason.reason_name_eng'),
       placeholder: t('denial_reason.enter_name'),
       field: 'reasonNameEng',
-      type: 'text'
+      type: 'text',
+      mandatory: true
     },
     {
       label: t('denial_reason.corresponding_functions'),
       placeholder: t('denial_reason.select_function'),
       field: 'functionId',
-      type: 'autocomplete'
+      type: 'autocomplete',
+      mandatory: true
     },
-    {
-      label: t('denial_reason.description'),
-      placeholder: t('denial_reason.enter_text'),
-      field: 'description',
-      type: 'text',
-      textarea: true
-    },
+    // {
+    //   label: t('denial_reason.description'),
+    //   placeholder: t('denial_reason.enter_text'),
+    //   field: 'description',
+    //   type: 'text',
+    //   textarea: true
+    // },
     {
       label: t('denial_reason.remark'),
       placeholder: t('denial_reason.enter_text'),
       field: 'remark',
       type: 'text',
-      textarea: true
+      textarea: true,
+      mandatory: false
     },
     {
       label: t('denial_reason.weatherFlg'),
       placeholder: '',
       field: 'weatherFlg',
-      type: 'boolean'
+      type: 'boolean',
+      mandatory: true
     },
     {
       label: t('general_settings.state'),
       placeholder: '',
       field: 'status',
-      type: 'boolean'
+      type: 'boolean',
+      mandatory: true
     }
   ]
 
@@ -254,7 +261,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       reasonNameTchi: t('denial_reason.reason_name_tchi'),
       reasonNameSchi: t('denial_reason.reason_name_schi'),
       reasonNameEng: t('denial_reason.reason_name_eng'),
-      description: t('denial_reason.description'),
+      // description: t('denial_reason.description'),
       remark: t('denial_reason.remark')
     }
     Object.keys(formData).forEach((fieldName) => {
@@ -504,7 +511,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
             {denialReasonField.map((item, index) =>
               item.type === 'text' ? (
                 <Grid item key={index}>
-                  <CustomField label={item.label} mandatory>
+                  <CustomField label={item.label} mandatory={item.mandatory}>
                     <CustomTextField
                       id={item.label}
                       value={formData[item.field as keyof FormValues]}
