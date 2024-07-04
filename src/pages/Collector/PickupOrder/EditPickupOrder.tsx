@@ -134,7 +134,7 @@ const EditPickupOrder = () => {
       refPicoId: '',
       updatePicoDetail: []
     },
-    validationSchema: validateSchema,
+    // validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
       values.updatePicoDetail = addRow
       const result = await submitEditPickUpOrder(poInfo.picoId, values)

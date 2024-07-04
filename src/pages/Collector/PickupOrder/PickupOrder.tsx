@@ -9,7 +9,7 @@ import {
 } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
-import PickupOrderForm from '../../../components/FormComponents/PickupOrderForm'
+import PickupOrderForm from '../../../components/FormComponents/PickupOrderFormCustom'
 import StatusCard from '../../../components/StatusCard'
 
 import { PickupOrder, queryPickupOrder } from '../../../interfaces/pickupOrder'
@@ -356,7 +356,7 @@ const PickupOrders = () => {
     ]
   }
   const {recycType, dateFormat, manuList, collectorList, logisticList} = useContainer(CommonTypeContainer)
-
+  const [actions, setActions] = useState<'add' | 'edit' | 'delete'>('add')
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation()
@@ -892,14 +892,16 @@ const PickupOrders = () => {
     <>
       <ToastContainer />
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Modal open={openModal} onClose={handleCloses}>
+        {/* <Modal open={openModal} onClose={handleCloses}> */}
           <PickupOrderForm
+            openModal={openModal}
+            actions={actions}
             onClose={handleCloses}
             selectedRow={selectedRow}
             pickupOrder={pickupOrder}
             initPickupOrderRequest={initPickupOrderRequest}
           />
-        </Modal>
+        {/* </Modal> */}
         <Box sx={{ display: 'flex', alignItems: 'center', ml: '6px' }}>
           <Typography fontSize={20} color="black" fontWeight="bold">
             {t('pick_up_order.enquiry_pickup_order')}

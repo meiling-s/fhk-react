@@ -93,7 +93,7 @@
       "tenantIdNotFound": "未找到租戶 ID",
       "mustDifferent": "一定是不同的",
       "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'",
-      "invalidDate": "開始日期和截止日期之間的無效日期 發貨有效期 "
+      "invalidDate": "出貨有效期限開始日期應早於出貨有效期限結束日期"
     }
   },
   "component": {
@@ -454,6 +454,17 @@
       "not_same_as_sender": "與寄件者不同",
       "receiver_address_cannot": "收件者地址不能與寄件者地址相同",
       "receiver_address_exists": "先前的資料中已經存在接收者位址"
+    },
+    "validation": {
+      "routine": "需要規律的生活",
+      "logistic": "需要物流公司",
+      "vehicleType": "車輛類型為必填",
+      "vehiclePlatNo": "車牌號碼為必填項",
+      "pickupDetail": "取貨訂單詳細資料為必填項",
+      "addHocReason": "特殊原因為必填項",
+      "shippingtoDateNotValid": "迄今為止的運送有效期限無效",
+      "shippingFromDateNotValid": "運輸有效期限自日期無效",
+      "specificDate": "需要具體日期"
     }
   },
   "tenant": {

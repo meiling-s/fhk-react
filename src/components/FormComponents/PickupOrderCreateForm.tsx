@@ -50,7 +50,7 @@ import {
   displayCreatedDate
 } from '../../utils/utils'
 
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
@@ -65,6 +65,80 @@ type DeleteModalProps = {
   onDelete: (id: number) => void,
   editMode: boolean
 }
+
+type fieldName = 'effFrmDate' | 'effToDate' | 'routine' | 'logisticName' | 'vehicleTypeId' | 'platNo' | 'reason' | 'createPicoDetail' | 'AD_HOC';
+
+const initialErrors = {
+  effFrmDate: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+  },
+  effToDate: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+  },
+  routine: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+  },
+  logisticName: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+  },
+  vehicleTypeId: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+  },
+  platNo: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+  },
+  reason: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+  },
+  createPicoDetail: {
+    type: 'array',
+    status: false,
+    required: true,
+    message: '',
+  },
+  AD_HOC: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+  }
+}
+const ErrorMessage:React.FC<{message: string}> = ({message}) => {
+  return <Typography style={{color: 'red', fontWeight: '400'}}>
+{message}
+</Typography>
+}
+
+type ErrorsField = Record<
+  fieldName,
+  {
+    type: string
+    status: boolean
+    required: boolean,
+    message: string
+  }
+>
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
   open,
@@ -156,6 +230,7 @@ const PickupOrderCreateForm = ({
   const logisticCompany = logisticList
   const contractRole = contractType
   const [index, setIndex] = useState<number| null>(null)
+  const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
 
   const unexpiredContracts = contractRole
     ? contractRole?.filter((contract) => {
@@ -548,9 +623,311 @@ const PickupOrderCreateForm = ({
     setPrevLang(i18n.language)
   }, [i18n.language])
 
+  const isValidDayjsISODate = (date: Dayjs): boolean => {
+    if (!date.isValid()) {
+      return false
+    }
+    // Convert to ISO string and check if it matches the original input
+    const isoString = date.toISOString()
+    // Regex to ensure ISO 8601 format with 'Z' (UTC time)
+    const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+    return iso8601Pattern.test(isoString)
+  }
+
+  const validateData = () :boolean => {
+    let isValid = true
+
+    if(formik.values.effFrmDate){
+      const fromDate = dayjs(formik.values.effFrmDate);
+      if(!isValidDayjsISODate(fromDate)) {
+        isValid = false;
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            effFrmDate: {
+              ...prev.effFrmDate,
+              status: true,
+              message: t('pick_up_order.validation.shippingFromDateNotValid')
+            }
+          }
+        })
+      }
+    }
+
+    if(formik.values.effToDate){
+      const toDate = dayjs(formik.values.effToDate);
+      if(!isValidDayjsISODate(toDate)) {
+        isValid = false;
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            effToDate: {
+              ...prev.effToDate,
+              status: true,
+              message: t('pick_up_order.validation.shippingtoDateNotValid')
+            }
+          }
+        })
+      }
+    }
+
+    if(formik.values.effToDate && formik.values.effFrmDate){
+      const fromDate = dayjs(formik.values.effFrmDate).format('YYYY-MM-DD');
+      const toDate = dayjs(formik.values.effToDate).format('YYYY-MM-DD');
+
+      if(fromDate > toDate){
+        isValid = false;
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            effFrmDate: {
+              ...prev.effFrmDate,
+              status: true,
+              message: t('form.error.invalidDate')
+            }
+          }
+        })
+      } else {
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            effFrmDate: {
+              ...prev.effFrmDate,
+              status: false,
+            }
+          }
+        })
+      }
+
+    }
+
+    if(formik.values.routineType === ''){
+      isValid = false;
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          routine: {
+            ...prev.routine,
+            status: true,
+            message: t('pick_up_order.validation.routine')
+          }
+        }
+      })
+    }
+   
+    if(formik.values.routineType === 'specificDate' && formik.values.routine.length === 0){
+      isValid = false;
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          routine: {
+            ...prev.routine,
+            status: true,
+            message: t('pick_up_order.validation.specificDate')
+          }
+        }
+      })
+    } else if(formik.values.routineType === 'specificDate' && formik.values.routine.length >= 1){
+      const fromDate = dayjs(formik.values.effFrmDate).format('YYYY-MM-DD');
+      const toDate = dayjs(formik.values.effToDate).format('YYYY-MM-DD');
+      const routine:boolean[] = formik.values.routine.map((item: any) => {
+        const date = dayjs(item).format('YYYY-MM-DD');
+        if(date < fromDate || date > toDate){
+          return false
+        } else {
+          return true
+        }
+      });
+      
+      if(routine.includes(false)){
+        isValid = false;
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            routine: {
+              ...prev.routine,
+              status: true,
+              message: t('pick_up_order.out_of_date_range'),
+            }
+          }
+        })
+      } else {
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            routine: {
+              ...prev.routine,
+              status: false
+            }
+          }
+        })
+      }
+    } else if(formik.values.routineType !== 'specificDate'){
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          routine: {
+            ...prev.routine,
+            status: false,
+          }
+        }
+      })
+    }
+
+    if(formik.values.logisticName === ''){
+      isValid = false;
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          logisticName: {
+            ...prev.logisticName,
+            status: true,
+            message: t('pick_up_order.validation.logistic')
+          }
+        }
+      })
+    } else {
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          logisticName: {
+            ...prev.logisticName,
+            status: false
+          }
+        }
+      })
+    }
+    if(formik.values.vehicleTypeId === ''){
+      isValid = false;
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          vehicleTypeId: {
+            ...prev.vehicleTypeId,
+            status: true,
+            message: t('pick_up_order.validation.vehicleType')
+          }
+        }
+      })
+    } else {
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          vehicleTypeId: {
+            ...prev.vehicleTypeId,
+            status: false,
+          }
+        }
+      })
+    }
+    if(formik.values.platNo === ''){
+      isValid = false;
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          platNo: {
+            ...prev.platNo,
+            status: true,
+            message: t('pick_up_order.validation.vehiclePlatNo')
+          }
+        }
+      })
+    } else {
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          platNo: {
+            ...prev.platNo,
+            status: false,
+          }
+        }
+      })
+    }
+
+   if(state.length === 0){
+    isValid = false;
+    setErrorsField(prev => {
+      return {
+        ...prev,
+        createPicoDetail: {
+          ...prev.createPicoDetail,
+          status: true,
+          message: t('pick_up_order.validation.pickupDetail')
+        }
+      }
+    })
+   } else {
+    setErrorsField(prev => {
+      return {
+        ...prev,
+        createPicoDetail: {
+          ...prev.createPicoDetail,
+          status: false,
+        }
+      }
+    })
+   }
+
+   const isDetailOrderEmpty = state.filter(item => item.status !== 'DELETED');
+   if(isDetailOrderEmpty.length === 0){
+    isValid = false;
+    setErrorsField(prev => {
+      return {
+        ...prev,
+        createPicoDetail: {
+          ...prev.createPicoDetail,
+          status: true,
+          message: t('pick_up_order.validation.pickupDetail')
+        }
+      }
+    })
+   } else {
+    setErrorsField(prev => {
+      return {
+        ...prev,
+        createPicoDetail: {
+          ...prev.createPicoDetail,
+          status: false,
+        }
+      }
+    })
+   }
+
+   if(formik.values.picoType === 'AD_HOC' && formik.values.reason ===''){
+    isValid = false;
+    setErrorsField(prev => {
+      return {
+        ...prev,
+        AD_HOC: {
+          ...prev.AD_HOC,
+          status: true,
+          message: t('pick_up_order.validation.addHocReason')
+        }
+      }
+    })
+   } else if(formik.values.picoType === 'AD_HOC' && formik.values.reason) {
+    setErrorsField(prev => {
+      return {
+        ...prev,
+        AD_HOC: {
+          ...prev.AD_HOC,
+          status: false,
+        }
+      }
+    })
+   }
+    return isValid  
+  }
+
+  const onhandleSubmit = () => {
+    const isValid = validateData();
+    if(!isValid) return
+    formik.handleSubmit()
+  }
+  console.log('indexOf', index, openModal, isEditing)
   return (
     <>
-      <form onSubmit={formik.handleSubmit}>
+      {/* <form onSubmit={formik.handleSubmit}> */}
         <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
           <LocalizationProvider
             dateAdapter={AdapterDayjs}
@@ -612,7 +989,7 @@ const PickupOrderCreateForm = ({
                   />
                 </CustomField>
               </Grid>
-              <Grid item display="flex">
+              <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomDatePicker2
                   pickupOrderForm={true}
                   setDate={(values) => {
@@ -623,34 +1000,48 @@ const PickupOrderCreateForm = ({
                   defaultEndDate={selectedPo?.effToDate}
                   iconColor={colorTheme}
                 />
+                {
+                  errorsField['effFrmDate' as keyof ErrorsField].required && errorsField['effFrmDate' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={errorsField.effFrmDate.message}/> : ''
+                }
+                {
+                  errorsField['effToDate' as keyof ErrorsField].required && errorsField['effToDate' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={errorsField.effToDate.message}/> : ''
+                }
               </Grid>
               {formik.values.picoType == 'ROUTINE' && (
-                <CustomField
-                  label={t('pick_up_order.routine.every_week')}
-                  style={{ width: '100%' }}
-                  mandatory
-                >
-                  <PicoRoutineSelect
-                    setRoutine={(values) => {
-                      formik.setFieldValue('routineType', values.routineType)
-                      formik.setFieldValue('routine', values.routineContent)
-                    }}
-                    defaultValue={{
-                      routineType: selectedPo?.routineType ?? 'daily',
-                      routineContent: selectedPo?.routine ?? []
-                    }}
-                    itemColor={{
-                      bgColor: customListTheme.bgColor,
-                      borderColor: customListTheme
-                        ? customListTheme.border
-                        : '#79CA25'
-                    }}
-                    roleColor={colorTheme}
-                  />
-                </CustomField>
+                <Grid item style={{display: 'flex', flexDirection: 'column'}}>
+                  <CustomField
+                    label={t('pick_up_order.routine.every_week')}
+                    style={{ width: '100%' }}
+                    mandatory
+                  >
+                    <PicoRoutineSelect
+                      setRoutine={(values) => {
+                        formik.setFieldValue('routineType', values.routineType)
+                        formik.setFieldValue('routine', values.routineContent)
+                      }}
+                      defaultValue={{
+                        routineType: selectedPo?.routineType ?? 'daily',
+                        routineContent: selectedPo?.routine ?? []
+                      }}
+                      itemColor={{
+                        bgColor: customListTheme.bgColor,
+                        borderColor: customListTheme
+                          ? customListTheme.border
+                          : '#79CA25'
+                      }}
+                      roleColor={colorTheme}
+                    />
+                  </CustomField>
+                  {
+                    errorsField['routine' as keyof ErrorsField].required && errorsField['routine' as keyof ErrorsField].status ? 
+                    <ErrorMessage  message={errorsField.routine.message}/> : ''
+                  }
+                </Grid>
               )}
 
-              <Grid item>
+              <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomField
                   label={t('pick_up_order.choose_logistic')}
                   mandatory
@@ -684,8 +1075,12 @@ const PickupOrderCreateForm = ({
                     }
                   />
                 </CustomField>
+                  {
+                    errorsField['logisticName' as keyof ErrorsField].required && errorsField['logisticName' as keyof ErrorsField].status ? 
+                    <ErrorMessage  message={errorsField.logisticName.message}/> : ''
+                  }
               </Grid>
-              <Grid item>
+              <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomField
                   label={t('pick_up_order.vehicle_category')}
                   mandatory
@@ -709,6 +1104,10 @@ const PickupOrderCreateForm = ({
                     }}
                   />
                 </CustomField>
+                {
+                  errorsField['vehicleTypeId' as keyof ErrorsField].required && errorsField['vehicleTypeId' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={errorsField.vehicleTypeId.message}/> : ''
+                }
               </Grid>
               <Grid item>
                 <CustomField label={t('pick_up_order.plat_number')} mandatory>
@@ -721,6 +1120,10 @@ const PickupOrderCreateForm = ({
                     error={formik.errors.platNo && formik.touched.platNo}
                   />
                 </CustomField>
+                {
+                  errorsField['platNo' as keyof ErrorsField].required && errorsField['platNo' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={errorsField.platNo.message}/> : ''
+                }
               </Grid>
               <Grid item>
                 <CustomField
@@ -771,7 +1174,7 @@ const PickupOrderCreateForm = ({
                 </Grid>
               )}
               {formik.values.picoType == 'AD_HOC' && (
-                <Grid item>
+                <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                   <CustomField
                     label={t('pick_up_order.adhoc.reason_get_off')}
                     mandatory
@@ -792,6 +1195,10 @@ const PickupOrderCreateForm = ({
                       }}
                     />
                   </CustomField>
+                  {
+                    errorsField['AD_HOC' as keyof ErrorsField].required && errorsField['AD_HOC' as keyof ErrorsField].status ? 
+                    <ErrorMessage  message={errorsField.AD_HOC.message}/> : ''
+                  }
                 </Grid>
               )}
               {formik.values.picoType === 'AD_HOC' && (
@@ -832,7 +1239,7 @@ const PickupOrderCreateForm = ({
                   {t('pick_up_order.recyle_loc_info')}
                 </Typography>
               </Grid>
-              <Grid item>
+              <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomField label={''}>
                   <DataGrid
                     rows={
@@ -873,8 +1280,9 @@ const PickupOrderCreateForm = ({
                       }
                     }}
                   />
-                  <Modal open={openModal} onClose={handleCloses}>
+                  {/* <Modal open={openModal} onClose={handleCloses}> */}
                     <CreateRecycleForm
+                      openModal={openModal}
                       data={state}
                       setId={setId}
                       setState={setState}
@@ -885,7 +1293,7 @@ const PickupOrderCreateForm = ({
                       index={index}
                       editMode={editMode}
                     />
-                  </Modal>
+                  {/* </Modal> */}
 
                   <PickupOrderList
                     drawerOpen={openPico}
@@ -916,6 +1324,11 @@ const PickupOrderCreateForm = ({
                     {t('pick_up_order.new')}
                   </Button>
                 </CustomField>
+                {
+                  errorsField['createPicoDetail' as keyof ErrorsField].required && errorsField['createPicoDetail' as keyof ErrorsField].status ? 
+                  <ErrorMessage  message={errorsField.createPicoDetail.message}/> : ''
+                }
+              
               </Grid>
               <Grid item>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -946,6 +1359,7 @@ const PickupOrderCreateForm = ({
                 <Button
                   type="submit"
                   sx={[buttonFilledCustom, localstyles.localButton]}
+                  onClick={onhandleSubmit}
                 >
                   {t('pick_up_order.finish')}
                 </Button>
@@ -977,7 +1391,7 @@ const PickupOrderCreateForm = ({
             />
           </LocalizationProvider>
         </Box>
-      </form>
+      {/* </form> */}
     </>
   )
 }

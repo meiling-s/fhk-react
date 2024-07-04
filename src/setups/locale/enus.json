@@ -93,7 +93,7 @@
       "tenantIdNotFound": "Tenant Id not found",
       "mustDifferent": "must be different",
       "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed",
-      "invalidDate": "invalid date between start  and to date Shipping validity date"
+      "invalidDate": "Shipping validity start date should be lower than shipping validity end date"
     }
   },
   "component": {
@@ -455,6 +455,17 @@
       "not_same_as_sender": "not-same-as-sender",
       "receiver_address_cannot": "Receiver address cannot be the same as sender address",
       "receiver_address_exists": "Receiver address already exists in previous data"
+    },
+    "validation": {
+      "routine": "Routine is Required",
+      "logistic": "Logistic Company is Required",
+      "vehicleType": "Vehicle type is Required",
+      "vehiclePlatNo": "Vehicle plate number is Required",
+      "pickupDetail": "Pickup order detail is Required",
+      "addHocReason": "Ad-hoc reason is Required",
+      "shippingtoDateNotValid": "Shipping validity to date not valid",
+      "shippingFromDateNotValid": "Shipping validity from date not valid",
+      "specificDate": "Specific Date is Required"
     }
   },
   "tenant": {

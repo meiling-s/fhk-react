@@ -160,7 +160,7 @@ const CreatePickupOrder = () => {
       updatedBy: 'Admin',
       createPicoDetail: []
     },
-    validationSchema: validateSchema,
+    // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow
       const result = await submitPickUpOrder(values)
