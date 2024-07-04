@@ -22,6 +22,7 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import { getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import { useNavigate } from 'react-router-dom'
+import Switcher from '../../../components/FormComponents/CustomSwitch'
 
 interface CreateDenialReasonProps {
   drawerOpen: boolean
@@ -52,6 +53,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     description: '',
     remark: ''
   }
+  const [status, setStatus] = useState<boolean>(true)
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -152,6 +154,13 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       type: 'text-not-mandatory',
       textarea: true,
       mandatory: false
+    },
+    {
+      label: t('general_settings.state'),
+      placeholder: '',
+      field: 'status',
+      type: 'boolean',
+      mandatory: true
     }
   ]
 
@@ -177,6 +186,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         // description: selectedItem.description,
         remark: selectedItem.remark
       })
+      setStatus(selectedItem.status === 'ACTIVE' ? true : false)
     }
   }
 
@@ -264,7 +274,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         description: formData.description,
         functionId: formData.functionId,
         remark: formData.remark,
-        status: 'ACTIVE',
+        status: status === true ? 'ACTIVE' : 'INACTIVE',
         createdBy: loginName,
         updatedBy: loginName
       }
@@ -321,7 +331,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameEng: formData.reasonNameEng,
         description: '',
         functionId: formData.functionId,
-        status: 'ACTIVE',
+        status: status === true ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
         updatedBy: loginName
       }
@@ -433,6 +443,42 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
+              ) : item.type == 'autocomplete' ? (
+                <Grid item key={index}>
+                  <CustomField label={item.label} mandatory>
+                    <Autocomplete
+                      disablePortal
+                      id="contractNo"
+                      defaultValue={selectedFunctionId}
+                      options={functionList.map(
+                        (functionItem) => functionItem.name
+                      )}
+                      onChange={(event, value) => {
+                        if (value) {
+                          handleFieldChange(
+                            item.field as keyof FormValues,
+                            value
+                          )
+                          setSelectedFunctionId(value)
+                        }
+                      }}
+                      value={selectedFunctionId}
+                      disabled={action === 'delete'}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder={item.placeholder}
+                          sx={[styles.textField, { width: 320 }]}
+                          InputProps={{
+                            ...params.InputProps,
+                            sx: styles.inputProps
+                          }}
+                          error={checkString(selectedFunctionId)}
+                        />
+                      )}
+                    />
+                  </CustomField>
+                </Grid>
               ) : item.type === 'text-not-mandatory' ? (
                 <Grid item key={index}>
                   <CustomField label={item.label}>
@@ -452,37 +498,19 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
-              ) : item.type == 'autocomplete' ? (
-                <CustomField label={item.label} mandatory>
-                  <Autocomplete
-                    disablePortal
-                    id="contractNo"
-                    defaultValue={selectedFunctionId}
-                    options={functionList.map(
-                      (functionItem) => functionItem.name
-                    )}
-                    onChange={(event, value) => {
-                      if (value) {
-                        handleFieldChange(item.field as keyof FormValues, value)
-                        setSelectedFunctionId(value)
-                      }
-                    }}
-                    value={selectedFunctionId}
+              ) : item.field == 'status' && item.type == 'boolean' ? (
+                <Grid item key={index}>
+                  <CustomField label={item.label} mandatory></CustomField>
+                  <Switcher
+                    onText={t('status.active')}
+                    offText={t('status.inactive')}
                     disabled={action === 'delete'}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder={item.placeholder}
-                        sx={[styles.textField, { width: 320 }]}
-                        InputProps={{
-                          ...params.InputProps,
-                          sx: styles.inputProps
-                        }}
-                        error={checkString(selectedFunctionId)}
-                      />
-                    )}
+                    defaultValue={status}
+                    setState={(newValue) => {
+                      setStatus(newValue)
+                    }}
                   />
-                </CustomField>
+                </Grid>
               ) : (
                 <></>
               )
