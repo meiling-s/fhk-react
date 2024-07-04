@@ -467,6 +467,9 @@ function CreateCollectionPoint() {
       case formErr.startDateBehindEndDate:
         msg = t('form.error.startDateBehindEndDate')
         break
+      case formErr.incorrectAddress:
+        msg = t('form.error.incorrectAddress')
+        break
     }
     return msg
   }
