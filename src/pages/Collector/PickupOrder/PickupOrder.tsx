@@ -761,7 +761,7 @@ const PickupOrders = () => {
   }
   const searchfield = [
     {
-      label: t('pick_up_order.filter.search'),
+      label: t('purchase_order.table.pico_id'),
       placeholder: t('check_in.search_input'),
       field: 'picoId',
       width: '260px'
@@ -782,7 +782,7 @@ const PickupOrders = () => {
       field: 'logisticName'
     },
     {
-      label: t('pick_up_order.table.sender_company'),
+      label: t('check_in.location'),
       options: getUniqueOptions('senderCompany'),
       field: 'senderName'
     },

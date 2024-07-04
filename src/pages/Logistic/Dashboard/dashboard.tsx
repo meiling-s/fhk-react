@@ -386,7 +386,7 @@ const VehicleDashboard = () => {
           <TextField
             id="searchCompanyNumber"
             onChange={handleInputChange}
-            label={t('tenant.search')}
+            label={t('tenant.invite_form.company_number')}
             sx={style.inputState}
             placeholder={t('tenant.enter_company_number')}
             inputProps={{

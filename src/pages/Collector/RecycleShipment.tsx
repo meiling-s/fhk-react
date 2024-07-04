@@ -722,7 +722,7 @@ function ShipmentManage() {
               handleFilterPoNum(event.target.value)
             }}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
+            label={t('check_in.pickup_order_no')}
             InputLabelProps={{
               style: { color: primaryColor },
               focused: true
@@ -749,10 +749,6 @@ function ShipmentManage() {
               label={t('check_in.sender_company')}
               onChange={handleComChange}
             >
-              <MenuItem value="">
-                {' '}
-                <em>{t('check_in.any')}</em>
-              </MenuItem>
               {checkInRequest
                 ?.filter(
                   (item, index, self) =>
@@ -764,23 +760,23 @@ function ShipmentManage() {
                     {item.senderName}
                   </MenuItem>
                 ))}
+              <MenuItem value="">
+                {' '}
+                <em>{t('check_in.any')}</em>
+              </MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
             <InputLabel id="location-label" sx={styles.textFieldLabel}>
-              {t('check_in.sender_addr')}
+              {t('check_in.location')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t('check_in.sender_addr')}
+              label={t('check_in.location')}
               onChange={handleLocChange}
             >
-              <MenuItem value="">
-                {' '}
-                <em>{t('check_in.any')}</em>
-              </MenuItem>
               {checkInRequest
                 ?.filter(
                   (item, index, self) =>
@@ -792,6 +788,10 @@ function ShipmentManage() {
                     {item.senderAddr}
                   </MenuItem>
                 ))}
+              <MenuItem value="">
+                {' '}
+                <em>{t('check_in.any')}</em>
+              </MenuItem>
             </Select>
           </FormControl>
         </Box>

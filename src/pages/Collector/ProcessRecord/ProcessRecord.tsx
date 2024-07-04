@@ -234,7 +234,7 @@ const ProcessRecord: FunctionComponent = () => {
 
   const searchfield = [
     {
-      label: t('processRecord.search'),
+      label: t('processRecord.processingNumb'),
       placeholder: t('processRecord.enterProcessingNumber'),
       field: 'processOutId',
       numberOnly: true,
@@ -247,7 +247,7 @@ const ProcessRecord: FunctionComponent = () => {
       width: '300px'
     },
     {
-      label: t('warehouse_page.place'),
+      label: t('processRecord.processingLocation'),
       options: getUniqueOptions('address'),
       field: 'processAddress',
       width: '300px'

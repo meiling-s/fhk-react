@@ -309,7 +309,7 @@
     "changed_pickup_order": "回收运單已更改",
     "table": {
       "created_datetime": "建立日期",
-      "pico_id": "运单编号",
+      "pico_id": "订单编号",
       "logistic_company": "物流公司",
       "delivery_date": "送货日期",
       "sender_company": "寄件公司",
@@ -580,6 +580,8 @@
     "please_enter": "请输入",
     "nature": "自然",
     "speaker": "讲者",
+    "enterSpeaker": "请输入发言人",
+    "enterNature": "请进入自然",
     "service_type": "服务种类",
     "additional": "额外的",
     "other_services": "其他服务",
@@ -743,6 +745,31 @@
     "failedDeleteUser": "删除用户失败",
     "resetPasswaitApproval": "重置密码等待批准",
     "resetPassword": "重设密码"
+  },
+  "checkinandcheckout": {
+    "checkinandcheckout": "概覽",
+    "title": "出入記錄",
+    "creation_date": "建立日期",
+    "outin": "出/入",
+    "shipping_company": "寄件公司",
+    "receiver": "收件公司",
+    "waybill_number": "運單編號",
+    "adjust_inventory": "調整庫存",
+    "logistics_company": "物流公司",
+    "delivery_location": "送出地點",
+    "arrived": "到達地點",
+    "search": "搜索",
+    "company": "公司",
+    "place": "地點",
+    "search_placeholder": "輸入採購訂單編號",
+    "any": "任何",
+    "send": "送出",
+    "send_in": "送入",
+    "ship": "出货",
+    "send_request": "送出請求",
+    "shipping_info": "運輸資料",
+    "recyle_loc_info": "預計回收地點資料",
+    "recyc_loc_info": "回收地點資料"
   },
   "userGroup": {
     "title": "用戶群組",
@@ -981,7 +1008,7 @@
     "and": "和",
     "new": "新的",
     "currency": "货币",
-    "contracts": "合同",
+    "contracts": "合约",
     "name": "名称",
     "reference_number": "参考编号",
     "state": "状态",
@@ -989,7 +1016,7 @@
     "end_date": "结束日期",
     "remark": "评论",
     "whether": "是否EPD",
-    "default_currency": "默认货币",
+    "default_currency": "预设货币",
     "activate": "活性",
     "deactive": "停用",
     "true": "真的",
@@ -1056,7 +1083,7 @@
     "table": {
       "created_datetime": "建立日期",
       "order_number": "訂單編號",
-      "pico_id": "回收運單編號",
+      "pico_id": "订单号",
       "place_receipt": "收貨地點",
       "receipt_date_time": "收貨日期及時間",
       "status": "状态",
@@ -1341,6 +1368,7 @@
     "classification": "分类",
     "subclassification": "子分類",
     "place": "地方",
-    "po_number": "输入采购订单号"
+    "po_number": "输入采购订单号",
+    "jo_number": "输入工作编号"
   }
 }
