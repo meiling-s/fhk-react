@@ -93,7 +93,8 @@
       "tenatIdShouldBeSixDigit": "Tenant Id should be six digit",
       "tenantIdNotFound": "Tenant Id not found",
       "mustDifferent": "must be different",
-      "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed"
+      "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed",
+      "incorrectAddress": "incorrect Address"
     }
   },
   "component": {

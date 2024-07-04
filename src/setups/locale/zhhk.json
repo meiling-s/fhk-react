@@ -93,7 +93,8 @@
       "tenatIdShouldBeSixDigit": "租戶 ID 應為六位數",
       "tenantIdNotFound": "未找到租戶 ID",
       "mustDifferent": "一定是不同的",
-      "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'"
+      "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'",
+      "incorrectAddress": "地址不正確"
     }
   },
   "component": {

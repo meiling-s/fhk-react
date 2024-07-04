@@ -172,9 +172,19 @@ function CreateCollectionPoint() {
     }
   }, [debouncedSearchValue])
 
+  // const checkRecyclable = () => {
+  //   //console.log('checkRecyclable', items)
+  //   return recyclables.every((item) => item.recycSubTypeId.length > 0)
+  // }
+
   const checkRecyclable = () => {
-    //console.log('checkRecyclable', items)
-    return recyclables.every((item) => item.recycSubTypeId.length > 0)
+    return recyclables.every((item) => {
+      const recycType = typeList.recyc.find(r => r.recycTypeId === item.recycTypeId);
+      if (recycType && recycType.recycSubType.length > 0) {
+        return item.recycSubTypeId.length > 0;
+      }
+      return true; // If no sub-types available, it's okay
+    });
   }
 
   const checkTimePeriod = () => {
@@ -230,7 +240,8 @@ function CreateCollectionPoint() {
     const [newStart, newEnd] = newPeriod;
     for (let period of periods) {
       const [start, end] = period;
-      if (newStart < end && newEnd > start) {
+      if ((newStart < end && newEnd > start) ||
+      (start < newEnd && end > newStart) ) {
         return true;
       }
     }
@@ -263,7 +274,7 @@ function CreateCollectionPoint() {
       ;(await address) == ''
         ? tempV.push({
             field: 'col.address',
-            problem: formErr.empty,
+            problem: formErr.incorrectAddress,
             type: 'error'
           })
         : (await checkAddressUsed(contractNo, address)) &&
@@ -344,12 +355,12 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      // !checkRecyclable() &&
-      //   tempV.push({
-      //     field: 'inventory.recyleSubType',
-      //     problem: formErr.empty,
-      //     type: 'error'
-      //   })
+      !checkRecyclable() &&
+        tempV.push({
+          field: 'inventory.recyleSubType',
+          problem: formErr.empty,
+          type: 'error'
+        })
       // console.log(
       //   'num:',
       //   staffNum,
