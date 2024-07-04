@@ -32,9 +32,9 @@ export const createInvitation = async (
     })
     console.log('Insert tenant success:', JSON.stringify(response.data))
     return response
-  } catch (e:any) {
+  } catch (e: any) {
     console.error('Insert tenant Failed:', e)
-    throw(e)
+    throw e
   }
 }
 
@@ -55,7 +55,7 @@ export const getAllTenant = async (page: number, size: number) => {
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)
-    throw(e)
+    throw e
   }
 }
 
@@ -80,7 +80,7 @@ export const searchTenantById = async (
     return response
   } catch (e) {
     console.error('Get all tenant failed:', e)
-    throw(e)
+    throw e
   }
 }
 
@@ -96,7 +96,7 @@ export const getTenantById = async (tenantId: number) => {
     return response
   } catch (e) {
     console.error('Get tenant by id failed:', e)
-    throw(e)
+    throw e
   }
 }
 
@@ -124,10 +124,7 @@ export const updateTenantRegInfo = async (
   }
 }
 
-export const updateTenantStatus = async (
-  item: any,
-  tenantId: number
-) => {
+export const updateTenantStatus = async (item: any, tenantId: number) => {
   try {
     const response = await axiosInstance({
       baseURL: window.baseURL.account,
@@ -139,16 +136,15 @@ export const updateTenantStatus = async (
     //   JSON.stringify(response.data)
     // )
     return response
-  } catch (e:any) {
+  } catch (e: any) {
     console.error('Tenant register status update failed:', e)
-    throw(e)
+    throw e
   }
 }
 
 export const sendEmailInvitation = async (
   memberEmail: string,
-  title: string,
-  content: string
+  tenantId: string
 ) => {
   try {
     const response = await axiosInstance({
@@ -156,8 +152,7 @@ export const sendEmailInvitation = async (
       ...SEND_EMAIL_INVITATION,
       params: {
         to: memberEmail,
-        title: title,
-        content: content
+        tenantId
       }
     })
     console.log(
