@@ -975,20 +975,20 @@
           "deleteFailMsg": "Failed delete driver"
         }
       },
-      "vehicleMenu": {
-        "vehicle_number": "Vehicle Number",
-        "license_plate_number": "License Plate Number",
-        "vehicle_type": "Vehicle Type",
-        "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
-        "picture": "Picture",
-        "license_plate_number_placeholder": "Please enter vehicle plate number",
-        "vehicle_type_placeholder": "Please enter vehicle type",
-        "vehicle_cargo_capacity_placeholder": "Please enter weight"
-      },
       "search": {
         "label": "Search",
         "placeholder": "Please enter Driver No."
       }
+    },
+    "vehicleMenu": {
+      "vehicle_number": "Vehicle Number",
+      "license_plate_number": "License Plate Number",
+      "vehicle_type": "Vehicle Type",
+      "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
+      "picture": "Picture",
+      "license_plate_number_placeholder": "Please enter vehicle plate number",
+      "vehicle_type_placeholder": "Please enter vehicle type",
+      "vehicle_cargo_capacity_placeholder": "Please enter weight"
     }
   },
   "general_settings": {
