@@ -142,19 +142,10 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
 
   const returnErrMessage = (errorString: string) => {
     try {
-      // Extract the JSON part of the string
-      const jsonStringStart = errorString.indexOf('{', errorString.indexOf('{"errorMessage"'));
-      const jsonStringEnd = errorString.lastIndexOf('}') + 1;
-      const jsonString = errorString.slice(jsonStringStart, jsonStringEnd);
-
-      // Parse the JSON string
-      const outerError = JSON.parse(jsonString);
-
-      // Extract and parse the inner JSON string
-      const innerErrorString = outerError.errorMessage;
-      const innerError = JSON.parse(innerErrorString);
+      const innerError = JSON.parse(errorString);
 
       // Get the actual error message
+      console.log(innerError, 'error')
       setErrorMessage(innerError.errorMessage);
       setErrorUpdate(true)
     } catch (e) {
