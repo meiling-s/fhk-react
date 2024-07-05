@@ -50,10 +50,11 @@ import {
   displayCreatedDate
 } from '../../utils/utils'
 
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
+import useValidationPickupOrder from '../../pages/Collector/PickupOrder/useValidationPickupOrder'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -64,6 +65,12 @@ type DeleteModalProps = {
   onClose: () => void
   onDelete: (id: number) => void,
   editMode: boolean
+}
+
+const ErrorMessage:React.FC<{message: string}> = ({message}) => {
+  return <Typography style={{color: 'red', fontWeight: '400'}}>
+{message}
+</Typography>
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
@@ -146,13 +153,17 @@ const PickupOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { logisticList, contractType, vehicleType, recycType, dateFormat, getLogisticlist } =
+  const { 
+    logisticList, contractType, vehicleType, recycType, dateFormat, getLogisticlist,
+    getContractList  
+  } =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const logisticCompany = logisticList
   const contractRole = contractType
   const [index, setIndex] = useState<number| null>(null)
+  const { validateData, errorsField } =  useValidationPickupOrder(formik.values, state);
 
   const unexpiredContracts = contractRole
     ? contractRole?.filter((contract) => {
@@ -168,7 +179,8 @@ const PickupOrderCreateForm = ({
   // set custom style each role
   const colorTheme: string = getThemeColorRole(role)
   const customListTheme = getThemeCustomList(role)
-  
+  const [prevLang, setPrevLang] = useState(i18n.language);
+
   const buttonFilledCustom = {
     borderRadius: '40px',
     borderColor: '#7CE495',
@@ -218,6 +230,7 @@ const PickupOrderCreateForm = ({
 
   useEffect(() => {
     getLogisticlist()
+    getContractList()
   }, [])
 
   const handleCloses = () => {
@@ -255,9 +268,9 @@ const PickupOrderCreateForm = ({
     ? dayjs.utc(selectedPo.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
     : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
-  const updatedDate = selectedPo
-    ? dayjs.utc(selectedPo.updatedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
-    : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+  const approveAt = selectedPo?.approvedAt
+    ? dayjs.utc(selectedPo?.approvedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+    : dayjs.utc(selectedPo?.updatedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   const handleHeaderOnClick = () => {
     //console.log('Header click')
@@ -506,9 +519,62 @@ const PickupOrderCreateForm = ({
     setPicoRefId('')
   }
 
+  const getCurrentLogisticName = (value:string) => {
+    let logisticName:string = '';
+    if(!logisticCompany) return logisticName
+    if(prevLang === Languages.ENUS){
+      const logistic = logisticCompany.find(item => item.logisticNameEng === value);
+      if(i18n.language === Languages.ZHCH){
+        logisticName = logistic?.logisticNameSchi ?? ''
+      } else if(i18n.language === Languages.ZHHK){
+        logisticName = logistic?.logisticNameTchi ?? ''
+      }
+    } else if(prevLang === Languages.ZHCH){
+      const logistic = logisticCompany.find(item => item.logisticNameSchi === value);
+      if(i18n.language === Languages.ENUS){
+        logisticName = logistic?.logisticNameEng ?? ''
+      } else if(i18n.language === Languages.ZHHK){
+        logisticName = logistic?.logisticNameTchi ?? ''
+      }
+    } else if(prevLang === Languages.ZHHK){
+      const logistic = logisticCompany.find(item => item.logisticNameTchi === value);
+      if(i18n.language === Languages.ZHCH){
+        logisticName = logistic?.logisticNameSchi ?? ''
+      } else if(i18n.language === Languages.ENUS){
+        logisticName = logistic?.logisticNameEng ?? ''
+      }
+    }
+    formik.setFieldValue('logisticName', logisticName)
+  }
+
+  useEffect(() => {
+    if(formik?.values?.logisticName && prevLang !== i18n.language){
+      getCurrentLogisticName(formik.values.logisticName)
+    }
+    setPrevLang(i18n.language)
+  }, [i18n.language])
+
+  const isValidDayjsISODate = (date: Dayjs): boolean => {
+    if (!date.isValid()) {
+      return false
+    }
+    // Convert to ISO string and check if it matches the original input
+    const isoString = date.toISOString()
+    // Regex to ensure ISO 8601 format with 'Z' (UTC time)
+    const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+    return iso8601Pattern.test(isoString)
+  }
+
+
+  const onhandleSubmit = () => {
+    const isValid = validateData();
+    if(!isValid) return
+    formik.handleSubmit()
+  }
+
   return (
     <>
-      <form onSubmit={formik.handleSubmit}>
+      {/* <form onSubmit={formik.handleSubmit}> */}
         <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
           <LocalizationProvider
             dateAdapter={AdapterDayjs}
@@ -570,7 +636,7 @@ const PickupOrderCreateForm = ({
                   />
                 </CustomField>
               </Grid>
-              <Grid item display="flex">
+              <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomDatePicker2
                   pickupOrderForm={true}
                   setDate={(values) => {
@@ -581,34 +647,39 @@ const PickupOrderCreateForm = ({
                   defaultEndDate={selectedPo?.effToDate}
                   iconColor={colorTheme}
                 />
+                { errorsField.effFrmDate.status ?  <ErrorMessage  message={errorsField.effFrmDate.message}/> : ''}
+                { errorsField.effToDate.status ?  <ErrorMessage  message={errorsField.effToDate.message}/> : ''}
               </Grid>
               {formik.values.picoType == 'ROUTINE' && (
-                <CustomField
-                  label={t('pick_up_order.routine.every_week')}
-                  style={{ width: '100%' }}
-                  mandatory
-                >
-                  <PicoRoutineSelect
-                    setRoutine={(values) => {
-                      formik.setFieldValue('routineType', values.routineType)
-                      formik.setFieldValue('routine', values.routineContent)
-                    }}
-                    defaultValue={{
-                      routineType: selectedPo?.routineType ?? 'daily',
-                      routineContent: selectedPo?.routine ?? []
-                    }}
-                    itemColor={{
-                      bgColor: customListTheme.bgColor,
-                      borderColor: customListTheme
-                        ? customListTheme.border
-                        : '#79CA25'
-                    }}
-                    roleColor={colorTheme}
-                  />
-                </CustomField>
+                <Grid item style={{display: 'flex', flexDirection: 'column'}}>
+                  <CustomField
+                    label={t('pick_up_order.routine.every_week')}
+                    style={{ width: '100%' }}
+                    mandatory
+                  >
+                    <PicoRoutineSelect
+                      setRoutine={(values) => {
+                        formik.setFieldValue('routineType', values.routineType)
+                        formik.setFieldValue('routine', values.routineContent)
+                      }}
+                      defaultValue={{
+                        routineType: selectedPo?.routineType ?? 'daily',
+                        routineContent: selectedPo?.routine ?? []
+                      }}
+                      itemColor={{
+                        bgColor: customListTheme.bgColor,
+                        borderColor: customListTheme
+                          ? customListTheme.border
+                          : '#79CA25'
+                      }}
+                      roleColor={colorTheme}
+                    />
+                  </CustomField>
+                  { errorsField.routine.status ? <ErrorMessage  message={errorsField.routine.message}/> : ''}
+                </Grid>
               )}
 
-              <Grid item>
+              <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomField
                   label={t('pick_up_order.choose_logistic')}
                   mandatory
@@ -642,8 +713,9 @@ const PickupOrderCreateForm = ({
                     }
                   />
                 </CustomField>
+                  { errorsField.logisticName.status ? <ErrorMessage  message={errorsField.logisticName.message}/> : ''}
               </Grid>
-              <Grid item>
+              <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomField
                   label={t('pick_up_order.vehicle_category')}
                   mandatory
@@ -667,6 +739,7 @@ const PickupOrderCreateForm = ({
                     }}
                   />
                 </CustomField>
+                { errorsField.vehicleTypeId.status ? <ErrorMessage  message={errorsField.vehicleTypeId.message}/> : ''}
               </Grid>
               <Grid item>
                 <CustomField label={t('pick_up_order.plat_number')} mandatory>
@@ -679,6 +752,7 @@ const PickupOrderCreateForm = ({
                     error={formik.errors.platNo && formik.touched.platNo}
                   />
                 </CustomField>
+                { errorsField.platNo.status ? <ErrorMessage  message={errorsField.platNo.message}/> : ''}
               </Grid>
               <Grid item>
                 <CustomField
@@ -729,7 +803,7 @@ const PickupOrderCreateForm = ({
                 </Grid>
               )}
               {formik.values.picoType == 'AD_HOC' && (
-                <Grid item>
+                <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                   <CustomField
                     label={t('pick_up_order.adhoc.reason_get_off')}
                     mandatory
@@ -750,6 +824,7 @@ const PickupOrderCreateForm = ({
                       }}
                     />
                   </CustomField>
+                  { errorsField.AD_HOC.status ?  <ErrorMessage  message={errorsField.AD_HOC.message}/> : '' }
                 </Grid>
               )}
               {formik.values.picoType === 'AD_HOC' && (
@@ -790,7 +865,7 @@ const PickupOrderCreateForm = ({
                   {t('pick_up_order.recyle_loc_info')}
                 </Typography>
               </Grid>
-              <Grid item>
+              <Grid item >
                 <CustomField label={''}>
                   <DataGrid
                     rows={
@@ -831,8 +906,9 @@ const PickupOrderCreateForm = ({
                       }
                     }}
                   />
-                  <Modal open={openModal} onClose={handleCloses}>
+                  {/* <Modal open={openModal} onClose={handleCloses}> */}
                     <CreateRecycleForm
+                      openModal={openModal}
                       data={state}
                       setId={setId}
                       setState={setState}
@@ -843,7 +919,7 @@ const PickupOrderCreateForm = ({
                       index={index}
                       editMode={editMode}
                     />
-                  </Modal>
+                  {/* </Modal> */}
 
                   <PickupOrderList
                     drawerOpen={openPico}
@@ -876,6 +952,9 @@ const PickupOrderCreateForm = ({
                 </CustomField>
               </Grid>
               <Grid item>
+                { errorsField.createPicoDetail.status ? <ErrorMessage  message={errorsField.createPicoDetail.message}/> : ''}
+              </Grid>
+              <Grid item>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography
                     sx={{
@@ -886,7 +965,8 @@ const PickupOrderCreateForm = ({
                   >
                     {t('common.createdDatetime') + ' : ' + createdDate}
                   </Typography>
-                  <Typography
+                  {approveAt && editMode &&
+                    <Typography
                     sx={{
                       ...styles.header3,
                       paddingX: '4px',
@@ -894,14 +974,16 @@ const PickupOrderCreateForm = ({
                       borderLeft: '1px solid #ACACAC'
                     }}
                   >
-                    {t('common.lastUpdateDatetime') + ' : ' + updatedDate}
+                    {t('common.lastUpdateDatetime') + ' : ' + approveAt}
                   </Typography>
+                  }
                 </Box>
               </Grid>
               <Grid item>
                 <Button
                   type="submit"
                   sx={[buttonFilledCustom, localstyles.localButton]}
+                  onClick={onhandleSubmit}
                 >
                   {t('pick_up_order.finish')}
                 </Button>
@@ -933,7 +1015,7 @@ const PickupOrderCreateForm = ({
             />
           </LocalizationProvider>
         </Box>
-      </form>
+      {/* </form> */}
     </>
   )
 }

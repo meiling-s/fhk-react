@@ -89,7 +89,7 @@ export default function PicoRoutineSelect({
             itemColor={itemColor ? itemColor : null}
             defaultWeek={
               defaultValue?.routineType == routineType[1].id
-                ? defaultValue.routineContent
+                ? routineContent
                 : undefined
             }
           />

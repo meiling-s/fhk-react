@@ -93,7 +93,7 @@
       "tenantIdNotFound": "未找到租户 ID",
       "mustDifferent": "必须不同",
       "loginIdProhibited": "不允许在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'",
-      "invalidDate": "开始日期和结束日期之间的日期无效 运输有效日期 "
+      "invalidDate": "运输有效期开始日期应低于运输有效期结束日期"
     }
   },
   "component": {
@@ -374,7 +374,9 @@
       "recycling_week": "回收周次",
       "every_week": "逢星期",
       "contract_number": "合约编号",
-      "enter_contract": "请输入编号"
+      "enter_contract": "请输入编号",
+      "period": "时期",
+      "period_should_not_empty": "期间日期"
     },
     "adhoc": {
       "reason_get_off": "下单原因",
@@ -453,6 +455,17 @@
       "not_same_as_sender": "与发件人不同",
       "receiver_address_cannot": "收件人地址不能与发件人地址相同",
       "receiver_address_exists": "之前的数据中已经存在接收者地址"
+    },
+    "validation": {
+      "routine": "例行公事是必需的",
+      "logistic": "需要物流公司",
+      "vehicleType": "车辆类型为必填项",
+      "vehiclePlatNo": "车牌号码为必填项",
+      "pickupDetail": "需要提供取货订单详细信息",
+      "addHocReason": "需要临时理由",
+      "shippingtoDateNotValid": "迄今为止的运输有效期无效",
+      "shippingFromDateNotValid": "发货有效期自日期起无效",
+      "specificDate": "需要具体日期"
     }
   },
   "tenant": {

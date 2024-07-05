@@ -9,7 +9,7 @@ import {
 } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
-import PickupOrderForm from '../../../components/FormComponents/PickupOrderForm'
+import PickupOrderForm from '../../../components/FormComponents/PickupOrderFormCustom'
 import StatusCard from '../../../components/StatusCard'
 
 import { PickupOrder, queryPickupOrder } from '../../../interfaces/pickupOrder'
@@ -356,7 +356,7 @@ const PickupOrders = () => {
     ]
   }
   const {recycType, dateFormat, manuList, collectorList, logisticList} = useContainer(CommonTypeContainer)
-
+  const [actions, setActions] = useState<'add' | 'edit' | 'delete'>('add')
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation()
@@ -375,7 +375,7 @@ const PickupOrders = () => {
   })
   const [approveModal, setApproveModal] = useState(false)
   const [rejectModal, setRejectModal] = useState(false)
-  const [reasonList, setReasonList] = useState<any>([])
+  const [reasonList, setReasonList] = useState<{reasonId: string, name: string}[]>([])
 
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const statusList: StatusPickUpOrder[] = [
@@ -549,29 +549,43 @@ const PickupOrders = () => {
   const getRejectReason = async () => {
     try {
       let result = await getAllReason()
-      if (result && result?.data && result?.data.length > 0) {
-        let reasonName = ''
-        switch (i18n.language) {
-          case 'enus':
-            reasonName = 'reasonNameEng'
-            break
-          case 'zhch':
-            reasonName = 'reasonNameSchi'
-            break
-          case 'zhhk':
-            reasonName = 'reasonNameTchi'
-            break
-          default:
-            reasonName = 'reasonNameEng'
-            break
-        }
-        result?.data.map(
-          (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
-            item.id = item.reasonId
-            item.name = item[reasonName]
+      if (result && result?.data && result?.data?.content.length > 0) {
+        // let reasonName = ''
+        // switch (i18n.language) {
+        //   case 'enus':
+        //     reasonName = 'reasonNameEng'
+        //     break
+        //   case 'zhch':
+        //     reasonName = 'reasonNameSchi'
+        //     break
+        //   case 'zhhk':
+        //     reasonName = 'reasonNameTchi'
+        //     break
+        //   default:
+        //     reasonName = 'reasonNameEng'
+        //     break
+        // }
+
+        const reasons: {reasonId: string, name: string}[] = result?.data?.content.map((item: any) => {
+            if(i18n.language === Languages.ENUS){
+              return {
+                id : item.reasonId,
+                name : item.reasonNameEng
+              }
+            } else if(i18n.language === Languages.ZHCH){
+              return {
+                id : item.reasonId,
+                name : item.reasonNameSchi
+              }
+            } else {
+              return {
+                id : item.reasonId,
+                name : item.reasonNameTchi
+              }
+            }
           }
         )
-        setReasonList(result?.data)
+        setReasonList(reasons)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -593,6 +607,7 @@ const PickupOrders = () => {
 
   useEffect(() => {
     initPickupOrderRequest()
+    getRejectReason()
   }, [i18n.language])
 
   useEffect(() => {
@@ -649,8 +664,6 @@ const PickupOrders = () => {
     setRecycItem(recycItems)
   }, [i18n.language])
 
-  
-
   const getDeliveryDay = (deliveryDate:string[]) => {
     const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat', 'sun'];
     let delivery = deliveryDate.map(item => item.trim());
@@ -699,9 +712,7 @@ const PickupOrders = () => {
         return '每天'
       }
     } else {
-      console.log('row, routine', row.routine)
-      // return `${row.routine.join(', ')}`
-      return getDeliveryDay(row.routine)
+      return  getDeliveryDay(row.routine)
     }
   }
 
@@ -829,7 +840,6 @@ const PickupOrders = () => {
   }
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as PickupOrder;
-    console.log('row', row)
     setSelectedRow(row);
     setOpenModal(true);
   };
@@ -878,19 +888,20 @@ const PickupOrders = () => {
     })
     return options
   }
-  
   return (
     <>
       <ToastContainer />
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Modal open={openModal} onClose={handleCloses}>
+        {/* <Modal open={openModal} onClose={handleCloses}> */}
           <PickupOrderForm
+            openModal={openModal}
+            actions={actions}
             onClose={handleCloses}
             selectedRow={selectedRow}
             pickupOrder={pickupOrder}
             initPickupOrderRequest={initPickupOrderRequest}
           />
-        </Modal>
+        {/* </Modal> */}
         <Box sx={{ display: 'flex', alignItems: 'center', ml: '6px' }}>
           <Typography fontSize={20} color="black" fontWeight="bold">
             {t('pick_up_order.enquiry_pickup_order')}
