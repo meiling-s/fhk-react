@@ -360,7 +360,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameSchi: formData.reasonNameSchi,
         reasonNameEng: formData.reasonNameEng,
         description: formData.description,
-        functionId: formData.functionId,
+        functionId: status ? formData.functionId : '0',
         remark: formData.remark,
         status: status === true ? 'ACTIVE' : 'INACTIVE',
         createdBy: loginName,
