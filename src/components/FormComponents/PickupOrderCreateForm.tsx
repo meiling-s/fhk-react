@@ -54,6 +54,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
+import useValidationPickupOrder from '../../pages/Collector/PickupOrder/useValidationPickupOrder'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -66,79 +67,11 @@ type DeleteModalProps = {
   editMode: boolean
 }
 
-type fieldName = 'effFrmDate' | 'effToDate' | 'routine' | 'logisticName' | 'vehicleTypeId' | 'platNo' | 'reason' | 'createPicoDetail' | 'AD_HOC';
-
-const initialErrors = {
-  effFrmDate: {
-    type: 'string',
-    status: false,
-    required: true,
-    message: '',
-  },
-  effToDate: {
-    type: 'string',
-    status: false,
-    required: true,
-    message: '',
-  },
-  routine: {
-    type: 'string',
-    status: false,
-    required: true,
-    message: '',
-  },
-  logisticName: {
-    type: 'string',
-    status: false,
-    required: true,
-    message: '',
-  },
-  vehicleTypeId: {
-    type: 'string',
-    status: false,
-    required: true,
-    message: '',
-  },
-  platNo: {
-    type: 'string',
-    status: false,
-    required: true,
-    message: '',
-  },
-  reason: {
-    type: 'string',
-    status: false,
-    required: true,
-    message: '',
-  },
-  createPicoDetail: {
-    type: 'array',
-    status: false,
-    required: true,
-    message: '',
-  },
-  AD_HOC: {
-    type: 'string',
-    status: false,
-    required: true,
-    message: '',
-  }
-}
 const ErrorMessage:React.FC<{message: string}> = ({message}) => {
   return <Typography style={{color: 'red', fontWeight: '400'}}>
 {message}
 </Typography>
 }
-
-type ErrorsField = Record<
-  fieldName,
-  {
-    type: string
-    status: boolean
-    required: boolean,
-    message: string
-  }
->
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
   open,
@@ -230,7 +163,7 @@ const PickupOrderCreateForm = ({
   const logisticCompany = logisticList
   const contractRole = contractType
   const [index, setIndex] = useState<number| null>(null)
-  const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
+  const { validateData, errorsField } =  useValidationPickupOrder(formik.values, state);
 
   const unexpiredContracts = contractRole
     ? contractRole?.filter((contract) => {
@@ -335,9 +268,9 @@ const PickupOrderCreateForm = ({
     ? dayjs.utc(selectedPo.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
     : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
-  const approveAt = selectedPo
-    ? dayjs.utc(selectedPo.approvedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
-    : dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+  const approveAt = selectedPo?.approvedAt
+    ? dayjs.utc(selectedPo?.approvedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+    : dayjs.utc(selectedPo?.updatedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
 
   const handleHeaderOnClick = () => {
     //console.log('Header click')
@@ -617,8 +550,6 @@ const PickupOrderCreateForm = ({
   useEffect(() => {
     if(formik?.values?.logisticName && prevLang !== i18n.language){
       getCurrentLogisticName(formik.values.logisticName)
-      // if(i18n.language)
-      // console.log('logisticName', formik.values.logisticName, logisticCompany)
     }
     setPrevLang(i18n.language)
   }, [i18n.language])
@@ -634,297 +565,13 @@ const PickupOrderCreateForm = ({
     return iso8601Pattern.test(isoString)
   }
 
-  const validateData = () :boolean => {
-    let isValid = true
-
-    if(formik.values.effFrmDate){
-      const fromDate = dayjs(formik.values.effFrmDate);
-      if(!isValidDayjsISODate(fromDate)) {
-        isValid = false;
-        setErrorsField(prev => {
-          return {
-            ...prev,
-            effFrmDate: {
-              ...prev.effFrmDate,
-              status: true,
-              message: t('pick_up_order.validation.shippingFromDateNotValid')
-            }
-          }
-        })
-      }
-    }
-
-    if(formik.values.effToDate){
-      const toDate = dayjs(formik.values.effToDate);
-      if(!isValidDayjsISODate(toDate)) {
-        isValid = false;
-        setErrorsField(prev => {
-          return {
-            ...prev,
-            effToDate: {
-              ...prev.effToDate,
-              status: true,
-              message: t('pick_up_order.validation.shippingtoDateNotValid')
-            }
-          }
-        })
-      }
-    }
-
-    if(formik.values.effToDate && formik.values.effFrmDate){
-      const fromDate = dayjs(formik.values.effFrmDate).format('YYYY-MM-DD');
-      const toDate = dayjs(formik.values.effToDate).format('YYYY-MM-DD');
-
-      if(fromDate > toDate){
-        isValid = false;
-        setErrorsField(prev => {
-          return {
-            ...prev,
-            effFrmDate: {
-              ...prev.effFrmDate,
-              status: true,
-              message: t('form.error.invalidDate')
-            }
-          }
-        })
-      } else {
-        setErrorsField(prev => {
-          return {
-            ...prev,
-            effFrmDate: {
-              ...prev.effFrmDate,
-              status: false,
-            }
-          }
-        })
-      }
-
-    }
-
-    if(formik.values.routineType === ''){
-      isValid = false;
-      setErrorsField(prev => {
-        return {
-          ...prev,
-          routine: {
-            ...prev.routine,
-            status: true,
-            message: t('pick_up_order.validation.routine')
-          }
-        }
-      })
-    }
-   
-    if(formik.values.routineType === 'specificDate' && formik.values.routine.length === 0){
-      isValid = false;
-      setErrorsField(prev => {
-        return {
-          ...prev,
-          routine: {
-            ...prev.routine,
-            status: true,
-            message: t('pick_up_order.validation.specificDate')
-          }
-        }
-      })
-    } else if(formik.values.routineType === 'specificDate' && formik.values.routine.length >= 1){
-      const fromDate = dayjs(formik.values.effFrmDate).format('YYYY-MM-DD');
-      const toDate = dayjs(formik.values.effToDate).format('YYYY-MM-DD');
-      const routine:boolean[] = formik.values.routine.map((item: any) => {
-        const date = dayjs(item).format('YYYY-MM-DD');
-        if(date < fromDate || date > toDate){
-          return false
-        } else {
-          return true
-        }
-      });
-      
-      if(routine.includes(false)){
-        isValid = false;
-        setErrorsField(prev => {
-          return {
-            ...prev,
-            routine: {
-              ...prev.routine,
-              status: true,
-              message: t('pick_up_order.out_of_date_range'),
-            }
-          }
-        })
-      } else {
-        setErrorsField(prev => {
-          return {
-            ...prev,
-            routine: {
-              ...prev.routine,
-              status: false
-            }
-          }
-        })
-      }
-    } else if(formik.values.routineType !== 'specificDate'){
-      setErrorsField(prev => {
-        return {
-          ...prev,
-          routine: {
-            ...prev.routine,
-            status: false,
-          }
-        }
-      })
-    }
-
-    if(formik.values.logisticName === ''){
-      isValid = false;
-      setErrorsField(prev => {
-        return {
-          ...prev,
-          logisticName: {
-            ...prev.logisticName,
-            status: true,
-            message: t('pick_up_order.validation.logistic')
-          }
-        }
-      })
-    } else {
-      setErrorsField(prev => {
-        return {
-          ...prev,
-          logisticName: {
-            ...prev.logisticName,
-            status: false
-          }
-        }
-      })
-    }
-    if(formik.values.vehicleTypeId === ''){
-      isValid = false;
-      setErrorsField(prev => {
-        return {
-          ...prev,
-          vehicleTypeId: {
-            ...prev.vehicleTypeId,
-            status: true,
-            message: t('pick_up_order.validation.vehicleType')
-          }
-        }
-      })
-    } else {
-      setErrorsField(prev => {
-        return {
-          ...prev,
-          vehicleTypeId: {
-            ...prev.vehicleTypeId,
-            status: false,
-          }
-        }
-      })
-    }
-    if(formik.values.platNo === ''){
-      isValid = false;
-      setErrorsField(prev => {
-        return {
-          ...prev,
-          platNo: {
-            ...prev.platNo,
-            status: true,
-            message: t('pick_up_order.validation.vehiclePlatNo')
-          }
-        }
-      })
-    } else {
-      setErrorsField(prev => {
-        return {
-          ...prev,
-          platNo: {
-            ...prev.platNo,
-            status: false,
-          }
-        }
-      })
-    }
-
-   if(state.length === 0){
-    isValid = false;
-    setErrorsField(prev => {
-      return {
-        ...prev,
-        createPicoDetail: {
-          ...prev.createPicoDetail,
-          status: true,
-          message: t('pick_up_order.validation.pickupDetail')
-        }
-      }
-    })
-   } else {
-    setErrorsField(prev => {
-      return {
-        ...prev,
-        createPicoDetail: {
-          ...prev.createPicoDetail,
-          status: false,
-        }
-      }
-    })
-   }
-
-   const isDetailOrderEmpty = state.filter(item => item.status !== 'DELETED');
-   if(isDetailOrderEmpty.length === 0){
-    isValid = false;
-    setErrorsField(prev => {
-      return {
-        ...prev,
-        createPicoDetail: {
-          ...prev.createPicoDetail,
-          status: true,
-          message: t('pick_up_order.validation.pickupDetail')
-        }
-      }
-    })
-   } else {
-    setErrorsField(prev => {
-      return {
-        ...prev,
-        createPicoDetail: {
-          ...prev.createPicoDetail,
-          status: false,
-        }
-      }
-    })
-   }
-
-   if(formik.values.picoType === 'AD_HOC' && formik.values.reason ===''){
-    isValid = false;
-    setErrorsField(prev => {
-      return {
-        ...prev,
-        AD_HOC: {
-          ...prev.AD_HOC,
-          status: true,
-          message: t('pick_up_order.validation.addHocReason')
-        }
-      }
-    })
-   } else if(formik.values.picoType === 'AD_HOC' && formik.values.reason) {
-    setErrorsField(prev => {
-      return {
-        ...prev,
-        AD_HOC: {
-          ...prev.AD_HOC,
-          status: false,
-        }
-      }
-    })
-   }
-    return isValid  
-  }
 
   const onhandleSubmit = () => {
     const isValid = validateData();
     if(!isValid) return
     formik.handleSubmit()
   }
-  console.log('indexOf', index, openModal, isEditing)
+
   return (
     <>
       {/* <form onSubmit={formik.handleSubmit}> */}
@@ -1000,14 +647,8 @@ const PickupOrderCreateForm = ({
                   defaultEndDate={selectedPo?.effToDate}
                   iconColor={colorTheme}
                 />
-                {
-                  errorsField['effFrmDate' as keyof ErrorsField].required && errorsField['effFrmDate' as keyof ErrorsField].status ? 
-                  <ErrorMessage  message={errorsField.effFrmDate.message}/> : ''
-                }
-                {
-                  errorsField['effToDate' as keyof ErrorsField].required && errorsField['effToDate' as keyof ErrorsField].status ? 
-                  <ErrorMessage  message={errorsField.effToDate.message}/> : ''
-                }
+                { errorsField.effFrmDate.status ?  <ErrorMessage  message={errorsField.effFrmDate.message}/> : ''}
+                { errorsField.effToDate.status ?  <ErrorMessage  message={errorsField.effToDate.message}/> : ''}
               </Grid>
               {formik.values.picoType == 'ROUTINE' && (
                 <Grid item style={{display: 'flex', flexDirection: 'column'}}>
@@ -1034,10 +675,7 @@ const PickupOrderCreateForm = ({
                       roleColor={colorTheme}
                     />
                   </CustomField>
-                  {
-                    errorsField['routine' as keyof ErrorsField].required && errorsField['routine' as keyof ErrorsField].status ? 
-                    <ErrorMessage  message={errorsField.routine.message}/> : ''
-                  }
+                  { errorsField.routine.status ? <ErrorMessage  message={errorsField.routine.message}/> : ''}
                 </Grid>
               )}
 
@@ -1075,10 +713,7 @@ const PickupOrderCreateForm = ({
                     }
                   />
                 </CustomField>
-                  {
-                    errorsField['logisticName' as keyof ErrorsField].required && errorsField['logisticName' as keyof ErrorsField].status ? 
-                    <ErrorMessage  message={errorsField.logisticName.message}/> : ''
-                  }
+                  { errorsField.logisticName.status ? <ErrorMessage  message={errorsField.logisticName.message}/> : ''}
               </Grid>
               <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomField
@@ -1104,10 +739,7 @@ const PickupOrderCreateForm = ({
                     }}
                   />
                 </CustomField>
-                {
-                  errorsField['vehicleTypeId' as keyof ErrorsField].required && errorsField['vehicleTypeId' as keyof ErrorsField].status ? 
-                  <ErrorMessage  message={errorsField.vehicleTypeId.message}/> : ''
-                }
+                { errorsField.vehicleTypeId.status ? <ErrorMessage  message={errorsField.vehicleTypeId.message}/> : ''}
               </Grid>
               <Grid item>
                 <CustomField label={t('pick_up_order.plat_number')} mandatory>
@@ -1120,10 +752,7 @@ const PickupOrderCreateForm = ({
                     error={formik.errors.platNo && formik.touched.platNo}
                   />
                 </CustomField>
-                {
-                  errorsField['platNo' as keyof ErrorsField].required && errorsField['platNo' as keyof ErrorsField].status ? 
-                  <ErrorMessage  message={errorsField.platNo.message}/> : ''
-                }
+                { errorsField.platNo.status ? <ErrorMessage  message={errorsField.platNo.message}/> : ''}
               </Grid>
               <Grid item>
                 <CustomField
@@ -1195,10 +824,7 @@ const PickupOrderCreateForm = ({
                       }}
                     />
                   </CustomField>
-                  {
-                    errorsField['AD_HOC' as keyof ErrorsField].required && errorsField['AD_HOC' as keyof ErrorsField].status ? 
-                    <ErrorMessage  message={errorsField.AD_HOC.message}/> : ''
-                  }
+                  { errorsField.AD_HOC.status ?  <ErrorMessage  message={errorsField.AD_HOC.message}/> : '' }
                 </Grid>
               )}
               {formik.values.picoType === 'AD_HOC' && (
@@ -1324,11 +950,7 @@ const PickupOrderCreateForm = ({
                     {t('pick_up_order.new')}
                   </Button>
                 </CustomField>
-                {
-                  errorsField['createPicoDetail' as keyof ErrorsField].required && errorsField['createPicoDetail' as keyof ErrorsField].status ? 
-                  <ErrorMessage  message={errorsField.createPicoDetail.message}/> : ''
-                }
-              
+                { errorsField.createPicoDetail.status ? <ErrorMessage  message={errorsField.createPicoDetail.message}/> : ''}
               </Grid>
               <Grid item>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -1341,7 +963,7 @@ const PickupOrderCreateForm = ({
                   >
                     {t('common.createdDatetime') + ' : ' + createdDate}
                   </Typography>
-                  {selectedPo?.approvedAt &&
+                  {approveAt &&
                     <Typography
                     sx={{
                       ...styles.header3,

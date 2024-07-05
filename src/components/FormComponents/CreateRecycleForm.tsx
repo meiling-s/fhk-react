@@ -201,8 +201,9 @@ const CreateRecycleForm = ({
   }, [editRow])
 
   useEffect(() => {
-    // console.log('defaultRecyc: ', defaultRecyc)
-  }, [defaultRecyc])
+    getManuList()
+    getCollectorList()
+  }, [])
 
   const validateSchema = Yup.lazy((values) => {
     let prevData: CreatePicoDetail[] = []
