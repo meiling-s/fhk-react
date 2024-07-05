@@ -153,7 +153,7 @@ export interface Row {
     contractNo:    string;
     updatedBy:     string;
     refPicoId:     string ;
-    createPicoDetail: CreatePicoDetail[]
+    updatePicoDetail: CreatePicoDetail[]
     
 }
 
