@@ -397,7 +397,7 @@ const RegisterTenant = () => {
           <Box sx={styles.errorContainer}>
             <Box sx={{ display: "flex", flexDirection: "row", flex: 9, alignItems: "center" }}>
               <Typography sx={styles.txtField}>
-                上載商業登記圖片
+                上載圖片
               </Typography>
               <Typography sx={styles.txtErrorMsg}>
                 不应留白
