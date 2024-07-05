@@ -236,9 +236,7 @@ const Login = () => {
         /**handling err code from BE for reset PW and showing err category */
         if (error?.response) {
           const errCode = returnErrCode(error)
-          if (errCode === '004') {
-            //navigate to reset pass firsttime login
-            console.group('errrr2r', errCode)
+          if (errCode === '004' || errCode === '005') {
             localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
             return navigate('/changePassword')
           }
