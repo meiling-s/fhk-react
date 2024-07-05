@@ -4,7 +4,9 @@ import dayjs, { Dayjs } from 'dayjs'
 import { useTranslation } from "react-i18next";
 import { Languages } from "../../../constants/constant";
 
-type fieldName = 'effFrmDate' | 'effToDate' | 'routine' | 'logisticName' | 'vehicleTypeId' | 'platNo' | 'reason' | 'createPicoDetail' | 'AD_HOC';
+type fieldName = 
+  'effFrmDate' | 'effToDate' | 'routine' | 'logisticName' | 'vehicleTypeId' | 'platNo' | 
+  'reason' | 'createPicoDetail' | 'AD_HOC' | 'weeklyDate';
 
 const initialErrors = {
   effFrmDate: {
@@ -64,6 +66,13 @@ const initialErrors = {
     messages: {}
   },
   AD_HOC: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+    messages: {}
+  },
+  weeklyDate: {
     type: 'string',
     status: false,
     required: true,
@@ -142,6 +151,16 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
             messageEn: "Specific Date is out of range of the Shipping validity date",
             messageTc: "具體日期超出「出貨有效期限」範圍",
             messageSc: "具体日期超出“发货有效期”范围"
+        },
+        weeklyDate: {
+          messageEn: "Weekly Date is Required",
+          messageTc: '每週日期為必填項',
+          messageSc: '每周日期为必填项'
+        },
+        duplicateDateTimePeriod: {
+          messageEn: "Duplicate time periode should not be allowed",
+          messageTc: '不允許重複的時間段',
+          messageSc: '不允许重复的时间段'
         }
     }
 
@@ -297,8 +316,24 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
               return true
             }
           });
-          
-          if(routine.includes(false)){
+
+          const originalLength = pico?.routine?.length;
+          const isDuplicatedDate = new Set([...pico?.routine]).size;
+         
+          if(originalLength !== isDuplicatedDate){
+            isValid = false;
+            setErrorsField(prev => {
+              return {
+                ...prev,
+                routine: {
+                  ...prev.routine,
+                  status: true,
+                  messages: errorMessages['duplicateDateTimePeriod'],
+                  message: getTranslationMessage('duplicateDateTimePeriod'),
+                }
+              }
+            })
+          } else if(routine.includes(false)){
             isValid = false;
             setErrorsField(prev => {
               return {
@@ -323,6 +358,31 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
             })
           }
         } else if(pico.routineType !== 'specificDate'){
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              routine: {
+                ...prev.routine,
+                status: false,
+              }
+            }
+          })
+        }
+
+        if(pico.routineType === 'weekly' && pico.routine.length === 0){
+          isValid = false;
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              routine: {
+                ...prev.routine,
+                status: true,
+                messages: errorMessages['weeklyDate'],
+                message: getTranslationMessage('weeklyDate')
+              }
+            }
+          })
+        } else if((pico.routineType === 'weekly' && pico.routine.length >= 0)){
           setErrorsField(prev => {
             return {
               ...prev,

@@ -554,22 +554,11 @@ const PickupOrderCreateForm = ({
     setPrevLang(i18n.language)
   }, [i18n.language])
 
-  const isValidDayjsISODate = (date: Dayjs): boolean => {
-    if (!date.isValid()) {
-      return false
-    }
-    // Convert to ISO string and check if it matches the original input
-    const isoString = date.toISOString()
-    // Regex to ensure ISO 8601 format with 'Z' (UTC time)
-    const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
-    return iso8601Pattern.test(isoString)
-  }
-
-
   const onhandleSubmit = () => {
     const isValid = validateData();
+    console.log('formik', formik.values)
     if(!isValid) return
-    formik.handleSubmit()
+    // formik.handleSubmit()
   }
 
   return (
