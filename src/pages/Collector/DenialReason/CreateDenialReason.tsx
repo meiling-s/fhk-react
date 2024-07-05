@@ -263,6 +263,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   const validate = async () => {
     const tempV: formValidate[] = []
     const excludeFields = ['description', 'remark']
+    if (!status) {
+      excludeFields.push('functionId')
+    }
     const fieldMapping: FormValues = {
       functionId: t('denial_reason.corresponding_functions'),
       reasonNameTchi: t('denial_reason.reason_name_tchi'),

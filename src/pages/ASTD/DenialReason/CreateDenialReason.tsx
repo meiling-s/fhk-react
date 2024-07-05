@@ -276,9 +276,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameSchi: formData.reasonNameSchi,
         reasonNameEng: formData.reasonNameEng,
         description: formData.description,
-        functionId: formData.functionId,
+        functionId: status ? formData.functionId : '0',
         remark: formData.remark,
-        status: status === true ? 'ACTIVE' : 'INACTIVE',
+        status: status ? 'ACTIVE' : 'INACTIVE',
         createdBy: loginName,
         updatedBy: loginName
       }
@@ -335,7 +335,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameEng: formData.reasonNameEng,
         description: '',
         functionId: formData.functionId,
-        status: status === true ? 'ACTIVE' : 'INACTIVE',
+        status: status ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
         updatedBy: loginName
       }
