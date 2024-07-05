@@ -865,7 +865,7 @@ const PickupOrderCreateForm = ({
                   {t('pick_up_order.recyle_loc_info')}
                 </Typography>
               </Grid>
-              <Grid item style={{display: 'flex', flexDirection: 'column'}}>
+              <Grid item >
                 <CustomField label={''}>
                   <DataGrid
                     rows={
@@ -950,6 +950,8 @@ const PickupOrderCreateForm = ({
                     {t('pick_up_order.new')}
                   </Button>
                 </CustomField>
+              </Grid>
+              <Grid item>
                 { errorsField.createPicoDetail.status ? <ErrorMessage  message={errorsField.createPicoDetail.message}/> : ''}
               </Grid>
               <Grid item>
