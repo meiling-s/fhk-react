@@ -223,18 +223,12 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         setWeatherFlg(false)
       }
 
-      if (
-        isCollectors() &&
-        (selectedItem as DenialReasonCollectors).status !== undefined
-      ) {
-        setStatus(
-          (selectedItem as DenialReasonCollectors).status === 'ACTIVE'
-            ? true
-            : false
-        )
-      } else {
-        setStatus(false)
-      }
+      setStatus(
+        (selectedItem as DenialReasonCollectors).status === 'ACTIVE'
+          ? true
+          : false
+      )
+
       setExistingDenialReason(
         denialReasonlist.filter(
           (item) => item.reasonId != selectedItem.reasonId
@@ -481,7 +475,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       reasonNameTchi: formData.reasonNameTchi,
       reasonNameSchi: formData.reasonNameSchi,
       reasonNameEng: formData.reasonNameEng,
-      description: formData.description,
+      description: "",
       functionId: formData.functionId,
       status: 'DELETED',
       remark: formData.remark,
@@ -613,9 +607,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     }}
                   />
                 </Grid>
-              ) : item.field == 'status' &&
-                item.type == 'boolean' &&
-                role === 'collector' ? (
+              ) : item.field == 'status' && item.type == 'boolean' ? (
                 <Grid item key={index}>
                   <CustomField label={item.label} mandatory></CustomField>
                   <Switcher
