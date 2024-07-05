@@ -418,30 +418,31 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
             }
           })
         }
-        if(pico.vehicleTypeId === ''){
-          isValid = false;
-          setErrorsField(prev => {
-            return {
-              ...prev,
-              vehicleTypeId: {
-                ...prev.vehicleTypeId,
-                status: true,
-                messages: errorMessages['vehicleType'],
-                message: getTranslationMessage('vehicleType')
-              }
-            }
-          })
-        } else {
-          setErrorsField(prev => {
-            return {
-              ...prev,
-              vehicleTypeId: {
-                ...prev.vehicleTypeId,
-                status: false,
-              }
-            }
-          })
-        }
+        // if(pico.vehicleTypeId === ''){
+        //   isValid = false;
+        //   setErrorsField(prev => {
+        //     return {
+        //       ...prev,
+        //       vehicleTypeId: {
+        //         ...prev.vehicleTypeId,
+        //         status: true,
+        //         messages: errorMessages['vehicleType'],
+        //         message: getTranslationMessage('vehicleType')
+        //       }
+        //     }
+        //   })
+        // } else {
+        //   setErrorsField(prev => {
+        //     return {
+        //       ...prev,
+        //       vehicleTypeId: {
+        //         ...prev.vehicleTypeId,
+        //         status: false,
+        //       }
+        //     }
+        //   })
+        // }
+        
         if(pico.platNo === ''){
           isValid = false;
           setErrorsField(prev => {

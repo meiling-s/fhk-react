@@ -707,7 +707,7 @@ const PickupOrderCreateForm = ({
               <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomField
                   label={t('pick_up_order.vehicle_category')}
-                  mandatory
+                  mandatory={false}
                 >
                   <CustomItemList
                     items={getvehicleType() || []}
