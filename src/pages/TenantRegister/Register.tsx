@@ -97,7 +97,7 @@ const RegisterTenant = () => {
     },
     {
       name: 'company_image',
-      label: '公司image',
+      label: '',
       placeholder: '上載商業登記圖片',
       type: 'image'
     },
@@ -296,7 +296,7 @@ const RegisterTenant = () => {
           <Box key={field.name}>
             {field.type === 'image' ? (
               <Box>
-                <CustomField label={field.label} style={constantStyle.labelField} mandatory>
+                <CustomField label={field.label} style={constantStyle.labelField} mandatory={field.label !== '' ? true : false}>
                   <ImageUploading
                     multiple
                     value={
