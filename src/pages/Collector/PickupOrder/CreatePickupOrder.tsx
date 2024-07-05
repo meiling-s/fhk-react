@@ -12,6 +12,7 @@ import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import dayjs from 'dayjs'
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
@@ -60,18 +61,24 @@ const CreatePickupOrder = () => {
       if (routineType === 'specificDate') {
         return Yup.array()
           .required('routine is required')
+          .min(1, getErrorMsg(t('pick_up_order.routine.period_should_not_empty'), 'empty'))
           .test(
             'is-in-range',
             t('pick_up_order.out_of_date_range'),
             function (value) {
               const { effFrmDate, effToDate } = schema.parent
-              const fromDate = new Date(effFrmDate)
-              const toDate = new Date(effToDate)
-
+              // const fromDate = new Date(effFrmDate)
+              // const toDate = new Date(effToDate)
+              
+              const fromDate = dayjs(effFrmDate).format('YYYY-MM-DD')
+              const toDate =  dayjs(effToDate).format('YYYY-MM-DD')
+             
               const datesInDateObjects = value.map((date) => new Date(date))
-
               return datesInDateObjects.every(
-                (date) => date >= fromDate && date <= toDate
+                (date) => {
+                  const currentDate = dayjs(date).format('YYYY-MM-DD')
+                  return currentDate >= fromDate && currentDate <= toDate
+                }
               )
             }
           )
@@ -153,10 +160,9 @@ const CreatePickupOrder = () => {
       updatedBy: 'Admin',
       createPicoDetail: []
     },
-    validationSchema: validateSchema,
+    // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow
-      console.log('values', values)
       const result = await submitPickUpOrder(values)
       const data = result?.data
       if (data) {
