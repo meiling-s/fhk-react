@@ -171,7 +171,7 @@ const RegisterTenant = () => {
         if (!logoImage.length) setLogoImageError(true);
       }
     } else if (formStep === 3) {
-      if (formValues.contact_person !== '' && formValues.contact_person_number !== '' && EPDImages.length) {
+      if (formValues.contact_person !== '' && formValues.contact_person_number !== '') {
         registerTenant()
       } else {
         if (!formValues.contact_person) {
