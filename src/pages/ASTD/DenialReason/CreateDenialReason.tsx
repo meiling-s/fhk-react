@@ -443,7 +443,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
-              ) : item.type == 'autocomplete' ? (
+              ) : item.type == 'autocomplete' && status === true ? (
                 <Grid item key={index}>
                   <CustomField label={item.label} mandatory>
                     <Autocomplete

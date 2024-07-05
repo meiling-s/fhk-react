@@ -475,7 +475,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       reasonNameTchi: formData.reasonNameTchi,
       reasonNameSchi: formData.reasonNameSchi,
       reasonNameEng: formData.reasonNameEng,
-      description: "",
+      description: '',
       functionId: formData.functionId,
       status: 'DELETED',
       remark: formData.remark,
@@ -556,7 +556,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
-              ) : item.type == 'autocomplete' ? (
+              ) : item.type == 'autocomplete' && status === true ? (
                 <Grid item key={index}>
                   <CustomField label={item.label} mandatory>
                     <Autocomplete
