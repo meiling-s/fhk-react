@@ -207,7 +207,7 @@ export const GET_LOGISTICLIST = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/logisticlist/${table}`
+  url: `api/v1/${realmApiRoute}/logisticlist/${table}?size=1000`
 })
 
 export const GET_COLLECTORLIST = (
@@ -215,7 +215,7 @@ export const GET_COLLECTORLIST = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/collectorlist/${table}`
+  url: `api/v1/${realmApiRoute}/collectorlist/${table}?size=1000`
 })
 
 export const CREATE_COLLECTORLIST = (
@@ -247,7 +247,7 @@ export const GET_MANULIST = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/manulist/${table}`
+  url: `api/v1/${realmApiRoute}/manulist/${table}?size=1000`
 })
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {

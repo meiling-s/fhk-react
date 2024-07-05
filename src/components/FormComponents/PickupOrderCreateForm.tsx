@@ -963,7 +963,7 @@ const PickupOrderCreateForm = ({
                   >
                     {t('common.createdDatetime') + ' : ' + createdDate}
                   </Typography>
-                  {approveAt &&
+                  {approveAt && editMode &&
                     <Typography
                     sx={{
                       ...styles.header3,
