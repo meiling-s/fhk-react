@@ -21,19 +21,18 @@ export default function FunctionList({
   const [selected, setSelected] = useState(functions.includes(item.functionId))
 
   const handleClick = () => {
-    const index = functions.indexOf(item.functionId);
-    let newValue;
+    const index = functions.indexOf(item.functionId)
+    let newValue
     if (index !== -1) {
-        // Remove the functionId from the array
-        newValue = functions.filter(id => id !== item.functionId);
+      // Remove the functionId from the array
+      newValue = functions.filter((id) => id !== item.functionId)
     } else {
-        // Add the functionId to the array
-        newValue = [...functions, item.functionId];
+      // Add the functionId to the array
+      newValue = [...functions, item.functionId]
     }
-    setFunctions(newValue);
-    setSelected(!selected);
-};
-
+    setFunctions(newValue)
+    setSelected(!selected)
+  }
 
   //   useEffect(() => {
   //     const index = functions.indexOf(item.functionId)
@@ -58,7 +57,8 @@ export default function FunctionList({
         selected ? styles.tagOutlineActive : styles.tagOutlineDefault,
         {
           width: 'max-content',
-          height: '40px'
+          height: '40px',
+          borderColor: disabled ? 'gainsboro' : ''
         }
       ]}
       style={{ borderRadius: 50, margin: 4 }}
