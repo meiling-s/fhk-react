@@ -681,9 +681,9 @@
     "enterEmployeeNumber": "Enter Employee Number",
     "employeeName": "Employee Name",
     "enterEmployeeName": "Enter Employee Name",
-    "employeeChineseName": "Chinese recycling number of the employee",
-    "employeeEnglishName": "English Name of the employee",
-    "employeeChineseCn": "Employee's Chinese Simplified chinese name",
+    "employeeChineseName": "Employee's chinese traditional chinese name",
+    "employeeEnglishName": "English name of the employee",
+    "employeeChineseCn": "Employee's chinese simplified chinese name",
     "position": "Position",
     "loginName": "Login name",
     "enterLoginName": "Enter login name",
@@ -988,20 +988,20 @@
           "deleteFailMsg": "Failed delete driver"
         }
       },
-      "vehicleMenu": {
-        "vehicle_number": "Vehicle Number",
-        "license_plate_number": "License Plate Number",
-        "vehicle_type": "Vehicle Type",
-        "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
-        "picture": "Picture",
-        "license_plate_number_placeholder": "Please enter vehicle plate number",
-        "vehicle_type_placeholder": "Please enter vehicle type",
-        "vehicle_cargo_capacity_placeholder": "Please enter weight"
-      },
       "search": {
         "label": "Search",
         "placeholder": "Please enter Driver No."
       }
+    },
+    "vehicleMenu": {
+      "vehicle_number": "Vehicle Number",
+      "license_plate_number": "License Plate Number",
+      "vehicle_type": "Vehicle Type",
+      "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
+      "picture": "Picture",
+      "license_plate_number_placeholder": "Please enter vehicle plate number",
+      "vehicle_type_placeholder": "Please enter vehicle type",
+      "vehicle_cargo_capacity_placeholder": "Please enter weight"
     }
   },
   "general_settings": {
