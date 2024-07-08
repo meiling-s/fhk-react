@@ -6,15 +6,23 @@ import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
-import { editDenialReason, createDenialReason } from '../../../APICalls/Collector/denialReason'
+import {
+  editDenialReason,
+  createDenialReason
+} from '../../../APICalls/Collector/denialReason'
 import { styles } from '../../../constants/styles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { extractError, returnErrorMsg } from '../../../utils/utils'
-import { DenialReason, CreateDenialReason, UpdateDenialReason } from '../../../interfaces/denialReason'
+import {
+  DenialReason,
+  CreateDenialReason,
+  UpdateDenialReason
+} from '../../../interfaces/denialReason'
 import { localStorgeKeyName } from '../../../constants/constant'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup';
+import { getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import { useNavigate } from 'react-router-dom'
+import Switcher from '../../../components/FormComponents/CustomSwitch'
 
 interface CreateDenialReasonProps {
   drawerOpen: boolean
@@ -43,99 +51,130 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     reasonNameEng: '',
     functionId: '',
     description: '',
-    remark: '',
+    remark: ''
   }
+  const [status, setStatus] = useState<boolean>(true)
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
-  const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
-  const navigate = useNavigate();
+  const [functionList, setFunctionList] = useState<
+    {
+      functionId: string
+      functionNameEng: string
+      functionNameSChi: string
+      reasonTchi: string
+      name: string
+    }[]
+  >([])
+  const navigate = useNavigate()
 
   const initFunctionList = async () => {
-   try {
-    const result = await getAllFunction();
-    const data = result?.data;
-    if (data.length > 0) {
-      let name = ''
-      data.map((item: { functionId: string; functionNameEng: string; functionNameSChi: string; functionNameTChi: string; name: string; }) => {
-        switch (i18n.language) {
-          case 'enus':
-            name = item.functionNameEng
-            break
-          case 'zhch':
-            name = item.functionNameSChi
-            break
-          case 'zhhk':
-            name = item.functionNameTChi
-            break
-          default:
-            name = item.functionNameTChi
-            break
-        }
-        item.name = name
-      })
+    try {
+      const result = await getAllFunction()
+      const data = result?.data
+      if (data.length > 0) {
+        let name = ''
+        data.map(
+          (item: {
+            functionId: string
+            functionNameEng: string
+            functionNameSChi: string
+            functionNameTChi: string
+            name: string
+          }) => {
+            switch (i18n.language) {
+              case 'enus':
+                name = item.functionNameEng
+                break
+              case 'zhch':
+                name = item.functionNameSChi
+                break
+              case 'zhhk':
+                name = item.functionNameTChi
+                break
+              default:
+                name = item.functionNameTChi
+                break
+            }
+            item.name = name
+          }
+        )
+      }
+      setFunctionList(data)
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-    setFunctionList(data);
-   } catch (error:any) {
-    const {state} =  extractError(error)
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
-  };
+  }
   const denialReasonField = [
     {
       label: t('denial_reason.reason_name_tchi'),
       placeholder: t('denial_reason.enter_name'),
       field: 'reasonNameTchi',
-      type: 'text'
+      type: 'text',
+      mandatory: true
     },
     {
       label: t('denial_reason.reason_name_schi'),
       placeholder: t('denial_reason.enter_name'),
       field: 'reasonNameSchi',
-      type: 'text'
+      type: 'text',
+      mandatory: true
     },
     {
       label: t('denial_reason.reason_name_eng'),
       placeholder: t('denial_reason.enter_name'),
       field: 'reasonNameEng',
-      type: 'text'
+      type: 'text',
+      mandatory: true
     },
     {
       label: t('denial_reason.corresponding_functions'),
       placeholder: t('denial_reason.select_function'),
       field: 'functionId',
-      type: 'autocomplete'
+      type: 'autocomplete',
+      mandatory: true
     },
-    {
-      label: t('denial_reason.description'),
-      placeholder: t('denial_reason.enter_text'),
-      field: 'description',
-      type: 'text-not-mandatory',
-      textarea: true,
-    },
+    // {
+    //   label: t('denial_reason.description'),
+    //   placeholder: t('denial_reason.enter_text'),
+    //   field: 'description',
+    //   type: 'text-not-mandatory',
+    //   textarea: true,
+    // },
     {
       label: t('denial_reason.remark'),
       placeholder: t('denial_reason.enter_text'),
       field: 'remark',
       type: 'text-not-mandatory',
       textarea: true,
+      mandatory: false
+    },
+    {
+      label: t('general_settings.state'),
+      placeholder: '',
+      field: 'status',
+      type: 'boolean',
+      mandatory: true
     }
   ]
 
   useEffect(() => {
     if (drawerOpen) {
-      initFunctionList();
+      initFunctionList()
     }
   }, [drawerOpen])
 
   const mappingData = () => {
     if (selectedItem != null) {
-      const selectedValue = functionList.find((el) => el.functionId === selectedItem.functionId)
+      const selectedValue = functionList.find(
+        (el) => el.functionId === selectedItem.functionId
+      )
       if (selectedValue) {
         setSelectedFunctionId(selectedValue.name)
       }
@@ -144,9 +183,10 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameTchi: selectedItem.reasonNameTchi,
         reasonNameEng: selectedItem.reasonNameEng,
         reasonNameSchi: selectedItem.reasonNameSchi,
-        description: selectedItem.description,
-        remark: selectedItem.remark,
+        // description: selectedItem.description,
+        remark: selectedItem.remark
       })
+      setStatus(selectedItem.status === 'ACTIVE' ? true : false)
     }
   }
 
@@ -174,17 +214,23 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
 
   const validate = async () => {
     const tempV: formValidate[] = []
+    let excludeFields = ['description', 'remark']
+    if (!status) {
+      excludeFields.push('functionId')
+    }
+
     const fieldMapping: FormValues = {
       functionId: t('denial_reason.corresponding_functions'),
       reasonNameTchi: t('denial_reason.reason_name_tchi'),
       reasonNameSchi: t('denial_reason.reason_name_schi'),
-      reasonNameEng: t('denial_reason.reason_name_eng'),
-      description: t('denial_reason.description'),
-      remark: t('denial_reason.remark')
+      reasonNameEng: t('denial_reason.reason_name_eng')
+      // description: t('denial_reason.description'),
+      //remark: t('denial_reason.remark')
     }
     Object.keys(formData).forEach((fieldName) => {
       if (typeof formData[fieldName as keyof FormValues] !== 'number') {
         formData[fieldName as keyof FormValues]?.trim() === '' &&
+          !excludeFields.includes(fieldName) &&
           tempV.push({
             field: fieldMapping[fieldName as keyof FormValues],
             problem: formErr.empty,
@@ -193,7 +239,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       }
     })
     setValidation(tempV)
-    return tempV.length === 0;
+    return tempV.length === 0
   }
 
   useEffect(() => {
@@ -203,8 +249,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     formData.reasonNameTchi,
     formData.reasonNameEng,
     formData.reasonNameSchi,
-    formData.description,
-    formData.remark,
+    // formData.description,
+    // formData.remark,
     formData.titleId
   ])
 
@@ -216,9 +262,11 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   }
 
   const handleSubmit = async () => {
-    const isValid = await validate();
+    const isValid = await validate()
     if (isValid) {
-      const selectedValue = functionList.find((el) => el.name === formData.functionId)
+      const selectedValue = functionList.find(
+        (el) => el.name === formData.functionId
+      )
       if (selectedValue) {
         formData.functionId = selectedValue.functionId
       }
@@ -228,9 +276,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameSchi: formData.reasonNameSchi,
         reasonNameEng: formData.reasonNameEng,
         description: formData.description,
-        functionId: formData.functionId,
+        functionId: status ? formData.functionId : '0',
         remark: formData.remark,
-        status: 'ACTIVE',
+        status: status ? 'ACTIVE' : 'INACTIVE',
         createdBy: loginName,
         updatedBy: loginName
       }
@@ -241,39 +289,43 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         handleEditDenialReason()
       }
     } else {
-      setTrySubmited(true);
+      setTrySubmited(true)
     }
   }
 
-  const handleCreateDenialReason = async (denialReasonData: CreateDenialReason) => {
-  try {
-    if (validation.length === 0) {
-      const result = await createDenialReason(denialReasonData)
-      if (result?.data) {
-        onSubmitData('success', t('common.saveSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+  const handleCreateDenialReason = async (
+    denialReasonData: CreateDenialReason
+  ) => {
+    try {
+      if (validation.length === 0) {
+        const result = await createDenialReason(denialReasonData)
+        if (result?.data) {
+          onSubmitData('success', t('common.saveSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        } else {
+          setTrySubmited(true)
+          onSubmitData('error', t('common.saveFailed'))
+        }
+      } else {
+        setTrySubmited(true)
+      }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
       } else {
         setTrySubmited(true)
         onSubmitData('error', t('common.saveFailed'))
       }
-    } else {
-      setTrySubmited(true)
     }
-  } catch (error:any) {
-    const {state} =  extractError(error)
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    } else {
-      setTrySubmited(true)
-      onSubmitData('error', t('common.saveFailed'))
-    }
-  }
   }
 
   const handleEditDenialReason = async () => {
     try {
-      const selectedValue = functionList.find((el) => el.name === formData.functionId)
+      const selectedValue = functionList.find(
+        (el) => el.name === formData.functionId
+      )
       if (selectedValue) {
         formData.functionId = selectedValue.functionId
       }
@@ -281,9 +333,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameTchi: formData.reasonNameTchi,
         reasonNameSchi: formData.reasonNameSchi,
         reasonNameEng: formData.reasonNameEng,
-        description: formData.description,
+        description: '',
         functionId: formData.functionId,
-        status: 'ACTIVE',
+        status: status ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
         updatedBy: loginName
       }
@@ -299,16 +351,18 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const {state} =  extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
 
   const handleDelete = async () => {
-    const selectedValue = functionList.find((el) => el.name === formData.functionId)
+    const selectedValue = functionList.find(
+      (el) => el.name === formData.functionId
+    )
     if (selectedValue) {
       formData.functionId = selectedValue.functionId
     }
@@ -373,7 +427,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
             {denialReasonField.map((item, index) =>
               item.type === 'text' ? (
                 <Grid item key={index}>
-                  <CustomField label={item.label} mandatory>
+                  <CustomField label={item.label} mandatory={item.mandatory}>
                     <CustomTextField
                       id={item.label}
                       value={formData[item.field as keyof FormValues]}
@@ -385,15 +439,51 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                           event.target.value
                         )
                       }
-                      textarea = {item.textarea}
-                      multiline = {item.textarea}
+                      textarea={item.textarea}
+                      multiline={item.textarea}
                       error={checkString(
                         formData[item.field as keyof FormValues]
                       )}
                     />
                   </CustomField>
                 </Grid>
-              ) :  item.type === 'text-not-mandatory' ? (
+              ) : item.type == 'autocomplete' && status === true ? (
+                <Grid item key={index}>
+                  <CustomField label={item.label} mandatory>
+                    <Autocomplete
+                      disablePortal
+                      id="contractNo"
+                      defaultValue={selectedFunctionId}
+                      options={functionList.map(
+                        (functionItem) => functionItem.name
+                      )}
+                      onChange={(event, value) => {
+                        if (value) {
+                          handleFieldChange(
+                            item.field as keyof FormValues,
+                            value
+                          )
+                          setSelectedFunctionId(value)
+                        }
+                      }}
+                      value={selectedFunctionId}
+                      disabled={action === 'delete'}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder={item.placeholder}
+                          sx={[styles.textField, { width: 320 }]}
+                          InputProps={{
+                            ...params.InputProps,
+                            sx: styles.inputProps
+                          }}
+                          error={checkString(selectedFunctionId)}
+                        />
+                      )}
+                    />
+                  </CustomField>
+                </Grid>
+              ) : item.type === 'text-not-mandatory' ? (
                 <Grid item key={index}>
                   <CustomField label={item.label}>
                     <CustomTextField
@@ -407,49 +497,35 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                           event.target.value
                         )
                       }
-                      textarea = {item.textarea}
-                      multiline = {item.textarea}
+                      textarea={item.textarea}
+                      multiline={item.textarea}
                     />
                   </CustomField>
                 </Grid>
-              ) : item.type == 'autocomplete' ? (
-                <CustomField label={item.label} mandatory>
-                  <Autocomplete
-                    disablePortal
-                    id="contractNo"
-                    defaultValue={selectedFunctionId}
-                    options={functionList.map((functionItem) => functionItem.name)}
-                    onChange={(event, value) => {
-                      if (value) {
-                        handleFieldChange(
-                          item.field as keyof FormValues,
-                          value
-                        )
-                        setSelectedFunctionId(value)
-                      }
-                    }}
-                    value={selectedFunctionId}
+              ) : item.field == 'status' && item.type == 'boolean' ? (
+                <Grid item key={index}>
+                  <CustomField label={item.label} mandatory></CustomField>
+                  <Switcher
+                    onText={t('status.active')}
+                    offText={t('status.inactive')}
                     disabled={action === 'delete'}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder={item.placeholder}
-                        sx={[styles.textField, { width: 320 }]}
-                        InputProps={{
-                          ...params.InputProps,
-                          sx: styles.inputProps
-                        }}
-                        error={checkString(selectedFunctionId)}
-                      />
-                    )}
+                    defaultValue={status}
+                    setState={(newValue) => {
+                      setStatus(newValue)
+                    }}
                   />
-              </CustomField>
-              ) : <></>
+                </Grid>
+              ) : (
+                <></>
+              )
             )}
             <Grid item sx={{ width: '100%' }}>
               {trySubmited &&
                 validation.map((val, index) => {
-                  if (val.field !== t('denial_reason.description') && val.field !== t('denial_reason.remark')) {
+                  if (
+                    val.field !== t('denial_reason.description') &&
+                    val.field !== t('denial_reason.remark')
+                  ) {
                     return (
                       <FormErrorMsg
                         key={index}
@@ -459,7 +535,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                       />
                     )
                   }
-                  return null;
+                  return null
                 })}
             </Grid>
           </Grid>
