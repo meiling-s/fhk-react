@@ -61,7 +61,12 @@ export default function FunctionList({
           borderColor: disabled ? 'gainsboro' : ''
         }
       ]}
-      style={{ borderRadius: 50, margin: 4 }}
+      style={{
+        borderRadius: 50,
+        margin: 4,
+        backgroundColor: disabled ? '#C7C7C7' : '',
+        color: disabled ? '#808080' : ''
+      }}
       disabled={disabled}
       onClick={handleClick}
     >
