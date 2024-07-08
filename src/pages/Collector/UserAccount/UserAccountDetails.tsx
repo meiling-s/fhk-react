@@ -364,7 +364,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             className="sm:ml-0 mt-o w-full"
           >
             {action == 'add' && (
-              <CustomField label={t('userAccount.addByNumber')}>
+              <CustomField label={t('userAccount.staffId')}>
                 <CustomTextField
                   id="staffId"
                   value={staffId}
