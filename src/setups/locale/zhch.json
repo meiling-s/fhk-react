@@ -395,6 +395,9 @@
     "new": "新增",
     "finish": "完成",
     "cancel": "取消",
+    "every": "每星期",
+    "daily": "每日",
+    "picoDetailCannotBeRepeated": "预计回收地点资料不能重复",
     "detail": {
       "shipping_time": "运送时间",
       "main_category": "主类别",
@@ -436,7 +439,7 @@
       "effToDate": "迄今为止这是必需的",
       "routineType": "此例程類型為必填項",
       "routine": "需要例行公事",
-      "pickuAt": "此提货点为必填项",
+      "pickuAt": "此取货时间是必填项",
       "senderName": "此发件人姓名为必填项",
       "senderAddr": "此发件人地址为必填项",
       "receiverName": "该接收者姓名为必填项",
@@ -454,7 +457,9 @@
       "sender_address_exists": "发件人地址已存在于之前的数据中",
       "not_same_as_sender": "与发件人不同",
       "receiver_address_cannot": "收件人地址不能与发件人地址相同",
-      "receiver_address_exists": "之前的数据中已经存在接收者地址"
+      "receiver_address_exists": "之前的数据中已经存在接收者地址",
+      "succeedDeletePickupOrder": "删除取货订单成功",
+      "failedDeletePickupOrder": "删除取货订单失败"
     },
     "validation": {
       "routine": "例行公事是必需的",
