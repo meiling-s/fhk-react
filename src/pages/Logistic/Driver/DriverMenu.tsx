@@ -58,8 +58,8 @@ const DriverMenu = () => {
         },
         {
             field: currentLanguage === 'zhch' ? 'driverNameSchi' : 'driverNameTchi',
-            headerName: t('driver.DriverMenu.table.driverName'),
-            width: 150,
+            headerName: currentLanguage === 'zhch' ? t('driver.DriverMenu.table.driverSchiName') : t('driver.DriverMenu.table.driverTchiName'),
+            width: 250,
             type: 'string'
         },
         {
@@ -207,7 +207,7 @@ const DriverMenu = () => {
             </Box>
             <Box>
                 <TextField
-                    label={t('tenant.search')}
+                    label={t('driver.DriverMenu.table.driverId')}
                     placeholder={t('driver.DriverMenu.table.enterDriverId')}
                     InputProps={{
                         endAdornment: (

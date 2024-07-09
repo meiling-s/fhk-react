@@ -9,7 +9,7 @@ import {
 } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
-import PickupOrderForm from '../../../components/FormComponents/PickupOrderForm'
+import PickupOrderForm from '../../../components/FormComponents/PickupOrderFormCustom'
 import StatusCard from '../../../components/StatusCard'
 
 import { PickupOrder, queryPickupOrder } from '../../../interfaces/pickupOrder'
@@ -39,6 +39,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleText from '../../../hooks/useLocaleTextDataGrid'
+import { weekDs } from '../../../components/SpecializeComponents/RoutineSelect/predefinedOption'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -248,6 +249,12 @@ interface StatusPickUpOrder {
   labelTchi: string
 }
 
+interface Company {
+  nameEng?: string,
+  nameSchi?: string,
+  nameTchi?: string
+}
+
 const PickupOrders = () => {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -348,9 +355,9 @@ const PickupOrders = () => {
       }
     ]
   }
-
+  const {recycType, dateFormat, manuList, collectorList, logisticList} = useContainer(CommonTypeContainer)
+  const [actions, setActions] = useState<'add' | 'edit' | 'delete'>('add')
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
-  const { recycType, dateFormat } = useContainer(CommonTypeContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
   const location = useLocation()
   const action: string = location.state
@@ -368,7 +375,7 @@ const PickupOrders = () => {
   })
   const [approveModal, setApproveModal] = useState(false)
   const [rejectModal, setRejectModal] = useState(false)
-  const [reasonList, setReasonList] = useState<any>([])
+  const [reasonList, setReasonList] = useState<{reasonId: string, name: string}[]>([])
 
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const statusList: StatusPickUpOrder[] = [
@@ -416,12 +423,35 @@ const PickupOrders = () => {
     },
     {
       value: '',
-      labelEng: 'any',
+      labelEng: t('localizedTexts.filterValueAny'),
       labelSchi: '任何',
       labelTchi: '任何'
     }
   ]
-  const { localeTextDataGrid } = useLocaleText()
+  const { localeTextDataGrid } = useLocaleText();
+
+  let listCompany:Company[] = [];
+  if(collectorList && collectorList?.length >= 1){
+    const collectors:Company[] = collectorList?.map(item => {
+      return {
+        nameEng: item.collectorNameEng,
+        nameSchi: item.collectorNameSchi,
+        nameTchi: item.collectorNameTchi
+      }
+    })
+    listCompany = [...listCompany, ...collectors]
+  }
+
+  if(manuList && manuList.length >= 1){
+    const manus:Company[] = manuList?.map(item => {
+      return{
+        nameEng: item.manufacturerNameEng,
+        nameSchi: item.manufacturerNameSchi,
+        nameTchi: item.manufacturerNameTchi
+      }
+    });
+    listCompany = [...listCompany, ...manus]
+  }
 
   const initPickupOrderRequest = async () => {
     try {
@@ -433,9 +463,59 @@ const PickupOrders = () => {
       } else {
         result = await getAllPickUpOrder(page - 1, pageSize, query)
       }
-      const data = result?.data.content
+      let data = result?.data.content;
       if (data && data.length > 0) {
-        setPickupOrder(data)
+        data = data.map((item:any) => {
+          const pickupOrderDetail = item?.pickupOrderDetail[0];
+          const logisticName = item.logisticName;
+          const logistic = logisticList?.find(item => {
+            if(item.logisticNameEng === logisticName ||  item.logisticNameSchi === logisticName || 
+              item.logisticNameTchi === logisticName){
+              return item
+            } 
+          });
+
+          if(logistic && i18n.language === Languages.ENUS){
+            item.logisticName = logistic.logisticNameEng
+          } else if(logistic && i18n.language === Languages.ZHCH){
+            item.logisticName = logistic.logisticNameSchi
+          } else if (logistic && i18n.language === Languages.ZHHK){
+            item.logisticName = logistic.logisticNameTchi
+          }
+
+          const receiver = listCompany.find(item => {
+          if(item.nameEng === pickupOrderDetail?.receiverName || item.nameSchi === pickupOrderDetail.receiverName || 
+            item.nameTchi === pickupOrderDetail.receiverName) {
+              return item
+            }
+          })
+
+          if(receiver && i18n.language === Languages.ENUS){
+            pickupOrderDetail.receiverName = receiver.nameEng
+          } else if(receiver && i18n.language === Languages.ZHCH){
+            pickupOrderDetail.receiverName = receiver.nameSchi
+          } else if(receiver && i18n.language === Languages.ZHHK){
+            pickupOrderDetail.receiverName = receiver.nameTchi
+          }
+        
+          const senderName = listCompany.find(item => {
+            if(item.nameEng === pickupOrderDetail?.senderName || item.nameSchi === pickupOrderDetail.senderName || 
+              item.nameTchi === pickupOrderDetail.senderName) {
+                return item
+              }
+          })
+          
+          if(senderName && i18n.language === Languages.ENUS){
+            pickupOrderDetail.senderName = senderName.nameEng
+          } else if(senderName && i18n.language === Languages.ZHCH){
+            pickupOrderDetail.senderName = senderName.nameSchi
+          } else if(senderName && i18n.language === Languages.ZHHK){
+            pickupOrderDetail.senderName = senderName.nameTchi
+          }
+          item.pickupOrderDetail[0] = pickupOrderDetail;
+          return item
+        })
+        setPickupOrder(data);
       } else {
         setPickupOrder([])
       }
@@ -469,29 +549,43 @@ const PickupOrders = () => {
   const getRejectReason = async () => {
     try {
       let result = await getAllReason()
-      if (result && result?.data && result?.data.length > 0) {
-        let reasonName = ''
-        switch (i18n.language) {
-          case 'enus':
-            reasonName = 'reasonNameEng'
-            break
-          case 'zhch':
-            reasonName = 'reasonNameSchi'
-            break
-          case 'zhhk':
-            reasonName = 'reasonNameTchi'
-            break
-          default:
-            reasonName = 'reasonNameEng'
-            break
-        }
-        result?.data.map(
-          (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
-            item.id = item.reasonId
-            item.name = item[reasonName]
+      if (result && result?.data && result?.data?.content.length > 0) {
+        // let reasonName = ''
+        // switch (i18n.language) {
+        //   case 'enus':
+        //     reasonName = 'reasonNameEng'
+        //     break
+        //   case 'zhch':
+        //     reasonName = 'reasonNameSchi'
+        //     break
+        //   case 'zhhk':
+        //     reasonName = 'reasonNameTchi'
+        //     break
+        //   default:
+        //     reasonName = 'reasonNameEng'
+        //     break
+        // }
+
+        const reasons: {reasonId: string, name: string}[] = result?.data?.content.map((item: any) => {
+            if(i18n.language === Languages.ENUS){
+              return {
+                id : item.reasonId,
+                name : item.reasonNameEng
+              }
+            } else if(i18n.language === Languages.ZHCH){
+              return {
+                id : item.reasonId,
+                name : item.reasonNameSchi
+              }
+            } else {
+              return {
+                id : item.reasonId,
+                name : item.reasonNameTchi
+              }
+            }
           }
         )
-        setReasonList(result?.data)
+        setReasonList(reasons)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -513,6 +607,7 @@ const PickupOrders = () => {
 
   useEffect(() => {
     initPickupOrderRequest()
+    getRejectReason()
   }, [i18n.language])
 
   useEffect(() => {
@@ -569,6 +664,36 @@ const PickupOrders = () => {
     setRecycItem(recycItems)
   }, [i18n.language])
 
+  const getDeliveryDay = (deliveryDate:string[]) => {
+    const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat', 'sun'];
+    let delivery = deliveryDate.map(item => item.trim());
+    let isWeek = false;
+
+    for(let deliv of delivery){
+      if(weeks.includes(deliv)){
+        isWeek = true
+      }
+    }
+
+    if(isWeek){
+      delivery = delivery.map(item => {
+        const days = weekDs.find(day => day.id === item);
+        if(days) {
+          if(i18n.language === Languages.ENUS){
+            return days.engName
+          } else if(i18n.language === Languages.ZHCH){
+            return days.schiName
+          } else {
+            return days.tchiName
+          }
+        } else {
+          return ''
+        }
+      })
+    }
+    return delivery.join(',')
+  }
+
   const getDeliveryDate = (row: PickupOrder) => {
     if (row.picoType === 'AD_HOC') {
       return `${dayjs
@@ -579,9 +704,15 @@ const PickupOrders = () => {
         .tz('Asia/Hong_Kong')
         .format(`${dateFormat}`)}`
     } else if (row.routineType === 'daily') {
-      return 'Daily'
+      if(i18n.language === Languages.ENUS){
+        return 'Daily'
+      } else if(i18n.language === Languages.ZHCH){
+        return '每天'
+      } else {
+        return '每天'
+      }
     } else {
-      return `${row.routine.join(', ')}`
+      return  getDeliveryDay(row.routine)
     }
   }
 
@@ -591,7 +722,7 @@ const PickupOrders = () => {
       pickupOrder?.map((item) => ({
         ...item,
         id: item.picoId,
-        createdAt: displayCreatedDate(item.createdAt),
+        createdAt: item.createdAt,
         logisticCompany: item.logisticName,
         picoId: item.picoId,
         deliveryDate: getDeliveryDate(item),
@@ -630,7 +761,7 @@ const PickupOrders = () => {
   }
   const searchfield = [
     {
-      label: t('pick_up_order.filter.search'),
+      label: t('purchase_order.table.pico_id'),
       placeholder: t('check_in.search_input'),
       field: 'picoId',
       width: '260px'
@@ -651,12 +782,12 @@ const PickupOrders = () => {
       field: 'logisticName'
     },
     {
-      label: t('pick_up_order.table.sender_company'),
+      label: t('check_in.location'),
       options: getUniqueOptions('senderCompany'),
       field: 'senderName'
     },
     {
-      label: t('placeHolder.classification'),
+      label: t('pick_up_order.filter.recycling_category'),
       options: getReycleOption(),
       field: 'recycType'
     },
@@ -668,11 +799,11 @@ const PickupOrders = () => {
   ]
 
   const navigate = useNavigate()
-  const [openModal, setOpenModal] = useState<boolean>(false)
-  const [selectedRow, setSelectedRow] = useState<Row | null>(null)
-  function getUniqueOptions(propertyName: keyof Row) {
-    const optionMap = new Map()
-
+  const [openModal,setOpenModal] =useState<boolean>(false)
+  const [selectedRow, setSelectedRow] = useState<PickupOrder | null>(null);
+  function getUniqueOptions(propertyName:keyof Row) {
+    const optionMap = new Map();
+  
     rows.forEach((row) => {
       optionMap.set(row[propertyName], row[propertyName])
     })
@@ -683,7 +814,7 @@ const PickupOrders = () => {
     }))
     options.push({
       value: '',
-      label: 'any'
+      label: t('localizedTexts.filterValueAny'),
     })
     return options
   }
@@ -695,7 +826,7 @@ const PickupOrders = () => {
     }))
     options.push({
       value: '',
-      label: 'any'
+      label: t('localizedTexts.filterValueAny'),
     })
     return options
   }
@@ -708,10 +839,10 @@ const PickupOrders = () => {
     setOpenModal(false)
   }
   const handleRowClick = (params: GridRowParams) => {
-    const row = params.row as Row
-    setSelectedRow(row)
-    setOpenModal(true)
-  }
+    const row = params.row as PickupOrder;
+    setSelectedRow(row);
+    setOpenModal(true);
+  };
 
   const updateQuery = (newQuery: Partial<queryPickupOrder>) => {
     setQuery({ ...query, ...newQuery })
@@ -757,19 +888,20 @@ const PickupOrders = () => {
     })
     return options
   }
-
   return (
     <>
       <ToastContainer />
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Modal open={openModal} onClose={handleCloses}>
+        {/* <Modal open={openModal} onClose={handleCloses}> */}
           <PickupOrderForm
+            openModal={openModal}
+            actions={actions}
             onClose={handleCloses}
             selectedRow={selectedRow}
             pickupOrder={pickupOrder}
             initPickupOrderRequest={initPickupOrderRequest}
           />
-        </Modal>
+        {/* </Modal> */}
         <Box sx={{ display: 'flex', alignItems: 'center', ml: '6px' }}>
           <Typography fontSize={20} color="black" fontWeight="bold">
             {t('pick_up_order.enquiry_pickup_order')}

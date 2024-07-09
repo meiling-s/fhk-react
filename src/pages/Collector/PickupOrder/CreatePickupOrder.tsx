@@ -12,6 +12,7 @@ import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import dayjs from 'dayjs'
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
@@ -40,8 +41,16 @@ const CreatePickupOrder = () => {
   }
 
   const validateSchema = Yup.object().shape({
-    effFrmDate: Yup.string().required('This effFrmDate is required'),
-    effToDate: Yup.string().required('This effToDate is required'),
+    // effFrmDate: Yup.string().required('This effFrmDate is required'),
+    // effToDate: Yup.string().required('This effToDate is required'),
+    effFrmDate: Yup.date().required(),
+    effToDate: Yup.date()
+        .when(
+        'effFrmDate',
+        (effFrmDate, schema) => {
+          return effFrmDate && schema.min(effFrmDate, `${t('form.error.invalidDate') }`)
+        },
+    ),
     routineType:
       picoTypeValue == 'ROUTINE'
         ? Yup.string().required('This routineType is required')
@@ -52,18 +61,24 @@ const CreatePickupOrder = () => {
       if (routineType === 'specificDate') {
         return Yup.array()
           .required('routine is required')
+          .min(1, getErrorMsg(t('pick_up_order.routine.period_should_not_empty'), 'empty'))
           .test(
             'is-in-range',
             t('pick_up_order.out_of_date_range'),
             function (value) {
               const { effFrmDate, effToDate } = schema.parent
-              const fromDate = new Date(effFrmDate)
-              const toDate = new Date(effToDate)
-
+              // const fromDate = new Date(effFrmDate)
+              // const toDate = new Date(effToDate)
+              
+              const fromDate = dayjs(effFrmDate).format('YYYY-MM-DD')
+              const toDate =  dayjs(effToDate).format('YYYY-MM-DD')
+             
               const datesInDateObjects = value.map((date) => new Date(date))
-
               return datesInDateObjects.every(
-                (date) => date >= fromDate && date <= toDate
+                (date) => {
+                  const currentDate = dayjs(date).format('YYYY-MM-DD')
+                  return currentDate >= fromDate && currentDate <= toDate
+                }
               )
             }
           )
@@ -80,15 +95,15 @@ const CreatePickupOrder = () => {
     platNo: Yup.string().required(
       getErrorMsg(t('pick_up_order.plat_number'), 'empty')
     ),
-    contactNo: Yup.number().required(
-      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    ),
-    contractNo:
-      picoTypeValue == 'ROUTINE'
-        ? Yup.string().required(
-            getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty')
-          )
-        : Yup.string(),
+    // contactNo: Yup.number().required(
+    //   getErrorMsg(t('pick_up_order.contact_number'), 'empty')
+    // ),
+    // contractNo:
+    //   picoTypeValue == 'ROUTINE'
+    //     ? Yup.string().required(
+    //         getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty')
+    //       )
+    //     : Yup.string(),
     reason:
       picoTypeValue == 'AD_HOC'
         ? Yup.string().required(
@@ -145,7 +160,7 @@ const CreatePickupOrder = () => {
       updatedBy: 'Admin',
       createPicoDetail: []
     },
-    validationSchema: validateSchema,
+    // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
       values.createPicoDetail = addRow
       const result = await submitPickUpOrder(values)

@@ -20,17 +20,21 @@ import { styles } from '../../../constants/styles'
 import {
   ADD_ICON,
   EDIT_OUTLINED_ICON,
-  DELETE_OUTLINED_ICON,
-} from "../../../themes/icons";
-import { getAllDenialReason, getAllDenialReasonByFunctionId } from "../../../APICalls/Collector/denialReason";
-import { DenialReason as DenialReasonItem } from "../../../interfaces/denialReason";
-import CreateDenialReason from "./CreateDenialReason";
-import { getAllFunction } from "../../../APICalls/Collector/userGroup";
-import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
-import { useNavigate } from "react-router-dom";
-import { extractError } from "../../../utils/utils";
-import { STATUS_CODE } from "../../../constants/constant";
-import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
+  DELETE_OUTLINED_ICON
+} from '../../../themes/icons'
+import {
+  getAllDenialReason,
+  getAllDenialReasonByFunctionId
+} from '../../../APICalls/Collector/denialReason'
+import { DenialReason as DenialReasonItem } from '../../../interfaces/denialReason'
+import CreateDenialReason from './CreateDenialReason'
+import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
+import { useNavigate } from 'react-router-dom'
+import { extractError } from '../../../utils/utils'
+import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import StatusLabel from '../../../components/StatusLabel'
 
 function createDenialReason(
   reasonId: number,
@@ -78,12 +82,22 @@ const DenialReason: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [DenialReasonList, setDenialReasonList] = useState<DenialReasonItem[]>(
     []
-  );
-  const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
-  const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
-  const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
-  const navigate =  useNavigate()
-  const { localeTextDataGrid } =  useLocaleTextDataGrid()
+  )
+  const [functionList, setFunctionList] = useState<
+    {
+      functionId: string
+      functionNameEng: string
+      functionNameSChi: string
+      reasonTchi: string
+      name: string
+    }[]
+  >([])
+  const [functionOptions, setFunctionOptions] = useState<
+    { value: string; label: string }[]
+  >([])
+  const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null)
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
     initFunctionList()
@@ -128,7 +142,7 @@ const DenialReason: FunctionComponent = () => {
         }
       })
       options.push({
-        label: 'any',
+        label: t('check_in.any'),
         value: ''
       })
       setFunctionList(data)
@@ -262,12 +276,12 @@ const DenialReason: FunctionComponent = () => {
       width: 100,
       type: 'number'
     },
-    {
-      field: 'description',
-      headerName: t('denial_reason.description'),
-      width: 100,
-      type: 'string'
-    },
+    // {
+    //   field: 'description',
+    //   headerName: t('denial_reason.description'),
+    //   width: 100,
+    //   type: 'string'
+    // },
     {
       field: 'remark',
       headerName: t('denial_reason.remark'),
@@ -275,7 +289,7 @@ const DenialReason: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: "edit",
+      field: 'edit',
       headerName: t('pick_up_order.item.edit'),
       filterable: false,
       renderCell: (params) => {
@@ -296,8 +310,8 @@ const DenialReason: FunctionComponent = () => {
       }
     },
     {
-      field: "delete",
-      headerName:t('pick_up_order.item.delete'),
+      field: 'delete',
+      headerName: t('pick_up_order.item.delete'),
       filterable: false,
       renderCell: (params) => {
         return (
@@ -314,6 +328,15 @@ const DenialReason: FunctionComponent = () => {
             />
           </Button>
         )
+      }
+    },
+    {
+      field: 'status',
+      headerName: t('col.status'),
+      width: 100,
+      type: 'string',
+      renderCell(params) {
+        return <StatusLabel status={params.row.status}></StatusLabel>
       }
     }
   ]
@@ -435,17 +458,18 @@ const DenialReason: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           {/* <Stack direction='row' mt={3} > */}
-            {searchfield.map((s, i)=>(
-              <CustomSearchField
-                key={i}
-                width="100%"
-                placeholder={s.placeholder}
-                label={s.label} 
-                options={s.options || []} 
-                onChange={handleSearch} />
-            ))}
+          {searchfield.map((s, i) => (
+            <CustomSearchField
+              key={i}
+              width="100%"
+              placeholder={s.placeholder}
+              label={s.label}
+              options={s.options || []}
+              onChange={handleSearch}
+            />
+          ))}
           {/* </Stack> */}
-          <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
               rows={DenialReasonList}
               getRowId={(row) => row.reasonId}

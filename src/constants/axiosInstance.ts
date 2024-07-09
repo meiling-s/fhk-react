@@ -1,5 +1,10 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { STATUS_CODE, localStorgeKeyName } from '../constants/constant'
+import { createUserActivity } from "../APICalls/userAccount";
+import { UserActivity } from '../interfaces/common'
+import { returnApiToken } from "../utils/utils";
+const ipAddress = localStorage.getItem('ipAddress');
+const { loginId } = returnApiToken()
 
 const __isDebug = false
 let expiredAccessToken = false;
@@ -58,6 +63,15 @@ axiosInstance.interceptors.request.use(
                     // Handle refresh token expired scenario
                     // For example, redirect to login page
                     __isDebug && console.log('Refresh token expired. Redirecting to login page...');
+                    if(ipAddress){
+                        const userActivity:UserActivity = {
+                          operation: 'Logout',
+                          ip: ipAddress,
+                          createdBy: loginId,
+                          updatedBy: loginId
+                        }
+                        createUserActivity(loginId, userActivity)
+                    }
                     localStorage.clear();
                     window.location.href = '/';
                 }
@@ -88,13 +102,22 @@ const __apiNewToken = async () => {
       return data.access_token;
     } catch (e:any) {
         if(e?.response?.status === STATUS_CODE[500]){
+            if(ipAddress){
+                const userActivity:UserActivity = {
+                  operation: 'Logout',
+                  ip: ipAddress,
+                  createdBy: loginId,
+                  updatedBy: loginId
+                }
+                createUserActivity(loginId, userActivity)
+            }
             localStorage.clear();
             window.location.href = '/';
         }
       console.log('__apiNewToken failed');
       //   throw e
     }
-  };
+};
 
 // This is a trikcy way to by-pass multiple request with > 1 request failure and force logout
 // TODO: implement in a way that only 1 refresh token request is triggered with retry mechanism

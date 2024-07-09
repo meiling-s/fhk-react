@@ -39,6 +39,7 @@ import CustomSearchField from '../../../components/TableComponents/CustomSearchF
 import { displayCreatedDate, extractError } from '../../../utils/utils'
 import UserGroup from '../UserGroup/UserGroup'
 import {
+  Languages,
   Realm,
   STATUS_CODE,
   localStorgeKeyName
@@ -74,7 +75,8 @@ function createStaff(
   updatedBy: string,
   createdAt: string,
   updatedAt: string,
-  fullTimeFlg?: boolean
+  titleValue:string,
+  fullTimeFlg?: boolean,
 ): Staff {
   return {
     staffId,
@@ -93,8 +95,17 @@ function createStaff(
     updatedBy,
     createdAt,
     updatedAt,
-    fullTimeFlg
+    fullTimeFlg,
+    titleValue
   }
+}
+
+export type Title = {
+  name: string,
+  id: string,
+  nameEng:string,
+  nameSc:string,
+  nameTc:string
 }
 
 const StaffManagement: FunctionComponent = () => {
@@ -108,7 +119,7 @@ const StaffManagement: FunctionComponent = () => {
   const [filteredStaff, setFillteredStaff] = useState<Staff[]>([])
   const [selectedRow, setSelectedRow] = useState<Staff | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
-  const [staffTitleList, setStaffTitleList] = useState<il_item[]>([])
+  const [staffTitleList, setStaffTitleList] = useState<Title[]>([])
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
@@ -127,28 +138,31 @@ const StaffManagement: FunctionComponent = () => {
     const result = await getStaffTitle()
     if (result) {
       const data = result.data.content
-      var staffTitle: il_item[] = []
+      let staffTitle: Title[] = []
       data.forEach((item: any) => {
-        var name = ''
+        let title:Title = {
+          id: item.titleId,
+          name: '',
+          nameEng: item.titleNameEng,
+          nameSc: item.titleNameSchi,
+          nameTc: item.titleNameTchi
+        }
         switch (i18n.language) {
           case 'enus':
-            name = item.titleNameEng
+            title.name = item.titleNameEng
             break
           case 'zhch':
-            name = item.titleNameSchi
+            title.name = item.titleNameSchi
             break
           case 'zhhk':
-            name = item.titleNameTchi
+            title.name = item.titleNameTchi
             break
           default:
-            name = item.titleNameTchi
+            title.name = item.titleNameTchi
             break
         }
 
-        staffTitle.push({
-          id: item.titleId,
-          name: name
-        })
+        staffTitle.push(title)
       })
       setStaffTitleList(staffTitle)
     }
@@ -165,8 +179,17 @@ const StaffManagement: FunctionComponent = () => {
         data.map((item: any) => {
           const dateInHK = dayjs.utc(item.updatedAt).tz('Asia/Hong_Kong')
           const updatedAt = dateInHK.format(`${dateFormat} HH:mm`)
-          const position = staffTitleList.find(
-            (title) => title.id == item.titleId
+          
+          staffTitleList.forEach((title:Title) => {
+            if(i18n.language === Languages.ENUS && item?.titleId === title.id){
+              item.titleValue = title.nameEng
+            } else if(i18n.language === Languages.ZHCH && item?.titleId === title.id){
+              item.titleValue = title.nameSc
+            } else if (item?.titleId === title.id) {
+              item.titleValue = title.nameTc
+            }
+          } 
+            
           )
 
           staffMapping.push(
@@ -188,7 +211,8 @@ const StaffManagement: FunctionComponent = () => {
               item?.updatedBy,
               item?.createdAt,
               updatedAt,
-              item?.fullTimeFlg
+              item?.titleValue,
+              item?.fullTimeFlg,
             )
           )
         })
@@ -234,7 +258,7 @@ const StaffManagement: FunctionComponent = () => {
     },
     {
       field: 'staffNameEng',
-      headerName: 'Employee English Name',
+      headerName: 'Employee english name',
       width: 200,
       type: 'string'
     },
@@ -330,7 +354,7 @@ const StaffManagement: FunctionComponent = () => {
       },
       {
         field: 'staffNameEng',
-        headerName: 'Employee English Name',
+        headerName: 'Employee english name',
         width: 200,
         type: 'string'
       },
@@ -341,7 +365,7 @@ const StaffManagement: FunctionComponent = () => {
         type: 'boolean'
       },
       {
-        field: 'titleId',
+        field: 'titleValue',
         headerName: t('staffManagement.position'),
         width: 150,
         type: 'string'

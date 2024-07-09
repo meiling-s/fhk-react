@@ -23,7 +23,8 @@ interface reportItem {
   reportId: string
   dateOption?: string // daterange, datetime, none
   manualTenantId: boolean,
-  tenantId?:string
+  tenantId?:string,
+  loginId?: string
 }
 
 const DownloadArea = () => {
@@ -37,7 +38,7 @@ const DownloadArea = () => {
     reportId: '',
     dateOption: '',
     manualTenantId: false,
-    tenantId: ''
+    tenantId: '',
   })
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
@@ -187,7 +188,7 @@ const DownloadArea = () => {
 
   const manufacturerRows: reportItem[] = [
     {
-      id: 0,
+      id: 1,
       report_name: t(
         'generate_report.recycled_waste_request_list_manufacturer'
       ),
@@ -196,14 +197,14 @@ const DownloadArea = () => {
       manualTenantId: false
     },
     {
-      id: 1,
+      id: 2,
       report_name: t('generate_report.report_of_manu_recycled_order_list'),
       typeFile: 'XLS',
       reportId: 'downloadExcelFnRpt000012',
       manualTenantId: false
     },
     {
-      id: 2,
+      id: 3,
       report_name: t(
         'generate_report.report_of_manu_recycled_waste_tracing_list'
       ),
@@ -212,7 +213,7 @@ const DownloadArea = () => {
       manualTenantId: false
     },
     {
-      id: 3,
+      id: 4,
       report_name: t(
         'generate_report.report_of_manu_recycled_waste_classification_list'
       ),
@@ -254,6 +255,41 @@ const DownloadArea = () => {
       dateOption: 'none',
       manualTenantId: false,
       tenantId: 'none'
+    },
+    {
+      id: 3,
+      report_name: t(
+        'generate_report.report_of_audit_trail'
+      ),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000016',
+      manualTenantId: false,
+
+    },
+    {
+      id: 4,
+      report_name: t(
+        'generate_report.report_of_user_activity'
+      ),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000022',
+      tenantId: 'none',
+      dateOption: 'datetime',
+      manualTenantId: false,
+
+    },
+    {
+      id: 5,
+      report_name: t(
+        'generate_report.report_of_notification'
+      ),
+      typeFile: 'XLS',
+      reportId: 'downloadExcelFnRpt000023',
+      tenantId: 'none',
+      manualTenantId: false,
+      dateOption: 'datetime',
+      // loginId: loginId
+
     }
   ]
 
@@ -294,6 +330,7 @@ const DownloadArea = () => {
         dateOption: params?.row?.dateOption,
         manualTenantId: params?.row?.manualTenantId,
         tenantId: params?.row?.tenantId,
+        loginId: params?.row?.loginId
       }
     })
   }
@@ -310,6 +347,7 @@ const DownloadArea = () => {
         dateOption: params?.row?.dateOption,
         manualTenantId: params?.row?.manualTenantId,
         tenantId: params?.row?.tenantId,
+        loginId: params?.row?.loginId
       }
     })
   }

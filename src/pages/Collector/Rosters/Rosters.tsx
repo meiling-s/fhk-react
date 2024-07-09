@@ -7,7 +7,7 @@ import { ADD_ICON } from '../../../themes/icons'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { STATUS_CODE, format } from '../../../constants/constant'
+import { Languages, STATUS_CODE, format } from '../../../constants/constant'
 import { useTranslation } from 'react-i18next'
 import RosterDetail from './RosterDetail'
 
@@ -20,6 +20,7 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { extractError } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
+import i18n from '../../../setups/i18n'
 
 const Rosters: FunctionComponent = () => {
   const { t } = useTranslation()
@@ -65,7 +66,33 @@ const Rosters: FunctionComponent = () => {
               collectionName: colPoint.colName,
               roster: rosterData.filter(
                 (roster: Roster) =>
-                  roster.collectionPoint.colId === parseInt(colPoint.colId)
+                  {
+                    if(roster.collectionPoint.colId === parseInt(colPoint.colId)){
+                      return {
+                        ...roster,
+                        collectionPoint : {
+                          ...roster.collectionPoint,
+                          colId: parseInt(colPoint.colId)
+                        },
+                        staff: {
+                          ...roster.staff.map(item => {
+                            if(i18n.language === Languages.ENUS){
+                              item.lang = item.staffNameEng
+                              return item
+                            } else if(i18n.language === Languages.ZHCH){
+                              item.lang = item.staffNameSchi
+                              return item
+                            } else {
+                              item.lang = item.staffNameTchi
+                              return item
+                            }
+                          })
+  
+                        }
+                      }
+                    }
+                   
+                  }
               )
             }
           }
@@ -108,6 +135,10 @@ const Rosters: FunctionComponent = () => {
     }
     setDrawerOpen(true)
   }
+
+  useEffect(() => {
+    initRosterData()
+  }, [i18n.language])
 
   return (
     <>
@@ -165,11 +196,11 @@ const Rosters: FunctionComponent = () => {
                         >
                           <div className="staff flex gap-2 mt-2 justify-start items-center">
                             <div className="w-[25px] h-[25px] rounded-3xl bg-[#86C049] p-1 font-bold text-white text-xs text-center">
-                              {staffItem.staffNameTchi.substring(0, 2)}
+                            {staffItem.staffNameTchi.substring(0, 2)}
                             </div>
                             <div className="right-side">
                               <div className="font-bold text-base text-black mb-1">
-                                {staffItem.staffNameTchi}
+                                {staffItem.lang}
                               </div>
                               <div className="text-xs font-normal text-[#717171]">
                                 {staffItem.titleId}

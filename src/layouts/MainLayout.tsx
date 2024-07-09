@@ -14,10 +14,11 @@ function MainLayout() {
   const theme = useTheme()
   //todo move to global utils
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const { broadcast, setBroadcast, setShowBroadcast, showBroadcast } =  useContainer(NotifContainer);
+  const { broadcast, setBroadcast, setMarginTop, setShowBroadcast, showBroadcast } =  useContainer(NotifContainer);
 
   const onCloseBroadcastMessage = () => {
     // setBroadcast(null)
+    setMarginTop('0px')
     setShowBroadcast(false)
     styles.innerScreen.pt = '32px'
   };

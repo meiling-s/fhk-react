@@ -290,7 +290,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
       defaultPath.tenantRegisterPath + id
     }`
 
-    const result = await sendEmailInvitation(email, titleInv, content)
+    const result = await sendEmailInvitation(email, id)
     if (result) {
       onSendInvitation(true)
     } else {
@@ -881,7 +881,7 @@ function CompanyManage() {
       label: t('tenant.invite_form.customer_company')
     }
   ]
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1006,7 +1006,8 @@ function CompanyManage() {
       width: 150,
       type: 'string',
       valueGetter: (params) => {
-        return dayjs.utc((params.row?.createDate))
+        return dayjs
+          .utc(params.row?.createDate)
           .tz('Asia/Hong_Kong')
           .format(`${dateFormat} HH:mm`)
       }
@@ -1289,7 +1290,7 @@ function CompanyManage() {
               }
             }
           }}
-          label={t('tenant.search')}
+          label={t('tenant.company_number')}
           placeholder={t('tenant.enter_company_number')}
           inputProps={{
             inputMode: 'numeric',

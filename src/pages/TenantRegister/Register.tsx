@@ -9,7 +9,7 @@ import {
   ImageList,
   ImageListItem
 } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import ImageUploading, {
   ImageListType,
@@ -27,6 +27,7 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { extractError } from '../../utils/utils'
 import { STATUS_CODE } from '../../constants/constant'
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
 
 interface FormValues {
   [key: string]: string
@@ -50,9 +51,8 @@ const RegisterTenant = () => {
   const submitLabel = ' 繼續'
   const { tenantId } = useParams()
   const [tenantIdNumber, setTenantIdNumber] = useState(null)
-  const [firstForm, showFirstForm] = useState(true)
-  const [secondForm, showSecondForm] = useState(false)
-  const [thirdForm, showThirdForm] = useState(false)
+  const [lang, setLang] = useState<string>('')
+  const [monetaryValue, setMonetaryValue] = useState<string>('')
   const [formValues, setFormValues] = useState<FormValues>({
     company_category: '',
     company_cn_name: '',
@@ -62,9 +62,14 @@ const RegisterTenant = () => {
     contact_person_number: ''
   })
   const [BRNImages, setBRNImages] = useState<ImageListType>([])
-  const [EPDImages, setEDPImages] = useState<ImageListType>([])
+  const [EPDImages, setEPDImages] = useState<ImageListType>([])
   const [logoImage, setLogoImage] = useState<string | ImageType[]>([])
-  const {imgSettings} = useContainer(CommonTypeContainer)
+  const [BRNImagesError, setBRNImagesError] = useState<boolean>(false)
+  const [logoImageError, setLogoImageError] = useState<boolean>(false)
+  const { imgSettings } = useContainer(CommonTypeContainer)
+  const [formStep, setFormStep] = useState(1);
+  const [CPNError, setCPNError] = useState<boolean>(false)
+  const [CPError, setCPError] = useState<boolean>(false)
 
   const firstFormFields = [
     {
@@ -133,7 +138,7 @@ const RegisterTenant = () => {
       if (tenantId) {
         const result = await getTenantById(parseInt(tenantId))
         const data = result?.data
-        console.log('initRegisterForm', data)
+        // console.log('initRegisterForm', data)
         setTenantIdNumber(data?.tenantId)
         setFormValues({
           company_category: data?.tenantType,
@@ -141,34 +146,59 @@ const RegisterTenant = () => {
           company_en_name: data?.companyNameEng,
           company_number: data?.brNo
         })
-        setEDPImages(data?.EPDImages)
-        console.log(result?.data)
+        setEPDImages(data?.epdPhoto ?? [])
+        setLang(data?.lang)
+        setMonetaryValue(data?.monetaryValue)
       }
-    } catch (error:any) {
-      const {state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
         return navigate('/maintenance')
       }
     }
   }
 
-  const onChangeTextInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
+  const handleToNextForm = useCallback(() => {
+    if (formStep === 1) {
+      if (formValues.company_category && formValues.company_cn_name && formValues.company_en_name) {
+        setFormStep(2);
+      }
+    } else if (formStep === 2) {
+      if (BRNImages.length && logoImage.length) {
+        setFormStep(3);
+      } else {
+        if (!BRNImages.length) setBRNImagesError(true);
+        if (!logoImage.length) setLogoImageError(true);
+      }
+    } else if (formStep === 3) {
+      if (formValues.contact_person !== '' && formValues.contact_person_number !== '') {
+        registerTenant()
+      } else {
+        if (!formValues.contact_person) {
+          setCPError(true);
+        }
+        if (!formValues.contact_person_number) {
+          setCPNError(true);
+        }
+      }
+    }
+  }, [formStep, formValues, BRNImages, logoImage, EPDImages]);
+
+  const onChangeTextInput = useCallback((name: string, value: string) => {
     setFormValues((prevState) => ({
       ...prevState,
       [name]: value
-    }))
-  }
+    }));
+  }, []);
 
-  const handleToSecondForm = () => {
-    showFirstForm(false)
-    showSecondForm(true)
-  }
-
-  const handleToThirdForm = () => {
-    showSecondForm(false)
-    showThirdForm(true)
-  }
+  useEffect(() => {
+    if (formValues.contact_person !== '' && formValues.contact_person !== undefined) {
+      setCPError(false)
+    }
+    if (formValues.contact_person_number !== '' && formValues.contact_person_number !== undefined) {
+      setCPNError(false)
+    }
+  }, [formValues])
 
   const onImageChange = (
     imageList: ImageListType,
@@ -177,30 +207,46 @@ const RegisterTenant = () => {
   ) => {
     if (fieldType === 'company_image') {
       setBRNImages(imageList)
+      setBRNImagesError(false)
     } else if (fieldType === 'company_logo') {
       const firstImage = imageList.length > 0 ? imageList[0].data_url : ''
       setLogoImage(firstImage)
+      setLogoImageError(false)
     } else if (fieldType === 'edp_contract') {
-      setEDPImages(imageList)
+      setEPDImages(imageList)
     }
-    console.log(imageList, addUpdateIndex)
+  }
+
+  const removeImage = (field: string, index: number) => {
+    if (field === 'company_image') {
+      const newPictures = [...BRNImages]
+      newPictures.splice(index, 1)
+      setBRNImages(newPictures)
+    } else if (field === 'company_logo') {
+      setLogoImage([])
+    } else if (field === 'edp_contract') {
+      const newPictures = [...EPDImages]
+      newPictures.splice(index, 1)
+      setEPDImages(newPictures)
+    }
   }
 
   const registerTenant = () => {
     if (tenantIdNumber) {
       const registerInfo: RegisterItem = {
+        lang: lang,
         contactName: formValues.contact_person,
         contactNo: formValues.contact_person_number,
-        // brImages: ImageToBase64(BRNImages),
-        // companyLogo: Array.isArray(logoImage)
-        //   ? logoImage[0]?.data_url || ''
-        //   : logoImage,
-        // epdImages: ImageToBase64(EPDImages)
-        brImages: ['string'],
-        companyLogo: 'string',
-        epdImages: ['string']
+        brImages: ImageToBase64(BRNImages),
+        companyLogo: Array.isArray(logoImage)
+          ? logoImage[0]?.data_url || ''
+          : logoImage,
+        epdImages: ImageToBase64(EPDImages),
+        monetaryValue: monetaryValue,
+        // brImages: ['string'],
+        // companyLogo: 'string',
+        // epdImages: ['string']
       }
-
       const result = updateTenantRegInfo(registerInfo, tenantIdNumber)
       if (result != null) {
         console.log('result: ', result)
@@ -209,7 +255,7 @@ const RegisterTenant = () => {
     }
   }
 
-  const FirstFormContent = ({}) => {
+  const FirstFormContent = useMemo(() => {
     return (
       <Box>
         <Stack spacing={4}>
@@ -220,9 +266,10 @@ const RegisterTenant = () => {
                   id={field.label}
                   placeholder={field.placeholder}
                   rows={1}
-                  onChange={onChangeTextInput}
+                  onChange={(e) => onChangeTextInput(field.name, e.target.value)}
                   value={formValues[field.name]}
                   sx={{ width: '100%' }}
+                  disabled={true}
                 ></CustomTextField>
               </CustomField>
             </Box>
@@ -230,7 +277,7 @@ const RegisterTenant = () => {
           <Box>
             <Button
               fullWidth
-              onClick={handleToSecondForm}
+              onClick={handleToNextForm}
               sx={constantStyle.buttonFilledGreen}
               variant="contained"
             >
@@ -240,27 +287,147 @@ const RegisterTenant = () => {
         </Stack>
       </Box>
     )
-  }
+  }, [formValues, onChangeTextInput, handleToNextForm]);
 
-  const SecondFormContent = ({}) => {
+  const SecondFormContent = useMemo(() => {
     return (
       <Stack spacing={2}>
         {secondformFields.map((field) => (
           <Box key={field.name}>
             {field.type === 'image' ? (
               <Box>
-                <Typography sx={constantStyle.labelField}>
-                  {field.label}
-                </Typography>
+                <CustomField label={field.label} style={constantStyle.labelField} mandatory={field.label !== '' ? true : false}>
+                  <ImageUploading
+                    multiple
+                    value={
+                      field.name === 'company_image'
+                        ? BRNImages
+                        : typeof logoImage === 'string'
+                          ? [{ data_url: logoImage }]
+                          : logoImage
+                    }
+                    onChange={(imageList, addUpdateIndex) =>
+                      onImageChange(imageList, addUpdateIndex, field.name)
+                    }
+                    maxNumber={imgSettings?.ImgQuantity}
+                    maxFileSize={imgSettings?.ImgSize}
+                    dataURLKey="data_url"
+                  >
+                    {({ imageList, onImageUpload, onImageRemove }) => (
+                      <Box className="boox">
+                        <Card sx={styles.cardImg}>
+                          <ButtonBase
+                            sx={styles.btnBase}
+                            onClick={(event) => onImageUpload()}
+                          >
+                            <CAMERA_OUTLINE_ICON
+                              style={{ color: '#ACACAC' }}
+                              fontSize="large"
+                            />
+                            <Typography
+                              sx={[
+                                constantStyle.labelField,
+                                { fontWeight: 'bold' }
+                              ]}
+                            >
+                              {field.placeholder}
+                            </Typography>
+                          </ButtonBase>
+                        </Card>
+                        <ImageList sx={styles.imagesContainer} cols={3}>
+                          {imageList.map((image, index) => (
+                            <ImageListItem key={image['file']?.name}>
+                              <img
+                                style={styles.image}
+                                src={image['data_url']}
+                                alt={image['file']?.name}
+                                loading="lazy"
+                              />
+                              <ButtonBase
+                                onClick={(event) => {
+                                  onImageRemove(index)
+                                  removeImage(field.name, index)
+                                }}
+                                style={{
+                                  position: 'absolute',
+                                  top: '0px',
+                                  right: '10px',
+                                  padding: '4px'
+                                }}
+                              >
+                                <CancelRoundedIcon className="text-black" />
+                              </ButtonBase>
+                            </ImageListItem>
+                          ))}
+                        </ImageList>
+                      </Box>
+                    )}
+                  </ImageUploading>
+                </CustomField>
+              </Box>
+            ) : (
+              <Box>
+                <CustomField label={field.label} mandatory>
+                  <CustomTextField
+                    id={field.label}
+                    placeholder={field.placeholder}
+                    rows={1}
+                    onChange={(e) => onChangeTextInput(field.name, e.target.value)}
+                    value={formValues[field.name]}
+                    sx={{ width: '100%' }}
+                  ></CustomTextField>
+                </CustomField>
+              </Box>
+            )}
+          </Box>
+        ))}
+        {BRNImagesError && (
+          <Box sx={styles.errorContainer}>
+            <Box sx={{ display: "flex", flexDirection: "row", flex: 9, alignItems: "center" }}>
+              <Typography sx={styles.txtField}>
+                上載商業登記圖片
+              </Typography>
+              <Typography sx={styles.txtErrorMsg}>
+                不应留白
+              </Typography>
+            </Box>
+          </Box>
+        )}
+        {logoImageError && (
+          <Box sx={styles.errorContainer}>
+            <Box sx={{ display: "flex", flexDirection: "row", flex: 9, alignItems: "center" }}>
+              <Typography sx={styles.txtField}>
+                上載圖片
+              </Typography>
+              <Typography sx={styles.txtErrorMsg}>
+                不应留白
+              </Typography>
+            </Box>
+          </Box>
+        )}
+        <Button
+          fullWidth
+          onClick={handleToNextForm}
+          sx={constantStyle.buttonFilledGreen}
+          variant="contained"
+        >
+          {submitLabel}
+        </Button>
+      </Stack>
+    )
+  }, [formValues, BRNImages, logoImage, BRNImagesError, logoImageError, onImageChange, removeImage, onChangeTextInput, handleToNextForm])
+
+  const ThirdFormContent = useMemo(() => {
+    return (
+      <Stack spacing={4}>
+        {thirdFormFields.map((field) => (
+          <Box key={field.name}>
+            {field.type === 'image' ? (
+              <>
+                <Typography sx={constantStyle.labelField}>{field.label}</Typography>
                 <ImageUploading
                   multiple
-                  value={
-                    field.name === 'company_image'
-                      ? BRNImages
-                      : typeof logoImage === 'string'
-                      ? [{ data_url: logoImage }]
-                      : logoImage
-                  }
+                  value={EPDImages}
                   onChange={(imageList, addUpdateIndex) =>
                     onImageChange(imageList, addUpdateIndex, field.name)
                   }
@@ -268,17 +435,14 @@ const RegisterTenant = () => {
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
                 >
-                  {({ imageList, onImageUpload }) => (
-                    <Box className="boox">
+                  {({ imageList, onImageUpload, onImageRemove }) => (
+                    <Box className="box">
                       <Card sx={styles.cardImg}>
                         <ButtonBase
                           sx={styles.btnBase}
                           onClick={(event) => onImageUpload()}
                         >
-                          <CAMERA_OUTLINE_ICON
-                            style={{ color: '#ACACAC' }}
-                            fontSize="large"
-                          />
+                          <CAMERA_OUTLINE_ICON style={{ color: '#ACACAC' }} />
                           <Typography
                             sx={[
                               constantStyle.labelField,
@@ -290,7 +454,7 @@ const RegisterTenant = () => {
                         </ButtonBase>
                       </Card>
                       <ImageList sx={styles.imagesContainer} cols={3}>
-                        {imageList.map((image) => (
+                        {imageList.map((image, index) => (
                           <ImageListItem key={image['file']?.name}>
                             <img
                               style={styles.image}
@@ -298,32 +462,68 @@ const RegisterTenant = () => {
                               alt={image['file']?.name}
                               loading="lazy"
                             />
+                            <ButtonBase
+                              onClick={(event) => {
+                                onImageRemove(index)
+                                removeImage(field.name, index)
+                              }}
+                              style={{
+                                position: 'absolute',
+                                top: '0px',
+                                right: '10px',
+                                padding: '4px'
+                              }}
+                            >
+                              <CancelRoundedIcon className="text-black" />
+                            </ButtonBase>
                           </ImageListItem>
                         ))}
                       </ImageList>
                     </Box>
                   )}
                 </ImageUploading>
-              </Box>
+              </>
             ) : (
-              <Box>
-                <CustomField label={field.label}>
-                  <CustomTextField
-                    id={field.label}
-                    placeholder={field.placeholder}
-                    rows={1}
-                    onChange={onChangeTextInput}
-                    value={formValues[field.name]}
-                    sx={{ width: '100%' }}
-                  ></CustomTextField>
-                </CustomField>
-              </Box>
+              <CustomField label={field.label} mandatory>
+                <TextField
+                  id={field.label}
+                  placeholder={field.placeholder}
+                  rows={1}
+                  onChange={(e) => onChangeTextInput(field.name, e.target.value)}
+                  value={formValues[field.name]}
+                  sx={{ width: '100%' }}
+                />
+              </CustomField>
             )}
           </Box>
         ))}
+        {CPError && (
+          <Box sx={styles.errorContainer}>
+            <Box sx={{ display: "flex", flexDirection: "row", flex: 9, alignItems: "center" }}>
+              <Typography sx={styles.txtField}>
+                聯絡人姓名
+              </Typography>
+              <Typography sx={styles.txtErrorMsg}>
+                不应留白
+              </Typography>
+            </Box>
+          </Box>
+        )}
+        {CPNError && (
+          <Box sx={styles.errorContainer}>
+            <Box sx={{ display: "flex", flexDirection: "row", flex: 9, alignItems: "center" }}>
+              <Typography sx={styles.txtField}>
+                聯絡人手機號碼
+              </Typography>
+              <Typography sx={styles.txtErrorMsg}>
+                不应留白
+              </Typography>
+            </Box>
+          </Box>
+        )}
         <Button
           fullWidth
-          onClick={handleToThirdForm}
+          onClick={handleToNextForm}
           sx={constantStyle.buttonFilledGreen}
           variant="contained"
         >
@@ -331,83 +531,7 @@ const RegisterTenant = () => {
         </Button>
       </Stack>
     )
-  }
-
-  const ThirdFormContent = ({}) => {
-    return (
-      <Stack spacing={4}>
-        {thirdFormFields.map((field) => (
-          <Box key={field.name}>
-            <Typography sx={constantStyle.labelField}>{field.label}</Typography>
-            {field.type === 'image' ? (
-              <ImageUploading
-                multiple
-                value={EPDImages}
-                onChange={(imageList, addUpdateIndex) =>
-                  onImageChange(imageList, addUpdateIndex, field.name)
-                }
-                maxNumber={imgSettings?.ImgQuantity}
-                maxFileSize={imgSettings?.ImgSize}
-                dataURLKey="data_url"
-              >
-                {({ imageList, onImageUpload }) => (
-                  <Box className="box">
-                    <Card sx={styles.cardImg}>
-                      <ButtonBase
-                        sx={styles.btnBase}
-                        onClick={(event) => onImageUpload()}
-                      >
-                        <CAMERA_OUTLINE_ICON style={{ color: '#ACACAC' }} />
-                        <Typography
-                          sx={[
-                            constantStyle.labelField,
-                            { fontWeight: 'bold' }
-                          ]}
-                        >
-                          {field.placeholder}
-                        </Typography>
-                      </ButtonBase>
-                    </Card>
-                    <ImageList sx={styles.imagesContainer} cols={3}>
-                      {imageList.map((image) => (
-                        <ImageListItem key={image['file']?.name}>
-                          <img
-                            style={styles.image}
-                            src={image['data_url']}
-                            alt={image['file']?.name}
-                            loading="lazy"
-                          />
-                        </ImageListItem>
-                      ))}
-                    </ImageList>
-                  </Box>
-                )}
-              </ImageUploading>
-            ) : (
-              <TextField
-                fullWidth
-                placeholder={field.placeholder}
-                name={field.name}
-                value={formValues[field.name]}
-                InputProps={{
-                  sx: styles.textField
-                }}
-                onChange={onChangeTextInput}
-              />
-            )}
-          </Box>
-        ))}
-        <Button
-          fullWidth
-          onClick={registerTenant}
-          sx={constantStyle.buttonFilledGreen}
-          variant="contained"
-        >
-          {submitLabel}
-        </Button>
-      </Stack>
-    )
-  }
+  }, [formValues, EPDImages, CPError, CPNError, onImageChange, removeImage, onChangeTextInput, registerTenant]);
 
   return (
     <Box sx={constantStyle.loginPageBg}>
@@ -420,9 +544,9 @@ const RegisterTenant = () => {
         >
           {titlePage}
         </Typography>
-        {firstForm && <FirstFormContent />}
-        {secondForm && <SecondFormContent />}
-        {thirdForm && <ThirdFormContent />}
+        {formStep === 1 && FirstFormContent}
+        {formStep === 2 && SecondFormContent}
+        {formStep === 3 && ThirdFormContent}
       </Box>
       <div className="sm:mt-4 w-full pt-4 text-center">
         <CustomCopyrightSection />
@@ -462,7 +586,24 @@ let styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+  errorContainer: {
+    display: "flex",
+    flexDirection: "row",
+    width: "90%",
+    marginY: 1.5,
+    p: 2,
+    backgroundColor: "#F7BCC6",
+    borderRadius: 5
+  },
+  txtField: {
+    fontWeight: "bold",
+    color: "red",
+    marginRight: "8px"
+  },
+  txtErrorMsg: {
+    color: "red"
+  },
 }
 
 export default RegisterTenant
