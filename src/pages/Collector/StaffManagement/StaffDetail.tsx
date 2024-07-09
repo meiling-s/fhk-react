@@ -22,7 +22,8 @@ import {
   extractError,
   returnErrorMsg,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  validateEmail
 } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'

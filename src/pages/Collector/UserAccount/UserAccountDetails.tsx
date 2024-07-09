@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
+import { returnErrorMsg, validateEmail } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 
 import { localStorgeKeyName } from '../../../constants/constant'
@@ -211,13 +211,13 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
 
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      validateEmail(email) &&
         tempV.push({
           field: t('userAccount.emailAddress'),
           problem: formErr.wrongFormat,
           type: 'error'
         })
-      }
+
       setValidation(tempV)
     }
 
@@ -403,7 +403,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                       value={email}
                       placeholder={t('userAccount.pleaseEnterEmailAddress')}
                       onChange={(event) => setEmail(event.target.value)}
-                      error={(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && trySubmited}
+                      error={validateEmail(email) && trySubmited}
                     />
                   </CustomField>
                 </Grid>
