@@ -124,6 +124,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     }
   }, [drawerOpen])
 
+  useEffect(() => {
+    if (userGroupList.length > 0 && action === 'add')
+      setUserGroup(userGroupList[0].groupId)
+  }, [userGroupList])
+
   const getUserGroupList = async () => {
     const result = await getUserGroup(0, 1000)
     const groupList: DropdownOption[] = []
@@ -135,8 +140,6 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         })
       })
       setUserGroupList(groupList)
-
-      if (groupList.length > 0) setUserGroup(groupList[0].groupId)
     }
   }
 

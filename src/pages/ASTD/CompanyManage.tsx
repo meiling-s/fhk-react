@@ -303,7 +303,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
 
   return (
     <Modal
-      open={true}
+      open={open}
       onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
