@@ -22,7 +22,7 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import { getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import { useNavigate } from 'react-router-dom'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
+// import Switcher from '../../../components/FormComponents/CustomSwitch'
 
 interface CreateDenialReasonProps {
   drawerOpen: boolean
@@ -53,7 +53,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
     description: '',
     remark: ''
   }
-  const [status, setStatus] = useState<boolean>(true)
+  // const [status, setStatus] = useState<boolean>(true)
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -154,14 +154,14 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       type: 'text-not-mandatory',
       textarea: true,
       mandatory: false
-    },
-    {
-      label: t('general_settings.state'),
-      placeholder: '',
-      field: 'status',
-      type: 'boolean',
-      mandatory: true
     }
+    // {
+    //   label: t('general_settings.state'),
+    //   placeholder: '',
+    //   field: 'status',
+    //   type: 'boolean',
+    //   mandatory: true
+    // }
   ]
 
   useEffect(() => {
@@ -186,7 +186,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         // description: selectedItem.description,
         remark: selectedItem.remark
       })
-      setStatus(selectedItem.status === 'ACTIVE' ? true : false)
+      //setStatus(selectedItem.status === 'ACTIVE' ? true : false)
     }
   }
 
@@ -215,9 +215,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   const validate = async () => {
     const tempV: formValidate[] = []
     let excludeFields = ['description', 'remark']
-    if (!status) {
-      excludeFields.push('functionId')
-    }
+    // if (!status) {
+    //   excludeFields.push('functionId')
+    // }
 
     const fieldMapping: FormValues = {
       functionId: t('denial_reason.corresponding_functions'),
@@ -276,9 +276,11 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameSchi: formData.reasonNameSchi,
         reasonNameEng: formData.reasonNameEng,
         description: formData.description,
-        functionId: status ? formData.functionId : '0',
+        //functionId: status ? formData.functionId : '0',
+        functionId: formData.functionId,
         remark: formData.remark,
-        status: status ? 'ACTIVE' : 'INACTIVE',
+        status: 'ACTIVE',
+        // status: status ? 'ACTIVE' : 'INACTIVE',
         createdBy: loginName,
         updatedBy: loginName
       }
@@ -335,7 +337,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameEng: formData.reasonNameEng,
         description: '',
         functionId: formData.functionId,
-        status: status ? 'ACTIVE' : 'INACTIVE',
+        status: 'ACTIVE',
+        //status: status ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
         updatedBy: loginName
       }
@@ -447,7 +450,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
-              ) : item.type == 'autocomplete' && status === true ? (
+              ) : item.type == 'autocomplete' ? (
                 <Grid item key={index}>
                   <CustomField label={item.label} mandatory>
                     <Autocomplete
@@ -502,20 +505,21 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
-              ) : item.field == 'status' && item.type == 'boolean' ? (
-                <Grid item key={index}>
-                  <CustomField label={item.label} mandatory></CustomField>
-                  <Switcher
-                    onText={t('status.active')}
-                    offText={t('status.inactive')}
-                    disabled={action === 'delete'}
-                    defaultValue={status}
-                    setState={(newValue) => {
-                      setStatus(newValue)
-                    }}
-                  />
-                </Grid>
               ) : (
+                // item.field == 'status' && item.type == 'boolean' ? (
+                //   <Grid item key={index}>
+                //     <CustomField label={item.label} mandatory></CustomField>
+                //     <Switcher
+                //       onText={t('status.active')}
+                //       offText={t('status.inactive')}
+                //       disabled={action === 'delete'}
+                //       defaultValue={status}
+                //       setState={(newValue) => {
+                //         setStatus(newValue)
+                //       }}
+                //     />
+                //   </Grid>
+                // ) :
                 <></>
               )
             )}
