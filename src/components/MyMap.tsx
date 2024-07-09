@@ -44,14 +44,16 @@ function MyMap({
       {collectionPoints.map((collectionPoint) => {
         switch (collectionPoint.colPointTypeId) {
           case 'CPT00001':
-            color = 'abcdef'
+            color = '#2ecc71'
             break
           case 'CPT00002':
-            color = '2ecc71'
+            color = '#e85141'
             break
           case 'CPT00003':
-            color = 'e85141'
+            color = '#71c9ff'
             break
+          default:
+            color = '#000'
         }
         var location =
           collectionPoint.gpsCode.length > 0 ? collectionPoint.gpsCode : [0, 0]
@@ -63,7 +65,11 @@ function MyMap({
             position={[location[0], location[1]]}
             icon={
               new Icon({
-                iconUrl: `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|${color}&chf=a,s,ee00FFFF`,
+                iconUrl: `data:image/svg+xml;base64,${btoa(`
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="35" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="${color}"/>
+                  </svg>
+                `)}`,
                 iconSize: [28, 35]
               })
             }

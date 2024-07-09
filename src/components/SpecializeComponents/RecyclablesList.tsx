@@ -200,17 +200,34 @@ export default function RecyclablesList({
     return subTypes
   }
 
+  // const toRecyclables = () => {
+  //   var recyclableS: recyclable[] = []
+  //   recycTypeList.map((recyc) => {
+  //     const subId = returnSubTypesId(recyc)
+  //     const subList = subTypeList.filter((sub) => {
+  //       //get the selected sub types of corresponding recyc type
+  //       return subId.includes(sub)
+  //     })
+  //     recyclableS.push({ recycTypeId: recyc, recycSubTypeId: subList })
+  //   })
+
+  //   return recyclableS
+  // }
+
   const toRecyclables = () => {
     var recyclableS: recyclable[] = []
     recycTypeList.map((recyc) => {
-      const subId = returnSubTypesId(recyc)
-      const subList = subTypeList.filter((sub) => {
-        //get the selected sub types of corresponding recyc type
-        return subId.includes(sub)
-      })
-      recyclableS.push({ recycTypeId: recyc, recycSubTypeId: subList })
+      const recycType = recycL.find(r => r.recycTypeId === recyc);
+      if (recycType && recycType.recycSubType.length > 0) {
+        const subId = returnSubTypesId(recyc)
+        const subList = subTypeList.filter((sub) => {
+          return subId.includes(sub)
+        })
+        recyclableS.push({ recycTypeId: recyc, recycSubTypeId: subList })
+      } else {
+        recyclableS.push({ recycTypeId: recyc, recycSubTypeId: [] })
+      }
     })
-
     return recyclableS
   }
 

@@ -71,7 +71,8 @@
     "cancel": "取消",
     "collectionPoint_created": "回收点已建立",
     "collectionPoint_updated": "回收点已更新",
-    "addressNotes": "请输入座位数、街道名称、屋苑等信息"
+    "addressNotes": "请输入座位数、街道名称、屋苑等信息",
+    "addressReminder": "请选择地址"
   },
   "form": {
     "error": {
@@ -93,7 +94,8 @@
       "tenantIdNotFound": "未找到租户 ID",
       "mustDifferent": "必须不同",
       "loginIdProhibited": "不允许在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'",
-      "invalidDate": "运输有效期开始日期应低于运输有效期结束日期"
+      "invalidDate": "运输有效期开始日期应低于运输有效期结束日期",
+      "incorrectAddress": "地址不正确"
     }
   },
   "component": {
