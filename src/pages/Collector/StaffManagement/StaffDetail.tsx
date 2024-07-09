@@ -1,5 +1,12 @@
 import { FunctionComponent, useState, useEffect } from 'react'
-import { Box, Divider, Grid, Autocomplete, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Divider,
+  Grid,
+  Autocomplete,
+  TextField,
+  Typography
+} from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
@@ -44,21 +51,25 @@ interface CreateVehicleProps {
 interface FormValues {
   [key: string]: string
 }
-type FieldName = 'loginId' | 'staffNameTchi' | 'staffNameSchi' | 'staffNameEng' | 'titleId' | 'contactNo' | 'email';
+type FieldName =
+  | 'loginId'
+  | 'staffNameTchi'
+  | 'staffNameSchi'
+  | 'staffNameEng'
+  | 'titleId'
+  | 'contactNo'
+  | 'email'
 
-type ErrorsStaffData = Record<
-  FieldName,
-  {status: boolean, message: string}
->
+type ErrorsStaffData = Record<FieldName, { status: boolean; message: string }>
 
 const initialErrors = {
-  loginId:  {status: false, message: ''},
-  staffNameTchi:  {status: false, message: ''},
-  staffNameSchi:  {status: false, message: ''},
-  staffNameEng:  {status: false, message: ''},
-  titleId:  {status: false, message: ''},
-  contactNo:  {status: false, message: ''},
-  email:  {status: false, message: ''},
+  loginId: { status: false, message: '' },
+  staffNameTchi: { status: false, message: '' },
+  staffNameSchi: { status: false, message: '' },
+  staffNameEng: { status: false, message: '' },
+  titleId: { status: false, message: '' },
+  contactNo: { status: false, message: '' },
+  email: { status: false, message: '' }
 }
 
 const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
@@ -92,8 +103,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   const [contractType, setContractType] = useState<number>(0)
   const [errors, setErrors] = useState<ErrorsStaffData>(initialErrors)
   const [staffListExisting, setStaffListExisting] = useState<Staff[]>([])
-  const navigate = useNavigate();
- 
+  const navigate = useNavigate()
+
   let staffField = [
     {
       label: t('staffManagement.loginName'),
@@ -159,7 +170,6 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         setStaffListExisting(data)
       }
     } catch (error: any) {
-      
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
@@ -170,18 +180,20 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   useEffect(() => {
     initLoginIdList()
     initStaffTitle()
-    initStaffList();
+    initStaffList()
   }, [drawerOpen])
 
   const initLoginIdList = async () => {
     const result = await getLoginIdList()
     if (result) {
       const data = result.data
-      var loginIdMapping: il_item[] = [];
+      var loginIdMapping: il_item[] = []
 
       data.forEach((item: any) => {
-        const isUserExist = staffListExisting.find(user => user.loginId === item.loginId);
-        if(!isUserExist) {
+        const isUserExist = staffListExisting.find(
+          (user) => user.loginId === item.loginId
+        )
+        if (!isUserExist) {
           loginIdMapping.push({
             id: item.loginId,
             name: item.loginId
@@ -199,20 +211,20 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
 
       let staffTitle: il_item[] = []
       data.forEach((item: StaffTitle) => {
-        let title:il_item = {
+        let title: il_item = {
           name: '',
-          id: item.titleId,
-        };
-        switch(i18n.language){
+          id: item.titleId
+        }
+        switch (i18n.language) {
           case Languages.ENUS:
             title.name = item.titleNameEng
-            break;
+            break
           case Languages.ZHCH:
-            title.name = item.titleNameSchi;
-            break;
+            title.name = item.titleNameSchi
+            break
           default:
             title.name = item.titleNameTchi
-            break;
+            break
         }
         staffTitle.push(title)
       })
@@ -264,13 +276,13 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     return s == ''
   }
 
-  const validateStaff = () :boolean => {
-    let isValid: boolean = true;
- 
-    if(!formData.loginId) {
-      isValid = false;
-      setErrors(prev => {
-        return{
+  const validateStaff = (): boolean => {
+    let isValid: boolean = true
+
+    if (!formData.loginId) {
+      isValid = false
+      setErrors((prev) => {
+        return {
           ...prev,
           loginId: {
             status: true,
@@ -279,8 +291,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     } else {
-      setErrors(prev => {
-        return{
+      setErrors((prev) => {
+        return {
           ...prev,
           loginId: {
             status: false,
@@ -289,10 +301,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     }
-    if(!formData.staffNameEng){
-      isValid = false;
-      setErrors(prev => {
-        return{
+    if (!formData.staffNameEng) {
+      isValid = false
+      setErrors((prev) => {
+        return {
           ...prev,
           staffNameEng: {
             status: true,
@@ -301,8 +313,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     } else {
-      setErrors(prev => {
-        return{
+      setErrors((prev) => {
+        return {
           ...prev,
           staffNameEng: {
             status: false,
@@ -311,10 +323,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     }
-    if(!formData.staffNameSchi){
-      isValid = false;
-      setErrors(prev => {
-        return{
+    if (!formData.staffNameSchi) {
+      isValid = false
+      setErrors((prev) => {
+        return {
           ...prev,
           staffNameSchi: {
             status: true,
@@ -323,20 +335,20 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     } else {
-      setErrors(prev => {
-        return{
+      setErrors((prev) => {
+        return {
           ...prev,
           staffNameSchi: {
             status: false,
-            message:''
+            message: ''
           }
         }
       })
     }
-    if(!formData.staffNameTchi){
-      isValid = false;
-      setErrors(prev => {
-        return{
+    if (!formData.staffNameTchi) {
+      isValid = false
+      setErrors((prev) => {
+        return {
           ...prev,
           staffNameTchi: {
             status: true,
@@ -345,8 +357,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     } else {
-      setErrors(prev => {
-        return{
+      setErrors((prev) => {
+        return {
           ...prev,
           staffNameTchi: {
             status: false,
@@ -355,10 +367,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     }
-    if(!formData.titleId){
-      isValid = false;
-      setErrors(prev => {
-        return{
+    if (!formData.titleId) {
+      isValid = false
+      setErrors((prev) => {
+        return {
           ...prev,
           titleId: {
             status: true,
@@ -367,8 +379,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     } else {
-      setErrors(prev => {
-        return{
+      setErrors((prev) => {
+        return {
           ...prev,
           titleId: {
             status: false,
@@ -377,10 +389,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     }
-    if(!formData.contactNo){
-      isValid = false;
-      setErrors(prev => {
-        return{
+    if (!formData.contactNo) {
+      isValid = false
+      setErrors((prev) => {
+        return {
           ...prev,
           contactNo: {
             status: true,
@@ -389,20 +401,20 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     } else {
-      setErrors(prev => {
-        return{
+      setErrors((prev) => {
+        return {
           ...prev,
           contactNo: {
             status: false,
-            message:''
+            message: ''
           }
         }
       })
     }
-    if(!formData.email){
-      isValid = false;
-      setErrors(prev => {
-        return{
+    if (!formData.email) {
+      isValid = false
+      setErrors((prev) => {
+        return {
           ...prev,
           email: {
             status: true,
@@ -410,10 +422,12 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
           }
         }
       })
-    } else if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(formData.email)) {
-      isValid = false;
-      setErrors(prev => {
-        return{
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(formData.email)
+    ) {
+      isValid = false
+      setErrors((prev) => {
+        return {
           ...prev,
           email: {
             status: true,
@@ -421,10 +435,10 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
           }
         }
       })
-    } else if(formData.email.indexOf('.') === 0){
-      isValid = false;
-      setErrors(prev => {
-        return{
+    } else if (formData.email.indexOf('.') === 0) {
+      isValid = false
+      setErrors((prev) => {
+        return {
           ...prev,
           email: {
             status: true,
@@ -433,8 +447,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
     } else {
-      setErrors(prev => {
-        return{
+      setErrors((prev) => {
+        return {
           ...prev,
           email: {
             status: false,
@@ -444,7 +458,6 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       })
     }
     return isValid
-
   }
 
   const validate = () => {
@@ -497,7 +510,6 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     })
 
     setValidation(tempV)
-    
   }
 
   useEffect(() => {
@@ -509,42 +521,45 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       ...formData,
       [field]: value
     })
- 
   }
 
   const handleSubmit = () => {
-    const isvalid = validateStaff();
-    if(!isvalid) return
-    const staffData: CreateStaff = {
-      tenantId: tenantId.toString(),
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'ACTIVE',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      createdBy: loginName,
-      updatedBy: loginName
-    }
+    //const isvalid = validateStaff()
+    console.log("validation", validation)
+    if (validation.length === 0) {
+      const staffData: CreateStaff = {
+        tenantId: tenantId.toString(),
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'ACTIVE',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        createdBy: loginName,
+        updatedBy: loginName
+      }
 
-    if (realm === Realm.collector) {
-      staffData.fullTimeFlg = contractType === 0 ? true : false
-    }
+      if (realm === Realm.collector) {
+        staffData.fullTimeFlg = contractType === 0 ? true : false
+      }
 
-    if (action == 'add') {
-      handleCreateStaff(staffData)
+      if (action == 'add') {
+        handleCreateStaff(staffData)
+      } else {
+        handleEditStaff()
+      }
     } else {
-      handleEditStaff()
+      setTrySubmited(true)
     }
   }
 
   const handleCreateStaff = async (staffData: CreateStaff) => {
     //validate()
-    console.log("staffData", staffData)
+    console.log('staffData', staffData)
     if (validation.length === 0) {
       const result = await createStaff(staffData)
 
@@ -635,7 +650,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   ]
 
   const onHandleDrawer = () => {
-    handleDrawerClose();
+    handleDrawerClose()
     setErrors(initialErrors)
   }
 
@@ -682,27 +697,27 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
           >
             {staffField.map((item, index) =>
               item.type == 'text' ? (
-                  <Grid item key={index}>
-                    <CustomField label={item.label} mandatory>
-                      <CustomTextField
-                        id={item.label}
-                        value={formData[item.field as keyof FormValues]}
-                        disabled={action === 'delete'}
-                        placeholder={item.placeholder}
-                        onChange={(event) =>
-                          handleFieldChange(
-                            item.field as keyof FormValues,
-                            event.target.value
-                          )
-                        }
-                        error={checkString(
-                          formData[item.field as keyof FormValues]
-                        )}
-                      />
-                    </CustomField>
-                    <Typography style={{color: 'red', fontWeight: '500'}}>
+                <Grid item key={index}>
+                  <CustomField label={item.label} mandatory>
+                    <CustomTextField
+                      id={item.label}
+                      value={formData[item.field as keyof FormValues]}
+                      disabled={action === 'delete'}
+                      placeholder={item.placeholder}
+                      onChange={(event) =>
+                        handleFieldChange(
+                          item.field as keyof FormValues,
+                          event.target.value
+                        )
+                      }
+                      error={checkString(
+                        formData[item.field as keyof FormValues]
+                      )}
+                    />
+                  </CustomField>
+                  {/* <Typography style={{color: 'red', fontWeight: '500'}}>
                       {errors[item.field as keyof ErrorsStaffData].status ? errors[item.field as keyof ErrorsStaffData].message : ''}
-                    </Typography>
+                    </Typography> */}
                 </Grid>
               ) : item.type == 'autocomplete' ? (
                 <Grid item>
@@ -756,34 +771,41 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                       />
                     )}
                   </CustomField>
-                  <Typography style={{color: 'red', fontWeight: '500'}}>
-                    {errors[item.field as keyof ErrorsStaffData].status ? errors[item.field as keyof ErrorsStaffData].message : ''}
-                  </Typography>
+                  {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
+                    {errors[item.field as keyof ErrorsStaffData].status
+                      ? errors[item.field as keyof ErrorsStaffData].message
+                      : ''}
+                  </Typography> */}
                 </Grid>
               ) : item.type === 'option' ? (
-               <Grid item>
-                 <CustomField label={t('staffManagement.position')} mandatory>
-                  <CustomItemList
-                    items={staffTitleList || []}
-                    singleSelect={(values) =>
-                      handleFieldChange(item.field, values)
-                    }
-                    value={selectedItem ? selectedItem?.titleId : ''}
-                    defaultSelected={selectedItem ? selectedItem?.titleId : ''}
-                    needPrimaryColor={true}
-                    editable={action === 'delete' ? false : true}
-                  />
-                </CustomField>
-                <Typography style={{color: 'red', fontWeight: '500'}}>
-                    {errors[item.field as keyof ErrorsStaffData].status ? errors[item.field as keyof ErrorsStaffData].message : ''}
-                  </Typography>
-               </Grid>
+                <Grid item>
+                  <CustomField label={t('staffManagement.position')} mandatory>
+                    <CustomItemList
+                      items={staffTitleList || []}
+                      singleSelect={(values) =>
+                        handleFieldChange(item.field, values)
+                      }
+                      value={selectedItem ? selectedItem?.titleId : ''}
+                      defaultSelected={
+                        selectedItem ? selectedItem?.titleId : ''
+                      }
+                      needPrimaryColor={true}
+                      editable={action === 'delete' ? false : true}
+                    />
+                  </CustomField>
+                  {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
+                    {errors[item.field as keyof ErrorsStaffData].status
+                      ? errors[item.field as keyof ErrorsStaffData].message
+                      : ''}
+                  </Typography> */}
+                </Grid>
               ) : (
                 <CustomField label={t('staffManagement.contractType')}>
                   <CustomItemListBoolean
                     items={contractTypeList}
                     setServiceFlg={setContractType}
                     value={contractType}
+                    needPrimaryColor={true}
                   ></CustomItemListBoolean>
                 </CustomField>
               )
