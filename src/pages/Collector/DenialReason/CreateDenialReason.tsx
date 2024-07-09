@@ -223,11 +223,22 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         setWeatherFlg(false)
       }
 
-      setStatus(
-        (selectedItem as DenialReasonCollectors).status === 'ACTIVE'
-          ? true
-          : false
-      )
+      if (
+        isCollectors() &&
+        (selectedItem as DenialReasonCollectors).status !== undefined
+      ) {
+        setStatus(
+          (selectedItem as DenialReasonCollectors).status === 'ACTIVE'
+            ? true
+            : false
+        )
+      }
+
+      // setStatus(
+      //   (selectedItem as DenialReasonCollectors).status === 'ACTIVE'
+      //     ? true
+      //     : false
+      // )
 
       setExistingDenialReason(
         denialReasonlist.filter(
@@ -263,9 +274,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   const validate = async () => {
     const tempV: formValidate[] = []
     const excludeFields = ['description', 'remark']
-    if (!status) {
-      excludeFields.push('functionId')
-    }
+    // if (!status) {
+    //   excludeFields.push('functionId')
+    // }
     const fieldMapping: FormValues = {
       functionId: t('denial_reason.corresponding_functions'),
       reasonNameTchi: t('denial_reason.reason_name_tchi'),
@@ -360,7 +371,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameSchi: formData.reasonNameSchi,
         reasonNameEng: formData.reasonNameEng,
         description: formData.description,
-        functionId: status ? formData.functionId : '0',
+        //functionId: status ? formData.functionId : '0',
+        functionId: formData.functionId,
         remark: formData.remark,
         status: status === true ? 'ACTIVE' : 'INACTIVE',
         createdBy: loginName,
@@ -430,7 +442,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameEng: formData.reasonNameEng,
         description: '',
         functionId: formData.functionId,
-        status: status === true ? 'ACTIVE' : 'INACTIVE',
+        status: 'ACTIVE',
+        //status: status === true ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
         updatedBy: loginName,
         ...(isCollectors() && { weatherFlg: weatherFlg })
@@ -559,7 +572,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     />
                   </CustomField>
                 </Grid>
-              ) : item.type == 'autocomplete' && status === true ? (
+              ) : item.type == 'autocomplete' ? (
                 <Grid item key={index}>
                   <CustomField label={item.label} mandatory>
                     <Autocomplete
@@ -610,7 +623,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                     }}
                   />
                 </Grid>
-              ) : item.field == 'status' && item.type == 'boolean' ? (
+              ) : item.field == 'status' &&
+                item.type == 'boolean' &&
+                role === 'collector' ? (
                 <Grid item key={index}>
                   <CustomField label={item.label} mandatory></CustomField>
                   <Switcher

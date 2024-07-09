@@ -275,15 +275,15 @@ const DenialReason: FunctionComponent = () => {
         )
       }
     },
-    {
-      field: 'status',
-      headerName: t('col.status'),
-      width: 100,
-      type: 'string',
-      renderCell(params) {
-        return <StatusLabel status={params.row.status}></StatusLabel>
-      }
-    }
+    // {
+    //   field: 'status',
+    //   headerName: t('col.status'),
+    //   width: 100,
+    //   type: 'string',
+    //   renderCell(params) {
+    //     return <StatusLabel status={params.row.status}></StatusLabel>
+    //   }
+    // }
   ]
 
   const searchfield = [
