@@ -57,7 +57,8 @@ export const formErr = {
   tenantIdShouldBeSixDigit: 'tenantIdShouldBeSixDigit',
   tenantIdNotFound: 'tenantIdNotFound',
   mustDifferent: 'mustDifferent',
-  loginIdProhibited: 'loginIdProhibited'
+  loginIdProhibited: 'loginIdProhibited',
+  incorrectAddress: 'incorrectAddress'
 }
 
 export const Notiftemplate = {

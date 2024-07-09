@@ -66,7 +66,7 @@ const UserAccount: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const columns: GridColDef[] = [
     {
@@ -140,7 +140,7 @@ const UserAccount: FunctionComponent = () => {
       const result = await getUserAccountPaging(page - 1, pageSize)
       const accountlist: string[] = []
       if (result?.data) {
-       setUserAccountItems(result.data.content)
+        setUserAccountItems(result.data.content)
         result.data.content.map((item: any) => accountlist.push(item.loginId))
         setUserList(accountlist)
         setTotalData(result.data.totalPages)
@@ -238,7 +238,7 @@ const UserAccount: FunctionComponent = () => {
       }}
     >
       <div className="warehouse-section">
-        <div className="settings-page relative bg-bg-primary w-full h-[2046px] overflow-hidden flex flex-row items-start justify-start text-center text-mini text-grey-darker font-tag-chi-medium">
+        <div className="settings-page relative bg-bg-primary w-full overflow-hidden flex flex-row items-start justify-start text-center text-mini text-grey-darker font-tag-chi-medium">
           <div className=" self-stretch flex-1 bg-white flex flex-col items-start justify-start text-smi text-grey-middle font-noto-sans-cjk-tc">
             <div className="self-stretch flex-1 bg-bg-primary flex flex-col items-start justify-start text-3xl text-black font-tag-chi-medium">
               {forgetPassList.length > 0 && (
