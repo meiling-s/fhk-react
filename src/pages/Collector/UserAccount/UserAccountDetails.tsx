@@ -78,7 +78,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const logginUser = localStorage.getItem(localStorgeKeyName.username) || ''
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
-  const prohibitedLoginId: string[] = ["_astdadmin", "_superadmin", "_fhkadmin"];
+  const prohibitedLoginId: string[] = ['_astdadmin', '_superadmin', '_fhkadmin']
 
   const statusList = () => {
     const colList: il_item[] = [
@@ -159,10 +159,13 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     return s == ''
   }
 
-  const hasProhibitedSubstring = (loginId: string, prohibitedLoginId: string[]) => {
-    const lowerCaseLoginId = loginId?.toLowerCase();
+  const hasProhibitedSubstring = (
+    loginId: string,
+    prohibitedLoginId: string[]
+  ) => {
+    const lowerCaseLoginId = loginId?.toLowerCase()
     return prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase())
-  };
+  }
 
   useEffect(() => {
     const validate = async () => {
@@ -175,12 +178,12 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
 
-      if(hasProhibitedSubstring(loginId, prohibitedLoginId)) { 
+      if (hasProhibitedSubstring(loginId, prohibitedLoginId)) {
         tempV.push({
           field: t('userAccount.loginName'),
           problem: formErr.loginIdProhibited,
           type: 'error'
-        });
+        })
       }
       userList?.includes(loginId) &&
         tempV.push({
@@ -207,6 +210,14 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        tempV.push({
+          field: t('userAccount.emailAddress'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      }
       setValidation(tempV)
     }
 
@@ -392,7 +403,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                       value={email}
                       placeholder={t('userAccount.pleaseEnterEmailAddress')}
                       onChange={(event) => setEmail(event.target.value)}
-                      error={checkString(contactNo)}
+                      error={(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && trySubmited}
                     />
                   </CustomField>
                 </Grid>
