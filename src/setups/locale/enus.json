@@ -95,7 +95,8 @@
       "mustDifferent": "must be different",
       "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed",
       "invalidDate": "Shipping validity start date should be lower than shipping validity end date",
-      "incorrectAddress": "incorrect Address"
+      "incorrectAddress": "incorrect Address",
+      "dateOutOfRange": "Specify date(s) is out of the Effective date range"
     }
   },
   "component": {

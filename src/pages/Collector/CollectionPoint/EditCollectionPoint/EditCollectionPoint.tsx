@@ -251,6 +251,20 @@ function CreateCollectionPoint() {
     return false;
   };
 
+  const checkRoutineDates = () => {
+    if (colPtRoutine?.routineType !== 'specificDate' ) {
+      return true;
+    }
+  
+    const startDate = dayjs(openingPeriod.startDate).subtract(1, 'day').startOf('day');
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day');
+  
+    return colPtRoutine.routineContent.every(content => {
+      const contentDate = dayjs(content.id);
+      return contentDate.isAfter(startDate) && contentDate.isBefore(endDate);
+    });
+  };
+
   useEffect(() => {
     const validate = async () => {
       //do validation here
@@ -341,6 +355,12 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
+      !checkRoutineDates() &&
+      tempV.push({
+        field: `${t('date')}`,
+        problem: formErr.dateOutOfRange,
+        type: 'error'
+      });
       !checkRecyclable() &&
         tempV.push({
           field: 'inventory.recyleSubType',
@@ -469,6 +489,9 @@ function CreateCollectionPoint() {
         break
       case formErr.incorrectAddress:
         msg = t('form.error.incorrectAddress')
+        break
+      case formErr.dateOutOfRange:
+        msg = t('form.error.dateOutOfRange')
         break
     }
     return msg
