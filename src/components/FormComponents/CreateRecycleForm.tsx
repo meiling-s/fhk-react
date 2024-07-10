@@ -77,8 +77,8 @@ export interface InitValue {
   recycSubType: string;
   weight:       string;
   newDetail?: boolean;
-  id?: number
-  
+  id?: number,
+  recycTypeName?: string
 }
 
 const initValue:InitValue  = {
@@ -100,7 +100,7 @@ const initValue:InitValue  = {
   weight: '0',
   newDetail: true,
   id: 0,
-  
+  recycTypeName: ''
 }
 
 const CreateRecycleForm = ({
@@ -272,7 +272,13 @@ const CreateRecycleForm = ({
         //   }
         // ),
       recycType: Yup.string().required(t('pick_up_order.error.recycType')),
-      recycSubType: Yup.string().required(t('pick_up_order.error.recycSubType')),
+      // recycSubType: Yup.string().required(t('pick_up_order.error.recycSubType')),
+      recycSubType: Yup.string()
+        .when("recycTypeName", (recycTypeName, schema) => {
+          if(recycTypeName[0] !== 'Non-recyclable') return schema.required(t('pick_up_order.error.recycSubType'))
+          return schema
+        }
+      ),
       weight: Yup.number().moreThan(0, t('pick_up_order.error.weightGreaterThanZero')).required(t('pick_up_order.error.weight'))
     })
   })
@@ -508,6 +514,11 @@ const CreateRecycleForm = ({
                               'recycSubType',
                               values?.recycSubTypeId
                             )
+                            const recyc = recycType?.find(item => item.recycTypeId === values.recycTypeId);
+                            // will use to validate when non-recycable selected
+                            if(recyc){
+                              formik.setFieldValue('recycTypeName', recyc?.recyclableNameEng)
+                            }
                           }}
                       itemColor={{
                         bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',

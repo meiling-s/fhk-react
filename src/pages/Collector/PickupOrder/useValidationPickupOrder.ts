@@ -341,7 +341,7 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
           })
         }
        
-        if(pico.routineType === 'specificDate' && pico.routine.length === 0){
+        if(pico.picoType === 'picoType' && pico.routineType === 'specificDate' && pico.routine.length === 0){
           isValid = false;
           setErrorsField(prev => {
             return {
@@ -354,7 +354,7 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
               }
             }
           })
-        } else if(pico.routineType === 'specificDate' && pico.routine.length >= 1){
+        } else if(pico.picoType === 'picoType' && pico.routineType === 'specificDate' && pico.routine.length >= 1){
           const fromDate = dayjs(pico.effFrmDate).format('YYYY-MM-DD');
           const toDate = dayjs(pico.effToDate).format('YYYY-MM-DD');
           const routine:boolean[] = pico.routine.map((item: any) => {
@@ -406,7 +406,7 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
               }
             })
           }
-        } else if(pico.routineType !== 'specificDate'){
+        } else if(pico.picoType === 'picoType' && pico.routineType !== 'specificDate'){
           setErrorsField(prev => {
             return {
               ...prev,
@@ -418,7 +418,7 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
           })
         }
 
-        if(pico.routineType === 'weekly' && pico.routine.length === 0){
+        if(pico.picoType === 'picoType' && pico.routineType === 'weekly' && pico.routine.length === 0){
           isValid = false;
           setErrorsField(prev => {
             return {
@@ -622,10 +622,12 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
     }
 
     const validateDataChange = () => {
-      if(pico.effFrmDate && errorsField.effFrmDate.touch){
+      const fromDate = dayjs(pico.effFrmDate);
+      
+      const toDate = dayjs(pico.effToDate);
+      if(!isValidDayjsISODate(fromDate) && errorsField.effFrmDate.touch){
         const fromDate = dayjs(pico.effFrmDate);
-        if(!isValidDayjsISODate(fromDate)) {
-  
+        // if(!isValidDayjsISODate(fromDate)) {
           setErrorsField(prev => {
             return {
               ...prev,
@@ -637,29 +639,27 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
               }
             }
           })
-        }
-      } else if(pico.effToDate && errorsField.effToDate.touch){
+        // }
+      } else if(!isValidDayjsISODate(toDate) && errorsField.effToDate.touch){
         const toDate = dayjs(pico.effToDate);
-        if(!isValidDayjsISODate(toDate)) {
-  
+        // if(!isValidDayjsISODate(toDate)) {
           setErrorsField(prev => {
             return {
               ...prev,
               effToDate: {
                 ...prev.effToDate,
                 status: true,
-                messages: errorMessages['shippingtoDateNotValid'],
-                message: getTranslationMessage('shippingtoDateNotValid')
+                messages: errorMessages['shippingFromDateNotValid'],
+                message: getTranslationMessage('shippingFromDateNotValid')
               }
             }
           })
-        }
+        // }
       } else if(pico.effToDate && pico.effFrmDate  && errorsField.effToDate.touch &&  errorsField.effFrmDate.touch){
         const fromDate = dayjs(pico.effFrmDate).format('YYYY-MM-DD');
         const toDate = dayjs(pico.effToDate).format('YYYY-MM-DD');
-  
-        if(fromDate > toDate){
-  
+        
+        if(fromDate > toDate){ 
           setErrorsField(prev => {
             return {
               ...prev,
@@ -671,17 +671,30 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
               }
             }
           })
-        } 
-      } else {
-        setErrorsField(prev => {
-          return {
-            ...prev,
-            effFrmDate: {
-              ...prev.effFrmDate,
-              status: false,
+        }  else {
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              effFrmDate: {
+                ...prev.effFrmDate,
+                status: false,
+                message: ''
+              }
             }
-          }
-        })
+          })
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              effToDate: {
+                ...prev.effToDate,
+                status: false,
+                message: ''
+              }
+            }
+          })
+        }
+      } else {
+       
       }
   
       if(pico.routineType === '' && errorsField.routine.touch){

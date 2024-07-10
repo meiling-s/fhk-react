@@ -183,7 +183,7 @@ const CreatePickupOrder = () => {
   useEffect(() => {
     setPicoType(createPickupOrder.values.picoType)
   }, [createPickupOrder.values.picoType])
-  console.log('addRow', addRow)
+  
   return (
     <PickupOrderCreateForm
       formik={createPickupOrder}
