@@ -215,6 +215,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         })
 
       validateEmail(email) &&
+        email?.toString() != '' &&
         tempV.push({
           field: t('userAccount.emailAddress'),
           problem: formErr.wrongFormat,
@@ -281,16 +282,22 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     }
     if (validation.length === 0) {
       const result = await postUserAccount(formData)
+      setValidation([])
       if (result == 409) {
         //SET VALIDATION FOR USER WITH SAME EMAIL
         setTrySubmited(true)
         let tempV = []
         tempV.push({
-          field: t('userAccount.emailAddress'),
+          field: `${t('userAccount.emailAddress')} ${t(
+            'localizedTexts.filterPanelOperatorOr'
+          )} ${t('userAccount.loginName')}`,
           problem: formErr.alreadyExist,
           type: 'error'
         })
         setValidation(tempV)
+      } else if (result?.status == 500) {
+        setTrySubmited(true)
+        showErrorToast(t('userAccount.failedCreatedUser'))
       } else {
         onSubmitData()
         showSuccessToast(t('userAccount.successCreatedUser'))
@@ -299,7 +306,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
       }
     } else {
       setTrySubmited(true)
-      showErrorToast(t('userAccount.failedCreatedUser'))
+      //showErrorToast(t('userAccount.failedCreatedUser'))
     }
   }
 
