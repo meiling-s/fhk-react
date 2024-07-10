@@ -41,8 +41,8 @@ import CustomSearchField from '../../../components/TableComponents/CustomSearchF
 import { useNavigate } from 'react-router-dom'
 import { extractError } from '../../../utils/utils'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
-import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid";
-
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import StatusLabel from '../../../components/StatusLabel'
 
 const DenialReason: FunctionComponent = () => {
   const { t } = useTranslation()
@@ -73,7 +73,7 @@ const DenialReason: FunctionComponent = () => {
   const isCollectors = () => {
     return role === 'collector'
   }
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const initFunctionList = async () => {
     try {
@@ -148,9 +148,8 @@ const DenialReason: FunctionComponent = () => {
           item.functionName = functionItem.name
         }
         denialReasonMapping.push(item)
-
       })
-     
+
       setDenialReasonList(denialReasonMapping)
       setTotalData(data.totalPages)
     }
@@ -222,12 +221,12 @@ const DenialReason: FunctionComponent = () => {
       width: 200,
       type: 'string'
     },
-    {
-      field: 'description',
-      headerName: t('denial_reason.description'),
-      width: 100,
-      type: 'string'
-    },
+    // {
+    //   field: 'description',
+    //   headerName: t('denial_reason.description'),
+    //   width: 100,
+    //   type: 'string'
+    // },
     {
       field: 'remark',
       headerName: t('denial_reason.remark'),
@@ -235,7 +234,7 @@ const DenialReason: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: "edit",
+      field: 'edit',
       headerName: t('pick_up_order.item.edit'),
       filterable: false,
       renderCell: (params) => {
@@ -256,7 +255,7 @@ const DenialReason: FunctionComponent = () => {
       }
     },
     {
-      field: "delete",
+      field: 'delete',
       headerName: t('pick_up_order.item.delete'),
       filterable: false,
       renderCell: (params) => {
@@ -275,7 +274,16 @@ const DenialReason: FunctionComponent = () => {
           </Button>
         )
       }
-    }
+    },
+    // {
+    //   field: 'status',
+    //   headerName: t('col.status'),
+    //   width: 100,
+    //   type: 'string',
+    //   renderCell(params) {
+    //     return <StatusLabel status={params.row.status}></StatusLabel>
+    //   }
+    // }
   ]
 
   const searchfield = [
@@ -393,15 +401,15 @@ const DenialReason: FunctionComponent = () => {
           </Button>
         </Box>
         <div className="table-vehicle">
-            {searchfield.map((s, i) => (
-              <CustomSearchField
-                key={i}
-                width="100%"
-                label={s.label}
-                options={s.options || []}
-                onChange={handleSearch}
-              />
-            ))}
+          {searchfield.map((s, i) => (
+            <CustomSearchField
+              key={i}
+              width="100%"
+              label={s.label}
+              options={s.options || []}
+              onChange={handleSearch}
+            />
+          ))}
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
               rows={DenialReasonList}

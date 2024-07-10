@@ -71,7 +71,8 @@
     "cancel": "取消",
     "collectionPoint_created": "回收點已建立",
     "collectionPoint_updated": "回收點已更新",
-    "addressNotes": "請輸入座位數、街道名稱、屋苑等訊息"
+    "addressNotes": "請輸入座位數、街道名稱、屋苑等訊息",
+    "addressReminder": "請選擇地址"
   },
   "form": {
     "error": {
@@ -93,7 +94,8 @@
       "tenantIdNotFound": "未找到租戶 ID",
       "mustDifferent": "一定是不同的",
       "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'",
-      "invalidDate": "出貨有效期限開始日期應早於出貨有效期限結束日期"
+      "invalidDate": "出貨有效期限開始日期應早於出貨有效期限結束日期",
+      "incorrectAddress": "地址不正確"
     }
   },
   "component": {
@@ -777,11 +779,11 @@
     "title": "用戶群組",
     "change": "更改",
     "delete": "刪除",
-    "groupName": "群組名稱",
+    "groupName": "群組名称",
     "introduction": "簡介",
     "description": "描述",
     "availableFeatures": "可用功能",
-    "pleaseEnterName": "請輸入名稱",
+    "pleaseEnterName": "输入名称",
     "pleaseEnterText": "請輸入文字",
     "userAccountUsed": "用戶群組無法刪除，因為其中仍有帳戶"
   },
