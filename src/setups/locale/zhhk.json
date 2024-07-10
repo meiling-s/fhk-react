@@ -43,6 +43,7 @@
     "enterAddress": "請輸入地點",
     "enterName": "請輸入名稱",
     "effFromDate": "開放日期由",
+    "effDate": "開放日期",
     "openingDate": "開放日期",
     "startTime": "服務時間",
     "premiseName": "房屋或埸所名稱",
@@ -96,7 +97,8 @@
       "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'",
       "invalidDate": "出貨有效期限開始日期應早於出貨有效期限結束日期",
       "incorrectAddress": "地址不正確",
-      "dateOutOfRange": "指定日期超出開放日期範圍"
+      "dateOutOfRange": "指定日期超出開放日期範圍",
+      "effectiveDateLess": " 開始日期不能晚於截止日期"
     }
   },
   "component": {

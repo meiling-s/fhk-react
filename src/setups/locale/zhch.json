@@ -43,6 +43,7 @@
     "enterAddress": "请输入地点",
     "enterName": "请输入名称",
     "effFromDate": "开放日期由",
+    "effDate": "开放日期 ",
     "openingDate": "开放日期",
     "startTime": "服务时间",
     "premiseName": "房屋或场所名称",
@@ -96,7 +97,8 @@
       "loginIdProhibited": "不允许在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'",
       "invalidDate": "运输有效期开始日期应低于运输有效期结束日期",
       "incorrectAddress": "地址不正确",
-      "dateOutOfRange": "指定日期超出开放日期范围"
+      "dateOutOfRange": "指定日期超出开放日期范围",
+      "effectiveDateLess": "开始日期不能晚于截止日期"
     }
   },
   "component": {

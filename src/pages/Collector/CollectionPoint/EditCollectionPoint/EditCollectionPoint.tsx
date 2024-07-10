@@ -265,6 +265,17 @@ function CreateCollectionPoint() {
     });
   };
 
+  const checkEffectiveDate = () => {
+    const startDate = dayjs(openingPeriod.startDate).subtract(1, 'day').startOf('day');
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day');
+
+    if (startDate.isAfter(endDate)){
+      return false
+    } else {
+      return true
+    }
+    };
+
   useEffect(() => {
     const validate = async () => {
       //do validation here
@@ -367,6 +378,12 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
+      !checkEffectiveDate() &&
+        tempV.push({
+          field: 'col.effDate',
+          problem: formErr.effectiveDateLess,
+          type: 'error'
+      })
       staffNum == '' &&
         tempV.push({
           field: 'col.numOfStaff',
@@ -492,6 +509,9 @@ function CreateCollectionPoint() {
         break
       case formErr.dateOutOfRange:
         msg = t('form.error.dateOutOfRange')
+        break
+      case formErr.effectiveDateLess:
+        msg = t('form.error.effectiveDateLess')
         break
     }
     return msg

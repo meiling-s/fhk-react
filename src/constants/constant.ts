@@ -59,7 +59,8 @@ export const formErr = {
   mustDifferent: 'mustDifferent',
   loginIdProhibited: 'loginIdProhibited',
   incorrectAddress: 'incorrectAddress',
-  dateOutOfRange: 'dateOutOfRange'
+  dateOutOfRange: 'dateOutOfRange',
+  effectiveDateLess: 'effectiveDateLess'
 }
 
 export const Notiftemplate = {

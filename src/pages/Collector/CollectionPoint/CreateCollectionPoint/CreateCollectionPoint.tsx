@@ -266,6 +266,17 @@ function CreateCollectionPoint() {
     });
   };
 
+  const checkEffectiveDate = () => {
+    const startDate = dayjs(openingPeriod.startDate).subtract(1, 'day').startOf('day');
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day');
+
+    if (startDate.isAfter(endDate)){
+      return false
+    } else {
+      return true
+    }
+    };
+
   useEffect(() => {
     //do validation here
     const validate = async () => {
@@ -354,6 +365,12 @@ function CreateCollectionPoint() {
           problem: formErr.timeCantDuplicate,
           type: 'error'
         })
+      !checkEffectiveDate() &&
+      tempV.push({
+        field: 'col.effDate',
+        problem: formErr.effectiveDateLess,
+        type: 'error'
+      })
       premiseName == '' &&
         tempV.push({
           field: 'col.premiseName',
@@ -520,6 +537,9 @@ function CreateCollectionPoint() {
         break
       case formErr.dateOutOfRange:
         msg = t('form.error.dateOutOfRange')
+        break
+      case formErr.effectiveDateLess:
+        msg = t('form.error.effectiveDateLess')
         break
     }
     return msg
