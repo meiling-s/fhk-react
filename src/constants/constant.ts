@@ -58,7 +58,9 @@ export const formErr = {
   tenantIdNotFound: 'tenantIdNotFound',
   mustDifferent: 'mustDifferent',
   loginIdProhibited: 'loginIdProhibited',
-  incorrectAddress: 'incorrectAddress'
+  incorrectAddress: 'incorrectAddress',
+  dateOutOfRange: 'dateOutOfRange',
+  effectiveDateLess: 'effectiveDateLess'
 }
 
 export const Notiftemplate = {
