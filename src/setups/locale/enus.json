@@ -398,6 +398,9 @@
     "new": "New",
     "finish": "Complete",
     "cancel": "Cancel",
+    "every": "Every",
+    "daily": "Daily",
+    "picoDetailCannotBeRepeated": "The expected recycling location information cannot be repeated",
     "detail": {
       "shipping_time": "Pickup time",
       "main_category": "Type",
@@ -438,7 +441,7 @@
       "effToDate": "This  to date is required",
       "routineType": "This routine Type is required",
       "routine": "routine is required",
-      "pickuAt": "This pickupAt is required",
+      "pickuAt": "This pickup time is required",
       "senderName": "This sendername is required",
       "senderAddr": "This sender address is required",
       "receiverName": "This receiver Name is required",
@@ -456,7 +459,9 @@
       "sender_address_exists": "Sender address already exists in previous data",
       "not_same_as_sender": "not-same-as-sender",
       "receiver_address_cannot": "Receiver address cannot be the same as sender address",
-      "receiver_address_exists": "Receiver address already exists in previous data"
+      "receiver_address_exists": "Receiver address already exists in previous data",
+      "succeedDeletePickupOrder": "Succeeded delete pick up order",
+      "failedDeletePickupOrder": "Failed delete pick up order"
     },
     "validation": {
       "routine": "Routine is Required",
