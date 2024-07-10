@@ -167,10 +167,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     initType()
   }, [])
 
-  useEffect(() => {
-    initType()
-  }, [])
-
   const initType = async () => {
     try {
       const result = await getCommonTypes()
@@ -661,6 +657,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setOpenDelete(true)
   }
 
+  const handleClose = () => {
+    setValidation([])
+    setErrorMsgList([])
+    setTrySubmited(false)
+    handleDrawerClose()
+  }
+
   const onDeleteModal = () => {
     //handleSubmit()
     setOpenDelete(false)
@@ -743,7 +746,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       <ToastContainer></ToastContainer>
       <RightOverlayForm
         open={drawerOpen}
-        onClose={handleDrawerClose}
+        onClose={handleClose}
         anchor={'right'}
         action={action}
         headerProps={{
@@ -756,7 +759,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           subTitle: t('top_menu.workshop'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('add_warehouse_page.delete'),
-          onCloseHeader: handleDrawerClose,
+          onCloseHeader: handleClose,
           onSubmit: handleSubmit,
           onDelete: handleDelete
         }}
