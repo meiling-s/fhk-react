@@ -450,7 +450,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       !isRecycleSubUnique &&
       tempV.push({
         field: 'warehouseRecyc',
-        error: `${t(`add_warehouse_page.warehouseRecyc`)} can't duplicated`
+        error: `${t(`add_warehouse_page.warehouseRecyc`)} ${t('add_warehouse_page.shouldNotDuplicate')}`
       })
 
     setValidation(tempV)

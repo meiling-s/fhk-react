@@ -179,6 +179,7 @@
     "contractNum": "Contract number",
     "warehouseRecyc": "recyclable type(s)",
     "shouldNotEmpty": "should not empty",
+    "shouldNotDuplicate": "should not duplicate",
     "shouldNotDuplicated": "The address of warehouse had been used"
   },
   "check_in": {
