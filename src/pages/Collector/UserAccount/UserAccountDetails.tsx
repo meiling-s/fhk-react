@@ -282,6 +282,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     }
     if (validation.length === 0) {
       const result = await postUserAccount(formData)
+      console.log('result', result)
       setValidation([])
       if (result == 409) {
         //SET VALIDATION FOR USER WITH SAME EMAIL
@@ -295,7 +296,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
         setValidation(tempV)
-      } else if (result?.status == 500) {
+      } else if (result == 500) {
         setTrySubmited(true)
         showErrorToast(t('userAccount.failedCreatedUser'))
       } else {
