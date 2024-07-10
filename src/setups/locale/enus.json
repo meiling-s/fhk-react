@@ -71,7 +71,8 @@
     "cancel": "Cancel",
     "collectionPoint_created": "Collection point created",
     "collectionPoint_updated": "Collection point updated",
-    "addressNotes": "Please enter the number of seats, street name, housing estate and other information"
+    "addressNotes": "Please enter the number of seats, street name, housing estate and other information",
+    "addressReminder": "Please select an address"
   },
   "form": {
     "error": {
@@ -93,7 +94,8 @@
       "tenantIdNotFound": "Tenant Id not found",
       "mustDifferent": "must be different",
       "loginIdProhibited": "Using '_astdadmin', '_superadmin', '_fhkadmin' in loginid is not allowed",
-      "invalidDate": "Shipping validity start date should be lower than shipping validity end date"
+      "invalidDate": "Shipping validity start date should be lower than shipping validity end date",
+      "incorrectAddress": "incorrect Address"
     }
   },
   "component": {
