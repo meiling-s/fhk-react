@@ -111,7 +111,7 @@ export const getCheckoutReasons = async () => {
     const token = returnApiToken()
     const keyRole = token.realmApiRoute
     const functId: { [key: string]: number } = {
-      collectors: 4,
+      collectors: 5,
       manufacturer: 37,
       logistic: 4,
       customer: 4,
