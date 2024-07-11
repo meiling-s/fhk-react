@@ -90,6 +90,7 @@ const Vehicles: FunctionComponent = () => {
 
   useEffect(() => {
     initVehicleList()
+    initAllVehicleList()
   }, [page])
 
   const initVehicleList = useCallback(async () => {
@@ -119,11 +120,42 @@ const Vehicles: FunctionComponent = () => {
         newPlateList.push(item?.plateNo)
       })
       setVehicleList(vehicleMapping)
-      setPlateList(newPlateList)
     }
     setTotalData(data.totalPages)
     setIsLoading(false)
   }, [page, pageSize])
+
+  const initAllVehicleList = useCallback(async () => {
+    setIsLoading(true)
+    const result = await getAllVehicles(0, 1000)
+    const data = result?.data
+    const newPlateList: string[] = []
+    if (data) {
+      var vehicleMapping: VehicleItem[] = []
+      data.content.map((item: any) => {
+        vehicleMapping.push(
+          createVehicles(
+            item?.vehicleId,
+            item?.vehicleTypeId,
+            item?.plateNo,
+            item?.photo,
+            item?.status,
+            item?.netWeight,
+            item?.createdBy,
+            item?.updatedBy,
+            item?.createdAt,
+            item?.updatedAt
+          )
+        )
+
+        //mappping plate list
+        newPlateList.push(item?.plateNo)
+      })
+      // setVehicleList(vehicleMapping)
+      setPlateList(newPlateList)
+    }
+    setIsLoading(false)
+  }, [])
 
   const columns: GridColDef[] = [
     {
