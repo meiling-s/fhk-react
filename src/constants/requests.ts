@@ -162,10 +162,11 @@ export const UPDATE_CHECK_IN_STATUS = (
 //get checkin reason list
 export const GET_CHECKIN_REASON = (
   realmApiRoute: string,
-  tenantId: string
+  tenantId: string,
+  functionId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/reason/${tenantId}/4`
+  url: `api/v1/${realmApiRoute}/reason/${tenantId}/${functionId}`
 })
 
 //collector/pickupOrder
@@ -521,10 +522,11 @@ export const UPDATE_CHECKOUT_REQUEST_STATUS = (
 //get checkout reason list
 export const GET_CHECKOUT_REASON = (
   realmApiRoute: string,
-  tenantId: string
+  tenantId: string,
+  functId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/reason/${tenantId}/5`
+  url: `api/v1/${realmApiRoute}/reason/${tenantId}/${functId}`
 })
 
 //recycle type

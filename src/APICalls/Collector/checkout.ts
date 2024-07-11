@@ -7,20 +7,27 @@ import {
   NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS,
   UPDATE_CHECKOUT_REQUEST_STATUS
 } from '../../constants/requests'
-import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
+import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import { queryCheckout } from '../../interfaces/checkout'
-import { returnApiToken } from '../../utils/utils';
+import { returnApiToken } from '../../utils/utils'
 
 const checkoutAPI = {
   baseURL: window.baseURL.collector
 }
 
-export const getAllCheckoutRequest = async (page: number, size: number, query: queryCheckout ) => {
+export const getAllCheckoutRequest = async (
+  page: number,
+  size: number,
+  query: queryCheckout
+) => {
   try {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS(token.realmApiRoute, token.decodeKeycloack),
+      ...NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS(
+        token.realmApiRoute,
+        token.decodeKeycloack
+      ),
       baseURL: checkoutAPI.baseURL,
       params: {
         page: page,
@@ -29,7 +36,7 @@ export const getAllCheckoutRequest = async (page: number, size: number, query: q
         picoId: query.picoId,
         receiverName: query.receiverName,
         receiverAddr: query.receiverAddr
-      },
+      }
     })
     return response
   } catch (e: any) {
@@ -43,8 +50,12 @@ export const getDetailCheckoutRequests = async (checkinId: number) => {
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...NEW_GET_ALL_DETAIL_CHECKOUT_REQUESTS(token.realmApiRoute, token.decodeKeycloack, checkinId),
-      baseURL: checkoutAPI.baseURL,
+      ...NEW_GET_ALL_DETAIL_CHECKOUT_REQUESTS(
+        token.realmApiRoute,
+        token.decodeKeycloack,
+        checkinId
+      ),
+      baseURL: checkoutAPI.baseURL
     })
     return response
   } catch (e: any) {
@@ -59,7 +70,7 @@ export const getCheckoutRequestById = async (chkOutId: number) => {
 
     const response = await axiosInstance({
       ...GET_CHECKOUT_REQUEST_BY_ID(chkOutId, token.decodeKeycloack),
-      baseURL: checkoutAPI.baseURL,
+      baseURL: checkoutAPI.baseURL
     })
     console.log(
       'Get all check-out request success:',
@@ -80,9 +91,13 @@ export const updateCheckoutRequestStatus = async (
     const token = returnApiToken()
 
     const response = await axiosInstance({
-      ...UPDATE_CHECKOUT_REQUEST_STATUS(token.realmApiRoute, chkOutId, token.decodeKeycloack),
+      ...UPDATE_CHECKOUT_REQUEST_STATUS(
+        token.realmApiRoute,
+        chkOutId,
+        token.decodeKeycloack
+      ),
       baseURL: checkoutAPI.baseURL,
-      data: data,
+      data: data
     })
     return response
   } catch (e) {
@@ -94,14 +109,26 @@ export const updateCheckoutRequestStatus = async (
 export const getCheckoutReasons = async () => {
   try {
     const token = returnApiToken()
+    const keyRole = token.realmApiRoute
+    const functId: { [key: string]: number } = {
+      collectors: 4,
+      manufacturer: 37,
+      logistic: 4,
+      customer: 4,
+      account: 4
+    }
 
     const response = await axiosInstance({
-      ...GET_CHECKOUT_REASON(token.realmApiRoute, token.tenantId),
-      baseURL: checkoutAPI.baseURL,
+      ...GET_CHECKOUT_REASON(
+        token.realmApiRoute,
+        token.tenantId,
+        functId[keyRole]
+      ),
+      baseURL: checkoutAPI.baseURL
     })
     return response
   } catch (e) {
     console.error('get checkout reasons failed:', e)
-    throw(e)
+    throw e
   }
 }
