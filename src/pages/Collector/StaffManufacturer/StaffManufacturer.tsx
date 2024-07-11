@@ -465,6 +465,9 @@ const StaffManufacturer: FunctionComponent = () => {
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
+                  getRowClassName={(params) => 
+                    selectedRow && params.id === selectedRow.staffId ? 'selected-row' : ''
+                  }
                   sx={{
                     border: 'none',
                     '& .MuiDataGrid-cell': {
@@ -474,11 +477,19 @@ const StaffManufacturer: FunctionComponent = () => {
                       bgcolor: 'white',
                       borderRadius: '10px'
                     },
-                    '&>.MuiDataGrid-main': {
-                      '&>.MuiDataGrid-columnHeaders': {
-                        borderBottom: 'none'
+                    "&>.MuiDataGrid-main": {
+                      "&>.MuiDataGrid-columnHeaders": {
+                        borderBottom: "none",
+                      },
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': { 
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                        backgroundColor: '#F6FDF2 !important',
+                        border: '1px solid #79CA25'
                       }
-                    }
                   }}
                 />
                 <Pagination
@@ -494,7 +505,7 @@ const StaffManufacturer: FunctionComponent = () => {
             {/* {selectedRow != null && ( */}
             <StaffManufacturerDetail
               drawerOpen={drawerOpen}
-              handleDrawerClose={() => setDrawerOpen(false)}
+              handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
               action={action}
               selectedItem={selectedRow}
               onSubmitData={onSubmitData}

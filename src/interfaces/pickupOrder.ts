@@ -23,6 +23,7 @@ export interface PickupOrderDetail {
 }
 
 export interface PickupOrder {
+    id(id: any): unknown;
     tenantId:         string;
     picoId:            string;
     picoType:          string;

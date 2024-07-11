@@ -8,6 +8,9 @@ import {
   ButtonBase,
   ImageList,
   ImageListItem,
+  Select,
+  SelectChangeEvent,
+  MenuItem,
 } from '@mui/material'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { styles } from '../../../constants/styles'
@@ -26,7 +29,7 @@ import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { formErr } from '../../../constants/constant'
 import { ImageToBase64, formatWeight, onChangeWeight, returnErrorMsg } from '../../../utils/utils'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { formValidate } from '../../../interfaces/common'
+import { formValidate, weightUnit } from '../../../interfaces/common'
 import { generateNumericId } from '../../../utils/uuidgenerator'
 import { singleRecyclable } from '../../../interfaces/collectionPoint'
 import { processOutImage, ProcessOut } from '../../../interfaces/processRecords'
@@ -52,6 +55,7 @@ type RecycItem = {
   recycSubtype: il_item
   weight: number
   images: string[]
+  unitId?: string
 }
 interface EditProcessRecordProps {
   drawerOpen: boolean
@@ -62,6 +66,7 @@ interface EditProcessRecordProps {
   editedData: RecycItem | null
   processOut?: ProcessOut | null
   action: 'none' | 'add' | 'edit' | 'delete' | undefined
+  weightUnits: weightUnit[]
 }
 
 const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
@@ -72,7 +77,8 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   onDeleteItem,
   editedData,
   processOut,
-  action
+  action,
+  weightUnits
 }) => {
   const { t } = useTranslation()
   const [weight, setWeight] = useState<string>('0')
@@ -83,6 +89,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
   const [pictures, setPictures] = useState<ImageListType>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+  const [selectedWeightId, setSelectedWeightId] = useState<string>('')
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 
   useEffect(() => {
@@ -105,7 +112,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       }
       setDefaultRecyc(defRecyc)
       setWeight(formatWeight(editedData.weight.toString(), decimalVal))
-
+      
       const imageList: any = editedData.images.map(
         (url: string, index: number) => {
           return {
@@ -117,10 +124,10 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
             }
           }
         }
-      )
-
-      setPictures(imageList)
-    } else {
+        )
+        setPictures(imageList)
+        setSelectedWeightId(editedData.unitId ?? '12')
+      } else {
       setDefaultRecyc(undefined)
     }
   }, [action, drawerOpen])
@@ -169,12 +176,13 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       recycSubTypeId: recycSubTypeId,
       packageTypeId: '',
       weight: parseFloat(weight),
-      unitId: 'kg',
+      unitId: selectedWeightId,
       status: "ACTIVE",
       processoutDetailPhoto: imgItems,
       createdBy: loginId,
       updatedBy: loginId
     }
+
     if (validation.length === 0) {
       action == 'add' ? onCreateRecycle(data) : onEditRecycle(data, editedData!!.processOutDtlId)
       resetData()
@@ -292,13 +300,33 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                     setWeight(value)
                   }}
                   value={weight}
-                  sx={{ width: '100%' }}
-                  endAdornment={
-                    <InputAdornment position="end">kg</InputAdornment>
-                  }
+                  sx={{ width: '70%' }}
                   disabled={action == 'delete'}
                   error={weight === '0' && trySubmited}
                 ></CustomTextField>
+                <Select
+                  labelId="selectedWeight"
+                  id="selectedWeight"
+                  value={selectedWeightId}
+                  sx={{
+                    borderRadius: '12px',
+                    width: '30%'
+                  }}
+                  onChange={(event) => {
+                    const selectedValue = weightUnits.find(
+                      (item: weightUnit) => item.unitId.toString() == event.target.value
+                    )
+                    if (selectedValue) {
+                      setSelectedWeightId(selectedValue.unitId.toString())
+                    }
+                  }}
+                >
+                  {weightUnits.map((item: weightUnit, index: number) => (
+                    <MenuItem key={index} value={item.unitId}>
+                      {item.unitNameEng}
+                    </MenuItem>
+                  ))}
+                </Select>
               </CustomField>
               <Grid item>
                 {/* image field */}

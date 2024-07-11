@@ -526,7 +526,8 @@
       "invite_success": "成功發送邀請",
       "invite_failed": "發送邀請失敗",
       "err_date": "運送有效期限無效。確保截止日期晚於開始日期",
-      "err_duplicated": "公司號碼/公司名稱/商業註冊。編號已存在"
+      "err_duplicated": "公司號碼/公司名稱/商業註冊。編號已存在",
+      "err_companyIdLength": "公司編號必需為6位數字"
     },
     "detail": {
       "company_category": "公司類別",
