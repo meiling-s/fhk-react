@@ -329,7 +329,7 @@ const DenialReason: FunctionComponent = () => {
           </Button>
         )
       }
-    },
+    }
     // {
     //   field: 'status',
     //   headerName: t('col.status'),
@@ -475,7 +475,6 @@ const DenialReason: FunctionComponent = () => {
               getRowId={(row) => row.reasonId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
