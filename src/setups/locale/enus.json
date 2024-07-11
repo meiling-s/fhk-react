@@ -1222,7 +1222,7 @@
   "dashboard_recyclables": {
     "data": "Dashboard",
     "recyclable": "Recyclable Data",
-    "recycling_data": "Recycling data",
+    "recycling_data": "Collection Point Information",
     "different_recycling_weights": "Different recycling weights",
     "date_range": "Date range",
     "recycling_point": "Recycling point",
