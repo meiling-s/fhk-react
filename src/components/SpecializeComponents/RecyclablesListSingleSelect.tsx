@@ -184,7 +184,7 @@ export default function RecyclablesListSingleSelect({
           label={
             curRecyc == ' '
               ? ''
-              : getNameFromRecycId(curRecyc) + t('col.category')
+              : getNameFromRecycId(curRecyc) + ' ' + t('pick_up_order.detail.subcategory')
           }
           key={recycType}
         >

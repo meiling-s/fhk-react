@@ -2,7 +2,9 @@ import {
   Box,
   Button,
   Divider,
+  Drawer,
   IconButton,
+  Modal,
   Stack,
   Typography
 } from '@mui/material'
@@ -45,13 +47,72 @@ import RightOverlayForm from '../RightOverlayFormPickupOrder'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+type DeleteModalProps = {
+  open: boolean
+  id?: string | null
+  onClose: () => void
+  onDelete: (id: number) => void,
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({
+  open,
+  id,
+  onClose,
+  onDelete,
+}) => {
+  const { t } = useTranslation()
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('pick_up_order.delete_msg')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                // if(id) onDelete(id)
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
 const PickupOrderForm = ({
   openModal,
   actions,
   onClose,
   selectedRow,
   pickupOrder,
-  initPickupOrderRequest
+  initPickupOrderRequest,
+  onDeleteModal
 }: // navigateToJobOrder
 {
   openModal: boolean
@@ -60,6 +121,7 @@ const PickupOrderForm = ({
   selectedRow?: PickupOrder | null | undefined
   pickupOrder?: PickupOrder[] | null
   initPickupOrderRequest: () => void
+  onDeleteModal: () => void
   // navigateToJobOrder: () => void;
 }) => {
   const { t } = useTranslation()
@@ -68,7 +130,8 @@ const PickupOrderForm = ({
   const {dateFormat} = useContainer(CommonTypeContainer)
   const [vehicleType, setVehicleType] = useState<string>('');
   const { marginTop } = useContainer(NotifContainer);
-
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
+  
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -79,7 +142,7 @@ const PickupOrderForm = ({
   }
   const navigate = useNavigate()
 
-  const handleRowClick = async (po: PickupOrder) => {
+  const handleRowClick = async () => {
     const routeName = role
     const result = await getPicoById(selectedPickupOrder ? selectedPickupOrder.picoId : '')
     if (result) {
@@ -204,35 +267,95 @@ const PickupOrderForm = ({
         }
       })
     }
-    return delivery.join(',')
+    return t('pick_up_order.every') + ' ' + delivery.join(',')
   }
-  
+
   return (
     <div className="add-vehicle">
-      <RightOverlayForm
+      <Drawer
         open={openModal}
         onClose={onClose}
         anchor={'right'}
-        action={actions}
-        headerProps={{
-          title:
-          actions == 'add'
-              ? t('pick_up_order.item.detail')
-              : actions == 'delete'
-              ? t('common.delete')
-              : selectedRow?.picoId,
-          subTitle: selectedRow?.picoId,
-          submitText: t('add_warehouse_page.save'),
-          cancelText: t('add_warehouse_page.delete'),
-          statusLabel: selectedRow?.status,
-          selectedRow: selectedRow,
-          onCloseHeader: onClose,
-          initPickupOrderRequest: initPickupOrderRequest
-          // onCloseHeader: handleDrawerClose,
-          // onSubmit: handleSubmit,
-          // onDelete: handleDelete
+        variant={'temporary'}
+        sx={{
+          '& .MuiDrawer-paper': {
+            marginTop: `${marginTop}`
+          }
         }}
       >
+        <div className="header">
+          <div className="header-section">
+          <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
+          <div className="md:flex items-center gap-2 sm:block">
+            <div className="flex-1 flex flex-col items-start justify-start sm:mb-2">
+              <b className="md:text-sm sm:text-xs">{t('pick_up_order.item.detail')}</b>
+              <div className="md:text-smi sm:text-2xs text-grey-dark text-left">
+                {selectedRow?.picoId}
+              </div>
+            </div>
+            {selectedRow?.status && <StatusCard status={selectedRow.status} />}
+          </div>
+          <div className="right-action flex items-center">
+            <Box sx={{ marginLeft: 'auto' }}>
+              {role === 'logistic' &&
+              selectedRow?.status &&
+              ['STARTED', 'OUTSTANDING'].includes(selectedRow?.status) ? (
+                <CustomButton
+                  text={t('pick_up_order.table.create_job_order')}
+                  onClick={() => {
+                    if(selectedRow?.picoId){
+                      navigateToJobOrder(selectedRow?.picoId.toString())
+                    }
+                  }}
+                ></CustomButton>
+              ) : role === 'logistic' &&
+                selectedRow &&
+                selectedRow.status === 'CREATED' &&
+                selectedRow?.tenantId === tenantId ? (
+                <>
+                  <CustomButton
+                  text={t('pick_up_order.item.edit')}
+                  style={{ marginRight: '12px' }}
+                  onClick={() => {
+                    selectedRow && handleRowClick()
+                  }}
+                />
+                  <CustomButton
+                    text={t('pick_up_order.item.delete')}
+                    outlined
+                    onClick={onDeleteModal}
+                  />
+                </>
+              ) : role !== 'logistic' && selectedRow?.status === 'CREATED'  ? (
+                <>
+                  <CustomButton
+                    text={t('pick_up_order.item.edit')}
+                    style={{ marginRight: '12px' }}
+                    onClick={() => {
+                      selectedRow && handleRowClick()
+                    }}
+                  ></CustomButton>
+                  <CustomButton
+                    text={t('pick_up_order.item.delete')}
+                    outlined
+                    onClick={onDeleteModal}
+                  ></CustomButton>
+                </>
+              ) : null}
+            </Box>
+
+            <div className="close-icon ml-2 cursor-pointer">
+              <img
+                className="relative w-6 h-6 overflow-hidden shrink-0"
+                alt=""
+                src="/collapse1.svg"
+                onClick={onClose}
+              />
+            </div>
+          </div>
+          </div>
+      </div>
+        </div>
          <Divider></Divider>
          <Stack spacing={2} sx={localstyles.content}>
           <Box>
@@ -264,17 +387,19 @@ const PickupOrderForm = ({
               {dayjs.utc(selectedPickupOrder?.effFrmDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)} To{' '} {dayjs.utc(selectedPickupOrder?.effToDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)}
             </Typography>
           </CustomField>
-          <CustomField label={t('pick_up_order.item.recycling_week')}>
-            <Typography sx={localstyles.typo_fieldContent}>
-              {/* {selectedPickupOrder?.routine
-                .map((routineItem) => routineItem)
-                .join(' ')} */}
-              { selectedPickupOrder?.routine 
-                && getDeliveryDate(selectedPickupOrder.routine)
-              }
-            </Typography>
-          </CustomField>
-
+          {selectedPickupOrder?.picoType !== 'AD_HOC' && 
+            (
+              <CustomField label={t('pick_up_order.table.delivery_date')}>
+              <Typography sx={localstyles.typo_fieldContent}>
+                {/* {selectedPickupOrder?.routine
+                  .map((routineItem) => routineItem)
+                  .join(' ')} */}
+                { selectedPickupOrder?.routineType === 'daily' &&  t('pick_up_order.daily')}
+                { selectedPickupOrder?.routineType === 'weekly' && getDeliveryDate(selectedPickupOrder.routine)}
+              </Typography>
+            </CustomField>
+            )
+          }
           <CustomField label={t('pick_up_order.item.vehicle_category')}>
             <Typography sx={localstyles.typo_fieldContent}>
               {/* {selectedPickupOrder?.vehicleTypeId === '1'
@@ -314,7 +439,15 @@ const PickupOrderForm = ({
 
           <PickupOrderCard pickupOrderDetail={selectedRow?.pickupOrderDetail ?? []} />
         </Stack>
-      </RightOverlayForm>
+          <DeleteModal
+            open={openDelete}
+            id={selectedRow?.picoId}
+            onClose={() => {
+              setOpenDelete(false)
+            }}
+            onDelete={onDeleteModal}
+          />
+      </Drawer>
 
     </div>
   )

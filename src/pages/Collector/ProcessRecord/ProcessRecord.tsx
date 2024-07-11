@@ -359,7 +359,7 @@ const ProcessRecord: FunctionComponent = () => {
               getRowId={(row) => row.processOutId}
               hideFooter
               columns={columns}
-              checkboxSelection={false}
+
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}

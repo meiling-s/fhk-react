@@ -502,7 +502,7 @@ const JobOrder = () => {
           <DataGrid
             rows={filteredPico}
             columns={columns}
-            checkboxSelection
+  
             disableRowSelectionOnClick
             onRowClick={handleRowClick}
             getRowSpacing={getRowSpacing}
