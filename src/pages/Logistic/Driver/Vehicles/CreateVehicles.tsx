@@ -40,6 +40,7 @@ import i18n from '../../../../setups/i18n'
 import { il_item } from '../../../../components/FormComponents/CustomItemList'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
+import { toast } from 'react-toastify'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -100,6 +101,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   }
 
   useEffect(() => {
+    setTrySubmited(false)
     getserviceList()
     getVehiclesLogisticType()
     setValidation([])
@@ -154,8 +156,31 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     imageList: ImageListType,
     addUpdateIndex: number[] | undefined
   ) => {
-    setPictures(imageList)
-  }
+    const maxFileSize = imgSettings?.ImgSize; // 5MB default if not set
+
+    const oversizedImages = imageList.filter(
+      (image) => image.file && image.file.size > maxFileSize
+    );
+
+    if (oversizedImages.length > 0) {
+      toast.error(t('vehicle.imageSizeExceeded'), {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+
+      // Remove oversized images from the list
+      const validImages = imageList.filter(
+        (image) => !image.file || image.file.size <= maxFileSize
+      );
+      setPictures(validImages);
+    } else {
+      setPictures(imageList);
+    }
+  };
 
   const removeImage = (index: number) => {
     // Remove the image at the specified index
@@ -176,12 +201,28 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     const validate = async () => {
       //do validation here
       const tempV: formValidate[] = []
-      licensePlate?.toString() == '' &&
+      if (licensePlate?.toString() === '') {
         tempV.push({
           field: t('driver.vehicleMenu.license_plate_number'),
           problem: formErr.empty,
           type: 'error'
         })
+      } else if (plateListExist && action === 'add' && plateListExist.includes(licensePlate)) {
+        tempV.push({
+          field: t('driver.vehicleMenu.license_plate_number'),
+          problem: formErr.alreadyExist,
+          type: 'error'
+        })
+      } else if (plateListExist && action === 'edit' && selectedItem) {
+        // Check if the license plate has changed and if the new plate already exists
+        if (licensePlate !== selectedItem.plateNo && plateListExist.includes(licensePlate)) {
+          tempV.push({
+            field: t('driver.vehicleMenu.license_plate_number'),
+            problem: formErr.alreadyExist,
+            type: 'error'
+          })
+        }
+      }
       pictures.length == 0 &&
         tempV.push({
           field: t('driver.vehicleMenu.picture'),

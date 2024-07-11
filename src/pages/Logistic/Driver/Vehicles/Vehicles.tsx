@@ -96,6 +96,7 @@ const Vehicles: FunctionComponent = () => {
     setIsLoading(true)
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
+    const newPlateList: string[] = []
     if (data) {
       var vehicleMapping: VehicleItem[] = []
       data.content.map((item: any) => {
@@ -115,9 +116,10 @@ const Vehicles: FunctionComponent = () => {
         )
 
         //mappping plate list
-        plateList.push(item?.plateNo)
+        newPlateList.push(item?.plateNo)
       })
       setVehicleList(vehicleMapping)
+      setPlateList(newPlateList)
     }
     setTotalData(data.totalPages)
     setIsLoading(false)
