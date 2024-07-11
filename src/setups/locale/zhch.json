@@ -180,7 +180,7 @@
   },
   "check_in": {
     "request_check_in": "送入请求",
-    "approve": "接受",
+    "approve": "核准",
     "reject": "拒绝",
     "search": "搜索",
     "input_po_no": "输入运单编号",
@@ -199,7 +199,7 @@
     "recyclable_type_weight": "回收物类别及重量",
     "message": "信息",
     "confirm_reject": "确认拒绝送入请求吗?",
-    "reject_reasons": "拒绝原因(可多选)",
+    "reject_reasons": "拒绝原因（可多选）",
     "confirm": "确认拒绝",
     "cancel": "取消",
     "search_input": "輸入运单编号"
@@ -480,7 +480,7 @@
     "company_category": "公司类别",
     "created_date": "建立日期",
     "number_of_acc": "帐户数量",
-    "photo_blury ": "照片模糊",
+    "photo_blury ": "相片模糊",
     "bussniess_error": "商业编号不匹配",
     "closed_tenant_title": "您确定要将状态更改为“已停用”吗?",
     "closes_success": "关闭租户状态成功",
@@ -608,7 +608,7 @@
     "recyleSubType": "次类别",
     "package": "包装",
     "recyclingNumber": "回收编号",
-    "inventoryLocation": "库存位置",
+    "inventoryLocation": "库存地点",
     "weight": "重量",
     "at": "于",
     "handover": "交给"
@@ -1367,7 +1367,7 @@
     "any": "任何",
     "classification": "分类",
     "subclassification": "子分類",
-    "place": "地方",
+    "place": "地点",
     "po_number": "输入采购订单号",
     "jo_number": "输入工作编号"
   }

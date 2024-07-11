@@ -180,7 +180,7 @@
   },
   "check_in": {
     "request_check_in": "送入請求",
-    "approve": "接受",
+    "approve": "核准",
     "reject": "拒絕",
     "search": "搜索",
     "input_po_no": "輸入運單編號",
@@ -199,7 +199,7 @@
     "recyclable_type_weight": "回收物類別及重量",
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
-    "reject_reasons": "拒絕原因(可多選)",
+    "reject_reasons": "拒絕原因（可多選）",
     "confirm": "確認拒絕",
     "cancel": "取消",
     "search_input": "輸入運單編號"
@@ -479,7 +479,7 @@
     "company_category": "公司類別",
     "created_date": "建立日期",
     "number_of_acc": "帳戶數量",
-    "photo_blury ": "照片模糊",
+    "photo_blury ": "相片模糊",
     "are_sure_to_reject": "您确定要拒绝该申请吗",
     "bussniess_error": "商業編號不匹配",
     "closed_tenant_title": "您確定要將狀態變更為「已停用」嗎?",
@@ -600,13 +600,13 @@
   },
   "inventory": {
     "inventory": "回收物",
-    "recyclingInformation": "回收資訊",
+    "recyclingInformation": "回收物資訊",
     "date": "日期",
     "recyleType": "主類別",
     "recyleSubType": "次類別",
     "package": "包裝",
     "recyclingNumber": "回收編號",
-    "inventoryLocation": "庫存位置",
+    "inventoryLocation": "庫存地點",
     "weight": "重量",
     "at": "於",
     "handover": "交給"
@@ -1366,7 +1366,7 @@
     "classification": "分類",
     "subclassification": "子分類",
     "inventory_location": "地點",
-    "place": "地方",
+    "place": "地點",
     "po_number": "輸入採購訂單編號",
     "jo_number": "輸入工作編號"
   }
