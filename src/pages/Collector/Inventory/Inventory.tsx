@@ -430,13 +430,13 @@ const Inventory: FunctionComponent = () => {
     },
     {
       label: t('placeHolder.classification'),
-      options: getUniqueOptions('recycTypeId'),
+      options: getUniqueOptions('recyName'),
       field: 'recycTypeId',
       placeholder: t('placeHolder.any')
     },
     {
       label: t('placeHolder.subclassification'),
-      options: getUniqueOptions('recycSubTypeId'),
+      options: getUniqueOptions('subName'),
       field: 'recycSubTypeId',
       placeholder: t('placeHolder.any')
     },
@@ -451,16 +451,16 @@ const Inventory: FunctionComponent = () => {
   function getUniqueOptions(propertyName: keyof InventoryItem) {
     const optionMap = new Map()
 
-    if (propertyName === 'recycTypeId') {
+    if (propertyName === 'recyName') {
       inventoryList.forEach((row) => {
         if (row[propertyName]) {
-          optionMap.set(row[propertyName], row.recyName)
+          optionMap.set(row['recycTypeId'], row.recyName)
         }
       })
-    } else if (propertyName === 'recycSubTypeId') {
+    } else if (propertyName === 'subName') {
       inventoryList.forEach((row) => {
         if (row[propertyName]) {
-          optionMap.set(row[propertyName], row.subName)
+          optionMap.set(row['recycSubTypeId'], row.subName)
         }
       })
     } else {
@@ -473,13 +473,27 @@ const Inventory: FunctionComponent = () => {
       value: key,
       label: value
     }))
-    console.log('options', optionMap)
-    options.push({
+    
+    const cache:any = {};
+
+    for(let item of options){
+      if(item.label in cache){
+        
+      }  else {
+        const newItem = item.label
+        cache[newItem] = {
+          ...item
+        }
+      }
+    }
+    const filter : Option[] = Object.values(cache);
+
+    filter.push({
       value: '',
       label: t('check_in.any')
     })
 
-    return options
+    return filter
   }
 
   const handleSelectRow = (params: GridRowParams) => {
