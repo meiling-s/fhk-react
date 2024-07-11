@@ -159,14 +159,14 @@
     "location": "Physical location",
     "place": "Place",
     "status": "Status",
-    "recyclable_subcategories": "Recyclable subcategories",
+    "recyclable_subcategories": "Recyclable type(s)",
     "enter_tenantId": "Enter the tenant id"
   },
   "add_warehouse_page": {
     "save": "Save",
     "delete": "Delete",
     "type_name": "Please type a name",
-    "recyclable_subcategories": "Recyclable subcategories",
+    "recyclable_subcategories": "Recyclable type(s)",
     "place_placeholders": "No. 14, Ao Pui Wan Street, Fo Tan",
     "subtype": "Subtype",
     "recycle_type": "Recycle type",
@@ -182,6 +182,7 @@
     "contractNum": "Contract number",
     "warehouseRecyc": "recyclable type(s)",
     "shouldNotEmpty": "should not empty",
+    "shouldNotDuplicate": "should not duplicate",
     "shouldNotDuplicated": "The address of warehouse had been used"
   },
   "check_in": {
