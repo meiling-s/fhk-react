@@ -81,7 +81,7 @@ const UserGroup: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initFunctionList()
@@ -329,7 +329,6 @@ const UserGroup: FunctionComponent = () => {
               getRowId={(row) => row.groupId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
