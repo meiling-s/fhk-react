@@ -58,7 +58,7 @@ const JobOrder = () => {
   const [isEdit, setIsEdit] = useState(false)
   const navigate = useNavigate()
   const [isActive, setIsActive] = useState(false)
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { loginId } = returnApiToken()
   const { recycType, decimalVal, dateFormat } = useContainer(CommonTypeContainer)
   const [driverList, setDriverList] = useState<DriverList[]>([])
@@ -417,7 +417,8 @@ const JobOrder = () => {
               {t('jobOrder.recycling_location_information')}
             </p>
             {pickupOrderDetail.map((item: AssignJobDriver, index) => {
-              console.log(item.driverId, 'driverId')
+              const driver = driverList.find(value => value.driverId === item.driverId)
+              const driverName = i18n.language === 'enus' ? driver?.driverNameEng : i18n.language === 'zhch' ? driver?.driverNameSchi : driver?.driverNameTchi
               return (
                 <div
                   className={`flex flex-col rounded-sm px-[15px] py-[18px] w-[450px] ${
@@ -528,7 +529,7 @@ const JobOrder = () => {
                         </div>
                         <div className="flex flex-col">
                           <label className="label-0 text-[#535353] text-[15px]">
-                            {item.driverId}
+                            {driverName}
                           </label>
                           <label className="label-0 text-[#535353] text-[15px]">
                             {item.plateNo}

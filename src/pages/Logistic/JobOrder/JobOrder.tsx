@@ -381,7 +381,7 @@ const JobOrder = () => {
         id: item.joId,
         joId: item.joId,
         picoId: item.picoId,
-        createdAt: displayCreatedDate(item.createdAt),
+        createdAt: item.createdAt,
         driverId: item.driverId,
         plateNo: item.plateNo,
         senderName: item.senderName,
