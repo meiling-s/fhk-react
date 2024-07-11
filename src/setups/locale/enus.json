@@ -1200,7 +1200,7 @@
     "service_type": "Service type"
   },
   "logisticDashboard": {
-    "searchDriver": "Search for driver directions",
+    "searchDriver": "Search for Driver Directions",
     "driverInfo": "The driver you are searching for",
     "driverNumb": "Driver number",
     "driverLicense": "Driving license",

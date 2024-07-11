@@ -1198,7 +1198,7 @@
     "service_type": "服务种类"
   },
   "logisticDashboard": {
-    "searchDriver": "搜索司机方向",
+    "searchDriver": "搜索司机路线",
     "driverInfo": "您正在搜索的司机",
     "driverNumb": "司机号码",
     "driverLicense": "驾驶证",
