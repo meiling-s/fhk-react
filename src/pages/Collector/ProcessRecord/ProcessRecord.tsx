@@ -267,7 +267,6 @@ const ProcessRecord: FunctionComponent = () => {
       })
       .filter((option): option is Option => option !== undefined)
 
-    console.log('option', options)
     options.push({
       value: '',
       label: t('check_in.any')
