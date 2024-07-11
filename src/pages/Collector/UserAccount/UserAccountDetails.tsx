@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
+import { returnErrorMsg, validateEmail } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 
 import { localStorgeKeyName } from '../../../constants/constant'
@@ -78,7 +78,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const logginUser = localStorage.getItem(localStorgeKeyName.username) || ''
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
-  const prohibitedLoginId: string[] = ["_astdadmin", "_superadmin", "_fhkadmin"];
+  const prohibitedLoginId: string[] = ['_astdadmin', '_superadmin', '_fhkadmin']
 
   const statusList = () => {
     const colList: il_item[] = [
@@ -124,6 +124,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     }
   }, [drawerOpen])
 
+  useEffect(() => {
+    if (userGroupList.length > 0 && action === 'add')
+      setUserGroup(userGroupList[0].groupId)
+  }, [userGroupList])
+
   const getUserGroupList = async () => {
     const result = await getUserGroup(0, 1000)
     const groupList: DropdownOption[] = []
@@ -135,8 +140,6 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         })
       })
       setUserGroupList(groupList)
-
-      if (groupList.length > 0) setUserGroup(groupList[0].groupId)
     }
   }
 
@@ -159,10 +162,13 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     return s == ''
   }
 
-  const hasProhibitedSubstring = (loginId: string, prohibitedLoginId: string[]) => {
-    const lowerCaseLoginId = loginId?.toLowerCase();
+  const hasProhibitedSubstring = (
+    loginId: string,
+    prohibitedLoginId: string[]
+  ) => {
+    const lowerCaseLoginId = loginId?.toLowerCase()
     return prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase())
-  };
+  }
 
   useEffect(() => {
     const validate = async () => {
@@ -175,12 +181,12 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
 
-      if(hasProhibitedSubstring(loginId, prohibitedLoginId)) { 
+      if (hasProhibitedSubstring(loginId, prohibitedLoginId)) {
         tempV.push({
           field: t('userAccount.loginName'),
           problem: formErr.loginIdProhibited,
           type: 'error'
-        });
+        })
       }
       userList?.includes(loginId) &&
         tempV.push({
@@ -207,6 +213,15 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+
+      validateEmail(email) &&
+        email?.toString() != '' &&
+        tempV.push({
+          field: t('userAccount.emailAddress'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+
       setValidation(tempV)
     }
 
@@ -267,16 +282,23 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     }
     if (validation.length === 0) {
       const result = await postUserAccount(formData)
+      console.log('result', result)
+      setValidation([])
       if (result == 409) {
         //SET VALIDATION FOR USER WITH SAME EMAIL
         setTrySubmited(true)
         let tempV = []
         tempV.push({
-          field: t('userAccount.emailAddress'),
+          field: `${t('userAccount.emailAddress')} ${t(
+            'localizedTexts.filterPanelOperatorOr'
+          )} ${t('userAccount.loginName')}`,
           problem: formErr.alreadyExist,
           type: 'error'
         })
         setValidation(tempV)
+      } else if (result == 500) {
+        setTrySubmited(true)
+        showErrorToast(t('userAccount.failedCreatedUser'))
       } else {
         onSubmitData()
         showSuccessToast(t('userAccount.successCreatedUser'))
@@ -285,7 +307,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
       }
     } else {
       setTrySubmited(true)
-      showErrorToast(t('userAccount.failedCreatedUser'))
+      //showErrorToast(t('userAccount.failedCreatedUser'))
     }
   }
 
@@ -364,7 +386,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             className="sm:ml-0 mt-o w-full"
           >
             {action == 'add' && (
-              <CustomField label={t('userAccount.addByNumber')}>
+              <CustomField label={t('userAccount.staffId')}>
                 <CustomTextField
                   id="staffId"
                   value={staffId}
@@ -392,7 +414,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                       value={email}
                       placeholder={t('userAccount.pleaseEnterEmailAddress')}
                       onChange={(event) => setEmail(event.target.value)}
-                      error={checkString(contactNo)}
+                      error={validateEmail(email) && trySubmited}
                     />
                   </CustomField>
                 </Grid>

@@ -58,7 +58,8 @@ import {
   extractError,
   returnApiToken,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  validateEmail
 } from '../../utils/utils'
 import { ToastContainer } from 'react-toastify'
 import utc from 'dayjs/plugin/utc'
@@ -283,6 +284,7 @@ const ModalNotification: React.FC<ModalNotif> = ({
 function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
   const { t } = useTranslation()
   const [email, setEmail] = useState<string>('')
+  const [emailErr, setEmailErr] = useState<boolean>(false)
 
   const sendInvitation = async () => {
     const titleInv = 'Invitation Tenant Account'
@@ -328,8 +330,10 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
               fullWidth
               placeholder={t('tenant.invite_modal.enter_email')}
               onChange={(event) => {
+                setEmailErr(validateEmail(email))
                 setEmail(event.target.value)
               }}
+              error={emailErr}
               InputProps={{
                 sx: styles.textField,
                 endAdornment: (
@@ -344,6 +348,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
                       ]}
                       variant="outlined"
                       onClick={sendInvitation}
+                      disabled={emailErr}
                     >
                       {t('tenant.invite_modal.send')}
                     </Button>
