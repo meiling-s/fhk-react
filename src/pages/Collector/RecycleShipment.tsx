@@ -396,7 +396,7 @@ function ShipmentManage() {
   useEffect(() => {
     initCheckInRequest()
     getRejectReason()
-  }, [page, query])
+  }, [page, query, dateFormat])
 
   const transformToTableRow = (item: CheckIn): TableRow => {
     const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
