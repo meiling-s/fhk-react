@@ -731,6 +731,7 @@ function CreateCollectionPoint() {
                 placeholder={t('col.enterName')}
                 onChange={(event) => setCOLName(event.target.value)}
                 error={checkString(colName)}
+                maxLength={100}
               />
             </CustomField>
 
