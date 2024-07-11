@@ -473,19 +473,18 @@ const Inventory: FunctionComponent = () => {
       value: key,
       label: value
     }))
-    
+
     const cache:any = {};
 
     for(let item of options){
-      if(item.label in cache){
-        
-      }  else {
+      if(!(item.label in cache)){
         const newItem = item.label
         cache[newItem] = {
           ...item
         }
-      }
+      } 
     }
+    
     const filter : Option[] = Object.values(cache);
 
     filter.push({
