@@ -848,6 +848,7 @@ const PickupOrders = () => {
   }, [])
   const handleCloses = () => {
     setOpenModal(false)
+    setSelectedRow(null)
   }
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as PickupOrder
@@ -1005,6 +1006,9 @@ const PickupOrders = () => {
             getRowSpacing={getRowSpacing}
             hideFooter
             localeText={localeTextDataGrid}
+            getRowClassName={(params) => 
+              selectedRow && params.id === selectedRow.picoId ? 'selected-row' : ''
+            }
             sx={{
               border: 'none',
               '& .MuiDataGrid-cell': {
@@ -1018,7 +1022,16 @@ const PickupOrders = () => {
                 '&>.MuiDataGrid-columnHeaders': {
                   borderBottom: 'none'
                 }
-              }
+              },
+              '.MuiDataGrid-columnHeaderTitle': { 
+                fontWeight: 'bold !important',
+                overflow: 'visible !important'
+              },
+              '& .selected-row': {
+                  backgroundColor: '#F6FDF2 !important',
+                  border: '1px solid #79CA25'
+                }
+
             }}
           />
           <Pagination

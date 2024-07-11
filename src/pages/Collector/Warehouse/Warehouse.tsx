@@ -279,6 +279,7 @@ const Warehouse: FunctionComponent = () => {
 
   const handleDrawerClose = () => {
     setDrawerOpen(false)
+    setSelectedRow(null)
     fetchData()
   }
 
@@ -307,8 +308,8 @@ const Warehouse: FunctionComponent = () => {
                 }`}
               >
                 <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
-                  <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-grey-dark">
-                    <b className="relative tracking-[0.08em] leading-[28px]">
+                  <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-black">
+                    <b className="relative leading-[28px] font-bold fill-neutral-950" style={{fontWeight: 900}}>
                       {t('top_menu.workshop')}
                     </b>
                     <div
@@ -330,6 +331,9 @@ const Warehouse: FunctionComponent = () => {
                       onRowClick={handleRowClick}
                       getRowSpacing={getRowSpacing}
                       localeText={localeTextDataGrid}
+                      getRowClassName={(params) => 
+                        selectedRow && params.id === selectedRow.id ? 'selected-row' : ''
+                      }
                       sx={{
                         border: 'none',
                         '& .MuiDataGrid-cell': {
@@ -343,7 +347,15 @@ const Warehouse: FunctionComponent = () => {
                           '&>.MuiDataGrid-columnHeaders': {
                             borderBottom: 'none'
                           }
-                        }
+                        },
+                        '.MuiDataGrid-columnHeaderTitle': { 
+                          fontWeight: 'bold !important',
+                          overflow: 'visible !important'
+                        },
+                        '& .selected-row': {
+                            backgroundColor: '#F6FDF2 !important',
+                            border: '1px solid #79CA25'
+                          }
                       }}
                     />
                     <Pagination

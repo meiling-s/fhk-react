@@ -713,6 +713,9 @@ const RecyclingUnit: FunctionComponent = () => {
               onRowClick={codeHandleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedCodeRow && params.id === selectedCodeRow.recycCodeId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -726,7 +729,15 @@ const RecyclingUnit: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
           </Box>
@@ -769,6 +780,9 @@ const RecyclingUnit: FunctionComponent = () => {
               onRowClick={packagingHandleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedPackagingRow && params.id === selectedPackagingRow.packagingTypeId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -782,7 +796,15 @@ const RecyclingUnit: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
           </Box>
@@ -825,6 +847,9 @@ const RecyclingUnit: FunctionComponent = () => {
               onRowClick={weightHandleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.unitId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -838,7 +863,15 @@ const RecyclingUnit: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
           </Box>
@@ -856,21 +889,21 @@ const RecyclingUnit: FunctionComponent = () => {
       />
       <CodeFormat
         drawerOpen={codeDrawerOpen}
-        handleDrawerClose={() => setCodeDrawerOpen(false)}
+        handleDrawerClose={() => {setCodeDrawerOpen(false); setSelectedCodeRow(null)}}
         action={action}
         onSubmitData={handleOnSubmitData}
         selectedItem={selectedCodeRow}
       />
       <PackagingFormat
         drawerOpen={packagingDrawerOpen}
-        handleDrawerClose={() => setPackagingDrawerOpen(false)}
+        handleDrawerClose={() => {setPackagingDrawerOpen(false); setSelectedPackagingRow(null)}}
         action={action}
         onSubmitData={handleOnSubmitData}
         selectedItem={selectedPackagingRow}
       />
       <WeightFormat
         drawerOpen={weightDrawerOpen}
-        handleDrawerClose={() => setWeightDrawerOpen(false)}
+        handleDrawerClose={() => {setWeightDrawerOpen(false); setSelectedRow(null)}}
         action={action}
         onSubmitData={handleOnSubmitData}
         rowId={rowId}
@@ -922,29 +955,23 @@ const CustomDataGrid = ({
   ]
 
   return (
-    <div
-      style={{
+    <div style={{
+      display: 'flex', flexDirection: 'column',
+      borderRadius: '4px',
+      overflow: 'hidden'
+    }}>
+      <div style={{
         display: 'flex',
-        flexDirection: 'column',
-        borderRadius: '4px',
-        overflow: 'hidden'
-      }}
-    >
-      <div
-        style={{
-          display: 'flex'
-        }}
-      >
-        {/* <input type="checkbox" /> */}
-        {columns.map((column) => (
-          <div
-            key={column.key}
-            style={{
-              flex: `0 0 ${column.width}`,
-              padding: '8px',
-              fontSize: 13
-            }}
-          >
+
+        fontWeight: 'bold'
+      }}>
+        <input type='checkbox' />
+        {columns.map(column => (
+          <div key={column.key} style={{
+            flex: `0 0 ${column.width}`,
+            padding: '8px',
+            fontSize: 13
+          }}>
             {column.label}
           </div>
         ))}

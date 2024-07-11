@@ -266,44 +266,43 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
   }, [])
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        pr: 4
-      }}
-    >
-      <div className="table-vehicle">
-        <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
-          <DataGrid
-            rows={filteredTemplate}
-            getRowId={(row) => row.templateId}
-            hideFooter
-            columns={columns}
-            onRowClick={handleSelectRow}
-            getRowSpacing={getRowSpacing}
-            localeText={localeTextDataGrid}
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none'
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
+      <Box
+        sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', pr: 4}}
+      >
+        <div className="table-vehicle">
+          <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
+            <DataGrid
+              rows={filteredTemplate}
+              getRowId={(row) => row.templateId}
+              hideFooter
+              columns={columns}
+              // checkboxSelection
+              onRowClick={handleSelectRow}
+              getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
+              sx={{
+                border: 'none',
+                '& .MuiDataGrid-cell': {
+                  border: 'none'
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .MuiDataGrid-row': {
+                  bgcolor: 'white',
+                  borderRadius: '10px'
+                },
+                '&>.MuiDataGrid-main': {
+                  '&>.MuiDataGrid-columnHeaders': {
+                    borderBottom: 'none'
+                  }
                 }
-              }
-            }}
-          />
-        </Box>
-      </div>
-    </Box>
+              }}
+            />
+          </Box>
+        </div>
+      </Box>
   )
 }
 

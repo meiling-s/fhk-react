@@ -31,6 +31,7 @@ import {
 } from '../../../APICalls/Collector/inventory'
 import {
   format,
+  Languages,
   localStorgeKeyName,
   STATUS_CODE
 } from '../../../constants/constant'
@@ -49,6 +50,8 @@ import { returnApiToken, extractError } from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { InventoryQuery } from '../../../interfaces/inventory'
+import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
+import { PackagingUnit } from '../../../interfaces/packagingUnit'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -80,7 +83,8 @@ function createInventory(
   inventoryDetail: InvDetails[],
   createdAt: string,
   updatedAt: string,
-  location: string
+  location: string,
+  packageName?:string
 ): InventoryItem {
   return {
     itemId,
@@ -99,7 +103,8 @@ function createInventory(
     inventoryDetail,
     createdAt,
     updatedAt,
-    location
+    location,
+    packageName
   }
 }
 
@@ -131,9 +136,27 @@ const Inventory: FunctionComponent = () => {
   })
   const [warehouseList, setWarehouseList] = useState<Option[]>([])
   const [recycList, setRecycList] = useState<Option[]>([])
+  const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
 
+  const initpackagingUnit = async () => {
+    try {
+      const result = await getAllPackagingUnit(0, 1000)
+      const data = result?.data
+  
+      if (data) {
+        setPackagingMapping(data.content)
+      }
+     } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+     }
+  }
+  
   useEffect(() => {
     mappingRecyleItem()
+    initpackagingUnit()
   }, [recycType, i18n.language])
 
   useEffect(() => {
@@ -227,15 +250,39 @@ const Inventory: FunctionComponent = () => {
     if (data) {
       const picoData = await getAllPickupOrder(data.content)
       var inventoryMapping: InventoryItem[] = []
-      data.content.map((item: any) => {
+      data.content.map((item: InventoryItem) => {
         const recy = recycItem.find(
           (re) => re.recycType.id === item.recycTypeId
         )
-        const recyName = recy ? recy.recycType.name : '-'
-        const subType = recy
-          ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId)
-          : null
-        const subName = subType ? subType.name : '-'
+        let recyName:string = '-';
+        let subName:string = '-';
+        item.packageName = item.packageTypeId;
+        const recyclables = recycType?.find(item => item.recycTypeId === item.recycTypeId);
+        if(recyclables){
+          if(i18n.language === Languages.ENUS) recyName = recyclables.recyclableNameEng
+          if(i18n.language === Languages.ZHCH) recyName = recyclables.recyclableNameSchi
+          if(i18n.language === Languages.ZHHK) recyName = recyclables.recyclableNameTchi
+          const subs = recyclables.recycSubType.find(sub => sub.recycSubTypeId === item.recycSubTypeId )
+          if(subs){
+            if(i18n.language === Languages.ENUS) subName = subs.recyclableNameEng
+            if(i18n.language === Languages.ZHCH) subName = subs.recyclableNameSchi
+            if(i18n.language === Languages.ZHHK) subName = subs.recyclableNameTchi
+          }
+        }
+        
+        const packages = packagingMapping.find(packageItem => packageItem.packagingTypeId === item.packageTypeId);
+      
+        if(packages){
+          if(i18n.language === Languages.ENUS) item.packageName = packages.packagingNameEng;
+          if(i18n.language === Languages.ZHCH) item.packageName = packages.packagingNameSchi;
+          if(i18n.language === Languages.ZHHK) item.packageName = packages.packagingNameTchi
+        }
+        
+        // const recyName = recy ? recy.recycType.name : '-'
+        // const subType = recy
+        //   ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId)
+        //   : null
+        // const subName = subType ? subType.name : '-'
         const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
         const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
 
@@ -265,7 +312,8 @@ const Inventory: FunctionComponent = () => {
             item?.inventoryDetail || '-',
             createdAt,
             item?.updatedAt,
-            item?.location
+            item?.location,
+            item?.packageName,
           )
         )
       })
@@ -283,19 +331,19 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'recycTypeId',
+      field: 'recyName',
       headerName: t('inventory.recyleType'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'recycSubTypeId',
+      field: 'subName',
       headerName: t('inventory.recyleSubType'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'packageTypeId',
+      field: 'packageName',
       headerName: t('inventory.package'),
       width: 200,
       type: 'string'
@@ -382,13 +430,13 @@ const Inventory: FunctionComponent = () => {
     },
     {
       label: t('placeHolder.classification'),
-      options: getUniqueOptions('recycTypeId'),
+      options: getUniqueOptions('recyName'),
       field: 'recycTypeId',
       placeholder: t('placeHolder.any')
     },
     {
       label: t('placeHolder.subclassification'),
-      options: getUniqueOptions('recycSubTypeId'),
+      options: getUniqueOptions('subName'),
       field: 'recycSubTypeId',
       placeholder: t('placeHolder.any')
     },
@@ -403,16 +451,16 @@ const Inventory: FunctionComponent = () => {
   function getUniqueOptions(propertyName: keyof InventoryItem) {
     const optionMap = new Map()
 
-    if (propertyName === 'recycTypeId') {
+    if (propertyName === 'recyName') {
       inventoryList.forEach((row) => {
         if (row[propertyName]) {
-          optionMap.set(row[propertyName], row.recyName)
+          optionMap.set(row['recycTypeId'], row.recyName)
         }
       })
-    } else if (propertyName === 'recycSubTypeId') {
+    } else if (propertyName === 'subName') {
       inventoryList.forEach((row) => {
         if (row[propertyName]) {
-          optionMap.set(row[propertyName], row.subName)
+          optionMap.set(row['recycSubTypeId'], row.subName)
         }
       })
     } else {
@@ -425,12 +473,26 @@ const Inventory: FunctionComponent = () => {
       value: key,
       label: value
     }))
-    options.push({
+
+    const cache:any = {};
+
+    for(let item of options){
+      if(!(item.label in cache)){
+        const newItem = item.label
+        cache[newItem] = {
+          ...item
+        }
+      } 
+    }
+    
+    const filter : Option[] = Object.values(cache);
+
+    filter.push({
       value: '',
       label: t('check_in.any')
     })
 
-    return options
+    return filter
   }
 
   const handleSelectRow = (params: GridRowParams) => {
@@ -562,6 +624,9 @@ const Inventory: FunctionComponent = () => {
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedRow && params.row.itemId === selectedRow.itemId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -575,7 +640,15 @@ const Inventory: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
             <Pagination
@@ -589,7 +662,7 @@ const Inventory: FunctionComponent = () => {
           </Box>
           <InventoryDetail
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
             selectedRow={selectedRow}
             selectedPico={selectedPico}
           />
