@@ -1005,9 +1005,9 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "车辆号码",
-      "license_plate_number": "车辆编码",
-      "vehicle_type": "车辆载货量",
+      "vehicle_number": "车辆编号",
+      "license_plate_number": "车牌号码",
+      "vehicle_type": "车辆种类",
       "vehicle_cargo_capacity": "车辆载货量",
       "picture": "图片",
       "license_plate_number_placeholder": "请输入车辆编码",
