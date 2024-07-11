@@ -407,7 +407,10 @@ const RecyclingPoint: FunctionComponent = () => {
               checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
+              localeText={localeTextDataGrid}getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.siteTypeId ? 'selected-row' : ''
+              }
+
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -421,7 +424,15 @@ const RecyclingPoint: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
           </Box>
@@ -462,6 +473,9 @@ const RecyclingPoint: FunctionComponent = () => {
               onRowClick={handleEngineSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                engineSelectedRow && params.id === engineSelectedRow.premiseTypeId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -475,14 +489,22 @@ const RecyclingPoint: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
           </Box>
         </div>
         <CreateRecyclingPoint
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
             action={action}
             rowId={rowId}
             selectedItem={selectedRow}
@@ -491,7 +513,7 @@ const RecyclingPoint: FunctionComponent = () => {
         />
         <CreateEngineData
             drawerOpen={engineDrawerOpen}
-            handleDrawerClose={() => setEngineDrawerOpen(false)}
+            handleDrawerClose={() => {setEngineDrawerOpen(false); setEngineSelectedRow(null)}}
             action={action}
             rowId={rowId}
             selectedItem={engineSelectedRow}

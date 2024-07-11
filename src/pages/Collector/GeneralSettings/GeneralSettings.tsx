@@ -394,6 +394,9 @@ const GeneralSettings: FunctionComponent = () => {
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.id ? 'selected-row' : ''
+              }
               initialState={{
                 sorting: {
                   sortModel: [{ field: 'contractNo', sort: 'desc' }]
@@ -412,7 +415,15 @@ const GeneralSettings: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
             <Pagination
@@ -427,7 +438,7 @@ const GeneralSettings: FunctionComponent = () => {
         </div>
         <CreateContract
           drawerOpen={drawerOpen}
-          handleDrawerClose={() => setDrawerOpen(false)}
+          handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
           action={action}
           rowId={rowId}
           selectedItem={selectedRow}

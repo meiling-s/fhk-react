@@ -837,16 +837,22 @@ const PickupOrders = () => {
   }, [])
   const handleCloses = () => {
     setOpenModal(false)
+    setSelectedRow(null)
   }
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as PickupOrder;
     setSelectedRow(row);
     setOpenModal(true);
+    console.log('params', params)
   };
 
   const updateQuery = (newQuery: Partial<queryPickupOrder>) => {
     setQuery({ ...query, ...newQuery })
   }
+
+  useEffect(() => {
+    console.log('selectedRow', selectedRow)
+  }, [selectedRow])
 
   const handleSearch = (keyName: string, value: string) => {
     setPage(1)
@@ -948,6 +954,9 @@ const PickupOrders = () => {
             onRowClick={handleRowClick}
             getRowSpacing={getRowSpacing}
             hideFooter
+            getRowClassName={(params) => 
+              selectedRow && params.id === selectedRow.picoId ? 'selected-row' : ''
+            }
             localeText={localeTextDataGrid}
             sx={{
               border: 'none',
@@ -960,9 +969,17 @@ const PickupOrders = () => {
               },
               '&>.MuiDataGrid-main': {
                 '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
+                  borderBottom: 'none',
                 }
-              }
+              },
+              '.MuiDataGrid-columnHeaderTitle': { 
+                fontWeight: 'bold !important',
+                overflow: 'visible !important'
+              },
+              '& .selected-row': {
+                  backgroundColor: '#F6FDF2 !important',
+                  border: '1px solid #79CA25'
+                }
             }}
           />
           <Pagination

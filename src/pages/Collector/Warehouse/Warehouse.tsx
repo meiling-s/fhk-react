@@ -280,6 +280,7 @@ const Warehouse: FunctionComponent = () => {
 
   const handleDrawerClose = () => {
     setDrawerOpen(false)
+    setSelectedRow(null)
     fetchData()
   }
 
@@ -332,6 +333,9 @@ const Warehouse: FunctionComponent = () => {
                       onRowClick={handleRowClick}
                       getRowSpacing={getRowSpacing}
                       localeText={localeTextDataGrid}
+                      getRowClassName={(params) => 
+                        selectedRow && params.id === selectedRow.id ? 'selected-row' : ''
+                      }
                       sx={{
                         border: 'none',
                         '& .MuiDataGrid-cell': {
@@ -345,7 +349,15 @@ const Warehouse: FunctionComponent = () => {
                           '&>.MuiDataGrid-columnHeaders': {
                             borderBottom: 'none'
                           }
-                        }
+                        },
+                        '.MuiDataGrid-columnHeaderTitle': { 
+                          fontWeight: 'bold !important',
+                          overflow: 'visible !important'
+                        },
+                        '& .selected-row': {
+                            backgroundColor: '#F6FDF2 !important',
+                            border: '1px solid #79CA25'
+                          }
                       }}
                     />
                     <Pagination

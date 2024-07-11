@@ -556,6 +556,9 @@ const StaffManagement: FunctionComponent = () => {
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
+                  getRowClassName={(params) => 
+                    selectedRow && params.id === selectedRow.staffId ? 'selected-row' : ''
+                  }
                   initialState={{
                     sorting: {
                       sortModel: [{ field: 'staffId', sort: 'asc' }]
@@ -574,7 +577,15 @@ const StaffManagement: FunctionComponent = () => {
                       '&>.MuiDataGrid-columnHeaders': {
                         borderBottom: 'none'
                       }
-                    }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': { 
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                        backgroundColor: '#F6FDF2 !important',
+                        border: '1px solid #79CA25'
+                      }
                   }}
                 />
                 <Pagination
@@ -590,7 +601,7 @@ const StaffManagement: FunctionComponent = () => {
             {/* {selectedRow != null && ( */}
             <StaffDetail
               drawerOpen={drawerOpen}
-              handleDrawerClose={() => setDrawerOpen(false)}
+              handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
               action={action}
               selectedItem={selectedRow}
               staffList={staffList}

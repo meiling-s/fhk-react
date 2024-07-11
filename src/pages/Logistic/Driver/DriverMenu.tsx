@@ -233,6 +233,9 @@ const DriverMenu = () => {
                         onRowClick={handleSelectRow}
                         getRowSpacing={getRowSpacing}
                         localeText={localeTextDataGrid}
+                        getRowClassName={(params) => 
+                            selectedRow && params.id === selectedRow.driverId ? 'selected-row' : ''
+                        }
                         sx={{
                             border: 'none',
                             '& .MuiDataGrid-cell': {
@@ -246,6 +249,14 @@ const DriverMenu = () => {
                                 '&>.MuiDataGrid-columnHeaders': {
                                     borderBottom: 'none'
                                 }
+                            },
+                            '.MuiDataGrid-columnHeaderTitle': { 
+                                fontWeight: 'bold !important',
+                                overflow: 'visible !important'
+                            },
+                            '& .selected-row': {
+                                backgroundColor: '#F6FDF2 !important',
+                                border: '1px solid #79CA25'
                             }
                         }}
                     />
@@ -261,7 +272,7 @@ const DriverMenu = () => {
             </div>
             <DriverDetail
                 open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
+                onClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
                 action={action}
                 onSubmitData={(type, msg) => onSubmitData(type, msg)}
                 driver={selectedRow}

@@ -431,6 +431,9 @@ const ASTDSettings: FunctionComponent = () => {
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.monetaryId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -444,7 +447,15 @@ const ASTDSettings: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
           </Box>
@@ -473,7 +484,7 @@ const ASTDSettings: FunctionComponent = () => {
       />
       <CreateCurrency
         drawerOpen={currencyDrawerOpen}
-        handleDrawerClose={() => setCurrencyDrawerOpen(false)}
+        handleDrawerClose={() => {setCurrencyDrawerOpen(false); setSelectedRow(null)}}
         action={action}
         onSubmitData={onSubmitData}
         selectedItem={selectedRow}
