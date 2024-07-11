@@ -559,7 +559,6 @@ const Inventory: FunctionComponent = () => {
               getRowId={(row) => row.itemId}
               hideFooter
               columns={columns}
-              checkboxSelection={false}
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}

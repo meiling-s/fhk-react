@@ -40,13 +40,12 @@ import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
-
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -100,9 +99,9 @@ const GeneralSettings: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
-  const {dateFormat} = useContainer(CommonTypeContainer)
-  const navigate = useNavigate();
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initContractList()
@@ -116,8 +115,12 @@ const GeneralSettings: FunctionComponent = () => {
       if (data) {
         var contractMapping: ContractItem[] = []
         data.map((item: any, index: any) => {
-          const contractFrmDate = dayjs(item.contractFrmDate).format(`${dateFormat}`)
-          const contractToDate = dayjs(item.contractToDate).format(`${dateFormat}`)
+          const contractFrmDate = dayjs(item.contractFrmDate).format(
+            `${dateFormat}`
+          )
+          const contractToDate = dayjs(item.contractToDate).format(
+            `${dateFormat}`
+          )
           contractMapping.push(
             createContract(
               item?.id !== undefined ? item?.id : index,
@@ -139,25 +142,25 @@ const GeneralSettings: FunctionComponent = () => {
         setContractList(contractMapping)
       }
       setTotalData(result?.data.totalPages)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
   const getTenantData = async () => {
-   try {
-    const token = returnApiToken()
-    const result = await getTenantById(parseInt(token.tenantId))
-    const data = result?.data
-    setTenantCurrency(data?.monetaryValue || '')
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+    try {
+      const token = returnApiToken()
+      const result = await getTenantById(parseInt(token.tenantId))
+      const data = result?.data
+      setTenantCurrency(data?.monetaryValue || '')
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
   }
   const columns: GridColDef[] = [
     {
@@ -390,7 +393,6 @@ const GeneralSettings: FunctionComponent = () => {
               getRowId={(row) => row.id}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}

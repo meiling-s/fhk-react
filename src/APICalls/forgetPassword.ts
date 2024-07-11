@@ -7,14 +7,13 @@ import {
 import { forgetPasswordForm } from '../interfaces/forgetPassword'
 import axiosInstance from '../constants/axiosInstance'
 import { returnApiToken } from '../utils/utils'
+import { getUserAccountById } from './Collector/userGroup'
 
 export const forgetPassword = async (data: forgetPasswordForm) => {
-  const isProd =
-    window.baseURL.administrator == 'https://www.greenhoopapp.com/'
-      ? true
-      : false
+  const resUserAccount = await getUserAccountById(data.loginId)
+  const tenantId = resUserAccount?.data?.tenantId || '';
   const token = {
-    decodeKeyCloack: isProd ? 'company888888' : 'company861341' // remove when api changed
+    decodeKeyCloack: 'company' + tenantId
   }
   try {
     const response = await axiosInstance({
