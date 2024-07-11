@@ -228,7 +228,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       if (result) {
         if (result == 500) {
           setTrySubmited(true)
-          onSubmitData('error', t('notify.userAccountUsed'))
+          onSubmitData('error', t('userGroup.userAccountUsed'))
         } else {
           onSubmitData('success', t('notify.successDeleted'))
           resetData()
