@@ -90,12 +90,14 @@ const Vehicles: FunctionComponent = () => {
 
   useEffect(() => {
     initVehicleList()
+    initAllVehicleList()
   }, [page])
 
   const initVehicleList = useCallback(async () => {
     setIsLoading(true)
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
+    const newPlateList: string[] = []
     if (data) {
       var vehicleMapping: VehicleItem[] = []
       data.content.map((item: any) => {
@@ -115,13 +117,45 @@ const Vehicles: FunctionComponent = () => {
         )
 
         //mappping plate list
-        plateList.push(item?.plateNo)
+        newPlateList.push(item?.plateNo)
       })
       setVehicleList(vehicleMapping)
     }
     setTotalData(data.totalPages)
     setIsLoading(false)
   }, [page, pageSize])
+
+  const initAllVehicleList = useCallback(async () => {
+    setIsLoading(true)
+    const result = await getAllVehicles(0, 1000)
+    const data = result?.data
+    const newPlateList: string[] = []
+    if (data) {
+      var vehicleMapping: VehicleItem[] = []
+      data.content.map((item: any) => {
+        vehicleMapping.push(
+          createVehicles(
+            item?.vehicleId,
+            item?.vehicleTypeId,
+            item?.plateNo,
+            item?.photo,
+            item?.status,
+            item?.netWeight,
+            item?.createdBy,
+            item?.updatedBy,
+            item?.createdAt,
+            item?.updatedAt
+          )
+        )
+
+        //mappping plate list
+        newPlateList.push(item?.plateNo)
+      })
+      // setVehicleList(vehicleMapping)
+      setPlateList(newPlateList)
+    }
+    setIsLoading(false)
+  }, [])
 
   const columns: GridColDef[] = [
     {
@@ -386,6 +420,9 @@ const Vehicles: FunctionComponent = () => {
                 onRowClick={handleSelectRow}
                 getRowSpacing={getRowSpacing}
                 localeText={localeTextDataGrid}
+                getRowClassName={(params) => 
+                  selectedRow && params.id === selectedRow.vehicleId ? 'selected-row' : ''
+                }
                 sx={{
                   border: 'none',
                   '& .MuiDataGrid-cell': {
@@ -399,7 +436,15 @@ const Vehicles: FunctionComponent = () => {
                     '&>.MuiDataGrid-columnHeaders': {
                       borderBottom: 'none'
                     }
-                  }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': { 
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
                 }}
               />
               <Pagination
@@ -417,7 +462,7 @@ const Vehicles: FunctionComponent = () => {
         {rowId != 0 && (
           <CreateVehicles
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
             action={action}
             rowId={rowId}
             selectedItem={selectedRow}

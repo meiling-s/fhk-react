@@ -129,12 +129,12 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
         vehicleType: {
             messageEn: "Vehicle type is Required",
             messageTc: '車輛類型為必填',
-            messageSc: '车辆类型为必填项'
+            messageSc: '车辆载货量为必填项'
         },
         vehiclePlatNo: {
             messageEn: "Vehicle plate number is Required",
-            messageTc: '車牌號碼為必填項',
-            messageSc: '车牌号码为必填项'
+            messageTc: '車輛編碼為必填項',
+            messageSc: '车辆编码为必填项'
         },
         pickupDetail: {
             messageEn: "Pickup order detail is Required",

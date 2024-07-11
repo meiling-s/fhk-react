@@ -363,6 +363,12 @@ const Company: FunctionComponent = () => {
                     }}
                     getRowSpacing={getRowSpacing}
                     localeText={localeTextDataGrid}
+                    getRowClassName={(params) => {
+                      if (selectedRow && params.id === selectedRow.companyId && item === selectCompanyType) {
+                        return 'selected-row';
+                      }
+                      return '';
+                    }}
                     sx={{
                       border: "none",
                       "& .MuiDataGrid-cell": {
@@ -377,6 +383,14 @@ const Company: FunctionComponent = () => {
                           borderBottom: "none",
                         },
                       },
+                      '.MuiDataGrid-columnHeaderTitle': { 
+                        fontWeight: 'bold !important',
+                        overflow: 'visible !important'
+                      },
+                      '& .selected-row': {
+                          backgroundColor: '#F6FDF2 !important',
+                          border: '1px solid #79CA25'
+                        }
                     }}
                   />
                   <Pagination
@@ -401,7 +415,7 @@ const Company: FunctionComponent = () => {
         <CreateCompany
           companyType={selectCompanyType}
           drawerOpen={drawerOpen}
-          handleDrawerClose={() => setDrawerOpen(false)}
+          handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
           action={action}
           selectedItem={selectedRow}
           onSubmitData={onSubmitData}

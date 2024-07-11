@@ -61,15 +61,15 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
     },
     {
       label: t('col.recycType'),
-      value: selectedRow?.recycTypeId
+      value: selectedRow?.recyName
     },
     {
       label: t('inventory.recyleSubType'),
-      value: selectedRow?.recycSubTypeId
+      value: selectedRow?.subName
     },
     {
       label: t('inventory.package'),
-      value: selectedRow?.packageTypeId
+      value: selectedRow?.packageName
     },
     {
       label: t('inventory.inventoryLocation'),
@@ -112,7 +112,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
           action={'none'}
           headerProps={{
             title: t('recyclables'),
-            subTitle: selectedRow?.recyclingNumber,
+            subTitle: selectedRow?.recyName,
             onCloseHeader: handleDrawerClose
           }}
         >

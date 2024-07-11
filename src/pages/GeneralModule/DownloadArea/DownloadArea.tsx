@@ -371,6 +371,9 @@ const DownloadArea = () => {
             getRowSpacing={getRowSpacing}
             onRowClick={handleSelectRow}
             localeText={localeTextDataGrid}
+            getRowClassName={(params) => 
+              selectedRow && params.id === selectedRow.id ? 'selected-row' : ''
+            }
             sx={{
               border: 'none',
               '& .MuiDataGrid-cell': {
@@ -384,12 +387,28 @@ const DownloadArea = () => {
                 '&>.MuiDataGrid-columnHeaders': {
                   borderBottom: 'none'
                 }
-              }
+              },
+              '.MuiDataGrid-columnHeaderTitle': { 
+                fontWeight: 'bold !important',
+                overflow: 'visible !important'
+              },
+              '& .selected-row': {
+                  backgroundColor: '#F6FDF2 !important',
+                  border: '1px solid #79CA25'
+                }
             }}
           />
           <DownloadAreaModal
             drawerOpen={openModal}
-            handleDrawerClose={() => setOpenModal(false)}
+            handleDrawerClose={() => {setOpenModal(false); setSelectedRow({
+              id: 0,
+              report_name: '',
+              typeFile: '',
+              reportId: '',
+              dateOption: '',
+              manualTenantId: false,
+              tenantId: '',
+            })}}
             selectedItem={selectedRow}
             staffId={staffId}
           />
