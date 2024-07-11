@@ -1005,7 +1005,7 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "Vehicle Number",
+      "vehicle_number": "Vehicle ID",
       "license_plate_number": "License Plate Number",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",

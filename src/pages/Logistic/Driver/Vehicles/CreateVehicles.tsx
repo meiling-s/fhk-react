@@ -194,12 +194,13 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.minMoreOneImgUploded,
           type: 'error'
         })
-      vehicleWeight?.toString() == '0' &&
+      if(vehicleWeight?.toString() == '0' || vehicleWeight === ''){
         tempV.push({
           field: t('driver.vehicleMenu.vehicle_cargo_capacity'),
           problem: formErr.empty,
           type: 'error'
         })
+      }
       vehicleTypeId?.toString() == '' &&
         tempV.push({
           field: t('driver.vehicleMenu.vehicle_type'),
