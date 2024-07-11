@@ -162,7 +162,11 @@ const CreatePickupOrder = () => {
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
-      values.createPicoDetail = addRow
+      values.createPicoDetail = addRow;
+      if(picoTypeValue === 'AD_HOC'){
+        values.routine = [];
+      }
+      
       const result = await submitPickUpOrder(values)
       const data = result?.data
       if (data) {
@@ -179,7 +183,7 @@ const CreatePickupOrder = () => {
   useEffect(() => {
     setPicoType(createPickupOrder.values.picoType)
   }, [createPickupOrder.values.picoType])
-
+  
   return (
     <PickupOrderCreateForm
       formik={createPickupOrder}

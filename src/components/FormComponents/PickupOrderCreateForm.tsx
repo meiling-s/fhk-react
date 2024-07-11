@@ -155,7 +155,7 @@ const PickupOrderCreateForm = ({
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const { 
     logisticList, contractType, vehicleType, recycType, dateFormat, getLogisticlist,
-    getContractList  
+    getContractList, getRecycType  
   } =
     useContainer(CommonTypeContainer)
   const navigate = useNavigate()
@@ -163,7 +163,7 @@ const PickupOrderCreateForm = ({
   const logisticCompany = logisticList
   const contractRole = contractType
   const [index, setIndex] = useState<number| null>(null)
-  const { validateData, errorsField } =  useValidationPickupOrder(formik.values, state);
+  const { validateData, errorsField, changeTouchField } =  useValidationPickupOrder(formik.values, state);
 
   const unexpiredContracts = contractRole
     ? contractRole?.filter((contract) => {
@@ -231,6 +231,7 @@ const PickupOrderCreateForm = ({
   useEffect(() => {
     getLogisticlist()
     getContractList()
+    getRecycType()
   }, [])
 
   const handleCloses = () => {
@@ -554,18 +555,6 @@ const PickupOrderCreateForm = ({
     setPrevLang(i18n.language)
   }, [i18n.language])
 
-  const isValidDayjsISODate = (date: Dayjs): boolean => {
-    if (!date.isValid()) {
-      return false
-    }
-    // Convert to ISO string and check if it matches the original input
-    const isoString = date.toISOString()
-    // Regex to ensure ISO 8601 format with 'Z' (UTC time)
-    const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
-    return iso8601Pattern.test(isoString)
-  }
-
-
   const onhandleSubmit = () => {
     const isValid = validateData();
     if(!isValid) return
@@ -642,6 +631,8 @@ const PickupOrderCreateForm = ({
                   setDate={(values) => {
                     formik.setFieldValue('effFrmDate', values.startDate)
                     formik.setFieldValue('effToDate', values.endDate)
+                    changeTouchField('effFrmDate')
+                    changeTouchField('effToDate')
                   }}
                   defaultStartDate={selectedPo?.effFrmDate}
                   defaultEndDate={selectedPo?.effToDate}
@@ -653,7 +644,7 @@ const PickupOrderCreateForm = ({
               {formik.values.picoType == 'ROUTINE' && (
                 <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                   <CustomField
-                    label={t('pick_up_order.routine.every_week')}
+                    label={t('pick_up_order.table.delivery_date')}
                     style={{ width: '100%' }}
                     mandatory
                   >
@@ -661,6 +652,7 @@ const PickupOrderCreateForm = ({
                       setRoutine={(values) => {
                         formik.setFieldValue('routineType', values.routineType)
                         formik.setFieldValue('routine', values.routineContent)
+                        changeTouchField('routine')
                       }}
                       defaultValue={{
                         routineType: selectedPo?.routineType ?? 'daily',
@@ -700,11 +692,13 @@ const PickupOrderCreateForm = ({
                       ) ?? []
                     }
                     sx={{ width: '400px' }}
-                    onChange={(_: SyntheticEvent, newValue: string | null) =>
-                      formik.setFieldValue('logisticName', newValue)
-                    }
+                    onChange={(_: SyntheticEvent, newValue: string | null) => {
+                        formik.setFieldValue('logisticName', newValue)
+                        changeTouchField('logisticName')
+                    }}
                     onInputChange={(event: any, newInputValue: string) => {
                       formik.setFieldValue('logisticName', newInputValue) // Update the formik field value if needed
+                      changeTouchField('logisticName')
                     }}
                     value={formik.values.logisticName}
                     inputValue={formik.values.logisticName}
@@ -718,7 +712,7 @@ const PickupOrderCreateForm = ({
               <Grid item style={{display: 'flex', flexDirection: 'column'}}>
                 <CustomField
                   label={t('pick_up_order.vehicle_category')}
-                  mandatory
+                  mandatory={false}
                 >
                   <CustomItemList
                     items={getvehicleType() || []}
@@ -742,11 +736,14 @@ const PickupOrderCreateForm = ({
                 { errorsField.vehicleTypeId.status ? <ErrorMessage  message={errorsField.vehicleTypeId.message}/> : ''}
               </Grid>
               <Grid item>
-                <CustomField label={t('pick_up_order.plat_number')} mandatory>
+                <CustomField label={t('pick_up_order.plat_number')} mandatory={false}>
                   <CustomTextField
                     id="platNo"
                     placeholder={t('pick_up_order.enter_plat_number')}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      formik.setFieldValue('platNo', event.target.value)
+                      changeTouchField('platNo')
+                    }}
                     value={formik.values.platNo}
                     sx={{ width: '400px' }}
                     error={formik.errors.platNo && formik.touched.platNo}
@@ -762,11 +759,16 @@ const PickupOrderCreateForm = ({
                   <CustomTextField
                     id="contactNo"
                     placeholder={t('pick_up_order.enter_contact_number')}
-                    onChange={formik.handleChange}
+                    onChange={event => {
+                      // formik.handleChange(event.target.value)
+                      formik.setFieldValue('contactNo', event.target.value)
+                      changeTouchField('contactNo')
+                    }}
                     value={formik.values.contactNo}
                     sx={{ width: '400px' }}
                     error={formik.errors.contactNo && formik.touched.contactNo}
                   />
+                   { errorsField.contactNo.status ? <ErrorMessage  message={errorsField.contactNo.message}/> : ''}
                 </CustomField>
               </Grid>
               {formik.values.picoType == 'ROUTINE' && (
@@ -878,7 +880,7 @@ const PickupOrderCreateForm = ({
                         }
                       })
                     }
-                    getRowId={(row) => row.pickupAt}
+                    getRowId={(row) => row.id}
                     hideFooter
                     columns={columns}
                     disableRowSelectionOnClick
@@ -937,6 +939,7 @@ const PickupOrderCreateForm = ({
                       setIndex(null)
                       setIsEditing(false)
                       setOpenModal(true)
+                      changeTouchField('createPicoDetail')
                     }}
                     sx={{
                       height: '40px',
