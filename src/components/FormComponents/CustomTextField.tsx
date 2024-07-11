@@ -18,7 +18,8 @@ type props = {
   helperText?: any;
   disabled?: boolean;
   textarea?: boolean;
-  type?: string
+  type?: string;
+  maxLength?: number;
 };
 
 function CustomTextField({
@@ -37,7 +38,8 @@ function CustomTextField({
   helperText,
   disabled = false,
   textarea = false,
-  type
+  type,
+  maxLength
 }: props) {
   return (
     <TextField
@@ -56,6 +58,7 @@ function CustomTextField({
       sx={{ ...styles.textField, ...sx }}
       helperText={helperText}
       disabled={disabled}
+      inputProps={maxLength ? { maxLength: maxLength } : undefined}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end" sx={{ height: "100%" }}>
