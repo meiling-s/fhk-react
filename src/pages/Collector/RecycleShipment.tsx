@@ -193,7 +193,6 @@ function RejectForm({
           <Box>
             <Typography sx={localstyles.typo}>
               {t('check_in.reject_reasons')}
-              <Required />
             </Typography>
             {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedShipments.length}
