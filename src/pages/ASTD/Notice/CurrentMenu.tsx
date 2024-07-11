@@ -276,6 +276,10 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
                 '& .MuiDataGrid-cell': {
                   border: 'none'
                 },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
                 '& .MuiDataGrid-row': {
                   bgcolor: 'white',
                   borderRadius: '10px'

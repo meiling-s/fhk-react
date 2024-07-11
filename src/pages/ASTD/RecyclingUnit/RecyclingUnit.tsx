@@ -917,6 +917,8 @@ const CustomDataGrid = ({ data, customGridHandleAction, handleClickSwitch }: { d
     }}>
       <div style={{
         display: 'flex',
+
+        fontWeight: 'bold'
       }}>
         <input type='checkbox' />
         {columns.map(column => (
