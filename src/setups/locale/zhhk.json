@@ -181,6 +181,7 @@
     "contractNum": "合約編號",
     "warehouseRecyc": "回收物類別",
     "shouldNotEmpty": "不應為空",
+    "shouldNotDuplicate": "不應重複",
     "shouldNotDuplicated": " 货仓地址已经被使用"
   },
   "check_in": {
