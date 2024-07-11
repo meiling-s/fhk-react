@@ -243,7 +243,6 @@ const RejectModal: React.FC<RejectForm> = ({
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
-            // console.log('updated check-out status: ', data)
             if (onRejected) {
               onRejected()
             }
@@ -548,7 +547,7 @@ const CheckoutRequest: FunctionComponent = () => {
   useEffect(() => {
     getCheckoutRequest()
     getRejectReason()
-  }, [page, query])
+  }, [page, query, dateFormat, i18n.language])
 
   const updateQuery = (newQuery: Partial<queryCheckout>) => {
     setQuery({ ...query, ...newQuery })

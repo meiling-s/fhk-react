@@ -193,7 +193,6 @@ function RejectForm({
           <Box>
             <Typography sx={localstyles.typo}>
               {t('check_in.reject_reasons')}
-              <Required />
             </Typography>
             {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedShipments.length}
@@ -396,7 +395,7 @@ function ShipmentManage() {
   useEffect(() => {
     initCheckInRequest()
     getRejectReason()
-  }, [page, query])
+  }, [page, query, dateFormat, i18n.language])
 
   const transformToTableRow = (item: CheckIn): TableRow => {
     const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')

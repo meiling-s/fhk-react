@@ -205,7 +205,7 @@
     "recyc_loc_info": "Recycling location information",
     "recyclable_type_weight": "Recyclable type & weight",
     "message": "Message",
-    "confirm_reject": "Are you sure to request the check-in proceed?",
+    "confirm_reject": "Are you sure to reject request the check-in proceed?",
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
     "cancel": "Cancel",
