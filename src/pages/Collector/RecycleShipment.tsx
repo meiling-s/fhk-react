@@ -453,6 +453,7 @@ function ShipmentManage() {
     chkInId: number
   ) => {
     setOpen(false)
+    setSelectedRow(undefined);
 
     const checked = event.target.checked
     const updatedChecked = checked
@@ -803,13 +804,12 @@ function ShipmentManage() {
               getRowId={(row) => row.chkInId}
               hideFooter
               columns={headCells}
-              checkboxSelection={false}
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
               getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.chkInId ? 'selected-row' : ''
+                `${selectedRow && params.row.chkInId === selectedRow.chkInId ? 'selected-row ' : ''}${selectedCheckin && selectedCheckin.includes(params.row.chkInId) ? 'checked-row' : ''}`
               }
               sx={{
                 border: 'none',
@@ -824,6 +824,9 @@ function ShipmentManage() {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
+                },
+                '.checked-row':{
+                  backgroundColor: `rgba(25, 118, 210, 0.08)`
                 },
                 '.MuiDataGrid-columnHeaderTitle': { 
                   fontWeight: 'bold !important',

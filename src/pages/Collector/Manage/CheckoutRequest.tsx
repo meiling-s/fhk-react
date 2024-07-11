@@ -398,6 +398,7 @@ const CheckoutRequest: FunctionComponent = () => {
     chkOutId: number
   ) => {
     setDrawerOpen(false)
+    setSelectedRow(undefined);
 
     const checked = event.target.checked
     const updatedChecked = checked
@@ -739,7 +740,7 @@ const CheckoutRequest: FunctionComponent = () => {
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
               getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.chkOutId ? 'selected-row' : ''
+                `${selectedRow && params.row.chkOutId === selectedRow.chkOutId ? 'selected-row ' : ''}${checkedCheckOut && checkedCheckOut.includes(params.row.chkOutId) ? 'checked-row' : ''}`
               }
               sx={{
                 border: 'none',
@@ -754,6 +755,9 @@ const CheckoutRequest: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
+                },
+                '.checked-row':{
+                  backgroundColor: `rgba(25, 118, 210, 0.08)`
                 },
                 '.MuiDataGrid-columnHeaderTitle': { 
                   fontWeight: 'bold !important',
