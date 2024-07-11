@@ -661,7 +661,7 @@
   "warehouseDashboard": {
     "warehouse": "回收厂",
     "currentCapacity": "现时容量",
-    "thereStillEnoughSpace": "还有足够的空间",
+    "thereStillEnoughSpace": "尚有大量空间",
     "noMoreRoom": "没有空间了",
     "all": "全部",
     "sendRequest": "送入请求",

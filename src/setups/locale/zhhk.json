@@ -659,7 +659,7 @@
   "warehouseDashboard": {
     "warehouse": "回收厰",
     "currentCapacity": "現時容量",
-    "thereStillEnoughSpace": "還有足夠的空間",
+    "thereStillEnoughSpace": "尚有大量空間",
     "noMoreRoom": "沒有空間了",
     "all": "全部",
     "sendRequest": "送入請求",
