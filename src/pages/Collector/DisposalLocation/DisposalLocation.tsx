@@ -295,6 +295,9 @@ const DisposalLocation: FunctionComponent = () => {
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.disposalLocId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -304,11 +307,19 @@ const DisposalLocation: FunctionComponent = () => {
                   bgcolor: 'white',
                   borderRadius: '10px'
                 },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+                "&>.MuiDataGrid-main": {
+                  "&>.MuiDataGrid-columnHeaders": {
+                    borderBottom: "none",
+                  },
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
                   }
-                }
               }}
             />
             <Pagination
@@ -324,7 +335,7 @@ const DisposalLocation: FunctionComponent = () => {
         {rowId != 0 && (
           <CreateDisposalLocation
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
             action={action}
             selectedItem={selectedRow}
             disposalList={DisposalLocationList}
