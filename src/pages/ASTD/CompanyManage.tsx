@@ -58,7 +58,8 @@ import {
   extractError,
   returnApiToken,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  validateEmail
 } from '../../utils/utils'
 import { ToastContainer } from 'react-toastify'
 import utc from 'dayjs/plugin/utc'
@@ -283,6 +284,7 @@ const ModalNotification: React.FC<ModalNotif> = ({
 function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
   const { t } = useTranslation()
   const [email, setEmail] = useState<string>('')
+  const [emailErr, setEmailErr] = useState<boolean>(false)
 
   const sendInvitation = async () => {
     const titleInv = 'Invitation Tenant Account'
@@ -328,8 +330,10 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
               fullWidth
               placeholder={t('tenant.invite_modal.enter_email')}
               onChange={(event) => {
+                setEmailErr(validateEmail(email))
                 setEmail(event.target.value)
               }}
+              error={emailErr}
               InputProps={{
                 sx: styles.textField,
                 endAdornment: (
@@ -344,6 +348,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
                       ]}
                       variant="outlined"
                       onClick={sendInvitation}
+                      disabled={emailErr}
                     >
                       {t('tenant.invite_modal.send')}
                     </Button>
@@ -935,33 +940,7 @@ function CompanyManage() {
     setRejectModal(true)
   }
 
-  const HeaderCheckbox = (
-    <Checkbox
-      checked={selectAll}
-      onChange={handleSelectAll}
-      color="primary"
-      inputProps={{ 'aria-label': 'Select all rows' }}
-    />
-  )
-
-  const checkboxColumn: GridColDef = {
-    field: 'customCheckbox',
-    headerName: t('localizedTexts.select'),
-    width: 80,
-    sortable: false,
-    filterable: false,
-    renderHeader: () => HeaderCheckbox,
-    renderCell: (params) => (
-      <Checkbox
-        checked={selected.includes(params.row.id) || selectAll}
-        onChange={(event) => handleRowCheckboxChange(event, params.row.id)}
-        color="primary"
-      />
-    )
-  }
-
   const headCells: GridColDef[] = [
-    checkboxColumn,
     {
       field: 'id',
       headerName: t('tenant.company_number'),
@@ -1314,7 +1293,6 @@ function CompanyManage() {
               getRowId={(row) => row.id}
               hideFooter
               columns={headCells}
-              checkboxSelection={false}
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}

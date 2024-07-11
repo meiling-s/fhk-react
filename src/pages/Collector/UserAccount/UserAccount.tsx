@@ -325,7 +325,6 @@ const UserAccount: FunctionComponent = () => {
                       getRowId={(row) => row.loginId}
                       hideFooter
                       columns={columns}
-                      checkboxSelection
                       disableRowSelectionOnClick
                       onRowClick={handleRowClick}
                       getRowSpacing={getRowSpacing}

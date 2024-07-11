@@ -427,7 +427,6 @@ const ASTDSettings: FunctionComponent = () => {
               getRowId={(row) => row.monetaryId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}

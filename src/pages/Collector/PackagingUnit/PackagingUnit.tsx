@@ -357,7 +357,6 @@ const PackagingUnit: FunctionComponent = () => {
               getRowId={(row) => row.id}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}

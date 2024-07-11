@@ -258,7 +258,7 @@ const PurchaseOrderForm = ({
 
             {rolesEnableCreatePO.includes(userRole) && 
               (
-                <CustomField label={t('purchase_order.create.sender_company_name')}>
+                <CustomField label={t('purchase_order_customer.table.recycling_plant')}>
                   <Typography sx={localstyles.typo_fieldContent}>
                     {selectedPurchaseOrder?.senderName}
                   </Typography>

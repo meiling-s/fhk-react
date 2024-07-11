@@ -881,7 +881,6 @@ const WarehouseDashboard: FunctionComponent = () => {
             getRowId={(row) => row.id}
             hideFooter
             columns={columns}
-            checkboxSelection={false}
             getRowSpacing={getRowSpacing}
             localeText={localeTextDataGrid}
             sx={{

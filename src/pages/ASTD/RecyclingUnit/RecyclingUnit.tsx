@@ -1,4 +1,9 @@
-import React, { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import React, {
+  useEffect,
+  useState,
+  FunctionComponent,
+  useCallback
+} from 'react'
 import {
   Box,
   Button,
@@ -10,7 +15,7 @@ import {
   Switch,
   Modal,
   Stack,
-  Divider,
+  Divider
 } from '@mui/material'
 import {
   DataGrid,
@@ -40,14 +45,23 @@ import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
-import { GET_ALL_RECYCLE_TYPE, GET_RECYC_TYPE } from '../../../constants/requests'
+import {
+  GET_ALL_RECYCLE_TYPE,
+  GET_RECYC_TYPE
+} from '../../../constants/requests'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import { t } from 'i18next'
 import RecyclingFormat from './RecyclingFormat'
-import { deleteRecyc, deleteSubRecyc, getAllPackagingUnit, getRecycCode, getWeightUnit } from '../../../APICalls/ASTD/recycling'
+import {
+  deleteRecyc,
+  deleteSubRecyc,
+  getAllPackagingUnit,
+  getRecycCode,
+  getWeightUnit
+} from '../../../APICalls/ASTD/recycling'
 import WeightFormat from './WeightFormat'
 import PackagingFormat from './PackagingFormat'
 import CodeFormat from './CodeFormat'
@@ -145,9 +159,12 @@ const RecyclingUnit: FunctionComponent = () => {
   const { t, i18n } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState<WeightFormatProps | null>(null)
-  const [selectedRecyclingRow, setSelectedRecyclingRow] = useState<recyleTypeData | null>(null)
-  const [selectedPackagingRow, setSelectedPackagingRow] = useState<PackagingUnitProps | null>(null)
-  const [selectedCodeRow, setSelectedCodeRow] = useState<CodeFormatProps | null>(null)
+  const [selectedRecyclingRow, setSelectedRecyclingRow] =
+    useState<recyleTypeData | null>(null)
+  const [selectedPackagingRow, setSelectedPackagingRow] =
+    useState<PackagingUnitProps | null>(null)
+  const [selectedCodeRow, setSelectedCodeRow] =
+    useState<CodeFormatProps | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
   const [page, setPage] = useState(1)
@@ -164,8 +181,8 @@ const RecyclingUnit: FunctionComponent = () => {
   const [isMainCategory, setMainCategory] = useState<boolean>(false)
   const [delFormModal, setDeleteModal] = useState<boolean>(false)
   const [switchValue, setSwitchValue] = useState<any>(null)
-  const navigate = useNavigate();
-  const {  localeTextDataGrid } = useLocaleTextDataGrid();
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initRecycTypeList()
@@ -183,9 +200,9 @@ const RecyclingUnit: FunctionComponent = () => {
       })
       const data = response.data
       setRecyclableType(data)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -195,40 +212,39 @@ const RecyclingUnit: FunctionComponent = () => {
     try {
       const result = await getRecycCode(page - 1, pageSize)
       const data = result?.data
-  
-  
+
       setCode(data)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
 
   const initPackagingUnit = async () => {
-   try {
-    const result = await getAllPackagingUnit(page - 1, pageSize)
-    const data = result?.data.content
+    try {
+      const result = await getAllPackagingUnit(page - 1, pageSize)
+      const data = result?.data.content
 
-    setPackagingUnit(data)
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+      setPackagingUnit(data)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
   }
 
   const initWeightUnit = async () => {
     try {
       const result = await getWeightUnit(page - 1, pageSize)
       const data = result?.data
-  
+
       setWeightUnit(data)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -239,19 +255,19 @@ const RecyclingUnit: FunctionComponent = () => {
       field: 'recycCodeName',
       headerName: t('recycling_unit.recyclable_code'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'recycTypeId',
       headerName: t('recycling_unit.main_category'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'recycSubTypeId',
       headerName: t('recycling_unit.sub_category'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'edit',
@@ -300,7 +316,7 @@ const RecyclingUnit: FunctionComponent = () => {
       field: 'packagingNameTchi',
       headerName: t('packaging_unit.traditional_chinese_name'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'packagingNameSchi',
@@ -373,7 +389,7 @@ const RecyclingUnit: FunctionComponent = () => {
       field: 'unitNameTchi',
       headerName: t('packaging_unit.traditional_chinese_name'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'unitNameSchi',
@@ -551,8 +567,7 @@ const RecyclingUnit: FunctionComponent = () => {
 
   const handleClickSwitch = async (value: any, type: string) => {
     const token = returnApiToken()
-    
-    
+
     const recyclingForm = {
       status: 'INACTIVE',
       updatedBy: token.loginId
@@ -579,7 +594,10 @@ const RecyclingUnit: FunctionComponent = () => {
     }
     if (switchValue !== null) {
       try {
-        const response = await deleteRecyc(recyclingForm, switchValue.recycTypeId)
+        const response = await deleteRecyc(
+          recyclingForm,
+          switchValue.recycTypeId
+        )
         if (response) {
           showSuccessToast(t('notify.successDeleted'))
           handleOnSubmitData('recycle')
@@ -596,15 +614,14 @@ const RecyclingUnit: FunctionComponent = () => {
           handleOnSubmitData('recycle')
           setDeleteModal(false)
         }
-      } catch (error:any) {
-        const {state} = extractError(error)
-        if(state.code === STATUS_CODE[503] ){
+      } catch (error: any) {
+        const { state } = extractError(error)
+        if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
         } else {
           console.error(error)
           showErrorToast(t('notify.errorDeleted'))
         }
-       
       }
     }
   }
@@ -613,20 +630,20 @@ const RecyclingUnit: FunctionComponent = () => {
     <>
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          pr: 4,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          pr: 4
         }}
       >
         <ToastContainer></ToastContainer>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            marginY: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginY: 4
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
@@ -636,28 +653,34 @@ const RecyclingUnit: FunctionComponent = () => {
             sx={[
               styles.buttonOutlinedGreen,
               {
-                width: "max-content",
-                height: "40px",
-              },
+                width: 'max-content',
+                height: '40px'
+              }
             ]}
             variant="outlined"
-            onClick={() => { setRecycDrawerOpen(true); setAction('add') }}
+            onClick={() => {
+              setRecycDrawerOpen(true)
+              setAction('add')
+            }}
           >
-            <ADD_ICON /> {t("top_menu.add_new")}
+            <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
-            <CustomDataGrid data={recyclableType} customGridHandleAction={customGridHandleAction} handleClickSwitch={handleClickSwitch}/>
-        
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
+            <CustomDataGrid
+              data={recyclableType}
+              customGridHandleAction={customGridHandleAction}
+              handleClickSwitch={handleClickSwitch}
+            />
           </Box>
         </div>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            marginY: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginY: 4
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
@@ -667,24 +690,26 @@ const RecyclingUnit: FunctionComponent = () => {
             sx={[
               styles.buttonOutlinedGreen,
               {
-                width: "max-content",
-                height: "40px",
-              },
+                width: 'max-content',
+                height: '40px'
+              }
             ]}
             variant="outlined"
-            onClick={() => { setCodeDrawerOpen(true); setAction('add') }}
+            onClick={() => {
+              setCodeDrawerOpen(true)
+              setAction('add')
+            }}
           >
-            <ADD_ICON /> {t("top_menu.add_new")}
+            <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
               rows={code}
               getRowId={(row) => row.recycCodeId}
               hideFooter
               columns={codeColumns}
-              checkboxSelection
               onRowClick={codeHandleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
@@ -718,10 +743,10 @@ const RecyclingUnit: FunctionComponent = () => {
           </Box>
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              marginY: 4,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px',
+              marginY: 4
             }}
           >
             <Typography fontSize={16} color="black" fontWeight="bold">
@@ -731,25 +756,27 @@ const RecyclingUnit: FunctionComponent = () => {
               sx={[
                 styles.buttonOutlinedGreen,
                 {
-                  width: "max-content",
-                  height: "40px",
-                },
+                  width: 'max-content',
+                  height: '40px'
+                }
               ]}
               variant="outlined"
-              onClick={() => { setPackagingDrawerOpen(true); setAction('add') }}
+              onClick={() => {
+                setPackagingDrawerOpen(true)
+                setAction('add')
+              }}
             >
-              <ADD_ICON /> {t("top_menu.add_new")}
+              <ADD_ICON /> {t('top_menu.add_new')}
             </Button>
           </Box>
         </div>
         <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
               rows={packagingUnit}
               getRowId={(row) => row.packagingTypeId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={packagingHandleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
@@ -783,10 +810,10 @@ const RecyclingUnit: FunctionComponent = () => {
           </Box>
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              marginY: 4,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px',
+              marginY: 4
             }}
           >
             <Typography fontSize={16} color="black" fontWeight="bold">
@@ -796,25 +823,27 @@ const RecyclingUnit: FunctionComponent = () => {
               sx={[
                 styles.buttonOutlinedGreen,
                 {
-                  width: "max-content",
-                  height: "40px",
-                },
+                  width: 'max-content',
+                  height: '40px'
+                }
               ]}
               variant="outlined"
-              onClick={() => { setWeightDrawerOpen(true); setAction('add') }}
+              onClick={() => {
+                setWeightDrawerOpen(true)
+                setAction('add')
+              }}
             >
-              <ADD_ICON /> {t("top_menu.add_new")}
+              <ADD_ICON /> {t('top_menu.add_new')}
             </Button>
           </Box>
         </div>
         <div className="table-vehicle">
-          <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             <DataGrid
               rows={weightUnit}
               getRowId={(row) => row.unitId}
               hideFooter
               columns={weightColumns}
-              checkboxSelection
               onRowClick={weightHandleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
@@ -897,16 +926,32 @@ const RecyclingUnit: FunctionComponent = () => {
 
 export default RecyclingUnit
 
-const CustomDataGrid = ({ data, customGridHandleAction, handleClickSwitch }: { data: any; customGridHandleAction: (value: any, action: string, type: string) => void; handleClickSwitch: (value: any, type: string) => void}) => {
+const CustomDataGrid = ({
+  data,
+  customGridHandleAction,
+  handleClickSwitch
+}: {
+  data: any
+  customGridHandleAction: (value: any, action: string, type: string) => void
+  handleClickSwitch: (value: any, type: string) => void
+}) => {
   const columns = [
-    { key: 'traditionalName', label: t('common.traditionalChineseName'), width: '15%' },
-    { key: 'chineseName', label: t('common.simplifiedChineseName'), width: '15%' },
+    {
+      key: 'traditionalName',
+      label: t('common.traditionalChineseName'),
+      width: '15%'
+    },
+    {
+      key: 'chineseName',
+      label: t('common.simplifiedChineseName'),
+      width: '15%'
+    },
     { key: 'englishName', label: t('common.englishName'), width: '15%' },
     { key: 'description', label: t('common.description'), width: '10%' },
     { key: 'remark', label: t('common.remark'), width: '5%' },
     { key: 'edit', label: '', width: '5%' },
     { key: 'delete', label: '', width: '5%' },
-    { key: 'toggle', label: '', width: '5%' },
+    { key: 'toggle', label: '', width: '5%' }
   ]
 
   return (
@@ -931,30 +976,59 @@ const CustomDataGrid = ({ data, customGridHandleAction, handleClickSwitch }: { d
           </div>
         ))}
       </div>
-      <div style={{
-        flex: 1,
-        overflowY: 'auto'
-      }}>
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto'
+        }}
+      >
         {data.map((item: any, index: any) => (
-          <div style={{ backgroundColor: '#fff', marginBottom: 15, borderRadius: 8 }}>
-            <div key={index} style={{
-              display: 'flex',
-              borderBottom: '1px solid #ccc',
-              paddingBottom: 5,
-              paddingTop: 5,
-            }}>
-              <input type='checkbox' />
-              <div style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}>{item.recyclableNameTchi}</div>
-              <div style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}>{item.recyclableNameSchi}</div>
-              <div style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}>{item.recyclableNameEng}</div>
-              <div style={{ flex: `0 0 10%`, padding: '8px', fontSize: 16 }}>{item.description}</div>
-              <div style={{ flex: `0 0 5%`, padding: '8px', fontSize: 16 }}>{item.remark}</div>
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <div
+            style={{
+              backgroundColor: '#fff',
+              marginBottom: 15,
+              borderRadius: 8
+            }}
+          >
+            <div
+              key={index}
+              style={{
+                display: 'flex',
+                borderBottom: '1px solid #ccc',
+                paddingBottom: 5,
+                paddingTop: 5
+              }}
+            >
+              {/* <input type="checkbox" /> */}
+              <div style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}>
+                {item.recyclableNameTchi}
+              </div>
+              <div style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}>
+                {item.recyclableNameSchi}
+              </div>
+              <div style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}>
+                {item.recyclableNameEng}
+              </div>
+              <div style={{ flex: `0 0 10%`, padding: '8px', fontSize: 16 }}>
+                {item.description}
+              </div>
+              <div style={{ flex: `0 0 5%`, padding: '8px', fontSize: 16 }}>
+                {item.remark}
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center'
+                }}
+              >
                 <div style={{ display: 'flex' }}>
                   <EDIT_OUTLINED_ICON
                     fontSize="small"
                     className="cursor-pointer text-grey-dark mr-5"
-                    onClick={() => customGridHandleAction(item, 'edit', 'mainCategory')}
+                    onClick={() =>
+                      customGridHandleAction(item, 'edit', 'mainCategory')
+                    }
                   />
                 </div>
                 <div style={{ display: 'flex' }}>
@@ -966,46 +1040,77 @@ const CustomDataGrid = ({ data, customGridHandleAction, handleClickSwitch }: { d
                 </div>
               </div>
             </div>
-            {item.recycSubType.length > 0 && item.recycSubType.map((value: any, index: any) => (
-              <div key={index} style={{
-                display: 'flex',
-                borderBottom: '1px solid #ccc',
-                backgroundColor: '#fff',
-                paddingBottom: 5,
-                paddingTop: 5,
-                marginLeft: 20,
-                alignItems: 'center'
-              }}>
-                <input type='checkbox' />
-                <div style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}>{value.recyclableNameTchi}</div>
-                <div style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}>{value.recyclableNameSchi}</div>
-                <div style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}>{value.recyclableNameEng}</div>
-                <div style={{ flex: `0 0 10%`, padding: '8px', fontSize: 16 }}>{value.description}</div>
-                <div style={{ flex: `0 0 5%`, padding: '8px', fontSize: 16 }}>{value.remark}</div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft: -10 }}>
-                  <div style={{ display: 'flex' }}>
-                    <EDIT_OUTLINED_ICON
-                      fontSize="small"
-                      className="cursor-pointer text-grey-dark mr-5"
-                      onClick={() => customGridHandleAction(value, 'edit', 'subCategory')}
-                    />
+            {item.recycSubType.length > 0 &&
+              item.recycSubType.map((value: any, index: any) => (
+                <div
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    borderBottom: '1px solid #ccc',
+                    backgroundColor: '#fff',
+                    paddingBottom: 5,
+                    paddingTop: 5,
+                    //marginLeft: 20,
+                    alignItems: 'center'
+                  }}
+                >
+                  {/* <input type="checkbox" /> */}
+                  <div
+                    style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}
+                  >
+                    {value.recyclableNameTchi}
                   </div>
-                  <div style={{ display: 'flex' }}>
-                    <DELETE_OUTLINED_ICON
-                      fontSize="small"
-                      className="cursor-pointer text-grey-dark mr-2"
-                      onClick={() =>  handleClickSwitch(value, 'sub')}
-                    />
+                  <div
+                    style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}
+                  >
+                    {value.recyclableNameSchi}
+                  </div>
+                  <div
+                    style={{ flex: `0 0 15%`, padding: '8px', fontSize: 16 }}
+                  >
+                    {value.recyclableNameEng}
+                  </div>
+                  <div
+                    style={{ flex: `0 0 10%`, padding: '8px', fontSize: 16 }}
+                  >
+                    {value.description}
+                  </div>
+                  <div style={{ flex: `0 0 5%`, padding: '8px', fontSize: 16 }}>
+                    {value.remark}
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      //marginLeft: -10
+                    }}
+                  >
+                    <div style={{ display: 'flex' }}>
+                      <EDIT_OUTLINED_ICON
+                        fontSize="small"
+                        className="cursor-pointer text-grey-dark mr-5"
+                        onClick={() =>
+                          customGridHandleAction(value, 'edit', 'subCategory')
+                        }
+                      />
+                    </div>
+                    <div style={{ display: 'flex' }}>
+                      <DELETE_OUTLINED_ICON
+                        fontSize="small"
+                        className="cursor-pointer text-grey-dark mr-2"
+                        onClick={() => handleClickSwitch(value, 'sub')}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const DeleteModal: React.FC<DeleteForm> = ({
   open,
@@ -1042,17 +1147,24 @@ const DeleteModal: React.FC<DeleteForm> = ({
           </Box>
 
           <Box sx={{ alignSelf: 'center' }}>
-            <CustomButton text={t('check_in.confirm')} color="blue" style={{width: '175px', marginRight: '10px'}} onClick={
-              () => {
+            <CustomButton
+              text={t('check_in.confirm')}
+              color="blue"
+              style={{ width: '175px', marginRight: '10px' }}
+              onClick={() => {
                 handleConfirmDelete()
                 onClose()
-              }
-            } />
-            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '175px'}} onClick={
-              () => {
+              }}
+            />
+            <CustomButton
+              text={t('check_in.cancel')}
+              color="blue"
+              outlined
+              style={{ width: '175px' }}
+              onClick={() => {
                 onClose()
-              }
-            } />
+              }}
+            />
           </Box>
         </Stack>
       </Box>

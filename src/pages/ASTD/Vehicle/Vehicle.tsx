@@ -273,7 +273,6 @@ const Vehicle: FunctionComponent = () => {
               getRowId={(row) => row.vehicleTypeId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}

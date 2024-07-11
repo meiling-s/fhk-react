@@ -43,6 +43,7 @@
     "enterAddress": "請輸入地點",
     "enterName": "請輸入名稱",
     "effFromDate": "開放日期由",
+    "effDate": "開放日期",
     "openingDate": "開放日期",
     "startTime": "服務時間",
     "premiseName": "房屋或埸所名稱",
@@ -95,7 +96,9 @@
       "mustDifferent": "一定是不同的",
       "loginIdProhibited": "不允許在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'",
       "invalidDate": "出貨有效期限開始日期應早於出貨有效期限結束日期",
-      "incorrectAddress": "地址不正確"
+      "incorrectAddress": "地址不正確",
+      "dateOutOfRange": "指定日期超出開放日期範圍",
+      "effectiveDateLess": " 開始日期不能晚於截止日期"
     }
   },
   "component": {
@@ -178,6 +181,7 @@
     "contractNum": "合約編號",
     "warehouseRecyc": "回收物類別",
     "shouldNotEmpty": "不應為空",
+    "shouldNotDuplicate": "不應重複",
     "shouldNotDuplicated": " 货仓地址已经被使用"
   },
   "check_in": {
@@ -396,6 +400,9 @@
     "new": "新增",
     "finish": "完成",
     "cancel": "取消",
+    "every": "每星期",
+    "daily": "每日",
+    "picoDetailCannotBeRepeated": "預計回收地點資料不能重複",
     "detail": {
       "shipping_time": "運送時間",
       "main_category": "主類別",
@@ -437,7 +444,7 @@
       "effToDate": "迄今為止這是必要的",
       "routineType": "此例程类型为必填项",
       "routine": "需要例行公事",
-      "pickuAt": "此提貨點為必填項",
+      "pickuAt": "此取件時間為必填項",
       "senderName": "此寄件人姓名為必填項",
       "senderAddr": "他的寄件者送貨地址是必需的",
       "receiverName": "此寄件者地址為必填項",
@@ -455,7 +462,9 @@
       "sender_address_exists": "寄件者地址已存在於先前的資料中",
       "not_same_as_sender": "與寄件者不同",
       "receiver_address_cannot": "收件者地址不能與寄件者地址相同",
-      "receiver_address_exists": "先前的資料中已經存在接收者位址"
+      "receiver_address_exists": "先前的資料中已經存在接收者位址",
+      "succeedDeletePickupOrder": "刪除提貨訂單成功",
+      "failedDeletePickupOrder": "刪除提貨訂單失敗"
     },
     "validation": {
       "routine": "需要規律的生活",
@@ -521,16 +530,16 @@
     },
     "detail": {
       "company_category": "公司類別",
-      "company_name_traditional_chinese": "繁體中文公司名稱",
-      "company_name_simplified_chinese": "簡體中文公司名稱",
-      "company_english_name": "公司英文名稱",
-      "business_registration_number": "商業登記號碼",
-      "business_reg_number_picture": "商業登記號碼圖片",
+      "company_name_traditional_chinese": "公司繁體中文名",
+      "company_name_simplified_chinese": "公司簡體中文名",
+      "company_english_name": "公司英文名",
+      "business_registration_number": "商業登記編號",
+      "business_reg_number_picture": "商業登記編號圖片",
       "contact_person_name": "聯絡人姓名",
-      "contact_phone_number": "聯絡電話號碼",
+      "contact_phone_number": "聯絡人電話號碼",
       "epd_contract": "EPD合同",
       "creation_date": "創建日期",
-      "company_logo": "公司標誌",
+      "company_logo": "公司Logo",
       "remark": "備註",
       "number_of_accounts": "帳戶數目",
       "ways_of_entry_and_exit": "進出方式",

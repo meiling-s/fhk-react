@@ -734,7 +734,6 @@ const CheckoutRequest: FunctionComponent = () => {
               getRowId={(row) => row.chkOutId}
               hideFooter
               columns={checkoutHeader}
-              checkboxSelection={false}
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}

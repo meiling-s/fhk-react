@@ -358,7 +358,6 @@ const Company: FunctionComponent = () => {
                     getRowId={(row) => row.companyId}
                     hideFooter
                     columns={columns}
-                    checkboxSelection
                     onRowClick={(params) => {
                       handleSelectRow(params, item)
                     }}
