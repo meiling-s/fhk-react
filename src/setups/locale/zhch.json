@@ -368,7 +368,7 @@
     "select_shipping_category": "请选择运输类别",
     "regular_shipping": "常规运输",
     "one-transport": "一次性运输",
-    "shipping_validity": "运输有效日期由",
+    "shipping_validity": "有效日期由",
     "to": "至",
     "routine": {
       "recycling_week": "回收周次",
