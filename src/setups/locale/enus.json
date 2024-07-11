@@ -1220,7 +1220,7 @@
     "inputDriverNumber": "Please enter driver Id"
   },
   "dashboard_recyclables": {
-    "data": "Data",
+    "data": "Dashboard",
     "recyclable": "Recyclable Data",
     "recycling_data": "Recycling data",
     "different_recycling_weights": "Different recycling weights",

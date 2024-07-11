@@ -590,7 +590,7 @@
     "invalidTenantId": "租户 ID 无效"
   },
   "vehicle": {
-    "vehicle": "车辆",
+    "vehicle": "车队",
     "serviceType": "服务类型",
     "vehicleType": "车辆类型",
     "licensePlate": "车牌号码",
@@ -601,7 +601,7 @@
     "loading_capacity": "载重量 (kg)"
   },
   "inventory": {
-    "inventory": "存货",
+    "inventory": "回收物",
     "recyclingInformation": "回收信息",
     "date": "日期",
     "recyleType": "主类别",
@@ -659,7 +659,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "仓库",
+    "warehouse": "回收厂",
     "currentCapacity": "现时容量",
     "thereStillEnoughSpace": "还有足够的空间",
     "noMoreRoom": "没有空间了",
@@ -1233,7 +1233,7 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "集电极"
+    "collector": "回收公司"
   },
   "dashboard_manufacturer": {
     "data": "数据",
