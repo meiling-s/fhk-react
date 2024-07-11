@@ -156,7 +156,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
     imageList: ImageListType,
     addUpdateIndex: number[] | undefined
   ) => {
-    const maxFileSize = imgSettings?.ImgSize; // 5MB default if not set
+    const maxFileSize = imgSettings?.ImgSize; 
 
     const oversizedImages = imageList.filter(
       (image) => image.file && image.file.size > maxFileSize
@@ -288,6 +288,19 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       setTrySubmited(true)
     }
   }
+
+  const showErrorToast = (msg: string) => {
+    toast.error(msg, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
 
   const handleEditVehicle = async (formData: CreateLogisticVehicle) => {
     if (validation.length === 0) {
@@ -445,8 +458,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   maxNumber={imgSettings?.ImgQuantity}
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
+                  
                 >
-                  {({ imageList, onImageUpload, onImageRemove }) => (
+                  {({ imageList, onImageUpload, onImageRemove, errors }) => (
                     <Box className="box">
                       <Card
                         sx={{
@@ -468,6 +482,15 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                           </Typography>
                         </ButtonBase>
                       </Card>
+                      {errors && (
+                        <div>
+                        {errors.maxFileSize && (
+                          <span onClick={() => showErrorToast(`Selected file size exceeds maximum file size ${imgSettings?.ImgSize/1000000} Mb`)} style={{color: "red"}}>
+                            Selected file size exceeds maximum file size {imgSettings?.ImgSize/1000000} mb
+                          </span>
+                        )}
+                        </div>
+                      )}
                       <ImageList sx={localstyles.imagesContainer} cols={4}>
                         {imageList.map((image, index) => (
                           <ImageListItem
