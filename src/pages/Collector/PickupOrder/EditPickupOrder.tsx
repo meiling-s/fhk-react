@@ -137,6 +137,9 @@ const EditPickupOrder = () => {
     // validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
       values.updatePicoDetail = addRow
+      if(values.picoType === 'AD_HOC'){
+        values.routine = [];
+      }
       const result = await submitEditPickUpOrder(poInfo.picoId, values)
 
       const data = result?.data
@@ -153,6 +156,7 @@ const EditPickupOrder = () => {
   const setPickupOrderDetail = () => {
     const picoDetails: CreatePicoDetail[] =
       poInfo?.pickupOrderDetail?.map((item, index) => ({
+        id: item.picoDtlId,
         picoDtlId: item.picoDtlId,
         picoHisId: item.picoHisId,
         senderId: item.senderId,

@@ -28,7 +28,6 @@ import { extractError } from '../../../utils/utils'
 import { STATUS_CODE } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
-
 interface RecyleItem {
   recycTypeId: string
   recycSubTypeId: string
@@ -187,9 +186,9 @@ const Warehouse: FunctionComponent = () => {
         })
         fetchData()
       }
-    } catch (error:any) {
-      const {state , realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -327,7 +326,6 @@ const Warehouse: FunctionComponent = () => {
                       rows={warehouseItems}
                       hideFooter
                       columns={columns}
-                      checkboxSelection
                       disableRowSelectionOnClick
                       onRowClick={handleRowClick}
                       getRowSpacing={getRowSpacing}

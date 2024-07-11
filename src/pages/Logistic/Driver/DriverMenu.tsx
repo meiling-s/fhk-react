@@ -229,7 +229,6 @@ const DriverMenu = () => {
                         getRowId={(row) => row.driverId}
                         hideFooter
                         columns={columns}
-                        checkboxSelection
                         onRowClick={handleSelectRow}
                         getRowSpacing={getRowSpacing}
                         localeText={localeTextDataGrid}

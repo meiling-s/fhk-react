@@ -122,6 +122,10 @@ function CreateCollectionPoint() {
     initType()
   }, [])
 
+  useEffect(() => {
+    console.log("routine", RoutineSelect, openingPeriod)
+  }, [RoutineSelect])
+
   const initType = async () => {
    try {
     const result = await getCommonTypes()
@@ -248,10 +252,35 @@ function CreateCollectionPoint() {
     return false;
   };
 
+  const checkRoutineDates = () => {
+    if (colPtRoutine?.routineType !== 'specificDate' ) {
+      return true;
+    }
+  
+    const startDate = dayjs(openingPeriod.startDate).subtract(1, 'day').startOf('day');
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day');
+  
+    return colPtRoutine.routineContent.every(content => {
+      const contentDate = dayjs(content.id);
+      return contentDate.isAfter(startDate) && contentDate.isBefore(endDate);
+    });
+  };
+
+  const checkEffectiveDate = () => {
+    const startDate = dayjs(openingPeriod.startDate).subtract(1, 'day').startOf('day');
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day');
+
+    if (startDate.isAfter(endDate)){
+      return false
+    } else {
+      return true
+    }
+    };
+
   useEffect(() => {
     //do validation here
     const validate = async () => {
-      console.log('colPtRoutine', colPtRoutine?.routineContent)
+      console.log('colPtRoutine', colPtRoutine)
       const tempV: formValidate[] = [] //temp validation
       colType == '' &&
         tempV.push({
@@ -318,6 +347,12 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
+      !checkRoutineDates() &&
+      tempV.push({
+        field: `${t('date')}`,
+        problem: formErr.dateOutOfRange,
+        type: 'error'
+      });
       !checkTimePeriodNotInvalid() &&
       tempV.push({
         field: 'time_Period',
@@ -330,6 +365,12 @@ function CreateCollectionPoint() {
           problem: formErr.timeCantDuplicate,
           type: 'error'
         })
+      !checkEffectiveDate() &&
+      tempV.push({
+        field: 'col.effDate',
+        problem: formErr.effectiveDateLess,
+        type: 'error'
+      })
       premiseName == '' &&
         tempV.push({
           field: 'col.premiseName',
@@ -493,6 +534,12 @@ function CreateCollectionPoint() {
         break
       case formErr.incorrectAddress:
         msg = t('form.error.incorrectAddress')
+        break
+      case formErr.dateOutOfRange:
+        msg = t('form.error.dateOutOfRange')
+        break
+      case formErr.effectiveDateLess:
+        msg = t('form.error.effectiveDateLess')
         break
     }
     return msg
@@ -736,7 +783,7 @@ function CreateCollectionPoint() {
               </Box>
             </CustomField>
 
-            <CustomField label={t('col.effFromDate')}>
+            <CustomField label={t('col.effFromDate')} mandatory>
               <CustomPeriodSelect setDate={setOpeningPeriod} />
             </CustomField>
 

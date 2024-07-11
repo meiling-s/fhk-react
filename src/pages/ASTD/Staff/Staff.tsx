@@ -296,7 +296,6 @@ const StaffTitle: FunctionComponent = () => {
               getRowId={(row) => row.titleId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
