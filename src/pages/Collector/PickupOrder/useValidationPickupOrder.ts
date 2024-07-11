@@ -4,7 +4,9 @@ import dayjs, { Dayjs } from 'dayjs'
 import { useTranslation } from "react-i18next";
 import { Languages } from "../../../constants/constant";
 
-type fieldName = 'effFrmDate' | 'effToDate' | 'routine' | 'logisticName' | 'vehicleTypeId' | 'platNo' | 'reason' | 'createPicoDetail' | 'AD_HOC';
+type fieldName = 
+  'effFrmDate' | 'effToDate' | 'routine' | 'logisticName' | 'vehicleTypeId' | 'platNo' | 
+  'reason' | 'createPicoDetail' | 'AD_HOC' | 'weeklyDate' | 'contactNo';
 
 const initialErrors = {
   effFrmDate: {
@@ -12,63 +14,88 @@ const initialErrors = {
     status: false,
     required: true,
     message: '',
-    messages: {}
+    messages: {},
+    touch: false
   },
   effToDate: {
     type: 'string',
     status: false,
     required: true,
     message: '',
-    messages: {}
+    messages: {},
+    touch: false
   },
   routine: {
     type: 'string',
     status: false,
     required: true,
     message: '',
-    messages: {}
+    messages: {},
+    touch: false
   },
   logisticName: {
     type: 'string',
     status: false,
     required: true,
     message: '',
-    messages: {}
+    messages: {},
+    touch: false
   },
   vehicleTypeId: {
     type: 'string',
     status: false,
     required: true,
     message: '',
-    messages: {}
+    messages: {},
+    touch: false
   },
   platNo: {
     type: 'string',
     status: false,
     required: true,
     message: '',
-    messages: {}
+    messages: {},
+    touch: false
   },
   reason: {
     type: 'string',
     status: false,
     required: true,
     message: '',
-    messages: {}
+    messages: {},
+    touch: false
   },
   createPicoDetail: {
     type: 'array',
     status: false,
     required: true,
     message: '',
-    messages: {}
+    messages: {},
+    touch: false
   },
   AD_HOC: {
     type: 'string',
     status: false,
     required: true,
     message: '',
-    messages: {}
+    messages: {},
+    touch: false
+  },
+  weeklyDate: {
+    type: 'string',
+    status: false,
+    required: true,
+    message: '',
+    messages: {},
+    touch: false
+  },
+  contactNo: {
+    type: 'number',
+    status: false,
+    required: true,
+    message: '',
+    messages: {},
+    touch: false
   }
 }
 
@@ -77,9 +104,10 @@ type ErrorsField = Record<
   {
     type: string
     status: boolean
-    required: boolean,
-    message: string,
+    required: boolean
+    message: string
     messages: any
+    touch: boolean
   }
 >
 
@@ -124,9 +152,9 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
             messageSc: '迄今为止的运输有效期无效'
         },
         shippingFromDateNotValid: {
-            messageEn: "Shipping validity from date not valid",
-            messageTc: '運輸有效期限自日期無效',
-            messageSc: '发货有效期自日期起无效'
+            messageEn: "Shipping valid until The content you entered contains invalid characters",
+            messageTc: '運輸有效日期由 您輸入的內容包含無效字元',
+            messageSc: '运输有效日期至 您输入的内容包含无效字元'
         },
         specificDate: {
             messageEn: "Specific Date is Required",
@@ -142,6 +170,21 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
             messageEn: "Specific Date is out of range of the Shipping validity date",
             messageTc: "具體日期超出「出貨有效期限」範圍",
             messageSc: "具体日期超出“发货有效期”范围"
+        },
+        weeklyDate: {
+          messageEn: "Weekly Date is Required",
+          messageTc: '每週日期為必填項',
+          messageSc: '每周日期为必填项'
+        },
+        duplicateDateTimePeriod: {
+          messageEn: "Duplicate time periode should not be allowed",
+          messageTc: '不允許重複的時間段',
+          messageSc: '不允许重复的时间段'
+        },
+        contactNo: {
+          messageEn: "Contact number The content you entered contains invalid characters.",
+          messageTc: '聯絡人號碼 您輸入的內容包含無效字元',
+          messageSc: '联络人号码 您输入的内容包含无效字元'
         }
     }
 
@@ -191,9 +234,46 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
     const validateData = () :boolean => {
         let isValid = true
     
-        if(pico.effFrmDate){
-          const fromDate = dayjs(pico.effFrmDate);
-          if(!isValidDayjsISODate(fromDate)) {
+        // if(pico.effFrmDate){
+        //   const fromDate = dayjs(pico.effFrmDate);
+        //   if(!isValidDayjsISODate(fromDate)) {
+        //     isValid = false;
+        //     setErrorsField(prev => {
+        //       return {
+        //         ...prev,
+        //         effFrmDate: {
+        //           ...prev.effFrmDate,
+        //           status: true,
+        //           messages: errorMessages['shippingFromDateNotValid'],
+        //           message: getTranslationMessage('shippingFromDateNotValid')
+        //         }
+        //       }
+        //     })
+        //   }
+        // }
+    
+        // if(pico.effToDate){
+        //   const toDate = dayjs(pico.effToDate);
+        //   if(!isValidDayjsISODate(toDate)) {
+        //     isValid = false;
+        //     setErrorsField(prev => {
+        //       return {
+        //         ...prev,
+        //         effToDate: {
+        //           ...prev.effToDate,
+        //           status: true,
+        //           messages: errorMessages['shippingtoDateNotValid'],
+        //           message: getTranslationMessage('shippingtoDateNotValid')
+        //         }
+        //       }
+        //     })
+        //   }
+        // }
+    
+        if(pico.effToDate && pico.effFrmDate){
+          const fromDate = dayjs(pico.effFrmDate).format('YYYY-MM-DD');
+          const toDate = dayjs(pico.effToDate).format('YYYY-MM-DD');
+          if(!isValidDayjsISODate(dayjs(pico.effFrmDate))) {
             isValid = false;
             setErrorsField(prev => {
               return {
@@ -206,12 +286,7 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
                 }
               }
             })
-          }
-        }
-    
-        if(pico.effToDate){
-          const toDate = dayjs(pico.effToDate);
-          if(!isValidDayjsISODate(toDate)) {
+          } else if (!isValidDayjsISODate(dayjs(pico.effToDate))){
             isValid = false;
             setErrorsField(prev => {
               return {
@@ -224,14 +299,7 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
                 }
               }
             })
-          }
-        }
-    
-        if(pico.effToDate && pico.effFrmDate){
-          const fromDate = dayjs(pico.effFrmDate).format('YYYY-MM-DD');
-          const toDate = dayjs(pico.effToDate).format('YYYY-MM-DD');
-    
-          if(fromDate > toDate){
+          } else if(fromDate > toDate){
             isValid = false;
             setErrorsField(prev => {
               return {
@@ -273,7 +341,7 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
           })
         }
        
-        if(pico.routineType === 'specificDate' && pico.routine.length === 0){
+        if(pico.picoType === 'picoType' && pico.routineType === 'specificDate' && pico.routine.length === 0){
           isValid = false;
           setErrorsField(prev => {
             return {
@@ -286,7 +354,7 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
               }
             }
           })
-        } else if(pico.routineType === 'specificDate' && pico.routine.length >= 1){
+        } else if(pico.picoType === 'picoType' && pico.routineType === 'specificDate' && pico.routine.length >= 1){
           const fromDate = dayjs(pico.effFrmDate).format('YYYY-MM-DD');
           const toDate = dayjs(pico.effToDate).format('YYYY-MM-DD');
           const routine:boolean[] = pico.routine.map((item: any) => {
@@ -297,8 +365,24 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
               return true
             }
           });
-          
-          if(routine.includes(false)){
+
+          const originalLength = pico?.routine?.length;
+          const isDuplicatedDate = new Set([...pico?.routine]).size;
+         
+          if(originalLength !== isDuplicatedDate){
+            isValid = false;
+            setErrorsField(prev => {
+              return {
+                ...prev,
+                routine: {
+                  ...prev.routine,
+                  status: true,
+                  messages: errorMessages['duplicateDateTimePeriod'],
+                  message: getTranslationMessage('duplicateDateTimePeriod'),
+                }
+              }
+            })
+          } else if(routine.includes(false)){
             isValid = false;
             setErrorsField(prev => {
               return {
@@ -322,7 +406,32 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
               }
             })
           }
-        } else if(pico.routineType !== 'specificDate'){
+        } else if(pico.picoType === 'picoType' && pico.routineType !== 'specificDate'){
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              routine: {
+                ...prev.routine,
+                status: false,
+              }
+            }
+          })
+        }
+
+        if(pico.picoType === 'picoType' && pico.routineType === 'weekly' && pico.routine.length === 0){
+          isValid = false;
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              routine: {
+                ...prev.routine,
+                status: true,
+                messages: errorMessages['weeklyDate'],
+                message: getTranslationMessage('weeklyDate')
+              }
+            }
+          })
+        } else if((pico.routineType === 'weekly' && pico.routine.length >= 0)){
           setErrorsField(prev => {
             return {
               ...prev,
@@ -358,54 +467,55 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
             }
           })
         }
-        if(pico.vehicleTypeId === ''){
-          isValid = false;
-          setErrorsField(prev => {
-            return {
-              ...prev,
-              vehicleTypeId: {
-                ...prev.vehicleTypeId,
-                status: true,
-                messages: errorMessages['vehicleType'],
-                message: getTranslationMessage('vehicleType')
-              }
-            }
-          })
-        } else {
-          setErrorsField(prev => {
-            return {
-              ...prev,
-              vehicleTypeId: {
-                ...prev.vehicleTypeId,
-                status: false,
-              }
-            }
-          })
-        }
-        if(pico.platNo === ''){
-          isValid = false;
-          setErrorsField(prev => {
-            return {
-              ...prev,
-              platNo: {
-                ...prev.platNo,
-                status: true,
-                messages: errorMessages['vehiclePlatNo'],
-                message: getTranslationMessage('vehiclePlatNo')
-              }
-            }
-          })
-        } else {
-          setErrorsField(prev => {
-            return {
-              ...prev,
-              platNo: {
-                ...prev.platNo,
-                status: false,
-              }
-            }
-          })
-        }
+        // if(pico.vehicleTypeId === ''){
+        //   isValid = false;
+        //   setErrorsField(prev => {
+        //     return {
+        //       ...prev,
+        //       vehicleTypeId: {
+        //         ...prev.vehicleTypeId,
+        //         status: true,
+        //         messages: errorMessages['vehicleType'],
+        //         message: getTranslationMessage('vehicleType')
+        //       }
+        //     }
+        //   })
+        // } else {
+        //   setErrorsField(prev => {
+        //     return {
+        //       ...prev,
+        //       vehicleTypeId: {
+        //         ...prev.vehicleTypeId,
+        //         status: false,
+        //       }
+        //     }
+        //   })
+        // }
+        
+        // if(pico.platNo === ''){
+        //   isValid = false;
+        //   setErrorsField(prev => {
+        //     return {
+        //       ...prev,
+        //       platNo: {
+        //         ...prev.platNo,
+        //         status: true,
+        //         messages: errorMessages['vehiclePlatNo'],
+        //         message: getTranslationMessage('vehiclePlatNo')
+        //       }
+        //     }
+        //   })
+        // } else {
+        //   setErrorsField(prev => {
+        //     return {
+        //       ...prev,
+        //       platNo: {
+        //         ...prev.platNo,
+        //         status: false,
+        //       }
+        //     }
+        //   })
+        // }
     
        if(state.length === 0){
         isValid = false;
@@ -482,12 +592,400 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
           }
         })
        }
+
+       if(pico.contactNo !== '' && isNaN(Number(pico.contactNo))){
+        isValid = false;
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            contactNo: {
+              ...prev.contactNo,
+              status: true,
+              messages: errorMessages['contactNo'],
+              message: getTranslationMessage('contactNo')
+            }
+          }
+        })
+       } else {
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            contactNo: {
+              ...prev.contactNo,
+              status: false,
+            }
+          }
+        })
+       }
+      
         return isValid  
+    }
+
+    const validateDataChange = () => {
+      const fromDate = dayjs(pico.effFrmDate);
+      
+      const toDate = dayjs(pico.effToDate);
+      if(!isValidDayjsISODate(fromDate) && errorsField.effFrmDate.touch){
+        const fromDate = dayjs(pico.effFrmDate);
+        // if(!isValidDayjsISODate(fromDate)) {
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              effFrmDate: {
+                ...prev.effFrmDate,
+                status: true,
+                messages: errorMessages['shippingFromDateNotValid'],
+                message: getTranslationMessage('shippingFromDateNotValid')
+              }
+            }
+          })
+        // }
+      } else if(!isValidDayjsISODate(toDate) && errorsField.effToDate.touch){
+        const toDate = dayjs(pico.effToDate);
+        // if(!isValidDayjsISODate(toDate)) {
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              effToDate: {
+                ...prev.effToDate,
+                status: true,
+                messages: errorMessages['shippingFromDateNotValid'],
+                message: getTranslationMessage('shippingFromDateNotValid')
+              }
+            }
+          })
+        // }
+      } else if(pico.effToDate && pico.effFrmDate  && errorsField.effToDate.touch &&  errorsField.effFrmDate.touch){
+        const fromDate = dayjs(pico.effFrmDate).format('YYYY-MM-DD');
+        const toDate = dayjs(pico.effToDate).format('YYYY-MM-DD');
+        
+        if(fromDate > toDate){ 
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              effFrmDate: {
+                ...prev.effFrmDate,
+                status: true,
+                messages: errorMessages['invalidDate'],
+                message: getTranslationMessage('invalidDate')
+              }
+            }
+          })
+        }  else {
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              effFrmDate: {
+                ...prev.effFrmDate,
+                status: false,
+                message: ''
+              }
+            }
+          })
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              effToDate: {
+                ...prev.effToDate,
+                status: false,
+                message: ''
+              }
+            }
+          })
+        }
+      } else {
+       
+      }
+  
+      if(pico.routineType === '' && errorsField.routine.touch){
+
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            routine: {
+              ...prev.routine,
+              status: true,
+              messages: errorMessages['routine'],
+              message: getTranslationMessage('routine')
+            }
+          }
+        })
+      }
+
+      if(pico.picoType !== 'AD_HOC'){
+        if(pico.routineType === 'specificDate' && pico.routine.length === 0 && errorsField.routine.touch){
+
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              routine: {
+                ...prev.routine,
+                status: true,
+                messages: errorMessages['specificDate'],
+                message: getTranslationMessage('specificDate')
+              }
+            }
+          })
+        } else if(pico.routineType === 'specificDate' && pico.routine.length >= 1 && errorsField.routine.touch){
+          const fromDate = dayjs(pico.effFrmDate).format('YYYY-MM-DD');
+          const toDate = dayjs(pico.effToDate).format('YYYY-MM-DD');
+          const routine:boolean[] = pico.routine.map((item: any) => {
+            const date = dayjs(item).format('YYYY-MM-DD');
+            if(date < fromDate || date > toDate){
+              return false
+            } else {
+              return true
+            }
+          });
+  
+          const originalLength = pico?.routine?.length;
+          const isDuplicatedDate = new Set([...pico?.routine]).size;
+         
+          if(originalLength !== isDuplicatedDate){
+    
+            setErrorsField(prev => {
+              return {
+                ...prev,
+                routine: {
+                  ...prev.routine,
+                  status: true,
+                  messages: errorMessages['duplicateDateTimePeriod'],
+                  message: getTranslationMessage('duplicateDateTimePeriod'),
+                }
+              }
+            })
+          } else if(routine.includes(false)){
+    
+            setErrorsField(prev => {
+              return {
+                ...prev,
+                routine: {
+                  ...prev.routine,
+                  status: true,
+                  messages: errorMessages['out_of_date_range'],
+                  message: getTranslationMessage('out_of_date_range'),
+                }
+              }
+            })
+          } else {
+            setErrorsField(prev => {
+              return {
+                ...prev,
+                routine: {
+                  ...prev.routine,
+                  status: false
+                }
+              }
+            })
+          }
+        } else if(pico.routineType !== 'specificDate'){
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              routine: {
+                ...prev.routine,
+                status: false,
+              }
+            }
+          })
+        }
+  
+        if(pico.routineType === 'weekly' && pico.routine.length === 0 && errorsField.routine.touch){
+  
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              routine: {
+                ...prev.routine,
+                status: true,
+                messages: errorMessages['weeklyDate'],
+                message: getTranslationMessage('weeklyDate')
+              }
+            }
+          })
+        } else if((pico.routineType === 'weekly' && pico.routine.length >= 0 && errorsField.routine.touch)){
+          setErrorsField(prev => {
+            return {
+              ...prev,
+              routine: {
+                ...prev.routine,
+                status: false,
+              }
+            }
+          })
+        }
+      }
+     
+      if(pico.logisticName === '' && errorsField.logisticName.touch){
+
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            logisticName: {
+              ...prev.logisticName,
+              status: true,
+              messages: errorMessages['logistic'],
+              message: getTranslationMessage('logistic')
+            }
+          }
+        })
+      } else {
+        setErrorsField(prev => {
+          return {
+            ...prev,
+            logisticName: {
+              ...prev.logisticName,
+              status: false
+            }
+          }
+        })
+      }      
+      // if(pico.platNo === '' && errorsField.platNo.touch){
+
+      //   setErrorsField(prev => {
+      //     return {
+      //       ...prev,
+      //       platNo: {
+      //         ...prev.platNo,
+      //         status: true,
+      //         messages: errorMessages['vehiclePlatNo'],
+      //         message: getTranslationMessage('vehiclePlatNo')
+      //       }
+      //     }
+      //   })
+      // } else {
+      //   setErrorsField(prev => {
+      //     return {
+      //       ...prev,
+      //       platNo: {
+      //         ...prev.platNo,
+      //         status: false,
+      //       }
+      //     }
+      //   })
+      // }
+  
+     if(state.length === 0 && errorsField.createPicoDetail.touch){
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          createPicoDetail: {
+            ...prev.createPicoDetail,
+            status: true,
+            messages: errorMessages['pickupDetail'],
+            message: getTranslationMessage('pickupDetail')
+          }
+        }
+      })
+     } else {
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          createPicoDetail: {
+            ...prev.createPicoDetail,
+            status: false,
+          }
+        }
+      })
+     }
+  
+     const isDetailOrderEmpty = state.filter(item => item.status !== 'DELETED');
+     if(isDetailOrderEmpty.length === 0 && errorsField.createPicoDetail.touch){
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          createPicoDetail: {
+            ...prev.createPicoDetail,
+            status: true,
+            messages: errorMessages['pickupDetail'],
+            message: getTranslationMessage('pickupDetail')
+          }
+        }
+      })
+     } else {
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          createPicoDetail: {
+            ...prev.createPicoDetail,
+            status: false,
+          }
+        }
+      })
+     }
+  
+     if(pico.picoType === 'AD_HOC' && pico.reason ==='' && errorsField.AD_HOC.touch){
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          AD_HOC: {
+            ...prev.AD_HOC,
+            status: true,
+            messages: errorMessages['addHocReason'],
+            message: getTranslationMessage('addHocReason')
+          }
+        }
+      })
+     } else if(pico.picoType === 'AD_HOC' && pico.reason) {
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          AD_HOC: {
+            ...prev.AD_HOC,
+            status: false,
+          }
+        }
+      })
+     } 
+     
+     if(pico.contactNo !== '' && isNaN(Number(pico.contactNo))){
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          contactNo: {
+            ...prev.contactNo,
+            status: true,
+            messages: errorMessages['contactNo'],
+            message: getTranslationMessage('contactNo')
+          }
+        }
+      })
+     } else {
+      setErrorsField(prev => {
+        return {
+          ...prev,
+          contactNo: {
+            ...prev.contactNo,
+            status: false,
+          }
+        }
+      })
+     }
+    
+    }
+
+    useEffect(() => {
+      validateDataChange()
+    }, [pico]);
+    // console.log('ErrorsField', errorsField)
+    const changeTouchField = (field: fieldName) => {
+      
+      setErrorsField(prev => {
+        console.log('field', prev[field])
+        return {
+          ...prev,
+          [field] : {
+            ...prev[field],
+            touch: true
+          }
+        }
+      })
     }
 
     return {
         validateData,
-        errorsField
+        errorsField,
+        changeTouchField
     }
 
 };

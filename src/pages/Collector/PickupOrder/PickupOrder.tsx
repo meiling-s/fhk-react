@@ -23,11 +23,12 @@ import CustomItemList, {
 import {
   getAllPickUpOrder,
   getAllLogisticsPickUpOrder,
-  getAllReason
+  getAllReason,
+  editPickupOrderDetailStatus
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { editPickupOrderStatus } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate, extractError } from '../../../utils/utils'
+import { displayCreatedDate, extractError, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
 import {
   STATUS_CODE,
@@ -376,10 +377,8 @@ const PickupOrders = () => {
   })
   const [approveModal, setApproveModal] = useState(false)
   const [rejectModal, setRejectModal] = useState(false)
-  const [reasonList, setReasonList] = useState<
-    { reasonId: string; name: string }[]
-  >([])
-
+  const [reasonList, setReasonList] = useState<{reasonId: string, name: string}[]>([])
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
   const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const statusList: StatusPickUpOrder[] = [
     {
@@ -718,13 +717,13 @@ const PickupOrders = () => {
     } else if (row.routineType === 'daily') {
       if (i18n.language === Languages.ENUS) {
         return 'Daily'
-      } else if (i18n.language === Languages.ZHCH) {
-        return '每天'
+      } else if(i18n.language === Languages.ZHCH){
+        return '每日'
       } else {
-        return '每天'
+        return '每日'
       }
     } else {
-      return getDeliveryDay(row.routine)
+      return  t('pick_up_order.every') + ' '  + getDeliveryDay(row.routine)
     }
   }
 
@@ -900,19 +899,65 @@ const PickupOrders = () => {
     })
     return options
   }
+  const onDeleteModal = () => {
+    setOpenDelete(prev => !prev)
+  }
+
+  const onDeleteClick = async () => {
+    if (selectedRow) {
+      const updatePoStatus = {
+        status: 'CLOSED',
+        reason: selectedRow.reason,
+        updatedBy: selectedRow.updatedBy
+      }
+      const updatePoDtlStatus = {
+        status: 'CLOSED',
+        updatedBy: selectedRow.updatedBy
+      }
+      try {
+        const result = await editPickupOrderStatus(
+          selectedRow.picoId,
+          updatePoStatus
+        )
+        if (result) {
+          const detailUpdatePromises =
+            selectedRow.pickupOrderDetail.map((detail) =>
+              editPickupOrderDetailStatus(
+                detail.picoDtlId.toString(),
+                updatePoDtlStatus
+              )
+            )
+          await Promise.all(detailUpdatePromises)
+          await initPickupOrderRequest()
+          onDeleteModal()
+          setOpenModal(false)
+          showSuccessToast(t('pick_up_order.error.succeedDeletePickupOrder'))
+        }
+        
+        // navigate('/collector/PickupOrder')
+      } catch (error) {
+        showErrorToast(t('pick_up_order.error.failedDeletePickupOrder'))
+        //console.error('Error updating field:', error)
+      }
+    } else {
+      alert('No selected pickup order')
+    }
+  }
+
   return (
     <>
       <ToastContainer />
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         {/* <Modal open={openModal} onClose={handleCloses}> */}
-        <PickupOrderForm
-          openModal={openModal}
-          actions={actions}
-          onClose={handleCloses}
-          selectedRow={selectedRow}
-          pickupOrder={pickupOrder}
-          initPickupOrderRequest={initPickupOrderRequest}
-        />
+          <PickupOrderForm
+            openModal={openModal}
+            actions={actions}
+            onClose={handleCloses}
+            selectedRow={selectedRow}
+            pickupOrder={pickupOrder}
+            initPickupOrderRequest={initPickupOrderRequest}
+            onDeleteModal={onDeleteModal}
+          />
         {/* </Modal> */}
         <Box sx={{ display: 'flex', alignItems: 'center', ml: '6px' }}>
           <Typography fontSize={20} color="black" fontWeight="bold">
@@ -999,8 +1044,72 @@ const PickupOrders = () => {
           selectedRow={selectedRow}
           reasonList={reasonList}
         />
+         <DeleteModal
+          open={openDelete}
+          selectedRow={selectedRow}
+          onClose={onDeleteModal}
+          onDelete={onDeleteClick}
+        />
       </Box>
     </>
+  )
+}
+
+type DeleteModalProps = {
+  open: boolean
+  selectedRow?: PickupOrder | null
+  onClose: () => void
+  onDelete: () => void,
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({
+  open,
+  selectedRow,
+  onClose,
+  onDelete,
+}) => {
+  const { t } = useTranslation()
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('pick_up_order.delete_msg')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                if(selectedRow) onDelete()
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
   )
 }
 
