@@ -22,6 +22,7 @@ export type InventoryItem = {
     createdAt: string
     updatedAt: string
     location: string
+    packageName?:string
 }
 
 export type InventoryQuery = {

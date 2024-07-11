@@ -31,6 +31,7 @@ import {
 } from '../../../APICalls/Collector/inventory'
 import {
   format,
+  Languages,
   localStorgeKeyName,
   STATUS_CODE
 } from '../../../constants/constant'
@@ -49,6 +50,8 @@ import { returnApiToken, extractError } from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { InventoryQuery } from '../../../interfaces/inventory'
+import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
+import { PackagingUnit } from '../../../interfaces/packagingUnit'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -80,7 +83,8 @@ function createInventory(
   inventoryDetail: InvDetails[],
   createdAt: string,
   updatedAt: string,
-  location: string
+  location: string,
+  packageName?:string
 ): InventoryItem {
   return {
     itemId,
@@ -99,7 +103,8 @@ function createInventory(
     inventoryDetail,
     createdAt,
     updatedAt,
-    location
+    location,
+    packageName
   }
 }
 
@@ -131,9 +136,27 @@ const Inventory: FunctionComponent = () => {
   })
   const [warehouseList, setWarehouseList] = useState<Option[]>([])
   const [recycList, setRecycList] = useState<Option[]>([])
+  const [packagingMapping, setPackagingMapping] = useState<PackagingUnit[]>([])
 
+  const initpackagingUnit = async () => {
+    try {
+      const result = await getAllPackagingUnit(0, 1000)
+      const data = result?.data
+  
+      if (data) {
+        setPackagingMapping(data.content)
+      }
+     } catch (error:any) {
+      const {state, realm} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+     }
+  }
+  
   useEffect(() => {
     mappingRecyleItem()
+    initpackagingUnit()
   }, [recycType, i18n.language])
 
   useEffect(() => {
@@ -227,15 +250,39 @@ const Inventory: FunctionComponent = () => {
     if (data) {
       const picoData = await getAllPickupOrder(data.content)
       var inventoryMapping: InventoryItem[] = []
-      data.content.map((item: any) => {
+      data.content.map((item: InventoryItem) => {
         const recy = recycItem.find(
           (re) => re.recycType.id === item.recycTypeId
         )
-        const recyName = recy ? recy.recycType.name : '-'
-        const subType = recy
-          ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId)
-          : null
-        const subName = subType ? subType.name : '-'
+        let recyName:string = '-';
+        let subName:string = '-';
+        item.packageName = item.packageTypeId;
+        const recyclables = recycType?.find(item => item.recycTypeId === item.recycTypeId);
+        if(recyclables){
+          if(i18n.language === Languages.ENUS) recyName = recyclables.recyclableNameEng
+          if(i18n.language === Languages.ZHCH) recyName = recyclables.recyclableNameSchi
+          if(i18n.language === Languages.ZHHK) recyName = recyclables.recyclableNameTchi
+          const subs = recyclables.recycSubType.find(sub => sub.recycSubTypeId === item.recycSubTypeId )
+          if(subs){
+            if(i18n.language === Languages.ENUS) subName = subs.recyclableNameEng
+            if(i18n.language === Languages.ZHCH) subName = subs.recyclableNameSchi
+            if(i18n.language === Languages.ZHHK) subName = subs.recyclableNameTchi
+          }
+        }
+        
+        const packages = packagingMapping.find(packageItem => packageItem.packagingTypeId === item.packageTypeId);
+      
+        if(packages){
+          if(i18n.language === Languages.ENUS) item.packageName = packages.packagingNameEng;
+          if(i18n.language === Languages.ZHCH) item.packageName = packages.packagingNameSchi;
+          if(i18n.language === Languages.ZHHK) item.packageName = packages.packagingNameTchi
+        }
+        
+        // const recyName = recy ? recy.recycType.name : '-'
+        // const subType = recy
+        //   ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId)
+        //   : null
+        // const subName = subType ? subType.name : '-'
         const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
         const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
 
@@ -265,7 +312,8 @@ const Inventory: FunctionComponent = () => {
             item?.inventoryDetail || '-',
             createdAt,
             item?.updatedAt,
-            item?.location
+            item?.location,
+            item?.packageName,
           )
         )
       })
@@ -283,19 +331,19 @@ const Inventory: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: 'recycTypeId',
+      field: 'recyName',
       headerName: t('inventory.recyleType'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'recycSubTypeId',
+      field: 'subName',
       headerName: t('inventory.recyleSubType'),
       width: 200,
       type: 'string'
     },
     {
-      field: 'packageTypeId',
+      field: 'packageName',
       headerName: t('inventory.package'),
       width: 200,
       type: 'string'
@@ -425,6 +473,7 @@ const Inventory: FunctionComponent = () => {
       value: key,
       label: value
     }))
+    console.log('options', optionMap)
     options.push({
       value: '',
       label: t('check_in.any')
