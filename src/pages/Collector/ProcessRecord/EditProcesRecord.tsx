@@ -249,7 +249,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
       recycSubTypeId: data.recycSubTypeId,
       packageTypeId: selectedRow?.packageTypeId || "",
       weight: data.weight,
-      unitId: 'kg',
+      unitId: data.unitId,
       status: data.status,
       processoutDetailPhoto: imgItems,
       createdBy: loginId,
@@ -380,7 +380,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                     {t('processRecord.categoryWeight')}
                   </div>
                   {recycItem?.map((item, index) => {
-                    const weightType = weightUnits.find((value) => value.unitId === Number(item.unitId))
+                    const weightType = weightUnits && weightUnits.find((value) => value.unitId === Number(item.unitId))
                     const weightUnit = i18n.language === 'enus' ? weightType?.unitNameEng : i18n.language === 'zhch' ? weightType?.unitNameSchi : weightType?.unitNameTchi
                     return (
                       <div
@@ -432,11 +432,9 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                         {item.images.length != 0 && (
                           <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
                             {item.images.map((img, index) => {
-                              let regex = /^data:image\/(jpeg|png);base64,/;
-                              let cleanedString = img.replace(regex, '');
                               return (
                                 <img
-                                  src={cleanedString}
+                                  src={img}
                                   alt=""
                                   key={index}
                                   className="lg:w-[100px] h-[100px] object-cover sm:w-16"
@@ -484,6 +482,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
             editedData={selectedItem}
             processOut={selectedRow}
             action={action}
+            weightUnits={weightUnits}
           />
         </RightOverlayForm>
       </div>
