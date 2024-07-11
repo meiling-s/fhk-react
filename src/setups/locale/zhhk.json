@@ -204,7 +204,7 @@
     "recyc_loc_info": "回收地點資料",
     "recyclable_type_weight": "回收物類別及重量",
     "message": "訊息",
-    "confirm_reject": "確認拒絕送入請求嗎?",
+    "confirm_reject": "確認拒絕送出請求嗎?",
     "reject_reasons": "拒絕原因(可多選)",
     "confirm": "確認拒絕",
     "cancel": "取消",
