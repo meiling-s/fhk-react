@@ -281,8 +281,8 @@
     "overview": "概览"
   },
   "status": {
-    "active": "已启用",
-    "inactive": "已停用",
+    "active": "启用",
+    "inactive": "停用",
     "deleted": "已删除",
     "started": "处理中",
     "created": "待处理",
@@ -1037,7 +1037,7 @@
     "currency_category": "货币类别",
     "introduction": "簡介",
     "monetary": "名称",
-    "contract_number": "编号"
+    "contract_number": "合约编号"
   },
   "packaging_unit": {
     "packaging_unit": "包装单位",

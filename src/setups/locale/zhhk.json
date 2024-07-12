@@ -280,8 +280,8 @@
     "err_msg_500": "取得授權資料失敗。"
   },
   "status": {
-    "active": "已啟用",
-    "inactive": "已停用",
+    "active": "啟用",
+    "inactive": "停用",
     "deleted": "已刪除",
     "started": "處理中",
     "created": "待處理",
