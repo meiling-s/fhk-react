@@ -39,6 +39,11 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { mappingRecyName } from '../../utils/utils'
 import i18n from '../../setups/i18n'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 type props = {
   onClose: () => void
@@ -76,9 +81,10 @@ props) => {
     vehicleId: false
   })
   const currentLang = i18n.language
-  const { recycType } = useContainer(CommonTypeContainer)
+  const { recycType, dateFormat} = useContainer(CommonTypeContainer)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -168,6 +174,7 @@ props) => {
         return {
           ...item,
           pickupAt: new Date(startDate.format()).toISOString(),
+          // pickupAt: dayjs.utc(startDate).format(`${dateFormat} HH:mm`),
           vehicleId: assignField.vehicleId,
           driverId: assignField.driverId,
           plateNo: assignField.plateNo
@@ -304,7 +311,7 @@ props) => {
                               </label>
                             </div>
                             <p className="flex-1 font-semibold text-[#535353]">
-                              {item.pickupAt}
+                              {item.driverId == '' ? dayjs(new Date).format(`${dateFormat} ${item.pickupAt}`) : dayjs(item.pickupAt).format(`${dateFormat} HH:mm`)}
                             </p>
                           </div>
                           <div className="flex items-center">
@@ -385,8 +392,11 @@ props) => {
                             disablePortal
                             id="driver"
                             sx={{ width: '100%' }}
-                            // value={assignField.driverId}
-                            getOptionLabel={(option) => option?.driverName}
+                            value={{
+                              driverId: assignField.driverId,
+                              driverName: driverList.find(value => value.driverId === assignField.driverId)?.driverNameEng
+                            }}
+                            getOptionLabel={(option) => option?.driverName ?? ''}
                             options={driverList.map((driver) => {
                               if (currentLang === 'enus') {
                                 return {

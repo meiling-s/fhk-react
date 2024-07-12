@@ -26,7 +26,7 @@
     "approveFailed": "批准请求失败",
     "rejectSuccess": "成功拒绝请求",
     "rejectFailed": "拒绝请求失败",
-    "details": "细节",
+    "details": "详情",
     "maintenance": "系统正在维护中，请稍后。",
     "pageNotFound": "找不到网页",
     "errorMessage": "错误信息",
@@ -43,6 +43,7 @@
     "enterAddress": "请输入地点",
     "enterName": "请输入名称",
     "effFromDate": "开放日期由",
+    "effDate": "开放日期 ",
     "openingDate": "开放日期",
     "startTime": "服务时间",
     "premiseName": "房屋或场所名称",
@@ -71,7 +72,8 @@
     "cancel": "取消",
     "collectionPoint_created": "回收点已建立",
     "collectionPoint_updated": "回收点已更新",
-    "addressNotes": "请输入座位数、街道名称、屋苑等信息"
+    "addressNotes": "请输入座位数、街道名称、屋苑等信息",
+    "addressReminder": "请选择地址"
   },
   "form": {
     "error": {
@@ -90,7 +92,13 @@
       "endDateEarlyThanStartDate": "如果“截止日期”早于“开始日期”，则不允许截止日期",
       "loginIdCantContainAdmin": "'admin' 中不允许有单词",
       "tenatIdShouldBeSixDigit": "租户 ID 应为六位数字",
-      "tenantIdNotFound": "未找到租户 ID"
+      "tenantIdNotFound": "未找到租户 ID",
+      "mustDifferent": "必须不同",
+      "loginIdProhibited": "不允许在userid 中使用'_astdadmin', '_superadmin', '_fhkadmin'",
+      "invalidDate": "运输有效期开始日期应低于运输有效期结束日期",
+      "incorrectAddress": "地址不正确",
+      "dateOutOfRange": "指定日期超出开放日期范围",
+      "effectiveDateLess": "开始日期不能晚于截止日期"
     }
   },
   "component": {
@@ -173,6 +181,7 @@
     "contractNum": "合约编号",
     "warehouseRecyc": "回收物类別",
     "shouldNotEmpty": "不应为空",
+    "shouldNotDuplicate": "不应重复",
     "shouldNotDuplicated": " 货仓地址已经被使用"
   },
   "check_in": {
@@ -195,7 +204,7 @@
     "recyc_loc_info": "回收地点资料",
     "recyclable_type_weight": "回收物类别及重量",
     "message": "信息",
-    "confirm_reject": "确认拒绝送入请求吗?",
+    "confirm_reject": "确认拒绝送出请求吗?",
     "reject_reasons": "拒绝原因(可多选)",
     "confirm": "确认拒绝",
     "cancel": "取消",
@@ -229,6 +238,7 @@
     "confirm": "确认拒绝",
     "cancel": "取消",
     "shipping_company": "寄件公司",
+    "shipping_location": "发货地点",
     "arrival_location": "到达地点",
     "success_approve": "结帐请求成功",
     "ok": "好的",
@@ -305,7 +315,7 @@
     "changed_pickup_order": "回收运單已更改",
     "table": {
       "created_datetime": "建立日期",
-      "pico_id": "运单编号",
+      "pico_id": "订单编号",
       "logistic_company": "物流公司",
       "delivery_date": "送货日期",
       "sender_company": "寄件公司",
@@ -349,7 +359,7 @@
       "shipping_validity": "运输有效日期由",
       "recycling_week": "回收周次",
       "vehicle_category": "车辆类别",
-      "plat_number": "车牌号码",
+      "plat_number": "车辆编码",
       "contact_number": "请填写手机号码",
       "sender_name": "寄件公司",
       "exp_opration": "已过期操作",
@@ -370,7 +380,9 @@
       "recycling_week": "回收周次",
       "every_week": "逢星期",
       "contract_number": "合约编号",
-      "enter_contract": "请输入编号"
+      "enter_contract": "请输入编号",
+      "period": "时期",
+      "period_should_not_empty": "期间日期"
     },
     "adhoc": {
       "reason_get_off": "下单原因",
@@ -379,8 +391,8 @@
     "choose_logistic": "物流公司",
     "enter_company_name": "请输入公司名称",
     "vehicle_category": "车辆类别",
-    "plat_number": "车牌号码",
-    "enter_plat_number": "请填写车牌号码",
+    "plat_number": "车辆编码",
+    "enter_plat_number": "请填写车辆编码",
     "contact_number": "请填写手机号码",
     "enter_contact_number": "请填写手机号码",
     "recyle_loc_info": "预计回收地点资料",
@@ -389,6 +401,9 @@
     "new": "新增",
     "finish": "完成",
     "cancel": "取消",
+    "every": "每星期",
+    "daily": "每日",
+    "picoDetailCannotBeRepeated": "预计回收地点资料不能重复",
     "detail": {
       "shipping_time": "运送时间",
       "main_category": "主类别",
@@ -430,8 +445,8 @@
       "effToDate": "迄今为止这是必需的",
       "routineType": "此例程類型為必填項",
       "routine": "需要例行公事",
-      "pickuAt": "此提货点为必填项",
-      "senderName": "此发件人姓名为必填项'",
+      "pickuAt": "此取货时间是必填项",
+      "senderName": "此发件人姓名为必填项",
       "senderAddr": "此发件人地址为必填项",
       "receiverName": "该接收者姓名为必填项",
       "receiverAddr": "此收件人地址为必填项",
@@ -448,7 +463,20 @@
       "sender_address_exists": "发件人地址已存在于之前的数据中",
       "not_same_as_sender": "与发件人不同",
       "receiver_address_cannot": "收件人地址不能与发件人地址相同",
-      "receiver_address_exists": "之前的数据中已经存在接收者地址"
+      "receiver_address_exists": "之前的数据中已经存在接收者地址",
+      "succeedDeletePickupOrder": "删除取货订单成功",
+      "failedDeletePickupOrder": "删除取货订单失败"
+    },
+    "validation": {
+      "routine": "例行公事是必需的",
+      "logistic": "需要物流公司",
+      "vehicleType": "车辆载货量为必填项",
+      "vehiclePlatNo": "车辆编码为必填项",
+      "pickupDetail": "需要提供取货订单详细信息",
+      "addHocReason": "需要临时理由",
+      "shippingtoDateNotValid": "迄今为止的运输有效期无效",
+      "shippingFromDateNotValid": "发货有效期自日期起无效",
+      "specificDate": "需要具体日期"
     }
   },
   "tenant": {
@@ -500,20 +528,21 @@
       "invite_success": "成功发送邀请",
       "invite_failed": "发送邀请失败",
       "err_date": " 运送有效期无效。确保截止日期晚于开始日期",
-      "err_duplicated": "公司号码/公司名称/商业注册。编号已存在"
+      "err_duplicated": "公司号码/公司名称/商业注册。编号已存在",
+      "err_companyIdLength": "公司编号必需为6位数字"
     },
     "detail": {
       "company_category": "公司类别",
-      "company_name_traditional_chinese": "繁体中文公司名称",
-      "company_name_simplified_chinese": "简体中文公司名称",
-      "company_english_name": "公司英文名称",
-      "business_registration_number": "商业登记号码",
-      "business_reg_number_picture": "商业登记号码图片",
-      "contact_person_name": "联系人姓名",
-      "contact_phone_number": "联系电话号码",
+      "company_name_traditional_chinese": "公司繁体中文名",
+      "company_name_simplified_chinese": "公司简体中文名",
+      "company_english_name": "公司英文名",
+      "business_registration_number": "商业登记编号",
+      "business_reg_number_picture": "商业登记编号图片",
+      "contact_person_name": "联络人姓名",
+      "contact_phone_number": "联络人电话号码",
       "epd_contract": "EPD合同",
       "creation_date": "创建日期",
-      "company_logo": "公司标志",
+      "company_logo": "公司Logo",
       "remark": "备注",
       "number_of_accounts": "账户数量",
       "ways_of_entry_and_exit": "进出方式",
@@ -563,6 +592,8 @@
     "please_enter": "请输入",
     "nature": "自然",
     "speaker": "讲者",
+    "enterSpeaker": "请输入发言人",
+    "enterNature": "请进入自然",
     "service_type": "服务种类",
     "additional": "额外的",
     "other_services": "其他服务",
@@ -573,8 +604,8 @@
   "vehicle": {
     "vehicle": "车辆",
     "serviceType": "服务类型",
-    "vehicleType": "车辆类型",
-    "licensePlate": "车牌号码",
+    "vehicleType": "车辆载货量",
+    "licensePlate": "车辆编码",
     "picture": "图片",
     "basic": "基本",
     "additional": "额外",
@@ -727,15 +758,40 @@
     "resetPasswaitApproval": "重置密码等待批准",
     "resetPassword": "重设密码"
   },
+  "checkinandcheckout": {
+    "checkinandcheckout": "概覽",
+    "title": "出入記錄",
+    "creation_date": "建立日期",
+    "outin": "出/入",
+    "shipping_company": "寄件公司",
+    "receiver": "收件公司",
+    "waybill_number": "運單編號",
+    "adjust_inventory": "調整庫存",
+    "logistics_company": "物流公司",
+    "delivery_location": "送出地點",
+    "arrived": "到達地點",
+    "search": "搜索",
+    "company": "公司",
+    "place": "地點",
+    "search_placeholder": "輸入採購訂單編號",
+    "any": "任何",
+    "send": "送出",
+    "send_in": "送入",
+    "ship": "出货",
+    "send_request": "送出請求",
+    "shipping_info": "運輸資料",
+    "recyle_loc_info": "預計回收地點資料",
+    "recyc_loc_info": "回收地點資料"
+  },
   "userGroup": {
     "title": "用戶群組",
     "change": "更改",
     "delete": "刪除",
-    "groupName": "群組名稱",
+    "groupName": "群組名称",
     "introduction": "簡介",
     "description": "描述",
     "availableFeatures": "可用功能",
-    "pleaseEnterName": "請輸入名稱",
+    "pleaseEnterName": "输入名称",
     "pleaseEnterText": "請輸入文字",
     "userAccountUsed": "用户组无法删除，因为其中仍有帐户"
   },
@@ -754,7 +810,7 @@
       "jo_id": "工作运单编号",
       "pico_id": "回收运单编号",
       "driver_id": "司机名称",
-      "plate_no": "车牌号码",
+      "plate_no": "车辆编码",
       "sender_company": "寄件公司",
       "receiver_company": "收件公司",
       "status": "状态",
@@ -798,7 +854,7 @@
     "finish": "完成",
     "cancel": "取消",
     "driver": "司机",
-    "plat_number": "车牌号码",
+    "plat_number": "车辆编码",
     "assign_driver": "指派司机",
     "shippingDateAndTime": "运输日期及时间",
     "success_assign": "成功分配工作订单",
@@ -907,13 +963,14 @@
         "placeholder": "输入司机编号"
       },
       "table": {
-        "driverId": "司机编号",
-        "driverName": "司机中文名",
+        "driverId": "司机号码",
+        "driverSchiName": "司机简体中文名称",
         "driverEngName": "Driver English Name",
         "gender": "性别",
         "loginName": "登入名称",
         "contactNo": "联络电话",
-        "lastLogin": "上次登入"
+        "lastLogin": "上次登入",
+        "enterDriverId": "输入司机编号"
       },
       "popUp": {
         "addTitle": "新增司机",
@@ -949,20 +1006,21 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "车辆号码",
-      "license_plate_number": "车牌号",
-      "vehicle_type": "车辆类型",
-      "vehicle_cargo_capacity": "车辆类型",
+      "vehicle_number": "车辆编号",
+      "license_plate_number": "车牌号码",
+      "vehicle_type": "车辆种类",
+      "vehicle_cargo_capacity": "车辆载货量",
       "picture": "图片",
-      "license_plate_number_placeholder": "请输入车牌号",
-      "vehicle_type_placeholder": "请输入车辆类型",
+      "license_plate_number_placeholder": "请输入车辆编码",
+      "vehicle_type_placeholder": "请输入车辆载货量",
       "vehicle_cargo_capacity_placeholder": "请输入体重"
     }
   },
   "general_settings": {
+    "and": "和",
     "new": "新的",
     "currency": "货币",
-    "contracts": "合同",
+    "contracts": "合约",
     "name": "名称",
     "reference_number": "参考编号",
     "state": "状态",
@@ -970,7 +1028,7 @@
     "end_date": "结束日期",
     "remark": "评论",
     "whether": "是否EPD",
-    "default_currency": "默认货币",
+    "default_currency": "预设货币",
     "activate": "活性",
     "deactive": "停用",
     "true": "真的",
@@ -980,7 +1038,8 @@
     "weight_tolerance": "允许重量误差 (kg)",
     "currency_category": "货币类别",
     "introduction": "簡介",
-    "monetary": "名称"
+    "monetary": "名称",
+    "contract_number": "合约编号"
   },
   "packaging_unit": {
     "packaging_unit": "包装单位",
@@ -1025,7 +1084,10 @@
     "report_of_manu_recycled_order_list" :"顾客订单列表",
     "report_of_manu_recycled_waste_tracing_list": "回收物追踪列表",
     "report_of_manu_recycled_waste_classification_list":"回收物类别分析表",
-    "report_of_user_management_list": " 用戶報表"
+    "report_of_user_management_list": "用戶報表",
+    "report_of_audit_trail": "審計追蹤報表",
+    "report_of_user_activity": "用户活动报表",
+    "report_of_notification": "通知报表"
   },
   "purchase_order": {
     "all_order": "所有订单",
@@ -1033,7 +1095,7 @@
     "table": {
       "created_datetime": "建立日期",
       "order_number": "訂單編號",
-      "pico_id": "回收運單編號",
+      "pico_id": "订单号",
       "place_receipt": "收貨地點",
       "receipt_date_time": "收貨日期及時間",
       "status": "状态",
@@ -1317,6 +1379,8 @@
     "any": "任何",
     "classification": "分类",
     "subclassification": "子分類",
-    "place": "地方"
+    "place": "地方",
+    "po_number": "输入采购订单号",
+    "jo_number": "输入工作编号"
   }
 }

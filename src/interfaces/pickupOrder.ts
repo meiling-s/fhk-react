@@ -23,6 +23,7 @@ export interface PickupOrderDetail {
 }
 
 export interface PickupOrder {
+    id(id: any): unknown;
     tenantId:         string;
     picoId:            string;
     picoType:          string;
@@ -153,7 +154,7 @@ export interface Row {
     contractNo:    string;
     updatedBy:     string;
     refPicoId:     string ;
-    createPicoDetail: CreatePicoDetail[]
+    updatePicoDetail: CreatePicoDetail[]
     
 }
 

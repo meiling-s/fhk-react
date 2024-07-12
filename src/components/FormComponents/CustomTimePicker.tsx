@@ -88,8 +88,8 @@ function CustomTimePicker({
     if (value != null) {
       if (index >= 0) {
         const TP = timePeriod[index]
-        const isValidStartTime = start ? value.isBefore(TP.endAt) : true
-        const isValidEndTime = !start ? value.isAfter(TP.startFrom) : true
+        const isValidStartTime = start ? (value.isBefore(TP.endAt) || value.isSame(TP.endAt)) : true
+        const isValidEndTime = !start ? (value.isAfter(TP.startFrom) || value.isSame(TP.startFrom)) : true
 
         
         // keep set time if invalid
@@ -109,17 +109,18 @@ function CustomTimePicker({
 
         //display error msg when selectedtime invalid and parsing to parent
 
-        if (isValidStartTime && isValidEndTime) {
-          const updatedErrorMessages = [...errorMessages]
-          updatedErrorMessages[index] = '' // Clear the error message for this index
-          setErrorMessages(updatedErrorMessages)
-        } else {
-          const errorMessage = t('form.error.startDateBehindEndDate')
-          const updatedErrorMessages = [...errorMessages]
-          updatedErrorMessages[index] = errorMessage
-          setErrorMessages(updatedErrorMessages)
-          console.error(errorMessage)
-        }
+        // if (isValidStartTime && isValidEndTime) {
+        //   const updatedErrorMessages = [...errorMessages]
+        //   updatedErrorMessages[index] = '' // Clear the error message for this index
+        //   setErrorMessages(updatedErrorMessages)
+        // } 
+        // else {
+        //   const errorMessage = t('form.error.startDateBehindEndDate')
+        //   const updatedErrorMessages = [...errorMessages]
+        //   updatedErrorMessages[index] = errorMessage
+        //   setErrorMessages(updatedErrorMessages)
+        //   console.error(errorMessage)
+        // }
       }
     }
   }

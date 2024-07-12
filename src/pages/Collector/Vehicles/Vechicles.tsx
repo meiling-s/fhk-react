@@ -24,10 +24,26 @@ import { useNavigate } from 'react-router-dom'
 import { extractError } from '../../../utils/utils'
 import { STATUS_CODE } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import { getVehicleData } from '../../../APICalls/ASTD/recycling'
 
 type TableRow = {
   id: number
   [key: string]: any
+}
+
+interface VehicleDataProps {
+  createdAt: string
+  createdBy: string
+  description: string
+  remark: string
+  status: string
+  updatedAt: string
+  updatedBy: string
+  vehicleTypeId: string
+  vehicleTypeNameEng: string
+  vehicleTypeNameSchi: string
+  vehicleTypeNameTchi: string
+  vehicleTypeLimit: string
 }
 
 function createVehicles(
@@ -50,8 +66,10 @@ function createVehicles(
 
 const Vehicle: FunctionComponent = () => {
   const { t } = useTranslation()
+  const { i18n } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [vehicleList, setVehicleList] = useState<VehicleItem[]>([])
+  const [vehicleData, setVehicleData] = useState<VehicleDataProps[]>([])
   const [selectedRow, setSelectedRow] = useState<VehicleItem | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
@@ -61,10 +79,29 @@ const Vehicle: FunctionComponent = () => {
   const [plateList, setPlateList] = useState<string[]>([])
   const navigate = useNavigate();
   const { localeTextDataGrid } = useLocaleTextDataGrid();
+      const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
 
   useEffect(() => {
     initVehicleList()
   }, [page])
+
+  useEffect(() => {
+    getAllVehiclesData()
+  },[])
+
+  const getAllVehiclesData = async () => {
+    try {
+      const result = await getVehicleData()
+      const data = result?.data
+      
+      setVehicleData(data)
+      } catch (error:any) {
+      const {state} =  extractError(error);
+      if(state.code === STATUS_CODE[503] ){
+        navigate('/maintenance')
+      }
+    }
+  }
 
   const initVehicleList = async () => {
    try {
@@ -105,6 +142,22 @@ const Vehicle: FunctionComponent = () => {
    }
   }
 
+  const getVehicleTypeName = useCallback((vehicleTypeId: string) => {
+    const vehicleType = vehicleData.find(v => v.vehicleTypeId === vehicleTypeId)
+    if (!vehicleType) return ''
+
+    switch(i18n.language) {
+      case 'enus':
+        return vehicleType.vehicleTypeNameEng
+      case 'zhhk':
+        return vehicleType.vehicleTypeNameTchi
+      case 'zhch':
+        return vehicleType.vehicleTypeNameSchi
+      default:
+        return vehicleType.vehicleTypeNameEng // fallback to English
+    }
+  }, [vehicleData, i18n, currentLanguage])
+
   const columns: GridColDef[] = [
     {
       field: 'serviceType',
@@ -121,7 +174,10 @@ const Vehicle: FunctionComponent = () => {
       field: 'vehicleName',
       headerName: t('vehicle.vehicleType'),
       width: 200,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        return <div>{getVehicleTypeName(params.row.vehicleTypeId)}</div>
+      }
     },
     {
       field: 'plateNo',
@@ -286,10 +342,12 @@ const Vehicle: FunctionComponent = () => {
               getRowId={(row) => row.vehicleId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.id ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -303,7 +361,15 @@ const Vehicle: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
             <Pagination
@@ -319,7 +385,7 @@ const Vehicle: FunctionComponent = () => {
         {rowId != 0 && (
           <CreateVehicle
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
             action={action}
             rowId={rowId}
             selectedItem={selectedRow}

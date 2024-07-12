@@ -41,13 +41,17 @@ import { updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
 import { CheckIn } from '../../interfaces/checkin'
 import { STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
-import { displayCreatedDate, extractError, showSuccessToast } from '../../utils/utils'
+import {
+  displayCreatedDate,
+  extractError,
+  showSuccessToast
+} from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 import { queryCheckIn } from '../../interfaces/checkin'
 import CustomButton from '../../components/FormComponents/CustomButton'
 import i18n from '../../setups/i18n'
 
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
@@ -56,7 +60,6 @@ import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
-
 
 const Required = () => {
   return (
@@ -190,7 +193,6 @@ function RejectForm({
           <Box>
             <Typography sx={localstyles.typo}>
               {t('check_in.reject_reasons')}
-              <Required />
             </Typography>
             {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedShipments.length}
@@ -353,7 +355,7 @@ function ShipmentManage() {
     senderAddr: ''
   })
   const [reasonList, setReasonList] = useState<any>([])
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const { dateFormat } = useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const getRejectReason = async () => {
@@ -383,9 +385,9 @@ function ShipmentManage() {
         )
         setReasonList(result?.data?.content)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -393,7 +395,7 @@ function ShipmentManage() {
   useEffect(() => {
     initCheckInRequest()
     getRejectReason()
-  }, [page, query])
+  }, [page, query, dateFormat, i18n.language])
 
   const transformToTableRow = (item: CheckIn): TableRow => {
     const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
@@ -428,9 +430,9 @@ function ShipmentManage() {
         }
         setTotalData(result?.data.totalPages)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -450,6 +452,7 @@ function ShipmentManage() {
     chkInId: number
   ) => {
     setOpen(false)
+    setSelectedRow(undefined);
 
     const checked = event.target.checked
     const updatedChecked = checked
@@ -549,7 +552,7 @@ function ShipmentManage() {
       type: 'string',
       headerName: t('check_in.receiver_addr'),
       width: 200
-    },
+    }
     // {
     //   field: 'status',
     //   type: 'string',
@@ -628,6 +631,7 @@ function ShipmentManage() {
 
   const handleClose = () => {
     setOpen(false)
+    setSelectedRow(undefined)
   }
 
   const handleSelectRow = (params: GridRowParams) => {
@@ -719,7 +723,7 @@ function ShipmentManage() {
               handleFilterPoNum(event.target.value)
             }}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
+            label={t('check_in.pickup_order_no')}
             InputLabelProps={{
               style: { color: primaryColor },
               focused: true
@@ -746,37 +750,49 @@ function ShipmentManage() {
               label={t('check_in.sender_company')}
               onChange={handleComChange}
             >
+              {checkInRequest
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.senderName === item.senderName)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.senderName}>
+                    {item.senderName}
+                  </MenuItem>
+                ))}
               <MenuItem value="">
                 {' '}
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {checkInRequest?.map((item, index) => (
-                <MenuItem key={index} value={item.senderName}>
-                  {item.senderName}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
             <InputLabel id="location-label" sx={styles.textFieldLabel}>
-              {t('check_in.sender_addr')}
+              {t('check_in.location')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t('check_in.sender_addr')}
+              label={t('check_in.location')}
               onChange={handleLocChange}
             >
+              {checkInRequest
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.senderAddr === item.senderAddr)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.senderAddr}>
+                    {item.senderAddr}
+                  </MenuItem>
+                ))}
               <MenuItem value="">
                 {' '}
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {checkInRequest?.map((item, index) => (
-                <MenuItem key={index} value={item.senderAddr}>
-                  {item.senderAddr}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
         </Box>
@@ -787,11 +803,13 @@ function ShipmentManage() {
               getRowId={(row) => row.chkInId}
               hideFooter
               columns={headCells}
-              checkboxSelection={false}
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                `${selectedRow && params.row.chkInId === selectedRow.chkInId ? 'selected-row ' : ''}${selectedCheckin && selectedCheckin.includes(params.row.chkInId) ? 'checked-row' : ''}`
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -805,7 +823,18 @@ function ShipmentManage() {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.checked-row':{
+                  backgroundColor: `rgba(25, 118, 210, 0.08)`
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
             <Pagination

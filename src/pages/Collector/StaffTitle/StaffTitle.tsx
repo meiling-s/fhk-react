@@ -68,52 +68,61 @@ const StaffTitle: FunctionComponent = () => {
   const [engNameList, setEngNameList] = useState<string[]>([])
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
-  const navigate = useNavigate();
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const initStaffTitleList = async () => {
-   try {
-    const result = await getAllStaffTitle(page - 1, pageSize)
-    const data = result?.data
-    // setStaffTitleList(data);
-    setEngNameList([])
-    setSchiNameList([])
-    setTchiNameList([])
-    if (data) {
-      var staffTitleMapping: StaffTitleItem[] = []
-      data.content.map((item: any) => {
-        staffTitleMapping.push(
-          createStaffTitle(
-            item?.titleId,
-            item?.tenantId,
-            item?.titleNameTchi,
-            item?.titleNameSchi,
-            item?.titleNameEng,
-            item?.duty[0],
-            item?.description,
-            item?.remark,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
+    try {
+      const result = await getAllStaffTitle(page - 1, pageSize)
+      const data = result?.data
+      // setStaffTitleList(data);
+      setEngNameList([])
+      setSchiNameList([])
+      setTchiNameList([])
+      if (data) {
+        var staffTitleMapping: StaffTitleItem[] = []
+        data.content.map((item: any) => {
+          staffTitleMapping.push(
+            createStaffTitle(
+              item?.titleId,
+              item?.tenantId,
+              item?.titleNameTchi,
+              item?.titleNameSchi,
+              item?.titleNameEng,
+              item?.duty[0],
+              item?.description,
+              item?.remark,
+              item?.status,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
           )
-        )
 
-        //set namelist for validation
-        setEngNameList((prevEngName: any) => [...prevEngName, item.titleNameEng]);
-        setSchiNameList((prevSchiName: any) => [...prevSchiName, item.titleNameSchi]);
-        setTchiNameList((prevTchiName: any) => [...prevTchiName, item.titleNameTchi]);
-      })
-      setStaffTitleList(staffTitleMapping)
-      setTotalData(data.totalPages)
+          //set namelist for validation
+          setEngNameList((prevEngName: any) => [
+            ...prevEngName,
+            item.titleNameEng
+          ])
+          setSchiNameList((prevSchiName: any) => [
+            ...prevSchiName,
+            item.titleNameSchi
+          ])
+          setTchiNameList((prevTchiName: any) => [
+            ...prevTchiName,
+            item.titleNameTchi
+          ])
+        })
+        setStaffTitleList(staffTitleMapping)
+        setTotalData(data.totalPages)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
   }
   useEffect(() => {
     initStaffTitleList()
@@ -305,10 +314,12 @@ const StaffTitle: FunctionComponent = () => {
               getRowId={(row) => row.titleId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.titleId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -322,7 +333,15 @@ const StaffTitle: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
             <Pagination
@@ -338,7 +357,7 @@ const StaffTitle: FunctionComponent = () => {
         {rowId != 0 && (
           <CreateStaffTitle
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}

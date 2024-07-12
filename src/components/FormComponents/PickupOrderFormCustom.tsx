@@ -2,7 +2,9 @@ import {
   Box,
   Button,
   Divider,
+  Drawer,
   IconButton,
+  Modal,
   Stack,
   Typography
 } from '@mui/material'
@@ -40,21 +42,86 @@ import { getVehicleDetail } from '../../APICalls/ASTD/recycling'
 import i18n from '../../setups/i18n'
 import { weekDs } from '../SpecializeComponents/RoutineSelect/predefinedOption'
 import NotifContainer from '../../contexts/NotifContainer'
+import RightOverlayForm from '../RightOverlayFormPickupOrder'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+type DeleteModalProps = {
+  open: boolean
+  id?: string | null
+  onClose: () => void
+  onDelete: (id: number) => void,
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({
+  open,
+  id,
+  onClose,
+  onDelete,
+}) => {
+  const { t } = useTranslation()
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={localstyles.modal}>
+        <Stack spacing={2}>
+          <Box sx={{ paddingX: 3, paddingTop: 3 }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: 'bold' }}
+            >
+              {t('pick_up_order.delete_msg')}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box sx={{ alignSelf: 'center', paddingBottom: 3 }}>
+            <button
+              className="primary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                // if(id) onDelete(id)
+              }}
+            >
+              {t('check_in.confirm')}
+            </button>
+            <button
+              className="secondary-btn mr-2 cursor-pointer"
+              onClick={() => {
+                onClose()
+              }}
+            >
+              {t('check_out.cancel')}
+            </button>
+          </Box>
+        </Stack>
+      </Box>
+    </Modal>
+  )
+}
+
 const PickupOrderForm = ({
+  openModal,
+  actions,
   onClose,
   selectedRow,
   pickupOrder,
-  initPickupOrderRequest
+  initPickupOrderRequest,
+  onDeleteModal
 }: // navigateToJobOrder
 {
+  openModal: boolean
+  actions: 'add' | 'edit' | 'delete' | 'none'
   onClose?: () => void
   selectedRow?: PickupOrder | null | undefined
   pickupOrder?: PickupOrder[] | null
   initPickupOrderRequest: () => void
+  onDeleteModal: () => void
   // navigateToJobOrder: () => void;
 }) => {
   const { t } = useTranslation()
@@ -63,7 +130,8 @@ const PickupOrderForm = ({
   const {dateFormat} = useContainer(CommonTypeContainer)
   const [vehicleType, setVehicleType] = useState<string>('');
   const { marginTop } = useContainer(NotifContainer);
-
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
+  
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -74,7 +142,7 @@ const PickupOrderForm = ({
   }
   const navigate = useNavigate()
 
-  const handleRowClick = async (po: PickupOrder) => {
+  const handleRowClick = async () => {
     const routeName = role
     const result = await getPicoById(selectedPickupOrder ? selectedPickupOrder.picoId : '')
     if (result) {
@@ -199,33 +267,45 @@ const PickupOrderForm = ({
         }
       })
     }
-    return delivery.join(',')
+    return t('pick_up_order.every') + ' ' + delivery.join(',')
   }
-  
+
   return (
-    <>
-      <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}>
-        <Box sx={localstyles.container}>
-          <Box sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}>
-            <Box>
-              <Typography sx={styles.header4}>
-                {t('pick_up_order.item.detail')}
-              </Typography>
-              <Typography sx={styles.header3}>
-                {selectedPickupOrder?.picoId}
-              </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', flexShrink: 0, ml: '20px' }}>
-              <StatusCard status={selectedPickupOrder?.status} />
-            </Box>
+    <div className="add-vehicle">
+      <Drawer
+        open={openModal}
+        onClose={onClose}
+        anchor={'right'}
+        variant={'temporary'}
+        sx={{
+          '& .MuiDrawer-paper': {
+            marginTop: `${marginTop}`
+          }
+        }}
+      >
+        <div className="header">
+          <div className="header-section">
+          <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
+          <div className="md:flex items-center gap-2 sm:block">
+            <div className="flex-1 flex flex-col items-start justify-start sm:mb-2">
+              <b className="md:text-sm sm:text-xs">{t('pick_up_order.item.detail')}</b>
+              <div className="md:text-smi sm:text-2xs text-grey-dark text-left">
+                {selectedRow?.picoId}
+              </div>
+            </div>
+            {selectedRow?.status && <StatusCard status={selectedRow.status} />}
+          </div>
+          <div className="right-action flex items-center">
             <Box sx={{ marginLeft: 'auto' }}>
               {role === 'logistic' &&
-              selectedRow &&
-              ['STARTED', 'OUTSTANDING'].includes(selectedRow.status) ? (
+              selectedRow?.status &&
+              ['STARTED', 'OUTSTANDING'].includes(selectedRow?.status) ? (
                 <CustomButton
                   text={t('pick_up_order.table.create_job_order')}
                   onClick={() => {
-                    navigateToJobOrder(selectedRow.picoId.toString())
+                    if(selectedRow?.picoId){
+                      navigateToJobOrder(selectedRow?.picoId.toString())
+                    }
                   }}
                 ></CustomButton>
               ) : role === 'logistic' &&
@@ -233,17 +313,17 @@ const PickupOrderForm = ({
                 selectedRow.status === 'CREATED' &&
                 selectedRow?.tenantId === tenantId ? (
                 <>
-                 <CustomButton
+                  <CustomButton
                   text={t('pick_up_order.item.edit')}
                   style={{ marginRight: '12px' }}
                   onClick={() => {
-                    selectedPickupOrder && handleRowClick(selectedPickupOrder)
+                    selectedRow && handleRowClick()
                   }}
                 />
-                 <CustomButton
+                  <CustomButton
                     text={t('pick_up_order.item.delete')}
                     outlined
-                    onClick={onDeleteClick}
+                    onClick={onDeleteModal}
                   />
                 </>
               ) : role !== 'logistic' && selectedRow?.status === 'CREATED'  ? (
@@ -252,105 +332,124 @@ const PickupOrderForm = ({
                     text={t('pick_up_order.item.edit')}
                     style={{ marginRight: '12px' }}
                     onClick={() => {
-                      selectedPickupOrder && handleRowClick(selectedPickupOrder)
+                      selectedRow && handleRowClick()
                     }}
                   ></CustomButton>
                   <CustomButton
                     text={t('pick_up_order.item.delete')}
                     outlined
-                    onClick={onDeleteClick}
+                    onClick={onDeleteModal}
                   ></CustomButton>
                 </>
               ) : null}
-              <IconButton sx={{ ml: '20px' }} onClick={onClose}>
-                <KeyboardTabIcon sx={{ fontSize: '30px' }} />
-              </IconButton>
             </Box>
+
+            <div className="close-icon ml-2 cursor-pointer">
+              <img
+                className="relative w-6 h-6 overflow-hidden shrink-0"
+                alt=""
+                src="/collapse1.svg"
+                onClick={onClose}
+              />
+            </div>
+          </div>
+          </div>
+      </div>
+        </div>
+         <Divider></Divider>
+         <Stack spacing={2} sx={localstyles.content}>
+          <Box>
+            <Typography sx={localstyles.typo_header}>
+              {t('pick_up_order.item.shipping_info')}
+            </Typography>
           </Box>
-          <Divider />
-          <Stack spacing={2} sx={localstyles.content}>
-            <Box>
-              <Typography sx={localstyles.typo_header}>
-                {t('pick_up_order.item.shipping_info')}
-              </Typography>
-            </Box>
 
-            <CustomField label={t('pick_up_order.item.date_time')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.createdAt
-                  ? dayjs.utc(selectedPickupOrder?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
-                  : ''}
-              </Typography>
-            </CustomField>
+          <CustomField label={t('pick_up_order.item.date_time')}>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {selectedPickupOrder?.createdAt
+                ? dayjs.utc(selectedPickupOrder?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+                : ''}
+            </Typography>
+          </CustomField>
 
-            <CustomField label={t('pick_up_order.item.transport_category')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.picoType === 'AD_HOC'
-                  ? t('pick_up_order.card_detail.one-transport')
-                  : selectedPickupOrder?.picoType === 'ROUTINE'
-                  ? t('pick_up_order.card_detail.regular_shipping')
-                  : undefined}
-              </Typography>
-            </CustomField>
+          <CustomField label={t('pick_up_order.item.transport_category')}>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {selectedPickupOrder?.picoType === 'AD_HOC'
+                ? t('pick_up_order.card_detail.one-transport')
+                : selectedPickupOrder?.picoType === 'ROUTINE'
+                ? t('pick_up_order.card_detail.regular_shipping')
+                : undefined}
+            </Typography>
+          </CustomField>
 
-            <CustomField label={t('pick_up_order.item.shipping_validity')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {dayjs.utc(selectedPickupOrder?.effFrmDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)} To{' '} {dayjs.utc(selectedPickupOrder?.effToDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)}
-              </Typography>
-            </CustomField>
-            <CustomField label={t('pick_up_order.item.recycling_week')}>
+          <CustomField label={t('pick_up_order.item.shipping_validity')}>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {dayjs.utc(selectedPickupOrder?.effFrmDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)} To{' '} {dayjs.utc(selectedPickupOrder?.effToDate).tz('Asia/Hong_Kong').format(`${dateFormat}`)}
+            </Typography>
+          </CustomField>
+          {selectedPickupOrder?.picoType !== 'AD_HOC' && 
+            (
+              <CustomField label={t('pick_up_order.table.delivery_date')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {/* {selectedPickupOrder?.routine
                   .map((routineItem) => routineItem)
                   .join(' ')} */}
-                { selectedPickupOrder?.routine 
-                  && getDeliveryDate(selectedPickupOrder.routine)
-                }
+                { selectedPickupOrder?.routineType === 'daily' &&  t('pick_up_order.daily')}
+                { selectedPickupOrder?.routineType === 'weekly' && getDeliveryDate(selectedPickupOrder.routine)}
               </Typography>
             </CustomField>
-
-            <CustomField label={t('pick_up_order.item.vehicle_category')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {/* {selectedPickupOrder?.vehicleTypeId === '1'
-                  ? t('pick_up_order.card_detail.van')
-                  : selectedPickupOrder?.vehicleTypeId === '2'
-                  ? t('pick_up_order.card_detail.large_truck')
-                  : ''} */}
-                  {vehicleType}
-              </Typography>
-            </CustomField>
-            <CustomField label={t('pick_up_order.item.plat_number')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.platNo}
-              </Typography>
-            </CustomField>
-            <CustomField label={t('pick_up_order.item.contact_number')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.contactNo}
-              </Typography>
-            </CustomField>
-
-            <CustomField label={t('pick_up_order.item.logistic_company')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedRow?.logisticName}
-              </Typography>
-            </CustomField>
-
-            <CustomField label={t('pick_up_order.item.exp_opration')}>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.normalFlg ? t('yes') : t('no')}
-              </Typography>
-            </CustomField>
-
-            <Typography sx={localstyles.typo_header}>
-              {t('pick_up_order.item.rec_loc_info')}
+            )
+          }
+          <CustomField label={t('pick_up_order.item.vehicle_category')}>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {/* {selectedPickupOrder?.vehicleTypeId === '1'
+                ? t('pick_up_order.card_detail.van')
+                : selectedPickupOrder?.vehicleTypeId === '2'
+                ? t('pick_up_order.card_detail.large_truck')
+                : ''} */}
+                {vehicleType}
             </Typography>
+          </CustomField>
+          <CustomField label={t('pick_up_order.item.plat_number')}>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {selectedPickupOrder?.platNo}
+            </Typography>
+          </CustomField>
+          <CustomField label={t('pick_up_order.item.contact_number')}>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {selectedPickupOrder?.contactNo}
+            </Typography>
+          </CustomField>
 
-            <PickupOrderCard pickupOrderDetail={selectedRow?.pickupOrderDetail ?? []} />
-          </Stack>
-        </Box>
-      </Box>
-    </>
+          <CustomField label={t('pick_up_order.item.logistic_company')}>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {selectedRow?.logisticName}
+            </Typography>
+          </CustomField>
+
+          <CustomField label={t('pick_up_order.item.exp_opration')}>
+            <Typography sx={localstyles.typo_fieldContent}>
+              {selectedPickupOrder?.normalFlg ? t('yes') : t('no')}
+            </Typography>
+          </CustomField>
+
+          <Typography sx={localstyles.typo_header}>
+            {t('pick_up_order.item.rec_loc_info')}
+          </Typography>
+
+          <PickupOrderCard pickupOrderDetail={selectedRow?.pickupOrderDetail ?? []} />
+        </Stack>
+          <DeleteModal
+            open={openDelete}
+            id={selectedRow?.picoId}
+            onClose={() => {
+              setOpenDelete(false)
+            }}
+            onDelete={onDeleteModal}
+          />
+      </Drawer>
+
+    </div>
   )
 }
 

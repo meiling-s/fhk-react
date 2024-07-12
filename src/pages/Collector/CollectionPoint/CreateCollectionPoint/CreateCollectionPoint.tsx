@@ -122,6 +122,10 @@ function CreateCollectionPoint() {
     initType()
   }, [])
 
+  useEffect(() => {
+    console.log("routine", RoutineSelect, openingPeriod)
+  }, [RoutineSelect])
+
   const initType = async () => {
    try {
     const result = await getCommonTypes()
@@ -172,9 +176,19 @@ function CreateCollectionPoint() {
     }
   }, [debouncedSearchValue])
 
+  // const checkRecyclable = () => {
+  //   //console.log('checkRecyclable', items)
+  //   return recyclables.every((item) => item.recycSubTypeId.length > 0)
+  // }
+
   const checkRecyclable = () => {
-    //console.log('checkRecyclable', items)
-    return recyclables.every((item) => item.recycSubTypeId.length > 0)
+    return recyclables.every((item) => {
+      const recycType = typeList.recyc.find(r => r.recycTypeId === item.recycTypeId);
+      if (recycType && recycType.recycSubType.length > 0) {
+        return item.recycSubTypeId.length > 0;
+      }
+      return true; // If no sub-types available, it's okay
+    });
   }
 
   const checkTimePeriod = () => {
@@ -208,30 +222,65 @@ function CreateCollectionPoint() {
     return value.match(/\d{2}:\d{2}:\d{2}/)[0]
   }
 
-  const checkTimeNotDuplicate = () => {
-    const isvalid = colPtRoutine?.routineContent.every((item) => {
-      for (let index = 0; index < item.startTime.length - 1; index++) {
-        const currPair =
-          getTime(item.startTime[index]) + getTime(item.endTime[index])
-
-        const nextPair =
-          getTime(item.startTime[index + 1]) + getTime(item.endTime[index + 1])
-
-          console.log(currPair, nextPair)
-        if (currPair === nextPair) {
-          return false
+  const checkTimeNotOverlapping = () => {
+    return colPtRoutine?.routineContent.every((item) => {
+      const periods = [];
+      for (let i = 0; i < item.startTime.length; i++) {
+        const start = new Date(`1970-01-01T${getTime(item.startTime[i])}`);
+        const end = new Date(`1970-01-01T${getTime(item.endTime[i])}`);
+        
+        // Check if this period overlaps with any existing periods
+        if (isOverlapping([start, end], periods)) {
+          return false;
         }
+        
+        periods.push([start, end]);
       }
-      return true
-    })
+      return true;
+    });
+  };
 
-    return isvalid
-  }
+  const isOverlapping = (newPeriod, periods) => {
+    const [newStart, newEnd] = newPeriod;
+    for (let period of periods) {
+      const [start, end] = period;
+      if ((newStart < end && newEnd > start) ||
+      (start < newEnd && end > newStart) ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const checkRoutineDates = () => {
+    if (colPtRoutine?.routineType !== 'specificDate' ) {
+      return true;
+    }
+  
+    const startDate = dayjs(openingPeriod.startDate).subtract(1, 'day').startOf('day');
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day');
+  
+    return colPtRoutine.routineContent.every(content => {
+      const contentDate = dayjs(content.id);
+      return contentDate.isAfter(startDate) && contentDate.isBefore(endDate);
+    });
+  };
+
+  const checkEffectiveDate = () => {
+    const startDate = dayjs(openingPeriod.startDate).subtract(1, 'day').startOf('day');
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day');
+
+    if (startDate.isAfter(endDate)){
+      return false
+    } else {
+      return true
+    }
+    };
 
   useEffect(() => {
     //do validation here
     const validate = async () => {
-      console.log('colPtRoutine', colPtRoutine?.routineContent)
+      console.log('colPtRoutine', colPtRoutine)
       const tempV: formValidate[] = [] //temp validation
       colType == '' &&
         tempV.push({
@@ -251,18 +300,18 @@ function CreateCollectionPoint() {
           problem: formErr.exceedsMaxLength,
           type: 'error'
         })
-      // ;(await address) == ''
-      //   ? tempV.push({
-      //       field: 'col.address',
-      //       problem: formErr.empty,
-      //       type: 'error'
-      //     })
-      //   : (await checkAddressUsed(contractNo, address)) &&
-      //     tempV.push({
-      //       field: 'col.address',
-      //       problem: formErr.hasBeenUsed,
-      //       type: 'error'
-      //     })
+      ;(await address) == ''
+        ? tempV.push({
+            field: 'col.address',
+            problem: formErr.incorrectAddress,
+            type: 'error'
+          })
+        : (await checkAddressUsed(contractNo, address)) &&
+          tempV.push({
+            field: 'col.address',
+            problem: formErr.hasBeenUsed,
+            type: 'error'
+          })
       ;(await colName) == ''
         ? tempV.push({
             field: 'col.colName',
@@ -298,18 +347,30 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
+      !checkRoutineDates() &&
+      tempV.push({
+        field: `${t('date')}`,
+        problem: formErr.dateOutOfRange,
+        type: 'error'
+      });
       !checkTimePeriodNotInvalid() &&
       tempV.push({
         field: 'time_Period',
         problem: formErr.startDateBehindEndDate,
         type: 'error'
       })
-      !checkTimeNotDuplicate() &&
+      !checkTimeNotOverlapping() &&
         tempV.push({
           field: 'time_Period',
           problem: formErr.timeCantDuplicate,
           type: 'error'
         })
+      !checkEffectiveDate() &&
+      tempV.push({
+        field: 'col.effDate',
+        problem: formErr.effectiveDateLess,
+        type: 'error'
+      })
       premiseName == '' &&
         tempV.push({
           field: 'col.premiseName',
@@ -335,12 +396,12 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      // !checkRecyclable() &&
-      //   tempV.push({
-      //     field: 'inventory.recyleSubType',
-      //     problem: formErr.empty,
-      //     type: 'error'
-      //   })
+      !checkRecyclable() &&
+        tempV.push({
+          field: 'inventory.recyleSubType',
+          problem: formErr.empty,
+          type: 'error'
+        })
       // console.log(
       //   'num:',
       //   staffNum,
@@ -470,6 +531,15 @@ function CreateCollectionPoint() {
         break
       case formErr.startDateBehindEndDate:
         msg = t('form.error.startDateBehindEndDate')
+        break
+      case formErr.incorrectAddress:
+        msg = t('form.error.incorrectAddress')
+        break
+      case formErr.dateOutOfRange:
+        msg = t('form.error.dateOutOfRange')
+        break
+      case formErr.effectiveDateLess:
+        msg = t('form.error.effectiveDateLess')
         break
     }
     return msg
@@ -661,10 +731,11 @@ function CreateCollectionPoint() {
                 placeholder={t('col.enterName')}
                 onChange={(event) => setCOLName(event.target.value)}
                 error={checkString(colName)}
+                maxLength={100}
               />
             </CustomField>
 
-            <CustomField label={t('col.address')} mandatory={true}>
+            <CustomField label={`${t('col.address')} (${t('col.addressReminder')})`} mandatory={true}>
               <CustomTextField
                 id="address"
                 placeholder={t('col.enterAddress')}
@@ -713,7 +784,7 @@ function CreateCollectionPoint() {
               </Box>
             </CustomField>
 
-            <CustomField label={t('col.effFromDate')}>
+            <CustomField label={t('col.effFromDate')} mandatory>
               <CustomPeriodSelect setDate={setOpeningPeriod} />
             </CustomField>
 
@@ -721,17 +792,19 @@ function CreateCollectionPoint() {
               label={t('col.startTime')}
               mandatory={true}
               style={{ maxWidth: '220px' }}
+              error={!checkTimeNotOverlapping()}
+              helperText={!checkTimeNotOverlapping() ? t('error.timeOverlap') : ''}
             >
               <RoutineSelect
                 setRoutine={setColPtRoutine}
                 requiredTimePeriod={true}
               />
             </CustomField>
-            {!checkTimeNotDuplicate() && (
+            {/* {!checkTimeNotOverlapping() && (
               <div className="ml-5 text-red text-sm">
                 {t('form.error.timeCantDuplicate')}
               </div>
-            )}
+            )} */}
 
             <CustomField label={t('col.premiseName')} mandatory={true}>
               <CustomTextField

@@ -22,6 +22,8 @@ const PickupOrderCard = ({
   const recyc = LocalizeRecyctype(pickupOrderDetail)
   const { decimalVal } = useContainer(CommonTypeContainer)
 
+  pickupOrderDetail = pickupOrderDetail.sort((prevItem, nextItem) => prevItem.pickupAt.localeCompare(nextItem.pickupAt));
+
   return (
     <>
       {pickupOrderDetail.map((podetail, index) => (
@@ -141,7 +143,7 @@ const PickupOrderCard = ({
                 sx={{ overflowWrap: 'break-word' }}
                 style={localstyles.mini_value}
               >
-                {podetail?.senderName} - {podetail?.receiverName}
+                {podetail?.senderName} → {podetail?.receiverName}
               </Typography>
             </Box>
           </Box>
@@ -167,7 +169,7 @@ const PickupOrderCard = ({
               sx={{ overflowWrap: 'break-word' }}
             >
               <Typography style={localstyles.mini_value}>
-                {podetail?.senderAddr} --- {podetail.receiverAddr}
+                {podetail?.senderAddr} → {podetail.receiverAddr}
               </Typography>
             </Box>
           </Box>

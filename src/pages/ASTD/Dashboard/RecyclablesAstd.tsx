@@ -27,12 +27,23 @@ const Recyclables: FunctionComponent = () => {
                 <TextField
                     id="searchShipment"
                     value={tenantId}
-                    onChange={(event) =>
+                    onChange={(event) =>{
+                        const numericValue = event.target.value.replace(
+                            /\D/g,
+                            ''
+                          )
+                          event.target.value = numericValue
                         onChangeTenandId(event.target.value)
                     }
+                    }
                     sx={{...styles.inputStyle}}
-                    label={t('check_in.search')}
+                    label={t('tenant.invite_form.company_number')}
                     placeholder={t('tenant.enter_company_number')}
+                    inputProps={{
+                        inputMode: 'numeric',
+                        pattern: '[0-9]*',
+                        maxLength: 6
+                      }}
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">

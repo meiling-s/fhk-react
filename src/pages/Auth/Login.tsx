@@ -35,6 +35,10 @@ import { setLanguage } from '../../setups/i18n'
 import { extractError, returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
 import { parseJwtToken } from '../../constants/axiosInstance'
+import NotifContainer from '../../contexts/NotifContainer'
+import axios from 'axios'
+import { createUserActivity } from '../../APICalls/userAccount'
+import { UserActivity } from '../../interfaces/common'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -47,7 +51,7 @@ const Login = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const commonTypeContainer = useContainer(CommonTypeContainer)
-
+  const { initBroadcastMessage } = useContainer(NotifContainer)
   // overwrite select style
   //todo : make select as component
   const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -74,6 +78,13 @@ const Login = () => {
       dataString.indexOf('{'),
       dataString.lastIndexOf('}') + 1
     )
+  }
+
+  const getIpAddress = async () => {
+    const response = await axios.get("https://api.ipify.org/?format=json");
+    if(response){
+      localStorage.setItem('ipAddress', response?.data?.ip)
+    }
   }
 
   const returnErrCode = (error: any) => {
@@ -107,6 +118,17 @@ const Login = () => {
         })
         //console.log(result, 'result login')
         if (result && result.access_token) {
+          const ipAddress = localStorage.getItem('ipAddress')
+          if(ipAddress){
+            const userActivity:UserActivity = {
+              operation: 'Login',
+              ip: ipAddress,
+              createdBy: userName,
+              updatedBy: userName
+            }
+            createUserActivity(userName, userActivity)
+          }
+          initBroadcastMessage();
           setWarningMsg(' ')
           //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
           localStorage.setItem(
@@ -151,7 +173,7 @@ const Login = () => {
               break
             case 'collector':
               realmApiRoute = 'collectors'
-              navigate('/collector')
+              navigate('/collector/collectionPoint')
               break
             case 'logistic':
               realmApiRoute = 'logistic'
@@ -183,6 +205,7 @@ const Login = () => {
           setLanguage(selectedLang)
 
           commonTypeContainer.updateCommonTypeContainer()
+         
         } else {
           // if(errCode === STATUS_CODE[503]){
           //   return navigate('/maintenance')
@@ -213,9 +236,7 @@ const Login = () => {
         /**handling err code from BE for reset PW and showing err category */
         if (error?.response) {
           const errCode = returnErrCode(error)
-          if (errCode === '004') {
-            //navigate to reset pass firsttime login
-            console.group('errrr2r', errCode)
+          if (errCode === '004' || errCode === '005') {
             localStorage.setItem(localStorgeKeyName.firstTimeLogin, 'true')
             return navigate('/changePassword')
           }
@@ -286,6 +307,7 @@ const Login = () => {
         }
       }
     }
+    getIpAddress();
   }, [])
 
   return (

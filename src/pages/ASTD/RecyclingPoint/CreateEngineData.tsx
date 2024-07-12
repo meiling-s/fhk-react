@@ -9,6 +9,7 @@ import {
     Autocomplete,
     Box,
     Divider,
+    Grid,
     TextField,
 } from '@mui/material'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
@@ -21,6 +22,7 @@ import { createRecyc, deleteEngineData, editEngineData, sendEngineData, sendWeig
 import { styles } from '../../../constants/styles'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 
 interface engineDataProps {
     createdAt: string
@@ -87,6 +89,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     }, [i18n, currentLanguage])
 
     useEffect(() => {
+        setTrySubmitted(false)
         if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 const newServiceValue = serviceTypeSelect.filter(value => value.value === selectedItem.serviceType)[0]
@@ -144,7 +147,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         tChineseName.trim() === '' &&
             tempV.push({
-                field: 'tChineseName',
+                field: `${t('packaging_unit.traditional_chinese_name')}`,
                 error: `${t(`common.traditionalChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -152,7 +155,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         sChineseName.trim() === '' &&
             tempV.push({
-                field: 'sChineseName',
+                field: `${t('packaging_unit.simplified_chinese_name')}`,
                 error: `${t(`common.simplifiedChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -160,7 +163,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         englishName.trim() === '' &&
             tempV.push({
-                field: 'englishName',
+                field: `${t('packaging_unit.english_name')}`,
                 error: `${t(`common.englishName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -168,14 +171,14 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         selectedService.trim() === '' &&
         tempV.push({
-            field: 'selectedService',
+            field: `${t('recycling_point.service_type')}`,
             error: `${t(`recycling_point.service_type`)} ${t(
                 'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName, selectedService])
+    }, [tChineseName, sChineseName, englishName, selectedService, i18n, currentLanguage])
 
     const handleDelete = async () => {
         const token = returnApiToken()
@@ -382,7 +385,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.remark')} mandatory={false}>
+                        <CustomField label={t('packaging_unit.remark')}>
                             <CustomTextField
                                 id="remark"
                                 placeholder={t('packaging_unit.remark')}
@@ -392,6 +395,17 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                             />
                         </CustomField>
                     </Box>
+                    <Grid item sx={{ width: '92%' }}>
+                        {trySubmited &&
+                            validation.map((val, index) => (
+                            <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={val.error}
+                                type={'error'}
+                            />
+                            ))}
+                    </Grid>
                 </Box>
             </RightOverlayForm>
         </div>

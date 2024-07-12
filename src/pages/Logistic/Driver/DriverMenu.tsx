@@ -58,8 +58,8 @@ const DriverMenu = () => {
         },
         {
             field: currentLanguage === 'zhch' ? 'driverNameSchi' : 'driverNameTchi',
-            headerName: t('driver.DriverMenu.table.driverName'),
-            width: 150,
+            headerName: currentLanguage === 'zhch' ? t('driver.DriverMenu.table.driverSchiName') : t('driver.DriverMenu.table.driverTchiName'),
+            width: 250,
             type: 'string'
         },
         {
@@ -207,8 +207,8 @@ const DriverMenu = () => {
             </Box>
             <Box>
                 <TextField
-                    label={t('driver.DriverMenu.search.label')}
-                    placeholder={t('driver.DriverMenu.search.placeholder')}
+                    label={t('driver.DriverMenu.table.driverId')}
+                    placeholder={t('driver.DriverMenu.table.enterDriverId')}
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
@@ -229,10 +229,12 @@ const DriverMenu = () => {
                         getRowId={(row) => row.driverId}
                         hideFooter
                         columns={columns}
-                        checkboxSelection
                         onRowClick={handleSelectRow}
                         getRowSpacing={getRowSpacing}
                         localeText={localeTextDataGrid}
+                        getRowClassName={(params) => 
+                            selectedRow && params.id === selectedRow.driverId ? 'selected-row' : ''
+                        }
                         sx={{
                             border: 'none',
                             '& .MuiDataGrid-cell': {
@@ -246,6 +248,14 @@ const DriverMenu = () => {
                                 '&>.MuiDataGrid-columnHeaders': {
                                     borderBottom: 'none'
                                 }
+                            },
+                            '.MuiDataGrid-columnHeaderTitle': { 
+                                fontWeight: 'bold !important',
+                                overflow: 'visible !important'
+                            },
+                            '& .selected-row': {
+                                backgroundColor: '#F6FDF2 !important',
+                                border: '1px solid #79CA25'
                             }
                         }}
                     />
@@ -261,7 +271,7 @@ const DriverMenu = () => {
             </div>
             <DriverDetail
                 open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
+                onClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
                 action={action}
                 onSubmitData={(type, msg) => onSubmitData(type, msg)}
                 driver={selectedRow}

@@ -95,6 +95,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     }, [i18n, currentLanguage])
     
     useEffect(() => {
+        setTrySubmitted(false)
         resetForm()
         if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
@@ -150,30 +151,30 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
         codeName.trim() === '' &&
         tempV.push({
-            field: 'codeName',
-            error: `${t(`common.traditionalChineseName`)} ${t(
+            field: `${t('recycling_unit.recyclable_code')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         mainName.trim() === '' &&
         tempV.push({
-            field: 'mainName',
-            error: `${t(`common.simplifiedChineseName`)} ${t(
+            field: `${t('recycling_unit.main_category')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         subName.trim() === '' &&
         tempV.push({
-            field: 'subName',
-            error: `${t(`common.englishName`)} ${t(
+            field: `${t('recycling_unit.sub_category')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         setValidation(tempV)
-    }, [codeName, mainName, subName])
+    }, [codeName, mainName, subName, i18n, currentLanguage])
 
     const handleDelete = async () => {
         const { loginId, tenantId } = returnApiToken();
@@ -292,7 +293,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 <Divider></Divider>
                 <Box sx={{ marginX: 2 }}>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.recyclable_code')}>
+                        <CustomField label={t('recycling_unit.recyclable_code')} mandatory>
                             <CustomTextField
                                 id="codeName"
                                 value={codeName}
@@ -304,7 +305,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.main_category')}>
+                        <CustomField label={t('recycling_unit.main_category')} mandatory>
                             <CustomTextField
                                 id="mainName"
                                 value={mainName}
@@ -316,7 +317,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.sub_category')}>
+                        <CustomField label={t('recycling_unit.sub_category')} mandatory>
                             <CustomTextField
                                 id="subName"
                                 value={subName}
@@ -327,6 +328,17 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             />
                         </CustomField>
                     </Box>
+                    <Grid item sx={{ width: '92%' }}>
+                        {trySubmited &&
+                            validation.map((val, index) => (
+                            <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={val.error}
+                                type={'error'}
+                            />
+                            ))}
+                    </Grid>
                 </Box>
             </RightOverlayForm>
         </div>

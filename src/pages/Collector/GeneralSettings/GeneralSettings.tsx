@@ -40,13 +40,12 @@ import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
-
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -100,9 +99,9 @@ const GeneralSettings: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [tenantCurrency, setTenantCurrency] = useState<string>('')
-  const {dateFormat} = useContainer(CommonTypeContainer)
-  const navigate = useNavigate();
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initContractList()
@@ -116,8 +115,12 @@ const GeneralSettings: FunctionComponent = () => {
       if (data) {
         var contractMapping: ContractItem[] = []
         data.map((item: any, index: any) => {
-          const contractFrmDate = dayjs(item.contractFrmDate).format(`${dateFormat}`)
-          const contractToDate = dayjs(item.contractToDate).format(`${dateFormat}`)
+          const contractFrmDate = dayjs(item.contractFrmDate).format(
+            `${dateFormat}`
+          )
+          const contractToDate = dayjs(item.contractToDate).format(
+            `${dateFormat}`
+          )
           contractMapping.push(
             createContract(
               item?.id !== undefined ? item?.id : index,
@@ -139,30 +142,30 @@ const GeneralSettings: FunctionComponent = () => {
         setContractList(contractMapping)
       }
       setTotalData(result?.data.totalPages)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
   const getTenantData = async () => {
-   try {
-    const token = returnApiToken()
-    const result = await getTenantById(parseInt(token.tenantId))
-    const data = result?.data
-    setTenantCurrency(data?.monetaryValue || '')
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+    try {
+      const token = returnApiToken()
+      const result = await getTenantById(parseInt(token.tenantId))
+      const data = result?.data
+      setTenantCurrency(data?.monetaryValue || '')
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
   }
   const columns: GridColDef[] = [
     {
       field: 'contractNo',
-      headerName: t('general_settings.name'),
+      headerName: t('general_settings.contract_number'),
       width: 150,
       type: 'string'
     },
@@ -390,10 +393,12 @@ const GeneralSettings: FunctionComponent = () => {
               getRowId={(row) => row.id}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.id ? 'selected-row' : ''
+              }
               initialState={{
                 sorting: {
                   sortModel: [{ field: 'contractNo', sort: 'desc' }]
@@ -412,7 +417,15 @@ const GeneralSettings: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
             <Pagination
@@ -427,7 +440,7 @@ const GeneralSettings: FunctionComponent = () => {
         </div>
         <CreateContract
           drawerOpen={drawerOpen}
-          handleDrawerClose={() => setDrawerOpen(false)}
+          handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
           action={action}
           rowId={rowId}
           selectedItem={selectedRow}

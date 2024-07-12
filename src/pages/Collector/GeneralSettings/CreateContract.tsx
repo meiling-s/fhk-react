@@ -111,19 +111,25 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
 
       contractNo.toString() == '' &&
         tempV.push({
-          field: t('general_settings.name'),
+          field: t('general_settings.contract_number'),
           problem: formErr.empty,
           type: 'error'
         })
       existingContract.forEach((item) => {
         if (item.contractNo.toLowerCase() === contractNo.toLowerCase()) {
           tempV.push({
-            field: t('general_settings.name'),
+            field: t('general_settings.contract_number'),
             problem: formErr.alreadyExist,
             type: 'error'
           })
         }
       })
+      contractNo !== '' && referenceNumber !== '' && contractNo === referenceNumber &&
+        tempV.push({
+          field: `${t('general_settings.name') } ${t('general_settings.and')} ${t('general_settings.reference_number')}`,
+          problem: formErr.mustDifferent,
+          type: 'error'
+        })
       startDate > endDate &&
         tempV.push({
           field: t('general_settings.start_date'),
@@ -141,7 +147,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     }
 
     validate()
-  }, [contractNo, startDate, endDate, i18n])
+  }, [contractNo, referenceNumber, startDate, endDate, i18n])
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -283,12 +289,12 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{ marginY: 2 }}>
-            <CustomField label={t('general_settings.name')}>
+            <CustomField label={t('general_settings.contract_number')}>
               <CustomTextField
                 id="contractNo"
                 value={contractNo}
                 disabled={action != 'add'}
-                placeholder={t('general_settings.name')}
+                placeholder={t('general_settings.contract_number')}
                 onChange={(event) => setContractNo(event.target.value)}
                 error={checkString(contractNo)}
               />
@@ -365,8 +371,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField label={t('general_settings.whether')} />
               <Switcher
-                onText={t('general_settings.true')}
-                offText={t('general_settings.false')}
+                onText={t('common.yes')}
+                offText={t('common.no')}
                 disabled={action === 'delete'}
                 defaultValue={whether}
                 setState={(newValue) => {

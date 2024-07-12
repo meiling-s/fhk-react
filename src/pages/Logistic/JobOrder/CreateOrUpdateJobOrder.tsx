@@ -34,6 +34,11 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import { getAllVehiclesLogistic, getDriver } from '../../../APICalls/jobOrder'
 import { mappingRecyName } from '../../../utils/utils'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const JobOrder = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -53,12 +58,11 @@ const JobOrder = () => {
   const [isEdit, setIsEdit] = useState(false)
   const navigate = useNavigate()
   const [isActive, setIsActive] = useState(false)
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { loginId } = returnApiToken()
-  const { decimalVal } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat } = useContainer(CommonTypeContainer)
   const [driverList, setDriverList] = useState<DriverList[]>([])
   const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
-  const { recycType } = useContainer(CommonTypeContainer)
 
   const handleCloses = () => {
     setId(0)
@@ -122,6 +126,10 @@ const JobOrder = () => {
       const response = await getPicoById(picoId)
       if (response) {
         const details = response?.data.pickupOrderDetail.map((item: any) => {
+          const currentDate = dayjs().format('YYYY-MM-DD');
+          const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`;
+          const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong');
+          const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm');
           return {
             joId: item?.joId ?? 0,
             picoId: response?.data?.picoId,
@@ -141,7 +149,7 @@ const JobOrder = () => {
             vehicleId: item?.vehicleId ?? 0,
             driverId: item?.driverId ?? '',
             contractNo: response?.data?.contractNo ?? '',
-            pickupAt: item?.pickupAt ?? '',
+            pickupAt: item.pickupAt ?? '',
             createdBy: loginId ?? '',
             updatedBy: loginId ?? '',
             status: item?.driverId ? 'assigned' : ''
@@ -301,6 +309,7 @@ const JobOrder = () => {
     }
   }
 
+  console.log()
   return (
     <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
       <ToastContainer></ToastContainer>
@@ -408,6 +417,8 @@ const JobOrder = () => {
               {t('jobOrder.recycling_location_information')}
             </p>
             {pickupOrderDetail.map((item: AssignJobDriver, index) => {
+              const driver = driverList.find(value => value.driverId === item.driverId)
+              const driverName = i18n.language === 'enus' ? driver?.driverNameEng : i18n.language === 'zhch' ? driver?.driverNameSchi : driver?.driverNameTchi
               return (
                 <div
                   className={`flex flex-col rounded-sm px-[15px] py-[18px] w-[450px] ${
@@ -441,7 +452,7 @@ const JobOrder = () => {
                       </label>
                     </div>
                     <p className="flex-1 font-semibold text-[#535353]">
-                      {item.pickupAt}
+                      {item.driverId == '' ? dayjs(new Date).format(`${dateFormat} ${item.pickupAt}`) : dayjs(item.pickupAt).format(`${dateFormat} HH:mm`)}
                     </p>
                   </div>
                   <div className="flex items-center">
@@ -518,7 +529,7 @@ const JobOrder = () => {
                         </div>
                         <div className="flex flex-col">
                           <label className="label-0 text-[#535353] text-[15px]">
-                            {item.driverId}
+                            {driverName}
                           </label>
                           <label className="label-0 text-[#535353] text-[15px]">
                             {item.plateNo}

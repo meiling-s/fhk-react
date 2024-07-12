@@ -6,6 +6,7 @@ import CustomDatePicker from "../../../FormComponents/CustomDatePicker";
 import { format } from "../../../../constants/constant";
 import { DEFAULT_ATTRIBUTE } from "@mui/system/cssVars/getInitColorSchemeScript";
 import { Add } from "@mui/icons-material";
+import CustomField from "../../../FormComponents/CustomField";
 
 type props = {
     setSpecificDate: (RSDs: string[]) => void,
@@ -44,14 +45,21 @@ export default function SpecificDate({
         });
         setSpecificDates(newSpecificDates);
     }
-
+    
     return(
-        <CustomDatePicker
-            defaultDate={defaultDates}
-            setMultiDate={(dates) => handleDatePick(dates)}
-            dp_style={{width: "200px"}}
-            roleColor={roleColor}
-        />
+        <CustomField
+            label={t('pick_up_order.routine.period')}
+            style={{ width: '100%' }}
+            mandatory
+        >
+            <CustomDatePicker
+                defaultDate={defaultDates}
+                setMultiDate={(dates) => handleDatePick(dates)}
+                dp_style={{width: "200px"}}
+                roleColor={roleColor}
+            />
+        </CustomField>
+
     )
     
 }

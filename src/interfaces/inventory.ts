@@ -10,6 +10,8 @@ export type InventoryItem = {
     recyclingNumber?: string
     recycTypeId: string
     recycSubTypeId: string
+    recyName: string
+    subName: string
     packageTypeId: string
     weight: number
     unitId: string
@@ -20,4 +22,12 @@ export type InventoryItem = {
     createdAt: string
     updatedAt: string
     location: string
+    packageName?:string
+}
+
+export type InventoryQuery = {
+    itemId: number | null
+    warehouseId: number | null
+    recycTypeId: string
+    recycSubTypeId: string
 }

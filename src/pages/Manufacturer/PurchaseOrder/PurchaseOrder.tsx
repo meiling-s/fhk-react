@@ -259,7 +259,7 @@ const PurchaseOrder = () => {
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
   const userRole = localStorage.getItem(localStorgeKeyName.role) || ''
   const rolesEnableCreatePO = [Roles.customerAdmin]
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   let columns: GridColDef[] = [
     //
@@ -295,7 +295,10 @@ const PurchaseOrder = () => {
       width: 200,
       editable: true,
       valueGetter: (params) => {
-        return dayjs.utc(params?.row?.purchaseOrderDetail[0]?.pickupAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+        return dayjs
+          .utc(params?.row?.purchaseOrderDetail[0]?.pickupAt)
+          .tz('Asia/Hong_Kong')
+          .format(`${dateFormat} HH:mm`)
       }
     },
     {
@@ -363,9 +366,12 @@ const PurchaseOrder = () => {
         width: 260,
         editable: true,
         valueGetter: (params) => {
-          if(params?.row?.purchaseOrderDetail[0]?.pickupAt){
-            return dayjs.utc(params?.row?.purchaseOrderDetail[0]?.pickupAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
-          } 
+          if (params?.row?.purchaseOrderDetail[0]?.pickupAt) {
+            return dayjs
+              .utc(params?.row?.purchaseOrderDetail[0]?.pickupAt)
+              .tz('Asia/Hong_Kong')
+              .format(`${dateFormat} HH:mm`)
+          }
         }
       },
       {
@@ -484,6 +490,7 @@ const PurchaseOrder = () => {
     setApproveModal(false)
     setRejectModal(false)
     initPurchaseOrderRequest()
+    setSelectedRow(null)
   }
 
   const getRejectReason = async () => {
@@ -593,11 +600,17 @@ const PurchaseOrder = () => {
       purchaseOrder?.map((item) => ({
         ...item,
         id: item.poId,
-        createdAt: dayjs.utc(item.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`),
+        createdAt: dayjs
+          .utc(item.createdAt)
+          .tz('Asia/Hong_Kong')
+          .format(`${dateFormat} HH:mm`),
         poId: item.poId,
         picoId: item.picoId,
         receiverAddr: item.receiverAddr,
-        approvedAt: dayjs.utc(item.approvedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`),
+        approvedAt: dayjs
+          .utc(item.approvedAt)
+          .tz('Asia/Hong_Kong')
+          .format(`${dateFormat} HH:mm`),
         status: item.status,
         recyType: item.purchaseOrderDetail.map((item) => {
           return item.recycTypeId
@@ -619,7 +632,12 @@ const PurchaseOrder = () => {
     recyType: string
   }
   const searchfield = [
-    { label: t('pick_up_order.filter.search'), width: '14%', field: 'poId' },
+    {
+      label: t('purchase_order.table.pico_id'),
+      placeholder: t('placeHolder.po_number'),
+      width: '14%',
+      field: 'poId'
+    },
     {
       label: t('pick_up_order.filter.dateby'),
       field: 'fromCreatedAt',
@@ -667,7 +685,7 @@ const PurchaseOrder = () => {
     }))
     options.push({
       value: '',
-      label: 'any'
+      label: t('check_in.any')
     })
     return options
   }
@@ -679,7 +697,7 @@ const PurchaseOrder = () => {
     }))
     options.push({
       value: '',
-      label: 'any'
+      label: t('check_in.any')
     })
     return options
   }
@@ -713,6 +731,7 @@ const PurchaseOrder = () => {
   }, [])
   const handleCloses = () => {
     setOpenModal(false)
+    setSelectedRow(null)
   }
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as Row
@@ -726,6 +745,7 @@ const PurchaseOrder = () => {
   }
 
   const handleSearch = (keyName: string, value: string) => {
+    setPage(1)
     updateQuery({ [keyName]: value })
   }
 
@@ -764,28 +784,31 @@ const PurchaseOrder = () => {
           )}
         </Box>
         <Box />
-        <Stack direction="row" mt={3}>
+        <Box sx={{ mt: 3, display: 'flex' }}>
           {searchfield.map((s) => (
             <CustomSearchField
               key={s.field}
               label={s.label}
               inputType={s?.inputType}
+              placeholder={s?.placeholder}
               field={s.field}
               options={s.options || []}
               onChange={handleSearch}
             />
           ))}
-        </Stack>
+        </Box>
         <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
           <DataGrid
             rows={filteredPico}
             columns={columns}
-            checkboxSelection
             disableRowSelectionOnClick
             onRowClick={handleRowClick}
             getRowSpacing={getRowSpacing}
             localeText={localeTextDataGrid}
             hideFooter
+            getRowClassName={(params) => 
+              selectedRow && params.id === selectedRow.poId ? 'selected-row' : ''
+            }
             sx={{
               border: 'none',
               '& .MuiDataGrid-cell': {
@@ -799,7 +822,15 @@ const PurchaseOrder = () => {
                 '&>.MuiDataGrid-columnHeaders': {
                   borderBottom: 'none'
                 }
-              }
+              },
+              '.MuiDataGrid-columnHeaderTitle': { 
+                fontWeight: 'bold !important',
+                overflow: 'visible !important'
+              },
+              '& .selected-row': {
+                  backgroundColor: '#F6FDF2 !important',
+                  border: '1px solid #79CA25'
+                }
             }}
           />
           <Pagination

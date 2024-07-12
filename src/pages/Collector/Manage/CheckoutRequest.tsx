@@ -43,14 +43,18 @@ import { CheckOut } from '../../../interfaces/checkout'
 import { useTranslation } from 'react-i18next'
 import { styles, primaryColor } from '../../../constants/styles'
 import { queryCheckout } from '../../../interfaces/checkout'
-import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
-import { displayCreatedDate, extractError, showSuccessToast } from '../../../utils/utils'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import {
+  displayCreatedDate,
+  extractError,
+  showSuccessToast
+} from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import i18n from '../../../setups/i18n'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
@@ -128,7 +132,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
   onApprove
 }) => {
   const { t } = useTranslation()
-  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
     const statReason: updateStatus = {
@@ -185,12 +189,23 @@ const ApproveModal: React.FC<ApproveForm> = ({
           </Box> */}
 
           <Box sx={{ alignSelf: 'center' }}>
-            <CustomButton text={t('check_out.confirm_approve_btn')} color="blue" style={{width: '150px', marginRight: '10px'}} onClick={() => {
-              handleApproveRequest()
-            }} />
-            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '150px', marginRight: '10px'}} onClick={() => {
-              onClose()
-            }} />
+            <CustomButton
+              text={t('check_out.confirm_approve_btn')}
+              color="blue"
+              style={{ width: '150px', marginRight: '10px' }}
+              onClick={() => {
+                handleApproveRequest()
+              }}
+            />
+            <CustomButton
+              text={t('check_in.cancel')}
+              color="blue"
+              outlined
+              style={{ width: '150px', marginRight: '10px' }}
+              onClick={() => {
+                onClose()
+              }}
+            />
           </Box>
         </Stack>
       </Box>
@@ -210,10 +225,12 @@ const RejectModal: React.FC<RejectForm> = ({
 
   const handleRejectRequest = async (rejectReasonId: string[]) => {
     const rejectReason = rejectReasonId.map((id) => {
-      const reasonItem = reasonList.find((reason: { id: string }) => reason.id === id)
+      const reasonItem = reasonList.find(
+        (reason: { id: string }) => reason.id === id
+      )
       return reasonItem ? reasonItem.name : ''
     })
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
     const statReason: updateStatus = {
       status: 'REJECTED',
       reason: rejectReason,
@@ -226,7 +243,6 @@ const RejectModal: React.FC<RejectForm> = ({
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
-            // console.log('updated check-out status: ', data)
             if (onRejected) {
               onRejected()
             }
@@ -268,21 +284,32 @@ const RejectModal: React.FC<RejectForm> = ({
             {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedCheckOut.length}
             </Typography> */}
-            <CustomItemList items={reasonList} multiSelect={setRejectReasonId} itemColor={{bgColor: '#F0F9FF', borderColor: primaryColor}} />
+            <CustomItemList
+              items={reasonList}
+              multiSelect={setRejectReasonId}
+              itemColor={{ bgColor: '#F0F9FF', borderColor: primaryColor }}
+            />
           </Box>
 
           <Box sx={{ alignSelf: 'center' }}>
-            <CustomButton text={t('check_in.confirm')} color="blue" style={{width: '175px', marginRight: '10px'}} onClick={
-              () => {
+            <CustomButton
+              text={t('check_in.confirm')}
+              color="blue"
+              style={{ width: '175px', marginRight: '10px' }}
+              onClick={() => {
                 handleRejectRequest(rejectReasonId)
                 onClose()
-              }
-            } />
-            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '175px'}} onClick={
-              () => {
+              }}
+            />
+            <CustomButton
+              text={t('check_in.cancel')}
+              color="blue"
+              outlined
+              style={{ width: '175px' }}
+              onClick={() => {
                 onClose()
-              }
-            } />
+              }}
+            />
           </Box>
         </Stack>
       </Box>
@@ -312,19 +339,19 @@ const CheckoutRequest: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [query, setQuery] = useState<queryCheckout>({
-    picoId: "",
-    receiverName: "",
-    receiverAddr: "",
-  });
+    picoId: '',
+    receiverName: '',
+    receiverAddr: ''
+  })
   const [reasonList, setReasonList] = useState<any>([])
-  const {dateFormat} = useContainer(CommonTypeContainer)
-  const { localeTextDataGrid} = useLocaleTextDataGrid();
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
-  const getRejectReason = async() => {
+  const getRejectReason = async () => {
     try {
       let result = await getCheckoutReasons()
-      if ( result?.data?.content.length > 0) {
-        let reasonName = ""
+      if (result?.data?.content.length > 0) {
+        let reasonName = ''
         switch (i18n.language) {
           case 'enus':
             reasonName = 'reasonNameEng'
@@ -339,15 +366,17 @@ const CheckoutRequest: FunctionComponent = () => {
             reasonName = 'reasonNameEng'
             break
         }
-        result?.data?.content.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
-          item.id = item.reasonId
-          item.name = item[reasonName]
-        })
+        result?.data?.content.map(
+          (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
+            item.id = item.reasonId
+            item.name = item[reasonName]
+          }
+        )
         setReasonList(result?.data?.content)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -368,6 +397,7 @@ const CheckoutRequest: FunctionComponent = () => {
     chkOutId: number
   ) => {
     setDrawerOpen(false)
+    setSelectedRow(undefined);
 
     const checked = event.target.checked
     const updatedChecked = checked
@@ -506,9 +536,9 @@ const CheckoutRequest: FunctionComponent = () => {
         setFilterCheckOut([])
       }
       setTotalData(result?.data.totalPages)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -517,31 +547,32 @@ const CheckoutRequest: FunctionComponent = () => {
   useEffect(() => {
     getCheckoutRequest()
     getRejectReason()
-  }, [page, query.picoId, query.receiverName, query.receiverName])
+  }, [page, query, dateFormat, i18n.language])
 
   const updateQuery = (newQuery: Partial<queryCheckout>) => {
-    setQuery({ ...query, ...newQuery });
-  };
+    setQuery({ ...query, ...newQuery })
+  }
 
   const handleSearchByPoNumb = (searchWord: string) => {
-    updateQuery({picoId: searchWord})
+    updateQuery({ picoId: searchWord })
   }
 
   const handleCompanyChange = (event: SelectChangeEvent) => {
     // console.log("company", event.target.value)
     setCompany(event.target.value)
-    var searchWord =  event.target.value
-    updateQuery({receiverName: searchWord})
+    var searchWord = event.target.value
+    updateQuery({ receiverName: searchWord })
   }
 
   const handleLocChange = (event: SelectChangeEvent) => {
     setLocation(event.target.value)
     var searchWord = event.target.value
-    updateQuery({receiverAddr: searchWord})
+    updateQuery({ receiverAddr: searchWord })
   }
 
   const handleDrawerClose = () => {
     setDrawerOpen(false)
+    setSelectedRow(undefined)
   }
 
   const handleSelectRow = (params: GridRowParams) => {
@@ -571,14 +602,18 @@ const CheckoutRequest: FunctionComponent = () => {
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   useEffect(() => {
-    setPrimaryColor(role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25')
+    setPrimaryColor(
+      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
+    )
   }, [role])
 
   return (
     <Box className="container-wrapper w-full mr-11">
       <div className="overview-page bg-bg-primary">
-        <div className="header-page flex justify-start items-center mb-4 cursor-pointer"
-          onClick={() => navigate('/warehouse')}>
+        <div
+          className="header-page flex justify-start items-center mb-4 cursor-pointer"
+          onClick={() => navigate('/warehouse')}
+        >
           <LEFT_ARROW_ICON fontSize="large" />
           <div className="title font-bold text-3xl pl-4 ">{titlePage}</div>
         </div>
@@ -588,12 +623,13 @@ const CheckoutRequest: FunctionComponent = () => {
               styles.buttonFilledGreen,
               {
                 mt: 3,
-                width: "90px",
-                height: "40px",
+                width: '90px',
+                height: '40px',
                 m: 0.5,
-                backgroundPositionXackground: checkedCheckOut.length === 0 ? 'white' : '',
+                backgroundPositionXackground:
+                  checkedCheckOut.length === 0 ? 'white' : '',
                 cursor: checkedCheckOut.length === 0 ? 'not-allowed' : 'pointer'
-              },
+              }
             ]}
             disabled={checkedCheckOut.length === 0}
             variant="outlined"
@@ -606,10 +642,10 @@ const CheckoutRequest: FunctionComponent = () => {
               styles.buttonOutlinedGreen,
               {
                 mt: 3,
-                width: "90px",
-                height: "40px",
-                m: 0.5,
-              },
+                width: '90px',
+                height: '40px',
+                m: 0.5
+              }
             ]}
             disabled={checkedCheckOut.length === 0}
             variant="outlined"
@@ -623,8 +659,8 @@ const CheckoutRequest: FunctionComponent = () => {
             id="searchShipment"
             onChange={(event) => handleSearchByPoNumb(event.target.value)}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
-            placeholder={t('check_in.search_input')}
+            label={t('check_in.pickup_order_no')}
+            placeholder={t('check_in.input_po_no')}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -636,43 +672,57 @@ const CheckoutRequest: FunctionComponent = () => {
             }}
           />
           <FormControl sx={styles.inputStyle}>
-            <InputLabel id="company-label"  sx={styles.textFieldLabel} >{t('check_out.company')}</InputLabel>
+            <InputLabel id="company-label" sx={styles.textFieldLabel}>
+              {t('check_out.receiver_company')}
+            </InputLabel>
             <Select
               labelId="company-label"
               id="company"
               value={company}
-              label={t('check_out.company')}
+              label={t('check_in.receiver_company')}
               onChange={handleCompanyChange}
             >
+              {filterCheckOut
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.receiverName === item.receiverName)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.receiverName}>
+                    {item.receiverName}
+                  </MenuItem>
+                ))}
               <MenuItem value="">
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {filterCheckOut.map((item, index) => (
-                <MenuItem key={index} value={item.receiverName}>
-                  {item.receiverName}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
-            <InputLabel id="location-label"  sx={styles.textFieldLabel}>
-              {t('check_out.receiver_addr')}
+            <InputLabel id="location-label" sx={styles.textFieldLabel}>
+              {t('check_out.location')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t('check_out.receiver_addr')}
+              label={t('check_out.location')}
               onChange={handleLocChange}
             >
+              {filterCheckOut
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.receiverAddr === item.receiverAddr)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.receiverAddr}>
+                    {item.receiverAddr}
+                  </MenuItem>
+                ))}
               <MenuItem value="">
                 <em>{t('check_out.any')}</em>
               </MenuItem>
-              {filterCheckOut.map((item, index) => (
-                <MenuItem key={index} value={item.receiverAddr}>
-                  {item.receiverAddr}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
         </div>
@@ -683,11 +733,13 @@ const CheckoutRequest: FunctionComponent = () => {
               getRowId={(row) => row.chkOutId}
               hideFooter
               columns={checkoutHeader}
-              checkboxSelection={false}
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                `${selectedRow && params.row.chkOutId === selectedRow.chkOutId ? 'selected-row ' : ''}${checkedCheckOut && checkedCheckOut.includes(params.row.chkOutId) ? 'checked-row' : ''}`
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -701,10 +753,21 @@ const CheckoutRequest: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.checked-row':{
+                  backgroundColor: `rgba(25, 118, 210, 0.08)`
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
-             <Pagination
+            <Pagination
               className="mt-4"
               count={Math.ceil(totalData)}
               page={page}

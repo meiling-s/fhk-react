@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useEffect } from 'react'
+import { FunctionComponent, SyntheticEvent, useState, useEffect } from 'react'
 
 import {
   Box,
@@ -15,7 +15,8 @@ import {
   PicoRefrenceList
 } from '../interfaces/pickupOrder'
 import { useTranslation } from 'react-i18next'
-
+import CustomField from './FormComponents/CustomField'
+import CustomAutoComplete from './FormComponents/CustomAutoComplete'
 import { useContainer } from 'unstated-next'
 import { getAllPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
 import { queryPickupOrder } from '../interfaces/pickupOrder'
@@ -51,6 +52,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     status: null
   })
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const [selectedPico, setSelectedPico] = useState<string>('')
 
   const initPickupOrderRequest = async () => {
     let result = null
@@ -92,13 +94,15 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   }, [drawerOpen])
 
   const handleSearch = (searchWord: string) => {
+    console.log('searchWord', searchWord)
+    const normalizedSearchWord = searchWord.trim().toLowerCase()
     if (searchWord != '') {
-      const filteredData: PicoRefrenceList[] = []
-      filteredPico.map((item) => {
-        if (item.senderName.includes(searchWord)) {
-          filteredData.push(item)
-        }
+      const filteredData = filteredPico.filter((item) => {
+        // Normalize the senderName by converting to lowercase
+        return item.senderName.toLowerCase().includes(normalizedSearchWord)
       })
+
+      setFilteredPico(filteredData)
       if (filteredData) {
         setFilteredPico(filteredData)
       }
@@ -134,8 +138,8 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
             <Divider />
             <div className="p-6">
               <Box>
-                <div className="filter-section flex justify-between items-center w-full mb-6">
-                  <TextField
+                <div className="filter-section  mb-6">
+                  {/* <TextField
                     id="searchShipment"
                     onChange={(event) => handleSearch(event.target.value)}
                     sx={styles.inputState}
@@ -149,7 +153,38 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                         </InputAdornment>
                       )
                     }}
-                  />
+                  /> */}
+                  <CustomField
+                    label={t('pick_up_order.choose_logistic')}
+                    mandatory
+                  >
+                    <CustomAutoComplete
+                      placeholder={t('pick_up_order.enter_company_name')}
+                      option={
+                        Array.from(
+                          new Set(
+                            filteredPico
+                              ?.filter((item) => item.status !== 'CLOSED')
+                              .map((item) => item.senderName)
+                          )
+                        ) ?? []
+                      }
+                      sx={{ width: '100%' }}
+                      onChange={(
+                        _: SyntheticEvent,
+                        newValue: string | null
+                      ) => {
+                        handleSearch(newValue || '')
+                        setSelectedPico(newValue || '')
+                      }}
+                      onInputChange={(event: any, newInputValue: string) => {
+                        handleSearch(newInputValue)
+                        setSelectedPico(event.target.value)
+                      }}
+                      value={selectedPico}
+                      inputValue={selectedPico}
+                    />
+                  </CustomField>
                 </div>
                 <Box>
                   {filteredPico.map((item, index) =>

@@ -56,6 +56,11 @@ export const formErr = {
   toDateIsEarlierThanStartDate: 'toDateIsEarlierThanStartDate',
   tenantIdShouldBeSixDigit: 'tenantIdShouldBeSixDigit',
   tenantIdNotFound: 'tenantIdNotFound',
+  mustDifferent: 'mustDifferent',
+  loginIdProhibited: 'loginIdProhibited',
+  incorrectAddress: 'incorrectAddress',
+  dateOutOfRange: 'dateOutOfRange',
+  effectiveDateLess: 'effectiveDateLess'
 }
 
 export const Notiftemplate = {

@@ -1,31 +1,43 @@
 import { FunctionComponent, useState, useEffect } from 'react'
-import { Box, Divider, Grid, Autocomplete, TextField } from '@mui/material'
+import {
+  Box,
+  Divider,
+  Grid,
+  Autocomplete,
+  TextField,
+  Typography
+} from '@mui/material'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
 import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { formValidate } from '../../../interfaces/common'
+import { StaffTitle, formValidate } from '../../../interfaces/common'
 import {
   editStaff,
   createStaff,
   getLoginIdList,
-  getStaffTitle
+  getStaffTitle,
+  getStaffList
 } from '../../../APICalls/staff'
 
 import { styles } from '../../../constants/styles'
 
-import { formErr } from '../../../constants/constant'
+import { Languages, STATUS_CODE, formErr } from '../../../constants/constant'
 import {
+  extractError,
   returnErrorMsg,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  validateEmail
 } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
 import { localStorgeKeyName, Realm } from '../../../constants/constant'
+import i18n from '../../../setups/i18n'
+import { useNavigate } from 'react-router-dom'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -38,6 +50,26 @@ interface CreateVehicleProps {
 
 interface FormValues {
   [key: string]: string
+}
+type FieldName =
+  | 'loginId'
+  | 'staffNameTchi'
+  | 'staffNameSchi'
+  | 'staffNameEng'
+  | 'titleId'
+  | 'contactNo'
+  | 'email'
+
+type ErrorsStaffData = Record<FieldName, { status: boolean; message: string }>
+
+const initialErrors = {
+  loginId: { status: false, message: '' },
+  staffNameTchi: { status: false, message: '' },
+  staffNameSchi: { status: false, message: '' },
+  staffNameEng: { status: false, message: '' },
+  titleId: { status: false, message: '' },
+  contactNo: { status: false, message: '' },
+  email: { status: false, message: '' }
 }
 
 const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
@@ -69,6 +101,9 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const realm = localStorage.getItem(localStorgeKeyName.realm)
   const [contractType, setContractType] = useState<number>(0)
+  const [errors, setErrors] = useState<ErrorsStaffData>(initialErrors)
+  const [staffListExisting, setStaffListExisting] = useState<Staff[]>([])
+  const navigate = useNavigate()
 
   let staffField = [
     {
@@ -126,10 +161,26 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       }
     ]
   }
+  const initStaffList = async () => {
+    try {
+      const result = await getStaffList(1 - 1, 1000, null)
+
+      if (result) {
+        const data = result.data.content
+        setStaffListExisting(data)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
 
   useEffect(() => {
     initLoginIdList()
     initStaffTitle()
+    initStaffList()
   }, [drawerOpen])
 
   const initLoginIdList = async () => {
@@ -137,11 +188,17 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     if (result) {
       const data = result.data
       var loginIdMapping: il_item[] = []
+
       data.forEach((item: any) => {
-        loginIdMapping.push({
-          id: item.loginId,
-          name: item.loginId
-        })
+        const isUserExist = staffListExisting.find(
+          (user) => user.loginId === item.loginId
+        )
+        if (!isUserExist) {
+          loginIdMapping.push({
+            id: item.loginId,
+            name: item.loginId
+          })
+        }
       })
       setLoginIdList(loginIdMapping)
     }
@@ -151,12 +208,25 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     const result = await getStaffTitle()
     if (result) {
       const data = result.data.content
-      var staffTitle: il_item[] = []
-      data.forEach((item: any) => {
-        staffTitle.push({
-          id: item.titleId,
-          name: item.titleNameTchi
-        })
+
+      let staffTitle: il_item[] = []
+      data.forEach((item: StaffTitle) => {
+        let title: il_item = {
+          name: '',
+          id: item.titleId
+        }
+        switch (i18n.language) {
+          case Languages.ENUS:
+            title.name = item.titleNameEng
+            break
+          case Languages.ZHCH:
+            title.name = item.titleNameSchi
+            break
+          default:
+            title.name = item.titleNameTchi
+            break
+        }
+        staffTitle.push(title)
       })
       setStaffTitleList(staffTitle)
     }
@@ -204,6 +274,190 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       return false
     }
     return s == ''
+  }
+
+  const validateStaff = (): boolean => {
+    let isValid: boolean = true
+
+    if (!formData.loginId) {
+      isValid = false
+      setErrors((prev) => {
+        return {
+          ...prev,
+          loginId: {
+            status: true,
+            message: t('purchase_order.create.required_field')
+          }
+        }
+      })
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          loginId: {
+            status: false,
+            message: ''
+          }
+        }
+      })
+    }
+    if (!formData.staffNameEng) {
+      isValid = false
+      setErrors((prev) => {
+        return {
+          ...prev,
+          staffNameEng: {
+            status: true,
+            message: t('purchase_order.create.required_field')
+          }
+        }
+      })
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          staffNameEng: {
+            status: false,
+            message: ''
+          }
+        }
+      })
+    }
+    if (!formData.staffNameSchi) {
+      isValid = false
+      setErrors((prev) => {
+        return {
+          ...prev,
+          staffNameSchi: {
+            status: true,
+            message: t('purchase_order.create.required_field')
+          }
+        }
+      })
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          staffNameSchi: {
+            status: false,
+            message: ''
+          }
+        }
+      })
+    }
+    if (!formData.staffNameTchi) {
+      isValid = false
+      setErrors((prev) => {
+        return {
+          ...prev,
+          staffNameTchi: {
+            status: true,
+            message: t('purchase_order.create.required_field')
+          }
+        }
+      })
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          staffNameTchi: {
+            status: false,
+            message: ''
+          }
+        }
+      })
+    }
+    if (!formData.titleId) {
+      isValid = false
+      setErrors((prev) => {
+        return {
+          ...prev,
+          titleId: {
+            status: true,
+            message: t('purchase_order.create.required_field')
+          }
+        }
+      })
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          titleId: {
+            status: false,
+            message: ''
+          }
+        }
+      })
+    }
+    if (!formData.contactNo) {
+      isValid = false
+      setErrors((prev) => {
+        return {
+          ...prev,
+          contactNo: {
+            status: true,
+            message: t('purchase_order.create.required_field')
+          }
+        }
+      })
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          contactNo: {
+            status: false,
+            message: ''
+          }
+        }
+      })
+    }
+    if (!formData.email) {
+      isValid = false
+      setErrors((prev) => {
+        return {
+          ...prev,
+          email: {
+            status: true,
+            message: t('purchase_order.create.required_field')
+          }
+        }
+      })
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(formData.email)
+    ) {
+      isValid = false
+      setErrors((prev) => {
+        return {
+          ...prev,
+          email: {
+            status: true,
+            message: 'invalid email'
+          }
+        }
+      })
+    } else if (formData.email.indexOf('.') === 0) {
+      isValid = false
+      setErrors((prev) => {
+        return {
+          ...prev,
+          email: {
+            status: true,
+            message: 'invalid email'
+          }
+        }
+      })
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          email: {
+            status: false,
+            message: ''
+          }
+        }
+      })
+    }
+    return isValid
   }
 
   const validate = () => {
@@ -256,7 +510,6 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     })
 
     setValidation(tempV)
-    
   }
 
   useEffect(() => {
@@ -268,40 +521,45 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       ...formData,
       [field]: value
     })
-    console.log("formData", formData)
   }
 
   const handleSubmit = () => {
-    const staffData: CreateStaff = {
-      tenantId: tenantId.toString(),
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'ACTIVE',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      createdBy: loginName,
-      updatedBy: loginName
-    }
+    //const isvalid = validateStaff()
+    console.log("validation", validation)
+    if (validation.length === 0) {
+      const staffData: CreateStaff = {
+        tenantId: tenantId.toString(),
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'ACTIVE',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        createdBy: loginName,
+        updatedBy: loginName
+      }
 
-    if (realm === Realm.collector) {
-      staffData.fullTimeFlg = contractType === 0 ? true : false
-    }
+      if (realm === Realm.collector) {
+        staffData.fullTimeFlg = contractType === 0 ? true : false
+      }
 
-    if (action == 'add') {
-      handleCreateStaff(staffData)
+      if (action == 'add') {
+        handleCreateStaff(staffData)
+      } else {
+        handleEditStaff()
+      }
     } else {
-      handleEditStaff()
+      setTrySubmited(true)
     }
   }
 
   const handleCreateStaff = async (staffData: CreateStaff) => {
     //validate()
-    console.log("staffData", staffData)
+    console.log('staffData', staffData)
     if (validation.length === 0) {
       const result = await createStaff(staffData)
 
@@ -391,11 +649,16 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     }
   ]
 
+  const onHandleDrawer = () => {
+    handleDrawerClose()
+    setErrors(initialErrors)
+  }
+
   return (
     <div className="add-vehicle">
       <RightOverlayForm
         open={drawerOpen}
-        onClose={handleDrawerClose}
+        onClose={onHandleDrawer}
         anchor={'right'}
         action={action}
         headerProps={{
@@ -452,71 +715,97 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                       )}
                     />
                   </CustomField>
+                  {/* <Typography style={{color: 'red', fontWeight: '500'}}>
+                      {errors[item.field as keyof ErrorsStaffData].status ? errors[item.field as keyof ErrorsStaffData].message : ''}
+                    </Typography> */}
                 </Grid>
               ) : item.type == 'autocomplete' ? (
-                <CustomField label={item.label} mandatory>
-                  {action === 'add' ? (
-                    <Autocomplete
-                      disablePortal
-                      id="contractNo"
-                      defaultValue={selectedLoginId}
-                      options={loginIdList.map((login) => login.name)}
-                      onChange={(event, value) => {
-                        if (value) {
-                          handleFieldChange(
-                            item.field as keyof FormValues,
-                            value
-                          )
-                          setSelectedLoginId(value)
-                        }
-                      }}
-                      value={selectedLoginId}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder={item.placeholder}
-                          sx={[styles.textField, { width: 320 }]}
-                          InputProps={{
-                            ...params.InputProps,
-                            sx: styles.inputProps
-                          }}
-                          disabled={action != 'add'}
-                          error={checkString(selectedLoginId)}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <TextField
-                      placeholder={item.placeholder}
-                      sx={[styles.textField, { width: 320 }]}
-                      InputProps={{
-                        readOnly: true,
-                        sx: styles.inputProps
-                      }}
-                      disabled={true}
-                      value={selectedLoginId}
-                    />
-                  )}
-                </CustomField>
+                <Grid item>
+                  <CustomField label={item.label} mandatory>
+                    {action === 'add' ? (
+                      <Autocomplete
+                        disablePortal
+                        id="contractNo"
+                        defaultValue={selectedLoginId}
+                        options={loginIdList.map((login) => login.name)}
+                        onChange={(event, value) => {
+                          if (value) {
+                            handleFieldChange(
+                              item.field as keyof FormValues,
+                              value
+                            )
+                            setSelectedLoginId(value)
+                          } else {
+                            handleFieldChange(
+                              item.field as keyof FormValues,
+                              ''
+                            )
+                            setSelectedLoginId('')
+                          }
+                        }}
+                        value={selectedLoginId}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={item.placeholder}
+                            sx={[styles.textField, { width: 320 }]}
+                            InputProps={{
+                              ...params.InputProps,
+                              sx: styles.inputProps
+                            }}
+                            disabled={action != 'add'}
+                            error={checkString(selectedLoginId)}
+                          />
+                        )}
+                      />
+                    ) : (
+                      <TextField
+                        placeholder={item.placeholder}
+                        sx={[styles.textField, { width: 320 }]}
+                        InputProps={{
+                          readOnly: true,
+                          sx: styles.inputProps
+                        }}
+                        disabled={true}
+                        value={selectedLoginId}
+                      />
+                    )}
+                  </CustomField>
+                  {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
+                    {errors[item.field as keyof ErrorsStaffData].status
+                      ? errors[item.field as keyof ErrorsStaffData].message
+                      : ''}
+                  </Typography> */}
+                </Grid>
               ) : item.type === 'option' ? (
-                <CustomField label={t('staffManagement.position')} mandatory>
-                  <CustomItemList
-                    items={staffTitleList || []}
-                    singleSelect={(values) => {
-                      handleFieldChange(item.field as keyof FormValues, values)
-                    }}
-                    //value={formData[item.field as keyof FormValues]}
-                    defaultSelected={formData.titleId}
-                    needPrimaryColor={true}
-                    error={trySubmited && formData.titleId.toString() === ''}
-                  />
-                </CustomField>
+                <Grid item>
+                  <CustomField label={t('staffManagement.position')} mandatory>
+                    <CustomItemList
+                      items={staffTitleList || []}
+                      singleSelect={(values) =>
+                        handleFieldChange(item.field, values)
+                      }
+                      value={selectedItem ? selectedItem?.titleId : ''}
+                      defaultSelected={
+                        selectedItem ? selectedItem?.titleId : ''
+                      }
+                      needPrimaryColor={true}
+                      editable={action === 'delete' ? false : true}
+                    />
+                  </CustomField>
+                  {/* <Typography style={{ color: 'red', fontWeight: '500' }}>
+                    {errors[item.field as keyof ErrorsStaffData].status
+                      ? errors[item.field as keyof ErrorsStaffData].message
+                      : ''}
+                  </Typography> */}
+                </Grid>
               ) : (
                 <CustomField label={t('staffManagement.contractType')}>
                   <CustomItemListBoolean
                     items={contractTypeList}
                     setServiceFlg={setContractType}
                     value={contractType}
+                    needPrimaryColor={true}
                   ></CustomItemListBoolean>
                 </CustomField>
               )

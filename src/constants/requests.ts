@@ -162,10 +162,11 @@ export const UPDATE_CHECK_IN_STATUS = (
 //get checkin reason list
 export const GET_CHECKIN_REASON = (
   realmApiRoute: string,
-  tenantId: string
+  tenantId: string,
+  functionId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/reason/${tenantId}/4`
+  url: `api/v1/${realmApiRoute}/reason/${tenantId}/${functionId}`
 })
 
 //collector/pickupOrder
@@ -207,7 +208,7 @@ export const GET_LOGISTICLIST = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/logisticlist/${table}`
+  url: `api/v1/${realmApiRoute}/logisticlist/${table}?size=1000`
 })
 
 export const GET_COLLECTORLIST = (
@@ -215,7 +216,7 @@ export const GET_COLLECTORLIST = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/collectorlist/${table}`
+  url: `api/v1/${realmApiRoute}/collectorlist/${table}?size=1000`
 })
 
 export const CREATE_COLLECTORLIST = (
@@ -247,12 +248,12 @@ export const GET_MANULIST = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/manulist/${table}`
+  url: `api/v1/${realmApiRoute}/manulist/${table}?size=1000`
 })
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',
-  url: 'api/v1/administrator/pico'
+  url: 'api/v1/administrator/pico/new'
 }
 export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
   method: 'patch',
@@ -521,10 +522,11 @@ export const UPDATE_CHECKOUT_REQUEST_STATUS = (
 //get checkout reason list
 export const GET_CHECKOUT_REASON = (
   realmApiRoute: string,
-  tenantId: string
+  tenantId: string,
+  functId: number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/reason/${tenantId}/5`
+  url: `api/v1/${realmApiRoute}/reason/${tenantId}/${functId}`
 })
 
 //recycle type
@@ -661,6 +663,8 @@ export const GET_PROCESS_OUT = (
   method: 'get',
   url: `api/v1/${realmApiRoute}/processout/header/searching/${table}`
 })
+
+
 
 export const GET_PROCESS_IN_BY_ID = (
   table: string,
@@ -824,7 +828,7 @@ export const GET_STAFF = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/${realmApiRoute}/staff/${tenantId}`
+  url: `api/v1/${realmApiRoute}/staff/search/${tenantId}`
 })
 
 export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
@@ -1002,10 +1006,11 @@ export const GET_STATUS_DETAIL = (status: string): AxiosRequestConfig => ({
 //get pickup order reason list
 export const GET_ALL_REASON = (
   tenantId: string,
+  realmApiRoute: string,
   functionId: string | number
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/reason/${tenantId}/${functionId}`
+  url: `api/v1/${realmApiRoute}/reason/${tenantId}/${functionId}`
 })
 
 //logistic/jobOrder
@@ -1355,7 +1360,7 @@ export const GET_USER_MANUFACTURER_LIST = (
   tenantId: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/manufacturer/staff/${tenantId}`
+  url: `api/v1/manufacturer/staff/search/${tenantId}`
 })
 
 export const CREATE_USER_MANUFACTURER: AxiosRequestConfig = {
@@ -1599,7 +1604,11 @@ export const GET_STAFF_ID = (
   url: `api/v1/${realmApiRoute}/staff/login/${tenantId}/${loginId}`
 })
 
-//NEW DENIAL REASON API FOR COLLECTORS
+export const GET_VEHICLE_DETAIL = (vehicleId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/vehicleType/${vehicleId}`
+})
+
 export const GET_DENIAL_REASON_COLLECTORS = (
   tenantId: string
 ): AxiosRequestConfig => ({
@@ -1626,4 +1635,11 @@ export const UPDATE_DENIAL_REASON_COLLECTORS = (
 ): AxiosRequestConfig => ({
   method: 'PUT',
   url: `/api/v1/collectors/reason/${tenantId}/${reasonId}/new`
+})
+
+export const CREATE_USER_ACTIVITY = (
+  loginId: string, 
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/administrator/userActivity/${loginId}`
 })
