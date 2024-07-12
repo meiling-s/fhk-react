@@ -169,11 +169,17 @@ const StaffManufacturer: FunctionComponent = () => {
       field: 'staffNameTchi',
       headerName: t('staffManagement.employeeChineseName'),
       width: 200,
-      type: 'string'
+      type: 'string',
+    },
+    {
+      field: "staffNameSchi",
+      headerName: t("staffManagement.employeeChineseCn"),
+      width: 200,
+      type: 'string',
     },
     {
       field: 'staffNameEng',
-      headerName: 'Employee english name',
+      headerName: t("staffManagement.employeeEnglishName"),
       width: 200,
       type: 'string'
     },
