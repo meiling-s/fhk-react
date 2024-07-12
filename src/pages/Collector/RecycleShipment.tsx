@@ -40,7 +40,7 @@ import {
 import { updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
 import { CheckIn } from '../../interfaces/checkin'
-import { STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
+import { Languages, STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
 import {
   displayCreatedDate,
   extractError,
@@ -57,9 +57,17 @@ import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
+import { getPicoById } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
+
+
+type CompanyNameLanguages = {
+  labelEnglish: string,
+  labelSimpflifed: string,
+  labelTraditional: string
+}
 
 const Required = () => {
   return (
@@ -356,7 +364,8 @@ function ShipmentManage() {
   })
   const [reasonList, setReasonList] = useState<any>([])
   const { dateFormat } = useContainer(CommonTypeContainer)
-  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { logisticList, manuList, collectorList } = useContainer(CommonTypeContainer)
 
   const getRejectReason = async () => {
     try {
@@ -395,24 +404,92 @@ function ShipmentManage() {
   useEffect(() => {
     initCheckInRequest()
     getRejectReason()
-  }, [page, query, dateFormat, i18n.language])
+  }, [page, query, dateFormat, i18n.language]);
 
   const transformToTableRow = (item: CheckIn): TableRow => {
     const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-    const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+    const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
+   
     return {
       id: item.chkInId,
       chkInId: item.chkInId,
       createdAt: createdAt,
       senderName: item.senderName,
-      recipientCompany: '-',
+      recipientCompany: item.recipientCompany,
       picoId: item.picoId,
       adjustmentFlg: item.adjustmentFlg,
       logisticName: item.logisticName,
       senderAddr: item.senderAddr,
-      deliveryAddress: '-',
+      deliveryAddress: item.deliveryAddress,
       status: item.status,
       checkinDetail: item.checkinDetail
+    }
+  }
+
+  const getTranslationCompanyName = (name: string) : string => {
+    let companyName:string = '';
+    const logistic = logisticList?.find(item => {
+      const { logisticNameEng, logisticNameSchi, logisticNameTchi } = item
+      if(logisticNameEng === name || logisticNameSchi === name || logisticNameTchi === name){
+        return item;
+      }
+    })
+
+    if(logistic){
+      if(i18n.language === Languages.ENUS) companyName = logistic.logisticNameEng
+      if(i18n.language === Languages.ZHCH) companyName = logistic.logisticNameSchi;
+      if(i18n.language === Languages.ZHHK) companyName = logistic.logisticNameTchi
+    }
+    return companyName
+  }
+
+  const listTranslationCompanyName = () : CompanyNameLanguages[] => {
+
+    const manufacturerCompany: CompanyNameLanguages[] = manuList?.map(item => {
+      return {
+        labelEnglish : item?.manufacturerNameEng ?? '',
+        labelSimpflifed : item?.manufacturerNameSchi ?? '',
+        labelTraditional : item?.manufacturerNameTchi ?? ''
+      }
+    }) ?? []
+
+    const collectorCompany : CompanyNameLanguages[] = collectorList?.map(item => {
+      return {
+        labelEnglish : item?.collectorId ?? '',
+        labelSimpflifed : item?.collectorNameSchi ?? '',
+        labelTraditional : item?.collectorNameTchi ?? ''
+      }
+    })  ?? []
+   
+    return [...manufacturerCompany, ...collectorCompany]
+  }
+
+  const companyReceiverSender  = listTranslationCompanyName();
+
+  const getTranslationCompany = (name: string) : string => {
+    let companyName:string = '';
+    const company = companyReceiverSender.find(item => {
+      const { labelEnglish, labelSimpflifed, labelTraditional } = item
+      if( name === labelEnglish || name === labelSimpflifed || name === labelTraditional){
+        return item
+      }
+    })
+
+    if(company){
+      if(i18n.language === Languages.ENUS) companyName = company.labelEnglish
+      if(i18n.language === Languages.ZHCH) companyName = company.labelSimpflifed
+      if(i18n.language === Languages.ZHHK) companyName = company.labelTraditional
+    }
+
+    return companyName
+  }
+
+  const getPicoDetail =  async (picoId: string) => {
+    try {
+      const picoDetail = await getPicoById(picoId);
+      return picoDetail
+    } catch (error) {
+      return null
     }
   }
 
@@ -422,9 +499,39 @@ function ShipmentManage() {
       if (result) {
         const data = result?.data?.content
         if (data && data.length > 0) {
-          const checkinData = data.map(transformToTableRow)
-          setCheckInRequest(data)
-          setFilterShipments(checkinData)
+            const newData:CheckIn[] = [];
+            for(let item of data){
+              if(item.picoId){
+                const picoDetail = await getPicoDetail(item.picoId);
+                  if(picoDetail?.data?.pickupOrderDetail[0]){
+                    const detail = picoDetail?.data?.pickupOrderDetail[0]
+                    item.deliveryAddress = detail?.receiverAddr ?? '-'
+                    item.recipientCompany = detail?.receiverName ?? '-' 
+                  }
+                
+              
+                 if(item?.logisticName){
+                  const companyName = getTranslationCompanyName(item.logisticName);
+                  item.logisticName = companyName === '' ? item.logisticName  : companyName
+                 }
+
+                 if(item.senderName){
+                  const companyName = getTranslationCompany(item.senderName)
+                  item.senderName = companyName === '' ? item.senderName  : companyName
+                 }
+
+                 if(item.recipientCompany){
+                  const companyName = getTranslationCompany(item.recipientCompany)
+                  item.recipientCompany = companyName === '' ? item.recipientCompany  : companyName
+                 }
+                 const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+                 item.createdAt =  dateInHK.format(`${dateFormat} HH:mm`);
+                 newData.push(item)
+              }
+            }
+          // const checkinData = newData.map(transformToTableRow)
+          setCheckInRequest(newData)
+          setFilterShipments(newData)
         } else {
           setFilterShipments([])
         }

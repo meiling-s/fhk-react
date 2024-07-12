@@ -232,7 +232,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
 
             <Box>
               <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.receiver_company')}</Typography>
-              <Typography sx={localstyles.typo_fieldContent}>-</Typography>
+              <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.recipientCompany ?? '-'}</Typography>
             </Box>
 
             <Box>
@@ -263,7 +263,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                   <Typography sx={localstyles.typo_fieldTitle}>
                     {t('check_in.receiver_addr')}
                   </Typography>
-                  <Typography sx={localstyles.typo_fieldContent}>-</Typography>
+                  <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.deliveryAddress ?? '-'}</Typography>
                 </Box>
               </Box>
             </Box>
