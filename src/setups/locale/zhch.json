@@ -638,7 +638,7 @@
     "processingName": "处理名称",
     "any": "任何",
     "location": "地点",
-    "creationDate": "建立日期",
+    "creationDate": "建立日期及时间",
     "handleName": "处理名称",
     "processingNumb": "处理编号",
     "processingLocation": "处理地点",
@@ -646,8 +646,8 @@
     "status": "状态",
     "categoryWeight": "处理前的回收物类别及重量",
     "detail": {
-      "processingData": "处理数据",
-      "recyclingInformation": "回收信息",
+      "processingData": "处理资料",
+      "recyclingInformation": "回收物资料",
       "categoryAndWeightOfRecyclablesBeforeProcessing": "处理前可回收物品的类别和重量",
       "typeAndWeightOfProcessedRecyclates": "处理后可回收物品的类型和重量"
     },
