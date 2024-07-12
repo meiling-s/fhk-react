@@ -50,13 +50,13 @@
     "premiseType": "房屋或场所类别",
     "premiseRemark": "其他备注",
     "enterText": "请输入文字",
-    "status": "状态",
+    "status": "开放状态",
     "open": "开放",
     "close": "关闭",
     "colRecycType": "回收物资料",
-    "recycType": "可回收物类别",
+    "recycType": "回收物类别",
     "category": "类别",
-    "staffInfo": "员工人数",
+    "staffInfo": "员工资料",
     "numOfStaff": "员工数量",
     "enterNumOfStaff": "请输入人数",
     "locationData": "地点资料",
@@ -185,7 +185,7 @@
   },
   "check_in": {
     "request_check_in": "送入请求",
-    "approve": "核准",
+    "approve": "接受",
     "reject": "拒绝",
     "search": "搜索",
     "input_po_no": "输入运单编号",
@@ -232,12 +232,12 @@
     "message": "信息",
     "confirm_reject": "确认拒绝送出请求吗?",
     "confirm_approve": "您确定批准该请求吗？",
-    "reject_reasons": "拒绝原因(可多选)",
+    "reject_reasons": "拒绝原因（可多选）",
     "confirm_approve_btn": "确认批准",
     "confirm": "确认拒绝",
     "cancel": "取消",
     "shipping_company": "寄件公司",
-    "shipping_location": "发货地点",
+    "shipping_location": "回收地点",
     "arrival_location": "到达地点",
     "success_approve": "结帐请求成功",
     "ok": "好的",
@@ -281,8 +281,8 @@
     "overview": "概览"
   },
   "status": {
-    "active": "已启用",
-    "inactive": "已停用",
+    "active": "启用",
+    "inactive": "停用",
     "deleted": "已删除",
     "started": "处理中",
     "created": "待处理",
@@ -328,11 +328,11 @@
     },
     "filter": {
       "search": "搜索",
-      "dateby": "日期截止",
+      "dateby": "日期由",
       "to": "至",
       "logistic_company": "物流公司",
       "location": "地点",
-      "recycling_category": "回收类别",
+      "recycling_category": "回收物类别",
       "status": "状态"
     },
     "card_detail": {
@@ -347,7 +347,7 @@
       "regular_shipping": "常规运输",
       "one-transport": "一次性运输",
       "sender_and_receiver_company": "寄件和收件公司",
-      "sender_and_receiver_location": "回收和到达地点"
+      "sender_and_receiver_location": "送出和到达地点"
     },
     "item": {
       "detail": "运单详情",
@@ -374,7 +374,7 @@
     "select_shipping_category": "请选择运输类别",
     "regular_shipping": "常规运输",
     "one-transport": "一次性运输",
-    "shipping_validity": "有效日期由",
+    "shipping_validity": "运输有效日期由",
     "to": "至",
     "routine": {
       "recycling_week": "回收周次",
@@ -388,12 +388,12 @@
       "reason_get_off": "下单原因",
       "po_number": "回收运单编号"
     },
-    "choose_logistic": "物流公司",
+    "choose_logistic": "选择物流公司",
     "enter_company_name": "请输入公司名称",
     "vehicle_category": "车辆类别",
     "plat_number": "车牌号码",
     "enter_plat_number": "请填写车牌号码",
-    "contact_number": "请填写手机号码",
+    "contact_number": "联络人号码",
     "enter_contact_number": "请填写手机号码",
     "recyle_loc_info": "预计回收地点资料",
     "creation_time": "建立时间",
@@ -639,7 +639,7 @@
     "processingName": "处理名称",
     "any": "任何",
     "location": "地点",
-    "creationDate": "建立日期",
+    "creationDate": "处理日期及时间",
     "handleName": "处理名称",
     "processingNumb": "处理编号",
     "processingLocation": "处理地点",
@@ -647,8 +647,8 @@
     "status": "状态",
     "categoryWeight": "处理前的回收物类别及重量",
     "detail": {
-      "processingData": "处理数据",
-      "recyclingInformation": "回收信息",
+      "processingData": "处理资料",
+      "recyclingInformation": "回收物资料",
       "categoryAndWeightOfRecyclablesBeforeProcessing": "处理前可回收物品的类别和重量",
       "typeAndWeightOfProcessedRecyclates": "处理后可回收物品的类型和重量"
     },
