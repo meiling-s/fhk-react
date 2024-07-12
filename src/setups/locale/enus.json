@@ -573,7 +573,7 @@
     "numberOfPeople": "Number of people",
     "pleaseEnterNumberOfPeople": "Please enter number of people",
     "picture": "Picture",
-    "uploadPictures": "Upload pictures",
+    "uploadPictures": "Upload Pictures",
     "save": "Save",
     "otherCollectionPoint": "Other collection point",
     "communityCollectionPoint": "Community collection point",
@@ -652,7 +652,7 @@
     },
     "create": {
       "modifyRecycl": "Modify recycling information",
-      "recycNum": "Recycling number"
+      "recycNum": "Recycling Number"
     },
     "tenantType": {
       "collector": "Collector",
