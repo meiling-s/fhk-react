@@ -306,7 +306,7 @@
     "notify": "通知"
   },
   "pick_up_order": {
-    "enquiry_pickup_order": "查詢運單",
+    "enquiry_pickup_order": "回收運單",
     "delete_msg": "您確定要刪除此項目嗎 ?",
     "out_of_date_range": "具體日期超出「出貨有效期限」範圍",
     "created_pickup_order": "回收運單已建立",
@@ -316,7 +316,7 @@
       "pico_id": "運單編號",
       "logistic_company": "物流公司",
       "delivery_date": "送貨日期",
-      "sender_company": "訂單編號",
+      "sender_company": "寄件公司",
       "receiver": "收件公司",
       "status": "狀態",
       "operation": "操作",
@@ -326,11 +326,11 @@
     },
     "filter": {
       "search": "搜尋",
-      "dateby": "日期截止",
+      "dateby": "日期由",
       "to": "至",
       "logistic_company": "物流公司",
       "location": "地點",
-      "recycling_category": "回收類別",
+      "recycling_category": "回收物類別",
       "status": "狀態"
     },
     "card_detail": {

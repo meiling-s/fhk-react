@@ -327,11 +327,11 @@
     },
     "filter": {
       "search": "搜索",
-      "dateby": "日期截止",
+      "dateby": "日期由",
       "to": "至",
       "logistic_company": "物流公司",
       "location": "地点",
-      "recycling_category": "回收类别",
+      "recycling_category": "回收物类别",
       "status": "状态"
     },
     "card_detail": {

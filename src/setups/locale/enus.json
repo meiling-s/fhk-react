@@ -308,18 +308,18 @@
     "notify": "Notify"
   },
   "pick_up_order": {
-    "enquiry_pickup_order": "Enquiry pickup order",
+    "enquiry_pickup_order": "Enquiry Pickup Order",
     "delete_msg": "are you sure want delete this item ?",
     "out_of_date_range": "Specific Date is out of range of the Shipping validity date",
     "created_pickup_order": "Pickup order has been created",
     "changed_pickup_order": "Pickup order has been changed",
     "table": {
-      "created_datetime": "Created datetime",
+      "created_datetime": "Created Datetime",
       "pico_id": "PO number",
       "logistic_company": "Logistic company",
-      "delivery_date": "Delivery date",
-      "sender_company": " Sender company",
-      "receiver": "Receiver company",
+      "delivery_date": "Delivery Date",
+      "sender_company": " Sender Company",
+      "receiver": "Receiver Company",
       "status": "Status",
       "operation": "Operation",
       "approve": "Approve",
@@ -328,11 +328,11 @@
     },
     "filter": {
       "search": "Search",
-      "dateby": " Date by",
+      "dateby": " Date By",
       "to": "To",
-      "logistic_company": "Logistic company",
+      "logistic_company": "Logistic Company",
       "location": "Location",
-      "recycling_category": "Recycling category",
+      "recycling_category": "Recycling Category",
       "status": "Status"
     },
     "card_detail": {
