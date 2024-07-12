@@ -286,7 +286,7 @@
     "deleted": "已删除",
     "started": "处理中",
     "created": "待处理",
-    "confirmed": "核准于",
+    "confirmed": "已确认",
     "rejected": "已拒绝",
     "completed": "已完成",
     "closed": "已取消",
@@ -307,6 +307,7 @@
     "notify": "通知"
   },
   "pick_up_order": {
+    "pickup_order": "回收运单",
     "enquiry_pickup_order": "查询运单",
     "delete_msg": "您确定要删除此项目吗 ?",
     "out_of_date_range": "具体日期超出“发货有效期”范围",
@@ -385,7 +386,7 @@
     },
     "adhoc": {
       "reason_get_off": "下单原因",
-      "po_number": "参考运单编号"
+      "po_number": "回收运单编号"
     },
     "choose_logistic": "物流公司",
     "enter_company_name": "请输入公司名称",
@@ -693,8 +694,8 @@
     "employeeName": "员工姓名",
     "enterEmployeeName": "输入员工姓名",
     "employeeChineseName": "员工繁体中文名",
-    "employeeEnglishName": "員工英文名",
-    "employeeChineseCn": "員工簡体中文名",
+    "employeeEnglishName": "员工英文名",
+    "employeeChineseCn": "员工簡体中文名",
     "position": "职位",
     "loginName": "登入名称",
     "enterLoginName": "输入登入名称",
@@ -824,7 +825,7 @@
       "detail": "工作运单",
       "shipping_info": "运输资料",
       "date_time": "建立日期及时间",
-      "reference_po_number": "參考运单编号",
+      "reference_po_number": "回收运单编号",
       "sender_name": "寄件公司",
       "rec_loc_info": "回收地点资料"
     },
@@ -963,7 +964,7 @@
       "table": {
         "driverId": "司机号码",
         "driverSchiName": "司机简体中文名称",
-        "driverEngName": "Driver English Name",
+        "driverEngName": "司机英文姓名",
         "gender": "性别",
         "loginName": "登入名称",
         "contactNo": "联络电话",
@@ -981,8 +982,8 @@
           "nameText": "请输入名称",
           "TchiName": "司机繁体中文名称",
           "SchiName": "司机简体中文名称",
-          "engName": "Driver English Name",
-          "engText": "Please type a name",
+          "engName": "司机英文名称",
+          "engText": "请输入名称",
           "linsenceName": "驾驶执照编号",
           "linsenceText": "驾驶执照编号",
           "uploadLinsence": "上载驾驶执照",
@@ -1042,9 +1043,9 @@
   "packaging_unit": {
     "packaging_unit": "包装单位",
     "new": "新的",
-    "traditional_chinese_name": "繁体中文名",
-    "simplified_chinese_name": "简体中文名",
-    "english_name": "英文名",
+    "traditional_chinese_name": "繁体中文名称",
+    "simplified_chinese_name": "简体中文名称",
+    "english_name": "英文名称",
     "introduction": "介绍",
     "remark": "备注"
   },
@@ -1074,10 +1075,10 @@
     "download": "下载",
     "start_date": "日期由",
     "end_date": "至",
-    "report_of_recycled_waste_pickup_list": "回收物提取报表",
-    "report_of_recycled_waste_collection_route": "实际路线列表",
-    "report_of_logistic_service_vehicle": "物流车列表",
-    "report_of_logistic_service_recycled": "物流公司回收物报告",
+    "report_of_recycled_waste_pickup_list": "回收运单记录",
+    "report_of_recycled_waste_collection_route": "回收运单预计及实际路线记录",
+    "report_of_logistic_service_vehicle": "物流公司车辆名单",
+    "report_of_logistic_service_recycled": "物流公司收集的回收物记录",
     "report_of_recycled_waste_inventory_manufacturers": "回收物庫存報表",
     "report_of_manu_recycled_order_list" :"顾客订单列表",
     "report_of_manu_recycled_waste_tracing_list": "回收物追踪列表",

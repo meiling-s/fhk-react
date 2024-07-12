@@ -125,7 +125,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       type: 'text'
     },
     {
-      label: 'Staff English Name',
+      label: t('staffManagement.employeeEnglishName'),
       placeholder: t('staffManagement.enterName'),
       field: 'staffNameEng',
       type: 'text'

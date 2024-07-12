@@ -154,7 +154,7 @@ const StaffEnquiry: FunctionComponent = () => {
     },
     {
       field: "staffNameEng",
-      headerName: "Employee english name",
+      headerName: t("staffManagement.employeeEnglishName"),
       width: 200,
       type: "string",
     },

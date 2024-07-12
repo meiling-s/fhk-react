@@ -144,8 +144,8 @@
     "vehicles": "Vehicles",
     "company": "Company",
     "waste_disposal": "Waste Disposal",
-    "staff_positions": "Staff positions",
-    "denial_reason": "Denial reason",
+    "staff_positions": "Staff Positions",
+    "denial_reason": "Reject Reason",
     "add_new": "New",
     "add_new_vehicle": "Add New Vehicle"
   },
@@ -309,7 +309,8 @@
     "notify": "Notify"
   },
   "pick_up_order": {
-    "enquiry_pickup_order": "Enquiry pickup order",
+    "pickup_order": "Pickup Order",
+    "enquiry_pickup_order": "Enquiry Pickup Order",
     "delete_msg": "are you sure want delete this item ?",
     "out_of_date_range": "Specific Date is out of range of the Shipping validity date",
     "created_pickup_order": "Pickup order has been created",
@@ -943,7 +944,7 @@
   "companyManagement": {
     "collectorlist": "Collection Company",
     "logisticlist": "Logistic Company",
-    "manulist": "Manufacturer Company",
+    "manulist": "Recycling plant",
     "customerlist": "Customer Company",
     "brNo": "Business registration number",
     "enterBrNo": "Please enter business registration number"
@@ -1076,10 +1077,10 @@
     "download": "Download",
     "start_date": "Start Date",
     "end_date": "to",
-    "report_of_recycled_waste_pickup_list": "The report of recycled waste collection pickup list",
-    "report_of_recycled_waste_collection_route": "The report of Recycled waste collection route and actual collection route list",
-    "report_of_logistic_service_vehicle": "The report of Logistic service provider vehicle list",
-    "report_of_logistic_service_recycled": "The report of daily logistic service provider recycled waste collection list",
+    "report_of_recycled_waste_pickup_list": "Records of recycling PO order",
+    "report_of_recycled_waste_collection_route": "Records of estimated and actual routes of recycling PO order",
+    "report_of_logistic_service_vehicle": "Logistics company vehicle list ",
+    "report_of_logistic_service_recycled": "Records of recyclables collected by logistics companies",
     "report_of_recycled_waste_inventory_manufacturers": "The report of recycled waste inventory list for recycled waste collectors and recycled waste manufacturers",
     "report_of_manu_recycled_order_list": "The report of recycled customer order list",
     "report_of_manu_recycled_waste_tracing_list": "The report of recycled waste tracing list",

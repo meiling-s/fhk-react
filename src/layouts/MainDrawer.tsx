@@ -138,7 +138,7 @@ function MainDrawer() {
         functionName: 'Collection point'
       },
       'Pickup order': {
-        name: t('pick_up_order.enquiry_pickup_order'),
+        name: t('pick_up_order.pickup_order'),
         icon: <SHIPPING_CAR_ICON />,
         onClick: () => navigate(`/${realm}/pickupOrder`),
         collapse: false,
