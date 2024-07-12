@@ -346,7 +346,7 @@
       "regular_shipping": "常规运输",
       "one-transport": "一次性运输",
       "sender_and_receiver_company": "寄件和收件公司",
-      "sender_and_receiver_location": "回收和到达地点"
+      "sender_and_receiver_location": "送出和到达地点"
     },
     "item": {
       "detail": "运单详情",
@@ -392,7 +392,7 @@
     "vehicle_category": "车辆类别",
     "plat_number": "车牌号码",
     "enter_plat_number": "请填写车牌号码",
-    "contact_number": "请填写手机号码",
+    "contact_number": "联络人号码",
     "enter_contact_number": "请填写手机号码",
     "recyle_loc_info": "预计回收地点资料",
     "creation_time": "建立时间",

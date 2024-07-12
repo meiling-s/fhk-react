@@ -336,7 +336,7 @@
     "card_detail": {
       "main_category": "主類別",
       "subcategory": "次類別",
-      "shipping_time": "運送時間",
+      "shipping_time": "預計運送時間",
       "weight": "重量",
       "shipping_receiver": "運輸和接收公司",
       "deliver_location": "交貨和到達地點",
@@ -345,7 +345,7 @@
       "regular_shipping": "常規運輸",
       "one-transport": "一次性運輸",
       "sender_and_receiver_company": "寄件和收件公司",
-      "sender_and_receiver_location": "回收和到達地點"
+      "sender_and_receiver_location": "送出和到達地點"
     },
     "item": {
       "detail": "運單詳情",
@@ -354,7 +354,7 @@
       "shipping_info": "運輸資料",
       "date_time": "建立日期及時間",
       "transport_category": "運輸類別",
-      "shipping_validity": "運輸有效日期由",
+      "shipping_validity": "運輸有效日期",
       "recycling_week": "回收週次",
       "vehicle_category": "車輛類別",
       "plat_number": "車牌號碼",
@@ -362,7 +362,7 @@
       "sender_name": "寄件公司",
       "exp_opration": "已過期操作",
       "rec_loc_info": "回收地點資料",
-      "logistic_company": "物流公司",
+      "logistic_company": "寄件公司名稱",
       "actions": "行動",
       "download": "下載"
     },
