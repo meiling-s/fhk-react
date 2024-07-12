@@ -385,10 +385,10 @@
       "period_should_not_empty": "Period date"
     },
     "adhoc": {
-      "reason_get_off": "Ad-hoc reason",
-      "po_number": "Related pickup order"
+      "reason_get_off": "Ad-hoc Reason",
+      "po_number": "Related Pickup Order"
     },
-    "choose_logistic": "Logistic Company",
+    "choose_logistic": "Choose Logistic Company",
     "enter_company_name": "Please Enter Company Name",
     "vehicle_category": "Vehicle Type",
     "plat_number": "Vehicle Plate No.",
@@ -471,7 +471,7 @@
       "logistic": "Logistic Company is Required",
       "vehicleType": "Vehicle type is Required",
       "vehiclePlatNo": "Vehicle plate number is Required",
-      "pickupDetail": "Pickup order detail is Required",
+      "pickupDetail": "Pickup Order Detail Is Required",
       "addHocReason": "Ad-hoc reason is Required",
       "shippingtoDateNotValid": "Shipping validity to date not valid",
       "shippingFromDateNotValid": "Shipping validity from date not valid",

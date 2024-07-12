@@ -373,7 +373,7 @@
     "select_shipping_category": "请选择运输类别",
     "regular_shipping": "常规运输",
     "one-transport": "一次性运输",
-    "shipping_validity": "有效日期由",
+    "shipping_validity": "运输有效日期由",
     "to": "至",
     "routine": {
       "recycling_week": "回收周次",
@@ -387,7 +387,7 @@
       "reason_get_off": "下单原因",
       "po_number": "参考运单编号"
     },
-    "choose_logistic": "物流公司",
+    "choose_logistic": "选择物流公司",
     "enter_company_name": "请输入公司名称",
     "vehicle_category": "车辆类别",
     "plat_number": "车牌号码",

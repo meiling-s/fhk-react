@@ -372,7 +372,7 @@
     "select_shipping_category": "請選擇運輸類別",
     "regular_shipping": "常規運輸",
     "one-transport": "一次性運輸",
-    "shipping_validity": "有效日期由",
+    "shipping_validity": "運輸有效日期由",
     "to": "至",
     "routine": {
       "recycling_week": "回收週次",
@@ -386,7 +386,7 @@
       "reason_get_off": "下單原因",
       "po_number": "參考運單編號"
     },
-    "choose_logistic": "物流公司",
+    "choose_logistic": "選擇物流公司",
     "enter_company_name": "請輸入公司名稱",
     "vehicle_category": "車輛類別",
     "plat_number": "車牌號碼",
