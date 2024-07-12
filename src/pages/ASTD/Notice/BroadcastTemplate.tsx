@@ -503,7 +503,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                                 className="mr-2 text-[#717171] text-md py-1 px-2 hover:cursor-pointer  bg-[#FBFBFB]"
                                 id ={`drag-${index}`} 
                                 onDragStart={(event) => onDragHandler(event, ` [${item}] `)}
-                                draggable="true">{`[${item}]`}
+                                draggable="true">{`{${item}}`}
                             </div>
                             // />
                         })}
