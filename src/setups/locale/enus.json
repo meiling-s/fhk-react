@@ -220,7 +220,7 @@
     "company": "Company",
     "any": "Any",
     "location": "Location",
-    "created_at": "Created at",
+    "created_at": "Checkout Date Time",
     "sender_company": "Sender company",
     "receiver_company": "Receiver company",
     "pickup_order_no": "Pickup order no.",
