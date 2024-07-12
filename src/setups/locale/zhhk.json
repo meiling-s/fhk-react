@@ -185,7 +185,7 @@
   },
   "check_in": {
     "request_check_in": "送入請求",
-    "approve": "接受",
+    "approve": "核准",
     "reject": "拒絕",
     "search": "搜索",
     "input_po_no": "輸入運單編號",
@@ -204,7 +204,7 @@
     "recyclable_type_weight": "回收物類別及重量",
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
-    "reject_reasons": "拒絕原因(可多選)",
+    "reject_reasons": "拒絕原因（可多選）",
     "confirm": "確認拒絕",
     "cancel": "取消",
     "search_input": "輸入運單編號"
@@ -285,7 +285,7 @@
     "deleted": "已刪除",
     "started": "處理中",
     "created": "待處理",
-    "confirmed": "已確認",
+    "confirmed": "核准於",
     "rejected": "已拒絕",
     "completed": "已完成",
     "closed": "已取消",
@@ -372,7 +372,7 @@
     "select_shipping_category": "請選擇運輸類別",
     "regular_shipping": "常規運輸",
     "one-transport": "一次性運輸",
-    "shipping_validity": "運輸有效日期由",
+    "shipping_validity": "有效日期由",
     "to": "至",
     "routine": {
       "recycling_week": "回收週次",
@@ -489,7 +489,7 @@
     "company_category": "公司類別",
     "created_date": "建立日期",
     "number_of_acc": "帳戶數量",
-    "photo_blury ": "照片模糊",
+    "photo_blury ": "相片模糊",
     "are_sure_to_reject": "您确定要拒绝该申请吗",
     "bussniess_error": "商業編號不匹配",
     "closed_tenant_title": "您確定要將狀態變更為「已停用」嗎?",
@@ -537,18 +537,18 @@
       "contact_person_name": "聯絡人姓名",
       "contact_phone_number": "聯絡人電話號碼",
       "epd_contract": "EPD合同",
-      "creation_date": "創建日期",
+      "creation_date": "建立日期",
       "company_logo": "公司Logo",
       "remark": "備註",
-      "number_of_accounts": "帳戶數目",
-      "ways_of_entry_and_exit": "進出方式",
-      "number_of_photos_uploaded": "已上載照片數量",
-      "max_photo_upload_capacity": "最大照片上傳容量",
+      "number_of_accounts": "帳戶數量",
+      "ways_of_entry_and_exit": "出入方式",
+      "number_of_photos_uploaded": "上傳相片數量",
+      "max_photo_upload_capacity": "上傳相片最大容量",
       "account_status": "帳戶狀態",
       "reason_for_deactivation": "停用原因",
       "please_enter_capacity_mb": "請輸入容量（MB）",
       "please_enter_the_reason": "請輸入原因",
-      "no_preference": "無特別偏好",
+      "no_preference": "無偏好",
       "fifo": "先進先出（FIFO）",
       "lifo": "後進先出（LIFO）",
       "default_lang": "預設語言",
@@ -598,7 +598,7 @@
     "invalidTenantId": "租戶 ID 無效"
   },
   "vehicle": {
-    "vehicle": "車輛",
+    "vehicle": "車隊",
     "serviceType": "服務類型",
     "vehicleType": "車輛類型",
     "licensePlate": "車牌號碼",
@@ -609,14 +609,14 @@
     "loading_capacity": "載重量 (kg)"
   },
   "inventory": {
-    "inventory": "存貨",
-    "recyclingInformation": "回收資訊",
+    "inventory": "回收物",
+    "recyclingInformation": "回收物資訊",
     "date": "日期",
     "recyleType": "主類別",
     "recyleSubType": "次類別",
     "package": "包裝",
     "recyclingNumber": "回收編號",
-    "inventoryLocation": "庫存位置",
+    "inventoryLocation": "庫存地點",
     "weight": "重量",
     "at": "於",
     "handover": "交給"
@@ -667,9 +667,9 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "倉庫",
+    "warehouse": "回收厰",
     "currentCapacity": "現時容量",
-    "thereStillEnoughSpace": "還有足夠的空間",
+    "thereStillEnoughSpace": "尚有大量空間",
     "noMoreRoom": "沒有空間了",
     "all": "全部",
     "sendRequest": "送入請求",
@@ -1206,7 +1206,7 @@
     "service_type": "服務種類"
   },
   "logisticDashboard": {
-    "searchDriver": "搜索司機方向",
+    "searchDriver": "搜索司機路綫",
     "driverInfo": "您正在搜索的司機",
     "driverNumb": "司機號碼",
     "driverLicense": "駕駛證",
@@ -1228,7 +1228,7 @@
   "dashboard_recyclables": {
     "data": "數據",
     "recyclable": "回收物",
-    "recycling_data": "回收物數據",
+    "recycling_data": "回收點資料",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "日期範圍",
     "recycling_point": "回收点",
@@ -1241,7 +1241,7 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "集電極"
+    "collector": "回收公司"
   },
   "dashboard_manufacturer": {
     "data": "數據",
@@ -1376,7 +1376,7 @@
     "classification": "分類",
     "subclassification": "子分類",
     "inventory_location": "地點",
-    "place": "地方",
+    "place": "地點",
     "po_number": "輸入採購訂單編號",
     "jo_number": "輸入工作編號"
   }

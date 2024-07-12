@@ -185,7 +185,7 @@
   },
   "check_in": {
     "request_check_in": "送入请求",
-    "approve": "接受",
+    "approve": "核准",
     "reject": "拒绝",
     "search": "搜索",
     "input_po_no": "输入运单编号",
@@ -204,7 +204,7 @@
     "recyclable_type_weight": "回收物类别及重量",
     "message": "信息",
     "confirm_reject": "确认拒绝送入请求吗?",
-    "reject_reasons": "拒绝原因(可多选)",
+    "reject_reasons": "拒绝原因（可多选）",
     "confirm": "确认拒绝",
     "cancel": "取消",
     "search_input": "輸入运单编号"
@@ -286,7 +286,7 @@
     "deleted": "已删除",
     "started": "处理中",
     "created": "待处理",
-    "confirmed": "已确认",
+    "confirmed": "核准于",
     "rejected": "已拒绝",
     "completed": "已完成",
     "closed": "已取消",
@@ -373,7 +373,7 @@
     "select_shipping_category": "请选择运输类别",
     "regular_shipping": "常规运输",
     "one-transport": "一次性运输",
-    "shipping_validity": "运输有效日期由",
+    "shipping_validity": "有效日期由",
     "to": "至",
     "routine": {
       "recycling_week": "回收周次",
@@ -490,7 +490,7 @@
     "company_category": "公司类别",
     "created_date": "建立日期",
     "number_of_acc": "帐户数量",
-    "photo_blury ": "照片模糊",
+    "photo_blury ": "相片模糊",
     "bussniess_error": "商业编号不匹配",
     "closed_tenant_title": "您确定要将状态更改为“已停用”吗?",
     "closes_success": "关闭租户状态成功",
@@ -539,21 +539,21 @@
       "contact_person_name": "联络人姓名",
       "contact_phone_number": "联络人电话号码",
       "epd_contract": "EPD合同",
-      "creation_date": "创建日期",
+      "creation_date": "建立日期",
       "company_logo": "公司Logo",
       "remark": "备注",
       "number_of_accounts": "账户数量",
-      "ways_of_entry_and_exit": "进出方式",
-      "number_of_photos_uploaded": "已上传照片数量",
-      "max_photo_upload_capacity": "最大照片上传容量",
+      "ways_of_entry_and_exit": "出入方式",
+      "number_of_photos_uploaded": "上传相片最大容量",
+      "max_photo_upload_capacity": "最上传相片最大容量",
       "account_status": "账户状态",
       "reason_for_deactivation": "停用原因",
       "please_enter_capacity_mb": "请输入容量（MB）",
       "please_enter_the_reason": "请输入原因",
-      "no_preference": "无特别偏好",
+      "no_preference": "无偏好",
       "fifo": "先进先出（FIFO）",
       "lifo": "后进先出（LIFO）",
-      "default_lang": "默认语言",
+      "default_lang": "预设语言",
       "confirm": "启用",
       "suspend": "未启用",
       "closed": "已停用",
@@ -600,7 +600,7 @@
     "invalidTenantId": "租户 ID 无效"
   },
   "vehicle": {
-    "vehicle": "车辆",
+    "vehicle": "车队",
     "serviceType": "服务类型",
     "vehicleType": "车辆类型",
     "licensePlate": "车牌号码",
@@ -611,14 +611,14 @@
     "loading_capacity": "载重量 (kg)"
   },
   "inventory": {
-    "inventory": "存货",
-    "recyclingInformation": "回收信息",
+    "inventory": "回收物",
+    "recyclingInformation": "回收物资讯",
     "date": "日期",
     "recyleType": "主类别",
     "recyleSubType": "次类别",
     "package": "包装",
     "recyclingNumber": "回收编号",
-    "inventoryLocation": "库存位置",
+    "inventoryLocation": "库存地点",
     "weight": "重量",
     "at": "于",
     "handover": "交给"
@@ -669,9 +669,9 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "仓库",
+    "warehouse": "回收厂",
     "currentCapacity": "现时容量",
-    "thereStillEnoughSpace": "还有足够的空间",
+    "thereStillEnoughSpace": "尚有大量空间",
     "noMoreRoom": "没有空间了",
     "all": "全部",
     "sendRequest": "送入请求",
@@ -1208,7 +1208,7 @@
     "service_type": "服务种类"
   },
   "logisticDashboard": {
-    "searchDriver": "搜索司机方向",
+    "searchDriver": "搜索司机路线",
     "driverInfo": "您正在搜索的司机",
     "driverNumb": "司机号码",
     "driverLicense": "驾驶证",
@@ -1230,7 +1230,7 @@
   "dashboard_recyclables": {
     "data": "数据",
     "recyclable": "回收物",
-    "recycling_data": "回收物数据",
+    "recycling_data": "回收点资料",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "时间范围",
     "recycling_point": "回收点",
@@ -1243,7 +1243,7 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "集电极"
+    "collector": "回收公司"
   },
   "dashboard_manufacturer": {
     "data": "数据",
@@ -1377,7 +1377,7 @@
     "any": "任何",
     "classification": "分类",
     "subclassification": "子分類",
-    "place": "地方",
+    "place": "地点",
     "po_number": "输入采购订单号",
     "jo_number": "输入工作编号"
   }
