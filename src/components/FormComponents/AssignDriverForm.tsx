@@ -392,8 +392,11 @@ props) => {
                             disablePortal
                             id="driver"
                             sx={{ width: '100%' }}
-                            // value={assignField.driverId}
-                            getOptionLabel={(option) => option?.driverName}
+                            value={{
+                              driverId: assignField.driverId,
+                              driverName: driverList.find(value => value.driverId === assignField.driverId)?.driverNameEng
+                            }}
+                            getOptionLabel={(option) => option?.driverName ?? ''}
                             options={driverList.map((driver) => {
                               if (currentLang === 'enus') {
                                 return {

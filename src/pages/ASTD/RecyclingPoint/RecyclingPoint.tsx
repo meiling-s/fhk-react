@@ -1,4 +1,9 @@
-import React, { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import React, {
+  useEffect,
+  useState,
+  FunctionComponent,
+  useCallback
+} from 'react'
 import {
   Box,
   Button,
@@ -37,13 +42,19 @@ import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
-import { GET_ALL_RECYCLE_TYPE, GET_RECYC_TYPE } from '../../../constants/requests'
+import {
+  GET_ALL_RECYCLE_TYPE,
+  GET_RECYC_TYPE
+} from '../../../constants/requests'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import { t } from 'i18next'
-import { getEngineData, getSiteTypeData } from '../../../APICalls/ASTD/recycling'
+import {
+  getEngineData,
+  getSiteTypeData
+} from '../../../APICalls/ASTD/recycling'
 import CreateRecyclingPoint from './CreateRecyclingPoint'
 import CreateEngineData from './CreateEngineData'
 import { useNavigate } from 'react-router-dom'
@@ -51,40 +62,41 @@ import { STATUS_CODE } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface siteTypeDataProps {
-    createdAt: string
-    createdBy: string
-    description: string
-    remark: string
-    siteTypeId: string
-    siteTypeNameEng: string
-    siteTypeNameSchi: string
-    siteTypeNameTchi: string
-    status: string
-    updatedAt: string
-    updatedBy: string
+  createdAt: string
+  createdBy: string
+  description: string
+  remark: string
+  siteTypeId: string
+  siteTypeNameEng: string
+  siteTypeNameSchi: string
+  siteTypeNameTchi: string
+  status: string
+  updatedAt: string
+  updatedBy: string
 }
 
 interface engineDataProps {
-    createdAt: string
-    createdBy: string
-    premiseTypeId: string
-    premiseTypeNameEng: string
-    premiseTypeNameSchi: string
-    premiseTypeNameTchi: string
-    registeredFlg: boolean
-    remark: string
-    residentalFlg: boolean
-    serviceType: string
-    status: string
-    updatedAt: string
-    updatedBy: string
+  createdAt: string
+  createdBy: string
+  premiseTypeId: string
+  premiseTypeNameEng: string
+  premiseTypeNameSchi: string
+  premiseTypeNameTchi: string
+  registeredFlg: boolean
+  remark: string
+  residentalFlg: boolean
+  serviceType: string
+  status: string
+  updatedAt: string
+  updatedBy: string
 }
 
 const RecyclingPoint: FunctionComponent = () => {
   const { t, i18n } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState<siteTypeDataProps | null>(null)
-  const [engineSelectedRow, setEngineSelectedRow] = useState<engineDataProps | null>(null)
+  const [engineSelectedRow, setEngineSelectedRow] =
+    useState<engineDataProps | null>(null)
   const [siteTypeData, setSiteTypeData] = useState<siteTypeDataProps[]>([])
   const [engineData, setEngineData] = useState<engineDataProps[]>([])
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
@@ -93,7 +105,7 @@ const RecyclingPoint: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [engineDrawerOpen, setEngineDrawerOpen] = useState<boolean>(false)
-  const  navigate = useNavigate();
+  const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   useEffect(() => {
     initSiteTypeData()
@@ -106,26 +118,26 @@ const RecyclingPoint: FunctionComponent = () => {
       const data = result?.data
 
       setSiteTypeData(data)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
 
   const initEngineData = async () => {
-   try {
-    const result = await getEngineData()
-    const data = result?.data
+    try {
+      const result = await getEngineData()
+      const data = result?.data
 
-    setEngineData(data)
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+      setEngineData(data)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
   }
 
   const columns: GridColDef[] = [
@@ -133,7 +145,7 @@ const RecyclingPoint: FunctionComponent = () => {
       field: 'siteTypeNameTchi',
       headerName: t('packaging_unit.traditional_chinese_name'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'siteTypeNameSchi',
@@ -205,7 +217,7 @@ const RecyclingPoint: FunctionComponent = () => {
       field: 'premiseTypeNameTchi',
       headerName: t('packaging_unit.traditional_chinese_name'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'premiseTypeNameSchi',
@@ -310,7 +322,6 @@ const RecyclingPoint: FunctionComponent = () => {
   }
 
   const onSubmitData = (type: string, msg: string) => {
-
     if (type == 'success') {
       showSuccessToast(msg)
     } else {
@@ -364,20 +375,20 @@ const RecyclingPoint: FunctionComponent = () => {
     <>
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          pr: 4,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          pr: 4
         }}
       >
         <ToastContainer></ToastContainer>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            marginY: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginY: 4
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
@@ -385,16 +396,19 @@ const RecyclingPoint: FunctionComponent = () => {
           </Typography>
           <Button
             sx={[
-              styles.buttonOutlinedGreen, 
+              styles.buttonOutlinedGreen,
               {
-                width: "max-content",
-                height: "40px",
-              },
+                width: 'max-content',
+                height: '40px'
+              }
             ]}
             variant="outlined"
-            onClick={() => {setDrawerOpen(true); setAction('add')}}
+            onClick={() => {
+              setDrawerOpen(true)
+              setAction('add')
+            }}
           >
-            <ADD_ICON /> {t("top_menu.add_new")}
+            <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
@@ -404,10 +418,12 @@ const RecyclingPoint: FunctionComponent = () => {
               getRowId={(row) => row.siteTypeId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
+              localeText={localeTextDataGrid}getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.siteTypeId ? 'selected-row' : ''
+              }
+
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -421,17 +437,25 @@ const RecyclingPoint: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
           </Box>
         </div>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            marginY: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginY: 4
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
@@ -439,16 +463,19 @@ const RecyclingPoint: FunctionComponent = () => {
           </Typography>
           <Button
             sx={[
-              styles.buttonOutlinedGreen, 
+              styles.buttonOutlinedGreen,
               {
-                width: "max-content",
-                height: "40px",
-              },
+                width: 'max-content',
+                height: '40px'
+              }
             ]}
             variant="outlined"
-            onClick={() => {setEngineDrawerOpen(true); setAction('add')}}
+            onClick={() => {
+              setEngineDrawerOpen(true)
+              setAction('add')
+            }}
           >
-            <ADD_ICON /> {t("top_menu.add_new")}
+            <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
@@ -458,10 +485,12 @@ const RecyclingPoint: FunctionComponent = () => {
               getRowId={(row) => row.premiseTypeId}
               hideFooter
               columns={engineColumns}
-              checkboxSelection
               onRowClick={handleEngineSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                engineSelectedRow && params.id === engineSelectedRow.premiseTypeId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -475,14 +504,22 @@ const RecyclingPoint: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
           </Box>
         </div>
         <CreateRecyclingPoint
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
             action={action}
             rowId={rowId}
             selectedItem={selectedRow}
@@ -491,7 +528,7 @@ const RecyclingPoint: FunctionComponent = () => {
         />
         <CreateEngineData
             drawerOpen={engineDrawerOpen}
-            handleDrawerClose={() => setEngineDrawerOpen(false)}
+            handleDrawerClose={() => {setEngineDrawerOpen(false); setEngineSelectedRow(null)}}
             action={action}
             rowId={rowId}
             selectedItem={engineSelectedRow}

@@ -159,14 +159,14 @@
     "location": "Physical location",
     "place": "Place",
     "status": "Status",
-    "recyclable_subcategories": "Recyclable subcategories",
+    "recyclable_subcategories": "Recyclable type(s)",
     "enter_tenantId": "Enter the tenant id"
   },
   "add_warehouse_page": {
     "save": "Save",
     "delete": "Delete",
     "type_name": "Please type a name",
-    "recyclable_subcategories": "Recyclable subcategories",
+    "recyclable_subcategories": "Recyclable type(s)",
     "place_placeholders": "No. 14, Ao Pui Wan Street, Fo Tan",
     "subtype": "Subtype",
     "recycle_type": "Recycle type",
@@ -182,6 +182,7 @@
     "contractNum": "Contract number",
     "warehouseRecyc": "recyclable type(s)",
     "shouldNotEmpty": "should not empty",
+    "shouldNotDuplicate": "should not duplicate",
     "shouldNotDuplicated": "The address of warehouse had been used"
   },
   "check_in": {
@@ -204,7 +205,7 @@
     "recyc_loc_info": "Recycling location information",
     "recyclable_type_weight": "Recyclable type & weight",
     "message": "Message",
-    "confirm_reject": "Are you sure to request the check-in proceed?",
+    "confirm_reject": "Are you sure to reject request the check-in proceed?",
     "reject_reasons": "Reject reason(s)",
     "confirm": "Confirm",
     "cancel": "Cancel",
@@ -526,7 +527,8 @@
       "invite_success": "Success send invitation",
       "invite_failed": "Failed send invitation",
       "err_date": "Invalid Shipping validity date. Ensure To date is later than the Start date",
-      "err_duplicated": "Company number/Company name/Business Reg. No. already exist"
+      "err_duplicated": "Company number/Company name/Business Reg. No. already exist",
+      "err_companyIdLength": "Company ID must be a 6 digital code"
     },
     "detail": {
       "company_category": "Company Category",
@@ -1004,8 +1006,8 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "Vehicle Number",
-      "license_plate_number": "License Plate Number",
+      "vehicle_number": "Vehicle no.",
+      "license_plate_number": "License Plate no.",
       "vehicle_type": "Vehicle Type",
       "vehicle_cargo_capacity": "Vehicle Cargo Capacity",
       "picture": "Picture",

@@ -12,7 +12,7 @@ import dayjs from 'dayjs'
 import { toast } from 'react-toastify'
 import { fieldNameRecycables } from '../constants/constant'
 import { errorState } from '../interfaces/common'
-import i18n from '../setups/i18n';
+import i18n from '../setups/i18n'
 import { recycType } from '../interfaces/common'
 
 export const returnApiToken = () => {
@@ -300,10 +300,11 @@ export const randomBackgroundColor = (): string => {
   return bgColor
 }
 
-
-export const extractError = (error:any):{state:errorState, realm: string} => {
-  const realm = localStorage.getItem(localStorgeKeyName.realm) || '';
-  let message:string = '';
+export const extractError = (
+  error: any
+): { state: errorState; realm: string } => {
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
+  let message: string = ''
 
   switch (error?.response?.status) {
     case STATUS_CODE[401]:
@@ -327,7 +328,7 @@ export const extractError = (error:any):{state:errorState, realm: string} => {
     message: message || 'not found'
   }
 
-  return {state, realm}
+  return { state, realm }
 }
 
 export const getSelectedLanguange = (lang: string) => {
@@ -350,46 +351,54 @@ export const getSelectedLanguange = (lang: string) => {
   return selectedLang
 }
 
-export const mappingRecyName = (recycTypeId: string, recycSubTypeId: string, recycType: recycType[]) => {
+export const mappingRecyName = (
+  recycTypeId: string,
+  recycSubTypeId: string,
+  recycType: recycType[]
+) => {
   const matchingRecycType = recycType?.find(
-      (recyc) => recycTypeId === recyc.recycTypeId
-  );
+    (recyc) => recycTypeId === recyc.recycTypeId
+  )
 
   if (matchingRecycType) {
-      const matchRecycSubType = matchingRecycType.recycSubType?.find(
-          (subtype) => subtype.recycSubTypeId === recycSubTypeId
-      );
-      var name = '';
-      switch (i18n.language) {
-          case 'enus':
-              name = matchingRecycType.recyclableNameEng;
-              break;
-          case 'zhch':
-              name = matchingRecycType.recyclableNameSchi;
-              break;
-          case 'zhhk':
-              name = matchingRecycType.recyclableNameTchi;
-              break;
-          default:
-              name = matchingRecycType.recyclableNameTchi;
-              break;
-      }
-      var subName = '';
-      switch (i18n.language) {
-          case 'enus':
-              subName = matchRecycSubType?.recyclableNameEng ?? '';
-              break;
-          case 'zhch':
-              subName = matchRecycSubType?.recyclableNameSchi ?? '';
-              break;
-          case 'zhhk':
-              subName = matchRecycSubType?.recyclableNameTchi ?? '';
-              break;
-          default:
-              subName = matchRecycSubType?.recyclableNameTchi ?? ''; //default fallback language is zhhk
-              break;
-      }
+    const matchRecycSubType = matchingRecycType.recycSubType?.find(
+      (subtype) => subtype.recycSubTypeId === recycSubTypeId
+    )
+    var name = ''
+    switch (i18n.language) {
+      case 'enus':
+        name = matchingRecycType.recyclableNameEng
+        break
+      case 'zhch':
+        name = matchingRecycType.recyclableNameSchi
+        break
+      case 'zhhk':
+        name = matchingRecycType.recyclableNameTchi
+        break
+      default:
+        name = matchingRecycType.recyclableNameTchi
+        break
+    }
+    var subName = ''
+    switch (i18n.language) {
+      case 'enus':
+        subName = matchRecycSubType?.recyclableNameEng ?? ''
+        break
+      case 'zhch':
+        subName = matchRecycSubType?.recyclableNameSchi ?? ''
+        break
+      case 'zhhk':
+        subName = matchRecycSubType?.recyclableNameTchi ?? ''
+        break
+      default:
+        subName = matchRecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+        break
+    }
 
-      return { name, subName };
+    return { name, subName }
   }
-};
+}
+
+export const validateEmail = (email: string) => {
+  return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}

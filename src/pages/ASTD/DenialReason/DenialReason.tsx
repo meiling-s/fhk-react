@@ -329,7 +329,7 @@ const DenialReason: FunctionComponent = () => {
           </Button>
         )
       }
-    },
+    }
     // {
     //   field: 'status',
     //   headerName: t('col.status'),
@@ -475,10 +475,12 @@ const DenialReason: FunctionComponent = () => {
               getRowId={(row) => row.reasonId}
               hideFooter
               columns={columns}
-              checkboxSelection
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
+              getRowClassName={(params) => 
+                selectedRow && params.id === selectedRow.reasonId ? 'selected-row' : ''
+              }
               sx={{
                 border: 'none',
                 '& .MuiDataGrid-cell': {
@@ -492,7 +494,15 @@ const DenialReason: FunctionComponent = () => {
                   '&>.MuiDataGrid-columnHeaders': {
                     borderBottom: 'none'
                   }
-                }
+                },
+                '.MuiDataGrid-columnHeaderTitle': { 
+                  fontWeight: 'bold !important',
+                  overflow: 'visible !important'
+                },
+                '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
               }}
             />
             <Pagination
@@ -508,7 +518,7 @@ const DenialReason: FunctionComponent = () => {
         {rowId != 0 && (
           <CreateDenialReason
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}

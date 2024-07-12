@@ -381,7 +381,7 @@ const JobOrder = () => {
         id: item.joId,
         joId: item.joId,
         picoId: item.picoId,
-        createdAt: displayCreatedDate(item.createdAt),
+        createdAt: item.createdAt,
         driverId: item.driverId,
         plateNo: item.plateNo,
         senderName: item.senderName,
@@ -453,6 +453,7 @@ const JobOrder = () => {
   }, [])
   const handleCloses = () => {
     setOpenModal(false)
+    setSelectedRow(null)
   }
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as Row
@@ -502,11 +503,14 @@ const JobOrder = () => {
           <DataGrid
             rows={filteredPico}
             columns={columns}
-            checkboxSelection
+  
             disableRowSelectionOnClick
             onRowClick={handleRowClick}
             getRowSpacing={getRowSpacing}
             localeText={localeTextDataGrid}
+            getRowClassName={(params) => 
+              selectedRow && params.id === selectedRow.joId ? 'selected-row' : ''
+            }
             hideFooter
             sx={{
               border: 'none',
@@ -521,7 +525,15 @@ const JobOrder = () => {
                 '&>.MuiDataGrid-columnHeaders': {
                   borderBottom: 'none'
                 }
-              }
+              },
+              '.MuiDataGrid-columnHeaderTitle': { 
+                fontWeight: 'bold !important',
+                overflow: 'visible !important'
+              },
+              '& .selected-row': {
+                  backgroundColor: '#F6FDF2 !important',
+                  border: '1px solid #79CA25'
+                }
             }}
           />
           <Pagination

@@ -75,8 +75,8 @@ function createStaff(
   updatedBy: string,
   createdAt: string,
   updatedAt: string,
-  titleValue:string,
-  fullTimeFlg?: boolean,
+  titleValue: string,
+  fullTimeFlg?: boolean
 ): Staff {
   return {
     staffId,
@@ -101,11 +101,11 @@ function createStaff(
 }
 
 export type Title = {
-  name: string,
-  id: string,
-  nameEng:string,
-  nameSc:string,
-  nameTc:string
+  name: string
+  id: string
+  nameEng: string
+  nameSc: string
+  nameTc: string
 }
 
 const StaffManagement: FunctionComponent = () => {
@@ -132,7 +132,7 @@ const StaffManagement: FunctionComponent = () => {
     staffId: '',
     staffName: ''
   })
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const initStaffTitle = async () => {
     const result = await getStaffTitle()
@@ -140,7 +140,7 @@ const StaffManagement: FunctionComponent = () => {
       const data = result.data.content
       let staffTitle: Title[] = []
       data.forEach((item: any) => {
-        let title:Title = {
+        let title: Title = {
           id: item.titleId,
           name: '',
           nameEng: item.titleNameEng,
@@ -179,18 +179,22 @@ const StaffManagement: FunctionComponent = () => {
         data.map((item: any) => {
           const dateInHK = dayjs.utc(item.updatedAt).tz('Asia/Hong_Kong')
           const updatedAt = dateInHK.format(`${dateFormat} HH:mm`)
-          
-          staffTitleList.forEach((title:Title) => {
-            if(i18n.language === Languages.ENUS && item?.titleId === title.id){
+
+          staffTitleList.forEach((title: Title) => {
+            if (
+              i18n.language === Languages.ENUS &&
+              item?.titleId === title.id
+            ) {
               item.titleValue = title.nameEng
-            } else if(i18n.language === Languages.ZHCH && item?.titleId === title.id){
+            } else if (
+              i18n.language === Languages.ZHCH &&
+              item?.titleId === title.id
+            ) {
               item.titleValue = title.nameSc
             } else if (item?.titleId === title.id) {
               item.titleValue = title.nameTc
             }
-          } 
-            
-          )
+          })
 
           staffMapping.push(
             createStaff(
@@ -212,7 +216,7 @@ const StaffManagement: FunctionComponent = () => {
               item?.createdAt,
               updatedAt,
               item?.titleValue,
-              item?.fullTimeFlg,
+              item?.fullTimeFlg
             )
           )
         })
@@ -387,7 +391,7 @@ const StaffManagement: FunctionComponent = () => {
         headerName: t('staffManagement.lastLogin'),
         width: 200,
         type: 'string'
-      },
+      }
       // {
       //   field: 'edit',
       //   headerName: t('pick_up_order.item.edit'),
@@ -456,12 +460,10 @@ const StaffManagement: FunctionComponent = () => {
     setDrawerOpen(true)
   }
 
-
   // const handleTabChange = () => {}
   const handleTabChange = (tab: number) => {
     setSelectedTab(tab)
   }
-
 
   const onSubmitData = () => {
     initStaffList()
@@ -552,10 +554,12 @@ const StaffManagement: FunctionComponent = () => {
                   getRowId={(row) => row.staffId}
                   hideFooter
                   columns={columns}
-                  checkboxSelection
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
+                  getRowClassName={(params) => 
+                    selectedRow && params.id === selectedRow.staffId ? 'selected-row' : ''
+                  }
                   initialState={{
                     sorting: {
                       sortModel: [{ field: 'staffId', sort: 'asc' }]
@@ -574,7 +578,15 @@ const StaffManagement: FunctionComponent = () => {
                       '&>.MuiDataGrid-columnHeaders': {
                         borderBottom: 'none'
                       }
-                    }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': { 
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                        backgroundColor: '#F6FDF2 !important',
+                        border: '1px solid #79CA25'
+                      }
                   }}
                 />
                 <Pagination
@@ -590,7 +602,7 @@ const StaffManagement: FunctionComponent = () => {
             {/* {selectedRow != null && ( */}
             <StaffDetail
               drawerOpen={drawerOpen}
-              handleDrawerClose={() => setDrawerOpen(false)}
+              handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
               action={action}
               selectedItem={selectedRow}
               staffList={staffList}

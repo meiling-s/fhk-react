@@ -38,6 +38,7 @@ type RecycItem = {
   recycSubtype: il_item
   weight: number
   images: string[]
+  unitId?: string
 }
 
 interface EditProcessRecordProps {
@@ -51,19 +52,17 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   handleDrawerClose,
   selectedRow
 }) => {
-  const { t } = useTranslation()
-  const { recycType, decimalVal } = useContainer(CommonTypeContainer)
+  const { t, i18n} = useTranslation()
+  const { recycType, decimalVal, processType, dateFormat, weightUnits } = useContainer(CommonTypeContainer)
   const [drawerRecyclable, setDrawerRecyclable] = useState(false)
   const [action, setAction] = useState<
     'none' | 'add' | 'edit' | 'delete' | undefined
   >('add')
+
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const [reloadData, setReloadData] = useState(false);
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
-  const {processType, dateFormat} = useContainer(CommonTypeContainer)
-
-
 
   const mappingProcessName = (processTypeId: string) => {
     
@@ -218,7 +217,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
               weight: detail.weight,
               images: detail.processoutDetailPhoto.map((item) => {
                 return `data:image/jpeg;base64,${item.photo}`
-              })
+              }),
+              unitId: detail.unitId
             })
           }
         })
@@ -249,7 +249,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
       recycSubTypeId: data.recycSubTypeId,
       packageTypeId: selectedRow?.packageTypeId || "",
       weight: data.weight,
-      unitId: 'kg',
+      unitId: data.unitId,
       status: data.status,
       processoutDetailPhoto: imgItems,
       createdBy: loginId,
@@ -310,6 +310,10 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
     }
   }
 
+  // const getWeightUnitList = async () => {
+  //   const result = await getWeightUnitList
+  // }
+
   return (
     <>
       <div className="detail-inventory">
@@ -353,7 +357,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                   </Typography>
                 </Box>
               </Grid>
-              {fieldItem.map((item, index) => (
+              {fieldItem.map((item, index) => {
+                return (
                 <Grid item key={index}>
                   <CustomField label={item.label}>
                     <Typography sx={localStyle.textField}>
@@ -361,7 +366,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                     </Typography>
                   </CustomField>
                 </Grid>
-              ))}
+                )})}
               <Grid item>
                 <Box>
                   <Typography sx={styles.header2}>
@@ -374,67 +379,73 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
                   <div className="recyle-type-weight text-[13px] text-[#ACACAC] font-normal tracking-widest mb-4">
                     {t('processRecord.categoryWeight')}
                   </div>
-                  {recycItem?.map((item, index) => (
-                    <div
-                      key={index}
-                      className="recyle-item px-4 py-2 rounded-xl border border-solid border-[#E2E2E2] mt-4"
-                    >
-                      <div className="detail flex justify-between items-center">
-                        <div className="recyle-type flex items-center gap-2">
-                          <div className="category" style={categoryRecyle}>
-                            {item.recycType.name.charAt(0)}
+                  {recycItem?.map((item, index) => {
+                    const weightType = weightUnits && weightUnits.find((value) => value.unitId === Number(item.unitId))
+                    const weightUnit = i18n.language === 'enus' ? weightType?.unitNameEng : i18n.language === 'zhch' ? weightType?.unitNameSchi : weightType?.unitNameTchi
+                    return (
+                      <div
+                        key={index}
+                        className="recyle-item px-4 py-2 rounded-xl border border-solid border-[#E2E2E2] mt-4"
+                      >
+                        <div className="detail flex justify-between items-center">
+                          <div className="recyle-type flex items-center gap-2">
+                            <div className="category" style={categoryRecyle}>
+                              {item.recycType.name.charAt(0)}
+                            </div>
+                            <div className="type-item">
+                              <div className="sub-type text-xs text-black font-bold tracking-widest">
+                                {item.recycType.name}
+                              </div>
+                              <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
+                                {item.recycSubtype.name}
+                              </div>
+                            </div>
                           </div>
-                          <div className="type-item">
-                            <div className="sub-type text-xs text-black font-bold tracking-widest">
-                              {item.recycType.name}
+                          <div className="right action flex items-center gap-2">
+                            <div className="weight font-bold font-base">
+                              {formatWeight(item.weight, decimalVal)}{weightUnit}
                             </div>
-                            <div className="type text-mini text-[#ACACAC] font-normal tracking-widest mb-2">
-                              {item.recycSubtype.name}
-                            </div>
+                            {/* {item.processOutId == 0 && ( */}
+                              <Box>
+                                <DriveFileRenameOutlineOutlinedIcon
+                                  onClick={() => {
+                                    setSelectedItem(item)
+                                    setAction('edit')
+                                    setDrawerRecyclable(true)
+                                  }}
+                                  fontSize="small"
+                                  className="text-gray cursor-pointer"
+                                />
+                                <DELETE_OUTLINED_ICON
+                                  onClick={() => {
+                                    setSelectedItem(item)
+                                    setAction('delete')
+                                    setDrawerRecyclable(true)
+                                  }}
+                                  fontSize="small"
+                                  className="text-gray cursor-pointer"
+                                ></DELETE_OUTLINED_ICON>
+                              </Box>
+                            {/* )} */}
                           </div>
                         </div>
-                        <div className="right action flex items-center gap-2">
-                          <div className="weight font-bold font-base">
-                            {formatWeight(item.weight, decimalVal)}kg
+                        {item.images.length != 0 && (
+                          <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
+                            {item.images.map((img, index) => {
+                              return (
+                                <img
+                                  src={img}
+                                  alt=""
+                                  key={index}
+                                  className="lg:w-[100px] h-[100px] object-cover sm:w-16"
+                                />
+                              )
+                            })}
                           </div>
-                          {/* {item.processOutId == 0 && ( */}
-                            <Box>
-                              <DriveFileRenameOutlineOutlinedIcon
-                                onClick={() => {
-                                  setSelectedItem(item)
-                                  setAction('edit')
-                                  setDrawerRecyclable(true)
-                                }}
-                                fontSize="small"
-                                className="text-gray cursor-pointer"
-                              />
-                              <DELETE_OUTLINED_ICON
-                                onClick={() => {
-                                  setSelectedItem(item)
-                                  setAction('delete')
-                                  setDrawerRecyclable(true)
-                                }}
-                                fontSize="small"
-                                className="text-gray cursor-pointer"
-                              ></DELETE_OUTLINED_ICON>
-                            </Box>
-                          {/* )} */}
-                        </div>
+                        )}
                       </div>
-                      {item.images.length != 0 && (
-                        <div className="images mt-3 grid lg:grid-cols-4 sm:rid grid-cols-2 gap-4">
-                          {item.images.map((img, index) => (
-                            <img
-                              src={img}
-                              alt=""
-                              key={index}
-                              className="lg:w-[100px] h-[100px] object-cover sm:w-16"
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                    )
+                  })}
                 </Box>
               </Grid>
               <Grid item>
@@ -471,6 +482,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
             editedData={selectedItem}
             processOut={selectedRow}
             action={action}
+            weightUnits={weightUnits}
           />
         </RightOverlayForm>
       </div>
