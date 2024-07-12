@@ -524,6 +524,8 @@ function ShipmentManage() {
                   const companyName = getTranslationCompany(item.recipientCompany)
                   item.recipientCompany = companyName === '' ? item.recipientCompany  : companyName
                  }
+                 const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+                 item.createdAt =  dateInHK.format(`${dateFormat} HH:mm`);
                  newData.push(item)
               }
             }
