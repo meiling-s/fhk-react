@@ -32,6 +32,7 @@ function CustomPeriodSelect({
   const { t } = useTranslation()
 
   const onChangeDate = (start: boolean, value: dayjs.Dayjs | null) => {
+    
     if (value != null) {
       const peri = Object.assign({}, period)
       if (start) {

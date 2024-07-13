@@ -17,7 +17,9 @@ import { REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import CustomItemList, { StaffName } from '../../../components/FormComponents/CustomItemList'
+import CustomItemList, {
+  StaffName
+} from '../../../components/FormComponents/CustomItemList'
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
@@ -27,7 +29,8 @@ import {
   displayLocalDate,
   displayLocalDateWitoutOffset,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  validDayjsISODate
 } from '../../../utils/utils'
 
 import { Languages, formErr } from '../../../constants/constant'
@@ -74,6 +77,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   const initStaff: string[] = ['']
 
   const [rosterDate, setRosterDate] = useState<string>('')
+  const [dateParent, setDateParent] = useState<dayjs.Dayjs>(dayjs())
   const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs())
   const [endDate, setEndDate] = useState<dayjs.Dayjs>(dayjs())
   const [selectedColPoint, setSelectedColPoint] = useState<string>('')
@@ -138,18 +142,18 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
       const data = result.data.content
       var staffMapping: StaffName[] = []
       data.map((item: any) => {
-        let name:string = '';
+        let name: string = ''
 
-        switch(i18n.language){
-          case Languages.ENUS: 
-            name = item.staffNameEng;
-            break;
+        switch (i18n.language) {
+          case Languages.ENUS:
+            name = item.staffNameEng
+            break
           case Languages.ZHCH:
             name = item.staffNameSchi
-            break;
-          default: 
+            break
+          default:
             name = item.staffNameTchi
-            break;
+            break
         }
         staffMapping.push({
           id: item.staffId,
@@ -197,6 +201,46 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+      //validDayjsISODate
+      dateParent == null &&
+        tempV.push({
+          field: t('roster.date'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      dateParent &&
+        !validDayjsISODate(dateParent) &&
+        tempV.push({
+          field: t('roster.date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      startDate == null &&
+        tempV.push({
+          field: t('roster.timeBy'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      startDate &&
+        !validDayjsISODate(startDate) &&
+        tempV.push({
+          field: t('roster.timeBy'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      endDate == null &&
+        tempV.push({
+          field: t('roster.to'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      endDate == null &&
+        !validDayjsISODate(endDate) &&
+        tempV.push({
+          field: t('roster.to'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
       startDate > endDate &&
         tempV.push({
           field: t('roster.timeBy'),
@@ -217,7 +261,9 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }, [selectedStaff, startDate, endDate])
 
   const formattedDate = (dateData: dayjs.Dayjs) => {
-    return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    if (dateData != null) {
+      return dateData.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    }
   }
 
   const handleSubmit = () => {
@@ -352,7 +398,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
   }
 
   const handleRemoveStaff = (indexToRemove: number) => {
-    if(indexToRemove === 0 && selectedStaff.length === 1) return
+    if (indexToRemove === 0 && selectedStaff.length === 1) return
     const updatedContractNum = selectedStaff.filter(
       (_, index) => index !== indexToRemove
     )
@@ -410,9 +456,10 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                 {action == 'add' ? (
                   <Box sx={{ ...localStyle.DateItem }}>
                     <DatePicker
-                      defaultValue={dayjs()}
+                      defaultValue={dayjs(dateParent)}
                       format={format.dateFormat2}
                       onChange={(value) => {
+                        setDateParent(value!!)
                         setStartDate(value!!)
                         setEndDate(value!!)
                       }}
@@ -548,18 +595,17 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                       />
                     )
                   )}
-                  { index == selectedStaff.length - 1 && 
-                      <REMOVE_CIRCLE_ICON
-                        fontSize="small"
-                        className={`text-grey-light ${
-                          selectedStaff.length === 1
-                            ? 'cursor-not-allowed'
-                            : 'cursor-pointer'
-                        } `}
-                        onClick={() => handleRemoveStaff(index)}
-                      />
-
-                  }
+                  {index == selectedStaff.length - 1 && (
+                    <REMOVE_CIRCLE_ICON
+                      fontSize="small"
+                      className={`text-grey-light ${
+                        selectedStaff.length === 1
+                          ? 'cursor-not-allowed'
+                          : 'cursor-pointer'
+                      } `}
+                      onClick={() => handleRemoveStaff(index)}
+                    />
+                  )}
                 </Box>
               ))}
               <Grid item>
