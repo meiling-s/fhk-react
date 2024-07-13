@@ -167,9 +167,9 @@ const useValidationPickupOrder = (pico : CreatePO | EditPo, state : CreatePicoDe
             messageSc: "出貨有效期限開始日期應早於出貨有效期限結束日期"
         },
         out_of_date_range: {
-            messageEn: "Specific Date is out of range of the Shipping validity date",
-            messageTc: "具體日期超出「出貨有效期限」範圍",
-            messageSc: "具体日期超出“发货有效期”范围"
+            messageEn: "Specify date(s) is in wrong format",
+            messageTc: "指定日期格式錯誤",
+            messageSc: "指定日期格式错误"
         },
         weeklyDate: {
           messageEn: "Weekly Date is Required",

@@ -98,6 +98,7 @@
       "invalidDate": "出貨有效期限開始日期應早於出貨有效期限結束日期",
       "incorrectAddress": "地址不正確",
       "dateOutOfRange": "指定日期超出開放日期範圍",
+      "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期"
     }
   },

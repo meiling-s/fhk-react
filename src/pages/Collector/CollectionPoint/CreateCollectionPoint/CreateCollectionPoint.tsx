@@ -361,8 +361,6 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
-      console.log('isOpeningPeriodEmpty', openingPeriod.startDate)
-      // debugger;
       isOpeningPeriodEmpty() &&
         tempV.push({
           field: `${t('col.effFromDate')}`,
@@ -380,7 +378,7 @@ function CreateCollectionPoint() {
       !checkRoutineDates() &&
         tempV.push({
           field: `${t('date')}`,
-          problem: formErr.dateOutOfRange,
+          problem: formErr.dateSpesificIsWrong,
           type: 'error'
         })
       ;(colPtRoutine?.routineContent.length == 0 || !checkTimePeriod()) &&
@@ -577,6 +575,9 @@ function CreateCollectionPoint() {
         break
       case formErr.effectiveDateLess:
         msg = t('form.error.effectiveDateLess')
+        break
+      case formErr.dateSpesificIsWrong:
+        msg = t('form.error.dateSpesificIsWrong')
         break
     }
     return msg
