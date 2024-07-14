@@ -377,7 +377,7 @@ function CreateCollectionPoint() {
 
       !checkRoutineDates() &&
         tempV.push({
-          field: `${t('date')}`,
+          field: 'date',
           problem: formErr.dateSpesificIsWrong,
           type: 'error'
         })

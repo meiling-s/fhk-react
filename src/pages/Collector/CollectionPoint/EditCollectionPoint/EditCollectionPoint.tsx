@@ -57,7 +57,11 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import { localStorgeKeyName } from '../../../../constants/constant'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
-import { displayCreatedDate, extractError } from '../../../../utils/utils'
+import {
+  displayCreatedDate,
+  extractError,
+  validDayjsISODate
+} from '../../../../utils/utils'
 
 function CreateCollectionPoint() {
   const { state } = useLocation()
@@ -283,6 +287,18 @@ function CreateCollectionPoint() {
     }
   }
 
+  const isOpeningPeriodValid = () => {
+    return (
+      validDayjsISODate(openingPeriod.startDate) &&
+      validDayjsISODate(openingPeriod.endDate)
+    )
+  }
+
+  const isOpeningPeriodEmpty = () => {
+    console.log('isOpeningPeriodEmpty', openingPeriod.startDate)
+    return !openingPeriod.startDate || !openingPeriod.endDate
+  }
+
   useEffect(() => {
     const validate = async () => {
       //do validation here
@@ -373,9 +389,23 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
+      isOpeningPeriodEmpty() &&
+        tempV.push({
+          field: `${t('col.effFromDate')}`,
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      !isOpeningPeriodValid() &&
+        tempV.push({
+          field: `${t('col.effFromDate')}`,
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+
       !checkRoutineDates() &&
         tempV.push({
-          field: `${t('date')}`,
+          field: 'date',
           problem: formErr.dateSpesificIsWrong,
           type: 'error'
         })

@@ -67,7 +67,7 @@ type DeleteModalProps = {
 
 const ErrorMessage: React.FC<{ message: string }> = ({ message }) => {
   return (
-    <div className="bg-[#F7BBC6] p-3 rounded-xl">
+    <div className="bg-[#F7BBC6] p-3 rounded-xl w-1/2">
       <Typography
         style={{
           color: 'red',
