@@ -266,13 +266,16 @@ export const onChangeWeight = (
   if (decimalVal === 0) {
     regexStr = '^\\d*$' // 只匹配整數
   } else {
-    const decimalStr = decimalVal.toString()
-    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length
-    regexStr = '^(?!\\.$)\\d*\\.?\\d{0,' + zeroCount + '}$' // 匹配小數，但首字符不能是小數點
-  }
-  const regex = new RegExp(regexStr)
-  if (regex.test(value) || value === '') {
-    cb(value)
+    const newValue = value.split('.')
+    if (newValue[0].length < 9) {
+      const decimalStr = decimalVal.toString()
+      const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length
+      regexStr = '^(?!\\.$)\\d*\\.?\\d{0,' + zeroCount + '}$' // 匹配小數，但首字符不能是小數點
+      const regex = new RegExp(regexStr)
+      if (regex.test(value) || value === '') {
+        cb(value)
+      }
+    }
   }
 }
 
