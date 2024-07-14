@@ -912,6 +912,7 @@ function CreateCollectionPoint() {
                     }}
                   />
                 )}
+                noOptionsText={t('common.noOptions')}
               />
             </CustomField>
 

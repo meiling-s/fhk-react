@@ -605,6 +605,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
                           error={checkString(selectedFunctionId)}
                         />
                       )}
+                      noOptionsText={t('common.noOptions')}
                     />
                   </CustomField>
                 </Grid>

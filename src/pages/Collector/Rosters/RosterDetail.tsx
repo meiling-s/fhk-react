@@ -471,11 +471,15 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                     setSelectedColPoint(event.target.value)
                   }}
                 >
-                  {colPointList?.map((item, index) => (
+                  {colPointList.length > 0 ? (colPointList?.map((item, index) => (
                     <MenuItem key={index} value={item.id}>
                       {item.name}
                     </MenuItem>
-                  ))}
+                  ))) : (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
+                    </MenuItem>
+                  )}
                 </Select>
               </FormControl>
             </Grid>
@@ -522,11 +526,15 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                       }}
                       error={trySubmited && selectedStaff.length == 0}
                     >
-                      {staffList?.map((item, index) => (
+                      {staffList.length > 0 ? (staffList?.map((item, index) => (
                         <MenuItem key={index} value={item.id}>
                           {`${item.id} - ${item.name}`}
                         </MenuItem>
-                      ))}
+                      ))) : (
+                        <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
+                    </MenuItem>
+                      )}
                     </Select>
                   </FormControl>
                   {index === selectedStaff.length - 1 ? (

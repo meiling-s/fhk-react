@@ -799,6 +799,7 @@ const PickupOrderCreateForm = ({
                             }}
                           />
                         )}
+                        noOptionsText={t('common.noOptions')}
                       />
                     </CustomField>
                   </Box>
