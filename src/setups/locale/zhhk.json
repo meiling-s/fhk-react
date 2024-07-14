@@ -670,7 +670,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "倉庫",
+    "warehouse": "倉庫儀表板",
     "currentCapacity": "現時容量",
     "thereStillEnoughSpace": "還有足夠的空間",
     "noMoreRoom": "沒有空間了",

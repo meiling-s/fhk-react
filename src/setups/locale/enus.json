@@ -671,7 +671,7 @@
     "deleteProcessOutFailed": "Delete process out failed"
   },
   "warehouseDashboard": {
-    "warehouse": "Warehouse",
+    "warehouse": "Warehouse Dashboard",
     "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
     "noMoreRoom": "No more room",
