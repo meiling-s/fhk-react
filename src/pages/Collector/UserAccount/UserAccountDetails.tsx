@@ -463,11 +463,18 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                     }
                   }}
                 >
-                  {userGroupList.map((item, index) => (
+                  {!userGroupList? 
+                  ( <MenuItem disabled value="">
+                  <em>No options available</em>
+                </MenuItem>
+                )
+                :
+                  (userGroupList.map((item, index) => (
                     <MenuItem key={index} value={item.groupId}>
                       {item.roleName}
                     </MenuItem>
-                  ))}
+                  )))
+                }
                 </Select>
               </FormControl>
             </Grid>

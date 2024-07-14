@@ -31,7 +31,8 @@
     "pageNotFound": "Page Not Found",
     "errorMessage": "Error Message",
     "message": "Message",
-    "statusCode": "status Code"
+    "statusCode": "status Code",
+    "noOptions": "No options"
   },
   "col": {
     "createCP": "Create collection point",

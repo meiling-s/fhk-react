@@ -31,7 +31,8 @@
     "pageNotFound": "找不到网页",
     "errorMessage": "错误信息",
     "message": "留言",
-    "statusCode": "状态码"
+    "statusCode": "状态码",
+    "noOptions": "无选项"
   },
   "col": {
     "createCP": "建立回收点",

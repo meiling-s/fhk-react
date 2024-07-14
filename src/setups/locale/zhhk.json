@@ -31,7 +31,8 @@
     "pageNotFound": "找不到網頁",
     "errorMessage": "錯誤訊息",
     "message": "留言",
-    "statusCode": "狀態碼"
+    "statusCode": "狀態碼",
+    "noOptions": "無選項"
   },
   "col": {
     "createCP": "建立回收點",
