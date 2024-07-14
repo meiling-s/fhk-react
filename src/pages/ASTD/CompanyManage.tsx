@@ -292,7 +292,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
       defaultPath.tenantRegisterPath + id
     }`
 
-    const result = await sendEmailInvitation(email, id)
+    const result = await sendEmailInvitation(email, id.toString().padStart(6, '0'))
     if (result) {
       onSendInvitation(true)
     } else {
@@ -377,7 +377,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
                     <Button
                       onClick={() =>
                         navigator.clipboard.writeText(
-                          defaultPath.tenantRegisterPath + id
+                          defaultPath.tenantRegisterPath + id.toString().padStart(6, '0')
                         )
                       }
                       sx={[
