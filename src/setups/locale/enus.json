@@ -311,7 +311,7 @@
   },
   "pick_up_order": {
     "enquiry_pickup_order": "Enquiry pickup order",
-    "delete_msg": "are you sure want delete this item ?",
+    "delete_msg": "Do you confirm to delete this item?",
     "out_of_date_range": "Specific Date is out of range of the Shipping validity date",
     "created_pickup_order": "Pickup order has been created",
     "changed_pickup_order": "Pickup order has been changed",

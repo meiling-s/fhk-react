@@ -5,6 +5,7 @@ import { Button, Typography } from '@mui/material'
 import { styles } from '../constants/styles'
 import { useContainer } from 'unstated-next'
 import NotifContainer from '../contexts/NotifContainer'
+import DeleteModal from './FormComponents/deleteModal'
 
 type HeaderProps = {
   title?: string
@@ -39,6 +40,19 @@ const HeaderSection: React.FC<HeaderProps> = ({
   action = 'add',
   statusLabel
 }) => {
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
+
+  const onDeleteModal = () => {
+    setOpenDelete(prev => !prev)
+  }
+
+  const onDeleteClick = async () => {
+    if (onDelete) {
+      await onDelete()
+    }
+    onDeleteModal()
+  }
+
   return (
     <div className="header-section">
       <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
@@ -79,7 +93,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
                   ]}
                   variant="outlined"
                   disabled={action === 'add'}
-                  onClick={onDelete}
+                  onClick={onDeleteModal}
                 >
                   {cancelText}
                 </Button>
@@ -97,6 +111,11 @@ const HeaderSection: React.FC<HeaderProps> = ({
           </div>
         </div>
         </div>
+        <DeleteModal
+          open={openDelete}
+          onClose={onDeleteModal}
+          onDelete={onDeleteClick}
+        />
       </div>
   )
 }
