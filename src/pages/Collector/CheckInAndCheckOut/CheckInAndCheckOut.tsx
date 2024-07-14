@@ -13,7 +13,7 @@ import {
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
-import { STATUS_CODE, format } from '../../../constants/constant'
+import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { SEARCH_ICON } from '../../../themes/icons'
 import { CheckInAndCheckOutDetails } from '../CheckInAndCheckOut'
@@ -47,6 +47,7 @@ function CheckInAndCheckOut() {
   const [isShow, setIsShow] = useState(false)
   const [details, setDetails] = useState(null)
   const [keyword, setKeyword] = useState('')
+  const [primaryColor, setPrimaryColor] = useState<string>('')
   const [filter, setFilter] = useState({
     company: '',
     location: '',
@@ -55,6 +56,7 @@ function CheckInAndCheckOut() {
   const navigate = useNavigate()
   const [totalElements, setTotalElements] = useState<number>(0)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   useEffect(() => {
     getData() // eslint-disable-next-line
@@ -63,6 +65,12 @@ function CheckInAndCheckOut() {
   const request = axios.create({
     baseURL: window.baseURL.collector
   })
+
+  useEffect(() => {
+    setPrimaryColor(
+      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
+    )
+  }, [role])
 
   const getData = async () => {
     try {
@@ -129,9 +137,8 @@ function CheckInAndCheckOut() {
       renderCell: (params) => {
         return params.row.chkInId || params.row.chkOutId ? (
           <div
-            className={`px-4 py-2 rounded-full ${
-              params.row.chkInId ? 'bg-green-primary' : 'bg-blue-primary'
-            } text-white font-bold`}
+            className={`px-4 py-2 rounded-full text-white font-bold`}
+            style={{backgroundColor: primaryColor}}
           >
             {params.row.chkInId
               ? t('checkinandcheckout.send_in')
@@ -271,22 +278,22 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 },
                 '& label.Mui-focused': {
-                  color: '#79CA25' // Change label color when input is focused
+                  color: primaryColor // Change label color when input is focused
                 }
               }
             }}
             label={t('purchase_order.table.pico_id')}
             InputLabelProps={{
-              style: { color: '#79CA25' },
+              style: { color: primaryColor },
               focused: true
             }}
             placeholder={t('checkinandcheckout.search_placeholder')}
@@ -294,7 +301,7 @@ function CheckInAndCheckOut() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: '#79CA25' }} />
+                    <SEARCH_ICON style={{ color: primaryColor }} />
                   </IconButton>
                 </InputAdornment>
               )
@@ -308,13 +315,13 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 }
               }
             }}
@@ -353,13 +360,13 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 }
               }
             }}
@@ -398,13 +405,13 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: primaryColor
                 }
               }
             }}
@@ -489,6 +496,7 @@ function CheckInAndCheckOut() {
   )
 }
 
+const role = localStorage.getItem(localStorgeKeyName.role)
 const styles = {
   textField: {
     borderRadius: '10px',
@@ -498,16 +506,16 @@ const styles = {
     }
   },
   textFieldLabel: {
-    color: '#79CA25',
+    color:  role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25',
     '&.Mui-focused': {
-      color: '#79CA25'
+      color:  role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
     }
   },
   totalElements: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#79CA25',
+    backgroundColor:  role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25',
     padding: '3px',
     borderRadius: '20px',
     width: '20px',

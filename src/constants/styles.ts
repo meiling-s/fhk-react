@@ -393,6 +393,7 @@ export const styles = {
     borderRadius: '10px',
     width: '100%',
     bgcolor: 'white',
+    borderColor: primaryColor,
     '& .MuiOutlinedInput-root': {
       borderRadius: '10px',
       '& fieldset': {

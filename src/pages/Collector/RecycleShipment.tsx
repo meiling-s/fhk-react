@@ -362,10 +362,12 @@ function ShipmentManage() {
     senderName: '',
     senderAddr: ''
   })
+  const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const [reasonList, setReasonList] = useState<any>([])
   const { dateFormat } = useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid();
   const { logisticList, manuList, collectorList } = useContainer(CommonTypeContainer)
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   const getRejectReason = async () => {
     try {
@@ -756,6 +758,12 @@ function ShipmentManage() {
     }
   }, [])
 
+  useEffect(() => {
+    setPrimaryColor(
+      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
+    )
+  }, [role])
+
   return (
     <>
       <Modal open={open} onClose={handleClose}>
@@ -785,16 +793,20 @@ function ShipmentManage() {
         </Grid>
         <Box>
           <Button
-            sx={[
-              styles.buttonFilledGreen,
-              {
+            sx={{
                 mt: 3,
                 width: '90px',
                 height: '40px',
                 m: 0.5,
-                cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer'
-              }
-            ]}
+                cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer',
+                borderRadius: '20px',
+                backgroundColor: primaryColor,
+                '&.MuiButton-root:hover': { bgcolor: primaryColor },
+                borderColor: primaryColor,
+                marginLeft: '20px',
+                fontWeight: 'bold',
+                color: 'white'
+              }}
             disabled={selectedCheckin.length === 0}
             variant="outlined"
             onClick={() => {
@@ -806,15 +818,18 @@ function ShipmentManage() {
             {t('check_in.approve')}
           </Button>
           <Button
-            sx={[
-              styles.buttonOutlinedGreen,
-              {
+            sx={{
                 mt: 3,
                 width: '90px',
                 height: '40px',
-                m: 0.5
-              }
-            ]}
+                m: 0.5,
+                cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer',
+                borderRadius: '20px',
+                borderColor: primaryColor,
+                borderWidth: 1,
+                fontWeight: 'bold',
+                marginLeft: '20px',
+              }}
             variant="outlined"
             disabled={selectedCheckin.length === 0}
             onClick={() => setRejectModal(selectedCheckin.length > 0)}

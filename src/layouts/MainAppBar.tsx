@@ -52,6 +52,7 @@ const MainAppBar = () => {
   const { loginId } = returnApiToken();
   const { setMarginTop, setBroadcast, setShowBroadcast } = useContainer(NotifContainer)
   const ipAddress = localStorage.getItem('ipAddress');
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   useEffect(() => {
     updateNotifications(loginId)
@@ -254,7 +255,7 @@ const MainAppBar = () => {
             >
               <BackgroundLetterAvatars
                 name="Cawin Pan"
-                backgroundColor="#79ca25"
+                backgroundColor={role === 'manufacturer' || role === 'customer' ? "#6bc7ff" : "#79ca25"}
               />
             </IconButton>
             <Menu
