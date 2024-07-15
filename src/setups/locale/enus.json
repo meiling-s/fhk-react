@@ -881,7 +881,7 @@
     "modify_template": {
       "header": "Modify Template",
       "app": {
-        "Recycling_delivery_request": "Recycling delivery request",
+        "Recycling_delivery_request": "Recyclables Delivery Request",
         "type": "Type",
         "title": "Title",
         "language": "Language",
@@ -908,7 +908,7 @@
         "button_submit": "Store"
       },
       "broadcast": {
-        "Recycling_delivery_request": "Recyclables Delivery Request",
+        "Recycling_delivery_request": "System Information",
         "type": "Type",
         "title": "Title",
         "language": "Language",
