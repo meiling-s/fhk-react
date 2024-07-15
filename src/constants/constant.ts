@@ -60,6 +60,7 @@ export const formErr = {
   loginIdProhibited: 'loginIdProhibited',
   incorrectAddress: 'incorrectAddress',
   dateOutOfRange: 'dateOutOfRange',
+  dateSpesificIsWrong: 'dateSpesificIsWrong',
   effectiveDateLess: 'effectiveDateLess'
 }
 
