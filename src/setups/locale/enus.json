@@ -1045,9 +1045,9 @@
   "packaging_unit": {
     "packaging_unit": "Packaging Unit",
     "new": "New",
-    "traditional_chinese_name": "Traditional Chinese name",
-    "simplified_chinese_name": "Simplified Chinese name",
-    "english_name": "English name",
+    "traditional_chinese_name": "Traditional Chinese Name",
+    "simplified_chinese_name": "Simplified Chinese Name",
+    "english_name": "English Name",
     "introduction": "Introduction",
     "remark": "Remark"
   },
