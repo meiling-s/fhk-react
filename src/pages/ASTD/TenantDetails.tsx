@@ -361,7 +361,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
         action={'edit'}
         headerProps={{
           title: t('common.details'),
-          subTitle: tenantId.toString(),
+          subTitle: tenantId.toString().padStart(6, '0'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('common.cancel'),
           onCloseHeader: handleDrawerClose,
