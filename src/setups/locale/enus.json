@@ -603,9 +603,9 @@
   },
   "vehicle": {
     "vehicle": "Vehicle",
-    "serviceType": "Service type",
-    "vehicleType": "Vehicle category",
-    "licensePlate": "License plate",
+    "serviceType": "Service Type",
+    "vehicleType": "Vehicle Category",
+    "licensePlate": "License Plate",
     "picture": "Picture",
     "basic": "Basic",
     "additional": "Additional",
