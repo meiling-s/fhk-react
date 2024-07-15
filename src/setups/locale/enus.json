@@ -153,13 +153,13 @@
     "title": "Settings"
   },
   "warehouse_page": {
-    "trad_name": "Traditional name",
-    "simp_name": "Simplified name",
-    "english_name": "English name",
-    "location": "Physical location",
+    "trad_name": "Traditional Name",
+    "simp_name": "Simplified Name",
+    "english_name": "English Name",
+    "location": "Physical Location",
     "place": "Place",
     "status": "Status",
-    "recyclable_subcategories": "Recyclable type(s)",
+    "recyclable_subcategories": "Recyclable Type(s)",
     "enter_tenantId": "Enter the tenant id"
   },
   "add_warehouse_page": {
