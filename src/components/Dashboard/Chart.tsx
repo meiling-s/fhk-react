@@ -243,6 +243,7 @@ const Chart = ({
                                         }}
                                     />
                                 )}
+                                noOptionsText={t('common.noOptions')}
                             />
                             )}
                         </Grid>
