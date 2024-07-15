@@ -421,7 +421,23 @@ export const getPrimaryColor = (): string => {
     default:
       return '#79CA25';
   }
-}
+};
+
+export const getPrimaryLightColor = (): string => {
+  const role = localStorage.getItem(localStorgeKeyName.role);
+  switch (role) {
+    case 'manufacturer':
+      return '#F0F9FF';
+    case 'customer':
+      return '#F0F9FF';
+    case 'logistic':
+      return '#63D884';
+    case 'collector':
+      return '#79CA25';
+    default:
+      return '#79CA25';
+  }
+};
 
 export const validDayjsISODate = (date: Dayjs): boolean => {
   if (!date.isValid()) {
