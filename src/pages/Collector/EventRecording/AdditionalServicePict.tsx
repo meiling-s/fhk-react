@@ -152,7 +152,7 @@ const AdditionalServicePict = () => {
   const AdditionalService = [
     {
       serviceName: 'SRV00001',
-      label: t('report.otherPictures')
+      label: t('report.additionalServicePictures')
     },
     {
       serviceName: 'SRV00002',
@@ -641,7 +641,7 @@ const AdditionalServicePict = () => {
                   <CustomField label={t('report.address')}>
                     <CustomTextField
                       id="place"
-                      placeholder={t('report.address')}
+                      placeholder={t('report.pleaseEnterAddress')}
                       onChange={(event) => {
                         updateData(
                           item.serviceName as ServiceName,
@@ -669,7 +669,7 @@ const AdditionalServicePict = () => {
                       <CustomField label={t('report.eventName')}>
                         <CustomTextField
                           id="eventName"
-                          placeholder={t('report.eventName')}
+                          placeholder={t('report.pleaseEnterEventName')}
                           onChange={(event) => {
                             if (event.target.value) {
                               setEventName(event.target.value)
