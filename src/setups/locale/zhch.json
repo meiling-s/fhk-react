@@ -908,7 +908,7 @@
         "button_submit": "儲存"
       },
       "broadcast": {
-        "Recycling_delivery_request": "系统资讯",
+        "Recycling_delivery_request": "回收物送入请求",
         "type": "种类",
         "title": "标题",
         "language": "语言",
