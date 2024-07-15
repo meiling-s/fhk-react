@@ -52,7 +52,6 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 import useValidationPickupOrder from '../../pages/Collector/PickupOrder/useValidationPickupOrder'
-import { FormErrorMsg } from './FormErrorMsg'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -732,8 +731,8 @@ const PickupOrderCreateForm = ({
                   value={formik.values.logisticName}
                   inputValue={formik.values.logisticName}
                   error={
-                    //formik.errors.logisticName || formik.touched.logisticName
                     errorsField.logisticName.status
+                    //formik.errors.logisticName && formik.touched.logisticName
                   }
                 />
               </CustomField>
@@ -750,15 +749,14 @@ const PickupOrderCreateForm = ({
               >
                 <CustomItemList
                   items={getvehicleType() || []}
-                  singleSelect={(values) => {
+                  singleSelect={(values) =>
                     formik.setFieldValue('vehicleTypeId', values)
-                    changeTouchField('vehicleTypeId')
-                  }}
+                  }
                   value={formik.values.vehicleTypeId}
                   defaultSelected={selectedPo?.vehicleTypeId}
                   error={
                     errorsField.vehicleTypeId.status
-                    //formik.errors.vehicleTypeId && formik.touched.vehicleTypeId
+                   // formik.errors.vehicleTypeId && formik.touched.vehicleTypeId
                   }
                   itemColor={{
                     bgColor: customListTheme.bgColor,
@@ -788,10 +786,7 @@ const PickupOrderCreateForm = ({
                   }}
                   value={formik.values.platNo}
                   sx={{ width: '400px' }}
-                  error={
-                    errorsField.platNo.status
-                    //formik.errors.platNo && formik.touched.platNo
-                  }
+                  error={formik.errors.platNo && formik.touched.platNo}
                 />
               </CustomField>
               {/* {errorsField.platNo.status ? (
@@ -815,10 +810,7 @@ const PickupOrderCreateForm = ({
                   }}
                   value={formik.values.contactNo}
                   sx={{ width: '400px' }}
-                  error={
-                    errorsField.contactNo.status
-                    //formik.errors.contactNo && formik.touched.contactNo
-                  }
+                  error={formik.errors.contactNo && formik.touched.contactNo}
                 />
                 {/* {errorsField.contactNo.status ? (
                   <ErrorMessage message={errorsField.contactNo.message} />
@@ -855,6 +847,7 @@ const PickupOrderCreateForm = ({
                           }}
                         />
                       )}
+                      noOptionsText={t('common.noOptions')}
                     />
                   </CustomField>
                 </Box>

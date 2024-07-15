@@ -55,6 +55,8 @@ export type CheckOut = {
   checkoutDetail: CheckoutDetail[]
   createdAt: string
   updatedAt: string
+  senderName?: string
+  senderAddr?: string
 }
 
 export type queryCheckout = {

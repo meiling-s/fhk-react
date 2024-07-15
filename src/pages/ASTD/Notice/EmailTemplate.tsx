@@ -334,6 +334,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                             sx: styles.inputProps
                             }} 
                         />}
+                        noOptionsText={t('common.noOptions')}
                     />
                     <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
                         {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}
@@ -418,8 +419,8 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                                 key={index} 
                                 className="mr-2 text-[#717171] text-md py-1 px-2 hover:cursor-pointer  bg-[#FBFBFB]"
                                 id ={`drag-${index}`} 
-                                onDragStart={(event) => onDragHandler(event, ` [${item}] `)}
-                                draggable="true">{`[${item}]`}
+                                onDragStart={(event) => onDragHandler(event, ` {${item}} `)}
+                                draggable="true">{`{${item}}`}
                             </div>
                         })}
                     </Grid>

@@ -907,6 +907,7 @@ const PurchaseOrderCreateForm = ({
                           }
                         />
                       )}
+                      noOptionsText={t('common.noOptions')}
                      
                     />
                   </CustomField>
@@ -956,6 +957,7 @@ const PurchaseOrderCreateForm = ({
                           }}
                         />
                       )}
+                      noOptionsText={t('common.noOptions')}
                     />
                   </CustomField>
                 </Box>

@@ -31,7 +31,8 @@
     "pageNotFound": "Page Not Found",
     "errorMessage": "Error Message",
     "message": "Message",
-    "statusCode": "status Code"
+    "statusCode": "status Code",
+    "noOptions": "No options"
   },
   "col": {
     "createCP": "Create collection point",
@@ -221,7 +222,7 @@
     "company": "Company",
     "any": "Any",
     "location": "Location",
-    "created_at": "Created at",
+    "created_at": "Checkout Date Time",
     "sender_company": "Sender company",
     "receiver_company": "Receiver company",
     "pickup_order_no": "Pickup order no.",
@@ -240,7 +241,7 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "shipping_company": "Shipping company",
-    "shipping_location": "Shipping Location",
+    "shipping_location": "Sender Location",
     "arrival_location": "Arrival location",
     "success_approve": "Checkout request is success",
     "ok": "Ok",
@@ -311,7 +312,7 @@
   },
   "pick_up_order": {
     "enquiry_pickup_order": "Enquiry pickup order",
-    "delete_msg": "are you sure want delete this item ?",
+    "delete_msg": "Do you confirm to delete this item?",
     "out_of_date_range": "Specific Date is out of range of the Shipping validity date",
     "created_pickup_order": "Pickup order has been created",
     "changed_pickup_order": "Pickup order has been changed",
@@ -363,7 +364,7 @@
       "vehicle_category": "Vehicle type",
       "plat_number": "Vehicle plate no.",
       "contact_number": "Contact no.",
-      "sender_name": "Shipping company",
+      "sender_name": "Sender company",
       "exp_opration": "Expired operation",
       "rec_loc_info": "Recycling location information",
       "logistic_company": "Logistic company",
@@ -671,7 +672,7 @@
     "deleteProcessOutFailed": "Delete process out failed"
   },
   "warehouseDashboard": {
-    "warehouse": "Warehouse",
+    "warehouse": "Warehouse Dashboard",
     "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
     "noMoreRoom": "No more room",
