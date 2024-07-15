@@ -53,6 +53,8 @@ export interface JobListOrder {
     senderName: string;
     receiverName: string;
     status: string;
+    receiverId?: string ;
+    senderId?: string;
   }
   
   export interface DriverDetail {

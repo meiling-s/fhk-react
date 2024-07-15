@@ -14,8 +14,8 @@ import StatusCard from '../StatusCard'
 import { DriverDetail, JobListOrder, Row } from '../../interfaces/JobOrderInterfaces'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate } from '../../utils/utils'
-import { localStorgeKeyName } from '../../constants/constant'
+import { displayCreatedDate, extractError } from '../../utils/utils'
+import { localStorgeKeyName, STATUS_CODE } from '../../constants/constant'
 import { PickupOrderDetail } from '../../interfaces/pickupOrder'
 import { getPicoById } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import JobOrderCard from '../JobOrderCard'
@@ -26,6 +26,8 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import { getTenantById } from '../../APICalls/tenantManage'
+import i18n from '../../setups/i18n'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -57,15 +59,57 @@ const JobOrderForm = ({
   const [driverDetail, setDriverDetail] = useState<DriverDetail>()
   const {dateFormat} = useContainer(CommonTypeContainer)
 
-  const getPicoDetail = async() => {
-    if (selectedRow?.picoId) {
-      const result = await getPicoById(selectedRow?.picoId.toString())
-      if(result?.data.pickupOrderDetail?.length > 0) {
-        const picoDetailItem = result?.data.pickupOrderDetail.find((item: { picoDtlId: number }) => item.picoDtlId === selectedRow?.picoDtlId)
-        setPickUpOrderDetail([picoDetailItem])
+  const fetchTenantDetails = async (tenantId: number) => {
+    try {
+      const result = await getTenantById(tenantId)
+      const data = result?.data
+      
+      if (i18n.language === 'enus') {
+        return data.companyNameEng
+      } else if (i18n.language === 'zhhk') {
+        return data.companyNameTchi
+      } else {
+        return data.companyNameSchi
       }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+      console.error(`Error fetching tenant ${tenantId}:`, error)
+      return null
     }
   }
+  
+  const getPicoDetail = async () => {
+    if (selectedRow?.picoId) {
+      const result = await getPicoById(selectedRow?.picoId.toString());
+      if (result?.data.pickupOrderDetail?.length > 0) {
+        const updatedPickupOrderDetails = await Promise.all(
+          result.data.pickupOrderDetail.map(async (item: {
+            receiverName: any;
+            receiverId: number; 
+            senderId: number; 
+            senderName: any 
+}) => {
+            const senderName = await fetchTenantDetails(item.senderId);
+            const receiverName = await fetchTenantDetails(item.receiverId);
+            return {
+              ...item,
+              senderName: senderName || item.senderName,
+              receiverName: receiverName || item.receiverName
+            };
+          })
+        );
+  
+        const picoDetailItem = updatedPickupOrderDetails.find(
+          (item) => item.picoDtlId === selectedRow?.picoDtlId
+        );
+        setPickUpOrderDetail([picoDetailItem]);
+      }
+    }
+  };
+  
   const getDriverDetail = async() => {
     if (selectedRow?.driverId) {
       const result = await getDriverDetailById(selectedRow?.driverId.toString())
