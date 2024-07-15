@@ -321,11 +321,15 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
                     }
                   }}
                 >
-                  {weightUnits.map((item: weightUnit, index: number) => (
+                  {weightUnits.length > 0? (weightUnits.map((item: weightUnit, index: number) => (
                     <MenuItem key={index} value={item.unitId}>
                       {item.unitNameEng}
                     </MenuItem>
-                  ))}
+                  ))) : (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
+                    </MenuItem>
+                  )}
                 </Select>
               </CustomField>
               <Grid item>

@@ -214,6 +214,7 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
                     error={checkString(numFormat)}
                 />
                 )}
+                noOptionsText={t('common.noOptions')}
             />
             </CustomField>
           </Box>

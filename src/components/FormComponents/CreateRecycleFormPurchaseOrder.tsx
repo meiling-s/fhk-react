@@ -697,6 +697,7 @@ const CreateRecycleForm = ({
                             }}
                           />
                         )}
+                        noOptionsText={t('common.noOptions')}
                       />
                     }
                   ></CustomTextField>

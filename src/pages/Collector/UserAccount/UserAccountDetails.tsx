@@ -465,8 +465,8 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 >
                   {!userGroupList? 
                   ( <MenuItem disabled value="">
-                  <em>No options available</em>
-                </MenuItem>
+                    <em>{t('common.noOptions')}</em>
+                  </MenuItem>
                 )
                 :
                   (userGroupList.map((item, index) => (

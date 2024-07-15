@@ -554,11 +554,18 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   }}
                   defaultValue={tenantDetail?.decimalPlace.toString()}
                 >
-                  {num_option.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>
-                      {item.name}
+                  {num_option.length > 0 ? (
+                    (num_option.map((item, index) => (
+                      <MenuItem key={index} value={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    )))) : (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
                     </MenuItem>
-                  ))}
+                    )
+                    
+                  }
                 </Select>
               </FormControl>
             </Grid>
@@ -600,11 +607,15 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   }}
                   defaultValue={tenantDetail?.allowImgNum.toString()}
                 >
-                  {num_option.map((item, index) => (
+                  { num_option.length >0 ? (num_option.map((item, index) => (
                     <MenuItem key={index} value={item.id}>
                       {item.name}
                     </MenuItem>
-                  ))}
+                  ))): (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
+                    </MenuItem>
+                  )}
                 </Select>
               </FormControl>
             </Grid>
@@ -647,11 +658,15 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   }}
                   onChange={(event) => setDefaultLang(event.target.value)}
                 >
-                  {lang_option.map((item, index) => (
+                  {lang_option.length > 0 ? (lang_option.map((item, index) => (
                     <MenuItem key={index + item.id} value={item?.id}>
                       {item.name}
                     </MenuItem>
-                  ))}
+                  ))) : (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
+                    </MenuItem>
+                  )}
                 </Select>
               </FormControl>
             </Grid>

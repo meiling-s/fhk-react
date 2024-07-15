@@ -852,6 +852,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               disabled={action === 'delete'}
                             />
                           )}
+                          noOptionsText={t('common.noOptions')}
                         />
                       </FormControl>
                       {index === contractNum.length - 1 ? (
@@ -950,7 +951,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <MenuItem value="">
                               <em>-</em>
                             </MenuItem>
-                            {recycleType.map((item, index) => (
+                            {recycleType.length > 0 ? (recycleType.map((item, index) => (
                               <MenuItem value={item.id} key={index}>
                                 {currentLanguage === 'zhhk'
                                   ? item.recyclableNameTchi
@@ -958,7 +959,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                   ? item.recyclableNameSchi
                                   : item.recyclableNameEng}
                               </MenuItem>
-                            ))}
+                            ))) : (
+                              <MenuItem disabled value="">
+                                <em>{t('common.noOptions')}</em>
+                              </MenuItem>
+                            )}
                           </Select>
                         </FormControl>
                         <FormControl sx={{ m: 1, width: '100%' }}>
@@ -983,7 +988,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <MenuItem value="">
                               <em>-</em>
                             </MenuItem>
-                            {recycleSubType[item.recycTypeId]?.map(
+                            {recycleSubType[item.recycTypeId]?.length > 0 ? (recycleSubType[item.recycTypeId]?.map(
                               (item, index) => (
                                 <MenuItem
                                   value={item.recycSubTypeId}
@@ -996,7 +1001,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                     : item.recyclableNameEng}
                                 </MenuItem>
                               )
-                            )}
+                            )) : (
+                            <MenuItem disabled value="">
+                              <em>{t('common.noOptions')}</em>
+                            </MenuItem>)}
                           </Select>
                         </FormControl>
                         <FormControl fullWidth variant="standard">

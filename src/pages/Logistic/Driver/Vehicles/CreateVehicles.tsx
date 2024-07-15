@@ -407,11 +407,15 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   <MenuItem value="">
                     <em>{t('check_in.any')}</em>
                   </MenuItem>
-                  {vehicleTypeList.map((item, index) => (
+                  {vehicleTypeList.length > 0 ? (vehicleTypeList.map((item, index) => (
                     <MenuItem key={index} value={item.id}>
                       {item.name}
                     </MenuItem>
-                  ))}
+                  ))) : (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
+                    </MenuItem>
+                  )}
                 </Select>
               </FormControl>
             </Grid>
