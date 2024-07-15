@@ -18,7 +18,7 @@ import { collectionPoint } from '../../../interfaces/collectionPoint'
 import dayjs from 'dayjs'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { extractError } from '../../../utils/utils'
+import { extractError, getPrimaryColor } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 import i18n from '../../../setups/i18n'
 
@@ -251,7 +251,7 @@ const localstyles = {
     ...styles.textField,
     width: '350px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   DateItem: {

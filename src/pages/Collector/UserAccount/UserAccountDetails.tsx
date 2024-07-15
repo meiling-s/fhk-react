@@ -503,7 +503,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 }}
                 editable={action != 'delete'}
                 defaultSelected={userStatus}
-                needPrimaryColor={true}
+                needPrimaryColor={false}
               />
             </CustomField>
             <Grid item sx={{ width: '100%' }}>

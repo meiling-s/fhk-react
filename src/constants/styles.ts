@@ -1,13 +1,10 @@
 import { layout, localStorgeKeyName } from './constant'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import { getPrimaryColor, getPrimaryLightColor } from '../utils/utils'
 
 // const theme = useTheme()
 // const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-const role = localStorage.getItem(localStorgeKeyName.role)
-console.log({role})
-export const primaryColor: string = role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
-export const primaryLightColor: string = role === 'manufacturer' || role === 'customer' ? '#F0F9FF' : '#E4F6DC'
 export const styles = {
   innerScreen: {
     display: 'flex',
@@ -67,14 +64,14 @@ export const styles = {
   },
   buttonFilledGreen: {
     borderRadius: '40px',
-    borderColor: primaryColor,
-    backgroundColor: primaryColor,
+    borderColor: getPrimaryColor(),
+    backgroundColor: getPrimaryColor(),
     color: 'white',
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
-      backgroundColor: primaryColor,
+      backgroundColor: getPrimaryColor(),
       border: "2px solid",
-      borderColor: primaryColor,
+      borderColor: getPrimaryColor(),
     },
     innerScreen: {
         display: "flex",
@@ -134,13 +131,13 @@ export const styles = {
     buttonFilledGreen: {
         borderRadius: "40px",
         borderColor: "#79ca25",
-        backgroundColor: primaryColor,
+        backgroundColor: getPrimaryColor(),
         color: "white",
         fontWeight: "bold",
         '&.MuiButton-root:hover': {
-            backgroundColor: primaryColor,
+            backgroundColor: getPrimaryColor(),
             border: "2px solid",
-            borderColor: primaryColor,
+            borderColor: getPrimaryColor(),
         }
     },
     buttonOutlinedGreen: {
@@ -261,9 +258,9 @@ export const styles = {
   buttonOutlinedGreen: {
     borderRadius: '40px',
     border: 1,
-    borderColor: primaryColor,
+    borderColor: getPrimaryColor(),
     backgroundColor: 'white',
-    color: primaryColor,
+    color: getPrimaryColor(),
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
       bgcolor: '#F4F4F4'
@@ -274,9 +271,9 @@ export const styles = {
     padding: 2,
     borderRadius: 3,
     border: 1,
-    borderColor: primaryColor,
+    borderColor: getPrimaryColor(),
     backgroundColor: 'white',
-    color: primaryColor,
+    color: getPrimaryColor(),
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
       bgcolor: '#F4F4F4'
@@ -311,7 +308,7 @@ export const styles = {
   },
   endAdornmentIcon: {
     fontSize: 25,
-    color: primaryColor
+    color: getPrimaryColor()
   },
   disableIcon: {
     fontSize: 25,
@@ -382,9 +379,9 @@ export const styles = {
     }
   },
   textFieldLabel: {
-    color: primaryColor,
+    color: getPrimaryColor(),
     "&.Mui-focused": {
-      color: primaryColor
+      color: getPrimaryColor()
     },
   },
   inputStyle: {
@@ -393,28 +390,29 @@ export const styles = {
     borderRadius: '10px',
     width: '100%',
     bgcolor: 'white',
+    borderColor: getPrimaryColor(),
     '& .MuiOutlinedInput-root': {
       borderRadius: '10px',
       '& fieldset': {
-        borderColor: primaryColor
+        borderColor: getPrimaryColor()
       },
       '&:hover fieldset': {
-        borderColor: primaryColor
+        borderColor: getPrimaryColor()
       },
       '&.Mui-focused fieldset': {
-        borderColor: primaryColor
+        borderColor: getPrimaryColor()
       }
     }
   },
   tagOutlineActive:{
     borderRadius: "40px",
     border: 1,
-    borderColor: primaryColor,
-    backgroundColor: primaryLightColor,
-    color: primaryColor,
+    borderColor: getPrimaryColor(),
+    backgroundColor: getPrimaryLightColor(),
+    color: getPrimaryColor(),
     fontWeight: "bold",
     '&.MuiButton-root:hover': {
-        bgcolor: primaryLightColor
+        bgcolor: getPrimaryLightColor()
     }
   },
   tagOutlineDefault:{
@@ -425,7 +423,7 @@ export const styles = {
     color: '#535353',
     fontWeight: "bold",
     '&.MuiButton-root:hover': {
-        bgcolor: primaryLightColor
+        bgcolor: getPrimaryLightColor()
     }
   }
 }

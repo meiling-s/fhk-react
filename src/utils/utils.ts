@@ -154,9 +154,9 @@ export const getThemeColorRole = (role: string) => {
   const colorList = {
     astd: '#79CA25',
     collector: '#79CA25',
-    logistic: '#7CE495',
+    logistic: '#63D884',
     manufacturer: '#6BC7FF',
-    customer: '#6BC7FF'
+    customer: '#199BEC'
   }
 
   return colorList[role as keyof typeof colorList]
