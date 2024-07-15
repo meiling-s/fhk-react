@@ -169,23 +169,23 @@ const Login = () => {
           switch (loginTo) {
             case 'astd':
               realmApiRoute = 'account'
-              navigate('/astd')
+              window.location.href = '/astd'
               break
             case 'collector':
               realmApiRoute = 'collectors'
-              navigate('/collector/collectionPoint')
+              window.location.href = '/collector'
               break
             case 'logistic':
               realmApiRoute = 'logistic'
-              navigate('/logistic/pickupOrder')
+              window.location.href = '/logistic/pickupOrder'
               break
             case 'manufacturer':
               realmApiRoute = 'manufacturer'
-              navigate('/manufacturer/pickupOrder')
+              window.location.href = '/manufacturer/pickupOrder'
               break
             case 'customer':
               realmApiRoute = 'customer'
-              navigate('/customer/account')
+              window.location.href = '/customer/account'
               break
             default:
               realmApiRoute = 'collectors'
