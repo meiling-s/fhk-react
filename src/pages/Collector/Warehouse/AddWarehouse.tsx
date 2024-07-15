@@ -825,6 +825,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                         <Autocomplete
                           disablePortal
                           fullWidth
+                          disabled={action === 'delete'}
                           options={contractList
                             .filter(
                               (contract) =>
@@ -856,8 +857,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                       {index === contractNum.length - 1 ? (
                         <ADD_CIRCLE_ICON
                           fontSize="small"
-                          className="text-green-primary cursor-pointer"
-                          onClick={handleAddContact}
+                          className={`${action === 'delete' ? "text-gray" : "text-green-primary"} " cursor-pointer"`}
+                          onClick={action !== 'delete' ? handleAddContact : undefined}
                         />
                       ) : (
                         index !== contractNum.length - 1 && (
@@ -868,7 +869,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                 ? 'cursor-not-allowed'
                                 : 'cursor-pointer'
                             } `}
-                            onClick={() => handleRemoveContact(index)}
+                            onClick={() => action !== 'delete' ? handleRemoveContact(index) : undefined}
                           />
                         )
                       )}
