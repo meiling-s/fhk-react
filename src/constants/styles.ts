@@ -409,10 +409,10 @@ export const styles = {
     border: 1,
     borderColor: getPrimaryColor(),
     backgroundColor: getPrimaryLightColor(),
-    color: getPrimaryColor(),
+    color: 'white',
     fontWeight: "bold",
     '&.MuiButton-root:hover': {
-        bgcolor: getPrimaryLightColor()
+        bgcolor: getPrimaryColor()
     }
   },
   tagOutlineDefault:{

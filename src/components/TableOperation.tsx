@@ -1,6 +1,7 @@
 import { Box } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import CustomButton from './FormComponents/CustomButton'
+import { getPrimaryColor } from '../utils/utils'
 
 interface TableOperationProps {
   row: any
@@ -24,7 +25,6 @@ const TableOperation = ({
         <Box>
           <CustomButton
             text={t('pick_up_order.table.approve')}
-            color={color ? color : 'green'}
             style={{ marginRight: '8px' }}
             onClick={() => {
               onApprove(row)
@@ -32,7 +32,6 @@ const TableOperation = ({
           ></CustomButton>
           <CustomButton
             text={t('pick_up_order.table.reject')}
-            color={color ? color : 'green'}
             outlined={true}
             onClick={() => {
               onReject(row)

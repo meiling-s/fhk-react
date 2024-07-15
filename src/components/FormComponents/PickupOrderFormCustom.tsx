@@ -29,7 +29,7 @@ import {
   getPicoById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate } from '../../utils/utils'
+import { displayCreatedDate, getPrimaryColor } from '../../utils/utils'
 import CustomButton from './CustomButton'
 import { Languages, localStorgeKeyName } from '../../constants/constant'
 
