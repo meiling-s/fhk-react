@@ -381,6 +381,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                     error={checkString(selectedService)}
                                 />
                                 )}
+                                noOptionsText={t('common.noOptions')}
                             />
                         </CustomField>
                     </Box>

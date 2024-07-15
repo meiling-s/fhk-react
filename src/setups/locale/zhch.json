@@ -31,7 +31,8 @@
     "pageNotFound": "找不到网页",
     "errorMessage": "错误信息",
     "message": "留言",
-    "statusCode": "状态码"
+    "statusCode": "状态码",
+    "noOptions": "无选项"
   },
   "col": {
     "createCP": "建立回收点",
@@ -98,6 +99,7 @@
       "invalidDate": "运输有效期开始日期应低于运输有效期结束日期",
       "incorrectAddress": "地址不正确",
       "dateOutOfRange": "指定日期超出开放日期范围",
+      "dateSpesificIsWrong": "指定日期格式错误",
       "effectiveDateLess": "开始日期不能晚于截止日期"
     }
   },
@@ -153,9 +155,9 @@
     "title": "设定"
   },
   "warehouse_page": {
-    "trad_name": "繁体中文名称",
+    "trad_name": "繁體中文名稱",
     "simp_name": "简体中文名称",
-    "english_name": "英文名称",
+    "english_name": "English Name",
     "location": "实体地点",
     "place": "地点",
     "status": "状态",
@@ -181,6 +183,7 @@
     "contractNum": "合约编号",
     "warehouseRecyc": "回收物类別",
     "shouldNotEmpty": "不应为空",
+    "shouldNotDuplicate": "不应重复",
     "shouldNotDuplicated": " 货仓地址已经被使用"
   },
   "check_in": {
@@ -218,7 +221,7 @@
     "company": "公司",
     "any": "任何",
     "location": "地点",
-    "created_at": "建立日期",
+    "created_at": "送出日期及时间",
     "sender_company": "寄件公司",
     "receiver_company": "收件公司",
     "pickup_order_no": "运单编号",
@@ -964,7 +967,7 @@
       "table": {
         "driverId": "司机号码",
         "driverSchiName": "司机简体中文名称",
-        "driverEngName": "司机英文姓名",
+        "driverEngName": "Driver English Name",
         "gender": "性别",
         "loginName": "登入名称",
         "contactNo": "联络电话",
@@ -982,8 +985,8 @@
           "nameText": "请输入名称",
           "TchiName": "司机繁体中文名称",
           "SchiName": "司机简体中文名称",
-          "engName": "司机英文名称",
-          "engText": "请输入名称",
+          "engName": "Driver English Name",
+          "engText": "Please type a name",
           "linsenceName": "驾驶执照编号",
           "linsenceText": "驾驶执照编号",
           "uploadLinsence": "上载驾驶执照",
@@ -1005,13 +1008,13 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "车辆号码",
-      "license_plate_number": "车牌号",
-      "vehicle_type": "车辆类型",
-      "vehicle_cargo_capacity": "车辆类型",
+      "vehicle_number": "车辆编号",
+      "license_plate_number": "车牌号码",
+      "vehicle_type": "车辆种类",
+      "vehicle_cargo_capacity": "车辆载货量",
       "picture": "图片",
-      "license_plate_number_placeholder": "请输入车牌号",
-      "vehicle_type_placeholder": "请输入车辆类型",
+      "license_plate_number_placeholder": "请输入车辆编码",
+      "vehicle_type_placeholder": "请输入车辆载货量",
       "vehicle_cargo_capacity_placeholder": "请输入体重"
     }
   },
@@ -1025,7 +1028,7 @@
     "state": "状态",
     "start_date": "开始日期",
     "end_date": "结束日期",
-    "remark": "备注",
+    "remark": "评论",
     "whether": "是否EPD",
     "default_currency": "预设货币",
     "activate": "活性",
@@ -1043,16 +1046,11 @@
   "packaging_unit": {
     "packaging_unit": "包装单位",
     "new": "新的",
-    "traditional_chinese_name": "繁体中文名称",
-    "traditional_chinese_name_placeholder": "请输入繁体中文名称",
+    "traditional_chinese_name": "繁体中文名字",
     "simplified_chinese_name": "简体中文名称",
-    "simplified_chinese_name_placeholder": "请输入簡體中文名稱",
-    "english_name": "英文名称",
-    "english_name_placeholder": "请输入英文名称",
-    "introduction": "简介",
-    "introduction_placeholder": "请输入简介",
-    "remark": "备注",
-    "remark_placeholder": "请输入备注"
+    "english_name": "English Name",
+    "introduction": "介绍",
+    "remark": "评论"
   },
   "staffEnquiry": {
     "title": "員工查詢",
@@ -1081,12 +1079,12 @@
     "start_date": "日期由",
     "end_date": "至",
     "report_of_recycled_waste_pickup_list": "回收物提取报表",
-    "report_of_recycled_waste_collection_route": "实际路线记录",
-    "report_of_logistic_service_vehicle": "物流车记录",
-    "report_of_logistic_service_recycled": " 物流公司回收物报告",
-    "report_of_recycled_waste_inventory_manufacturers": "回收物库存报记录",
-    "report_of_manu_recycled_order_list": "顾客订单记录",
-    "report_of_manu_recycled_waste_tracing_list": "回收物到达地点记录",
+    "report_of_recycled_waste_collection_route": "实际路线列表",
+    "report_of_logistic_service_vehicle": "物流车列表",
+    "report_of_logistic_service_recycled": "物流公司回收物报告",
+    "report_of_recycled_waste_inventory_manufacturers": "回收物庫存報表",
+    "report_of_manu_recycled_order_list" :"顾客订单列表",
+    "report_of_manu_recycled_waste_tracing_list": "回收物追踪列表",
     "report_of_manu_recycled_waste_classification_list":"回收物类别分析表",
     "report_of_user_management_list": "用戶報表",
     "report_of_audit_trail": "審計追蹤報表",
@@ -1098,8 +1096,8 @@
     "enquiry_po": "订单",
     "table": {
       "created_datetime": "建立日期",
-      "order_number": "订单编号",
-      "pico_id": "回收运单编号",
+      "order_number": "訂單編號",
+      "pico_id": "订单号",
       "place_receipt": "收貨地點",
       "receipt_date_time": "收貨日期及時間",
       "status": "状态",
@@ -1114,7 +1112,7 @@
       "contact_number": "聯絡人號碼",
       "payment_method": "付款方式",
       "order_info": "訂單資料",
-      "pico_id": "回收运单编号"
+      "pico_id": "回收運單編號"
     },
     "create": {
       "create_order": "建立订单",
@@ -1156,10 +1154,10 @@
     "table": {
       "created_datetime": "建立日期",
       "recycling_plant": "回收厂",
-      "order_number": "订单编号",
-      "pico_id": "运单编号",
-      "place_receipt": "收货地点",
-      "receipt_date_time": "收货日期及时间",
+      "order_number": "訂單編號",
+      "pico_id": "回收運單編號",
+      "place_receipt": "收貨地點",
+      "receipt_date_time": "收貨日期及時間",
       "status": "状态",
       "operation": "操作",
       "approve": "接受",
@@ -1172,7 +1170,7 @@
       "contact_number": "聯絡人號碼",
       "payment_method": "付款方式",
       "order_info": "訂單資料",
-      "pico_id": "回收运单编号"
+      "pico_id": "回收運單編號"
     },
     "createOrEdit": {
       "new": "新增",
@@ -1214,7 +1212,7 @@
     "service_type": "服务种类"
   },
   "logisticDashboard": {
-    "searchDriver": "搜索司机路线",
+    "searchDriver": "搜索司机方向",
     "driverInfo": "您正在搜索的司机",
     "driverNumb": "司机号码",
     "driverLicense": "驾驶证",
@@ -1236,7 +1234,7 @@
   "dashboard_recyclables": {
     "data": "数据",
     "recyclable": "回收物",
-    "recycling_data": "回收点资料",
+    "recycling_data": "回收物数据",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "时间范围",
     "recycling_point": "回收点",
@@ -1249,7 +1247,7 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "回收公司"
+    "collector": "集电极"
   },
   "dashboard_manufacturer": {
     "data": "数据",
@@ -1383,7 +1381,7 @@
     "any": "任何",
     "classification": "分类",
     "subclassification": "子分類",
-    "place": "地点",
+    "place": "地方",
     "po_number": "输入采购订单号",
     "jo_number": "输入工作编号"
   }

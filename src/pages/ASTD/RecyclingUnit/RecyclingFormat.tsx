@@ -437,7 +437,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                                 <MenuItem value="">
                                                 <em>-</em>
                                                 </MenuItem>
-                                                {recyclableType.map((item, index) => (
+                                                {recyclableType.length > 0 ? (recyclableType.map((item, index) => (
                                                 <MenuItem value={item.recycTypeId} key={index}>
                                                     {currentLanguage === 'zhhk'
                                                     ? item.recyclableNameTchi
@@ -445,7 +445,10 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                                     ? item.recyclableNameSchi
                                                     : item.recyclableNameEng}
                                                 </MenuItem>
-                                                ))}
+                                                ))): 
+                                                <MenuItem disabled value="">
+                                                <em>{t('common.noOptions')}</em>
+                                                </MenuItem>}
                                             </Select>
                                         </FormControl>
                                     </div>
