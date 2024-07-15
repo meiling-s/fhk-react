@@ -98,34 +98,6 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     handleSearch(searchInput)
   }, [searchInput])
 
-  // const handleSearch = (searchWord: string) => {
-  //   const normalizedSearchWord = searchWord
-  //     .trim()
-  //     .toLowerCase()
-  //     .normalize('NFKC')
-  //   if (searchWord != '') {
-  //     const filteredData = filteredPico.filter((item) => {
-  //       console.log('searchWord', searchWord)
-  //       // Normalize the senderName by converting to lowercase
-  //       const normalizedSenderName = item.senderName
-  //         .trim()
-  //         .toLowerCase()
-  //         .normalize('NFKC')
-
-  //       return normalizedSenderName.includes(normalizedSearchWord)
-
-  //       //return item.senderName.toLowerCase().includes(normalizedSearchWord)
-  //     })
-
-  //     setFilteredPico(filteredData)
-  //     if (filteredData) {
-  //       setFilteredPico(filteredData)
-  //     }
-  //   } else {
-  //     setFilteredPico(picoList)
-  //   }
-  // }
-
   const handleSelectedPicoId = (
     pickupOrderDetail: PickupOrderDetail,
     picoId: string
@@ -145,7 +117,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       // Update the query with the search term
       const updatedQuery = {
         ...query,
-        senderName: normalizedSearchWord,
+        senderName: normalizedSearchWord
       }
 
       let result = null
@@ -159,7 +131,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       if (data && data.length > 0) {
         const picoDetailList =
           data.flatMap((item: any) =>
-            item?.pickupOrderDetail.map((detailPico:any) => ({
+            item?.pickupOrderDetail.map((detailPico: any) => ({
               type: item.picoType,
               picoId: item.picoId,
               status: detailPico.status,
@@ -183,7 +155,6 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
 
   const handleCompositionEnd = (event: SyntheticEvent) => {
     const target = event.target as HTMLInputElement
-    // console.log('handleCompositionEnd', target.value)
     setSearchInput(target.value)
     handleSearch(target.value)
   }
@@ -202,9 +173,9 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
             onCloseHeader: handleDrawerClose
           }}
         >
-          <Box>
+          <Box sx={{ paddingX: 4 }}>
             <Divider />
-            <div className="p-6">
+            <div className="">
               <Box>
                 <div className="filter-section  mb-6">
                   <CustomField
@@ -252,7 +223,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                             item.picoId
                           )
                         }}
-                        className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4"
+                        className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4 w-[450px]"
                       >
                         <div className="font-bold text-mini mb-2">
                           {item.type}
