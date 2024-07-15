@@ -14,9 +14,9 @@
     "enterText": "Please enter text",
     "description": "Description",
     "remark": "Remark",
-    "traditionalChineseName": "Traditional Chinese name",
-    "simplifiedChineseName": "Simplified Chinese name",
-    "englishName": "English name",
+    "traditionalChineseName": "Traditional Chinese Name",
+    "simplifiedChineseName": "Simplified Chinese Name",
+    "englishName": "English Name",
     "yes": "Yes",
     "no": "No",
     "createdDatetime": "Create Datetime",
@@ -946,7 +946,7 @@
     "logisticlist": "Logistic Company",
     "manulist": "Recycling plant",
     "customerlist": "Customer Company",
-    "brNo": "Business registration number",
+    "brNo": "Business Registration Number",
     "enterBrNo": "Please enter business registration number"
   },
   "driver": {
