@@ -408,7 +408,7 @@ export const styles = {
     borderRadius: "40px",
     border: 1,
     borderColor: getPrimaryColor(),
-    backgroundColor: getPrimaryLightColor(),
+    backgroundColor: getPrimaryColor(),
     color: 'white',
     fontWeight: "bold",
     '&.MuiButton-root:hover': {
