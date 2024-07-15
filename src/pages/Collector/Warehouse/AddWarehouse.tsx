@@ -1032,8 +1032,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                         {index === recycleCategory.length - 1 ? (
                           <ADD_CIRCLE_ICON
                             fontSize="small"
-                            className="text-green-primary cursor-pointer"
-                            onClick={handleAddRecycleCategory}
+                            className={`${action === 'delete' ? "text-gray" : "text-green-primary"} " cursor-pointer"`}
+                            onClick={action !== 'delete' ? handleAddRecycleCategory : undefined}
                           />
                         ) : (
                           index !== recycleCategory.length - 1 && (
@@ -1044,7 +1044,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                   ? 'cursor-not-allowed'
                                   : 'cursor-pointer'
                               } `}
-                              onClick={() => handleRemoveReycleCategory(index)}
+                              onClick={() => action !== 'delete' ? handleRemoveReycleCategory(index) : undefined}
                             />
                           )
                         )}
