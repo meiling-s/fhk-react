@@ -6,7 +6,7 @@ import { getDriverList } from "../../../APICalls/driver"
 import { styles } from "../../../constants/styles"
 import { Driver } from "../../../interfaces/driver"
 import { ADD_ICON, DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON, SEARCH_ICON } from "../../../themes/icons"
-import { showErrorToast, showSuccessToast } from "../../../utils/utils"
+import { getPrimaryColor, showErrorToast, showSuccessToast } from "../../../utils/utils"
 import DriverDetail from "./DriverDetail"
 import useLocaleTextDataGrid from "../../../hooks/useLocaleTextDataGrid"
 
@@ -20,17 +20,16 @@ const localstyles = {
         '& .MuiOutlinedInput-root': {
             borderRadius: '10px',
             '& fieldset': {
-
-                borderColor: '#79CA25'
+                borderColor: getPrimaryColor()
             },
             '&:hover fieldset': {
-                borderColor: '#79CA25'
+                borderColor: getPrimaryColor()
             },
             '&.Mui-focused fieldset': {
-                borderColor: '#79CA25'
+                borderColor: getPrimaryColor()
             },
             '& label.Mui-focused': {
-                color: '#79CA25'
+                color: getPrimaryColor()
             }
         }
     }
@@ -213,13 +212,17 @@ const DriverMenu = () => {
                         endAdornment: (
                             <InputAdornment position="end">
                                 <IconButton onClick={() => { }}>
-                                    <SEARCH_ICON style={{ color: '#79CA25' }} />
+                                    <SEARCH_ICON style={{ color: getPrimaryColor() }} />
                                 </IconButton>
                             </InputAdornment>
                         )
                     }}
                     sx={[localstyles.inputState, { width: '1460px' }]}
                     onChange={(e) => handleSearch(e.target.value)}
+                    InputLabelProps={{
+                        style: {color: getPrimaryColor()},
+                        focused: true
+                    }}
                 />
             </Box>
             <div className="table-vehicle">

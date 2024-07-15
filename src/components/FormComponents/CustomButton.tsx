@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@mui/material';
+import { getPrimaryColor } from '../../utils/utils';
 interface ButtonProps {
   id?: string;
   text?: string;
@@ -26,16 +27,16 @@ const CustomButton: React.FC<ButtonProps> = ({
     switch (color) {
       case 'green':
         style = {
-          backgroundColor: outlined ? '#fff' : '#79CA25',
-          color: outlined ? '#79CA25' : '#fff',
-          borderColor: '#79CA25'
+          backgroundColor: outlined ? '#fff' : getPrimaryColor(),
+          color: outlined ? getPrimaryColor() : '#fff',
+          borderColor: getPrimaryColor()
         };
         break;
       case 'blue':
         style = {
-          backgroundColor: outlined ? '#fff' : '#6BC7FF',
-          color: outlined ? '#6BC7FF' : '#fff',
-          borderColor: outlined ? '#6BC7FF' : '#6BC7FF'
+          backgroundColor: outlined ? '#fff' : getPrimaryColor(),
+          color: outlined ? getPrimaryColor() : '#fff',
+          borderColor: outlined ? getPrimaryColor() : getPrimaryColor()
         };
         break;
       default:

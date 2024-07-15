@@ -338,8 +338,8 @@ const PackagingUnit: FunctionComponent = () => {
               styles.buttonOutlinedGreen,
               {
                 width: 'max-content',
-                height: '40px'
-              }
+                height: '40px',
+              },
             ]}
             variant="outlined"
             onClick={() => {

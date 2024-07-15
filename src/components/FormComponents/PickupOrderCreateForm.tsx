@@ -44,7 +44,8 @@ import { localStorgeKeyName } from '../../constants/constant'
 import {
   getThemeColorRole,
   getThemeCustomList,
-  displayCreatedDate
+  displayCreatedDate,
+  getPrimaryColor
 } from '../../utils/utils'
 
 import dayjs, { Dayjs } from 'dayjs'

@@ -118,6 +118,7 @@ const Login = () => {
         })
         //console.log(result, 'result login')
         if (result && result.access_token) {
+          localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
           const ipAddress = localStorage.getItem('ipAddress')
           if(ipAddress){
             const userActivity:UserActivity = {
@@ -140,7 +141,6 @@ const Login = () => {
             result?.refresh_token || ''
           )
           localStorage.setItem(localStorgeKeyName.realm, result?.realm || '')
-          localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
           localStorage.setItem(
             localStorgeKeyName.username,
             result?.username || ''
@@ -169,23 +169,23 @@ const Login = () => {
           switch (loginTo) {
             case 'astd':
               realmApiRoute = 'account'
-              navigate('/astd')
+              window.location.href = '/astd'
               break
             case 'collector':
               realmApiRoute = 'collectors'
-              navigate('/collector/collectionPoint')
+              window.location.href = '/collector'
               break
             case 'logistic':
               realmApiRoute = 'logistic'
-              navigate('/logistic/pickupOrder')
+              window.location.href = '/logistic/pickupOrder'
               break
             case 'manufacturer':
               realmApiRoute = 'manufacturer'
-              navigate('/manufacturer/pickupOrder')
+              window.location.href = '/manufacturer/pickupOrder'
               break
             case 'customer':
               realmApiRoute = 'customer'
-              navigate('/customer/account')
+              window.location.href = '/customer/account'
               break
             default:
               realmApiRoute = 'collectors'

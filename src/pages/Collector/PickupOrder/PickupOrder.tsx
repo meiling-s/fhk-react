@@ -28,7 +28,7 @@ import {
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { editPickupOrderStatus } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate, extractError, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import { displayCreatedDate, extractError, getPrimaryColor, showErrorToast, showSuccessToast } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
 import {
   STATUS_CODE,
@@ -379,7 +379,6 @@ const PickupOrders = () => {
   const [rejectModal, setRejectModal] = useState(false)
   const [reasonList, setReasonList] = useState<{reasonId: string, name: string}[]>([])
   const [openDelete, setOpenDelete] = useState<boolean>(false)
-  const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const statusList: StatusPickUpOrder[] = [
     {
       value: '0',
@@ -605,12 +604,6 @@ const PickupOrders = () => {
       }
     }
   }
-
-  useEffect(() => {
-    setPrimaryColor(
-      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
-    )
-  }, [role])
 
   useEffect(() => {
     setShowOperationColumn(role === 'logistic')
@@ -971,8 +964,8 @@ const PickupOrders = () => {
             }}
             sx={{
               borderRadius: '20px',
-              backgroundColor: primaryColor,
-              '&.MuiButton-root:hover': { bgcolor: primaryColor },
+              backgroundColor: getPrimaryColor(),
+              '&.MuiButton-root:hover': { bgcolor: getPrimaryColor() },
               width: 'fit-content',
               height: '40px',
               marginLeft: '20px'
