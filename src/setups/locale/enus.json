@@ -170,7 +170,7 @@
     "place_placeholders": "No. 14, Ao Pui Wan Street, Fo Tan",
     "subtype": "Subtype",
     "recycle_type": "Recycle type",
-    "weight": "please input weight",
+    "weight": "Please input weight",
     "yes": "Yes",
     "no": "No",
     "open": "Open",
@@ -186,7 +186,7 @@
     "shouldNotDuplicated": "The address of warehouse had been used"
   },
   "check_in": {
-    "request_check_in": "Request Check-in",
+    "request_check_in": "Check-in Request",
     "approve": "Approve",
     "reject": "Reject",
     "search": "Search",
@@ -212,7 +212,7 @@
     "search_input": "Enter PO Number"
   },
   "check_out": {
-    "request_check_out": "Checkout Request",
+    "request_check_out": "Check-out Request",
     "approve": "Approve",
     "reject": "Reject",
     "search": "Search",
@@ -241,13 +241,13 @@
     "shipping_company": "Shipping Company",
     "shipping_location": "Shipping Location",
     "arrival_location": "Arrival Location",
-    "success_approve": "Checkout request is success",
+    "success_approve": "Check-out request is success",
     "ok": "Ok",
     "shipping_info": "Shipping Information",
     "delivery_location": "Delivery Location",
     "approved_on": "Approved on",
     "reason_is": "Reason is",
-    "total_checkout": "total check-out request is",
+    "total_checkout": "Total check-out request is",
     "reason_1": "Reason 1",
     "reason_2": "Reason 2",
     "reason_3": "Reason 3"
@@ -704,8 +704,8 @@
     "lastLogin": "Last login",
     "email": "Email",
     "enterName": "Please enter name",
-    "enterContactNo": "please enter contact no",
-    "enterEmail": "please enter email address",
+    "enterContactNo": "Please enter contact no",
+    "enterEmail": "Please enter email address",
     "fullTimeFlg": "Full time",
     "partTime": "Part Time",
     "contractType": "Contract Type"
@@ -1046,10 +1046,15 @@
     "packaging_unit": "Packaging Unit",
     "new": "New",
     "traditional_chinese_name": "Traditional Chinese name",
+    "traditional_chinese_name_placeholder": "Please enter Traditional Chinese name",
     "simplified_chinese_name": "Simplified Chinese name",
+    "simplified_chinese_name_placeholder": "Please enter Simplified Chinese Name",
     "english_name": "English name",
+    "english_name_placeholder": "Please enter English name",
     "introduction": "Introduction",
-    "remark": "Remark"
+    "introduction_placeholder": "Please enter introduction",
+    "remark": "Remark",
+    "remark_placeholder": "Please enter remark"
   },
   "staffEnquiry": {
     "title": "Staff Enquiry",

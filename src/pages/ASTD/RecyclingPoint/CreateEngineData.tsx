@@ -388,7 +388,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                         <CustomField label={t('packaging_unit.remark')}>
                             <CustomTextField
                                 id="remark"
-                                placeholder={t('packaging_unit.remark')}
+                                placeholder={t('packaging_unit.remark_placeholder')}
                                 onChange={(event) => setRemark(event.target.value)}
                                 multiline={true}
                                 defaultValue={remark}
