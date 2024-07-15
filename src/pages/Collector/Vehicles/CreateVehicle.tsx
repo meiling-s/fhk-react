@@ -78,8 +78,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   })
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
-    id: '1',
-    name: 'Van'
+    id: '',
+    name: ''
   })
   const [licensePlate, setLicensePlate] = useState('')
   const [pictures, setPictures] = useState<ImageListType>([])
@@ -178,7 +178,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   const resetData = () => {
     setSelectedService(serviceType[0])
-    setSelectedVehicle({ id: '1', name: 'Van' })
+    setSelectedVehicle({ id: '', name: '' })
     setLicensePlate('')
     setPictures([])
     setValidation([])
@@ -216,7 +216,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
-      selectedVehicle?.toString() == '' &&
+      selectedVehicle?.id.toString() == '' &&
         tempV.push({
           field: t('vehicle.vehicleType'),
           problem: formErr.empty,
@@ -433,6 +433,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   id="vehicleType"
                   value={selectedVehicle.id}
                   disabled={action === 'delete'}
+                  error={checkString(selectedVehicle.id)}
                   sx={{
                     borderRadius: '12px'
                   }}
@@ -483,7 +484,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
                 >
-                  {({ imageList, onImageUpload, onImageRemove }) => (
+                  {({ imageList, onImageUpload, onImageRemove, errors }) => (
                     <Box className="box">
                       <Card
                         sx={{
@@ -505,6 +506,15 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                           </Typography>
                         </ButtonBase>
                       </Card>
+                      {errors && (
+                        <div>
+                        {errors.maxFileSize && (
+                          <span  style={{color: "red"}}>
+                            Selected file size exceeds maximum file size {imgSettings?.ImgSize/1000000} mb
+                          </span>
+                        )}
+                        </div>
+                      )}
                       <ImageList sx={localstyles.imagesContainer} cols={4}>
                         {imageList.map((image, index) => (
                           <ImageListItem

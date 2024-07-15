@@ -659,11 +659,15 @@ const WarehouseDashboard: FunctionComponent = () => {
             label={t('check_out.any')}
             onChange={onChangeWarehouse}
           >
-            {warehouseList?.map((item, index) => (
+            {warehouseList?.length >0 ? (warehouseList?.map((item, index) => (
               <MenuItem value={item?.id} key={index}>
                 {item?.name}
               </MenuItem>
-            ))}
+            ))) : (
+              <MenuItem disabled value="">
+                <em>{t('common.noOptions')}</em>
+              </MenuItem>
+            )}
           </Select>
         </FormControl>
       </Box>

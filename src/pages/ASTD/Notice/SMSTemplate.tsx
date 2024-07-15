@@ -351,6 +351,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                             sx: styles.inputProps
                             }} 
                         />}
+                        noOptionsText={t('common.noOptions')}
                     />
                     <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
                         {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}

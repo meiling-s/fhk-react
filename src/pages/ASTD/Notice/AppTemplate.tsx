@@ -372,6 +372,7 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({
                   }}
                 />
               )}
+              noOptionsText={t('common.noOptions')}
             />
             <Typography
               style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}
