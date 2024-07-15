@@ -18,6 +18,7 @@ import {
 import { STATUS_CODE, formErr, format } from '../../../constants/constant'
 import {
   extractError,
+  getPrimaryColor,
   returnErrorMsg,
   validDayjsISODate
 } from '../../../utils/utils'
