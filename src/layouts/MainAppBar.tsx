@@ -35,6 +35,7 @@ import { Notif } from '../interfaces/notif'
 import { createUserActivity } from '../APICalls/userAccount'
 import { UserActivity } from '../interfaces/common'
 import NotifContainer from '../contexts/NotifContainer'
+import logo_company from '../logo_company.png'
 
 const MainAppBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -253,10 +254,17 @@ const MainAppBar = () => {
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
             >
-              <BackgroundLetterAvatars
-                name="Cawin Pan"
-                backgroundColor={role === 'manufacturer' || role === 'customer' ? "#6bc7ff" : "#79ca25"}
-              />
+              {role !== 'astd' ? (
+                <BackgroundLetterAvatars
+                  name={role === 'manufacturer' ? 'M F' : role === 'customer' ? 'C S' : role === 'logistic' ? 'L O' : role === 'collector' ? 'C P' : 'C P'}
+                  backgroundColor={role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25'}
+                />
+              ) : 
+                <img
+                  src={logo_company}
+                  style={{width: 40, height: 40, borderRadius: 100, objectFit: 'contain'}}
+                />
+              }
             </IconButton>
             <Menu
               anchorEl={anchorElAvatar}

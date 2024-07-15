@@ -31,6 +31,7 @@ import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
 import {
   formatWeight,
+  getPrimaryColor,
   getThemeColorRole,
   getThemeCustomList,
   onChangeWeight
@@ -855,7 +856,7 @@ let localstyles = {
     ...styles.textField,
     maxWidth: '370px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   timePicker: {
@@ -869,7 +870,7 @@ let localstyles = {
       paddingX: 0
     },
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   textField: {

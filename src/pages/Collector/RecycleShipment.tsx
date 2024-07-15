@@ -26,7 +26,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { SEARCH_ICON, LEFT_ARROW_ICON } from '../../themes/icons'
 import { useEffect, useState } from 'react'
 import React from 'react'
-import { primaryColor, styles } from '../../constants/styles'
+import { styles } from '../../constants/styles'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CheckIcon from '@mui/icons-material/Check'
@@ -44,6 +44,7 @@ import { Languages, STATUS_CODE, localStorgeKeyName } from '../../constants/cons
 import {
   displayCreatedDate,
   extractError,
+  getPrimaryColor,
   showSuccessToast
 } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
@@ -208,7 +209,7 @@ function RejectForm({
             <CustomItemList
               items={reasonList}
               multiSelect={setRejectReasonId}
-              itemColor={{ bgColor: '#F0F9FF', borderColor: primaryColor }}
+              itemColor={{ bgColor: '#F0F9FF', borderColor: getPrimaryColor() }}
             />
           </Box>
 

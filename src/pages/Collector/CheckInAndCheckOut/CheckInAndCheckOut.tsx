@@ -17,7 +17,7 @@ import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/cons
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { SEARCH_ICON } from '../../../themes/icons'
 import { CheckInAndCheckOutDetails } from '../CheckInAndCheckOut'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import axios from 'axios'
 import {
@@ -25,7 +25,7 @@ import {
   GET_CHECKIN_CHECKOUT_LIST,
   GET_CHECKOUT_BY_ID
 } from '../../../constants/requests'
-import { extractError, returnApiToken } from '../../../utils/utils'
+import { extractError, getPrimaryColor, returnApiToken } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../../../constants/axiosInstance'
 import {
@@ -37,6 +37,7 @@ import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 function onlyUnique(value: any, index: any, array: any) {
   return array.indexOf(value) === index
 }
+const role = localStorage.getItem(localStorgeKeyName.role) || ''
 
 function CheckInAndCheckOut() {
   const { t } = useTranslation()
@@ -47,7 +48,6 @@ function CheckInAndCheckOut() {
   const [isShow, setIsShow] = useState(false)
   const [details, setDetails] = useState(null)
   const [keyword, setKeyword] = useState('')
-  const [primaryColor, setPrimaryColor] = useState<string>('')
   const [filter, setFilter] = useState({
     company: '',
     location: '',
@@ -56,7 +56,6 @@ function CheckInAndCheckOut() {
   const navigate = useNavigate()
   const [totalElements, setTotalElements] = useState<number>(0)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
-  const role = localStorage.getItem(localStorgeKeyName.role)
 
   useEffect(() => {
     getData() // eslint-disable-next-line
@@ -65,12 +64,6 @@ function CheckInAndCheckOut() {
   const request = axios.create({
     baseURL: window.baseURL.collector
   })
-
-  useEffect(() => {
-    setPrimaryColor(
-      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
-    )
-  }, [role])
 
   const getData = async () => {
     try {
@@ -138,7 +131,7 @@ function CheckInAndCheckOut() {
         return params.row.chkInId || params.row.chkOutId ? (
           <div
             className={`px-4 py-2 rounded-full text-white font-bold`}
-            style={{backgroundColor: primaryColor}}
+            style={{backgroundColor: getPrimaryColor()}}
           >
             {params.row.chkInId
               ? t('checkinandcheckout.send_in')
@@ -278,22 +271,22 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 },
                 '& label.Mui-focused': {
-                  color: primaryColor // Change label color when input is focused
+                  color: getPrimaryColor // Change label color when input is focused
                 }
               }
             }}
             label={t('purchase_order.table.pico_id')}
             InputLabelProps={{
-              style: { color: primaryColor },
+              style: { color: getPrimaryColor() },
               focused: true
             }}
             placeholder={t('checkinandcheckout.search_placeholder')}
@@ -301,7 +294,7 @@ function CheckInAndCheckOut() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: primaryColor }} />
+                    <SEARCH_ICON style={{ color: getPrimaryColor() }} />
                   </IconButton>
                 </InputAdornment>
               )
@@ -315,13 +308,13 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 }
               }
             }}
@@ -360,13 +353,13 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 }
               }
             }}
@@ -405,13 +398,13 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor
                 }
               }
             }}
@@ -496,7 +489,6 @@ function CheckInAndCheckOut() {
   )
 }
 
-const role = localStorage.getItem(localStorgeKeyName.role)
 const styles = {
   textField: {
     borderRadius: '10px',
@@ -506,16 +498,16 @@ const styles = {
     }
   },
   textFieldLabel: {
-    color:  role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25',
+    color: getPrimaryColor,
     '&.Mui-focused': {
-      color:  role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
+      color: getPrimaryColor,
     }
   },
   totalElements: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:  role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25',
+    backgroundColor: getPrimaryColor,
     padding: '3px',
     borderRadius: '20px',
     width: '20px',

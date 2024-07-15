@@ -118,6 +118,7 @@ const Login = () => {
         })
         //console.log(result, 'result login')
         if (result && result.access_token) {
+          localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
           const ipAddress = localStorage.getItem('ipAddress')
           if(ipAddress){
             const userActivity:UserActivity = {
@@ -140,7 +141,6 @@ const Login = () => {
             result?.refresh_token || ''
           )
           localStorage.setItem(localStorgeKeyName.realm, result?.realm || '')
-          localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
           localStorage.setItem(
             localStorgeKeyName.username,
             result?.username || ''

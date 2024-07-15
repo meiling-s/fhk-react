@@ -41,12 +41,13 @@ import { updateStatus } from '../../../interfaces/warehouse'
 import { CheckOut } from '../../../interfaces/checkout'
 
 import { useTranslation } from 'react-i18next'
-import { styles, primaryColor } from '../../../constants/styles'
+import { styles } from '../../../constants/styles'
 import { queryCheckout } from '../../../interfaces/checkout'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import {
   displayCreatedDate,
   extractError,
+  getPrimaryColor,
   showSuccessToast
 } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
@@ -287,7 +288,7 @@ const RejectModal: React.FC<RejectForm> = ({
             <CustomItemList
               items={reasonList}
               multiSelect={setRejectReasonId}
-              itemColor={{ bgColor: '#F0F9FF', borderColor: primaryColor }}
+              itemColor={{ bgColor: '#F0F9FF', borderColor: getPrimaryColor() }}
             />
           </Box>
 

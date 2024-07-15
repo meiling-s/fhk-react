@@ -28,7 +28,7 @@ import { format } from '../../../constants/constant'
 import { localStorgeKeyName } from "../../../constants/constant";
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { extractError } from '../../../utils/utils'
+import { extractError, getPrimaryColor } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 
 type ServiceName = 'SRV00005' | 'SRV00006' | 'SRV00007'
@@ -451,7 +451,7 @@ const localstyles = {
     ...styles.textField,
     maxWidth: '370px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   container: {
@@ -479,7 +479,7 @@ const localstyles = {
       paddingX: 0
     },
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   timePeriodItem: {

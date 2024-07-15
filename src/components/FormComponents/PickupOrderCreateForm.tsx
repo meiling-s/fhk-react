@@ -47,7 +47,8 @@ import { localStorgeKeyName } from '../../constants/constant'
 import {
   getThemeColorRole,
   getThemeCustomList,
-  displayCreatedDate
+  displayCreatedDate,
+  getPrimaryColor
 } from '../../utils/utils'
 
 import dayjs, { Dayjs } from 'dayjs'
@@ -636,7 +637,7 @@ const PickupOrderCreateForm = ({
                   }}
                   defaultStartDate={selectedPo?.effFrmDate}
                   defaultEndDate={selectedPo?.effToDate}
-                  iconColor={colorTheme}
+                  iconColor={getPrimaryColor()}
                 />
                 { errorsField.effFrmDate.status ?  <ErrorMessage  message={errorsField.effFrmDate.message}/> : ''}
                 { errorsField.effToDate.status ?  <ErrorMessage  message={errorsField.effToDate.message}/> : ''}

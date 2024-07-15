@@ -154,9 +154,9 @@ export const getThemeColorRole = (role: string) => {
   const colorList = {
     astd: '#79CA25',
     collector: '#79CA25',
-    logistic: '#7CE495',
+    logistic: '#63D884',
     manufacturer: '#6BC7FF',
-    customer: '#6BC7FF'
+    customer: '#199BEC'
   }
 
   return colorList[role as keyof typeof colorList]
@@ -402,3 +402,35 @@ export const mappingRecyName = (
 export const validateEmail = (email: string) => {
   return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
+
+export const getPrimaryColor = (): string => {
+  const role = localStorage.getItem(localStorgeKeyName.role);
+  switch (role) {
+    case 'manufacturer':
+      return '#6BC7FF';
+    case 'customer':
+      return '#199BEC';
+    case 'logistic':
+      return '#63D884';
+    case 'collector':
+      return '#79CA25';
+    default:
+      return '#79CA25';
+  }
+};
+
+export const getPrimaryLightColor = (): string => {
+  const role = localStorage.getItem(localStorgeKeyName.role);
+  switch (role) {
+    case 'manufacturer':
+      return '#F0F9FF';
+    case 'customer':
+      return '#F0F9FF';
+    case 'logistic':
+      return '#63D884';
+    case 'collector':
+      return '#79CA25';
+    default:
+      return '#79CA25';
+  }
+};

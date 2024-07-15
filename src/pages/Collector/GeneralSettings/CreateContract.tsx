@@ -16,7 +16,7 @@ import {
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr, format } from '../../../constants/constant'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, getPrimaryColor, returnErrorMsg } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
@@ -443,7 +443,7 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   DateItem: {

@@ -5,7 +5,7 @@ import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { styles } from '../../../constants/styles'
+import {  styles } from '../../../constants/styles'
 
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
@@ -386,7 +386,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
               }}
               editable={action != 'delete'}
               defaultSelected={status}
-              needPrimaryColor={true}
+              needPrimaryColor={false}
             />
           </CustomField>
           <Grid item>
