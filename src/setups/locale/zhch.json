@@ -31,7 +31,8 @@
     "pageNotFound": "找不到网页",
     "errorMessage": "错误信息",
     "message": "留言",
-    "statusCode": "状态码"
+    "statusCode": "状态码",
+    "noOptions": "无选项"
   },
   "col": {
     "createCP": "建立回收点",
@@ -671,7 +672,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "仓库",
+    "warehouse": "仓库仪表板",
     "currentCapacity": "现时容量",
     "thereStillEnoughSpace": "还有足够的空间",
     "noMoreRoom": "没有空间了",

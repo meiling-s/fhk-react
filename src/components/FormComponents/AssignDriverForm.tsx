@@ -432,6 +432,7 @@ props) => {
                                 }}
                               />
                             )}
+                            noOptionsText={t('common.noOptions')}
                           />
                         </CustomField>
 
@@ -464,6 +465,7 @@ props) => {
                                 }}
                               />
                             )}
+                            noOptionsText={t('common.noOptions')}
                           />
                         </CustomField>
                         <Grid item sx={{ width: '100%' }}>
