@@ -311,7 +311,7 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                 spacing={2.5}
             >
                 <Typography style={{ color: '#717171', fontSize: '16px', fontWeight: '700' }}>
-                    {t('notification.modify_template.broadcast.Recycling_delivery_request')}
+                    {t('notification.modify_template.sms.Recycling_delivery_request')}
                 </Typography>
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
                     <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
@@ -434,8 +434,8 @@ const SMSTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiRou
                                 key={index} 
                                 className="mr-2 text-[#717171] text-md py-1 px-2 hover:cursor-pointer  bg-[#FBFBFB]"
                                 id ={`drag-${index}`} 
-                                onDragStart={(event) => onDragHandler(event, ` [${item}] `)}
-                                draggable="true">{`[${item}]`}
+                                onDragStart={(event) => onDragHandler(event, ` {${item}} `)}
+                                draggable="true">{`{${item}}`}
                             </div>
                         })}
                     </Grid>
