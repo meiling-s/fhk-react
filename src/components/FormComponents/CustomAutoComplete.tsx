@@ -4,10 +4,10 @@ import {
   AutocompleteChangeReason,
   SxProps,
   TextField,
-  Theme,
-} from "@mui/material";
-import React from "react";
-import { styles } from "../../constants/styles";
+  Theme
+} from '@mui/material'
+import React from 'react'
+import { styles } from '../../constants/styles'
 
 const CustomAutoComplete = ({
   placeholder,
@@ -19,28 +19,24 @@ const CustomAutoComplete = ({
   inputValue,
   error,
   helpertext,
-  readOnly
-
- 
+  readOnly,
+  onCompositionEnd
 }: {
-  option: any;
-  placeholder: string;
-  sx?: SxProps<Theme>;
-  value:string
+  option: any
+  placeholder: string
+  sx?: SxProps<Theme>
+  value: string
   onChange: (
     event: React.SyntheticEvent<Element, Event>,
     newValue: string | null,
-    reason: AutocompleteChangeReason,
-  ) => void;
-  onInputChange?:any,
-  inputValue?:any,
-  error?:boolean,
-  helpertext?:any,
-  readOnly?:boolean | undefined;
-   
- 
-
-
+    reason: AutocompleteChangeReason
+  ) => void
+  onInputChange?: any
+  inputValue?: any
+  error?: boolean
+  helpertext?: any
+  readOnly?: boolean | undefined
+  onCompositionEnd?: any
 }) => {
   return (
     <Autocomplete
@@ -51,6 +47,7 @@ const CustomAutoComplete = ({
       disableClearable
       options={option}
       onChange={onChange}
+      onCompositionEnd={onCompositionEnd}
       renderInput={(params) => (
         <TextField
           error={error}
@@ -59,18 +56,14 @@ const CustomAutoComplete = ({
           placeholder={placeholder}
           InputProps={{
             ...params.InputProps,
-            type: "search",
+            type: 'search'
           }}
-         
           helperText={helpertext}
           sx={{ ...styles.textField, ...sx }}
-         
-          
-          
         />
       )}
     />
-  );
-};
+  )
+}
 
-export default CustomAutoComplete;
+export default CustomAutoComplete

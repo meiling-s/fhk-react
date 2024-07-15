@@ -664,8 +664,6 @@ export const GET_PROCESS_OUT = (
   url: `api/v1/${realmApiRoute}/processout/header/searching/${table}`
 })
 
-
-
 export const GET_PROCESS_IN_BY_ID = (
   table: string,
   processInId: number,
@@ -839,7 +837,7 @@ export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
 export const EDIT_STAFF = (
   tenantId: string,
   staffId: string,
-  realmApi: string,
+  realmApi: string
 ): AxiosRequestConfig => ({
   method: realmApi === 'logistic' ? 'put' : 'patch',
   url: `api/v1/${realmApi}/staff/${tenantId}/${staffId}`
@@ -988,7 +986,8 @@ export const GET_ALL_LOGISTICS_PICK_UP_ORDER = (
   tenantId: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/administrator/pico/search/logistic/${tenantId}`
+  //url: `api/v1/administrator/pico/search/logistic/${tenantId}`
+  url: `api/v1/administrator/pico/search/${tenantId}`
 })
 
 //get all status
@@ -1637,9 +1636,7 @@ export const UPDATE_DENIAL_REASON_COLLECTORS = (
   url: `/api/v1/collectors/reason/${tenantId}/${reasonId}/new`
 })
 
-export const CREATE_USER_ACTIVITY = (
-  loginId: string, 
-): AxiosRequestConfig => ({
+export const CREATE_USER_ACTIVITY = (loginId: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/userActivity/${loginId}`
 })
