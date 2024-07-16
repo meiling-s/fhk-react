@@ -33,6 +33,7 @@ interface engineDataProps {
     premiseTypeNameTchi: string
     registeredFlg: boolean
     remark: string
+    description: string
     residentalFlg: boolean
     serviceType: string
     status: string
@@ -69,6 +70,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const [englishName, setEnglishName] = useState('')
     const [registeredFlg, setRegisteredFlg] = useState(false)
     const [residentalFlg, setResidentalFlg] = useState(false)
+    const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
     const [selectedService, setSelectedService] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
@@ -99,6 +101,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 setRegisteredFlg(selectedItem.registeredFlg)
                 setResidentalFlg(selectedItem.residentalFlg)
                 setSelectedService(newServiceValue.name)
+                setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
             }
         } else if (action === 'add') {
@@ -113,6 +116,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         setRegisteredFlg(false)
         setResidentalFlg(false)
         setSelectedService('')
+        setDescription('')
         setRemark('')
     }
 
@@ -217,6 +221,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             residentalFlg: residentalFlg,
             registeredFlg: registeredFlg,
             remark: remark,
+            description: description,
             status: 'ACTIVE',
             serviceType: serviceValue.value,
             createdBy: loginId,
@@ -382,6 +387,17 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 />
                                 )}
                                 noOptionsText={t('common.noOptions')}
+                            />
+                        </CustomField>
+                    </Box>
+                    <Box sx={{ marginY: 2 }}>
+                        <CustomField label={t('packaging_unit.introduction')}>
+                            <CustomTextField
+                                id="introduction"
+                                placeholder={t('packaging_unit.introduction_placeholder')}
+                                onChange={(event) => setDescription(event.target.value)}
+                                multiline={true}
+                                defaultValue={description}
                             />
                         </CustomField>
                     </Box>
