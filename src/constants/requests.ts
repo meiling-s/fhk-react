@@ -986,8 +986,8 @@ export const GET_ALL_LOGISTICS_PICK_UP_ORDER = (
   tenantId: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  //url: `api/v1/administrator/pico/search/logistic/${tenantId}`
-  url: `api/v1/administrator/pico/search/${tenantId}`
+  url: `api/v1/administrator/pico/search/logistic/${tenantId}`
+  // url: `api/v1/administrator/pico/search/${tenantId}`
 })
 
 //get all status
