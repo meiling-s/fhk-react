@@ -87,10 +87,6 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       {
         name: t('status.inactive'),
         id: 'INACTIVE'
-      },
-      {
-        name: t('status.deleted'),
-        id: 'DELETED'
       }
     ]
     return colList
@@ -215,7 +211,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       packagingNameEng: englishName,
       description: description,
       remark: remark,
-      status: 'ACTIVE',
+      status: status,
       createdBy: token.loginId,
       updatedBy: token.loginId
     }
