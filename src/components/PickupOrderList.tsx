@@ -53,13 +53,14 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   })
   const role = localStorage.getItem(localStorgeKeyName.role)
   const [selectedPico, setSelectedPico] = useState<string>('')
+  const [searchInput, setSearchInput] = useState<string>('')
 
   const initPickupOrderRequest = async () => {
     let result = null
     if (role != 'collectoradmin') {
-      result = await getAllLogisticsPickUpOrder(0 - 1, 50, query)
+      result = await getAllLogisticsPickUpOrder(0 - 1, 1000, query)
     } else {
-      result = await getAllPickUpOrder(0 - 1, 50, query)
+      result = await getAllPickUpOrder(0 - 1, 1000, query)
     }
     const data = result?.data.content
     //console.log("pickup order content: ", data);
@@ -93,23 +94,9 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     setFilteredPico(picoDetailList)
   }, [drawerOpen])
 
-  const handleSearch = (searchWord: string) => {
-    console.log('searchWord', searchWord)
-    const normalizedSearchWord = searchWord.trim().toLowerCase()
-    if (searchWord != '') {
-      const filteredData = filteredPico.filter((item) => {
-        // Normalize the senderName by converting to lowercase
-        return item.senderName.toLowerCase().includes(normalizedSearchWord)
-      })
-
-      setFilteredPico(filteredData)
-      if (filteredData) {
-        setFilteredPico(filteredData)
-      }
-    } else {
-      setFilteredPico(picoList)
-    }
-  }
+  useEffect(() => {
+    handleSearch(searchInput)
+  }, [searchInput])
 
   const handleSelectedPicoId = (
     pickupOrderDetail: PickupOrderDetail,
@@ -118,6 +105,58 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     if (selectPicoDetail) {
       selectPicoDetail(pickupOrderDetail, picoId)
     }
+  }
+
+  const handleSearch = async (searchWord: string) => {
+    const normalizedSearchWord = searchWord
+      .trim()
+      .toLowerCase()
+      .normalize('NFKC')
+
+    if (normalizedSearchWord !== '') {
+      // Update the query with the search term
+      const updatedQuery = {
+        ...query,
+        senderName: normalizedSearchWord
+      }
+
+      let result = null
+      if (role !== 'collectoradmin') {
+        result = await getAllLogisticsPickUpOrder(0 - 1, 1000, updatedQuery)
+      } else {
+        result = await getAllPickUpOrder(0 - 1, 1000, updatedQuery)
+      }
+
+      const data = result?.data.content
+      if (data && data.length > 0) {
+        const picoDetailList =
+          data.flatMap((item: any) =>
+            item?.pickupOrderDetail.map((detailPico: any) => ({
+              type: item.picoType,
+              picoId: item.picoId,
+              status: detailPico.status,
+              effFrmDate: item.effFrmDate,
+              effToDate: item.effToDate,
+              routine: `${item.routineType}, ${item.routine.join(', ')}`,
+              senderName: detailPico.senderName,
+              receiver: detailPico.receiverName,
+              pickupOrderDetail: detailPico
+            }))
+          ) ?? []
+
+        setFilteredPico(picoDetailList)
+      } else {
+        setFilteredPico([])
+      }
+    } else {
+      setFilteredPico(picoList)
+    }
+  }
+
+  const handleCompositionEnd = (event: SyntheticEvent) => {
+    const target = event.target as HTMLInputElement
+    setSearchInput(target.value)
+    handleSearch(target.value)
   }
 
   return (
@@ -134,26 +173,11 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
             onCloseHeader: handleDrawerClose
           }}
         >
-          <Box>
+          <Box sx={{ paddingX: 4 }}>
             <Divider />
-            <div className="p-6">
+            <div className="">
               <Box>
                 <div className="filter-section  mb-6">
-                  {/* <TextField
-                    id="searchShipment"
-                    onChange={(event) => handleSearch(event.target.value)}
-                    sx={styles.inputState}
-                    placeholder={t('pick_up_order.search_company_name')}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={() => {}}>
-                            <SEARCH_ICON style={{ color: '#79CA25' }} />
-                          </IconButton>
-                        </InputAdornment>
-                      )
-                    }}
-                  /> */}
                   <CustomField
                     label={t('pick_up_order.choose_logistic')}
                     mandatory
@@ -174,11 +198,13 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                         _: SyntheticEvent,
                         newValue: string | null
                       ) => {
-                        handleSearch(newValue || '')
+                        // handleSearch(newValue || '')
+                        setSearchInput(newValue || '')
                         setSelectedPico(newValue || '')
                       }}
+                      onCompositionEnd={handleCompositionEnd}
                       onInputChange={(event: any, newInputValue: string) => {
-                        handleSearch(newInputValue)
+                        setSearchInput(newInputValue)
                         setSelectedPico(event.target.value)
                       }}
                       value={selectedPico}
@@ -197,7 +223,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                             item.picoId
                           )
                         }}
-                        className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4"
+                        className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4 w-[450px]"
                       >
                         <div className="font-bold text-mini mb-2">
                           {item.type}

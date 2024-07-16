@@ -21,7 +21,7 @@ const Notice = () => {
     ];
     
     return(
-        <Box className="container-wrapper w-full">
+        <Box className="container-wrapper w-max">
             <div className="settings-page bg-bg-primary">
                 <Box>
                     <Typography style={{fontWeight: '700', fontSize: '22px'}} color="black" fontWeight="bold">

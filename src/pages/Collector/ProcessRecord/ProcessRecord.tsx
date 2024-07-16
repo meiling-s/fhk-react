@@ -238,19 +238,19 @@ const ProcessRecord: FunctionComponent = () => {
       placeholder: t('processRecord.enterProcessingNumber'),
       field: 'processOutId',
       numberOnly: true,
-      width: '300px'
+      // width: ''
     },
     {
       label: t('processRecord.handleName'),
       options: getUniqueOptions('packageTypeId'),
       field: 'processType',
-      width: '300px'
+      // width: '100%'
     },
     {
       label: t('processRecord.processingLocation'),
       options: getUniqueOptions('address'),
       field: 'processAddress',
-      width: '300px'
+      // width: '100%'
     }
   ]
 
@@ -334,7 +334,8 @@ const ProcessRecord: FunctionComponent = () => {
             display: {
               sm: 'flex',
               xs: 'block'
-            }
+            },
+            width: '100%'
           }}
           mt={3}
         >
@@ -344,7 +345,7 @@ const ProcessRecord: FunctionComponent = () => {
               label={s.label}
               field={s.field}
               placeholder={s?.placeholder}
-              width={s.width}
+              // width={s.width}
               numberOnly={s.numberOnly || false}
               options={s.options || []}
               onChange={handleSearch}
