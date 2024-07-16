@@ -1,5 +1,6 @@
 import { Axios, AxiosRequestConfig } from 'axios'
 import { CreateDenialReason } from '../interfaces/denialReason'
+import { RealmApi } from './constant'
 
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
@@ -148,6 +149,16 @@ export const GET_ALL_CHECKIN_REQUESTS = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/checkinrequest/searching/${table}`
+})
+
+export const UPDATE_CHECK_IN = (
+  realmApiRoute: string,
+  chkInId: number,
+  table: string,
+  picoDtlId: number
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/checkin/${table}/pico/${chkInId}/${picoDtlId}`
 })
 
 export const UPDATE_CHECK_IN_STATUS = (
@@ -508,6 +519,16 @@ export const GET_CHECKOUT_REQUEST_BY_ID = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/collectors/checkout/${table}/${chkOutId}`
+})
+
+export const UPDATE_CHECK_OUT = (
+  realmApiRoute: string,
+  chkOutId: number,
+  table: string,
+  picoDtlId: number
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/checkout/${table}/pico/${chkOutId}/${picoDtlId}`
 })
 
 export const UPDATE_CHECKOUT_REQUEST_STATUS = (
