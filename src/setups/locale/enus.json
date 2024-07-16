@@ -99,6 +99,7 @@
       "invalidDate": "Shipping validity start date should be lower than shipping validity end date",
       "incorrectAddress": "incorrect Address",
       "dateOutOfRange": "Specify date(s) is out of the Effective date range",
+      "dateSpesificIsWrong": "Specify date(s) is in wrong format",
       "effectiveDateLess": "Effective from date should not later than Effective to date"
     }
   },

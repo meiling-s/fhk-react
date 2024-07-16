@@ -31,7 +31,7 @@ import { localStorgeKeyName } from "../../../constants/constant";
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useNavigate } from 'react-router-dom'
-import { extractError } from '../../../utils/utils'
+import { extractError, getPrimaryColor } from '../../../utils/utils'
 
 const BasicServicePicture = () => {
   const { t } = useTranslation()
@@ -464,7 +464,7 @@ const localstyles = {
     ...styles.textField,
     maxWidth: '370px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   container: {
@@ -492,7 +492,7 @@ const localstyles = {
       paddingX: 0
     },
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   timePeriodItem: {

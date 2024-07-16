@@ -10,12 +10,12 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import LabelField from '../../../components/FormComponents/CustomField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DOCUMENT_ICON } from '../../../themes/icons'
-import { getDownloadExcel, getDownloadWord } from '../../../APICalls/report'
-import { primaryColor } from '../../../constants/styles'
 import {
   getBaseUrl,
   returnApiToken,
-  getSelectedLanguange
+  getSelectedLanguange,
+  getPrimaryColor,
+  getPrimaryLightColor
 } from '../../../utils/utils'
 
 import axiosInstance from '../../../constants/axiosInstance'
@@ -603,7 +603,7 @@ const DownloadItem: FunctionComponent<{
           alignItems: 'center',
           height: '32px',
           width: '90px',
-          background: '#E4F6DC',
+          background: getPrimaryLightColor(),
           borderRadius: '24px',
           padding: '6px, 12px, 6px, 12px',
           rowGap: '4px',
@@ -616,12 +616,12 @@ const DownloadItem: FunctionComponent<{
         href={validation.length === 0 ? url : ''}
         // onClick={() => downloadfile(url, typeFile)}
       >
-        <DOCUMENT_ICON style={{ color: '#79CA25' }} />
+        <DOCUMENT_ICON style={{ color: getPrimaryColor() }} />
         <Typography
           style={{
             fontSize: '13px',
             fontWeight: '700',
-            color: '#79CA25',
+            color: getPrimaryColor(),
             textAlign: 'center'
           }}
         >
@@ -677,7 +677,7 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: primaryColor
+      color: getPrimaryColor()
     }
   },
   DateItem: {

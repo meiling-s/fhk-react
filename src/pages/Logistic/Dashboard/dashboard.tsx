@@ -27,7 +27,7 @@ import {
   DropOffPoint
 } from '../../../interfaces/dashboardLogistic'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { displayCreatedDate, displayLocalDate, extractError } from '../../../utils/utils'
+import { displayCreatedDate, displayLocalDate, extractError, getPrimaryColor } from '../../../utils/utils'
 import { getAllPackagingUnit } from '../../../APICalls/Collector/packagingUnit'
 import { PackagingUnit } from '../../../interfaces/packagingUnit'
 import { getVehicleLogistic } from '../../../APICalls/Logistic/vehicles'
@@ -398,7 +398,7 @@ const VehicleDashboard = () => {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: '#79CA25' }} />
+                    <SEARCH_ICON style={{ color: getPrimaryColor()}} />
                   </IconButton>
                 </InputAdornment>
               )
@@ -488,7 +488,7 @@ const VehicleDashboard = () => {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={() => {}}>
-                      <SEARCH_ICON style={{ color: '#79CA25' }} />
+                      <SEARCH_ICON style={{ color: getPrimaryColor() }} />
                     </IconButton>
                   </InputAdornment>
                 )
@@ -680,16 +680,16 @@ let style = {
     '& .MuiOutlinedInput-root': {
       borderRadius: '10px',
       '& fieldset': {
-        borderColor: '#79CA25'
+        borderColor: getPrimaryColor()
       },
       '&:hover fieldset': {
-        borderColor: '#79CA25'
+        borderColor: getPrimaryColor()
       },
       '&.Mui-focused fieldset': {
-        borderColor: '#79CA25'
+        borderColor: getPrimaryColor()
       },
       '& label.Mui-focused': {
-        color: '#79CA25'
+        color: getPrimaryColor()
       }
     }
   }

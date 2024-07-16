@@ -1,6 +1,7 @@
 import { Box, Button } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { styles, primaryColor, primaryLightColor } from '../../constants/styles'
+import { styles} from '../../constants/styles'
+import { getPrimaryColor, getPrimaryLightColor } from '../../utils/utils'
 
 //item list's item
 export type il_item = {
@@ -43,13 +44,13 @@ function CustomItemList({
     ...styles.listItemTemp,
     backgroundColor: itemColor?.bgColor
       ? itemColor?.bgColor
-      : primaryLightColor,
-    borderColor: itemColor?.borderColor ? itemColor?.borderColor : primaryColor,
-    color: needPrimaryColor ? primaryColor : '#535353',
+      : getPrimaryLightColor(),
+    borderColor: itemColor?.borderColor ? itemColor?.borderColor : getPrimaryColor(),
+    color: needPrimaryColor ? getPrimaryColor() : '#535353',
     '&.MuiButton-root:hover': {
       borderColor: itemColor?.borderColor
         ? itemColor?.borderColor
-        : primaryColor
+        : getPrimaryColor()
     }
   }
 

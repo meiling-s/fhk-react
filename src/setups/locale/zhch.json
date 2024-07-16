@@ -99,6 +99,7 @@
       "invalidDate": "运输有效期开始日期应低于运输有效期结束日期",
       "incorrectAddress": "地址不正确",
       "dateOutOfRange": "指定日期超出开放日期范围",
+      "dateSpesificIsWrong": "指定日期格式错误",
       "effectiveDateLess": "开始日期不能晚于截止日期"
     }
   },

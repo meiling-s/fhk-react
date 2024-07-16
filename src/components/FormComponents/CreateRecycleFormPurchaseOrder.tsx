@@ -31,9 +31,11 @@ import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
 import {
   formatWeight,
+  getPrimaryColor,
   getThemeColorRole,
   getThemeCustomList,
-  onChangeWeight
+  onChangeWeight,
+  validDayjsISODate
 } from '../../utils/utils'
 import { PurchaseOrderDetail } from '../../interfaces/purchaseOrder'
 import { DatePicker } from '@mui/x-date-pickers'
@@ -282,7 +284,7 @@ const CreateRecycleForm = ({
 
   const validateData = () => {
     let isValid = true
-
+    // debugger
     if (formik.values.pickupAt === '') {
       setErrorsField((prev) => {
         return {
@@ -295,6 +297,21 @@ const CreateRecycleForm = ({
       })
       isValid = false
     }
+
+    if (!validDayjsISODate(dayjs(formik.values.pickupAt))) {
+      console.log('formik.values.pickupAt', formik.values.pickupAt)
+      setErrorsField((prev) => {
+        return {
+          ...prev,
+          pickupAt: {
+            ...prev.pickupAt,
+            status: true
+          }
+        }
+      })
+      isValid = false
+    }
+
     if (formik.values.recycTypeId === '') {
       setErrorsField((prev) => {
         return {
@@ -586,11 +603,8 @@ const CreateRecycleForm = ({
                     </Box>
                   </Box>
                 </CustomField>
-                {errorsField['pickupAt' as keyof ErrorsField].required &&
-                errorsField['pickupAt' as keyof ErrorsField].status ? (
-                  <ErrorMessages
-                    message={t('purchase_order.create.required_field')}
-                  />
+                {errorsField['pickupAt' as keyof ErrorsField].status ? (
+                  <ErrorMessages message={t('form.error.isInWrongFormat')} />
                 ) : (
                   ''
                 )}
@@ -856,7 +870,7 @@ let localstyles = {
     ...styles.textField,
     maxWidth: '370px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   timePicker: {
@@ -870,7 +884,7 @@ let localstyles = {
       paddingX: 0
     },
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   textField: {
