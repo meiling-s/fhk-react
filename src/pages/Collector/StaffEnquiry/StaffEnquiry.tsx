@@ -322,7 +322,7 @@ const StaffEnquiry: FunctionComponent = () => {
   }, []);
 
   return (
-    <Box className="container-wrapper w-full">
+    <Box className="container-wrapper w-max">
       <div className="settings-page bg-bg-primary">
         <Box>
           <Typography fontSize={16} color="black" fontWeight="bold">

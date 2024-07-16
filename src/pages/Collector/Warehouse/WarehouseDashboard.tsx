@@ -626,7 +626,7 @@ const WarehouseDashboard: FunctionComponent = () => {
   }, [debouncedSearchValue, i18n.language])
 
   return (
-    <Box className="container-wrapper w-[1283px] mt-4">
+    <Box className="container-wrapper w-max mt-4">
       <Box sx={{ marginBottom: 2 }}>
         {realmApi === 'account' && (
           <TextField

@@ -346,6 +346,7 @@ const GeneralSettings: FunctionComponent = () => {
               padding: '10px',
               borderRadius: '5px',
               marginLeft: 0,
+              width: '100%',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' // Optional: Add box shadow
             }}
           >

@@ -47,7 +47,7 @@ const Report: FunctionComponent = () => {
   }
 
   return (
-    <Box className="container-wrapper w-full">
+    <Box className="container-wrapper">
       <div className="settings-page bg-bg-primary">
         <div className="title font-bold text-3xl mb-10">{titlePage}</div>
         <Tabs

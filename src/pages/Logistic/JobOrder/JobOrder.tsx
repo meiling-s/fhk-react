@@ -472,7 +472,10 @@ const JobOrder = () => {
   return (
     <>
       <ToastContainer />
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Box
+        sx={{ display: 'flex', flexDirection: 'column' }}
+        className="container-wrapper w-max"
+      >
         <Modal open={openModal} onClose={handleCloses}>
           <JobOrderForm
             onClose={handleCloses}
@@ -503,13 +506,14 @@ const JobOrder = () => {
           <DataGrid
             rows={filteredPico}
             columns={columns}
-  
             disableRowSelectionOnClick
             onRowClick={handleRowClick}
             getRowSpacing={getRowSpacing}
             localeText={localeTextDataGrid}
-            getRowClassName={(params) => 
-              selectedRow && params.id === selectedRow.joId ? 'selected-row' : ''
+            getRowClassName={(params) =>
+              selectedRow && params.id === selectedRow.joId
+                ? 'selected-row'
+                : ''
             }
             hideFooter
             sx={{
@@ -526,14 +530,14 @@ const JobOrder = () => {
                   borderBottom: 'none'
                 }
               },
-              '.MuiDataGrid-columnHeaderTitle': { 
+              '.MuiDataGrid-columnHeaderTitle': {
                 fontWeight: 'bold !important',
                 overflow: 'visible !important'
               },
               '& .selected-row': {
-                  backgroundColor: '#F6FDF2 !important',
-                  border: '1px solid #79CA25'
-                }
+                backgroundColor: '#F6FDF2 !important',
+                border: '1px solid #79CA25'
+              }
             }}
           />
           <Pagination
