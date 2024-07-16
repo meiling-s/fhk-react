@@ -31,7 +31,8 @@
     "pageNotFound": "找不到网页",
     "errorMessage": "错误信息",
     "message": "留言",
-    "statusCode": "状态码"
+    "statusCode": "状态码",
+    "noOptions": "无选项"
   },
   "col": {
     "createCP": "建立回收点",
@@ -98,6 +99,7 @@
       "invalidDate": "运输有效期开始日期应低于运输有效期结束日期",
       "incorrectAddress": "地址不正确",
       "dateOutOfRange": "指定日期超出开放日期范围",
+      "dateSpesificIsWrong": "指定日期格式错误",
       "effectiveDateLess": "开始日期不能晚于截止日期"
     }
   },
@@ -205,7 +207,7 @@
     "message": "信息",
     "confirm_reject": "确认拒绝送入请求吗?",
     "reject_reasons": "拒绝原因（可多选）",
-    "confirm": "确认拒绝",
+    "confirm": "确认",
     "cancel": "取消",
     "search_input": "輸入运单编号"
   },
@@ -218,7 +220,7 @@
     "company": "公司",
     "any": "任何",
     "location": "地点",
-    "created_at": "建立日期",
+    "created_at": "送出日期及时间",
     "sender_company": "寄件公司",
     "receiver_company": "收件公司",
     "pickup_order_no": "运单编号",
@@ -670,7 +672,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "回收厂",
+    "warehouse": "仓库仪表板",
     "currentCapacity": "现时容量",
     "thereStillEnoughSpace": "尚有大量空间",
     "noMoreRoom": "没有空间了",

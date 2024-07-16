@@ -36,7 +36,7 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { extractError } from '../../../utils/utils'
+import { extractError, getPrimaryColor } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 
 type ServiceName = 'SRV00001' | 'SRV00002' | 'SRV00003' | 'SRV00004'
@@ -1001,7 +1001,7 @@ const localstyles = {
     ...styles.textField,
     maxWidth: '370px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   container: {
@@ -1029,7 +1029,7 @@ const localstyles = {
       paddingX: 0
     },
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   timePeriodItem: {

@@ -16,7 +16,12 @@ import {
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr, format } from '../../../constants/constant'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import {
+  extractError,
+  getPrimaryColor,
+  returnErrorMsg,
+  validDayjsISODate
+} from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
@@ -66,8 +71,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
   const [existingContract, setExistingContract] = useState<Contract[]>([])
-  const {dateFormat} = useContainer(CommonTypeContainer)
-  const navigate = useNavigate();
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
 
   useEffect(() => {
     resetData()
@@ -115,19 +120,49 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
-      existingContract.forEach((item) => {
-        if (item.contractNo.toLowerCase() === contractNo.toLowerCase()) {
-          tempV.push({
-            field: t('general_settings.contract_number'),
-            problem: formErr.alreadyExist,
-            type: 'error'
-          })
-        }
-      })
-      contractNo !== '' && referenceNumber !== '' && contractNo === referenceNumber &&
+      // existingContract.forEach((item) => {
+      //   if (item.contractNo.toLowerCase() === contractNo.toLowerCase()) {
+      //     tempV.push({
+      //       field: t('general_settings.contract_number'),
+      //       problem: formErr.alreadyExist,
+      //       type: 'error'
+      //     })
+      //   }
+      // })
+      contractNo !== '' &&
+        referenceNumber !== '' &&
+        contractNo === referenceNumber &&
         tempV.push({
-          field: `${t('general_settings.name') } ${t('general_settings.and')} ${t('general_settings.reference_number')}`,
+          field: `${t('general_settings.name')} ${t(
+            'general_settings.and'
+          )} ${t('general_settings.reference_number')}`,
           problem: formErr.mustDifferent,
+          type: 'error'
+        })
+      startDate == null &&
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      startDate &&
+        !validDayjsISODate(startDate) &&
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      endDate == null &&
+        tempV.push({
+          field: t('general_settings.end_date'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      endDate &&
+        !validDayjsISODate(endDate) &&
+        tempV.push({
+          field: t('general_settings.end_date'),
+          problem: formErr.wrongFormat,
           type: 'error'
         })
       startDate > endDate &&
@@ -166,8 +201,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       contractNo: contractNo,
       parentContractNo: referenceNumber,
       status: contractStatus === true ? 'ACTIVE' : 'INACTIVE',
-      contractFrmDate: startDate.format('YYYY-MM-DD'),
-      contractToDate: endDate.format('YYYY-MM-DD'),
+      contractFrmDate: startDate ? startDate.format('YYYY-MM-DD') : '',
+      contractToDate: endDate ? endDate.format('YYYY-MM-DD') : '',
       remark: remark,
       epdFlg: whether,
       createdBy: loginId,
@@ -197,9 +232,9 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.saveFailed'))
@@ -219,9 +254,9 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -231,7 +266,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     try {
       const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
       const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
-  
+
       const formData: any = {
         // tenantId: tenantId,
         // contractNo: contractNo,
@@ -254,9 +289,9 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
           onSubmitData('error', t('common.deleteFailed'))
         }
       }
-    } catch (error:any) {
-      const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.deleteFailed'))
@@ -443,7 +478,7 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   DateItem: {

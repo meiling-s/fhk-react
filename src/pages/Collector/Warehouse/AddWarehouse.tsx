@@ -825,6 +825,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                         <Autocomplete
                           disablePortal
                           fullWidth
+                          disabled={action === 'delete'}
                           options={contractList
                             .filter(
                               (contract) =>
@@ -851,13 +852,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               disabled={action === 'delete'}
                             />
                           )}
+                          noOptionsText={t('common.noOptions')}
                         />
                       </FormControl>
                       {index === contractNum.length - 1 ? (
                         <ADD_CIRCLE_ICON
                           fontSize="small"
-                          className="text-green-primary cursor-pointer"
-                          onClick={handleAddContact}
+                          className={`${action === 'delete' ? "text-gray" : "text-green-primary"} " cursor-pointer"`}
+                          onClick={action !== 'delete' ? handleAddContact : undefined}
                         />
                       ) : (
                         index !== contractNum.length - 1 && (
@@ -868,7 +870,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                 ? 'cursor-not-allowed'
                                 : 'cursor-pointer'
                             } `}
-                            onClick={() => handleRemoveContact(index)}
+                            onClick={() => action !== 'delete' ? handleRemoveContact(index) : undefined}
                           />
                         )
                       )}
@@ -949,7 +951,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <MenuItem value="">
                               <em>-</em>
                             </MenuItem>
-                            {recycleType.map((item, index) => (
+                            {recycleType.length > 0 ? (recycleType.map((item, index) => (
                               <MenuItem value={item.id} key={index}>
                                 {currentLanguage === 'zhhk'
                                   ? item.recyclableNameTchi
@@ -957,7 +959,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                   ? item.recyclableNameSchi
                                   : item.recyclableNameEng}
                               </MenuItem>
-                            ))}
+                            ))) : (
+                              <MenuItem disabled value="">
+                                <em>{t('common.noOptions')}</em>
+                              </MenuItem>
+                            )}
                           </Select>
                         </FormControl>
                         <FormControl sx={{ m: 1, width: '100%' }}>
@@ -982,7 +988,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <MenuItem value="">
                               <em>-</em>
                             </MenuItem>
-                            {recycleSubType[item.recycTypeId]?.map(
+                            {recycleSubType[item.recycTypeId]?.length > 0 ? (recycleSubType[item.recycTypeId]?.map(
                               (item, index) => (
                                 <MenuItem
                                   value={item.recycSubTypeId}
@@ -995,7 +1001,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                     : item.recyclableNameEng}
                                 </MenuItem>
                               )
-                            )}
+                            )) : (
+                            <MenuItem disabled value="">
+                              <em>{t('common.noOptions')}</em>
+                            </MenuItem>)}
                           </Select>
                         </FormControl>
                         <FormControl fullWidth variant="standard">
@@ -1031,8 +1040,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                         {index === recycleCategory.length - 1 ? (
                           <ADD_CIRCLE_ICON
                             fontSize="small"
-                            className="text-green-primary cursor-pointer"
-                            onClick={handleAddRecycleCategory}
+                            className={`${action === 'delete' ? "text-gray" : "text-green-primary"} " cursor-pointer"`}
+                            onClick={action !== 'delete' ? handleAddRecycleCategory : undefined}
                           />
                         ) : (
                           index !== recycleCategory.length - 1 && (
@@ -1043,7 +1052,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                   ? 'cursor-not-allowed'
                                   : 'cursor-pointer'
                               } `}
-                              onClick={() => handleRemoveReycleCategory(index)}
+                              onClick={() => action !== 'delete' ? handleRemoveReycleCategory(index) : undefined}
                             />
                           )
                         )}

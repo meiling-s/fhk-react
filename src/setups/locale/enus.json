@@ -31,7 +31,8 @@
     "pageNotFound": "Page Not Found",
     "errorMessage": "Error Message",
     "message": "Message",
-    "statusCode": "status Code"
+    "statusCode": "status Code",
+    "noOptions": "No options"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -98,6 +99,7 @@
       "invalidDate": "Shipping validity start date should be lower than shipping validity end date",
       "incorrectAddress": "incorrect Address",
       "dateOutOfRange": "Specify date(s) is out of the Effective date range",
+      "dateSpesificIsWrong": "Specify date(s) is in wrong format",
       "effectiveDateLess": "Effective from date should not later than Effective to date"
     }
   },
@@ -311,7 +313,7 @@
   "pick_up_order": {
     "pickup_order": "Pickup Order",
     "enquiry_pickup_order": "Enquiry Pickup Order",
-    "delete_msg": "are you sure want delete this item ?",
+    "delete_msg": "Do you confirm to delete this item?",
     "out_of_date_range": "Specific Date is out of range of the Shipping validity date",
     "created_pickup_order": "Pickup order has been created",
     "changed_pickup_order": "Pickup order has been changed",
@@ -363,7 +365,7 @@
       "vehicle_category": "Vehicle Type",
       "plat_number": "Vehicle Plate No.",
       "contact_number": "Contact No.",
-      "sender_name": "Shipping Company",
+      "sender_name": "Sender Company",
       "exp_opration": "Expired Operation",
       "rec_loc_info": "Recycling Location Information",
       "logistic_company": "Logistic Company",
@@ -671,7 +673,7 @@
     "deleteProcessOutFailed": "Delete process out failed"
   },
   "warehouseDashboard": {
-    "warehouse": "Warehouse",
+    "warehouse": "Warehouse Dashboard",
     "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
     "noMoreRoom": "No more room",

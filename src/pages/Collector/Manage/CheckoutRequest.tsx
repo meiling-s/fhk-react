@@ -41,12 +41,13 @@ import { updateStatus } from '../../../interfaces/warehouse'
 import { CheckOut } from '../../../interfaces/checkout'
 
 import { useTranslation } from 'react-i18next'
-import { styles, primaryColor } from '../../../constants/styles'
+import { styles } from '../../../constants/styles'
 import { queryCheckout } from '../../../interfaces/checkout'
-import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import { Languages, STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import {
   displayCreatedDate,
   extractError,
+  getPrimaryColor,
   showSuccessToast
 } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
@@ -58,6 +59,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -287,7 +289,7 @@ const RejectModal: React.FC<RejectForm> = ({
             <CustomItemList
               items={reasonList}
               multiSelect={setRejectReasonId}
-              itemColor={{ bgColor: '#F0F9FF', borderColor: primaryColor }}
+              itemColor={{ bgColor: '#F0F9FF', borderColor: getPrimaryColor() }}
             />
           </Box>
 
@@ -317,6 +319,12 @@ const RejectModal: React.FC<RejectForm> = ({
   )
 }
 
+type CompanyNameLanguages = {
+  labelEnglish: string,
+  labelSimpflifed: string,
+  labelTraditional: string
+}
+
 const CheckoutRequest: FunctionComponent = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -344,7 +352,7 @@ const CheckoutRequest: FunctionComponent = () => {
     receiverAddr: ''
   })
   const [reasonList, setReasonList] = useState<any>([])
-  const { dateFormat } = useContainer(CommonTypeContainer)
+  const { dateFormat, manuList, collectorList, logisticList } = useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const getRejectReason = async () => {
@@ -448,7 +456,7 @@ const CheckoutRequest: FunctionComponent = () => {
       width: 200
     },
     {
-      field: 'vehicleTypeId',
+      field: 'senderName',
       headerName: t('check_out.shipping_company'),
       width: 150,
       type: 'string'
@@ -520,17 +528,67 @@ const CheckoutRequest: FunctionComponent = () => {
     }
   }
 
+  const getPicoDetail = async (picoId: string) => {
+    try {
+        const pico = await getPicoById(picoId)
+        if(pico) {
+          return pico.data
+        }
+    } catch (error) {
+      return null
+    }
+  }
+
   const getCheckoutRequest = async () => {
     try {
       const result = await getAllCheckoutRequest(page - 1, pageSize, query)
       const data = result?.data.content
       if (data && data.length > 0) {
-        const checkoutData = data
-          .map(transformToTableRow)
-          .filter((item: CheckOut) => item.status === 'CREATED')
-        setCheckoutRequest(
-          data.filter((item: CheckOut) => item.status === 'CREATED')
-        )
+        // console.log('transformToTableRow', data)
+        // const checkoutData = data
+        //   .map(transformToTableRow)
+        //   .filter((item: CheckOut) => item.status === 'CREATED')
+        // setCheckoutRequest(
+        //   data.filter((item: CheckOut) => item.status === 'CREATED')
+        // )
+        let checkoutData:CheckOut[] = []
+        for (let item of data){
+          if(item.status !== 'CREATED') continue
+          const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+          const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
+          item.createdAt = createdAt;
+          if(item.picoId){
+            const picoDetail = await getPicoDetail(item.picoId);
+            if(picoDetail?.pickupOrderDetail[0]){
+              const pico = picoDetail?.pickupOrderDetail[0]
+              item.senderName = pico.senderName
+              item.senderAddr = pico.senderAddr
+            }
+          }
+          if(item?.logisticName){
+            const companyName = getTranslationCompanyName(item?.logisticName)
+            item.logisticName = companyName !== '' ? companyName : item.logisticName
+          }
+          if(item.receiverName){
+            const companyName = getTranslationCompany(item.receiverName);
+            item.receiverName = companyName !== '' ? companyName : item.receiverName
+          }
+          if(item.senderName){
+            const companyName = getTranslationCompany(item.senderName);
+            item.senderName = companyName !== '' ? companyName : item.senderName
+          }
+ 
+          checkoutData.push(item)
+        }
+        // const checkoutData = data.map((item: CheckOut) => {
+        //   const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+        //   const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+        //   return {
+        //     ...item,
+        //     createdAt
+        //   }
+        // })
+        setCheckoutRequest(checkoutData)
         setFilterCheckOut(checkoutData)
       } else {
         setFilterCheckOut([])
@@ -581,6 +639,7 @@ const CheckoutRequest: FunctionComponent = () => {
     const selectedItem = checkOutRequest?.find(
       (item) => item.chkOutId === row.chkOutId
     )
+    
     setSelectedRow(selectedItem)
 
     setDrawerOpen(true)
@@ -606,6 +665,64 @@ const CheckoutRequest: FunctionComponent = () => {
       role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
     )
   }, [role])
+
+  const getTranslationCompanyName = (name: string) : string => {
+    let companyName:string = '';
+    const logistic = logisticList?.find(item => {
+      const { logisticNameEng, logisticNameSchi, logisticNameTchi } = item
+      if(logisticNameEng === name || logisticNameSchi === name || logisticNameTchi === name){
+        return item;
+      }
+    })
+
+    if(logistic){
+      if(i18n.language === Languages.ENUS) companyName = logistic.logisticNameEng
+      if(i18n.language === Languages.ZHCH) companyName = logistic.logisticNameSchi;
+      if(i18n.language === Languages.ZHHK) companyName = logistic.logisticNameTchi
+    }
+    return companyName
+  }
+
+  const listTranslationCompanyName = () : CompanyNameLanguages[] => {
+
+    const manufacturerCompany: CompanyNameLanguages[] = manuList?.map(item => {
+      return {
+        labelEnglish : item?.manufacturerNameEng ?? '',
+        labelSimpflifed : item?.manufacturerNameSchi ?? '',
+        labelTraditional : item?.manufacturerNameTchi ?? ''
+      }
+    }) ?? []
+
+    const collectorCompany : CompanyNameLanguages[] = collectorList?.map(item => {
+      return {
+        labelEnglish : item?.collectorId ?? '',
+        labelSimpflifed : item?.collectorNameSchi ?? '',
+        labelTraditional : item?.collectorNameTchi ?? ''
+      }
+    })  ?? []
+   
+    return [...manufacturerCompany, ...collectorCompany]
+  }
+
+  const companyReceiverSender  = listTranslationCompanyName();
+
+  const getTranslationCompany = (name: string) : string => {
+    let companyName:string = '';
+    const company = companyReceiverSender.find(item => {
+      const { labelEnglish, labelSimpflifed, labelTraditional } = item
+      if( name === labelEnglish || name === labelSimpflifed || name === labelTraditional){
+        return item
+      }
+    })
+
+    if(company){
+      if(i18n.language === Languages.ENUS) companyName = company.labelEnglish
+      if(i18n.language === Languages.ZHCH) companyName = company.labelSimpflifed
+      if(i18n.language === Languages.ZHHK) companyName = company.labelTraditional
+    }
+
+    return companyName
+  }
 
   return (
     <Box className="container-wrapper w-full mr-11">

@@ -59,10 +59,10 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
-import { primaryColor, styles } from '../../../constants/styles'
+import { styles } from '../../../constants/styles'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
-import { extractError, returnApiToken } from '../../../utils/utils'
+import { extractError, getPrimaryColor, returnApiToken } from '../../../utils/utils'
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -644,7 +644,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: primaryColor }} />
+                    <SEARCH_ICON style={{ color: getPrimaryColor() }} />
                   </IconButton>
                 </InputAdornment>
               )
@@ -659,11 +659,15 @@ const WarehouseDashboard: FunctionComponent = () => {
             label={t('check_out.any')}
             onChange={onChangeWarehouse}
           >
-            {warehouseList?.map((item, index) => (
+            {warehouseList?.length >0 ? (warehouseList?.map((item, index) => (
               <MenuItem value={item?.id} key={index}>
                 {item?.name}
               </MenuItem>
-            ))}
+            ))) : (
+              <MenuItem disabled value="">
+                <em>{t('common.noOptions')}</em>
+              </MenuItem>
+            )}
           </Select>
         </FormControl>
       </Box>

@@ -218,6 +218,7 @@ const ChartTotalSales = () => {
                                         }}
                                     />
                                 )}
+                                noOptionsText={t('common.noOptions')}
                             />
                             <Grid  item style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: 1, border: '1px solid #E2E2E2', height: '40px', padding: '8px', borderRadius: '6px'}} >
                                 <Typography>

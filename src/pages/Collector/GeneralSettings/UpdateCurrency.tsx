@@ -180,11 +180,15 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
                     }
                   }}
                 >
-                  {currencyType.map((item, index) => (
+                  {currencyType.length > 0 ? (currencyType.map((item, index) => (
                     <MenuItem key={index} value={item.id}>
                       {item.name}
                     </MenuItem>
-                  ))}
+                  ))) : (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
+                    </MenuItem>
+                  )}
                 </Select>
               </FormControl>
             </Grid>

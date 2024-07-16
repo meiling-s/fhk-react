@@ -12,10 +12,10 @@ import { t } from 'i18next'
 import { localStorgeKeyName } from '../../constants/constant'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs, { Dayjs } from 'dayjs'
-import { styles } from '../../constants/styles'
 import { format } from './../../constants/constant'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { getPrimaryColor } from '../../utils/utils'
 
 interface Option {
   value: string
@@ -62,8 +62,6 @@ const CustomSearchField = ({
       onChange(field ? field : label, newValue)
     }
   }
-  const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
-  const role = localStorage.getItem(localStorgeKeyName.role)
 
   const handleDateChange = (date: Dayjs | null) => {
     const formattedDate = date ? date.format('YYYY-MM-DD') : ''
@@ -81,12 +79,6 @@ const CustomSearchField = ({
     }
   }
 
-  useEffect(() => {
-    setPrimaryColor(
-      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
-    )
-  }, [role])
-
   return (
     <Box>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
@@ -100,7 +92,7 @@ const CustomSearchField = ({
               sx={{
                 ...localstyles.datePicker,
                 '& .MuiIconButton-edgeEnd': {
-                  color: primaryColor
+                  color: getPrimaryColor()
                 }
               }}
             ></DatePicker>
@@ -117,19 +109,19 @@ const CustomSearchField = ({
                   borderColor: '#grey'
                 },
                 '&:hover fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor()
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: primaryColor
+                  borderColor: getPrimaryColor()
                 },
                 '& label.Mui-focused': {
-                  color: primaryColor // Change label color when input is focused
+                  color: getPrimaryColor() // Change label color when input is focused
                 }
               }
             }}
             label={label}
             InputLabelProps={{
-              style: { color: primaryColor },
+              style: { color: getPrimaryColor() },
               focused: true
             }}
             value={selectedValue}
@@ -145,7 +137,7 @@ const CustomSearchField = ({
                         handleSearch ? () => handleSearchClick() : undefined
                       }
                     >
-                      <SEARCH_ICON style={{ color: primaryColor }} />
+                      <SEARCH_ICON style={{ color: getPrimaryColor() }} />
                     </IconButton>
                   )}
                 </InputAdornment>

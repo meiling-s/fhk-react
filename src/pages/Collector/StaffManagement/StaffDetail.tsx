@@ -757,6 +757,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                             error={checkString(selectedLoginId)}
                           />
                         )}
+                        noOptionsText={t('common.noOptions')}
                       />
                     ) : (
                       <TextField

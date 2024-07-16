@@ -463,11 +463,18 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                     }
                   }}
                 >
-                  {userGroupList.map((item, index) => (
+                  {!userGroupList? 
+                  ( <MenuItem disabled value="">
+                    <em>{t('common.noOptions')}</em>
+                  </MenuItem>
+                )
+                :
+                  (userGroupList.map((item, index) => (
                     <MenuItem key={index} value={item.groupId}>
                       {item.roleName}
                     </MenuItem>
-                  ))}
+                  )))
+                }
                 </Select>
               </FormControl>
             </Grid>
@@ -496,7 +503,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 }}
                 editable={action != 'delete'}
                 defaultSelected={userStatus}
-                needPrimaryColor={true}
+                needPrimaryColor={false}
               />
             </CustomField>
             <Grid item sx={{ width: '100%' }}>

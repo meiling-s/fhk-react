@@ -435,6 +435,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
                           )}
                         />
                       )}
+                      noOptionsText={t('common.noOptions')}
                     />
                   ) : (
                     <TextField

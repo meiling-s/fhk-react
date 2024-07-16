@@ -31,7 +31,8 @@
     "pageNotFound": "找不到網頁",
     "errorMessage": "錯誤訊息",
     "message": "留言",
-    "statusCode": "狀態碼"
+    "statusCode": "狀態碼",
+    "noOptions": "無選項"
   },
   "col": {
     "createCP": "建立回收點",
@@ -98,6 +99,7 @@
       "invalidDate": "出貨有效期限開始日期應早於出貨有效期限結束日期",
       "incorrectAddress": "地址不正確",
       "dateOutOfRange": "指定日期超出開放日期範圍",
+      "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期"
     }
   },
@@ -203,9 +205,9 @@
     "recyc_loc_info": "回收地點資料",
     "recyclable_type_weight": "回收物類別及重量",
     "message": "訊息",
-    "confirm_reject": "確認拒絕送入請求嗎?",
-    "reject_reasons": "拒絕原因（可多選）",
-    "confirm": "確認拒絕",
+    "confirm_reject": "確認拒絕送出請求嗎?",
+    "reject_reasons": "拒絕原因(可多選)",
+    "confirm": "確認",
     "cancel": "取消",
     "search_input": "輸入運單編號"
   },
@@ -234,7 +236,7 @@
     "company": "公司",
     "any": "任何",
     "location": "地點",
-    "created_at": "建立日期",
+    "created_at": "送出日期及時間",
     "sender_company": "寄件公司",
     "receiver_company": "收件公司",
     "pickup_order_no": "運單編號",
@@ -668,7 +670,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "回收厰",
+    "warehouse": "倉庫儀表板",
     "currentCapacity": "現時容量",
     "thereStillEnoughSpace": "尚有大量空間",
     "noMoreRoom": "沒有空間了",

@@ -13,8 +13,8 @@ import {
 import DownloadAreaModal from './DownloadAreaModal'
 import { getStaffID, getUserAccountById } from '../../../APICalls/Collector/userGroup'
 import { Roles, localStorgeKeyName } from '../../../constants/constant'
-import { primaryColor } from '../../../constants/styles'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import { getPrimaryColor } from '../../../utils/utils'
 
 interface reportItem {
   id: number
@@ -61,7 +61,7 @@ const DownloadArea = () => {
           <div style={{ display: 'flex', gap: '8px' }}>
             <Button
               style={{
-                backgroundColor: primaryColor,
+                backgroundColor: getPrimaryColor(),
                 color: '#fff',
                 borderColor: '#7CE495',
                 borderRadius: '20px',
