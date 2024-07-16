@@ -83,6 +83,7 @@ interface engineDataProps {
   premiseTypeNameSchi: string
   premiseTypeNameTchi: string
   registeredFlg: boolean
+  description: string
   remark: string
   residentalFlg: boolean
   serviceType: string
@@ -248,6 +249,12 @@ const RecyclingPoint: FunctionComponent = () => {
       headerName: t('packaging_unit.remark'),
       width: 170,
       type: 'string'
+    },
+    {
+    field: 'description',
+    headerName: t('packaging_unit.introduction'),
+    width: 170,
+    type: 'string'
     },
     {
       field: 'edit',
