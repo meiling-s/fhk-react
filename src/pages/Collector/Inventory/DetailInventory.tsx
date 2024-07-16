@@ -13,10 +13,16 @@ import CustomField from '../../../components/FormComponents/CustomField'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined'
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined'
-import { InventoryItem, InventoryDetail as InvDetails} from '../../../interfaces/inventory'
-import { format } from "../../../constants/constant";
+import {
+  InventoryItem,
+  InventoryDetail as InvDetails
+} from '../../../interfaces/inventory'
+import { format } from '../../../constants/constant'
 import dayjs from 'dayjs'
-import { dateToLocalDate, dayjsToLocalDate } from '../../../components/Formatter'
+import {
+  dateToLocalDate,
+  dayjsToLocalDate
+} from '../../../components/Formatter'
 
 import { useTranslation } from 'react-i18next'
 import { PickupOrder } from '../../../interfaces/pickupOrder'
@@ -44,15 +50,16 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   const [shippingData, setShippingData] = useState<any[]>([])
   const { decimalVal } = useContainer(CommonTypeContainer)
   const getPicoDtl = (picoId: string, dtlId: number) => {
-    if(selectedPico) {
-    const pico = selectedPico.find((pico) => pico.picoId == picoId)
-    if(pico) {
-      const picoDetail = pico.pickupOrderDetail.find((dtl) => dtl.picoDtlId == dtlId)
-      return picoDetail
+    if (selectedPico) {
+      const pico = selectedPico.find((pico) => pico.picoId == picoId)
+      if (pico) {
+        const picoDetail = pico.pickupOrderDetail.find(
+          (dtl) => dtl.picoDtlId == dtlId
+        )
+        return picoDetail
       }
     }
     return null
-    
   }
   const fieldItem = [
     {
@@ -88,16 +95,19 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   const initItemTrackInventory = async () => {
     const token = returnApiToken()
     if (selectedRow !== null && selectedRow !== undefined) {
-      let result;
+      let result
       if (token.realmApiRoute === 'account') {
-  
       } else {
-          result = await getItemTrackInventory(token.realmApiRoute, token.decodeKeycloack, selectedRow?.itemId)
+        result = await getItemTrackInventory(
+          token.realmApiRoute,
+          token.decodeKeycloack,
+          selectedRow?.itemId
+        )
 
-          if (result) {
-            const data = result.data
-            setShippingData(data)
-          }
+        if (result) {
+          const data = result.data
+          setShippingData(data)
+        }
       }
     }
   }
@@ -148,77 +158,13 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                   </CustomField>
                 </Grid>
               ))}
-              {selectedRow && selectedRow.inventoryDetail.length > 0 && (
-              <Grid item>
-                <Box>
-                  <Typography sx={styles.header2}>
-                    {t('job_order.item.shipping_info')}
-                  </Typography>
-                </Box>
-              </Grid>
-              )}
-              <Grid item>
-                {selectedRow?.inventoryDetail?.map((item, index) => {
-                  const pico = selectedPico?.find((p) => p.picoId ==  item.sourcePicoId)
-                  const picoDtl = getPicoDtl(item.sourcePicoId, item.sourcePicoDtlId)
-                  let createdDate = ""
-                  if(picoDtl) {
-                    createdDate = dayjs(new Date(picoDtl.createdAt)).format(format.dateFormat1)
-                  }
-                  
-                  return picoDtl ? (
-                    <Box key={index} sx={{ ...localStyle.card, borderColor: '#ACACAC' }}>
-                      <div className="header flex items-center gap-2">
-                        <div className="font-bold text-base">{picoDtl.senderName}</div>
-                        <ArrowForwardOutlinedIcon className="text-grey-darker" />
-                        <div className="font-bold text-base">{picoDtl.receiverName}</div>
-                      </div>
-                      <div className="text-sm text-grey-darker mb-4">
-                        {item.sourcePicoId}
-                      </div>
-                      <div className="logistic flex items-center gap-2 mb-2">
-                        <LocalShippingOutlinedIcon
-                          fontSize="small"
-                          className="text-gray"
-                        />
-                        <div className="text-sm text-grey-darker">
-                          {pico?.logisticName}
-                        </div>
-                      </div>
-                      <div className="shiping-loc flex items-center gap-2 mb-2">
-                        <LocationOnOutlinedIcon
-                          className="text-gray"
-                          fontSize="small"
-                        />
-                        <div className="flex items-center gap-2">
-                          <div className="text-sm text-grey-darker">
-                            {picoDtl.senderAddr}
-                          </div>
-                          <ArrowForwardOutlinedIcon
-                            fontSize="small"
-                            className="text-gray"
-                          />
-                          <div className="text-sm text-grey-darker">
-                            {picoDtl.receiverAddr}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="bg-[#F4F4F4] text-green-primary text-xs p-2 rounded-lg">
-                        { `Handed over to [${pico?.logisticName}, ${pico?.platNo}] at
-                        ${createdDate}`}
-                      </div>
-                    </Box>
-                  ) : null
-
-                })}
-              </Grid>
               {shippingData.length > 0 && (
-              <Grid item>
-                <Typography sx={styles.header2}>
-                  {t('pick_up_order.item.shipping_info')}
-                </Typography>
-                <InventoryShippingCard shippingData={shippingData}/>
-              </Grid>
+                <Grid item>
+                  <Typography sx={styles.header2}>
+                    {t('pick_up_order.item.shipping_info')}
+                  </Typography>
+                  <InventoryShippingCard shippingData={shippingData} />
+                </Grid>
               )}
             </Grid>
           </Box>
