@@ -34,11 +34,12 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { setLanguage } from '../../setups/i18n'
 import { extractError, returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
-import { parseJwtToken } from '../../constants/axiosInstance'
+import axiosInstance, { parseJwtToken } from '../../constants/axiosInstance'
 import NotifContainer from '../../contexts/NotifContainer'
 import axios from 'axios'
 import { createUserActivity } from '../../APICalls/userAccount'
 import { UserActivity } from '../../interfaces/common'
+import JSEncrypt from 'jsencrypt';
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -52,6 +53,8 @@ const Login = () => {
   const { t } = useTranslation()
   const commonTypeContainer = useContainer(CommonTypeContainer)
   const { initBroadcastMessage } = useContainer(NotifContainer)
+  const [publicKey, setPublicKey] = useState('');
+  const [encryptedData, setEncryptedData] = useState('');
   // overwrite select style
   //todo : make select as component
   const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -64,6 +67,50 @@ const Login = () => {
       padding: 8
     }
   }))
+
+  useEffect(() => {
+    fetchPublicKey();
+  }, []);
+
+  const fetchPublicKey = async () => {
+    try {
+      // const response = await fetch(`http://6d7e3a6.r20.cpolar.top/api/v1/collectors/getPublicKey`)
+      const response = await fetch(`${window.baseURL.collector}/api/v1/collectors/getPublicKey`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const publicKeyPem = await response.text();
+      setPublicKey(publicKeyPem);
+    } catch (error) {
+      console.error('Error fetching public key:', error);
+    }
+  };
+
+  const handleEncrypt = (userName: string, password: string) => {
+    if (!userName || !password) {
+      return;
+    }
+    encryptData(password)
+  }
+
+  const encryptData = (data: string) => {
+    if (!publicKey) {
+      console.log('No public key available.');
+      return;
+    }
+
+    const encryptor = new JSEncrypt();
+    encryptor.setPublicKey(publicKey);
+    const encrypted = encryptor.encrypt(data);
+    if (encrypted !== false) {
+      setEncryptedData(encrypted);
+      console.log('Encrypted Data:', encrypted);
+  
+      onLoginButtonClick(userName, encrypted)
+    } else {
+      console.error('Encryption failed.')
+    }
+  };
 
   const getTenantData = async () => {
     const token = returnApiToken()
@@ -316,7 +363,7 @@ const Login = () => {
       component="form"
       onSubmit={(event) => {
         event.preventDefault()
-        onLoginButtonClick(userName, password)
+        handleEncrypt(userName, password)
       }}
     >
       <Box sx={constantStyle.loginBox}>
