@@ -35,7 +35,8 @@ import CustomItemList from '../../components/FormComponents/CustomItemList'
 import {
   getAllCheckInRequests,
   updateCheckinStatus,
-  getCheckinReasons
+  getCheckinReasons,
+  updateCheckin
 } from '../../APICalls/Collector/warehouseManage'
 import { updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
@@ -270,6 +271,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
           const data = result?.data
           if (data) {
             // console.log('updated check-in status: ', data)
+            const resultPut = await updateCheckin(checkInId, )
             if (onApprove) {
               onApprove()
             }

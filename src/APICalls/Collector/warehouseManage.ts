@@ -4,6 +4,7 @@ import {
   GET_CHECKIN_REASON,
   NEW_GET_ALL_HEADER_CHECKIN_REQUESTS,
   NEW_GET_DETAIL_CHECKIN_REQUESTS,
+  UPDATE_CHECK_IN,
   UPDATE_CHECK_IN_STATUS
 } from '../../constants/requests'
 import { updateStatus } from '../../interfaces/warehouse'
@@ -62,6 +63,35 @@ export const getDetailCheckInRequests = async (checkinId: number) => {
   } catch (e: any) {
     // console.error('Get all check-in request failed:', e)
     throw e
+  }
+}
+
+export const updateCheckin = async (
+  chkInId: number,
+  data: updateStatus,
+  picoDtlId: number
+
+) => {
+  const token = returnApiToken()
+
+  try {
+    const response = await axiosInstance({
+      ...UPDATE_CHECK_IN(
+        token.realmApiRoute,
+        chkInId,
+        token.decodeKeycloack,
+        picoDtlId
+      ),
+      baseURL: warehouseAPI.baseURL,
+      data: data,
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+    return response
+  } catch (e) {
+    // console.error('Update check-in request status failed:', e)
+    return null
   }
 }
 
