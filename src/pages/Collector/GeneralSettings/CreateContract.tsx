@@ -18,6 +18,7 @@ import {
 import { STATUS_CODE, formErr, format } from '../../../constants/constant'
 import {
   extractError,
+  getPrimaryColor,
   returnErrorMsg,
   validDayjsISODate
 } from '../../../utils/utils'
@@ -477,7 +478,7 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   DateItem: {

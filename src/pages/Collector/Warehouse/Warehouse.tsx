@@ -25,7 +25,7 @@ import {
   getRecycleType
 } from '../../../APICalls/warehouseManage'
 import { extractError } from '../../../utils/utils'
-import { STATUS_CODE } from '../../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface RecyleItem {
@@ -74,6 +74,8 @@ const Warehouse: FunctionComponent = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [primaryColor, setPrimaryColor] = useState<string>('')
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   const columns: GridColDef[] = [
     {
@@ -289,6 +291,12 @@ const Warehouse: FunctionComponent = () => {
     }
   }, [])
 
+  useEffect(() => {
+    setPrimaryColor(
+      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
+    )
+  }, [role])
+
   return (
     <Box
       sx={{
@@ -313,7 +321,8 @@ const Warehouse: FunctionComponent = () => {
                       {t('top_menu.workshop')}
                     </b>
                     <div
-                      className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi text-green-primary border-[1px] border-solid border-green-pale"
+                      className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi border-[1px] border-solid"
+                      style={{borderColor: primaryColor, color: primaryColor}}
                       onClick={addDataWarehouse}
                     >
                       <ADD_ICON />
