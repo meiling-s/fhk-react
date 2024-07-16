@@ -319,7 +319,7 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({
             style={{ color: '#717171', fontSize: '16px', fontWeight: '700' }}
           >
             {t(
-              'notification.modify_template.broadcast.Recycling_delivery_request'
+              'notification.modify_template.app.Recycling_delivery_request'
             )}
           </Typography>
           <Grid display={'flex'} direction={'column'} rowGap={1}>
