@@ -342,7 +342,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                 id="tChineseName"
                 value={tChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.traditional_chinese_name')}
+                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                 onChange={(event) => setTChineseName(event.target.value)}
                 error={checkString(tChineseName)}
               />
@@ -357,7 +357,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                 id="sChineseName"
                 value={sChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.simplified_chinese_name')}
+                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                 onChange={(event) => setSChineseName(event.target.value)}
                 error={checkString(sChineseName)}
               />
@@ -369,7 +369,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                 id="englishName"
                 value={englishName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.english_name')}
+                placeholder={t('packaging_unit.english_name_placeholder')}
                 onChange={(event) => setEnglishName(event.target.value)}
                 error={checkString(englishName)}
               />
@@ -381,7 +381,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                 id="brNo"
                 value={brNo}
                 disabled={action === 'delete'}
-                placeholder={t('general_settings.reference_number')}
+                placeholder={t('general_settings.reference_number_placeholder')}
                 onChange={(event) => setBRNumber(event.target.value)}
                 error={checkString(brNo)}
               />
@@ -393,7 +393,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
           >
             <CustomTextField
               id="description"
-              placeholder={t('packaging_unit.introduction')}
+              placeholder={t('packaging_unit.introduction_placeholder')}
               onChange={(event) => setDescription(event.target.value)}
               multiline={true}
               defaultValue={description}
@@ -402,7 +402,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
           <CustomField label={t('packaging_unit.remark')} mandatory={false}>
             <CustomTextField
               id="remark"
-              placeholder={t('packaging_unit.remark')}
+              placeholder={t('packaging_unit.remark_placeholder')}
               onChange={(event) => setRemark(event.target.value)}
               multiline={true}
               defaultValue={remark}
