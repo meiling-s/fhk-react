@@ -389,6 +389,16 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           )}`
         })
       }
+      let contractNoErrorAdded = false;
+      if (contractNum.some(contract => contract.trim() === '') || contractNum.length === 0) {
+        if (!contractNoErrorAdded) {
+          tempV.push({
+            field: 'contractNo',
+            error: `${t('col.contractNo')} ${t('add_warehouse_page.shouldNotEmpty')}`
+          });
+          contractNoErrorAdded = true;
+        }
+      }
       if (
         item.warehouseNameSchi.toLowerCase() ===
         nameValue.warehouseNameSchi.toLowerCase()
@@ -490,8 +500,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const handleAddContact = () => {
-    const updatedContractNum = [...contractNum, '']
-    setContractNum(updatedContractNum)
+      const updatedContractNum = [...contractNum, '']
+      setContractNum(updatedContractNum)
   }
 
   const handleContractChange = (value: string, index: number) => {
@@ -643,15 +653,27 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
-  const getFormErrorMsg = () => {
-    const errorList: string[] = []
-    validation.map((item) => {
-      errorList.push(`${item.error}`)
-    })
-    setErrorMsgList(errorList)
+  useEffect(()=>{
+    getFormErrorMsg()
+  },[validation])
 
-    return ''
-  }
+const getFormErrorMsg = () => {
+  const errorList: string[] = [];
+  const seenErrors = new Set();
+
+  validation.forEach((item) => {
+    if (item.field === 'contractNo') {
+      if (!seenErrors.has('contractNo')) {
+        errorList.push(item.error);
+        seenErrors.add('contractNo');
+      }
+    } else {
+      errorList.push(item.error);
+    }
+  });
+
+  setErrorMsgList(errorList);
+}
 
   const handleDelete = () => {
     setOpenDelete(true)
@@ -850,6 +872,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                               }}
                               sx={styles.inputState}
                               disabled={action === 'delete'}
+                              error={trySubmited && contact === ''}
                             />
                           )}
                           noOptionsText={t('common.noOptions')}
