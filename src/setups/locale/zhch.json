@@ -1108,7 +1108,7 @@
     "table": {
       "created_datetime": "建立日期",
       "order_number": "訂單編號",
-      "pico_id": "订单号",
+      "pico_id": "回收运单编号",
       "place_receipt": "收貨地點",
       "receipt_date_time": "收貨日期及時間",
       "status": "状态",
