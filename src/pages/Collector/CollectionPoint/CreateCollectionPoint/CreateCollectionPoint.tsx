@@ -796,9 +796,9 @@ function CreateCollectionPoint() {
                 value={address ? address : searchText}
                 error={checkString(address)}
               />
-              <Typography sx={{ marginTop: 1, fontSize: 16, color: '#ACACAC' }}>
+              {/* <Typography sx={{ marginTop: 1, fontSize: 16, color: '#ACACAC' }}>
                 {t('col.addressNotes')}
-              </Typography>
+              </Typography> */}
 
               <Box
                 sx={{
