@@ -1223,7 +1223,7 @@
     "state": "State",
     "house_place": "House or Place Category",
     "residence": "Residence",
-    "epd": "Whether EPD certification category",
+    "epd": "Whether EPD Certification Category",
     "offsite": "Off-site Collection Service",
     "community": "Community Collection Point",
     "service_type": "Service type"
