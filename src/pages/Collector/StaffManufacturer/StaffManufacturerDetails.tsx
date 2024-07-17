@@ -17,7 +17,7 @@ import {
 import { styles } from '../../../constants/styles'
 
 import { formErr } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
+import { returnErrorMsg, validateEmail } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
 
@@ -205,7 +205,11 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
         })
       }
 
-      if (fieldName === 'email' && !fieldValue.includes('@')) {
+      if (
+        fieldName === 'email' &&
+        fieldValue != '' &&
+        !validateEmail(fieldValue)
+      ) {
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
           problem: formErr.wrongFormat,
@@ -391,9 +395,19 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
                           event.target.value
                         )
                       }
-                      error={checkString(
-                        formData[item.field as keyof FormValues]
-                      )}
+                      error={
+                        item.field === 'email'
+                          ? !validateEmail(
+                              formData[item.field as keyof FormValues]
+                            ) &&
+                            trySubmited &&
+                            formData[
+                              item.field as keyof FormValues
+                            ].toString() != ''
+                          : checkString(
+                              formData[item.field as keyof FormValues]
+                            )
+                      }
                     />
                   </CustomField>
                 </Grid>
