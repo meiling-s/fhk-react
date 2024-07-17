@@ -1201,7 +1201,7 @@
     "recyclable_subtype_semi_complete": "回收物、半制成品、制成品类别",
     "recyclable_code": "编码",
     "enter_code": "请输入编码",
-    "packaging_unit": "包装单位编码",
+    "packaging_unit": "包装单位",
     "weight_unit": "磅重单位",
     "main_category": "主类别",
     "sub_category": "次类别",
