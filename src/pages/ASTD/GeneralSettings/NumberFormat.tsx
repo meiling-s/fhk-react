@@ -177,7 +177,7 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('general_settings.number_format')}>
+            <CustomField label={t('general_settings.diy_format')}>
               {/* <CustomTextField
                 id="contractNo"
                 value={numFormat}

@@ -841,7 +841,7 @@ function InviteForm({
                     }
                   ]}
                 >
-                  {t('changePass.submitPassword')}
+                  {t('common.submit')}
                 </Button>
               </Box>
             </Stack>

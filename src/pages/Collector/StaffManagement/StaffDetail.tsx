@@ -465,7 +465,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     const fieldMapping: FormValues = {
       loginId: t('staffManagement.loginName'),
       staffNameTchi: t('staffManagement.employeeChineseName'),
-      staffNameSchi: t('staffManagement.employeeChineseName'),
+      staffNameSchi: t('staffManagement.employeeChineseCn'),
       staffNameEng: t('staffManagement.employeeEnglishName'),
       titleId: t('staffManagement.position'),
       contactNo: t('staffManagement.contactNumber'),
