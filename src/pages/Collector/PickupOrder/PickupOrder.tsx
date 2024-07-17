@@ -468,16 +468,15 @@ const PickupOrders = () => {
       if (data && data.length > 0) {
         data = data.map((item: any) => {
           const pickupOrderDetail = item?.pickupOrderDetail[0]
-          // const logisticName = item.logisticName
+          const logisticName = item.logisticName
           const logistic = logisticList?.find((item) => {
-            // if (
-            //   item.logisticNameEng === logisticName ||
-            //   item.logisticNameSchi === logisticName ||
-            //   item.logisticNameTchi === logisticName
-            // ) {
-            // return item
-            // }
-            return item
+            if (
+              item.logisticNameEng === logisticName ||
+              item.logisticNameSchi === logisticName ||
+              item.logisticNameTchi === logisticName
+            ) {
+              return item
+            }
           })
 
           if (logistic && i18n.language === Languages.ENUS) {
@@ -489,14 +488,13 @@ const PickupOrders = () => {
           }
 
           const receiver = listCompany.find((item) => {
-            // if (
-            //   item.nameEng === pickupOrderDetail?.receiverName ||
-            //   item.nameSchi === pickupOrderDetail.receiverName ||
-            //   item.nameTchi === pickupOrderDetail.receiverName
-            // ) {
-            //   return item
-            // }
-            return item
+            if (
+              item.nameEng === pickupOrderDetail?.receiverName ||
+              item.nameSchi === pickupOrderDetail.receiverName ||
+              item.nameTchi === pickupOrderDetail.receiverName
+            ) {
+              return item
+            }
           })
 
           if (receiver && i18n.language === Languages.ENUS) {
@@ -508,14 +506,13 @@ const PickupOrders = () => {
           }
 
           const senderName = listCompany.find((item) => {
-            // if (
-            //   item.nameEng === pickupOrderDetail?.senderName ||
-            //   item.nameSchi === pickupOrderDetail.senderName ||
-            //   item.nameTchi === pickupOrderDetail.senderName
-            // ) {
-            //   return item
-            // }
-            return item
+            if (
+              item.nameEng === pickupOrderDetail?.senderName ||
+              item.nameSchi === pickupOrderDetail.senderName ||
+              item.nameTchi === pickupOrderDetail.senderName
+            ) {
+              return item
+            }
           })
 
           if (senderName && i18n.language === Languages.ENUS) {
