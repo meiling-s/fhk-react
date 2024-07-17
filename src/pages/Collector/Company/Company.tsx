@@ -81,6 +81,14 @@ const Company: FunctionComponent = () => {
   const [customerData, setCustomerData] = useState<number>(0)
   const navigate = useNavigate();
   const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const [pages, setPages] = useState(
+    {
+      collectorlist: '1', 
+      logisticlist: '1',
+      manulist: '1',
+      customerlist: '1',
+    }
+  )
   
   const initCompanyList = async (companyType: string) => {
    try {
@@ -126,7 +134,7 @@ const Company: FunctionComponent = () => {
           break
         case 'customerlist':
           setCustomerList(companyMapping)
-          setManuData(data.setCustomerData)
+          setCustomerData(data.totalPages)
           break
         default:
           break
@@ -183,10 +191,10 @@ const Company: FunctionComponent = () => {
           selectedTotalData = customerData
           break
         default:
-          selectedTotalData = 0
+          selectedTotalData = 1
           break
       }
-      return selectedTotalData
+      return selectedTotalData >= 1 ? selectedTotalData : 1
     },
     [collectorData, collectorData, manuData, customerData]
   )
@@ -370,6 +378,10 @@ const Company: FunctionComponent = () => {
     }
   }, [])
 
+  const onChangePage = (newPage: number, companyType:string) => {
+    
+  }
+
   return (
     <>
       {companyTypeList.map((item, index) => {
@@ -459,9 +471,12 @@ const Company: FunctionComponent = () => {
                 />
                 <Pagination
                   className="mt-4"
+                  id={item}
                   count={Math.ceil(getSelectedTotalCompany(item))}
                   page={page}
                   onChange={(_, newPage) => {
+                    console.log('onChange', newPage, item)
+                    onChangePage(newPage, item)
                     setPage(newPage)
                   }}
                 />
