@@ -534,27 +534,27 @@ const PickupOrders = () => {
             }
           }
 
-          const pickupOrderDetail = item?.pickupOrderDetail[0];
+          //const pickupOrderDetail = item?.pickupOrderDetail[0];
           
-          const { receiverId, senderId } = pickupOrderDetail;
+          // const { receiverId, senderId } = pickupOrderDetail;
 
-          if(receiverId){
-            const receiverName = companies.find(company => company.id == receiverId)
-            if(receiverName) {
-              if(i18n.language === Languages.ENUS)  pickupOrderDetail.receiverName = receiverName.nameEng
-              if(i18n.language === Languages.ZHCH)  pickupOrderDetail.receiverName = receiverName.nameSchi
-              if(i18n.language === Languages.ZHHK)  pickupOrderDetail.receiverName = receiverName.nameTchi
-            }
-          }
+          // if(receiverId){
+          //   const receiverName = companies.find(company => company.id == receiverId)
+          //   if(receiverName) {
+          //     if(i18n.language === Languages.ENUS)  pickupOrderDetail.receiverName = receiverName.nameEng
+          //     if(i18n.language === Languages.ZHCH)  pickupOrderDetail.receiverName = receiverName.nameSchi
+          //     if(i18n.language === Languages.ZHHK)  pickupOrderDetail.receiverName = receiverName.nameTchi
+          //   }
+          // }
 
-          if(senderId){
-            const senderName = companies.find(company => company.id == senderId)
-            if(senderName){
-              if(i18n.language === Languages.ENUS)  pickupOrderDetail.senderName = senderName.nameEng
-              if(i18n.language === Languages.ZHCH)  pickupOrderDetail.senderName = senderName.nameSchi
-              if(i18n.language === Languages.ZHHK)  pickupOrderDetail.senderName = senderName.nameTchi
-            }
-          }
+          // if(senderId){
+          //   const senderName = companies.find(company => company.id == senderId)
+          //   if(senderName){
+          //     if(i18n.language === Languages.ENUS)  pickupOrderDetail.senderName = senderName.nameEng
+          //     if(i18n.language === Languages.ZHCH)  pickupOrderDetail.senderName = senderName.nameSchi
+          //     if(i18n.language === Languages.ZHHK)  pickupOrderDetail.senderName = senderName.nameTchi
+          //   }
+          // }
 
           //mapping logisticName company
           // const logisticName = item.logisticName
