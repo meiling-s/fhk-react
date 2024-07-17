@@ -20,7 +20,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
-import { STATUS_CODE, format } from '../../../constants/constant'
+import { Languages, STATUS_CODE, format } from '../../../constants/constant'
 import { rejectAssginDriver, assignDriver } from '../../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
@@ -36,6 +36,7 @@ import { getAllVehiclesLogistic, getDriver } from '../../../APICalls/jobOrder'
 import { mappingRecyName } from '../../../utils/utils'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import { getTenantById } from '../../../APICalls/tenantManage'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -120,41 +121,112 @@ const JobOrder = () => {
     initListDriver()
     initListVehicle()
   }, [])
+  
+  const getLogisticName = async (logisticId: number) => {
+    try {
+      if(logisticId) {
+        const tenant = await getTenantById(logisticId);
+        let logisticName:string = '';
+        if(tenant ){
+          if(i18n.language === Languages.ENUS) logisticName = tenant.data.companyNameEng
+          if(i18n.language === Languages.ZHCH) logisticName = tenant.data.companyNameSchi
+          if(i18n.language === Languages.ZHHK) logisticName = tenant.data.companyNameTchi
+        }
+        return logisticName
+      }
+       
+    } catch (error) {
+      return null
+    }
+  }
+
+  useEffect(() => {
+    if(picoId) getDetailPico(picoId)
+  },[i18n.language])
 
   const getDetailPico = async (picoId: string) => {
     try {
       const response = await getPicoById(picoId)
       if (response) {
-        const details = response?.data.pickupOrderDetail.map((item: any) => {
+        const logistic = await getLogisticName(response?.data?.logisticId)
+        if(logistic){
+          response.data.logisticName = logistic
+        }
+        const details: any [] = []
+        for(let item of response.data.pickupOrderDetail){
           const currentDate = dayjs().format('YYYY-MM-DD');
           const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`;
           const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong');
           const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm');
-          return {
-            joId: item?.joId ?? 0,
-            picoId: response?.data?.picoId,
-            picoDtlId: item?.picoDtlId ?? 0,
-            plateNo: item?.plateNo ?? '',
-            senderId: item?.senderId ?? '',
-            senderName: item?.senderName ?? '',
-            senderAddr: item?.senderAddr ?? '',
-            senderAddrGps: item?.senderAddrGps ?? [],
-            receiverId: item?.receiverId ?? '',
-            receiverName: item?.receiverName ?? '',
-            receiverAddr: item?.receiverAddr ?? '',
-            receiverAddrGps: item?.receiverAddrGps ?? [],
-            recycType: item?.recycType ?? '',
-            recycSubType: item?.recycSubType ?? '',
-            weight: formatWeight(item?.weight, decimalVal) ?? 0,
-            vehicleId: item?.vehicleId ?? 0,
-            driverId: item?.driverId ?? '',
-            contractNo: response?.data?.contractNo ?? '',
-            pickupAt: item.pickupAt ?? '',
-            createdBy: loginId ?? '',
-            updatedBy: loginId ?? '',
-            status: item?.driverId ? 'assigned' : ''
-          }
-        })
+          const receiverName = await getLogisticName(item?.receiverId);
+          const senderName = await getLogisticName(item?.senderId);
+         
+          if(receiverName)item.receiverName = receiverName;
+          if(senderName) item.senderName = senderName;
+          details.push(
+            {
+              joId: item?.joId ?? 0,
+              picoId: response?.data?.picoId,
+              picoDtlId: item?.picoDtlId ?? 0,
+              plateNo: item?.plateNo ?? '',
+              senderId: item?.senderId ?? '',
+              senderName: item?.senderName ?? '',
+              senderAddr: item?.senderAddr ?? '',
+              senderAddrGps: item?.senderAddrGps ?? [],
+              receiverId: item?.receiverId ?? '',
+              receiverName: item?.receiverName ?? '',
+              receiverAddr: item?.receiverAddr ?? '',
+              receiverAddrGps: item?.receiverAddrGps ?? [],
+              recycType: item?.recycType ?? '',
+              recycSubType: item?.recycSubType ?? '',
+              weight: formatWeight(item?.weight, decimalVal) ?? 0,
+              vehicleId: item?.vehicleId ?? 0,
+              driverId: item?.driverId ?? '',
+              contractNo: response?.data?.contractNo ?? '',
+              pickupAt: item.pickupAt ?? '',
+              createdBy: loginId ?? '',
+              updatedBy: loginId ?? '',
+              status: item?.driverId ? 'assigned' : ''
+            }
+          )
+        }
+        
+        // const details = response?.data.pickupOrderDetail.map(async (item: any) => {
+        //   const currentDate = dayjs().format('YYYY-MM-DD');
+        //   const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`;
+        //   const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong');
+        //   const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm');
+       
+        //   // const receiverName = await getLogisticName(item?.receiverId);
+        //   // const senderName = await getLogisticName(item?.senderId);
+        //   // console.log('receiverAddr', item.receiverId, item.senderId, receiverName, senderName)
+        //   // if(receiverName)item.receiverName = receiverName;
+        //   // if(senderName) item.senderName = senderName;
+        //   return {
+        //     joId: item?.joId ?? 0,
+        //     picoId: response?.data?.picoId,
+        //     picoDtlId: item?.picoDtlId ?? 0,
+        //     plateNo: item?.plateNo ?? '',
+        //     senderId: item?.senderId ?? '',
+        //     senderName: item?.senderName ?? '',
+        //     senderAddr: item?.senderAddr ?? '',
+        //     senderAddrGps: item?.senderAddrGps ?? [],
+        //     receiverId: item?.receiverId ?? '',
+        //     receiverName: item?.receiverName ?? '',
+        //     receiverAddr: item?.receiverAddr ?? '',
+        //     receiverAddrGps: item?.receiverAddrGps ?? [],
+        //     recycType: item?.recycType ?? '',
+        //     recycSubType: item?.recycSubType ?? '',
+        //     weight: formatWeight(item?.weight, decimalVal) ?? 0,
+        //     vehicleId: item?.vehicleId ?? 0,
+        //     driverId: item?.driverId ?? '',
+        //     contractNo: response?.data?.contractNo ?? '',
+        //     pickupAt: item.pickupAt ?? '',
+        //     createdBy: loginId ?? '',
+        //     updatedBy: loginId ?? '',
+        //     status: item?.driverId ? 'assigned' : ''
+        //   }
+        // })
 
         setPickupOrderDetail(details)
 
