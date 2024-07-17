@@ -210,7 +210,7 @@
     "message": "信息",
     "confirm_reject": "确认拒绝送入请求吗?",
     "reject_reasons": "拒绝原因（可多选）",
-    "confirm": "确认拒绝",
+    "confirm": "确认",
     "cancel": "取消",
     "search_input": "輸入运单编号"
   },
