@@ -1206,6 +1206,7 @@
     "main_category": "主类别",
     "sub_category": "次类别",
     "1kg_equivalent": "1kg 相等于",
+    "enter_weight": "请输入重量",
     "confirm_delete": "确认删除",
     "confirm_text": "如你要删除主类别, 相关的次类别也会删除, 需要继续吗?",
     "weight_error": "权重不能低于0"
