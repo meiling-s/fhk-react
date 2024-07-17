@@ -560,7 +560,7 @@ const CreateRecycleForm = ({
                     <CustomField mandatory label={it.label}>
                       {it.id === 'senderName' || it.id === 'receiverName' ? (
                         <CustomAutoComplete
-                          placeholder={''}
+                          placeholder={t('pick_up_order.recyclForm.placeholder')}
                           option={[
                             ...(collectorList?.map(
                               (option) => {
