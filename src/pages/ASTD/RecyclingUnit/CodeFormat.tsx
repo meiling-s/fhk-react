@@ -298,7 +298,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 id="codeName"
                                 value={codeName}
                                 disabled={action === 'delete'}
-                                placeholder={t('recycling_unit.recyclable_code')}
+                                placeholder={t('recycling_unit.enter_code')}
                                 onChange={(event) => setCodeName(event.target.value)}
                                 error={checkString(codeName)}
                             />
