@@ -226,8 +226,9 @@ function CheckInAndCheckOut() {
 
   return (
     <Box
+      className={'container-wrapper w-max'}
       sx={{
-        width: '100%',
+        width: 'max-content',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',

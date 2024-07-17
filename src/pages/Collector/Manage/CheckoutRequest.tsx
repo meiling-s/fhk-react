@@ -725,7 +725,7 @@ const CheckoutRequest: FunctionComponent = () => {
   }
 
   return (
-    <Box className="container-wrapper w-full mr-11">
+    <Box className="container-wrapper w-max mr-11">
       <div className="overview-page bg-bg-primary">
         <div
           className="header-page flex justify-start items-center mb-4 cursor-pointer"

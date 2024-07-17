@@ -319,7 +319,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
     }
 
     return (
-        <Box className="container-wrapper w-full mr-11">
+        <Box className="container-wrapper w-max mr-11">
             <LocalizationProvider
                 dateAdapter={AdapterDayjs}
                 adapterLocale="zh-cn"
