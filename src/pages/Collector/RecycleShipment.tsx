@@ -529,8 +529,9 @@ function ShipmentManage() {
                  }
                  const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
                  item.createdAt =  dateInHK.format(`${dateFormat} HH:mm`);
-                 newData.push(item)
+                
               }
+              newData.push(item)
             }
           // const checkinData = newData.map(transformToTableRow)
           setCheckInRequest(newData)
@@ -556,6 +557,15 @@ function ShipmentManage() {
       : []
     setSelectedCheckin(selectedRows)
   }
+
+  useEffect(() => {
+    if(selectAll){
+      const newIds:number[] = filterShipments.map(item => item.chkInId);
+      const allId:number[] = [...selectedCheckin, ...newIds];
+      const ids = new Set(allId)
+      setSelectedCheckin(Array.from(ids))
+    }
+  }, [filterShipments])
 
   const handleRowCheckboxChange = (
     event: React.ChangeEvent<HTMLInputElement>,

@@ -429,6 +429,15 @@ const CheckoutRequest: FunctionComponent = () => {
     />
   )
 
+  useEffect(() => {
+    if(selectAll){
+      const newIds:number[] = filterCheckOut.map(item => item.chkOutId)
+      const allId:number[] = [...checkedCheckOut, ...newIds]
+      const ids = new Set(allId)
+      setCheckedCheckOut(Array.from(ids))
+    }
+  }, [filterCheckOut])
+
   const checkboxColumn: GridColDef = {
     field: 'customCheckbox',
     headerName: t('localizedTexts.select'),
