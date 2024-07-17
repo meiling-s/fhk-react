@@ -950,7 +950,7 @@
     "logisticlist": "Logistic Company",
     "manulist": "Recycling plant",
     "customerlist": "Customer Company",
-    "brNo": "Business registration number",
+    "brNo": "Business Registration Number",
     "enterBrNo": "Please enter business registration number"
   },
   "driver": {
