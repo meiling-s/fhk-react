@@ -7,7 +7,7 @@ import {
   UPDATE_CHECK_IN,
   UPDATE_CHECK_IN_STATUS
 } from '../../constants/requests'
-import { updateStatus } from '../../interfaces/warehouse'
+import { CheckInWarehouse, updateStatus } from '../../interfaces/warehouse'
 import { localStorgeKeyName } from '../../constants/constant'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import { returnApiToken } from '../../utils/utils'
@@ -68,7 +68,7 @@ export const getDetailCheckInRequests = async (checkinId: number) => {
 
 export const updateCheckin = async (
   chkInId: number,
-  data: updateStatus,
+  data: CheckInWarehouse,
   picoDtlId: number
 
 ) => {

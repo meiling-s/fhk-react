@@ -11,6 +11,7 @@ import {
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import { queryCheckout } from '../../interfaces/checkout'
 import { returnApiToken } from '../../utils/utils'
+import { CheckOutWarehouse } from '../../interfaces/warehouse'
 
 const checkoutAPI = {
   baseURL: window.baseURL.collector
@@ -86,8 +87,8 @@ export const getCheckoutRequestById = async (chkOutId: number) => {
 
 export const updateCheckout = async (
   chkOutId: number,
-  picoDtlId: number,
-  data: any
+  data: CheckOutWarehouse,
+  picoDtlId: number
 ) => {
   try {
     const token = returnApiToken()

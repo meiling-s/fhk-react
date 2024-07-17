@@ -21,14 +21,14 @@ export type CheckOutWarehouse = {
 }
 
 export type CheckInOutWarehouse = {
-id: number
-createdAt: string
-status: string
-senderName: string
-receiverName: string
-picoId: string
-adjustmentFlg: true
-logisticName: string
-senderAddr: string
-receiverAddr: string
+    id: number
+    createdAt: string
+    status: string
+    senderName: string
+    receiverName: string
+    picoId: string
+    adjustmentFlg: true
+    logisticName: string
+    senderAddr: string
+    receiverAddr: string
 }
