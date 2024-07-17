@@ -322,6 +322,7 @@
       "pico_id": "運單編號",
       "logistic_company": "物流公司",
       "delivery_date": "送貨日期",
+      "delivery_datetime": "回收週次",
       "sender_company": "寄件公司",
       "receiver": "收件公司",
       "status": "狀態",

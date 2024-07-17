@@ -324,6 +324,7 @@
       "pico_id": "PO number",
       "logistic_company": "Logistic Company",
       "delivery_date": "Delivery Date",
+      "delivery_datetime": "Recycling Date",
       "sender_company": " Sender Company",
       "receiver": "Receiver Company",
       "status": "Status",

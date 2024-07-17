@@ -322,6 +322,7 @@
       "created_datetime": "建立日期",
       "pico_id": "运单编号",
       "logistic_company": "物流公司",
+      "delivery_datetime": "回收周次",
       "delivery_date": "送货日期",
       "sender_company": "寄件公司",
       "receiver": "收件公司",
