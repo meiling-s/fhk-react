@@ -408,7 +408,7 @@ export const validateEmail = (email: string) => {
 
 export const getPrimaryColor = (): string => {
   const role = localStorage.getItem(localStorgeKeyName.role);
-  console.log(role, 'role')
+  //console.log(role, 'role')
   switch (role) {
     case 'manufacturer':
       return '#6BC7FF';
