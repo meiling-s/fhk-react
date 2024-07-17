@@ -32,7 +32,9 @@
     "errorMessage": "Error Message",
     "message": "Message",
     "statusCode": "status Code",
-    "noOptions": "No options"
+    "noOptions": "No options",
+    "start_date_at": "Validity Date From",
+    "submit": "Submit"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -521,10 +523,10 @@
     },
     "invite_modal": {
       "invite_company": "Invite Company",
-      "invite_by_email": "Invite by email address",
+      "invite_by_email": "Invite by Email Address",
       "enter_email": "Please enter email address",
       "or": "or",
-      "link_invitation": "Send link invitation",
+      "link_invitation": "Send Link Invitation",
       "copy": "copy",
       "send": "send",
       "invite_success": "Success send invitation",

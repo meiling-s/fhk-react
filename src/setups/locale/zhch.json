@@ -32,7 +32,9 @@
     "errorMessage": "错误信息",
     "message": "留言",
     "statusCode": "状态码",
-    "noOptions": "无选项"
+    "noOptions": "无选项",
+    "start_date_at": "有效日期由",
+    "submit": "提交"
   },
   "col": {
     "createCP": "建立回收点",
