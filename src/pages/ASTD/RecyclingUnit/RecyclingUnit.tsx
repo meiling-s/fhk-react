@@ -69,7 +69,7 @@ import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import { useNavigate } from 'react-router-dom'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
-
+import DeleteModalSub from '../../../components/FormComponents/deleteModal'
 interface CodeFormatProps {
   createdAt: string
   createdBy: string
@@ -183,6 +183,8 @@ const RecyclingUnit: FunctionComponent = () => {
   const [switchValue, setSwitchValue] = useState<any>(null)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
+  const [recycSubTypeIdValue, setRecycSubTypeIdValue] = useState<any>(null)
 
   useEffect(() => {
     initRecycTypeList()
@@ -463,6 +465,27 @@ const RecyclingUnit: FunctionComponent = () => {
     }
   ]
 
+  const onDeleteModal = () => {
+    setOpenDelete(prev => !prev)
+  }
+
+  const onDeleteClick = async () => {
+    const token = returnApiToken()
+
+    const recyclingForm = {
+      status: 'INACTIVE',
+      updatedBy: token.loginId
+    }
+
+    const response = await deleteSubRecyc(recyclingForm, recycSubTypeIdValue)
+    if (response) {
+      showSuccessToast(t('notify.successDeleted'))
+      handleOnSubmitData('recycle')
+      setRecycSubTypeIdValue(null)
+    }
+    onDeleteModal()
+  }
+
   const handleAction = (
     params: GridRenderCellParams,
     action: 'add' | 'edit' | 'delete',
@@ -566,22 +589,13 @@ const RecyclingUnit: FunctionComponent = () => {
   }
 
   const handleClickSwitch = async (value: any, type: string) => {
-    const token = returnApiToken()
-
-    const recyclingForm = {
-      status: 'INACTIVE',
-      updatedBy: token.loginId
-    }
     if (type === 'main') {
       setSwitchValue(value)
       setDeleteModal(true)
     } else if (type === 'sub') {
       setSwitchValue(null)
-      const response = await deleteSubRecyc(recyclingForm, value.recycSubTypeId)
-      if (response) {
-        showSuccessToast(t('notify.successDeleted'))
-        handleOnSubmitData('recycle')
-      }
+      setRecycSubTypeIdValue(value.recycSubTypeId)
+      setOpenDelete(true)
     }
   }
 
@@ -877,6 +891,11 @@ const RecyclingUnit: FunctionComponent = () => {
           </Box>
         </div>
       </Box>
+      <DeleteModalSub
+          open={openDelete}
+          onClose={onDeleteModal}
+          onDelete={onDeleteClick}
+        />
       <RecyclingFormat
         drawerOpen={recycDrawerOpen}
         handleDrawerClose={() => setRecycDrawerOpen(false)}
