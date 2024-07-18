@@ -8,7 +8,7 @@ import {
   RealmApi,
   STATUS_CODE
 } from '../constants/constant'
-import dayjs ,{ Dayjs } from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { toast } from 'react-toastify'
 import { fieldNameRecycables } from '../constants/constant'
 import { errorState } from '../interfaces/common'
@@ -403,41 +403,43 @@ export const mappingRecyName = (
 }
 
 export const validateEmail = (email: string) => {
-  return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  return /^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/.test(
+    email
+  )
 }
 
 export const getPrimaryColor = (): string => {
-  const role = localStorage.getItem(localStorgeKeyName.role);
+  const role = localStorage.getItem(localStorgeKeyName.role)
   //console.log(role, 'role')
   switch (role) {
     case 'manufacturer':
-      return '#6BC7FF';
+      return '#6BC7FF'
     case 'customer':
-      return '#199BEC';
+      return '#199BEC'
     case 'logistic':
-      return '#63D884';
+      return '#63D884'
     case 'collector':
-      return '#79CA25';
+      return '#79CA25'
     default:
-      return '#79CA25';
+      return '#79CA25'
   }
-};
+}
 
 export const getPrimaryLightColor = (): string => {
-  const role = localStorage.getItem(localStorgeKeyName.role);
+  const role = localStorage.getItem(localStorgeKeyName.role)
   switch (role) {
     case 'manufacturer':
-      return '#F0F9FF';
+      return '#F0F9FF'
     case 'customer':
-      return '#F0F9FF';
+      return '#F0F9FF'
     case 'logistic':
-      return '#63D884';
+      return '#63D884'
     case 'collector':
-      return '#79CA25';
+      return '#79CA25'
     default:
-      return '#79CA25';
+      return '#79CA25'
   }
-};
+}
 
 export const validDayjsISODate = (date: Dayjs): boolean => {
   if (!date.isValid()) {
