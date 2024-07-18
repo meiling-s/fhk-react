@@ -562,18 +562,24 @@ function ShipmentManage() {
   useEffect(() => {
     if(selectAll){
       let newIds:number[] = []
-      // const newIds:number[] = 
-      filterShipments.filter(item => {
+
+      for(let item of filterShipments){
         if(!selectedUnCheckin.includes(item.chkInId)){
           newIds.push(item.chkInId)
         }
-        
-      });
+      }
+
       const allId:number[] = [...selectedCheckin, ...newIds];
       const ids = new Set(allId)
       setSelectedCheckin(Array.from(ids))
     }
   }, [filterShipments])
+
+  useEffect(() => {
+    if(selectedCheckin.length === 0){
+      setSelectAll(false)
+    }
+  }, [selectedCheckin])
 
   const handleRowCheckboxChange = (
     event: React.ChangeEvent<HTMLInputElement>,
