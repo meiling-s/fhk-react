@@ -579,8 +579,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const handleAddContact = () => {
-    const updatedContractNum = [...contractNum, '']
-    setContractNum(updatedContractNum)
+      const updatedContractNum = [...contractNum, '']
+      setContractNum(updatedContractNum)
   }
 
   const handleContractChange = (value: string, index: number) => {
@@ -687,8 +687,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       statusWarehouse = 'DELETED'
     }
 
-    // console.log('action', action)
+    const filteredContractNum = contractNum.filter(num => num !== '');
 
+    // console.log('action', action)
+    
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
@@ -696,7 +698,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       location: place,
       locationGps: locationGps,
       physicalFlg: pysicalLocation,
-      contractNo: contractNum,
+      contractNo: filteredContractNum,
       status: statusWarehouse,
       createdBy: 'string',
       updatedBy: 'string',
@@ -731,15 +733,27 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
-  const getFormErrorMsg = () => {
-    const errorList: string[] = []
-    validation.map((item) => {
-      errorList.push(`${item.error}`)
-    })
-    setErrorMsgList(errorList)
+  useEffect(()=>{
+    getFormErrorMsg()
+  },[validation])
 
-    return ''
-  }
+const getFormErrorMsg = () => {
+  const errorList: string[] = [];
+  const seenErrors = new Set();
+
+  validation.forEach((item) => {
+    if (item.field === 'contractNo') {
+      if (!seenErrors.has('contractNo')) {
+        errorList.push(item.error);
+        seenErrors.add('contractNo');
+      }
+    } else {
+      errorList.push(item.error);
+    }
+  });
+
+  setErrorMsgList(errorList);
+}
 
   const handleDelete = () => {
     setOpenDelete(true)

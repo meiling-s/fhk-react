@@ -1,5 +1,6 @@
 import { Axios, AxiosRequestConfig } from 'axios'
 import { CreateDenialReason } from '../interfaces/denialReason'
+import { RealmApi } from './constant'
 
 //tenant manage
 export const LOGIN: AxiosRequestConfig = {
