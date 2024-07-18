@@ -34,11 +34,12 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { setLanguage } from '../../setups/i18n'
 import { extractError, returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
-import { parseJwtToken } from '../../constants/axiosInstance'
+import axiosInstance, { parseJwtToken } from '../../constants/axiosInstance'
 import NotifContainer from '../../contexts/NotifContainer'
 import axios from 'axios'
 import { createUserActivity } from '../../APICalls/userAccount'
 import { UserActivity } from '../../interfaces/common'
+import JSEncrypt from 'jsencrypt';
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -52,6 +53,7 @@ const Login = () => {
   const { t } = useTranslation()
   const commonTypeContainer = useContainer(CommonTypeContainer)
   const { initBroadcastMessage } = useContainer(NotifContainer)
+  const [publicKey, setPublicKey] = useState('');
   // overwrite select style
   //todo : make select as component
   const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -64,6 +66,54 @@ const Login = () => {
       padding: 8
     }
   }))
+
+  useEffect(() => {
+    fetchPublicKey()
+  }, [])
+
+  const fetchPublicKey = async () => {
+    try {
+      const response = await fetch(`${window.baseURL.collector}api/v1/administrator/getPublicKey`);
+      if (response.ok) {
+        const publicKeyPem = await response.text();
+        setPublicKey(publicKeyPem);
+      } else {
+        console.log('Failed to fetch public key, retrying...');
+        setTimeout(fetchPublicKey, 3000); // Retry after 3 seconds
+      }
+    } catch (error) {
+      console.log('Error fetching public key:', error);
+      setTimeout(fetchPublicKey, 3000); // Retry after 3 seconds
+    }
+  };
+
+  const handleEncrypt = async (userName: string, password: string) => {
+    if (!userName || !password) {
+      setWarningMsg('Username and password are required.');
+      return;
+    }
+    await encryptData(userName, password);
+  };
+
+  const encryptData = async (userName: string, password: string) => {
+    if (!publicKey) {
+      console.log('No public key available, trying to fetch it again...');
+      await fetchPublicKey();
+    }
+
+    if (publicKey) {
+      const encryptor = new JSEncrypt();
+      encryptor.setPublicKey(publicKey);
+      const encrypted = encryptor.encrypt(password);
+      if (encrypted) {
+        onLoginButtonClick(userName, encrypted);
+      } else {
+        setWarningMsg('Encryption failed. Please try again.');
+      }
+    } else {
+      setWarningMsg('Public key is not available. Please try again later.');
+    }
+  };
 
   const getTenantData = async () => {
     const token = returnApiToken()
@@ -118,6 +168,7 @@ const Login = () => {
         })
         //console.log(result, 'result login')
         if (result && result.access_token) {
+          localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
           const ipAddress = localStorage.getItem('ipAddress')
           if(ipAddress){
             const userActivity:UserActivity = {
@@ -140,7 +191,6 @@ const Login = () => {
             result?.refresh_token || ''
           )
           localStorage.setItem(localStorgeKeyName.realm, result?.realm || '')
-          localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
           localStorage.setItem(
             localStorgeKeyName.username,
             result?.username || ''
@@ -169,23 +219,23 @@ const Login = () => {
           switch (loginTo) {
             case 'astd':
               realmApiRoute = 'account'
-              navigate('/astd')
+              window.location.href = '/astd'
               break
             case 'collector':
               realmApiRoute = 'collectors'
-              navigate('/collector/collectionPoint')
+              window.location.href = '/collector'
               break
             case 'logistic':
               realmApiRoute = 'logistic'
-              navigate('/logistic/pickupOrder')
+              window.location.href = '/logistic/pickupOrder'
               break
             case 'manufacturer':
               realmApiRoute = 'manufacturer'
-              navigate('/manufacturer/pickupOrder')
+              window.location.href = '/manufacturer/pickupOrder'
               break
             case 'customer':
               realmApiRoute = 'customer'
-              navigate('/customer/account')
+              window.location.href = '/customer/account'
               break
             default:
               realmApiRoute = 'collectors'
@@ -316,7 +366,7 @@ const Login = () => {
       component="form"
       onSubmit={(event) => {
         event.preventDefault()
-        onLoginButtonClick(userName, password)
+        handleEncrypt(userName, password)
       }}
     >
       <Box sx={constantStyle.loginBox}>
@@ -433,6 +483,3 @@ let styles = {
 }
 
 export default Login
-function __getNewAccessToken() {
-  throw new Error('Function not implemented.')
-}

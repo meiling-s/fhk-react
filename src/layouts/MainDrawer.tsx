@@ -138,7 +138,7 @@ function MainDrawer() {
         functionName: 'Collection point'
       },
       'Pickup order': {
-        name: t('pick_up_order.enquiry_pickup_order'),
+        name: t('pick_up_order.pickup_order'),
         icon: <SHIPPING_CAR_ICON />,
         onClick: () => navigate(`/${realm}/pickupOrder`),
         collapse: false,
@@ -606,19 +606,17 @@ function MainDrawer() {
                     sx={{
                       '&:hover': {
                         '.MuiSvgIcon-root': {
-                          color: '#79ca25' // Change color on hover
+                          color: role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25'
                         }
                       }
                     }}
                   >
                     <ListItemIcon
-                      className={
-                        selectedIndex === index ? 'icon-menu-active' : ''
-                      }
+                      sx={{color: selectedIndex === index ? role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25' : ''}}
                     >
                       {drawerMenu.icon}
                     </ListItemIcon>
-                    <ListItemText
+                    <ListItemText 
                       sx={{ marginLeft: -2 }}
                       primary={drawerMenu.name}
                     />
@@ -645,6 +643,7 @@ function MainDrawer() {
                                   ? 'text-menu-active'
                                   : ''
                               }
+                              sx={{color: role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25'}}
                               primary={item.value}
                             />
                           </ListItemButton>
@@ -666,15 +665,13 @@ function MainDrawer() {
                   sx={{
                     '&:hover': {
                       '.MuiSvgIcon-root': {
-                        color: '#79ca25' // Change color on hover
+                        color: role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25'
                       }
                     }
                   }}
                 >
                   <ListItemIcon
-                    className={
-                      selectedIndex === index ? 'icon-menu-active' : ''
-                    }
+                    sx={{color: selectedIndex === index ? role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25' : ''}}
                   >
                     {drawerMenu.icon}
                   </ListItemIcon>

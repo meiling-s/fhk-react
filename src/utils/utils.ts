@@ -8,7 +8,7 @@ import {
   RealmApi,
   STATUS_CODE
 } from '../constants/constant'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { toast } from 'react-toastify'
 import { fieldNameRecycables } from '../constants/constant'
 import { errorState } from '../interfaces/common'
@@ -154,9 +154,9 @@ export const getThemeColorRole = (role: string) => {
   const colorList = {
     astd: '#79CA25',
     collector: '#79CA25',
-    logistic: '#7CE495',
+    logistic: '#63D884',
     manufacturer: '#6BC7FF',
-    customer: '#6BC7FF'
+    customer: '#199BEC'
   }
 
   return colorList[role as keyof typeof colorList]
@@ -266,13 +266,16 @@ export const onChangeWeight = (
   if (decimalVal === 0) {
     regexStr = '^\\d*$' // 只匹配整數
   } else {
-    const decimalStr = decimalVal.toString()
-    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length
-    regexStr = '^(?!\\.$)\\d*\\.?\\d{0,' + zeroCount + '}$' // 匹配小數，但首字符不能是小數點
-  }
-  const regex = new RegExp(regexStr)
-  if (regex.test(value) || value === '') {
-    cb(value)
+    const newValue = value.split('.')
+    if (newValue[0].length < 9) {
+      const decimalStr = decimalVal.toString()
+      const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length
+      regexStr = '^(?!\\.$)\\d*\\.?\\d{0,' + zeroCount + '}$' // 匹配小數，但首字符不能是小數點
+      const regex = new RegExp(regexStr)
+      if (regex.test(value) || value === '') {
+        cb(value)
+      }
+    }
   }
 }
 
@@ -400,5 +403,51 @@ export const mappingRecyName = (
 }
 
 export const validateEmail = (email: string) => {
-  return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  return /^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/.test(
+    email
+  )
+}
+
+export const getPrimaryColor = (): string => {
+  const role = localStorage.getItem(localStorgeKeyName.role)
+  //console.log(role, 'role')
+  switch (role) {
+    case 'manufacturer':
+      return '#6BC7FF'
+    case 'customer':
+      return '#199BEC'
+    case 'logistic':
+      return '#63D884'
+    case 'collector':
+      return '#79CA25'
+    default:
+      return '#79CA25'
+  }
+}
+
+export const getPrimaryLightColor = (): string => {
+  const role = localStorage.getItem(localStorgeKeyName.role)
+  switch (role) {
+    case 'manufacturer':
+      return '#F0F9FF'
+    case 'customer':
+      return '#F0F9FF'
+    case 'logistic':
+      return '#63D884'
+    case 'collector':
+      return '#79CA25'
+    default:
+      return '#79CA25'
+  }
+}
+
+export const validDayjsISODate = (date: Dayjs): boolean => {
+  if (!date.isValid()) {
+    return false
+  }
+  // Convert to ISO string and check if it matches the original input
+  const isoString = date.toISOString()
+  // Regex to ensure ISO 8601 format with 'Z' (UTC time)
+  const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+  return iso8601Pattern.test(isoString)
 }

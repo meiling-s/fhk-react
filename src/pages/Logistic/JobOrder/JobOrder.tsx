@@ -41,6 +41,7 @@ import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { getDriverList } from '../../../APICalls/driver'
 import { Driver } from '../../../interfaces/driver'
+import { getTenantById } from '../../../APICalls/tenantManage'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -373,10 +374,36 @@ const JobOrder = () => {
     return options
   }
 
+  const fetchTenantDetails = async (tenantId: number) => {
+    try {
+      const result = await getTenantById(tenantId)
+      const data = result?.data
+      
+      if (i18n.language === 'enus') {
+        return data.companyNameEng
+      } else if (i18n.language === 'zhhk') {
+        return data.companyNameTchi
+      } else {
+        return data.companyNameSchi
+      }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+      console.error(`Error fetching tenant ${tenantId}:`, error)
+      return null
+    }
+  }
+
   useEffect(() => {
-    // const mappingData = () => {
-    const tempRows: any[] = (
-      jobOrder?.map((item) => ({
+    const tempRows = jobOrder?.map(async (item) => {
+      const senderCompany = await fetchTenantDetails(Number(item.senderId));
+      const receiverCompany = await fetchTenantDetails(Number(item.receiverId));
+      if(senderCompany){
+        console.log('sender', senderCompany)
+      }
+      return {
         ...item,
         id: item.joId,
         joId: item.joId,
@@ -384,18 +411,23 @@ const JobOrder = () => {
         createdAt: item.createdAt,
         driverId: item.driverId,
         plateNo: item.plateNo,
-        senderName: item.senderName,
-        receiverName: item.receiverName,
+        senderName: senderCompany ? (
+          senderCompany
+        ) : item.senderName,
+        receiverName: receiverCompany ? (
+          receiverCompany
+        ) : item.receiverName,
         status: item.status,
         operation: ''
-
-        //}))??[])
-      })) ?? []
-    ).filter((item) => item.status !== 'CLOSED')
-    setRows(tempRows)
-    setFilteredPico(tempRows)
-    // }
-  }, [jobOrder])
+      };
+    }) ?? [];
+  
+    Promise.all(tempRows).then(resolvedRows => {
+      const filteredRows = resolvedRows.filter(item => item.status !== 'CLOSED');
+      setRows(filteredRows);
+      setFilteredPico(filteredRows);
+    });
+  }, [jobOrder, i18n.language]);
 
   const searchfield = [
     {
@@ -472,7 +504,10 @@ const JobOrder = () => {
   return (
     <>
       <ToastContainer />
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Box
+        sx={{ display: 'flex', flexDirection: 'column' }}
+        className="container-wrapper w-max"
+      >
         <Modal open={openModal} onClose={handleCloses}>
           <JobOrderForm
             onClose={handleCloses}
@@ -503,13 +538,14 @@ const JobOrder = () => {
           <DataGrid
             rows={filteredPico}
             columns={columns}
-  
             disableRowSelectionOnClick
             onRowClick={handleRowClick}
             getRowSpacing={getRowSpacing}
             localeText={localeTextDataGrid}
-            getRowClassName={(params) => 
-              selectedRow && params.id === selectedRow.joId ? 'selected-row' : ''
+            getRowClassName={(params) =>
+              selectedRow && params.id === selectedRow.joId
+                ? 'selected-row'
+                : ''
             }
             hideFooter
             sx={{
@@ -526,14 +562,14 @@ const JobOrder = () => {
                   borderBottom: 'none'
                 }
               },
-              '.MuiDataGrid-columnHeaderTitle': { 
+              '.MuiDataGrid-columnHeaderTitle': {
                 fontWeight: 'bold !important',
                 overflow: 'visible !important'
               },
               '& .selected-row': {
-                  backgroundColor: '#F6FDF2 !important',
-                  border: '1px solid #79CA25'
-                }
+                backgroundColor: '#F6FDF2 !important',
+                border: '1px solid #79CA25'
+              }
             }}
           />
           <Pagination

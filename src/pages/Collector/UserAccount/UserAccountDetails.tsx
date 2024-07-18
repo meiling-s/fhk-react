@@ -214,7 +214,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           type: 'error'
         })
 
-      validateEmail(email) &&
+      !validateEmail(email) &&
         email?.toString() != '' &&
         tempV.push({
           field: t('userAccount.emailAddress'),
@@ -333,7 +333,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   const handleDelete = async () => {
     const formData = {
-      status: 'INACTIVE',
+      status: 'DELETED',
       updatedBy: logginUser
     }
     if (selectedItem != null) {
@@ -414,7 +414,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                       value={email}
                       placeholder={t('userAccount.pleaseEnterEmailAddress')}
                       onChange={(event) => setEmail(event.target.value)}
-                      error={validateEmail(email) && trySubmited}
+                      error={!validateEmail(email) && trySubmited}
                     />
                   </CustomField>
                 </Grid>
@@ -463,11 +463,17 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                     }
                   }}
                 >
-                  {userGroupList.map((item, index) => (
-                    <MenuItem key={index} value={item.groupId}>
-                      {item.roleName}
+                  {!userGroupList ? (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
                     </MenuItem>
-                  ))}
+                  ) : (
+                    userGroupList.map((item, index) => (
+                      <MenuItem key={index} value={item.groupId}>
+                        {item.roleName}
+                      </MenuItem>
+                    ))
+                  )}
                 </Select>
               </FormControl>
             </Grid>
@@ -496,7 +502,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 }}
                 editable={action != 'delete'}
                 defaultSelected={userStatus}
-                needPrimaryColor={true}
+                needPrimaryColor={false}
               />
             </CustomField>
             <Grid item sx={{ width: '100%' }}>

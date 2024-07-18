@@ -19,6 +19,7 @@ import { STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
 import { styles as constantStyle } from '../../constants/styles'
 import { useTranslation } from 'react-i18next'
 import CustomField from '../../components/FormComponents/CustomField'
+import JSEncrypt from 'jsencrypt';
 
 interface FormData {
   userName: string
@@ -54,6 +55,7 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
   const [erorUpdate, setErrorUpdate] = useState<boolean>(false)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [publicKey, setPublicKey] = useState('');
   const [validation, setValidation] = useState<
     { field: string; error: string }[]
   >([]) //validation for required field
@@ -98,6 +100,24 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
       helperText: t('changePass.helper_confirm_password')
     }
   ]
+
+  useEffect(() => {
+    fetchPublicKey();
+  }, []);
+
+  const fetchPublicKey = async () => {
+    try {
+      // const response = await fetch(`http://6d7e3a6.r20.cpolar.top/api/v1/collectors/getPublicKey`)
+      const response = await fetch(`${window.baseURL.collector}api/v1/administrator/getPublicKey`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const publicKeyPem = await response.text();
+      setPublicKey(publicKeyPem);
+    } catch (error) {
+      console.error('Error fetching public key:', error);
+    }
+  };
 
   const checkPassComplexity = (password: string): boolean => {
     const [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar] = [
@@ -206,32 +226,40 @@ const ChangePasswordBase: React.FC<ChangePasswordBaseProps> = ({
       localStorage.getItem(localStorgeKeyName.firstTimeLogin) === 'true'
 
     if (isPassValid && isPassIdentical && validation.length === 0) {
-      const passData = {
-        loginId: formData.userName,
-        password: formData.password,
-        newPassword: formData.newPassword
-      }
-
-      const resetPassword = async (passData: any) => {
-        try {
-          const response = await changePassword(passData)
-          if (response) {
-            if (onSuccess) return onSuccess()
-            if (isFirstLogin) {
-              localStorage.removeItem('firstTimeLogin')
-              navigate('/')
+      const encryptor = new JSEncrypt();
+      encryptor.setPublicKey(publicKey);
+      const encryptedPassword = encryptor.encrypt(formData.password);
+      const encryptedNewPassword = encryptor.encrypt(formData.newPassword)
+      if (encryptedPassword !== false && encryptedNewPassword !== false) {
+        const passData = {
+          loginId: formData.userName,
+          password: encryptedPassword,
+          newPassword: encryptedNewPassword,
+        }
+        const resetPassword = async (passData: any) => {
+          try {
+            const response = await changePassword(passData)
+            if (response) {
+              if (onSuccess) return onSuccess()
+              if (isFirstLogin) {
+                localStorage.removeItem('firstTimeLogin')
+                navigate('/')
+              }
+            }
+          } catch (error: any) {
+            if (error?.response?.status === STATUS_CODE[503]) {
+              return navigate('/maintenance')
+            } else if (error?.response) {
+              returnErrMessage(error.response.data.message)
+              // console.log(error.response.data.message, 'message')
             }
           }
-        } catch (error: any) {
-          if (error?.response?.status === STATUS_CODE[503]) {
-            return navigate('/maintenance')
-          } else if (error?.response) {
-            returnErrMessage(error.response.data.message)
-            // console.log(error.response.data.message, 'message')
-          }
         }
+        resetPassword(passData)
+      } else {
+        console.error('Encryption failed.')
       }
-      resetPassword(passData)
+
     } else {
       setTrySubmited(true)
     }

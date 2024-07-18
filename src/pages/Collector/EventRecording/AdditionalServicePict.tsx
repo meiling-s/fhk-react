@@ -36,7 +36,7 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-import { extractError } from '../../../utils/utils'
+import { extractError, getPrimaryColor } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 
 type ServiceName = 'SRV00001' | 'SRV00002' | 'SRV00003' | 'SRV00004'
@@ -152,7 +152,7 @@ const AdditionalServicePict = () => {
   const AdditionalService = [
     {
       serviceName: 'SRV00001',
-      label: t('report.otherPictures')
+      label: t('report.additionalServicePictures')
     },
     {
       serviceName: 'SRV00002',
@@ -641,7 +641,7 @@ const AdditionalServicePict = () => {
                   <CustomField label={t('report.address')}>
                     <CustomTextField
                       id="place"
-                      placeholder={t('report.address')}
+                      placeholder={t('report.pleaseEnterAddress')}
                       onChange={(event) => {
                         updateData(
                           item.serviceName as ServiceName,
@@ -669,7 +669,7 @@ const AdditionalServicePict = () => {
                       <CustomField label={t('report.eventName')}>
                         <CustomTextField
                           id="eventName"
-                          placeholder={t('report.eventName')}
+                          placeholder={t('report.pleaseEnterEventName')}
                           onChange={(event) => {
                             if (event.target.value) {
                               setEventName(event.target.value)
@@ -1001,7 +1001,7 @@ const localstyles = {
     ...styles.textField,
     maxWidth: '370px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   container: {
@@ -1029,7 +1029,7 @@ const localstyles = {
       paddingX: 0
     },
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   timePeriodItem: {

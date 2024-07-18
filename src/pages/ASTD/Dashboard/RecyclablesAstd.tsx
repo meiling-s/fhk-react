@@ -2,9 +2,10 @@ import { FunctionComponent } from "react";
 import { Box, Grid, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next'
 import Dashboard from "../../../components/Dashboard/Chart";
-import { primaryColor, styles } from "../../../constants/styles";
+import { styles } from "../../../constants/styles";
 import { SEARCH_ICON } from "../../../themes/icons";
 import useWeightDashboardAstd from "./useWeightDashboardAstd";
+import { getPrimaryColor } from "../../../utils/utils";
 
 const Recyclables: FunctionComponent = () => {
     const { t } = useTranslation()
@@ -49,7 +50,7 @@ const Recyclables: FunctionComponent = () => {
                             <InputAdornment position="end">
                                 <IconButton onClick={() => {}}>
                                     <SEARCH_ICON
-                                        style={{ color: primaryColor }}
+                                        style={{ color: getPrimaryColor() }}
                                     />
                                 </IconButton>
                             </InputAdornment>

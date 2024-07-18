@@ -531,6 +531,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                                 handleEditInfo(idx, 'vehicleTypeId', value.id)
                                                             }
                                                         }}
+                                                        noOptionsText={t('common.noOptions')}
                                                     />
                                                 </CustomField>
                                             </Grid>
@@ -643,6 +644,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                         )
                                                     }   
                                                 }}
+                                                noOptionsText={t('common.noOptions')}
                                             />
                                         ) : (
                                             <TextField

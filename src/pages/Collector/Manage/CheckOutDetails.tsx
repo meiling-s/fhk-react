@@ -63,7 +63,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
     },
     {
       label: t('check_out.shipping_company'),
-      value: selectedCheckOut?.logisticName
+      value: selectedCheckOut?.senderName
     },
     {
       label: t('check_out.receiver_company'),
@@ -169,12 +169,15 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
           className="content p-6"
         >
           <Stack spacing={4}>
-            <Box>
-              <div className="bg-[#FBFBFB] rounded-sm flex items-center gap-2 p-2 adjustmen-inventory">
-                <CheckIcon className="text-[#79CA25]" />
-                {t('check_out.stock_adjustment')}
-              </div>
-            </Box>
+
+            {selectedCheckOut?.adjustmentFlg &&
+               <Box>
+               <div className="bg-[#FBFBFB] rounded-sm flex items-center gap-2 p-2 adjustmen-inventory">
+                 <CheckIcon className="text-[#79CA25]" />
+                 {t('check_out.stock_adjustment')}
+               </div>
+             </Box>
+            }
             <Box>
               <div className="shiping-information text-base text-[#717171] font-bold">
                 {t('check_out.shipping_info')}
@@ -223,7 +226,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   {t('check_out.arrival_location')}
                 </div>
                 <div className="text-mini text-black font-bold tracking-widest">
-                  火炭
+                {selectedCheckOut?.senderAddr}
                 </div>
               </div>
             </Box>
@@ -268,14 +271,17 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               ))}
             </Box>
             <Box>
-              <div className="message">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('check_out.message')}
+              { selectedCheckOut?.status !== 'CREATED' &&
+                <div className="message">
+                  <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
+                    {t('check_out.message')}
+                  </div>
+                  <div className=" text-sm text-[#717171] font-medium tracking-widest">
+                    {messageCheckout}
+                  </div>
                 </div>
-                <div className=" text-sm text-[#717171] font-medium tracking-widest">
-                  {messageCheckout}
-                </div>
-              </div>
+              }
+              
             </Box>
           </Stack>
         </div>

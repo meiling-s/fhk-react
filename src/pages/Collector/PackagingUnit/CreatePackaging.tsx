@@ -5,7 +5,7 @@ import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { styles } from '../../../constants/styles'
+import {  styles } from '../../../constants/styles'
 
 import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
@@ -324,7 +324,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                 id="tChineseName"
                 value={tChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.traditional_chinese_name')}
+                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                 onChange={(event) => setTChineseName(event.target.value)}
                 error={checkString(tChineseName)}
               />
@@ -339,7 +339,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                 id="sChineseName"
                 value={sChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.simplified_chinese_name')}
+                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                 onChange={(event) => setSChineseName(event.target.value)}
                 error={checkString(sChineseName)}
               />
@@ -351,7 +351,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
                 id="englishName"
                 value={englishName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.english_name')}
+                placeholder={t('packaging_unit.english_name_placeholder')}
                 onChange={(event) => setEnglishName(event.target.value)}
                 error={checkString(englishName)}
               />
@@ -363,7 +363,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
           >
             <CustomTextField
               id="description"
-              placeholder={t('packaging_unit.introduction')}
+              placeholder={t('packaging_unit.introduction_placeholder')}
               onChange={(event) => setDescription(event.target.value)}
               multiline={true}
               defaultValue={description}
@@ -372,7 +372,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
           <CustomField label={t('packaging_unit.remark')} mandatory={false}>
             <CustomTextField
               id="remark"
-              placeholder={t('packaging_unit.remark')}
+              placeholder={t('packaging_unit.remark_placeholder')}
               onChange={(event) => setRemark(event.target.value)}
               multiline={true}
               defaultValue={remark}
@@ -386,7 +386,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
               }}
               editable={action != 'delete'}
               defaultSelected={status}
-              needPrimaryColor={true}
+              needPrimaryColor={false}
             />
           </CustomField>
           <Grid item>

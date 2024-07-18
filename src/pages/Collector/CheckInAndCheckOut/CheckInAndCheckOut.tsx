@@ -13,11 +13,11 @@ import {
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
-import { STATUS_CODE, format } from '../../../constants/constant'
+import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { SEARCH_ICON } from '../../../themes/icons'
 import { CheckInAndCheckOutDetails } from '../CheckInAndCheckOut'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import axios from 'axios'
 import {
@@ -25,7 +25,7 @@ import {
   GET_CHECKIN_CHECKOUT_LIST,
   GET_CHECKOUT_BY_ID
 } from '../../../constants/requests'
-import { extractError, returnApiToken } from '../../../utils/utils'
+import { extractError, getPrimaryColor, returnApiToken } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../../../constants/axiosInstance'
 import {
@@ -37,6 +37,7 @@ import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 function onlyUnique(value: any, index: any, array: any) {
   return array.indexOf(value) === index
 }
+const role = localStorage.getItem(localStorgeKeyName.role) || ''
 
 function CheckInAndCheckOut() {
   const { t } = useTranslation()
@@ -129,9 +130,8 @@ function CheckInAndCheckOut() {
       renderCell: (params) => {
         return params.row.chkInId || params.row.chkOutId ? (
           <div
-            className={`px-4 py-2 rounded-full ${
-              params.row.chkInId ? 'bg-green-primary' : 'bg-blue-primary'
-            } text-white font-bold`}
+            className={`px-4 py-2 rounded-full text-white font-bold`}
+            style={{backgroundColor: getPrimaryColor()}}
           >
             {params.row.chkInId
               ? t('checkinandcheckout.send_in')
@@ -226,8 +226,9 @@ function CheckInAndCheckOut() {
 
   return (
     <Box
+      className={'container-wrapper w-max'}
       sx={{
-        width: '100%',
+        width: 'max-content',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -271,22 +272,22 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 },
                 '& label.Mui-focused': {
-                  color: '#79CA25' // Change label color when input is focused
+                  color: getPrimaryColor // Change label color when input is focused
                 }
               }
             }}
             label={t('purchase_order.table.pico_id')}
             InputLabelProps={{
-              style: { color: '#79CA25' },
+              style: { color: getPrimaryColor() },
               focused: true
             }}
             placeholder={t('checkinandcheckout.search_placeholder')}
@@ -294,7 +295,7 @@ function CheckInAndCheckOut() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: '#79CA25' }} />
+                    <SEARCH_ICON style={{ color: getPrimaryColor() }} />
                   </IconButton>
                 </InputAdornment>
               )
@@ -308,13 +309,13 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 }
               }
             }}
@@ -353,13 +354,13 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 }
               }
             }}
@@ -398,13 +399,13 @@ function CheckInAndCheckOut() {
               bgcolor: 'white',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 },
                 '&:hover fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#79CA25'
+                  borderColor: getPrimaryColor
                 }
               }
             }}
@@ -498,16 +499,16 @@ const styles = {
     }
   },
   textFieldLabel: {
-    color: '#79CA25',
+    color: getPrimaryColor,
     '&.Mui-focused': {
-      color: '#79CA25'
+      color: getPrimaryColor,
     }
   },
   totalElements: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#79CA25',
+    backgroundColor: getPrimaryColor,
     padding: '3px',
     borderRadius: '20px',
     width: '20px',

@@ -60,7 +60,7 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { localStorgeKeyName } from '../../../../constants/constant'
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
-import { extractError } from '../../../../utils/utils'
+import { extractError, validDayjsISODate } from '../../../../utils/utils'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 
@@ -103,7 +103,7 @@ function CreateCollectionPoint() {
     { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
   >([])
   const debouncedSearchValue: string = useDebounce(searchText, 1000)
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const { dateFormat } = useContainer(CommonTypeContainer)
 
   const navigate = useNavigate()
   console.log(address)
@@ -123,39 +123,39 @@ function CreateCollectionPoint() {
   }, [])
 
   useEffect(() => {
-    console.log("routine", RoutineSelect, openingPeriod)
+    console.log('routine', RoutineSelect, openingPeriod)
   }, [RoutineSelect])
 
   const initType = async () => {
-   try {
-    const result = await getCommonTypes()
-    if (result) {
-      setTypeList(result)
-    }
-    // console.log('result: ', result)
-    if (result?.contract) {
-      var conList: {
-        contractNo: string
-        isEpd: boolean
-        frmDate: string
-        toDate: string
-      }[] = []
-      result.contract.map((con) => {
-        conList.push({
-          contractNo: con.contractNo,
-          isEpd: con.epdFlg,
-          frmDate: con.contractFrmDate,
-          toDate: con.contractToDate
+    try {
+      const result = await getCommonTypes()
+      if (result) {
+        setTypeList(result)
+      }
+      // console.log('result: ', result)
+      if (result?.contract) {
+        var conList: {
+          contractNo: string
+          isEpd: boolean
+          frmDate: string
+          toDate: string
+        }[] = []
+        result.contract.map((con) => {
+          conList.push({
+            contractNo: con.contractNo,
+            isEpd: con.epdFlg,
+            frmDate: con.contractFrmDate,
+            toDate: con.contractToDate
+          })
         })
-      })
-      setContractList(conList)
+        setContractList(conList)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const { state, realm } = extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
   }
 
   useEffect(() => {
@@ -183,12 +183,14 @@ function CreateCollectionPoint() {
 
   const checkRecyclable = () => {
     return recyclables.every((item) => {
-      const recycType = typeList.recyc.find(r => r.recycTypeId === item.recycTypeId);
+      const recycType = typeList.recyc.find(
+        (r) => r.recycTypeId === item.recycTypeId
+      )
       if (recycType && recycType.recycSubType.length > 0) {
-        return item.recycSubTypeId.length > 0;
+        return item.recycSubTypeId.length > 0
       }
-      return true; // If no sub-types available, it's okay
-    });
+      return true // If no sub-types available, it's okay
+    })
   }
 
   const checkTimePeriod = () => {
@@ -224,58 +226,76 @@ function CreateCollectionPoint() {
 
   const checkTimeNotOverlapping = () => {
     return colPtRoutine?.routineContent.every((item) => {
-      const periods = [];
+      const periods = []
       for (let i = 0; i < item.startTime.length; i++) {
-        const start = new Date(`1970-01-01T${getTime(item.startTime[i])}`);
-        const end = new Date(`1970-01-01T${getTime(item.endTime[i])}`);
-        
+        const start = new Date(`1970-01-01T${getTime(item.startTime[i])}`)
+        const end = new Date(`1970-01-01T${getTime(item.endTime[i])}`)
+
         // Check if this period overlaps with any existing periods
         if (isOverlapping([start, end], periods)) {
-          return false;
+          return false
         }
-        
-        periods.push([start, end]);
+
+        periods.push([start, end])
       }
-      return true;
-    });
-  };
+      return true
+    })
+  }
 
   const isOverlapping = (newPeriod, periods) => {
-    const [newStart, newEnd] = newPeriod;
+    const [newStart, newEnd] = newPeriod
     for (let period of periods) {
-      const [start, end] = period;
-      if ((newStart < end && newEnd > start) ||
-      (start < newEnd && end > newStart) ) {
-        return true;
+      const [start, end] = period
+      if (
+        (newStart < end && newEnd > start) ||
+        (start < newEnd && end > newStart)
+      ) {
+        return true
       }
     }
-    return false;
-  };
+    return false
+  }
 
   const checkRoutineDates = () => {
-    if (colPtRoutine?.routineType !== 'specificDate' ) {
-      return true;
+    if (colPtRoutine?.routineType !== 'specificDate') {
+      return true
     }
-  
-    const startDate = dayjs(openingPeriod.startDate).subtract(1, 'day').startOf('day');
-    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day');
-  
-    return colPtRoutine.routineContent.every(content => {
-      const contentDate = dayjs(content.id);
-      return contentDate.isAfter(startDate) && contentDate.isBefore(endDate);
-    });
-  };
+
+    const startDate = dayjs(openingPeriod.startDate)
+      .subtract(1, 'day')
+      .startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day')
+
+    return colPtRoutine.routineContent.every((content) => {
+      const contentDate = dayjs(content.id)
+      return contentDate.isAfter(startDate) && contentDate.isBefore(endDate)
+    })
+  }
 
   const checkEffectiveDate = () => {
-    const startDate = dayjs(openingPeriod.startDate).subtract(1, 'day').startOf('day');
-    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day');
+    const startDate = dayjs(openingPeriod.startDate)
+      .subtract(1, 'day')
+      .startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day')
 
-    if (startDate.isAfter(endDate)){
+    if (startDate.isAfter(endDate)) {
       return false
     } else {
       return true
     }
-    };
+  }
+
+  const isOpeningPeriodValid = () => {
+    return (
+      validDayjsISODate(openingPeriod.startDate) &&
+      validDayjsISODate(openingPeriod.endDate)
+    )
+  }
+
+  const isOpeningPeriodEmpty = () => {
+    console.log('isOpeningPeriodEmpty', openingPeriod.startDate)
+    return !openingPeriod.startDate || !openingPeriod.endDate
+  }
 
   useEffect(() => {
     //do validation here
@@ -341,24 +361,39 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
+      isOpeningPeriodEmpty() &&
+        tempV.push({
+          field: `${t('col.effFromDate')}`,
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      !isOpeningPeriodValid() &&
+        tempV.push({
+          field: `${t('col.effFromDate')}`,
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+
+      !checkRoutineDates() &&
+        tempV.push({
+          field: 'date',
+          problem: formErr.dateSpesificIsWrong,
+          type: 'error'
+        })
       ;(colPtRoutine?.routineContent.length == 0 || !checkTimePeriod()) &&
         tempV.push({
           field: 'time_Period',
           problem: formErr.empty,
           type: 'error'
         })
-      !checkRoutineDates() &&
-      tempV.push({
-        field: `${t('date')}`,
-        problem: formErr.dateOutOfRange,
-        type: 'error'
-      });
+
       !checkTimePeriodNotInvalid() &&
-      tempV.push({
-        field: 'time_Period',
-        problem: formErr.startDateBehindEndDate,
-        type: 'error'
-      })
+        tempV.push({
+          field: 'time_Period',
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
       !checkTimeNotOverlapping() &&
         tempV.push({
           field: 'time_Period',
@@ -366,11 +401,11 @@ function CreateCollectionPoint() {
           type: 'error'
         })
       !checkEffectiveDate() &&
-      tempV.push({
-        field: 'col.effDate',
-        problem: formErr.effectiveDateLess,
-        type: 'error'
-      })
+        tempV.push({
+          field: 'col.effDate',
+          problem: formErr.effectiveDateLess,
+          type: 'error'
+        })
       premiseName == '' &&
         tempV.push({
           field: 'col.premiseName',
@@ -541,6 +576,9 @@ function CreateCollectionPoint() {
       case formErr.effectiveDateLess:
         msg = t('form.error.effectiveDateLess')
         break
+      case formErr.dateSpesificIsWrong:
+        msg = t('form.error.dateSpesificIsWrong')
+        break
     }
     return msg
   }
@@ -594,7 +632,7 @@ function CreateCollectionPoint() {
       console.log('colPtRoutine', colPtRoutine)
       const loginId = localStorage.getItem(localStorgeKeyName.username)
       const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
-  
+
       if (validation.length == 0) {
         const cp: createCP = {
           tenantId: tenantId,
@@ -632,11 +670,11 @@ function CreateCollectionPoint() {
         setTrySubmited(true)
         //if(validation.incl)
       }
-    } catch (error:any) {
-     const { state, realm}  =  extractError(error);
-     if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-     }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -666,7 +704,10 @@ function CreateCollectionPoint() {
   ]
   const [serviceFlg, setServiceFlg] = useState<string>('basic')
 
-  const createdDate = dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+  const createdDate = dayjs
+    .utc(new Date())
+    .tz('Asia/Hong_Kong')
+    .format(`${dateFormat} HH:mm`)
 
   return (
     <>
@@ -735,16 +776,20 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-            <CustomField label={`${t('col.address')} (${t('col.addressReminder')})`} mandatory={true}>
+            <CustomField
+              label={`${t('col.address')} (${t('col.addressReminder')})`}
+              mandatory={true}
+            >
               <CustomTextField
                 id="address"
                 placeholder={t('col.enterAddress')}
                 // onChange={(event) => handleSearchTextChange(event)}
-                
-                //hardcode the gps 
-                onChange={(e) => { // Handle the onClick event here
-                  setAddress(e.target.value); // Set the hardcoded address
-                  setGPSCode([22.426887, 114.211165]); // Set the hardcoded GPS coordinates
+
+                //hardcode the gps
+                onChange={(e) => {
+                  // Handle the onClick event here
+                  setAddress(e.target.value) // Set the hardcoded address
+                  setGPSCode([22.426887, 114.211165]) // Set the hardcoded GPS coordinates
                 }}
                 multiline={true}
                 // endAdornment={locationSelect(setCPLocation)}
@@ -793,7 +838,9 @@ function CreateCollectionPoint() {
               mandatory={true}
               style={{ maxWidth: '220px' }}
               error={!checkTimeNotOverlapping()}
-              helperText={!checkTimeNotOverlapping() ? t('error.timeOverlap') : ''}
+              helperText={
+                !checkTimeNotOverlapping() ? t('error.timeOverlap') : ''
+              }
             >
               <RoutineSelect
                 setRoutine={setColPtRoutine}
@@ -917,6 +964,7 @@ function CreateCollectionPoint() {
                     }}
                   />
                 )}
+                noOptionsText={t('common.noOptions')}
               />
             </CustomField>
 
@@ -993,6 +1041,5 @@ const localstyles = {
     mr: 3
   }
 }
-
 
 export default CreateCollectionPoint

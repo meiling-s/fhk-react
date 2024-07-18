@@ -257,14 +257,20 @@ const StaffManagement: FunctionComponent = () => {
     {
       field: 'staffNameTchi',
       headerName: t('staffManagement.employeeChineseName'),
-      width: 200,
+      width: 220,
       type: 'string'
     },
     {
-      field: 'staffNameEng',
-      headerName: 'Employee english name',
-      width: 200,
+      field: 'staffNameSchi',
+      headerName: t('staffManagement.employeeChineseCn'),
+      width: 220,
       type: 'string'
+    },
+    {
+      field: "staffNameEng",
+      headerName: t("staffManagement.employeeEnglishName"),
+      width: 200,
+      type: "string",
     },
     {
       field: 'titleId',
@@ -353,7 +359,13 @@ const StaffManagement: FunctionComponent = () => {
       {
         field: 'staffNameTchi',
         headerName: t('staffManagement.employeeChineseName'),
-        width: 200,
+        width: 220,
+        type: 'string'
+      },
+      {
+        field: 'staffNameSchi',
+        headerName: t('staffManagement.employeeChineseCn'),
+        width: 220,
         type: 'string'
       },
       {
@@ -557,8 +569,10 @@ const StaffManagement: FunctionComponent = () => {
                   onRowClick={handleSelectRow}
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
-                  getRowClassName={(params) => 
-                    selectedRow && params.id === selectedRow.staffId ? 'selected-row' : ''
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.staffId
+                      ? 'selected-row'
+                      : ''
                   }
                   initialState={{
                     sorting: {
@@ -579,14 +593,14 @@ const StaffManagement: FunctionComponent = () => {
                         borderBottom: 'none'
                       }
                     },
-                    '.MuiDataGrid-columnHeaderTitle': { 
+                    '.MuiDataGrid-columnHeaderTitle': {
                       fontWeight: 'bold !important',
                       overflow: 'visible !important'
                     },
                     '& .selected-row': {
-                        backgroundColor: '#F6FDF2 !important',
-                        border: '1px solid #79CA25'
-                      }
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
                   }}
                 />
                 <Pagination
@@ -602,7 +616,10 @@ const StaffManagement: FunctionComponent = () => {
             {/* {selectedRow != null && ( */}
             <StaffDetail
               drawerOpen={drawerOpen}
-              handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+              handleDrawerClose={() => {
+                setDrawerOpen(false)
+                setSelectedRow(null)
+              }}
               action={action}
               selectedItem={selectedRow}
               staffList={staffList}

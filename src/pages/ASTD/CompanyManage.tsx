@@ -292,7 +292,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
       defaultPath.tenantRegisterPath + id
     }`
 
-    const result = await sendEmailInvitation(email, id)
+    const result = await sendEmailInvitation(email, id.toString().padStart(6, '0'))
     if (result) {
       onSendInvitation(true)
     } else {
@@ -330,7 +330,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
               fullWidth
               placeholder={t('tenant.invite_modal.enter_email')}
               onChange={(event) => {
-                setEmailErr(validateEmail(email))
+                setEmailErr(!validateEmail(email))
                 setEmail(event.target.value)
               }}
               error={emailErr}
@@ -366,7 +366,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
             </Typography>
             <TextField
               fullWidth
-              value={defaultPath.tenantRegisterPath + id}
+              value={defaultPath.tenantRegisterPath + id.toString().padStart(6, '0')}
               onChange={(event: { target: { value: any } }) => {
                 //console.log(event.target.value)
               }}
@@ -377,7 +377,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
                     <Button
                       onClick={() =>
                         navigator.clipboard.writeText(
-                          defaultPath.tenantRegisterPath + id
+                          defaultPath.tenantRegisterPath + id.toString().padStart(6, '0')
                         )
                       }
                       sx={[
@@ -841,7 +841,7 @@ function InviteForm({
                     }
                   ]}
                 >
-                  {t('changePass.submitPassword')}
+                  {t('common.submit')}
                 </Button>
               </Box>
             </Stack>
@@ -980,7 +980,10 @@ function CompanyManage() {
       field: 'id',
       headerName: t('tenant.company_number'),
       type: 'string',
-      width: 200
+      width: 200,
+      valueFormatter: (params) => {
+        return params.value.toString().padStart(6, '0');
+      }
     },
     {
       field: 'cName',

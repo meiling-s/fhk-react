@@ -125,7 +125,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
       type: 'text'
     },
     {
-      label: 'Staff English Name',
+      label: t('staffManagement.employeeEnglishName'),
       placeholder: t('staffManagement.enterName'),
       field: 'staffNameEng',
       type: 'text'
@@ -465,7 +465,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     const fieldMapping: FormValues = {
       loginId: t('staffManagement.loginName'),
       staffNameTchi: t('staffManagement.employeeChineseName'),
-      staffNameSchi: t('staffManagement.employeeChineseName'),
+      staffNameSchi: t('staffManagement.employeeChineseCn'),
       staffNameEng: t('staffManagement.employeeEnglishName'),
       titleId: t('staffManagement.position'),
       contactNo: t('staffManagement.contactNumber'),
@@ -500,7 +500,11 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         })
       }
 
-      if (fieldName === 'email' && !fieldValue.includes('@')) {
+      if (
+        fieldName === 'email' &&
+        fieldValue != '' &&
+        !validateEmail(fieldValue)
+      ) {
         tempV.push({
           field: fieldMapping[fieldName as keyof FormValues],
           problem: formErr.wrongFormat,
@@ -525,7 +529,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
 
   const handleSubmit = () => {
     //const isvalid = validateStaff()
-    console.log("validation", validation)
+    console.log('validation', validation)
     if (validation.length === 0) {
       const staffData: CreateStaff = {
         tenantId: tenantId.toString(),
@@ -710,9 +714,19 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                           event.target.value
                         )
                       }
-                      error={checkString(
-                        formData[item.field as keyof FormValues]
-                      )}
+                      error={
+                        item.field === 'email'
+                          ? !validateEmail(
+                              formData[item.field as keyof FormValues]
+                            ) &&
+                            !trySubmited &&
+                            formData[
+                              item.field as keyof FormValues
+                            ].toString() != ''
+                          : checkString(
+                              formData[item.field as keyof FormValues]
+                            )
+                      }
                     />
                   </CustomField>
                   {/* <Typography style={{color: 'red', fontWeight: '500'}}>
@@ -757,6 +771,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                             error={checkString(selectedLoginId)}
                           />
                         )}
+                        noOptionsText={t('common.noOptions')}
                       />
                     ) : (
                       <TextField

@@ -29,7 +29,7 @@ import {
   getPicoById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate } from '../../utils/utils'
+import { displayCreatedDate, getPrimaryColor } from '../../utils/utils'
 import CustomButton from './CustomButton'
 import { Languages, localStorgeKeyName } from '../../constants/constant'
 
@@ -389,7 +389,7 @@ const PickupOrderForm = ({
           </CustomField>
           {selectedPickupOrder?.picoType !== 'AD_HOC' && 
             (
-              <CustomField label={t('pick_up_order.table.delivery_date')}>
+              <CustomField label={t('pick_up_order.table.delivery_datetime')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {/* {selectedPickupOrder?.routine
                   .map((routineItem) => routineItem)

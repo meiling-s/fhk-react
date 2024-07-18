@@ -16,7 +16,7 @@ import {
   GridRowSpacingParams,
   GridRenderCellParams
 } from '@mui/x-data-grid'
-import { primaryColor, styles } from '../../../constants/styles'
+import { styles } from '../../../constants/styles'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import InventoryDetail from './DetailInventory'
 import { useContainer } from 'unstated-next'
@@ -46,7 +46,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
-import { returnApiToken, extractError } from '../../../utils/utils'
+import { returnApiToken, extractError, getPrimaryColor } from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { InventoryQuery } from '../../../interfaces/inventory'
@@ -582,7 +582,7 @@ const Inventory: FunctionComponent = () => {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: primaryColor }} />
+                    <SEARCH_ICON style={{ color: getPrimaryColor() }} />
                   </IconButton>
                 </InputAdornment>
               )

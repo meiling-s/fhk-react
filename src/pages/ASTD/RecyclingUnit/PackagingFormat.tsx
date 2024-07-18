@@ -294,7 +294,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 id="tChineseName"
                                 value={tChineseName}
                                 disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.traditional_chinese_name')}
+                                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                                 onChange={(event) => setTChineseName(event.target.value)}
                                 error={checkString(tChineseName)}
                             />
@@ -306,7 +306,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 id="sChineseName"
                                 value={sChineseName}
                                 disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.simplified_chinese_name')}
+                                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                                 onChange={(event) => setSChineseName(event.target.value)}
                                 error={checkString(sChineseName)}
                             />
@@ -318,7 +318,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                 id="englishName"
                                 value={englishName}
                                 disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.english_name')}
+                                placeholder={t('packaging_unit.english_name_placeholder')}
                                 onChange={(event) => setEnglishName(event.target.value)}
                                 error={checkString(englishName)}
                             />
@@ -327,7 +327,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     <CustomField label={t('packaging_unit.introduction')}>
                         <CustomTextField
                             id="description"
-                            placeholder={t('packaging_unit.introduction')}
+                            placeholder={t('packaging_unit.introduction_placeholder')}
                             onChange={(event) => setDescription(event.target.value)}
                             multiline={true}
                             defaultValue={description}
@@ -336,7 +336,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     <CustomField label={t('packaging_unit.remark')}>
                         <CustomTextField
                             id="remark"
-                            placeholder={t('packaging_unit.remark')}
+                            placeholder={t('packaging_unit.remark_placeholder')}
                             onChange={(event) => setRemark(event.target.value)}
                             multiline={true}
                             defaultValue={remark}

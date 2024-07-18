@@ -219,8 +219,16 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                 {t('check_in.stock_adjustment')}
               </Alert>
             )}
+            
             <Box>
-              <Typography sx={localstyles.typo_header}>{t('check_in.stock_adjustment')}</Typography>
+              <Typography sx={localstyles.typo_header}>{t('check_in.transport_information')}</Typography>
+            </Box>
+
+            <Box>
+              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.logistic_company')}</Typography>
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedItem?.logisticName}
+              </Typography>
             </Box>
 
             <Box>
@@ -232,14 +240,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
 
             <Box>
               <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.receiver_company')}</Typography>
-              <Typography sx={localstyles.typo_fieldContent}>-</Typography>
-            </Box>
-
-            <Box>
-              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.logistic_company')}</Typography>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedItem?.logisticName}
-              </Typography>
+              <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.recipientCompany ?? '-'}</Typography>
             </Box>
 
             <Typography sx={localstyles.typo_header}>{t('check_in.recyc_loc_info')}</Typography>
@@ -263,7 +264,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                   <Typography sx={localstyles.typo_fieldTitle}>
                     {t('check_in.receiver_addr')}
                   </Typography>
-                  <Typography sx={localstyles.typo_fieldContent}>-</Typography>
+                  <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.deliveryAddress ?? '-'}</Typography>
                 </Box>
               </Box>
             </Box>

@@ -150,6 +150,16 @@ export const GET_ALL_CHECKIN_REQUESTS = (
   url: `api/v1/${realmApiRoute}/checkinrequest/searching/${table}`
 })
 
+export const UPDATE_CHECK_IN = (
+  realmApiRoute: string,
+  chkInId: number,
+  table: string,
+  picoDtlId: number
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/checkin/${table}/pico/${chkInId}/${picoDtlId}`
+})
+
 export const UPDATE_CHECK_IN_STATUS = (
   realmApiRoute: string,
   chkInId: number,
@@ -510,6 +520,16 @@ export const GET_CHECKOUT_REQUEST_BY_ID = (
   url: `api/v1/collectors/checkout/${table}/${chkOutId}`
 })
 
+export const UPDATE_CHECK_OUT = (
+  realmApiRoute: string,
+  chkOutId: number,
+  table: string,
+  picoDtlId: number
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/checkout/${table}/pico/${chkOutId}/${picoDtlId}`
+})
+
 export const UPDATE_CHECKOUT_REQUEST_STATUS = (
   realmApiRoute: string,
   chkOutId: number,
@@ -663,8 +683,6 @@ export const GET_PROCESS_OUT = (
   method: 'get',
   url: `api/v1/${realmApiRoute}/processout/header/searching/${table}`
 })
-
-
 
 export const GET_PROCESS_IN_BY_ID = (
   table: string,
@@ -839,7 +857,7 @@ export const CREATE_STAFF = (realmApiRoute: string): AxiosRequestConfig => ({
 export const EDIT_STAFF = (
   tenantId: string,
   staffId: string,
-  realmApi: string,
+  realmApi: string
 ): AxiosRequestConfig => ({
   method: realmApi === 'logistic' ? 'put' : 'patch',
   url: `api/v1/${realmApi}/staff/${tenantId}/${staffId}`
@@ -989,6 +1007,7 @@ export const GET_ALL_LOGISTICS_PICK_UP_ORDER = (
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/administrator/pico/search/logistic/${tenantId}`
+  // url: `api/v1/administrator/pico/search/${tenantId}`
 })
 
 //get all status
@@ -1637,9 +1656,7 @@ export const UPDATE_DENIAL_REASON_COLLECTORS = (
   url: `/api/v1/collectors/reason/${tenantId}/${reasonId}/new`
 })
 
-export const CREATE_USER_ACTIVITY = (
-  loginId: string, 
-): AxiosRequestConfig => ({
+export const CREATE_USER_ACTIVITY = (loginId: string): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/userActivity/${loginId}`
 })
