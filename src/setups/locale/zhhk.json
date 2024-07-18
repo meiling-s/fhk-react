@@ -607,9 +607,10 @@
   },
   "vehicle": {
     "vehicle": "車隊",
-    "serviceType": "服務類型",
-    "vehicleType": "車輛類型",
+    "serviceType": "服務種類",
+    "vehicleType": "車輛種類",
     "licensePlate": "車牌號碼",
+    "please_enter_pla_number": "請輸入車牌號碼",
     "picture": "圖片",
     "basic": "基本",
     "additional": "額外",

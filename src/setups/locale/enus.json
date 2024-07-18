@@ -612,6 +612,7 @@
     "serviceType": "Service Type",
     "vehicleType": "Vehicle Category",
     "licensePlate": "License Plate",
+    "please_enter_pla_number": "Please enter the plate number",
     "picture": "Picture",
     "basic": "Basic",
     "additional": "Additional",
@@ -830,7 +831,7 @@
     "item": {
       "detail": "Job Order",
       "shipping_info": "Shipping information",
-      "date_time": "Creation date and time",
+      "date_time": "Creation Datetime",
       "reference_po_number": "Reference PO number",
       "sender_name": "Shipping company",
       "rec_loc_info": "Recycling location information"
@@ -861,7 +862,7 @@
     "driver": "Driver",
     "plat_number": "Plate number",
     "assign_driver": "Assign a driver",
-    "shippingDateAndTime": "Shipping Date And Time",
+    "shippingDateAndTime": "Shipping Datetime",
     "success_assign": "Success Assign Job Order",
     "failed_assign": "Failed Assign Job Order"
   },

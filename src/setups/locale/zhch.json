@@ -609,9 +609,10 @@
   },
   "vehicle": {
     "vehicle": "车队",
-    "serviceType": "服务类型",
-    "vehicleType": "车辆类型",
+    "serviceType": "服务种类",
+    "vehicleType": "车辆种类",
     "licensePlate": "车牌号码",
+    "please_enter_pla_number": "请输入车牌号码",
     "picture": "图片",
     "basic": "基本",
     "additional": "额外",
