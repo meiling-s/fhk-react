@@ -190,6 +190,7 @@
     "shouldNotDuplicated": "The address of warehouse had been used"
   },
   "check_in": {
+    "transport_information": "Transport Information",
     "request_check_in": "Check-in Request",
     "approve": "Approve",
     "reject": "Reject",

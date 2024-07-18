@@ -189,6 +189,7 @@
     "shouldNotDuplicated": " 货仓地址已经被使用"
   },
   "check_in": {
+    "transport_information": "运输资料",
     "request_check_in": "送入请求",
     "approve": "接受",
     "reject": "拒绝",
