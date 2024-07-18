@@ -676,7 +676,7 @@
     "deleteProcessOutFailed": "Delete process out failed"
   },
   "warehouseDashboard": {
-    "warehouse": "Warehouse Dashboard",
+    "warehouse": "Warehouse",
     "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
     "noMoreRoom": "No more room",
@@ -686,7 +686,7 @@
     "check-out": "Check-out request",
     "toBeConfirmed": "to be confirmed",
     "recyclingInformation": "Recycling Information",
-    "recentEntryAndExitRecords": "Recent entry and exit records"
+    "recentEntryAndExitRecords": "Recent Entry and Exit Records"
   },
   "staffManagement": {
     "staff": "Staff",
