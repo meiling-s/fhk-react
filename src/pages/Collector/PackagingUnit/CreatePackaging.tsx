@@ -228,7 +228,18 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       } else {
-        onSubmitData('error', t('common.saveFailed'))
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          setValidation(
+            [
+              {
+                field: t('common.packageName'),
+                problem: '',
+                type: 'error'
+              }
+            ]
+          )
+        }
+        // onSubmitData('error', t('common.saveFailed'))
       }
     }
   }
@@ -310,7 +321,8 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

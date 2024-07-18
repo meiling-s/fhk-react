@@ -430,7 +430,14 @@ const Company: FunctionComponent = () => {
   }
 
   const onSubmitData = (type: string, msg: string) => {
-    initAllData()
+    // initAllData()
+    initSpecifiedCompany(selectCompanyType, 2)
+    setPages(prev => {
+      return {
+        ...prev,
+        [selectCompanyType]: 1
+      }
+    })
     if (type == 'success') {
       showSuccessToast(msg)
     } else {

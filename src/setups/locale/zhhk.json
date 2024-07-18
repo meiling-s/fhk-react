@@ -39,7 +39,9 @@
     "collectorName": "收藏家姓名",
     "logisticName": "物流名稱",
     "customerName": "顧客姓名",
-    "manufacturerName": "生產商名稱"
+    "manufacturerName": "生產商名稱",
+    "reasonName": "原因名稱",
+    "packageName": "包裝單位名稱已存在"
   },
   "col": {
     "createCP": "建立回收點",

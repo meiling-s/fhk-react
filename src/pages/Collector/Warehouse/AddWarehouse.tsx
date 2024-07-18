@@ -761,7 +761,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         {/* form warehouse */}

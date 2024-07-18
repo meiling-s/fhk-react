@@ -39,7 +39,9 @@
     "collectorName": "Collector Name",
     "logisticName": "Logistic Name",
     "customerName": "Customer Name",
-    "manufacturerName": "Manufacturer Name"
+    "manufacturerName": "Manufacturer Name",
+    "reasonName": "Reason Name",
+    "packageName": "Package Type Name already exist"
   },
   "col": {
     "createCP": "Create Collection Point",
