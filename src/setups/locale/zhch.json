@@ -159,7 +159,7 @@
   "warehouse_page": {
     "trad_name": "繁体中文名称",
     "simp_name": "简体中文名称",
-    "english_name": "English Name",
+    "english_name": "英文名称",
     "location": "实体地点",
     "place": "地点",
     "status": "状态",
@@ -170,7 +170,7 @@
     "save": "储存",
     "delete": "删除",
     "type_name": "请输入名称",
-    "place_placeholders": "火炭坳背湾街14号",
+    "place_placeholders": "请输入地点",
     "subtype": "亚型",
     "recycle_type": "可回收物类别",
     "weight": "请输入重量",
