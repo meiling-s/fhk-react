@@ -7,7 +7,7 @@ import {
   IconButton,
   TextField
 } from '@mui/material'
-import { SEARCH_ICON } from '../themes/icons'
+import { SEARCH_ICON, ARRPW_FORWARD_ICON } from '../themes/icons'
 import RightOverlayForm from '../components/RightOverlayForm'
 import {
   PickupOrder,
@@ -173,8 +173,8 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
             onCloseHeader: handleDrawerClose
           }}
         >
-          <Box sx={{ paddingX: 4 }}>
-            <Divider />
+          <Divider/>
+          <Box sx={{ paddingX: 4, paddingY: 2 }}>
             <div className="">
               <Box>
                 <div className="filter-section  mb-6">
@@ -249,12 +249,11 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                           </div>
                         </div>
                         <div className="mb- flex items-center gap-2">
-                          <div>
-                            <img src="../Delivery.svg" alt="" />
-                          </div>
+                          <img src="../Delivery.svg" alt="" />
                           <div className="text-xs text-[#717171]">
                             {item.senderName}
                           </div>
+                          <ARRPW_FORWARD_ICON fontSize="small" className="text-[#717171]"/>
                           <div className="text-xs text-[#717171]">
                             {item.receiver}
                           </div>

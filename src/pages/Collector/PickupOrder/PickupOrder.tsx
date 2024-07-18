@@ -47,6 +47,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleText from '../../../hooks/useLocaleTextDataGrid'
 import { weekDs } from '../../../components/SpecializeComponents/RoutineSelect/predefinedOption'
+import { getAllTenant } from '../../../APICalls/tenantManage'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -257,6 +258,7 @@ interface StatusPickUpOrder {
 }
 
 interface Company {
+  id?: number
   nameEng?: string
   nameSchi?: string
   nameTchi?: string
@@ -362,7 +364,7 @@ const PickupOrders = () => {
       }
     ]
   }
-  const { recycType, dateFormat, manuList, collectorList, logisticList } =
+  const { recycType, dateFormat, manuList, collectorList, logisticList, companies } =
     useContainer(CommonTypeContainer)
   const [actions, setActions] = useState<'add' | 'edit' | 'delete'>('add')
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
@@ -409,6 +411,7 @@ const PickupOrders = () => {
     })
     listCompany = [...listCompany, ...manus]
   }
+  // const [companies, setCompanies] = useState<Company[]>([])
   const statusList: StatusPickUpOrder[] = [
     {
       value: '0',
@@ -461,6 +464,32 @@ const PickupOrders = () => {
   ]
   const { localeTextDataGrid } = useLocaleText()
 
+  async function initCompaniesData() {
+    try {
+      const result = await getAllTenant(1 - 1, 1000)
+      if(result){
+        const data = result?.data.content
+        const mappingData:Company[] = data.map((item:any) => {
+          return {
+            id: item?.tenantId,
+            nameEng: item?.companyNameEng,
+            nameSchi: item?.companyNameSchi,
+            nameTchi: item?.companyNameTchi
+          }
+        })
+        if (data.length > 0) {
+          // setCompanies(mappingData)
+        }
+      }
+
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+  }
+
   const initPickupOrderRequest = async () => {
     try {
       setPickupOrder([])
@@ -474,70 +503,119 @@ const PickupOrders = () => {
       let data = result?.data.content
       if (data && data.length > 0) {
         data = data.map((item: any) => {
-          const pickupOrderDetail = item?.pickupOrderDetail[0]
+          if(item.logisticId){
+            const logistic = companies.find(company => company.id == item.logisticId);
+            if(logistic){
+              if(i18n.language === Languages.ENUS) item.logisticName = logistic.nameEng
+              if(i18n.language === Languages.ZHCH) item.logisticName = logistic.nameSchi
+              if(i18n.language === Languages.ZHHK) item.logisticName = logistic.nameTchi
+            }
+          }
 
-          console.log('i18n.language', i18n.language)
+          for(let detail of item?.pickupOrderDetail){
+            const { receiverId, senderId } = detail;
+
+            if(receiverId){
+              const receiverName = companies.find(company => company.id == receiverId)
+              if(receiverName) {
+                if(i18n.language === Languages.ENUS)  detail.receiverName = receiverName.nameEng
+                if(i18n.language === Languages.ZHCH)  detail.receiverName = receiverName.nameSchi
+                if(i18n.language === Languages.ZHHK)  detail.receiverName = receiverName.nameTchi
+              }
+            }
+  
+            if(senderId){
+              const senderName = companies.find(company => company.id == senderId)
+              if(senderName){
+                if(i18n.language === Languages.ENUS)  detail.senderName = senderName.nameEng
+                if(i18n.language === Languages.ZHCH)  detail.senderName = senderName.nameSchi
+                if(i18n.language === Languages.ZHHK)  detail.senderName = senderName.nameTchi
+              }
+            }
+          }
+
+          //const pickupOrderDetail = item?.pickupOrderDetail[0];
+          
+          // const { receiverId, senderId } = pickupOrderDetail;
+
+          // if(receiverId){
+          //   const receiverName = companies.find(company => company.id == receiverId)
+          //   if(receiverName) {
+          //     if(i18n.language === Languages.ENUS)  pickupOrderDetail.receiverName = receiverName.nameEng
+          //     if(i18n.language === Languages.ZHCH)  pickupOrderDetail.receiverName = receiverName.nameSchi
+          //     if(i18n.language === Languages.ZHHK)  pickupOrderDetail.receiverName = receiverName.nameTchi
+          //   }
+          // }
+
+          // if(senderId){
+          //   const senderName = companies.find(company => company.id == senderId)
+          //   if(senderName){
+          //     if(i18n.language === Languages.ENUS)  pickupOrderDetail.senderName = senderName.nameEng
+          //     if(i18n.language === Languages.ZHCH)  pickupOrderDetail.senderName = senderName.nameSchi
+          //     if(i18n.language === Languages.ZHHK)  pickupOrderDetail.senderName = senderName.nameTchi
+          //   }
+          // }
 
           //mapping logisticName company
-          const logisticName = item.logisticName
-          const selectedLogistic = logisticList?.find((source) => {
-            return (
-              source.logisticNameEng === logisticName ||
-              source.logisticNameSchi === logisticName ||
-              source.logisticNameTchi === logisticName
-            )
-          })
+          // const logisticName = item.logisticName
+          // const selectedLogistic = logisticList?.find((source) => {
+          //   return (
+          //     source.logisticNameEng === logisticName ||
+          //     source.logisticNameSchi === logisticName ||
+          //     source.logisticNameTchi === logisticName
+          //   )
+          // })
 
-          if (selectedLogistic) {
-            if (i18n.language === Languages.ENUS) {
-              item.logisticName = selectedLogistic.logisticNameEng
-            } else if (i18n.language === Languages.ZHCH) {
-              item.logisticName = selectedLogistic.logisticNameSchi
-            } else if (i18n.language === Languages.ZHHK) {
-              item.logisticName = selectedLogistic.logisticNameTchi
-            }
-          }
+          // if (selectedLogistic) {
+          //   if (i18n.language === Languages.ENUS) {
+          //     item.logisticName = selectedLogistic.logisticNameEng
+          //   } else if (i18n.language === Languages.ZHCH) {
+          //     item.logisticName = selectedLogistic.logisticNameSchi
+          //   } else if (i18n.language === Languages.ZHHK) {
+          //     item.logisticName = selectedLogistic.logisticNameTchi
+          //   }
+          // }
 
           //mapping receiver company
-          const receiver = listCompany?.find((sourceReceiver) => {
-            return (
-              sourceReceiver.nameEng === pickupOrderDetail?.receiverName ||
-              sourceReceiver.nameSchi === pickupOrderDetail?.receiverName ||
-              sourceReceiver.nameTchi === pickupOrderDetail?.receiverName
-            )
-          })
+          // const receiver = listCompany?.find((sourceReceiver) => {
+          //   return (
+          //     sourceReceiver.nameEng === pickupOrderDetail?.receiverName ||
+          //     sourceReceiver.nameSchi === pickupOrderDetail?.receiverName ||
+          //     sourceReceiver.nameTchi === pickupOrderDetail?.receiverName
+          //   )
+          // })
 
-          if (receiver) {
-            if (i18n.language === Languages.ENUS) {
-              pickupOrderDetail.receiverName = receiver.nameEng
-            } else if (i18n.language === Languages.ZHCH) {
-              pickupOrderDetail.receiverName = receiver.nameSchi
-            } else if (i18n.language === Languages.ZHHK) {
-              pickupOrderDetail.receiverName = receiver.nameTchi
-            }
-          }
+          // if (receiver) {
+          //   if (i18n.language === Languages.ENUS) {
+          //     pickupOrderDetail.receiverName = receiver.nameEng
+          //   } else if (i18n.language === Languages.ZHCH) {
+          //     pickupOrderDetail.receiverName = receiver.nameSchi
+          //   } else if (i18n.language === Languages.ZHHK) {
+          //     pickupOrderDetail.receiverName = receiver.nameTchi
+          //   }
+          // }
 
-          //mapping senderName company
-          const senderName = listCompany.find((sourceSender) => {
-            return (
-              sourceSender.nameEng === pickupOrderDetail?.senderName ||
-              sourceSender.nameSchi === pickupOrderDetail?.senderName ||
-              sourceSender.nameTchi === pickupOrderDetail?.senderName
-            )
-          })
+          // //mapping senderName company
+          // const senderName = listCompany.find((sourceSender) => {
+          //   return (
+          //     sourceSender.nameEng === pickupOrderDetail?.senderName ||
+          //     sourceSender.nameSchi === pickupOrderDetail?.senderName ||
+          //     sourceSender.nameTchi === pickupOrderDetail?.senderName
+          //   )
+          // })
 
-          if (senderName) {
-            if (i18n.language === Languages.ENUS) {
-              pickupOrderDetail.senderName = senderName.nameEng
-            } else if (i18n.language === Languages.ZHCH) {
-              pickupOrderDetail.senderName = senderName.nameSchi
-            } else if (i18n.language === Languages.ZHHK) {
-              pickupOrderDetail.senderName = senderName.nameTchi
-            }
-          }
+          // if (senderName) {
+          //   if (i18n.language === Languages.ENUS) {
+          //     pickupOrderDetail.senderName = senderName.nameEng
+          //   } else if (i18n.language === Languages.ZHCH) {
+          //     pickupOrderDetail.senderName = senderName.nameSchi
+          //   } else if (i18n.language === Languages.ZHHK) {
+          //     pickupOrderDetail.senderName = senderName.nameTchi
+          //   }
+          // }
 
           //set picoItem details
-          item.pickupOrderDetail[0] = pickupOrderDetail
+          // item.pickupOrderDetail[0] = pickupOrderDetail
           return item
         })
 
@@ -628,6 +706,7 @@ const PickupOrders = () => {
   useEffect(() => {
     initPickupOrderRequest()
     getRejectReason()
+    // initCompaniesData()
   }, [i18n.language])
 
   useEffect(() => {
