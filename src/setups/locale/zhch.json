@@ -785,8 +785,8 @@
     "ship": "出货",
     "send_request": "送出請求",
     "shipping_info": "運輸資料",
-    "recyle_loc_info": "預計回收地點資料",
-    "recyc_loc_info": "回收地點資料"
+    "recyle_loc_info": "预计回收地点资料",
+    "recyc_loc_info": "回收地点资料"
   },
   "userGroup": {
     "title": "用戶群組",
