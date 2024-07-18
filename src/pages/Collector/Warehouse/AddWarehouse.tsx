@@ -375,24 +375,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     return filteredArr.length === 1
   })
 
-  const getName = (type: recyleTypeOption, subType: recyleTypeOption) => {
-    const recycTypeName =
-      currentLanguage === 'zhhk'
-        ? type?.recyclableNameTchi
-        : currentLanguage === 'zhch'
-        ? type?.recyclableNameSchi
-        : type?.recyclableNameEng || '-'
-
-    const recycSubTypeName =
-      currentLanguage === 'zhhk'
-        ? subType?.recyclableNameTchi
-        : currentLanguage === 'zhch'
-        ? subType?.recyclableNameSchi
-        : subType?.recyclableNameEng || '-'
-
-    return { recycTypeName, recycSubTypeName }
-  }
-
   // validation input text
   useEffect(() => {
     const tempV: { field: string; error: string }[] = []
@@ -473,7 +455,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     //check value not zero
     if (isRecyleUnselected) {
       recycleCategory.forEach((item) => {
-        if (item.recycTypeCapacity === 0) {
+        if (item.recycSubTypeCapacity === 0) {
           const recybles = recycleType.find(
             (type: recyleTypeOption) => type.id === item.recycTypeId
           )
@@ -543,6 +525,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       })
     }
 
+    console.group('tempV')
+
     setValidation(tempV)
   }, [nameValue, place, contractNum, recycleCategory])
 
@@ -579,8 +563,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const handleAddContact = () => {
-      const updatedContractNum = [...contractNum, '']
-      setContractNum(updatedContractNum)
+    const updatedContractNum = [...contractNum, '']
+    setContractNum(updatedContractNum)
   }
 
   const handleContractChange = (value: string, index: number) => {
@@ -687,10 +671,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       statusWarehouse = 'DELETED'
     }
 
-    const filteredContractNum = contractNum.filter(num => num !== '');
+    const filteredContractNum = contractNum.filter((num) => num !== '')
 
     // console.log('action', action)
-    
+
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
@@ -733,27 +717,27 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getFormErrorMsg()
-  },[validation])
+  }, [validation])
 
-const getFormErrorMsg = () => {
-  const errorList: string[] = [];
-  const seenErrors = new Set();
+  const getFormErrorMsg = () => {
+    const errorList: string[] = []
+    const seenErrors = new Set()
 
-  validation.forEach((item) => {
-    if (item.field === 'contractNo') {
-      if (!seenErrors.has('contractNo')) {
-        errorList.push(item.error);
-        seenErrors.add('contractNo');
+    validation.forEach((item) => {
+      if (item.field === 'contractNo') {
+        if (!seenErrors.has('contractNo')) {
+          errorList.push(item.error)
+          seenErrors.add('contractNo')
+        }
+      } else {
+        errorList.push(item.error)
       }
-    } else {
-      errorList.push(item.error);
-    }
-  });
+    })
 
-  setErrorMsgList(errorList);
-}
+    setErrorMsgList(errorList)
+  }
 
   const handleDelete = () => {
     setOpenDelete(true)
