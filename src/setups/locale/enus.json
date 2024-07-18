@@ -892,25 +892,25 @@
         "type": "Type",
         "title": "Title",
         "language": "Language",
-        "content": "content",
+        "content": "Content",
         "variables": "Available Variables",
         "button_submit": "Store"
       },
       "sms": {
-        "Recycling_delivery_request": "Recycling materials have been sent to the factory",
+        "Recycling_delivery_request": "Recycling Materials Have Been Sent to the Factory",
         "type": "Type",
         "title": "Title",
         "language": "Language",
-        "content": "content",
+        "content": "Content",
         "variables": "Available Variables",
         "button_submit": "Store"
       },
       "email": {
-        "Recycling_delivery_request": "Registration link",
+        "Recycling_delivery_request": "Registration Link",
         "type": "Type",
         "title": "Title",
         "language": "Language",
-        "content": "content",
+        "content": "Content",
         "variables": "Available Variables",
         "button_submit": "Store"
       },

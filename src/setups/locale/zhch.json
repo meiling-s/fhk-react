@@ -894,7 +894,7 @@
         "title": "标题",
         "language": "语言",
         "content": "内容",
-        "variables": "可用的变数",
+        "variables": "可用变量",
         "button_submit": "儲存"
       },
       "sms": {
@@ -903,7 +903,7 @@
         "title": "标题",
         "language": "语言",
         "content": "内容",
-        "variables": "可用的变数",
+        "variables": "可用变量",
         "button_submit": "儲存"
       },
       "email": {
@@ -912,7 +912,7 @@
         "title": "标题",
         "language": "语言",
         "content": "内容",
-        "variables": "可用的变数",
+        "variables": "可用变量",
         "button_submit": "儲存"
       },
       "broadcast": {
