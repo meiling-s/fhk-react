@@ -389,7 +389,7 @@ const PickupOrderForm = ({
           </CustomField>
           {selectedPickupOrder?.picoType !== 'AD_HOC' && 
             (
-              <CustomField label={t('pick_up_order.table.delivery_date')}>
+              <CustomField label={t('pick_up_order.table.delivery_datetime')}>
               <Typography sx={localstyles.typo_fieldContent}>
                 {/* {selectedPickupOrder?.routine
                   .map((routineItem) => routineItem)

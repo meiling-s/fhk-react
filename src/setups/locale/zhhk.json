@@ -352,7 +352,7 @@
       "regular_shipping": "常規運輸",
       "one-transport": "一次性運輸",
       "sender_and_receiver_company": "寄件和收件公司",
-      "sender_and_receiver_location": "回收和到達地點"
+      "sender_and_receiver_location": "送出和到達地點"
     },
     "item": {
       "detail": "運單詳情",
