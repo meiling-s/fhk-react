@@ -389,15 +389,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           )}`
         })
       }
-      let contractNoErrorAdded = false;
-      if (contractNum.some(contract => contract.trim() === '') || contractNum.length === 0) {
-        if (!contractNoErrorAdded) {
-          tempV.push({
+      if (contractNum.every(num => num === '')) {
+        tempV.push({
             field: 'contractNo',
             error: `${t('col.contractNo')} ${t('add_warehouse_page.shouldNotEmpty')}`
-          });
-          contractNoErrorAdded = true;
-        }
+        });
       }
       if (
         item.warehouseNameSchi.toLowerCase() ===
@@ -609,8 +605,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       statusWarehouse = 'DELETED'
     }
 
-    // console.log('action', action)
+    const filteredContractNum = contractNum.filter(num => num !== '');
 
+    // console.log('action', action)
+    
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
@@ -618,7 +616,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       location: place,
       locationGps: locationGps,
       physicalFlg: pysicalLocation,
-      contractNo: contractNum,
+      contractNo: filteredContractNum,
       status: statusWarehouse,
       createdBy: 'string',
       updatedBy: 'string',
