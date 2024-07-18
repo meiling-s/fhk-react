@@ -27,6 +27,7 @@ import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined'
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 
 export const PLACE_ICON = PlaceOutlinedIcon
 export const SHIPPING_CAR_ICON = LocalShippingOutlinedIcon
@@ -57,3 +58,4 @@ export const WARNING_ICON = ErrorOutlinedIcon
 export const TEMPLATE_ICON = SpaceDashboardIcon
 export const STATISTIC_ICON = BarChartIcon
 export const PERSON_OUTLINE_ICON = PersonOutlineIcon
+export const ARRPW_FORWARD_ICON = ArrowForwardRoundedIcon
