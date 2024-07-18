@@ -264,7 +264,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           warehouseNameSchi: warehouse.warehouseNameSchi,
           warehouseNameEng: warehouse.warehouseNameEng
         })
-        setContractNum([...warehouse.contractNo])
+        setContractNum(warehouse.contractNo.length !== 0? [...warehouse.contractNo] : [""])
         setPlace(warehouse.location)
         setPysicalLocation(warehouse.physicalFlg)
         setStatus(warehouse.status === 'ACTIVE')
