@@ -159,6 +159,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   >([])
   const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
   const [status, setStatus] = useState(true) // status field
+  const duplicateRecycleTypeIds = new Set<string>()
+  const [zeroCapacityItems, setZeroCapacityItems] = useState<
+    recyleTypeOption[]
+  >([])
   const isInitialRender = useRef(true) // Add this line
   const [existingWarehouse, setExisitingWarehouse] = useState<Warehouse[]>([])
   const navigate = useNavigate()
@@ -356,6 +360,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const isRecycleTypeIdUnique = recycleCategory.every((item, index, arr) => {
     const filteredArr = arr.filter((i) => i.recycTypeId === item.recycTypeId)
+
+    if (filteredArr.length > 1) {
+      duplicateRecycleTypeIds.add(item.recycTypeId)
+    }
+
     return filteredArr.length === 1
   })
 
@@ -365,6 +374,24 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     )
     return filteredArr.length === 1
   })
+
+  const getName = (type: recyleTypeOption, subType: recyleTypeOption) => {
+    const recycTypeName =
+      currentLanguage === 'zhhk'
+        ? type?.recyclableNameTchi
+        : currentLanguage === 'zhch'
+        ? type?.recyclableNameSchi
+        : type?.recyclableNameEng || '-'
+
+    const recycSubTypeName =
+      currentLanguage === 'zhhk'
+        ? subType?.recyclableNameTchi
+        : currentLanguage === 'zhch'
+        ? subType?.recyclableNameSchi
+        : subType?.recyclableNameEng || '-'
+
+    return { recycTypeName, recycSubTypeName }
+  }
 
   // validation input text
   useEffect(() => {
@@ -430,16 +457,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    const isRecyleHaveUniqId = isRecycleTypeIdUnique
+    // const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
-      return (
-        item.recycTypeId.trim() != '' &&
-        item.recycSubTypeId.trim() != '' &&
-        item.recycSubTypeCapacity != 0
-      )
+      return item.recycTypeId.trim() != '' && item.recycSubTypeId.trim() != ''
     })
-
-    //console.log('isRecycleTypeIdUnique', isRecycleTypeIdUnique)
 
     !isRecyleUnselected &&
       tempV.push({
@@ -449,17 +470,80 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    !isRecyleHaveUniqId &&
-      !isRecycleSubUnique &&
-      tempV.push({
-        field: 'warehouseRecyc',
-        error: `${t(`add_warehouse_page.warehouseRecyc`)} ${t(
-          'add_warehouse_page.shouldNotDuplicate'
-        )}`
+    //check value not zero
+    if (isRecyleUnselected) {
+      recycleCategory.forEach((item) => {
+        if (item.recycTypeCapacity === 0) {
+          const recybles = recycleType.find(
+            (type: recyleTypeOption) => type.id === item.recycTypeId
+          )
+
+          const subtype = recycleSubType[item.recycTypeId].find(
+            (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
+          )
+
+          const recycTypeName =
+            currentLanguage === 'zhhk'
+              ? recybles?.recyclableNameTchi
+              : currentLanguage === 'zhch'
+              ? recybles?.recyclableNameSchi
+              : recybles?.recyclableNameEng || '-'
+
+          const recycSubTypeName =
+            currentLanguage === 'zhhk'
+              ? subtype?.recyclableNameTchi
+              : currentLanguage === 'zhch'
+              ? subtype?.recyclableNameSchi
+              : subtype?.recyclableNameEng || '-'
+
+          tempV.push({
+            field: 'warehouseRecyc',
+            error: `${recycTypeName} - ${recycSubTypeName}, ${t(
+              'form.error.shouldGreaterThanZero'
+            )}`
+          })
+        }
       })
+    }
+
+    //check duplicated recytype
+    if (!isRecycleTypeIdUnique || !isRecycleSubUnique) {
+      duplicateRecycleTypeIds.forEach((recycTypeId) => {
+        recycleCategory.forEach((item) => {
+          if (item.recycTypeId === recycTypeId) {
+            const recybles = recycleType.find(
+              (type: recyleTypeOption) => type.id === item.recycTypeId
+            )
+            const subtype = recycleSubType[item.recycTypeId].find(
+              (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
+            )
+
+            const recycTypeName =
+              currentLanguage === 'zhhk'
+                ? recybles?.recyclableNameTchi
+                : currentLanguage === 'zhch'
+                ? recybles?.recyclableNameSchi
+                : recybles?.recyclableNameEng || '-'
+
+            const recycSubTypeName =
+              currentLanguage === 'zhhk'
+                ? subtype?.recyclableNameTchi
+                : currentLanguage === 'zhch'
+                ? subtype?.recyclableNameSchi
+                : subtype?.recyclableNameEng || '-'
+
+            tempV.push({
+              field: 'warehouseRecyc',
+              error: `${recycTypeName} - ${recycSubTypeName} ${t(
+                'add_warehouse_page.shouldNotDuplicate'
+              )}`
+            })
+          }
+        })
+      })
+    }
 
     setValidation(tempV)
-    //console.log(tempV)
   }, [nameValue, place, contractNum, recycleCategory])
 
   const checkString = (s: string) => {
