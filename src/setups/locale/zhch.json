@@ -620,8 +620,8 @@
     "loading_capacity": "载重量 (kg)"
   },
   "inventory": {
-    "inventory": "回收物",
-    "recyclingInformation": "回收物资讯",
+    "inventory": "回收点",
+    "recyclingInformation": "回收点资讯",
     "date": "日期",
     "recyleType": "主类别",
     "recyleSubType": "次类别",
@@ -1252,8 +1252,8 @@
   },
   "dashboard_recyclables": {
     "data": "数据",
-    "recyclable": "回收点",
-    "recycling_data": "回收点数据",
+    "recyclable": "回收物",
+    "recycling_data": "回收物数据",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "时间范围",
     "recycling_point": "回收点",
