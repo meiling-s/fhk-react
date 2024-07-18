@@ -355,7 +355,7 @@ const CreateRecycleForm = ({
       error: formik.errors.receiverName && formik.touched.receiverName
     },
     {
-      label: t('check_out.shipping_location'),
+      label: t('pick_up_order.recyclForm.recycling_location'),
       id: 'senderAddr',
       value: formik.values.senderAddr,
       error: formik.errors.senderAddr && formik.touched.senderAddr
@@ -560,7 +560,7 @@ const CreateRecycleForm = ({
                     <CustomField mandatory label={it.label}>
                       {it.id === 'senderName' || it.id === 'receiverName' ? (
                         <CustomAutoComplete
-                          placeholder={''}
+                          placeholder={t('pick_up_order.recyclForm.placeholder')}
                           option={[
                             ...(collectorList?.map(
                               (option) => {

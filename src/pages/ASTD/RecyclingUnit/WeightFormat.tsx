@@ -350,7 +350,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                                 type="number"
                                 value={equivalent}
                                 disabled={action === 'delete'}
-                                placeholder={t('recycling_unit.1kg_equivalent')}
+                                placeholder={t('recycling_unit.enter_weight')}
                                 onChange={(event) => setEquivalent(event.target.value)}
                                 error={checkNumber(Number(equivalent))}
                             />
