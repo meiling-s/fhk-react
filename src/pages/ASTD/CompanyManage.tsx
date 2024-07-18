@@ -330,7 +330,7 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
               fullWidth
               placeholder={t('tenant.invite_modal.enter_email')}
               onChange={(event) => {
-                setEmailErr(validateEmail(email))
+                setEmailErr(!validateEmail(email))
                 setEmail(event.target.value)
               }}
               error={emailErr}
@@ -841,7 +841,7 @@ function InviteForm({
                     }
                   ]}
                 >
-                  {t('changePass.submitPassword')}
+                  {t('common.submit')}
                 </Button>
               </Box>
             </Stack>

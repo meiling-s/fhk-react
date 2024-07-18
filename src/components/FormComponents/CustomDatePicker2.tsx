@@ -65,7 +65,7 @@ function CustomDatePicker2({
    
       {pickupOrderForm ? (
         <Box display={"flex"}>
-      <CustomField label={t('pick_up_order.shipping_validity')} mandatory>
+      <CustomField label={t('common.start_date_at')} mandatory>
        <DatePicker
          defaultValue={dayjs(startDate)}
          maxDate={period.endDate}

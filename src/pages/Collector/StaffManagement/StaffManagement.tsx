@@ -267,12 +267,6 @@ const StaffManagement: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: "staffNameCN",
-      headerName: t("staffManagement.employeeChineseCn"),
-      width: 200,
-      type: "string",
-    },
-    {
       field: "staffNameEng",
       headerName: t("staffManagement.employeeEnglishName"),
       width: 200,

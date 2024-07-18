@@ -35,9 +35,10 @@ import CustomItemList from '../../components/FormComponents/CustomItemList'
 import {
   getAllCheckInRequests,
   updateCheckinStatus,
-  getCheckinReasons
+  getCheckinReasons,
+  updateCheckin
 } from '../../APICalls/Collector/warehouseManage'
-import { updateStatus } from '../../interfaces/warehouse'
+import { CheckInWarehouse, updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
 import { CheckIn } from '../../interfaces/checkin'
 import { Languages, STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
@@ -246,6 +247,23 @@ type ApproveForm = {
   onApprove?: () => void
 }
 
+interface CheckInDetail {
+  chkInDtlId: number;
+  recycTypeId: string;
+  recycSubTypeId: string;
+  packageTypeId: string;
+  weight: number;
+  unitId: string;
+  itemId: number;
+  picoDtlId: number;
+  checkinDetailPhoto: {
+    sid: number;
+    photo: string;
+  }[];
+  createdBy: string;
+  updatedBy: string;
+}
+
 const ApproveModal: React.FC<ApproveForm> = ({
   open,
   onClose,
@@ -262,7 +280,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
       updatedBy: loginId
     }
     console.log('hit', checkedCheckIn)
-
+  
     const results = await Promise.allSettled(
       checkedCheckIn.map(async (checkInId) => {
         try {
@@ -270,6 +288,21 @@ const ApproveModal: React.FC<ApproveForm> = ({
           const data = result?.data
           if (data) {
             // console.log('updated check-in status: ', data)
+            
+            // Map over each item in checkinDetail
+            data.checkinDetail.map(async (detail: any) => {
+              const dataCheckin: CheckInWarehouse = {
+                checkInWeight: detail.weight || 0,
+                checkInUnitId: detail.unitId || 0,
+                checkInAt: data.updatedAt || '',
+                checkInBy: data.updatedBy || '',
+                updatedBy: loginId
+              }
+              if (detail.picoDtlId){
+                return await updateCheckin(checkInId, dataCheckin, detail.picoDtlId)
+              }
+            })
+  
             if (onApprove) {
               onApprove()
             }

@@ -674,7 +674,7 @@ const PickupOrderCreateForm = ({
             {formik.values.picoType == 'ROUTINE' && (
               <Grid item style={{ display: 'flex', flexDirection: 'column' }}>
                 <CustomField
-                  label={t('pick_up_order.table.delivery_date')}
+                  label={t('pick_up_order.table.delivery_datetime')}
                   style={{ width: '100%' }}
                   mandatory
                 >

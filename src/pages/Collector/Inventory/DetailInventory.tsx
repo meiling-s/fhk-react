@@ -67,7 +67,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
       value: selectedRow?.createdAt
     },
     {
-      label: t('col.recycType'),
+      label: t('inventory.recyleType'),
       value: selectedRow?.recyName
     },
     {
