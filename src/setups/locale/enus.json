@@ -793,10 +793,10 @@
     "title": "User Group",
     "change": "Change",
     "delete": "Delete",
-    "groupName": "Group name",
+    "groupName": "Group Name",
     "introduction": "Introduction",
     "description": "Description",
-    "availableFeatures": "Available features",
+    "availableFeatures": "Available Features",
     "pleaseEnterName": "Please enter name",
     "pleaseEnterText": "Please enter text",
     "userAccountUsed": "User group can't be deleted since there are still account(s) in it"
