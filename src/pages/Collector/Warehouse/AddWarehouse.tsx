@@ -389,12 +389,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           )}`
         })
       }
-      if (contractNum.every(num => num === '')) {
-        tempV.push({
-            field: 'contractNo',
-            error: `${t('col.contractNo')} ${t('add_warehouse_page.shouldNotEmpty')}`
-        });
-      }
       if (
         item.warehouseNameSchi.toLowerCase() ===
         nameValue.warehouseNameSchi.toLowerCase()
