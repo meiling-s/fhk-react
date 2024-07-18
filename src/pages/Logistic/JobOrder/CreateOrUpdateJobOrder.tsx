@@ -61,7 +61,7 @@ const JobOrder = () => {
   const [isActive, setIsActive] = useState(false)
   const { t, i18n } = useTranslation()
   const { loginId } = returnApiToken()
-  const { recycType, decimalVal, dateFormat } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat, companies } = useContainer(CommonTypeContainer)
   const [driverList, setDriverList] = useState<DriverList[]>([])
   const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
 
@@ -122,15 +122,17 @@ const JobOrder = () => {
     initListVehicle()
   }, [])
   
-  const getLogisticName = async (logisticId: number) => {
+  const getLogisticName =  (logisticId: number) => {
     try {
       if(logisticId) {
-        const tenant = await getTenantById(logisticId);
+        // const tenant =  getTenantById(logisticId);
+        const tenant = companies.find(item => item.id == logisticId)
+
         let logisticName:string = '';
         if(tenant ){
-          if(i18n.language === Languages.ENUS) logisticName = tenant.data.companyNameEng
-          if(i18n.language === Languages.ZHCH) logisticName = tenant.data.companyNameSchi
-          if(i18n.language === Languages.ZHHK) logisticName = tenant.data.companyNameTchi
+          if(i18n.language === Languages.ENUS) logisticName = tenant.nameEng ?? ''
+          if(i18n.language === Languages.ZHCH) logisticName = tenant.nameSchi ?? ''
+          if(i18n.language === Languages.ZHHK) logisticName = tenant.nameTchi ?? ''
         }
         return logisticName
       }
@@ -148,7 +150,7 @@ const JobOrder = () => {
     try {
       const response = await getPicoById(picoId)
       if (response) {
-        const logistic = await getLogisticName(response?.data?.logisticId)
+        const logistic =  getLogisticName(response?.data?.logisticId)
         if(logistic){
           response.data.logisticName = logistic
         }
@@ -158,8 +160,8 @@ const JobOrder = () => {
           const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`;
           const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong');
           const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm');
-          const receiverName = await getLogisticName(item?.receiverId);
-          const senderName = await getLogisticName(item?.senderId);
+          const receiverName =  getLogisticName(item?.receiverId);
+          const senderName =  getLogisticName(item?.senderId);
          
           if(receiverName)item.receiverName = receiverName;
           if(senderName) item.senderName = senderName;

@@ -364,7 +364,7 @@ const PickupOrders = () => {
       }
     ]
   }
-  const { recycType, dateFormat, manuList, collectorList, logisticList } =
+  const { recycType, dateFormat, manuList, collectorList, logisticList, companies } =
     useContainer(CommonTypeContainer)
   const [actions, setActions] = useState<'add' | 'edit' | 'delete'>('add')
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
@@ -411,7 +411,7 @@ const PickupOrders = () => {
     })
     listCompany = [...listCompany, ...manus]
   }
-  const [companies, setCompanies] = useState<Company[]>([])
+  // const [companies, setCompanies] = useState<Company[]>([])
   const statusList: StatusPickUpOrder[] = [
     {
       value: '0',
@@ -478,7 +478,7 @@ const PickupOrders = () => {
           }
         })
         if (data.length > 0) {
-          setCompanies(mappingData)
+          // setCompanies(mappingData)
         }
       }
 
@@ -706,7 +706,7 @@ const PickupOrders = () => {
   useEffect(() => {
     initPickupOrderRequest()
     getRejectReason()
-    initCompaniesData()
+    // initCompaniesData()
   }, [i18n.language])
 
   useEffect(() => {
