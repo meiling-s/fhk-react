@@ -344,6 +344,7 @@ function ShipmentManage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [selectedCheckin, setSelectedCheckin] = useState<number[]>([])
+  const [selectedUnCheckin, setSelectedUnCheckin] = useState<number[]>([])
   const [filterShipments, setFilterShipments] = useState<CheckIn[]>([])
   const [rejFormModal, setRejectModal] = useState<boolean>(false)
   const [approveModal, setApproveModal] = useState<boolean>(false)
@@ -560,7 +561,14 @@ function ShipmentManage() {
 
   useEffect(() => {
     if(selectAll){
-      const newIds:number[] = filterShipments.map(item => item.chkInId);
+      let newIds:number[] = []
+      // const newIds:number[] = 
+      filterShipments.filter(item => {
+        if(!selectedUnCheckin.includes(item.chkInId)){
+          newIds.push(item.chkInId)
+        }
+        
+      });
       const allId:number[] = [...selectedCheckin, ...newIds];
       const ids = new Set(allId)
       setSelectedCheckin(Array.from(ids))
@@ -575,16 +583,28 @@ function ShipmentManage() {
     setSelectedRow(undefined);
 
     const checked = event.target.checked
-    const updatedChecked = checked
-      ? [...selectedCheckin, chkInId]
-      : selectedCheckin.filter((rowId) => rowId != chkInId)
-    setSelectedCheckin(updatedChecked)
+    if(checked){
+      setSelectedCheckin(prev => [...prev, chkInId])
+      setSelectedUnCheckin(prev => {
+        const unCheck = prev.filter(id => id !== chkInId)
+        return unCheck
+      })
+    } else {
+      const updatedChecked = selectedCheckin.filter((rowId) => rowId != chkInId)
+      setSelectedCheckin(updatedChecked)
+      setSelectedUnCheckin(prev => [...prev, chkInId])
+    }
+    // const updatedChecked = checked
+    //   ? [...selectedCheckin, chkInId]
+    //   : selectedCheckin.filter((rowId) => rowId != chkInId)
+    // setSelectedCheckin(updatedChecked)
+    // console.log('updatedChecked', updatedChecked)
     // console.log(updatedChecked)
 
-    const allRowsChecked = filterShipments.every((row) =>
-      updatedChecked.includes(row.chkInId)
-    )
-    setSelectAll(allRowsChecked)
+    // const allRowsChecked = filterShipments.every((row) =>
+    //   updatedChecked.includes(row.chkInId)
+    // )
+    // // setSelectAll(allRowsChecked)
   }
 
   const HeaderCheckbox = (
@@ -605,7 +625,7 @@ function ShipmentManage() {
     renderHeader: () => HeaderCheckbox,
     renderCell: (params) => (
       <Checkbox
-        checked={selectAll || selectedCheckin?.includes(params.row?.chkInId)}
+        checked={selectedCheckin?.includes(params.row?.chkInId)}
         onChange={(event) => handleRowCheckboxChange(event, params.row.chkInId)}
         color="primary"
       />
