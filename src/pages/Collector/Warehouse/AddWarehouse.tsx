@@ -864,7 +864,6 @@ const getFormErrorMsg = () => {
                               }}
                               sx={styles.inputState}
                               disabled={action === 'delete'}
-                              error={trySubmited && contact === ''}
                             />
                           )}
                           noOptionsText={t('common.noOptions')}
