@@ -33,11 +33,12 @@ import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import {
   getAllCheckoutRequest,
   updateCheckoutRequestStatus,
-  getCheckoutReasons
+  getCheckoutReasons,
+  updateCheckout
 } from '../../../APICalls/Collector/checkout'
 import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
 import CheckInDetails from './CheckOutDetails'
-import { updateStatus } from '../../../interfaces/warehouse'
+import { CheckOutWarehouse, updateStatus } from '../../../interfaces/warehouse'
 import { CheckOut } from '../../../interfaces/checkout'
 
 import { useTranslation } from 'react-i18next'
@@ -149,12 +150,24 @@ const ApproveModal: React.FC<ApproveForm> = ({
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
-            // console.log('updated check-in status: ', data)
-            if (onApprove) {
-              onApprove()
+            // console.log('updated check-iout status: ', data)
+            data.checkoutDetail.map(async (detail: any) => {
+            const dataCheckout: CheckOutWarehouse = {
+              checkOutWeight: detail.weight || 0,
+              checkOutUnitId: detail.unitId || 0,
+              checkOutAt: data.updatedAt || '',
+              checkOutBy: data.updatedBy || '',
+              updatedBy: loginId
             }
+            if (detail.picoDtlId){
+              return await updateCheckout(chkOutId, dataCheckout, detail.picoDtlId)
+            }
+          })
+          
+          if (onApprove) {
+            onApprove()
           }
-        } catch (error) {
+        }} catch (error) {
           console.error(
             `Failed to update check-in status for id ${chkOutId}: `,
             error

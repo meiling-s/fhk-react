@@ -5,11 +5,13 @@ import {
   GET_CHECKOUT_REQUEST_BY_ID,
   NEW_GET_ALL_DETAIL_CHECKOUT_REQUESTS,
   NEW_GET_ALL_HEADER_CHECKOUT_REQUESTS,
+  UPDATE_CHECK_OUT,
   UPDATE_CHECKOUT_REQUEST_STATUS
 } from '../../constants/requests'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs'
 import { queryCheckout } from '../../interfaces/checkout'
 import { returnApiToken } from '../../utils/utils'
+import { CheckOutWarehouse } from '../../interfaces/warehouse'
 
 const checkoutAPI = {
   baseURL: window.baseURL.collector
@@ -79,6 +81,32 @@ export const getCheckoutRequestById = async (chkOutId: number) => {
     return response
   } catch (e) {
     console.error('Get all check-out request failed:', e)
+    return null
+  }
+}
+
+export const updateCheckout = async (
+  chkOutId: number,
+  data: CheckOutWarehouse,
+  picoDtlId: number
+) => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      ...UPDATE_CHECK_OUT(
+        token.realmApiRoute,
+        chkOutId,
+        token.decodeKeycloack,
+        picoDtlId
+
+      ),
+      baseURL: checkoutAPI.baseURL,
+      data: data
+    })
+    return response
+  } catch (e) {
+    console.error('Update checkout request status failed:', e)
     return null
   }
 }
