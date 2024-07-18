@@ -702,7 +702,7 @@
     "employeeName": "Employee Name",
     "enterEmployeeName": "Enter Employee Name",
     "employeeChineseName": "Employee's Chinese traditional Chinese name",
-    "employeeEnglishName": "English name of the employee",
+    "employeeEnglishName": "Employee's English Name",
     "employeeChineseCn": "Employee's Chinese simplified Chinese name",
     "position": "Position",
     "loginName": "Login name",
@@ -951,7 +951,7 @@
   "companyManagement": {
     "collectorlist": "Collection Company",
     "logisticlist": "Logistic Company",
-    "manulist": "Recycling plant",
+    "manulist": "Recycling Plant",
     "customerlist": "Customer Company",
     "brNo": "Business Registration Number",
     "enterBrNo": "Please enter business registration number"
