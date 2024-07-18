@@ -432,8 +432,8 @@
       "weight": "Estimated Weight",
       "shipping_company": "Sender Company",
       "receiver": "Receiver Company",
-      "recycling_location": "Sender Location",
-      "arrived": "Receiver Location",
+      "recycling_location": "Recycling Location",
+      "arrived": "Arrival Location",
       "placeholder": "Please Enter Location"
     },
     "select_po": "Choose pickup order",
