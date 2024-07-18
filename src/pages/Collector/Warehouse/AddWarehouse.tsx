@@ -293,7 +293,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
 
     getRecyleCategory()
-  }, [action])
+  }, [action, drawerOpen])
 
   const name_fields = [
     {
