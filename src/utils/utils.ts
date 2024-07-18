@@ -403,6 +403,11 @@ export const mappingRecyName = (
 }
 
 export const validateEmail = (email: string) => {
+  //validation email can't contain admin
+  if (email.toLocaleLowerCase().includes('admin')) {
+    return false
+  }
+
   return /^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/.test(
     email
   )
@@ -433,11 +438,11 @@ export const getPrimaryLightColor = (): string => {
     case 'customer':
       return '#F0F9FF'
     case 'logistic':
-      return '#E4F6DC';
+      return '#E4F6DC'
     case 'collector':
-      return '#E4F6DC';
+      return '#E4F6DC'
     default:
-      return '#E4F6DC';
+      return '#E4F6DC'
   }
 }
 
