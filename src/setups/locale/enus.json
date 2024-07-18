@@ -34,7 +34,12 @@
     "statusCode": "status Code",
     "noOptions": "No options",
     "start_date_at": "Validity Date From",
-    "submit": "Submit"
+    "submit": "Submit",
+    "deleteMessage": "Are you sure to delete?",
+    "collectorName": "Collector Name",
+    "logisticName": "Logistic Name",
+    "customerName": "Customer Name",
+    "manufacturerName": "Manufacturer Name"
   },
   "col": {
     "createCP": "Create Collection Point",

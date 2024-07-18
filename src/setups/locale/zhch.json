@@ -34,7 +34,12 @@
     "statusCode": "状态码",
     "noOptions": "无选项",
     "start_date_at": "有效日期由",
-    "submit": "提交"
+    "submit": "提交",
+    "deleteMessage": "你确定要删除吗",
+    "collectorName": "收藏家姓名",
+    "logisticName": "物流名称",
+    "customerName": "顾客姓名",
+    "manufacturerName": "生产商名称"
   },
   "col": {
     "createCP": "建立回收点",
