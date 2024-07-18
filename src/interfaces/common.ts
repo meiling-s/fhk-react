@@ -229,3 +229,10 @@ export type UserActivity = {
     createdBy: string
     updatedBy: string
 }
+
+export type Company =  {
+    id?: number
+    nameEng?: string
+    nameSchi?: string
+    nameTchi?: string
+}
