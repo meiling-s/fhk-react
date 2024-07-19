@@ -77,8 +77,13 @@ const Company: FunctionComponent = () => {
   const [logisticList, setLogisticList] = useState<CompanyItem[]>([]);
   const [manuList, setManuList] = useState<CompanyItem[]>([]);
   const [customerList, setCustomerList] = useState<CompanyItem[]>([]);
-  const initCompanyList = async (companyType: string) => {
-    const result = await getAllCompany(companyType, page[companyType] - 1, pageSize);
+
+  const initCompanyList = async (companyType: string, backToFirstPage?: boolean) => {
+    let pages = page[companyType] - 1;
+    if(backToFirstPage){
+      pages = 1
+    }
+    const result = await getAllCompany(companyType, pages , pageSize);
     const data = result?.data;
     // setCompanyList(data);
     if (data) {
@@ -292,7 +297,14 @@ const Company: FunctionComponent = () => {
   };
 
   const onSubmitData = (type: string, msg: string) => {
-    initAllData();
+    // initAllData();
+    initCompanyList(selectCompanyType, true)
+    setPage(prev => {
+      return {
+        ...prev,
+        [selectCompanyType]: 1
+      }
+    })
     if (type == "success") {
       showSuccessToast(msg);
     } else {

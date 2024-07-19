@@ -41,7 +41,10 @@
     "customerName": "顾客姓名",
     "manufacturerName": "生产商名称",
     "reasonName": "原因名称",
-    "packageName": "包装单位名称已存在"
+    "packageName": "包装单位名称已存在",
+    "warehouseName": "仓库名称已存在",
+    "vehicle": "车辆",
+    "theNameAlreadyExist": "员工职位名称已存在"
   },
   "col": {
     "createCP": "建立回收点",
@@ -109,7 +112,8 @@
       "incorrectAddress": "地址不正确",
       "dateOutOfRange": "指定日期超出开放日期范围",
       "dateSpesificIsWrong": "指定日期格式错误",
-      "effectiveDateLess": "开始日期不能晚于截止日期"
+      "effectiveDateLess": "开始日期不能晚于截止日期",
+      "cannotBeSame": "不能相同"
     }
   },
   "component": {
@@ -1056,7 +1060,10 @@
     "currency_category": "货币类别",
     "introduction": "简介",
     "monetary": "名称",
-    "contract_number": "合约编号"
+    "contract_number": "合约编号",
+    "contract_number_must_be_different": "合约编号和参考编号不",
+    "packageNameAlreadyExist": "封装类型名称",
+    "disposalLocation": "处置地点"
   },
   "packaging_unit": {
     "packaging_unit": "包装单位",

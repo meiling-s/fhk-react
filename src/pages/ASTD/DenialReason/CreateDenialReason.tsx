@@ -408,7 +408,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
           cancelText: t('common.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

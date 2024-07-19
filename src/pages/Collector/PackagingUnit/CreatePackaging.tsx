@@ -239,6 +239,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
             ]
           )
         }
+        setTrySubmited(true)
         // onSubmitData('error', t('common.saveFailed'))
       }
     }
@@ -263,6 +264,19 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
       const {state} =  extractError(error);
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
+      } else {
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          setValidation(
+            [
+              {
+                field: t('common.packageName'),
+                problem: '',
+                type: 'error'
+              }
+            ]
+          )
+        }
+        setTrySubmited(true)
       }
    }
   }

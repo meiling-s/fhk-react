@@ -244,7 +244,23 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       } else {
-        onSubmitData('error', t('common.saveFailed'))
+        let field = t('common.saveFailed');
+        let problem = ''
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          field = t('general_settings.packageNameAlreadyExist')
+          problem = formErr.alreadyExist
+        } 
+        setValidation(
+          [
+            {
+              field,
+              problem,
+              type: 'error'
+            }
+          ]
+        )
+        setTrySubmited(true)
+        // onSubmitData('error', t('common.saveFailed'))
       }
     }
   }
@@ -265,6 +281,23 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
     const {state} = extractError(error);
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
+    } else {
+      let field = t('common.saveFailed');
+      let problem = ''
+      if(error?.response?.data?.status === STATUS_CODE[500]){
+        field = t('general_settings.packageNameAlreadyExist')
+        problem = formErr.alreadyExist
+      } 
+      setValidation(
+        [
+          {
+            field,
+            problem,
+            type: 'error'
+          }
+        ]
+      )
+      setTrySubmited(true)
     }
    }
   }
@@ -324,7 +357,8 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

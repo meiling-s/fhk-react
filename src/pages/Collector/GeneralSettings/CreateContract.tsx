@@ -133,10 +133,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         referenceNumber !== '' &&
         contractNo === referenceNumber &&
         tempV.push({
-          field: `${t('general_settings.name')} ${t(
-            'general_settings.and'
-          )} ${t('general_settings.reference_number')}`,
-          problem: formErr.mustDifferent,
+          field: `${t('general_settings.contract_number_must_be_different')}`,
+          problem: formErr.cannotBeSame,
           type: 'error'
         })
       startDate == null &&
@@ -237,7 +235,23 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        onSubmitData('error', t('common.saveFailed'))
+        let field = t('common.saveFailed');
+        let problem = ''
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          field = t('general_settings.contract_number')
+          problem = formErr.alreadyExist
+        } 
+        setValidation(
+          [
+            {
+              field,
+              problem,
+              type: 'error'
+            }
+          ]
+        )
+        setTrySubmited(true)
+        // onSubmitData('error', t('common.saveFailed'))
       }
     }
   }
@@ -258,6 +272,23 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else {
+        let field = t('common.saveFailed');
+        let problem = ''
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          field = t('general_settings.contract_number')
+          problem = formErr.alreadyExist
+        } 
+        setValidation(
+          [
+            {
+              field,
+              problem,
+              type: 'error'
+            }
+          ]
+        )
+        setTrySubmited(true)
       }
     }
   }
@@ -318,7 +349,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>
@@ -380,6 +412,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                   format={dateFormat}
                   onChange={(value) => setStartDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
+                  maxDate={dayjs(endDate)}
                 />
               </Box>
               <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
@@ -389,6 +422,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                   format={dateFormat}
                   onChange={(value) => setEndDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
+                  minDate={dayjs(startDate)}
                 />
               </Box>
             </Box>
