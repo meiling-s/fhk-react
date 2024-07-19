@@ -221,6 +221,16 @@ props) => {
     return s == ''
   }
 
+  const autoCompleteDriverName = () => {
+    if (currentLang === 'enus') {
+      return driverList.find(value => value.driverId === assignField.driverId)?.driverNameEng
+    } else if (currentLang === 'zhch') {
+      return driverList.find(value => value.driverId === assignField.driverId)?.driverNameSchi
+    } else {
+      return driverList.find(value => value.driverId === assignField.driverId)?.driverNameTchi
+    }
+  }
+
   return (
     <>
       <form>
@@ -394,7 +404,7 @@ props) => {
                             sx={{ width: '100%' }}
                             value={{
                               driverId: assignField.driverId,
-                              driverName: driverList.find(value => value.driverId === assignField.driverId)?.driverNameEng
+                              driverName: autoCompleteDriverName()
                             }}
                             getOptionLabel={(option) => option?.driverName ?? ''}
                             options={driverList.map((driver) => {
