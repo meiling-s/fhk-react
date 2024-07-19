@@ -253,7 +253,8 @@ const GeneralSettings: FunctionComponent = () => {
 
   useEffect(() => {
     if(contractList.length === 0 && page > 1){
-      setPage(page - 1)
+      // move backward to previous page once data deleted from last page (no data left on last page)
+      setPage(prev => prev  - 1)
     }
   }, [contractList])
 

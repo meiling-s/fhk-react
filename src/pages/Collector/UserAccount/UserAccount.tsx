@@ -237,6 +237,7 @@ const UserAccount: FunctionComponent = () => {
 
   useEffect(() => {
     if(userAccountItems.length === 0 && page > 1 && !selectedAccount){
+      // move backward to previous page once data deleted from last page (no data left on last page)
       setPage(prev => prev - 1)
     }
   }, [userAccountItems])
