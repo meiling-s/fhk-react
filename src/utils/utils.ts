@@ -403,11 +403,6 @@ export const mappingRecyName = (
 }
 
 export const validateEmail = (email: string) => {
-  //validation email can't contain admin
-  if (email.toLocaleLowerCase().includes('admin')) {
-    return false
-  }
-
   return /^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/.test(
     email
   )
