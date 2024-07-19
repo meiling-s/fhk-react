@@ -167,7 +167,10 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     prohibitedLoginId: string[]
   ) => {
     const lowerCaseLoginId = loginId?.toLowerCase()
-    return prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase())
+    return (
+      prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase()) ||
+      /admin/.test(loginId.toLocaleLowerCase())
+    )
   }
 
   useEffect(() => {
@@ -194,13 +197,13 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           problem: formErr.alreadyExist,
           type: 'error'
         })
-      if (/admin/.test(loginId)) {
-        tempV.push({
-          field: t('userAccount.loginName'),
-          problem: formErr.loginIdCantContainAdmin,
-          type: 'error'
-        })
-      }
+      // if (/admin/.test(loginId.toLocaleLowerCase())) {
+      //   tempV.push({
+      //     field: t('userAccount.loginName'),
+      //     problem: formErr.loginIdCantContainAdmin,
+      //     type: 'error'
+      //   })
+      // }
       contactNo?.toString() == '' &&
         tempV.push({
           field: t('staffManagement.contactNumber'),

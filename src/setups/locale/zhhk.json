@@ -32,9 +32,7 @@
     "errorMessage": "錯誤訊息",
     "message": "留言",
     "statusCode": "狀態碼",
-    "noOptions": "無選項",
-    "start_date_at": "有效日期由",
-    "submit": "提交"
+    "noOptions": "無選項"
   },
   "col": {
     "createCP": "建立回收點",
@@ -57,8 +55,8 @@
     "open": "開放",
     "close": "關閉",
     "colRecycType": "回收物資料",
-    "recycType": "可回收物類別 (按一下類別顯示子類別，按兩下取消選擇)",
-    "category": "類別 (按一下類別選擇/取消選擇)",
+    "recycType": "回收物類別",
+    "category": "類別",
     "staffInfo": "員工資料",
     "numOfStaff": "員工數量",
     "enterNumOfStaff": "請輸入人數",
@@ -189,7 +187,6 @@
     "shouldNotDuplicated": " 货仓地址已经被使用"
   },
   "check_in": {
-    "transport_information": "運輸資料",
     "request_check_in": "送入請求",
     "approve": "接受",
     "reject": "拒絕",
@@ -211,7 +208,7 @@
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
     "reject_reasons": "拒絕原因（可多選）",
-    "confirm": "確認",
+    "confirm": "確認拒絕",
     "cancel": "取消",
     "search_input": "輸入運單編號"
   },
@@ -323,7 +320,6 @@
       "pico_id": "運單編號",
       "logistic_company": "物流公司",
       "delivery_date": "送貨日期",
-      "delivery_datetime": "回收週次",
       "sender_company": "寄件公司",
       "receiver": "收件公司",
       "status": "狀態",
@@ -353,7 +349,7 @@
       "regular_shipping": "常規運輸",
       "one-transport": "一次性運輸",
       "sender_and_receiver_company": "寄件和收件公司",
-      "sender_and_receiver_location": "送出和到達地點"
+      "sender_and_receiver_location": "回收和到達地點"
     },
     "item": {
       "detail": "運單詳情",
@@ -651,7 +647,7 @@
     "processingLocation": "處理地點",
     "handler": "經手人",
     "status": "狀態",
-    "categoryWeight": "處理前的回收物類別及重量",
+    "categoryWeight": "處理前的回收物类别及重量",
     "detail": {
       "processingData": "處理資料",
       "recyclingInformation": "回收物資料",
@@ -1028,14 +1024,12 @@
     "contracts": "合約",
     "enter_contracts_number": "請輸入編號",
     "name": "名稱",
-    "enter_name": "請輸入名稱",
     "reference_number": "參考編號",
     "enter_reference_number": "請輸入編號",
     "state": "狀態",
     "start_date": "開始日期",
     "end_date": "結束日期",
     "remark": "備註",
-    "enter_remark": "請輸入文字",
     "whether": "是否EPD",
     "default_currency": "預設貨幣",
     "activate": "啟用",
@@ -1043,12 +1037,10 @@
     "true": "真的",
     "false": "錯誤的",
     "number_format": "數字格式",
-    "diy_format": "自訂格式",
-    "example_format": "範例：1,234.56",
     "date_format": "日期格式",
     "weight_tolerance": "允許重量誤差 (kg)",
     "currency_category": "貨幣類別",
-    "introduction": "簡介",
+    "introduction": "備註",
     "monetary": "名稱",
     "contract_number": "編號"
   },
@@ -1199,17 +1191,14 @@
     }
   },
   "recycling_unit": {
-    "recycling_type": "回收物類別",
     "recycling_and_related_units": "回收物及相關單位",
     "recyclable_subtype_semi_complete": "回收物、半製成品、製成品類別",
     "recyclable_code": "編碼",
-    "enter_code": "請輸入編碼",
     "packaging_unit": "包裝單位",
     "weight_unit": "磅重單位",
     "main_category": "主類別",
     "sub_category": "次類別",
     "1kg_equivalent": "1kg 相等於",
-    "enter_weight": "請輸入重量",
     "confirm_delete": "確認刪除",
     "confirm_text": "如你要删除主類別, 相關的次類別也會删除, 需要繼續嗎?",
     "weight_error": "權重不能低於0"

@@ -433,11 +433,11 @@ export const getPrimaryLightColor = (): string => {
     case 'customer':
       return '#F0F9FF'
     case 'logistic':
-      return '#63D884'
+      return '#E4F6DC'
     case 'collector':
-      return '#79CA25'
+      return '#E4F6DC'
     default:
-      return '#79CA25'
+      return '#E4F6DC'
   }
 }
 
