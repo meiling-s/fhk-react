@@ -359,7 +359,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }, [place])
 
   const isRecycleTypeIdUnique = recycleCategory.every((item, index, arr) => {
-    const filteredArr = arr.filter((i) => i.recycTypeId === item.recycTypeId)
+    const filteredArr = arr.filter(
+      (i) =>
+        i.recycTypeId === item.recycTypeId &&
+        i.recycSubTypeId === item.recycSubTypeId
+    )
 
     if (filteredArr.length > 1) {
       duplicateRecycleTypeIds.add(item.recycTypeId)
@@ -368,12 +372,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     return filteredArr.length === 1
   })
 
-  const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
-    const filteredArr = arr.filter(
-      (i) => i.recycSubTypeId === item.recycSubTypeId
-    )
-    return filteredArr.length === 1
-  })
+  // const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
+  //   const filteredArr = arr.filter(
+  //     (i) => i.recycSubTypeId === item.recycSubTypeId
+  //   )
+  //   return filteredArr.length === 1
+  // })
 
   // validation input text
   useEffect(() => {
@@ -489,7 +493,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
 
     //check duplicated recytype
-    if (!isRecycleTypeIdUnique || !isRecycleSubUnique) {
+    if (!isRecycleTypeIdUnique) {
       duplicateRecycleTypeIds.forEach((recycTypeId) => {
         recycleCategory.forEach((item) => {
           if (item.recycTypeId === recycTypeId) {
@@ -1022,10 +1026,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px'
                             }}
-                            error={
-                              checkString(item.recycSubTypeId) ||
-                              !isRecycleSubUnique
-                            }
+                            // error={
+                            //   checkString(item.recycSubTypeId) ||
+                            //   !isRecycleSubUnique
+                            // }
                           >
                             <MenuItem value="">
                               <em>-</em>
@@ -1129,13 +1133,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 ))}
               </Grid>
             )}
-            {/* <DeleteModal
-              open={openDelete}
-              onClose={() => {
-                setOpenDelete(false)
-              }}
-              onDelete={onDeleteModal}
-            /> */}
           </div>
         </div>
       </RightOverlayForm>
