@@ -360,6 +360,12 @@ const DenialReason: FunctionComponent = () => {
     }
   }
 
+  useEffect(() => {
+    if(DenialReasonList.length === 0 && page > 1){
+      setPage(prev => prev - 1)
+    }
+  }, [DenialReasonList])
+
   return (
     <>
       <Box

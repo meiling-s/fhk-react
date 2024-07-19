@@ -245,6 +245,12 @@ const DisposalLocation: FunctionComponent = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if(DisposalLocationList.length === 0 && page > 1){
+      setPage(page - 1)
+    }
+  }, [DisposalLocationList])
+
   return (
     <>
       <Box

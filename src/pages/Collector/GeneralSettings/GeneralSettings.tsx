@@ -251,6 +251,12 @@ const GeneralSettings: FunctionComponent = () => {
     }
   ]
 
+  useEffect(() => {
+    if(contractList.length === 0 && page > 1){
+      setPage(page - 1)
+    }
+  }, [contractList])
+
   const handleAction = (
     params: GridRenderCellParams,
     action: 'add' | 'edit' | 'delete'

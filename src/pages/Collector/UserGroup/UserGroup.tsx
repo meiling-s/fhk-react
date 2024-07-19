@@ -282,6 +282,12 @@ const UserGroup: FunctionComponent = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if(userGroupList.length === 0 && page > 1){
+      setPage(prev => prev - 1)
+    }
+  }, [userGroupList])
+
   return (
     <>
       <Box

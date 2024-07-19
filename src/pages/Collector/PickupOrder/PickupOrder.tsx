@@ -492,7 +492,7 @@ const PickupOrders = () => {
 
   const initPickupOrderRequest = async () => {
     try {
-      setPickupOrder([])
+      // setPickupOrder([])
       setTotalData(0)
       let result = null
       if (role === 'logistic') {
@@ -1034,6 +1034,12 @@ const PickupOrders = () => {
       alert('No selected pickup order')
     }
   }
+
+  useEffect(() => {
+    if(pickupOrder && pickupOrder.length === 0 && page > 1){
+      setPage(prev => prev - 1)
+    }
+  }, [pickupOrder])
 
   return (
     <>

@@ -373,7 +373,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       reasonNameTchi: formData.reasonNameTchi,
       reasonNameSchi: formData.reasonNameSchi,
       reasonNameEng: formData.reasonNameEng,
-      description: formData.description,
+      description: formData.description ?? '',
       functionId: formData.functionId,
       status: 'DELETED',
       remark: formData.remark,

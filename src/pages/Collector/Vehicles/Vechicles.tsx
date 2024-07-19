@@ -298,6 +298,12 @@ const Vehicle: FunctionComponent = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if(vehicleList.length === 0 && page > 1){
+      setPage(page - 1)
+    }
+  }, [vehicleList])
+
   return (
     <>
       <Box

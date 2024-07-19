@@ -249,6 +249,12 @@ const StaffTitle: FunctionComponent = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if(StaffTitleList.length === 0 && page > 1){
+      setPage(prev => prev - 1)
+    }
+  }, [StaffTitleList])
+
   return (
     <>
       <Box

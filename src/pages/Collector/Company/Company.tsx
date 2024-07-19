@@ -431,13 +431,8 @@ const Company: FunctionComponent = () => {
 
   const onSubmitData = (type: string, msg: string) => {
     // initAllData()
-    initSpecifiedCompany(selectCompanyType, 2)
-    setPages(prev => {
-      return {
-        ...prev,
-        [selectCompanyType]: 1
-      }
-    })
+    const page = getPage(selectCompanyType)
+    initSpecifiedCompany(selectCompanyType, page)
     if (type == 'success') {
       showSuccessToast(msg)
     } else {
@@ -464,6 +459,48 @@ const Company: FunctionComponent = () => {
   const getPage = (companyType:string)  => {
     return pages[companyType as  keyof Pages]
   }
+
+  useEffect(() => {
+    if(collectorList.length === 0 && pages.collectorlist > 1){
+      setPages(prev => {
+        return{
+          ...prev,
+          'collectorlist': pages.collectorlist - 1
+        }
+      })
+    }
+    if(manuList.length === 0 && pages.manulist > 1){
+      setPages(prev => {
+        return{
+          ...prev,
+          'manulist': pages.manulist - 1
+        }
+      })
+    }
+    if(logisticList.length === 0 && pages.logisticlist > 1){
+      setPages(prev => {
+        return{
+          ...prev,
+          'logisticlist': pages.logisticlist - 1
+        }
+      })
+    }
+    if(customerList.length === 0 && pages.customerlist > 1){
+      setPages(prev => {
+        return{
+          ...prev,
+          'customerlist': pages.customerlist - 1
+        }
+      })
+    }
+  }, [collectorList, manuList, logisticList, customerList]);
+
+  useEffect(() => {
+    if(selectCompanyType){
+      const page = getPage(selectCompanyType)
+      initSpecifiedCompany(selectCompanyType, page)
+    } 
+  }, [pages])
 
   return (
     <>

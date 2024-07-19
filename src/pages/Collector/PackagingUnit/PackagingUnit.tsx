@@ -274,6 +274,12 @@ const PackagingUnit: FunctionComponent = () => {
     }
   }
 
+  useEffect(() => {
+    if(packagingMapping.length === 0 && page > 1){
+      setPage(page - 1)
+    }
+  }, [packagingMapping])
+
   const showErrorToast = (msg: string) => {
     toast.error(msg, {
       position: 'top-center',

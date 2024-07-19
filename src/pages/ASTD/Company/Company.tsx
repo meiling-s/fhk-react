@@ -78,12 +78,8 @@ const Company: FunctionComponent = () => {
   const [manuList, setManuList] = useState<CompanyItem[]>([]);
   const [customerList, setCustomerList] = useState<CompanyItem[]>([]);
 
-  const initCompanyList = async (companyType: string, backToFirstPage?: boolean) => {
-    let pages = page[companyType] - 1;
-    if(backToFirstPage){
-      pages = 1
-    }
-    const result = await getAllCompany(companyType, pages , pageSize);
+  const initCompanyList = async (companyType: string) => {
+    const result = await getAllCompany(companyType, page[companyType] - 1 , pageSize);
     const data = result?.data;
     // setCompanyList(data);
     if (data) {
@@ -298,13 +294,7 @@ const Company: FunctionComponent = () => {
 
   const onSubmitData = (type: string, msg: string) => {
     // initAllData();
-    initCompanyList(selectCompanyType, true)
-    setPage(prev => {
-      return {
-        ...prev,
-        [selectCompanyType]: 1
-      }
-    })
+    initCompanyList(selectCompanyType)
     if (type == "success") {
       showSuccessToast(msg);
     } else {
@@ -318,6 +308,42 @@ const Company: FunctionComponent = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const existingPage = page[selectCompanyType];
+    if(existingPage && collectorList.length === 0 && existingPage > 1){
+      setPage(prev =>{
+        return{
+          ...prev,
+          [selectCompanyType]: existingPage - 1
+        }
+      })
+    }
+    if(existingPage && manuList.length === 0 && existingPage > 1){
+      setPage(prev =>{
+        return{
+          ...prev,
+          [selectCompanyType]: existingPage - 1
+        }
+      })
+    }
+    if(existingPage && logisticList.length === 0 && existingPage > 1){
+      setPage(prev =>{
+        return{
+          ...prev,
+          [selectCompanyType]: existingPage - 1
+        }
+      })
+    }
+    if(existingPage && customerList.length === 0 && existingPage > 1){
+      setPage(prev =>{
+        return{
+          ...prev,
+          [selectCompanyType]: existingPage - 1
+        }
+      })
+    }
+  }, [collectorList, manuList, logisticList, customerList])
+  
   return (
     <>
       {
