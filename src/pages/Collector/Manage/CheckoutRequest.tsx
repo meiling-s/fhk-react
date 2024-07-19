@@ -511,13 +511,13 @@ const CheckoutRequest: FunctionComponent = () => {
     },
     {
       field: 'senderAddr',
-      headerName: t('check_out.sender_addr'),
+      headerName: t('check_out.delivery_location'),
       type: 'string',
       width: 200
     },
     {
       field: 'receiverAddr',
-      headerName: t('check_out.receiver_addr'),
+      headerName: t('check_out.arrival_location'),
       width: 200,
       type: 'string'
     }
