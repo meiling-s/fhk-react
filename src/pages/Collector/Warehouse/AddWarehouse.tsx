@@ -475,20 +475,20 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               ? recybles?.recyclableNameTchi
               : currentLanguage === 'zhch'
               ? recybles?.recyclableNameSchi
-              : recybles?.recyclableNameEng || '-'
+              : recybles?.recyclableNameEng || ''
 
           const recycSubTypeName =
             currentLanguage === 'zhhk'
               ? subtype?.recyclableNameTchi
               : currentLanguage === 'zhch'
               ? subtype?.recyclableNameSchi
-              : subtype?.recyclableNameEng || '-'
+              : subtype?.recyclableNameEng || ''
 
           tempV.push({
             field: 'warehouseRecyc',
-            error: `${recycTypeName} - ${recycSubTypeName}, ${t(
-              'form.error.shouldGreaterThanZero'
-            )}`
+            error: `${recycTypeName} - ${
+              recycSubTypeName ? recycSubTypeName : ''
+            }, ${t('form.error.shouldGreaterThanZero')}`
           })
         }
       })
@@ -511,21 +511,29 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 ? recybles?.recyclableNameTchi
                 : currentLanguage === 'zhch'
                 ? recybles?.recyclableNameSchi
-                : recybles?.recyclableNameEng || '-'
+                : recybles?.recyclableNameEng || ''
 
             const recycSubTypeName =
               currentLanguage === 'zhhk'
                 ? subtype?.recyclableNameTchi
                 : currentLanguage === 'zhch'
                 ? subtype?.recyclableNameSchi
-                : subtype?.recyclableNameEng || '-'
+                : subtype?.recyclableNameEng || ''
 
-            tempV.push({
-              field: 'warehouseRecyc',
-              error: `${recycTypeName} - ${recycSubTypeName} ${t(
-                'add_warehouse_page.shouldNotDuplicate'
-              )}`
-            })
+            const errorMsg = `${recycTypeName} - ${
+              recycSubTypeName ? recycSubTypeName : ''
+            } ${t('add_warehouse_page.shouldNotDuplicate')}`
+
+            const alreadyExist = tempV.find((it) => it.error === errorMsg)
+
+            if (!alreadyExist) {
+              tempV.push({
+                field: 'warehouseRecyc',
+                error: `${recycTypeName} - ${
+                  recycSubTypeName ? recycSubTypeName : ''
+                } ${t('add_warehouse_page.shouldNotDuplicate')}`
+              })
+            }
           }
         })
       })
