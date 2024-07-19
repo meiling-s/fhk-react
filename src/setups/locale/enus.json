@@ -621,7 +621,7 @@
   },
   "inventory": {
     "inventory": "Inventory",
-    "recyclingInformation": "Recycling Information",
+    "recyclingInformation": "Inventory Information",
     "date": "Date",
     "recyleType": "Recyclable Type",
     "recyleSubType": "Recyclable Sub-type",
@@ -1255,8 +1255,8 @@
   },
   "dashboard_recyclables": {
     "data": "Dashboard",
-    "recyclable": "Recyclable Data",
-    "recycling_data": "Collection Point Information",
+    "recyclable": "Recyclables",
+    "recycling_data": "Recycling Data",
     "different_recycling_weights": "Different recycling weights",
     "date_range": "Date range",
     "recycling_point": "Recycling point",
