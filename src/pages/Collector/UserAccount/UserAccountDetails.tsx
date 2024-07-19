@@ -264,7 +264,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   }
 
   const isEmailExisting = (email: string) => {
-    const isExisting = existingEmail.includes(email.toLocaleLowerCase())
+    const lowercaseEmail = email.toLowerCase()
+    const isExisting = existingEmail.some(
+      (existing) => existing.toLowerCase() === lowercaseEmail
+    )
+
     return isExisting
   }
 
