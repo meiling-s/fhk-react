@@ -11,7 +11,8 @@ import {
   siteType,
   vehicleType,
   ProcessType,
-  weightUnit
+  weightUnit,
+  Company
 } from '../interfaces/common'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
@@ -33,6 +34,7 @@ import {
 import { randomBackgroundColor, returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 import { getWeightUnit } from '../APICalls/ASTD/recycling'
+import { getAllTenant } from '../APICalls/tenantManage'
 
 const CommonType = () => {
   const [colPointType, setColPointType] = useState<colPointType[]>()
@@ -55,6 +57,7 @@ const CommonType = () => {
   const pageSize = 10
   const [decimalVal, setDecimalVal] = useState<number>(0)
   const [dateFormat, setDateFormat] = useState<string>('')
+  const [companies, setCompanies] = useState<Company[]>([])
 
   const getColPointType = async () => {
     var colPointType = []
@@ -298,6 +301,29 @@ const CommonType = () => {
     }
   }
 
+  const initCompaniesData = async () => {
+    try {
+      const result = await getAllTenant(1 - 1, 1000)
+      if(result){
+        const data = result?.data.content
+        const mappingData:Company[] = data.map((item:any) => {
+          return {
+            id: item?.tenantId,
+            nameEng: item?.companyNameEng,
+            nameSchi: item?.companyNameSchi,
+            nameTchi: item?.companyNameTchi
+          }
+        })
+        if (data.length > 0) {
+          setCompanies(mappingData)
+        }
+      }
+
+    } catch (error: any) {
+      return null
+    }
+  }
+
   const updateCommonTypeContainer = () => {
     getColPointType()
     getPremiseType()
@@ -313,6 +339,7 @@ const CommonType = () => {
     getImgSettings()
     getDecimalVal()
     getDateFormat()
+    initCompaniesData()
   }
 
   useEffect(() => {
@@ -332,6 +359,7 @@ const CommonType = () => {
       getDecimalVal()
       initWeightUnit()
       getDateFormat()
+      initCompaniesData()
     }
   }, [])
 
@@ -352,6 +380,7 @@ const CommonType = () => {
     decimalVal,
     weightUnits,
     dateFormat,
+    companies,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -367,7 +396,8 @@ const CommonType = () => {
     getImgSettings,
     getDecimalVal,
     getDateFormat,
-    initWeightUnit
+    initWeightUnit,
+    initCompaniesData
   }
 }
 
