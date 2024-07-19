@@ -329,7 +329,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 id="contractNo"
                 value={contractNo}
                 disabled={action != 'add'}
-                placeholder={t('general_settings.contract_number')}
+                placeholder={t('general_settings.enter_contracts_number')}
                 onChange={(event) => setContractNo(event.target.value)}
                 error={checkString(contractNo)}
               />
@@ -341,7 +341,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 id="referenceNumber"
                 value={referenceNumber}
                 disabled={action === 'delete'}
-                placeholder={t('general_settings.reference_number')}
+                placeholder={t('general_settings.enter_reference_number')}
                 onChange={(event) => setReferenceNumber(event.target.value)}
               />
             </CustomField>
@@ -393,11 +393,11 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
               </Box>
             </Box>
           </LocalizationProvider>
-          <CustomField label={t('common.remark')} mandatory={false}>
+          <CustomField label={t('general_settings.remark')} mandatory={false}>
             <CustomTextField
               id="remark"
               value={remark}
-              placeholder={t('common.remark')}
+              placeholder={t('general_settings.enter_remark')}
               onChange={(event) => setRemark(event.target.value)}
               multiline={true}
             />

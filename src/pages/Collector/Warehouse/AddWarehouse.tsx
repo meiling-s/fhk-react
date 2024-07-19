@@ -309,7 +309,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     {
       field: 'warehouseNameEng',
       label: t('warehouse_page.english_name'),
-      placeholder: 'Please type a name'
+      placeholder: t('add_warehouse_page.type_name')
     }
   ]
   const [nameValue, setNamesField] = useState<nameFields>({
