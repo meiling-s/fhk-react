@@ -264,7 +264,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           warehouseNameSchi: warehouse.warehouseNameSchi,
           warehouseNameEng: warehouse.warehouseNameEng
         })
-        setContractNum(warehouse.contractNo.length !== 0? [...warehouse.contractNo] : [""])
+        setContractNum(
+          warehouse.contractNo.length !== 0 ? [...warehouse.contractNo] : ['']
+        )
         setPlace(warehouse.location)
         setPysicalLocation(warehouse.physicalFlg)
         setStatus(warehouse.status === 'ACTIVE')
@@ -445,7 +447,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     // const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
-      return item.recycTypeId.trim() != '' && item.recycSubTypeId.trim() != ''
+      return item.recycTypeId.trim() != ''
     })
 
     !isRecyleUnselected &&
