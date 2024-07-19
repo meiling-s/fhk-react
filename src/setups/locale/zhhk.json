@@ -757,7 +757,8 @@
     "successDeleteUser": "成功刪除用戶",
     "failedDeleteUser": "刪除用戶失敗",
     "resetPasswaitApproval": "重置密碼等待批准",
-    "resetPassword": "重新設密碼"
+    "resetPassword": "重新設密碼",
+    "emailIsExisting": "電郵地址已經被使用過, 請問要繼續嗎?"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "概覽",

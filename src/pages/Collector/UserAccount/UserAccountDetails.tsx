@@ -19,10 +19,16 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
-import { returnErrorMsg, validateEmail } from '../../../utils/utils'
+import {
+  returnErrorMsg,
+  validateEmail,
+  extractError,
+  showErrorToast,
+  showSuccessToast
+} from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 
-import { localStorgeKeyName } from '../../../constants/constant'
+import { localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
 import Switches from '../../../components/FormComponents/CustomSwitch'
 import LabelField from '../../../components/FormComponents/CustomField'
 import { getUserGroup } from '../../../APICalls/commonManage'
@@ -33,6 +39,9 @@ import {
   updateUserAccount,
   deleteUserAccount
 } from '../../../APICalls/userAccount'
+import { getStaffList } from '../../../APICalls/staff'
+import { useNavigate } from 'react-router-dom'
+import UserConfirmModal from '../../../components/FormComponents/UserConfirmModal'
 
 interface UserAccountDetailsProps {
   drawerOpen: boolean
@@ -79,6 +88,9 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const logginUser = localStorage.getItem(localStorgeKeyName.username) || ''
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
   const prohibitedLoginId: string[] = ['_astdadmin', '_superadmin', '_fhkadmin']
+  const [existingEmail, setExistingEmail] = useState<string[]>([])
+  const [showModalConfirm, setShowModalConfirm] = useState(false)
+  const navigate = useNavigate()
 
   const statusList = () => {
     const colList: il_item[] = [
@@ -99,7 +111,6 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   }
 
   const mappingData = () => {
-    // console.log('selectedItem', selectedItem)
     if (selectedItem) {
       const selectedStatus =
         selectedItem.status === 'ACTIVE'
@@ -115,6 +126,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   useEffect(() => {
     getUserGroupList()
+    getExistingEmail()
     setValidation([])
     if (action !== 'add') {
       mappingData()
@@ -140,6 +152,28 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         })
       })
       setUserGroupList(groupList)
+    }
+  }
+
+  const getExistingEmail = async () => {
+    try {
+      const result = await getStaffList(0, 1000, null)
+
+      if (result) {
+        let tempEmail: string[] = []
+        const data = result.data.content
+        data.map((item: any) => {
+          tempEmail.push(item.email)
+        })
+
+        setExistingEmail(tempEmail)
+        console.log('existing', existingEmail)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -197,13 +231,6 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           problem: formErr.alreadyExist,
           type: 'error'
         })
-      // if (/admin/.test(loginId.toLocaleLowerCase())) {
-      //   tempV.push({
-      //     field: t('userAccount.loginName'),
-      //     problem: formErr.loginIdCantContainAdmin,
-      //     type: 'error'
-      //   })
-      // }
       contactNo?.toString() == '' &&
         tempV.push({
           field: t('staffManagement.contactNumber'),
@@ -231,37 +258,46 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     validate()
   }, [loginId, contactNo, email, userGroup, userStatus])
 
-  const showErrorToast = (msg: string) => {
-    toast.error(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
+  const handleCreateOrEditUser = () => {
+    setShowModalConfirm(false)
+    handleCreateUser()
   }
 
-  const showSuccessToast = (msg: string) => {
-    toast.info(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
+  const isEmailExisting = (email: string) => {
+    const isExisting = existingEmail.includes(email.toLocaleLowerCase())
+    return isExisting
   }
+
+  // const handleSubmit = () => {
+  //   if (validation.length === 0) {
+  //     if (action == 'add') {
+  //       if (!isEmailExisting(email)) {
+  //         setTrySubmited(true)
+  //         setShowModalConfirm(true)
+  //       } else {
+  //         handleCreateUser()
+  //       }
+  //     } else {
+  //       handleEditUser()
+  //     }
+  //   }
+  // }
 
   const handleSubmit = () => {
-    if (action == 'add') {
-      handleCreateUser()
+    if (validation.length !== 0 && action === 'add') {
+      setTrySubmited(true)
+      return
+    }
+
+    action === 'add' ? handleAddUser() : handleEditUser()
+  }
+
+  const handleAddUser = () => {
+    if (isEmailExisting(email)) {
+      setShowModalConfirm(true)
     } else {
-      handleEditUser()
+      setTrySubmited(true)
+      handleCreateUser()
     }
   }
 
@@ -285,7 +321,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     }
     if (validation.length === 0) {
       const result = await postUserAccount(formData)
-      console.log('result', result)
+
       setValidation([])
       if (result == 409) {
         //SET VALIDATION FOR USER WITH SAME EMAIL
@@ -520,6 +556,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 ))}
             </Grid>
           </Grid>
+          <UserConfirmModal
+            open={showModalConfirm}
+            onClose={() => setShowModalConfirm(false)}
+            onSubmit={handleCreateOrEditUser}
+          ></UserConfirmModal>
         </Box>
       </RightOverlayForm>
     </div>
