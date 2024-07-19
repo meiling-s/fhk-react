@@ -502,9 +502,9 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                 {t('roster.recyclingPoint')}
               </Typography>
               <FormControl sx={{ width: '100%' }}>
-                <InputLabel id="recyclingPoint">
+                {/* <InputLabel id="recyclingPoint">
                   {t('roster.recyclingPoint')}
-                </InputLabel>
+                </InputLabel> */}
                 <Select
                   labelId="recyclingPoint"
                   id="recyclingPoint"
@@ -513,7 +513,7 @@ const RosterDetail: FunctionComponent<RosterDetailProps> = ({
                     borderRadius: '12px'
                   }}
                   disabled={action === 'delete'}
-                  label={t('vehicle.recyclingPoint')}
+                  // label={t('vehicle.recyclingPoint')}
                   onChange={(event: SelectChangeEvent<string>) => {
                     setSelectedColPoint(event.target.value)
                   }}

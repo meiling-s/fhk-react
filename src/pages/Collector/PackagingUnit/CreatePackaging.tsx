@@ -356,6 +356,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
               />
             </CustomField>
           </Box>
+          
           <Box sx={{ marginY: 2 }}>
             <CustomField
               label={t('packaging_unit.simplified_chinese_name')}
@@ -371,6 +372,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
               />
             </CustomField>
           </Box>
+
           <Box sx={{ marginY: 2 }}>
             <CustomField label={t('packaging_unit.english_name')} mandatory>
               <CustomTextField
@@ -383,49 +385,62 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
               />
             </CustomField>
           </Box>
-          <CustomField
-            label={t('packaging_unit.introduction')}
-            mandatory={false}
-          >
-            <CustomTextField
-              id="description"
-              placeholder={t('packaging_unit.introduction_placeholder')}
-              onChange={(event) => setDescription(event.target.value)}
-              multiline={true}
-              defaultValue={description}
-            />
-          </CustomField>
-          <CustomField label={t('packaging_unit.remark')} mandatory={false}>
-            <CustomTextField
-              id="remark"
-              placeholder={t('packaging_unit.remark_placeholder')}
-              onChange={(event) => setRemark(event.target.value)}
-              multiline={true}
-              defaultValue={remark}
-            />
-          </CustomField>
-          <CustomField label={t('col.status')} mandatory={true}>
-            <CustomItemList
-              items={statusList()}
-              singleSelect={(selectedItem) => {
-                setStatus(selectedItem)
-              }}
-              editable={action != 'delete'}
-              defaultSelected={status}
-              needPrimaryColor={false}
-            />
-          </CustomField>
-          <Grid item>
-            {trySubmited &&
-              validation.map((val, index) => (
-                <FormErrorMsg
-                  key={index}
-                  field={t(val.field)}
-                  errorMsg={returnErrorMsg(val.problem, t)}
-                  type={val.type}
-                />
-              ))}
-          </Grid>
+
+          <Box sx={{ marginY: 2 }}>
+            <CustomField
+              label={t('packaging_unit.introduction')}
+              mandatory={false}
+            >
+              <CustomTextField
+                id="description"
+                placeholder={t('packaging_unit.introduction_placeholder')}
+                onChange={(event) => setDescription(event.target.value)}
+                multiline={true}
+                defaultValue={description}
+              />
+            </CustomField>
+          </Box>
+
+          <Box sx={{ marginY: 2 }}>
+            <CustomField label={t('packaging_unit.remark')} mandatory={false}>
+              <CustomTextField
+                id="remark"
+                placeholder={t('packaging_unit.remark_placeholder')}
+                onChange={(event) => setRemark(event.target.value)}
+                multiline={true}
+                defaultValue={remark}
+              />
+            </CustomField>
+          </Box>
+
+          <Box sx={{ marginY: 2 }}>
+            <CustomField label={t('col.status')} mandatory={true}>
+              <CustomItemList
+                items={statusList()}
+                singleSelect={(selectedItem) => {
+                  setStatus(selectedItem)
+                }}
+                editable={action != 'delete'}
+                defaultSelected={status}
+                needPrimaryColor={false}
+              />
+            </CustomField>
+          </Box>
+
+          <Box sx={{ marginY: 2 }}>
+            <Grid item>
+              {trySubmited &&
+                validation.map((val, index) => (
+                  <FormErrorMsg
+                    key={index}
+                    field={t(val.field)}
+                    errorMsg={returnErrorMsg(val.problem, t)}
+                    type={val.type}
+                  />
+                ))}
+            </Grid>
+          </Box>
+
         </Box>
       </RightOverlayForm>
     </div>

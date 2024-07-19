@@ -6,6 +6,7 @@ import { styles } from '../constants/styles'
 import { useContainer } from 'unstated-next'
 import NotifContainer from '../contexts/NotifContainer'
 import DeleteModal from './FormComponents/deleteModal'
+import { t } from 'i18next'
 
 type HeaderProps = {
   title?: string
@@ -45,7 +46,14 @@ const HeaderSection: React.FC<HeaderProps> = ({
   const [openDelete, setOpenDelete] = useState<boolean>(false)
 
   const onDeleteModal = () => {
-    setOpenDelete(prev => !prev)
+    if(cancelText === t('common.cancel')){
+      setOpenDelete(false)
+      if (onDelete){
+        onDelete()
+      }
+    } else {
+      setOpenDelete(prev => !prev)
+    }
   }
 
   const onDeleteClick = async () => {

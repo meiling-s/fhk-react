@@ -396,9 +396,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   width: '100%'
                 }}
               >
-                <InputLabel id="serviceType">
+                {/* <InputLabel id="serviceType">
                   {t('vehicle.serviceType')}
-                </InputLabel>
+                </InputLabel> */}
                 <Select
                   labelId="serviceType"
                   id="serviceType"
@@ -407,7 +407,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                     borderRadius: '12px'
                   }}
                   disabled={action === 'delete'}
-                  label={t('vehicle.serviceType')}
+                  // label={t('vehicle.serviceType')}
                   //onChange={(event) => setSelectedService(event.target.value)}
                   onChange={(event: SelectChangeEvent<string>) => {
                     const selectedValue = serviceType.find(
@@ -476,7 +476,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 id="licensePlate"
                 value={licensePlate}
                 disabled={action === 'delete'}
-                placeholder={t('vehicle.licensePlate')}
+                placeholder={t('vehicle.please_enter_pla_number')}
                 onChange={(event) => setLicensePlate(event.target.value)}
                 error={checkString(licensePlate)}
               />

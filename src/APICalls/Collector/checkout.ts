@@ -99,7 +99,6 @@ export const updateCheckout = async (
         chkOutId,
         token.decodeKeycloack,
         picoDtlId
-
       ),
       baseURL: checkoutAPI.baseURL,
       data: data
