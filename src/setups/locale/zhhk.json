@@ -102,7 +102,8 @@
       "incorrectAddress": "地址不正確",
       "dateOutOfRange": "指定日期超出開放日期範圍",
       "dateSpesificIsWrong": "指定日期格式錯誤",
-      "effectiveDateLess": " 開始日期不能晚於截止日期"
+      "effectiveDateLess": " 開始日期不能晚於截止日期",
+      "shouldGreaterThanZero": "可存容量大於零"
     }
   },
   "component": {
@@ -163,7 +164,7 @@
     "location": "實體地點",
     "place": "地點",
     "status": "狀態",
-    "recyclable_subcategories": "回收物類別",
+    "recyclable_subcategories": "可存回收物類別及容量",
     "enter_tenantId": "輸入租戶 ID"
   },
   "add_warehouse_page": {

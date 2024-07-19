@@ -28,7 +28,11 @@ import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
-import { extractError, showErrorToast, showSuccessToast } from '../../../utils/utils'
+import {
+  extractError,
+  showErrorToast,
+  showSuccessToast
+} from '../../../utils/utils'
 import {
   createWarehouse,
   getWarehouseById,
@@ -155,9 +159,13 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   >([])
   const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
   const [status, setStatus] = useState(true) // status field
+  const duplicateRecycleTypeIds = new Set<string>()
+  const [zeroCapacityItems, setZeroCapacityItems] = useState<
+    recyleTypeOption[]
+  >([])
   const isInitialRender = useRef(true) // Add this line
   const [existingWarehouse, setExisitingWarehouse] = useState<Warehouse[]>([])
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -187,9 +195,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         })
         setContractList(conList)
       }
-    } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -224,9 +232,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         setRecycleType(dataReycleType)
         setSubRecycleType(subTypeMapping)
       }
-    } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -256,7 +264,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           warehouseNameSchi: warehouse.warehouseNameSchi,
           warehouseNameEng: warehouse.warehouseNameEng
         })
-        setContractNum([...warehouse.contractNo])
+        setContractNum(
+          warehouse.contractNo.length !== 0 ? [...warehouse.contractNo] : ['']
+        )
         setPlace(warehouse.location)
         setPysicalLocation(warehouse.physicalFlg)
         setStatus(warehouse.status === 'ACTIVE')
@@ -266,11 +276,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           warehouseList.filter((item) => item.id != warehouse.warehouseId)
         )
       }
-    } catch (error:any) {
-     const { state } =  extractError(error);
-     if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-     }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -284,9 +294,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       getWarehousebyId()
     }
 
-    // console.log('physicalFlg', pysicalLocation)
     getRecyleCategory()
-  }, [action, handleDrawerClose])
+  }, [action, drawerOpen])
 
   const name_fields = [
     {
@@ -352,16 +361,25 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }, [place])
 
   const isRecycleTypeIdUnique = recycleCategory.every((item, index, arr) => {
-    const filteredArr = arr.filter((i) => i.recycTypeId === item.recycTypeId)
+    const filteredArr = arr.filter(
+      (i) =>
+        i.recycTypeId === item.recycTypeId &&
+        i.recycSubTypeId === item.recycSubTypeId
+    )
+
+    if (filteredArr.length > 1) {
+      duplicateRecycleTypeIds.add(item.recycTypeId)
+    }
+
     return filteredArr.length === 1
   })
 
-  const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
-    const filteredArr = arr.filter(
-      (i) => i.recycSubTypeId === item.recycSubTypeId
-    )
-    return filteredArr.length === 1
-  })
+  // const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
+  //   const filteredArr = arr.filter(
+  //     (i) => i.recycSubTypeId === item.recycSubTypeId
+  //   )
+  //   return filteredArr.length === 1
+  // })
 
   // validation input text
   useEffect(() => {
@@ -427,16 +445,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    const isRecyleHaveUniqId = isRecycleTypeIdUnique
+    // const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
-      return (
-        item.recycTypeId.trim() != '' &&
-        item.recycSubTypeId.trim() != '' &&
-        item.recycSubTypeCapacity != 0
-      )
+      return item.recycTypeId.trim() != ''
     })
-
-    //console.log('isRecycleTypeIdUnique', isRecycleTypeIdUnique)
 
     !isRecyleUnselected &&
       tempV.push({
@@ -446,15 +458,90 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    !isRecyleHaveUniqId &&
-      !isRecycleSubUnique &&
-      tempV.push({
-        field: 'warehouseRecyc',
-        error: `${t(`add_warehouse_page.warehouseRecyc`)} ${t('add_warehouse_page.shouldNotDuplicate')}`
+    //check value not zero
+    if (isRecyleUnselected) {
+      recycleCategory.forEach((item) => {
+        if (item.recycSubTypeCapacity === 0) {
+          const recybles = recycleType.find(
+            (type: recyleTypeOption) => type.id === item.recycTypeId
+          )
+
+          const subtype = recycleSubType[item.recycTypeId].find(
+            (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
+          )
+
+          const recycTypeName =
+            currentLanguage === 'zhhk'
+              ? recybles?.recyclableNameTchi
+              : currentLanguage === 'zhch'
+              ? recybles?.recyclableNameSchi
+              : recybles?.recyclableNameEng || ''
+
+          const recycSubTypeName =
+            currentLanguage === 'zhhk'
+              ? subtype?.recyclableNameTchi
+              : currentLanguage === 'zhch'
+              ? subtype?.recyclableNameSchi
+              : subtype?.recyclableNameEng || ''
+
+          tempV.push({
+            field: 'warehouseRecyc',
+            error: `${recycTypeName} - ${
+              recycSubTypeName ? recycSubTypeName : ''
+            }, ${t('form.error.shouldGreaterThanZero')}`
+          })
+        }
       })
+    }
+
+    //check duplicated recytype
+    if (!isRecycleTypeIdUnique) {
+      duplicateRecycleTypeIds.forEach((recycTypeId) => {
+        recycleCategory.forEach((item) => {
+          if (item.recycTypeId === recycTypeId) {
+            const recybles = recycleType.find(
+              (type: recyleTypeOption) => type.id === item.recycTypeId
+            )
+            const subtype = recycleSubType[item.recycTypeId].find(
+              (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
+            )
+
+            const recycTypeName =
+              currentLanguage === 'zhhk'
+                ? recybles?.recyclableNameTchi
+                : currentLanguage === 'zhch'
+                ? recybles?.recyclableNameSchi
+                : recybles?.recyclableNameEng || ''
+
+            const recycSubTypeName =
+              currentLanguage === 'zhhk'
+                ? subtype?.recyclableNameTchi
+                : currentLanguage === 'zhch'
+                ? subtype?.recyclableNameSchi
+                : subtype?.recyclableNameEng || ''
+
+            const errorMsg = `${recycTypeName} - ${
+              recycSubTypeName ? recycSubTypeName : ''
+            } ${t('add_warehouse_page.shouldNotDuplicate')}`
+
+            const alreadyExist = tempV.find((it) => it.error === errorMsg)
+
+            if (!alreadyExist) {
+              tempV.push({
+                field: 'warehouseRecyc',
+                error: `${recycTypeName} - ${
+                  recycSubTypeName ? recycSubTypeName : ''
+                } ${t('add_warehouse_page.shouldNotDuplicate')}`
+              })
+            }
+          }
+        })
+      })
+    }
+
+    console.group('tempV')
 
     setValidation(tempV)
-    //console.log(tempV)
   }, [nameValue, place, contractNum, recycleCategory])
 
   const checkString = (s: string) => {
@@ -558,9 +645,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         // console.log('added', response)
         showSuccessToast(t('common.saveSuccessfully'))
       }
-    } catch (error:any) {
-      const {state} = extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         console.error(error)
@@ -578,15 +665,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             ? t('common.editSuccessfully')
             : t('common.deletedSuccessfully')
         )
-        // console.log('edited', response)
         handleDrawerClose()
       }
-    } catch (error:any) {
+    } catch (error: any) {
       showErrorToast(
         type == 'edit' ? t('common.editFailed') : t('common.deleteFailed')
       )
-      const {state}= extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -599,6 +685,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       statusWarehouse = 'DELETED'
     }
 
+    const filteredContractNum = contractNum.filter((num) => num !== '')
+
     // console.log('action', action)
 
     const addWarehouseForm = {
@@ -608,7 +696,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       location: place,
       locationGps: locationGps,
       physicalFlg: pysicalLocation,
-      contractNo: contractNum,
+      contractNo: filteredContractNum,
       status: statusWarehouse,
       createdBy: 'string',
       updatedBy: 'string',
@@ -643,14 +731,26 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
+  useEffect(() => {
+    getFormErrorMsg()
+  }, [validation])
+
   const getFormErrorMsg = () => {
     const errorList: string[] = []
-    validation.map((item) => {
-      errorList.push(`${item.error}`)
-    })
-    setErrorMsgList(errorList)
+    const seenErrors = new Set()
 
-    return ''
+    validation.forEach((item) => {
+      if (item.field === 'contractNo') {
+        if (!seenErrors.has('contractNo')) {
+          errorList.push(item.error)
+          seenErrors.add('contractNo')
+        }
+      } else {
+        errorList.push(item.error)
+      }
+    })
+
+    setErrorMsgList(errorList)
   }
 
   const handleDelete = () => {
@@ -666,7 +766,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const onDeleteModal = () => {
     //handleSubmit()
-    setOpenDelete(false)
+    //setOpenDelete(false)
     // console.log('rowId', rowId)
     const deleteform = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
@@ -683,62 +783,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
 
     editWarehouseData(deleteform, 'delete')
-  }
-
-  type DeleteModalProps = {
-    open: boolean
-    onClose: () => void
-    onDelete: () => void
-  }
-
-  const DeleteModal: React.FC<DeleteModalProps> = ({
-    open,
-    onClose,
-    onDelete
-  }) => {
-    const { t } = useTranslation()
-    return (
-      <Modal
-        open={open}
-        onClose={onClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={styles.modal}>
-          <Stack spacing={2}>
-            <Box>
-              <Typography
-                id="modal-modal-title"
-                variant="h6"
-                component="h2"
-                sx={{ fontWeight: 'bold' }}
-              >
-                {t('check_out.confirm_approve')}
-              </Typography>
-            </Box>
-            <Divider />
-            <Box sx={{ alignSelf: 'center' }}>
-              <button
-                className="primary-btn mr-2 cursor-pointer"
-                onClick={() => {
-                  onDelete()
-                }}
-              >
-                {t('check_in.confirm')}
-              </button>
-              <button
-                className="secondary-btn mr-2 cursor-pointer"
-                onClick={() => {
-                  onClose()
-                }}
-              >
-                {t('check_out.cancel')}
-              </button>
-            </Box>
-          </Stack>
-        </Box>
-      </Modal>
-    )
   }
 
   return (
@@ -761,7 +805,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: onDeleteModal
         }}
       >
         {/* form warehouse */}
@@ -858,8 +902,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                       {index === contractNum.length - 1 ? (
                         <ADD_CIRCLE_ICON
                           fontSize="small"
-                          className={`${action === 'delete' ? "text-gray" : "text-green-primary"} " cursor-pointer"`}
-                          onClick={action !== 'delete' ? handleAddContact : undefined}
+                          className={`${
+                            action === 'delete'
+                              ? 'text-gray'
+                              : 'text-green-primary'
+                          } " cursor-pointer"`}
+                          onClick={
+                            action !== 'delete' ? handleAddContact : undefined
+                          }
                         />
                       ) : (
                         index !== contractNum.length - 1 && (
@@ -870,7 +920,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                 ? 'cursor-not-allowed'
                                 : 'cursor-pointer'
                             } `}
-                            onClick={() => action !== 'delete' ? handleRemoveContact(index) : undefined}
+                            onClick={() =>
+                              action !== 'delete'
+                                ? handleRemoveContact(index)
+                                : undefined
+                            }
                           />
                         )
                       )}
@@ -951,15 +1005,17 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <MenuItem value="">
                               <em>-</em>
                             </MenuItem>
-                            {recycleType.length > 0 ? (recycleType.map((item, index) => (
-                              <MenuItem value={item.id} key={index}>
-                                {currentLanguage === 'zhhk'
-                                  ? item.recyclableNameTchi
-                                  : currentLanguage === 'zhch'
-                                  ? item.recyclableNameSchi
-                                  : item.recyclableNameEng}
-                              </MenuItem>
-                            ))) : (
+                            {recycleType.length > 0 ? (
+                              recycleType.map((item, index) => (
+                                <MenuItem value={item.id} key={index}>
+                                  {currentLanguage === 'zhhk'
+                                    ? item.recyclableNameTchi
+                                    : currentLanguage === 'zhch'
+                                    ? item.recyclableNameSchi
+                                    : item.recyclableNameEng}
+                                </MenuItem>
+                              ))
+                            ) : (
                               <MenuItem disabled value="">
                                 <em>{t('common.noOptions')}</em>
                               </MenuItem>
@@ -980,31 +1036,34 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px'
                             }}
-                            error={
-                              checkString(item.recycSubTypeId) ||
-                              !isRecycleSubUnique
-                            }
+                            // error={
+                            //   checkString(item.recycSubTypeId) ||
+                            //   !isRecycleSubUnique
+                            // }
                           >
                             <MenuItem value="">
                               <em>-</em>
                             </MenuItem>
-                            {recycleSubType[item.recycTypeId]?.length > 0 ? (recycleSubType[item.recycTypeId]?.map(
-                              (item, index) => (
-                                <MenuItem
-                                  value={item.recycSubTypeId}
-                                  key={index}
-                                >
-                                  {currentLanguage === 'zhhk'
-                                    ? item.recyclableNameTchi
-                                    : currentLanguage === 'zhch'
-                                    ? item.recyclableNameSchi
-                                    : item.recyclableNameEng}
-                                </MenuItem>
+                            {recycleSubType[item.recycTypeId]?.length > 0 ? (
+                              recycleSubType[item.recycTypeId]?.map(
+                                (item, index) => (
+                                  <MenuItem
+                                    value={item.recycSubTypeId}
+                                    key={index}
+                                  >
+                                    {currentLanguage === 'zhhk'
+                                      ? item.recyclableNameTchi
+                                      : currentLanguage === 'zhch'
+                                      ? item.recyclableNameSchi
+                                      : item.recyclableNameEng}
+                                  </MenuItem>
+                                )
                               )
-                            )) : (
-                            <MenuItem disabled value="">
-                              <em>{t('common.noOptions')}</em>
-                            </MenuItem>)}
+                            ) : (
+                              <MenuItem disabled value="">
+                                <em>{t('common.noOptions')}</em>
+                              </MenuItem>
+                            )}
                           </Select>
                         </FormControl>
                         <FormControl fullWidth variant="standard">
@@ -1040,8 +1099,16 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                         {index === recycleCategory.length - 1 ? (
                           <ADD_CIRCLE_ICON
                             fontSize="small"
-                            className={`${action === 'delete' ? "text-gray" : "text-green-primary"} " cursor-pointer"`}
-                            onClick={action !== 'delete' ? handleAddRecycleCategory : undefined}
+                            className={`${
+                              action === 'delete'
+                                ? 'text-gray'
+                                : 'text-green-primary'
+                            } " cursor-pointer"`}
+                            onClick={
+                              action !== 'delete'
+                                ? handleAddRecycleCategory
+                                : undefined
+                            }
                           />
                         ) : (
                           index !== recycleCategory.length - 1 && (
@@ -1052,7 +1119,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                                   ? 'cursor-not-allowed'
                                   : 'cursor-pointer'
                               } `}
-                              onClick={() => action !== 'delete' ? handleRemoveReycleCategory(index) : undefined}
+                              onClick={() =>
+                                action !== 'delete'
+                                  ? handleRemoveReycleCategory(index)
+                                  : undefined
+                              }
                             />
                           )
                         )}
@@ -1072,13 +1143,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 ))}
               </Grid>
             )}
-            <DeleteModal
-              open={openDelete}
-              onClose={() => {
-                setOpenDelete(false)
-              }}
-              onDelete={onDeleteModal}
-            />
           </div>
         </div>
       </RightOverlayForm>

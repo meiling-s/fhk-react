@@ -102,7 +102,8 @@
       "incorrectAddress": "incorrect Address",
       "dateOutOfRange": "Specify date(s) is out of the Effective date range",
       "dateSpesificIsWrong": "Specify date(s) is in wrong format",
-      "effectiveDateLess": "Effective from date should not later than Effective to date"
+      "effectiveDateLess": "Effective from date should not later than Effective to date",
+      "shouldGreaterThanZero": "Storage capacity should be greater then Zero"
     }
   },
   "component": {
@@ -163,15 +164,15 @@
     "location": "Physical Location",
     "place": "Place",
     "status": "Status",
-    "recyclable_subcategories": "Recyclable Type(s)",
+    "recyclable_subcategories": "Storage recyclable and capacity",
     "enter_tenantId": "Enter the tenant id"
   },
   "add_warehouse_page": {
     "save": "Save",
     "delete": "Delete",
     "type_name": "Please type a name",
-    "recyclable_subcategories": "Recyclable subcategories",
-    "place_placeholders": "Please enter the place name",
+    "recyclable_subcategories": "Storage recyclable and capacity",
+    "place_placeholders": "No. 14, Ao Pui Wan Street, Fo Tan",
     "subtype": "Subtype",
     "recycle_type": "Recycle type",
     "weight": "Please input weight",
@@ -1038,7 +1039,7 @@
     "start_date": "Start Date",
     "end_date": "End Date",
     "remark": "Remark",
-    "enter_remark" :"Please enter text",
+    "enter_remark": "Please enter text",
     "whether": "Is EPD",
     "default_currency": "Default Currency",
     "activate": "Activate",
