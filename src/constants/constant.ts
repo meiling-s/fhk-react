@@ -61,7 +61,8 @@ export const formErr = {
   incorrectAddress: 'incorrectAddress',
   dateOutOfRange: 'dateOutOfRange',
   dateSpesificIsWrong: 'dateSpesificIsWrong',
-  effectiveDateLess: 'effectiveDateLess'
+  effectiveDateLess: 'effectiveDateLess',
+  cantBeSame: 'cantBeSame'
 }
 
 export const Notiftemplate = {

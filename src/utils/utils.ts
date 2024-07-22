@@ -97,6 +97,9 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
       break
     case formErr.incorrectAddress:
       msg = t('form.error.incorrectAddress')
+      break
+    case formErr.cantBeSame:
+      msg = t('form.error.cantBeSame')
   }
   return msg
 }

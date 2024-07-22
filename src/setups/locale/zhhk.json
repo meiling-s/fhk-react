@@ -102,7 +102,8 @@
       "incorrectAddress": "地址不正確",
       "dateOutOfRange": "指定日期超出開放日期範圍",
       "dateSpesificIsWrong": "指定日期格式錯誤",
-      "effectiveDateLess": " 開始日期不能晚於截止日期"
+      "effectiveDateLess": " 開始日期不能晚於截止日期",
+      "cantBeSame":"不能相同"
     }
   },
   "component": {
@@ -1240,7 +1241,7 @@
     "received": "已收到",
     "notReceived": "未收到",
     "logisticsCompany": "物流公司",
-    "poNumber": "採購訂單號",
+    "poNumber": "采購訂單號",
     "shippingAddress": "送貨地址",
     "recyclingCategory:": "回收類別",
     "packingQty": "包裝數量",
