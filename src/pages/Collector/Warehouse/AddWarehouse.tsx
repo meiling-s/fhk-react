@@ -264,7 +264,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           warehouseNameSchi: warehouse.warehouseNameSchi,
           warehouseNameEng: warehouse.warehouseNameEng
         })
-        setContractNum([...warehouse.contractNo])
+        setContractNum(
+          warehouse.contractNo.length !== 0 ? [...warehouse.contractNo] : ['']
+        )
         setPlace(warehouse.location)
         setPysicalLocation(warehouse.physicalFlg)
         setStatus(warehouse.status === 'ACTIVE')
@@ -293,7 +295,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
 
     getRecyleCategory()
-  }, [action])
+  }, [action, drawerOpen])
 
   const name_fields = [
     {
@@ -359,7 +361,11 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }, [place])
 
   const isRecycleTypeIdUnique = recycleCategory.every((item, index, arr) => {
-    const filteredArr = arr.filter((i) => i.recycTypeId === item.recycTypeId)
+    const filteredArr = arr.filter(
+      (i) =>
+        i.recycTypeId === item.recycTypeId &&
+        i.recycSubTypeId === item.recycSubTypeId
+    )
 
     if (filteredArr.length > 1) {
       duplicateRecycleTypeIds.add(item.recycTypeId)
@@ -368,12 +374,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     return filteredArr.length === 1
   })
 
-  const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
-    const filteredArr = arr.filter(
-      (i) => i.recycSubTypeId === item.recycSubTypeId
-    )
-    return filteredArr.length === 1
-  })
+  // const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
+  //   const filteredArr = arr.filter(
+  //     (i) => i.recycSubTypeId === item.recycSubTypeId
+  //   )
+  //   return filteredArr.length === 1
+  // })
 
   // validation input text
   useEffect(() => {
@@ -441,7 +447,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     // const isRecyleHaveUniqId = isRecycleTypeIdUnique
     const isRecyleUnselected = recycleCategory.every((item, index, arr) => {
-      return item.recycTypeId.trim() != '' && item.recycSubTypeId.trim() != ''
+      return item.recycTypeId.trim() != ''
     })
 
     !isRecyleUnselected &&
@@ -469,27 +475,27 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               ? recybles?.recyclableNameTchi
               : currentLanguage === 'zhch'
               ? recybles?.recyclableNameSchi
-              : recybles?.recyclableNameEng || '-'
+              : recybles?.recyclableNameEng || ''
 
           const recycSubTypeName =
             currentLanguage === 'zhhk'
               ? subtype?.recyclableNameTchi
               : currentLanguage === 'zhch'
               ? subtype?.recyclableNameSchi
-              : subtype?.recyclableNameEng || '-'
+              : subtype?.recyclableNameEng || ''
 
           tempV.push({
             field: 'warehouseRecyc',
-            error: `${recycTypeName} - ${recycSubTypeName}, ${t(
-              'form.error.shouldGreaterThanZero'
-            )}`
+            error: `${recycTypeName} - ${
+              recycSubTypeName ? recycSubTypeName : ''
+            }, ${t('form.error.shouldGreaterThanZero')}`
           })
         }
       })
     }
 
     //check duplicated recytype
-    if (!isRecycleTypeIdUnique || !isRecycleSubUnique) {
+    if (!isRecycleTypeIdUnique) {
       duplicateRecycleTypeIds.forEach((recycTypeId) => {
         recycleCategory.forEach((item) => {
           if (item.recycTypeId === recycTypeId) {
@@ -505,21 +511,29 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 ? recybles?.recyclableNameTchi
                 : currentLanguage === 'zhch'
                 ? recybles?.recyclableNameSchi
-                : recybles?.recyclableNameEng || '-'
+                : recybles?.recyclableNameEng || ''
 
             const recycSubTypeName =
               currentLanguage === 'zhhk'
                 ? subtype?.recyclableNameTchi
                 : currentLanguage === 'zhch'
                 ? subtype?.recyclableNameSchi
-                : subtype?.recyclableNameEng || '-'
+                : subtype?.recyclableNameEng || ''
 
-            tempV.push({
-              field: 'warehouseRecyc',
-              error: `${recycTypeName} - ${recycSubTypeName} ${t(
-                'add_warehouse_page.shouldNotDuplicate'
-              )}`
-            })
+            const errorMsg = `${recycTypeName} - ${
+              recycSubTypeName ? recycSubTypeName : ''
+            } ${t('add_warehouse_page.shouldNotDuplicate')}`
+
+            const alreadyExist = tempV.find((it) => it.error === errorMsg)
+
+            if (!alreadyExist) {
+              tempV.push({
+                field: 'warehouseRecyc',
+                error: `${recycTypeName} - ${
+                  recycSubTypeName ? recycSubTypeName : ''
+                } ${t('add_warehouse_page.shouldNotDuplicate')}`
+              })
+            }
           }
         })
       })
@@ -1022,10 +1036,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             sx={{
                               borderRadius: '12px'
                             }}
-                            error={
-                              checkString(item.recycSubTypeId) ||
-                              !isRecycleSubUnique
-                            }
+                            // error={
+                            //   checkString(item.recycSubTypeId) ||
+                            //   !isRecycleSubUnique
+                            // }
                           >
                             <MenuItem value="">
                               <em>-</em>
@@ -1129,13 +1143,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 ))}
               </Grid>
             )}
-            {/* <DeleteModal
-              open={openDelete}
-              onClose={() => {
-                setOpenDelete(false)
-              }}
-              onDelete={onDeleteModal}
-            /> */}
           </div>
         </div>
       </RightOverlayForm>
