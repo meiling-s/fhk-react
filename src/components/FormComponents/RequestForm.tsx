@@ -286,16 +286,17 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                 images={item.checkinDetailPhoto}
               />
             ))}
-            <Box>
-              <div className="message">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('check_out.message')}
+            { selectedItem?.status !== 'CREATED' &&  <Box>
+                <div className="message">
+                  <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
+                    {t('check_out.message')}
+                  </div>
+                  <div className=" text-sm text-[#717171] font-medium tracking-widest">
+                    {messageCheckin}
+                  </div>
                 </div>
-                <div className=" text-sm text-[#717171] font-medium tracking-widest">
-                  {messageCheckin}
-                </div>
-              </div>
-            </Box>
+              </Box>
+            }
           </Stack>
 
         </Box>

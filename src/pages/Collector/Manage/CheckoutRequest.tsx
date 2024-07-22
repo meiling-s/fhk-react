@@ -579,19 +579,19 @@ const CheckoutRequest: FunctionComponent = () => {
         // )
         let checkoutData:CheckOut[] = []
         for (let item of data){
-          console.log('item', item)
+          
           if(item.status !== 'CREATED') continue
           const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
           const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
           item.createdAt = createdAt;
-          // if(item.picoId){
-          //   const picoDetail = await getPicoDetail(item.picoId);
-          //   if(picoDetail?.pickupOrderDetail[0]){
-          //     const pico = picoDetail?.pickupOrderDetail[0]
-          //     item.senderName = pico.senderName
-          //     item.senderAddr = pico.senderAddr
-          //   }
-          // }
+          if(item.picoId){
+            const picoDetail = await getPicoDetail(item.picoId);
+            if(picoDetail?.pickupOrderDetail[0]){
+              const pico = picoDetail?.pickupOrderDetail[0]
+              item.senderName = pico.senderName
+              item.senderAddr = pico.senderAddr
+            }
+          }
           if(item?.logisticId){
             const companyName = getCompanyNameById(Number(item?.logisticId))
             item.logisticName = companyName !== '' ? companyName : item.logisticName
