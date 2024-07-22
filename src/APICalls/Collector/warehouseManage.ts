@@ -70,7 +70,6 @@ export const updateCheckin = async (
   chkInId: number,
   data: CheckInWarehouse,
   picoDtlId: number
-
 ) => {
   const token = returnApiToken()
 

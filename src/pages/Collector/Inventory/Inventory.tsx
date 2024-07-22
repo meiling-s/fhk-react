@@ -46,7 +46,11 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
-import { returnApiToken, extractError, getPrimaryColor } from '../../../utils/utils'
+import {
+  returnApiToken,
+  extractError,
+  getPrimaryColor
+} from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { InventoryQuery } from '../../../interfaces/inventory'
@@ -84,7 +88,7 @@ function createInventory(
   createdAt: string,
   updatedAt: string,
   location: string,
-  packageName?:string
+  packageName?: string
 ): InventoryItem {
   return {
     itemId,
@@ -142,18 +146,18 @@ const Inventory: FunctionComponent = () => {
     try {
       const result = await getAllPackagingUnit(0, 1000)
       const data = result?.data
-  
+
       if (data) {
         setPackagingMapping(data.content)
       }
-     } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
-     }
+    }
   }
-  
+
   useEffect(() => {
     mappingRecyleItem()
     initpackagingUnit()
@@ -251,33 +255,48 @@ const Inventory: FunctionComponent = () => {
       const picoData = await getAllPickupOrder(data.content)
       var inventoryMapping: InventoryItem[] = []
       data.content.map((item: InventoryItem) => {
-        const recy = recycItem.find(
-          (re) => re.recycType.id === item.recycTypeId
+        // const recy = recycItem.find(
+        //   (re) => re.recycType.id === item.recycTypeId
+        // )
+        let recyName: string = '-'
+        let subName: string = '-'
+        item.packageName = item.packageTypeId
+        const recyclables = recycType?.find(
+          (re) => re.recycTypeId === item.recycTypeId
         )
-        let recyName:string = '-';
-        let subName:string = '-';
-        item.packageName = item.packageTypeId;
-        const recyclables = recycType?.find(item => item.recycTypeId === item.recycTypeId);
-        if(recyclables){
-          if(i18n.language === Languages.ENUS) recyName = recyclables.recyclableNameEng
-          if(i18n.language === Languages.ZHCH) recyName = recyclables.recyclableNameSchi
-          if(i18n.language === Languages.ZHHK) recyName = recyclables.recyclableNameTchi
-          const subs = recyclables.recycSubType.find(sub => sub.recycSubTypeId === item.recycSubTypeId )
-          if(subs){
-            if(i18n.language === Languages.ENUS) subName = subs.recyclableNameEng
-            if(i18n.language === Languages.ZHCH) subName = subs.recyclableNameSchi
-            if(i18n.language === Languages.ZHHK) subName = subs.recyclableNameTchi
+        if (recyclables) {
+          if (i18n.language === Languages.ENUS)
+            recyName = recyclables.recyclableNameEng
+          if (i18n.language === Languages.ZHCH)
+            recyName = recyclables.recyclableNameSchi
+          if (i18n.language === Languages.ZHHK)
+            recyName = recyclables.recyclableNameTchi
+          const subs = recyclables.recycSubType.find(
+            (sub) => sub.recycSubTypeId === item.recycSubTypeId
+          )
+          if (subs) {
+            if (i18n.language === Languages.ENUS)
+              subName = subs.recyclableNameEng
+            if (i18n.language === Languages.ZHCH)
+              subName = subs.recyclableNameSchi
+            if (i18n.language === Languages.ZHHK)
+              subName = subs.recyclableNameTchi
           }
         }
-        
-        const packages = packagingMapping.find(packageItem => packageItem.packagingTypeId === item.packageTypeId);
-      
-        if(packages){
-          if(i18n.language === Languages.ENUS) item.packageName = packages.packagingNameEng;
-          if(i18n.language === Languages.ZHCH) item.packageName = packages.packagingNameSchi;
-          if(i18n.language === Languages.ZHHK) item.packageName = packages.packagingNameTchi
+
+        const packages = packagingMapping.find(
+          (packageItem) => packageItem.packagingTypeId === item.packageTypeId
+        )
+
+        if (packages) {
+          if (i18n.language === Languages.ENUS)
+            item.packageName = packages.packagingNameEng
+          if (i18n.language === Languages.ZHCH)
+            item.packageName = packages.packagingNameSchi
+          if (i18n.language === Languages.ZHHK)
+            item.packageName = packages.packagingNameTchi
         }
-        
+
         // const recyName = recy ? recy.recycType.name : '-'
         // const subType = recy
         //   ? recy.recycSubType.find((sub) => sub.id == item.recycSubTypeId)
@@ -313,7 +332,7 @@ const Inventory: FunctionComponent = () => {
             createdAt,
             item?.updatedAt,
             item?.location,
-            item?.packageName,
+            item?.packageName
           )
         )
       })
@@ -474,18 +493,18 @@ const Inventory: FunctionComponent = () => {
       label: value
     }))
 
-    const cache:any = {};
+    const cache: any = {}
 
-    for(let item of options){
-      if(!(item.label in cache)){
+    for (let item of options) {
+      if (!(item.label in cache)) {
         const newItem = item.label
         cache[newItem] = {
           ...item
         }
-      } 
+      }
     }
-    
-    const filter : Option[] = Object.values(cache);
+
+    const filter: Option[] = Object.values(cache)
 
     filter.push({
       value: '',
@@ -523,6 +542,7 @@ const Inventory: FunctionComponent = () => {
 
   const handleSearch = (keyName: string, value: string) => {
     updateQuery({ [keyName]: value })
+    setPage(1)
   }
 
   const handleSearchByPoNumb = async (
@@ -624,8 +644,10 @@ const Inventory: FunctionComponent = () => {
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.row.itemId === selectedRow.itemId ? 'selected-row' : ''
+              getRowClassName={(params) =>
+                selectedRow && params.row.itemId === selectedRow.itemId
+                  ? 'selected-row'
+                  : ''
               }
               sx={{
                 border: 'none',
@@ -641,14 +663,14 @@ const Inventory: FunctionComponent = () => {
                     borderBottom: 'none'
                   }
                 },
-                '.MuiDataGrid-columnHeaderTitle': { 
+                '.MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold !important',
                   overflow: 'visible !important'
                 },
                 '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
+                  backgroundColor: '#F6FDF2 !important',
+                  border: '1px solid #79CA25'
+                }
               }}
             />
             <Pagination
@@ -662,7 +684,10 @@ const Inventory: FunctionComponent = () => {
           </Box>
           <InventoryDetail
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             selectedRow={selectedRow}
             selectedPico={selectedPico}
           />
