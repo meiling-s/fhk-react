@@ -567,6 +567,7 @@ function ShipmentManage() {
           isExist : true,
           address: warehouse.location
         }
+        deliveryAddress = warehouse.location
       } else {
         cacheWarehouse[warehouseId] = {
           isExist : false,
