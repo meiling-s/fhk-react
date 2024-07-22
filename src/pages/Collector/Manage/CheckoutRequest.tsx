@@ -365,7 +365,7 @@ const CheckoutRequest: FunctionComponent = () => {
     receiverAddr: ''
   })
   const [reasonList, setReasonList] = useState<any>([])
-  const { dateFormat, manuList, collectorList, logisticList } = useContainer(CommonTypeContainer)
+  const { dateFormat, manuList, collectorList, logisticList, companies } = useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const getRejectReason = async () => {
@@ -552,6 +552,19 @@ const CheckoutRequest: FunctionComponent = () => {
     }
   }
 
+  const getCompanyNameById = (id:number):string => {
+    let { ENUS, ZHCH, ZHHK } = Languages
+    let companyName:string = '';
+    const company = companies.find(item => item.id === id);
+    if(company){
+      if(i18n.language === ENUS) companyName = company.nameEng ?? ''
+      if(i18n.language === ZHCH) companyName = company.nameSchi ?? ''
+      if(i18n.language === ZHHK) companyName = company.nameTchi ?? ''
+    }
+
+    return companyName
+  }
+
   const getCheckoutRequest = async () => {
     try {
       const result = await getAllCheckoutRequest(page - 1, pageSize, query)
@@ -566,24 +579,25 @@ const CheckoutRequest: FunctionComponent = () => {
         // )
         let checkoutData:CheckOut[] = []
         for (let item of data){
+          console.log('item', item)
           if(item.status !== 'CREATED') continue
           const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
           const createdAt = dateInHK.format(`${dateFormat} HH:mm`);
           item.createdAt = createdAt;
-          if(item.picoId){
-            const picoDetail = await getPicoDetail(item.picoId);
-            if(picoDetail?.pickupOrderDetail[0]){
-              const pico = picoDetail?.pickupOrderDetail[0]
-              item.senderName = pico.senderName
-              item.senderAddr = pico.senderAddr
-            }
-          }
-          if(item?.logisticName){
-            const companyName = getTranslationCompanyName(item?.logisticName)
+          // if(item.picoId){
+          //   const picoDetail = await getPicoDetail(item.picoId);
+          //   if(picoDetail?.pickupOrderDetail[0]){
+          //     const pico = picoDetail?.pickupOrderDetail[0]
+          //     item.senderName = pico.senderName
+          //     item.senderAddr = pico.senderAddr
+          //   }
+          // }
+          if(item?.logisticId){
+            const companyName = getCompanyNameById(Number(item?.logisticId))
             item.logisticName = companyName !== '' ? companyName : item.logisticName
           }
-          if(item.receiverName){
-            const companyName = getTranslationCompany(item.receiverName);
+          if(item.receiverId){
+            const companyName = getCompanyNameById(item.receiverId);
             item.receiverName = companyName !== '' ? companyName : item.receiverName
           }
           if(item.senderName){

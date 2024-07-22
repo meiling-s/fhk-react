@@ -36,7 +36,8 @@ import {
   getAllCheckInRequests,
   updateCheckinStatus,
   getCheckinReasons,
-  updateCheckin
+  updateCheckin,
+  getDetailCheckInRequests
 } from '../../APICalls/Collector/warehouseManage'
 import { CheckInWarehouse, updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
@@ -400,7 +401,7 @@ function ShipmentManage() {
   const [reasonList, setReasonList] = useState<any>([])
   const { dateFormat } = useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid();
-  const { logisticList, manuList, collectorList } = useContainer(CommonTypeContainer)
+  const { logisticList, manuList, collectorList, companies } = useContainer(CommonTypeContainer)
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   const getRejectReason = async () => {
@@ -529,6 +530,19 @@ function ShipmentManage() {
     }
   }
 
+  const getCompanyNameById = (id:number):string => {
+    let { ENUS, ZHCH, ZHHK } = Languages
+    let companyName:string = '';
+    const company = companies.find(item => item.id === id);
+    if(company){
+      if(i18n.language === ENUS) companyName = company.nameEng ?? ''
+      if(i18n.language === ZHCH) companyName = company.nameSchi ?? ''
+      if(i18n.language === ZHHK) companyName = company.nameTchi ?? ''
+    }
+
+    return companyName
+  }
+
   const initCheckInRequest = async () => {
     try {
       const result = await getAllCheckInRequests(page - 1, pageSize, query)
@@ -537,33 +551,39 @@ function ShipmentManage() {
         if (data && data.length > 0) {
             const newData:CheckIn[] = [];
             for(let item of data){
+              console.log('item', item, item.logisticId, item.logisticName, item.recipientCompany)
+              // const checkin = await getDetailCheckInRequests(item.chkInId)
+              // console.log('chkInId', checkin)
               if(item.picoId){
                 const picoDetail = await getPicoDetail(item.picoId);
-                  if(picoDetail?.data?.pickupOrderDetail[0]){
-                    const detail = picoDetail?.data?.pickupOrderDetail[0]
-                    item.deliveryAddress = detail?.receiverAddr ?? '-'
-                    item.recipientCompany = detail?.receiverName ?? '-' 
-                  }
+                console.log('picoDetail', picoDetail)
+                // if(picoDetail?.data?.pickupOrderDetail[0]){
+                //   const detail = picoDetail?.data?.pickupOrderDetail[0]
+                //   item.deliveryAddress = detail?.receiverAddr ?? '-'
+                //   item.recipientCompany = detail?.receiverName ?? '-' 
+                // }
                 
-              
-                 if(item?.logisticName){
-                  const companyName = getTranslationCompanyName(item.logisticName);
-                  item.logisticName = companyName === '' ? item.logisticName  : companyName
-                 }
-
-                 if(item.senderName){
-                  const companyName = getTranslationCompany(item.senderName)
-                  item.senderName = companyName === '' ? item.senderName  : companyName
-                 }
 
                  if(item.recipientCompany){
                   const companyName = getTranslationCompany(item.recipientCompany)
                   item.recipientCompany = companyName === '' ? item.recipientCompany  : companyName
                  }
-                 const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-                 item.createdAt =  dateInHK.format(`${dateFormat} HH:mm`);
-                 newData.push(item)
+                 
+                //  newData.push(item)
               }
+              const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+              item.createdAt =  dateInHK.format(`${dateFormat} HH:mm`);
+
+              if(item?.logisticId){
+                const companyName = getCompanyNameById(Number(item.logisticId));
+                item.logisticName = companyName === '' ? item.logisticName  : companyName
+              }
+
+              if(item.senderId){
+              const companyName = getCompanyNameById(Number(item.senderId))
+              item.senderName = companyName === '' ? item.senderName  : companyName
+              }
+              newData.push(item)
             }
           // const checkinData = newData.map(transformToTableRow)
           setCheckInRequest(newData)
