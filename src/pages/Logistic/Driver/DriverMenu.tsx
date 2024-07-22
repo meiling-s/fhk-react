@@ -50,7 +50,7 @@ const DriverMenu = () => {
 
     const columns: GridColDef[] = useMemo(() => ([
         {
-            field: 'driverId',
+            field: 'labelId',
             headerName: t('driver.DriverMenu.table.driverId'),
             width: 150,
             type: 'string'

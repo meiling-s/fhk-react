@@ -18,4 +18,5 @@ export interface Driver {
     driverDetail: DriverDetail[];
     createdBy: string;
     updatedBy: string;
+    labelId?: string
 }
