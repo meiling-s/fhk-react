@@ -212,17 +212,7 @@ const PickupOrderCard = ({
             
             <Box display="flex">
               <Box display="flex" width={'150px'} alignItems={"center"}>
-              <Icon
-                  sx={{
-                    justifySelf: 'center',
-                    display: 'flex',
-                    mr: '5px',
-                    color: '#79CA25'
-                  }}
-                >
-                  <AccessTimeIcon />
-                </Icon>
-                <Typography style={localstyles.mini_title_green}>
+                <Typography style={localstyles.mini_title_green} ml={"30px"}>
                   {t('pick_up_order.card_detail.checkout_time')}
                 </Typography>
               </Box>
@@ -258,17 +248,7 @@ const PickupOrderCard = ({
             
             <Box display="flex">
               <Box display="flex" width={'150px'} alignItems={"center"}>
-              <Icon
-                  sx={{
-                    justifySelf: 'center',
-                    display: 'flex',
-                    mr: '5px',
-                    color: '#79CA25'
-                  }}
-                >
-                  <MonitorWeightOutlinedIcon />
-                </Icon>
-                <Typography style={localstyles.mini_title_green}>
+                <Typography style={localstyles.mini_title_green} ml={"30px"}>
                   {t('pick_up_order.card_detail.checkout_weight')}
                 </Typography>
               </Box>
@@ -304,17 +284,7 @@ const PickupOrderCard = ({
             
             <Box display="flex">
               <Box display="flex" width={'150px'} alignItems={"center"}>
-              <Icon
-                  sx={{
-                    justifySelf: 'center',
-                    display: 'flex',
-                    mr: '5px',
-                    color: '#79CA25'
-                  }}
-                >
-                  <PersonOutlineIcon />
-                </Icon>
-                <Typography style={localstyles.mini_title_green}>
+                <Typography style={localstyles.mini_title_green} ml={"30px"}>
                   {t('pick_up_order.card_detail.checkout_by')}
                 </Typography>
               </Box>
