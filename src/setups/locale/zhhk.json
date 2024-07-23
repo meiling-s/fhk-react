@@ -1047,7 +1047,7 @@
     "start_date": "開始日期",
     "end_date": "結束日期",
     "remark": "備註",
-    "enter_remark": "請輸入文字",
+    "enter_remark": "請輸入備註",
     "whether": "是否EPD",
     "default_currency": "預設貨幣",
     "activate": "啟用",
