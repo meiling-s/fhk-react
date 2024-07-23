@@ -171,7 +171,7 @@ export default function SpecificDate({
             { display: { md: 'flex', xs: 'block' } }
           ]}
         >
-          <Grid xs={3} sx={localstyles.tableCell} key={date.id + 'datePick'}>
+          <Grid xs={2} sx={localstyles.tableCell} style={{marginRight: '10px'}}  key={date.id + 'datePick'}>
             <CustomDatePicker
               defaultDate={date.date.format(format.dateFormat2)}
               setDate={(d) => {
@@ -179,14 +179,14 @@ export default function SpecificDate({
               }}
             />
           </Grid>
-          <Grid xs={8.5} sx={localstyles.tableCell} key={date.id + 'timePick'}>
+          <Grid xs={9} sx={localstyles.tableCell} key={date.id + 'timePick'}>
             <CustomTimePicker
               setTime={(periods) => handleTimePick(periods, date.id)}
               multiple={true}
               defaultTime={date.timePeriod}
             />
           </Grid>
-          <Grid xs={0.5} sx={localstyles.tableCell} key={date.id + 'delete'}>
+          <Grid xs={0.5} sx={localstyles.tableCell} style={{justifyContent: 'end'}} key={date.id + 'delete'}>
             <IconButton onClick={() => handleRemoveDate(date.id)}>
               <DeleteOutlineIcon className="text-[#ACACAC]" />
             </IconButton>

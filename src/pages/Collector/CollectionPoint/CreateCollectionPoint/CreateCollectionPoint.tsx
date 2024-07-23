@@ -714,7 +714,7 @@ function CreateCollectionPoint() {
       <Box
         sx={
           (styles.innerScreen_container,
-          { paddingLeft: { xs: 0 }, width: '100%' })
+          { paddingLeft: { xs: 0 }, width: '80%' })
         }
       >
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">

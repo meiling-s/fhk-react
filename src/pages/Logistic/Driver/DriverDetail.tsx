@@ -392,7 +392,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                     onCloseHeader: onClose,
                     onSubmit: handleSubmit,
                     onDelete: handleSubmit,
-                    subTitle: driver ? driver.driverId.toString() : ''
+                    subTitle: driver?.labelId ? driver.labelId.toString() : ''
                 }}
             >
                 <Divider />
