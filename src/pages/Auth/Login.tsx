@@ -179,7 +179,7 @@ const Login = () => {
             }
             createUserActivity(userName, userActivity)
           }
-          initBroadcastMessage();
+          // await initBroadcastMessage();
           setWarningMsg(' ')
           //console.log(`Token: ${localStorage.getItem(localStorgeKeyName.keycloakToken)}`);
           localStorage.setItem(
