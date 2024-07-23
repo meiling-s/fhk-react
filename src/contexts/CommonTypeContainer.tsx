@@ -34,7 +34,8 @@ import {
 import { randomBackgroundColor, returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 import { getWeightUnit } from '../APICalls/ASTD/recycling'
-import { getAllTenant } from '../APICalls/tenantManage'
+import { getAllTenant, getTenantById } from '../APICalls/tenantManage'
+import { localStorgeKeyName } from '../constants/constant'
 
 const CommonType = () => {
   const [colPointType, setColPointType] = useState<colPointType[]>()
@@ -57,8 +58,10 @@ const CommonType = () => {
   const pageSize = 10
   const [decimalVal, setDecimalVal] = useState<number>(0)
   const [dateFormat, setDateFormat] = useState<string>('')
-  const [companies, setCompanies] = useState<Company[]>([])
-
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [currentTenant, setCurrentTenant] = useState<Company| null>(null);
+  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId);
+  
   const getColPointType = async () => {
     var colPointType = []
     try {
@@ -324,6 +327,23 @@ const CommonType = () => {
     }
   }
 
+  const getTenantLogin = async () => {
+    try {
+      if(!tenantId) return
+      const response =  await getTenantById(Number(tenantId));
+      if(response.data){
+        const tenant:Company = {
+          nameEng: response.data.companyNameEng ?? response.data.companyNameEng ?? '',
+          nameSchi: response.data.companyNameSchi ?? '',
+          nameTchi: response.data.companyNameTchi ?? '',
+        }
+        setCurrentTenant(tenant)
+      }
+    } catch (error) {
+      return null
+    }
+  }
+
   const updateCommonTypeContainer = () => {
     getColPointType()
     getPremiseType()
@@ -340,6 +360,7 @@ const CommonType = () => {
     getDecimalVal()
     getDateFormat()
     initCompaniesData()
+    getTenantLogin()
   }
 
   useEffect(() => {
@@ -360,6 +381,7 @@ const CommonType = () => {
       initWeightUnit()
       getDateFormat()
       initCompaniesData()
+      getTenantLogin()
     }
   }, [])
 
@@ -381,6 +403,7 @@ const CommonType = () => {
     weightUnits,
     dateFormat,
     companies,
+    currentTenant,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,

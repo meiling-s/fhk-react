@@ -36,7 +36,8 @@ import {
   getAllCheckInRequests,
   updateCheckinStatus,
   getCheckinReasons,
-  updateCheckin
+  updateCheckin,
+  getDetailCheckInRequests
 } from '../../APICalls/Collector/warehouseManage'
 import { CheckInWarehouse, updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
@@ -60,6 +61,8 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 import { getPicoById } from '../../APICalls/Collector/pickupOrder/pickupOrder'
+import { getTenantById } from '../../APICalls/tenantManage'
+import { getWarehouseById } from '../../APICalls/warehouseManage'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -279,7 +282,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
       reason: confirmReason,
       updatedBy: loginId
     }
-    console.log('hit', checkedCheckIn)
+    
   
     const results = await Promise.allSettled(
       checkedCheckIn.map(async (checkInId) => {
@@ -400,7 +403,7 @@ function ShipmentManage() {
   const [reasonList, setReasonList] = useState<any>([])
   const { dateFormat } = useContainer(CommonTypeContainer)
   const { localeTextDataGrid } = useLocaleTextDataGrid();
-  const { logisticList, manuList, collectorList } = useContainer(CommonTypeContainer)
+  const { logisticList, manuList, collectorList, companies, currentTenant } = useContainer(CommonTypeContainer)
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   const getRejectReason = async () => {
@@ -529,6 +532,52 @@ function ShipmentManage() {
     }
   }
 
+  const getCompanyNameById = (id:number):string => {
+    let { ENUS, ZHCH, ZHHK } = Languages
+    let companyName:string = '';
+    const company = companies.find(item => item.id === id);
+    if(company){
+      if(i18n.language === ENUS) companyName = company.nameEng ?? ''
+      if(i18n.language === ZHCH) companyName = company.nameSchi ?? ''
+      if(i18n.language === ZHHK) companyName = company.nameTchi ?? ''
+    }
+
+    return companyName
+  }
+
+  const getRecepientCompany = ():string => {
+    let recipientCompany:string = '';
+    if(i18n.language === Languages.ENUS) recipientCompany = currentTenant?.nameEng ?? ''
+    if(i18n.language === Languages.ZHCH) recipientCompany = currentTenant?.nameSchi ?? ''
+    if(i18n.language === Languages.ZHHK) recipientCompany = currentTenant?.nameTchi ?? ''
+    return recipientCompany;
+  }
+
+  const cacheWarehouse:any = {}
+
+  const getWarehouseAddres =  async (warehouseId: number) => {
+    let deliveryAddress:string = '';
+    if(warehouseId in cacheWarehouse) {
+      deliveryAddress = cacheWarehouse[warehouseId].address
+    } else {
+      const warehouse = await getWarehouseDetail(warehouseId);
+
+      if(warehouse){
+        cacheWarehouse[warehouseId] = {
+          isExist : true,
+          address: warehouse.location
+        }
+        deliveryAddress = warehouse.location
+      } else {
+        cacheWarehouse[warehouseId] = {
+          isExist : false,
+          address: ''
+        }
+      }
+    }
+    return deliveryAddress
+  }
+
   const initCheckInRequest = async () => {
     try {
       const result = await getAllCheckInRequests(page - 1, pageSize, query)
@@ -537,33 +586,25 @@ function ShipmentManage() {
         if (data && data.length > 0) {
             const newData:CheckIn[] = [];
             for(let item of data){
-              if(item.picoId){
-                const picoDetail = await getPicoDetail(item.picoId);
-                  if(picoDetail?.data?.pickupOrderDetail[0]){
-                    const detail = picoDetail?.data?.pickupOrderDetail[0]
-                    item.deliveryAddress = detail?.receiverAddr ?? '-'
-                    item.recipientCompany = detail?.receiverName ?? '-' 
-                  }
-                
-              
-                 if(item?.logisticName){
-                  const companyName = getTranslationCompanyName(item.logisticName);
-                  item.logisticName = companyName === '' ? item.logisticName  : companyName
-                 }
+              const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+              item.createdAt =  dateInHK.format(`${dateFormat} HH:mm`);
 
-                 if(item.senderName){
-                  const companyName = getTranslationCompany(item.senderName)
-                  item.senderName = companyName === '' ? item.senderName  : companyName
-                 }
-
-                 if(item.recipientCompany){
-                  const companyName = getTranslationCompany(item.recipientCompany)
-                  item.recipientCompany = companyName === '' ? item.recipientCompany  : companyName
-                 }
-                 const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-                 item.createdAt =  dateInHK.format(`${dateFormat} HH:mm`);
-                 newData.push(item)
+              if(item?.logisticId){
+                const companyName = getCompanyNameById(Number(item.logisticId));
+                item.logisticName = companyName === '' ? item.logisticName  : companyName
               }
+
+              if(item.senderId){
+                const companyName = getCompanyNameById(Number(item.senderId))
+                item.senderName = companyName === '' ? item.senderName  : companyName
+              }
+
+              item.recipientCompany = getRecepientCompany()
+
+              if(item.warehouseId){
+                item.deliveryAddress = await getWarehouseAddres(item.warehouseId) ?? ''
+              }
+              newData.push(item)
             }
           // const checkinData = newData.map(transformToTableRow)
           setCheckInRequest(newData)
@@ -798,6 +839,16 @@ function ShipmentManage() {
     )
   }, [role])
 
+  const getWarehouseDetail = async (id: number) => {
+    try {
+      const warehouse = await getWarehouseById(id)
+      return warehouse.data
+    
+    } catch (error) {
+      return null
+    }
+  }
+  
   return (
     <>
       <Modal open={open} onClose={handleClose}>

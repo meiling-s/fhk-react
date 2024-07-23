@@ -32,6 +32,7 @@ import {
   showSuccessToast,
   validateEmail
 } from '../../../utils/utils'
+import UserConfirmModal from '../../../components/FormComponents/UserConfirmModal'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
@@ -103,6 +104,8 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   const [contractType, setContractType] = useState<number>(0)
   const [errors, setErrors] = useState<ErrorsStaffData>(initialErrors)
   const [staffListExisting, setStaffListExisting] = useState<Staff[]>([])
+  const [existingEmail, setExistingEmail] = useState<string[]>([])
+  const [showModalConfirm, setShowModalConfirm] = useState(false)
   const navigate = useNavigate()
 
   let staffField = [
@@ -181,6 +184,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     initLoginIdList()
     initStaffTitle()
     initStaffList()
+    getExistingEmail()
   }, [drawerOpen])
 
   const initLoginIdList = async () => {
@@ -201,6 +205,28 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         }
       })
       setLoginIdList(loginIdMapping)
+    }
+  }
+
+  const getExistingEmail = async () => {
+    try {
+      const result = await getStaffList(0, 1000, null)
+
+      if (result) {
+        let tempEmail: string[] = []
+        const data = result.data.content
+        data.map((item: any) => {
+          tempEmail.push(item.email)
+        })
+
+        setExistingEmail(tempEmail)
+        console.log('existing', existingEmail)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -250,6 +276,15 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         setContractType(1)
       }
     }
+  }
+
+  const isEmailExisting = (email: string) => {
+    const lowercaseEmail = email.toLowerCase()
+    const isExisting = existingEmail.some(
+      (existing) => existing.toLowerCase() === lowercaseEmail
+    )
+
+    return isExisting
   }
 
   const resetFormData = () => {
@@ -527,43 +562,61 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     })
   }
 
-  const handleSubmit = () => {
-    //const isvalid = validateStaff()
-    console.log('validation', validation)
-    if (validation.length === 0) {
-      const staffData: CreateStaff = {
-        tenantId: tenantId.toString(),
-        staffNameTchi: formData.staffNameTchi,
-        staffNameSchi: formData.staffNameSchi,
-        staffNameEng: formData.staffNameEng,
-        titleId: formData.titleId,
-        contactNo: formData.contactNo,
-        loginId: formData.loginId,
-        status: 'ACTIVE',
-        gender: 'M',
-        email: formData.email,
-        salutation: 'salutation',
-        createdBy: loginName,
-        updatedBy: loginName
-      }
+  const createStaffData = (): CreateStaff => ({
+    tenantId: tenantId.toString(),
+    staffNameTchi: formData.staffNameTchi,
+    staffNameSchi: formData.staffNameSchi,
+    staffNameEng: formData.staffNameEng,
+    titleId: formData.titleId,
+    contactNo: formData.contactNo,
+    loginId: formData.loginId,
+    status: 'ACTIVE',
+    gender: 'M',
+    email: formData.email,
+    salutation: 'salutation',
+    createdBy: loginName,
+    updatedBy: loginName
+  })
 
+  const handleCreateOrEditStaff = () => {
+    const staffData = createStaffData()
+    setShowModalConfirm(false)
+    handleCreateStaff(staffData)
+  }
+
+  const handleSubmit = () => {
+    if (validation.length === 0) {
+      const staffData = createStaffData()
       if (realm === Realm.collector) {
         staffData.fullTimeFlg = contractType === 0 ? true : false
       }
 
-      if (action == 'add') {
-        handleCreateStaff(staffData)
-      } else {
-        handleEditStaff()
+      // if (action == 'add') {
+      //   handleCreateStaff(staffData)
+      // } else {
+      //   handleEditStaff()
+      // }
+      if (validation.length !== 0 && action === 'add') {
+        setTrySubmited(true)
+        return
       }
+
+      action === 'add' ? handleAddStaff(staffData) : handleEditStaff()
     } else {
       setTrySubmited(true)
     }
   }
 
+  const handleAddStaff = (staffData: CreateStaff) => {
+    if (isEmailExisting(formData.email)) {
+      setShowModalConfirm(true)
+    } else {
+      setTrySubmited(true)
+      handleCreateStaff(staffData)
+    }
+  }
+
   const handleCreateStaff = async (staffData: CreateStaff) => {
-    //validate()
-    console.log('staffData', staffData)
     if (validation.length === 0) {
       const result = await createStaff(staffData)
 
@@ -837,6 +890,11 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
                 ))}
             </Grid>
           </Grid>
+          <UserConfirmModal
+            open={showModalConfirm}
+            onClose={() => setShowModalConfirm(false)}
+            onSubmit={handleCreateOrEditStaff}
+          ></UserConfirmModal>
         </Box>
       </RightOverlayForm>
     </div>

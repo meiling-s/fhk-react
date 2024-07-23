@@ -11,17 +11,22 @@ import {
   editStaff,
   createStaff,
   getLoginIdList,
-  getStaffTitle
+  getStaffTitle,
+  getStaffList
 } from '../../../APICalls/staff'
 
 import { styles } from '../../../constants/styles'
-
+import UserConfirmModal from '../../../components/FormComponents/UserConfirmModal'
 import { formErr } from '../../../constants/constant'
-import { returnErrorMsg, validateEmail } from '../../../utils/utils'
+import {
+  returnErrorMsg,
+  validateEmail,
+  extractError
+} from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
-
-import { localStorgeKeyName } from '../../../constants/constant'
+import { useNavigate } from 'react-router-dom'
+import { localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
 import {
   postUserManufacturer,
   updateUserManufacturer
@@ -65,6 +70,9 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
   const [validation, setValidation] = useState<formValidate[]>([])
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+  const [existingEmail, setExistingEmail] = useState<string[]>([])
+  const [showModalConfirm, setShowModalConfirm] = useState(false)
+  const navigate = useNavigate()
 
   const staffField = [
     {
@@ -114,6 +122,7 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
   useEffect(() => {
     initLoginIdList()
     initStaffTitle()
+    getExistingEmail()
   }, [drawerOpen])
 
   const initLoginIdList = async () => {
@@ -143,6 +152,28 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
         })
       })
       setStaffTitleList(staffTitle)
+    }
+  }
+
+  const getExistingEmail = async () => {
+    try {
+      const result = await getStaffList(0, 1000, null)
+
+      if (result) {
+        let tempEmail: string[] = []
+        const data = result.data.content
+        data.map((item: any) => {
+          tempEmail.push(item.email)
+        })
+
+        setExistingEmail(tempEmail)
+        console.log('existing', existingEmail)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -240,27 +271,60 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
     })
   }
 
+  const isEmailExisting = (email: string) => {
+    const lowercaseEmail = email.toLowerCase()
+    const isExisting = existingEmail.some(
+      (existing) => existing.toLowerCase() === lowercaseEmail
+    )
+
+    return isExisting
+  }
+
+  const createStaffData = (): CreateStaff => ({
+    tenantId: tenantId.toString(),
+    staffNameTchi: formData.staffNameTchi,
+    staffNameSchi: formData.staffNameSchi,
+    staffNameEng: formData.staffNameEng,
+    titleId: formData.titleId,
+    contactNo: formData.contactNo,
+    loginId: formData.loginId,
+    status: 'ACTIVE',
+    gender: 'M',
+    email: formData.email,
+    salutation: 'salutation',
+    createdBy: loginName,
+    updatedBy: loginName
+  })
+
+  const handleCreateOrEditStaff = () => {
+    const staffData = createStaffData()
+    setShowModalConfirm(false)
+    handleCreateStaff(staffData)
+  }
+
   const handleSubmit = () => {
-    const staffData: CreateStaff = {
-      tenantId: tenantId.toString(),
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'ACTIVE',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      createdBy: loginName,
-      updatedBy: loginName
+    const staffData = createStaffData()
+
+    if (validation.length !== 0 && action === 'add') {
+      setTrySubmited(true)
+      return
     }
 
-    if (action == 'add') {
-      handleCreateStaff(staffData)
+    action === 'add' ? handleAddStaff(staffData) : handleEditStaff()
+
+    // if (action == 'add') {
+    //   handleCreateStaff(staffData)
+    // } else {
+    //   handleEditStaff()
+    // }
+  }
+
+  const handleAddStaff = (staffData: CreateStaff) => {
+    if (isEmailExisting(formData.email)) {
+      setShowModalConfirm(true)
     } else {
-      handleEditStaff()
+      setTrySubmited(true)
+      handleCreateStaff(staffData)
     }
   }
 
@@ -483,6 +547,11 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
                 ))}
             </Grid>
           </Grid>
+          <UserConfirmModal
+            open={showModalConfirm}
+            onClose={() => setShowModalConfirm(false)}
+            onSubmit={handleCreateOrEditStaff}
+          ></UserConfirmModal>
         </Box>
       </RightOverlayForm>
     </div>

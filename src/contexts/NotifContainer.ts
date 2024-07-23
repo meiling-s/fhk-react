@@ -107,6 +107,10 @@ const Notification = () => {
       }
   }
 
+  useEffect(() => {
+    initBroadcastMessage()
+  }, [])
+
   // useEffect(() => {
   //   if(showBroadcast){
   //     setMarginTop('30px')
