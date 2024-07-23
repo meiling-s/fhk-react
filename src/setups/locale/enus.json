@@ -357,7 +357,13 @@
       "regular_shipping": "Regular shipping",
       "one-transport": "One time transport",
       "sender_and_receiver_company": "Sender and Receiver Company",
-      "sender_and_receiver_location": "Sender and Receiver Location"
+      "sender_and_receiver_location": "Sender and Receiver Location",
+      "checkin_time": "Actual pickup datetime",
+      "checkout_time": "Actual dropoff datetime",
+      "checkin_weight": "Actual pickup weight",
+      "checkout_weight": "Actual dropoff weight",
+      "checkin_by": "Checkin person",
+      "checkout_by" :"Checkout person"
     },
     "item": {
       "detail": "Pickup Order Details",
