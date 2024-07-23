@@ -103,7 +103,7 @@
       "dateOutOfRange": "指定日期超出開放日期範圍",
       "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期",
-      "cantBeSame":"不能相同"
+      "cantBeSame": "不能相同"
     }
   },
   "component": {
@@ -780,7 +780,7 @@
     "search": "搜索",
     "company": "公司",
     "place": "地點",
-    "search_placeholder": "输入采购订单号",
+    "search_placeholder": "采購訂單號",
     "any": "任何",
     "send_in": "送入",
     "ship": "出貨",
