@@ -353,7 +353,13 @@
       "regular_shipping": "常規運輸",
       "one-transport": "一次性運輸",
       "sender_and_receiver_company": "寄件和收件公司",
-      "sender_and_receiver_location": "回收和到達地點"
+      "sender_and_receiver_location": "回收和到達地點",
+      "checkin_time": "實際送出時間",
+      "checkout_time": "實際到達時間",
+      "checkin_weight": "實際提取重量",
+      "checkout_weight": "實際送出重量",
+      "checkin_by": "送出負責人",
+      "checkout_by" :"提取負責人"
     },
     "item": {
       "detail": "運單詳情",
