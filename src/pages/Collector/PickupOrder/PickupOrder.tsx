@@ -364,8 +364,14 @@ const PickupOrders = () => {
       }
     ]
   }
-  const { recycType, dateFormat, manuList, collectorList, logisticList, companies } =
-    useContainer(CommonTypeContainer)
+  const {
+    recycType,
+    dateFormat,
+    manuList,
+    collectorList,
+    logisticList,
+    companies
+  } = useContainer(CommonTypeContainer)
   const [actions, setActions] = useState<'add' | 'edit' | 'delete'>('add')
   // const {pickupOrder} = useContainer(CheckInRequestContainer)
   const [recycItem, setRecycItem] = useState<il_item[]>([])
@@ -467,9 +473,9 @@ const PickupOrders = () => {
   async function initCompaniesData() {
     try {
       const result = await getAllTenant(1 - 1, 1000)
-      if(result){
+      if (result) {
         const data = result?.data.content
-        const mappingData:Company[] = data.map((item:any) => {
+        const mappingData: Company[] = data.map((item: any) => {
           return {
             id: item?.tenantId,
             nameEng: item?.companyNameEng,
@@ -481,7 +487,6 @@ const PickupOrders = () => {
           // setCompanies(mappingData)
         }
       }
-
     } catch (error: any) {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
@@ -503,39 +508,54 @@ const PickupOrders = () => {
       let data = result?.data.content
       if (data && data.length > 0) {
         data = data.map((item: any) => {
-          if(item.logisticId){
-            const logistic = companies.find(company => company.id == item.logisticId);
-            if(logistic){
-              if(i18n.language === Languages.ENUS) item.logisticName = logistic.nameEng
-              if(i18n.language === Languages.ZHCH) item.logisticName = logistic.nameSchi
-              if(i18n.language === Languages.ZHHK) item.logisticName = logistic.nameTchi
+          if (item.logisticId) {
+            const logistic = companies.find(
+              (company) => company.id == item.logisticId
+            )
+            if (logistic) {
+              if (i18n.language === Languages.ENUS)
+                item.logisticName = logistic.nameEng
+              if (i18n.language === Languages.ZHCH)
+                item.logisticName = logistic.nameSchi
+              if (i18n.language === Languages.ZHHK)
+                item.logisticName = logistic.nameTchi
             }
           }
 
-          for(let detail of item?.pickupOrderDetail){
-            const { receiverId, senderId } = detail;
+          for (let detail of item?.pickupOrderDetail) {
+            const { receiverId, senderId } = detail
 
-            if(receiverId){
-              const receiverName = companies.find(company => company.id == receiverId)
-              if(receiverName) {
-                if(i18n.language === Languages.ENUS)  detail.receiverName = receiverName.nameEng
-                if(i18n.language === Languages.ZHCH)  detail.receiverName = receiverName.nameSchi
-                if(i18n.language === Languages.ZHHK)  detail.receiverName = receiverName.nameTchi
+            if (receiverId) {
+              const receiverName = companies.find(
+                (company) => company.id == receiverId
+              )
+              if (receiverName) {
+                if (i18n.language === Languages.ENUS)
+                  detail.receiverName = receiverName.nameEng
+                if (i18n.language === Languages.ZHCH)
+                  detail.receiverName = receiverName.nameSchi
+                if (i18n.language === Languages.ZHHK)
+                  detail.receiverName = receiverName.nameTchi
               }
             }
-  
-            if(senderId){
-              const senderName = companies.find(company => company.id == senderId)
-              if(senderName){
-                if(i18n.language === Languages.ENUS)  detail.senderName = senderName.nameEng
-                if(i18n.language === Languages.ZHCH)  detail.senderName = senderName.nameSchi
-                if(i18n.language === Languages.ZHHK)  detail.senderName = senderName.nameTchi
+
+            if (senderId) {
+              const senderName = companies.find(
+                (company) => company.id == senderId
+              )
+              if (senderName) {
+                if (i18n.language === Languages.ENUS)
+                  detail.senderName = senderName.nameEng
+                if (i18n.language === Languages.ZHCH)
+                  detail.senderName = senderName.nameSchi
+                if (i18n.language === Languages.ZHHK)
+                  detail.senderName = senderName.nameTchi
               }
             }
           }
 
           //const pickupOrderDetail = item?.pickupOrderDetail[0];
-          
+
           // const { receiverId, senderId } = pickupOrderDetail;
 
           // if(receiverId){
@@ -831,7 +851,9 @@ const PickupOrders = () => {
             (detail) => detail.senderName === query.senderName
           ).length > 0
             ? query.senderName
-            : item.pickupOrderDetail[0].senderName,
+            : item.pickupOrderDetail.length > 0
+            ? item.pickupOrderDetail[0].senderName
+            : '-',
         receiver: item.pickupOrderDetail[0]?.receiverName,
         status: item.status,
         recyType: item.pickupOrderDetail.map((item) => {
