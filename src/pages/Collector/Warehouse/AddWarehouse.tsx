@@ -401,7 +401,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         nameValue.warehouseNameTchi.toLowerCase()
       ) {
         tempV.push({
-          field: nameValue.warehouseNameTchi,
+          field: 'warehouseNameTchi',
           error: `${t('common.traditionalChineseName')} ${t(
             'form.error.alreadyExist'
           )}`
@@ -412,7 +412,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         nameValue.warehouseNameSchi.toLowerCase()
       ) {
         tempV.push({
-          field: nameValue.warehouseNameSchi,
+          field: 'warehouseNameSchi',
           error: `${t('common.simplifiedChineseName')} ${t(
             'form.error.alreadyExist'
           )}`
@@ -423,7 +423,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         nameValue.warehouseNameEng.toLowerCase()
       ) {
         tempV.push({
-          field: nameValue.warehouseNameEng,
+          field: 'warehouseNameEng',
           error: `${t('common.englishName')} ${t('form.error.alreadyExist')}`
         })
       }
@@ -539,9 +539,17 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       })
     }
 
-    console.group('tempV')
+    const cacheValidation:any[] = [];
+  
+    for(let item of Object.values(tempV)){
+      const { field } = item;
+      const isExist = cacheValidation.find(cache => cache.field === field);
+      if(!isExist){
+        cacheValidation.push(item)
+      }
+    }
 
-    setValidation(tempV)
+    setValidation(cacheValidation)
   }, [nameValue, place, contractNum, recycleCategory])
 
   const checkString = (s: string) => {
@@ -805,7 +813,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete,
+          onDelete: onDeleteModal,
           deleteText: t('common.deleteMessage')
         }}
       >

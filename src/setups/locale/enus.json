@@ -623,7 +623,7 @@
     "vehicle": "Vehicle",
     "serviceType": "Service Type",
     "vehicleType": "Vehicle Category",
-    "licensePlate": "License Plate",
+    "licensePlate": "Vehicle plate no.",
     "please_enter_pla_number": "Please enter the plate number",
     "picture": "Picture",
     "basic": "Basic",
