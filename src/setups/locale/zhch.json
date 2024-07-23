@@ -775,7 +775,8 @@
     "successDeleteUser": "成功删除用户",
     "failedDeleteUser": "删除用户失败",
     "resetPasswaitApproval": "重置密码等待批准",
-    "resetPassword": "重设密码"
+    "resetPassword": "重设密码",
+    "emailIsExisting": "电邮地址已经被使用过, 请问要继续吗?"
   },
   "checkinandcheckout": {
     "checkinandcheckout": "概覽",
