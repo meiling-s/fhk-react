@@ -356,12 +356,12 @@
       "one-transport": "一次性运输",
       "sender_and_receiver_company": "寄件和收件公司",
       "sender_and_receiver_location": "送出和到达地点",
-      "checkin_time": "实际送出时间",
-      "checkout_time": "实际到达时间",
+      "checkin_time": "实际到达时间",
+      "checkout_time": "实际送出时间",
       "checkin_weight": "实际提取重量",
       "checkout_weight": "实际送出重量",
-      "checkin_by": "送出负责人",
-      "checkout_by" :"提取负责人"
+      "checkin_by": "提取负责人",
+      "checkout_by" :"送出负责人"
     },
     "item": {
       "detail": "运单详情",
