@@ -980,7 +980,7 @@
       "table": {
         "driverId": "司机号码",
         "driverSchiName": "司机简体中文名称",
-        "driverEngName": "Driver English Name",
+        "driverEngName": "司机英文名称",
         "gender": "性别",
         "loginName": "登入名称",
         "contactNo": "联络电话",
