@@ -426,8 +426,8 @@
       "weight": "Estimated Weight",
       "sender_name": "Sender Company",
       "receiver": "Receiver Company",
-      "recycling_location": "Recycling Location",
-      "arrived": "Arrival Location"
+      "recycling_location": "Sender Location",
+      "arrived": "Receiver Location"
     },
     "recyclForm": {
       "new": "New",
