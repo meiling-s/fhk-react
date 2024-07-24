@@ -628,8 +628,8 @@
     "loading_capacity": "载重量 (kg)"
   },
   "inventory": {
-    "inventory": "回收点",
-    "recyclingInformation": "回收点资讯",
+    "inventory": "存货",
+    "recyclingInformation": "存货",
     "date": "日期",
     "recyleType": "主类别",
     "recyleSubType": "次类别",
@@ -686,7 +686,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "回收厂",
+    "warehouse": "概览",
     "currentCapacity": "现时容量",
     "thereStillEnoughSpace": "尚有大量空间",
     "noMoreRoom": "没有空间了",
@@ -981,7 +981,7 @@
       "table": {
         "driverId": "司机号码",
         "driverSchiName": "司机简体中文名称",
-        "driverEngName": "Driver English Name",
+        "driverEngName": "司机英文名称",
         "gender": "性别",
         "loginName": "登入名称",
         "contactNo": "联络电话",
@@ -1261,8 +1261,8 @@
   },
   "dashboard_recyclables": {
     "data": "数据",
-    "recyclable": "回收物",
-    "recycling_data": "回收物数据",
+    "recyclable": "回收物仪表盘",
+    "recycling_data": "回收物仪表盘",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "时间范围",
     "recycling_point": "回收点",
@@ -1275,7 +1275,7 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "集电极"
+    "collector": "回收物仪表盘"
   },
   "dashboard_manufacturer": {
     "data": "数据",
