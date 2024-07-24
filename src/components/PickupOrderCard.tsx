@@ -2,6 +2,7 @@ import { Box, Icon, Stack, Typography } from '@mui/material'
 import CustomField from './FormComponents/CustomField'
 import StatusCard from './StatusCard'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
@@ -11,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { formatWeight } from '../utils/utils'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../contexts/CommonTypeContainer'
+import dayjs from 'dayjs';
 
 const PickupOrderCard = ({
   pickupOrderDetail
@@ -24,6 +26,11 @@ const PickupOrderCard = ({
 
   pickupOrderDetail = pickupOrderDetail.sort((prevItem, nextItem) => prevItem.pickupAt.localeCompare(nextItem.pickupAt));
 
+  const formattedTime = (value: string) => {
+    const dateObject = dayjs(value)
+    return dateObject.utc().format('YYYY-MM-DD HH:mm')
+  }
+  
   return (
     <>
       {pickupOrderDetail.map((podetail, index) => (
@@ -173,6 +180,121 @@ const PickupOrderCard = ({
               </Typography>
             </Box>
           </Box>
+          { (podetail.checkInBy || podetail.checkOutBy) && 
+          <Box
+            p={'10px'}
+            bgcolor={'#FBFBFB'}
+          >
+            {podetail.checkInAt && 
+            
+          <Box display="flex">
+            <Box display="flex" width={'150px'} alignItems={"center"}>
+            <Icon
+                sx={{
+                  justifySelf: 'center',
+                  display: 'flex',
+                  mr: '5px',
+                  color: '#79CA25'
+                }}
+              >
+                <AccessTimeIcon />
+              </Icon>
+              <Typography style={localstyles.mini_title_green}>
+                {t('pick_up_order.card_detail.checkin_time')}
+              </Typography>
+            </Box>
+            <Typography ml="60px" style={localstyles.mini_value}>
+            {formattedTime(podetail.checkInAt)}
+            </Typography>
+          </Box>
+            }
+            {podetail.checkOutAt && 
+            
+            <Box display="flex">
+              <Box display="flex" width={'150px'} alignItems={"center"}>
+                <Typography style={localstyles.mini_title_green} ml={"30px"}>
+                  {t('pick_up_order.card_detail.checkout_time')}
+                </Typography>
+              </Box>
+              <Typography ml="60px" style={localstyles.mini_value}>
+              {formattedTime(podetail.checkOutAt)}
+              </Typography>
+            </Box>
+              }
+              {podetail.checkInWeight && 
+            
+            <Box display="flex">
+              <Box display="flex" width={'150px'} alignItems={"center"}>
+              <Icon
+                  sx={{
+                    justifySelf: 'center',
+                    display: 'flex',
+                    mr: '5px',
+                    color: '#79CA25'
+                  }}
+                >
+                  <MonitorWeightOutlinedIcon />
+                </Icon>
+                <Typography style={localstyles.mini_title_green}>
+                  {t('pick_up_order.card_detail.checkin_weight')}
+                </Typography>
+              </Box>
+              <Typography ml="60px" style={localstyles.mini_value}>
+                { formatWeight(podetail.checkInWeight, decimalVal)} kg
+              </Typography>
+            </Box>
+              }
+              {podetail.checkOutWeight && 
+            
+            <Box display="flex">
+              <Box display="flex" width={'150px'} alignItems={"center"}>
+                <Typography style={localstyles.mini_title_green} ml={"30px"}>
+                  {t('pick_up_order.card_detail.checkout_weight')}
+                </Typography>
+              </Box>
+              <Typography ml="60px" style={localstyles.mini_value}>
+                { formatWeight(podetail.checkOutWeight, decimalVal)} kg
+              </Typography>
+            </Box>
+              }
+              {podetail.checkInBy && 
+            
+            <Box display="flex">
+              <Box display="flex" width={'150px'} alignItems={"center"}>
+              <Icon
+                  sx={{
+                    justifySelf: 'center',
+                    display: 'flex',
+                    mr: '5px',
+                    color: '#79CA25'
+                  }}
+                >
+                  <PersonOutlineIcon />
+                </Icon>
+                <Typography style={localstyles.mini_title_green}>
+                  {t('pick_up_order.card_detail.checkin_by')}
+                </Typography>
+              </Box>
+              <Typography ml="60px" style={localstyles.mini_value}>
+                {podetail.checkInBy}
+              </Typography>
+            </Box>
+              }
+            {podetail.checkOutBy && 
+            
+            <Box display="flex">
+              <Box display="flex" width={'150px'} alignItems={"center"}>
+                <Typography style={localstyles.mini_title_green} ml={"30px"}>
+                  {t('pick_up_order.card_detail.checkout_by')}
+                </Typography>
+              </Box>
+              <Typography ml="60px" style={localstyles.mini_value}>
+                {podetail.checkOutBy}
+              </Typography>
+            </Box>
+              }
+          </Box>
+          }
         </Stack>
       ))}
     </>
@@ -191,6 +313,11 @@ const localstyles = {
   mini_title: {
     fontSize: '12px',
     color: '#acacac',
+    letterSpacing: '1px'
+  },
+  mini_title_green: {
+    fontSize: '12px',
+    color: '#79CA25',
     letterSpacing: '1px'
   },
   mini_value: {
