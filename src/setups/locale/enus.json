@@ -628,7 +628,7 @@
   },
   "inventory": {
     "inventory": "Inventory",
-    "recyclingInformation": "Inventory Information",
+    "recyclingInformation": "Inventory",
     "date": "Date",
     "recyleType": "Recyclable Type",
     "recyleSubType": "Recyclable Sub-type",
@@ -685,7 +685,7 @@
     "deleteProcessOutFailed": "Delete process out failed"
   },
   "warehouseDashboard": {
-    "warehouse": "Warehouse",
+    "warehouse": "Overview",
     "currentCapacity": "Current Capacity",
     "thereStillEnoughSpace": "There's still enough space",
     "noMoreRoom": "No more room",
@@ -1263,8 +1263,8 @@
   },
   "dashboard_recyclables": {
     "data": "Dashboard",
-    "recyclable": "Recyclables",
-    "recycling_data": "Recycling Data",
+    "recyclable": "Reyclables Dashboard",
+    "recycling_data": "Reyclables Dashboard",
     "different_recycling_weights": "Different recycling weights",
     "date_range": "Date range",
     "recycling_point": "Recycling point",
@@ -1277,7 +1277,7 @@
     "rechargeable_battery": "Rechargeable battery",
     "compact_fluorescent": "Compact fluorescent lamps and light tubes",
     "paper_drink_box": "Paper drink box",
-    "collector": "Collector"
+    "collector": "Reyclables Dashboard"
   },
   "dashboard_manufacturer": {
     "data": "Data",

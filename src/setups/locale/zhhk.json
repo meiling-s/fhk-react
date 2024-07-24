@@ -624,8 +624,8 @@
     "loading_capacity": "載重量 (kg)"
   },
   "inventory": {
-    "inventory": "回收點",
-    "recyclingInformation": "回收點資訊",
+    "inventory": "存貨",
+    "recyclingInformation": "存貨",
     "date": "日期",
     "recyleType": "主類別",
     "recyleSubType": "次類別",
@@ -682,7 +682,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "回收厰",
+    "warehouse": "概覽",
     "currentCapacity": "現時容量",
     "thereStillEnoughSpace": "尚有大量空間",
     "noMoreRoom": "沒有空間了",
@@ -999,6 +999,7 @@
           "engText": "請輸入名稱",
           "linsenceName": "駕駛執照編號",
           "linsenceText": "駕駛執照編號",
+          "uploadLinsence": "上载驾驶执照",
           "": "上載駕駛執照",
           "carType": "車輛類別",
           "carTypeSelect": "請選擇",
@@ -1257,8 +1258,8 @@
   },
   "dashboard_recyclables": {
     "data": "數據",
-    "recyclable": "回收物",
-    "recycling_data": "回收物數據",
+    "recyclable": "回收物儀表盤",
+    "recycling_data": "回收物儀表盤",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "日期範圍",
     "recycling_point": "回收点",
@@ -1271,7 +1272,7 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "回收公司"
+    "collector": "回收物儀表盤"
   },
   "dashboard_manufacturer": {
     "data": "數據",
