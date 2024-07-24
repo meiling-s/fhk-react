@@ -20,6 +20,14 @@ export interface PickupOrderDetail {
     recycType:    string;
     recycSubType: string;
     weight:       number;
+    checkInWeight?: number | null,
+    checkInUnitId?: number | null,
+    checkInAt?: string | null,
+    checkInBy?: string | null,
+    checkOutWeight?: number | null,
+    checkOutUnitId?: number | null,
+    checkOutAt?: string | null,
+    checkOutBy?: string | null,
 }
 
 export interface PickupOrder {
