@@ -169,9 +169,13 @@ const UserAccount: FunctionComponent = () => {
   }
 
   useEffect(() => {
-    fetchDataUserAccount()
+    // fetchDataUserAccount()
     initForgetPassList()
-  }, [action, drawerOpen, currentLanguage, i18n, currentLanguage, page])
+  }, [action, drawerOpen, currentLanguage, i18n, currentLanguage])
+
+  useEffect(() => {
+    fetchDataUserAccount()
+  }, [page])
 
   const addDataWarehouse = () => {
     setDrawerOpen(true)
@@ -230,6 +234,13 @@ const UserAccount: FunctionComponent = () => {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
+
+  useEffect(() => {
+    if(userAccountItems.length === 0 && page > 1 && !selectedAccount){
+      // move backward to previous page once data deleted from last page (no data left on last page)
+      setPage(prev => prev - 1)
+    }
+  }, [userAccountItems])
 
   return (
     <Box
