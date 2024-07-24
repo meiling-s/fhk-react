@@ -28,6 +28,7 @@ export type processOutImage = {
     address: string
     packageTypeId: string
     packageName: string
+    labelId?: string
   }
   
   export type CreateRecyclable = {

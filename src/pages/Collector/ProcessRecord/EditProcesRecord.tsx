@@ -325,7 +325,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
           action={'none'}
           headerProps={{
             title: t('processRecord.processingRecords'),
-            subTitle: selectedRow?.processOutId.toString(),
+            subTitle: selectedRow?.labelId ? selectedRow?.labelId.toString() : '',
             onSubmit: onSaveData,
             onDelete: handleDrawerClose,
             onCloseHeader: handleDrawerClose,
