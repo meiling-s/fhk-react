@@ -59,7 +59,8 @@ function createProcessRecord(
   updatedAt: string,
   address: string,
   packageTypeId: string,
-  packageName: string
+  packageName: string,
+  labelId?: string
 ): ProcessOut {
   return {
     processOutId,
@@ -72,7 +73,8 @@ function createProcessRecord(
     updatedAt,
     address,
     packageTypeId,
-    packageName
+    packageName,
+    labelId
   }
 }
 
@@ -138,7 +140,8 @@ const ProcessRecord: FunctionComponent = () => {
                 item?.updatedAt,
                 item?.address,
                 item?.processTypeId,
-                processName || '-'
+                processName || '-',
+                item.labelId
               )
             )
           })
@@ -204,7 +207,7 @@ const ProcessRecord: FunctionComponent = () => {
       }
     },
     {
-      field: 'processOutId',
+      field: 'labelId',
       headerName: t('processRecord.processingNumb'),
       width: 200,
       type: 'string'
