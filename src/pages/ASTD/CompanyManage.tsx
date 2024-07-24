@@ -292,7 +292,10 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
       defaultPath.tenantRegisterPath + id
     }`
 
-    const result = await sendEmailInvitation(email, id.toString().padStart(6, '0'))
+    const result = await sendEmailInvitation(
+      email,
+      id.toString().padStart(6, '0')
+    )
     if (result) {
       onSendInvitation(true)
     } else {
@@ -366,7 +369,9 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
             </Typography>
             <TextField
               fullWidth
-              value={defaultPath.tenantRegisterPath + id.toString().padStart(6, '0')}
+              value={
+                defaultPath.tenantRegisterPath + id.toString().padStart(6, '0')
+              }
               onChange={(event: { target: { value: any } }) => {
                 //console.log(event.target.value)
               }}
@@ -377,7 +382,8 @@ function InviteModal({ open, onClose, id, onSendInvitation }: inviteModal) {
                     <Button
                       onClick={() =>
                         navigator.clipboard.writeText(
-                          defaultPath.tenantRegisterPath + id.toString().padStart(6, '0')
+                          defaultPath.tenantRegisterPath +
+                            id.toString().padStart(6, '0')
                         )
                       }
                       sx={[
@@ -430,7 +436,7 @@ function InviteForm({
   onClose,
   onSubmitForm,
   isDuplicated,
-  isTenantErr,
+  isTenantErr
 }: inviteForm) {
   const { t } = useTranslation()
   //const [submitable, setSubmitable] = useState<boolean>(false)
@@ -542,7 +548,7 @@ function InviteForm({
       id: 'companyNumber',
       value: formik.values.companyNumber,
       error: formik.errors.companyNumber && formik.touched.companyNumber,
-      mandatory: false,
+      mandatory: false
     },
     {
       label: t('tenant.invite_form.company_category'),
@@ -576,7 +582,7 @@ function InviteForm({
       id: 'companyZhName',
       value: formik.values.companyZhName,
       error: formik.errors.companyZhName && formik.touched.companyZhName,
-      mandatory: true,
+      mandatory: true
     },
     {
       label: t('tenant.invite_form.company_cn_name'),
@@ -584,7 +590,7 @@ function InviteForm({
       id: 'companyCnName',
       value: formik.values.companyCnName,
       error: formik.errors.companyCnName && formik.touched.companyCnName,
-      mandatory: true,
+      mandatory: true
     },
     {
       label: t('tenant.invite_form.company_en_name'),
@@ -592,7 +598,7 @@ function InviteForm({
       id: 'companyEnName',
       value: formik.values.companyEnName,
       error: formik.errors.companyEnName && formik.touched.companyEnName,
-      mandatory: true,
+      mandatory: true
     },
     {
       label: t('tenant.invite_form.bussiness_number'),
@@ -600,7 +606,7 @@ function InviteForm({
       id: 'bussinessNumber',
       value: formik.values.bussinessNumber,
       error: formik.errors.bussinessNumber && formik.touched.bussinessNumber,
-      mandatory: true,
+      mandatory: true
     }
   ]
 
@@ -975,14 +981,14 @@ function CompanyManage() {
   }
 
   const headCells: GridColDef[] = [
-    checkboxColumn,
+    // checkboxColumn,
     {
       field: 'id',
       headerName: t('tenant.company_number'),
       type: 'string',
       width: 200,
       valueFormatter: (params) => {
-        return params.value.toString().padStart(6, '0');
+        return params.value.toString().padStart(6, '0')
       }
     },
     {
@@ -1199,15 +1205,15 @@ function CompanyManage() {
   ) => {
     if (formikValues.companyNumber && formikValues.companyNumber.length !== 6) {
       setTenantIdErr(true)
-      setIsLoadingInvite(false);
-      return;
+      setIsLoadingInvite(false)
+      return
     } else {
       try {
         setIsLoadingInvite(true)
         const realmType =
           realmOptions.find((item) => item.key == formikValues.companyCategory)
             ?.key || 'collector'
-  
+
         const result = await createInvitation(
           {
             tenantId: parseInt(formikValues.companyNumber),
@@ -1233,7 +1239,7 @@ function CompanyManage() {
           },
           realmType
         )
-  
+
         if (result?.data?.tenantId) {
           console.log(result)
           setInviteId(result?.data?.tenantId)
@@ -1258,7 +1264,6 @@ function CompanyManage() {
           setIsLoadingInvite(false)
         }
       }
-      
     }
   }
 
@@ -1339,13 +1344,14 @@ function CompanyManage() {
               getRowId={(row) => row.id}
               hideFooter
               columns={headCells}
-              checkboxSelection={false}
               disableRowSelectionOnClick
               onRowClick={handleSelectRow}
               getRowSpacing={getRowSpacing}
               localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedTenanId && params.id === selectedTenanId? 'selected-row' : ''
+              getRowClassName={(params) =>
+                selectedTenanId && params.id === selectedTenanId
+                  ? 'selected-row'
+                  : ''
               }
               sx={{
                 border: 'none',
@@ -1361,14 +1367,14 @@ function CompanyManage() {
                     borderBottom: 'none'
                   }
                 },
-                '.MuiDataGrid-columnHeaderTitle': { 
+                '.MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold !important',
                   overflow: 'visible !important'
                 },
                 '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
+                  backgroundColor: '#F6FDF2 !important',
+                  border: '1px solid #79CA25'
+                }
               }}
             />
             <Pagination
@@ -1384,7 +1390,10 @@ function CompanyManage() {
         <InviteForm
           open={invFormModal}
           isLoading={isLoadingInvite}
-          onClose={() => {setInvFormModal(false); setTenantIdErr(false)}}
+          onClose={() => {
+            setInvFormModal(false)
+            setTenantIdErr(false)
+          }}
           onSubmitForm={onInviteFormSubmit}
           isDuplicated={duplicatedData}
           isTenantErr={tenantIdErr}

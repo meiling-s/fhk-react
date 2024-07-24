@@ -114,7 +114,8 @@
       "dateSpesificIsWrong": "指定日期格式错误",
       "effectiveDateLess": "开始日期不能晚于截止日期",
       "cannotBeSame": "不能相同",
-      "shouldGreaterThanZero": " 可存容量大于零"
+      "shouldGreaterThanZero": " 可存容量大于零",
+      "cantBeSame":"不能相同"
     }
   },
   "component": {
@@ -790,16 +791,16 @@
     "creation_date": "建立日期",
     "outin": "出/入",
     "shipping_company": "寄件公司",
-    "receiver": "收件公司",
+    "receiver": "到达地点",
     "waybill_number": "運單編號",
-    "adjust_inventory": "調整庫存",
+    "adjust_inventory": "调整库存",
     "logistics_company": "物流公司",
-    "delivery_location": "送出地點",
-    "arrived": "到達地點",
+    "delivery_location": "地点",
+    "arrived": "到达地点",
     "search": "搜索",
     "company": "公司",
-    "place": "地點",
-    "search_placeholder": "輸入採購订单编号",
+    "place": "地点",
+    "search_placeholder": "输入运单编号",
     "any": "任何",
     "send": "送出",
     "send_in": "送入",
