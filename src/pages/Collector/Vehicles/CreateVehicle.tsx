@@ -294,7 +294,19 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       } else {
-        onSubmitData('error', t('common.saveFailed'))
+        // onSubmitData('error', t('common.saveFailed'))
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          setValidation(
+            [
+              {
+                field: t('common.vehicle'),
+                problem: formErr.alreadyExist,
+                type: 'error'
+              }
+            ]
+          )
+        }
+        setTrySubmited(true)
       }
     }
   }
@@ -355,7 +367,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

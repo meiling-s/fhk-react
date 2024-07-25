@@ -53,9 +53,16 @@ function createCompany(
   }
 }
 
+type Pages  = {
+  collectorlist: number, 
+  logisticlist: number,
+  manulist: number,
+  customerlist: number,
+}
+
 const Company: FunctionComponent = () => {
   const { t } = useTranslation()
-  const [page, setPage] = useState(1)
+  // const [page, setPage] = useState(1)
   const pageSize = 10
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
@@ -81,9 +88,18 @@ const Company: FunctionComponent = () => {
   const [customerData, setCustomerData] = useState<number>(0)
   const navigate = useNavigate();
   const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const [pages, setPages] = useState<Pages>(
+    {
+      collectorlist: 1, 
+      logisticlist: 1,
+      manulist: 1,
+      customerlist: 1,
+    }
+  )
   
   const initCompanyList = async (companyType: string) => {
    try {
+    const page = pages[companyType as  keyof Pages]
     const result = await getAllCompany(companyType, page - 1, pageSize)
     const data = result?.data
     // setCompanyList(data);
@@ -126,7 +142,7 @@ const Company: FunctionComponent = () => {
           break
         case 'customerlist':
           setCustomerList(companyMapping)
-          setManuData(data.setCustomerData)
+          setCustomerData(data.totalPages)
           break
         default:
           break
@@ -140,6 +156,64 @@ const Company: FunctionComponent = () => {
     }
    }
   }
+
+  const initSpecifiedCompany = async (companyType: string, page: number) => {
+    try {
+     const result = await getAllCompany(companyType, page - 1, pageSize)
+     const data = result?.data
+     if (data) {
+       var companyMapping: CompanyItem[] = []
+       const prefixItemName =
+         companyType === 'manulist'
+           ? 'manufacturer'
+           : companyType.replace('list', '')
+       data.content.map((item: any) => {
+         companyMapping.push(
+           createCompany(
+             item[`${prefixItemName}Id`],
+             item[`${prefixItemName}NameTchi`],
+             item[`${prefixItemName}NameSchi`],
+             item[`${prefixItemName}NameEng`],
+             item?.brNo,
+             item?.description,
+             item?.remark,
+             item?.status,
+             item?.createdBy,
+             item?.updatedBy,
+             item?.createdAt,
+             item?.updatedAt
+           )
+         )
+       })
+       switch (companyType) {
+         case 'collectorlist':
+           setCollectorList(companyMapping)
+           setCollectorData(data.totalPages)
+           break
+         case 'logisticlist':
+           setLogisticList(companyMapping)
+           setLogisticData(data.totalPages)
+           break
+         case 'manulist':
+           setManuList(companyMapping)
+           setManuData(data.totalPages)
+           break
+         case 'customerlist':
+           setCustomerList(companyMapping)
+           setCustomerData(data.totalPages)
+           break
+         default:
+           break
+       }
+       setTotalData(data.totalPages)
+     }
+    } catch (error:any) {
+     const {state, realm} =  extractError(error);
+     if(state.code === STATUS_CODE[503] ){
+       navigate('/maintenance')
+     }
+    }
+   }
 
   const getSelectedCompanyList = useCallback(
     (companyType: string) => {
@@ -183,7 +257,7 @@ const Company: FunctionComponent = () => {
           selectedTotalData = customerData
           break
         default:
-          selectedTotalData = 0
+          selectedTotalData = 1
           break
       }
       return selectedTotalData
@@ -198,7 +272,7 @@ const Company: FunctionComponent = () => {
   }
   useEffect(() => {
     initAllData()
-  }, [page])
+  }, [])
 
   const columns: GridColDef[] = [
     {
@@ -356,7 +430,9 @@ const Company: FunctionComponent = () => {
   }
 
   const onSubmitData = (type: string, msg: string) => {
-    initAllData()
+    // initAllData()
+    const page = getPage(selectCompanyType)
+    initSpecifiedCompany(selectCompanyType, page)
     if (type == 'success') {
       showSuccessToast(msg)
     } else {
@@ -369,6 +445,62 @@ const Company: FunctionComponent = () => {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
+
+  const onChangePage = (newPage: number, companyType:string) => {
+    initSpecifiedCompany(companyType, newPage)
+    setPages(prev => {
+      return {
+        ...prev,
+        [companyType]: newPage
+      }
+    })
+  }
+
+  const getPage = (companyType:string)  => {
+    return pages[companyType as  keyof Pages]
+  }
+
+  useEffect(() => {
+    if(collectorList.length === 0 && pages.collectorlist > 1){
+      setPages(prev => {
+        return{
+          ...prev,
+          'collectorlist': pages.collectorlist - 1
+        }
+      })
+    }
+    if(manuList.length === 0 && pages.manulist > 1){
+      setPages(prev => {
+        return{
+          ...prev,
+          'manulist': pages.manulist - 1
+        }
+      })
+    }
+    if(logisticList.length === 0 && pages.logisticlist > 1){
+      setPages(prev => {
+        return{
+          ...prev,
+          'logisticlist': pages.logisticlist - 1
+        }
+      })
+    }
+    if(customerList.length === 0 && pages.customerlist > 1){
+      setPages(prev => {
+        return{
+          ...prev,
+          'customerlist': pages.customerlist - 1
+        }
+      })
+    }
+  }, [collectorList, manuList, logisticList, customerList]);
+
+  useEffect(() => {
+    if(selectCompanyType){
+      const page = getPage(selectCompanyType)
+      initSpecifiedCompany(selectCompanyType, page)
+    } 
+  }, [pages])
 
   return (
     <>
@@ -459,10 +591,12 @@ const Company: FunctionComponent = () => {
                 />
                 <Pagination
                   className="mt-4"
+                  id={item}
                   count={Math.ceil(getSelectedTotalCompany(item))}
-                  page={page}
+                  page={getPage(item)}
                   onChange={(_, newPage) => {
-                    setPage(newPage)
+                    onChangePage(newPage, item)
+                    // setPage(newPage)
                   }}
                 />
               </Box>

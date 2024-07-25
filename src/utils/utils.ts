@@ -98,8 +98,12 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
     case formErr.incorrectAddress:
       msg = t('form.error.incorrectAddress')
       break
+    case formErr.cannotBeSame:
+      msg = t('form.error.cannotBeSame')
+      break
     case formErr.cantBeSame:
       msg = t('form.error.cantBeSame')
+      break
   }
   return msg
 }

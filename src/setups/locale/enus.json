@@ -34,7 +34,17 @@
     "statusCode": "status Code",
     "noOptions": "No options",
     "start_date_at": "Validity Date From",
-    "submit": "Submit"
+    "submit": "Submit",
+    "deleteMessage": "Are you sure to delete?",
+    "collectorName": "Collector Name",
+    "logisticName": "Logistic Name",
+    "customerName": "Customer Name",
+    "manufacturerName": "Manufacturer Name",
+    "reasonName": "Reason Name",
+    "packageName": "Package Type Name already exist",
+    "warehouseName": "Warehouse Name already Exist",
+    "vehicle": "Vehicle",
+    "theNameAlreadyExist": "Staff position name already exist"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -103,6 +113,7 @@
       "dateOutOfRange": "Specify date(s) is out of the Effective date range",
       "dateSpesificIsWrong": "Specify date(s) is in wrong format",
       "effectiveDateLess": "Effective from date should not later than Effective to date",
+      "cannotBeSame": "cannot be the same",
       "shouldGreaterThanZero": "Storage capacity should be greater then Zero",
       "cantBeSame":"cannot be the same"
     }
@@ -427,8 +438,8 @@
       "weight": "Estimated Weight",
       "sender_name": "Sender Company",
       "receiver": "Receiver Company",
-      "recycling_location": "Recycling Location",
-      "arrived": "Arrival Location"
+      "recycling_location": "Sender Location",
+      "arrived": "Receiver Location"
     },
     "recyclForm": {
       "new": "New",
@@ -441,8 +452,8 @@
       "weight": "Estimated Weight",
       "shipping_company": "Sender Company",
       "receiver": "Receiver Company",
-      "recycling_location": "Recycling Location",
-      "arrived": "Arrival Location",
+      "recycling_location": "Sender Location",
+      "arrived": "Receiver Location",
       "placeholder": "Please Enter Location"
     },
     "select_po": "Choose pickup order",
@@ -619,7 +630,7 @@
     "vehicle": "Vehicle",
     "serviceType": "Service Type",
     "vehicleType": "Vehicle Category",
-    "licensePlate": "License Plate",
+    "licensePlate": "Vehicle plate no.",
     "please_enter_pla_number": "Please enter the plate number",
     "picture": "Picture",
     "basic": "Basic",
@@ -1062,7 +1073,10 @@
     "currency_category": "Currency Category",
     "introduction": "Description",
     "monetary": "Monetary",
-    "contract_number": "Contract Number"
+    "contract_number": "Contract Number",
+    "contract_number_must_be_different": "Contract Number and Reference number",
+    "packageNameAlreadyExist": "Package Type Name",
+    "disposalLocation": "Disposal Location"
   },
   "packaging_unit": {
     "packaging_unit": "Packaging Unit",

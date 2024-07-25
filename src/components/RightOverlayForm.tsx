@@ -18,6 +18,7 @@ type HeaderProps = {
   onDelete?: () => void
   action?: 'add' | 'edit' | 'delete' | 'none'
   statusLabel?: string
+  deleteText?: string
 }
 
 type RightOverlayFormProps = {
@@ -39,7 +40,8 @@ const HeaderSection: React.FC<HeaderProps> = ({
   onSubmit,
   onDelete,
   action = 'add',
-  statusLabel
+  statusLabel,
+  deleteText
 }) => {
   const [openDelete, setOpenDelete] = useState<boolean>(false)
 
@@ -123,6 +125,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
           open={openDelete}
           onClose={onDeleteModal}
           onDelete={onDeleteClick}
+          deleteText={deleteText}
         />
       </div>
   )

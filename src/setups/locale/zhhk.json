@@ -34,7 +34,17 @@
     "statusCode": "狀態碼",
     "noOptions": "無選項",
     "start_date_at": "有效日期由",
-    "submit": "提交"
+    "submit": "提交",
+    "deleteMessage": "你確定要刪除嗎？",
+    "collectorName": "收藏家姓名",
+    "logisticName": "物流名稱",
+    "customerName": "顧客姓名",
+    "manufacturerName": "生產商名稱",
+    "reasonName": "原因名稱",
+    "packageName": "包裝單位名稱已存在",
+    "warehouseName": "倉庫名稱已存在",
+    "vehicle": "車輛",
+    "theNameAlreadyExist": "員工職位名稱已存在"
   },
   "col": {
     "createCP": "建立回收點",
@@ -103,6 +113,7 @@
       "dateOutOfRange": "指定日期超出開放日期範圍",
       "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期",
+      "cannotBeSame": "不能相同",
       "cantBeSame": "不能相同"
     }
   },
@@ -1044,7 +1055,7 @@
     "start_date": "開始日期",
     "end_date": "結束日期",
     "remark": "備註",
-    "enter_remark": "請輸入文字",
+    "enter_remark": "請輸入備註",
     "whether": "是否EPD",
     "default_currency": "預設貨幣",
     "activate": "啟用",
@@ -1059,7 +1070,10 @@
     "currency_category": "貨幣類別",
     "introduction": "簡介",
     "monetary": "名稱",
-    "contract_number": "編號"
+    "contract_number": "編號",
+    "contract_number_must_be_different": "合約編號和參考編號",
+    "packageNameAlreadyExist": "封裝類型名稱",
+    "disposalLocation": "處置地點"
   },
   "packaging_unit": {
     "packaging_unit": "包裝單位",

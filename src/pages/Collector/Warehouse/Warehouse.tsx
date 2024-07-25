@@ -170,6 +170,12 @@ const Warehouse: FunctionComponent = () => {
     setDrawerOpen(false)
   }
 
+  useEffect(() => {
+    if(warehouseItems.length === 0 && page > 1){
+      setPage(page-1)
+    }
+  }, [warehouseItems])
+
   const getRecycleData = async () => {
     try {
       const response = await getRecycleType()
