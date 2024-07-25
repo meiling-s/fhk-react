@@ -142,9 +142,9 @@ const JobOrder = () => {
     }
   }
 
-  useEffect(() => {
-    if(picoId) getDetailPico(picoId)
-  },[i18n.language])
+  // useEffect(() => {
+  //   if(picoId) getDetailPico(picoId)
+  // },[i18n.language])
 
   const getDetailPico = async (picoId: string) => {
     try {
