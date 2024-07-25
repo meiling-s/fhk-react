@@ -279,11 +279,23 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     }
    } catch (error:any) {
     const { state } = extractError(error);
+    setTrySubmited(true)
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
     } else {
       setTrySubmited(true)
-      onSubmitData('error', t('common.saveFailed'))
+      if(error?.response?.data?.status === STATUS_CODE[500]){
+        setValidation(
+          [
+            {
+              field: t('common.theNameAlreadyExist'),
+              problem: '',
+              type: 'error'
+            }
+          ]
+        )
+      }
+      // onSubmitData('error', t('common.saveFailed'))
     }
    }
   }
@@ -317,6 +329,19 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     const { state } = extractError(error);
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
+    } else {
+      setTrySubmited(true)
+      if(error?.response?.data?.status === STATUS_CODE[500]){
+        setValidation(
+          [
+            {
+              field: t('common.theNameAlreadyExist'),
+              problem: '',
+              type: 'error'
+            }
+          ]
+        )
+      }
     }
    }
   }
@@ -365,7 +390,8 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

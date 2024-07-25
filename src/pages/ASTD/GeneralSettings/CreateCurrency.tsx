@@ -181,6 +181,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
           onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

@@ -61,7 +61,9 @@ export const formErr = {
   incorrectAddress: 'incorrectAddress',
   dateOutOfRange: 'dateOutOfRange',
   dateSpesificIsWrong: 'dateSpesificIsWrong',
-  effectiveDateLess: 'effectiveDateLess'
+  effectiveDateLess: 'effectiveDateLess',
+  cannotBeSame: 'cannotBeSame',
+  cantBeSame: 'cantBeSame'
 }
 
 export const Notiftemplate = {
@@ -150,6 +152,7 @@ export const STATUS_CODE = {
   402: 402,
   403: 403,
   404: 404,
+  409: 409,
   408: 408,
   500: 500,
   501: 501,

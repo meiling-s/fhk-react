@@ -422,8 +422,19 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          setValidation(
+            [
+              {
+                field: t('common.reasonName'),
+                problem: formErr.alreadyExist,
+                type: 'error'
+              }
+            ]
+          )
+        }
         setTrySubmited(true)
-        onSubmitData('error', t('common.saveFailed'))
+        // onSubmitData('error', t('common.saveFailed'))
       }
     }
   }
@@ -442,8 +453,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         reasonNameEng: formData.reasonNameEng,
         description: '',
         functionId: formData.functionId,
-        status: 'ACTIVE',
-        //status: status === true ? 'ACTIVE' : 'INACTIVE',
+        // status: 'ACTIVE',
+        status: status === true ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
         updatedBy: loginName,
         ...(isCollectors() && { weatherFlg: weatherFlg })
@@ -526,7 +537,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
           cancelText: t('common.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

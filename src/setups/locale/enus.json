@@ -34,7 +34,17 @@
     "statusCode": "status Code",
     "noOptions": "No options",
     "start_date_at": "Validity Date From",
-    "submit": "Submit"
+    "submit": "Submit",
+    "deleteMessage": "Are you sure to delete?",
+    "collectorName": "Collector Name",
+    "logisticName": "Logistic Name",
+    "customerName": "Customer Name",
+    "manufacturerName": "Manufacturer Name",
+    "reasonName": "Reason Name",
+    "packageName": "Package Type Name already exist",
+    "warehouseName": "Warehouse Name already Exist",
+    "vehicle": "Vehicle",
+    "theNameAlreadyExist": "Staff position name already exist"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -103,7 +113,9 @@
       "dateOutOfRange": "Specify date(s) is out of the Effective date range",
       "dateSpesificIsWrong": "Specify date(s) is in wrong format",
       "effectiveDateLess": "Effective from date should not later than Effective to date",
-      "shouldGreaterThanZero": "Storage capacity should be greater then Zero"
+      "cannotBeSame": "cannot be the same",
+      "shouldGreaterThanZero": "Storage capacity should be greater then Zero",
+      "cantBeSame":"cannot be the same"
     }
   },
   "component": {
@@ -196,7 +208,7 @@
     "approve": "Approve",
     "reject": "Reject",
     "search": "Search",
-    "input_po_no": "Please Input the Pickup Order No.",
+    "input_po_no": "Enter Pickup Order No.",
     "company": "Company",
     "any": "Any",
     "location": "Location",
@@ -206,10 +218,10 @@
     "pickup_order_no": "Pickup Order No.",
     "stock_adjustment": "Stock Adjustment",
     "logistic_company": "Logistic Company",
-    "sender_addr": "Delivery Location",
+    "sender_addr": "Sender Address",
     "receiver_addr": "Receiver Address",
     "recyc_loc_info": "Recycling Location Information",
-    "recyclable_type_weight": "Recyclable Type & Weight",
+    "recyclable_type_weight": "Recyclable Type and Weight",
     "message": "Message",
     "confirm_reject": "Are you sure to reject request the check-in proceed?",
     "reject_reasons": "Reject Reason(s)",
@@ -236,7 +248,7 @@
     "receiver_addr": "Delivery Location",
     "deliver_info": "Deliver Information",
     "recyc_loc_info": "Recycling Location Lnformation",
-    "recyclable_type_weight": "Recyclable Type & Weight",
+    "recyclable_type_weight": "Recyclable Type and Weight",
     "message": "Message",
     "confirm_reject": "Are you sure to reject the request?",
     "confirm_approve": "Are you sure to approve the request?",
@@ -251,7 +263,7 @@
     "ok": "Ok",
     "shipping_info": "Transport Information",
     "delivery_location": "Delivery Location",
-    "approved_on": "Approved on",
+    "approved_on": "Approved at",
     "reason_is": "Reason is",
     "total_checkout": "Total check-out request is",
     "reason_1": "Reason 1",
@@ -426,8 +438,8 @@
       "weight": "Estimated Weight",
       "sender_name": "Sender Company",
       "receiver": "Receiver Company",
-      "recycling_location": "Recycling Location",
-      "arrived": "Arrival Location"
+      "recycling_location": "Sender Location",
+      "arrived": "Receiver Location"
     },
     "recyclForm": {
       "new": "New",
@@ -440,8 +452,8 @@
       "weight": "Estimated Weight",
       "shipping_company": "Sender Company",
       "receiver": "Receiver Company",
-      "recycling_location": "Recycling Location",
-      "arrived": "Arrival Location",
+      "recycling_location": "Sender Location",
+      "arrived": "Receiver Location",
       "placeholder": "Please Enter Location"
     },
     "select_po": "Choose pickup order",
@@ -618,7 +630,7 @@
     "vehicle": "Vehicle",
     "serviceType": "Service Type",
     "vehicleType": "Vehicle Category",
-    "licensePlate": "License Plate",
+    "licensePlate": "Vehicle plate no.",
     "please_enter_pla_number": "Please enter the plate number",
     "picture": "Picture",
     "basic": "Basic",
@@ -783,7 +795,7 @@
     "waybill_number": "Waybill Number",
     "adjust_inventory": "Adjust inventory",
     "logistics_company": "Logistic Company",
-    "delivery_location": "Delivery location",
+    "delivery_location": "Place / Location",
     "arrived": "Receiver address",
     "search": "Search",
     "company": "Company",
@@ -1061,7 +1073,10 @@
     "currency_category": "Currency Category",
     "introduction": "Description",
     "monetary": "Monetary",
-    "contract_number": "Contract Number"
+    "contract_number": "Contract Number",
+    "contract_number_must_be_different": "Contract Number and Reference number",
+    "packageNameAlreadyExist": "Package Type Name",
+    "disposalLocation": "Disposal Location"
   },
   "packaging_unit": {
     "packaging_unit": "Packaging Unit",

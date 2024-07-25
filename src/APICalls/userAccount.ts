@@ -26,7 +26,7 @@ export const getAllUserAccount = async () => {
     }
 };
 
-export const getUserAccountPaging = async (page: number, size: 10) => {
+export const getUserAccountPaging = async (page: number, size: number) => {
     const token = returnApiToken()
       try {
           const response = await axiosInstance({

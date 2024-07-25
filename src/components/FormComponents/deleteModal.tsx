@@ -15,6 +15,7 @@ type DeleteModalProps = {
   selectedRow?: number | null
   onClose: () => void
   onDelete: () => void,
+  deleteText?:string
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
@@ -22,6 +23,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   selectedRow,
   onClose,
   onDelete,
+  deleteText
 }) => {
   const { t } = useTranslation()
   return (
@@ -40,7 +42,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               component="h2"
               sx={{ fontWeight: 'bold' }}
             >
-              {t('pick_up_order.delete_msg')}
+              {deleteText ? deleteText : t('pick_up_order.delete_msg')}
             </Typography>
           </Box>
           <Divider />
