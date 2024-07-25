@@ -373,7 +373,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       reasonNameTchi: formData.reasonNameTchi,
       reasonNameSchi: formData.reasonNameSchi,
       reasonNameEng: formData.reasonNameEng,
-      description: formData.description,
+      description: formData.description ?? '',
       functionId: formData.functionId,
       status: 'DELETED',
       remark: formData.remark,
@@ -408,7 +408,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
           cancelText: t('common.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

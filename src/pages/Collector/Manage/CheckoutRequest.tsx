@@ -351,6 +351,7 @@ const CheckoutRequest: FunctionComponent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState<CheckOut>()
   const [checkedCheckOut, setCheckedCheckOut] = useState<number[]>([])
+  const [unCheckedCheckOut, setUnCheckedCheckOut] = useState<number[]>([])
   const [company, setCompany] = useState('')
   const [filterCheckOut, setFilterCheckOut] = useState<CheckOut[]>([])
   const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
@@ -421,16 +422,28 @@ const CheckoutRequest: FunctionComponent = () => {
     setSelectedRow(undefined);
 
     const checked = event.target.checked
-    const updatedChecked = checked
-      ? [...checkedCheckOut, chkOutId]
-      : checkedCheckOut.filter((rowId) => rowId != chkOutId)
-    setCheckedCheckOut(updatedChecked)
+
+    if(checked){
+      setCheckedCheckOut(prev => [...prev, chkOutId])
+      setUnCheckedCheckOut(prev => {
+        const unCheck = prev.filter(id => id !== chkOutId)
+        return unCheck
+      })
+    } else {
+      const updatedChecked = checkedCheckOut.filter((rowId) => rowId != chkOutId)
+      setCheckedCheckOut(updatedChecked)
+      setUnCheckedCheckOut(prev => [...prev, chkOutId])
+    }
+    // const updatedChecked = checked
+    //   ? [...checkedCheckOut, chkOutId]
+    //   : checkedCheckOut.filter((rowId) => rowId != chkOutId)
+    // setCheckedCheckOut(updatedChecked)
     // console.log(updatedChecked)
 
-    const allRowsChecked = filterCheckOut.every((row) =>
-      updatedChecked.includes(row.chkOutId)
-    )
-    setSelectAll(allRowsChecked)
+    // const allRowsChecked = filterCheckOut.every((row) =>
+    //   updatedChecked.includes(row.chkOutId)
+    // )
+    // setSelectAll(allRowsChecked)
   }
 
   const HeaderCheckbox = (
@@ -442,6 +455,27 @@ const CheckoutRequest: FunctionComponent = () => {
     />
   )
 
+  useEffect(() => {
+    if(selectAll){
+      const newIds:number[] = []
+       filterCheckOut.map(item => item.chkOutId)
+       for(let item of filterCheckOut){
+        if(!unCheckedCheckOut.includes(item.chkOutId)){
+          newIds.push(item.chkOutId)
+        }
+       }
+      const allId:number[] = [...checkedCheckOut, ...newIds]
+      const ids = new Set(allId)
+      setCheckedCheckOut(Array.from(ids))
+    }
+  }, [filterCheckOut])
+
+  useEffect(() => {
+    if(checkedCheckOut.length === 0){
+      setSelectAll(false)
+    }
+  }, [checkedCheckOut])
+
   const checkboxColumn: GridColDef = {
     field: 'customCheckbox',
     headerName: t('localizedTexts.select'),
@@ -451,7 +485,7 @@ const CheckoutRequest: FunctionComponent = () => {
     renderHeader: () => HeaderCheckbox,
     renderCell: (params) => (
       <Checkbox
-        checked={selectAll || checkedCheckOut.includes(params.row?.chkOutId)}
+        checked={checkedCheckOut.includes(params.row?.chkOutId)}
         onChange={(event) =>
           handleRowCheckboxChange(event, params.row.chkOutId)
         }
@@ -511,7 +545,7 @@ const CheckoutRequest: FunctionComponent = () => {
     },
     {
       field: 'senderAddr',
-      headerName: t('check_out.delivery_location'),
+      headerName: t('check_out.sender_addr'),
       type: 'string',
       width: 200
     },

@@ -13,7 +13,11 @@ import {
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
-import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant'
+import {
+  STATUS_CODE,
+  format,
+  localStorgeKeyName
+} from '../../../constants/constant'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { SEARCH_ICON } from '../../../themes/icons'
 import { CheckInAndCheckOutDetails } from '../CheckInAndCheckOut'
@@ -25,7 +29,11 @@ import {
   GET_CHECKIN_CHECKOUT_LIST,
   GET_CHECKOUT_BY_ID
 } from '../../../constants/requests'
-import { extractError, getPrimaryColor, returnApiToken } from '../../../utils/utils'
+import {
+  extractError,
+  getPrimaryColor,
+  returnApiToken
+} from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../../../constants/axiosInstance'
 import {
@@ -131,7 +139,7 @@ function CheckInAndCheckOut() {
         return params.row.chkInId || params.row.chkOutId ? (
           <div
             className={`px-4 py-2 rounded-full text-white font-bold`}
-            style={{backgroundColor: getPrimaryColor()}}
+            style={{ backgroundColor: getPrimaryColor() }}
           >
             {params.row.chkInId
               ? t('checkinandcheckout.send_in')
@@ -366,7 +374,7 @@ function CheckInAndCheckOut() {
             }}
           >
             <InputLabel id="location-label" sx={styles.textFieldLabel}>
-              {t('checkinandcheckout.place')}
+              {t('checkinandcheckout.delivery_location')}
             </InputLabel>
             <Select
               labelId="location-label"
@@ -501,7 +509,7 @@ const styles = {
   textFieldLabel: {
     color: getPrimaryColor,
     '&.Mui-focused': {
-      color: getPrimaryColor,
+      color: getPrimaryColor
     }
   },
   totalElements: {

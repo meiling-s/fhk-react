@@ -895,6 +895,7 @@ const RecyclingUnit: FunctionComponent = () => {
           open={openDelete}
           onClose={onDeleteModal}
           onDelete={onDeleteClick}
+          deleteText={t('common.deleteMessage')}
         />
       <RecyclingFormat
         drawerOpen={recycDrawerOpen}

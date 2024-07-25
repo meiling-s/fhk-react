@@ -34,7 +34,17 @@
     "statusCode": "狀態碼",
     "noOptions": "無選項",
     "start_date_at": "有效日期由",
-    "submit": "提交"
+    "submit": "提交",
+    "deleteMessage": "你確定要刪除嗎？",
+    "collectorName": "收藏家姓名",
+    "logisticName": "物流名稱",
+    "customerName": "顧客姓名",
+    "manufacturerName": "生產商名稱",
+    "reasonName": "原因名稱",
+    "packageName": "包裝單位名稱已存在",
+    "warehouseName": "倉庫名稱已存在",
+    "vehicle": "車輛",
+    "theNameAlreadyExist": "員工職位名稱已存在"
   },
   "col": {
     "createCP": "建立回收點",
@@ -102,7 +112,9 @@
       "incorrectAddress": "地址不正確",
       "dateOutOfRange": "指定日期超出開放日期範圍",
       "dateSpesificIsWrong": "指定日期格式錯誤",
-      "effectiveDateLess": " 開始日期不能晚於截止日期"
+      "effectiveDateLess": " 開始日期不能晚於截止日期",
+      "cannotBeSame": "不能相同",
+      "cantBeSame": "不能相同"
     }
   },
   "component": {
@@ -624,8 +636,8 @@
     "loading_capacity": "載重量 (kg)"
   },
   "inventory": {
-    "inventory": "回收點",
-    "recyclingInformation": "回收點資訊",
+    "inventory": "存貨",
+    "recyclingInformation": "存貨",
     "date": "日期",
     "recyleType": "主類別",
     "recyleSubType": "次類別",
@@ -682,7 +694,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "回收厰",
+    "warehouse": "概覽",
     "currentCapacity": "現時容量",
     "thereStillEnoughSpace": "尚有大量空間",
     "noMoreRoom": "沒有空間了",
@@ -785,7 +797,7 @@
     "search": "搜索",
     "company": "公司",
     "place": "地點",
-    "search_placeholder": "输入采购订单号",
+    "search_placeholder": "采購訂單號",
     "any": "任何",
     "send_in": "送入",
     "ship": "出貨",
@@ -999,6 +1011,7 @@
           "engText": "請輸入名稱",
           "linsenceName": "駕駛執照編號",
           "linsenceText": "駕駛執照編號",
+          "uploadLinsence": "上载驾驶执照",
           "": "上載駕駛執照",
           "carType": "車輛類別",
           "carTypeSelect": "請選擇",
@@ -1042,7 +1055,7 @@
     "start_date": "開始日期",
     "end_date": "結束日期",
     "remark": "備註",
-    "enter_remark": "請輸入文字",
+    "enter_remark": "請輸入備註",
     "whether": "是否EPD",
     "default_currency": "預設貨幣",
     "activate": "啟用",
@@ -1057,7 +1070,10 @@
     "currency_category": "貨幣類別",
     "introduction": "簡介",
     "monetary": "名稱",
-    "contract_number": "編號"
+    "contract_number": "編號",
+    "contract_number_must_be_different": "合約編號和參考編號",
+    "packageNameAlreadyExist": "封裝類型名稱",
+    "disposalLocation": "處置地點"
   },
   "packaging_unit": {
     "packaging_unit": "包裝單位",
@@ -1246,7 +1262,7 @@
     "received": "已收到",
     "notReceived": "未收到",
     "logisticsCompany": "物流公司",
-    "poNumber": "採購訂單號",
+    "poNumber": "采購訂單號",
     "shippingAddress": "送貨地址",
     "recyclingCategory:": "回收類別",
     "packingQty": "包裝數量",
@@ -1257,8 +1273,8 @@
   },
   "dashboard_recyclables": {
     "data": "數據",
-    "recyclable": "回收物",
-    "recycling_data": "回收物數據",
+    "recyclable": "回收物儀表盤",
+    "recycling_data": "回收物儀表盤",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "日期範圍",
     "recycling_point": "回收点",
@@ -1271,7 +1287,7 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "回收公司"
+    "collector": "回收物儀表盤"
   },
   "dashboard_manufacturer": {
     "data": "數據",

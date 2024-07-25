@@ -228,7 +228,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
           action={action}
           headerProps={{
             title: t('processRecord.processingRecords'),
-            subTitle: processOut?.processOutId.toString(),
+            subTitle: processOut?.labelId ? processOut?.labelId.toString() : '',
             onSubmit: onSaveData,
             onDelete: onHandleDelete,
             onCloseHeader: handleDrawerClose,
@@ -274,7 +274,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
               <Grid item>
                 <CustomField label={t('processRecord.create.recycNum')}>
                   <Typography sx={localStyle.textField}>
-                    {processOut?.processOutId}
+                    {processOut?.labelId ? processOut?.labelId : processOut?.processOutId}
                   </Typography>
                 </CustomField>
               </Grid>

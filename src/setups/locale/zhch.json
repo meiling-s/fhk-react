@@ -34,7 +34,17 @@
     "statusCode": "状态码",
     "noOptions": "无选项",
     "start_date_at": "有效日期由",
-    "submit": "提交"
+    "submit": "提交",
+    "deleteMessage": "你确定要删除吗",
+    "collectorName": "收藏家姓名",
+    "logisticName": "物流名称",
+    "customerName": "顾客姓名",
+    "manufacturerName": "生产商名称",
+    "reasonName": "原因名称",
+    "packageName": "包装单位名称已存在",
+    "warehouseName": "仓库名称已存在",
+    "vehicle": "车辆",
+    "theNameAlreadyExist": "员工职位名称已存在"
   },
   "col": {
     "createCP": "建立回收点",
@@ -103,7 +113,9 @@
       "dateOutOfRange": "指定日期超出开放日期范围",
       "dateSpesificIsWrong": "指定日期格式错误",
       "effectiveDateLess": "开始日期不能晚于截止日期",
-      "shouldGreaterThanZero": " 可存容量大于零"
+      "cannotBeSame": "不能相同",
+      "shouldGreaterThanZero": " 可存容量大于零",
+      "cantBeSame":"不能相同"
     }
   },
   "component": {
@@ -627,8 +639,8 @@
     "loading_capacity": "载重量 (kg)"
   },
   "inventory": {
-    "inventory": "回收点",
-    "recyclingInformation": "回收点资讯",
+    "inventory": "存货",
+    "recyclingInformation": "存货",
     "date": "日期",
     "recyleType": "主类别",
     "recyleSubType": "次类别",
@@ -685,7 +697,7 @@
     "deleteProcessOutFailed": "刪除處理流程失敗"
   },
   "warehouseDashboard": {
-    "warehouse": "回收厂",
+    "warehouse": "概览",
     "currentCapacity": "现时容量",
     "thereStillEnoughSpace": "尚有大量空间",
     "noMoreRoom": "没有空间了",
@@ -779,16 +791,16 @@
     "creation_date": "建立日期",
     "outin": "出/入",
     "shipping_company": "寄件公司",
-    "receiver": "收件公司",
+    "receiver": "到达地点",
     "waybill_number": "運單編號",
-    "adjust_inventory": "調整庫存",
+    "adjust_inventory": "调整库存",
     "logistics_company": "物流公司",
-    "delivery_location": "送出地點",
-    "arrived": "到達地點",
+    "delivery_location": "地点",
+    "arrived": "到达地点",
     "search": "搜索",
     "company": "公司",
-    "place": "地點",
-    "search_placeholder": "輸入採購订单编号",
+    "place": "地点",
+    "search_placeholder": "输入运单编号",
     "any": "任何",
     "send": "送出",
     "send_in": "送入",
@@ -980,7 +992,7 @@
       "table": {
         "driverId": "司机号码",
         "driverSchiName": "司机简体中文名称",
-        "driverEngName": "Driver English Name",
+        "driverEngName": "司机英文名称",
         "gender": "性别",
         "loginName": "登入名称",
         "contactNo": "联络电话",
@@ -1060,7 +1072,10 @@
     "currency_category": "货币类别",
     "introduction": "简介",
     "monetary": "名称",
-    "contract_number": "编号"
+    "contract_number": "合约编号",
+    "contract_number_must_be_different": "合约编号和参考编号不",
+    "packageNameAlreadyExist": "封装类型名称",
+    "disposalLocation": "处置地点"
   },
   "packaging_unit": {
     "packaging_unit": "包装单位",
@@ -1260,8 +1275,8 @@
   },
   "dashboard_recyclables": {
     "data": "数据",
-    "recyclable": "回收物",
-    "recycling_data": "回收物数据",
+    "recyclable": "回收物仪表盘",
+    "recycling_data": "回收物仪表盘",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "时间范围",
     "recycling_point": "回收点",
@@ -1274,7 +1289,7 @@
     "rechargeable_battery": "可充电电池",
     "compact_fluorescent": "悭电胆和光管",
     "paper_drink_box": "纸包饮品盒",
-    "collector": "集电极"
+    "collector": "回收物仪表盘"
   },
   "dashboard_manufacturer": {
     "data": "数据",

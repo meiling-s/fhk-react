@@ -45,7 +45,7 @@ export const getAllVehicles = async (page: number, size: number) => {
       return response
     } catch (e) {
       console.error('Create a vehicle failed:', e)
-      return null
+      throw(e)
     }
   }
 

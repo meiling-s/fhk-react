@@ -223,13 +223,22 @@ const Inventory: FunctionComponent = () => {
     setRecycItem(recyleMapping)
   }
 
+  const getPicoDetail = async (sourcePicoId: string) => {
+    try {
+      const result = await getPicoById(sourcePicoId)
+      if(result) return result
+    } catch (error) {
+      return null
+    }
+  }
+
   const getAllPickupOrder = async (data: InventoryItem[]) => {
     const picoData: PickupOrder[] = []
     for (let index = 0; index < data.length; index++) {
       const item = data[index]
       for (let index = 0; index < item.inventoryDetail.length; index++) {
         const invDetail = item.inventoryDetail[index]
-        const result = await getPicoById(invDetail.sourcePicoId)
+        const result = await getPicoDetail(invDetail.sourcePicoId)
         if (result?.data) {
           picoData.push(result.data)
         }
@@ -540,10 +549,23 @@ const Inventory: FunctionComponent = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleSearch = (keyName: string, value: string) => {
+  function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
+    let timeoutID: ReturnType<typeof setTimeout> | null
+
+    return function (this: any, ...args: Parameters<T>) {
+      if (timeoutID) {
+        clearTimeout(timeoutID)
+      }
+      timeoutID = setTimeout(() => {
+        fn.apply(this, args)
+      }, delay)
+    }
+  }
+
+  const handleSearch = debounce((keyName, value) => {
     updateQuery({ [keyName]: value })
     setPage(1)
-  }
+  }, 500)
 
   const handleSearchByPoNumb = async (
     event: React.ChangeEvent<HTMLInputElement>

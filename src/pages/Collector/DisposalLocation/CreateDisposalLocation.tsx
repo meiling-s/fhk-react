@@ -256,7 +256,23 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
         navigate('/maintenance')
       } else {
         setTrySubmited(true)
-        onSubmitData('error', t('common.saveFailed'))
+        let field = t('common.saveFailed');
+        let problem = ''
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          field = t('general_settings.disposalLocation')
+          problem = formErr.alreadyExist
+        } 
+        setValidation(
+          [
+            {
+              field,
+              problem,
+              type: 'error'
+            }
+          ]
+        )
+        setTrySubmited(true)
+        // onSubmitData('error', t('common.saveFailed'))
       }
     }
   }
@@ -353,7 +369,8 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
           cancelText: t('common.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>
