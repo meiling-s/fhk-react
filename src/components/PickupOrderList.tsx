@@ -58,9 +58,9 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   const initPickupOrderRequest = async () => {
     let result = null
     if (role != 'collectoradmin') {
-      result = await getAllLogisticsPickUpOrder(0 - 1, 1000, query)
+      result = await getAllLogisticsPickUpOrder(0, 1000, query)
     } else {
-      result = await getAllPickUpOrder(0 - 1, 1000, query)
+      result = await getAllPickUpOrder(0, 1000, query)
     }
     const data = result?.data.content
     //console.log("pickup order content: ", data);
@@ -92,7 +92,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
         ?.filter((picoDetail) => picoDetail.picoId !== picoId) ?? []
     setPicoList(picoDetailList)
     setFilteredPico(picoDetailList)
-  }, [drawerOpen])
+  }, [drawerOpen, searchInput === ''])
 
   useEffect(() => {
     handleSearch(searchInput)
@@ -108,40 +108,44 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const handleSearch = async (searchWord: string) => {
-    const normalizedSearchWord = searchWord
-      .trim()
-      .toLowerCase()
-      .normalize('NFKC')
+    console.log('searchWord', searchWord)
 
-    if (normalizedSearchWord !== '') {
-      // Update the query with the search term
+    if (searchWord !== '') {
       const updatedQuery = {
         ...query,
-        senderName: normalizedSearchWord
+        senderName: searchWord
       }
 
       let result = null
       if (role !== 'collectoradmin') {
-        result = await getAllLogisticsPickUpOrder(0 - 1, 1000, updatedQuery)
+        result = await getAllLogisticsPickUpOrder(0, 1000, updatedQuery)
       } else {
-        result = await getAllPickUpOrder(0 - 1, 1000, updatedQuery)
+        result = await getAllPickUpOrder(0, 1000, updatedQuery)
       }
 
       const data = result?.data.content
       if (data && data.length > 0) {
         const picoDetailList =
           data.flatMap((item: any) =>
-            item?.pickupOrderDetail.map((detailPico: any) => ({
-              type: item.picoType,
-              picoId: item.picoId,
-              status: detailPico.status,
-              effFrmDate: item.effFrmDate,
-              effToDate: item.effToDate,
-              routine: `${item.routineType}, ${item.routine.join(', ')}`,
-              senderName: detailPico.senderName,
-              receiver: detailPico.receiverName,
-              pickupOrderDetail: detailPico
-            }))
+            item?.pickupOrderDetail
+              .filter(
+                (detailPico: any) =>
+                  detailPico.senderName &&
+                  detailPico.senderName
+                    .toLowerCase()
+                    .includes(searchWord.toLowerCase())
+              )
+              .map((detailPico: any) => ({
+                type: item.picoType,
+                picoId: item.picoId,
+                status: detailPico.status,
+                effFrmDate: item.effFrmDate,
+                effToDate: item.effToDate,
+                routine: `${item.routineType}, ${item.routine.join(', ')}`,
+                senderName: detailPico.senderName,
+                receiver: detailPico.receiverName,
+                pickupOrderDetail: detailPico
+              }))
           ) ?? []
 
         setFilteredPico(picoDetailList)
@@ -150,6 +154,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
       }
     } else {
       setFilteredPico(picoList)
+      setSelectedPico('')
     }
   }
 
@@ -173,7 +178,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
             onCloseHeader: handleDrawerClose
           }}
         >
-          <Divider/>
+          <Divider />
           <Box sx={{ paddingX: 4, paddingY: 2 }}>
             <div className="">
               <Box>
@@ -253,7 +258,10 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                           <div className="text-xs text-[#717171]">
                             {item.senderName}
                           </div>
-                          <ARRPW_FORWARD_ICON fontSize="small" className="text-[#717171]"/>
+                          <ARRPW_FORWARD_ICON
+                            fontSize="small"
+                            className="text-[#717171]"
+                          />
                           <div className="text-xs text-[#717171]">
                             {item.receiver}
                           </div>
