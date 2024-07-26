@@ -35,7 +35,7 @@ import {
   DenialReasonCollectors
 } from '../../../interfaces/denialReason'
 import CreateDenialReason from './CreateDenialReason'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import { getAllFilteredFunction, getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import { useNavigate } from 'react-router-dom'
@@ -77,7 +77,7 @@ const DenialReason: FunctionComponent = () => {
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction()
+      const result = await getAllFilteredFunction(role)
       const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       if (data.length > 0) {
         let name = ''

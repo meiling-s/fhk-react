@@ -28,7 +28,7 @@ import {
 } from '../../../APICalls/Collector/denialReason'
 import { DenialReason as DenialReasonItem } from '../../../interfaces/denialReason'
 import CreateDenialReason from './CreateDenialReason'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import { getAllFilteredFunction, getAllFunction } from '../../../APICalls/Collector/userGroup'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import { useNavigate } from 'react-router-dom'
 import { extractError } from '../../../utils/utils'
@@ -105,7 +105,7 @@ const DenialReason: FunctionComponent = () => {
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction()
+      const result = await getAllFilteredFunction('astd')
       const data = result?.data
       if (data.length > 0) {
         let name = ''
