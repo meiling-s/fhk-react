@@ -826,6 +826,11 @@ export const GET_FUNCTION = (): AxiosRequestConfig => ({
   url: `api/v1/administrator/function`
 })
 
+export const GET_FUNCTION_FILTERED = (tenantTypeId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/administrator/function/t/functionWithReason/${tenantTypeId}`
+})
+
 export const CREATE_USER_GROUP = (): AxiosRequestConfig => ({
   method: 'post',
   url: `api/v1/administrator/userGroup`

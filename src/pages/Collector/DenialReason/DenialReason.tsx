@@ -1,4 +1,4 @@
-import { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import { useEffect, useState, FunctionComponent, useCallback, useRef } from 'react'
 import {
   Box,
   Button,
@@ -35,7 +35,7 @@ import {
   DenialReasonCollectors
 } from '../../../interfaces/denialReason'
 import CreateDenialReason from './CreateDenialReason'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import { getAllFilteredFunction, getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import { useNavigate } from 'react-router-dom'
@@ -74,10 +74,11 @@ const DenialReason: FunctionComponent = () => {
     return role === 'collector'
   }
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const searchActionRef = useRef(false)
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction()
+      const result = await getAllFilteredFunction(role)
       const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       if (data.length > 0) {
         let name = ''
@@ -137,8 +138,7 @@ const DenialReason: FunctionComponent = () => {
 
     const data = result?.data
     if (data) {
-      var denialReasonMapping: DenialReasonCollectors[] | DenialReasonItem[] =
-        []
+      var denialReasonMapping: DenialReasonCollectors[] | DenialReasonItem[] = []
 
       data.content.map((item: any) => {
         const functionItem = functionList.find(
@@ -154,17 +154,19 @@ const DenialReason: FunctionComponent = () => {
       setTotalData(data.totalPages)
     }
   }
+
   const searchByFunctionId = async (functionId: number) => {
+    setPage(1)
     let result = null
     if (isCollectors()) {
       result = await getDenialReasonByFunctionIdCollectors(
-        page - 1,
+        0,
         pageSize,
         functionId
       )
     } else {
       result = await getAllDenialReasonByFunctionId(
-        page - 1,
+        0,
         pageSize,
         functionId
       )
@@ -172,8 +174,7 @@ const DenialReason: FunctionComponent = () => {
 
     const data = result?.data
     if (data) {
-      var denialReasonMapping: DenialReasonItem[] | DenialReasonCollectors[] =
-        []
+      var denialReasonMapping: DenialReasonItem[] | DenialReasonCollectors[] = []
       data.content.map((item: any) => {
         const functionItem = functionList.find(
           (el) => el.functionId === item.functionId
@@ -187,12 +188,16 @@ const DenialReason: FunctionComponent = () => {
       setTotalData(data.totalPages)
     }
   }
+
   useEffect(() => {
     initFunctionList()
   }, [i18n.language])
 
   useEffect(() => {
-    initDenialReasonList()
+    if (!searchActionRef.current) {
+      initDenialReasonList()
+    }
+    searchActionRef.current = false
   }, [functionList, page])
 
   const columns: GridColDef[] = [
@@ -221,12 +226,6 @@ const DenialReason: FunctionComponent = () => {
       width: 200,
       type: 'string'
     },
-    // {
-    //   field: 'description',
-    //   headerName: t('denial_reason.description'),
-    //   width: 100,
-    //   type: 'string'
-    // },
     {
       field: 'remark',
       headerName: t('denial_reason.remark'),
@@ -275,15 +274,6 @@ const DenialReason: FunctionComponent = () => {
         )
       }
     }
-    // {
-    //   field: 'status',
-    //   headerName: t('col.status'),
-    //   width: 100,
-    //   type: 'string',
-    //   renderCell(params) {
-    //     return <StatusLabel status={params.row.status}></StatusLabel>
-    //   }
-    // }
   ]
 
   const searchfield = [
@@ -353,6 +343,7 @@ const DenialReason: FunctionComponent = () => {
   }, [])
 
   const handleSearch = (keyName: string, value: string) => {
+    searchActionRef.current = true
     if (value) {
       searchByFunctionId(Number(value))
     } else {
@@ -361,9 +352,9 @@ const DenialReason: FunctionComponent = () => {
   }
 
   useEffect(() => {
-    if(DenialReasonList.length === 0 && page > 1){
+    if (DenialReasonList.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev - 1)
+      setPage((prev) => prev - 1)
     }
   }, [DenialReasonList])
 
@@ -458,6 +449,7 @@ const DenialReason: FunctionComponent = () => {
               count={Math.ceil(totalData)}
               page={page}
               onChange={(_, newPage) => {
+                searchActionRef.current = false
                 setPage(newPage)
               }}
             />
@@ -466,7 +458,7 @@ const DenialReason: FunctionComponent = () => {
         {rowId != 0 && (
           <CreateDenialReason
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+            handleDrawerClose={() => { setDrawerOpen(false); setSelectedRow(null) }}
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}
