@@ -200,7 +200,7 @@ const DenialReason: FunctionComponent = () => {
   const searchByFunctionId = async (functionId: number) => {
     try {
       const result = await getAllDenialReasonByFunctionId(
-        page - 1,
+        0,
         pageSize,
         functionId
       )
@@ -410,8 +410,10 @@ const DenialReason: FunctionComponent = () => {
 
   const handleSearch = (keyName: string, value: string) => {
     if (value) {
+      setPage(1)
       searchByFunctionId(Number(value))
     } else {
+      setPage(1)
       initDenialReasonList()
     }
   }
