@@ -1,4 +1,4 @@
-import { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import { useEffect, useState, FunctionComponent, useCallback, useRef } from 'react'
 import {
   Box,
   Button,
@@ -98,6 +98,8 @@ const DenialReason: FunctionComponent = () => {
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const searchActionRef = useRef(false)
+
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
     initFunctionList()
@@ -199,6 +201,7 @@ const DenialReason: FunctionComponent = () => {
   }
   const searchByFunctionId = async (functionId: number) => {
     try {
+      setPage(1)
       const result = await getAllDenialReasonByFunctionId(
         0,
         pageSize,
@@ -248,7 +251,10 @@ const DenialReason: FunctionComponent = () => {
   }, [])
 
   useEffect(() => {
-    initDenialReasonList()
+    if (!searchActionRef.current) {
+      initDenialReasonList()
+    }
+    searchActionRef.current = false
   }, [functionList, page])
 
   const columns: GridColDef[] = [
@@ -409,11 +415,10 @@ const DenialReason: FunctionComponent = () => {
   }, [])
 
   const handleSearch = (keyName: string, value: string) => {
+    searchActionRef.current = true
     if (value) {
-      setPage(1)
       searchByFunctionId(Number(value))
     } else {
-      setPage(1)
       initDenialReasonList()
     }
   }
@@ -518,6 +523,7 @@ const DenialReason: FunctionComponent = () => {
               count={Math.ceil(totalData)}
               page={page}
               onChange={(_, newPage) => {
+                searchActionRef.current = false
                 setPage(newPage)
               }}
             />
