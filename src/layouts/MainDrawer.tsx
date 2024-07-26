@@ -31,7 +31,12 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import '../styles/MainDrawer.css'
-import { MAINTENANCE_STATUS, Realm, Roles, localStorgeKeyName } from '../constants/constant'
+import {
+  MAINTENANCE_STATUS,
+  Realm,
+  Roles,
+  localStorgeKeyName
+} from '../constants/constant'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import InventoryIcon from '@mui/icons-material/Inventory'
@@ -57,8 +62,8 @@ type DrawerItem = {
   onClick: () => void
   collapse: boolean
   collapseGroup?: boolean
-  path?: string,
-  functionName: string,
+  path?: string
+  functionName: string
 }
 
 const drawerWidth = 225
@@ -76,8 +81,8 @@ function MainDrawer() {
   const [selectedIndex, setSelectedIndex] = useState<number | 0>(0)
   const [selectedISubIndex, setSelectedSubIndex] = useState<number | 0>(0)
   const { realmApiRoute, loginId } = returnApiToken()
-  const { broadcast, showBroadcast } =  useContainer(NotifContainer);
-  const ipAddress = localStorage.getItem('ipAddress');
+  const { broadcast, showBroadcast } = useContainer(NotifContainer)
+  const ipAddress = localStorage.getItem('ipAddress')
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -132,7 +137,7 @@ function MainDrawer() {
       'Collection point': {
         name: t('all_Collection_Point'),
         icon: <PLACE_ICON />,
-        onClick:async () => navigate('/collector/collectionPoint'),
+        onClick: async () => navigate('/collector/collectionPoint'),
         collapse: false,
         path: '/collector/collectionPoint',
         functionName: 'Collection point'
@@ -228,7 +233,7 @@ function MainDrawer() {
       'Notification template': {
         name: t('notification.notification_menu'),
         icon: <ViewQuiltOutlinedIcon />,
-        onClick: () =>  navigate(`/${realm}/notice`),
+        onClick: () => navigate(`/${realm}/notice`),
         collapse: false,
         path: `/${realm}/notice`,
         functionName: 'Notification template'
@@ -440,7 +445,12 @@ function MainDrawer() {
 
   //set submenu dashboard
   var subMenuDashboard: any[]
-  let subMenuDashboardTmp: { name: string; value: string, path: string, functionName: string }[] = []
+  let subMenuDashboardTmp: {
+    name: string
+    value: string
+    path: string
+    functionName: string
+  }[] = []
   // Base items
   // need to add path & functionName property in order to tracking user activity
   const baseItems = [
@@ -491,15 +501,20 @@ function MainDrawer() {
     ]
   }
 
-  const previousPath = localStorage.getItem('previousPath');
+  const previousPath = localStorage.getItem('previousPath')
   const currentPath = window.location.pathname as string
-  const currentMenu = drawerMenusTmp.find((item) => item.path === currentPath );
-  const currentSubMenu = subMenuDashboardTmp.find(item => item.path === currentPath);
-  
-  if((!previousPath && currentMenu) || (previousPath !== currentPath && currentMenu && ipAddress)) {
+  const currentMenu = drawerMenusTmp.find((item) => item.path === currentPath)
+  const currentSubMenu = subMenuDashboardTmp.find(
+    (item) => item.path === currentPath
+  )
+
+  if (
+    (!previousPath && currentMenu) ||
+    (previousPath !== currentPath && currentMenu && ipAddress)
+  ) {
     localStorage.setItem('previousPath', currentPath)
-    if(ipAddress){
-      const userActivity:UserActivity = {
+    if (ipAddress) {
+      const userActivity: UserActivity = {
         operation: currentMenu.functionName,
         ip: ipAddress,
         createdBy: loginId,
@@ -507,10 +522,13 @@ function MainDrawer() {
       }
       createUserActivity(loginId, userActivity)
     }
-  } else if((!previousPath && currentSubMenu) || (previousPath !== currentPath && currentSubMenu)) {
-    localStorage.setItem('previousPath', currentPath);
-    if(ipAddress){
-      const userActivity:UserActivity = {
+  } else if (
+    (!previousPath && currentSubMenu) ||
+    (previousPath !== currentPath && currentSubMenu)
+  ) {
+    localStorage.setItem('previousPath', currentPath)
+    if (ipAddress) {
+      const userActivity: UserActivity = {
         operation: currentSubMenu.functionName,
         ip: ipAddress,
         createdBy: loginId,
@@ -549,6 +567,8 @@ function MainDrawer() {
   drawerMenus = drawerMenusTmp
   subMenuDashboard = subMenuDashboardTmp
   // 20240129 add function list daniel keung end
+
+  console.log('menulist', drawerMenus)
   return (
     <>
       {isMobile ? (
@@ -595,7 +615,11 @@ function MainDrawer() {
             drawerMenu.collapse ? (
               <>
                 <ListItem
-                  sx={{ marginTop: 2 }}
+                  sx={{
+                    marginTop: 2,
+                    paddingBottom:
+                      index === drawerMenus.length - 1 ? '48px' : '0px'
+                  }}
                   key={drawerMenu.name}
                   onClick={drawerMenu.onClick}
                   disablePadding
@@ -606,17 +630,39 @@ function MainDrawer() {
                     sx={{
                       '&:hover': {
                         '.MuiSvgIcon-root': {
-                          color: role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25'
+                          color:
+                            role === 'manufacturer'
+                              ? '#6BC7FF'
+                              : role === 'customer'
+                              ? '#199BEC'
+                              : role === 'logistic'
+                              ? '#63D884'
+                              : role === 'collector'
+                              ? '#79CA25'
+                              : '#79CA25'
                         }
                       }
                     }}
                   >
                     <ListItemIcon
-                      sx={{color: selectedIndex === index ? role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25' : ''}}
+                      sx={{
+                        color:
+                          selectedIndex === index
+                            ? role === 'manufacturer'
+                              ? '#6BC7FF'
+                              : role === 'customer'
+                              ? '#199BEC'
+                              : role === 'logistic'
+                              ? '#63D884'
+                              : role === 'collector'
+                              ? '#79CA25'
+                              : '#79CA25'
+                            : ''
+                      }}
                     >
                       {drawerMenu.icon}
                     </ListItemIcon>
-                    <ListItemText 
+                    <ListItemText
                       sx={{ marginLeft: -2 }}
                       primary={drawerMenu.name}
                     />
@@ -643,7 +689,18 @@ function MainDrawer() {
                                   ? 'text-menu-active'
                                   : ''
                               }
-                              sx={{color: role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25'}}
+                              sx={{
+                                color:
+                                  role === 'manufacturer'
+                                    ? '#6BC7FF'
+                                    : role === 'customer'
+                                    ? '#199BEC'
+                                    : role === 'logistic'
+                                    ? '#63D884'
+                                    : role === 'collector'
+                                    ? '#79CA25'
+                                    : '#79CA25'
+                              }}
                               primary={item.value}
                             />
                           </ListItemButton>
@@ -654,7 +711,11 @@ function MainDrawer() {
               </>
             ) : (
               <ListItem
-                sx={{ marginTop: 2 }}
+                sx={{
+                  marginTop: 2,
+                  paddingBottom:
+                    index === drawerMenus.length - 1 ? '48px' : '0px'
+                }}
                 key={index}
                 onClick={drawerMenu.onClick}
                 disablePadding
@@ -665,13 +726,35 @@ function MainDrawer() {
                   sx={{
                     '&:hover': {
                       '.MuiSvgIcon-root': {
-                        color: role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25'
+                        color:
+                          role === 'manufacturer'
+                            ? '#6BC7FF'
+                            : role === 'customer'
+                            ? '#199BEC'
+                            : role === 'logistic'
+                            ? '#63D884'
+                            : role === 'collector'
+                            ? '#79CA25'
+                            : '#79CA25'
                       }
                     }
                   }}
                 >
                   <ListItemIcon
-                    sx={{color: selectedIndex === index ? role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25' : ''}}
+                    sx={{
+                      color:
+                        selectedIndex === index
+                          ? role === 'manufacturer'
+                            ? '#6BC7FF'
+                            : role === 'customer'
+                            ? '#199BEC'
+                            : role === 'logistic'
+                            ? '#63D884'
+                            : role === 'collector'
+                            ? '#79CA25'
+                            : '#79CA25'
+                          : ''
+                    }}
                   >
                     {drawerMenu.icon}
                   </ListItemIcon>
