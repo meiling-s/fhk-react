@@ -94,6 +94,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
 
   const initItemTrackInventory = async () => {
     const token = returnApiToken()
+    setShippingData([])
     if (selectedRow !== null && selectedRow !== undefined) {
       let result
       if (token.realmApiRoute === 'account') {

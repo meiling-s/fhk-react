@@ -26,7 +26,7 @@ import {
   UpdateDenialReasonCollectors
 } from '../../../interfaces/denialReason'
 import { localStorgeKeyName } from '../../../constants/constant'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import { getAllFilteredFunction, getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import { useNavigate } from 'react-router-dom'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
@@ -79,7 +79,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       name: string
     }[]
   >([])
-  const role = localStorage.getItem(localStorgeKeyName.role)
+  const role = localStorage.getItem(localStorgeKeyName.role) || ''
   const [existingDenialReason, setExistingDenialReason] = useState<
     DenialReason[] | DenialReasonCollectors[]
   >([])
@@ -91,7 +91,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction()
+      const result = await getAllFilteredFunction(role)
       const data = result?.data.filter((item: any) => item.tenantTypeId == role)
       if (data.length > 0) {
         let name = ''

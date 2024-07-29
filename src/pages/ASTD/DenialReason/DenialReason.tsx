@@ -1,4 +1,4 @@
-import { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import { useEffect, useState, FunctionComponent, useCallback, useRef } from 'react'
 import {
   Box,
   Button,
@@ -28,7 +28,7 @@ import {
 } from '../../../APICalls/Collector/denialReason'
 import { DenialReason as DenialReasonItem } from '../../../interfaces/denialReason'
 import CreateDenialReason from './CreateDenialReason'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import { getAllFilteredFunction, getAllFunction } from '../../../APICalls/Collector/userGroup'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import { useNavigate } from 'react-router-dom'
 import { extractError } from '../../../utils/utils'
@@ -98,6 +98,8 @@ const DenialReason: FunctionComponent = () => {
   const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const searchActionRef = useRef(false)
+
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
     initFunctionList()
@@ -105,7 +107,7 @@ const DenialReason: FunctionComponent = () => {
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction()
+      const result = await getAllFilteredFunction('astd')
       const data = result?.data
       if (data.length > 0) {
         let name = ''
@@ -199,8 +201,9 @@ const DenialReason: FunctionComponent = () => {
   }
   const searchByFunctionId = async (functionId: number) => {
     try {
+      setPage(1)
       const result = await getAllDenialReasonByFunctionId(
-        page - 1,
+        0,
         pageSize,
         functionId
       )
@@ -248,7 +251,10 @@ const DenialReason: FunctionComponent = () => {
   }, [])
 
   useEffect(() => {
-    initDenialReasonList()
+    if (!searchActionRef.current) {
+      initDenialReasonList()
+    }
+    searchActionRef.current = false
   }, [functionList, page])
 
   const columns: GridColDef[] = [
@@ -409,6 +415,7 @@ const DenialReason: FunctionComponent = () => {
   }, [])
 
   const handleSearch = (keyName: string, value: string) => {
+    searchActionRef.current = true
     if (value) {
       searchByFunctionId(Number(value))
     } else {
@@ -516,6 +523,7 @@ const DenialReason: FunctionComponent = () => {
               count={Math.ceil(totalData)}
               page={page}
               onChange={(_, newPage) => {
+                searchActionRef.current = false
                 setPage(newPage)
               }}
             />

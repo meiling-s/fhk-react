@@ -19,7 +19,7 @@ import {
   UpdateDenialReason
 } from '../../../interfaces/denialReason'
 import { localStorgeKeyName } from '../../../constants/constant'
-import { getAllFunction } from '../../../APICalls/Collector/userGroup'
+import { getAllFilteredFunction, getAllFunction } from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import { useNavigate } from 'react-router-dom'
 // import Switcher from '../../../components/FormComponents/CustomSwitch'
@@ -73,7 +73,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
 
   const initFunctionList = async () => {
     try {
-      const result = await getAllFunction()
+      const result = await getAllFilteredFunction('astd')
       const data = result?.data
       if (data.length > 0) {
         let name = ''
