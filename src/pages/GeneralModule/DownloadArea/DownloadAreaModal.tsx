@@ -18,6 +18,8 @@ import {
   getPrimaryLightColor
 } from '../../../utils/utils'
 
+import LoadingCircle from '../../../components/LoadingCircle'
+
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import {
@@ -46,7 +48,7 @@ interface DownloadModalProps {
     reportId: string
     dateOption?: string
     manualTenantId: boolean
-    tenantId?: string,
+    tenantId?: string
     loginId?: string
   }
   staffId: string
@@ -94,7 +96,6 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
 
   useEffect(() => {
     const validate = async () => {
-      
       const tempV: formValidate[] = []
       startDate > endDate &&
         selectedItem?.dateOption != 'datetime' &&
@@ -114,21 +115,21 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
       }
 
       if (
-        selectedItem?.dateOption === 'datetime' && 
-        selectedItem.tenantId === 'none' && 
-        endDate < startDate) {
-          tempV.push({
-            field: t('general_settings.start_date'),
-            problem: formErr.startDateBehindEndDate,
-            type: 'error'
-          })
-          tempV.push({
-            field: t('generate_report.end_date'),
-            problem: formErr.endDateEarlyThanStartDate,
-            type: 'error'
-          })
+        selectedItem?.dateOption === 'datetime' &&
+        selectedItem.tenantId === 'none' &&
+        endDate < startDate
+      ) {
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
+        tempV.push({
+          field: t('generate_report.end_date'),
+          problem: formErr.endDateEarlyThanStartDate,
+          type: 'error'
+        })
       }
-
 
       startDate == null &&
         tempV.push({
@@ -136,48 +137,53 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
-      endDate == null  &&
+      endDate == null &&
         tempV.push({
           field: t('generate_report.end_date'),
           problem: formErr.empty,
           type: 'error'
         })
-      
-      if(startDate && 
-        !isValidDayjsISODate(startDate) && 
+
+      if (
+        startDate &&
+        !isValidDayjsISODate(startDate) &&
         selectedItem?.dateOption === 'dateOption' &&
-        selectedItem.tenantId === 'none'){
-          tempV.push({
-            field: t('general_settings.start_date'),
-            problem: formErr.wrongFormat,
-            type: 'error'
-          })
-      } else if(startDate &&
-        !isValidDayjsISODate(startDate)){
-          tempV.push({
-            field: t('general_settings.start_date'),
-            problem: formErr.wrongFormat,
-            type: 'error'
-          })
+        selectedItem.tenantId === 'none'
+      ) {
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      } else if (startDate && !isValidDayjsISODate(startDate)) {
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
       }
 
-      if( endDate &&
-          selectedItem?.dateOption === 'datetime' &&
-          selectedItem.tenantId === 'none' && 
-          !isValidDayjsISODate(endDate)){
-            tempV.push({
-              field: t('generate_report.end_date'),
-              problem: formErr.wrongFormat,
-              type: 'error'
-            })
-      } else if( endDate &&
+      if (
+        endDate &&
+        selectedItem?.dateOption === 'datetime' &&
+        selectedItem.tenantId === 'none' &&
+        !isValidDayjsISODate(endDate)
+      ) {
+        tempV.push({
+          field: t('generate_report.end_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      } else if (
+        endDate &&
         selectedItem?.dateOption != 'datetime' &&
-        !isValidDayjsISODate(endDate)){
-          tempV.push({
-            field: t('generate_report.end_date'),
-            problem: formErr.wrongFormat,
-            type: 'error'
-          })
+        !isValidDayjsISODate(endDate)
+      ) {
+        tempV.push({
+          field: t('generate_report.end_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
       }
 
       setValidation(tempV)
@@ -207,9 +213,9 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
   const generateWithLoginIdLink = (reportId: string) => {
     return (
       getBaseUrl() +
-      `api/v1/${realmApiRoute}/${reportId}?loginId=${selectedItem?.loginId}&frmDate=${formatUtcStartDate(
-        startDate
-      )}&toDate=${formatUtcEndDate(
+      `api/v1/${realmApiRoute}/${reportId}?loginId=${
+        selectedItem?.loginId
+      }&frmDate=${formatUtcStartDate(startDate)}&toDate=${formatUtcEndDate(
         endDate
       )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
     )
@@ -345,17 +351,17 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           break
         default:
           url =
-            selectedItem.tenantId === 'none' && 
-            selectedItem.dateOption === 'datetime' 
-            ? generateDatetimeNoTenantIdLink(selectedItem.reportId) :
-            selectedItem.dateOption === 'none' &&
-            selectedItem.tenantId === 'none'
+            selectedItem.tenantId === 'none' &&
+            selectedItem.dateOption === 'datetime'
+              ? generateDatetimeNoTenantIdLink(selectedItem.reportId)
+              : selectedItem.dateOption === 'none' &&
+                selectedItem.tenantId === 'none'
               ? generateNoDateNoTenandIdLink(selectedItem.reportId)
               : selectedItem?.dateOption === 'none'
               ? generateNoDateLink(selectedItem.reportId)
               : selectedItem?.dateOption === 'datetime'
               ? generateDatetimeLink(selectedItem.reportId)
-              : selectedItem.loginId 
+              : selectedItem.loginId
               ? generateWithLoginIdLink(selectedItem.reportId)
               : generateDateRangeLink(selectedItem.reportId)
           break
@@ -400,9 +406,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             dateAdapter={AdapterDayjs}
             adapterLocale="zh-cn"
           >
-            { selectedItem?.dateOption == 'datetime' && 
-              selectedItem.tenantId === 'none' ? 
-            (
+            {selectedItem?.dateOption == 'datetime' &&
+            selectedItem.tenantId === 'none' ? (
               <Box
                 className="filter-date"
                 sx={{
@@ -433,9 +438,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   />
                 </Box>
               </Box>
-            )
-            :
-            selectedItem?.dateOption == 'datetime' ? (
+            ) : selectedItem?.dateOption == 'datetime' ? (
               <Box
                 sx={{
                   ...localstyles.DateItem,
@@ -449,7 +452,11 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   format={format.dateFormat2}
                   onChange={(value) => setStartDate(value!!)}
                   sx={{ ...localstyles.datePicker, width: '100%' }}
-                  maxDate={selectedItem?.dateOption != 'datetime' ? dayjs(endDate) : null}
+                  maxDate={
+                    selectedItem?.dateOption != 'datetime'
+                      ? dayjs(endDate)
+                      : null
+                  }
                 />
               </Box>
             ) : selectedItem?.manualTenantId &&
@@ -539,6 +546,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   url={item.url}
                   typeFile={selectedItem?.typeFile}
                   validation={validation}
+                  reportName={selectedItem?.report_name}
                 />
               ))}
           </Grid>
@@ -564,22 +572,15 @@ const DownloadItem: FunctionComponent<{
   url: string
   typeFile: string | undefined
   validation: formValidate[]
-}> = ({ date, url, typeFile, validation = [] }) => {
-  const downloadfile = (blob: any, type: string | undefined) => {
-    let extention = ''
-    switch (type) {
-      case 'XLS':
-        extention = 'xls'
-        break
-      case 'WORD':
-        extention = 'doc'
-        break
-      default:
-        break
-    }
-    saveAs(blob, `document.${extention}`)
-  }
+  reportName?: string
+}> = ({ date, url, typeFile, validation = [], reportName }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const getUrl = () => {
+    return `/loadPage?downloadUrl=${encodeURIComponent(
+      url
+    )}&typeFile=${encodeURIComponent(typeFile || '')}&reportName=${reportName}`
+  }
   return (
     <Grid
       sx={{ borderBottom: 1, borderBottomColor: '#E2E2E2' }}
@@ -612,9 +613,10 @@ const DownloadItem: FunctionComponent<{
           cursor: 'pointer'
         }}
         underline="none"
+        //href={validation.length === 0 ? url : ''}
+        //onClick={() => downloadfile(url, typeFile)}
         target="_blank"
-        href={validation.length === 0 ? url : ''}
-        // onClick={() => downloadfile(url, typeFile)}
+        href={validation.length === 0 ? getUrl() : ''}
       >
         <DOCUMENT_ICON style={{ color: getPrimaryColor() }} />
         <Typography
@@ -628,6 +630,7 @@ const DownloadItem: FunctionComponent<{
           {typeFile}
         </Typography>
       </Link>
+      {isLoading ? <LoadingCircle></LoadingCircle> : ''}
     </Grid>
   )
 }
