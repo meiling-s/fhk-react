@@ -45,10 +45,16 @@ const Notification = () => {
     }
   }, [])
   useEffect(() => {
-    setNotifList([])
-    setNumOfNotif(0)
-    getNumNotif(loginId)
-    getNotifList(loginId)
+    const interval = setInterval(() => {
+      setNotifList([])
+      setNumOfNotif(0)
+      getNumNotif(loginId)
+      getNotifList(loginId)
+    }, 20000)
+
+    return() => {
+      clearInterval(interval)
+    }
   }, [])
 
   const getNumNotif = async (loginId: string) => {
