@@ -183,14 +183,19 @@ const MainAppBar = () => {
                     {t('appBar.notify')}
                   </Typography>
                   {numOfNotif !== 0 && (
-                    <BackgroundLetterAvatars
-                      name={numOfNotif.toString()!}
-                      size={23}
-                      backgroundColor="red"
-                      fontColor="white"
-                      fontSize="15px"
-                      isBold={true}
-                    />
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'red', borderRadius: 100, width: 25, height: 25}}>
+                    <Typography fontSize={14} style={{color: 'white', fontWeight: 'bold'}}>
+                      {numOfNotif}
+                    </Typography>
+                    </div>
+                    // <BackgroundLetterAvatars
+                    //   name={numOfNotif}
+                    //   size={15}
+                    //   backgroundColor="red"
+                    //   fontColor="white"
+                    //   fontSize="15px"
+                    //   isBold={true}
+                    // />
                   )}
                 </Box>
                 <Divider />
