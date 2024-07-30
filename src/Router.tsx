@@ -72,6 +72,9 @@ import PageNotFound from "./pages/Common/PageNotFound";
 import MaintenancePage from "./pages/Common/MaintenancePage";
 import AuthCheck from "./components/AuthCheck";
 
+
+import LoadingPage from './pages/GeneralModule/LoadingPage'
+
 const Router = () => {
   return (
     <BrowserRouter>
@@ -90,6 +93,7 @@ const Router = () => {
           />
           <Route path="/register/result" element={<RegisterResult />} />
           <Route path="/register/result" element={<RegisterResult />} />
+          <Route path="/loadPage" element={<LoadingPage />} />
 
           {/* collector admin */}
           <Route element={<MainLayout />}>

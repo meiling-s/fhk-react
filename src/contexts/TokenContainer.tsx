@@ -11,13 +11,14 @@ const useAuthCheck = () => {
     '/confirmNewPassword',
     '/changePassword/:idReset?',
     '/register/details/:tenantId',
-    '/register/result'
+    '/register/result',
+    '/loadPage'
   ]
 
   useEffect(() => {
     const checkToken = () => {
       const currentPath = window.location.pathname
-      const isExcluded = excludePath.some(path => 
+      const isExcluded = excludePath.some((path) =>
         matchPath({ path, end: false }, currentPath)
       )
       const token = localStorage.getItem(localStorgeKeyName.keycloakToken)
