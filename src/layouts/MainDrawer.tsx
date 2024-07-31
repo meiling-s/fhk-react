@@ -568,7 +568,7 @@ function MainDrawer() {
   subMenuDashboard = subMenuDashboardTmp
   // 20240129 add function list daniel keung end
 
-  console.log('menulist', drawerMenus)
+  // console.log('menulist', drawerMenus)
   return (
     <>
       {isMobile ? (
