@@ -1276,6 +1276,7 @@
   "dashboard_recyclables": {
     "data": "数据",
     "recyclable": "回收物仪表盘",
+    "warehouse": "仓库仪表板",
     "recycling_data": "回收物仪表盘",
     "different_recycling_weights": "不同回收物重量",
     "date_range": "时间范围",

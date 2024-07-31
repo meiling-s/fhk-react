@@ -21,13 +21,13 @@ const LoadingPage = () => {
 
         const blob = await response.blob()
         const urlObject = window.URL.createObjectURL(blob)
-        
+
         const a = document.createElement('a')
         a.href = urlObject
         let extension = ''
         switch (typeFile) {
           case 'XLS':
-            extension = 'xls'
+            extension = 'xlsx'
             break
           case 'WORD':
             extension = 'doc'
