@@ -244,7 +244,7 @@ const JobOrder = () => {
             //   'YYYY/MM/DD hh:mm'
             // )
             setupDate: dayjs
-              .utc(new Date())
+              .utc(response?.data?.createdAt)
               .tz('Asia/Hong_Kong')
               .format(`${dateFormat} HH:mm`)
           }
