@@ -61,7 +61,8 @@ const JobOrder = () => {
   const [isActive, setIsActive] = useState(false)
   const { t, i18n } = useTranslation()
   const { loginId } = returnApiToken()
-  const { recycType, decimalVal, dateFormat, companies } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat, companies } =
+    useContainer(CommonTypeContainer)
   const [driverList, setDriverList] = useState<DriverList[]>([])
   const [vehicleList, setVehicleList] = useState<VehicleList[]>([])
 
@@ -121,22 +122,24 @@ const JobOrder = () => {
     initListDriver()
     initListVehicle()
   }, [])
-  
-  const getLogisticName =  (logisticId: number) => {
-    try {
-      if(logisticId) {
-        // const tenant =  getTenantById(logisticId);
-        const tenant = companies.find(item => item.id == logisticId)
 
-        let logisticName:string = '';
-        if(tenant ){
-          if(i18n.language === Languages.ENUS) logisticName = tenant.nameEng ?? ''
-          if(i18n.language === Languages.ZHCH) logisticName = tenant.nameSchi ?? ''
-          if(i18n.language === Languages.ZHHK) logisticName = tenant.nameTchi ?? ''
+  const getLogisticName = (logisticId: number) => {
+    try {
+      if (logisticId) {
+        // const tenant =  getTenantById(logisticId);
+        const tenant = companies.find((item) => item.id == logisticId)
+
+        let logisticName: string = ''
+        if (tenant) {
+          if (i18n.language === Languages.ENUS)
+            logisticName = tenant.nameEng ?? ''
+          if (i18n.language === Languages.ZHCH)
+            logisticName = tenant.nameSchi ?? ''
+          if (i18n.language === Languages.ZHHK)
+            logisticName = tenant.nameTchi ?? ''
         }
         return logisticName
       }
-       
     } catch (error) {
       return null
     }
@@ -150,55 +153,53 @@ const JobOrder = () => {
     try {
       const response = await getPicoById(picoId)
       if (response) {
-        const logistic =  getLogisticName(response?.data?.logisticId)
-        if(logistic){
+        const logistic = getLogisticName(response?.data?.logisticId)
+        if (logistic) {
           response.data.logisticName = logistic
         }
-        const details: any [] = []
-        for(let item of response.data.pickupOrderDetail){
-          const currentDate = dayjs().format('YYYY-MM-DD');
-          const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`;
-          const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong');
-          const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm');
-          const receiverName =  getLogisticName(item?.receiverId);
-          const senderName =  getLogisticName(item?.senderId);
-         
-          if(receiverName)item.receiverName = receiverName;
-          if(senderName) item.senderName = senderName;
-          details.push(
-            {
-              joId: item?.joId ?? 0,
-              picoId: response?.data?.picoId,
-              picoDtlId: item?.picoDtlId ?? 0,
-              plateNo: item?.plateNo ?? '',
-              senderId: item?.senderId ?? '',
-              senderName: item?.senderName ?? '',
-              senderAddr: item?.senderAddr ?? '',
-              senderAddrGps: item?.senderAddrGps ?? [],
-              receiverId: item?.receiverId ?? '',
-              receiverName: item?.receiverName ?? '',
-              receiverAddr: item?.receiverAddr ?? '',
-              receiverAddrGps: item?.receiverAddrGps ?? [],
-              recycType: item?.recycType ?? '',
-              recycSubType: item?.recycSubType ?? '',
-              weight: formatWeight(item?.weight, decimalVal) ?? 0,
-              vehicleId: item?.vehicleId ?? 0,
-              driverId: item?.driverId ?? '',
-              contractNo: response?.data?.contractNo ?? '',
-              pickupAt: item.pickupAt ?? '',
-              createdBy: loginId ?? '',
-              updatedBy: loginId ?? '',
-              status: item?.driverId ? 'assigned' : ''
-            }
-          )
+        const details: any[] = []
+        for (let item of response.data.pickupOrderDetail) {
+          const currentDate = dayjs().format('YYYY-MM-DD')
+          const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`
+          const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong')
+          const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm')
+          const receiverName = getLogisticName(item?.receiverId)
+          const senderName = getLogisticName(item?.senderId)
+
+          if (receiverName) item.receiverName = receiverName
+          if (senderName) item.senderName = senderName
+          details.push({
+            joId: item?.joId ?? 0,
+            picoId: response?.data?.picoId,
+            picoDtlId: item?.picoDtlId ?? 0,
+            plateNo: item?.plateNo ?? '',
+            senderId: item?.senderId ?? '',
+            senderName: item?.senderName ?? '',
+            senderAddr: item?.senderAddr ?? '',
+            senderAddrGps: item?.senderAddrGps ?? [],
+            receiverId: item?.receiverId ?? '',
+            receiverName: item?.receiverName ?? '',
+            receiverAddr: item?.receiverAddr ?? '',
+            receiverAddrGps: item?.receiverAddrGps ?? [],
+            recycType: item?.recycType ?? '',
+            recycSubType: item?.recycSubType ?? '',
+            weight: formatWeight(item?.weight, decimalVal) ?? 0,
+            vehicleId: item?.vehicleId ?? 0,
+            driverId: item?.driverId ?? '',
+            contractNo: response?.data?.contractNo ?? '',
+            pickupAt: item.pickupAt ?? '',
+            createdBy: loginId ?? '',
+            updatedBy: loginId ?? '',
+            status: item?.driverId ? 'assigned' : ''
+          })
         }
-        
+
         // const details = response?.data.pickupOrderDetail.map(async (item: any) => {
         //   const currentDate = dayjs().format('YYYY-MM-DD');
         //   const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`;
         //   const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong');
         //   const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm');
-       
+
         //   // const receiverName = await getLogisticName(item?.receiverId);
         //   // const senderName = await getLogisticName(item?.senderId);
         //   // console.log('receiverAddr', item.receiverId, item.senderId, receiverName, senderName)
@@ -239,9 +240,13 @@ const JobOrder = () => {
             receiverName: response?.data?.logisticName,
             effFrmDate: response?.data?.effFrmDate,
             effToDate: response?.data?.effToDate,
-            setupDate: dayjs(response?.data?.createdAt).format(
-              'YYYY/MM/DD hh:mm'
-            )
+            // setupDate: dayjs(response?.data?.createdAt).format(
+            //   'YYYY/MM/DD hh:mm'
+            // )
+            setupDate: dayjs
+              .utc(new Date())
+              .tz('Asia/Hong_Kong')
+              .format(`${dateFormat} HH:mm`)
           }
         })
       }
@@ -302,7 +307,10 @@ const JobOrder = () => {
             onHandleCancel()
           }, 1000)
         } else {
-          onSubmitData('error', `${t('jobOrder.failed_assign')} ${order.picoDtlId}`)
+          onSubmitData(
+            'error',
+            `${t('jobOrder.failed_assign')} ${order.picoDtlId}`
+          )
         }
       }
     } else {
@@ -317,7 +325,10 @@ const JobOrder = () => {
             onHandleCancel()
           }, 1000)
         } else {
-          onSubmitData('error', `${t('jobOrder.failed_assign')} ${order.picoDtlId}`)
+          onSubmitData(
+            'error',
+            `${t('jobOrder.failed_assign')} ${order.picoDtlId}`
+          )
         }
       }
     }
@@ -491,8 +502,15 @@ const JobOrder = () => {
               {t('jobOrder.recycling_location_information')}
             </p>
             {pickupOrderDetail.map((item: AssignJobDriver, index) => {
-              const driver = driverList.find(value => value.driverId === item.driverId)
-              const driverName = i18n.language === 'enus' ? driver?.driverNameEng : i18n.language === 'zhch' ? driver?.driverNameSchi : driver?.driverNameTchi
+              const driver = driverList.find(
+                (value) => value.driverId === item.driverId
+              )
+              const driverName =
+                i18n.language === 'enus'
+                  ? driver?.driverNameEng
+                  : i18n.language === 'zhch'
+                  ? driver?.driverNameSchi
+                  : driver?.driverNameTchi
               return (
                 <div
                   className={`flex flex-col rounded-sm px-[15px] py-[18px] w-[450px] ${
@@ -526,7 +544,11 @@ const JobOrder = () => {
                       </label>
                     </div>
                     <p className="flex-1 font-semibold text-[#535353]">
-                      {item.driverId == '' ? dayjs(new Date).format(`${dateFormat} ${item.pickupAt}`) : dayjs(item.pickupAt).format(`${dateFormat} HH:mm`)}
+                      {item.driverId == ''
+                        ? dayjs(new Date()).format(
+                            `${dateFormat} ${item.pickupAt}`
+                          )
+                        : dayjs(item.pickupAt).format(`${dateFormat} HH:mm`)}
                     </p>
                   </div>
                   <div className="flex items-center">
