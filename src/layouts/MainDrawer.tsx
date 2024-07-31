@@ -465,7 +465,7 @@ function MainDrawer() {
       value:
         realm === Realm.astd
           ? t('dashboard_recyclables.collector')
-          : t('dashboard_recyclables.recyclable'),
+          : t('dashboard_recyclables.warehouse'),
       path: `/${realm}/dashboard`,
       functionName: 'dashboard'
     },
