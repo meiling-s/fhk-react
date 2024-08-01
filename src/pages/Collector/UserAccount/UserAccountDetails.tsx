@@ -41,7 +41,7 @@ import {
 } from '../../../APICalls/userAccount'
 import { getStaffList } from '../../../APICalls/staff'
 import { useNavigate } from 'react-router-dom'
-import UserConfirmModal from '../../../components/FormComponents/UserConfirmModal'
+import UserConfirmModal from '../../../components/FormComponents/UserC'
 
 interface UserAccountDetailsProps {
   drawerOpen: boolean
