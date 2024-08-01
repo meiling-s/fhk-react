@@ -13,6 +13,11 @@ import { formatWeight } from '../utils/utils'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../contexts/CommonTypeContainer'
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const PickupOrderCard = ({
   pickupOrderDetail
@@ -22,13 +27,12 @@ const PickupOrderCard = ({
   const { t } = useTranslation()
 
   const recyc = LocalizeRecyctype(pickupOrderDetail)
-  const { decimalVal } = useContainer(CommonTypeContainer)
+  const { decimalVal, dateFormat } = useContainer(CommonTypeContainer)
 
   pickupOrderDetail = pickupOrderDetail.sort((prevItem, nextItem) => prevItem.pickupAt.localeCompare(nextItem.pickupAt));
 
   const formattedTime = (value: string) => {
-    const dateObject = dayjs(value)
-    return dateObject.utc().format('YYYY-MM-DD HH:mm')
+    return dayjs.utc(value).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
   }
   
   return (
