@@ -34,20 +34,25 @@ import { collectorList, manuList } from '../../interfaces/common'
 import CustomAutoComplete from './CustomAutoComplete'
 import dayjs from 'dayjs'
 import { Languages, localStorgeKeyName } from '../../constants/constant'
-import { formatWeight, getThemeColorRole, getThemeCustomList, onChangeWeight } from '../../utils/utils'
+import {
+  formatWeight,
+  getThemeColorRole,
+  getThemeCustomList,
+  onChangeWeight
+} from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 import NotifContainer from '../../contexts/NotifContainer'
 import i18n from '../../setups/i18n'
 
 type props = {
-  openModal: boolean,
+  openModal: boolean
   onClose: () => void
   setState: (val: CreatePicoDetail[]) => void
   data: CreatePicoDetail[]
   setId: Dispatch<SetStateAction<number>>
   picoHisId: string | null
   editRowId: number | null
-  isEditing: boolean,
+  isEditing: boolean
   index?: number | null
   editMode: boolean
 }
@@ -59,29 +64,29 @@ const formattedTime = (pickupAtValue: dayjs.Dayjs) => {
 }
 
 export interface InitValue {
-  picoDtlId?:      any;
-  picoHisId:       string;
-  senderId:        string;
-  senderName:      string;
-  senderAddr:      string;
-  senderAddrGps:   number[];
-  receiverId:      string;
-  receiverName:    string;
-  receiverAddr:    string;
-  receiverAddrGps: number[];
-  status:          string;
-  createdBy:       string;
-  updatedBy:       string;
-  pickupAt:        string;
-  recycType:    string;
-  recycSubType: string;
-  weight:       string;
-  newDetail?: boolean;
-  id?: number,
+  picoDtlId?: any
+  picoHisId: string
+  senderId: string
+  senderName: string
+  senderAddr: string
+  senderAddrGps: number[]
+  receiverId: string
+  receiverName: string
+  receiverAddr: string
+  receiverAddrGps: number[]
+  status: string
+  createdBy: string
+  updatedBy: string
+  pickupAt: string
+  recycType: string
+  recycSubType: string
+  weight: string
+  newDetail?: boolean
+  id?: number
   recycTypeName?: string
 }
 
-const initValue:InitValue  = {
+const initValue: InitValue = {
   picoHisId: '',
   senderId: '1',
   senderName: '',
@@ -114,12 +119,18 @@ const CreateRecycleForm = ({
   index,
   editMode
 }: props) => {
-  const { recycType, manuList, collectorList, decimalVal, getManuList, getCollectorList } =
-    useContainer(CommonTypeContainer)
+  const {
+    recycType,
+    manuList,
+    collectorList,
+    decimalVal,
+    getManuList,
+    getCollectorList
+  } = useContainer(CommonTypeContainer)
   const [editRow, setEditRow] = useState<CreatePicoDetail | null>(null)
   const [defaultRecyc, setDefaultRecyc] = useState<singleRecyclable>()
-  const { marginTop } = useContainer(NotifContainer);
-  const [isDetailDouble, setIsDetailDouble] = useState(false);
+  const { marginTop } = useContainer(NotifContainer)
+  const [isDetailDouble, setIsDetailDouble] = useState(false)
   //---set custom style each role---
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collectoradmin'
   const colorTheme: string = getThemeColorRole(role) || '#79CA25'
@@ -136,27 +147,28 @@ const CreateRecycleForm = ({
   }
 
   useEffect(() => {
-    if(editRowId && editRowId){
-      const editR = data.find(item => item.picoDtlId === editRowId)
+    console.log('data', data)
+    if (editRowId && editRowId) {
+      const editR = data.find((item) => item.picoDtlId === editRowId)
       if (editR) {
         setDefRecyc(editR)
         setEditRow(editR)
       }
-    } else if(editRowId == null && index && editMode){
-      const editR = data.find(item => item.id === index)
+    } else if (editRowId == null && index && editMode) {
+      const editR = data.find((item) => item.id === index)
       if (editR) {
-       setDefRecyc(editR)
-       setEditRow(editR)
-     }
-    } else if(editMode)  {
+        setDefRecyc(editR)
+        setEditRow(editR)
+      }
+    } else if (editMode) {
       setDefaultRecyc(undefined)
-      initValue.id = data.length;
+      initValue.id = data.length
       formik.setValues(initValue)
     }
 
-    if(!editMode && index !== null && index !== undefined){
-      const edit = data.find(item => item.id === index);
-      if(edit){
+    if (!editMode && index !== null && index !== undefined) {
+      const edit = data.find((item) => item.id === index)
+      if (edit) {
         setDefRecyc(edit)
         setEditRow(edit)
       }
@@ -180,7 +192,7 @@ const CreateRecycleForm = ({
 
       formik.setValues({
         id: editRow.id,
-        picoDtlId: editRowId ?? 0,
+        picoDtlId: (editRowId && picoHisId !== "") ? editRowId : 0,
         picoHisId: picoHisId ?? '',
         senderId: editRow.senderId,
         senderName: editRow.senderName,
@@ -218,22 +230,22 @@ const CreateRecycleForm = ({
       pickupAt: Yup.string()
         .required(t('pick_up_order.error.pickuAt'))
         .test(
-         'invalid-date',
+          'invalid-date',
           t('pick_up_order.error.invalid_pickup_time'),
           function (value) {
-            if(value !== 'Invalid Date') return true
-            if(value === undefined) return true
+            if (value !== 'Invalid Date') return true
+            if (value === undefined) return true
             return false
             // return value !== t('pick_up_order.error.invalid_date')
           }
         ),
-        // .test(
-        //   t('pick_up_order.error.not_in_prev_data'),
-        //   t('pick_up_order.error.pickup_time'),
-        //   function (value) {
-        //     return !prevData.some((item) => item.pickupAt === value)
-        //   }
-        // ),
+      // .test(
+      //   t('pick_up_order.error.not_in_prev_data'),
+      //   t('pick_up_order.error.pickup_time'),
+      //   function (value) {
+      //     return !prevData.some((item) => item.pickupAt === value)
+      //   }
+      // ),
 
       senderName: Yup.string().required(t('pick_up_order.error.senderName')),
       senderAddr: Yup.string()
@@ -246,14 +258,16 @@ const CreateRecycleForm = ({
             return value !== receiverAddr
           }
         ),
-        // .test(
-        //   t('pick_up_order.error.not_in_prev_data'),
-        //   t('pick_up_order.error.sender_address_exists'),
-        //   function (value) {
-        //     return !prevData.some((item) => item.senderAddr === value)
-        //   }
-        // ),
-      receiverName: Yup.string().required(t('pick_up_order.error.receiverName')),
+      // .test(
+      //   t('pick_up_order.error.not_in_prev_data'),
+      //   t('pick_up_order.error.sender_address_exists'),
+      //   function (value) {
+      //     return !prevData.some((item) => item.senderAddr === value)
+      //   }
+      // ),
+      receiverName: Yup.string().required(
+        t('pick_up_order.error.receiverName')
+      ),
       receiverAddr: Yup.string()
         .required(t('pick_up_order.error.receiverAddr'))
         .test(
@@ -264,74 +278,83 @@ const CreateRecycleForm = ({
             return value !== senderAddr
           }
         ),
-        // .test(
-        //   t('pick_up_order.error.not_in_prev_data'),
-        //   t('pick_up_order.error.receiver_address_exists'),
-        //   function (value) {
-        //     return !prevData.some((item) => item.receiverAddr === value)
-        //   }
-        // ),
+      // .test(
+      //   t('pick_up_order.error.not_in_prev_data'),
+      //   t('pick_up_order.error.receiver_address_exists'),
+      //   function (value) {
+      //     return !prevData.some((item) => item.receiverAddr === value)
+      //   }
+      // ),
       recycType: Yup.string().required(t('pick_up_order.error.recycType')),
       // recycSubType: Yup.string().required(t('pick_up_order.error.recycSubType')),
-      recycSubType: Yup.string()
-        .when("recycTypeName", (recycTypeName, schema) => {
-          if(recycTypeName[0] !== 'Non-recyclable') return schema.required(t('pick_up_order.error.recycSubType'))
+      recycSubType: Yup.string().when(
+        'recycTypeName',
+        (recycTypeName, schema) => {
+          if (recycTypeName[0] !== 'Non-recyclable')
+            return schema.required(t('pick_up_order.error.recycSubType'))
           return schema
         }
       ),
-      weight: Yup.number().moreThan(0, t('pick_up_order.error.weightGreaterThanZero')).required(t('pick_up_order.error.weight'))
+      weight: Yup.number()
+        .moreThan(0, t('pick_up_order.error.weightGreaterThanZero'))
+        .required(t('pick_up_order.error.weight'))
     })
   })
-
-  //console.log(JSON.stringify(data)+'qwesss')
 
   const formik = useFormik({
     initialValues: initValue,
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
-      //console.log(values)
-      // alert(JSON.stringify(values, null, 2));
-      if(isDetailDouble) return
+     
+      if (isDetailDouble) return
       if (isEditing) {
         //editing row
-        //const {id, ...updateValue} = values
-        if(editMode){
+        if (editMode) {
           const updatedData = data.map((row, id) => {
-            if(editRowId === row.picoDtlId){
+            if (values.id === row.id) {
+              // debugger
+              console.log("edit mode",editRowId,  id)
               return {
                 ...values,
-                id
+                id : row.id
               }
             } else {
               return {
                 ...row,
-                id
+                //id : row.id
               }
             }
           })
+          
           setState(updatedData)
+         
         } else {
           const updatedData = data.map((row, id) => {
-            if(index === row.id){
+            if (values.id === row.id) {
+              
               return {
                 ...values,
-                id: index
+                //id: id
+                id: row.id
               }
             } else {
+             
               return row
             }
           })
+          console.log("bukan edit mode akhir", updatedData)
           setState(updatedData)
         }
-       
       } else {
         //creating row
         var updatedValues: CreatePicoDetail = values
-        if(!editMode){
-          updatedValues.id = data.length
-        }
-        //console.log("data: ",data," updatedValues: ",updatedValues)
+        // if (!editMode) {
+          //updatedValues.id = data.length
+          if (values.picoHisId == '' && !isEditing) updatedValues.id = data.length + 1
+         
+        // }
+
         setState([...data, updatedValues])
       }
       setEditRow(null)
@@ -382,38 +405,67 @@ const CreateRecycleForm = ({
     setDefaultRecyc(undefined)
     formik.resetForm()
   }
-  
+
   const validateIsDataExist = () => {
-    if(data.length === 0) return
-    const { pickupAt, receiverAddr, receiverName, senderName,  senderAddr, recycType, recycSubType, id } = formik.values;
-  
-    const newValueString = pickupAt +  receiverAddr + receiverName + senderName + senderAddr + recycType + recycSubType;
-    const dataStrings:string[] = [];
-    for(let item of data){
-      const { pickupAt, receiverAddr, receiverName, senderName,  senderAddr, recycType, recycSubType } = item;
-      const oldValueString = pickupAt +  receiverAddr + receiverName + senderName + senderAddr + recycType + recycSubType;
-      
-      if(!isEditing){
+    if (data.length === 0) return
+    const {
+      pickupAt,
+      receiverAddr,
+      receiverName,
+      senderName,
+      senderAddr,
+      recycType,
+      recycSubType,
+      id
+    } = formik.values
+
+    const newValueString =
+      pickupAt +
+      receiverAddr +
+      receiverName +
+      senderName +
+      senderAddr +
+      recycType +
+      recycSubType
+    const dataStrings: string[] = []
+    for (let item of data) {
+      const {
+        pickupAt,
+        receiverAddr,
+        receiverName,
+        senderName,
+        senderAddr,
+        recycType,
+        recycSubType
+      } = item
+      const oldValueString =
+        pickupAt +
+        receiverAddr +
+        receiverName +
+        senderName +
+        senderAddr +
+        recycType +
+        recycSubType
+
+      if (!isEditing) {
         dataStrings.push(oldValueString)
       } else {
-        if(formik.values.id !== item.id){
+        if (formik.values.id !== item.id) {
           dataStrings.push(oldValueString)
+        }
       }
-      }
-     
     }
 
-   if(dataStrings.includes(newValueString)){
-    setIsDetailDouble(true)
-   } else {
-    setIsDetailDouble(false)
-   }
+    if (dataStrings.includes(newValueString)) {
+      setIsDetailDouble(true)
+    } else {
+      setIsDetailDouble(false)
+    }
   }
 
   useEffect(() => {
     validateIsDataExist()
   }, [formik.values])
-  
 
   return (
     <Drawer
@@ -428,230 +480,240 @@ const CreateRecycleForm = ({
       }}
     >
       <Divider></Divider>
-        <div
-          className={`border-b-[1px] border-grey-line h-full ${
-            openModal ? `md:w-[700px] w-[100vw] mt-[${marginTop}]` : 'hidden'
-          }`}
-        >
-          <form onSubmit={formik.handleSubmit}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              {/* <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}> */}
+      <div
+        className={`border-b-[1px] border-grey-line h-full ${
+          openModal ? `md:w-[700px] w-[100vw] mt-[${marginTop}]` : 'hidden'
+        }`}
+      >
+        <form onSubmit={formik.handleSubmit}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            {/* <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}> */}
+            <Box>
+              <Box
+                sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}
+              >
                 <Box>
-                    <Box
-                      sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}
-                    >
-                      <Box>
-                        <Typography sx={styles.header4}>
-                          {isEditing ? t('userGroup.change') : t('top_menu.add_new')}
-                        </Typography>
-                        <Typography sx={styles.header3}>
-                          {t('pick_up_order.recyclForm.expected_recycling')}
-                        </Typography>
-                      </Box>
+                  <Typography sx={styles.header4}>
+                    {isEditing ? t('userGroup.change') : t('top_menu.add_new')}
+                  </Typography>
+                  <Typography sx={styles.header3}>
+                    {t('pick_up_order.recyclForm.expected_recycling')}
+                  </Typography>
+                </Box>
 
-                      <Box sx={{ marginLeft: 'auto' }}>
-                        <Button
-                          variant="outlined"
-                          sx={{
-                            ...localstyles.button,
-                            color: 'white',
-                            bgcolor: colorTheme,
-                            borderColor: colorTheme
-                          }}
-                          type="submit"
-                        >
-                          {t('col.save')}
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          sx={{
-                            ...localstyles.button,
-                            color: colorTheme,
-                            bgcolor: 'white',
-                            borderColor: colorTheme
-                          }}
-                          onClick={onHandleDrawer}
-                        >
-                          {t('col.cancel')}
-                        </Button>
-                        <IconButton
-                          sx={{ ml: '25px' }}
-                          onClick={onHandleDrawer}
-                        >
-                          <KeyboardTabIcon sx={{ fontSize: '30px' }} />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                    <Divider />
-                    
-                    <Stack spacing={2} sx={localstyles.content}>
-                      <CustomField
-                        label={t('pick_up_order.recyclForm.shipping_time')}
-                        mandatory
-                      >
-                        <TimePicker
-                          sx={{ width: '100%' }}
-                          value={formatTimePickAt(formik.values.pickupAt)}
-                          onChange={(value) => {
-                            formik.setFieldValue(
-                              'pickupAt',
-                              value ? formattedTime(value) : ''
-                            )
-                          }}
-                        />
-                      </CustomField>
-
-                      <CustomField label={t('col.recycType')} mandatory>
-                        <RecyclablesListSingleSelect
-                          showError={
-                            (formik.errors?.recycType && formik.touched?.recycType) ||
-                            undefined
-                          }
-                          recycL={recycType ?? []}
-                          setState={(values) => {
-                            formik.setFieldValue('recycType', values?.recycTypeId)
-                            formik.setFieldValue(
-                              'recycSubType',
-                              values?.recycSubTypeId
-                            )
-                            const recyc = recycType?.find(item => item.recycTypeId === values.recycTypeId);
-                            // will use to validate when non-recycable selected
-                            if(recyc){
-                              formik.setFieldValue('recycTypeName', recyc?.recyclableNameEng)
-                            }
-                          }}
-                      itemColor={{
-                        bgColor: customListTheme ? customListTheme.bgColor : '#E4F6DC',
-                        borderColor: customListTheme ? customListTheme.border: '79CA25'
-                      }}
-                      defaultRecycL={defaultRecyc}
-                      key={formik.values.picoDtlId}
-                    />
-                  </CustomField>
-                  <CustomField
-                    label={t('pick_up_order.recyclForm.weight')}
-                    mandatory
+                <Box sx={{ marginLeft: 'auto' }}>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      ...localstyles.button,
+                      color: 'white',
+                      bgcolor: colorTheme,
+                      borderColor: colorTheme
+                    }}
+                    type="submit"
                   >
-                    <CustomTextField
-                      id="weight"
-                      placeholder={t('userAccount.pleaseEnterNumber')}
-                      // onChange={formik.handleChange}
-                      onChange={(event) => {
-                        onChangeWeight(event.target.value, decimalVal, (value: string) => {
-                          formik.setFieldValue('weight', value)
-                        })
-                      }}
-                      onBlur={(event) => {
-                        const value = formatWeight(event.target.value, decimalVal)
-                        formik.setFieldValue('weight', value)
-                      }}
-                      value={formik.values.weight}
-                      error={
-                        (formik.errors?.weight && formik.touched?.weight) ||
-                        undefined
-                      }
-                      sx={{ width: '100%' }}
-                      endAdornment={
-                        <InputAdornment position="end">kg</InputAdornment>
-                      }
-                    ></CustomTextField>
-                  </CustomField>
-                  {TextFields.map((it) => (
-                    <CustomField mandatory label={it.label}>
-                      {it.id === 'senderName' || it.id === 'receiverName' ? (
-                        <CustomAutoComplete
-                          placeholder={t('pick_up_order.recyclForm.placeholder')}
-                          option={[
-                            ...(collectorList?.map(
-                              (option) => {
-                                if(i18n.language === Languages.ENUS){
-                                  return option.collectorNameEng
-                                } else if(i18n.language === Languages.ZHCH){
-                                  return option.collectorNameSchi
-                                } else {
-                                  return option.collectorNameTchi
-                                }
-                              }
-                            ) ?? []),
-                            ...(manuList?.map(
-                              (option) => {
-                                if(i18n.language === Languages.ENUS){
-                                  return option.manufacturerNameEng
-                                } else if(i18n.language === Languages.ZHCH){
-                                  return option.manufacturerNameSchi
-                                } else {
-                                  return option.manufacturerNameTchi
-                                }
-                              }
-                            ) ?? [])
-                          ]}
-                          sx={{ width: '100%' }}
-                          onChange={(
-                            _: SyntheticEvent,
-                            newValue: string | null
-                          ) => formik.setFieldValue(it.id, newValue)}
-                          onInputChange={(event: any, newInputValue: string) => {
-                            formik.setFieldValue(it.id, newInputValue) // Update the formik field value if needed
-                          }}
-                          value={it.value}
-                          inputValue={it.value}
-                          error={it.error || undefined}
-                        />
-                      ) : (
-                        <CustomTextField
-                          id={it.id}
-                          placeholder={t('pick_up_order.recyclForm.placeholder')}
-                          rows={4}
-                          onChange={formik.handleChange}
-                          value={it.value}
-                          sx={{ width: '100%' }}
-                          error={it.error || undefined}
-                        />
-                      )}
-                    </CustomField>
-                  ))}
-                  {isDetailDouble && <Typography style={{color: 'red'}} >{t('pick_up_order.picoDetailCannotBeRepeated')}</Typography>}
-                  <Stack spacing={2}>
-                    {formik.errors.pickupAt && formik.touched.pickupAt && (
-                      <Alert severity="error">{formik.errors.pickupAt} </Alert>
-                    )}
-                    {formik.errors?.recycType && formik.touched?.recycType && (
-                      <Alert severity="error">{formik.errors?.recycType} </Alert>
-                    )}
-                    {formik.errors?.recycSubType &&
-                      formik.touched?.recycSubType && (
-                        <Alert severity="error">
-                          {formik.errors?.recycSubType}{' '}
-                        </Alert>
-                      )}
-                    {formik.errors?.weight && formik.touched?.weight && (
-                      <Alert severity="error">{formik.errors?.weight} </Alert>
-                    )}
-                    {formik.errors.senderName && formik.touched.senderName && (
-                      <Alert severity="error">{formik.errors.senderName} </Alert>
-                    )}
-                    {formik.errors.receiverName &&
-                      formik.touched.receiverName && (
-                        <Alert severity="error">
-                          {formik.errors.receiverName}{' '}
-                        </Alert>
-                      )}
-                    {formik.errors.senderAddr && formik.touched.senderAddr && (
-                      <Alert severity="error">{formik.errors.senderAddr} </Alert>
-                    )}
-                    {formik.errors.receiverAddr &&
-                      formik.touched.receiverAddr && (
-                        <Alert severity="error">
-                          {formik.errors.receiverAddr}{' '}
-                        </Alert>
-                      )}
-                  </Stack>
-                </Stack>
+                    {t('col.save')}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      ...localstyles.button,
+                      color: colorTheme,
+                      bgcolor: 'white',
+                      borderColor: colorTheme
+                    }}
+                    onClick={onHandleDrawer}
+                  >
+                    {t('col.cancel')}
+                  </Button>
+                  <IconButton sx={{ ml: '25px' }} onClick={onHandleDrawer}>
+                    <KeyboardTabIcon sx={{ fontSize: '30px' }} />
+                  </IconButton>
+                </Box>
               </Box>
-          {/* </Box> */}
-            </LocalizationProvider>
-          </form>
-        </div>
+              <Divider />
+
+              <Stack spacing={2} sx={localstyles.content}>
+                <CustomField
+                  label={t('pick_up_order.recyclForm.shipping_time')}
+                  mandatory
+                >
+                  <TimePicker
+                    sx={{ width: '100%' }}
+                    value={formatTimePickAt(formik.values.pickupAt)}
+                    onChange={(value) => {
+                      formik.setFieldValue(
+                        'pickupAt',
+                        value ? formattedTime(value) : ''
+                      )
+                    }}
+                  />
+                </CustomField>
+
+                <CustomField label={t('col.recycType')} mandatory>
+                  <RecyclablesListSingleSelect
+                    showError={
+                      (formik.errors?.recycType && formik.touched?.recycType) ||
+                      undefined
+                    }
+                    recycL={recycType ?? []}
+                    setState={(values) => {
+                      formik.setFieldValue('recycType', values?.recycTypeId)
+                      formik.setFieldValue(
+                        'recycSubType',
+                        values?.recycSubTypeId
+                      )
+                      const recyc = recycType?.find(
+                        (item) => item.recycTypeId === values.recycTypeId
+                      )
+                      // will use to validate when non-recycable selected
+                      if (recyc) {
+                        formik.setFieldValue(
+                          'recycTypeName',
+                          recyc?.recyclableNameEng
+                        )
+                      }
+                    }}
+                    itemColor={{
+                      bgColor: customListTheme
+                        ? customListTheme.bgColor
+                        : '#E4F6DC',
+                      borderColor: customListTheme
+                        ? customListTheme.border
+                        : '79CA25'
+                    }}
+                    defaultRecycL={defaultRecyc}
+                    key={formik.values.picoDtlId}
+                  />
+                </CustomField>
+                <CustomField
+                  label={t('pick_up_order.recyclForm.weight')}
+                  mandatory
+                >
+                  <CustomTextField
+                    id="weight"
+                    placeholder={t('userAccount.pleaseEnterNumber')}
+                    // onChange={formik.handleChange}
+                    onChange={(event) => {
+                      onChangeWeight(
+                        event.target.value,
+                        decimalVal,
+                        (value: string) => {
+                          formik.setFieldValue('weight', value)
+                        }
+                      )
+                    }}
+                    onBlur={(event) => {
+                      const value = formatWeight(event.target.value, decimalVal)
+                      formik.setFieldValue('weight', value)
+                    }}
+                    value={formik.values.weight}
+                    error={
+                      (formik.errors?.weight && formik.touched?.weight) ||
+                      undefined
+                    }
+                    sx={{ width: '100%' }}
+                    endAdornment={
+                      <InputAdornment position="end">kg</InputAdornment>
+                    }
+                  ></CustomTextField>
+                </CustomField>
+                {TextFields.map((it) => (
+                  <CustomField mandatory label={it.label}>
+                    {it.id === 'senderName' || it.id === 'receiverName' ? (
+                      <CustomAutoComplete
+                        placeholder={t('pick_up_order.recyclForm.placeholder')}
+                        option={[
+                          ...(collectorList?.map((option) => {
+                            if (i18n.language === Languages.ENUS) {
+                              return option.collectorNameEng
+                            } else if (i18n.language === Languages.ZHCH) {
+                              return option.collectorNameSchi
+                            } else {
+                              return option.collectorNameTchi
+                            }
+                          }) ?? []),
+                          ...(manuList?.map((option) => {
+                            if (i18n.language === Languages.ENUS) {
+                              return option.manufacturerNameEng
+                            } else if (i18n.language === Languages.ZHCH) {
+                              return option.manufacturerNameSchi
+                            } else {
+                              return option.manufacturerNameTchi
+                            }
+                          }) ?? [])
+                        ]}
+                        sx={{ width: '100%' }}
+                        onChange={(
+                          _: SyntheticEvent,
+                          newValue: string | null
+                        ) => formik.setFieldValue(it.id, newValue)}
+                        onInputChange={(event: any, newInputValue: string) => {
+                          formik.setFieldValue(it.id, newInputValue) // Update the formik field value if needed
+                        }}
+                        value={it.value}
+                        inputValue={it.value}
+                        error={it.error || undefined}
+                      />
+                    ) : (
+                      <CustomTextField
+                        id={it.id}
+                        placeholder={t('pick_up_order.recyclForm.placeholder')}
+                        rows={4}
+                        onChange={formik.handleChange}
+                        value={it.value}
+                        sx={{ width: '100%' }}
+                        error={it.error || undefined}
+                      />
+                    )}
+                  </CustomField>
+                ))}
+                {isDetailDouble && (
+                  <Typography style={{ color: 'red' }}>
+                    {t('pick_up_order.picoDetailCannotBeRepeated')}
+                  </Typography>
+                )}
+                <Stack spacing={2}>
+                  {formik.errors.pickupAt && formik.touched.pickupAt && (
+                    <Alert severity="error">{formik.errors.pickupAt} </Alert>
+                  )}
+                  {formik.errors?.recycType && formik.touched?.recycType && (
+                    <Alert severity="error">{formik.errors?.recycType} </Alert>
+                  )}
+                  {formik.errors?.recycSubType &&
+                    formik.touched?.recycSubType && (
+                      <Alert severity="error">
+                        {formik.errors?.recycSubType}{' '}
+                      </Alert>
+                    )}
+                  {formik.errors?.weight && formik.touched?.weight && (
+                    <Alert severity="error">{formik.errors?.weight} </Alert>
+                  )}
+                  {formik.errors.senderName && formik.touched.senderName && (
+                    <Alert severity="error">{formik.errors.senderName} </Alert>
+                  )}
+                  {formik.errors.receiverName &&
+                    formik.touched.receiverName && (
+                      <Alert severity="error">
+                        {formik.errors.receiverName}{' '}
+                      </Alert>
+                    )}
+                  {formik.errors.senderAddr && formik.touched.senderAddr && (
+                    <Alert severity="error">{formik.errors.senderAddr} </Alert>
+                  )}
+                  {formik.errors.receiverAddr &&
+                    formik.touched.receiverAddr && (
+                      <Alert severity="error">
+                        {formik.errors.receiverAddr}{' '}
+                      </Alert>
+                    )}
+                </Stack>
+              </Stack>
+            </Box>
+            {/* </Box> */}
+          </LocalizationProvider>
+        </form>
+      </div>
     </Drawer>
   )
 }
