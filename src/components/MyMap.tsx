@@ -78,7 +78,7 @@ function MyMap({
             }}
           >
             <Popup>{collectionPoint.address}</Popup>
-            <Tooltip direction="bottom" offset={[0, 20]} opacity={0.9}>{collectionPoint.address}</Tooltip>
+            <Tooltip direction="bottom" offset={[0, 20]} opacity={0.9}>{collectionPoint.colName}</Tooltip>
             <FlyToMarker hoveredCard={hoveredCard} />
           </Marker>
         )
