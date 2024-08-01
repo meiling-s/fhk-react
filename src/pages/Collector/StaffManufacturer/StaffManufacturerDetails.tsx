@@ -16,7 +16,7 @@ import {
 } from '../../../APICalls/staff'
 
 import { styles } from '../../../constants/styles'
-import UserConfirmModal from '../../../components/FormComponents/UserConfirmModal'
+import UserConfirmModal from '../../../components/FormComponents/UserC'
 import { formErr } from '../../../constants/constant'
 import {
   returnErrorMsg,
