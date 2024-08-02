@@ -262,7 +262,7 @@ const PickupOrderCreateForm = ({
 
   const handleDeleteRow = (id: any) => {
     if (editMode) {
-      let updateDeleteRow = state.filter((row, index) => index != id)
+      let updateDeleteRow = state.filter((row, index) => row.id != id)
       updateDeleteRow = updateDeleteRow.map((picoDtl, index) => {
         return {
           ...picoDtl,
@@ -757,7 +757,7 @@ const PickupOrderCreateForm = ({
                   defaultSelected={selectedPo?.vehicleTypeId}
                   error={
                     errorsField.vehicleTypeId.status
-                   // formik.errors.vehicleTypeId && formik.touched.vehicleTypeId
+                    // formik.errors.vehicleTypeId && formik.touched.vehicleTypeId
                   }
                   itemColor={{
                     bgColor: customListTheme.bgColor,
@@ -1076,9 +1076,10 @@ const PickupOrderCreateForm = ({
             {errorsField.logisticName.status && (
               <ErrorMessage message={errorsField.logisticName.message} />
             )}
-            {errorsField.AD_HOC.status && formik.values.picoType === 'AD_HOC' && (
-              <ErrorMessage message={errorsField.AD_HOC.message} />
-            )}
+            {errorsField.AD_HOC.status &&
+              formik.values.picoType === 'AD_HOC' && (
+                <ErrorMessage message={errorsField.AD_HOC.message} />
+              )}
             {errorsField.createPicoDetail.status && (
               <ErrorMessage message={errorsField.createPicoDetail.message} />
             )}
