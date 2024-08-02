@@ -32,7 +32,7 @@ import {
   showSuccessToast,
   validateEmail
 } from '../../../utils/utils'
-import UserConfirmModal from '../../../components/FormComponents/UserConfirmModal'
+import UserConfirmModal from '../../../components/FormComponents/UserC'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { Staff, CreateStaff, EditStaff } from '../../../interfaces/staff'
 import CustomItemListBoolean from '../../../components/FormComponents/CustomItemListBoolean'
