@@ -464,7 +464,8 @@ const Inventory: FunctionComponent = () => {
       label: t('inventory.recyclingNumber'),
       field: 'itemId',
       placeholder: t('placeHolder.enterRecyclingNumber'),
-      width: '280px'
+      width: '280px',
+      numberOnly: true
     },
     {
       label: t('placeHolder.classification'),
@@ -538,8 +539,8 @@ const Inventory: FunctionComponent = () => {
       (item) => item.itemId == params.row.itemId
     )
     let selectedPicoList: PickupOrder[] = []
-    console.log('selectedInv', selectedInv)
-    console.log('selectedInv', picoList)
+    // console.log('selectedInv', selectedInv)
+    // console.log('selectedInv', picoList)
     selectedInv.inventoryDetail?.forEach((item) => {
       const pico = picoList.find((pico) => pico.picoId == item.sourcePicoId)
       if (pico) {
@@ -576,6 +577,9 @@ const Inventory: FunctionComponent = () => {
   }
 
   const handleSearch = debounce((keyName, value) => {
+    if (value.trim() === '' && query.itemId == null) {
+      return
+    }
     updateQuery({ [keyName]: value })
     setPage(1)
   }, 500)
@@ -662,6 +666,7 @@ const Inventory: FunctionComponent = () => {
               key={index}
               label={s.label}
               width={s?.width}
+              numberOnly={s.numberOnly || false}
               placeholder={s.placeholder}
               field={s.field}
               options={s.options || []}

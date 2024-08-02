@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom'
 const LoadingPage = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const downloadUrl = params.get('downloadUrl')
-    const typeFile = params.get('typeFile')
-    const reportName = params.get('reportName')
-
+    const downloadUrl = decodeURIComponent(params.get('downloadUrl') || '')
+    const typeFile = decodeURIComponent(params.get('typeFile') || '')
+    const reportName = decodeURIComponent(params.get('reportName') || '')
+    console.log('downloadUrl', downloadUrl)
     const downloadFile = async (url: string) => {
       try {
         const response = await fetch(url, {
@@ -18,6 +18,10 @@ const LoadingPage = () => {
             Accept: '*/*'
           }
         })
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
 
         const blob = await response.blob()
         const urlObject = window.URL.createObjectURL(blob)
@@ -35,7 +39,7 @@ const LoadingPage = () => {
           default:
             break
         }
-        console.log('urlObject', response)
+       
         a.download = reportName
           ? `${reportName}.${extension}`
           : `download-report.${extension}`
@@ -43,14 +47,17 @@ const LoadingPage = () => {
         a.click()
         a.remove()
         window.URL.revokeObjectURL(urlObject)
-        window.close()
+
+        setTimeout(() => {
+          window.close()
+        }, 4000)
       } catch (error) {
         console.error('Download failed:', error)
       }
     }
 
     if (downloadUrl) {
-      downloadFile(decodeURIComponent(downloadUrl))
+      downloadFile(downloadUrl)
     }
   }, [])
 
