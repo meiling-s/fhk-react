@@ -709,6 +709,14 @@ function CreateCollectionPoint() {
     .tz('Asia/Hong_Kong')
     .format(`${dateFormat} HH:mm`)
 
+  const getSelectedOtherPremis = () => {
+    return (
+      premiseType === 'PT00009' ||
+      premiseType === 'PT00027' ||
+      premiseType === 'PT00028'
+    )
+  }
+
   return (
     <>
       <Box
@@ -870,7 +878,7 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-            {premiseType === 'PT00009' && (
+            {getSelectedOtherPremis() && (
               <Grid item>
                 {/* <Collapse in={premiseType == 'PT00010'}> */}
                 <CustomField label={t('col.premiseRemark')} mandatory={true}>
