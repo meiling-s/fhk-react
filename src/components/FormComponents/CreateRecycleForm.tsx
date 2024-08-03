@@ -147,7 +147,6 @@ const CreateRecycleForm = ({
   }
 
   useEffect(() => {
-    console.log('data', data)
     if (editRowId && editRowId) {
       const editR = data.find((item) => item.picoDtlId === editRowId)
       if (editR) {
@@ -192,7 +191,7 @@ const CreateRecycleForm = ({
 
       formik.setValues({
         id: editRow.id,
-        picoDtlId: (editRowId && picoHisId !== "") ? editRowId : 0,
+        picoDtlId: editRowId === editRow.picoDtlId ? editRow.picoDtlId : 0,
         picoHisId: picoHisId ?? '',
         senderId: editRow.senderId,
         senderName: editRow.senderName,
@@ -306,53 +305,48 @@ const CreateRecycleForm = ({
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
-     
       if (isDetailDouble) return
       if (isEditing) {
         //editing row
         if (editMode) {
           const updatedData = data.map((row, id) => {
             if (values.id === row.id) {
-              // debugger
-              console.log("edit mode",editRowId,  id)
               return {
                 ...values,
-                id : row.id
+                id: row.id
               }
             } else {
               return {
-                ...row,
+                ...row
                 //id : row.id
               }
             }
           })
-          
+
           setState(updatedData)
-         
         } else {
           const updatedData = data.map((row, id) => {
             if (values.id === row.id) {
-              
               return {
                 ...values,
                 //id: id
                 id: row.id
               }
             } else {
-             
               return row
             }
           })
-          console.log("bukan edit mode akhir", updatedData)
+          console.log('bukan edit mode akhir', updatedData)
           setState(updatedData)
         }
       } else {
         //creating row
         var updatedValues: CreatePicoDetail = values
         // if (!editMode) {
-          //updatedValues.id = data.length
-          if (values.picoHisId == '' && !isEditing) updatedValues.id = data.length + 1
-         
+        //updatedValues.id = data.length
+        if (values.picoHisId == '' && !isEditing)
+          updatedValues.id = data.length + 1
+
         // }
 
         setState([...data, updatedValues])
