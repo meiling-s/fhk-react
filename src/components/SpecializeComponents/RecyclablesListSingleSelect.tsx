@@ -56,7 +56,7 @@ export default function RecyclablesListSingleSelect({
       setSubType(defaultRecycL.recycSubTypeId)
       setCurRecyc(defaultRecycL.recycTypeId)
     }
-  }, [])
+  }, [defaultRecycL])
   
   useEffect(() => {
     //console.log(toSingleRecyclable());

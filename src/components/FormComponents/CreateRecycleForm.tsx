@@ -142,7 +142,7 @@ const CreateRecycleForm = ({
       recycTypeId: picoDtl.recycType,
       recycSubTypeId: picoDtl.recycSubType
     }
-    //console.log("set def", defRecyc);
+    console.log("set def", defRecyc);
     setDefaultRecyc(defRecyc)
   }
 
@@ -154,12 +154,15 @@ const CreateRecycleForm = ({
         setEditRow(editR)
       }
     } else if (editRowId == null && index && editMode) {
+     
       const editR = data.find((item) => item.id === index)
       if (editR) {
+
         setDefRecyc(editR)
         setEditRow(editR)
       }
     } else if (editMode) {
+      
       setDefaultRecyc(undefined)
       initValue.id = data.length
       formik.setValues(initValue)
@@ -336,7 +339,6 @@ const CreateRecycleForm = ({
               return row
             }
           })
-          console.log('bukan edit mode akhir', updatedData)
           setState(updatedData)
         }
       } else {
@@ -552,6 +554,7 @@ const CreateRecycleForm = ({
                     }
                     recycL={recycType ?? []}
                     setState={(values) => {
+                      console.log("recycSubType", values?.recycSubTypeId)
                       formik.setFieldValue('recycType', values?.recycTypeId)
                       formik.setFieldValue(
                         'recycSubType',
