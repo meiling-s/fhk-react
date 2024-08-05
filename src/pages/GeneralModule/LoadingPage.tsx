@@ -72,7 +72,7 @@ const LoadingPage = () => {
 
         setTimeout(() => {
           window.close()
-        }, 1000)
+        }, 4000)
       } catch (error) {
         console.error('Download failed:', error)
       }
