@@ -135,7 +135,7 @@ const JobOrderForm = ({
             <Box>
               <Typography sx={styles.header4}>{t('job_order.item.detail')}</Typography>
               <Typography sx={styles.header3}>
-                {selectedJobOrder?.joId}
+                {selectedJobOrder?.labelId}
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', flexShrink: 0, ml: '20px' }}>
