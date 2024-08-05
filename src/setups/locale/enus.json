@@ -357,10 +357,10 @@
       "status": "Status"
     },
     "card_detail": {
-      "main_category": "Type",
-      "subcategory": "Subtype",
+      "main_category": "Recyclable Type",
+      "subcategory": "Recyclable Subtype",
       "shipping_time": "Estimated Shipping Time",
-      "weight": "Weight",
+      "weight": "Established Weight",
       "shipping_receiver": "Shipping and Receiving Companies",
       "deliver_location": "Delivery and Arrival Locations",
       "van": "Van",
@@ -369,12 +369,12 @@
       "one-transport": "One time transport",
       "sender_and_receiver_company": "Sender and Receiver Company",
       "sender_and_receiver_location": "Sender and Receiver Location",
-      "checkin_time": "Actual pickup datetime",
-      "checkout_time": "Actual dropoff datetime",
-      "checkin_weight": "Actual pickup weight",
-      "checkout_weight": "Actual dropoff weight",
-      "checkin_by": "Checkin person",
-      "checkout_by" :"Checkout person"
+      "checkin_time": "Actual check-in date and time",
+      "checkout_time": "Actual checkout date and time",
+      "checkin_weight": "Actual Check-in Weight",
+      "checkout_weight": "Actual Checkout Weight",
+      "checkin_by": "Check-in Person",
+      "checkout_by": "Checkout Person"
     },
     "item": {
       "detail": "Pickup Order Details",
