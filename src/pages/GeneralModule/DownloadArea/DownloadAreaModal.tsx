@@ -366,7 +366,7 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
               : generateDateRangeLink(selectedItem.reportId)
           break
       }
-
+     
       setDownloads((prev) => {
         return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
       })
@@ -577,9 +577,12 @@ const DownloadItem: FunctionComponent<{
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const getUrl = () => {
+    
     return `/loadPage?downloadUrl=${encodeURIComponent(
       url
-    )}&typeFile=${encodeURIComponent(typeFile || '')}&reportName=${reportName}`
+    )}&typeFile=${encodeURIComponent(
+      typeFile || ''
+    )}&reportName=${encodeURIComponent(reportName || '')}`
   }
   return (
     <Grid
@@ -614,7 +617,7 @@ const DownloadItem: FunctionComponent<{
         }}
         underline="none"
         //href={validation.length === 0 ? url : ''}
-        //onClick={() => downloadfile(url, typeFile)}
+      
         target="_blank"
         href={validation.length === 0 ? getUrl() : ''}
       >
