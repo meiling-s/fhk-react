@@ -19,11 +19,33 @@ const LoadingPage = () => {
           }
         })
 
+        //check if response ok && reader exist
         if (!response.ok) {
           throw new Error('Network response was not ok')
         }
 
-        const blob = await response.blob()
+        const reader = response.body?.getReader()
+        if (!reader) {
+          throw new Error('Failed to get reader from response body')
+        }
+
+        const contentLength = response.headers.get('Content-Length')
+        let receivedLength = 0
+        const chunks: Uint8Array[] = []
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) {
+            break
+          }
+          if (value) {
+            chunks.push(value)
+            receivedLength += value.length
+            console.log(`Received ${receivedLength} of ${contentLength}`)
+          }
+        }
+
+        const blob = new Blob(chunks)
         const urlObject = window.URL.createObjectURL(blob)
 
         const a = document.createElement('a')
@@ -39,7 +61,7 @@ const LoadingPage = () => {
           default:
             break
         }
-       
+
         a.download = reportName
           ? `${reportName}.${extension}`
           : `download-report.${extension}`
@@ -50,7 +72,7 @@ const LoadingPage = () => {
 
         setTimeout(() => {
           window.close()
-        }, 4000)
+        }, 1000)
       } catch (error) {
         console.error('Download failed:', error)
       }
