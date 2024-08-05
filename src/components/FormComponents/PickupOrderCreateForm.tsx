@@ -263,13 +263,14 @@ const PickupOrderCreateForm = ({
   const handleDeleteRow = (id: any) => {
     if (editMode) {
       //let updateDeleteRow = state.filter((row, index) => row.id == id)
-      let updateDeleteRow: CreatePicoDetail[] = []
-      updateDeleteRow = state.map((picoDtl, index) => {
-        return {
+      // let updateDeleteRow: CreatePicoDetail[] = []
+      // debugger
+      const updateDeleteRow = state
+        .filter((picoDtl) => picoDtl.picoDtlId) // Only include items with picoDtlId
+        .map((picoDtl) => ({
           ...picoDtl,
           status: picoDtl.picoDtlId === id ? 'DELETED' : picoDtl.status
-        }
-      })
+        }))
       setState(updateDeleteRow)
     } else {
       let updateDeleteRow = state.filter((row) => row.id !== id)
