@@ -306,6 +306,9 @@ const useValidationPickupOrder = (
       const toDate = dayjs(pico.effToDate).format(
         dateFormat ? dateFormat : 'YYYY-MM-DD'
       )
+
+      const validDate = dayjs(pico.effFrmDate, dateFormat).isBefore(dayjs(pico.effToDate, dateFormat))
+
       if (!isValidDayjsISODate(dayjs(pico.effFrmDate))) {
         isValid = false
         setErrorsField((prev) => {
@@ -332,7 +335,7 @@ const useValidationPickupOrder = (
             }
           }
         })
-      } else if (fromDate > toDate) {
+      } else if (!validDate) {
         isValid = false
         setErrorsField((prev) => {
           return {
@@ -712,6 +715,9 @@ const useValidationPickupOrder = (
     const fromDate = dayjs(pico.effFrmDate)
 
     const toDate = dayjs(pico.effToDate)
+
+    const validDate = dayjs(pico.effFrmDate, dateFormat).isBefore(dayjs(pico.effToDate, dateFormat))
+
     if (!isValidDayjsISODate(fromDate) && errorsField.effFrmDate.touch) {
       const fromDate = dayjs(pico.effFrmDate)
       // if(!isValidDayjsISODate(fromDate)) {
@@ -755,7 +761,7 @@ const useValidationPickupOrder = (
         dateFormat ? dateFormat : 'YYYY-MM-DD'
       )
 
-      if (fromDate > toDate) {
+      if (!validDate) {
         setErrorsField((prev) => {
           return {
             ...prev,
