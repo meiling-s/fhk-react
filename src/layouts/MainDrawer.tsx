@@ -67,6 +67,13 @@ type DrawerItem = {
   functionName: string
 }
 
+type subMenuItem = {
+  name: string
+  value: string
+  path: string
+  functionName: string
+}
+
 const drawerWidth = 225
 
 function MainDrawer() {
@@ -85,6 +92,9 @@ function MainDrawer() {
   const [drawerMenuToNavigate, setDrawerMenuToNavigate] =
     useState<DrawerItem | null>(null)
   const [currentDrawerMenu, setcurrentDrawerMenu] = useState<number | 0>(0)
+  const [subMenuToNavigate, setSubMenuToNavigate] =
+    useState<subMenuItem | null>(null)
+  const [currentIdxSubMenu, setcurrentIdxSubMenu] = useState<number | 0>(0)
   const restrictPage = creatioPageList()
 
   const handleDrawerOpen = () => {
@@ -265,12 +275,7 @@ function MainDrawer() {
 
   //set submenu dashboard
   var subMenuDashboard: any[]
-  let subMenuDashboardTmp: {
-    name: string
-    value: string
-    path: string
-    functionName: string
-  }[] = []
+  let subMenuDashboardTmp: subMenuItem[] = []
   // Base items
   // need to add path & functionName property in order to tracking user activity
   const baseItems = [
@@ -374,6 +379,9 @@ function MainDrawer() {
   }, [currentPath, drawerMenusTmp])
 
   const handleNavigateMenu = (drawerItem: DrawerItem, index: number) => {
+    if (drawerItem.collapse) {
+      return drawerItem.onClick()
+    }
     if (restrictPage.includes(currentPath)) {
       setOpenConfirmModal(true)
       setDrawerMenuToNavigate(drawerItem)
@@ -386,6 +394,17 @@ function MainDrawer() {
     }
   }
 
+  const handleSubItemMenu = (item: subMenuItem, index: number) => {
+    if (restrictPage.includes(currentPath)) {
+      setOpenConfirmModal(true)
+      setSubMenuToNavigate(item)
+      setcurrentDrawerMenu(index)
+    } else {
+      navigate(`${realm}/${item.name}`)
+      setSelectedSubIndex(index)
+    }
+  }
+
   const onConfirmNavigate = () => {
     if (drawerMenuToNavigate) {
       drawerMenuToNavigate.onClick()
@@ -394,8 +413,29 @@ function MainDrawer() {
       setDrawerMenuToNavigate(null)
       setSelectedSubIndex(0)
       setDashboardGroup(false)
-      setOpenConfirmModal(false)
+    } else {
+      setDashboardGroup(true)
+      navigate(`${realm}/${subMenuToNavigate?.name}`)
+      setSelectedSubIndex(currentIdxSubMenu)
+      setSubMenuToNavigate(null)
     }
+
+    setOpenConfirmModal(false)
+  }
+
+  const getMenuActiveColor = () => {
+    const color =
+      role === 'manufacturer'
+        ? '#6BC7FF'
+        : role === 'customer'
+        ? '#199BEC'
+        : role === 'logistic'
+        ? '#63D884'
+        : role === 'collector'
+        ? '#79CA25'
+        : '#79CA25'
+
+    return color
   }
 
   return (
@@ -450,26 +490,15 @@ function MainDrawer() {
                       index === drawerMenus.length - 1 ? '48px' : '0px'
                   }}
                   key={drawerMenu.name}
-                  // onClick={drawerMenu.onClick}
                   onClick={() => handleNavigateMenu(drawerMenu, index)}
                   disablePadding
                 >
                   <ListItemButton
                     selected={selectedIndex === index}
-                    //onClick={(event) => handleListItemClick(index)}
                     sx={{
                       '&:hover': {
                         '.MuiSvgIcon-root': {
-                          color:
-                            role === 'manufacturer'
-                              ? '#6BC7FF'
-                              : role === 'customer'
-                              ? '#199BEC'
-                              : role === 'logistic'
-                              ? '#63D884'
-                              : role === 'collector'
-                              ? '#79CA25'
-                              : '#79CA25'
+                          color: getMenuActiveColor()
                         }
                       }
                     }}
@@ -477,17 +506,7 @@ function MainDrawer() {
                     <ListItemIcon
                       sx={{
                         color:
-                          selectedIndex === index
-                            ? role === 'manufacturer'
-                              ? '#6BC7FF'
-                              : role === 'customer'
-                              ? '#199BEC'
-                              : role === 'logistic'
-                              ? '#63D884'
-                              : role === 'collector'
-                              ? '#79CA25'
-                              : '#79CA25'
-                            : ''
+                          selectedIndex === index ? getMenuActiveColor() : ''
                       }}
                     >
                       {drawerMenu.icon}
@@ -502,35 +521,22 @@ function MainDrawer() {
                   <List component="div" disablePadding>
                     {subMenuDashboard &&
                       subMenuDashboard.length > 0 &&
-                      subMenuDashboard.map((item, index) => {
+                      subMenuDashboard.map((item, subMenuIndex) => {
                         return (
                           <ListItemButton
-                            key={index}
+                            key={subMenuIndex}
                             sx={{ pl: 7 }}
                             selected={true}
                             onClick={() => {
-                              navigate(`${realm}/${item.name}`)
-                              setSelectedSubIndex(index)
+                              handleSubItemMenu(item, subMenuIndex)
                             }}
                           >
                             <ListItemText
                               className={
-                                index === selectedISubIndex
-                                  ? 'text-menu-active'
+                                subMenuIndex === selectedISubIndex
+                                  ? `text-[${getMenuActiveColor()}]`
                                   : ''
                               }
-                              sx={{
-                                color:
-                                  role === 'manufacturer'
-                                    ? '#6BC7FF'
-                                    : role === 'customer'
-                                    ? '#199BEC'
-                                    : role === 'logistic'
-                                    ? '#63D884'
-                                    : role === 'collector'
-                                    ? '#79CA25'
-                                    : '#79CA25'
-                              }}
                               primary={item.value}
                             />
                           </ListItemButton>
@@ -547,44 +553,22 @@ function MainDrawer() {
                     index === drawerMenus.length - 1 ? '48px' : '0px'
                 }}
                 key={index}
-                // onClick={drawerMenu.onClick}
                 onClick={() => handleNavigateMenu(drawerMenu, index)}
                 disablePadding
               >
                 <ListItemButton
                   selected={selectedIndex === index}
-                  //onClick={(event) => handleListItemClick(index)}
                   sx={{
                     '&:hover': {
                       '.MuiSvgIcon-root': {
-                        color:
-                          role === 'manufacturer'
-                            ? '#6BC7FF'
-                            : role === 'customer'
-                            ? '#199BEC'
-                            : role === 'logistic'
-                            ? '#63D884'
-                            : role === 'collector'
-                            ? '#79CA25'
-                            : '#79CA25'
+                        color: getMenuActiveColor()
                       }
                     }
                   }}
                 >
                   <ListItemIcon
                     sx={{
-                      color:
-                        selectedIndex === index
-                          ? role === 'manufacturer'
-                            ? '#6BC7FF'
-                            : role === 'customer'
-                            ? '#199BEC'
-                            : role === 'logistic'
-                            ? '#63D884'
-                            : role === 'collector'
-                            ? '#79CA25'
-                            : '#79CA25'
-                          : ''
+                      color: selectedIndex === index ? getMenuActiveColor() : ''
                     }}
                   >
                     {drawerMenu.icon}

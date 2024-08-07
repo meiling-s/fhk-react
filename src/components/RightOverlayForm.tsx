@@ -30,6 +30,7 @@ type RightOverlayFormProps = {
   showHeader?: boolean
   headerProps?: HeaderProps
   action?: 'add' | 'edit' | 'delete' | 'none'
+  useConfirmModal?: boolean
 }
 
 const HeaderSection: React.FC<HeaderProps> = ({
@@ -139,7 +140,8 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   anchor = 'left',
   showHeader = true,
   headerProps,
-  action = 'add'
+  action = 'add',
+  useConfirmModal = true
 }) => {
   const [isOpen, setIsOpen] = useState(open)
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
@@ -150,6 +152,7 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   }, [open])
 
   const handleClose = () => {
+    setOpenConfirmModal(false)
     if (onClose) {
       onClose()
     }
@@ -160,7 +163,7 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
     <Drawer
       open={isOpen}
       onClose={(_, reason) => {
-        action != 'delete'
+        action != 'delete' && useConfirmModal
           ? reason === 'backdropClick' && setOpenConfirmModal(true)
           : handleClose()
       }}
@@ -185,7 +188,7 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
 
         <div className="">{children}</div>
         <ConfirmModal
-          isOpen={openConfirmModal}
+          isOpen={openConfirmModal && useConfirmModal}
           onConfirm={() => {
             handleClose()
           }}

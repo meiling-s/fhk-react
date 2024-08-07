@@ -47,7 +47,7 @@ const ConfirmModal: React.FC<ConfirmationModalProps> = ({
                 onConfirm()
               }}
             >
-              {t('check_in.confirm')}
+              {t('common.confirm')}
             </button>
             <button
               className="secondary-btn mr-2 cursor-pointer"
