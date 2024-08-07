@@ -29,6 +29,7 @@ import {
   GET_CHECKIN_CHECKOUT_LIST,
   GET_CHECKOUT_BY_ID
 } from '../../../constants/requests'
+import { getAllCheckInOutRequest } from '../../../APICalls/Collector/checkInOut'
 import {
   extractError,
   getPrimaryColor,
@@ -41,6 +42,7 @@ import {
   getCheckOutDetailByID
 } from '../../../APICalls/Collector/inout'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import { queryCheckInOut } from '../../../interfaces/checkInOut'
 
 function onlyUnique(value: any, index: any, array: any) {
   return array.indexOf(value) === index
@@ -53,13 +55,15 @@ function CheckInAndCheckOut() {
   const [selectedRow, setSelectedRow] = useState<any | null>(null)
   const [totalData, setTotalData] = useState(0)
   const [page, setPage] = useState(1)
+  const pageSize = 10
   const [isShow, setIsShow] = useState(false)
   const [details, setDetails] = useState(null)
   const [keyword, setKeyword] = useState('')
-  const [filter, setFilter] = useState({
+  const [filter, setFilter] = useState<queryCheckInOut>({
+    picoId: '',
     company: '',
-    location: '',
-    outin: ''
+    addr: '',
+    inout: ''
   })
   const navigate = useNavigate()
   const [totalElements, setTotalElements] = useState<number>(0)
@@ -75,23 +79,24 @@ function CheckInAndCheckOut() {
 
   const getData = async () => {
     try {
-      const token = returnApiToken()
+      const result = await getAllCheckInOutRequest(page - 1, pageSize, filter)
+      const data = result?.data
+      // const token = returnApiToken()
+      // const table = token.decodeKeycloack
 
-      const table = token.decodeKeycloack
+      // const { data: dataRes } = await axiosInstance({
+      //   baseURL: window.baseURL.collector,
+      //   ...GET_CHECKIN_CHECKOUT_LIST(
+      //     table,
+      //     keyword,
+      //     page - 1,
+      //     10,
+      //     token.realmApiRoute
+      //   )
+      // })
 
-      const { data: dataRes } = await axiosInstance({
-        baseURL: window.baseURL.collector,
-        ...GET_CHECKIN_CHECKOUT_LIST(
-          table,
-          keyword,
-          page - 1,
-          10,
-          token.realmApiRoute
-        )
-      })
-
-      const { content, totalPages, totalElements } = dataRes
-      console.log('dataRes', dataRes)
+      const { content, totalPages, totalElements } = data
+      // console.log('dataRes', dataRes)
       setData(
         content.map((item: any, index: number) => {
           return {
@@ -354,7 +359,7 @@ function CheckInAndCheckOut() {
               </MenuItem>
             </Select>
           </FormControl>
-          <FormControl
+          {/* <FormControl
             sx={{
               mt: 3,
               m: 1,
@@ -435,27 +440,29 @@ function CheckInAndCheckOut() {
                 <em>{t('check_in.any')}</em>
               </MenuItem>
             </Select>
-          </FormControl>
+          </FormControl> */}
         </div>
       </Box>
       <div className="mt-6">
         <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
           <DataGrid
-            rows={data.filter((item: any) => {
-              if (filter.company) {
-                return item.senderName === filter.company
-              }
-              if (filter.location) {
-                return item.senderAddr === filter.location
-              }
-              if (filter.outin) {
-                if (filter.outin === 'out') {
-                  return item.chkOutId
-                }
-                return item.chkInId
-              }
-              return true
-            })}
+            rows={data}
+            // rows={data.filter((item: any) => {
+            //   if (filter.company) {
+            //     return item.senderName === filter.company
+            //   }
+            //   if (filter.location) {
+            //     return item.senderAddr === filter.location
+            //   }
+            //   if (filter.outin) {
+            //     if (filter.outin === 'out') {
+            //       return item.chkOutId
+            //     }
+            //     return item.chkInId
+            //   }
+            //   return true
+            // })}
+
             getRowId={(row) => row.id}
             hideFooter
             columns={columns}

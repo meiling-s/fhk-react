@@ -970,18 +970,10 @@ export const DELETE_USER_ACCOUNT = (loginId: string): AxiosRequestConfig => ({
 
 export const GET_CHECKIN_CHECKOUT_LIST = (
   table: string,
-  picoId: string,
-  page: number,
-  size: number,
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/${realmApiRoute}/checkinout/searching/${table}`,
-  params: {
-    picoId: picoId ?? '',
-    page,
-    size
-  }
 })
 
 export const GET_CHECKIN_BY_ID = (
