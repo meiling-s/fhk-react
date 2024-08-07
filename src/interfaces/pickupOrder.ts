@@ -24,10 +24,16 @@ export interface PickupOrderDetail {
     checkInUnitId?: number | null,
     checkInAt?: string | null,
     checkInBy?: string | null,
+    checkInByNameEng?: string | null,
+    checkInByNameSchi?: string | null,
+    checkInByNameTchi?: string | null,
     checkOutWeight?: number | null,
     checkOutUnitId?: number | null,
     checkOutAt?: string | null,
     checkOutBy?: string | null,
+    checkOutByNameEng?: string | null,
+    checkOutByNameSchi?: string | null,
+    checkOutByNameTchi?: string | null,
 }
 
 export interface PickupOrder {
