@@ -115,7 +115,8 @@
       "effectiveDateLess": "Effective from date should not later than Effective to date",
       "cannotBeSame": "cannot be the same",
       "shouldGreaterThanZero": "Storage capacity should be greater then Zero",
-      "cantBeSame":"cannot be the same"
+      "cantBeSame":"cannot be the same",
+      "selectFirst": "Please select first before adding a new one."
     }
   },
   "component": {
