@@ -47,6 +47,7 @@ export interface JobListOrder {
     joId: string;
     picoId: string;
     picoDtlId: number;
+    labelId?: string;
     createdAt: string;
     driverId: string;
     plateNo: string;

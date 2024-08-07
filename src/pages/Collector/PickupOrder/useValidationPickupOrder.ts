@@ -134,6 +134,8 @@ const useValidationPickupOrder = (
   const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
   const { dateFormat } = useContainer(CommonTypeContainer)
 
+  console.log("state", state)
+
   const errorMessages: any = {
     routine: {
       mesageEn: 'Routine is Required',
