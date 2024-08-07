@@ -513,7 +513,6 @@ const PickupOrderCreateForm = ({
         // </IconButton>
         <IconButton
           onClick={() => {
-            console.log('params delete', params.row.picoDtlId)
             setOpenDelete(true)
             setRecycbleLocId(params.row)
           }}

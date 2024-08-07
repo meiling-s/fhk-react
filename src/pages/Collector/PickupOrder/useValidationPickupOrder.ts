@@ -134,8 +134,6 @@ const useValidationPickupOrder = (
   const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
   const { dateFormat } = useContainer(CommonTypeContainer)
 
-  console.log("state", state)
-
   const errorMessages: any = {
     routine: {
       mesageEn: 'Routine is Required',
@@ -263,51 +261,11 @@ const useValidationPickupOrder = (
   const validateData = (): boolean => {
     let isValid = true
 
-    // if(pico.effFrmDate){
-    //   const fromDate = dayjs(pico.effFrmDate);
-    //   if(!isValidDayjsISODate(fromDate)) {
-    //     isValid = false;
-    //     setErrorsField(prev => {
-    //       return {
-    //         ...prev,
-    //         effFrmDate: {
-    //           ...prev.effFrmDate,
-    //           status: true,
-    //           messages: errorMessages['shippingFromDateNotValid'],
-    //           message: getTranslationMessage('shippingFromDateNotValid')
-    //         }
-    //       }
-    //     })
-    //   }
-    // }
-
-    // if(pico.effToDate){
-    //   const toDate = dayjs(pico.effToDate);
-    //   if(!isValidDayjsISODate(toDate)) {
-    //     isValid = false;
-    //     setErrorsField(prev => {
-    //       return {
-    //         ...prev,
-    //         effToDate: {
-    //           ...prev.effToDate,
-    //           status: true,
-    //           messages: errorMessages['shippingtoDateNotValid'],
-    //           message: getTranslationMessage('shippingtoDateNotValid')
-    //         }
-    //       }
-    //     })
-    //   }
-    // }
-
     if (pico.effToDate && pico.effFrmDate) {
-      const fromDate = dayjs(pico.effFrmDate).format(
-        dateFormat ? dateFormat : 'YYYY-MM-DD'
-      )
-      const toDate = dayjs(pico.effToDate).format(
-        dateFormat ? dateFormat : 'YYYY-MM-DD'
-      )
+      const newFromDate = dayjs(pico.effFrmDate).startOf('day')
+      const newToDate = dayjs(pico.effToDate).startOf('day')
 
-      const validDate = dayjs(pico.effFrmDate, dateFormat).isBefore(dayjs(pico.effToDate, dateFormat))
+      const validDate = newFromDate.isBefore(newToDate)
 
       if (!isValidDayjsISODate(dayjs(pico.effFrmDate))) {
         isValid = false
@@ -398,13 +356,13 @@ const useValidationPickupOrder = (
       pico.routineType === 'specificDate' &&
       pico.routine.length >= 1
     ) {
-      const fromDate = dayjs(pico.effFrmDate, dateFormat)
-      const toDate = dayjs(pico.effToDate, dateFormat)
+      const fromDate = dayjs(pico.effFrmDate).startOf('day')
+      const toDate = dayjs(pico.effToDate).startOf('day')
 
       const invalidFormatDates: string[] = []
       const outOfRangeDates: string[] = []
       pico.routine.map((item: any) => {
-        const itemDate = dayjs(item, dateFormat).startOf('day')
+        const itemDate = dayjs(item).startOf('day')
         const isValidDate = itemDate.isValid()
         const isValidFromDate = itemDate.isSame(fromDate) || itemDate.isAfter(fromDate)
         const isValidToDate = itemDate.isSame(toDate) || itemDate.isBefore(toDate)
@@ -700,8 +658,10 @@ const useValidationPickupOrder = (
     const fromDate = dayjs(pico.effFrmDate)
 
     const toDate = dayjs(pico.effToDate)
+    const newFromDate = dayjs(pico.effFrmDate).startOf('day')
+    const newToDate = dayjs(pico.effToDate).startOf('day')
 
-    const validDate = dayjs(pico.effFrmDate, dateFormat).isBefore(dayjs(pico.effToDate, dateFormat))
+    const validDate = newFromDate.isBefore(newToDate)
 
     if (!isValidDayjsISODate(fromDate) && errorsField.effFrmDate.touch) {
       const fromDate = dayjs(pico.effFrmDate)
@@ -819,14 +779,14 @@ const useValidationPickupOrder = (
         pico.routine.length >= 1 &&
         errorsField.routine.touch
       ) {
-        const fromDate = dayjs(pico.effFrmDate, dateFormat).startOf('day')
-        const toDate = dayjs(pico.effToDate, dateFormat).startOf('day')
+        const fromDate = dayjs(pico.effFrmDate).startOf('day')
+        const toDate = dayjs(pico.effToDate).startOf('day')
 
         const invalidFormatDates: string[] = []
         const outOfRangeDates: string[] = []
 
         pico.routine.map((item: any) => {
-          const itemDate = dayjs(item, dateFormat).startOf('day')
+          const itemDate = dayjs(item).startOf('day')
           const isValidDate = itemDate.isValid()
           const isValidFromDate = itemDate.isSame(fromDate) || itemDate.isAfter(fromDate)
           const isValidToDate = itemDate.isSame(toDate) || itemDate.isBefore(toDate)
@@ -1094,10 +1054,9 @@ const useValidationPickupOrder = (
   useEffect(() => {
     validateDataChange()
   }, [pico])
-  // console.log('ErrorsField', errorsField)
+  
   const changeTouchField = (field: fieldName) => {
     setErrorsField((prev) => {
-      console.log('field', prev[field])
       return {
         ...prev,
         [field]: {
