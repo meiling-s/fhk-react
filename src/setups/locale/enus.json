@@ -44,7 +44,8 @@
     "packageName": "Package Type Name already exist",
     "warehouseName": "Warehouse Name already Exist",
     "vehicle": "Vehicle",
-    "theNameAlreadyExist": "Staff position name already exist"
+    "theNameAlreadyExist": "Staff position name already exist",
+    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -115,7 +116,7 @@
       "effectiveDateLess": "Effective from date should not later than Effective to date",
       "cannotBeSame": "cannot be the same",
       "shouldGreaterThanZero": "Storage capacity should be greater then Zero",
-      "cantBeSame":"cannot be the same"
+      "cantBeSame": "cannot be the same"
     }
   },
   "component": {
@@ -374,7 +375,7 @@
       "checkin_weight": "Actual pickup weight",
       "checkout_weight": "Actual dropoff weight",
       "checkin_by": "Checkin person",
-      "checkout_by" :"Checkout person"
+      "checkout_by": "Checkout person"
     },
     "item": {
       "detail": "Pickup Order Details",

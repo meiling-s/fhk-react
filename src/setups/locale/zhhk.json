@@ -44,7 +44,8 @@
     "packageName": "包裝單位名稱已存在",
     "warehouseName": "倉庫名稱已存在",
     "vehicle": "車輛",
-    "theNameAlreadyExist": "員工職位名稱已存在"
+    "theNameAlreadyExist": "員工職位名稱已存在",
+    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失"
   },
   "col": {
     "createCP": "建立回收點",
@@ -371,7 +372,7 @@
       "checkin_weight": "實際提取重量",
       "checkout_weight": "實際送出重量",
       "checkin_by": "提取負責人",
-      "checkout_by" :"送出負責人"
+      "checkout_by": "送出負責人"
     },
     "item": {
       "detail": "運單詳情",

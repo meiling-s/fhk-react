@@ -6,6 +6,7 @@ import { styles } from '../constants/styles'
 import { useContainer } from 'unstated-next'
 import NotifContainer from '../contexts/NotifContainer'
 import DeleteModal from './FormComponents/deleteModal'
+import ConfirmModal from './SpecializeComponents/ConfirmationModal'
 import { t } from 'i18next'
 
 type HeaderProps = {
@@ -46,13 +47,13 @@ const HeaderSection: React.FC<HeaderProps> = ({
   const [openDelete, setOpenDelete] = useState<boolean>(false)
 
   const onDeleteModal = () => {
-    if(cancelText === t('common.cancel')){
+    if (cancelText === t('common.cancel')) {
       setOpenDelete(false)
-      if (onDelete){
+      if (onDelete) {
         onDelete()
       }
     } else {
-      setOpenDelete(prev => !prev)
+      setOpenDelete((prev) => !prev)
     }
   }
 
@@ -120,14 +121,14 @@ const HeaderSection: React.FC<HeaderProps> = ({
             />
           </div>
         </div>
-        </div>
-        <DeleteModal
-          open={openDelete}
-          onClose={onDeleteModal}
-          onDelete={onDeleteClick}
-          deleteText={deleteText}
-        />
       </div>
+      <DeleteModal
+        open={openDelete}
+        onClose={onDeleteModal}
+        onDelete={onDeleteClick}
+        deleteText={deleteText}
+      />
+    </div>
   )
 }
 
@@ -141,8 +142,9 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   action = 'add'
 }) => {
   const [isOpen, setIsOpen] = useState(open)
-  const { marginTop } = useContainer(NotifContainer);
-  
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
+  const { marginTop } = useContainer(NotifContainer)
+
   useEffect(() => {
     setIsOpen(open)
   }, [open])
@@ -157,7 +159,11 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   return (
     <Drawer
       open={isOpen}
-      onClose={handleClose}
+      onClose={(_, reason) => {
+        action != 'delete'
+          ? reason === 'backdropClick' && setOpenConfirmModal(true)
+          : handleClose()
+      }}
       anchor={anchor}
       variant={'temporary'}
       sx={{
@@ -178,6 +184,13 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
         ) : null}
 
         <div className="">{children}</div>
+        <ConfirmModal
+          isOpen={openConfirmModal}
+          onConfirm={() => {
+            handleClose()
+          }}
+          onCancel={() => setOpenConfirmModal(false)}
+        />
       </div>
     </Drawer>
   )
