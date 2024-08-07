@@ -398,29 +398,28 @@ const useValidationPickupOrder = (
       pico.routineType === 'specificDate' &&
       pico.routine.length >= 1
     ) {
-      const fromDate = dayjs(pico.effFrmDate).format(
-        dateFormat ? dateFormat : 'YYYY-MM-DD'
-      )
-      const toDate = dayjs(pico.effToDate).format(
-        dateFormat ? dateFormat : 'YYYY-MM-DD'
-      )
+      const fromDate = dayjs(pico.effFrmDate, dateFormat)
+      const toDate = dayjs(pico.effToDate, dateFormat)
 
       const invalidFormatDates: string[] = []
       const outOfRangeDates: string[] = []
-
       pico.routine.map((item: any) => {
-        const date = dayjs(item).format(dateFormat)
+        const itemDate = dayjs(item, dateFormat).startOf('day')
+        const isValidDate = itemDate.isValid()
+        const isValidFromDate = itemDate.isSame(fromDate) || itemDate.isAfter(fromDate)
+        const isValidToDate = itemDate.isSame(toDate) || itemDate.isBefore(toDate)
 
         // Check if date is in the correct format
-        if (date === 'Invalid Date') {
+        if (!isValidDate) {
           invalidFormatDates.push(item)
           return false
         }
 
         // Check if date is within the valid range
-        if ((date < fromDate || date > toDate) && date != 'Invalid Date') {
+        if (isValidFromDate && isValidToDate) {
+          return
+        } else {
           outOfRangeDates.push(item)
-          return false
         }
       })
 
@@ -440,20 +439,6 @@ const useValidationPickupOrder = (
             }
           }
         })
-        // } else if (routine.includes(false)) {
-        //   console.log('routine', routine)
-        //   isValid = false
-        //   setErrorsField((prev) => {
-        //     return {
-        //       ...prev,
-        //       routine: {
-        //         ...prev.routine,
-        //         status: true,
-        //         messages: errorMessages['out_of_date_range'],
-        //         message: getTranslationMessage('out_of_date_range')
-        //       }
-        //     }
-        //   })
       } else if (outOfRangeDates.length > 0) {
         setErrorsField((prev) => {
           return {
@@ -834,28 +819,29 @@ const useValidationPickupOrder = (
         pico.routine.length >= 1 &&
         errorsField.routine.touch
       ) {
-        const fromDate = dayjs(pico.effFrmDate).format(
-          dateFormat ? dateFormat : 'YYYY-MM-DD'
-        )
-        const toDate = dayjs(pico.effToDate).format(
-          dateFormat ? dateFormat : 'YYYY-MM-DD'
-        )
+        const fromDate = dayjs(pico.effFrmDate, dateFormat).startOf('day')
+        const toDate = dayjs(pico.effToDate, dateFormat).startOf('day')
+
         const invalidFormatDates: string[] = []
         const outOfRangeDates: string[] = []
 
         pico.routine.map((item: any) => {
-          const date = dayjs(item).format(dateFormat)
+          const itemDate = dayjs(item, dateFormat).startOf('day')
+          const isValidDate = itemDate.isValid()
+          const isValidFromDate = itemDate.isSame(fromDate) || itemDate.isAfter(fromDate)
+          const isValidToDate = itemDate.isSame(toDate) || itemDate.isBefore(toDate)
 
           // Check if date is in the correct format
-          if (date === 'Invalid Date') {
+          if (!isValidDate) {
             invalidFormatDates.push(item)
             return false
           }
 
           // Check if date is within the valid range
-          if ((date < fromDate || date > toDate) && date != 'Invalid Date') {
+          if (isValidFromDate && isValidToDate) {
+            return
+          } else {
             outOfRangeDates.push(item)
-            return false
           }
         })
 
