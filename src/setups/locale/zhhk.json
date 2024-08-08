@@ -115,7 +115,8 @@
       "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期",
       "cannotBeSame": "不能相同",
-      "cantBeSame": "不能相同"
+      "cantBeSame": "不能相同",
+      "selectFirst": "請先選擇，然後再新增新的。"
     }
   },
   "component": {
@@ -854,8 +855,8 @@
       "sender_name": "寄件公司",
       "rec_loc_info": "回收地點資料"
     },
-    "confirm_approve_title": "確認核準吗？",
-    "confirm_approve": "确认核準",
+    "confirm_approve_title": "確認核準嗎？",
+    "confirm_approve": "確認",
     "cancel": "取消",
     "approved_success": "核準成功"
   },
