@@ -1,12 +1,11 @@
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
-  ASSIGN_DRIVER, REJECT_REASSIGN_DRIVER, GET_DRIVER, GET_VEHICLE_LOGISTIC, GET_ALL_JOB_ORDER, UPDATE_JOB_ORDER_STATUS, GET_DRIVER_DETAIL_BY_ID
+  ASSIGN_DRIVER, REJECT_REASSIGN_DRIVER, GET_DRIVER, GET_VEHICLE_LOGISTIC, GET_ALL_JOB_ORDER, UPDATE_JOB_ORDER_STATUS, GET_DRIVER_DETAIL_BY_ID,
+  GET_VEHICLE_PLATE_LIST
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 import { AssignJobDriver, GetDriver, RejectJobDriver } from '../interfaces/pickupOrder'
 import { JoStatus, queryJobOrder } from '../interfaces/JobOrderInterfaces'
-
 
 export const getAllJobOrder = async (query?: queryJobOrder) => {
   const auth = returnApiToken()
@@ -110,7 +109,6 @@ export const getDriver = async (page: number, size: number, sort: string) => {
 export const getAllVehiclesLogistic = async (page: number, size: number) => {
   try {
     const token = returnApiToken()
-
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
       ...GET_VEHICLE_LOGISTIC(token.decodeKeycloack),
@@ -126,5 +124,24 @@ export const getAllVehiclesLogistic = async (page: number, size: number) => {
     return response
   } catch (e) {
     throw(e)
+  }
+}
+
+export const getVehiclePlateList = async () => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_VEHICLE_PLATE_LIST(token.decodeKeycloack),
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+    
+    return response
+
+  } catch (error) {
+    throw(error)
   }
 }
