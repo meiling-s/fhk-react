@@ -273,10 +273,8 @@ function CreateCollectionPoint() {
   }
 
   const checkEffectiveDate = () => {
-    const startDate = dayjs(openingPeriod.startDate)
-      .subtract(1, 'day')
-      .startOf('day')
-    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day')
+    const startDate = dayjs(openingPeriod.startDate).startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).endOf('day')
 
     if (startDate.isAfter(endDate)) {
       return false

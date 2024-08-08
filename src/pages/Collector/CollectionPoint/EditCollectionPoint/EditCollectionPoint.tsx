@@ -278,7 +278,6 @@ function CreateCollectionPoint() {
     const startDate = dayjs(openingPeriod.startDate).startOf('day')
     const endDate = dayjs(openingPeriod.endDate).endOf('day')
 
-    //  debugger
     if (startDate.isAfter(endDate)) {
       return false
     } else {
