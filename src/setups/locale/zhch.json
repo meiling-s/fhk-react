@@ -44,7 +44,8 @@
     "packageName": "包装单位名称已存在",
     "warehouseName": "仓库名称已存在",
     "vehicle": "车辆",
-    "theNameAlreadyExist": "员工职位名称已存在"
+    "theNameAlreadyExist": "员工职位名称已存在",
+    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失"
   },
   "col": {
     "createCP": "建立回收点",
@@ -374,7 +375,7 @@
       "checkin_weight": "实际提取重量",
       "checkout_weight": "实际送出重量",
       "checkin_by": "送入负责人",
-      "checkout_by" :"送出负责人"
+      "checkout_by": "送出负责人"
     },
     "item": {
       "detail": "运单详情",

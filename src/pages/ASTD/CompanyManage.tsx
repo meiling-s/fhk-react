@@ -68,6 +68,7 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import i18n from '../../setups/i18n'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
+import ConfirmModal from '../../components/SpecializeComponents/ConfirmationModal'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -440,7 +441,7 @@ function InviteForm({
 }: inviteForm) {
   const { t } = useTranslation()
   //const [submitable, setSubmitable] = useState<boolean>(false)
-
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
   const validateSchema = Yup.object().shape({
     companyCategory: Yup.string().required(
       `${t('tenant.invite_form.company_category')} ${t(
@@ -615,12 +616,17 @@ function InviteForm({
     await formik.handleSubmit()
   }
 
+  const handleOncloseForm = () => {
+    setOpenConfirmModal(true)
+    // onClose()
+  }
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
         <Modal
           open={open}
-          onClose={onClose}
+          onClose={handleOncloseForm}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -851,6 +857,14 @@ function InviteForm({
                 </Button>
               </Box>
             </Stack>
+            <ConfirmModal
+              isOpen={openConfirmModal}
+              onConfirm={() => {
+                setOpenConfirmModal(false)
+                onClose()
+              }}
+              onCancel={() => setOpenConfirmModal(false)}
+            />
           </Box>
         </Modal>
       </LocalizationProvider>

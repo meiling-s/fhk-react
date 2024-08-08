@@ -44,7 +44,8 @@
     "packageName": "Package Type Name already exist",
     "warehouseName": "Warehouse Name already Exist",
     "vehicle": "Vehicle",
-    "theNameAlreadyExist": "Staff position name already exist"
+    "theNameAlreadyExist": "Staff position name already exist",
+    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost"
   },
   "col": {
     "createCP": "Create Collection Point",
