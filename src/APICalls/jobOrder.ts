@@ -133,7 +133,7 @@ export const getVehiclePlateList = async () => {
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_VEHICLE_PLATE_LIST(token.decodeKeycloack),
+      ...GET_VEHICLE_PLATE_LIST(token.tenantId),
       headers: {
         AuthToken: token.authToken
       }

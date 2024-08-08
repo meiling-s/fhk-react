@@ -1096,9 +1096,9 @@ export const GET_VEHICLE_LOGISTIC = (table: string): AxiosRequestConfig => ({
   url: `api/v1/logistic/vehicle/${table}`
 })
 
-export const GET_VEHICLE_PLATE_LIST = (table: string): AxiosRequestConfig => ({
+export const GET_VEHICLE_PLATE_LIST = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/logistic/getVehiclePlateNoList/${table}`
+  url: `api/v1/logistic/vehicleInfo/${tenantId}`
 })
 
 export const GET_LIST_NOTIF_TEMPLATE_PO = (
