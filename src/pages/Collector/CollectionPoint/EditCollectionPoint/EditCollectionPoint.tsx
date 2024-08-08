@@ -275,11 +275,10 @@ function CreateCollectionPoint() {
   }
 
   const checkEffectiveDate = () => {
-    const startDate = dayjs(openingPeriod.startDate)
-      .subtract(1, 'day')
-      .startOf('day')
-    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day')
+    const startDate = dayjs(openingPeriod.startDate).startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).endOf('day')
 
+    //  debugger
     if (startDate.isAfter(endDate)) {
       return false
     } else {
@@ -692,6 +691,14 @@ function CreateCollectionPoint() {
     ? displayCreatedDate(colInfo.createdAt)
     : dayjs(new Date()).format(format.dateFormat1)
 
+  const isIncludeOthersPremis = () => {
+    return (
+      premiseType === 'PT00009' ||
+      premiseType === 'PT00027' ||
+      premiseType === 'PT00028'
+    )
+  }
+
   return (
     <>
       <Box
@@ -859,17 +866,24 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-            {premiseType === 'PT00009' && (
+            {isIncludeOthersPremis() && (
               <Grid item>
                 {/* <Collapse in={premiseType == "PT00010"} > */}
-                <CustomField label={t('col.premiseRemark')} mandatory={false}>
+                <CustomField
+                  label={
+                    premiseType === 'PT00027'
+                      ? t('col.otherResidentialPremise')
+                      : t('col.otherNonResidentialPremise')
+                  }
+                  mandatory={false}
+                >
                   <CustomTextField
                     id="premiseRemark"
                     disabled={true}
                     placeholder={t('col.enterText')}
                     onChange={(event) => setPremiseRemark(event.target.value)}
-                    defaultValue={colInfo.premiseRemark}
-                    error={checkString(premiseName)}
+                    defaultValue={premiseRemark}
+                    error={checkString(premiseRemark)}
                   />
                 </CustomField>
                 {/* </Collapse> */}
