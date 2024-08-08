@@ -586,8 +586,9 @@ const PickupOrderCreateForm = ({
 
   const onhandleSubmit = () => {
     const isValid = validateData()
-    if (!isValid) return
-    formik.handleSubmit()
+    if (isValid == true) {
+      formik.handleSubmit()
+    }
   }
 
   return (
