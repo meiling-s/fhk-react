@@ -227,7 +227,7 @@ const JobOrder = () => {
       editable: true
     },
     {
-      field: 'joId',
+      field: 'labelId',
       headerName: t('job_order.table.jo_id'),
       type: 'string',
       width: 200,

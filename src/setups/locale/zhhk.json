@@ -116,7 +116,8 @@
       "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期",
       "cannotBeSame": "不能相同",
-      "cantBeSame": "不能相同"
+      "cantBeSame": "不能相同",
+      "selectFirst": "請先選擇，然後再新增新的。"
     }
   },
   "component": {
@@ -356,10 +357,10 @@
       "status": "狀態"
     },
     "card_detail": {
-      "main_category": "主類別",
-      "subcategory": "次類別",
+      "main_category": "回收物主類別",
+      "subcategory": "回收物次類別",
       "shipping_time": "預計運送時間",
-      "weight": "重量",
+      "weight": "預計重量",
       "shipping_receiver": "運輸和接收公司",
       "deliver_location": "交貨和到達地點",
       "van": "小型貨車",
@@ -368,11 +369,11 @@
       "one-transport": "一次性運輸",
       "sender_and_receiver_company": "寄件和收件公司",
       "sender_and_receiver_location": "回收和到達地點",
-      "checkin_time": "實際到達時間",
-      "checkout_time": "實際送出時間",
-      "checkin_weight": "實際提取重量",
+      "checkin_time": "實際送入日期和時間",
+      "checkout_time": "實際送出日期和時間",
+      "checkin_weight": "實際送入重量",
       "checkout_weight": "實際送出重量",
-      "checkin_by": "提取負責人",
+      "checkin_by": "送入負責人",
       "checkout_by" :"送出負責人"
     },
     "item": {
@@ -855,8 +856,8 @@
       "sender_name": "寄件公司",
       "rec_loc_info": "回收地點資料"
     },
-    "confirm_approve_title": "確認核準吗？",
-    "confirm_approve": "确认核準",
+    "confirm_approve_title": "確認核準嗎？",
+    "confirm_approve": "確認",
     "cancel": "取消",
     "approved_success": "核準成功"
   },

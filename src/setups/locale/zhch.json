@@ -117,7 +117,8 @@
       "effectiveDateLess": "开始日期不能晚于截止日期",
       "cannotBeSame": "不能相同",
       "shouldGreaterThanZero": " 可存容量大于零",
-      "cantBeSame":"不能相同"
+      "cantBeSame": "不能相同",
+      "selectFirst": "请先选择，然后才能添加新的。"
     }
   },
   "component": {
@@ -358,10 +359,10 @@
       "status": "状态"
     },
     "card_detail": {
-      "main_category": "主类别",
-      "subcategory": "次类别",
+      "main_category": "回收物主类别",
+      "subcategory": "回收物次类别",
       "shipping_time": "预计运送时间",
-      "weight": "重量",
+      "weight": "预计重量",
       "shipping_receiver": "寄件及收件公司",
       "deliver_location": "送出及到达地点",
       "van": "小型货车",
@@ -370,11 +371,11 @@
       "one-transport": "一次性运输",
       "sender_and_receiver_company": "寄件和收件公司",
       "sender_and_receiver_location": "送出和到达地点",
-      "checkin_time": "实际到达时间",
-      "checkout_time": "实际送出时间",
+      "checkin_time": "实际送入日期和时间",
+      "checkout_time": "实际送出日期和时间",
       "checkin_weight": "实际提取重量",
       "checkout_weight": "实际送出重量",
-      "checkin_by": "提取负责人",
+      "checkin_by": "送入负责人",
       "checkout_by" :"送出负责人"
     },
     "item": {
@@ -860,7 +861,7 @@
       "rec_loc_info": "回收地点资料"
     },
     "confirm_approve_title": "确认核准吗？",
-    "confirm_approve": "确认核准",
+    "confirm_approve": "确认",
     "cancel": "取消",
     "approved_success": "核准成功"
   },
