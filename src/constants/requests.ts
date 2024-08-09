@@ -982,7 +982,7 @@ export const GET_CHECKIN_BY_ID = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkin/${table}/${chkInId}`
+  url: `api/v1/${realmApiRoute}/checkin/${table}/${chkInId}`
 })
 
 export const GET_CHECKOUT_BY_ID = (
@@ -991,7 +991,7 @@ export const GET_CHECKOUT_BY_ID = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/collectors/checkout/${table}/${chkOutId}`
+  url: `api/v1/${realmApiRoute}/checkout/${table}/${chkOutId}`
 })
 
 export const GET_ALL_RECYCLE_TYPE = (): AxiosRequestConfig => ({

@@ -1,14 +1,9 @@
 import {
   Box,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
   Pagination,
-  Select,
-  TextField,
-  Typography
+  CircularProgress,
+  Typography,
+  Stack
 } from '@mui/material'
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import dayjs from 'dayjs'
@@ -19,16 +14,8 @@ import {
   localStorgeKeyName
 } from '../../../constants/constant'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import { SEARCH_ICON } from '../../../themes/icons'
 import { CheckInAndCheckOutDetails } from '../CheckInAndCheckOut'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
-import axios from 'axios'
-import {
-  GET_CHECKIN_BY_ID,
-  GET_CHECKIN_CHECKOUT_LIST,
-  GET_CHECKOUT_BY_ID
-} from '../../../constants/requests'
 import { getAllCheckInOutRequest } from '../../../APICalls/Collector/checkInOut'
 import {
   extractError,
@@ -36,11 +23,8 @@ import {
   returnApiToken
 } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
-import axiosInstance from '../../../constants/axiosInstance'
-import {
-  getCheckInDetailByID,
-  getCheckOutDetailByID
-} from '../../../APICalls/Collector/inout'
+
+import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { queryCheckInOut } from '../../../interfaces/checkInOut'
 
@@ -59,11 +43,12 @@ function CheckInAndCheckOut() {
   const [isShow, setIsShow] = useState(false)
   const [details, setDetails] = useState(null)
   const [keyword, setKeyword] = useState('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [filter, setFilter] = useState<queryCheckInOut>({
     picoId: '',
     company: '',
     addr: '',
-    inout: ''
+    inout: 'in'
   })
   const navigate = useNavigate()
   const [totalElements, setTotalElements] = useState<number>(0)
@@ -71,32 +56,14 @@ function CheckInAndCheckOut() {
 
   useEffect(() => {
     getData() // eslint-disable-next-line
-  }, [page, keyword])
-
-  const request = axios.create({
-    baseURL: window.baseURL.collector
-  })
+  }, [page, filter])
 
   const getData = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllCheckInOutRequest(page - 1, pageSize, filter)
       const data = result?.data
-      // const token = returnApiToken()
-      // const table = token.decodeKeycloack
-
-      // const { data: dataRes } = await axiosInstance({
-      //   baseURL: window.baseURL.collector,
-      //   ...GET_CHECKIN_CHECKOUT_LIST(
-      //     table,
-      //     keyword,
-      //     page - 1,
-      //     10,
-      //     token.realmApiRoute
-      //   )
-      // })
-
       const { content, totalPages, totalElements } = data
-      // console.log('dataRes', dataRes)
       setData(
         content.map((item: any, index: number) => {
           return {
@@ -107,6 +74,7 @@ function CheckInAndCheckOut() {
       )
       setTotalData(totalPages)
       setTotalElements(totalElements)
+      setIsLoading(false)
     } catch (error: any) {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
@@ -115,11 +83,37 @@ function CheckInAndCheckOut() {
     }
   }
 
-  const handleChangeFilter = (name: string, e: any) => {
-    setFilter({
-      ...filter,
-      [name]: e?.target?.value
+  const updateQuery = (newQuery: Partial<queryCheckInOut>) => {
+    setFilter({ ...filter, ...newQuery })
+  }
+
+  const handleChangeFilter = (label: string, value: string) => {
+    setPage(1)
+    updateQuery({ [label]: value })
+  }
+
+  function getUniqueOptions(propertyName: keyof any) {
+    interface Option {
+      value: string
+      label: string
+    }
+    const optionMap = new Map()
+
+    data.forEach((row) => {
+      if (row[propertyName] !== '') {
+        optionMap.set(row[propertyName], row[propertyName])
+      }
     })
+
+    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
+      value: option,
+      label: option
+    }))
+    options.push({
+      value: '',
+      label: t('check_in.any')
+    })
+    return options
   }
 
   const columns: GridColDef[] = [
@@ -188,9 +182,9 @@ function CheckInAndCheckOut() {
             <path
               d="M14 4.5L6 12.5L2 8.5"
               stroke="#79CA25"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         ) : (
@@ -223,6 +217,33 @@ function CheckInAndCheckOut() {
       type: 'string',
       width: 200,
       headerName: t('checkinandcheckout.arrived')
+    }
+  ]
+
+  const searchField = [
+    {
+      label: t('purchase_order.table.pico_id'),
+      placeholder: t('checkinandcheckout.search_placeholder'),
+      field: 'picoId'
+    },
+    {
+      label: t('checkinandcheckout.company'),
+      options: getUniqueOptions('senderName'),
+      field: 'company'
+    },
+    {
+      label: t('checkinandcheckout.delivery_location'),
+      options: getUniqueOptions('senderAddr'),
+      field: 'addr'
+    },
+    {
+      label: t('checkinandcheckout.outin'),
+      options: [
+        { label: t('checkinandcheckout.ship'), value: 'out' },
+        { label: t('checkinandcheckout.send_in'), value: 'in' },
+        { value: '', label: t('check_in.any') }
+      ],
+      field: 'inout'
     }
   ]
 
@@ -272,228 +293,68 @@ function CheckInAndCheckOut() {
         </Box>
       </Box>
       <Box>
-        <div className="flex items-center">
-          <TextField
-            id="searchShipment"
-            onChange={(event) => {
-              setKeyword(event.target.value)
-            }}
-            sx={{
-              mt: 3,
-              m: 1,
-              width: '25%',
-              bgcolor: 'white',
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: getPrimaryColor
-                },
-                '&:hover fieldset': {
-                  borderColor: getPrimaryColor
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: getPrimaryColor
-                },
-                '& label.Mui-focused': {
-                  color: getPrimaryColor // Change label color when input is focused
-                }
-              }
-            }}
-            label={t('purchase_order.table.pico_id')}
-            InputLabelProps={{
-              style: { color: getPrimaryColor() },
-              focused: true
-            }}
-            placeholder={t('checkinandcheckout.search_placeholder')}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => {}}>
-                    <SEARCH_ICON style={{ color: getPrimaryColor() }} />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
-          <FormControl
-            sx={{
-              mt: 3,
-              m: 1,
-              width: '25%',
-              bgcolor: 'white',
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: getPrimaryColor
-                },
-                '&:hover fieldset': {
-                  borderColor: getPrimaryColor
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: getPrimaryColor
-                }
-              }
-            }}
-          >
-            <InputLabel id="company-label" sx={styles.textFieldLabel}>
-              {t('checkinandcheckout.company')}
-            </InputLabel>
-            <Select
-              labelId="company-label"
-              id="company"
-              value={filter.company}
-              label={t('checkinandcheckout.company')}
-              onChange={(value) => handleChangeFilter('company', value)}
-            >
-              {data
-                .map((item: any) => {
-                  return item.senderName
-                })
-                .filter(onlyUnique)
-                .map((item, index) => (
-                  <MenuItem key={index} value={item}>
-                    {item}
-                  </MenuItem>
-                ))}
-              <MenuItem value="">
-                {' '}
-                <em>{t('check_in.any')}</em>
-              </MenuItem>
-            </Select>
-          </FormControl>
-          {/* <FormControl
-            sx={{
-              mt: 3,
-              m: 1,
-              width: '25%',
-              bgcolor: 'white',
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: getPrimaryColor
-                },
-                '&:hover fieldset': {
-                  borderColor: getPrimaryColor
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: getPrimaryColor
-                }
-              }
-            }}
-          >
-            <InputLabel id="location-label" sx={styles.textFieldLabel}>
-              {t('checkinandcheckout.delivery_location')}
-            </InputLabel>
-            <Select
-              labelId="location-label"
-              id="location"
-              value={filter.location}
-              label={t('checkinandcheckout.place')}
-              onChange={(value) => handleChangeFilter('location', value)}
-            >
-              {data
-                .map((item: any) => {
-                  return item.senderAddr
-                })
-                .filter(onlyUnique)
-                .map((item, index) => (
-                  <MenuItem key={index} value={item}>
-                    {item}
-                  </MenuItem>
-                ))}
-              <MenuItem value="">
-                {' '}
-                <em>{t('check_in.any')}</em>
-              </MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl
-            sx={{
-              mt: 3,
-              m: 1,
-              width: '25%',
-              bgcolor: 'white',
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: getPrimaryColor
-                },
-                '&:hover fieldset': {
-                  borderColor: getPrimaryColor
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: getPrimaryColor
-                }
-              }
-            }}
-          >
-            <InputLabel id="location-label" sx={styles.textFieldLabel}>
-              {t('checkinandcheckout.outin')}
-            </InputLabel>
-            <Select
-              labelId="location-label"
-              id="location"
-              value={filter.outin}
-              label={t('check_out.delivery_location')}
-              onChange={(value) => handleChangeFilter('outin', value)}
-            >
-              <MenuItem value="out"> {t('checkinandcheckout.ship')}</MenuItem>
-              <MenuItem value="in">{t('checkinandcheckout.send_in')}</MenuItem>
-              <MenuItem value="">
-                {' '}
-                <em>{t('check_in.any')}</em>
-              </MenuItem>
-            </Select>
-          </FormControl> */}
-        </div>
+        <Stack direction="row" mt={3}>
+          {searchField.map((s, index) => (
+            <CustomSearchField
+              key={index}
+              label={s.label}
+              field={s.field}
+              placeholder={s?.placeholder}
+              options={s.options || []}
+              onChange={handleChangeFilter}
+            />
+          ))}
+        </Stack>
       </Box>
       <div className="mt-6">
         <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-          <DataGrid
-            rows={data}
-            // rows={data.filter((item: any) => {
-            //   if (filter.company) {
-            //     return item.senderName === filter.company
-            //   }
-            //   if (filter.location) {
-            //     return item.senderAddr === filter.location
-            //   }
-            //   if (filter.outin) {
-            //     if (filter.outin === 'out') {
-            //       return item.chkOutId
-            //     }
-            //     return item.chkInId
-            //   }
-            //   return true
-            // })}
-
-            getRowId={(row) => row.id}
-            hideFooter
-            columns={columns}
-            checkboxSelection={false}
-            onRowClick={handleSelectRow}
-            getRowSpacing={getRowSpacing}
-            localeText={localeTextDataGrid}
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none'
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
+          {isLoading ? (
+            <Box sx={{ textAlign: 'center', paddingY: 12 }}>
+              <CircularProgress
+                color={
+                  role === 'manufacturer' || role === 'customer'
+                    ? 'primary'
+                    : 'success'
                 }
-              }
-            }}
-          />
-          <Pagination
-            className="mt-4"
-            count={Math.ceil(totalData)}
-            page={page}
-            onChange={(_, newPage) => {
-              setPage(newPage)
-            }}
-          />
+              />
+            </Box>
+          ) : (
+            <Box>
+              <DataGrid
+                rows={data}
+                getRowId={(row) => row.id}
+                hideFooter
+                columns={columns}
+                checkboxSelection={false}
+                onRowClick={handleSelectRow}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  }
+                }}
+              />
+              <Pagination
+                className="mt-4"
+                count={Math.ceil(totalData)}
+                page={page}
+                onChange={(_, newPage) => {
+                  setPage(newPage)
+                }}
+              />
+            </Box>
+          )}
         </Box>
         <CheckInAndCheckOutDetails
           isShow={isShow}
