@@ -6,7 +6,7 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MonitorWeightOutlinedIcon from '@mui/icons-material/MonitorWeightOutlined'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
-import { PickupOrderDetail } from '../interfaces/pickupOrder'
+import { PickupOrder, PickupOrderDetail } from '../interfaces/pickupOrder'
 import LocalizeRecyctype from './TableComponents/LocalizeRecyctype'
 import { useTranslation } from 'react-i18next'
 import { formatWeight } from '../utils/utils'
@@ -24,7 +24,7 @@ const PickupOrderCard = ({
 }: {
   pickupOrderDetail: PickupOrderDetail[]
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const recyc = LocalizeRecyctype(pickupOrderDetail)
   const { decimalVal, dateFormat } = useContainer(CommonTypeContainer)
@@ -33,6 +33,26 @@ const PickupOrderCard = ({
 
   const formattedTime = (value: string) => {
     return dayjs.utc(value).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+  }
+
+  const checkOutUsername = (value: PickupOrderDetail) => {
+    if (i18n.language === 'enus') {
+      return value.checkOutByNameEng !== null ? value.checkOutByNameEng : value.checkOutBy
+    } else if (i18n.language === 'zhhk') {
+      return value.checkOutByNameTchi !== null ? value.checkOutByNameTchi : value.checkOutBy
+    } else if (i18n.language === 'zhch') {
+      return value.checkOutByNameSchi !== null ? value.checkOutByNameSchi : value.checkOutBy
+    }
+  }
+
+  const checkInUsername = (value: PickupOrderDetail) => {
+    if (i18n.language === 'enus') {
+      return value.checkInByNameEng !== null ? value.checkInByNameEng : value.checkInBy
+    } else if (i18n.language === 'zhhk') {
+      return value.checkInByNameTchi !== null ? value.checkInByNameTchi : value.checkInBy
+    } else if (i18n.language === 'zhch') {
+      return value.checkInByNameSchi !== null ? value.checkInByNameSchi : value.checkInBy
+    }
   }
 
   return (
@@ -276,7 +296,7 @@ const PickupOrderCard = ({
                     </Typography>
                   </Box>
                   <Typography ml="60px" style={localstyles.mini_value}>
-                    {podetail.checkOutBy}
+                    {checkOutUsername(podetail)}
                   </Typography>
                 </Box>
               }
@@ -290,7 +310,7 @@ const PickupOrderCard = ({
                     </Typography>
                   </Box>
                   <Typography ml="60px" style={localstyles.mini_value}>
-                    {podetail.checkInBy}
+                    {checkInUsername(podetail)}
                   </Typography>
                 </Box>
               }

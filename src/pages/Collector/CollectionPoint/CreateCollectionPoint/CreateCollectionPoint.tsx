@@ -273,10 +273,8 @@ function CreateCollectionPoint() {
   }
 
   const checkEffectiveDate = () => {
-    const startDate = dayjs(openingPeriod.startDate)
-      .subtract(1, 'day')
-      .startOf('day')
-    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day')
+    const startDate = dayjs(openingPeriod.startDate).startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).endOf('day')
 
     if (startDate.isAfter(endDate)) {
       return false
@@ -419,7 +417,7 @@ function CreateCollectionPoint() {
           type: 'error'
         })
       premiseRemark == '' &&
-        premiseType === 'PT00009' &&
+        isIncludeOthersPremis() &&
         tempV.push({
           field: 'col.premiseRemark',
           problem: formErr.empty,
@@ -709,6 +707,14 @@ function CreateCollectionPoint() {
     .tz('Asia/Hong_Kong')
     .format(`${dateFormat} HH:mm`)
 
+  const isIncludeOthersPremis = () => {
+    return (
+      premiseType === 'PT00009' ||
+      premiseType === 'PT00027' ||
+      premiseType === 'PT00028'
+    )
+  }
+
   return (
     <>
       <Box
@@ -870,10 +876,17 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-            {premiseType === 'PT00009' && (
+            {isIncludeOthersPremis() && (
               <Grid item>
                 {/* <Collapse in={premiseType == 'PT00010'}> */}
-                <CustomField label={t('col.premiseRemark')} mandatory={true}>
+                <CustomField
+                  label={
+                    premiseType === 'PT00027'
+                      ? t('col.otherResidentialPremise')
+                      : t('col.otherNonResidentialPremise')
+                  }
+                  mandatory={true}
+                >
                   <CustomTextField
                     id="premiseRemark"
                     placeholder={t('col.enterText')}

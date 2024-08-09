@@ -44,7 +44,8 @@
     "packageName": "包裝單位名稱已存在",
     "warehouseName": "倉庫名稱已存在",
     "vehicle": "車輛",
-    "theNameAlreadyExist": "員工職位名稱已存在"
+    "theNameAlreadyExist": "員工職位名稱已存在",
+    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失"
   },
   "col": {
     "createCP": "建立回收點",
@@ -61,7 +62,9 @@
     "startTime": "服務時間",
     "premiseName": "房屋或埸所名稱",
     "premiseType": "房屋或埸所類別",
-    "premiseRemark": "其他備注",
+    "premiseRemark": "前提备注",
+    "otherResidentialPremise":"其他(住宅處所)備註",
+    "otherNonResidentialPremise": "其他(非住宅處所)備註",
     "enterText": "請輸入文字",
     "status": "開放狀態",
     "open": "開放",
@@ -114,7 +117,8 @@
       "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期",
       "cannotBeSame": "不能相同",
-      "cantBeSame": "不能相同"
+      "cantBeSame": "不能相同",
+      "selectFirst": "請先選擇，然後再新增新的。"
     }
   },
   "component": {
@@ -853,8 +857,8 @@
       "sender_name": "寄件公司",
       "rec_loc_info": "回收地點資料"
     },
-    "confirm_approve_title": "確認核準吗？",
-    "confirm_approve": "确认核準",
+    "confirm_approve_title": "確認核準嗎？",
+    "confirm_approve": "確認",
     "cancel": "取消",
     "approved_success": "核準成功"
   },

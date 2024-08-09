@@ -44,7 +44,8 @@
     "packageName": "Package Type Name already exist",
     "warehouseName": "Warehouse Name already Exist",
     "vehicle": "Vehicle",
-    "theNameAlreadyExist": "Staff position name already exist"
+    "theNameAlreadyExist": "Staff position name already exist",
+    "leaveConfirmMsg": "Are you sure you want to leave this page? Unsaved changes will be lost"
   },
   "col": {
     "createCP": "Create Collection Point",
@@ -61,7 +62,9 @@
     "startTime": "Start Time",
     "premiseName": "Premise Name",
     "premiseType": "Premise Type",
-    "premiseRemark": "Others Remarks",
+    "premiseRemark": "Premise Remarks",
+    "otherResidentialPremise":"Others(Residential premises) Remarks",
+    "otherNonResidentialPremise": "Others(Non-residential premises) Remarks",
     "enterText": "Enter Text",
     "status": "Status",
     "open": "Open",
@@ -115,7 +118,8 @@
       "effectiveDateLess": "Effective from date should not later than Effective to date",
       "cannotBeSame": "cannot be the same",
       "shouldGreaterThanZero": "Storage capacity should be greater then Zero",
-      "cantBeSame":"cannot be the same"
+      "cantBeSame":"cannot be the same",
+      "selectFirst": "Please select first before adding a new one."
     }
   },
   "component": {
@@ -857,7 +861,7 @@
       "rec_loc_info": "Recycling location information"
     },
     "confirm_approve_title": "Confirm approve?",
-    "confirm_approve": "Confirm approve",
+    "confirm_approve": "Confirm",
     "cancel": "Cancel",
     "approved_success": "Approved successfully"
   },
