@@ -200,7 +200,8 @@
     "warehouseRecyc": "回收物类別",
     "shouldNotEmpty": "不应为空",
     "shouldNotDuplicate": "不应重复",
-    "shouldNotDuplicated": " 货仓地址已经被使用"
+    "shouldNotDuplicated": " 货仓地址已经被使用",
+    "workshopFlag": "是否工厂"
   },
   "check_in": {
     "transport_information": "运输资料",
@@ -374,7 +375,7 @@
       "checkin_weight": "实际提取重量",
       "checkout_weight": "实际送出重量",
       "checkin_by": "送入负责人",
-      "checkout_by" :"送出负责人"
+      "checkout_by": "送出负责人"
     },
     "item": {
       "detail": "运单详情",

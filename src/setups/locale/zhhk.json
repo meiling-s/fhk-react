@@ -199,7 +199,8 @@
     "warehouseRecyc": "回收物類別",
     "shouldNotEmpty": "不應為空",
     "shouldNotDuplicate": "不應重複",
-    "shouldNotDuplicated": " 货仓地址已经被使用"
+    "shouldNotDuplicated": " 货仓地址已经被使用",
+     "workshopFlag": "是否工場"
   },
   "check_in": {
     "transport_information": "運輸資料",

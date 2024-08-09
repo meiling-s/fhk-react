@@ -1,9 +1,10 @@
-import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
   GET_ALL_WAREHOUSE,
   GET_WAREHOUSE_BY_ID,
   ADD_WAREHOUSE,
+  ADD_WAREHOUSE_V2,
   UPDATE_WAREHOUSE_BY_ID,
+  UPDATE_WAREHOUSE_BY_ID_V2,
   UPDATE_RECYCLE_CAPACITY_BY_ID,
   UPDATE_WAREHOUSE_STATUS_BY_ID,
   GET_RECYCLE_TYPE,
@@ -21,10 +22,6 @@ const administratorAPI = {
   baseURL: window.baseURL.collector
 }
 
-const manufacturerPointAPI = {
-  baseURL: window.baseURL.manufacturer
-}
-
 //get all warehouse
 export const getAllWarehouse = async (page: number, size: number) => {
   try {
@@ -36,15 +33,12 @@ export const getAllWarehouse = async (page: number, size: number) => {
       params: {
         page: page,
         size: size
-      },
-      // headers: {
-      //   AuthToken: token.authToken
-      // }
+      }
     })
 
     return response
   } catch (e: any) {
-    throw(e)
+    throw e
   }
 }
 
@@ -55,7 +49,11 @@ export const getWarehouseById = async (warehouseId: number) => {
 
     const response = await axiosInstance({
       baseURL: window.baseURL.collector,
-      ...GET_WAREHOUSE_BY_ID(token.realmApiRoute, warehouseId, token.decodeKeycloack),
+      ...GET_WAREHOUSE_BY_ID(
+        token.realmApiRoute,
+        warehouseId,
+        token.decodeKeycloack
+      ),
       headers: {
         AuthToken: token.authToken
       }
@@ -64,7 +62,7 @@ export const getWarehouseById = async (warehouseId: number) => {
     return response
   } catch (e: any) {
     console.error('Get a warehouse failed:', e)
-    throw(e)
+    throw e
   }
 }
 
@@ -72,9 +70,14 @@ export const getWarehouseById = async (warehouseId: number) => {
 export const createWarehouse = async (data: any) => {
   try {
     const token = returnApiToken()
+    const role = token.realmApiRoute
+    const apiUrl =
+      role === 'collectors'
+        ? ADD_WAREHOUSE_V2(token.realmApiRoute, token.decodeKeycloack)
+        : ADD_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack)
 
     const response = await axiosInstance({
-      ...ADD_WAREHOUSE(token.realmApiRoute, token.decodeKeycloack),
+      ...apiUrl,
       baseURL: collectionPointAPI.baseURL,
       data: data,
       headers: {
@@ -84,7 +87,7 @@ export const createWarehouse = async (data: any) => {
     return response
   } catch (e) {
     console.error('Create a warehouse failed:', e)
-    throw(e)
+    throw e
   }
 }
 
@@ -92,9 +95,22 @@ export const createWarehouse = async (data: any) => {
 export const editWarehouse = async (data: any, warehouseId: number) => {
   try {
     const token = returnApiToken()
+    const role = token.realmApiRoute
+    const apiUrl =
+      role === 'collectors'
+        ? UPDATE_WAREHOUSE_BY_ID_V2(
+            token.realmApiRoute,
+            warehouseId,
+            token.decodeKeycloack
+          )
+        : UPDATE_WAREHOUSE_BY_ID(
+            token.realmApiRoute,
+            warehouseId,
+            token.decodeKeycloack
+          )
 
     const response = await axiosInstance({
-      ...UPDATE_WAREHOUSE_BY_ID(token.realmApiRoute, warehouseId, token.decodeKeycloack),
+      ...apiUrl,
       baseURL: collectionPointAPI.baseURL,
       data: data,
       headers: {
@@ -104,7 +120,7 @@ export const editWarehouse = async (data: any, warehouseId: number) => {
     return response
   } catch (e) {
     console.error('Edit a warehouse failed:', e)
-    throw(e)
+    throw e
   }
 }
 
@@ -155,7 +171,7 @@ export const getRecycleType = async () => {
     return response
   } catch (e) {
     console.error('Get recycle type failed:', e)
-    throw(e)
+    throw e
   }
 }
 
@@ -173,8 +189,10 @@ export const getRecycleTypeById = async (recycTypeId: string) => {
   }
 }
 
-
-export const manufacturerGetAllWarehouse = async (page: number, size: number) => {
+export const manufacturerGetAllWarehouse = async (
+  page: number,
+  size: number
+) => {
   try {
     const token = returnApiToken()
 
@@ -204,7 +222,11 @@ export const manufacturerGetAllWarehouse = async (page: number, size: number) =>
   }
 }
 
-export const astdSearchWarehouse = async (page: number, size: number, searchValue: string) => {
+export const astdSearchWarehouse = async (
+  page: number,
+  size: number,
+  searchValue: string
+) => {
   try {
     const token = returnApiToken()
 
@@ -214,7 +236,7 @@ export const astdSearchWarehouse = async (page: number, size: number, searchValu
       params: {
         page: page,
         size: size
-      },
+      }
     })
 
     return response
@@ -227,6 +249,6 @@ export const astdSearchWarehouse = async (page: number, size: number, searchValu
       window.location.href = '/'
     }
 
-    throw(error)
+    throw error
   }
 }
