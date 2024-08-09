@@ -37,64 +37,6 @@ const EditPickupOrder = () => {
         return field + ' ' + t('form.error.isInWrongFormat')
     }
   }
-  const validateSchema = Yup.object().shape({
-    // effFrmDate: Yup.string().required('This effFrmDate is required'),
-    // effToDate: Yup.string().required('This effToDate is required'),
-    effFrmDate: Yup.date().required(),
-    effToDate: Yup.date()
-        .when(
-        'effFrmDate',
-        (effFrmDate, schema) => {
-          return effFrmDate && schema.min(effFrmDate, `${t('form.error.invalidDate') }`)
-        },
-    ),
-
-    routine: Yup.lazy((value, schema) => {
-      const routineType = schema.parent.routineType
-      if (routineType === 'specificDate') {
-        return Yup.array()
-          .required('routine is required')
-          .test(
-            'is-in-range',
-            t('pick_up_order.out_of_date_range'),
-            function (value) {
-              const { effFrmDate, effToDate } = schema.parent
-              const fromDate = new Date(effFrmDate)
-              const toDate = new Date(effToDate)
-
-              const datesInDateObjects = value.map((date) => new Date(date))
-
-              return datesInDateObjects.every(
-                (date) => date >= fromDate && date <= toDate
-              )
-            }
-          )
-      } else {
-        return Yup.array().required('routine is required')
-      }
-    }),
-    logisticName: Yup.string().required(
-      getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
-    ),
-    vehicleTypeId: Yup.string().required(
-      getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')
-    ),
-    platNo: Yup.string().required(
-      getErrorMsg(t('pick_up_order.plat_number'), 'empty')
-    ),
-    contactNo: Yup.number().required(
-      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    ),
-    updatePicoDetail: Yup.array()
-      .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
-      .test(
-        'has-rows',
-        getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty')!!,
-        (value) => {
-          return value.length > 0 || addRow.length > 0
-        }
-      )
-  })
 
   const submitEditPickUpOrder = async (pickupOrderId: string, values:EditPo) => {
     try {
