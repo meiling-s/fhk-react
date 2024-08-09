@@ -21,7 +21,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { Languages, STATUS_CODE, format } from '../../../constants/constant'
-import { rejectAssginDriver, assignDriver } from '../../../APICalls/jobOrder'
+import { rejectAssginDriver, assignDriver, getVehiclePlateList, getVehicleDriverList } from '../../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
 import {
@@ -74,19 +74,10 @@ const JobOrder = () => {
 
   const initListDriver = async () => {
     try {
-      const result = await getDriver(0, 1000, 'string')
+      const result = await getVehicleDriverList()
       if (result) {
-        const data = result?.data?.content
-        const mappingDriver: DriverList[] = []
-        data.forEach((item: any) => {
-          mappingDriver.push({
-            driverId: item.driverId,
-            driverNameEng: item.driverNameEng,
-            driverNameSchi: item.driverNameSchi,
-            driverNameTchi: item.driverNameTchi
-          })
-        })
-        setDriverList(mappingDriver)
+        const data = result?.data
+        setDriverList(data)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -98,17 +89,10 @@ const JobOrder = () => {
 
   const initListVehicle = async () => {
     try {
-      const result = await getAllVehiclesLogistic(0, 1000)
+      const result = await getVehiclePlateList()
       if (result) {
-        const data = result?.data?.content
-        const mappingVehicle: VehicleList[] = []
-        data.forEach((item: any) => {
-          mappingVehicle.push({
-            vehicleId: item.vehicleId,
-            plateNo: item.plateNo
-          })
-        })
-        setVehicleList(mappingVehicle)
+        const data = result?.data
+        setVehicleList(data)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
