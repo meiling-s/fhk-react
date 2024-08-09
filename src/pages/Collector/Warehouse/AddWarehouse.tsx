@@ -30,6 +30,7 @@ import { useTranslation } from 'react-i18next'
 import { ToastContainer, toast } from 'react-toastify'
 import {
   extractError,
+  returnErrorMsg,
   showErrorToast,
   showSuccessToast
 } from '../../../utils/utils'
@@ -596,16 +597,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const handleAddRecycleCategory = () => {
-    const updatedRecycleCategory = [
-      ...recycleCategory,
-      {
-        recycTypeId: '',
-        recycSubTypeId: '',
-        recycSubTypeCapacity: 0,
-        recycTypeCapacity: 0
-      }
-    ]
-    setRecycleCategory(updatedRecycleCategory)
+    const checkRecyc = recycleCategory.find(recyc => recyc.recycTypeId === '')
+    if (!checkRecyc) {
+      const updatedRecycleCategory = [
+        ...recycleCategory,
+        {
+          recycTypeId: '',
+          recycSubTypeId: '',
+          recycSubTypeCapacity: 0,
+          recycTypeCapacity: 0
+        }
+      ]
+      setRecycleCategory(updatedRecycleCategory)
+    } else {
+      showErrorToast(t('form.error.selectFirst'))
+    }
   }
 
   const handleRemoveReycleCategory = (indexToRemove: number) => {
@@ -1124,7 +1130,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <REMOVE_CIRCLE_ICON
                               fontSize="small"
                               className={`text-grey-light ${
-                                contractNum.length === 1
+                                recycleCategory.length === 1
                                   ? 'cursor-not-allowed'
                                   : 'cursor-pointer'
                               } `}
