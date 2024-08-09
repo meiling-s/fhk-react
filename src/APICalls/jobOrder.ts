@@ -1,6 +1,7 @@
 import {
   ASSIGN_DRIVER, REJECT_REASSIGN_DRIVER, GET_DRIVER, GET_VEHICLE_LOGISTIC, GET_ALL_JOB_ORDER, UPDATE_JOB_ORDER_STATUS, GET_DRIVER_DETAIL_BY_ID,
-  GET_VEHICLE_PLATE_LIST
+  GET_VEHICLE_PLATE_LIST,
+  GET_DRIVER_DATA
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
@@ -141,6 +142,24 @@ export const getVehiclePlateList = async () => {
     
     return response
 
+  } catch (error) {
+    throw(error)
+  }
+}
+
+export const getVehicleDriverList = async () => {
+  try {
+    const token = returnApiToken()
+
+    const response = await axiosInstance({
+      baseURL: window.baseURL.collector,
+      ...GET_DRIVER_DATA(token.tenantId),
+      headers: {
+        AuthToken: token.authToken
+      }
+    })
+    
+    return response
   } catch (error) {
     throw(error)
   }

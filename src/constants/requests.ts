@@ -1091,14 +1091,19 @@ export const GET_DRIVER = (table: string): AxiosRequestConfig => ({
   url: `/api/v1/logistic/driver/{table}?table=${table}`
 })
 
-export const GET_VEHICLE_LOGISTIC = (table: string): AxiosRequestConfig => ({
+export const GET_DRIVER_DATA = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/logistic/vehicle/${table}`
+  url: `/api/v1/logistic/driverInfo/${tenantId}`
 })
 
 export const GET_VEHICLE_PLATE_LIST = (tenantId: string): AxiosRequestConfig => ({
   method: 'get',
   url: `api/v1/logistic/vehicleInfo/${tenantId}`
+})
+
+export const GET_VEHICLE_LOGISTIC = (table: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}`
 })
 
 export const GET_LIST_NOTIF_TEMPLATE_PO = (
