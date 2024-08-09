@@ -204,7 +204,8 @@
     "warehouseRecyc": "recyclable type(s)",
     "shouldNotEmpty": "should not empty",
     "shouldNotDuplicate": "should not duplicate",
-    "shouldNotDuplicated": "The address of warehouse had been used"
+    "shouldNotDuplicated": "The address of warehouse had been used",
+    "workshopFlag": "Is workshop"
   },
   "check_in": {
     "transport_information": "Transport Information",

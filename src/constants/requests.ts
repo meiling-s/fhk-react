@@ -465,6 +465,23 @@ export const UPDATE_WAREHOUSE_BY_ID = (
   url: `api/v1/${realmApiRoute}/warehouse/${table}/${warehouseId}`
 })
 
+export const ADD_WAREHOUSE_V2 = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/warehouse/v2/${table}`
+})
+
+export const UPDATE_WAREHOUSE_BY_ID_V2 = (
+  realmApiRoute: string,
+  warehouseId: number,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/warehouse/v2/${table}/${warehouseId}`
+})
+
 export const MANUFACTURER_GET_ALL_WAREHOUSE = (
   table: string
 ): AxiosRequestConfig => ({
