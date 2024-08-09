@@ -458,3 +458,20 @@ export const validDayjsISODate = (date: Dayjs): boolean => {
   const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
   return iso8601Pattern.test(isoString)
 }
+
+export const creatioPageList = () => {
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
+  const listPage = [
+    '/collector/createCollectionPoint',
+    '/collector/editCollectionPoint',
+    `/${realm}/createPickupOrder`,
+    `/${realm}/editPickupOrder`,
+    '/astd/createPicoLogistic',
+    '/astd/editPicoLogistic',
+    '/logistic/createJobOrder/:picoId',
+    '/customer/createPurchaseOrder',
+    '/customer/editPurchaseOrder'
+  ]
+
+  return listPage
+}
