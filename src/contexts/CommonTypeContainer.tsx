@@ -12,7 +12,8 @@ import {
   vehicleType,
   ProcessType,
   weightUnit,
-  Company
+  Company,
+  PackagingList
 } from '../interfaces/common'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
@@ -36,6 +37,7 @@ import axiosInstance from '../constants/axiosInstance'
 import { getWeightUnit } from '../APICalls/ASTD/recycling'
 import { getAllTenant, getTenantById } from '../APICalls/tenantManage'
 import { localStorgeKeyName } from '../constants/constant'
+import { getAllPackagingUnit } from '../APICalls/Collector/packagingUnit'
 
 const CommonType = () => {
   const [colPointType, setColPointType] = useState<colPointType[]>()
@@ -60,6 +62,7 @@ const CommonType = () => {
   const [dateFormat, setDateFormat] = useState<string>('')
   const [companies, setCompanies] = useState<Company[]>([]);
   const [currentTenant, setCurrentTenant] = useState<Company| null>(null);
+  const [packagingList, setPackagingList] = useState<PackagingList[]>([])
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId);
   
   const getColPointType = async () => {
@@ -344,6 +347,17 @@ const CommonType = () => {
     }
   }
 
+  const getPackagingUnitList = async () => {
+    try {
+      const result = await getAllPackagingUnit(1 - 1, 1000)
+      if (result.data) {
+        setPackagingList(result.data.content)
+      }
+    } catch (error) {
+      return null
+    }
+  }
+
   const updateCommonTypeContainer = () => {
     getColPointType()
     getPremiseType()
@@ -361,6 +375,7 @@ const CommonType = () => {
     getDateFormat()
     initCompaniesData()
     getTenantLogin()
+    getPackagingUnitList()
   }
 
   useEffect(() => {
@@ -382,6 +397,7 @@ const CommonType = () => {
       getDateFormat()
       initCompaniesData()
       getTenantLogin()
+      getPackagingUnitList()
     }
   }, [])
 
@@ -404,6 +420,7 @@ const CommonType = () => {
     dateFormat,
     companies,
     currentTenant,
+    packagingList,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -420,7 +437,8 @@ const CommonType = () => {
     getDecimalVal,
     getDateFormat,
     initWeightUnit,
-    initCompaniesData
+    initCompaniesData,
+    getPackagingUnitList,
   }
 }
 

@@ -48,8 +48,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
   handleDrawerClose
 }) => {
   const { t } = useTranslation()
-  const { recycType, decimalVal, dateFormat } =
-    useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat, packagingList } = useContainer(CommonTypeContainer)
   const [selectedDetail, setSelectedDetail] = useState<
     CheckoutDetail[] | undefined
   >([])
@@ -238,7 +237,11 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               <div className="recyle-type-weight text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
                 {t('check_out.recyclable_type_weight')}
               </div>
-              {recycItem.map((item, index) => (
+              {recycItem.map((item, index) => {
+                const packagingName = packagingList.find(value => value.packagingTypeId === item.packageTypeId)
+                const selectedPackaging = i18n.language === 'enus' ? packagingName?.packagingNameEng : i18n.language === 'zhch' ? packagingName?.packagingNameSchi : packagingName?.packagingNameTchi
+         
+                return (
                 <div
                   key={index}
                   className="recyle-item px-4 py-3 rounded-xl border border-solid border-[#E2E2E2] mt-2"
@@ -246,7 +249,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   <div className="detail flex justify-between items-center">
                     <div className="recyle-type flex items-center gap-2">
                       <div className="category" style={categoryRecyle}>
-                        {item.packageTypeId}
+                        {selectedPackaging ?? item.packageTypeId}
                       </div>
                       <div className="type-item">
                         <div className="sub-type text-xs text-black font-bold tracking-widest">
@@ -272,7 +275,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                     ))}
                   </div>
                 </div>
-              ))}
+              )})}
             </Box>
             <Box>
               {selectedCheckOut?.status !== 'CREATED' && (
