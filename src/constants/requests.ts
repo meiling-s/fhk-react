@@ -1041,7 +1041,7 @@ export const GET_ALL_REASON = (
 //logistic/jobOrder
 export const GET_ALL_JOB_ORDER = (table: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/logistic/jo/search/${table}`
+  url: `api/v1/logistic/jo/searchV2/${table}`
 })
 
 export const UPDATE_JOB_ORDER_STATUS = (

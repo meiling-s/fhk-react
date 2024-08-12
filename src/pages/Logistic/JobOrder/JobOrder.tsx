@@ -287,7 +287,7 @@ const JobOrder = () => {
   const [filteredPico, setFilteredPico] = useState<Row[]>([])
   const [query, setQuery] = useState<queryJobOrder>({
     id: '',
-    joId: '',
+    labelId: '',
     picoId: '',
     driverId: '',
     senderName: '',
@@ -433,7 +433,7 @@ const JobOrder = () => {
     {
       label: t('job_order.table.jo_id'),
       placeholder: t('placeHolder.jo_number'),
-      field: 'joId'
+      field: 'labelId'
     },
     {
       label: t('job_order.table.sender_company'),
