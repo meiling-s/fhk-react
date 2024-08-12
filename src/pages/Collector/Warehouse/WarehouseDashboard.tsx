@@ -15,7 +15,8 @@ import {
   MenuItem,
   TextField,
   InputAdornment,
-  IconButton
+  IconButton,
+  CircularProgress
 } from '@mui/material'
 import { SelectChangeEvent } from '@mui/material/Select'
 import {
@@ -62,7 +63,11 @@ import { useContainer } from 'unstated-next'
 import { styles } from '../../../constants/styles'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
-import { extractError, getPrimaryColor, returnApiToken } from '../../../utils/utils'
+import {
+  extractError,
+  getPrimaryColor,
+  returnApiToken
+} from '../../../utils/utils'
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -130,6 +135,9 @@ const WarehouseDashboard: FunctionComponent = () => {
   const role = localStorage.getItem(localStorgeKeyName.role)
   const debouncedSearchValue: string = useDebounce(searchText, 1000)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoadingCheckInCheckOut, setIsLoadingCheckInCheckOut] = useState<boolean>(false)
+  
 
   useEffect(() => {
     if (realmApi !== 'account') {
@@ -217,7 +225,7 @@ const WarehouseDashboard: FunctionComponent = () => {
         Object.keys(data).forEach((item) => {
           currCapacityWarehouse += data[item]
         })
-        setCurrentCapacity(currCapacityWarehouse)
+        setCurrentCapacity(Math.ceil(currCapacityWarehouse * 1000) / 1000)
         return result.data
       }
     }
@@ -346,6 +354,7 @@ const WarehouseDashboard: FunctionComponent = () => {
   }
 
   const initWarehouseSubType = async () => {
+    setIsLoading(true)
     if (selectedWarehouse) {
       if (realmApi === 'account') {
         const weightSubtype = await initGetRecycSubTypeWeight()
@@ -424,14 +433,16 @@ const WarehouseDashboard: FunctionComponent = () => {
               capacity: item.recycSubTypeCapacity
             })
           })
-          console.log(subtypeWarehouse, 'subtypewarehouse')
+          //console.log(subtypeWarehouse, 'subtypewarehouse')
           setWarehouseSubtype(subtypeWarehouse)
         }
       }
+      setIsLoading(false)
     }
   }
 
   const initCheckInOut = async () => {
+    setIsLoadingCheckInCheckOut(true)
     try {
       const token = returnApiToken()
       if (selectedWarehouse) {
@@ -478,6 +489,7 @@ const WarehouseDashboard: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoadingCheckInCheckOut(false)
   }
 
   const initGetRecycSubTypeWeight = async () => {
@@ -598,7 +610,6 @@ const WarehouseDashboard: FunctionComponent = () => {
   const handleSearchByTenantId = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-
     if (event.target.value === '') {
       setWarehouseList([])
     }
@@ -659,11 +670,13 @@ const WarehouseDashboard: FunctionComponent = () => {
             label={t('check_out.any')}
             onChange={onChangeWarehouse}
           >
-            {warehouseList?.length >0 ? (warehouseList?.map((item, index) => (
-              <MenuItem value={item?.id} key={index}>
-                {item?.name}
-              </MenuItem>
-            ))) : (
+            {warehouseList?.length > 0 ? (
+              warehouseList?.map((item, index) => (
+                <MenuItem value={item?.id} key={index}>
+                  {item?.name}
+                </MenuItem>
+              ))
+            ) : (
               <MenuItem disabled value="">
                 <em>{t('common.noOptions')}</em>
               </MenuItem>
@@ -672,6 +685,17 @@ const WarehouseDashboard: FunctionComponent = () => {
         </FormControl>
       </Box>
       <Box className="capacity-section">
+      {isLoading ? (
+          <Box sx={{ textAlign: 'center', paddingY: 12 , width: '100%' }}>
+            <CircularProgress
+              color={
+                role === 'manufacturer' || role === 'customer'
+                  ? 'primary'
+                  : 'success'
+              }
+            />
+          </Box>
+        ) : (
         <Card
           sx={{
             borderRadius: 2,
@@ -778,7 +802,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               </Card>
             </Box>
           )}
-        </Card>
+        </Card>)}
       </Box>
       <Box className="capacity-item" sx={{ marginY: 6 }}>
         <Box
@@ -808,48 +832,60 @@ const WarehouseDashboard: FunctionComponent = () => {
             ></ChevronRightIcon>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          {warehouseSubtype.map((item) => (
-            <Card
-              key={item.subTypeId}
-              sx={{
-                borderRadius: 2,
-                backgroundColor: 'white',
-                padding: 2,
-                boxShadow: 'none',
-                color: 'white',
-                width: '110px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between'
-              }}
-            >
-              <div
-                className="circle-color w-[30px] h-[30px] rounded-[50px]"
-                style={{
-                  background: generateRandomPastelColor()
+        {isLoading ? (
+          <Box sx={{ textAlign: 'center', paddingY: 12 , width: '100%'}}>
+            <CircularProgress
+              color={
+                role === 'manufacturer' || role === 'customer'
+                  ? 'primary'
+                  : 'success'
+              }
+            />
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {warehouseSubtype.map((item) => (
+              <Card
+                key={item.subTypeId}
+                sx={{
+                  borderRadius: 2,
+                  backgroundColor: 'white',
+                  padding: 2,
+                  boxShadow: 'none',
+                  color: 'white',
+                  width: '110px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
                 }}
-              ></div>
-              <div className="text-sm font-bold text-black mt-2 mb-10 min-h-12">
-                {item.subtypeName}
-              </div>
-              <div className="flex items-baseline">
-                <div className="text-3xl font-bold text-black">
-                  {item.weight}
+              >
+                <div
+                  className="circle-color w-[30px] h-[30px] rounded-[50px]"
+                  style={{
+                    background: generateRandomPastelColor()
+                  }}
+                ></div>
+                <div className="text-sm font-bold text-black mt-2 mb-10 min-h-12">
+                  {item.subtypeName}
                 </div>
-                <div className="text-2xs font-bold text-black ">
-                  /{item.capacity}kg
+                <div className="flex items-baseline">
+                  <div className="text-3xl font-bold text-black">
+                    {item.weight}
+                  </div>
+                  <div className="text-2xs font-bold text-black ">
+                    /{item.capacity}kg
+                  </div>
                 </div>
-              </div>
-              <Box sx={{ marginTop: 1 }}>
-                <ProgressLine
-                  value={item.weight}
-                  total={item.capacity}
-                ></ProgressLine>
-              </Box>
-            </Card>
-          ))}
-        </Box>
+                <Box sx={{ marginTop: 1 }}>
+                  <ProgressLine
+                    value={item.weight}
+                    total={item.capacity}
+                  ></ProgressLine>
+                </Box>
+              </Card>
+            ))}
+          </Box>
+        )}
       </Box>
       <Box className="table-checkin-out">
         <Box
@@ -879,7 +915,18 @@ const WarehouseDashboard: FunctionComponent = () => {
             ></ChevronRightIcon>
           </Box>
         </Box>
-        <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
+        {isLoadingCheckInCheckOut ? (
+          <Box sx={{ textAlign: 'center', paddingY: 12, width: '100%' }}>
+            <CircularProgress
+              color={
+                role === 'manufacturer' || role === 'customer'
+                  ? 'primary'
+                  : 'success'
+              }
+            />
+          </Box>
+        ) : (
+        <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
           <DataGrid
             rows={checkInOut}
             getRowId={(row) => row.id}
@@ -900,10 +947,14 @@ const WarehouseDashboard: FunctionComponent = () => {
                 '&>.MuiDataGrid-columnHeaders': {
                   borderBottom: 'none'
                 }
+              },
+              '& .MuiDataGrid-virtualScroller' : {
+                height: '300px'
               }
             }}
           />
         </Box>
+        )}
       </Box>
     </Box>
   )
