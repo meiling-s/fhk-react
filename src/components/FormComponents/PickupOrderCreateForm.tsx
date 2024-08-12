@@ -513,7 +513,6 @@ const PickupOrderCreateForm = ({
         // </IconButton>
         <IconButton
           onClick={() => {
-            console.log('params delete', params.row.picoDtlId)
             setOpenDelete(true)
             setRecycbleLocId(params.row)
           }}
@@ -587,8 +586,9 @@ const PickupOrderCreateForm = ({
 
   const onhandleSubmit = () => {
     const isValid = validateData()
-    if (!isValid) return
-    formik.handleSubmit()
+    if (isValid == true) {
+      formik.handleSubmit()
+    }
   }
 
   return (

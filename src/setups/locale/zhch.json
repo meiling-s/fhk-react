@@ -44,7 +44,8 @@
     "packageName": "包装单位名称已存在",
     "warehouseName": "仓库名称已存在",
     "vehicle": "车辆",
-    "theNameAlreadyExist": "员工职位名称已存在"
+    "theNameAlreadyExist": "员工职位名称已存在",
+    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失"
   },
   "col": {
     "createCP": "建立回收点",
@@ -61,7 +62,9 @@
     "startTime": "服务时间",
     "premiseName": "房屋或场所名称",
     "premiseType": "房屋或场所类别",
-    "premiseRemark": "其他备注",
+    "premiseRemark": "前提備註",
+    "otherResidentialPremise":"其他(住宅处所)备注",
+    "otherNonResidentialPremise": "其他(非住宅处所)备注",
     "enterText": "请输入文字",
     "status": "开放状态",
     "open": "开放",
@@ -115,7 +118,8 @@
       "effectiveDateLess": "开始日期不能晚于截止日期",
       "cannotBeSame": "不能相同",
       "shouldGreaterThanZero": " 可存容量大于零",
-      "cantBeSame":"不能相同"
+      "cantBeSame": "不能相同",
+      "selectFirst": "请先选择，然后才能添加新的。"
     }
   },
   "component": {
@@ -199,7 +203,8 @@
     "warehouseRecyc": "回收物类別",
     "shouldNotEmpty": "不应为空",
     "shouldNotDuplicate": "不应重复",
-    "shouldNotDuplicated": " 货仓地址已经被使用"
+    "shouldNotDuplicated": " 货仓地址已经被使用",
+    "workshopFlag": "是否工厂"
   },
   "check_in": {
     "transport_information": "运输资料",
@@ -373,7 +378,7 @@
       "checkin_weight": "实际提取重量",
       "checkout_weight": "实际送出重量",
       "checkin_by": "送入负责人",
-      "checkout_by" :"送出负责人"
+      "checkout_by": "送出负责人"
     },
     "item": {
       "detail": "运单详情",
@@ -858,7 +863,7 @@
       "rec_loc_info": "回收地点资料"
     },
     "confirm_approve_title": "确认核准吗？",
-    "confirm_approve": "确认核准",
+    "confirm_approve": "确认",
     "cancel": "取消",
     "approved_success": "核准成功"
   },

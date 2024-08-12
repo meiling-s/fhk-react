@@ -1,23 +1,8 @@
-import {
-  FunctionComponent,
-  useCallback,
-  useState,
-  useEffect,
-  useRef
-} from 'react'
+import { FunctionComponent, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import TextField from '@mui/material/TextField'
-import {
-  Grid,
-  FormHelperText,
-  Autocomplete,
-  Modal,
-  Box,
-  Stack,
-  Divider,
-  Typography
-} from '@mui/material'
+import { Grid, FormHelperText, Autocomplete } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -27,9 +12,10 @@ import Switcher from '../../../components/FormComponents/CustomSwitch'
 import LabelField from '../../../components/FormComponents/CustomField'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import {
   extractError,
+  // returnErrorMsg,
   showErrorToast,
   showSuccessToast
 } from '../../../utils/utils'
@@ -39,12 +25,11 @@ import {
   editWarehouse,
   getRecycleType
 } from '../../../APICalls/warehouseManage'
-import { set } from 'date-fns'
 import { getLocation } from '../../../APICalls/getLocation'
-import { get } from 'http'
 import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { STATUS_CODE } from '../../../constants/constant'
+import { localStorgeKeyName } from '../../../constants/constant'
 
 interface RecyleItem {
   recycTypeId: string
@@ -157,15 +142,16 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [contractList, setContractList] = useState<
     { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
   >([])
-  const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
-  const [status, setStatus] = useState(true) // status field
+  const [pysicalLocation, setPysicalLocation] = useState<boolean>(false)
+  const [status, setStatus] = useState(true)
+  const [workshopFlg, setWorkshopFlg] = useState<boolean>(false)
   const duplicateRecycleTypeIds = new Set<string>()
   const [zeroCapacityItems, setZeroCapacityItems] = useState<
     recyleTypeOption[]
   >([])
-  const isInitialRender = useRef(true) // Add this line
   const [existingWarehouse, setExisitingWarehouse] = useState<Warehouse[]>([])
   const navigate = useNavigate()
+  const role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -240,7 +226,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
   const resetForm = () => {
-    // console.log('reset form')
     setNamesField({
       warehouseNameTchi: '',
       warehouseNameSchi: '',
@@ -249,6 +234,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setContractNum([...initContractNum])
     setPlace('')
     setPysicalLocation(true)
+    setWorkshopFlg(true)
     setStatus(true)
     setRecycleCategory([...initRecyleCategory])
   }
@@ -269,6 +255,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )
         setPlace(warehouse.location)
         setPysicalLocation(warehouse.physicalFlg)
+        if (warehouse?.physicalFlg) setWorkshopFlg(warehouse.workshopFlg)
         setStatus(warehouse.status === 'ACTIVE')
         setRecycleCategory([...warehouse.warehouseRecyc])
 
@@ -285,7 +272,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   useEffect(() => {
-    // console.log('action', action)
     if (action === 'add') {
       resetForm()
       setTrySubmited(false)
@@ -539,12 +525,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       })
     }
 
-    const cacheValidation:any[] = [];
-  
-    for(let item of Object.values(tempV)){
-      const { field } = item;
-      const isExist = cacheValidation.find(cache => cache.field === field);
-      if(!isExist){
+    const cacheValidation: any[] = []
+
+    for (let item of Object.values(tempV)) {
+      const { field } = item
+      const isExist = cacheValidation.find((cache) => cache.field === field)
+      if (!isExist) {
         cacheValidation.push(item)
       }
     }
@@ -596,16 +582,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   }
 
   const handleAddRecycleCategory = () => {
-    const updatedRecycleCategory = [
-      ...recycleCategory,
-      {
-        recycTypeId: '',
-        recycSubTypeId: '',
-        recycSubTypeCapacity: 0,
-        recycTypeCapacity: 0
-      }
-    ]
-    setRecycleCategory(updatedRecycleCategory)
+    const checkRecyc = recycleCategory.find((recyc) => recyc.recycTypeId === '')
+    if (!checkRecyc) {
+      const updatedRecycleCategory = [
+        ...recycleCategory,
+        {
+          recycTypeId: '',
+          recycSubTypeId: '',
+          recycSubTypeCapacity: 0,
+          recycTypeCapacity: 0
+        }
+      ]
+      setRecycleCategory(updatedRecycleCategory)
+    } else {
+      showErrorToast(t('form.error.selectFirst'))
+    }
   }
 
   const handleRemoveReycleCategory = (indexToRemove: number) => {
@@ -650,7 +641,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     try {
       const response = await createWarehouse(addWarehouseForm)
       if (response) {
-        // console.log('added', response)
         showSuccessToast(t('common.saveSuccessfully'))
       }
     } catch (error: any) {
@@ -695,8 +685,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     const filteredContractNum = contractNum.filter((num) => num !== '')
 
-    // console.log('action', action)
-
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
@@ -708,15 +696,14 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       status: statusWarehouse,
       createdBy: 'string',
       updatedBy: 'string',
-      warehouseRecyc: recycleCategory
+      warehouseRecyc: recycleCategory,
+      ...(role === 'collector' && { workshopFlg: workshopFlg })
     }
-    // console.log('addWarehouseForm', addWarehouseForm)
-    // console.log('rowId', rowId)
 
     const isError = validation.length == 0
     getFormErrorMsg()
 
-    console.log('addWarehouseForm', validation)
+    // console.log('addWarehouseForm', validation)
 
     if (validation.length == 0) {
       action === 'add'
@@ -1124,7 +1111,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                             <REMOVE_CIRCLE_ICON
                               fontSize="small"
                               className={`text-grey-light ${
-                                contractNum.length === 1
+                                recycleCategory.length === 1
                                   ? 'cursor-not-allowed'
                                   : 'cursor-pointer'
                               } `}
@@ -1142,6 +1129,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
                 </div>
               </div>
             </div>
+            {/* Workshop flag */}
+            {role === 'collector' && (
+              <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
+                <LabelField label={t('add_warehouse_page.workshopFlag')} />
+                <Switcher
+                  onText={t('add_warehouse_page.yes')}
+                  offText={t('add_warehouse_page.no')}
+                  disabled={action === 'delete'}
+                  defaultValue={workshopFlg}
+                  setState={(newValue) => {
+                    setWorkshopFlg(newValue)
+                  }}
+                />
+              </div>
+            )}
             {/* error msg */}
             {validation.length > 0 && trySubmited && (
               <Grid item className="pt-3 w-full">
