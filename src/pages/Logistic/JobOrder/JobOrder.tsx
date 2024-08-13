@@ -400,9 +400,6 @@ const JobOrder = () => {
     const tempRows = jobOrder?.map(async (item) => {
       const senderCompany = await fetchTenantDetails(Number(item.senderId));
       const receiverCompany = await fetchTenantDetails(Number(item.receiverId));
-      if(senderCompany){
-        console.log('sender', senderCompany)
-      }
       return {
         ...item,
         id: item.joId,
@@ -418,7 +415,10 @@ const JobOrder = () => {
           receiverCompany
         ) : item.receiverName,
         status: item.status,
-        operation: ''
+        operation: '',
+        reason: item.reason,
+        updatedAt: item.updatedAt,
+        updatedBy: item.updatedBy,
       };
     }) ?? [];
   
