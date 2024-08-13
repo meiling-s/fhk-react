@@ -35,7 +35,7 @@ export interface JobListOrder {
   
   export type queryJobOrder = {
     id: string,
-    joId: string,
+    labelId: string,
     picoId: string,
     driverId: string,
     senderName: string,
