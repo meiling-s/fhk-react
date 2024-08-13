@@ -237,7 +237,7 @@ export interface AssignJobDriver {
     createdBy: string;
     effFrmDate:  string,
     effToDate:  string,
-    status: string  ,
+    status: string,
     updatedBy: string
 }
 

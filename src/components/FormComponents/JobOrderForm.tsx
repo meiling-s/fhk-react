@@ -27,7 +27,8 @@ import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { getTenantById } from '../../APICalls/tenantManage'
-import i18n from '../../setups/i18n'
+import { getAllDenialReason } from '../../APICalls/Collector/denialReason'
+import { DenialReason } from '../../interfaces/denialReason'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -41,7 +42,7 @@ const JobOrderForm = ({
   selectedRow: Row | null
   onApproved: () => void
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   const handleOverlayClick = (
@@ -57,13 +58,14 @@ const JobOrderForm = ({
   const [selectedJobOrder, setSelectedJobOrder] = useState<Row>()
   const [pickupOrderDetail, setPickUpOrderDetail] = useState<PickupOrderDetail[]>()
   const [driverDetail, setDriverDetail] = useState<DriverDetail>()
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const { dateFormat, logisticList } = useContainer(CommonTypeContainer)
+  const [denialReasonList, setDenialReasonList] = useState<DenialReason[]>([])
 
   const fetchTenantDetails = async (tenantId: number) => {
     try {
       const result = await getTenantById(tenantId)
       const data = result?.data
-      
+
       if (i18n.language === 'enus') {
         return data.companyNameEng
       } else if (i18n.language === 'zhhk') {
@@ -80,7 +82,7 @@ const JobOrderForm = ({
       return null
     }
   }
-  
+
   const getPicoDetail = async () => {
     if (selectedRow?.picoId) {
       const result = await getPicoById(selectedRow?.picoId.toString());
@@ -88,10 +90,10 @@ const JobOrderForm = ({
         const updatedPickupOrderDetails = await Promise.all(
           result.data.pickupOrderDetail.map(async (item: {
             receiverName: any;
-            receiverId: number; 
-            senderId: number; 
-            senderName: any 
-}) => {
+            receiverId: number;
+            senderId: number;
+            senderName: any
+          }) => {
             const senderName = await fetchTenantDetails(item.senderId);
             const receiverName = await fetchTenantDetails(item.receiverId);
             return {
@@ -101,7 +103,7 @@ const JobOrderForm = ({
             };
           })
         );
-  
+
         const picoDetailItem = updatedPickupOrderDetails.find(
           (item) => item.picoDtlId === selectedRow?.picoDtlId
         );
@@ -109,8 +111,8 @@ const JobOrderForm = ({
       }
     }
   };
-  
-  const getDriverDetail = async() => {
+
+  const getDriverDetail = async () => {
     if (selectedRow?.driverId) {
       const result = await getDriverDetailById(selectedRow?.driverId.toString())
       if (result?.data) {
@@ -119,13 +121,42 @@ const JobOrderForm = ({
     }
   }
 
+  const getDenialReason = async () => {
+    const result = await getAllDenialReason(0, 1000)
+    const data = result.data.content
+    if (data) {
+      setDenialReasonList(data)
+    }
+  }
+
   useEffect(() => {
     if (selectedRow) {
       setSelectedJobOrder(selectedRow)
       getPicoDetail()
       getDriverDetail()
+      getDenialReason()
     }
   }, [selectedRow])
+
+  const getReasonName = (reasonId: string) => {
+    const selectedReason = denialReasonList.find(value => value.reasonId.toString() === reasonId);
+    switch (i18n.language) {
+      case 'zhhk':
+        return selectedReason?.reasonNameTchi || '';
+      case 'zhch':
+        return selectedReason?.reasonNameSchi || '';
+      case 'enus':
+        return selectedReason?.reasonNameEng || '';
+      default:
+        return selectedReason?.reasonNameEng || '';
+    }
+  };
+
+  const reasons = selectedRow?.reason?.map(reason => getReasonName(reason)).filter(reasonName => reasonName.length > 0) || [];
+
+  const formattedReasons = reasons
+    .map((reason, index) => index === reasons.length - 1 ? reason + '.' : reason + ', ')
+    .join('');
 
   return (
     <>
@@ -159,9 +190,9 @@ const JobOrderForm = ({
               <Typography sx={localstyles.typo_header}>{t('job_order.item.shipping_info')}</Typography>
             </Box>
 
-            <CustomField label= {t('job_order.item.date_time')}>
+            <CustomField label={t('job_order.item.date_time')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedJobOrder?.createdAt ? dayjs.utc(selectedJobOrder?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`): ''}
+                {selectedJobOrder?.createdAt ? dayjs.utc(selectedJobOrder?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`) : ''}
               </Typography>
             </CustomField>
 
@@ -172,6 +203,11 @@ const JobOrderForm = ({
             </CustomField>
             <Typography sx={localstyles.typo_header}>{t('job_order.item.rec_loc_info')}</Typography>
             <JobOrderCard plateNo={selectedRow?.plateNo} pickupOrderDetail={pickupOrderDetail ?? []} driverDetail={driverDetail} />
+            {selectedRow?.status === 'DENY' && (
+              <Box>
+                <Typography>{driverDetail?.driverNameEng} {t('job_order.rejected_at')} {dayjs(selectedRow?.updatedAt).format(`${dateFormat} HH:mm`)}, {t('job_order.reason')} {formattedReasons}</Typography>
+              </Box>
+            )}
           </Stack>
         </Box>
       </Box>

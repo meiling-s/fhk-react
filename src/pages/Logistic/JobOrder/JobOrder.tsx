@@ -418,7 +418,10 @@ const JobOrder = () => {
           receiverCompany
         ) : item.receiverName,
         status: item.status,
-        operation: ''
+        operation: '',
+        reason: item.reason,
+        updatedAt: item.updatedAt,
+        updatedBy: item.updatedBy,
       };
     }) ?? [];
   
