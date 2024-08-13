@@ -867,7 +867,7 @@
     "cancel": "取消",
     "approved_success": "核准成功",
     "rejected_at": "于",
-    "reason": "拒绝，原因为"
+    "reason_single": "拒绝，原因为"
   },
   "jobOrder": {
     "job_order_menu": "工作运单",

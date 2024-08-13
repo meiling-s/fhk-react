@@ -866,7 +866,8 @@
     "cancel": "Cancel",
     "approved_success": "Approved successfully",
     "rejected_at": "Rejected At",
-    "reason": "the reason(s) is/are"
+    "reason_single": "the reason(s) is",
+    "reason_multi": "the reason(s) are"
   },
   "jobOrder": {
     "job_order_menu": "Job Order",

@@ -158,6 +158,20 @@ const JobOrderForm = ({
     .map((reason, index) => index === reasons.length - 1 ? reason + '.' : reason + ', ')
     .join('');
 
+  const itemCheck = () => {
+    if (selectedRow?.reason !== undefined && selectedRow?.reason?.length > 0) {
+      if (i18n.language === 'enus') {
+        if (selectedRow?.reason?.length < 2) {
+          return t('job_order.reason_single')
+        } else {
+          return t('job_order.reason_multi')
+        }
+      } else {
+        return t('job_order.reason_single')
+      }
+    }
+  }
+
   return (
     <>
       <Box sx={localstyles.modal} onClick={handleOverlayClick}>
@@ -205,7 +219,7 @@ const JobOrderForm = ({
             <JobOrderCard plateNo={selectedRow?.plateNo} pickupOrderDetail={pickupOrderDetail ?? []} driverDetail={driverDetail} />
             {selectedRow?.status === 'DENY' && (
               <Box>
-                <Typography>{driverDetail?.driverNameEng} {t('job_order.rejected_at')} {dayjs(selectedRow?.updatedAt).format(`${dateFormat} HH:mm`)}, {t('job_order.reason')} {formattedReasons}</Typography>
+                <Typography>{driverDetail?.driverNameEng} {t('job_order.rejected_at')} {dayjs(selectedRow?.updatedAt).format(`${dateFormat} HH:mm`)}, {itemCheck()} {formattedReasons}</Typography>
               </Box>
             )}
           </Stack>
