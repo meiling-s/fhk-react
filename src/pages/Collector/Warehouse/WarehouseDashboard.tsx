@@ -136,8 +136,8 @@ const WarehouseDashboard: FunctionComponent = () => {
   const debouncedSearchValue: string = useDebounce(searchText, 1000)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [isLoadingCheckInCheckOut, setIsLoadingCheckInCheckOut] = useState<boolean>(false)
-  
+  const [isLoadingCheckInCheckOut, setIsLoadingCheckInCheckOut] =
+    useState<boolean>(false)
 
   useEffect(() => {
     if (realmApi !== 'account') {
@@ -403,11 +403,12 @@ const WarehouseDashboard: FunctionComponent = () => {
         const weightSubtype = await getWeightSubtypeWarehouse()
         console.log(weightSubtype, 'weightSubType')
         const result = await getWarehouseById(parseInt(selectedWarehouse.id))
-        // console.log("weightSubtype",weightSubtype)
+        console.log('weightSubtype', weightSubtype)
 
         if (result) {
           const data = result.data
           let subtypeWarehouse: warehouseSubtype[] = []
+
           // var subTypeWeight = 0;
           data?.warehouseRecyc.forEach((item: any) => {
             const recyItem = mappingRecyName(
@@ -637,7 +638,7 @@ const WarehouseDashboard: FunctionComponent = () => {
   }, [debouncedSearchValue, i18n.language])
 
   return (
-    <Box className="container-wrapper w-max mt-4">
+    <Box className="container-wrapper w-full mt-4">
       <Box sx={{ marginBottom: 2 }}>
         {realmApi === 'account' && (
           <TextField
@@ -685,8 +686,8 @@ const WarehouseDashboard: FunctionComponent = () => {
         </FormControl>
       </Box>
       <Box className="capacity-section">
-      {isLoading ? (
-          <Box sx={{ textAlign: 'center', paddingY: 12 , width: '100%' }}>
+        {isLoading ? (
+          <Box sx={{ textAlign: 'center', paddingY: 12, width: '100%' }}>
             <CircularProgress
               color={
                 role === 'manufacturer' || role === 'customer'
@@ -696,113 +697,114 @@ const WarehouseDashboard: FunctionComponent = () => {
             />
           </Box>
         ) : (
-        <Card
-          sx={{
-            borderRadius: 2,
-            backgroundColor: 'white',
-            padding: 2,
-            boxShadow: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2
-          }}
-        >
-          <Box className={'total-capacity'} sx={{ flexGrow: 1 }}>
-            <Typography fontSize={16} color="gray" fontWeight="light">
-              {t('warehouseDashboard.currentCapacity')}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
-              <Typography fontSize={22} color="black" fontWeight="bold">
-                {currentCapacity}
+          <Card
+            sx={{
+              borderRadius: 2,
+              backgroundColor: 'white',
+              padding: 2,
+              boxShadow: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2
+            }}
+          >
+            <Box className={'total-capacity'} sx={{ flexGrow: 1 }}>
+              <Typography fontSize={16} color="gray" fontWeight="light">
+                {t('warehouseDashboard.currentCapacity')}
               </Typography>
-              <Typography fontSize={13} color="black" fontWeight="bold">
-                /{totalCapacity}kg
+              <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
+                <Typography fontSize={22} color="black" fontWeight="bold">
+                  {currentCapacity}
+                </Typography>
+                <Typography fontSize={13} color="black" fontWeight="bold">
+                  /{totalCapacity}kg
+                </Typography>
+              </Box>
+
+              <Box sx={{ marginTop: 3, marginBottom: 2 }}>
+                <ProgressLine
+                  value={currentCapacity}
+                  total={totalCapacity}
+                ></ProgressLine>
+              </Box>
+
+              <Typography
+                fontSize={14}
+                color={
+                  (currentCapacity / totalCapacity) * 100 > 70 ? 'red' : 'green'
+                }
+                fontWeight="light"
+              >
+                {(currentCapacity / totalCapacity) * 100 < 70
+                  ? t('warehouseDashboard.thereStillEnoughSpace')
+                  : t('warehouseDashboard.noMoreRoom')}
               </Typography>
             </Box>
-
-            <Box sx={{ marginTop: 3, marginBottom: 2 }}>
-              <ProgressLine
-                value={currentCapacity}
-                total={totalCapacity}
-              ></ProgressLine>
-            </Box>
-
-            <Typography
-              fontSize={14}
-              color={
-                (currentCapacity / totalCapacity) * 100 > 70 ? 'red' : 'green'
-              }
-              fontWeight="light"
-            >
-              {(currentCapacity / totalCapacity) * 100 < 70
-                ? t('warehouseDashboard.thereStillEnoughSpace')
-                : t('warehouseDashboard.noMoreRoom')}
-            </Typography>
-          </Box>
-          {realmApi !== 'account' && (
-            <Box
-              className={'checkin-checkout'}
-              sx={{ display: 'flex', gap: '12px' }}
-            >
-              <Card
-                sx={{
-                  borderRadius: 2,
-                  backgroundColor: '#A7D676',
-                  padding: 2,
-                  boxShadow: 'none',
-                  color: 'white',
-                  width: '84px',
-                  cursor: 'pointer'
-                }}
-                onClick={() => navigate('/warehouse/shipment')}
+            {realmApi !== 'account' && (
+              <Box
+                className={'checkin-checkout'}
+                sx={{ display: 'flex', gap: '12px' }}
               >
-                <LoginIcon
-                  fontSize="small"
-                  className="bg-[#7FC738] rounded-[50%] p-1"
-                />
-                <div className="text-sm font-bold mb-4">
-                  {t('warehouseDashboard.check-in')}
-                </div>
-                <div className="flex gap-1 items-baseline">
-                  <Typography fontSize={22} color="white" fontWeight="bold">
-                    {checkIn}
-                  </Typography>
-                  <Typography fontSize={11} color="white" fontWeight="bold">
-                    {t('warehouseDashboard.toBeConfirmed')}
-                  </Typography>
-                </div>
-              </Card>
-              <Card
-                sx={{
-                  borderRadius: 2,
-                  backgroundColor: '#7ADFF1',
-                  padding: 2,
-                  boxShadow: 'none',
-                  color: 'white',
-                  width: '84px',
-                  cursor: 'pointer'
-                }}
-                onClick={() => navigate('/warehouse/checkout')}
-              >
-                <LogoutIcon
-                  fontSize="small"
-                  className="bg-[#6BC7FF] rounded-[50%] p-1"
-                />
-                <div className="text-sm font-bold mb-4">
-                  {t('warehouseDashboard.check-out')}
-                </div>
-                <div className="flex gap-1 items-baseline">
-                  <Typography fontSize={22} color="white" fontWeight="bold">
-                    {checkOut}
-                  </Typography>
-                  <Typography fontSize={11} color="white" fontWeight="bold">
-                    {t('warehouseDashboard.toBeConfirmed')}
-                  </Typography>
-                </div>
-              </Card>
-            </Box>
-          )}
-        </Card>)}
+                <Card
+                  sx={{
+                    borderRadius: 2,
+                    backgroundColor: '#A7D676',
+                    padding: 2,
+                    boxShadow: 'none',
+                    color: 'white',
+                    width: '84px',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => navigate('/warehouse/shipment')}
+                >
+                  <LoginIcon
+                    fontSize="small"
+                    className="bg-[#7FC738] rounded-[50%] p-1"
+                  />
+                  <div className="text-sm font-bold mb-4">
+                    {t('warehouseDashboard.check-in')}
+                  </div>
+                  <div className="flex gap-1 items-baseline">
+                    <Typography fontSize={22} color="white" fontWeight="bold">
+                      {checkIn}
+                    </Typography>
+                    <Typography fontSize={11} color="white" fontWeight="bold">
+                      {t('warehouseDashboard.toBeConfirmed')}
+                    </Typography>
+                  </div>
+                </Card>
+                <Card
+                  sx={{
+                    borderRadius: 2,
+                    backgroundColor: '#7ADFF1',
+                    padding: 2,
+                    boxShadow: 'none',
+                    color: 'white',
+                    width: '84px',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => navigate('/warehouse/checkout')}
+                >
+                  <LogoutIcon
+                    fontSize="small"
+                    className="bg-[#6BC7FF] rounded-[50%] p-1"
+                  />
+                  <div className="text-sm font-bold mb-4">
+                    {t('warehouseDashboard.check-out')}
+                  </div>
+                  <div className="flex gap-1 items-baseline">
+                    <Typography fontSize={22} color="white" fontWeight="bold">
+                      {checkOut}
+                    </Typography>
+                    <Typography fontSize={11} color="white" fontWeight="bold">
+                      {t('warehouseDashboard.toBeConfirmed')}
+                    </Typography>
+                  </div>
+                </Card>
+              </Box>
+            )}
+          </Card>
+        )}
       </Box>
       <Box className="capacity-item" sx={{ marginY: 6 }}>
         <Box
@@ -833,7 +835,7 @@ const WarehouseDashboard: FunctionComponent = () => {
           </Box>
         </Box>
         {isLoading ? (
-          <Box sx={{ textAlign: 'center', paddingY: 12 , width: '100%'}}>
+          <Box sx={{ textAlign: 'center', paddingY: 12 }}>
             <CircularProgress
               color={
                 role === 'manufacturer' || role === 'customer'
@@ -926,34 +928,34 @@ const WarehouseDashboard: FunctionComponent = () => {
             />
           </Box>
         ) : (
-        <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
-          <DataGrid
-            rows={checkInOut}
-            getRowId={(row) => row.id}
-            hideFooter
-            columns={columns}
-            getRowSpacing={getRowSpacing}
-            localeText={localeTextDataGrid}
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none'
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
+          <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
+            <DataGrid
+              rows={checkInOut}
+              getRowId={(row) => row.id}
+              hideFooter
+              columns={columns}
+              getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
+              sx={{
+                border: 'none',
+                '& .MuiDataGrid-cell': {
+                  border: 'none'
+                },
+                '& .MuiDataGrid-row': {
+                  bgcolor: 'white',
+                  borderRadius: '10px'
+                },
+                '&>.MuiDataGrid-main': {
+                  '&>.MuiDataGrid-columnHeaders': {
+                    borderBottom: 'none'
+                  }
+                },
+                '& .MuiDataGrid-virtualScroller': {
+                  height: '300px'
                 }
-              },
-              '& .MuiDataGrid-virtualScroller' : {
-                height: '300px'
-              }
-            }}
-          />
-        </Box>
+              }}
+            />
+          </Box>
         )}
       </Box>
     </Box>
