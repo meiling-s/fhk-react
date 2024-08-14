@@ -203,7 +203,8 @@
     "warehouseRecyc": "回收物类別",
     "shouldNotEmpty": "不应为空",
     "shouldNotDuplicate": "不应重复",
-    "shouldNotDuplicated": " 货仓地址已经被使用"
+    "shouldNotDuplicated": " 货仓地址已经被使用",
+    "workshopFlag": "是否工厂"
   },
   "check_in": {
     "transport_information": "运输资料",
@@ -864,7 +865,9 @@
     "confirm_approve_title": "确认核准吗？",
     "confirm_approve": "确认",
     "cancel": "取消",
-    "approved_success": "核准成功"
+    "approved_success": "核准成功",
+    "rejected_at": "于",
+    "reason_single": "拒绝，原因为"
   },
   "jobOrder": {
     "job_order_menu": "工作运单",

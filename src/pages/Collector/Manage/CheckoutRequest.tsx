@@ -65,6 +65,7 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import { getTenantById, searchTenantById } from '../../../APICalls/tenantManage'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -612,6 +613,21 @@ const CheckoutRequest: FunctionComponent = () => {
     return companyName
   }
 
+  const getReceiverCompany = async (id: string) => {
+    let companyName: string = ''
+    const result = await getTenantById(Number(id))
+    const data = result.data
+    if (i18n.language === 'enus') {
+      companyName = data.companyNameEng
+    } else if (i18n.language === 'zhch') {
+      companyName = data.companyNameSchi
+    } else {
+      companyName = data.companyNameTchi
+    }
+
+    return companyName
+  }
+
   const getCheckoutRequest = async () => {
     setIsLoading(true)
     try {
@@ -638,9 +654,9 @@ const CheckoutRequest: FunctionComponent = () => {
               companyName !== '' ? companyName : item.logisticName
           }
           if (item.receiverId) {
-            const companyName = getCompanyNameById(item.receiverId)
+            const companyName = await getReceiverCompany(item.receiverId)
             item.receiverName =
-              companyName !== '' ? companyName : item.receiverName
+              item.receiverId !== '' ? companyName : item.receiverName
           }
           if (item.senderName) {
             const companyName = getTranslationCompany(item.senderName)
