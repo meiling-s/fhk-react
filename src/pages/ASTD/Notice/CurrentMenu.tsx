@@ -25,6 +25,7 @@ import { extractError, returnApiToken } from '../../../utils/utils'
 import { LanguagesNotif, Option } from '../../../interfaces/notif'
 import i18n from '../../../setups/i18n'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import CircularLoading from '../../../components/CircularLoading'
 
 function createNotifTemplate(
   templateId: string,
@@ -64,6 +65,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
 
   const [notifTemplate, setNotifTemplateList] = useState<NotifTemplate[]>([])
   const [filteredTemplate, setFillteredTemplate] = useState<NotifTemplate[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<NotifTemplate | null>(null)
   const [action, setAction] = useState<'edit'>('edit')
   const navigate = useNavigate()
@@ -102,6 +104,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
   }, [selectedTab])
 
   const initStaffList = async () => {
+    setIsLoading(true)
     try {
       const result = await getListNotifTemplateStaff()
       if (result) {
@@ -134,9 +137,11 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const initRecyclablesList = async () => {
+    setIsLoading(true)
     try {
       const result = await getListNotifTemplatePO()
       if (result) {
@@ -168,6 +173,7 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const columns: GridColDef[] = [
@@ -271,35 +277,37 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
       >
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
-            <DataGrid
-              rows={filteredTemplate}
-              getRowId={(row) => row.templateId}
-              hideFooter
-              columns={columns}
-              // checkboxSelection
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
+          {isLoading ? (
+            <CircularLoading />
+          ) : ( <DataGrid
+            rows={filteredTemplate}
+            getRowId={(row) => row.templateId}
+            hideFooter
+            columns={columns}
+            // checkboxSelection
+            onRowClick={handleSelectRow}
+            getRowSpacing={getRowSpacing}
+            localeText={localeTextDataGrid}
+            sx={{
+              border: 'none',
+              '& .MuiDataGrid-cell': {
+                border: 'none'
+              },
+              '.MuiDataGrid-columnHeaderTitle': { 
+                fontWeight: 'bold !important',
+                overflow: 'visible !important'
+              },
+              '& .MuiDataGrid-row': {
+                bgcolor: 'white',
+                borderRadius: '10px'
+              },
+              '&>.MuiDataGrid-main': {
+                '&>.MuiDataGrid-columnHeaders': {
+                  borderBottom: 'none'
                 }
-              }}
-            />
+              }
+            }}
+          />)}
           </Box>
         </div>
       </Box>

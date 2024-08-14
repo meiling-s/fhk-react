@@ -26,7 +26,7 @@ import {
 } from '../../../themes/icons'
 
 import StaffDetail from './StaffDetail'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { styles } from '../../../constants/styles'
 import { ToastContainer, toast } from 'react-toastify'
 import Tabs from '../../../components/Tabs'
@@ -111,8 +111,6 @@ export type Title = {
 const StaffManagement: FunctionComponent = () => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  // const [selectedTab, setSelectedTab] = useState(0)
-  // const tabStaff = [t('staffManagement.list'), t('staffManagement.schedule')]
   const [selectedTab, setSelectedTab] = useState(0)
   const tabStaff = [t('staffManagement.list'), t('staffManagement.userGroup')]
   const [staffList, setStaffList] = useState<Staff[]>([])
@@ -133,6 +131,7 @@ const StaffManagement: FunctionComponent = () => {
     staffName: ''
   })
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const initStaffTitle = async () => {
     const result = await getStaffTitle()
@@ -170,6 +169,7 @@ const StaffManagement: FunctionComponent = () => {
   }
 
   const initStaffList = async () => {
+    setIsLoading(true)
     try {
       const result = await getStaffList(page - 1, pageSize, query)
 
@@ -230,6 +230,7 @@ const StaffManagement: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -267,10 +268,10 @@ const StaffManagement: FunctionComponent = () => {
       type: 'string'
     },
     {
-      field: "staffNameEng",
-      headerName: t("staffManagement.employeeEnglishName"),
+      field: 'staffNameEng',
+      headerName: t('staffManagement.employeeEnglishName'),
       width: 200,
-      type: "string",
+      type: 'string'
     },
     {
       field: 'titleId',
@@ -509,9 +510,9 @@ const StaffManagement: FunctionComponent = () => {
   }, [])
 
   useEffect(() => {
-    if(staffList.length === 0 && page > 1){
+    if (staffList.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev - 1)
+      setPage((prev) => prev - 1)
     }
   }, [staffList])
 
@@ -568,56 +569,63 @@ const StaffManagement: FunctionComponent = () => {
 
             <div className="table-vehicle">
               <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
-                <DataGrid
-                  rows={filteredStaff}
-                  getRowId={(row) => row.staffId}
-                  hideFooter
-                  columns={columns}
-                  onRowClick={handleSelectRow}
-                  getRowSpacing={getRowSpacing}
-                  localeText={localeTextDataGrid}
-                  getRowClassName={(params) =>
-                    selectedRow && params.id === selectedRow.staffId
-                      ? 'selected-row'
-                      : ''
-                  }
-                  initialState={{
-                    sorting: {
-                      sortModel: [{ field: 'staffId', sort: 'asc' }]
-                    }
-                  }}
-                  sx={{
-                    border: 'none',
-                    '& .MuiDataGrid-cell': {
-                      border: 'none'
-                    },
-                    '& .MuiDataGrid-row': {
-                      bgcolor: 'white',
-                      borderRadius: '10px'
-                    },
-                    '&>.MuiDataGrid-main': {
-                      '&>.MuiDataGrid-columnHeaders': {
-                        borderBottom: 'none'
+                {isLoading ? (
+                  <CircularLoading />
+                ) : (
+                  <Box>
+                    {' '}
+                    <DataGrid
+                      rows={filteredStaff}
+                      getRowId={(row) => row.staffId}
+                      hideFooter
+                      columns={columns}
+                      onRowClick={handleSelectRow}
+                      getRowSpacing={getRowSpacing}
+                      localeText={localeTextDataGrid}
+                      getRowClassName={(params) =>
+                        selectedRow && params.id === selectedRow.staffId
+                          ? 'selected-row'
+                          : ''
                       }
-                    },
-                    '.MuiDataGrid-columnHeaderTitle': {
-                      fontWeight: 'bold !important',
-                      overflow: 'visible !important'
-                    },
-                    '& .selected-row': {
-                      backgroundColor: '#F6FDF2 !important',
-                      border: '1px solid #79CA25'
-                    }
-                  }}
-                />
-                <Pagination
-                  className="mt-4"
-                  count={Math.ceil(totalData)}
-                  page={page}
-                  onChange={(_, newPage) => {
-                    setPage(newPage)
-                  }}
-                />
+                      initialState={{
+                        sorting: {
+                          sortModel: [{ field: 'staffId', sort: 'asc' }]
+                        }
+                      }}
+                      sx={{
+                        border: 'none',
+                        '& .MuiDataGrid-cell': {
+                          border: 'none'
+                        },
+                        '& .MuiDataGrid-row': {
+                          bgcolor: 'white',
+                          borderRadius: '10px'
+                        },
+                        '&>.MuiDataGrid-main': {
+                          '&>.MuiDataGrid-columnHeaders': {
+                            borderBottom: 'none'
+                          }
+                        },
+                        '.MuiDataGrid-columnHeaderTitle': {
+                          fontWeight: 'bold !important',
+                          overflow: 'visible !important'
+                        },
+                        '& .selected-row': {
+                          backgroundColor: '#F6FDF2 !important',
+                          border: '1px solid #79CA25'
+                        }
+                      }}
+                    />
+                    <Pagination
+                      className="mt-4"
+                      count={Math.ceil(totalData)}
+                      page={page}
+                      onChange={(_, newPage) => {
+                        setPage(newPage)
+                      }}
+                    />
+                  </Box>
+                )}
               </Box>
             </div>
             {/* {selectedRow != null && ( */}
