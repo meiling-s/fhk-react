@@ -38,6 +38,7 @@ import {
 } from '../../APICalls/tenantManage'
 import { STATUS_CODE, defaultPath, format } from '../../constants/constant'
 import { styles } from '../../constants/styles'
+import CircularLoading from '../../components/CircularLoading'
 import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -473,23 +474,23 @@ function InviteForm({
         'purchase_order.create.is_required'
       )}`
     ),
-    effFrmDate: Yup.date()
-      .nullable()
-      .required(
-        `${t('pick_up_order.shipping_validity')} ${t(
-          'purchase_order.create.is_required'
-        )}`
-      )
-      .test(
-        'is-before-end-date',
-        `${t('pick_up_order.shipping_validity')} ${t(
-          'tenant.invite_modal.err_date'
-        )} `,
-        function (value) {
-          const { effToDate } = this.parent
-          return !effToDate || !value || new Date(value) <= new Date(effToDate)
-        }
-      ),
+    // effFrmDate: Yup.date()
+    //   .nullable()
+    //   .required(
+    //     `${t('pick_up_order.shipping_validity')} ${t(
+    //       'purchase_order.create.is_required'
+    //     )}`
+    //   )
+    //   .test(
+    //     'is-before-end-date',
+    //     `${t(
+    //       'tenant.invite_modal.err_date'
+    //     )} `,
+    //     function (value) {
+    //       const { effToDate } = this.parent
+    //       return !effToDate || !value || new Date(value) <= new Date(effToDate)
+    //     }
+    //   ),
     effToDate: Yup.date()
       .nullable()
       .required(
@@ -497,7 +498,7 @@ function InviteForm({
       )
       .test(
         'is-after-start-date',
-        `${t('pick_up_order.to')} ${t('tenant.invite_modal.err_date')} `,
+        `${t('tenant.invite_modal.err_date')} `,
         function (value) {
           const { effFrmDate } = this.parent
 
@@ -836,7 +837,7 @@ function InviteForm({
               </Box>
               <Box sx={{ alignSelf: 'center', paddingBottom: '16px' }}>
                 <Button
-                  disabled={!formik.isValid || isLoading}
+                  //disabled={!formik.isValid || isLoading}
                   onClick={handleSubmit}
                   type="submit"
                   // onClick={async () => {
@@ -897,6 +898,7 @@ function CompanyManage() {
   const { dateFormat } = useContainer(CommonTypeContainer)
   const [duplicatedData, setDuplicatedData] = useState<boolean>(false)
   const [tenantIdErr, setTenantIdErr] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const realmOptions = [
     {
       key: 'collector',
@@ -1133,6 +1135,7 @@ function CompanyManage() {
   }
 
   async function initCompaniesData() {
+    setIsLoading(true)
     try {
       const result = await getAllTenant(page - 1, pageSize)
       const data = result?.data.content
@@ -1148,6 +1151,7 @@ function CompanyManage() {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const handleFilterCompanies = async (searchWord: string) => {
@@ -1353,52 +1357,58 @@ function CompanyManage() {
         />
         <div className="table-tenant">
           <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={filterCompanies}
-              getRowId={(row) => row.id}
-              hideFooter
-              columns={headCells}
-              disableRowSelectionOnClick
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) =>
-                selectedTenanId && params.id === selectedTenanId
-                  ? 'selected-row'
-                  : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={filterCompanies}
+                  getRowId={(row) => row.id}
+                  hideFooter
+                  columns={headCells}
+                  disableRowSelectionOnClick
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedTenanId && params.id === selectedTenanId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': {
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                  backgroundColor: '#F6FDF2 !important',
-                  border: '1px solid #79CA25'
-                }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         <InviteForm
