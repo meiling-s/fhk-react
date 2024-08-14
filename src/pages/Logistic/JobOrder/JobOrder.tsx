@@ -287,7 +287,7 @@ const JobOrder = () => {
   const [filteredPico, setFilteredPico] = useState<Row[]>([])
   const [query, setQuery] = useState<queryJobOrder>({
     id: '',
-    joId: '',
+    labelId: '',
     picoId: '',
     driverId: '',
     senderName: '',
@@ -400,9 +400,6 @@ const JobOrder = () => {
     const tempRows = jobOrder?.map(async (item) => {
       const senderCompany = await fetchTenantDetails(Number(item.senderId));
       const receiverCompany = await fetchTenantDetails(Number(item.receiverId));
-      if(senderCompany){
-        console.log('sender', senderCompany)
-      }
       return {
         ...item,
         id: item.joId,
@@ -418,7 +415,10 @@ const JobOrder = () => {
           receiverCompany
         ) : item.receiverName,
         status: item.status,
-        operation: ''
+        operation: '',
+        reason: item.reason,
+        updatedAt: item.updatedAt,
+        updatedBy: item.updatedBy,
       };
     }) ?? [];
   
@@ -433,7 +433,7 @@ const JobOrder = () => {
     {
       label: t('job_order.table.jo_id'),
       placeholder: t('placeHolder.jo_number'),
-      field: 'joId'
+      field: 'labelId'
     },
     {
       label: t('job_order.table.sender_company'),

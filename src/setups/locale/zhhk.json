@@ -202,7 +202,8 @@
     "warehouseRecyc": "回收物類別",
     "shouldNotEmpty": "不應為空",
     "shouldNotDuplicate": "不應重複",
-    "shouldNotDuplicated": " 货仓地址已经被使用"
+    "shouldNotDuplicated": " 货仓地址已经被使用",
+     "workshopFlag": "是否工場"
   },
   "check_in": {
     "transport_information": "運輸資料",
@@ -860,7 +861,9 @@
     "confirm_approve_title": "確認核準嗎？",
     "confirm_approve": "確認",
     "cancel": "取消",
-    "approved_success": "核準成功"
+    "approved_success": "核準成功",
+    "rejected_at": "於",
+    "reason_single": "拒絕，原因為"
   },
   "jobOrder": {
     "job_order_menu": "工作運單",

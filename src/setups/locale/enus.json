@@ -204,7 +204,8 @@
     "warehouseRecyc": "recyclable type(s)",
     "shouldNotEmpty": "should not empty",
     "shouldNotDuplicate": "should not duplicate",
-    "shouldNotDuplicated": "The address of warehouse had been used"
+    "shouldNotDuplicated": "The address of warehouse had been used",
+    "workshopFlag": "Is workshop"
   },
   "check_in": {
     "transport_information": "Transport Information",
@@ -863,7 +864,10 @@
     "confirm_approve_title": "Confirm approve?",
     "confirm_approve": "Confirm",
     "cancel": "Cancel",
-    "approved_success": "Approved successfully"
+    "approved_success": "Approved successfully",
+    "rejected_at": "Rejected At",
+    "reason_single": "the reason(s) is",
+    "reason_multi": "the reason(s) are"
   },
   "jobOrder": {
     "job_order_menu": "Job Order",
