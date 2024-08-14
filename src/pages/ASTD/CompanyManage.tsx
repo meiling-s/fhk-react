@@ -473,23 +473,23 @@ function InviteForm({
         'purchase_order.create.is_required'
       )}`
     ),
-    effFrmDate: Yup.date()
-      .nullable()
-      .required(
-        `${t('pick_up_order.shipping_validity')} ${t(
-          'purchase_order.create.is_required'
-        )}`
-      )
-      .test(
-        'is-before-end-date',
-        `${t('pick_up_order.shipping_validity')} ${t(
-          'tenant.invite_modal.err_date'
-        )} `,
-        function (value) {
-          const { effToDate } = this.parent
-          return !effToDate || !value || new Date(value) <= new Date(effToDate)
-        }
-      ),
+    // effFrmDate: Yup.date()
+    //   .nullable()
+    //   .required(
+    //     `${t('pick_up_order.shipping_validity')} ${t(
+    //       'purchase_order.create.is_required'
+    //     )}`
+    //   )
+    //   .test(
+    //     'is-before-end-date',
+    //     `${t(
+    //       'tenant.invite_modal.err_date'
+    //     )} `,
+    //     function (value) {
+    //       const { effToDate } = this.parent
+    //       return !effToDate || !value || new Date(value) <= new Date(effToDate)
+    //     }
+    //   ),
     effToDate: Yup.date()
       .nullable()
       .required(
@@ -497,7 +497,7 @@ function InviteForm({
       )
       .test(
         'is-after-start-date',
-        `${t('pick_up_order.to')} ${t('tenant.invite_modal.err_date')} `,
+        `${t('tenant.invite_modal.err_date')} `,
         function (value) {
           const { effFrmDate } = this.parent
 
@@ -836,7 +836,7 @@ function InviteForm({
               </Box>
               <Box sx={{ alignSelf: 'center', paddingBottom: '16px' }}>
                 <Button
-                  disabled={!formik.isValid || isLoading}
+                  //disabled={!formik.isValid || isLoading}
                   onClick={handleSubmit}
                   type="submit"
                   // onClick={async () => {

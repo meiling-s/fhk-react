@@ -865,7 +865,9 @@
     "confirm_approve_title": "确认核准吗？",
     "confirm_approve": "确认",
     "cancel": "取消",
-    "approved_success": "核准成功"
+    "approved_success": "核准成功",
+    "rejected_at": "于",
+    "reason_single": "拒绝，原因为"
   },
   "jobOrder": {
     "job_order_menu": "工作运单",
