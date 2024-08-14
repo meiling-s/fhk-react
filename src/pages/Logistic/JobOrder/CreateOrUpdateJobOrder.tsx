@@ -295,10 +295,13 @@ const JobOrder = () => {
     })
     setPickupOrderDetail(ids)
   }
-
+  
   const onHandleSubmitOrder = async () => {
     if (params?.get('isEdit') === 'false') {
       for (let order of pickupOrderDetail) {
+        const date = new Date(order.pickupAt)
+        await date.setHours(date.getHours() + 8)
+        order.pickupAt = date.toISOString()
         const response = await assignDriver(order)
         if (response?.status === 201) {
           onSubmitData(
