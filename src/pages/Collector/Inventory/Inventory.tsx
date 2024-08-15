@@ -54,7 +54,8 @@ import useDebounce from '../../../hooks/useDebounce'
 import {
   returnApiToken,
   extractError,
-  getPrimaryColor
+  getPrimaryColor,
+  debounce
 } from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
@@ -563,18 +564,18 @@ const Inventory: FunctionComponent = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
-    let timeoutID: ReturnType<typeof setTimeout> | null
+  // function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
+  //   let timeoutID: ReturnType<typeof setTimeout> | null
 
-    return function (this: any, ...args: Parameters<T>) {
-      if (timeoutID) {
-        clearTimeout(timeoutID)
-      }
-      timeoutID = setTimeout(() => {
-        fn.apply(this, args)
-      }, delay)
-    }
-  }
+  //   return function (this: any, ...args: Parameters<T>) {
+  //     if (timeoutID) {
+  //       clearTimeout(timeoutID)
+  //     }
+  //     timeoutID = setTimeout(() => {
+  //       fn.apply(this, args)
+  //     }, delay)
+  //   }
+  // }
 
   const handleSearch = debounce((keyName, value) => {
     if (value.trim() === '' && query.itemId == null) {

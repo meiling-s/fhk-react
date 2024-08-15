@@ -47,7 +47,8 @@ import {
   displayCreatedDate,
   extractError,
   getPrimaryColor,
-  showSuccessToast
+  showSuccessToast,
+  debounce
 } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 import { queryCheckIn } from '../../interfaces/checkin'
@@ -784,17 +785,20 @@ function ShipmentManage() {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleFilterPoNum = (searchWord: string) => {
+  const handleFilterPoNum = debounce((searchWord: string) => {
+    setPage(1)
     updateQuery({ picoId: searchWord })
-  }
+  }, 500)
 
   const handleComChange = (event: SelectChangeEvent) => {
+    setPage(1)
     setCompany(event.target.value)
     var searchWord = event.target.value
     updateQuery({ senderName: searchWord })
   }
 
   const handleLocChange = (event: SelectChangeEvent) => {
+    setPage(1)
     setLocation(event.target.value)
     var searchWord = event.target.value
     updateQuery({ senderAddr: searchWord })

@@ -33,7 +33,8 @@ import {
   extractError,
   getPrimaryColor,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  debounce
 } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
 import {
@@ -972,24 +973,15 @@ const PickupOrders = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleSearch = (keyName: string, value: string) => {
+  const handleSearch = debounce((keyName: string, value: string) => {
     setPage(1)
     if (keyName == 'status') {
-      // const statusMapping: { [key: string]: number } = {
-      //   CREATED: 0,
-      //   STARTED: 1,
-      //   CONFIRMED: 2,
-      //   REJECTED: 3,
-      //   COMPLETED: 4,
-      //   CLOSED: 5,
-      //   OUTSTANDING: 6
-      // };
       const mappedStatus = value != '' ? parseInt(value) : null
       updateQuery({ ...query, [keyName]: mappedStatus })
     } else {
       updateQuery({ [keyName]: value })
     }
-  }
+  }, 1000)
 
   function getStatusOpion() {
     const options: Option[] = statusList.map((item) => {
