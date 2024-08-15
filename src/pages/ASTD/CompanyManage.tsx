@@ -60,7 +60,8 @@ import {
   returnApiToken,
   showErrorToast,
   showSuccessToast,
-  validateEmail
+  validateEmail,
+  debounce
 } from '../../utils/utils'
 import { ToastContainer } from 'react-toastify'
 import utc from 'dayjs/plugin/utc'
@@ -1154,7 +1155,7 @@ function CompanyManage() {
     setIsLoading(false)
   }
 
-  const handleFilterCompanies = async (searchWord: string) => {
+  const handleFilterCompanies = debounce(async (searchWord: string) => {
     try {
       if (searchWord != '') {
         const tenantId = parseInt(searchWord)
@@ -1175,7 +1176,7 @@ function CompanyManage() {
         navigate('/maintenance')
       }
     }
-  }
+  }, 500)
 
   const onRejectModal = () => {
     initCompaniesData()

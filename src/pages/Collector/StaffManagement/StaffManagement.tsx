@@ -36,7 +36,7 @@ import { getStaffList, getStaffTitle } from '../../../APICalls/staff'
 
 import { useTranslation } from 'react-i18next'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
-import { displayCreatedDate, extractError } from '../../../utils/utils'
+import { displayCreatedDate, extractError, debounce } from '../../../utils/utils'
 import UserGroup from '../UserGroup/UserGroup'
 import {
   Languages,
@@ -486,10 +486,10 @@ const StaffManagement: FunctionComponent = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleSearch = (keyName: string, value: string) => {
+  const handleSearch = debounce((keyName: string, value: string) => {
     setPage(1)
     updateQuery({ [keyName]: value })
-  }
+  }, 500)
 
   const searchfield = [
     {

@@ -475,3 +475,19 @@ export const creatioPageList = () => {
 
   return listPage
 }
+
+export function debounce<T extends (...args: any[]) => void>(
+  fn: T,
+  delay: number
+) {
+  let timeoutID: ReturnType<typeof setTimeout> | null
+
+  return function (this: any, ...args: Parameters<T>) {
+    if (timeoutID) {
+      clearTimeout(timeoutID)
+    }
+    timeoutID = setTimeout(() => {
+      fn.apply(this, args)
+    }, delay)
+  }
+}

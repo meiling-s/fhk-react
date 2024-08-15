@@ -28,7 +28,8 @@ import {
 import {
   getPrimaryColor,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  debounce
 } from '../../../utils/utils'
 import DriverDetail from './DriverDetail'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
@@ -151,16 +152,19 @@ const DriverMenu = () => {
     [currentLanguage, t]
   )
 
-  const handleSearch = (search: string) => {
+  const handleSearch = debounce((search: string) => {
     if (search.trim() !== '') {
+      setIsLoading(true)
       const filterData: Driver[] = filterDriverLists.filter((item) =>
-        item.driverId.toString().toLowerCase().startsWith(search.toLowerCase())
+        item.labelId?.toString().toLowerCase().startsWith(search.toLowerCase())
       )
       setFilterDriverLists(filterData)
+      setIsLoading(false)
       return
     }
     setFilterDriverLists(driverLists)
-  }
+    setIsLoading(false)
+  }, 500)
   const handleAction = (
     params: GridRenderCellParams,
     action: 'add' | 'edit' | 'delete'

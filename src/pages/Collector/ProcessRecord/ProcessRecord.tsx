@@ -30,7 +30,7 @@ import {
 import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate, extractError } from '../../../utils/utils'
+import { displayCreatedDate, extractError, debounce } from '../../../utils/utils'
 import { ProcessType } from '../../../interfaces/common'
 import { useNavigate } from 'react-router-dom'
 import { queryProcessRecord } from '../../../interfaces/processRecords'
@@ -298,10 +298,10 @@ const ProcessRecord: FunctionComponent = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleSearch = (label: string, value: string) => {
+  const handleSearch = debounce((label: string, value: string) => {
     setPage(1)
     updateQuery({ [label]: value })
-  }
+  }, 500)
 
   return (
     <>
@@ -352,7 +352,7 @@ const ProcessRecord: FunctionComponent = () => {
               field={s.field}
               placeholder={s?.placeholder}
               // width={s.width}
-              numberOnly={s.numberOnly || false}
+               numberOnly={s.numberOnly || false}
               options={s.options || []}
               onChange={handleSearch}
             />

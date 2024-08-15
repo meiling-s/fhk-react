@@ -25,7 +25,8 @@ import i18n from '../../../setups/i18n'
 import {
   displayCreatedDate,
   extractError,
-  returnApiToken
+  returnApiToken,
+  debounce
 } from '../../../utils/utils'
 import {
   localStorgeKeyName,
@@ -400,6 +401,7 @@ const JobOrder = () => {
   }
 
   useEffect(() => {
+    setIsLoading(true)
     const tempRows =
       jobOrder?.map(async (item) => {
         const senderCompany = await fetchTenantDetails(Number(item.senderId))
@@ -431,6 +433,7 @@ const JobOrder = () => {
       setRows(filteredRows)
       setFilteredPico(filteredRows)
     })
+    setIsLoading(false)
   }, [jobOrder, i18n.language])
 
   const searchfield = [
@@ -502,9 +505,10 @@ const JobOrder = () => {
     // initJobOrderRequest()
   }
 
-  const handleSearch = (keyName: string, value: string) => {
+  const handleSearch = debounce((keyName: string, value: string) => {
+    setPage(1)
     updateQuery({ [keyName]: value })
-  }
+  }, 1000)
   return (
     <>
       <ToastContainer />
