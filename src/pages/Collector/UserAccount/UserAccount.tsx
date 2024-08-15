@@ -20,6 +20,7 @@ import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded'
 import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
 import { getUserAccountPaging } from '../../../APICalls/userAccount'
+import CircularLoading from '../../../components/CircularLoading'
 import {
   UserAccount as UserAccountItem,
   ForgetPassUser
@@ -46,6 +47,7 @@ const UserAccount: FunctionComponent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { t } = useTranslation()
   const { i18n } = useTranslation()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
@@ -136,6 +138,7 @@ const UserAccount: FunctionComponent = () => {
   }
 
   async function fetchDataUserAccount() {
+    setIsLoading(true)
     try {
       const result = await getUserAccountPaging(page - 1, pageSize)
       const accountlist: string[] = []
@@ -151,6 +154,7 @@ const UserAccount: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   async function initForgetPassList() {
@@ -236,9 +240,9 @@ const UserAccount: FunctionComponent = () => {
   }, [])
 
   useEffect(() => {
-    if(userAccountItems.length === 0 && page > 1 && !selectedAccount){
+    if (userAccountItems.length === 0 && page > 1 && !selectedAccount) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev - 1)
+      setPage((prev) => prev - 1)
     }
   }, [userAccountItems])
 
@@ -249,7 +253,7 @@ const UserAccount: FunctionComponent = () => {
         maxWidth: { xs: 375, sm: 480, md: '100%' }
       }}
     >
-      <div className="warehouse-section">
+      <div className="user-account">
         <div className="settings-page relative bg-bg-primary w-full overflow-hidden flex flex-row items-start justify-start text-center text-mini text-grey-darker font-tag-chi-medium">
           <div className=" self-stretch flex-1 bg-white flex flex-col items-start justify-start text-smi text-grey-middle font-noto-sans-cjk-tc">
             <div className="self-stretch flex-1 bg-bg-primary flex flex-col items-start justify-start text-3xl text-black font-tag-chi-medium">
@@ -331,50 +335,60 @@ const UserAccount: FunctionComponent = () => {
                     </Button>
                   </div>
                   <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
-                    <DataGrid
-                      rows={userAccountItems}
-                      getRowId={(row) => row.loginId}
-                      hideFooter
-                      columns={columns}
-                      disableRowSelectionOnClick
-                      onRowClick={handleRowClick}
-                      getRowSpacing={getRowSpacing}
-                      localeText={localeTextDataGrid}
-                      getRowClassName={(params) => 
-                        selectedAccount && params.id === selectedAccount.loginId ? 'selected-row' : ''
-                      }
-                      sx={{
-                        border: 'none',
-                        '& .MuiDataGrid-cell': {
-                          border: 'none'
-                        },
-                        '& .MuiDataGrid-row': {
-                          bgcolor: 'white',
-                          borderRadius: '10px'
-                        },
-                        '&>.MuiDataGrid-main': {
-                          '&>.MuiDataGrid-columnHeaders': {
-                            borderBottom: 'none'
+                    {isLoading ? (
+                      <CircularLoading />
+                    ) : (
+                      <Box>
+                        {' '}
+                        <DataGrid
+                          rows={userAccountItems}
+                          getRowId={(row) => row.loginId}
+                          hideFooter
+                          columns={columns}
+                          disableRowSelectionOnClick
+                          onRowClick={handleRowClick}
+                          getRowSpacing={getRowSpacing}
+                          localeText={localeTextDataGrid}
+                          getRowClassName={(params) =>
+                            selectedAccount &&
+                            params.id === selectedAccount.loginId
+                              ? 'selected-row'
+                              : ''
                           }
-                        },
-                        '.MuiDataGrid-columnHeaderTitle': { 
-                          fontWeight: 'bold !important',
-                          overflow: 'visible !important'
-                        },
-                        '& .selected-row': {
-                            backgroundColor: '#F6FDF2 !important',
-                            border: '1px solid #79CA25'
-                          }
-                      }}
-                    />
-                    <Pagination
-                      className="mt-4"
-                      count={Math.ceil(totalData)}
-                      page={page}
-                      onChange={(_, newPage) => {
-                        setPage(newPage)
-                      }}
-                    />
+                          sx={{
+                            border: 'none',
+                            '& .MuiDataGrid-cell': {
+                              border: 'none'
+                            },
+                            '& .MuiDataGrid-row': {
+                              bgcolor: 'white',
+                              borderRadius: '10px'
+                            },
+                            '&>.MuiDataGrid-main': {
+                              '&>.MuiDataGrid-columnHeaders': {
+                                borderBottom: 'none'
+                              }
+                            },
+                            '.MuiDataGrid-columnHeaderTitle': {
+                              fontWeight: 'bold !important',
+                              overflow: 'visible !important'
+                            },
+                            '& .selected-row': {
+                              backgroundColor: '#F6FDF2 !important',
+                              border: '1px solid #79CA25'
+                            }
+                          }}
+                        />
+                        <Pagination
+                          className="mt-4"
+                          count={Math.ceil(totalData)}
+                          page={page}
+                          onChange={(_, newPage) => {
+                            setPage(newPage)
+                          }}
+                        />
+                      </Box>
+                    )}
                   </Box>
                 </div>
               </div>

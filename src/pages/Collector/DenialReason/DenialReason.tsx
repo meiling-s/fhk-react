@@ -1,4 +1,10 @@
-import { useEffect, useState, FunctionComponent, useCallback, useRef } from 'react'
+import {
+  useEffect,
+  useState,
+  FunctionComponent,
+  useCallback,
+  useRef
+} from 'react'
 import {
   Box,
   Button,
@@ -35,7 +41,10 @@ import {
   DenialReasonCollectors
 } from '../../../interfaces/denialReason'
 import CreateDenialReason from './CreateDenialReason'
-import { getAllFilteredFunction, getAllFunction } from '../../../APICalls/Collector/userGroup'
+import {
+  getAllFilteredFunction,
+  getAllFunction
+} from '../../../APICalls/Collector/userGroup'
 import i18n from '../../../setups/i18n'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import { useNavigate } from 'react-router-dom'
@@ -43,6 +52,7 @@ import { extractError } from '../../../utils/utils'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 import StatusLabel from '../../../components/StatusLabel'
+import CircularLoading from '../../../components/CircularLoading'
 
 const DenialReason: FunctionComponent = () => {
   const { t } = useTranslation()
@@ -75,6 +85,7 @@ const DenialReason: FunctionComponent = () => {
   }
   const { localeTextDataGrid } = useLocaleTextDataGrid()
   const searchActionRef = useRef(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const initFunctionList = async () => {
     try {
@@ -129,6 +140,7 @@ const DenialReason: FunctionComponent = () => {
   }
 
   const initDenialReasonList = async () => {
+    setIsLoading(true)
     let result = null
     if (isCollectors()) {
       result = await getDenialReasonCollectors(page - 1, pageSize)
@@ -138,7 +150,8 @@ const DenialReason: FunctionComponent = () => {
 
     const data = result?.data
     if (data) {
-      var denialReasonMapping: DenialReasonCollectors[] | DenialReasonItem[] = []
+      var denialReasonMapping: DenialReasonCollectors[] | DenialReasonItem[] =
+        []
 
       data.content.map((item: any) => {
         const functionItem = functionList.find(
@@ -153,9 +166,11 @@ const DenialReason: FunctionComponent = () => {
       setDenialReasonList(denialReasonMapping)
       setTotalData(data.totalPages)
     }
+    setIsLoading(false)
   }
 
   const searchByFunctionId = async (functionId: number) => {
+    setIsLoading(true)
     setPage(1)
     let result = null
     if (isCollectors()) {
@@ -165,16 +180,13 @@ const DenialReason: FunctionComponent = () => {
         functionId
       )
     } else {
-      result = await getAllDenialReasonByFunctionId(
-        0,
-        pageSize,
-        functionId
-      )
+      result = await getAllDenialReasonByFunctionId(0, pageSize, functionId)
     }
 
     const data = result?.data
     if (data) {
-      var denialReasonMapping: DenialReasonItem[] | DenialReasonCollectors[] = []
+      var denialReasonMapping: DenialReasonItem[] | DenialReasonCollectors[] =
+        []
       data.content.map((item: any) => {
         const functionItem = functionList.find(
           (el) => el.functionId === item.functionId
@@ -187,6 +199,7 @@ const DenialReason: FunctionComponent = () => {
       setDenialReasonList(denialReasonMapping)
       setTotalData(data.totalPages)
     }
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -409,56 +422,67 @@ const DenialReason: FunctionComponent = () => {
             />
           ))}
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={DenialReasonList}
-              getRowId={(row) => row.reasonId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.reasonId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={DenialReasonList}
+                  getRowId={(row) => row.reasonId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.reasonId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                searchActionRef.current = false
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    searchActionRef.current = false
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         {rowId != 0 && (
           <CreateDenialReason
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => { setDrawerOpen(false); setSelectedRow(null) }}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}

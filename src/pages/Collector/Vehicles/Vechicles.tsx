@@ -15,10 +15,13 @@ import {
 
 import { styles } from '../../../constants/styles'
 import CreateVehicle from './CreateVehicle'
-import { Vehicle as VehicleItem, CreateVehicle as VehiclesForm } from '../../../interfaces/vehicles'
+import {
+  Vehicle as VehicleItem,
+  CreateVehicle as VehiclesForm
+} from '../../../interfaces/vehicles'
 import { getAllVehicles } from '../../../APICalls/Collector/vehicles'
 import { ToastContainer, toast } from 'react-toastify'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { extractError } from '../../../utils/utils'
@@ -58,11 +61,23 @@ function createVehicles(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string,
+  updatedAt: string
 ): VehicleItem {
-  return { id, vehicleId, vehicleTypeId, vehicleName, plateNo, serviceType, photo, status, createdBy, updatedBy,createdAt, updatedAt  }
+  return {
+    id,
+    vehicleId,
+    vehicleTypeId,
+    vehicleName,
+    plateNo,
+    serviceType,
+    photo,
+    status,
+    createdBy,
+    updatedBy,
+    createdAt,
+    updatedAt
+  }
 }
-
 
 const Vehicle: FunctionComponent = () => {
   const { t } = useTranslation()
@@ -77,9 +92,10 @@ const Vehicle: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [plateList, setPlateList] = useState<string[]>([])
-  const navigate = useNavigate();
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
-      const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initVehicleList()
@@ -87,76 +103,83 @@ const Vehicle: FunctionComponent = () => {
 
   useEffect(() => {
     getAllVehiclesData()
-  },[])
+  }, [])
 
   const getAllVehiclesData = async () => {
     try {
       const result = await getVehicleData()
       const data = result?.data
-      
+
       setVehicleData(data)
-      } catch (error:any) {
-      const {state} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
 
   const initVehicleList = async () => {
-   try {
-    const result = await getAllVehicles(page - 1, pageSize)
-    const data = result?.data
-    // console.log("initVehicleList", data)
-    if(data) {
-      var vehicleMapping: VehicleItem[] = []
-      data.content.map((item: any) => {
-        vehicleMapping.push(
-          createVehicles(
-            item?.vehicleId,
-            item?.vehicleId,
-            item?.vehicleTypeId,
-            item?.vehicleName,
-            item?.plateNo,
-            item?.serviceType,
-            item?.photo,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
+    setIsLoading(true)
+    try {
+      const result = await getAllVehicles(page - 1, pageSize)
+      const data = result?.data
+      // console.log("initVehicleList", data)
+      if (data) {
+        var vehicleMapping: VehicleItem[] = []
+        data.content.map((item: any) => {
+          vehicleMapping.push(
+            createVehicles(
+              item?.vehicleId,
+              item?.vehicleId,
+              item?.vehicleTypeId,
+              item?.vehicleName,
+              item?.plateNo,
+              item?.serviceType,
+              item?.photo,
+              item?.status,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
           )
-        )
 
-        //mappping plate list
-        plateList.push(item?.plateNo)
-      })
-      setVehicleList(vehicleMapping)
-      setTotalData(data.totalPages)
+          //mappping plate list
+          plateList.push(item?.plateNo)
+        })
+        setVehicleList(vehicleMapping)
+        setTotalData(data.totalPages)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
+    setIsLoading(false)
   }
 
-  const getVehicleTypeName = useCallback((vehicleTypeId: string) => {
-    const vehicleType = vehicleData.find(v => v.vehicleTypeId === vehicleTypeId)
-    if (!vehicleType) return ''
+  const getVehicleTypeName = useCallback(
+    (vehicleTypeId: string) => {
+      const vehicleType = vehicleData.find(
+        (v) => v.vehicleTypeId === vehicleTypeId
+      )
+      if (!vehicleType) return ''
 
-    switch(i18n.language) {
-      case 'enus':
-        return vehicleType.vehicleTypeNameEng
-      case 'zhhk':
-        return vehicleType.vehicleTypeNameTchi
-      case 'zhch':
-        return vehicleType.vehicleTypeNameSchi
-      default:
-        return vehicleType.vehicleTypeNameEng // fallback to English
-    }
-  }, [vehicleData, i18n, currentLanguage])
+      switch (i18n.language) {
+        case 'enus':
+          return vehicleType.vehicleTypeNameEng
+        case 'zhhk':
+          return vehicleType.vehicleTypeNameTchi
+        case 'zhch':
+          return vehicleType.vehicleTypeNameSchi
+        default:
+          return vehicleType.vehicleTypeNameEng // fallback to English
+      }
+    },
+    [vehicleData, i18n, currentLanguage]
+  )
 
   const columns: GridColDef[] = [
     {
@@ -165,9 +188,7 @@ const Vehicle: FunctionComponent = () => {
       width: 200,
       type: 'string',
       renderCell: (params) => {
-        return (
-          <div>{t(`vehicle.${params.row.serviceType.toLowerCase()}`)}</div>
-        )
+        return <div>{t(`vehicle.${params.row.serviceType.toLowerCase()}`)}</div>
       }
     },
     {
@@ -190,18 +211,20 @@ const Vehicle: FunctionComponent = () => {
       headerName: t('vehicle.picture'),
       width: 300,
       renderCell: (params) => {
-
         return (
-          <div style={{ display: 'flex', gap: '8px' }}>{
-            params.row.photo.map((item: string, index:number) =>{
-              const format = item.startsWith("data:image/png") ? 'png' : 'jpeg'
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {params.row.photo.map((item: string, index: number) => {
+              const format = item.startsWith('data:image/png') ? 'png' : 'jpeg'
               const imgdata = `data:image/${format};base64,${item}`
               return (
-                <img key={item} className='w-[30px] h-[30px]' src={imgdata} alt="" />
+                <img
+                  key={item}
+                  className="w-[30px] h-[30px]"
+                  src={imgdata}
+                  alt=""
+                />
               )
-            }
-            )
-          }
+            })}
           </div>
         )
       }
@@ -217,7 +240,10 @@ const Vehicle: FunctionComponent = () => {
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              onClick={(event) => {event.stopPropagation();  handleAction(params, 'edit')}}
+              onClick={(event) => {
+                event.stopPropagation()
+                handleAction(params, 'edit')
+              }}
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -234,7 +260,10 @@ const Vehicle: FunctionComponent = () => {
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              onClick={(event) => {event.stopPropagation(); handleAction(params, 'delete')}}
+              onClick={(event) => {
+                event.stopPropagation()
+                handleAction(params, 'delete')
+              }}
               style={{ cursor: 'pointer' }}
             />
           </div>
@@ -243,7 +272,10 @@ const Vehicle: FunctionComponent = () => {
     }
   ]
 
-  const handleAction = (params: GridRenderCellParams, action: 'add' | 'edit' | 'delete') => {
+  const handleAction = (
+    params: GridRenderCellParams,
+    action: 'add' | 'edit' | 'delete'
+  ) => {
     setAction(action)
     setRowId(params.row.id)
     setSelectedRow(params.row)
@@ -283,9 +315,9 @@ const Vehicle: FunctionComponent = () => {
     })
   }
 
-  const onSubmitData = (type: string, msg: string) =>{
+  const onSubmitData = (type: string, msg: string) => {
     initVehicleList()
-    if(type == 'success') {
+    if (type == 'success') {
       showSuccessToast(msg)
     } else {
       showErrorToast(msg)
@@ -299,9 +331,9 @@ const Vehicle: FunctionComponent = () => {
   }, [])
 
   useEffect(() => {
-    if(vehicleList.length === 0 && page > 1){
+    if (vehicleList.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev - 1)
+      setPage((prev) => prev - 1)
     }
   }, [vehicleList])
 
@@ -337,62 +369,77 @@ const Vehicle: FunctionComponent = () => {
               }
             ]}
             variant="outlined"
-            onClick={() => {setDrawerOpen(true); setAction('add')}}
+            onClick={() => {
+              setDrawerOpen(true)
+              setAction('add')
+            }}
           >
             <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={vehicleList}
-              getRowId={(row) => row.vehicleId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.id ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                {' '}
+                <DataGrid
+                  rows={vehicleList}
+                  getRowId={(row) => row.vehicleId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.id
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className='mt-4'
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         {rowId != 0 && (
           <CreateVehicle
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             action={action}
             rowId={rowId}
             selectedItem={selectedRow}

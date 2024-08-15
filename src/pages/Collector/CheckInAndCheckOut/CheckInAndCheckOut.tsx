@@ -16,7 +16,6 @@ import { useTranslation } from 'react-i18next'
 import {
   STATUS_CODE,
   format,
-  localStorgeKeyName
 } from '../../../constants/constant'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { SEARCH_ICON } from '../../../themes/icons'
@@ -34,6 +33,7 @@ import {
   getPrimaryColor,
   returnApiToken
 } from '../../../utils/utils'
+import CircularLoading from '../../../components/CircularLoading'
 import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../../../constants/axiosInstance'
 import {
@@ -45,12 +45,12 @@ import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 function onlyUnique(value: any, index: any, array: any) {
   return array.indexOf(value) === index
 }
-const role = localStorage.getItem(localStorgeKeyName.role) || ''
 
 function CheckInAndCheckOut() {
   const { t } = useTranslation()
   const [data, setData] = useState([])
   const [selectedRow, setSelectedRow] = useState<any | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [totalData, setTotalData] = useState(0)
   const [page, setPage] = useState(1)
   const [isShow, setIsShow] = useState(false)
@@ -74,6 +74,7 @@ function CheckInAndCheckOut() {
   })
 
   const getData = async () => {
+    setIsLoading(true)
     try {
       const token = returnApiToken()
 
@@ -102,6 +103,7 @@ function CheckInAndCheckOut() {
       )
       setTotalData(totalPages)
       setTotalElements(totalElements)
+      setIsLoading(false)
     } catch (error: any) {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
@@ -234,9 +236,9 @@ function CheckInAndCheckOut() {
 
   return (
     <Box
-      className={'container-wrapper w-max'}
+      className={'container-wrapper w-full'}
       sx={{
-        width: 'max-content',
+        width: '100%',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -440,53 +442,59 @@ function CheckInAndCheckOut() {
       </Box>
       <div className="mt-6">
         <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-          <DataGrid
-            rows={data.filter((item: any) => {
-              if (filter.company) {
-                return item.senderName === filter.company
-              }
-              if (filter.location) {
-                return item.senderAddr === filter.location
-              }
-              if (filter.outin) {
-                if (filter.outin === 'out') {
-                  return item.chkOutId
-                }
-                return item.chkInId
-              }
-              return true
-            })}
-            getRowId={(row) => row.id}
-            hideFooter
-            columns={columns}
-            checkboxSelection={false}
-            onRowClick={handleSelectRow}
-            getRowSpacing={getRowSpacing}
-            localeText={localeTextDataGrid}
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none'
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
-                }
-              }
-            }}
-          />
-          <Pagination
-            className="mt-4"
-            count={Math.ceil(totalData)}
-            page={page}
-            onChange={(_, newPage) => {
-              setPage(newPage)
-            }}
-          />
+          {isLoading ? (
+            <CircularLoading />
+          ) : (
+            <Box>
+              <DataGrid
+                rows={data.filter((item: any) => {
+                  if (filter.company) {
+                    return item.senderName === filter.company
+                  }
+                  if (filter.location) {
+                    return item.senderAddr === filter.location
+                  }
+                  if (filter.outin) {
+                    if (filter.outin === 'out') {
+                      return item.chkOutId
+                    }
+                    return item.chkInId
+                  }
+                  return true
+                })}
+                getRowId={(row) => row.id}
+                hideFooter
+                columns={columns}
+                checkboxSelection={false}
+                onRowClick={handleSelectRow}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  }
+                }}
+              />
+              <Pagination
+                className="mt-4"
+                count={Math.ceil(totalData)}
+                page={page}
+                onChange={(_, newPage) => {
+                  setPage(newPage)
+                }}
+              />
+            </Box>
+          )}
         </Box>
         <CheckInAndCheckOutDetails
           isShow={isShow}
