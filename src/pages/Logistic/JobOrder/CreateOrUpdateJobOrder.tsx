@@ -399,9 +399,6 @@ const JobOrder = () => {
     }
   }
 
-  useEffect(() => {
-    console.log(pickupOrderDetail, 'a')
-  }, [pickupOrderDetail])
   return (
     <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
       <ToastContainer></ToastContainer>

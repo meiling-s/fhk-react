@@ -15,6 +15,7 @@ import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { ToastContainer, toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import CircularLoading from '../../../components/CircularLoading'
 import CustomItemList, {
   il_item
 } from '../../../components/FormComponents/CustomItemList'
@@ -260,6 +261,7 @@ const PurchaseOrder = () => {
   const userRole = localStorage.getItem(localStorgeKeyName.role) || ''
   const rolesEnableCreatePO = [Roles.customerAdmin]
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   let columns: GridColDef[] = [
     //
@@ -445,6 +447,7 @@ const PurchaseOrder = () => {
   ]
 
   const initPurchaseOrderRequest = async () => {
+    setIsLoading(true)
     try {
       setPurchaseOrder([])
       setTotalData(0)
@@ -465,6 +468,7 @@ const PurchaseOrder = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const showApproveModal = async (row: any) => {
@@ -798,48 +802,57 @@ const PurchaseOrder = () => {
           ))}
         </Box>
         <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
-          <DataGrid
-            rows={filteredPico}
-            columns={columns}
-            disableRowSelectionOnClick
-            onRowClick={handleRowClick}
-            getRowSpacing={getRowSpacing}
-            localeText={localeTextDataGrid}
-            hideFooter
-            getRowClassName={(params) => 
-              selectedRow && params.id === selectedRow.poId ? 'selected-row' : ''
-            }
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none' // Remove the borders from the cells
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
+          {isLoading ? (
+            <CircularLoading />
+          ) : (
+            <Box>
+              {' '}
+              <DataGrid
+                rows={filteredPico}
+                columns={columns}
+                disableRowSelectionOnClick
+                onRowClick={handleRowClick}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                hideFooter
+                getRowClassName={(params) =>
+                  selectedRow && params.id === selectedRow.poId
+                    ? 'selected-row'
+                    : ''
                 }
-              },
-              '.MuiDataGrid-columnHeaderTitle': { 
-                fontWeight: 'bold !important',
-                overflow: 'visible !important'
-              },
-              '& .selected-row': {
-                  backgroundColor: '#F6FDF2 !important',
-                  border: '1px solid #79CA25'
-                }
-            }}
-          />
-          <Pagination
-            count={Math.ceil(totalData)}
-            page={page}
-            onChange={(_, newPage) => {
-              setPage(newPage)
-            }}
-          />
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none' // Remove the borders from the cells
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
+                }}
+              />
+              <Pagination
+                count={Math.ceil(totalData)}
+                page={page}
+                onChange={(_, newPage) => {
+                  setPage(newPage)
+                }}
+              />
+            </Box>
+          )}
         </Box>
 
         <ApproveModal

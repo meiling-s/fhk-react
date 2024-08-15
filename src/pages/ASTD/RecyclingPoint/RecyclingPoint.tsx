@@ -37,7 +37,7 @@ import {
 import { Contract as ContractItem } from '../../../interfaces/contract'
 import { getAllContract } from '../../../APICalls/Collector/contracts'
 import { ToastContainer, toast } from 'react-toastify'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
@@ -108,12 +108,15 @@ const RecyclingPoint: FunctionComponent = () => {
   const [engineDrawerOpen, setEngineDrawerOpen] = useState<boolean>(false)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoadingSite, setIsLoadingSite] = useState<boolean>(false)
+  const [isLoadingEngine, setIsLoadingEngine] = useState<boolean>(false)
   useEffect(() => {
     initSiteTypeData()
     initEngineData()
   }, [page])
 
   const initSiteTypeData = async () => {
+    setIsLoadingSite(true)
     try {
       const result = await getSiteTypeData()
       const data = result?.data
@@ -125,9 +128,11 @@ const RecyclingPoint: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoadingSite(false)
   }
 
   const initEngineData = async () => {
+    setIsLoadingEngine(true)
     try {
       const result = await getEngineData()
       const data = result?.data
@@ -139,6 +144,7 @@ const RecyclingPoint: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoadingEngine(false)
   }
 
   const columns: GridColDef[] = [
@@ -251,10 +257,10 @@ const RecyclingPoint: FunctionComponent = () => {
       type: 'string'
     },
     {
-    field: 'description',
-    headerName: t('packaging_unit.introduction'),
-    width: 170,
-    type: 'string'
+      field: 'description',
+      headerName: t('packaging_unit.introduction'),
+      width: 170,
+      type: 'string'
     },
     {
       field: 'edit',
@@ -420,41 +426,50 @@ const RecyclingPoint: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            <DataGrid
-              rows={siteTypeData}
-              getRowId={(row) => row.siteTypeId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.siteTypeId ? 'selected-row' : ''
-              }
-
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoadingSite ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                {' '}
+                <DataGrid
+                  rows={siteTypeData}
+                  getRowId={(row) => row.siteTypeId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.siteTypeId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         <Box
@@ -487,59 +502,71 @@ const RecyclingPoint: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            <DataGrid
-              rows={engineData}
-              getRowId={(row) => row.premiseTypeId}
-              hideFooter
-              columns={engineColumns}
-              onRowClick={handleEngineSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                engineSelectedRow && params.id === engineSelectedRow.premiseTypeId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
+            {isLoadingEngine ? (
+              <CircularLoading />
+            ) : (
+              <DataGrid
+                rows={engineData}
+                getRowId={(row) => row.premiseTypeId}
+                hideFooter
+                columns={engineColumns}
+                onRowClick={handleEngineSelectRow}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                getRowClassName={(params) =>
+                  engineSelectedRow &&
+                  params.id === engineSelectedRow.premiseTypeId
+                    ? 'selected-row'
+                    : ''
+                }
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
                     backgroundColor: '#F6FDF2 !important',
                     border: '1px solid #79CA25'
                   }
-              }}
-            />
+                }}
+              />
+            )}
           </Box>
         </div>
         <CreateRecyclingPoint
-            drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
-            action={action}
-            rowId={rowId}
-            selectedItem={selectedRow}
-            handleOnSubmitData={handleOnSubmitData}
-            
+          drawerOpen={drawerOpen}
+          handleDrawerClose={() => {
+            setDrawerOpen(false)
+            setSelectedRow(null)
+          }}
+          action={action}
+          rowId={rowId}
+          selectedItem={selectedRow}
+          handleOnSubmitData={handleOnSubmitData}
         />
         <CreateEngineData
-            drawerOpen={engineDrawerOpen}
-            handleDrawerClose={() => {setEngineDrawerOpen(false); setEngineSelectedRow(null)}}
-            action={action}
-            rowId={rowId}
-            selectedItem={engineSelectedRow}
-            handleOnSubmitData={handleOnSubmitData}
+          drawerOpen={engineDrawerOpen}
+          handleDrawerClose={() => {
+            setEngineDrawerOpen(false)
+            setEngineSelectedRow(null)
+          }}
+          action={action}
+          rowId={rowId}
+          selectedItem={engineSelectedRow}
+          handleOnSubmitData={handleOnSubmitData}
         />
       </Box>
     </>

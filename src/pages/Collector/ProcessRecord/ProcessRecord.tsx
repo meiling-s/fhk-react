@@ -27,7 +27,7 @@ import {
   getAllProcessRecord,
   getProcessIn
 } from '../../../APICalls/Collector/processRecords'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { displayCreatedDate, extractError } from '../../../utils/utils'
@@ -98,6 +98,7 @@ const ProcessRecord: FunctionComponent = () => {
     processAddress: ''
   })
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initProcessRecord()
@@ -116,6 +117,7 @@ const ProcessRecord: FunctionComponent = () => {
   }
 
   const initProcessRecord = async () => {
+    setIsLoading(true)
     try {
       setTotalData(0)
       setProcesRecords([])
@@ -161,6 +163,7 @@ const ProcessRecord: FunctionComponent = () => {
         setFilteredProcessRecords([])
       }
     }
+    setIsLoading(false)
   }
 
   const mappingProcessName = (processTypeId: string) => {
@@ -240,19 +243,19 @@ const ProcessRecord: FunctionComponent = () => {
       label: t('processRecord.processingNumb'),
       placeholder: t('processRecord.enterProcessingNumber'),
       field: 'processOutId',
-      numberOnly: true,
+      numberOnly: true
       // width: ''
     },
     {
       label: t('processRecord.handleName'),
       options: getUniqueOptions('packageTypeId'),
-      field: 'processType',
+      field: 'processType'
       // width: '100%'
     },
     {
       label: t('processRecord.processingLocation'),
       options: getUniqueOptions('address'),
-      field: 'processAddress',
+      field: 'processAddress'
       // width: '100%'
     }
   ]
@@ -357,54 +360,64 @@ const ProcessRecord: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={filteredProcessRecords}
-              getRowId={(row) => row.processOutId}
-              hideFooter
-              columns={columns}
-
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.processOutId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={filteredProcessRecords}
+                  getRowId={(row) => row.processOutId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.processOutId
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
           <EditProcessRecord
             drawerOpen={drawerEditOpen}
-            handleDrawerClose={() => {setDrawerEditOpen(false); setSelectedRow(null)}}
+            handleDrawerClose={() => {
+              setDrawerEditOpen(false)
+              setSelectedRow(null)
+            }}
             selectedRow={selectedRow}
           />
         </div>
