@@ -32,7 +32,7 @@ import {
 import { Contract as ContractItem } from '../../../interfaces/contract'
 import { PackagingUnit as PackagingUnitItem } from '../../../interfaces/packagingUnit'
 import { ToastContainer, toast } from 'react-toastify'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
@@ -42,6 +42,7 @@ import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { STATUS_CODE } from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import { set } from 'date-fns'
 
 function createPackagingUnit(
   id: number,
@@ -92,8 +93,9 @@ const PackagingUnit: FunctionComponent = () => {
   const [engNameList, setEngNameList] = useState<string[]>([])
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
-  const navigate = useNavigate();
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initPackagingUnitList()
@@ -101,6 +103,7 @@ const PackagingUnit: FunctionComponent = () => {
   }, [page])
 
   const initPackagingUnitList = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllPackagingUnit(page - 1, pageSize)
       const data = result?.data
@@ -146,23 +149,23 @@ const PackagingUnit: FunctionComponent = () => {
         setPackagingMapping(packagingMapping)
         setTotalData(data.totalPages)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
   const getTenantData = async () => {
     try {
       const token = returnApiToken()
       const result = await getTenantById(parseInt(token.tenantId))
       const data = result?.data
-      console.log('tenant Data', data)
       setTenantCurrency(data?.monetaryValue || '')
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -275,9 +278,9 @@ const PackagingUnit: FunctionComponent = () => {
   }
 
   useEffect(() => {
-    if(packagingMapping.length === 0 && page > 1){
+    if (packagingMapping.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev - 1)
+      setPage((prev) => prev - 1)
     }
   }, [packagingMapping])
 
@@ -345,8 +348,8 @@ const PackagingUnit: FunctionComponent = () => {
               styles.buttonOutlinedGreen,
               {
                 width: 'max-content',
-                height: '40px',
-              },
+                height: '40px'
+              }
             ]}
             variant="outlined"
             onClick={() => {
@@ -359,54 +362,65 @@ const PackagingUnit: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            <DataGrid
-              rows={packagingMapping}
-              getRowId={(row) => row.id}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.id ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={packagingMapping}
+                  getRowId={(row) => row.id}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.id
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         <CreatePackaging
           drawerOpen={drawerOpen}
-          handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+          handleDrawerClose={() => {
+            setDrawerOpen(false)
+            setSelectedRow(null)
+          }}
           action={action}
           rowId={rowId}
           selectedItem={selectedRow}

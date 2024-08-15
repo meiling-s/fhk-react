@@ -1,4 +1,9 @@
-import React, { useEffect, useState, FunctionComponent, useCallback } from 'react'
+import React, {
+  useEffect,
+  useState,
+  FunctionComponent,
+  useCallback
+} from 'react'
 import {
   Box,
   Button,
@@ -37,12 +42,16 @@ import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken } from '../../../utils/utils'
 import { getTenantById } from '../../../APICalls/tenantManage'
 import StatusLabel from '../../../components/StatusLabel'
-import { GET_ALL_RECYCLE_TYPE, GET_RECYC_TYPE } from '../../../constants/requests'
+import {
+  GET_ALL_RECYCLE_TYPE,
+  GET_RECYC_TYPE
+} from '../../../constants/requests'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import { t } from 'i18next'
+import CircularLoading from '../../../components/CircularLoading'
 import { getVehicleData } from '../../../APICalls/ASTD/recycling'
 import CreateVehicle from './CreateVehicle'
 import { useNavigate } from 'react-router-dom'
@@ -50,18 +59,18 @@ import { STATUS_CODE } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 interface VehicleDataProps {
-    createdAt: string
-    createdBy: string
-    description: string
-    remark: string
-    status: string
-    updatedAt: string
-    updatedBy: string
-    vehicleTypeId: string
-    vehicleTypeNameEng: string
-    vehicleTypeNameSchi: string
-    vehicleTypeNameTchi: string
-    vehicleTypeLimit: string
+  createdAt: string
+  createdBy: string
+  description: string
+  remark: string
+  status: string
+  updatedAt: string
+  updatedBy: string
+  vehicleTypeId: string
+  vehicleTypeNameEng: string
+  vehicleTypeNameSchi: string
+  vehicleTypeNameTchi: string
+  vehicleTypeLimit: string
 }
 
 const Vehicle: FunctionComponent = () => {
@@ -73,26 +82,29 @@ const Vehicle: FunctionComponent = () => {
   const [rowId, setRowId] = useState<number>(1)
   const [page, setPage] = useState(1)
   const pageSize = 10
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [totalData, setTotalData] = useState<number>(0)
-  const navigate = useNavigate();
-  const { localeTextDataGrid} = useLocaleTextDataGrid()
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initVehicleData()
   }, [page])
 
   const initVehicleData = async () => {
-   try {
-    const result = await getVehicleData()
-    const data = result?.data
-    
-    setVehicleData(data)
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+    setIsLoading(true)
+    try {
+      const result = await getVehicleData()
+      const data = result?.data
+
+      setVehicleData(data)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
+    setIsLoading(false)
   }
 
   const columns: GridColDef[] = [
@@ -100,7 +112,7 @@ const Vehicle: FunctionComponent = () => {
       field: 'vehicleTypeNameTchi',
       headerName: t('packaging_unit.traditional_chinese_name'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'vehicleTypeNameSchi',
@@ -176,7 +188,7 @@ const Vehicle: FunctionComponent = () => {
 
   const handleAction = (
     params: GridRenderCellParams,
-    action: 'add' | 'edit' | 'delete',
+    action: 'add' | 'edit' | 'delete'
   ) => {
     setAction(action)
     setRowId(params.row.id)
@@ -190,7 +202,6 @@ const Vehicle: FunctionComponent = () => {
     setSelectedRow(params.row)
     setDrawerOpen(true)
   }
-
 
   const onSubmitData = (type: string) => {
     initVehicleData()
@@ -233,20 +244,20 @@ const Vehicle: FunctionComponent = () => {
     <>
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          pr: 4,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          pr: 4
         }}
       >
         <ToastContainer></ToastContainer>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            marginY: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginY: 4
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
@@ -254,63 +265,75 @@ const Vehicle: FunctionComponent = () => {
           </Typography>
           <Button
             sx={[
-              styles.buttonOutlinedGreen, 
+              styles.buttonOutlinedGreen,
               {
-                width: "max-content",
-                height: "40px",
-              },
+                width: 'max-content',
+                height: '40px'
+              }
             ]}
             variant="outlined"
-            onClick={() => {setDrawerOpen(true); setAction('add')}}
+            onClick={() => {
+              setDrawerOpen(true)
+              setAction('add')
+            }}
           >
-            <ADD_ICON /> {t("top_menu.add_new")}
+            <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            <DataGrid
-              rows={vehicleData}
-              getRowId={(row) => row.vehicleTypeId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.vehicleTypeId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <DataGrid
+                rows={vehicleData}
+                getRowId={(row) => row.vehicleTypeId}
+                hideFooter
+                columns={columns}
+                onRowClick={handleSelectRow}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                getRowClassName={(params) =>
+                  selectedRow && params.id === selectedRow.vehicleTypeId
+                    ? 'selected-row'
+                    : ''
+                }
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
                     backgroundColor: '#F6FDF2 !important',
                     border: '1px solid #79CA25'
                   }
-              }}
-            />
+                }}
+              />
+            )}
           </Box>
         </div>
         <CreateVehicle
-            drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
-            action={action}
-            selectedItem={selectedRow}
-            onSubmit={onSubmitData}
+          drawerOpen={drawerOpen}
+          handleDrawerClose={() => {
+            setDrawerOpen(false)
+            setSelectedRow(null)
+          }}
+          action={action}
+          selectedItem={selectedRow}
+          onSubmit={onSubmitData}
         />
       </Box>
     </>

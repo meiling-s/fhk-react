@@ -19,7 +19,7 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON
 } from '../../../../themes/icons'
-
+import CircularLoading from '../../../../components/CircularLoading'
 import { styles } from '../../../../constants/styles'
 import CreateVehicles from './CreateVehicles'
 import {
@@ -86,7 +86,7 @@ const Vehicles: FunctionComponent = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [isSearching, setSearching] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   useEffect(() => {
     initVehicleList()
@@ -404,65 +404,68 @@ const Vehicles: FunctionComponent = () => {
           handleSearch={(value) => handleSearch(value)}
           onChange={handleChange}
         />
-        {isLoading ? (
-          <Box sx={{ textAlign: 'center', paddingY: 2 }}>
-            <CircularProgress color="success" />
-          </Box>
-        ) : (
-          <div className="table-vehicle">
-            <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-              <DataGrid
-                rows={vehicleList}
-                getRowId={(row) => row.vehicleId}
-                hideFooter
-                columns={columns}
-
-                onRowClick={handleSelectRow}
-                getRowSpacing={getRowSpacing}
-                localeText={localeTextDataGrid}
-                getRowClassName={(params) => 
-                  selectedRow && params.id === selectedRow.vehicleId ? 'selected-row' : ''
-                }
-                sx={{
-                  border: 'none',
-                  '& .MuiDataGrid-cell': {
-                    border: 'none'
-                  },
-                  '& .MuiDataGrid-row': {
-                    bgcolor: 'white',
-                    borderRadius: '10px'
-                  },
-                  '&>.MuiDataGrid-main': {
-                    '&>.MuiDataGrid-columnHeaders': {
-                      borderBottom: 'none'
-                    }
-                  },
-                  '.MuiDataGrid-columnHeaderTitle': { 
-                    fontWeight: 'bold !important',
-                    overflow: 'visible !important'
-                  },
-                  '& .selected-row': {
+        <div className="table-vehicle">
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={vehicleList}
+                  getRowId={(row) => row.vehicleId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.vehicleId
+                      ? 'selected-row'
+                      : ''
+                  }
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
                       backgroundColor: '#F6FDF2 !important',
                       border: '1px solid #79CA25'
                     }
-                }}
-              />
-              <Pagination
-                className="mt-4"
-                count={Math.ceil(totalData)}
-                page={page}
-                onChange={(_, newPage) => {
-                  setPage(newPage)
-                }}
-              />
-            </Box>
-          </div>
-        )}
-
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
+        </div>
         {rowId != 0 && (
           <CreateVehicles
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             action={action}
             rowId={rowId}
             selectedItem={selectedRow}

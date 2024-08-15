@@ -47,6 +47,7 @@ import { getWeightTolerance } from '../../../APICalls/ASTD/weight'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import CircularLoading from '../../../components/CircularLoading'
 
 interface CurrencyListProps {
   createdAt: string
@@ -109,8 +110,9 @@ const ASTDSettings: FunctionComponent = () => {
   const [decimalValue, setDecimalValue] = useState<DecimalValueProps | null>(
     null
   )
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initCurrencyList()
@@ -120,61 +122,63 @@ const ASTDSettings: FunctionComponent = () => {
   }, [page])
 
   const initCurrencyList = async () => {
-   try {
-    const result = await getCurrencyList()
-    const data = result?.data
+    setIsLoading(true)
+    try {
+      const result = await getCurrencyList()
+      const data = result?.data
 
-    console.log(data, 'data currency')
+      console.log(data, 'data currency')
 
-    setCurrencyList(data)
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+      setCurrencyList(data)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
+    setIsLoading(false)
   }
 
   const initDecimalValue = async () => {
-   try {
-    const result = await getDecimalValue()
-    const data = result?.data
+    try {
+      const result = await getDecimalValue()
+      const data = result?.data
 
-    setDecimalValue(data)
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+      setDecimalValue(data)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
   }
 
   const initDateFormat = async () => {
-   try {
-    const result = await getDateFormat()
-    const data = result?.data
+    try {
+      const result = await getDateFormat()
+      const data = result?.data
 
-    setDateFormat(data)
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+      setDateFormat(data)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
   }
 
   const initWeightTolerance = async () => {
-   try {
-    const result = await getWeightTolerance()
-    const data = result?.data
+    try {
+      const result = await getWeightTolerance()
+      const data = result?.data
 
-    setWeightFormat(data)
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+      setWeightFormat(data)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
   }
 
   const columns: GridColDef[] = [
@@ -422,41 +426,47 @@ const ASTDSettings: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            <DataGrid
-              rows={currencyList}
-              getRowId={(row) => row.monetaryId}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.monetaryId ? 'selected-row' : ''
-              }
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <DataGrid
+                rows={currencyList}
+                getRowId={(row) => row.monetaryId}
+                hideFooter
+                columns={columns}
+                onRowClick={handleSelectRow}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                getRowClassName={(params) =>
+                  selectedRow && params.id === selectedRow.monetaryId
+                    ? 'selected-row'
+                    : ''
+                }
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
                     backgroundColor: '#F6FDF2 !important',
                     border: '1px solid #79CA25'
                   }
-              }}
-            />
+                }}
+              />
+            )}
           </Box>
         </div>
       </Box>
@@ -483,7 +493,10 @@ const ASTDSettings: FunctionComponent = () => {
       />
       <CreateCurrency
         drawerOpen={currencyDrawerOpen}
-        handleDrawerClose={() => {setCurrencyDrawerOpen(false); setSelectedRow(null)}}
+        handleDrawerClose={() => {
+          setCurrencyDrawerOpen(false)
+          setSelectedRow(null)
+        }}
         action={action}
         onSubmitData={onSubmitData}
         selectedItem={selectedRow}

@@ -51,6 +51,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
+import CircularLoading from '../../../components/CircularLoading'
 import {
   returnApiToken,
   extractError,
@@ -678,15 +679,7 @@ const Inventory: FunctionComponent = () => {
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             {isLoading ? (
-              <Box sx={{ textAlign: 'center', paddingY: 12 }}>
-                <CircularProgress
-                  color={
-                    role === 'manufacturer' || role === 'customer'
-                      ? 'primary'
-                      : 'success'
-                  }
-                />
-              </Box>
+              <CircularLoading />
             ) : (
               <Box>
                 <DataGrid
