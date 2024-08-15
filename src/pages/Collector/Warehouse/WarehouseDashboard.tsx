@@ -15,7 +15,8 @@ import {
   MenuItem,
   TextField,
   InputAdornment,
-  IconButton
+  IconButton,
+  CircularProgress
 } from '@mui/material'
 import { SelectChangeEvent } from '@mui/material/Select'
 import {
@@ -62,7 +63,11 @@ import { useContainer } from 'unstated-next'
 import { styles } from '../../../constants/styles'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
-import { extractError, getPrimaryColor, returnApiToken } from '../../../utils/utils'
+import {
+  extractError,
+  getPrimaryColor,
+  returnApiToken
+} from '../../../utils/utils'
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -130,6 +135,9 @@ const WarehouseDashboard: FunctionComponent = () => {
   const role = localStorage.getItem(localStorgeKeyName.role)
   const debouncedSearchValue: string = useDebounce(searchText, 1000)
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoadingCheckInCheckOut, setIsLoadingCheckInCheckOut] =
+    useState<boolean>(false)
 
   useEffect(() => {
     if (realmApi !== 'account') {
@@ -217,7 +225,7 @@ const WarehouseDashboard: FunctionComponent = () => {
         Object.keys(data).forEach((item) => {
           currCapacityWarehouse += data[item]
         })
-        setCurrentCapacity(currCapacityWarehouse)
+        setCurrentCapacity(Math.ceil(currCapacityWarehouse * 1000) / 1000)
         return result.data
       }
     }
@@ -346,6 +354,7 @@ const WarehouseDashboard: FunctionComponent = () => {
   }
 
   const initWarehouseSubType = async () => {
+    setIsLoading(true)
     if (selectedWarehouse) {
       if (realmApi === 'account') {
         const weightSubtype = await initGetRecycSubTypeWeight()
@@ -394,11 +403,12 @@ const WarehouseDashboard: FunctionComponent = () => {
         const weightSubtype = await getWeightSubtypeWarehouse()
         console.log(weightSubtype, 'weightSubType')
         const result = await getWarehouseById(parseInt(selectedWarehouse.id))
-        // console.log("weightSubtype",weightSubtype)
+        console.log('weightSubtype', weightSubtype)
 
         if (result) {
           const data = result.data
           let subtypeWarehouse: warehouseSubtype[] = []
+
           // var subTypeWeight = 0;
           data?.warehouseRecyc.forEach((item: any) => {
             const recyItem = mappingRecyName(
@@ -424,14 +434,16 @@ const WarehouseDashboard: FunctionComponent = () => {
               capacity: item.recycSubTypeCapacity
             })
           })
-          console.log(subtypeWarehouse, 'subtypewarehouse')
+          //console.log(subtypeWarehouse, 'subtypewarehouse')
           setWarehouseSubtype(subtypeWarehouse)
         }
       }
+      setIsLoading(false)
     }
   }
 
   const initCheckInOut = async () => {
+    setIsLoadingCheckInCheckOut(true)
     try {
       const token = returnApiToken()
       if (selectedWarehouse) {
@@ -478,6 +490,7 @@ const WarehouseDashboard: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoadingCheckInCheckOut(false)
   }
 
   const initGetRecycSubTypeWeight = async () => {
@@ -598,7 +611,6 @@ const WarehouseDashboard: FunctionComponent = () => {
   const handleSearchByTenantId = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-
     if (event.target.value === '') {
       setWarehouseList([])
     }
@@ -626,7 +638,7 @@ const WarehouseDashboard: FunctionComponent = () => {
   }, [debouncedSearchValue, i18n.language])
 
   return (
-    <Box className="container-wrapper w-max mt-4">
+    <Box className="container-wrapper w-full mt-4">
       <Box sx={{ marginBottom: 2 }}>
         {realmApi === 'account' && (
           <TextField
@@ -659,11 +671,13 @@ const WarehouseDashboard: FunctionComponent = () => {
             label={t('check_out.any')}
             onChange={onChangeWarehouse}
           >
-            {warehouseList?.length >0 ? (warehouseList?.map((item, index) => (
-              <MenuItem value={item?.id} key={index}>
-                {item?.name}
-              </MenuItem>
-            ))) : (
+            {warehouseList?.length > 0 ? (
+              warehouseList?.map((item, index) => (
+                <MenuItem value={item?.id} key={index}>
+                  {item?.name}
+                </MenuItem>
+              ))
+            ) : (
               <MenuItem disabled value="">
                 <em>{t('common.noOptions')}</em>
               </MenuItem>
@@ -672,113 +686,125 @@ const WarehouseDashboard: FunctionComponent = () => {
         </FormControl>
       </Box>
       <Box className="capacity-section">
-        <Card
-          sx={{
-            borderRadius: 2,
-            backgroundColor: 'white',
-            padding: 2,
-            boxShadow: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2
-          }}
-        >
-          <Box className={'total-capacity'} sx={{ flexGrow: 1 }}>
-            <Typography fontSize={16} color="gray" fontWeight="light">
-              {t('warehouseDashboard.currentCapacity')}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
-              <Typography fontSize={22} color="black" fontWeight="bold">
-                {currentCapacity}
-              </Typography>
-              <Typography fontSize={13} color="black" fontWeight="bold">
-                /{totalCapacity}kg
-              </Typography>
-            </Box>
-
-            <Box sx={{ marginTop: 3, marginBottom: 2 }}>
-              <ProgressLine
-                value={currentCapacity}
-                total={totalCapacity}
-              ></ProgressLine>
-            </Box>
-
-            <Typography
-              fontSize={14}
+        {isLoading ? (
+          <Box sx={{ textAlign: 'center', paddingY: 12, width: '100%' }}>
+            <CircularProgress
               color={
-                (currentCapacity / totalCapacity) * 100 > 70 ? 'red' : 'green'
+                role === 'manufacturer' || role === 'customer'
+                  ? 'primary'
+                  : 'success'
               }
-              fontWeight="light"
-            >
-              {(currentCapacity / totalCapacity) * 100 < 70
-                ? t('warehouseDashboard.thereStillEnoughSpace')
-                : t('warehouseDashboard.noMoreRoom')}
-            </Typography>
+            />
           </Box>
-          {realmApi !== 'account' && (
-            <Box
-              className={'checkin-checkout'}
-              sx={{ display: 'flex', gap: '12px' }}
-            >
-              <Card
-                sx={{
-                  borderRadius: 2,
-                  backgroundColor: '#A7D676',
-                  padding: 2,
-                  boxShadow: 'none',
-                  color: 'white',
-                  width: '84px',
-                  cursor: 'pointer'
-                }}
-                onClick={() => navigate('/warehouse/shipment')}
+        ) : (
+          <Card
+            sx={{
+              borderRadius: 2,
+              backgroundColor: 'white',
+              padding: 2,
+              boxShadow: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2
+            }}
+          >
+            <Box className={'total-capacity'} sx={{ flexGrow: 1 }}>
+              <Typography fontSize={16} color="gray" fontWeight="light">
+                {t('warehouseDashboard.currentCapacity')}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
+                <Typography fontSize={22} color="black" fontWeight="bold">
+                  {currentCapacity}
+                </Typography>
+                <Typography fontSize={13} color="black" fontWeight="bold">
+                  /{totalCapacity}kg
+                </Typography>
+              </Box>
+
+              <Box sx={{ marginTop: 3, marginBottom: 2 }}>
+                <ProgressLine
+                  value={currentCapacity}
+                  total={totalCapacity}
+                ></ProgressLine>
+              </Box>
+
+              <Typography
+                fontSize={14}
+                color={
+                  (currentCapacity / totalCapacity) * 100 > 70 ? 'red' : 'green'
+                }
+                fontWeight="light"
               >
-                <LoginIcon
-                  fontSize="small"
-                  className="bg-[#7FC738] rounded-[50%] p-1"
-                />
-                <div className="text-sm font-bold mb-4">
-                  {t('warehouseDashboard.check-in')}
-                </div>
-                <div className="flex gap-1 items-baseline">
-                  <Typography fontSize={22} color="white" fontWeight="bold">
-                    {checkIn}
-                  </Typography>
-                  <Typography fontSize={11} color="white" fontWeight="bold">
-                    {t('warehouseDashboard.toBeConfirmed')}
-                  </Typography>
-                </div>
-              </Card>
-              <Card
-                sx={{
-                  borderRadius: 2,
-                  backgroundColor: '#7ADFF1',
-                  padding: 2,
-                  boxShadow: 'none',
-                  color: 'white',
-                  width: '84px',
-                  cursor: 'pointer'
-                }}
-                onClick={() => navigate('/warehouse/checkout')}
-              >
-                <LogoutIcon
-                  fontSize="small"
-                  className="bg-[#6BC7FF] rounded-[50%] p-1"
-                />
-                <div className="text-sm font-bold mb-4">
-                  {t('warehouseDashboard.check-out')}
-                </div>
-                <div className="flex gap-1 items-baseline">
-                  <Typography fontSize={22} color="white" fontWeight="bold">
-                    {checkOut}
-                  </Typography>
-                  <Typography fontSize={11} color="white" fontWeight="bold">
-                    {t('warehouseDashboard.toBeConfirmed')}
-                  </Typography>
-                </div>
-              </Card>
+                {(currentCapacity / totalCapacity) * 100 < 70
+                  ? t('warehouseDashboard.thereStillEnoughSpace')
+                  : t('warehouseDashboard.noMoreRoom')}
+              </Typography>
             </Box>
-          )}
-        </Card>
+            {realmApi !== 'account' && (
+              <Box
+                className={'checkin-checkout'}
+                sx={{ display: 'flex', gap: '12px' }}
+              >
+                <Card
+                  sx={{
+                    borderRadius: 2,
+                    backgroundColor: '#A7D676',
+                    padding: 2,
+                    boxShadow: 'none',
+                    color: 'white',
+                    width: '84px',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => navigate('/warehouse/shipment')}
+                >
+                  <LoginIcon
+                    fontSize="small"
+                    className="bg-[#7FC738] rounded-[50%] p-1"
+                  />
+                  <div className="text-sm font-bold mb-4">
+                    {t('warehouseDashboard.check-in')}
+                  </div>
+                  <div className="flex gap-1 items-baseline">
+                    <Typography fontSize={22} color="white" fontWeight="bold">
+                      {checkIn}
+                    </Typography>
+                    <Typography fontSize={11} color="white" fontWeight="bold">
+                      {t('warehouseDashboard.toBeConfirmed')}
+                    </Typography>
+                  </div>
+                </Card>
+                <Card
+                  sx={{
+                    borderRadius: 2,
+                    backgroundColor: '#7ADFF1',
+                    padding: 2,
+                    boxShadow: 'none',
+                    color: 'white',
+                    width: '84px',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => navigate('/warehouse/checkout')}
+                >
+                  <LogoutIcon
+                    fontSize="small"
+                    className="bg-[#6BC7FF] rounded-[50%] p-1"
+                  />
+                  <div className="text-sm font-bold mb-4">
+                    {t('warehouseDashboard.check-out')}
+                  </div>
+                  <div className="flex gap-1 items-baseline">
+                    <Typography fontSize={22} color="white" fontWeight="bold">
+                      {checkOut}
+                    </Typography>
+                    <Typography fontSize={11} color="white" fontWeight="bold">
+                      {t('warehouseDashboard.toBeConfirmed')}
+                    </Typography>
+                  </div>
+                </Card>
+              </Box>
+            )}
+          </Card>
+        )}
       </Box>
       <Box className="capacity-item" sx={{ marginY: 6 }}>
         <Box
@@ -808,48 +834,60 @@ const WarehouseDashboard: FunctionComponent = () => {
             ></ChevronRightIcon>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          {warehouseSubtype.map((item) => (
-            <Card
-              key={item.subTypeId}
-              sx={{
-                borderRadius: 2,
-                backgroundColor: 'white',
-                padding: 2,
-                boxShadow: 'none',
-                color: 'white',
-                width: '110px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between'
-              }}
-            >
-              <div
-                className="circle-color w-[30px] h-[30px] rounded-[50px]"
-                style={{
-                  background: generateRandomPastelColor()
+        {isLoading ? (
+          <Box sx={{ textAlign: 'center', paddingY: 12 }}>
+            <CircularProgress
+              color={
+                role === 'manufacturer' || role === 'customer'
+                  ? 'primary'
+                  : 'success'
+              }
+            />
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {warehouseSubtype.map((item) => (
+              <Card
+                key={item.subTypeId}
+                sx={{
+                  borderRadius: 2,
+                  backgroundColor: 'white',
+                  padding: 2,
+                  boxShadow: 'none',
+                  color: 'white',
+                  width: '110px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
                 }}
-              ></div>
-              <div className="text-sm font-bold text-black mt-2 mb-10 min-h-12">
-                {item.subtypeName}
-              </div>
-              <div className="flex items-baseline">
-                <div className="text-3xl font-bold text-black">
-                  {item.weight}
+              >
+                <div
+                  className="circle-color w-[30px] h-[30px] rounded-[50px]"
+                  style={{
+                    background: generateRandomPastelColor()
+                  }}
+                ></div>
+                <div className="text-sm font-bold text-black mt-2 mb-10 min-h-12">
+                  {item.subtypeName}
                 </div>
-                <div className="text-2xs font-bold text-black ">
-                  /{item.capacity}kg
+                <div className="flex items-baseline">
+                  <div className="text-3xl font-bold text-black">
+                    {item.weight}
+                  </div>
+                  <div className="text-2xs font-bold text-black ">
+                    /{item.capacity}kg
+                  </div>
                 </div>
-              </div>
-              <Box sx={{ marginTop: 1 }}>
-                <ProgressLine
-                  value={item.weight}
-                  total={item.capacity}
-                ></ProgressLine>
-              </Box>
-            </Card>
-          ))}
-        </Box>
+                <Box sx={{ marginTop: 1 }}>
+                  <ProgressLine
+                    value={item.weight}
+                    total={item.capacity}
+                  ></ProgressLine>
+                </Box>
+              </Card>
+            ))}
+          </Box>
+        )}
       </Box>
       <Box className="table-checkin-out">
         <Box
@@ -879,31 +917,46 @@ const WarehouseDashboard: FunctionComponent = () => {
             ></ChevronRightIcon>
           </Box>
         </Box>
-        <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-          <DataGrid
-            rows={checkInOut}
-            getRowId={(row) => row.id}
-            hideFooter
-            columns={columns}
-            getRowSpacing={getRowSpacing}
-            localeText={localeTextDataGrid}
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none'
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
-                }
+        {isLoadingCheckInCheckOut ? (
+          <Box sx={{ textAlign: 'center', paddingY: 12, width: '100%' }}>
+            <CircularProgress
+              color={
+                role === 'manufacturer' || role === 'customer'
+                  ? 'primary'
+                  : 'success'
               }
-            }}
-          />
-        </Box>
+            />
+          </Box>
+        ) : (
+          <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
+            <DataGrid
+              rows={checkInOut}
+              getRowId={(row) => row.id}
+              hideFooter
+              columns={columns}
+              getRowSpacing={getRowSpacing}
+              localeText={localeTextDataGrid}
+              sx={{
+                border: 'none',
+                '& .MuiDataGrid-cell': {
+                  border: 'none'
+                },
+                '& .MuiDataGrid-row': {
+                  bgcolor: 'white',
+                  borderRadius: '10px'
+                },
+                '&>.MuiDataGrid-main': {
+                  '&>.MuiDataGrid-columnHeaders': {
+                    borderBottom: 'none'
+                  }
+                },
+                '& .MuiDataGrid-virtualScroller': {
+                  height: '300px'
+                }
+              }}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   )
