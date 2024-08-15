@@ -13,10 +13,7 @@ import {
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
-import {
-  STATUS_CODE,
-  format,
-} from '../../../constants/constant'
+import { STATUS_CODE, format } from '../../../constants/constant'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { SEARCH_ICON } from '../../../themes/icons'
 import { CheckInAndCheckOutDetails } from '../CheckInAndCheckOut'
@@ -31,7 +28,8 @@ import {
 import {
   extractError,
   getPrimaryColor,
-  returnApiToken
+  returnApiToken,
+  debounce
 } from '../../../utils/utils'
 import CircularLoading from '../../../components/CircularLoading'
 import { useNavigate } from 'react-router-dom'
@@ -234,6 +232,10 @@ function CheckInAndCheckOut() {
     }
   }, [])
 
+  const handleSearch = debounce((value: string) => {
+    setKeyword(value)
+  }, 500)
+
   return (
     <Box
       className={'container-wrapper w-full'}
@@ -273,7 +275,8 @@ function CheckInAndCheckOut() {
           <TextField
             id="searchShipment"
             onChange={(event) => {
-              setKeyword(event.target.value)
+              handleSearch(event.target.value)
+              //setKeyword(event.target.value)
             }}
             sx={{
               mt: 3,

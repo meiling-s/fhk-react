@@ -819,7 +819,7 @@ function ShipmentManage() {
   const handleFilterPoNum = debounce((searchWord: string) => {
     setPage(1)
     updateQuery({ picoId: searchWord })
-  }, 500)
+  }, 1000)
 
   const handleComChange = (event: SelectChangeEvent) => {
     setPage(1)

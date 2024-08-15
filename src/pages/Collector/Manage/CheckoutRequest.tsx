@@ -53,7 +53,8 @@ import {
   displayCreatedDate,
   extractError,
   getPrimaryColor,
-  showSuccessToast
+  showSuccessToast,
+  debounce
 } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import i18n from '../../../setups/i18n'
@@ -690,18 +691,21 @@ const CheckoutRequest: FunctionComponent = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleSearchByPoNumb = (searchWord: string) => {
+  const handleSearchByPoNumb = debounce((searchWord: string) => {
+    setPage(1)
     updateQuery({ picoId: searchWord })
-  }
+  }, 1000)
 
   const handleCompanyChange = (event: SelectChangeEvent) => {
     // console.log("company", event.target.value)
+    setPage(1)
     setCompany(event.target.value)
     var searchWord = event.target.value
     updateQuery({ receiverName: searchWord })
   }
 
   const handleLocChange = (event: SelectChangeEvent) => {
+    setPage(1)
     setLocation(event.target.value)
     var searchWord = event.target.value
     updateQuery({ receiverAddr: searchWord })

@@ -30,7 +30,7 @@ import {
   queryPurchaseOrder
 } from '../../../interfaces/purchaseOrder'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate, extractError } from '../../../utils/utils'
+import { displayCreatedDate, extractError, debounce } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
 import {
   Languages,
@@ -748,10 +748,10 @@ const PurchaseOrder = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleSearch = (keyName: string, value: string) => {
+  const handleSearch = debounce((keyName: string, value: string) => {
     setPage(1)
     updateQuery({ [keyName]: value })
-  }
+  }, 1000)
 
   return (
     <>
