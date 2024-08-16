@@ -179,15 +179,14 @@ const useValidationPickupOrder = (
       messageSc: '运输有效日期至 您输入的内容包含无效字元'
     },
     specificDate: {
-      messageEn: 'Specific Date is Required',
-      messageTc: '需要具體日期',
-      messageSc: '需要具体日期'
+      messageEn: 'Specific Date should not be empty',
+      messageTc: '需具體日期不應留白',
+      messageSc: '具体日期不应留白'
     },
     invalidDate: {
-      messageEn:
-        'Shipping validity start date should be lower than shipping validity end date',
-      messageTc: '运输有效期开始日期应低于运输有效期结束日期',
-      messageSc: '出貨有效期限開始日期應早於出貨有效期限結束日期'
+      messageEn: 'Validity Date Effective from date should not later than Effective to date',
+      messageTc: '有效日期由 開始日期不能晚於截止日期',
+      messageSc: '有效日期由 开始日期不能晚于截止日期'
     },
     out_of_date_range: {
       messageEn: 'Specified date(s) are out of the shipping validity range',
@@ -200,9 +199,9 @@ const useValidationPickupOrder = (
       messageSc: '指定的日期格式无效'
     },
     weeklyDate: {
-      messageEn: 'Weekly Date is Required',
-      messageTc: '每週日期為必填項',
-      messageSc: '每周日期为必填项'
+      messageEn: 'Weekly Date should not be empty',
+      messageTc: '每週日期不應留白',
+      messageSc: '每周日期不应留白'
     },
     duplicateDateTimePeriod: {
       messageEn: 'Duplicate time periode should not be allowed',
@@ -447,7 +446,7 @@ const useValidationPickupOrder = (
         })
       }
     } else if (
-      pico.picoType === 'picoType' &&
+      pico.picoType === 'ROUTINE' &&
       pico.routineType !== 'specificDate'
     ) {
       setErrorsField((prev) => {
@@ -462,7 +461,7 @@ const useValidationPickupOrder = (
     }
 
     if (
-      pico.picoType === 'picoType' &&
+      pico.picoType === 'ROUTINE' &&
       pico.routineType === 'weekly' &&
       pico.routine.length === 0
     ) {
@@ -871,9 +870,9 @@ const useValidationPickupOrder = (
       }
 
       if (
+        pico.picoType === 'picoType' &&
         pico.routineType === 'weekly' &&
-        pico.routine.length === 0 &&
-        errorsField.routine.touch
+        pico.routine.length === 0
       ) {
         setErrorsField((prev) => {
           return {
@@ -886,11 +885,7 @@ const useValidationPickupOrder = (
             }
           }
         })
-      } else if (
-        pico.routineType === 'weekly' &&
-        pico.routine.length >= 0 &&
-        errorsField.routine.touch
-      ) {
+      } else if (pico.routineType === 'weekly' && pico.routine.length >= 0) {
         setErrorsField((prev) => {
           return {
             ...prev,
@@ -901,6 +896,38 @@ const useValidationPickupOrder = (
           }
         })
       }
+
+      // if (
+      //   pico.routineType === 'weekly' &&
+      //   pico.routine.length === 0 &&
+      //   errorsField.routine.touch
+      // ) {
+      //   setErrorsField((prev) => {
+      //     return {
+      //       ...prev,
+      //       routine: {
+      //         ...prev.routine,
+      //         status: true,
+      //         messages: errorMessages['weeklyDate'],
+      //         message: getTranslationMessage('weeklyDate')
+      //       }
+      //     }
+      //   })
+      // } else if (
+      //   pico.routineType === 'weekly' &&
+      //   pico.routine.length >= 0 &&
+      //   errorsField.routine.touch
+      // ) {
+      //   setErrorsField((prev) => {
+      //     return {
+      //       ...prev,
+      //       routine: {
+      //         ...prev.routine,
+      //         status: false
+      //       }
+      //     }
+      //   })
+      // }
     }
 
     if (pico.logisticName === '' && errorsField.logisticName.touch) {
