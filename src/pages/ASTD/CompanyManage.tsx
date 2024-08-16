@@ -71,6 +71,7 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import i18n from '../../setups/i18n'
 import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 import ConfirmModal from '../../components/SpecializeComponents/ConfirmationModal'
+import { errorState } from '../../interfaces/common'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -430,6 +431,7 @@ type inviteForm = {
   onClose: () => void
   onSubmitForm: (formikValues: InviteTenant) => void
   isDuplicated: boolean
+  duplicatedErr: string
   isTenantErr: boolean
 }
 
@@ -439,6 +441,7 @@ function InviteForm({
   onClose,
   onSubmitForm,
   isDuplicated,
+  duplicatedErr,
   isTenantErr
 }: inviteForm) {
   const { t } = useTranslation()
@@ -475,37 +478,47 @@ function InviteForm({
         'purchase_order.create.is_required'
       )}`
     ),
-    // effFrmDate: Yup.date()
-    //   .nullable()
-    //   .required(
-    //     `${t('pick_up_order.shipping_validity')} ${t(
-    //       'purchase_order.create.is_required'
-    //     )}`
-    //   )
-    //   .test(
-    //     'is-before-end-date',
-    //     `${t(
-    //       'tenant.invite_modal.err_date'
-    //     )} `,
-    //     function (value) {
-    //       const { effToDate } = this.parent
-    //       return !effToDate || !value || new Date(value) <= new Date(effToDate)
-    //     }
-    //   ),
-    effToDate: Yup.date()
+    effFrmDate: Yup.mixed()
       .nullable()
       .required(
-        `${t('pick_up_order.to')} ${t('purchase_order.create.is_required')}`
+        `${t('common.start_date_at')} ${t('purchase_order.create.is_required')}`
       )
       .test(
-        'is-after-start-date',
-        `${t('tenant.invite_modal.err_date')} `,
+        'is-valid-format',
+        `${t('common.start_date_at')} ${t('form.error.isInWrongFormat')}`,
         function (value) {
-          const { effFrmDate } = this.parent
-
-          return (
-            !effFrmDate || !value || new Date(value) >= new Date(effFrmDate)
-          )
+          if (value === null || value === undefined) return true
+          const date = new Date(value as string)
+          return !isNaN(date.getTime())
+        }
+      )
+      .test(
+        'is-before-end-date',
+        `${t('tenant.invite_modal.err_date')}`,
+        function (value) {
+          const { effToDate } = this.parent
+          if (!value || !effToDate) return true
+          const startDate = new Date(value as string)
+          const endDate = new Date(effToDate as string)
+          return startDate <= endDate
+        }
+      ),
+    effToDate: Yup.mixed()
+      .nullable()
+      .required(
+        `${t('tenant.invite_modal.validaity_to_date')} ${t(
+          'purchase_order.create.is_required'
+        )}`
+      )
+      .test(
+        'is-valid-format',
+        `${t('tenant.invite_modal.validaity_to_date')} ${t(
+          'form.error.isInWrongFormat'
+        )}`,
+        function (value) {
+          if (value === null || value === undefined) return true
+          const date = new Date(value as string)
+          return !isNaN(date.getTime())
         }
       )
   })
@@ -621,6 +634,19 @@ function InviteForm({
   const handleOncloseForm = () => {
     setOpenConfirmModal(true)
     // onClose()
+  }
+
+  const getErrorMessage = () => {
+    switch (duplicatedErr) {
+      case 'brNo':
+        return t('tenant.invite_modal.err_duplicated_br_no')
+      case 'companyName':
+        return t('tenant.invite_modal.err_duplicated_company_name')
+      case 'companyNumber':
+        return t('tenant.invite_modal.err_duplicated_company_number')
+      default:
+        return t('tenant.invite_modal.err_duplicated')
+    }
   }
 
   return (
@@ -822,9 +848,7 @@ function InviteForm({
                     <Alert severity="error">{formik.errors.remark} </Alert>
                   )}
                   {isDuplicated && (
-                    <Alert severity="error">
-                      {t('tenant.invite_modal.err_duplicated')}{' '}
-                    </Alert>
+                    <Alert severity="error">{getErrorMessage()}</Alert>
                   )}
                   {isTenantErr && (
                     <Alert severity="error">
@@ -898,6 +922,7 @@ function CompanyManage() {
   const [totalData, setTotalData] = useState<number>(0)
   const { dateFormat } = useContainer(CommonTypeContainer)
   const [duplicatedData, setDuplicatedData] = useState<boolean>(false)
+  const [duplicatedType, setDuplicatedType] = useState<string>('')
   const [tenantIdErr, setTenantIdErr] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const realmOptions = [
@@ -1205,7 +1230,20 @@ function CompanyManage() {
   const handleCloseInvite = () => {
     setInvSendModal(false)
     setDuplicatedData(false)
+    setDuplicatedType('')
     initCompaniesData()
+  }
+
+  const getDuplicatedErrType = (state: errorState) => {
+    switch (state.code) {
+      case 409:
+        const match = state.message.match(/\[(.*?)\]/)
+        const errField = match ? match[1] : ''
+        setDuplicatedType(errField)
+        break
+      case 500:
+        setDuplicatedType('companyNumber')
+    }
   }
 
   const handleSendInvitation = (isSend: boolean) => {
@@ -1266,6 +1304,7 @@ function CompanyManage() {
           setInvFormModal(false)
           setIsLoadingInvite(false)
           setDuplicatedData(false)
+          setDuplicatedType('')
           setTenantIdErr(false)
         } else {
           showErrorToast(t('common.saveFailed'))
@@ -1277,9 +1316,9 @@ function CompanyManage() {
           navigate('/maintenance')
         } else {
           showErrorToast(`${t('common.saveFailed')}`)
+          getDuplicatedErrType(state)
           setDuplicatedData(true)
           setTenantIdErr(false)
-          // console.log("test", "lalal2")
           setIsLoadingInvite(false)
         }
       }
@@ -1314,6 +1353,7 @@ function CompanyManage() {
           onClick={() => {
             setInvFormModal(true)
             setDuplicatedData(false)
+            setDuplicatedType('')
           }}
         >
           <ADD_PERSON_ICON sx={{ marginX: 1 }} /> {t('tenant.invite')}
@@ -1421,6 +1461,7 @@ function CompanyManage() {
           }}
           onSubmitForm={onInviteFormSubmit}
           isDuplicated={duplicatedData}
+          duplicatedErr={duplicatedType}
           isTenantErr={tenantIdErr}
         />
 

@@ -63,7 +63,7 @@
     "premiseName": "Premise Name",
     "premiseType": "Premise Type",
     "premiseRemark": "Premise Remarks",
-    "otherResidentialPremise":"Others(Residential premises) Remarks",
+    "otherResidentialPremise": "Others(Residential premises) Remarks",
     "otherNonResidentialPremise": "Others(Non-residential premises) Remarks",
     "enterText": "Enter Text",
     "status": "Status",
@@ -118,7 +118,7 @@
       "effectiveDateLess": "Effective from date should not later than Effective to date",
       "cannotBeSame": "cannot be the same",
       "shouldGreaterThanZero": "Storage capacity should be greater then Zero",
-      "cantBeSame":"cannot be the same",
+      "cantBeSame": "cannot be the same",
       "selectFirst": "Please select first before adding a new one."
     }
   },
@@ -557,8 +557,12 @@
       "send": "send",
       "invite_success": "Success send invitation",
       "invite_failed": "Failed send invitation",
-      "err_date": "Invalid Shipping validity date. Ensure To date is later than the Start date",
+      "validaity_to_date": "Validity Date To",
+      "err_date":"Ensure the `Validity Date From` is not later than the `Validity Date To`",
       "err_duplicated": "Company number/Company name/Business Reg. No. already exist",
+      "err_duplicated_br_no": "Business Reg. No. already exist",
+      "err_duplicated_company_number": "Company number already exist",
+      "err_duplicated_company_name": "Company name already exist",
       "err_companyIdLength": "Company ID must be a 6 digital code"
     },
     "detail": {
