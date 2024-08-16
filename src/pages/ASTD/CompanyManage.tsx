@@ -642,10 +642,10 @@ function InviteForm({
         return t('tenant.invite_modal.err_duplicated_br_no')
       case 'companyName':
         return t('tenant.invite_modal.err_duplicated_company_name')
-      case 'companyNumber':
+      case 'companyNumber' || 'tenantId':
         return t('tenant.invite_modal.err_duplicated_company_number')
       default:
-        return t('tenant.invite_modal.err_duplicated')
+        return t('tenant.invite_modal.err_duplicated_company_number')
     }
   }
 
