@@ -444,86 +444,68 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    //check value not zero
-    if (isRecyleUnselected) {
-      recycleCategory.forEach((item) => {
+    const errorMap = new Map<string, boolean>()
+
+    recycleCategory.forEach((item, index) => {
+      const recybles = recycleType?.find(
+        (type: recyleTypeOption) => type.id === item.recycTypeId
+      )
+      const subtype = recycleSubType[item.recycTypeId]?.find(
+        (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
+      )
+
+      const recycTypeName =
+        currentLanguage === 'zhhk'
+          ? recybles?.recyclableNameTchi
+          : currentLanguage === 'zhch'
+          ? recybles?.recyclableNameSchi
+          : recybles?.recyclableNameEng || ''
+
+      const recycSubTypeName =
+        currentLanguage === 'zhhk'
+          ? subtype?.recyclableNameTchi
+          : currentLanguage === 'zhch'
+          ? subtype?.recyclableNameSchi
+          : subtype?.recyclableNameEng || ''
+
+      const key = `${item.recycTypeId}-${item.recycSubTypeId}`
+
+      if (!errorMap.has(key)) {
+        let errorMsg = ''
+
+        // Check if capacity is zero
         if (item.recycSubTypeCapacity === 0) {
-          const recybles = recycleType.find(
-            (type: recyleTypeOption) => type.id === item.recycTypeId
-          )
-
-          const subtype = recycleSubType[item.recycTypeId].find(
-            (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
-          )
-
-          const recycTypeName =
-            currentLanguage === 'zhhk'
-              ? recybles?.recyclableNameTchi
-              : currentLanguage === 'zhch'
-              ? recybles?.recyclableNameSchi
-              : recybles?.recyclableNameEng || ''
-
-          const recycSubTypeName =
-            currentLanguage === 'zhhk'
-              ? subtype?.recyclableNameTchi
-              : currentLanguage === 'zhch'
-              ? subtype?.recyclableNameSchi
-              : subtype?.recyclableNameEng || ''
-
-          tempV.push({
-            field: 'warehouseRecyc',
-            error: `${recycTypeName} - ${
-              recycSubTypeName ? recycSubTypeName : ''
-            }, ${t('form.error.shouldGreaterThanZero')}`
-          })
+          errorMsg = `${recycTypeName} - ${
+            recycSubTypeName ? recycSubTypeName : ''
+          }, ${t('form.error.shouldGreaterThanZero')}`
         }
-      })
-    }
 
-    //check duplicated recytype
-    if (!isRecycleTypeIdUnique) {
-      duplicateRecycleTypeIds.forEach((recycTypeId) => {
-        recycleCategory.forEach((item) => {
-          if (item.recycTypeId === recycTypeId) {
-            const recybles = recycleType.find(
-              (type: recyleTypeOption) => type.id === item.recycTypeId
-            )
-            const subtype = recycleSubType[item.recycTypeId].find(
-              (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
-            )
-
-            const recycTypeName =
-              currentLanguage === 'zhhk'
-                ? recybles?.recyclableNameTchi
-                : currentLanguage === 'zhch'
-                ? recybles?.recyclableNameSchi
-                : recybles?.recyclableNameEng || ''
-
-            const recycSubTypeName =
-              currentLanguage === 'zhhk'
-                ? subtype?.recyclableNameTchi
-                : currentLanguage === 'zhch'
-                ? subtype?.recyclableNameSchi
-                : subtype?.recyclableNameEng || ''
-
-            const errorMsg = `${recycTypeName} - ${
-              recycSubTypeName ? recycSubTypeName : ''
-            } ${t('add_warehouse_page.shouldNotDuplicate')}`
-
-            const alreadyExist = tempV.find((it) => it.error === errorMsg)
-
-            if (!alreadyExist) {
-              tempV.push({
-                field: 'warehouseRecyc',
-                error: `${recycTypeName} - ${
-                  recycSubTypeName ? recycSubTypeName : ''
-                } ${t('add_warehouse_page.shouldNotDuplicate')}`
-              })
+        // Check for duplicates
+        recycleCategory.forEach((compareItem, compareIndex) => {
+          if (
+            index !== compareIndex &&
+            item.recycTypeId === compareItem.recycTypeId &&
+            item.recycSubTypeId === compareItem.recycSubTypeId
+          ) {
+            if (errorMsg) {
+              errorMsg += ` ${t('add_warehouse_page.shouldNotDuplicate')}`
+            } else {
+              errorMsg = `${recycTypeName} - ${
+                recycSubTypeName ? recycSubTypeName : ''
+              } ${t('add_warehouse_page.shouldNotDuplicate')}`
             }
           }
         })
-      })
-    }
+
+        if (errorMsg) {
+          tempV.push({
+            field: `warehouseRecyc${index}`, // Include index to differentiate fields
+            error: errorMsg
+          })
+          errorMap.set(key, true) // Mark this combination as processed
+        }
+      }
+    })
 
     const cacheValidation: any[] = []
 

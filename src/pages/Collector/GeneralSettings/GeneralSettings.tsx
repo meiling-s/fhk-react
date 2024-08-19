@@ -169,7 +169,7 @@ const GeneralSettings: FunctionComponent = () => {
     {
       field: 'contractNo',
       headerName: t('general_settings.contract_number'),
-      width: 150,
+      width: 250,
       type: 'string'
     },
     {
