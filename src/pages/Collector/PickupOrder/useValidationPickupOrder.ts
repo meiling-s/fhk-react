@@ -134,38 +134,36 @@ const useValidationPickupOrder = (
   const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
   const { dateFormat } = useContainer(CommonTypeContainer)
 
-  console.log("state", state)
-
   const errorMessages: any = {
     routine: {
       mesageEn: 'Routine should not be empty',
-      messageTc: '例行公事不應留空',
-      messageSc: '例行事务不应留空'
+      messageTc: '例行公事 不應留白',
+      messageSc: '例行事务 不应留空'
     },
     logistic: {
       messageEn: 'Logistic Company should not be empty',
-      messageTc: '物流公司不能為空',
-      messageSc: '物流公司不能留空'
+      messageTc: '物流公司 不應留白',
+      messageSc: '物流公司 不应留白'
     },
     vehicleType: {
       messageEn: 'Vehicle type should not be empty',
-      messageTc: '車輛類型不能為空',
-      messageSc: '车辆类型不能留空'
+      messageTc: '車輛類型 不應留白',
+      messageSc: '车辆类型 不应留白'
     },
     vehiclePlatNo: {
       messageEn: 'Vehicle plate number should not be empty',
-      messageTc: '車牌號碼不能為空',
-      messageSc: '车牌号码不应留空'
+      messageTc: '車牌號碼 不應留白',
+      messageSc: '车牌号码 不应留空'
     },
     pickupDetail: {
       messageEn: 'Pickup order detail should not be empty',
-      messageTc: '取貨訂單詳細資料不應留空',
-      messageSc: '取货订单详情不能留空'
+      messageTc: '取貨訂單詳細資料 不應留白',
+      messageSc: '取货订单详情 不应留白'
     },
     addHocReason: {
       messageEn: 'Ad-hoc reason should not be empty',
-      messageTc: '特殊原因不應留白',
-      messageSc: '特殊原因不应留白'
+      messageTc: '特殊原因 不應留白',
+      messageSc: '特殊原因 不应留白'
     },
     shippingtoDateNotValid: {
       messageEn: 'Shipping validity to date not valid',
@@ -180,8 +178,8 @@ const useValidationPickupOrder = (
     },
     specificDate: {
       messageEn: 'Specific Date should not be empty',
-      messageTc: '需具體日期不應留白',
-      messageSc: '具体日期不应留白'
+      messageTc: '需具體日期 不應留白',
+      messageSc: '具体日期 不应留白'
     },
     invalidDate: {
       messageEn: 'Validity Date Effective from date should not later than Effective to date',
@@ -200,8 +198,8 @@ const useValidationPickupOrder = (
     },
     weeklyDate: {
       messageEn: 'Weekly Date should not be empty',
-      messageTc: '每週日期不應留白',
-      messageSc: '每周日期不应留白'
+      messageTc: '每週日期 不應留白',
+      messageSc: '每周日期 不应留白'
     },
     duplicateDateTimePeriod: {
       messageEn: 'Duplicate time periode should not be allowed',
