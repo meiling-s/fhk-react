@@ -231,7 +231,8 @@
     "reject_reasons": "拒绝原因（可多选）",
     "confirm": "确认",
     "cancel": "取消",
-    "search_input": "輸入运单编号"
+    "search_input": "輸入运单编号",
+    "check_in": "送入日期及时间"
   },
   "check_out": {
     "request_check_out": "送出请求",

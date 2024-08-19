@@ -230,7 +230,8 @@
     "reject_reasons": "拒絕原因（可多選）",
     "confirm": "確認拒絕",
     "cancel": "取消",
-    "search_input": "輸入運單編號"
+    "search_input": "輸入運單編號",
+    "check_in": "送入日期及時間"
   },
   "changePass": {
     "titlePage": "更改密碼",
