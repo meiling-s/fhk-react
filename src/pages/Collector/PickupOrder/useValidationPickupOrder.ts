@@ -138,34 +138,34 @@ const useValidationPickupOrder = (
 
   const errorMessages: any = {
     routine: {
-      mesageEn: 'Routine is Required',
-      messageTc: '需要規律的生活',
-      messageSc: '例行公事是必需的'
+      mesageEn: 'Routine should not be empty',
+      messageTc: '例行公事不應留空',
+      messageSc: '例行事务不应留空'
     },
     logistic: {
-      messageEn: 'Logistic Company is Required',
-      messageTc: '需要物流公司',
-      messageSc: '需要物流公司'
+      messageEn: 'Logistic Company should not be empty',
+      messageTc: '物流公司不能為空',
+      messageSc: '物流公司不能留空'
     },
     vehicleType: {
-      messageEn: 'Vehicle type is Required',
-      messageTc: '車輛類型為必填',
-      messageSc: '车辆载货量为必填项'
+      messageEn: 'Vehicle type should not be empty',
+      messageTc: '車輛類型不能為空',
+      messageSc: '车辆类型不能留空'
     },
     vehiclePlatNo: {
-      messageEn: 'Vehicle plate number is Required',
-      messageTc: '車輛編碼為必填項',
-      messageSc: '车辆编码为必填项'
+      messageEn: 'Vehicle plate number should not be empty',
+      messageTc: '車牌號碼不能為空',
+      messageSc: '车牌号码不应留空'
     },
     pickupDetail: {
-      messageEn: 'Pickup order detail is Required',
-      messageTc: '取貨訂單詳細資料為必填項',
-      messageSc: '需要提供取货订单详细信息'
+      messageEn: 'Pickup order detail should not be empty',
+      messageTc: '取貨訂單詳細資料不應留空',
+      messageSc: '取货订单详情不能留空'
     },
     addHocReason: {
-      messageEn: 'Ad-hoc reason is Required',
-      messageTc: '特殊原因為必填項',
-      messageSc: '需要临时理由'
+      messageEn: 'Ad-hoc reason should not be empty',
+      messageTc: '特殊原因不應留白',
+      messageSc: '特殊原因不应留白'
     },
     shippingtoDateNotValid: {
       messageEn: 'Shipping validity to date not valid',
