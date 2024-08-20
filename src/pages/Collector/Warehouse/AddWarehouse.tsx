@@ -466,6 +466,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           ? subtype?.recyclableNameSchi
           : subtype?.recyclableNameEng || ''
 
+      console.log('recycTypeName', recycTypeName)
+
       const key = `${item.recycTypeId}-${item.recycSubTypeId}`
 
       if (!errorMap.has(key)) {
@@ -473,7 +475,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
         // Check if capacity is zero
         if (item.recycSubTypeCapacity === 0) {
-          errorMsg = `${recycTypeName} - ${
+          errorMsg = `${recycTypeName ? recycTypeName : ''} - ${
             recycSubTypeName ? recycSubTypeName : ''
           }, ${t('form.error.shouldGreaterThanZero')}`
         }
