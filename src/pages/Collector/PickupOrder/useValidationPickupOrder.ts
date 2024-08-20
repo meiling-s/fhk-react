@@ -167,14 +167,13 @@ const useValidationPickupOrder = (
     },
     shippingtoDateNotValid: {
       messageEn: 'Shipping validity to date not valid',
-      messageTc: '迄今為止的運送有效期限無效',
-      messageSc: '迄今为止的运输有效期无效'
+      messageTc: '運輸有效日期至無效',
+      messageSc: '运输有效日期至无效'
     },
     shippingFromDateNotValid: {
-      messageEn:
-        'Shipping valid until The content you entered contains invalid characters',
-      messageTc: '運輸有效日期由 您輸入的內容包含無效字元',
-      messageSc: '运输有效日期至 您输入的内容包含无效字元'
+      messageEn: 'Shipping validity date from not valid',
+      messageTc: '運輸有效日期由無效',
+      messageSc: '运输有效日期由无效'
     },
     specificDate: {
       messageEn: 'Specific Date should not be empty',
@@ -236,6 +235,7 @@ const useValidationPickupOrder = (
       message = errorMessage?.messageTc ?? ''
     }
     return message
+
   }
 
   useEffect(() => {
@@ -277,7 +277,32 @@ const useValidationPickupOrder = (
             }
           }
         })
-      } else if (!isValidDayjsISODate(dayjs(pico.effToDate))) {
+      } else if (fromDate > toDate) {
+        isValid = false
+        setErrorsField((prev) => {
+          return {
+            ...prev,
+            effFrmDate: {
+              ...prev.effFrmDate,
+              status: true,
+              messages: errorMessages['invalidDate'],
+              message: getTranslationMessage('invalidDate')
+            }
+          }
+        })
+      } else {
+        setErrorsField((prev) => {
+          return {
+            ...prev,
+            effFrmDate: {
+              ...prev.effFrmDate,
+              status: false
+            }
+          }
+        })
+      }
+      
+      if (!isValidDayjsISODate(dayjs(pico.effToDate))) {
         isValid = false
         setErrorsField((prev) => {
           return {
@@ -307,8 +332,8 @@ const useValidationPickupOrder = (
         setErrorsField((prev) => {
           return {
             ...prev,
-            effFrmDate: {
-              ...prev.effFrmDate,
+            effToDate: {
+              ...prev.effToDate,
               status: false
             }
           }
@@ -362,7 +387,6 @@ const useValidationPickupOrder = (
 
       pico.routine.map((item: any) => {
         const date = dayjs(item).startOf('day')
-
         // Check if date is in the correct format
         // if (date === 'Invalid Date') {
         //   invalidFormatDates.push(item)
@@ -370,6 +394,10 @@ const useValidationPickupOrder = (
         // }
 
         // Check if date is within the valid range
+        if (!isValidDayjsISODate(date)) {
+          invalidFormatDates.push(item)
+          return false
+        }
         if (date < fromDate || date > toDate) {
           outOfRangeDates.push(item)
           return false
@@ -459,7 +487,6 @@ const useValidationPickupOrder = (
     }
 
     if (
-      pico.picoType === 'ROUTINE' &&
       pico.routineType === 'weekly' &&
       pico.routine.length === 0
     ) {
@@ -669,29 +696,12 @@ const useValidationPickupOrder = (
     const fromDate = dayjs(pico.effFrmDate)
 
     const toDate = dayjs(pico.effToDate)
-    if (!isValidDayjsISODate(fromDate) && errorsField.effFrmDate.touch) {
-      const fromDate = dayjs(pico.effFrmDate)
-      // if(!isValidDayjsISODate(fromDate)) {
+    if (!isValidDayjsISODate(fromDate)) {
       setErrorsField((prev) => {
         return {
           ...prev,
           effFrmDate: {
             ...prev.effFrmDate,
-            status: true,
-            messages: errorMessages['shippingFromDateNotValid'],
-            message: getTranslationMessage('shippingFromDateNotValid')
-          }
-        }
-      })
-      // }
-    } else if (!isValidDayjsISODate(toDate) && errorsField.effToDate.touch) {
-      const toDate = dayjs(pico.effToDate)
-      // if(!isValidDayjsISODate(toDate)) {
-      setErrorsField((prev) => {
-        return {
-          ...prev,
-          effToDate: {
-            ...prev.effToDate,
             status: true,
             messages: errorMessages['shippingFromDateNotValid'],
             message: getTranslationMessage('shippingFromDateNotValid')
@@ -707,7 +717,6 @@ const useValidationPickupOrder = (
     ) {
       const fromDate = pico.effFrmDate && dayjs(pico.effFrmDate).startOf('day')
       const toDate = pico.effFrmDate && dayjs(pico.effToDate).startOf('day')
-
       if (fromDate > toDate) {
         setErrorsField((prev) => {
           return {
@@ -731,6 +740,42 @@ const useValidationPickupOrder = (
             }
           }
         })
+      }
+    }
+    if (!isValidDayjsISODate(toDate)) {
+      setErrorsField((prev) => {
+        return {
+          ...prev,
+          effToDate: {
+            ...prev.effToDate,
+            status: true,
+            messages: errorMessages['shippingtoDateNotValid'],
+            message: getTranslationMessage('shippingtoDateNotValid')
+          }
+        }
+      })
+      // }
+    } else if (
+      pico.effToDate &&
+      pico.effFrmDate &&
+      errorsField.effToDate.touch &&
+      errorsField.effFrmDate.touch
+    ) {
+      const fromDate = pico.effFrmDate && dayjs(pico.effFrmDate).startOf('day')
+      const toDate = pico.effFrmDate && dayjs(pico.effToDate).startOf('day')
+      if (fromDate > toDate) {
+        setErrorsField((prev) => {
+          return {
+            ...prev,
+            effFrmDate: {
+              ...prev.effFrmDate,
+              status: true,
+              messages: errorMessages['invalidDate'],
+              message: getTranslationMessage('invalidDate')
+            }
+          }
+        })
+      } else {
         setErrorsField((prev) => {
           return {
             ...prev,
@@ -1081,6 +1126,7 @@ const useValidationPickupOrder = (
   useEffect(() => {
     validateDataChange()
   }, [pico])
+
   // console.log('ErrorsField', errorsField)
   const changeTouchField = (field: fieldName) => {
     setErrorsField((prev) => {
