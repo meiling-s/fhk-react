@@ -748,7 +748,7 @@ function ShipmentManage() {
     {
       field: 'createdAt',
       type: 'string',
-      headerName: t('check_in.created_at'),
+      headerName: t('check_in.check_in'),
       width: 150
     },
     {

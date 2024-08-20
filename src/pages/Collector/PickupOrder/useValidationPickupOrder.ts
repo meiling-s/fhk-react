@@ -136,34 +136,34 @@ const useValidationPickupOrder = (
 
   const errorMessages: any = {
     routine: {
-      mesageEn: 'Routine is Required',
-      messageTc: '需要規律的生活',
-      messageSc: '例行公事是必需的'
+      mesageEn: 'Routine should not be empty',
+      messageTc: '例行公事 不應留白',
+      messageSc: '例行事务 不应留空'
     },
     logistic: {
-      messageEn: 'Logistic Company is Required',
-      messageTc: '需要物流公司',
-      messageSc: '需要物流公司'
+      messageEn: 'Logistic Company should not be empty',
+      messageTc: '物流公司 不應留白',
+      messageSc: '物流公司 不应留白'
     },
     vehicleType: {
-      messageEn: 'Vehicle type is Required',
-      messageTc: '車輛類型為必填',
-      messageSc: '车辆载货量为必填项'
+      messageEn: 'Vehicle type should not be empty',
+      messageTc: '車輛類型 不應留白',
+      messageSc: '车辆类型 不应留白'
     },
     vehiclePlatNo: {
-      messageEn: 'Vehicle plate number is Required',
-      messageTc: '車輛編碼為必填項',
-      messageSc: '车辆编码为必填项'
+      messageEn: 'Vehicle plate number should not be empty',
+      messageTc: '車牌號碼 不應留白',
+      messageSc: '车牌号码 不应留空'
     },
     pickupDetail: {
-      messageEn: 'Pickup order detail is Required',
-      messageTc: '取貨訂單詳細資料為必填項',
-      messageSc: '需要提供取货订单详细信息'
+      messageEn: 'Pickup order detail should not be empty',
+      messageTc: '取貨訂單詳細資料 不應留白',
+      messageSc: '取货订单详情 不应留白'
     },
     addHocReason: {
-      messageEn: 'Ad-hoc reason is Required',
-      messageTc: '特殊原因為必填項',
-      messageSc: '需要临时理由'
+      messageEn: 'Ad-hoc reason should not be empty',
+      messageTc: '特殊原因 不應留白',
+      messageSc: '特殊原因 不应留白'
     },
     shippingtoDateNotValid: {
       messageEn: 'Shipping validity to date not valid',
@@ -176,15 +176,14 @@ const useValidationPickupOrder = (
       messageSc: '运输有效日期由无效'
     },
     specificDate: {
-      messageEn: 'Specific Date is Required',
-      messageTc: '需要具體日期',
-      messageSc: '需要具体日期'
+      messageEn: 'Specific Date should not be empty',
+      messageTc: '需具體日期 不應留白',
+      messageSc: '具体日期 不应留白'
     },
     invalidDate: {
-      messageEn:
-        'Shipping validity start date should be lower than shipping validity end date',
-      messageTc: '运输有效期开始日期应低于运输有效期结束日期',
-      messageSc: '出貨有效期限開始日期應早於出貨有效期限結束日期'
+      messageEn: 'Validity Date Effective from date should not later than Effective to date',
+      messageTc: '有效日期由 開始日期不能晚於截止日期',
+      messageSc: '有效日期由 开始日期不能晚于截止日期'
     },
     out_of_date_range: {
       messageEn: 'Specified date(s) are out of the shipping validity range',
@@ -197,9 +196,9 @@ const useValidationPickupOrder = (
       messageSc: '指定的日期格式无效'
     },
     weeklyDate: {
-      messageEn: 'Weekly Date is Required',
-      messageTc: '每週日期為必填項',
-      messageSc: '每周日期为必填项'
+      messageEn: 'Weekly Date should not be empty',
+      messageTc: '每週日期 不應留白',
+      messageSc: '每周日期 不应留白'
     },
     duplicateDateTimePeriod: {
       messageEn: 'Duplicate time periode should not be allowed',
@@ -473,7 +472,7 @@ const useValidationPickupOrder = (
         })
       }
     } else if (
-      pico.picoType === 'picoType' &&
+      pico.picoType === 'ROUTINE' &&
       pico.routineType !== 'specificDate'
     ) {
       setErrorsField((prev) => {
@@ -914,9 +913,9 @@ const useValidationPickupOrder = (
       }
 
       if (
+        pico.picoType === 'picoType' &&
         pico.routineType === 'weekly' &&
-        pico.routine.length === 0 &&
-        errorsField.routine.touch
+        pico.routine.length === 0
       ) {
         setErrorsField((prev) => {
           return {
@@ -929,11 +928,7 @@ const useValidationPickupOrder = (
             }
           }
         })
-      } else if (
-        pico.routineType === 'weekly' &&
-        pico.routine.length >= 0 &&
-        errorsField.routine.touch
-      ) {
+      } else if (pico.routineType === 'weekly' && pico.routine.length >= 0) {
         setErrorsField((prev) => {
           return {
             ...prev,
@@ -944,6 +939,38 @@ const useValidationPickupOrder = (
           }
         })
       }
+
+      // if (
+      //   pico.routineType === 'weekly' &&
+      //   pico.routine.length === 0 &&
+      //   errorsField.routine.touch
+      // ) {
+      //   setErrorsField((prev) => {
+      //     return {
+      //       ...prev,
+      //       routine: {
+      //         ...prev.routine,
+      //         status: true,
+      //         messages: errorMessages['weeklyDate'],
+      //         message: getTranslationMessage('weeklyDate')
+      //       }
+      //     }
+      //   })
+      // } else if (
+      //   pico.routineType === 'weekly' &&
+      //   pico.routine.length >= 0 &&
+      //   errorsField.routine.touch
+      // ) {
+      //   setErrorsField((prev) => {
+      //     return {
+      //       ...prev,
+      //       routine: {
+      //         ...prev.routine,
+      //         status: false
+      //       }
+      //     }
+      //   })
+      // }
     }
 
     if (pico.logisticName === '' && errorsField.logisticName.touch) {
