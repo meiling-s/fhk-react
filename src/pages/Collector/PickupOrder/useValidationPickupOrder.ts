@@ -236,6 +236,7 @@ const useValidationPickupOrder = (
       message = errorMessage?.messageTc ?? ''
     }
     return message
+
   }
 
   useEffect(() => {
@@ -301,6 +302,7 @@ const useValidationPickupOrder = (
           }
         })
       }
+      
       if (!isValidDayjsISODate(dayjs(pico.effToDate))) {
         isValid = false
         setErrorsField((prev) => {
@@ -319,8 +321,8 @@ const useValidationPickupOrder = (
         setErrorsField((prev) => {
           return {
             ...prev,
-            effFrmDate: {
-              ...prev.effFrmDate,
+            effToDate: {
+              ...prev.effToDate,
               status: true,
               messages: errorMessages['invalidDate'],
               message: getTranslationMessage('invalidDate')
@@ -331,8 +333,8 @@ const useValidationPickupOrder = (
         setErrorsField((prev) => {
           return {
             ...prev,
-            effFrmDate: {
-              ...prev.effFrmDate,
+            effToDate: {
+              ...prev.effToDate,
               status: false
             }
           }
@@ -386,7 +388,6 @@ const useValidationPickupOrder = (
 
       pico.routine.map((item: any) => {
         const date = dayjs(item).startOf('day')
-
         // Check if date is in the correct format
         // if (date === 'Invalid Date') {
         //   invalidFormatDates.push(item)
@@ -394,6 +395,10 @@ const useValidationPickupOrder = (
         // }
 
         // Check if date is within the valid range
+        if (!isValidDayjsISODate(date)) {
+          outOfRangeDates.push(item)
+          return false
+        }
         if (date < fromDate || date > toDate) {
           outOfRangeDates.push(item)
           return false
@@ -483,7 +488,6 @@ const useValidationPickupOrder = (
     }
 
     if (
-      pico.picoType === 'picoType' &&
       pico.routineType === 'weekly' &&
       pico.routine.length === 0
     ) {
@@ -694,8 +698,6 @@ const useValidationPickupOrder = (
 
     const toDate = dayjs(pico.effToDate)
     if (!isValidDayjsISODate(fromDate)) {
-      const fromDate = dayjs(pico.effFrmDate)
-      // if(!isValidDayjsISODate(fromDate)) {
       setErrorsField((prev) => {
         return {
           ...prev,
@@ -739,20 +741,9 @@ const useValidationPickupOrder = (
             }
           }
         })
-        setErrorsField((prev) => {
-          return {
-            ...prev,
-            effToDate: {
-              ...prev.effToDate,
-              status: false,
-              message: ''
-            }
-          }
-        })
       }
     }
     if (!isValidDayjsISODate(toDate)) {
-      // if(!isValidDayjsISODate(toDate)) {
       setErrorsField((prev) => {
         return {
           ...prev,
@@ -786,16 +777,6 @@ const useValidationPickupOrder = (
           }
         })
       } else {
-        setErrorsField((prev) => {
-          return {
-            ...prev,
-            effFrmDate: {
-              ...prev.effFrmDate,
-              status: false,
-              message: ''
-            }
-          }
-        })
         setErrorsField((prev) => {
           return {
             ...prev,
@@ -1118,6 +1099,10 @@ const useValidationPickupOrder = (
   useEffect(() => {
     validateDataChange()
   }, [pico])
+
+  useEffect(() => {
+    console.log(errorsField, 'field')
+  }, [errorsField])
   // console.log('ErrorsField', errorsField)
   const changeTouchField = (field: fieldName) => {
     setErrorsField((prev) => {
