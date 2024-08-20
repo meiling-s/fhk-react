@@ -167,13 +167,13 @@ const useValidationPickupOrder = (
     },
     shippingtoDateNotValid: {
       messageEn: 'Shipping validity to date not valid',
-      messageTc: '迄今為止的運送有效期限無效',
-      messageSc: '迄今为止的运输有效期无效'
+      messageTc: '運輸有效日期至無效',
+      messageSc: '运输有效日期至无效'
     },
     shippingFromDateNotValid: {
       messageEn: 'Shipping validity date from not valid',
-      messageTc: '出貨有效期限自無效',
-      messageSc: '运输有效期从无效'
+      messageTc: '運輸有效日期由無效',
+      messageSc: '运输有效日期由无效'
     },
     specificDate: {
       messageEn: 'Specific Date is Required',
