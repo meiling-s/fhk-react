@@ -466,18 +466,21 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           ? subtype?.recyclableNameSchi
           : subtype?.recyclableNameEng || ''
 
-      console.log('recycTypeName', recycTypeName)
-
       const key = `${item.recycTypeId}-${item.recycSubTypeId}`
 
       if (!errorMap.has(key)) {
-        let errorMsg = ''
+        let hasError = false
 
         // Check if capacity is zero
         if (item.recycSubTypeCapacity === 0) {
-          errorMsg = `${recycTypeName ? recycTypeName : ''} - ${
+          const zeroCapacityError = `${recycTypeName ? recycTypeName : '"'} - ${
             recycSubTypeName ? recycSubTypeName : ''
           }, ${t('form.error.shouldGreaterThanZero')}`
+          tempV.push({
+            field: `warehouseRecyc${index}`, // Include index to differentiate fields
+            error: zeroCapacityError
+          })
+          hasError = true
         }
 
         // Check for duplicates
@@ -487,37 +490,34 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             item.recycTypeId === compareItem.recycTypeId &&
             item.recycSubTypeId === compareItem.recycSubTypeId
           ) {
-            if (errorMsg) {
-              errorMsg += ` ${t('add_warehouse_page.shouldNotDuplicate')}`
-            } else {
-              errorMsg = `${recycTypeName} - ${
-                recycSubTypeName ? recycSubTypeName : ''
-              } ${t('add_warehouse_page.shouldNotDuplicate')}`
-            }
+            const duplicateError = `${recycTypeName ? recycTypeName : ''} - ${
+              recycSubTypeName ? recycSubTypeName : ''
+            } ${t('add_warehouse_page.shouldNotDuplicate')}`
+            tempV.push({
+              field: `warehouseRecyc${index}`, // Include index to differentiate fields
+              error: duplicateError
+            })
+            hasError = true
           }
         })
 
-        if (errorMsg) {
-          tempV.push({
-            field: `warehouseRecyc${index}`, // Include index to differentiate fields
-            error: errorMsg
-          })
+        if (hasError) {
           errorMap.set(key, true) // Mark this combination as processed
         }
       }
     })
 
-    const cacheValidation: any[] = []
+    // const cacheValidation: any[] = []
 
-    for (let item of Object.values(tempV)) {
-      const { field } = item
-      const isExist = cacheValidation.find((cache) => cache.field === field)
-      if (!isExist) {
-        cacheValidation.push(item)
-      }
-    }
+    // for (let item of Object.values(tempV)) {
+    //   const { field } = item
+    //   const isExist = cacheValidation.find((cache) => cache.field === field)
+    //   if (!isExist) {
+    //     cacheValidation.push(item)
+    //   }
+    // }
 
-    setValidation(cacheValidation)
+    setValidation(tempV)
   }, [nameValue, place, contractNum, recycleCategory])
 
   const checkString = (s: string) => {
