@@ -232,7 +232,8 @@
     "reject_reasons": "Reject Reason(s)",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "search_input": "Enter PO Number"
+    "search_input": "Enter PO Number",
+    "check_in": "Check-in Date Time"
   },
   "check_out": {
     "request_check_out": "Check-out Request",
