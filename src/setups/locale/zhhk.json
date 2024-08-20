@@ -555,7 +555,11 @@
       "send": "傳送",
       "invite_success": "成功發送邀請",
       "invite_failed": "發送邀請失敗",
-      "err_date": "運送有效期限無效。確保截止日期晚於開始日期",
+      "validaity_to_date": "有效期限至",
+      "err_date": "確保“有效期限自”不晚於“有效期限至”",
+      "err_duplicated_br_no": "商業註冊。編號已存在",
+      "err_duplicated_company_number": "公司號碼已存在",
+      "err_duplicated_company_name": "公司名稱已存在",
       "err_duplicated": "公司號碼/公司名稱/商業註冊。編號已存在"
     },
     "detail": {
