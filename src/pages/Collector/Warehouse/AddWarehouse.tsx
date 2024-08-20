@@ -27,9 +27,7 @@ import {
 } from '../../../APICalls/warehouseManage'
 import { getLocation } from '../../../APICalls/getLocation'
 import { getCommonTypes } from '../../../APICalls/commonManage'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { STATUS_CODE } from '../../../constants/constant'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 
 interface RecyleItem {
   recycTypeId: string
