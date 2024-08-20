@@ -477,7 +477,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
             recycSubTypeName ? recycSubTypeName : ''
           }, ${t('form.error.shouldGreaterThanZero')}`
           tempV.push({
-            field: `warehouseRecyc${index}`, // Include index to differentiate fields
+            field: `warehouseRecyc${index}${'zeroErr'}`, // Include index to differentiate fields
             error: zeroCapacityError
           })
           hasError = true
@@ -494,7 +494,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               recycSubTypeName ? recycSubTypeName : ''
             } ${t('add_warehouse_page.shouldNotDuplicate')}`
             tempV.push({
-              field: `warehouseRecyc${index}`, // Include index to differentiate fields
+              field: `warehouseRecyc${index}${'duplicatedErr'}`, // Include index to differentiate fields
               error: duplicateError
             })
             hasError = true
@@ -506,6 +506,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         }
       }
     })
+
+    console.log('temp', tempV)
 
     // const cacheValidation: any[] = []
 
