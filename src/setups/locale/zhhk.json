@@ -117,6 +117,7 @@
       "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期",
       "cannotBeSame": "不能相同",
+      "shouldGreaterThanZero": "可存容量大於零",
       "cantBeSame": "不能相同",
       "selectFirst": "請先選擇，然後再新增新的。"
     }
