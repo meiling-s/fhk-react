@@ -117,7 +117,7 @@
       "dateSpesificIsWrong": "指定日期格式错误",
       "effectiveDateLess": "开始日期不能晚于截止日期",
       "cannotBeSame": "不能相同",
-      "shouldGreaterThanZero": " 可存容量大于零",
+      "shouldGreaterThanZero": "可存容量大于零",
       "cantBeSame": "不能相同",
       "selectFirst": "请先选择，然后才能添加新的。"
     }
@@ -1045,7 +1045,7 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "车辆编号",
+      "vehicle_number": "车辆编码",
       "license_plate_number": "车牌号码",
       "vehicle_type": "车辆种类",
       "vehicle_cargo_capacity": "车辆载货量",

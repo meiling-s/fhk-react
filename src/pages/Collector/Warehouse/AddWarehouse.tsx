@@ -27,9 +27,7 @@ import {
 } from '../../../APICalls/warehouseManage'
 import { getLocation } from '../../../APICalls/getLocation'
 import { getCommonTypes } from '../../../APICalls/commonManage'
-import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
-import { STATUS_CODE } from '../../../constants/constant'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 
 interface RecyleItem {
   recycTypeId: string
@@ -444,98 +442,84 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         )}`
       })
 
-    //check value not zero
-    if (isRecyleUnselected) {
-      recycleCategory.forEach((item) => {
+    const errorMap = new Map<string, boolean>()
+
+    recycleCategory.forEach((item, index) => {
+      const recybles = recycleType?.find(
+        (type: recyleTypeOption) => type.id === item.recycTypeId
+      )
+      const subtype = recycleSubType[item.recycTypeId]?.find(
+        (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
+      )
+
+      const recycTypeName =
+        currentLanguage === 'zhhk'
+          ? recybles?.recyclableNameTchi
+          : currentLanguage === 'zhch'
+          ? recybles?.recyclableNameSchi
+          : recybles?.recyclableNameEng || ''
+
+      const recycSubTypeName =
+        currentLanguage === 'zhhk'
+          ? subtype?.recyclableNameTchi
+          : currentLanguage === 'zhch'
+          ? subtype?.recyclableNameSchi
+          : subtype?.recyclableNameEng || ''
+
+      const key = `${item.recycTypeId}-${item.recycSubTypeId}`
+
+      if (!errorMap.has(key)) {
+        let hasError = false
+
+        // Check if capacity is zero
         if (item.recycSubTypeCapacity === 0) {
-          const recybles = recycleType.find(
-            (type: recyleTypeOption) => type.id === item.recycTypeId
-          )
-
-          const subtype = recycleSubType[item.recycTypeId].find(
-            (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
-          )
-
-          const recycTypeName =
-            currentLanguage === 'zhhk'
-              ? recybles?.recyclableNameTchi
-              : currentLanguage === 'zhch'
-              ? recybles?.recyclableNameSchi
-              : recybles?.recyclableNameEng || ''
-
-          const recycSubTypeName =
-            currentLanguage === 'zhhk'
-              ? subtype?.recyclableNameTchi
-              : currentLanguage === 'zhch'
-              ? subtype?.recyclableNameSchi
-              : subtype?.recyclableNameEng || ''
-
+          const zeroCapacityError = `${recycTypeName ? recycTypeName : '"'} - ${
+            recycSubTypeName ? recycSubTypeName : ''
+          }, ${t('form.error.shouldGreaterThanZero')}`
           tempV.push({
-            field: 'warehouseRecyc',
-            error: `${recycTypeName} - ${
-              recycSubTypeName ? recycSubTypeName : ''
-            }, ${t('form.error.shouldGreaterThanZero')}`
+            field: `warehouseRecyc${index}${'zeroErr'}`, // Include index to differentiate fields
+            error: zeroCapacityError
           })
+          hasError = true
         }
-      })
-    }
 
-    //check duplicated recytype
-    if (!isRecycleTypeIdUnique) {
-      duplicateRecycleTypeIds.forEach((recycTypeId) => {
-        recycleCategory.forEach((item) => {
-          if (item.recycTypeId === recycTypeId) {
-            const recybles = recycleType.find(
-              (type: recyleTypeOption) => type.id === item.recycTypeId
-            )
-            const subtype = recycleSubType[item.recycTypeId].find(
-              (sub: any) => sub.recycSubTypeId === item.recycSubTypeId
-            )
-
-            const recycTypeName =
-              currentLanguage === 'zhhk'
-                ? recybles?.recyclableNameTchi
-                : currentLanguage === 'zhch'
-                ? recybles?.recyclableNameSchi
-                : recybles?.recyclableNameEng || ''
-
-            const recycSubTypeName =
-              currentLanguage === 'zhhk'
-                ? subtype?.recyclableNameTchi
-                : currentLanguage === 'zhch'
-                ? subtype?.recyclableNameSchi
-                : subtype?.recyclableNameEng || ''
-
-            const errorMsg = `${recycTypeName} - ${
+        // Check for duplicates
+        recycleCategory.forEach((compareItem, compareIndex) => {
+          if (
+            index !== compareIndex &&
+            item.recycTypeId === compareItem.recycTypeId &&
+            item.recycSubTypeId === compareItem.recycSubTypeId
+          ) {
+            const duplicateError = `${recycTypeName ? recycTypeName : ''} - ${
               recycSubTypeName ? recycSubTypeName : ''
             } ${t('add_warehouse_page.shouldNotDuplicate')}`
-
-            const alreadyExist = tempV.find((it) => it.error === errorMsg)
-
-            if (!alreadyExist) {
-              tempV.push({
-                field: 'warehouseRecyc',
-                error: `${recycTypeName} - ${
-                  recycSubTypeName ? recycSubTypeName : ''
-                } ${t('add_warehouse_page.shouldNotDuplicate')}`
-              })
-            }
+            tempV.push({
+              field: `warehouseRecyc${index}${'duplicatedErr'}`, // Include index to differentiate fields
+              error: duplicateError
+            })
+            hasError = true
           }
         })
-      })
-    }
 
-    const cacheValidation: any[] = []
-
-    for (let item of Object.values(tempV)) {
-      const { field } = item
-      const isExist = cacheValidation.find((cache) => cache.field === field)
-      if (!isExist) {
-        cacheValidation.push(item)
+        if (hasError) {
+          errorMap.set(key, true) // Mark this combination as processed
+        }
       }
-    }
+    })
 
-    setValidation(cacheValidation)
+    console.log('temp', tempV)
+
+    // const cacheValidation: any[] = []
+
+    // for (let item of Object.values(tempV)) {
+    //   const { field } = item
+    //   const isExist = cacheValidation.find((cache) => cache.field === field)
+    //   if (!isExist) {
+    //     cacheValidation.push(item)
+    //   }
+    // }
+
+    setValidation(tempV)
   }, [nameValue, place, contractNum, recycleCategory])
 
   const checkString = (s: string) => {

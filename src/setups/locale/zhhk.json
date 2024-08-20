@@ -117,6 +117,7 @@
       "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期",
       "cannotBeSame": "不能相同",
+      "shouldGreaterThanZero": "可存容量大於零",
       "cantBeSame": "不能相同",
       "selectFirst": "請先選擇，然後再新增新的。"
     }
@@ -179,7 +180,7 @@
     "location": "實體地點",
     "place": "地點",
     "status": "狀態",
-    "recyclable_subcategories": "回收物類別",
+    "recyclable_subcategories": "可存回收物類別及容量",
     "enter_tenantId": "輸入租戶 ID"
   },
   "add_warehouse_page": {
@@ -1043,8 +1044,8 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "車輛號碼",
-      "license_plate_number": "車牌號",
+      "vehicle_number": "車輛編碼",
+      "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",
       "picture": "圖片",
