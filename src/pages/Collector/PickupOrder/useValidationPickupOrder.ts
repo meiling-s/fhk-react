@@ -321,8 +321,8 @@ const useValidationPickupOrder = (
         setErrorsField((prev) => {
           return {
             ...prev,
-            effToDate: {
-              ...prev.effToDate,
+            effFrmDate: {
+              ...prev.effFrmDate,
               status: true,
               messages: errorMessages['invalidDate'],
               message: getTranslationMessage('invalidDate')
@@ -396,7 +396,7 @@ const useValidationPickupOrder = (
 
         // Check if date is within the valid range
         if (!isValidDayjsISODate(date)) {
-          outOfRangeDates.push(item)
+          invalidFormatDates.push(item)
           return false
         }
         if (date < fromDate || date > toDate) {
@@ -1100,9 +1100,6 @@ const useValidationPickupOrder = (
     validateDataChange()
   }, [pico])
 
-  useEffect(() => {
-    console.log(errorsField, 'field')
-  }, [errorsField])
   // console.log('ErrorsField', errorsField)
   const changeTouchField = (field: fieldName) => {
     setErrorsField((prev) => {
