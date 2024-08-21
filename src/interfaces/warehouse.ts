@@ -22,6 +22,8 @@ export type CheckOutWarehouse = {
 
 export type CheckInOutWarehouse = {
     id: number
+    chkInId: number | null
+    chkOutId: number | null
     createdAt: string
     status: string
     senderName: string
