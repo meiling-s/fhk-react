@@ -559,7 +559,7 @@
       "invite_success": "Success send invitation",
       "invite_failed": "Failed send invitation",
       "validaity_to_date": "Validity Date To",
-      "err_date":"Ensure the `Validity Date From` is not later than the `Validity Date To`",
+      "err_date": "Ensure the `Validity Date From` is not later than the `Validity Date To`",
       "err_duplicated": "Company number/Company name/Business Reg. No. already exist",
       "err_duplicated_br_no": "Business Reg. No. already exist",
       "err_duplicated_company_number": "Company number already exist",
@@ -1445,5 +1445,12 @@
     "place": "Place",
     "po_number": "Enter PO number",
     "jo_number": "Enter JO number"
+  },
+  "dashboardOverview": {
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "createdAt": "Checkout/in Datetime",
+    "shippingCompany": "Sender Company",
+    "inventoryLocation": "Sender Location"
   }
 }

@@ -63,7 +63,7 @@
     "premiseName": "房屋或场所名称",
     "premiseType": "房屋或场所类别",
     "premiseRemark": "前提備註",
-    "otherResidentialPremise":"其他(住宅处所)备注",
+    "otherResidentialPremise": "其他(住宅处所)备注",
     "otherNonResidentialPremise": "其他(非住宅处所)备注",
     "enterText": "请输入文字",
     "status": "开放状态",
@@ -1439,5 +1439,12 @@
     "place": "地方",
     "po_number": "输入采购订单号",
     "jo_number": "输入工作编号"
+  },
+  "dashboardOverview": {
+    "checkin": "入",
+    "checkout": "出",
+    "createdAt": "送出入日期及时间",
+    "shippingCompany": "状态",
+    "inventoryLocation": "送出地点"
   }
 }
