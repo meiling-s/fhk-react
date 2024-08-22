@@ -56,7 +56,6 @@ export const editPackaging = async (data: CreatePackagingUnit, packagingTypeId: 
     })
     return response
   } catch (e) {
-    console.error('Get all packaging unit failed:', e)
     throw(e)
   }
 }

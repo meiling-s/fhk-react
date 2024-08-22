@@ -883,7 +883,7 @@ export const EDIT_STAFF = (
   realmApi: string
 ): AxiosRequestConfig => ({
   method: realmApi === 'logistic' ? 'put' : 'patch',
-  url: `api/v1/${realmApi}/staff/${tenantId}/${staffId}`
+  url: `api/v1/${realmApi}/staff/V2/${tenantId}/${staffId}`
 })
 
 export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
@@ -1209,7 +1209,7 @@ export const UPDATE_STAFF_TITLE = (
   titleId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/stafftitle/${table}/${titleId}`
+  url: `/api/v1/${realmApiRoute}/stafftitle/V2/${table}/${titleId}`
 })
 
 //get disposal location
@@ -1323,7 +1323,7 @@ export const EDIT_PACKAGING = (
   packagingTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/packaginglist/${tenantId}/${packagingTypeId}`
+  url: `api/v1/${realmApiRoute}/packaginglist/V2/${tenantId}/${packagingTypeId}`
 })
 
 export const GET_DETAIL_NOTIF_TEMPLATE = (
@@ -1341,7 +1341,7 @@ export const UPDATE_NOTIF_TEMPLATE = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate/V2/${tenantId}/${templateId}`
 })
 
 //logistics driver
@@ -1377,7 +1377,7 @@ export const UPDATE_NOTIF_TEMPLATE_BROADCAST = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${path}/notiTemplate/${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate/V2/${tenantId}/${templateId}`
 })
 
 // STAFF ENQUIRY

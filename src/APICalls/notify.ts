@@ -107,7 +107,7 @@ export const updateNotifTemplate = async (templateId: string, data: UpdateNotifT
     })
     return response.data
   } catch (e) {
-    return null
+    return e
   }
 }
 

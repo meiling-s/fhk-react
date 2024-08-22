@@ -58,6 +58,7 @@ interface PackagingUnit {
   updatedBy: string
   createdAt: string
   updatedAt: string
+  version: number
 }
 
 const GeneralSettings: FunctionComponent = () => {

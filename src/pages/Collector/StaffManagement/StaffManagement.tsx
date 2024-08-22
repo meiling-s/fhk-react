@@ -76,7 +76,8 @@ function createStaff(
   createdAt: string,
   updatedAt: string,
   titleValue: string,
-  fullTimeFlg?: boolean
+  version: number,
+  fullTimeFlg?: boolean,
 ): Staff {
   return {
     staffId,
@@ -96,7 +97,8 @@ function createStaff(
     createdAt,
     updatedAt,
     fullTimeFlg,
-    titleValue
+    titleValue,
+    version
   }
 }
 
@@ -216,7 +218,8 @@ const StaffManagement: FunctionComponent = () => {
               item?.createdAt,
               updatedAt,
               item?.titleValue,
-              item?.fullTimeFlg
+              item?.version,
+              item?.fullTimeFlg,
             )
           )
         })

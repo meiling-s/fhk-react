@@ -32,7 +32,8 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
             receivers: [], 
             updatedBy: '',
             effFromDate: dayjs().format('YYYY-MM-DD'), 
-            effToDate: dayjs().format('YYYY-MM-DD')   
+            effToDate: dayjs().format('YYYY-MM-DD'),
+            version: 0,
         }
     )
     const navigate = useNavigate();
@@ -130,7 +131,8 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                         senders: notif?.senders,
                         receivers: notif?.receivers,
                         updatedBy: notif?.updatedBy,
-                        variables: notif?.variables
+                        variables: notif?.variables,
+                        version: notif?.version
                     }
                 })
                 setCurrentLanguage(notif.lang)
@@ -209,20 +211,18 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
     }
 
     const onSubmitUpdateTemplate = async () => {
-        if(notifTemplate.content === '' || notifTemplate.lang === ''){
+        if (notifTemplate.content === '' || notifTemplate.lang === ''){
             showErrorToast(t('common.editFailed'))
             return
         }
-        
-        const response = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
-        if (response) {
+        const result = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
+        if (result?.response?.status === 500) {
+            showErrorToast(result.response.data.message);
+        } else {
             showSuccessToast(t('common.editSuccessfully'))
             setTimeout(() => {
                 navigate(`/${realm}/notice`)
-            }, 1000);
-
-        } else {
-            showErrorToast(t('common.editFailed'))
+            }, 1000)
         }
     }
 
