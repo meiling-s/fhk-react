@@ -45,7 +45,7 @@ function CheckInAndCheckOut() {
     picoId: '',
     company: '',
     addr: '',
-    inout: 'in'
+    inout: ''
   })
   const navigate = useNavigate()
   const [totalElements, setTotalElements] = useState<number>(0)
