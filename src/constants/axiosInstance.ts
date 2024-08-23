@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios from "axios";
 import { STATUS_CODE, localStorgeKeyName } from '../constants/constant'
 import { createUserActivity } from "../APICalls/userAccount";
 import { UserActivity } from '../interfaces/common'
