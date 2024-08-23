@@ -18,7 +18,7 @@ import {
   VehicleList
 } from '../../../interfaces/pickupOrder'
 import { useNavigate, useParams } from 'react-router-dom'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { Languages, STATUS_CODE, format } from '../../../constants/constant'
 import { rejectAssginDriver, assignDriver, getVehiclePlateList, getVehicleDriverList } from '../../../APICalls/jobOrder'
@@ -296,10 +296,21 @@ const JobOrder = () => {
     setPickupOrderDetail(ids)
   }
   
+  const isValidDayjsISODate = (date: Dayjs): boolean => {
+    if (!date.isValid()) {
+      return false
+    }
+    // Convert to ISO string and check if it matches the original input
+    const isoString = date.toISOString()
+    // Regex to ensure ISO 8601 format with 'Z' (UTC time)
+    const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+    return iso8601Pattern.test(isoString)
+  }
+  
   const onHandleSubmitOrder = async () => {
     if (params?.get('isEdit') === 'false') {
       for (let order of pickupOrderDetail) {
-        if (order.pickupAt !== '00:00:00') {
+        if (isValidDayjsISODate(dayjs(order.pickupAt))) {
           const date = new Date(order.pickupAt)
           await date.setHours(date.getHours() + 8)
           order.pickupAt = date.toISOString()
