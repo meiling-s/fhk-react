@@ -84,10 +84,10 @@ function CheckInAndCheckOut() {
     setFilter({ ...filter, ...newQuery })
   }
 
-  const handleChangeFilter = (label: string, value: string) => {
+  const handleChangeFilter = debounce((label: string, value: string) => {
     setPage(1)
     updateQuery({ [label]: value })
-  }
+  }, 500)
 
   function getUniqueOptions(propertyName: keyof any) {
     interface Option {
@@ -97,15 +97,24 @@ function CheckInAndCheckOut() {
     const optionMap = new Map()
 
     data.forEach((row) => {
-      if (row[propertyName] !== '') {
+      if (propertyName === 'senderName') {
+        if (row['senderName'] && !optionMap.has(row['senderName'])) {
+          optionMap.set(row['senderName'], row['senderName'])
+        }
+        if (row['receiverName'] && !optionMap.has(row['receiverName'])) {
+          optionMap.set(row['receiverName'], row['receiverName'])
+        }
+      } else if (row[propertyName]) {
         optionMap.set(row[propertyName], row[propertyName])
       }
     })
+    let options: Option[] = Array.from(optionMap.values())
+      .filter((option) => option.trim() !== '') // Filter out empty or whitespace-only strings
+      .map((option) => ({
+        value: option,
+        label: option
+      }))
 
-    let options: Option[] = Array.from(optionMap.values()).map((option) => ({
-      value: option,
-      label: option
-    }))
     options.push({
       value: '',
       label: t('check_in.any')
@@ -255,9 +264,9 @@ function CheckInAndCheckOut() {
     }
   }, [])
 
-  const handleSearch = debounce((value: string) => {
-    setKeyword(value)
-  }, 500)
+  // const handleSearch = debounce((value: string) => {
+  //   setKeyword(value)
+  // }, 500)
 
   return (
     <Box
