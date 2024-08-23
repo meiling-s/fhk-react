@@ -55,7 +55,8 @@ function createVehicles(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  version: number
 ): VehicleItem {
   return {
     vehicleId,
@@ -67,7 +68,8 @@ function createVehicles(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    version,
   }
 }
 
@@ -99,6 +101,7 @@ const Vehicles: FunctionComponent = () => {
     const data = result?.data
     const newPlateList: string[] = []
     if (data) {
+      console.log(data, 'data')
       var vehicleMapping: VehicleItem[] = []
       data.content.map((item: any) => {
         vehicleMapping.push(
@@ -112,7 +115,8 @@ const Vehicles: FunctionComponent = () => {
             item?.createdBy,
             item?.updatedBy,
             item?.createdAt,
-            item?.updatedAt
+            item?.updatedAt,
+            item?.version,
           )
         )
 
@@ -144,7 +148,8 @@ const Vehicles: FunctionComponent = () => {
             item?.createdBy,
             item?.updatedBy,
             item?.createdAt,
-            item?.updatedAt
+            item?.updatedAt,
+            item?.version
           )
         )
 

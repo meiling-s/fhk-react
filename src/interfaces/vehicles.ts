@@ -35,6 +35,7 @@ export type LogisticVehicle = {
     updatedBy: string
     createdAt: string
     updatedAt: string
+    version: number
 }
 
 export type CreateLogisticVehicle = {

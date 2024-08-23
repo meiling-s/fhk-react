@@ -638,7 +638,7 @@ export const EDIT_LOGISTIC_VEHICLE = (
   vehicleId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
+  url: `api/v1/logistic/vehicle/V2/${table}/${vehicleId}`
 })
 
 export const DELETE_LOGISTIC_VEHICLE = (
