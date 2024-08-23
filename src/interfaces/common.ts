@@ -236,3 +236,18 @@ export type Company =  {
     nameSchi?: string
     nameTchi?: string
 }
+
+export type PackagingList = {
+    packagingTypeId: string,
+    tenantId: string,
+    packagingNameTchi: string,
+    packagingNameSchi: string,
+    packagingNameEng: string,
+    description: string,
+    remark: string,
+    status: string,
+    createdBy: string,
+    updatedBy: string,
+    createdAt: string,
+    updatedAt: string
+}

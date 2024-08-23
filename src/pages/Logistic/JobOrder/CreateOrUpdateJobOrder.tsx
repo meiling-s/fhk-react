@@ -21,7 +21,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { Languages, STATUS_CODE, format } from '../../../constants/constant'
-import { rejectAssginDriver, assignDriver } from '../../../APICalls/jobOrder'
+import { rejectAssginDriver, assignDriver, getVehiclePlateList, getVehicleDriverList } from '../../../APICalls/jobOrder'
 import { ToastContainer, toast } from 'react-toastify'
 import { EDIT_OUTLINED_ICON, DELETE_OUTLINED_ICON } from '../../../themes/icons'
 import {
@@ -32,11 +32,9 @@ import {
 import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
-import { getAllVehiclesLogistic, getDriver } from '../../../APICalls/jobOrder'
 import { mappingRecyName } from '../../../utils/utils'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { getTenantById } from '../../../APICalls/tenantManage'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -74,19 +72,10 @@ const JobOrder = () => {
 
   const initListDriver = async () => {
     try {
-      const result = await getDriver(0, 1000, 'string')
+      const result = await getVehicleDriverList()
       if (result) {
-        const data = result?.data?.content
-        const mappingDriver: DriverList[] = []
-        data.forEach((item: any) => {
-          mappingDriver.push({
-            driverId: item.driverId,
-            driverNameEng: item.driverNameEng,
-            driverNameSchi: item.driverNameSchi,
-            driverNameTchi: item.driverNameTchi
-          })
-        })
-        setDriverList(mappingDriver)
+        const data = result?.data
+        setDriverList(data)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -98,17 +87,10 @@ const JobOrder = () => {
 
   const initListVehicle = async () => {
     try {
-      const result = await getAllVehiclesLogistic(0, 1000)
+      const result = await getVehiclePlateList()
       if (result) {
-        const data = result?.data?.content
-        const mappingVehicle: VehicleList[] = []
-        data.forEach((item: any) => {
-          mappingVehicle.push({
-            vehicleId: item.vehicleId,
-            plateNo: item.plateNo
-          })
-        })
-        setVehicleList(mappingVehicle)
+        const data = result?.data
+        setVehicleList(data)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -149,6 +131,25 @@ const JobOrder = () => {
   //   if(picoId) getDetailPico(picoId)
   // },[i18n.language])
 
+  function sortByPickupAt(arr: any[]) {
+    return arr.sort((a, b) => {
+      const dateA = parseDateOrTime(a.pickupAt);
+      const dateB = parseDateOrTime(b.pickupAt);
+      return dateA.getTime() - dateB.getTime();
+    });
+  }
+  
+  function parseDateOrTime(pickupAt: string): Date {
+    if (pickupAt.includes('T')) {
+      return new Date(pickupAt);
+    }
+    
+    const now = new Date();
+    const [hours, minutes, seconds] = pickupAt.split(':').map(Number);
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, seconds);
+  }
+  
+
   const getDetailPico = async (picoId: string) => {
     try {
       const response = await getPicoById(picoId)
@@ -158,16 +159,17 @@ const JobOrder = () => {
           response.data.logisticName = logistic
         }
         const details: any[] = []
-        for (let item of response.data.pickupOrderDetail) {
-          const currentDate = dayjs().format('YYYY-MM-DD')
-          const fullDateTime = `${currentDate}T${item?.pickupAt}.000Z`
-          const date = dayjs.utc(fullDateTime).tz('Asia/Hong_Kong')
-          const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm')
-          const receiverName = getLogisticName(item?.receiverId)
-          const senderName = getLogisticName(item?.senderId)
+        const sortedPickupOrderDetails = sortByPickupAt(response.data.pickupOrderDetail);
 
-          if (receiverName) item.receiverName = receiverName
-          if (senderName) item.senderName = senderName
+        for (let item of sortedPickupOrderDetails) {
+          const date = dayjs(item.pickupAt).tz('Asia/Hong_Kong');
+          const formattedPickUpAt = date.format('DD/MM/YYYY HH:mm');
+          const receiverName = getLogisticName(item?.receiverId);
+          const senderName = getLogisticName(item?.senderId);
+        
+          if (receiverName) item.receiverName = receiverName;
+          if (senderName) item.senderName = senderName;
+        
           details.push({
             joId: item?.joId ?? 0,
             picoId: response?.data?.picoId,
@@ -190,8 +192,8 @@ const JobOrder = () => {
             pickupAt: item.pickupAt ?? '',
             createdBy: loginId ?? '',
             updatedBy: loginId ?? '',
-            status: item?.driverId ? 'assigned' : ''
-          })
+            status: item?.driverId ? 'assigned' : '',
+          });
         }
 
         // const details = response?.data.pickupOrderDetail.map(async (item: any) => {
@@ -284,19 +286,22 @@ const JobOrder = () => {
           vehicleId: 0,
           driverId: '',
           plateNo: '',
-          status: status
+          status: status,
+          pickupAt: dayjs(new Date()).format(`HH:mm:ss`).toString()
         }
       } else {
         return item
       }
     })
-
     setPickupOrderDetail(ids)
   }
-
+  
   const onHandleSubmitOrder = async () => {
     if (params?.get('isEdit') === 'false') {
       for (let order of pickupOrderDetail) {
+        const date = new Date(order.pickupAt)
+        await date.setHours(date.getHours() + 8)
+        order.pickupAt = date.toISOString()
         const response = await assignDriver(order)
         if (response?.status === 201) {
           onSubmitData(
@@ -394,7 +399,6 @@ const JobOrder = () => {
     }
   }
 
-  console.log()
   return (
     <Box sx={[styles.innerScreen_container, { paddingRight: 0 }]}>
       <ToastContainer></ToastContainer>
@@ -501,7 +505,7 @@ const JobOrder = () => {
               {' '}
               {t('jobOrder.recycling_location_information')}
             </p>
-            {pickupOrderDetail.map((item: AssignJobDriver, index) => {
+            {sortByPickupAt(pickupOrderDetail).map((item: AssignJobDriver, index) => {
               const driver = driverList.find(
                 (value) => value.driverId === item.driverId
               )

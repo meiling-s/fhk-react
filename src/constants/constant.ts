@@ -68,7 +68,7 @@ export const formErr = {
 
 export const Notiftemplate = {
   email: 'email',
-  app: 'app',
+  app: 'in-app',
   sms: 'sms',
   broadcast: 'broadcast'
 }

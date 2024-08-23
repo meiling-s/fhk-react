@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import PickupOrderForm from '../../../components/FormComponents/PickupOrderFormCustom'
 import StatusCard from '../../../components/StatusCard'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { PickupOrder, queryPickupOrder } from '../../../interfaces/pickupOrder'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
@@ -33,7 +33,8 @@ import {
   extractError,
   getPrimaryColor,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  debounce
 } from '../../../utils/utils'
 import TableOperation from '../../../components/TableOperation'
 import {
@@ -271,6 +272,7 @@ const PickupOrders = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [showOperationColumn, setShowOperationColumn] = useState<Boolean>(false)
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   let columns: GridColDef[] = [
     {
       field: 'createdAt',
@@ -496,6 +498,7 @@ const PickupOrders = () => {
   }
 
   const initPickupOrderRequest = async () => {
+    setIsLoading(true)
     try {
       // setPickupOrder([])
       setTotalData(0)
@@ -650,6 +653,7 @@ const PickupOrders = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const showApproveModal = (row: any) => {
@@ -972,24 +976,15 @@ const PickupOrders = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleSearch = (keyName: string, value: string) => {
+  const handleSearch = debounce((keyName: string, value: string) => {
     setPage(1)
     if (keyName == 'status') {
-      // const statusMapping: { [key: string]: number } = {
-      //   CREATED: 0,
-      //   STARTED: 1,
-      //   CONFIRMED: 2,
-      //   REJECTED: 3,
-      //   COMPLETED: 4,
-      //   CLOSED: 5,
-      //   OUTSTANDING: 6
-      // };
       const mappedStatus = value != '' ? parseInt(value) : null
       updateQuery({ ...query, [keyName]: mappedStatus })
     } else {
       updateQuery({ [keyName]: value })
     }
-  }
+  }, 1000)
 
   function getStatusOpion() {
     const options: Option[] = statusList.map((item) => {
@@ -1058,9 +1053,9 @@ const PickupOrders = () => {
   }
 
   useEffect(() => {
-    if(pickupOrder && pickupOrder.length === 0 && page > 1){
+    if (pickupOrder && pickupOrder.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev - 1)
+      setPage((prev) => prev - 1)
     }
   }, [pickupOrder])
 
@@ -1117,50 +1112,56 @@ const PickupOrders = () => {
           ))}
         </Stack>
         <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
-          <DataGrid
-            rows={filteredPico}
-            columns={columns}
-            disableRowSelectionOnClick
-            onRowClick={handleRowClick}
-            getRowSpacing={getRowSpacing}
-            hideFooter
-            localeText={localeTextDataGrid}
-            getRowClassName={(params) =>
-              selectedRow && params.id === selectedRow.picoId
-                ? 'selected-row'
-                : ''
-            }
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none' // Remove the borders from the cells
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
+          {isLoading ? (
+            <CircularLoading />
+          ) : (
+            <Box>
+              <DataGrid
+                rows={filteredPico}
+                columns={columns}
+                disableRowSelectionOnClick
+                onRowClick={handleRowClick}
+                getRowSpacing={getRowSpacing}
+                hideFooter
+                localeText={localeTextDataGrid}
+                getRowClassName={(params) =>
+                  selectedRow && params.id === selectedRow.picoId
+                    ? 'selected-row'
+                    : ''
                 }
-              },
-              '.MuiDataGrid-columnHeaderTitle': {
-                fontWeight: 'bold !important',
-                overflow: 'visible !important'
-              },
-              '& .selected-row': {
-                backgroundColor: '#F6FDF2 !important',
-                border: '1px solid #79CA25'
-              }
-            }}
-          />
-          <Pagination
-            count={Math.ceil(totalData)}
-            page={page}
-            onChange={(_, newPage) => {
-              setPage(newPage)
-            }}
-          />
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none' // Remove the borders from the cells
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
+                }}
+              />
+              <Pagination
+                count={Math.ceil(totalData)}
+                page={page}
+                onChange={(_, newPage) => {
+                  setPage(newPage)
+                }}
+              />
+            </Box>
+          )}
         </Box>
 
         <ApproveModal

@@ -31,7 +31,7 @@ import {
 import { Contract as ContractItem } from '../../../interfaces/contract'
 import { getAllContract } from '../../../APICalls/Collector/contracts'
 import { ToastContainer, toast } from 'react-toastify'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import CreateContract from './CreateContract'
 import UpdateCurrency from './UpdateCurrency'
@@ -102,6 +102,7 @@ const GeneralSettings: FunctionComponent = () => {
   const { dateFormat } = useContainer(CommonTypeContainer)
   const navigate = useNavigate()
   const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initContractList()
@@ -109,6 +110,7 @@ const GeneralSettings: FunctionComponent = () => {
   }, [page])
 
   const initContractList = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllContract(page - 1, pageSize)
       const data = result?.data.content
@@ -148,6 +150,7 @@ const GeneralSettings: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
   const getTenantData = async () => {
     try {
@@ -166,7 +169,7 @@ const GeneralSettings: FunctionComponent = () => {
     {
       field: 'contractNo',
       headerName: t('general_settings.contract_number'),
-      width: 150,
+      width: 250,
       type: 'string'
     },
     {
@@ -252,9 +255,9 @@ const GeneralSettings: FunctionComponent = () => {
   ]
 
   useEffect(() => {
-    if(contractList.length === 0 && page > 1){
+    if (contractList.length === 0 && page > 1) {
       // move backward to previous page once data deleted from last page (no data left on last page)
-      setPage(prev => prev  - 1)
+      setPage((prev) => prev - 1)
     }
   }, [contractList])
 
@@ -396,59 +399,71 @@ const GeneralSettings: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            <DataGrid
-              rows={contractList}
-              getRowId={(row) => row.id}
-              hideFooter
-              columns={columns}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              localeText={localeTextDataGrid}
-              getRowClassName={(params) => 
-                selectedRow && params.id === selectedRow.id ? 'selected-row' : ''
-              }
-              initialState={{
-                sorting: {
-                  sortModel: [{ field: 'contractNo', sort: 'desc' }]
-                }
-              }}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                {' '}
+                <DataGrid
+                  rows={contractList}
+                  getRowId={(row) => row.id}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.id
+                      ? 'selected-row'
+                      : ''
                   }
-                },
-                '.MuiDataGrid-columnHeaderTitle': { 
-                  fontWeight: 'bold !important',
-                  overflow: 'visible !important'
-                },
-                '& .selected-row': {
-                    backgroundColor: '#F6FDF2 !important',
-                    border: '1px solid #79CA25'
-                  }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  initialState={{
+                    sorting: {
+                      sortModel: [{ field: 'contractNo', sort: 'desc' }]
+                    }
+                  }}
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         <CreateContract
           drawerOpen={drawerOpen}
-          handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+          handleDrawerClose={() => {
+            setDrawerOpen(false)
+            setSelectedRow(null)
+          }}
           action={action}
           rowId={rowId}
           selectedItem={selectedRow}

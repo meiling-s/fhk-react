@@ -44,7 +44,8 @@
     "packageName": "包裝單位名稱已存在",
     "warehouseName": "倉庫名稱已存在",
     "vehicle": "車輛",
-    "theNameAlreadyExist": "員工職位名稱已存在"
+    "theNameAlreadyExist": "員工職位名稱已存在",
+    "leaveConfirmMsg": "您確定要離開此頁面嗎？未儲存的變更將會遺失"
   },
   "col": {
     "createCP": "建立回收點",
@@ -61,7 +62,9 @@
     "startTime": "服務時間",
     "premiseName": "房屋或埸所名稱",
     "premiseType": "房屋或埸所類別",
-    "premiseRemark": "其他備注",
+    "premiseRemark": "前提备注",
+    "otherResidentialPremise": "其他(住宅處所)備註",
+    "otherNonResidentialPremise": "其他(非住宅處所)備註",
     "enterText": "請輸入文字",
     "status": "開放狀態",
     "open": "開放",
@@ -114,7 +117,9 @@
       "dateSpesificIsWrong": "指定日期格式錯誤",
       "effectiveDateLess": " 開始日期不能晚於截止日期",
       "cannotBeSame": "不能相同",
-      "cantBeSame": "不能相同"
+      "shouldGreaterThanZero": "可存容量大於零",
+      "cantBeSame": "不能相同",
+      "selectFirst": "請先選擇，然後再新增新的。"
     }
   },
   "component": {
@@ -175,7 +180,7 @@
     "location": "實體地點",
     "place": "地點",
     "status": "狀態",
-    "recyclable_subcategories": "回收物類別",
+    "recyclable_subcategories": "可存回收物類別及容量",
     "enter_tenantId": "輸入租戶 ID"
   },
   "add_warehouse_page": {
@@ -198,7 +203,8 @@
     "warehouseRecyc": "回收物類別",
     "shouldNotEmpty": "不應為空",
     "shouldNotDuplicate": "不應重複",
-    "shouldNotDuplicated": " 货仓地址已经被使用"
+    "shouldNotDuplicated": " 货仓地址已经被使用",
+    "workshopFlag": "是否工場"
   },
   "check_in": {
     "transport_information": "運輸資料",
@@ -225,7 +231,8 @@
     "reject_reasons": "拒絕原因（可多選）",
     "confirm": "確認拒絕",
     "cancel": "取消",
-    "search_input": "輸入運單編號"
+    "search_input": "輸入運單編號",
+    "check_in": "送入日期及時間"
   },
   "changePass": {
     "titlePage": "更改密碼",
@@ -371,7 +378,7 @@
       "checkin_weight": "實際送入重量",
       "checkout_weight": "實際送出重量",
       "checkin_by": "送入負責人",
-      "checkout_by" :"送出負責人"
+      "checkout_by": "送出負責人"
     },
     "item": {
       "detail": "運單詳情",
@@ -465,18 +472,18 @@
     "rejected_success": "拒絕成功",
     "reject_reasons": "拒絕原因",
     "error": {
-      "effFrmDate": "此日期為必填項",
-      "effToDate": "迄今為止這是必要的",
-      "routineType": "此例程类型为必填项",
-      "routine": "需要例行公事",
-      "pickuAt": "此取件時間為必填項",
-      "senderName": "此寄件人姓名為必填項",
-      "senderAddr": "他的寄件者送貨地址是必需的",
-      "receiverName": "此寄件者地址為必填項",
-      "receiverAddr": "T此收件人地址為必填項",
-      "recycType": "此回收類型是必需的",
-      "recycSubType": "需要此可回收子類型",
-      "weight": "此重量為必填項",
+      "effFrmDate": "該日期 不應留白",
+      "effToDate": "迄今 不應留白",
+      "routineType": "此例程類型 不應留白",
+      "routine": "例程 不應留白",
+      "pickuAt": "此取件時間 不應留白",
+      "senderName": "此寄件者姓名 不應留白",
+      "senderAddr": "此寄件者地址 不應留白",
+      "receiverName": "此接收者姓名 不應留白",
+      "receiverAddr": "此接收者位址 不應留白",
+      "recycType": "此可回收類型 不應留白",
+      "recycSubType": "此可回收子類型 不應留白",
+      "weight": "該重量 不應留白",
       "weightGreaterThanZero": "這個權重應該大於零",
       "invalid_date": "失效日期",
       "invalid_pickup_time": "取件時間無效，請重新選擇時間",
@@ -550,7 +557,11 @@
       "send": "傳送",
       "invite_success": "成功發送邀請",
       "invite_failed": "發送邀請失敗",
-      "err_date": "運送有效期限無效。確保截止日期晚於開始日期",
+      "validaity_to_date": "有效期限至",
+      "err_date": "確保“有效期限自”不晚於“有效期限至”",
+      "err_duplicated_br_no": "商業註冊。編號已存在",
+      "err_duplicated_company_number": "公司號碼已存在",
+      "err_duplicated_company_name": "公司名稱已存在",
       "err_duplicated": "公司號碼/公司名稱/商業註冊。編號已存在"
     },
     "detail": {
@@ -853,10 +864,12 @@
       "sender_name": "寄件公司",
       "rec_loc_info": "回收地點資料"
     },
-    "confirm_approve_title": "確認核準吗？",
-    "confirm_approve": "确认核準",
+    "confirm_approve_title": "確認核準嗎？",
+    "confirm_approve": "確認",
     "cancel": "取消",
-    "approved_success": "核準成功"
+    "approved_success": "核準成功",
+    "rejected_at": "於",
+    "reason_single": "拒絕，原因為"
   },
   "jobOrder": {
     "job_order_menu": "工作運單",
@@ -1031,8 +1044,8 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "車輛號碼",
-      "license_plate_number": "車牌號",
+      "vehicle_number": "車輛編碼",
+      "license_plate_number": "車牌號碼",
       "vehicle_type": "車輛類型",
       "vehicle_cargo_capacity": "車輛載貨量",
       "picture": "圖片",
@@ -1426,5 +1439,12 @@
     "place": "地點",
     "po_number": "輸入採購訂單編號",
     "jo_number": "輸入工作編號"
+  },
+  "dashboardOverview": {
+    "checkin": "入",
+    "checkout": "出",
+    "createdAt": "送出入日期及時間",
+    "shippingCompany": "狀態",
+    "inventoryLocation": "送出地點"
   }
 }

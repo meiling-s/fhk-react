@@ -48,7 +48,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
   handleDrawerClose
 }) => {
   const { t } = useTranslation()
-  const { recycType, decimalVal, dateFormat } = useContainer(CommonTypeContainer)
+  const { recycType, decimalVal, dateFormat, packagingList } = useContainer(CommonTypeContainer)
   const [selectedDetail, setSelectedDetail] = useState<
     CheckoutDetail[] | undefined
   >([])
@@ -71,10 +71,13 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
     }
   ]
 
-  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
 
   const updatedDate = selectedCheckOut?.updatedAt
-    ? dayjs.utc(new Date(selectedCheckOut?.updatedAt)).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+    ? dayjs
+        .utc(new Date(selectedCheckOut?.updatedAt))
+        .tz('Asia/Hong_Kong')
+        .format(`${dateFormat} HH:mm`)
     : '-'
   const messageCheckout = `[${loginId}] ${t(
     'check_out.approved_on'
@@ -91,16 +94,16 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
       if (result) {
         const recycItems: RecycItem[] = []
         const data = result.data
-        
+
         data.forEach((detail: CheckoutDetail) => {
           const matchingRecycType = recycType?.find(
             (recyc) => detail.recycTypeId === recyc.recycTypeId
-          );
+          )
           if (matchingRecycType) {
             const matchrecycSubType = matchingRecycType.recycSubType?.find(
               (subtype) => subtype.recycSubTypeId === detail.recycSubTypeId
-            );
-            var name = "";
+            )
+            var name = ''
             switch (i18n.language) {
               case 'enus':
                 name = matchingRecycType.recyclableNameEng
@@ -143,7 +146,6 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               images: detail.checkoutDetailPhoto,
               packageTypeId: detail.packageTypeId
             })
-
           }
         })
         setRecycItem(recycItems)
@@ -163,21 +165,21 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
           subTitle: poNumber,
           onCloseHeader: handleDrawerClose
         }}
+        useConfirmModal={false}
       >
         <div
           style={{ borderTop: '1px solid lightgrey' }}
           className="content p-6"
         >
           <Stack spacing={4}>
-
-            {selectedCheckOut?.adjustmentFlg &&
-               <Box>
-               <div className="bg-[#FBFBFB] rounded-sm flex items-center gap-2 p-2 adjustmen-inventory">
-                 <CheckIcon className="text-[#79CA25]" />
-                 {t('check_out.stock_adjustment')}
-               </div>
-             </Box>
-            }
+            {selectedCheckOut?.adjustmentFlg && (
+              <Box>
+                <div className="bg-[#FBFBFB] rounded-sm flex items-center gap-2 p-2 adjustmen-inventory">
+                  <CheckIcon className="text-[#79CA25]" />
+                  {t('check_out.stock_adjustment')}
+                </div>
+              </Box>
+            )}
             <Box>
               <div className="shiping-information text-base text-[#717171] font-bold">
                 {t('check_out.shipping_info')}
@@ -187,8 +189,9 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               {shippingInfo.map((item, index) => (
                 <div
                   key={index}
-                  className={`wrapper ${index === shippingInfo.length - 1 ? '' : 'mb-6'
-                    }`}
+                  className={`wrapper ${
+                    index === shippingInfo.length - 1 ? '' : 'mb-6'
+                  }`}
                 >
                   <div className="shiping-information text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
                     {item.label}
@@ -226,7 +229,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   {t('check_out.arrival_location')}
                 </div>
                 <div className="text-mini text-black font-bold tracking-widest">
-                {selectedCheckOut?.receiverAddr}
+                  {selectedCheckOut?.receiverAddr}
                 </div>
               </div>
             </Box>
@@ -234,7 +237,11 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
               <div className="recyle-type-weight text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
                 {t('check_out.recyclable_type_weight')}
               </div>
-              {recycItem.map((item, index) => (
+              {recycItem.map((item, index) => {
+                const packagingName = packagingList.find(value => value.packagingTypeId === item.packageTypeId)
+                const selectedPackaging = i18n.language === 'enus' ? packagingName?.packagingNameEng : i18n.language === 'zhch' ? packagingName?.packagingNameSchi : packagingName?.packagingNameTchi
+         
+                return (
                 <div
                   key={index}
                   className="recyle-item px-4 py-3 rounded-xl border border-solid border-[#E2E2E2] mt-2"
@@ -242,7 +249,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                   <div className="detail flex justify-between items-center">
                     <div className="recyle-type flex items-center gap-2">
                       <div className="category" style={categoryRecyle}>
-                        {item.packageTypeId}
+                        {selectedPackaging ?? item.packageTypeId}
                       </div>
                       <div className="type-item">
                         <div className="sub-type text-xs text-black font-bold tracking-widest">
@@ -268,10 +275,10 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                     ))}
                   </div>
                 </div>
-              ))}
+              )})}
             </Box>
             <Box>
-              { selectedCheckOut?.status !== 'CREATED' &&
+              {selectedCheckOut?.status !== 'CREATED' && (
                 <div className="message">
                   <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
                     {t('check_out.message')}
@@ -280,8 +287,7 @@ const CheckOutDetails: FunctionComponent<CheckOutDetailsProps> = ({
                     {messageCheckout}
                   </div>
                 </div>
-              }
-              
+              )}
             </Box>
           </Stack>
         </div>

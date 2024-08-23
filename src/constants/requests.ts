@@ -465,6 +465,23 @@ export const UPDATE_WAREHOUSE_BY_ID = (
   url: `api/v1/${realmApiRoute}/warehouse/${table}/${warehouseId}`
 })
 
+export const ADD_WAREHOUSE_V2 = (
+  realmApiRoute: string,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'post',
+  url: `api/v1/${realmApiRoute}/warehouse/v2/${table}`
+})
+
+export const UPDATE_WAREHOUSE_BY_ID_V2 = (
+  realmApiRoute: string,
+  warehouseId: number,
+  table: string
+): AxiosRequestConfig => ({
+  method: 'put',
+  url: `api/v1/${realmApiRoute}/warehouse/v2/${table}/${warehouseId}`
+})
+
 export const MANUFACTURER_GET_ALL_WAREHOUSE = (
   table: string
 ): AxiosRequestConfig => ({
@@ -1033,7 +1050,7 @@ export const GET_ALL_REASON = (
 //logistic/jobOrder
 export const GET_ALL_JOB_ORDER = (table: string): AxiosRequestConfig => ({
   method: 'get',
-  url: `api/v1/logistic/jo/search/${table}`
+  url: `api/v1/logistic/jo/searchV2/${table}`
 })
 
 export const UPDATE_JOB_ORDER_STATUS = (
@@ -1081,6 +1098,16 @@ export const REJECT_REASSIGN_DRIVER = (
 export const GET_DRIVER = (table: string): AxiosRequestConfig => ({
   method: 'get',
   url: `/api/v1/logistic/driver/{table}?table=${table}`
+})
+
+export const GET_DRIVER_DATA = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `/api/v1/logistic/driverInfo/${tenantId}`
+})
+
+export const GET_VEHICLE_PLATE_LIST = (tenantId: string): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicleInfo/${tenantId}`
 })
 
 export const GET_VEHICLE_LOGISTIC = (table: string): AxiosRequestConfig => ({

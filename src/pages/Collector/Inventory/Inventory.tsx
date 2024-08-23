@@ -51,10 +51,12 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
 import { SEARCH_ICON } from '../../../themes/icons'
 import useDebounce from '../../../hooks/useDebounce'
+import CircularLoading from '../../../components/CircularLoading'
 import {
   returnApiToken,
   extractError,
-  getPrimaryColor
+  getPrimaryColor,
+  debounce
 } from '../../../utils/utils'
 import { getAllWarehouse } from '../../../APICalls/warehouseManage'
 import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
@@ -563,18 +565,18 @@ const Inventory: FunctionComponent = () => {
     setQuery({ ...query, ...newQuery })
   }
 
-  function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
-    let timeoutID: ReturnType<typeof setTimeout> | null
+  // function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
+  //   let timeoutID: ReturnType<typeof setTimeout> | null
 
-    return function (this: any, ...args: Parameters<T>) {
-      if (timeoutID) {
-        clearTimeout(timeoutID)
-      }
-      timeoutID = setTimeout(() => {
-        fn.apply(this, args)
-      }, delay)
-    }
-  }
+  //   return function (this: any, ...args: Parameters<T>) {
+  //     if (timeoutID) {
+  //       clearTimeout(timeoutID)
+  //     }
+  //     timeoutID = setTimeout(() => {
+  //       fn.apply(this, args)
+  //     }, delay)
+  //   }
+  // }
 
   const handleSearch = debounce((keyName, value) => {
     if (value.trim() === '' && query.itemId == null) {
@@ -677,15 +679,7 @@ const Inventory: FunctionComponent = () => {
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
             {isLoading ? (
-              <Box sx={{ textAlign: 'center', paddingY: 12 }}>
-                <CircularProgress
-                  color={
-                    role === 'manufacturer' || role === 'customer'
-                      ? 'primary'
-                      : 'success'
-                  }
-                />
-              </Box>
+              <CircularLoading />
             ) : (
               <Box>
                 <DataGrid

@@ -8,11 +8,7 @@ import {
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
-import {
-  STATUS_CODE,
-  format,
-  localStorgeKeyName
-} from '../../../constants/constant'
+import { STATUS_CODE, format } from '../../../constants/constant'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { CheckInAndCheckOutDetails } from '../CheckInAndCheckOut'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -20,8 +16,10 @@ import { getAllCheckInOutRequest } from '../../../APICalls/Collector/checkInOut'
 import {
   extractError,
   getPrimaryColor,
-  returnApiToken
+  returnApiToken,
+  debounce
 } from '../../../utils/utils'
+import CircularLoading from '../../../components/CircularLoading'
 import { useNavigate } from 'react-router-dom'
 
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
@@ -31,19 +29,18 @@ import { queryCheckInOut } from '../../../interfaces/checkInOut'
 function onlyUnique(value: any, index: any, array: any) {
   return array.indexOf(value) === index
 }
-const role = localStorage.getItem(localStorgeKeyName.role) || ''
 
 function CheckInAndCheckOut() {
   const { t } = useTranslation()
   const [data, setData] = useState([])
   const [selectedRow, setSelectedRow] = useState<any | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [totalData, setTotalData] = useState(0)
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [isShow, setIsShow] = useState(false)
   const [details, setDetails] = useState(null)
   const [keyword, setKeyword] = useState('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [filter, setFilter] = useState<queryCheckInOut>({
     picoId: '',
     company: '',
@@ -258,11 +255,15 @@ function CheckInAndCheckOut() {
     }
   }, [])
 
+  const handleSearch = debounce((value: string) => {
+    setKeyword(value)
+  }, 500)
+
   return (
     <Box
-      className={'container-wrapper w-max'}
+      className={'container-wrapper w-full'}
       sx={{
-        width: 'max-content',
+        width: '100%',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -310,13 +311,7 @@ function CheckInAndCheckOut() {
         <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
           {isLoading ? (
             <Box sx={{ textAlign: 'center', paddingY: 12 }}>
-              <CircularProgress
-                color={
-                  role === 'manufacturer' || role === 'customer'
-                    ? 'primary'
-                    : 'success'
-                }
-              />
+              <CircularLoading />
             </Box>
           ) : (
             <Box>

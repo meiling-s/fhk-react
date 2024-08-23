@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react'
 import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
 import JobOrderForm from '../../../components/FormComponents/JobOrderForm'
 import StatusCard from '../../../components/StatusCard'
-
+import CircularLoading from '../../../components/CircularLoading'
 import {
   JobListOrder,
   queryJobOrder,
@@ -25,7 +25,8 @@ import i18n from '../../../setups/i18n'
 import {
   displayCreatedDate,
   extractError,
-  returnApiToken
+  returnApiToken,
+  debounce
 } from '../../../utils/utils'
 import {
   localStorgeKeyName,
@@ -137,6 +138,7 @@ const JobOrder = () => {
   const [totalData, setTotalData] = useState<number>(0)
   const [driverLists, setDriverLists] = useState<Driver[]>([])
   const { dateFormat } = useContainer(CommonTypeContainer)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const statusList: {
     value: string
     labelEng: string
@@ -287,7 +289,7 @@ const JobOrder = () => {
   const [filteredPico, setFilteredPico] = useState<Row[]>([])
   const [query, setQuery] = useState<queryJobOrder>({
     id: '',
-    joId: '',
+    labelId: '',
     picoId: '',
     driverId: '',
     senderName: '',
@@ -298,6 +300,7 @@ const JobOrder = () => {
   const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const initJobOrderRequest = async () => {
+    setIsLoading(true)
     try {
       setJobOrder([])
       const params = {
@@ -317,6 +320,7 @@ const JobOrder = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const initDriverList = async () => {
@@ -378,7 +382,7 @@ const JobOrder = () => {
     try {
       const result = await getTenantById(tenantId)
       const data = result?.data
-      
+
       if (i18n.language === 'enus') {
         return data.companyNameEng
       } else if (i18n.language === 'zhhk') {
@@ -397,43 +401,46 @@ const JobOrder = () => {
   }
 
   useEffect(() => {
-    const tempRows = jobOrder?.map(async (item) => {
-      const senderCompany = await fetchTenantDetails(Number(item.senderId));
-      const receiverCompany = await fetchTenantDetails(Number(item.receiverId));
-      if(senderCompany){
-        console.log('sender', senderCompany)
-      }
-      return {
-        ...item,
-        id: item.joId,
-        joId: item.joId,
-        picoId: item.picoId,
-        createdAt: item.createdAt,
-        driverId: item.driverId,
-        plateNo: item.plateNo,
-        senderName: senderCompany ? (
-          senderCompany
-        ) : item.senderName,
-        receiverName: receiverCompany ? (
-          receiverCompany
-        ) : item.receiverName,
-        status: item.status,
-        operation: ''
-      };
-    }) ?? [];
-  
-    Promise.all(tempRows).then(resolvedRows => {
-      const filteredRows = resolvedRows.filter(item => item.status !== 'CLOSED');
-      setRows(filteredRows);
-      setFilteredPico(filteredRows);
-    });
-  }, [jobOrder, i18n.language]);
+    setIsLoading(true)
+    const tempRows =
+      jobOrder?.map(async (item) => {
+        const senderCompany = await fetchTenantDetails(Number(item.senderId))
+        const receiverCompany = await fetchTenantDetails(
+          Number(item.receiverId)
+        )
+        return {
+          ...item,
+          id: item.joId,
+          joId: item.joId,
+          picoId: item.picoId,
+          createdAt: item.createdAt,
+          driverId: item.driverId,
+          plateNo: item.plateNo,
+          senderName: senderCompany ? senderCompany : item.senderName,
+          receiverName: receiverCompany ? receiverCompany : item.receiverName,
+          status: item.status,
+          operation: '',
+          reason: item.reason,
+          updatedAt: item.updatedAt,
+          updatedBy: item.updatedBy
+        }
+      }) ?? []
+
+    Promise.all(tempRows).then((resolvedRows) => {
+      const filteredRows = resolvedRows.filter(
+        (item) => item.status !== 'CLOSED'
+      )
+      setRows(filteredRows)
+      setFilteredPico(filteredRows)
+    })
+    setIsLoading(false)
+  }, [jobOrder, i18n.language])
 
   const searchfield = [
     {
       label: t('job_order.table.jo_id'),
       placeholder: t('placeHolder.jo_number'),
-      field: 'joId'
+      field: 'labelId'
     },
     {
       label: t('job_order.table.sender_company'),
@@ -498,9 +505,10 @@ const JobOrder = () => {
     // initJobOrderRequest()
   }
 
-  const handleSearch = (keyName: string, value: string) => {
+  const handleSearch = debounce((keyName: string, value: string) => {
+    setPage(1)
     updateQuery({ [keyName]: value })
-  }
+  }, 1000)
   return (
     <>
       <ToastContainer />
@@ -535,50 +543,56 @@ const JobOrder = () => {
           ))}
         </Stack>
         <Box pr={4} pt={3} pb={3} sx={{ flexGrow: 1 }}>
-          <DataGrid
-            rows={filteredPico}
-            columns={columns}
-            disableRowSelectionOnClick
-            onRowClick={handleRowClick}
-            getRowSpacing={getRowSpacing}
-            localeText={localeTextDataGrid}
-            getRowClassName={(params) =>
-              selectedRow && params.id === selectedRow.joId
-                ? 'selected-row'
-                : ''
-            }
-            hideFooter
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': {
-                border: 'none' // Remove the borders from the cells
-              },
-              '& .MuiDataGrid-row': {
-                bgcolor: 'white',
-                borderRadius: '10px'
-              },
-              '&>.MuiDataGrid-main': {
-                '&>.MuiDataGrid-columnHeaders': {
-                  borderBottom: 'none'
+          {isLoading ? (
+            <CircularLoading />
+          ) : (
+            <Box>
+              <DataGrid
+                rows={filteredPico}
+                columns={columns}
+                disableRowSelectionOnClick
+                onRowClick={handleRowClick}
+                getRowSpacing={getRowSpacing}
+                localeText={localeTextDataGrid}
+                getRowClassName={(params) =>
+                  selectedRow && params.id === selectedRow.joId
+                    ? 'selected-row'
+                    : ''
                 }
-              },
-              '.MuiDataGrid-columnHeaderTitle': {
-                fontWeight: 'bold !important',
-                overflow: 'visible !important'
-              },
-              '& .selected-row': {
-                backgroundColor: '#F6FDF2 !important',
-                border: '1px solid #79CA25'
-              }
-            }}
-          />
-          <Pagination
-            count={Math.ceil(totalData)}
-            page={page}
-            onChange={(_, newPage) => {
-              setPage(newPage)
-            }}
-          />
+                hideFooter
+                sx={{
+                  border: 'none',
+                  '& .MuiDataGrid-cell': {
+                    border: 'none' // Remove the borders from the cells
+                  },
+                  '& .MuiDataGrid-row': {
+                    bgcolor: 'white',
+                    borderRadius: '10px'
+                  },
+                  '&>.MuiDataGrid-main': {
+                    '&>.MuiDataGrid-columnHeaders': {
+                      borderBottom: 'none'
+                    }
+                  },
+                  '.MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold !important',
+                    overflow: 'visible !important'
+                  },
+                  '& .selected-row': {
+                    backgroundColor: '#F6FDF2 !important',
+                    border: '1px solid #79CA25'
+                  }
+                }}
+              />
+              <Pagination
+                count={Math.ceil(totalData)}
+                page={page}
+                onChange={(_, newPage) => {
+                  setPage(newPage)
+                }}
+              />
+            </Box>
+          )}
         </Box>
 
         <ApproveModal

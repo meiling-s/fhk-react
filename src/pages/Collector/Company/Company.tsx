@@ -15,6 +15,7 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
+import CircularLoading from '../../../components/CircularLoading'
 import { getAllCompany } from '../../../APICalls/Collector/company'
 import { Company as CompanyItem } from '../../../interfaces/company'
 import CreateCompany from './CreateCompany'
@@ -53,11 +54,11 @@ function createCompany(
   }
 }
 
-type Pages  = {
-  collectorlist: number, 
-  logisticlist: number,
-  manulist: number,
-  customerlist: number,
+type Pages = {
+  collectorlist: number
+  logisticlist: number
+  manulist: number
+  customerlist: number
 }
 
 const Company: FunctionComponent = () => {
@@ -81,139 +82,139 @@ const Company: FunctionComponent = () => {
   const [logisticList, setLogisticList] = useState<CompanyItem[]>([])
   const [manuList, setManuList] = useState<CompanyItem[]>([])
   const [customerList, setCustomerList] = useState<CompanyItem[]>([])
-
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [collectorData, setCollectorData] = useState<number>(0)
   const [logisticData, setLogisticData] = useState<number>(0)
   const [manuData, setManuData] = useState<number>(0)
   const [customerData, setCustomerData] = useState<number>(0)
-  const navigate = useNavigate();
-  const { localeTextDataGrid } = useLocaleTextDataGrid();
-  const [pages, setPages] = useState<Pages>(
-    {
-      collectorlist: 1, 
-      logisticlist: 1,
-      manulist: 1,
-      customerlist: 1,
-    }
-  )
-  
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [pages, setPages] = useState<Pages>({
+    collectorlist: 1,
+    logisticlist: 1,
+    manulist: 1,
+    customerlist: 1
+  })
+
   const initCompanyList = async (companyType: string) => {
-   try {
-    const page = pages[companyType as  keyof Pages]
-    const result = await getAllCompany(companyType, page - 1, pageSize)
-    const data = result?.data
-    // setCompanyList(data);
-    if (data) {
-      var companyMapping: CompanyItem[] = []
-      const prefixItemName =
-        companyType === 'manulist'
-          ? 'manufacturer'
-          : companyType.replace('list', '')
-      data.content.map((item: any) => {
-        companyMapping.push(
-          createCompany(
-            item[`${prefixItemName}Id`],
-            item[`${prefixItemName}NameTchi`],
-            item[`${prefixItemName}NameSchi`],
-            item[`${prefixItemName}NameEng`],
-            item?.brNo,
-            item?.description,
-            item?.remark,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
+    setIsLoading(true)
+    try {
+      const page = pages[companyType as keyof Pages]
+      const result = await getAllCompany(companyType, page - 1, pageSize)
+      const data = result?.data
+      // setCompanyList(data);
+      if (data) {
+        var companyMapping: CompanyItem[] = []
+        const prefixItemName =
+          companyType === 'manulist'
+            ? 'manufacturer'
+            : companyType.replace('list', '')
+        data.content.map((item: any) => {
+          companyMapping.push(
+            createCompany(
+              item[`${prefixItemName}Id`],
+              item[`${prefixItemName}NameTchi`],
+              item[`${prefixItemName}NameSchi`],
+              item[`${prefixItemName}NameEng`],
+              item?.brNo,
+              item?.description,
+              item?.remark,
+              item?.status,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
           )
-        )
-      })
-      switch (companyType) {
-        case 'collectorlist':
-          setCollectorList(companyMapping)
-          setCollectorData(data.totalPages)
-          break
-        case 'logisticlist':
-          setLogisticList(companyMapping)
-          setLogisticData(data.totalPages)
-          break
-        case 'manulist':
-          setManuList(companyMapping)
-          setManuData(data.totalPages)
-          break
-        case 'customerlist':
-          setCustomerList(companyMapping)
-          setCustomerData(data.totalPages)
-          break
-        default:
-          break
+        })
+        switch (companyType) {
+          case 'collectorlist':
+            setCollectorList(companyMapping)
+            setCollectorData(data.totalPages)
+            break
+          case 'logisticlist':
+            setLogisticList(companyMapping)
+            setLogisticData(data.totalPages)
+            break
+          case 'manulist':
+            setManuList(companyMapping)
+            setManuData(data.totalPages)
+            break
+          case 'customerlist':
+            setCustomerList(companyMapping)
+            setCustomerData(data.totalPages)
+            break
+          default:
+            break
+        }
+        setTotalData(data.totalPages)
       }
-      setTotalData(data.totalPages)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
+    setIsLoading(false)
   }
 
   const initSpecifiedCompany = async (companyType: string, page: number) => {
     try {
-     const result = await getAllCompany(companyType, page - 1, pageSize)
-     const data = result?.data
-     if (data) {
-       var companyMapping: CompanyItem[] = []
-       const prefixItemName =
-         companyType === 'manulist'
-           ? 'manufacturer'
-           : companyType.replace('list', '')
-       data.content.map((item: any) => {
-         companyMapping.push(
-           createCompany(
-             item[`${prefixItemName}Id`],
-             item[`${prefixItemName}NameTchi`],
-             item[`${prefixItemName}NameSchi`],
-             item[`${prefixItemName}NameEng`],
-             item?.brNo,
-             item?.description,
-             item?.remark,
-             item?.status,
-             item?.createdBy,
-             item?.updatedBy,
-             item?.createdAt,
-             item?.updatedAt
-           )
-         )
-       })
-       switch (companyType) {
-         case 'collectorlist':
-           setCollectorList(companyMapping)
-           setCollectorData(data.totalPages)
-           break
-         case 'logisticlist':
-           setLogisticList(companyMapping)
-           setLogisticData(data.totalPages)
-           break
-         case 'manulist':
-           setManuList(companyMapping)
-           setManuData(data.totalPages)
-           break
-         case 'customerlist':
-           setCustomerList(companyMapping)
-           setCustomerData(data.totalPages)
-           break
-         default:
-           break
-       }
-       setTotalData(data.totalPages)
-     }
-    } catch (error:any) {
-     const {state, realm} =  extractError(error);
-     if(state.code === STATUS_CODE[503] ){
-       navigate('/maintenance')
-     }
+      const result = await getAllCompany(companyType, page - 1, pageSize)
+      const data = result?.data
+      if (data) {
+        var companyMapping: CompanyItem[] = []
+        const prefixItemName =
+          companyType === 'manulist'
+            ? 'manufacturer'
+            : companyType.replace('list', '')
+        data.content.map((item: any) => {
+          companyMapping.push(
+            createCompany(
+              item[`${prefixItemName}Id`],
+              item[`${prefixItemName}NameTchi`],
+              item[`${prefixItemName}NameSchi`],
+              item[`${prefixItemName}NameEng`],
+              item?.brNo,
+              item?.description,
+              item?.remark,
+              item?.status,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt
+            )
+          )
+        })
+        switch (companyType) {
+          case 'collectorlist':
+            setCollectorList(companyMapping)
+            setCollectorData(data.totalPages)
+            break
+          case 'logisticlist':
+            setLogisticList(companyMapping)
+            setLogisticData(data.totalPages)
+            break
+          case 'manulist':
+            setManuList(companyMapping)
+            setManuData(data.totalPages)
+            break
+          case 'customerlist':
+            setCustomerList(companyMapping)
+            setCustomerData(data.totalPages)
+            break
+          default:
+            break
+        }
+        setTotalData(data.totalPages)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
+  }
 
   const getSelectedCompanyList = useCallback(
     (companyType: string) => {
@@ -446,9 +447,9 @@ const Company: FunctionComponent = () => {
     }
   }, [])
 
-  const onChangePage = (newPage: number, companyType:string) => {
+  const onChangePage = (newPage: number, companyType: string) => {
     initSpecifiedCompany(companyType, newPage)
-    setPages(prev => {
+    setPages((prev) => {
       return {
         ...prev,
         [companyType]: newPage
@@ -456,50 +457,50 @@ const Company: FunctionComponent = () => {
     })
   }
 
-  const getPage = (companyType:string)  => {
-    return pages[companyType as  keyof Pages]
+  const getPage = (companyType: string) => {
+    return pages[companyType as keyof Pages]
   }
 
   useEffect(() => {
-    if(collectorList.length === 0 && pages.collectorlist > 1){
-      setPages(prev => {
-        return{
+    if (collectorList.length === 0 && pages.collectorlist > 1) {
+      setPages((prev) => {
+        return {
           ...prev,
-          'collectorlist': pages.collectorlist - 1
+          collectorlist: pages.collectorlist - 1
         }
       })
     }
-    if(manuList.length === 0 && pages.manulist > 1){
-      setPages(prev => {
-        return{
+    if (manuList.length === 0 && pages.manulist > 1) {
+      setPages((prev) => {
+        return {
           ...prev,
-          'manulist': pages.manulist - 1
+          manulist: pages.manulist - 1
         }
       })
     }
-    if(logisticList.length === 0 && pages.logisticlist > 1){
-      setPages(prev => {
-        return{
+    if (logisticList.length === 0 && pages.logisticlist > 1) {
+      setPages((prev) => {
+        return {
           ...prev,
-          'logisticlist': pages.logisticlist - 1
+          logisticlist: pages.logisticlist - 1
         }
       })
     }
-    if(customerList.length === 0 && pages.customerlist > 1){
-      setPages(prev => {
-        return{
+    if (customerList.length === 0 && pages.customerlist > 1) {
+      setPages((prev) => {
+        return {
           ...prev,
-          'customerlist': pages.customerlist - 1
+          customerlist: pages.customerlist - 1
         }
       })
     }
-  }, [collectorList, manuList, logisticList, customerList]);
+  }, [collectorList, manuList, logisticList, customerList])
 
   useEffect(() => {
-    if(selectCompanyType){
+    if (selectCompanyType) {
       const page = getPage(selectCompanyType)
       initSpecifiedCompany(selectCompanyType, page)
-    } 
+    }
   }, [pages])
 
   return (
@@ -548,57 +549,63 @@ const Company: FunctionComponent = () => {
             </Box>
             <div className="table-vehicle">
               <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-                <DataGrid
-                  rows={getSelectedCompanyList(item)}
-                  getRowId={(row) => row.companyId}
-                  hideFooter
-                  columns={columns}
-                  onRowClick={(params) => {
-                    handleSelectRow(params, item)
-                  }}
-                  getRowSpacing={getRowSpacing}
-                  localeText={localeTextDataGrid}
-                  getRowClassName={(params) => 
-                    selectedRow && 
-                    params.id === selectedRow.companyId && 
-                    item === selectCompanyType 
-                      ? 'selected-row' 
-                      : ''
-                  }
-                  sx={{
-                    border: 'none',
-                    '& .MuiDataGrid-cell': {
-                      border: 'none'
-                    },
-                    '& .MuiDataGrid-row': {
-                      bgcolor: 'white',
-                      borderRadius: '10px'
-                    },
-                    '&>.MuiDataGrid-main': {
-                      '&>.MuiDataGrid-columnHeaders': {
-                        borderBottom: 'none'
+                {isLoading ? (
+                  <CircularLoading />
+                ) : (
+                  <Box>
+                    <DataGrid
+                      rows={getSelectedCompanyList(item)}
+                      getRowId={(row) => row.companyId}
+                      hideFooter
+                      columns={columns}
+                      onRowClick={(params) => {
+                        handleSelectRow(params, item)
+                      }}
+                      getRowSpacing={getRowSpacing}
+                      localeText={localeTextDataGrid}
+                      getRowClassName={(params) =>
+                        selectedRow &&
+                        params.id === selectedRow.companyId &&
+                        item === selectCompanyType
+                          ? 'selected-row'
+                          : ''
                       }
-                    },
-                    '.MuiDataGrid-columnHeaderTitle': { 
-                      fontWeight: 'bold !important',
-                      overflow: 'visible !important'
-                    },
-                    '& .selected-row': {
-                        backgroundColor: '#F6FDF2 !important',
-                        border: '1px solid #79CA25'
-                      }
-                  }}
-                />
-                <Pagination
-                  className="mt-4"
-                  id={item}
-                  count={Math.ceil(getSelectedTotalCompany(item))}
-                  page={getPage(item)}
-                  onChange={(_, newPage) => {
-                    onChangePage(newPage, item)
-                    // setPage(newPage)
-                  }}
-                />
+                      sx={{
+                        border: 'none',
+                        '& .MuiDataGrid-cell': {
+                          border: 'none'
+                        },
+                        '& .MuiDataGrid-row': {
+                          bgcolor: 'white',
+                          borderRadius: '10px'
+                        },
+                        '&>.MuiDataGrid-main': {
+                          '&>.MuiDataGrid-columnHeaders': {
+                            borderBottom: 'none'
+                          }
+                        },
+                        '.MuiDataGrid-columnHeaderTitle': {
+                          fontWeight: 'bold !important',
+                          overflow: 'visible !important'
+                        },
+                        '& .selected-row': {
+                          backgroundColor: '#F6FDF2 !important',
+                          border: '1px solid #79CA25'
+                        }
+                      }}
+                    />
+                    <Pagination
+                      className="mt-4"
+                      id={item}
+                      count={Math.ceil(getSelectedTotalCompany(item))}
+                      page={getPage(item)}
+                      onChange={(_, newPage) => {
+                        onChangePage(newPage, item)
+                        // setPage(newPage)
+                      }}
+                    />
+                  </Box>
+                )}
               </Box>
             </div>
           </Box>
@@ -608,7 +615,10 @@ const Company: FunctionComponent = () => {
         <CreateCompany
           companyType={selectCompanyType}
           drawerOpen={drawerOpen}
-          handleDrawerClose={() => {setDrawerOpen(false); setSelectedRow(null)}}
+          handleDrawerClose={() => {
+            setDrawerOpen(false)
+            setSelectedRow(null)
+          }}
           action={action}
           selectedItem={selectedRow}
           onSubmitData={onSubmitData}

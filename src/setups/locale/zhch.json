@@ -44,7 +44,8 @@
     "packageName": "包装单位名称已存在",
     "warehouseName": "仓库名称已存在",
     "vehicle": "车辆",
-    "theNameAlreadyExist": "员工职位名称已存在"
+    "theNameAlreadyExist": "员工职位名称已存在",
+    "leaveConfirmMsg": "您确定要离开此页面吗？未保存的更改将会丢失"
   },
   "col": {
     "createCP": "建立回收点",
@@ -61,7 +62,9 @@
     "startTime": "服务时间",
     "premiseName": "房屋或场所名称",
     "premiseType": "房屋或场所类别",
-    "premiseRemark": "其他备注",
+    "premiseRemark": "前提備註",
+    "otherResidentialPremise": "其他(住宅处所)备注",
+    "otherNonResidentialPremise": "其他(非住宅处所)备注",
     "enterText": "请输入文字",
     "status": "开放状态",
     "open": "开放",
@@ -114,8 +117,9 @@
       "dateSpesificIsWrong": "指定日期格式错误",
       "effectiveDateLess": "开始日期不能晚于截止日期",
       "cannotBeSame": "不能相同",
-      "shouldGreaterThanZero": " 可存容量大于零",
-      "cantBeSame":"不能相同"
+      "shouldGreaterThanZero": "可存容量大于零",
+      "cantBeSame": "不能相同",
+      "selectFirst": "请先选择，然后才能添加新的。"
     }
   },
   "component": {
@@ -199,7 +203,8 @@
     "warehouseRecyc": "回收物类別",
     "shouldNotEmpty": "不应为空",
     "shouldNotDuplicate": "不应重复",
-    "shouldNotDuplicated": " 货仓地址已经被使用"
+    "shouldNotDuplicated": " 货仓地址已经被使用",
+    "workshopFlag": "是否工厂"
   },
   "check_in": {
     "transport_information": "运输资料",
@@ -226,7 +231,8 @@
     "reject_reasons": "拒绝原因（可多选）",
     "confirm": "确认",
     "cancel": "取消",
-    "search_input": "輸入运单编号"
+    "search_input": "輸入运单编号",
+    "check_in": "送入日期及时间"
   },
   "check_out": {
     "request_check_out": "送出请求",
@@ -373,7 +379,7 @@
       "checkin_weight": "实际提取重量",
       "checkout_weight": "实际送出重量",
       "checkin_by": "送入负责人",
-      "checkout_by" :"送出负责人"
+      "checkout_by": "送出负责人"
     },
     "item": {
       "detail": "运单详情",
@@ -467,18 +473,18 @@
     "rejected_success": "拒绝成功",
     "reject_reasons": "拒绝原因",
     "error": {
-      "effFrmDate": "此日期为必填项",
-      "effToDate": "迄今为止这是必需的",
-      "routineType": "此例程類型為必填項",
-      "routine": "需要例行公事",
-      "pickuAt": "此取货时间是必填项",
-      "senderName": "此发件人姓名为必填项",
-      "senderAddr": "此发件人地址为必填项",
-      "receiverName": "该接收者姓名为必填项",
-      "receiverAddr": "此收件人地址为必填项",
-      "recycType": "此回收类型是必需的",
-      "recycSubType": "需要此可回收子类型",
-      "weight": "此重量为必填项",
+      "effFrmDate": "该日期 不应留白",
+      "effToDate": "迄今 不应留白",
+      "routineType": "此例程类型 不应留白",
+      "routine": "例程 不应留白",
+      "pickuAt": "此取件时间 不应留白",
+      "senderName": "此寄件者姓名 不应留白",
+      "senderAddr": "此寄件者地址 不应留白",
+      "receiverName": "此接收者姓名 不应留白",
+      "receiverAddr": "此接收者位址 不应留白",
+      "recycType": "此可回收类型 不应留白",
+      "recycSubType": "此可回收子类型 不应留白",
+      "weight": "该重量 不应留白",
       "weightGreaterThanZero": "该权重应大于零",
       "invalid_date": "失效日期",
       "invalid_pickup_time": "取件时间无效，请重新选择时间",
@@ -553,7 +559,11 @@
       "send": "发送",
       "invite_success": "成功发送邀请",
       "invite_failed": "发送邀请失败",
-      "err_date": " 运送有效期无效。确保截止日期晚于开始日期",
+      "validaity_to_date": "有效期至",
+      "err_date": "确保“有效期自”不晚于“有效期至”",
+      "err_duplicated_br_no": "商业注册。编号已存在",
+      "err_duplicated_company_number": "公司号码已存在",
+      "err_duplicated_company_name": "公司名称已存在",
       "err_duplicated": "公司号码/公司名称/商业注册。编号已存在"
     },
     "detail": {
@@ -858,9 +868,11 @@
       "rec_loc_info": "回收地点资料"
     },
     "confirm_approve_title": "确认核准吗？",
-    "confirm_approve": "确认核准",
+    "confirm_approve": "确认",
     "cancel": "取消",
-    "approved_success": "核准成功"
+    "approved_success": "核准成功",
+    "rejected_at": "于",
+    "reason_single": "拒绝，原因为"
   },
   "jobOrder": {
     "job_order_menu": "工作运单",
@@ -1033,7 +1045,7 @@
       }
     },
     "vehicleMenu": {
-      "vehicle_number": "车辆编号",
+      "vehicle_number": "车辆编码",
       "license_plate_number": "车牌号码",
       "vehicle_type": "车辆种类",
       "vehicle_cargo_capacity": "车辆载货量",
@@ -1427,5 +1439,12 @@
     "place": "地方",
     "po_number": "输入采购订单号",
     "jo_number": "输入工作编号"
+  },
+  "dashboardOverview": {
+    "checkin": "入",
+    "checkout": "出",
+    "createdAt": "送出入日期及时间",
+    "shippingCompany": "状态",
+    "inventoryLocation": "送出地点"
   }
 }
