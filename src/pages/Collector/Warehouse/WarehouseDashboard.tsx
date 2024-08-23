@@ -37,7 +37,8 @@ import { il_item } from '../../../components/FormComponents/CustomItemList'
 import {
   STATUS_CODE,
   format,
-  localStorgeKeyName
+  localStorgeKeyName,
+  Languages
 } from '../../../constants/constant'
 
 import {
@@ -78,6 +79,8 @@ dayjs.extend(timezone)
 
 function createCheckInOutWarehouse(
   id: number,
+  chkInId: number | null,
+  chkOutId: number | null,
   createdAt: string,
   status: string,
   senderName: string,
@@ -90,6 +93,8 @@ function createCheckInOutWarehouse(
 ): CheckInOutWarehouse {
   return {
     id,
+    chkInId,
+    chkOutId,
     createdAt,
     status,
     senderName,
@@ -116,7 +121,7 @@ type RecycSubTypeCapacity = {
 const WarehouseDashboard: FunctionComponent = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const { recycType, dateFormat } = useContainer(CommonTypeContainer)
+  const { recycType, dateFormat, companies } = useContainer(CommonTypeContainer)
 
   const [currentCapacity, setCurrentCapacity] = useState<number>(0)
   const [totalCapacity, setTotalCapacity] = useState<number>(1000)
@@ -370,7 +375,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               const chosenWarehouseRecyc = filteredWarehouse.warehouseRecyc
               console.log(chosenWarehouseRecyc, 'chosenWarehouseRecyc')
               let subtypeWarehouse: warehouseSubtype[] = []
-              // var subTypeWeight = 0;
+
               chosenWarehouseRecyc.forEach((item: any) => {
                 const recyItem = mappingRecyName(
                   item.recycTypeId,
@@ -380,12 +385,6 @@ const WarehouseDashboard: FunctionComponent = () => {
                 let subTypeWeight = weightSubtype[recycSubTypeId]
                   ? weightSubtype[recycSubTypeId]
                   : 0
-                // if (subTypeWeight) {
-                //     subTypeWeight =
-                //         item.recycSubTypeId in weightSubtype
-                //             ? weightSubtype[item.recycSubTypeId]
-                //             : 0;
-                // }
 
                 subtypeWarehouse.push({
                   subTypeId: item.recycSubTypeId,
@@ -420,13 +419,6 @@ const WarehouseDashboard: FunctionComponent = () => {
               ? weightSubtype[recycSubTypeId]
               : 0
 
-            // if (subTypeWeight) {
-            //     subTypeWeight =
-            //         item.recycSubTypeId in weightSubtype
-            //             ? weightSubtype[item.recycSubTypeId]
-            //             : 0;
-            // }
-            // here
             subtypeWarehouse.push({
               subTypeId: item.recycSubTypeId,
               subtypeName: recyItem ? recyItem.subName : '-',
@@ -434,7 +426,7 @@ const WarehouseDashboard: FunctionComponent = () => {
               capacity: item.recycSubTypeCapacity
             })
           })
-          //console.log(subtypeWarehouse, 'subtypewarehouse')
+
           setWarehouseSubtype(subtypeWarehouse)
         }
       }
@@ -465,9 +457,58 @@ const WarehouseDashboard: FunctionComponent = () => {
           data.map((item: any, index: number) => {
             const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
             const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+
+            if (item.logisticId) {
+              const logistic = companies.find(
+                (company) => company.id == item.logisticId
+              )
+              console.log('logisticId', logistic)
+              if (logistic) {
+                if (i18n.language === Languages.ENUS)
+                  item.logisticName = logistic.nameEng
+                if (i18n.language === Languages.ZHCH)
+                  item.logisticName = logistic.nameSchi
+                if (i18n.language === Languages.ZHHK)
+                  item.logisticName = logistic.nameTchi
+              }
+            }
+
+            if (item.receiverId) {
+              const receiverName = companies.find(
+                (company) => company.id == item.receiverId
+              )
+              console.log('receiverName', receiverName)
+              if (receiverName) {
+                if (i18n.language === Languages.ENUS)
+                  item.receiverName = receiverName.nameEng
+                if (i18n.language === Languages.ZHCH)
+                  item.receiverName = receiverName.nameSchi
+                if (i18n.language === Languages.ZHHK)
+                  item.receiverName = receiverName.nameTchi
+              }
+            }
+
+            if (item.senderId) {
+              const senderName = companies.find(
+                (company) => company.id == item.senderId
+              )
+
+              console.log('senderName', senderName)
+              if (senderName) {
+                if (i18n.language === Languages.ENUS)
+                  item.senderName = senderName.nameEng
+                if (i18n.language === Languages.ZHCH)
+                  item.senderName = senderName.nameSchi
+                if (i18n.language === Languages.ZHHK)
+                  item.senderName = senderName.nameTchi
+              }
+            }
+
             checkinoutMapping.push(
               createCheckInOutWarehouse(
                 item?.chkInId || index + item?.chkInId,
+                item?.chkInId,
+                item?.chkOutId,
                 createdAt,
                 item?.status,
                 item?.senderName,
@@ -515,7 +556,7 @@ const WarehouseDashboard: FunctionComponent = () => {
   const columns: GridColDef[] = [
     {
       field: 'createdAt',
-      headerName: t('check_out.created_at'),
+      headerName: t('dashboardOverview.createdAt'),
       width: 150,
       type: 'string'
     },
@@ -529,15 +570,30 @@ const WarehouseDashboard: FunctionComponent = () => {
       }
     },
     {
+      field: '',
+      headerName: t('notification.menu_staff.type'),
+      width: 150,
+      type: 'string',
+      renderCell: (params) => {
+        return params.row.chkInId || params.row.chkOutId ? (
+          <div>
+            {params.row.chkInId
+              ? t('dashboardOverview.checkin')
+              : t('dashboardOverview.checkout')}
+          </div>
+        ) : null
+      }
+    },
+    {
       field: 'senderName',
-      headerName: t('check_out.shipping_company'),
-      width: 100,
+      headerName: t('dashboardOverview.shippingCompany'),
+      width: 200,
       type: 'string'
     },
     {
       field: 'receiverName',
       headerName: t('check_in.receiver_company'),
-      width: 100,
+      width: 200,
       type: 'string'
     },
     {
@@ -565,20 +621,20 @@ const WarehouseDashboard: FunctionComponent = () => {
     },
     {
       field: 'senderAddr',
-      headerName: t('inventory.inventoryLocation'),
-      width: 125,
+      headerName: t('dashboardOverview.inventoryLocation'),
+      width: 150,
       type: 'string'
     },
     {
       field: 'logisticName',
       headerName: t('check_out.logistic_company'),
-      width: 125,
+      width: 200,
       type: 'string'
     },
     {
       field: 'receiverAddr',
       headerName: t('check_out.arrival_location'),
-      width: 125,
+      width: 200,
       type: 'string'
     }
   ]

@@ -8,6 +8,7 @@ import { DriverDetail } from "../interfaces/JobOrderInterfaces";
 import { formatWeight } from "../utils/utils";
 import { useContainer } from "unstated-next";
 import CommonTypeContainer from "../contexts/CommonTypeContainer";
+import { useTranslation } from "react-i18next";
 
 const JobOrderCard = ({
   plateNo,
@@ -20,6 +21,7 @@ const JobOrderCard = ({
 }) => {
   const recyc = LocalizeRecyctype(pickupOrderDetail);
   const { decimalVal } = useContainer(CommonTypeContainer)
+  const {i18n} = useTranslation()
   return (
     <>
       {pickupOrderDetail.map((podetail, index) => (
@@ -76,7 +78,7 @@ const JobOrderCard = ({
               <img src={driverDetail?.photo[0]} alt="" />
               <Box display={"flex"} flexDirection={"column"}>
                 <Typography style={localstyles.driver_name}>
-                  {driverDetail?.driverNameTchi}
+                  {i18n.language === 'enus' ? driverDetail?.driverNameEng : i18n.language === 'zhch' ? driverDetail?.driverNameSchi : driverDetail?.driverNameTchi}
                 </Typography>
                 <Typography style={localstyles.plate_no}>
                   {plateNo}
