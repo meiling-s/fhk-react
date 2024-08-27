@@ -219,7 +219,7 @@ const JobOrderForm = ({
             <JobOrderCard plateNo={selectedRow?.plateNo} pickupOrderDetail={pickupOrderDetail ?? []} driverDetail={driverDetail} />
             {selectedRow?.status === 'DENY' && (
               <Box>
-                <Typography>{driverDetail?.driverNameEng} {t('job_order.rejected_at')} {dayjs(selectedRow?.updatedAt).format(`${dateFormat} HH:mm`)}, {itemCheck()} {formattedReasons}</Typography>
+                <Typography>{i18n.language === 'enus' ? driverDetail?.driverNameEng : i18n.language === 'zhch' ? driverDetail?.driverNameSchi : driverDetail?.driverNameTchi} {t('job_order.rejected_at')} {dayjs(selectedRow?.updatedAt).format(`${dateFormat} HH:mm`)}, {itemCheck()} {formattedReasons}</Typography>
               </Box>
             )}
           </Stack>

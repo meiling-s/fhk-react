@@ -63,7 +63,7 @@
     "premiseName": "房屋或埸所名稱",
     "premiseType": "房屋或埸所類別",
     "premiseRemark": "前提备注",
-    "otherResidentialPremise":"其他(住宅處所)備註",
+    "otherResidentialPremise": "其他(住宅處所)備註",
     "otherNonResidentialPremise": "其他(非住宅處所)備註",
     "enterText": "請輸入文字",
     "status": "開放狀態",
@@ -204,7 +204,7 @@
     "shouldNotEmpty": "不應為空",
     "shouldNotDuplicate": "不應重複",
     "shouldNotDuplicated": " 货仓地址已经被使用",
-     "workshopFlag": "是否工場"
+    "workshopFlag": "是否工場"
   },
   "check_in": {
     "transport_information": "運輸資料",
@@ -378,7 +378,7 @@
       "checkin_weight": "實際送入重量",
       "checkout_weight": "實際送出重量",
       "checkin_by": "送入負責人",
-      "checkout_by" :"送出負責人"
+      "checkout_by": "送出負責人"
     },
     "item": {
       "detail": "運單詳情",
@@ -1439,5 +1439,12 @@
     "place": "地點",
     "po_number": "輸入採購訂單編號",
     "jo_number": "輸入工作編號"
+  },
+  "dashboardOverview": {
+    "checkin": "入",
+    "checkout": "出",
+    "createdAt": "送出入日期及時間",
+    "shippingCompany": "狀態",
+    "inventoryLocation": "送出地點"
   }
 }
