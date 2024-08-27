@@ -882,7 +882,7 @@ export const EDIT_STAFF = (
   staffId: string,
   realmApi: string
 ): AxiosRequestConfig => ({
-  method: realmApi === 'logistic' ? 'put' : 'patch',
+  method: realmApi === 'logistic' ? 'put' : realmApi === 'customer' ? 'put' : 'patch',
   url: `api/v1/${realmApi}/staff${realmApi === 'logistic' ? `/V2/` : realmApi === 'customer' ? `/V2/` : `/`}${tenantId}/${staffId}`
 })
 
