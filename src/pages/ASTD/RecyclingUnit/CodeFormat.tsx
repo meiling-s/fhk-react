@@ -18,31 +18,11 @@ import {
     Divider,
     Typography
 } from '@mui/material'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
-import LabelField from '../../../components/FormComponents/CustomField'
-import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
-import { ToastContainer, toast } from 'react-toastify'
 import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
-import {
-    createWarehouse,
-    getWarehouseById,
-    editWarehouse,
-    getRecycleType
-} from '../../../APICalls/warehouseManage'
-import { set } from 'date-fns'
-import { getLocation } from '../../../APICalls/getLocation'
-import { get } from 'http'
-import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createPackagingUnit, createRecyc, editPackagingUnit } from '../../../APICalls/ASTD/recycling'
 import { createCodeData, deleteCodeData, updateCodeData } from '../../../APICalls/ASTD/code'
 import { STATUS_CODE } from '../../../constants/constant'
 

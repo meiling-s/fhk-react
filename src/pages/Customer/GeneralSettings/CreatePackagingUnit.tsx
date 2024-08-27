@@ -13,10 +13,6 @@ import {
   editPackaging
 } from '../../../APICalls/Collector/packagingUnit'
 import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
-import {
-  createPackagingUnit,
-  editPackagingUnit
-} from '../../../APICalls/Customer/packagingUnit'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
 import i18n from '../../../setups/i18n'

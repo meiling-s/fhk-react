@@ -68,7 +68,8 @@ function createContract(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  version?: number
 ): ContractItem {
   return {
     id,
@@ -83,7 +84,8 @@ function createContract(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    version
   }
 }
 
@@ -137,7 +139,8 @@ const GeneralSettings: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              item?.updatedAt,
+              item?.version,
             )
           )
         })

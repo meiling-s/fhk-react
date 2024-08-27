@@ -12,6 +12,7 @@ export type PackagingUnit = {
     updatedBy: string,
     createdAt: string,
     updatedAt: string,
+    version?: number,
 }
 
 export type CreatePackagingUnit = {
@@ -24,5 +25,6 @@ export type CreatePackagingUnit = {
     remark: string,
     status: string,
     createdBy: string,
-    updatedBy: string
+    updatedBy: string,
+    version?: number,
 }

@@ -68,6 +68,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
     const [maxImageNumber, setMaxImageNumber] = useState(0)
     const [maxImageSize, setMaxImageSize] = useState(0)
     const [validation, setValidation] = useState<formValidate[]>([])
+    const [version, setVersion] = useState<number>(0)
 
     const driverField = useMemo(() => (
         [
@@ -288,6 +289,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             if (driver.driverDetail.length > 0) {
                 setDriverDetailList([...driver.driverDetail])
             }
+            setVersion(driver.version)
 
             const imageList: any = driver.photo.map(
                 (url: string, index: number) => {
@@ -320,7 +322,8 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             ...formData,
             photo: ImageToBase64(pictures),
             driverDetail: driverDetailList,
-            status: 'ACTIVE'
+            status: 'ACTIVE',
+            version: version,
         }
 
         console.log(formValues, 'formValues')

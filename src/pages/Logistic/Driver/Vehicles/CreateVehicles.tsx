@@ -323,9 +323,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleDelete = async () => {
-    const status = 'DELETED'
+    const formData = {
+      status: 'DELETED',
+      version: version,
+    }
     if (selectedItem != null) {
-      const result = await deleteVehicle(status, selectedItem.vehicleId)
+      const result = await deleteVehicle(formData, selectedItem.vehicleId)
       if (result) {
         onSubmitData('success', t('common.deletedSuccessfully'))
         resetData()
