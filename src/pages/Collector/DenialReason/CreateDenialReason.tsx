@@ -16,7 +16,7 @@ import {
 } from '../../../APICalls/Collector/denialReasonCollectors'
 import { styles } from '../../../constants/styles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import {
   DenialReason,
   CreateDenialReason,
@@ -490,6 +490,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[500]) {
+        showErrorToast(error?.response?.data?.message)
       }
     }
   }

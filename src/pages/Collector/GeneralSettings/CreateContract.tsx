@@ -20,6 +20,7 @@ import {
   extractError,
   getPrimaryColor,
   returnErrorMsg,
+  showErrorToast,
   validDayjsISODate
 } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
@@ -276,23 +277,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else {
-        let field = t('common.saveFailed');
-        let problem = ''
-        if(error?.response?.data?.status === STATUS_CODE[500]){
-          field = t('general_settings.contract_number')
-          problem = formErr.alreadyExist
-        } 
-        setValidation(
-          [
-            {
-              field,
-              problem,
-              type: 'error'
-            }
-          ]
-        )
-        setTrySubmited(true)
+      } else if (state.code === STATUS_CODE[500]){
+        showErrorToast(error.response.data.message);
       }
     }
   }

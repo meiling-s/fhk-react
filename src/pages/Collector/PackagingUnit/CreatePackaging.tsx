@@ -15,7 +15,7 @@ import {
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -270,17 +270,8 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         navigate('/maintenance')
       } else {
         if(error?.response?.data?.status === STATUS_CODE[500]){
-          setValidation(
-            [
-              {
-                field: t('common.packageName'),
-                problem: '',
-                type: 'error'
-              }
-            ]
-          )
+          showErrorToast(error?.response?.data?.message);
         }
-        setTrySubmited(true)
       }
    }
   }
