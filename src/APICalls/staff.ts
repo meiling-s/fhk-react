@@ -66,9 +66,8 @@ export const editStaff = async (data: any, staffId: string) => {
       data: data
     })
     return response
-  } catch (e) {
-    console.error(`Edit staff ${staffId} failed:`, e)
-    return null
+  } catch (e: any) {
+    return e.response
   }
 }
 

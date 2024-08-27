@@ -100,7 +100,6 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
         description: selectedItem.description,
         remark: selectedItem.remark
       })
-
       //set existing disposal
       setExistingDisposal(
         disposalList.filter(

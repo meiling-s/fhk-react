@@ -12,6 +12,7 @@ export type StaffTitle = {
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
+  version?: number;
 };
 
 export type CreateStaffTitle = {
@@ -37,4 +38,5 @@ export type UpdateStaffTitle = {
   duty: string[];
   status: string;
   updatedBy?: string;
+  version?: number;
 };

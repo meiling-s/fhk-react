@@ -80,7 +80,7 @@ export const editVehicle = async (
 }
 
 //edit vehicle status
-export const deleteVehicle = async (data: string, vehicleId: number) => {
+export const deleteVehicle = async (data: {status: string, version: number}, vehicleId: number) => {
   try {
     const token = returnApiToken()
 

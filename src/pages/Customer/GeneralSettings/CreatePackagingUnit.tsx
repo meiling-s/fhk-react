@@ -12,11 +12,7 @@ import {
   createPackaging,
   editPackaging
 } from '../../../APICalls/Collector/packagingUnit'
-import { extractError, returnApiToken } from '../../../utils/utils'
-import {
-  createPackagingUnit,
-  editPackagingUnit
-} from '../../../APICalls/Customer/packagingUnit'
+import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
 import i18n from '../../../setups/i18n'
@@ -37,6 +33,7 @@ interface PackagingUnit {
   updatedBy: string
   createdAt: string
   updatedAt: string
+  version: number
 }
 
 interface CreatePackagingProps {
@@ -76,6 +73,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
   const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
   const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate();
 
   const statusList = () => {
@@ -102,6 +100,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
         setDescription(selectedItem.description)
         setRemark(selectedItem.remark)
         setStatus(selectedItem.status)
+        setVersion(selectedItem.version)
 
         // set existing name
         setEngNameExisting(
@@ -213,7 +212,8 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       remark: remark,
       status: status,
       createdBy: token.loginId,
-      updatedBy: token.loginId
+      updatedBy: token.loginId,
+      ...(action === 'edit' && {version: version})
     }
 
     if (action == 'add') {
@@ -282,22 +282,25 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
     } else {
-      let field = t('common.saveFailed');
-      let problem = ''
-      if(error?.response?.data?.status === STATUS_CODE[500]){
-        field = t('general_settings.packageNameAlreadyExist')
-        problem = formErr.alreadyExist
-      } 
-      setValidation(
-        [
-          {
-            field,
-            problem,
-            type: 'error'
-          }
-        ]
-      )
-      setTrySubmited(true)
+      // let field = t('common.saveFailed');
+      // let problem = ''
+      // if(error?.response?.data?.status === STATUS_CODE[500]){
+      //   field = t('general_settings.packageNameAlreadyExist')
+      //   problem = formErr.alreadyExist
+      // } 
+      // setValidation(
+      //   [
+      //     {
+      //       field,
+      //       problem,
+      //       type: 'error'
+      //     }
+      //   ]
+      // )
+      // setTrySubmited(true)
+      if (state.code === 500) {
+        showErrorToast(error?.response?.data?.message);
+      }
     }
    }
   }

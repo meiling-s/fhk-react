@@ -15,7 +15,7 @@ import {
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -69,6 +69,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
   const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
   const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate();
   const statusList = () => {
     const colList: il_item[] = [
@@ -94,6 +95,7 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         setDescription(selectedItem.description)
         setRemark(selectedItem.remark)
         setStatus(selectedItem.status)
+        setVersion(selectedItem.version ?? 0)
 
         // set existing name
         setEngNameExisting(
@@ -197,7 +199,8 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
       remark: remark,
       status: status,
       createdBy: loginId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      ...(action === 'edit' && {version: version})
     }
 
     if (action == 'add') {
@@ -267,17 +270,8 @@ const CreatePackaging: FunctionComponent<CreatePackagingProps> = ({
         navigate('/maintenance')
       } else {
         if(error?.response?.data?.status === STATUS_CODE[500]){
-          setValidation(
-            [
-              {
-                field: t('common.packageName'),
-                problem: '',
-                type: 'error'
-              }
-            ]
-          )
+          showErrorToast(error?.response?.data?.message);
         }
-        setTrySubmited(true)
       }
    }
   }

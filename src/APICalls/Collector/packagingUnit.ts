@@ -50,13 +50,9 @@ export const editPackaging = async (data: CreatePackagingUnit, packagingTypeId: 
       baseURL: window.baseURL.logistic,
       ...EDIT_PACKAGING(token.realmApiRoute, data.tenantId, packagingTypeId),
       data: data,
-      headers: {
-        AuthToken: token.authToken
-      }
     })
     return response
   } catch (e) {
-    console.error('Get all packaging unit failed:', e)
     throw(e)
   }
 }
