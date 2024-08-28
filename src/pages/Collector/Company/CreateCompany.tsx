@@ -274,7 +274,33 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       navigate('/maintenance')
     } else {
       setTrySubmited(true)
-      onSubmitData('error', t('common.saveFailed'))
+      if(error?.response?.data?.status === STATUS_CODE[500]){
+        const errorMessage:any = {
+          'collectorlist': t('common.collectorName'),
+          'logisticlist': t('common.logisticName'),
+          'manulist': t('common.manufacturerName'),
+          'customerlist': t('common.customerName'),
+        };
+        setValidation(
+          [
+            {
+              field: errorMessage[companyType],
+              problem: formErr.alreadyExist,
+              type: 'error'
+            }
+          ]
+        )
+      } else {
+        setValidation(
+          [
+            {
+              field: t('common.saveFailed'),
+              problem: '',
+              type: 'error'
+            }
+          ]
+        )
+      }
     }
    }
   }
@@ -403,7 +429,8 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
           cancelText: t('common.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

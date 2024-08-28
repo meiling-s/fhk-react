@@ -18,31 +18,11 @@ import {
     Divider,
     Typography
 } from '@mui/material'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import Switcher from '../../../components/FormComponents/CustomSwitch'
-import LabelField from '../../../components/FormComponents/CustomField'
-import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
-import { ToastContainer, toast } from 'react-toastify'
 import { extractError, returnApiToken, showErrorToast, showSuccessToast } from '../../../utils/utils'
-import {
-    createWarehouse,
-    getWarehouseById,
-    editWarehouse,
-    getRecycleType
-} from '../../../APICalls/warehouseManage'
-import { set } from 'date-fns'
-import { getLocation } from '../../../APICalls/getLocation'
-import { get } from 'http'
-import { getCommonTypes } from '../../../APICalls/commonManage'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import CustomField from '../../../components/FormComponents/CustomField'
 import CustomTextField from '../../../components/FormComponents/CustomTextField'
-import { createPackagingUnit, createRecyc, editPackagingUnit } from '../../../APICalls/ASTD/recycling'
 import { createCodeData, deleteCodeData, updateCodeData } from '../../../APICalls/ASTD/code'
 import { STATUS_CODE } from '../../../constants/constant'
 
@@ -95,6 +75,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     }, [i18n, currentLanguage])
     
     useEffect(() => {
+        setTrySubmitted(false)
         resetForm()
         if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
@@ -150,30 +131,30 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
         codeName.trim() === '' &&
         tempV.push({
-            field: 'codeName',
-            error: `${t(`common.traditionalChineseName`)} ${t(
+            field: `${t('recycling_unit.recyclable_code')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         mainName.trim() === '' &&
         tempV.push({
-            field: 'mainName',
-            error: `${t(`common.simplifiedChineseName`)} ${t(
+            field: `${t('recycling_unit.main_category')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         subName.trim() === '' &&
         tempV.push({
-            field: 'subName',
-            error: `${t(`common.englishName`)} ${t(
+            field: `${t('recycling_unit.sub_category')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         setValidation(tempV)
-    }, [codeName, mainName, subName])
+    }, [codeName, mainName, subName, i18n, currentLanguage])
 
     const handleDelete = async () => {
         const { loginId, tenantId } = returnApiToken();
@@ -286,25 +267,26 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,
                     onSubmit: handleSubmit,
-                    onDelete: handleDelete
+                    onDelete: handleDelete,
+                    deleteText: t('common.deleteMessage')
                 }}
             >
                 <Divider></Divider>
                 <Box sx={{ marginX: 2 }}>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.recyclable_code')}>
+                        <CustomField label={t('recycling_unit.recyclable_code')} mandatory>
                             <CustomTextField
                                 id="codeName"
                                 value={codeName}
                                 disabled={action === 'delete'}
-                                placeholder={t('recycling_unit.recyclable_code')}
+                                placeholder={t('recycling_unit.enter_code')}
                                 onChange={(event) => setCodeName(event.target.value)}
                                 error={checkString(codeName)}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.main_category')}>
+                        <CustomField label={t('recycling_unit.main_category')} mandatory>
                             <CustomTextField
                                 id="mainName"
                                 value={mainName}
@@ -316,7 +298,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.sub_category')}>
+                        <CustomField label={t('recycling_unit.sub_category')} mandatory>
                             <CustomTextField
                                 id="subName"
                                 value={subName}
@@ -327,6 +309,17 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             />
                         </CustomField>
                     </Box>
+                    <Grid item sx={{ width: '92%' }}>
+                        {trySubmited &&
+                            validation.map((val, index) => (
+                            <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={val.error}
+                                type={'error'}
+                            />
+                            ))}
+                    </Grid>
                 </Box>
             </RightOverlayForm>
         </div>

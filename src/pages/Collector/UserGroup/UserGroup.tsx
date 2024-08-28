@@ -21,7 +21,7 @@ import {
   Functions
 } from '../../../interfaces/userGroup'
 import { ToastContainer, toast } from 'react-toastify'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import {
   getAllFunction,
@@ -32,6 +32,7 @@ import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
 import { extractError } from '../../../utils/utils'
 import { useNavigate } from 'react-router-dom'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 type TableRow = {
   id: number
@@ -80,6 +81,8 @@ const UserGroup: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initFunctionList()
@@ -100,6 +103,7 @@ const UserGroup: FunctionComponent = () => {
   }
 
   const initUserGroupList = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllUserGroup(page - 1, pageSize)
       const data = result?.data
@@ -135,6 +139,7 @@ const UserGroup: FunctionComponent = () => {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const columns: GridColDef[] = [
@@ -180,7 +185,8 @@ const UserGroup: FunctionComponent = () => {
 
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -200,7 +206,8 @@ const UserGroup: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -278,6 +285,13 @@ const UserGroup: FunctionComponent = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (userGroupList.length === 0 && page > 1) {
+      // move backward to previous page once data deleted from last page (no data left on last page)
+      setPage((prev) => prev - 1)
+    }
+  }, [userGroupList])
+
   return (
     <>
       <Box
@@ -320,38 +334,58 @@ const UserGroup: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={userGroupList}
-              getRowId={(row) => row.groupId}
-              hideFooter
-              columns={columns}
-              checkboxSelection
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                {' '}
+                <DataGrid
+                  rows={userGroupList}
+                  getRowId={(row) => row.groupId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.groupId
+                      ? 'selected-row'
+                      : ''
                   }
-                }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         {rowId != 0 && (

@@ -1,4 +1,4 @@
-import { AddCircle, CancelRounded, DeleteSweepOutlined } from "@mui/icons-material"
+import { AddCircle, CancelRounded, DeleteSweepOutlined, WidthFull } from "@mui/icons-material"
 import { Autocomplete, Box, Button, ButtonBase, Card, Divider, Grid, ImageList, ImageListItem, TextField, Typography } from "@mui/material"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -68,6 +68,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
     const [maxImageNumber, setMaxImageNumber] = useState(0)
     const [maxImageSize, setMaxImageSize] = useState(0)
     const [validation, setValidation] = useState<formValidate[]>([])
+    const [version, setVersion] = useState<number>(0)
 
     const driverField = useMemo(() => (
         [
@@ -75,7 +76,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                 label: t('driver.DriverMenu.popUp.field.loginName'),
                 placeholder: t('driver.DriverMenu.popUp.field.nameText'),
                 field: 'loginId',
-                type: 'autocomplete'
+                type: 'text'
             },
             {
                 label: t('driver.DriverMenu.popUp.field.TchiName'),
@@ -135,9 +136,18 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                     })
                 }
             }
+            if (key == 'photo' && pictures.length == 0) {
+                const item = driverField.find((d) => d.field === key)
+                if (item) {
+                    tempV.push({
+                        field: item.label,
+                        problem: formErr.empty,
+                        type: 'error'
+                    })
+                }
+            }
         })
         driverDetailList.forEach((item: DriverInfo, index: number) => {
-            console.log({item})
             Object.keys(item).forEach((key) => {
                 if (!item[key]) {
                     let field = ''
@@ -155,7 +165,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                             break;
                     }
                     tempV.push({
-                        field: field + (index + 1),
+                        field: field,
                         problem: formErr.empty,
                         type: 'error'
                     })
@@ -279,6 +289,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             if (driver.driverDetail.length > 0) {
                 setDriverDetailList([...driver.driverDetail])
             }
+            setVersion(driver.version)
 
             const imageList: any = driver.photo.map(
                 (url: string, index: number) => {
@@ -311,8 +322,11 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
             ...formData,
             photo: ImageToBase64(pictures),
             driverDetail: driverDetailList,
-            status: 'ACTIVE'
+            status: 'ACTIVE',
+            version: version,
         }
+
+        console.log(formValues, 'formValues')
         const user = localStorage.getItem('username')
         if (action === 'add' || action === 'edit') {
             setTrySubmited(true)
@@ -381,7 +395,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                     onCloseHeader: onClose,
                     onSubmit: handleSubmit,
                     onDelete: handleSubmit,
-                    subTitle: driver ? driver.driverId.toString() : ''
+                    subTitle: driver?.labelId ? driver.labelId.toString() : ''
                 }}
             >
                 <Divider />
@@ -418,7 +432,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                 </Grid>
                             ) : driver.type === 'upload' ? (
                                 <Grid item key={driverIndex.toString()}>
-                                    <CustomField label={driver.label}>
+                                    <CustomField label={driver.label} mandatory>
                                         <ImageUploading
                                             multiple
                                             value={pictures}
@@ -491,10 +505,11 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                             ) : driver.type === 'select' ?
                                 <Grid item key={driverIndex.toString()}>
                                     {driverDetailList.map((info, idx) =>
-                                        <Grid container spacing={2} key={idx} sx={{ mt: 1 }}>
+                                        <Grid container spacing={1} key={idx} sx={{ mt: 1 }}>
                                             <Grid item xs={4.5}>
                                                 <CustomField
                                                     label={idx === 0 ? t('driver.DriverMenu.popUp.field.carType') : ''}
+                                                    mandatory={idx === 0 ? true : false}
                                                 >
                                                     <Autocomplete
                                                         disablePortal
@@ -520,12 +535,14 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                                 handleEditInfo(idx, 'vehicleTypeId', value.id)
                                                             }
                                                         }}
+                                                        noOptionsText={t('common.noOptions')}
                                                     />
                                                 </CustomField>
                                             </Grid>
-                                            <Grid item xs>
+                                            <Grid item>
                                                 <CustomField
                                                     label={idx === 0 ? t('driver.DriverMenu.popUp.field.carYear') : ''}
+                                                    mandatory={idx === 0 ? true : false}
                                                 >
                                                     <TextField
                                                         sx={{ ...styles.textField, width: '12ch' }}
@@ -539,12 +556,13 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                     />
                                                 </CustomField>
                                             </Grid>
-                                            <Grid item xs>
+                                            <Grid item xs={3.5}>
                                                 <CustomField
                                                     label={idx === 0 ? t('driver.DriverMenu.popUp.field.driveYear') : ''}
+                                                    mandatory={idx === 0 ? true : false}
                                                 >
                                                     <TextField
-                                                        sx={{ ...styles.textField, width: '12ch' }}
+                                                        sx={{ ...styles.textField, width: '14ch' }}
                                                         id='driveYear'
                                                         placeholder={t('driver.DriverMenu.popUp.field.yearInput')}
                                                         onChange={(e) => {
@@ -632,6 +650,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ open, onClose, action, onSu
                                                         )
                                                     }   
                                                 }}
+                                                noOptionsText={t('common.noOptions')}
                                             />
                                         ) : (
                                             <TextField

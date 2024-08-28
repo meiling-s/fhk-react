@@ -12,24 +12,34 @@ import CustomSearchField from '../../../components/TableComponents/CustomSearchF
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
 import EditProcessRecord from './EditProcesRecord'
-import { STATUS_CODE, format, localStorgeKeyName } from '../../../constants/constant'
+import {
+  STATUS_CODE,
+  format,
+  localStorgeKeyName
+} from '../../../constants/constant'
 import StatusCard from '../../../components/StatusCard'
 import {
   ProcessOut,
   processOutImage,
   ProcessOutItem
 } from '../../../interfaces/processRecords'
-import { getAllProcessRecord, getProcessIn } from '../../../APICalls/Collector/processRecords'
-
+import {
+  getAllProcessRecord,
+  getProcessIn
+} from '../../../APICalls/Collector/processRecords'
+import CircularLoading from '../../../components/CircularLoading'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../../setups/i18n'
-import { displayCreatedDate, extractError } from '../../../utils/utils'
+import { displayCreatedDate, extractError, debounce } from '../../../utils/utils'
 import { ProcessType } from '../../../interfaces/common'
 import { useNavigate } from 'react-router-dom'
+import { queryProcessRecord } from '../../../interfaces/processRecords'
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -49,7 +59,8 @@ function createProcessRecord(
   updatedAt: string,
   address: string,
   packageTypeId: string,
-  packageName: string
+  packageName: string,
+  labelId?: string
 ): ProcessOut {
   return {
     processOutId,
@@ -63,6 +74,7 @@ function createProcessRecord(
     address,
     packageTypeId,
     packageName,
+    labelId
   }
 }
 
@@ -79,12 +91,18 @@ const ProcessRecord: FunctionComponent = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const [query, setQuery] = useState<queryProcessRecord>({
+    processOutId: null,
+    processType: '',
+    processAddress: ''
+  })
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initProcessRecord()
-  }, [page])
-
+  }, [page, query])
 
   const getProcessInDetail = async (processInId: number) => {
     try {
@@ -94,57 +112,67 @@ const ProcessRecord: FunctionComponent = () => {
         return result.data
       }
     } catch (error) {
-      throw (error)
+      throw error
     }
   }
 
   const initProcessRecord = async () => {
+    setIsLoading(true)
     try {
       setTotalData(0)
       setProcesRecords([])
-      const result = await getAllProcessRecord(page - 1, pageSize)
+      const result = await getAllProcessRecord(page - 1, pageSize, query)
       if (result.status === STATUS_CODE[200]) {
         const data = result?.data
         var recordsMapping: any[] = []
-        await Promise.all(data.content.map(async (item: any) => {
-          const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
-          const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
-          const processName = mappingProcessName(item?.processTypeId)
-          recordsMapping.push(
-            createProcessRecord(
-              item?.processOutId,
-              item?.status,
-              item?.processInId,
-              item?.createdBy,
-              item?.updatedBy,
-              item?.processoutDetail,
-              createdAt,
-              item?.updatedAt,
-              item?.address,
-              item?.processTypeId,
-              processName || ''
+        await Promise.all(
+          data.content.map(async (item: any) => {
+            const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+            const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+            const processName = mappingProcessName(item?.processTypeId)
+            recordsMapping.push(
+              createProcessRecord(
+                item?.processOutId,
+                item?.status,
+                item?.processInId,
+                item?.createdBy,
+                item?.updatedBy,
+                item?.processoutDetail,
+                createdAt,
+                item?.updatedAt,
+                item?.address,
+                item?.processTypeId,
+                processName || '-',
+                item.labelId
+              )
             )
-          )
-        }));
+          })
+        )
 
         setTotalData(data.totalPages)
         setProcesRecords(recordsMapping)
         setFilteredProcessRecords(recordsMapping)
       }
     } catch (error: any) {
-      const { state, realm } = extractError(error);
+      const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else {
+        setTotalData(0)
+        setProcesRecords([])
+        setFilteredProcessRecords([])
       }
-
     }
+    setIsLoading(false)
   }
 
   const mappingProcessName = (processTypeId: string) => {
-    const matchingProcess = processType?.find((item: ProcessType) => item.processTypeId == processTypeId)
+    const matchingProcess = processType?.find(
+      (item: ProcessType) => item.processTypeId == processTypeId
+    )
 
     if (matchingProcess) {
-      var name = ""
+      var name = ''
       switch (i18n.language) {
         case 'enus':
           name = matchingProcess.processTypeNameEng
@@ -168,7 +196,7 @@ const ProcessRecord: FunctionComponent = () => {
       field: 'createdAt',
       headerName: t('processRecord.creationDate'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'packageTypeId',
@@ -182,7 +210,7 @@ const ProcessRecord: FunctionComponent = () => {
       }
     },
     {
-      field: 'processOutId',
+      field: 'labelId',
       headerName: t('processRecord.processingNumb'),
       width: 200,
       type: 'string'
@@ -191,10 +219,7 @@ const ProcessRecord: FunctionComponent = () => {
       field: 'address',
       headerName: t('processRecord.processingLocation'),
       width: 200,
-      type: 'string',
-      // renderCell: (params) => {
-      //   return '-'
-      // }
+      type: 'string'
     },
     {
       field: 'createdBy',
@@ -214,18 +239,24 @@ const ProcessRecord: FunctionComponent = () => {
   ]
 
   const searchfield = [
-    { label: t('processRecord.enterProcessingNumber'), field: 'search', width: '20%' },
     {
-      label: t('processRecord.handleName'),
-      width: '20%',
-      options: getUniqueOptions('createdBy'),
-      field: 'createdBy'
+      label: t('processRecord.processingNumb'),
+      placeholder: t('processRecord.enterProcessingNumber'),
+      field: 'processOutId',
+      numberOnly: true
+      // width: ''
     },
     {
-      label: t('processRecord.location'),
-      width: '20%',
+      label: t('processRecord.handleName'),
+      options: getUniqueOptions('packageTypeId'),
+      field: 'processType'
+      // width: '100%'
+    },
+    {
+      label: t('processRecord.processingLocation'),
       options: getUniqueOptions('address'),
-      field: 'address'
+      field: 'processAddress'
+      // width: '100%'
     }
   ]
 
@@ -234,13 +265,16 @@ const ProcessRecord: FunctionComponent = () => {
     procesRecords.forEach((row) => {
       optionMap.set(row[propertyName], row[propertyName])
     })
-    const options: Option[] = Array.from(optionMap.values()).map((option) => ({
-      value: option,
-      label: option
-    }))
+    const options: Option[] = Array.from(optionMap.values())
+      .map((option) => {
+        const label =
+          propertyName === 'packageTypeId' ? mappingProcessName(option) : option
+        return label !== undefined ? { value: option, label: label } : undefined
+      })
+      .filter((option): option is Option => option !== undefined)
 
     options.push({
-      value: "",
+      value: '',
       label: t('check_in.any')
     })
     return options
@@ -260,36 +294,14 @@ const ProcessRecord: FunctionComponent = () => {
     }
   }, [])
 
-  const handleSearch = (label: string, value: string) => {
-    // console.log('hanlde search', label, value)
-    if (value == '') return setFilteredProcessRecords(procesRecords)
-    if (label == 'search') {
-      const filtered: ProcessOut[] = procesRecords.filter(
-        (item) => item.processOutId == value
-      )
-      filtered
-        ? setFilteredProcessRecords(filtered)
-        : setFilteredProcessRecords(procesRecords)
-    }
-
-    if (label == 'createdBy') {
-      const filtered: ProcessOut[] = procesRecords.filter(
-        (item) => item.createdBy == value
-      )
-      filtered
-        ? setFilteredProcessRecords(filtered)
-        : setFilteredProcessRecords(procesRecords)
-    }
-
-    if (label == 'adress') {
-      const filtered: ProcessOut[] = procesRecords.filter(
-        (item) => item.address == value
-      )
-      filtered
-        ? setFilteredProcessRecords(filtered)
-        : setFilteredProcessRecords(procesRecords)
-    }
+  const updateQuery = (newQuery: Partial<queryProcessRecord>) => {
+    setQuery({ ...query, ...newQuery })
   }
+
+  const handleSearch = debounce((label: string, value: string) => {
+    setPage(1)
+    updateQuery({ [label]: value })
+  }, 500)
 
   return (
     <>
@@ -328,7 +340,8 @@ const ProcessRecord: FunctionComponent = () => {
             display: {
               sm: 'flex',
               xs: 'block'
-            }
+            },
+            width: '100%'
           }}
           mt={3}
         >
@@ -337,7 +350,9 @@ const ProcessRecord: FunctionComponent = () => {
               key={index}
               label={s.label}
               field={s.field}
-              width={s.width}
+              placeholder={s?.placeholder}
+              // width={s.width}
+               numberOnly={s.numberOnly || false}
               options={s.options || []}
               onChange={handleSearch}
             />
@@ -345,42 +360,64 @@ const ProcessRecord: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={filteredProcessRecords}
-              getRowId={(row) => row.processOutId}
-              hideFooter
-              columns={columns}
-              checkboxSelection={false}
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={filteredProcessRecords}
+                  getRowId={(row) => row.processOutId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.processOutId
+                      ? 'selected-row'
+                      : ''
                   }
-                }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
           <EditProcessRecord
             drawerOpen={drawerEditOpen}
-            handleDrawerClose={() => setDrawerEditOpen(false)}
+            handleDrawerClose={() => {
+              setDrawerEditOpen(false)
+              setSelectedRow(null)
+            }}
             selectedRow={selectedRow}
           />
         </div>

@@ -1,37 +1,35 @@
-import { FunctionComponent, useCallback, ReactNode, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Tabs from "../../../components/Tabs";
-import { Box, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import StaffManagement from "./StaffManagement";
-import Rosters from "../Rosters/Rosters";
-import UserGroup from "../UserGroup/UserGroup";
-import StaffManufacturer from "../StaffManufacturer/StaffManufacturer";
-import { returnApiToken } from "../../../utils/utils";
+import { FunctionComponent, useCallback, ReactNode, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Tabs from '../../../components/Tabs'
+import { Box, Typography } from '@mui/material'
+import { useTranslation } from 'react-i18next'
+import StaffManagement from './StaffManagement'
+import Rosters from '../Rosters/Rosters'
+// import UserGroup from '../UserGroup/UserGroup'
+import StaffManufacturer from '../StaffManufacturer/StaffManufacturer'
+import { returnApiToken } from '../../../utils/utils'
 
 const Settings: FunctionComponent = () => {
   const token = returnApiToken()
-  const { t } = useTranslation();
-  const [selectedTab, setSelectedTab] = useState(0);
+  const { t } = useTranslation()
+  const [selectedTab, setSelectedTab] = useState(0)
   const handleTabChange = (value: number, label: string) => {
-    // console.log(`Navigated to ${value} ${label}`)
-    setSelectedTab(value);
-  };
+    setSelectedTab(value)
+  }
 
-  const titlePage = t("settings_page.title");
+  const titlePage = t('settings_page.title')
   const tabSettings = [
-    t("staffManagement.list"),
-    t("staffManagement.schedule"),
-    t("staffManagement.userGroup"),
-    t("staffManagement.manufacturer"),
-  ];
+    t('staffManagement.list'),
+    t('staffManagement.schedule'),
+    t('staffManagement.manufacturer')
+  ]
 
   return (
-    <Box className="container-wrapper w-full">
+    <Box className="container-wrapper w-max">
       <div className="settings-page bg-bg-primary">
         <Box>
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t("staffManagement.staff")}
+            {t('staffManagement.staff')}
           </Typography>
         </Box>
         {token.realmApiRoute !== 'customer' ? (
@@ -47,15 +45,13 @@ const Settings: FunctionComponent = () => {
         ) : selectedTab === 1 ? (
           <Rosters />
         ) : selectedTab === 2 ? (
-          <UserGroup />
-        ) : selectedTab === 3 ? (
           <StaffManufacturer />
         ) : (
           <div></div>
         )}
       </div>
     </Box>
-  );
-};
+  )
+}
 
-export default Settings;
+export default Settings

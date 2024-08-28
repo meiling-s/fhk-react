@@ -38,6 +38,7 @@ import { localStorgeKeyName } from '../../constants/constant'
 import { getThemeColorRole, displayCreatedDate, formatWeight} from '../../utils/utils'
 import { manuList } from '../../interfaces/common'
 import { getManuList } from '../../APICalls/Manufacturer/purchaseOrder'
+import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -180,7 +181,7 @@ const PurchaseOrderCreateForm = ({
       details: {type: 'string',  status: false, required: true}
     }
   )
-
+  const {localeTextDataGrid } = useLocaleTextDataGrid()
   const [errorsField, setErrorsField] = useState<ErrorsField>(initialErrors)
   
   const paymentTypes : PaymentType[] = [
@@ -326,13 +327,13 @@ const PurchaseOrderCreateForm = ({
       width: 200,
       valueFormatter: (params) => {
         if(params){
-          return dayjs(params.value).format('YYYY/MM/DD hh:mm')
+          return dayjs.utc(params.value).tz('Asia/Hong_Kong').format('YYYY/MM/DD hh:mm A');
         }
       }
     },
     {
       field: 'recycTypeId',
-      headerName: t('purchase_order.create.main_category'),
+      headerName: t('pick_up_order.detail.main_category'),
       width: 150,
       editable: true,
       valueGetter: ({ row }) => {
@@ -361,7 +362,7 @@ const PurchaseOrderCreateForm = ({
     },
     {
       field: 'recycSubTypeId',
-      headerName: t('purchase_order.create.subcategory'),
+      headerName: t('pick_up_order.detail.subcategory'),
       type: 'string',
       width: 150,
       editable: true,
@@ -415,8 +416,9 @@ const PurchaseOrderCreateForm = ({
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
       width: 100,
+      filterable: false,
       renderCell: (params) => (
         <IconButton>
           <EDIT_OUTLINED_ICON onClick={() => handleEditRow(params.row.id)} />
@@ -425,8 +427,9 @@ const PurchaseOrderCreateForm = ({
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
       width: 100,
+      filterable: false,
       renderCell: (params) => (
         <IconButton
           onClick={() => {
@@ -904,6 +907,7 @@ const PurchaseOrderCreateForm = ({
                           }
                         />
                       )}
+                      noOptionsText={t('common.noOptions')}
                      
                     />
                   </CustomField>
@@ -953,13 +957,14 @@ const PurchaseOrderCreateForm = ({
                           }}
                         />
                       )}
+                      noOptionsText={t('common.noOptions')}
                     />
                   </CustomField>
                 </Box>
-                {
+                {/* {
                   errorsField['senderName' as keyof ErrorsField].required && errorsField['senderName' as keyof ErrorsField].status ? 
                   <ErrorMessage  message={t('purchase_order.create.senderNameEqualToReceiverName')}/> : ''
-                }
+                } */}
               </Grid>
               <Grid item>
                 <CustomField label={''}>
@@ -973,6 +978,7 @@ const PurchaseOrderCreateForm = ({
                     columns={columns}
                     disableRowSelectionOnClick
                     getRowSpacing={getRowSpacing}
+                    localeText={localeTextDataGrid}
                     sx={{
                       border: 'none',
                       '& .MuiDataGrid-cell': {
@@ -995,10 +1001,6 @@ const PurchaseOrderCreateForm = ({
                       }
                     }}
                   />
-                   {
-                  errorsField['details' as keyof ErrorsField].required && errorsField['details' as keyof ErrorsField].status ? 
-                  <ErrorMessage  message={t('purchase_order.create.required_field')}/> : ''
-                }
                   <Modal open={openModal} onClose={handleCloses}>
                     <CreateRecycleFormPurchaseOrder
                       data={state}
@@ -1033,6 +1035,10 @@ const PurchaseOrderCreateForm = ({
                   >
                     {t('pick_up_order.new')}
                   </Button>
+                    {
+                      errorsField['details' as keyof ErrorsField].required && errorsField['details' as keyof ErrorsField].status ? 
+                      <ErrorMessage  message={t('purchase_order.create.required_field')}/> : ''
+                    }
                 </CustomField>
               </Grid>
               <Grid item>

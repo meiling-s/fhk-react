@@ -1,9 +1,19 @@
 import { ImageListType } from 'react-images-uploading'
-import { formErr, localStorgeKeyName, format, Roles, Realm, RealmApi, STATUS_CODE } from '../constants/constant'
-import dayjs from 'dayjs'
+import {
+  formErr,
+  localStorgeKeyName,
+  format,
+  Roles,
+  Realm,
+  RealmApi,
+  STATUS_CODE
+} from '../constants/constant'
+import dayjs, { Dayjs } from 'dayjs'
 import { toast } from 'react-toastify'
 import { fieldNameRecycables } from '../constants/constant'
 import { errorState } from '../interfaces/common'
+import i18n from '../setups/i18n'
+import { recycType } from '../interfaces/common'
 
 export const returnApiToken = () => {
   const decodeKeycloack =
@@ -64,6 +74,36 @@ export const returnErrorMsg = (error: string, t: (key: string) => string) => {
     case formErr.loginIdCantContainAdmin:
       msg = t('form.error.loginIdCantContainAdmin')
       break
+    case formErr.hasBeenUsed:
+      msg = t('form.error.hasBeenUsed')
+      break
+    case formErr.startDateIsLaterThanToDate:
+      msg = t('form.error.startDateIsLaterThanToDate')
+      break
+    case formErr.toDateIsEarlierThanStartDate:
+      msg = t('form.error.toDateIsEarlierThanStartDate')
+      break
+    case formErr.tenantIdShouldBeSixDigit:
+      msg = t('form.error.tenatIdShouldBeSixDigit')
+      break
+    case formErr.tenantIdNotFound:
+      msg = t('form.error.tenantIdNotFound')
+      break
+    case formErr.mustDifferent:
+      msg = t('form.error.mustDifferent')
+      break
+    case formErr.loginIdProhibited:
+      msg = t('form.error.loginIdProhibited')
+      break
+    case formErr.incorrectAddress:
+      msg = t('form.error.incorrectAddress')
+      break
+    case formErr.cannotBeSame:
+      msg = t('form.error.cannotBeSame')
+      break
+    case formErr.cantBeSame:
+      msg = t('form.error.cantBeSame')
+      break
   }
   return msg
 }
@@ -121,9 +161,9 @@ export const getThemeColorRole = (role: string) => {
   const colorList = {
     astd: '#79CA25',
     collector: '#79CA25',
-    logistic: '#7CE495',
+    logistic: '#63D884',
     manufacturer: '#6BC7FF',
-    customer: '#6BC7FF'
+    customer: '#199BEC'
   }
 
   return colorList[role as keyof typeof colorList]
@@ -233,13 +273,16 @@ export const onChangeWeight = (
   if (decimalVal === 0) {
     regexStr = '^\\d*$' // 只匹配整數
   } else {
-    const decimalStr = decimalVal.toString()
-    const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length
-    regexStr = '^(?!\\.$)\\d*\\.?\\d{0,' + zeroCount + '}$' // 匹配小數，但首字符不能是小數點
-  }
-  const regex = new RegExp(regexStr)
-  if (regex.test(value) || value === '') {
-    cb(value)
+    const newValue = value.split('.')
+    if (newValue[0].length < 9) {
+      const decimalStr = decimalVal.toString()
+      const zeroCount = decimalStr.substring(decimalStr.indexOf('.') + 1).length
+      regexStr = '^(?!\\.$)\\d*\\.?\\d{0,' + zeroCount + '}$' // 匹配小數，但首字符不能是小數點
+      const regex = new RegExp(regexStr)
+      if (regex.test(value) || value === '') {
+        cb(value)
+      }
+    }
   }
 }
 
@@ -267,15 +310,16 @@ export const randomBackgroundColor = (): string => {
   return bgColor
 }
 
+export const extractError = (
+  error: any
+): { state: errorState; realm: string } => {
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
+  let message: string = ''
 
-export const extractError = (error:any):{state:errorState, realm: string} => {
-  const realm = localStorage.getItem(localStorgeKeyName.realm) || '';
-  let message:string = '';
-
-  switch(error?.response?.status){
+  switch (error?.response?.status) {
     case STATUS_CODE[401]:
       message = error?.response?.data
-      break;
+      break
     case STATUS_CODE[404]:
       message = error?.message
       break
@@ -285,16 +329,16 @@ export const extractError = (error:any):{state:errorState, realm: string} => {
   }
 
   let statusCode = error?.response?.status || STATUS_CODE[404]
-  if(!error?.response) {
+  if (!error?.response) {
     statusCode = STATUS_CODE[503]
   }
 
-  const state :errorState = {
+  const state: errorState = {
     code: statusCode,
-    message: message || 'not found',
+    message: message || 'not found'
   }
 
-  return {state, realm}
+  return { state, realm }
 }
 
 export const getSelectedLanguange = (lang: string) => {
@@ -315,4 +359,135 @@ export const getSelectedLanguange = (lang: string) => {
   }
 
   return selectedLang
+}
+
+export const mappingRecyName = (
+  recycTypeId: string,
+  recycSubTypeId: string,
+  recycType: recycType[]
+) => {
+  const matchingRecycType = recycType?.find(
+    (recyc) => recycTypeId === recyc.recycTypeId
+  )
+
+  if (matchingRecycType) {
+    const matchRecycSubType = matchingRecycType.recycSubType?.find(
+      (subtype) => subtype.recycSubTypeId === recycSubTypeId
+    )
+    var name = ''
+    switch (i18n.language) {
+      case 'enus':
+        name = matchingRecycType.recyclableNameEng
+        break
+      case 'zhch':
+        name = matchingRecycType.recyclableNameSchi
+        break
+      case 'zhhk':
+        name = matchingRecycType.recyclableNameTchi
+        break
+      default:
+        name = matchingRecycType.recyclableNameTchi
+        break
+    }
+    var subName = ''
+    switch (i18n.language) {
+      case 'enus':
+        subName = matchRecycSubType?.recyclableNameEng ?? ''
+        break
+      case 'zhch':
+        subName = matchRecycSubType?.recyclableNameSchi ?? ''
+        break
+      case 'zhhk':
+        subName = matchRecycSubType?.recyclableNameTchi ?? ''
+        break
+      default:
+        subName = matchRecycSubType?.recyclableNameTchi ?? '' //default fallback language is zhhk
+        break
+    }
+
+    return { name, subName }
+  }
+}
+
+export const validateEmail = (email: string) => {
+  return /^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/.test(
+    email
+  )
+}
+
+export const getPrimaryColor = (): string => {
+  const role = localStorage.getItem(localStorgeKeyName.role)
+  //console.log(role, 'role')
+  switch (role) {
+    case 'manufacturer':
+      return '#6BC7FF'
+    case 'customer':
+      return '#199BEC'
+    case 'logistic':
+      return '#63D884'
+    case 'collector':
+      return '#79CA25'
+    default:
+      return '#79CA25'
+  }
+}
+
+export const getPrimaryLightColor = (): string => {
+  const role = localStorage.getItem(localStorgeKeyName.role)
+  switch (role) {
+    case 'manufacturer':
+      return '#F0F9FF'
+    case 'customer':
+      return '#F0F9FF'
+    case 'logistic':
+      return '#E4F6DC'
+    case 'collector':
+      return '#E4F6DC'
+    default:
+      return '#E4F6DC'
+  }
+}
+
+export const validDayjsISODate = (date: Dayjs): boolean => {
+  if (!date.isValid()) {
+    return false
+  }
+  // Convert to ISO string and check if it matches the original input
+  const isoString = date.toISOString()
+  // Regex to ensure ISO 8601 format with 'Z' (UTC time)
+  const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+  return iso8601Pattern.test(isoString)
+}
+
+export const creatioPageList = () => {
+  const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
+  const listPage = [
+    '/collector/createCollectionPoint',
+    '/collector/editCollectionPoint',
+    `/${realm}/createPickupOrder`,
+    `/${realm}/editPickupOrder`,
+    '/astd/createPicoLogistic',
+    '/astd/editPicoLogistic',
+    '/logistic/createJobOrder/:picoId',
+    '/customer/createPurchaseOrder',
+    '/customer/editPurchaseOrder'
+  ]
+
+  return listPage
+}
+
+export function debounce<T extends (...args: any[]) => void>(
+  fn: T,
+  delay: number
+) {
+  let timeoutID: ReturnType<typeof setTimeout> | null
+
+  return function (this: any, ...args: Parameters<T>) {
+    if (timeoutID) {
+      clearTimeout(timeoutID)
+    }
+    timeoutID = setTimeout(() => {
+      fn.apply(this, args)
+    }, delay)
+  }
 }

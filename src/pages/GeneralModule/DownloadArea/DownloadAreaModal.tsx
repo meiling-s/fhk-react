@@ -1,6 +1,6 @@
 import { FunctionComponent, useState, useEffect } from 'react'
 import { Box, Divider, Grid, Link, Typography } from '@mui/material'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import RightOverlayFormCustom from '../../../components/RightOverlayFormCustom'
 import { styles } from '../../../constants/styles'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
@@ -10,12 +10,16 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import LabelField from '../../../components/FormComponents/CustomField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DOCUMENT_ICON } from '../../../themes/icons'
-import { getDownloadExcel, getDownloadWord } from '../../../APICalls/report'
 import {
   getBaseUrl,
   returnApiToken,
-  getSelectedLanguange
+  getSelectedLanguange,
+  getPrimaryColor,
+  getPrimaryLightColor
 } from '../../../utils/utils'
+
+import LoadingCircle from '../../../components/LoadingCircle'
+
 import axiosInstance from '../../../constants/axiosInstance'
 import { AXIOS_DEFAULT_CONFIGS } from '../../../constants/configs'
 import {
@@ -29,6 +33,9 @@ import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { returnErrorMsg } from '../../../utils/utils'
+import CustomField from '../../../components/FormComponents/CustomField'
+import CustomTextField from '../../../components/FormComponents/CustomTextField'
+import { getTenantById } from '../../../APICalls/tenantManage'
 dayjs.extend(utc)
 
 interface DownloadModalProps {
@@ -40,6 +47,9 @@ interface DownloadModalProps {
     typeFile: string
     reportId: string
     dateOption?: string
+    manualTenantId: boolean
+    tenantId?: string
+    loginId?: string
   }
   staffId: string
 }
@@ -59,6 +69,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     localStorage.getItem(localStorgeKeyName.realmApiRoute) || ''
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+  const [tenant, setTenant] = useState<string>('')
+
   useEffect(() => {
     if (validation.length === 0 && selectedItem?.dateOption != 'daterange') {
       getReport()
@@ -71,21 +83,54 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     getReport()
   }, [selectedItem?.id, i18n.language])
 
+  const isValidDayjsISODate = (date: Dayjs): boolean => {
+    if (!date.isValid()) {
+      return false
+    }
+    // Convert to ISO string and check if it matches the original input
+    const isoString = date.toISOString()
+    // Regex to ensure ISO 8601 format with 'Z' (UTC time)
+    const iso8601Pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+    return iso8601Pattern.test(isoString)
+  }
+
   useEffect(() => {
     const validate = async () => {
       const tempV: formValidate[] = []
       startDate > endDate &&
+        selectedItem?.dateOption != 'datetime' &&
         tempV.push({
           field: t('general_settings.start_date'),
           problem: formErr.startDateBehindEndDate,
           type: 'error'
         })
-      endDate < startDate &&
+      if (selectedItem?.dateOption != 'datetime') {
+        console.log('startDate', selectedItem?.dateOption)
+        endDate < startDate &&
+          tempV.push({
+            field: t('generate_report.end_date'),
+            problem: formErr.endDateEarlyThanStartDate,
+            type: 'error'
+          })
+      }
+
+      if (
+        selectedItem?.dateOption === 'datetime' &&
+        selectedItem.tenantId === 'none' &&
+        endDate < startDate
+      ) {
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
         tempV.push({
           field: t('generate_report.end_date'),
           problem: formErr.endDateEarlyThanStartDate,
           type: 'error'
         })
+      }
+
       startDate == null &&
         tempV.push({
           field: t('general_settings.start_date'),
@@ -98,6 +143,48 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+
+      if (
+        startDate &&
+        !isValidDayjsISODate(startDate) &&
+        selectedItem?.dateOption === 'dateOption' &&
+        selectedItem.tenantId === 'none'
+      ) {
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      } else if (startDate && !isValidDayjsISODate(startDate)) {
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      }
+
+      if (
+        endDate &&
+        selectedItem?.dateOption === 'datetime' &&
+        selectedItem.tenantId === 'none' &&
+        !isValidDayjsISODate(endDate)
+      ) {
+        tempV.push({
+          field: t('generate_report.end_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      } else if (
+        endDate &&
+        selectedItem?.dateOption != 'datetime' &&
+        !isValidDayjsISODate(endDate)
+      ) {
+        tempV.push({
+          field: t('generate_report.end_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      }
 
       setValidation(tempV)
     }
@@ -123,16 +210,124 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
     )
   }
 
+  const generateWithLoginIdLink = (reportId: string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}?loginId=${
+        selectedItem?.loginId
+      }&frmDate=${formatUtcStartDate(startDate)}&toDate=${formatUtcEndDate(
+        endDate
+      )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
+    )
+  }
+
   const generateNoDateLink = (reportId: string) => {
     return (
       getBaseUrl() +
-      `api/v1/${realmApiRoute}/${reportId}/${tenantId}&staffId=${staffId}&language=${getSelectedLanguange(
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?staffId=${staffId}&language=${getSelectedLanguange(
         i18n.language
       )}`
     )
   }
 
+  const generateDatetimeLink = (reportId: string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}/${tenantId}?frmDate=${formatUtcStartDate(
+        startDate
+      )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
+    )
+  }
+
+  const generateDatetimeNoTenantIdLink = (reportId: string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}?frmDate=${formatUtcStartDate(
+        startDate
+      )}&toDate=${formatUtcEndDate(
+        endDate
+      )}&staffId=${staffId}&language=${getSelectedLanguange(i18n.language)}`
+    )
+  }
+
+  const generateNoDateLinkManualTenantId = (
+    reportId: string,
+    tenant: string
+  ) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}/${tenant}?staffId=${staffId}&language=${getSelectedLanguange(
+        i18n.language
+      )}`
+    )
+  }
+
+  const generateNoDateNoTenandIdLink = (reportId: string) => {
+    return (
+      getBaseUrl() +
+      `api/v1/${realmApiRoute}/${reportId}?staffId=${staffId}&language=${getSelectedLanguange(
+        i18n.language
+      )}`
+    )
+  }
+
+  const onChangeTenantId = (value: string) => {
+    const isNumber = Number(value)
+    if (
+      typeof isNumber === 'number' &&
+      isNumber.toString() !== 'NaN' &&
+      value.length <= 6
+    ) {
+      setTenant(value)
+    }
+  }
+
+  const getTenantDetail = async () => {
+    try {
+      const tenantDetail = await getTenantById(Number(tenant))
+      if (tenantDetail && selectedItem?.reportId) {
+        const url = generateNoDateLinkManualTenantId(
+          selectedItem?.reportId,
+          tenant
+        )
+        setDownloads([
+          { date: dayjs(startDate).format('YYYY/MM/DD'), url: url }
+        ])
+        setValidation([])
+      }
+    } catch (error) {
+      setValidation([
+        {
+          field: t('report.invalidTenantId'),
+          problem: formErr.tenantIdNotFound,
+          type: 'error'
+        }
+      ])
+    }
+  }
+
+  useEffect(() => {
+    if (tenant.length === 6) {
+      getTenantDetail()
+    } else if (
+      selectedItem?.manualTenantId &&
+      tenant.length >= 1 &&
+      tenant.length < 6
+    ) {
+      setValidation([
+        {
+          field: t('report.invalidTenantId'),
+          problem: formErr.tenantIdShouldBeSixDigit,
+          type: 'error'
+        }
+      ])
+    } else if (selectedItem?.manualTenantId && tenant.length === 6) {
+      setValidation([])
+    }
+  }, [tenant])
+
   const getReport = async () => {
+    if (selectedItem?.manualTenantId) return
     let url = ''
     if (selectedItem) {
       switch (selectedItem?.id) {
@@ -156,19 +351,38 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
           break
         default:
           url =
-            selectedItem?.dateOption === 'none'
+            selectedItem.tenantId === 'none' &&
+            selectedItem.dateOption === 'datetime'
+              ? generateDatetimeNoTenantIdLink(selectedItem.reportId)
+              : selectedItem.dateOption === 'none' &&
+                selectedItem.tenantId === 'none'
+              ? generateNoDateNoTenandIdLink(selectedItem.reportId)
+              : selectedItem?.dateOption === 'none'
               ? generateNoDateLink(selectedItem.reportId)
+              : selectedItem?.dateOption === 'datetime'
+              ? generateDatetimeLink(selectedItem.reportId)
+              : selectedItem.loginId
+              ? generateWithLoginIdLink(selectedItem.reportId)
               : generateDateRangeLink(selectedItem.reportId)
           break
       }
-
+     
       setDownloads((prev) => {
         return [{ date: dayjs(startDate).format('YYYY/MM/DD'), url: url }]
       })
     }
   }
 
+  const resetData = () => {
+    setValidation([])
+    setTrySubmited(false)
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+    setTenant('')
+  }
+
   const onCloseDrawer = () => {
+    resetData()
     handleDrawerClose()
   }
 
@@ -192,8 +406,76 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             dateAdapter={AdapterDayjs}
             adapterLocale="zh-cn"
           >
-            {selectedItem?.dateOption == 'datetime' ? (
-              <div>syala</div>
+            {selectedItem?.dateOption == 'datetime' &&
+            selectedItem.tenantId === 'none' ? (
+              <Box
+                className="filter-date"
+                sx={{
+                  marginY: 2,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly'
+                }}
+              >
+                <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
+                  <LabelField label={t('general_settings.start_date')} />
+                  <DatePicker
+                    defaultValue={dayjs(startDate)}
+                    format={format.dateFormat2}
+                    onChange={(value) => setStartDate(value!!)}
+                    sx={{ ...localstyles.datePicker }}
+                    maxDate={dayjs(endDate)}
+                  />
+                </Box>
+                <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
+                  <LabelField label={t('generate_report.end_date')} />
+                  <DatePicker
+                    defaultValue={dayjs(endDate)}
+                    format={format.dateFormat2}
+                    onChange={(value) => setEndDate(value!!)}
+                    sx={{ ...localstyles.datePicker }}
+                    minDate={dayjs(startDate)}
+                  />
+                </Box>
+              </Box>
+            ) : selectedItem?.dateOption == 'datetime' ? (
+              <Box
+                sx={{
+                  ...localstyles.DateItem,
+                  flexDirection: 'column',
+                  marginY: 2
+                }}
+              >
+                <LabelField label={t('general_settings.start_date')} />
+                <DatePicker
+                  defaultValue={dayjs(startDate)}
+                  format={format.dateFormat2}
+                  onChange={(value) => setStartDate(value!!)}
+                  sx={{ ...localstyles.datePicker, width: '100%' }}
+                  maxDate={
+                    selectedItem?.dateOption != 'datetime'
+                      ? dayjs(endDate)
+                      : null
+                  }
+                />
+              </Box>
+            ) : selectedItem?.manualTenantId &&
+              selectedItem.dateOption === 'none' ? (
+              <CustomField label={t('report.tenantId')} mandatory>
+                <CustomTextField
+                  id="tenantId"
+                  placeholder={t('report.tenantIdPlaceHolder')}
+                  sx={{ ...localstyles.textFieldTenantId }}
+                  onChange={(event) => {
+                    if (event.target.value) {
+                      onChangeTenantId(event.target.value)
+                    } else {
+                      setTenant('')
+                    }
+                  }}
+                  value={tenant}
+                ></CustomTextField>
+              </CustomField>
             ) : selectedItem?.dateOption == 'none' ? (
               <></>
             ) : (
@@ -243,6 +525,8 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
             }}
           >
             {validation.length === 0 &&
+              selectedItem?.manualTenantId &&
+              tenant.length === 6 &&
               downloads.map((item) => (
                 <DownloadItem
                   key={item.url}
@@ -250,6 +534,19 @@ const DownloadAreaModal: FunctionComponent<DownloadModalProps> = ({
                   url={item.url}
                   typeFile={selectedItem?.typeFile}
                   validation={validation}
+                />
+              ))}
+
+            {validation.length === 0 &&
+              !selectedItem?.manualTenantId &&
+              downloads.map((item) => (
+                <DownloadItem
+                  key={item.url}
+                  date={item.date}
+                  url={item.url}
+                  typeFile={selectedItem?.typeFile}
+                  validation={validation}
+                  reportName={selectedItem?.report_name}
                 />
               ))}
           </Grid>
@@ -275,22 +572,18 @@ const DownloadItem: FunctionComponent<{
   url: string
   typeFile: string | undefined
   validation: formValidate[]
-}> = ({ date, url, typeFile, validation = [] }) => {
-  const downloadfile = (blob: any, type: string | undefined) => {
-    let extention = ''
-    switch (type) {
-      case 'XLS':
-        extention = 'xls'
-        break
-      case 'WORD':
-        extention = 'doc'
-        break
-      default:
-        break
-    }
-    saveAs(blob, `document.${extention}`)
-  }
+  reportName?: string
+}> = ({ date, url, typeFile, validation = [], reportName }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const getUrl = () => {
+    
+    return `/loadPage?downloadUrl=${encodeURIComponent(
+      url
+    )}&typeFile=${encodeURIComponent(
+      typeFile || ''
+    )}&reportName=${encodeURIComponent(reportName || '')}`
+  }
   return (
     <Grid
       sx={{ borderBottom: 1, borderBottomColor: '#E2E2E2' }}
@@ -314,7 +607,7 @@ const DownloadItem: FunctionComponent<{
           alignItems: 'center',
           height: '32px',
           width: '90px',
-          background: '#E4F6DC',
+          background: getPrimaryLightColor(),
           borderRadius: '24px',
           padding: '6px, 12px, 6px, 12px',
           rowGap: '4px',
@@ -323,22 +616,24 @@ const DownloadItem: FunctionComponent<{
           cursor: 'pointer'
         }}
         underline="none"
+        //href={validation.length === 0 ? url : ''}
+      
         target="_blank"
-        href={validation.length === 0 ? url : ''}
-        // onClick={() => downloadfile(url, typeFile)}
+        href={validation.length === 0 ? getUrl() : ''}
       >
-        <DOCUMENT_ICON style={{ color: '#79CA25' }} />
+        <DOCUMENT_ICON style={{ color: getPrimaryColor() }} />
         <Typography
           style={{
             fontSize: '13px',
             fontWeight: '700',
-            color: '#79CA25',
+            color: getPrimaryColor(),
             textAlign: 'center'
           }}
         >
           {typeFile}
         </Typography>
       </Link>
+      {isLoading ? <LoadingCircle></LoadingCircle> : ''}
     </Grid>
   )
 }
@@ -388,12 +683,24 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   DateItem: {
     display: 'flex',
     height: 'fit-content'
+  },
+  textFieldTenantId: {
+    borderRadius: '12px',
+    width: {
+      xs: '1000px',
+      md: '100%'
+    },
+    backgroundColor: 'white',
+    '& fieldset': {
+      borderRadius: '12px',
+      width: '93%'
+    }
   }
 }
 

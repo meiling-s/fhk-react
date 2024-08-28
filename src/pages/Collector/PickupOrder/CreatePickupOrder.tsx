@@ -12,6 +12,7 @@ import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import dayjs from 'dayjs'
 
 const CreatePickupOrder = () => {
   const navigate = useNavigate()
@@ -38,76 +39,6 @@ const CreatePickupOrder = () => {
         return field + ' ' + t('form.error.isInWrongFormat')
     }
   }
-
-  const validateSchema = Yup.object().shape({
-    effFrmDate: Yup.string().required('This effFrmDate is required'),
-    effToDate: Yup.string().required('This effToDate is required'),
-    routineType:
-      picoTypeValue == 'ROUTINE'
-        ? Yup.string().required('This routineType is required')
-        : Yup.string(),
-
-    routine: Yup.lazy((value, schema) => {
-      const routineType = schema.parent.routineType
-      if (routineType === 'specificDate') {
-        return Yup.array()
-          .required('routine is required')
-          .test(
-            'is-in-range',
-            t('pick_up_order.out_of_date_range'),
-            function (value) {
-              const { effFrmDate, effToDate } = schema.parent
-              const fromDate = new Date(effFrmDate)
-              const toDate = new Date(effToDate)
-
-              const datesInDateObjects = value.map((date) => new Date(date))
-
-              return datesInDateObjects.every(
-                (date) => date >= fromDate && date <= toDate
-              )
-            }
-          )
-      } else {
-        return Yup.array().required('routine is required')
-      }
-    }),
-    logisticName: Yup.string().required(
-      getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
-    ),
-    vehicleTypeId: Yup.string().required(
-      getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')
-    ),
-    platNo: Yup.string().required(
-      getErrorMsg(t('pick_up_order.plat_number'), 'empty')
-    ),
-    contactNo: Yup.number().required(
-      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    ),
-    contractNo:
-      picoTypeValue == 'ROUTINE'
-        ? Yup.string().required(
-            getErrorMsg(t('pick_up_order.routine.contract_number'), 'empty')
-          )
-        : Yup.string(),
-    reason:
-      picoTypeValue == 'AD_HOC'
-        ? Yup.string().required(
-            getErrorMsg(
-              t('pick_up_order.adhoc.reason_get_off'),
-              'isInWrongFormat'
-            )
-          )
-        : Yup.string(),
-    createPicoDetail: Yup.array()
-      .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
-      .test(
-        'has-rows',
-        getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty')!!,
-        (value) => {
-          return value.length > 0 || addRow.length > 0
-        }
-      )
-  })
 
 
   const submitPickUpOrder = async (values: CreatePO) => {
@@ -145,9 +76,13 @@ const CreatePickupOrder = () => {
       updatedBy: 'Admin',
       createPicoDetail: []
     },
-    validationSchema: validateSchema,
+    // validationSchema: validateSchema,
     onSubmit: async (values: CreatePO) => {
-      values.createPicoDetail = addRow
+      values.createPicoDetail = addRow;
+      if(picoTypeValue === 'AD_HOC'){
+        values.routine = [];
+      }
+      
       const result = await submitPickUpOrder(values)
       const data = result?.data
       if (data) {
@@ -164,7 +99,7 @@ const CreatePickupOrder = () => {
   useEffect(() => {
     setPicoType(createPickupOrder.values.picoType)
   }, [createPickupOrder.values.picoType])
-
+  
   return (
     <PickupOrderCreateForm
       formik={createPickupOrder}

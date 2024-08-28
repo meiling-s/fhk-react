@@ -181,6 +181,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
           onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>
@@ -191,31 +192,31 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
                 id="monetary"
                 value={monetary}
                 disabled={action === 'delete'}
-                placeholder={t('general_settings.name')}
+                placeholder={t('general_settings.enter_name')}
                 onChange={(event) => setMonetary(event.target.value)}
                 error={showError && checkString(monetary)}
               />
             </CustomField>
           </Box>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('common.remark')} mandatory>
+            <CustomField label={t('general_settings.remark')} mandatory>
               <CustomTextField
                 id="remark"
                 value={remark}
                 disabled={action === 'delete'}
-                placeholder={t('common.remark')}
+                placeholder={t('general_settings.enter_remark')}
                 onChange={(event) => setRemark(event.target.value)}
                 error={showError && checkString(remark)}
               />
             </CustomField>
           </Box>
           <Box sx={{marginY: 2}}>
-            <CustomField label={t('common.description')} mandatory>
+            <CustomField label={t('general_settings.introduction')} mandatory>
               <CustomTextField
                 id="description"
                 value={description}
                 disabled={action === 'delete'}
-                placeholder={t('common.description')}
+                placeholder={t('general_settings.enter_remark')}
                 onChange={(event) => setDescription(event.target.value)}
                 error={showError && checkString(description)}
               />

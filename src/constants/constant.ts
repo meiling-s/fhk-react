@@ -51,12 +51,24 @@ export const formErr = {
   startDateBehindEndDate: 'startDateBehidEndDate',
   endDateEarlyThanStartDate: 'endDateEarlyThanStartDate',
   timeCantDuplicate: 'timeCantDuplicate',
-  loginIdCantContainAdmin: 'loginIdCantContainAdmin'
+  loginIdCantContainAdmin: 'loginIdCantContainAdmin',
+  startDateIsLaterThanToDate: 'startDateIsLaterThanToDate',
+  toDateIsEarlierThanStartDate: 'toDateIsEarlierThanStartDate',
+  tenantIdShouldBeSixDigit: 'tenantIdShouldBeSixDigit',
+  tenantIdNotFound: 'tenantIdNotFound',
+  mustDifferent: 'mustDifferent',
+  loginIdProhibited: 'loginIdProhibited',
+  incorrectAddress: 'incorrectAddress',
+  dateOutOfRange: 'dateOutOfRange',
+  dateSpesificIsWrong: 'dateSpesificIsWrong',
+  effectiveDateLess: 'effectiveDateLess',
+  cannotBeSame: 'cannotBeSame',
+  cantBeSame: 'cantBeSame'
 }
 
 export const Notiftemplate = {
   email: 'email',
-  app: 'app',
+  app: 'in-app',
   sms: 'sms',
   broadcast: 'broadcast'
 }
@@ -125,7 +137,7 @@ export const TypeRecycables:TypeRecycable = {
   Metals: 'Metals'
 }
 
-export const indexMonths: string[] = ['January','February','March','April','May','June','Juli','August','September','October','November','December']
+export const indexMonths: string[] = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 export const MAINTENANCE_STATUS = {
   NOT_UNDER_MAINTENANCE : 'NOT_UNDER_MAINTENANCE',
@@ -140,6 +152,7 @@ export const STATUS_CODE = {
   402: 402,
   403: 403,
   404: 404,
+  409: 409,
   408: 408,
   500: 500,
   501: 501,

@@ -12,11 +12,7 @@ import {
   createPackaging,
   editPackaging
 } from '../../../APICalls/Collector/packagingUnit'
-import { extractError, returnApiToken } from '../../../utils/utils'
-import {
-  createPackagingUnit,
-  editPackagingUnit
-} from '../../../APICalls/Customer/packagingUnit'
+import { extractError, returnApiToken, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
 import { returnErrorMsg } from '../../../utils/utils'
 import i18n from '../../../setups/i18n'
@@ -37,6 +33,7 @@ interface PackagingUnit {
   updatedBy: string
   createdAt: string
   updatedAt: string
+  version: number
 }
 
 interface CreatePackagingProps {
@@ -76,6 +73,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
   const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
   const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate();
 
   const statusList = () => {
@@ -87,10 +85,6 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       {
         name: t('status.inactive'),
         id: 'INACTIVE'
-      },
-      {
-        name: t('status.deleted'),
-        id: 'DELETED'
       }
     ]
     return colList
@@ -106,6 +100,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
         setDescription(selectedItem.description)
         setRemark(selectedItem.remark)
         setStatus(selectedItem.status)
+        setVersion(selectedItem.version)
 
         // set existing name
         setEngNameExisting(
@@ -215,9 +210,10 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       packagingNameEng: englishName,
       description: description,
       remark: remark,
-      status: 'ACTIVE',
+      status: status,
       createdBy: token.loginId,
-      updatedBy: token.loginId
+      updatedBy: token.loginId,
+      ...(action === 'edit' && {version: version})
     }
 
     if (action == 'add') {
@@ -248,7 +244,23 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       } else {
-        onSubmitData('error', t('common.saveFailed'))
+        let field = t('common.saveFailed');
+        let problem = ''
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          field = t('general_settings.packageNameAlreadyExist')
+          problem = formErr.alreadyExist
+        } 
+        setValidation(
+          [
+            {
+              field,
+              problem,
+              type: 'error'
+            }
+          ]
+        )
+        setTrySubmited(true)
+        // onSubmitData('error', t('common.saveFailed'))
       }
     }
   }
@@ -269,6 +281,26 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
     const {state} = extractError(error);
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
+    } else {
+      // let field = t('common.saveFailed');
+      // let problem = ''
+      // if(error?.response?.data?.status === STATUS_CODE[500]){
+      //   field = t('general_settings.packageNameAlreadyExist')
+      //   problem = formErr.alreadyExist
+      // } 
+      // setValidation(
+      //   [
+      //     {
+      //       field,
+      //       problem,
+      //       type: 'error'
+      //     }
+      //   ]
+      // )
+      // setTrySubmited(true)
+      if (state.code === 500) {
+        showErrorToast(error?.response?.data?.message);
+      }
     }
    }
   }
@@ -328,7 +360,8 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>
@@ -342,7 +375,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                 id="tChineseName"
                 value={tChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.traditional_chinese_name')}
+                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                 onChange={(event) => setTChineseName(event.target.value)}
                 error={checkString(tChineseName)}
               />
@@ -357,7 +390,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                 id="sChineseName"
                 value={sChineseName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.simplified_chinese_name')}
+                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                 onChange={(event) => setSChineseName(event.target.value)}
                 error={checkString(sChineseName)}
               />
@@ -369,7 +402,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                 id="englishName"
                 value={englishName}
                 disabled={action === 'delete'}
-                placeholder={t('packaging_unit.english_name')}
+                placeholder={t('packaging_unit.english_name_placeholder')}
                 onChange={(event) => setEnglishName(event.target.value)}
                 error={checkString(englishName)}
               />
@@ -381,55 +414,66 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
                 id="brNo"
                 value={brNo}
                 disabled={action === 'delete'}
-                placeholder={t('general_settings.reference_number')}
+                placeholder={t('general_settings.reference_number_placeholder')}
                 onChange={(event) => setBRNumber(event.target.value)}
                 error={checkString(brNo)}
               />
             </CustomField>
           </Box> */}
-          <CustomField
-            label={t('packaging_unit.introduction')}
-            mandatory={false}
-          >
-            <CustomTextField
-              id="description"
-              placeholder={t('packaging_unit.introduction')}
-              onChange={(event) => setDescription(event.target.value)}
-              multiline={true}
-              defaultValue={description}
-            />
-          </CustomField>
-          <CustomField label={t('packaging_unit.remark')} mandatory={false}>
-            <CustomTextField
-              id="remark"
-              placeholder={t('packaging_unit.remark')}
-              onChange={(event) => setRemark(event.target.value)}
-              multiline={true}
-              defaultValue={remark}
-            />
-          </CustomField>
-          <CustomField label={t('col.status')} mandatory={true}>
-            <CustomItemList
-              items={statusList()}
-              singleSelect={(selectedItem) => {
-                setStatus(selectedItem)
-              }}
-              editable={action != 'delete'}
-              defaultSelected={status}
-              needPrimaryColor={true}
-            />
-          </CustomField>
-          <Grid item>
-            {trySubmited &&
-              validation.map((val, index) => (
-                <FormErrorMsg
-                  key={index}
-                  field={t(val.field)}
-                  errorMsg={returnErrorMsg(val.problem, t)}
-                  type={val.type}
-                />
-              ))}
-          </Grid>
+          <Box sx={{ marginY: 2 }}>
+            <CustomField
+              label={t('packaging_unit.introduction')}
+              mandatory={false}
+            >
+              <CustomTextField
+                id="description"
+                placeholder={t('packaging_unit.introduction_placeholder')}
+                onChange={(event) => setDescription(event.target.value)}
+                multiline={true}
+                defaultValue={description}
+              />
+            </CustomField>
+          </Box>
+          <Box sx={{ marginY: 2 }}>
+            <CustomField label={t('packaging_unit.remark')} mandatory={false}>
+              <CustomTextField
+                id="remark"
+                placeholder={t('packaging_unit.remark_placeholder')}
+                onChange={(event) => setRemark(event.target.value)}
+                multiline={true}
+                defaultValue={remark}
+              />
+            </CustomField>
+          </Box>
+          
+          <Box sx={{ marginY: 2 }}>
+            <CustomField label={t('col.status')} mandatory={true}>
+              <CustomItemList
+                items={statusList()}
+                singleSelect={(selectedItem) => {
+                  setStatus(selectedItem)
+                }}
+                editable={action != 'delete'}
+                defaultSelected={status}
+                needPrimaryColor={true}
+              />
+            </CustomField>
+          </Box>
+          
+          <Box sx={{ marginY: 2 }}>
+            <Grid item>
+              {trySubmited &&
+                validation.map((val, index) => (
+                  <FormErrorMsg
+                    key={index}
+                    field={t(val.field)}
+                    errorMsg={returnErrorMsg(val.problem, t)}
+                    type={val.type}
+                  />
+                ))}
+            </Grid>
+          </Box>
+          
         </Box>
       </RightOverlayForm>
     </div>

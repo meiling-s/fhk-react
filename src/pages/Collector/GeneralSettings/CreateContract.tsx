@@ -16,7 +16,13 @@ import {
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr, format } from '../../../constants/constant'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import {
+  extractError,
+  getPrimaryColor,
+  returnErrorMsg,
+  showErrorToast,
+  validDayjsISODate
+} from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import { localStorgeKeyName } from '../../../constants/constant'
 import i18n from '../../../setups/i18n'
@@ -65,14 +71,16 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const [whether, setWhether] = useState(false)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+  const [version, setVersion] = useState<number>(0)
   const [existingContract, setExistingContract] = useState<Contract[]>([])
-  const {dateFormat} = useContainer(CommonTypeContainer)
-  const navigate = useNavigate();
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
 
   useEffect(() => {
     resetData()
     if (action === 'edit') {
       if (selectedItem !== null && selectedItem !== undefined) {
+        console.log(selectedItem, 'item')
         setContractNo(selectedItem?.contractNo)
         setReferenceNumber(selectedItem?.parentContractNo)
         setContractStatus(selectedItem?.status === 'ACTIVE' ? true : false)
@@ -80,6 +88,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         setEndDate(dayjs(selectedItem?.contractToDate))
         setRemark(selectedItem?.remark)
         setWhether(selectedItem?.epdFlg)
+        setVersion(selectedItem?.version ?? 0)
 
         setExistingContract(
           contractList.filter(
@@ -111,19 +120,53 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
 
       contractNo.toString() == '' &&
         tempV.push({
-          field: t('general_settings.name'),
+          field: t('general_settings.contract_number'),
           problem: formErr.empty,
           type: 'error'
         })
-      existingContract.forEach((item) => {
-        if (item.contractNo.toLowerCase() === contractNo.toLowerCase()) {
-          tempV.push({
-            field: t('general_settings.name'),
-            problem: formErr.alreadyExist,
-            type: 'error'
-          })
-        }
-      })
+      // existingContract.forEach((item) => {
+      //   if (item.contractNo.toLowerCase() === contractNo.toLowerCase()) {
+      //     tempV.push({
+      //       field: t('general_settings.contract_number'),
+      //       problem: formErr.alreadyExist,
+      //       type: 'error'
+      //     })
+      //   }
+      // })
+      contractNo !== '' &&
+        referenceNumber !== '' &&
+        contractNo === referenceNumber &&
+        tempV.push({
+          field: `${t('general_settings.contract_number_must_be_different')}`,
+          problem: formErr.cannotBeSame,
+          type: 'error'
+        })
+      startDate == null &&
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      startDate &&
+        !validDayjsISODate(startDate) &&
+        tempV.push({
+          field: t('general_settings.start_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+      endDate == null &&
+        tempV.push({
+          field: t('general_settings.end_date'),
+          problem: formErr.empty,
+          type: 'error'
+        })
+      endDate &&
+        !validDayjsISODate(endDate) &&
+        tempV.push({
+          field: t('general_settings.end_date'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
       startDate > endDate &&
         tempV.push({
           field: t('general_settings.start_date'),
@@ -141,7 +184,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     }
 
     validate()
-  }, [contractNo, startDate, endDate, i18n])
+  }, [contractNo, referenceNumber, startDate, endDate, i18n])
 
   const checkString = (s: string) => {
     if (!trySubmited) {
@@ -160,12 +203,13 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       contractNo: contractNo,
       parentContractNo: referenceNumber,
       status: contractStatus === true ? 'ACTIVE' : 'INACTIVE',
-      contractFrmDate: startDate.format('YYYY-MM-DD'),
-      contractToDate: endDate.format('YYYY-MM-DD'),
+      contractFrmDate: startDate ? startDate.format('YYYY-MM-DD') : '',
+      contractToDate: endDate ? endDate.format('YYYY-MM-DD') : '',
       remark: remark,
       epdFlg: whether,
       createdBy: loginId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      ...(action === 'edit' && {version: version})
     }
 
     if (action == 'add') {
@@ -191,12 +235,28 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        onSubmitData('error', t('common.saveFailed'))
+        let field = t('common.saveFailed');
+        let problem = ''
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          field = t('general_settings.contract_number')
+          problem = formErr.alreadyExist
+        } 
+        setValidation(
+          [
+            {
+              field,
+              problem,
+              type: 'error'
+            }
+          ]
+        )
+        setTrySubmited(true)
+        // onSubmitData('error', t('common.saveFailed'))
       }
     }
   }
@@ -213,10 +273,12 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       } else {
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[500]){
+        showErrorToast(error.response.data.message);
       }
     }
   }
@@ -225,7 +287,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     try {
       const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
       const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
-  
+
       const formData: any = {
         // tenantId: tenantId,
         // contractNo: contractNo,
@@ -248,9 +310,9 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
           onSubmitData('error', t('common.deleteFailed'))
         }
       }
-    } catch (error:any) {
-      const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
         onSubmitData('error', t('common.deleteFailed'))
@@ -277,18 +339,19 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>
         <Box sx={{ marginX: 2 }}>
           <Box sx={{ marginY: 2 }}>
-            <CustomField label={t('general_settings.name')}>
+            <CustomField label={t('general_settings.contract_number')}>
               <CustomTextField
                 id="contractNo"
                 value={contractNo}
                 disabled={action != 'add'}
-                placeholder={t('general_settings.name')}
+                placeholder={t('general_settings.enter_contracts_number')}
                 onChange={(event) => setContractNo(event.target.value)}
                 error={checkString(contractNo)}
               />
@@ -300,7 +363,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                 id="referenceNumber"
                 value={referenceNumber}
                 disabled={action === 'delete'}
-                placeholder={t('general_settings.reference_number')}
+                placeholder={t('general_settings.enter_reference_number')}
                 onChange={(event) => setReferenceNumber(event.target.value)}
               />
             </CustomField>
@@ -339,6 +402,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                   format={dateFormat}
                   onChange={(value) => setStartDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
+                  maxDate={dayjs(endDate)}
                 />
               </Box>
               <Box sx={{ ...localstyles.DateItem, flexDirection: 'column' }}>
@@ -348,15 +412,16 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
                   format={dateFormat}
                   onChange={(value) => setEndDate(value!!)}
                   sx={{ ...localstyles.datePicker }}
+                  minDate={dayjs(startDate)}
                 />
               </Box>
             </Box>
           </LocalizationProvider>
-          <CustomField label={t('common.remark')} mandatory={false}>
+          <CustomField label={t('general_settings.remark')} mandatory={false}>
             <CustomTextField
               id="remark"
               value={remark}
-              placeholder={t('common.remark')}
+              placeholder={t('general_settings.enter_remark')}
               onChange={(event) => setRemark(event.target.value)}
               multiline={true}
             />
@@ -365,8 +430,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
             <div className="self-stretch flex flex-col items-start justify-start gap-[8px] text-center">
               <LabelField label={t('general_settings.whether')} />
               <Switcher
-                onText={t('general_settings.true')}
-                offText={t('general_settings.false')}
+                onText={t('common.yes')}
+                offText={t('common.no')}
                 disabled={action === 'delete'}
                 defaultValue={whether}
                 setState={(newValue) => {
@@ -437,7 +502,7 @@ const localstyles = {
     ...styles.textField,
     width: '250px',
     '& .MuiIconButton-edgeEnd': {
-      color: '#79CA25'
+      color: getPrimaryColor()
     }
   },
   DateItem: {

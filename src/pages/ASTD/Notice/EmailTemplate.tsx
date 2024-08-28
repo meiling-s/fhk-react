@@ -13,7 +13,7 @@ import { LanguagesNotif,Option } from "../../../interfaces/notif";
 import i18n from "../../../setups/i18n";
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs from "dayjs";
-
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 interface TemplateProps {
     templateId: string,
     realmApiRoute: string
@@ -32,7 +32,8 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
             receivers: [], 
             updatedBy: '',
             effFromDate: dayjs().format('YYYY-MM-DD'), 
-            effToDate: dayjs().format('YYYY-MM-DD')   
+            effToDate: dayjs().format('YYYY-MM-DD'),
+            version: 0,
         }
     )
     const navigate = useNavigate();
@@ -130,7 +131,8 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                         senders: notif?.senders,
                         receivers: notif?.receivers,
                         updatedBy: notif?.updatedBy,
-                        variables: notif?.variables
+                        variables: notif?.variables,
+                        version: notif?.version
                     }
                 })
                 setCurrentLanguage(notif.lang)
@@ -209,20 +211,18 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
     }
 
     const onSubmitUpdateTemplate = async () => {
-        if(notifTemplate.content === '' || notifTemplate.lang === ''){
+        if (notifTemplate.content === '' || notifTemplate.lang === ''){
             showErrorToast(t('common.editFailed'))
             return
         }
-        
-        const response = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
-        if (response) {
+        const result = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
+        if (result?.response?.status === 500) {
+            showErrorToast(result.response.data.message);
+        } else {
             showSuccessToast(t('common.editSuccessfully'))
             setTimeout(() => {
                 navigate(`/${realm}/notice`)
-            }, 1000);
-
-        } else {
-            showErrorToast(t('common.editFailed'))
+            }, 1000)
         }
     }
 
@@ -265,8 +265,16 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
         }
     }
 
+    const onDragHandler = (event: any, item: string) => {
+        event.dataTransfer.setData("text/plain", item);
+    }
+
     return (
-        <Box className="container-wrapper w-full mr-11">
+        <Box className="container-wrapper w-max mr-11">
+            <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="zh-cn"
+            >
             <div className="overview-page bg-bg-primary">
                 <div
                     className="header-page flex justify-start items-center mb-4 cursor-pointer"
@@ -286,7 +294,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                 spacing={2.5}
             >
                 <Typography style={{ color: '#717171', fontSize: '16px', fontWeight: '700' }}>
-                    {t('notification.modify_template.broadcast.Recycling_delivery_request')}
+                    {t('notification.modify_template.email.Recycling_delivery_request')}
                 </Typography>
                 <Grid display={'flex'} direction={'column'} rowGap={1}>
                     <Typography style={{ fontSize: '13px', color: '#ACACAC' }}>
@@ -326,6 +334,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                             sx: styles.inputProps
                             }} 
                         />}
+                        noOptionsText={t('common.noOptions')}
                     />
                     <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
                         {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}
@@ -406,11 +415,13 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                             //     style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
                             //     onClick={(event) => onChangeContent(index)}
                             // > [{item}] </button>
-                            return <FileUploadCard
-                                index={index}
-                                item={item} 
-                                onHandleUpload={onHandleUpload}
-                            />
+                            return <div 
+                                key={index} 
+                                className="mr-2 text-[#717171] text-md py-1 px-2 hover:cursor-pointer  bg-[#FBFBFB]"
+                                id ={`drag-${index}`} 
+                                onDragStart={(event) => onDragHandler(event, ` {${item}} `)}
+                                draggable="true">{`{${item}}`}
+                            </div>
                         })}
                     </Grid>
                 </Grid>
@@ -434,6 +445,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
                     </Button>
                 </Grid>
             </Grid>
+            </LocalizationProvider>
         </Box>
     )
 };

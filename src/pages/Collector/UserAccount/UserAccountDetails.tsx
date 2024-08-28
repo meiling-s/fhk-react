@@ -19,10 +19,16 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { formErr } from '../../../constants/constant'
-import { returnErrorMsg } from '../../../utils/utils'
+import {
+  returnErrorMsg,
+  validateEmail,
+  extractError,
+  showErrorToast,
+  showSuccessToast
+} from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 
-import { localStorgeKeyName } from '../../../constants/constant'
+import { localStorgeKeyName, STATUS_CODE } from '../../../constants/constant'
 import Switches from '../../../components/FormComponents/CustomSwitch'
 import LabelField from '../../../components/FormComponents/CustomField'
 import { getUserGroup } from '../../../APICalls/commonManage'
@@ -33,6 +39,9 @@ import {
   updateUserAccount,
   deleteUserAccount
 } from '../../../APICalls/userAccount'
+import { getStaffList } from '../../../APICalls/staff'
+import { useNavigate } from 'react-router-dom'
+import UserConfirmModal from '../../../components/FormComponents/UserC'
 
 interface UserAccountDetailsProps {
   drawerOpen: boolean
@@ -78,6 +87,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const logginUser = localStorage.getItem(localStorgeKeyName.username) || ''
   const realm = localStorage.getItem(localStorgeKeyName.realm) || ''
+  const prohibitedLoginId: string[] = ['_astdadmin', '_superadmin', '_fhkadmin']
+  const [existingEmail, setExistingEmail] = useState<string[]>([])
+  const [showModalConfirm, setShowModalConfirm] = useState(false)
+  const navigate = useNavigate()
+
   const statusList = () => {
     const colList: il_item[] = [
       {
@@ -97,7 +111,6 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
   }
 
   const mappingData = () => {
-    // console.log('selectedItem', selectedItem)
     if (selectedItem) {
       const selectedStatus =
         selectedItem.status === 'ACTIVE'
@@ -113,6 +126,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   useEffect(() => {
     getUserGroupList()
+    getExistingEmail()
     setValidation([])
     if (action !== 'add') {
       mappingData()
@@ -121,6 +135,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
       resetData()
     }
   }, [drawerOpen])
+
+  useEffect(() => {
+    if (userGroupList.length > 0 && action === 'add')
+      setUserGroup(userGroupList[0].groupId)
+  }, [userGroupList])
 
   const getUserGroupList = async () => {
     const result = await getUserGroup(0, 1000)
@@ -133,8 +152,28 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
         })
       })
       setUserGroupList(groupList)
+    }
+  }
 
-      if (groupList.length > 0) setUserGroup(groupList[0].groupId)
+  const getExistingEmail = async () => {
+    try {
+      const result = await getStaffList(0, 1000, null)
+
+      if (result) {
+        let tempEmail: string[] = []
+        const data = result.data.content
+        data.map((item: any) => {
+          tempEmail.push(item.email)
+        })
+
+        setExistingEmail(tempEmail)
+        console.log('existing', existingEmail)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -157,6 +196,17 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     return s == ''
   }
 
+  const hasProhibitedSubstring = (
+    loginId: string,
+    prohibitedLoginId: string[]
+  ) => {
+    const lowerCaseLoginId = loginId?.toLowerCase()
+    return (
+      prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase()) ||
+      /admin/.test(loginId.toLocaleLowerCase())
+    )
+  }
+
   useEffect(() => {
     const validate = async () => {
       //do validation here
@@ -167,19 +217,20 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+
+      if (hasProhibitedSubstring(loginId, prohibitedLoginId)) {
+        tempV.push({
+          field: t('userAccount.loginName'),
+          problem: formErr.loginIdProhibited,
+          type: 'error'
+        })
+      }
       userList?.includes(loginId) &&
         tempV.push({
           field: t('userAccount.loginName'),
           problem: formErr.alreadyExist,
           type: 'error'
         })
-      if (/admin/.test(loginId)) {
-        tempV.push({
-          field: t('userAccount.loginName'),
-          problem: formErr.loginIdCantContainAdmin,
-          type: 'error'
-        })
-      }
       contactNo?.toString() == '' &&
         tempV.push({
           field: t('staffManagement.contactNumber'),
@@ -192,43 +243,65 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
+
+      !validateEmail(email) &&
+        email?.toString() != '' &&
+        tempV.push({
+          field: t('userAccount.emailAddress'),
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+
       setValidation(tempV)
     }
 
     validate()
   }, [loginId, contactNo, email, userGroup, userStatus])
 
-  const showErrorToast = (msg: string) => {
-    toast.error(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
+  const handleCreateOrEditUser = () => {
+    setShowModalConfirm(false)
+    handleCreateUser()
   }
 
-  const showSuccessToast = (msg: string) => {
-    toast.info(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
+  const isEmailExisting = (email: string) => {
+    const lowercaseEmail = email.toLowerCase()
+    const isExisting = existingEmail.some(
+      (existing) => existing.toLowerCase() === lowercaseEmail
+    )
+
+    return isExisting
   }
+
+  // const handleSubmit = () => {
+  //   if (validation.length === 0) {
+  //     if (action == 'add') {
+  //       if (!isEmailExisting(email)) {
+  //         setTrySubmited(true)
+  //         setShowModalConfirm(true)
+  //       } else {
+  //         handleCreateUser()
+  //       }
+  //     } else {
+  //       handleEditUser()
+  //     }
+  //   }
+  // }
 
   const handleSubmit = () => {
-    if (action == 'add') {
-      handleCreateUser()
+    if (validation.length !== 0 && action === 'add') {
+      setTrySubmited(true)
+      return
+    }
+
+    action === 'add' ? handleAddUser() : handleEditUser()
+  }
+
+  const handleAddUser = () => {
+    if (isEmailExisting(email)) {
+      setShowModalConfirm(true)
     } else {
-      handleEditUser()
+      setTrySubmited(true)
+      handleCreateUser()
     }
   }
 
@@ -252,16 +325,23 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     }
     if (validation.length === 0) {
       const result = await postUserAccount(formData)
+
+      setValidation([])
       if (result == 409) {
         //SET VALIDATION FOR USER WITH SAME EMAIL
         setTrySubmited(true)
         let tempV = []
         tempV.push({
-          field: t('userAccount.emailAddress'),
+          field: `${t('userAccount.emailAddress')} ${t(
+            'localizedTexts.filterPanelOperatorOr'
+          )} ${t('userAccount.loginName')}`,
           problem: formErr.alreadyExist,
           type: 'error'
         })
         setValidation(tempV)
+      } else if (result == 500) {
+        setTrySubmited(true)
+        showErrorToast(t('userAccount.failedCreatedUser'))
       } else {
         onSubmitData()
         showSuccessToast(t('userAccount.successCreatedUser'))
@@ -270,7 +350,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
       }
     } else {
       setTrySubmited(true)
-      showErrorToast(t('userAccount.failedCreatedUser'))
+      //showErrorToast(t('userAccount.failedCreatedUser'))
     }
   }
 
@@ -296,7 +376,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
 
   const handleDelete = async () => {
     const formData = {
-      status: 'INACTIVE',
+      status: 'DELETED',
       updatedBy: logginUser
     }
     if (selectedItem != null) {
@@ -349,7 +429,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
             className="sm:ml-0 mt-o w-full"
           >
             {action == 'add' && (
-              <CustomField label={t('userAccount.addByNumber')}>
+              <CustomField label={t('userAccount.staffId')}>
                 <CustomTextField
                   id="staffId"
                   value={staffId}
@@ -377,7 +457,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                       value={email}
                       placeholder={t('userAccount.pleaseEnterEmailAddress')}
                       onChange={(event) => setEmail(event.target.value)}
-                      error={checkString(contactNo)}
+                      error={!validateEmail(email) && trySubmited}
                     />
                   </CustomField>
                 </Grid>
@@ -426,11 +506,17 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                     }
                   }}
                 >
-                  {userGroupList.map((item, index) => (
-                    <MenuItem key={index} value={item.groupId}>
-                      {item.roleName}
+                  {!userGroupList ? (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
                     </MenuItem>
-                  ))}
+                  ) : (
+                    userGroupList.map((item, index) => (
+                      <MenuItem key={index} value={item.groupId}>
+                        {item.roleName}
+                      </MenuItem>
+                    ))
+                  )}
                 </Select>
               </FormControl>
             </Grid>
@@ -459,7 +545,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 }}
                 editable={action != 'delete'}
                 defaultSelected={userStatus}
-                needPrimaryColor={true}
+                needPrimaryColor={false}
               />
             </CustomField>
             <Grid item sx={{ width: '100%' }}>
@@ -474,6 +560,11 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
                 ))}
             </Grid>
           </Grid>
+          <UserConfirmModal
+            open={showModalConfirm}
+            onClose={() => setShowModalConfirm(false)}
+            onSubmit={handleCreateOrEditUser}
+          ></UserConfirmModal>
         </Box>
       </RightOverlayForm>
     </div>

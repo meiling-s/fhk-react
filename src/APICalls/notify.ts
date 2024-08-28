@@ -8,7 +8,8 @@ import {
   GET_LIST_NOTIF_TEMPLATE_STAFF,
   GET_DETAIL_NOTIF_TEMPLATE,
   UPDATE_NOTIF_TEMPLATE,
-  UPDATE_NOTIF_TEMPLATE_BROADCAST
+  UPDATE_NOTIF_TEMPLATE_BROADCAST,
+  GET_BROADCAST_MESSAGE
 } from '../constants/requests'
 import { UpdateNotifTemplate, UpdateNotifTemplateBroadcast } from '../interfaces/notif'
 import { returnApiToken } from '../utils/utils'
@@ -106,7 +107,7 @@ export const updateNotifTemplate = async (templateId: string, data: UpdateNotifT
     })
     return response.data
   } catch (e) {
-    return null
+    return e
   }
 }
 
@@ -117,6 +118,19 @@ export const updateNotifTemplateBroadcast = async (templateId: string, data: Upd
       ...UPDATE_NOTIF_TEMPLATE_BROADCAST(token.tenantId, templateId, path),
       baseURL: administratorAPI.baseURL,
       data
+    })
+    return response.data
+  } catch (e) {
+    return null
+  }
+}
+
+export const getBroadcastMessage = async () => {
+  try {
+    const token = returnApiToken();
+    const response = await axiosInstance({
+      ...GET_BROADCAST_MESSAGE(),
+      baseURL: administratorAPI.baseURL,
     })
     return response.data
   } catch (e) {

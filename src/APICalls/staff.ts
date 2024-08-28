@@ -9,19 +9,25 @@ import {
 } from '../constants/requests'
 import { returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
+import { staffQuery } from '../interfaces/staff'
 
 //get all staff
-export const getStaffList = async (page: number, size: number) => {
+export const getStaffList = async (page: number, size: number, query: staffQuery | null) => {
   try {
     const token = returnApiToken()
+
+    const params: any = {
+      page: page,
+      size: size
+    }
+    if (query?.staffId) params.staffId = query.staffId
+    if (query?.staffName) params.staffName = query.staffName
+   
 
     const response = await axiosInstance({
         baseURL: window.baseURL.collector,
       ...GET_STAFF(token.tenantId, token.realmApiRoute),
-      params: {
-        page: page,
-        size: size
-      }
+      params: params
     })
 
     return response
@@ -60,9 +66,8 @@ export const editStaff = async (data: any, staffId: string) => {
       data: data
     })
     return response
-  } catch (e) {
-    console.error(`Edit staff ${staffId} failed:`, e)
-    return null
+  } catch (e: any) {
+    return e.response
   }
 }
 

@@ -77,13 +77,13 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       label: t('common.description'),
       placeholder: t('common.enterText'),
       field: 'description',
-      type: 'text'
+      type: 'text-not-mandatory'
     },
     {
       label: t('common.remark'),
       placeholder: t('common.enterText'),
       field: 'remark',
-      type: 'text'
+      type: 'text-not-mandatory'
     }
   ]
 
@@ -292,7 +292,8 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>
@@ -312,7 +313,23 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
             className="sm:ml-0 mt-o w-full"
           >
             {staffField.map((item, index) =>
-              <Grid item key={index}>
+            item.type === 'text-not-mandatory' ?
+              (<Grid item key={index}>
+                <CustomField label={item.label}>
+                  <CustomTextField
+                    id={item.label}
+                    value={formData[item.field as keyof FormValues]}
+                    disabled={action === 'delete'}
+                    placeholder={item.placeholder}
+                    onChange={(event) =>
+                      handleFieldChange(
+                        item.field as keyof FormValues,
+                        event.target.value
+                      )
+                    }
+                  />
+                </CustomField>
+              </Grid>) : (<Grid item key={index}>
                 <CustomField label={item.label} mandatory>
                   <CustomTextField
                     id={item.label}
@@ -330,18 +347,23 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
                     )}
                   />
                 </CustomField>
-              </Grid>
+              </Grid>)
             )}
             <Grid item sx={{ width: '100%' }}>
               {trySubmited &&
-                validation.map((val, index) => (
-                  <FormErrorMsg
-                    key={index}
-                    field={t(val.field)}
-                    errorMsg={returnErrorMsg(val.problem, t)}
-                    type={val.type}
-                  />
-                ))}
+                validation.map((val, index) => {
+                  if (val.field !== t('common.description') && val.field !== t('common.remark')) {
+                    return (
+                      <FormErrorMsg
+                        key={index}
+                        field={t(val.field)}
+                        errorMsg={returnErrorMsg(val.problem, t)}
+                        type={val.type}
+                      />
+                    )
+                  }
+                  return null;
+                })}
             </Grid>
           </Grid>
         </Box>

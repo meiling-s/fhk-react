@@ -1,13 +1,10 @@
 import { layout, localStorgeKeyName } from './constant'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import { getPrimaryColor, getPrimaryLightColor } from '../utils/utils'
 
 // const theme = useTheme()
 // const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-const role = localStorage.getItem(localStorgeKeyName.role)
-console.log({role})
-export const primaryColor: string = role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
-export const primaryLightColor: string = role === 'manufacturer' || role === 'customer' ? '#F0F9FF' : '#E4F6DC'
 export const styles = {
   innerScreen: {
     display: 'flex',
@@ -17,7 +14,8 @@ export const styles = {
     backgroundColor: '#F4F5F7',
     pl: layout.innerScreen_padding,
     pt: layout.innerScreen_padding,
-    width: '100%'
+    width: '100%',
+    overflow: 'auto'
   },
   innerScreen_container: {
     width: '100%',
@@ -25,7 +23,7 @@ export const styles = {
     display: 'flex',
     flexDirection: 'column',
     pr: layout.innerScreen_padding,
-    pb: layout.innerScreen_padding,
+    pb: layout.innerScreen_padding
   },
   mobileScreen: {
     ml: 0,
@@ -40,7 +38,6 @@ export const styles = {
   },
   gridForm: {
     alignItems: 'flex-start'
-
   },
   header1: {
     fontSize: 25,
@@ -67,203 +64,203 @@ export const styles = {
   },
   buttonFilledGreen: {
     borderRadius: '40px',
-    borderColor: primaryColor,
-    backgroundColor: primaryColor,
+    borderColor: getPrimaryColor(),
+    backgroundColor: getPrimaryColor(),
     color: 'white',
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
-      backgroundColor: primaryColor,
+      backgroundColor: getPrimaryColor(),
       border: "2px solid",
-      borderColor: primaryColor,
+      borderColor: getPrimaryColor(),
     },
     innerScreen: {
-        display: "flex",
-        minHeight: `calc(100vh - ${layout.appbarHeight} - ${layout.innerScreen_padding} )`,
-        ml: `${layout.drawerWidth}px`,
-        mt: { lg: layout.appbarHeight, sm: '100px' },
-        backgroundColor: "#F4F5F7",
-        pl: layout.innerScreen_padding,
-        pt: layout.innerScreen_padding,
-        
+      display: 'flex',
+      minHeight: `calc(100vh - ${layout.appbarHeight} - ${layout.innerScreen_padding} )`,
+      ml: `${layout.drawerWidth}px`,
+      mt: { lg: layout.appbarHeight, sm: '100px' },
+      backgroundColor: '#F4F5F7',
+      pl: layout.innerScreen_padding,
+      pt: layout.innerScreen_padding
     },
     innerScreen_container: {
-        width: "100%",
-        height: "100vh",
-        display: 'flex',
-        flexDirection: 'column',
-        pr: layout.innerScreen_padding,
-        pb: layout.innerScreen_padding
+      width: '100%',
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      pr: layout.innerScreen_padding,
+      pb: layout.innerScreen_padding
     },
     mobileScreen: {
-        ml: 0,
-        pl: 0,
-        pt: 0
+      ml: 0,
+      pl: 0,
+      pt: 0
     },
     headerSection: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        color: "black"
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      color: 'black'
     },
     gridForm: {
-        alignItems: "flex-start"
+      alignItems: 'flex-start'
     },
     header1: {
-        fontSize: 25,
-        fontWeight: "bold"
+      fontSize: 25,
+      fontWeight: 'bold'
     },
     header2: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "#717171"
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: '#717171'
     },
     header3: {
-        fontSize: 16,
-        color: "#ACACAC"
+      fontSize: 16,
+      color: '#ACACAC'
     },
     header4: {
-        fontSize: 20,
-        color: 'black',
-        fontWeight: 'bold'
+      fontSize: 20,
+      color: 'black',
+      fontWeight: 'bold'
     },
     formDataText: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#000000"
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#000000'
     },
     buttonFilledGreen: {
         borderRadius: "40px",
         borderColor: "#79ca25",
-        backgroundColor: primaryColor,
+        backgroundColor: getPrimaryColor(),
         color: "white",
         fontWeight: "bold",
         '&.MuiButton-root:hover': {
-            backgroundColor: primaryColor,
+            backgroundColor: getPrimaryColor(),
             border: "2px solid",
-            borderColor: primaryColor,
+            borderColor: getPrimaryColor(),
         }
     },
     buttonOutlinedGreen: {
-        borderRadius: "40px",
-        border: 1,
-        borderColor: "#79ca25",
-        backgroundColor: "white",
-        color: "#79ca25",
-        fontWeight: "bold",
-        '&.MuiButton-root:hover': {
-            bgcolor: "#F4F4F4"
-        }
+      borderRadius: '40px',
+      border: 1,
+      borderColor: '#79ca25',
+      backgroundColor: 'white',
+      color: '#79ca25',
+      fontWeight: 'bold',
+      '&.MuiButton-root:hover': {
+        bgcolor: '#F4F4F4'
+      }
     },
     buttonOutlinedGreen_2: {
-        padding: 2,
-        borderRadius: 3,
-        border: 1,
-        borderColor: "#79ca25",
-        backgroundColor: "white",
-        color: "#79ca25",
-        fontWeight: "bold",
-        '&.MuiButton-root:hover': {
-            bgcolor: "#F4F4F4"
-        }
+      padding: 2,
+      borderRadius: 3,
+      border: 1,
+      borderColor: '#79ca25',
+      backgroundColor: 'white',
+      color: '#79ca25',
+      fontWeight: 'bold',
+      '&.MuiButton-root:hover': {
+        bgcolor: '#F4F4F4'
+      }
     },
     mapRightContainer: {
-        width: "50%",
-        height: `calc(100vh - ${layout.appbarHeight})`,
-        mt: -4
+      width: '50%',
+      height: `calc(100vh - ${layout.appbarHeight})`,
+      mt: -4
     },
     textField: {
-        borderRadius: 5,
-        backgroundColor: "white",
-        "& fieldset": {
-            borderRadius: 5,
-        }
+      borderRadius: 5,
+      backgroundColor: 'white',
+      '& fieldset': {
+        borderRadius: 5
+      }
     },
     inputProps: {
-        '&:hover fieldset': {
-            borderColor: "#A8A8A8 !important"
-        },
-        '&:focus-within fieldset, &:focus-visible fieldset': {
-            borderColor: "#79CA25 !important",
-        }
+      '&:hover fieldset': {
+        borderColor: '#A8A8A8 !important'
+      },
+      '&:focus-within fieldset, &:focus-visible fieldset': {
+        borderColor: '#79CA25 !important'
+      }
     },
     endAdornmentIcon: {
-        fontSize: 25,
-        color: "#79CA25"
+      fontSize: 25,
+      color: '#79CA25'
     },
     disableIcon: {
-        fontSize: 25,
-        color: "#ACACAC"
+      fontSize: 25,
+      color: '#ACACAC'
     },
-    listItemTemp: {     //list item template, general style of custom list item in all state
-        paddingX: 1.5,
-        paddingY: 1,
-        mr: 1,
-        borderWidth: 1,
-        borderRadius: 50,
-        fontWeight: "bold"
+    listItemTemp: {
+      //list item template, general style of custom list item in all state
+      paddingX: 1.5,
+      paddingY: 1,
+      mr: 1,
+      borderWidth: 1,
+      borderRadius: 50,
+      fontWeight: 'bold'
     },
     imageContainer: {
-        position: 'absolute' as 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 800,
+      position: 'absolute' as 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 800
     },
     buttonBlack: {
-        color: "#000000"
+      color: '#000000'
     },
     loginPageBg: {
-        backgroundImage:
-            'linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)',
-        minHeight: '100vh',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: {
-            sm: 'flex-start',
-            md: 'center'
-        }
+      backgroundImage:
+        'linear-gradient(157.23deg, #A8EC7E -2.71%, #7EECB7 39.61%, #3BD2F3 107.1%)',
+      minHeight: '100vh',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: {
+        sm: 'flex-start',
+        md: 'center'
+      }
     },
     loginBox: {
-        paddingX: 4,
-        paddingY: 4,
-        margin: {
-            sm: '0 auto',
-            md: 'auto'
-        },
-        borderRadius: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: 'white',
-        height: 'fit-content',
-        // width: '20%',
-        minWidth: 300,
-        transition: 'height 0.3s ease-in-out'
+      paddingX: 4,
+      paddingY: 4,
+      margin: {
+        sm: '0 auto',
+        md: 'auto'
+      },
+      borderRadius: '20px',
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: 'white',
+      height: 'fit-content',
+      // width: '20%',
+      minWidth: 300,
+      transition: 'height 0.3s ease-in-out'
     },
     labelField: {
-        color: '#717171',
-        fontSize: 14,
-        marginBottom: 1,
-        fontWeight: 900
+      color: '#717171',
+      fontSize: 14,
+      marginBottom: 1,
+      fontWeight: 900
     },
     buttonOutlinedWhite: {
-        borderRadius: "40px",
-        borderColor: "#D1D1D1",
-        backgroundColor: "#FFFFFF",
-        color: "#000000",
-        // fontWeight: "bold",
-        '&.MuiButton-root:hover': {
-            backgroundColor: "#F4F4F4"
-        }
+      borderRadius: '40px',
+      borderColor: '#D1D1D1',
+      backgroundColor: '#FFFFFF',
+      color: '#000000',
+      // fontWeight: "bold",
+      '&.MuiButton-root:hover': {
+        backgroundColor: '#F4F4F4'
+      }
     }
   },
   buttonOutlinedGreen: {
     borderRadius: '40px',
     border: 1,
-    borderColor: primaryColor,
+    borderColor: getPrimaryColor(),
     backgroundColor: 'white',
-    color: primaryColor,
+    color: getPrimaryColor(),
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
       bgcolor: '#F4F4F4'
@@ -274,9 +271,9 @@ export const styles = {
     padding: 2,
     borderRadius: 3,
     border: 1,
-    borderColor: primaryColor,
+    borderColor: getPrimaryColor(),
     backgroundColor: 'white',
-    color: primaryColor,
+    color: getPrimaryColor(),
     fontWeight: 'bold',
     '&.MuiButton-root:hover': {
       bgcolor: '#F4F4F4'
@@ -296,7 +293,7 @@ export const styles = {
     backgroundColor: 'white',
     '& fieldset': {
       borderRadius: '12px'
-    },
+    }
   },
   inputProps: {
     '&:hover fieldset': {
@@ -305,13 +302,13 @@ export const styles = {
     '&:focus-within fieldset, &:focus-visible fieldset': {
       borderColor: '#79CA25 !important'
     },
-    '.Mui-disabled' : {
+    '.Mui-disabled': {
       cursor: 'no-drop'
     }
   },
   endAdornmentIcon: {
     fontSize: 25,
-    color: primaryColor
+    color: getPrimaryColor()
   },
   disableIcon: {
     fontSize: 25,
@@ -382,9 +379,9 @@ export const styles = {
     }
   },
   textFieldLabel: {
-    color: primaryColor,
+    color: getPrimaryColor(),
     "&.Mui-focused": {
-      color: primaryColor
+      color: getPrimaryColor()
     },
   },
   inputStyle: {
@@ -393,40 +390,40 @@ export const styles = {
     borderRadius: '10px',
     width: '100%',
     bgcolor: 'white',
+    borderColor: getPrimaryColor(),
     '& .MuiOutlinedInput-root': {
       borderRadius: '10px',
       '& fieldset': {
-        borderColor: primaryColor
+        borderColor: getPrimaryColor()
       },
       '&:hover fieldset': {
-        borderColor: primaryColor
+        borderColor: getPrimaryColor()
       },
       '&.Mui-focused fieldset': {
-        borderColor: primaryColor
+        borderColor: getPrimaryColor()
       }
     }
   },
-  tagOutlineActive:{
-    borderRadius: "40px",
+  tagOutlineActive: {
+    borderRadius: '40px',
     border: 1,
-    borderColor: primaryColor,
-    backgroundColor: primaryLightColor,
-    color: primaryColor,
+    borderColor: getPrimaryColor(),
+    backgroundColor: getPrimaryColor(),
+    color: 'white',
     fontWeight: "bold",
     '&.MuiButton-root:hover': {
-        bgcolor: primaryLightColor
+        bgcolor: getPrimaryColor()
     }
   },
-  tagOutlineDefault:{
-    borderRadius: "40px",
+  tagOutlineDefault: {
+    borderRadius: '40px',
     border: 1,
     borderColor: '#D1D1D1',
     backgroundColor: '#fff',
     color: '#535353',
-    fontWeight: "bold",
+    fontWeight: 'bold',
     '&.MuiButton-root:hover': {
-        bgcolor: primaryLightColor
+        bgcolor: getPrimaryLightColor()
     }
   }
 }
-

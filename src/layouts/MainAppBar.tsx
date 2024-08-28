@@ -31,6 +31,11 @@ import ChangePasswordBase from '../pages/Auth/ChangePasswordBase'
 import { updateFlagNotif } from '../APICalls/notify'
 import { setLanguage } from '../setups/i18n'
 import { returnApiToken } from '../utils/utils'
+import { Notif } from '../interfaces/notif'
+import { createUserActivity } from '../APICalls/userAccount'
+import { UserActivity } from '../interfaces/common'
+import NotifContainer from '../contexts/NotifContainer'
+import logo_company from '../logo_company.png'
 
 const MainAppBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -42,15 +47,18 @@ const MainAppBar = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList } = useContainer(
+  const { numOfNotif, notifList, updateNotifications, setNumOfNotif, setNotifList, broadcast, showBroadcast } = useContainer(
     NotifContainerContext
   )
-  const { loginId } = returnApiToken()
+  const { loginId } = returnApiToken();
+  const { setMarginTop, setBroadcast, setShowBroadcast } = useContainer(NotifContainer)
+  const ipAddress = localStorage.getItem('ipAddress');
+  const role = localStorage.getItem(localStorgeKeyName.role)
+
   useEffect(() => {
     updateNotifications(loginId)
-  }, [])
+  }, [loginId])
  
-
   const handleLanguageChange = (lng: string) => {
     console.log('change language: ', lng)
     i18n.changeLanguage(lng)
@@ -92,8 +100,21 @@ const MainAppBar = () => {
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false)
   }
+  
   const handleLogout = () => {
     console.log("on logout")
+    setMarginTop('0px')
+    setBroadcast(null)
+    setShowBroadcast(false)
+    if(ipAddress){
+      const userActivity: UserActivity = {
+        operation: 'Logout',
+        ip: ipAddress,
+        createdBy: loginId,
+        updatedBy: loginId
+      }
+      createUserActivity(loginId, userActivity)
+    }
     setNumOfNotif(0)
     setNotifList([])
     localStorage.clear()
@@ -115,6 +136,12 @@ const MainAppBar = () => {
     }
   }
 
+  const onClickNotif = (notif: Notif) => {
+    if(notif.messageType !== 'broadcast'){
+      handleClickNotif(notif.notiRecordId)
+    }
+  }
+
   return (
     //<Box flexDirection={"row"} sx={{ flexGrow: 1 }}>
     <AppBar
@@ -122,7 +149,8 @@ const MainAppBar = () => {
       position="fixed"
       sx={{
         width: `calc(100% - ${isMobile ? 0 : drawerWidth}px)`,
-        ml: `${drawerWidth}px`
+        ml: `${drawerWidth}px`,
+        marginTop: `${showBroadcast && broadcast ? '30px': ''}`
       }}
     >
       <Toolbar
@@ -155,14 +183,19 @@ const MainAppBar = () => {
                     {t('appBar.notify')}
                   </Typography>
                   {numOfNotif !== 0 && (
-                    <BackgroundLetterAvatars
-                      name={numOfNotif.toString()!}
-                      size={23}
-                      backgroundColor="red"
-                      fontColor="white"
-                      fontSize="15px"
-                      isBold={true}
-                    />
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'red', borderRadius: 100, width: 25, height: 25}}>
+                    <Typography fontSize={14} style={{color: 'white', fontWeight: 'bold'}}>
+                      {numOfNotif}
+                    </Typography>
+                    </div>
+                    // <BackgroundLetterAvatars
+                    //   name={numOfNotif}
+                    //   size={15}
+                    //   backgroundColor="red"
+                    //   fontColor="white"
+                    //   fontSize="15px"
+                    //   isBold={true}
+                    // />
                   )}
                 </Box>
                 <Divider />
@@ -172,7 +205,7 @@ const MainAppBar = () => {
                     title={notif.title}
                     content={notif.content}
                     datetime={notif.createdAt}
-                    handleItem={() => handleClickNotif(notif.notiRecordId)}
+                    handleItem={() => onClickNotif(notif)}
                     readFlg={notif.readFlg}
                   ></NotifItem>
                 ))}
@@ -226,10 +259,17 @@ const MainAppBar = () => {
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
             >
-              <BackgroundLetterAvatars
-                name="Cawin Pan"
-                backgroundColor="#79ca25"
-              />
+              {role !== 'astd' ? (
+                <BackgroundLetterAvatars
+                  name={role === 'manufacturer' ? 'M F' : role === 'customer' ? 'C S' : role === 'logistic' ? 'L O' : role === 'collector' ? 'C P' : 'C P'}
+                  backgroundColor={role === 'manufacturer' ? '#6BC7FF' : role === 'customer' ? "#199BEC" : role === 'logistic' ? '#63D884' : role === 'collector' ? '#79CA25' : '#79CA25'}
+                />
+              ) : 
+                <img
+                  src={logo_company}
+                  style={{width: 40, height: 40, borderRadius: 100, objectFit: 'contain'}}
+                />
+              }
             </IconButton>
             <Menu
               anchorEl={anchorElAvatar}

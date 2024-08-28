@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useEffect } from 'react'
+import { FunctionComponent, SyntheticEvent, useState, useEffect } from 'react'
 
 import {
   Box,
@@ -7,7 +7,7 @@ import {
   IconButton,
   TextField
 } from '@mui/material'
-import { SEARCH_ICON } from '../themes/icons'
+import { SEARCH_ICON, ARRPW_FORWARD_ICON } from '../themes/icons'
 import RightOverlayForm from '../components/RightOverlayForm'
 import {
   PickupOrder,
@@ -15,7 +15,8 @@ import {
   PicoRefrenceList
 } from '../interfaces/pickupOrder'
 import { useTranslation } from 'react-i18next'
-
+import CustomField from './FormComponents/CustomField'
+import CustomAutoComplete from './FormComponents/CustomAutoComplete'
 import { useContainer } from 'unstated-next'
 import { getAllPickUpOrder } from '../APICalls/Collector/pickupOrder/pickupOrder'
 import { queryPickupOrder } from '../interfaces/pickupOrder'
@@ -51,13 +52,15 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     status: null
   })
   const role = localStorage.getItem(localStorgeKeyName.role)
+  const [selectedPico, setSelectedPico] = useState<string>('')
+  const [searchInput, setSearchInput] = useState<string>('')
 
   const initPickupOrderRequest = async () => {
     let result = null
     if (role != 'collectoradmin') {
-      result = await getAllLogisticsPickUpOrder(0 - 1, 50, query)
+      result = await getAllLogisticsPickUpOrder(0, 1000, query)
     } else {
-      result = await getAllPickUpOrder(0 - 1, 50, query)
+      result = await getAllPickUpOrder(0, 1000, query)
     }
     const data = result?.data.content
     //console.log("pickup order content: ", data);
@@ -89,23 +92,11 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
         ?.filter((picoDetail) => picoDetail.picoId !== picoId) ?? []
     setPicoList(picoDetailList)
     setFilteredPico(picoDetailList)
-  }, [drawerOpen])
+  }, [drawerOpen, searchInput === ''])
 
-  const handleSearch = (searchWord: string) => {
-    if (searchWord != '') {
-      const filteredData: PicoRefrenceList[] = []
-      filteredPico.map((item) => {
-        if (item.senderName.includes(searchWord)) {
-          filteredData.push(item)
-        }
-      })
-      if (filteredData) {
-        setFilteredPico(filteredData)
-      }
-    } else {
-      setFilteredPico(picoList)
-    }
-  }
+  useEffect(() => {
+    handleSearch(searchInput)
+  }, [searchInput])
 
   const handleSelectedPicoId = (
     pickupOrderDetail: PickupOrderDetail,
@@ -114,6 +105,63 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
     if (selectPicoDetail) {
       selectPicoDetail(pickupOrderDetail, picoId)
     }
+  }
+
+  const handleSearch = async (searchWord: string) => {
+    console.log('searchWord', searchWord)
+
+    if (searchWord !== '') {
+      const updatedQuery = {
+        ...query,
+        senderName: searchWord
+      }
+
+      let result = null
+      if (role !== 'collectoradmin') {
+        result = await getAllLogisticsPickUpOrder(0, 1000, updatedQuery)
+      } else {
+        result = await getAllPickUpOrder(0, 1000, updatedQuery)
+      }
+
+      const data = result?.data.content
+      if (data && data.length > 0) {
+        const picoDetailList =
+          data.flatMap((item: any) =>
+            item?.pickupOrderDetail
+              .filter(
+                (detailPico: any) =>
+                  detailPico.senderName &&
+                  detailPico.senderName
+                    .toLowerCase()
+                    .includes(searchWord.toLowerCase())
+              )
+              .map((detailPico: any) => ({
+                type: item.picoType,
+                picoId: item.picoId,
+                status: detailPico.status,
+                effFrmDate: item.effFrmDate,
+                effToDate: item.effToDate,
+                routine: `${item.routineType}, ${item.routine.join(', ')}`,
+                senderName: detailPico.senderName,
+                receiver: detailPico.receiverName,
+                pickupOrderDetail: detailPico
+              }))
+          ) ?? []
+
+        setFilteredPico(picoDetailList)
+      } else {
+        setFilteredPico([])
+      }
+    } else {
+      setFilteredPico(picoList)
+      setSelectedPico('')
+    }
+  }
+
+  const handleCompositionEnd = (event: SyntheticEvent) => {
+    const target = event.target as HTMLInputElement
+    setSearchInput(target.value)
+    handleSearch(target.value)
   }
 
   return (
@@ -130,26 +178,44 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
             onCloseHeader: handleDrawerClose
           }}
         >
-          <Box>
-            <Divider />
-            <div className="p-6">
+          <Divider />
+          <Box sx={{ paddingX: 4, paddingY: 2 }}>
+            <div className="">
               <Box>
-                <div className="filter-section flex justify-between items-center w-full mb-6">
-                  <TextField
-                    id="searchShipment"
-                    onChange={(event) => handleSearch(event.target.value)}
-                    sx={styles.inputState}
-                    placeholder={t('pick_up_order.search_company_name')}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={() => {}}>
-                            <SEARCH_ICON style={{ color: '#79CA25' }} />
-                          </IconButton>
-                        </InputAdornment>
-                      )
-                    }}
-                  />
+                <div className="filter-section  mb-6">
+                  <CustomField
+                    label={t('pick_up_order.choose_logistic')}
+                    mandatory
+                  >
+                    <CustomAutoComplete
+                      placeholder={t('pick_up_order.enter_company_name')}
+                      option={
+                        Array.from(
+                          new Set(
+                            filteredPico
+                              ?.filter((item) => item.status !== 'CLOSED')
+                              .map((item) => item.senderName)
+                          )
+                        ) ?? []
+                      }
+                      sx={{ width: '100%' }}
+                      onChange={(
+                        _: SyntheticEvent,
+                        newValue: string | null
+                      ) => {
+                        // handleSearch(newValue || '')
+                        setSearchInput(newValue || '')
+                        setSelectedPico(newValue || '')
+                      }}
+                      onCompositionEnd={handleCompositionEnd}
+                      onInputChange={(event: any, newInputValue: string) => {
+                        setSearchInput(newInputValue)
+                        setSelectedPico(event.target.value)
+                      }}
+                      value={selectedPico}
+                      inputValue={selectedPico}
+                    />
+                  </CustomField>
                 </div>
                 <Box>
                   {filteredPico.map((item, index) =>
@@ -162,7 +228,7 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                             item.picoId
                           )
                         }}
-                        className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4"
+                        className="card-pico p-4 border border-solid rounded-lg border-grey-line cursor-pointer mb-4 w-[450px]"
                       >
                         <div className="font-bold text-mini mb-2">
                           {item.type}
@@ -188,12 +254,14 @@ const PickupOrderList: FunctionComponent<AddWarehouseProps> = ({
                           </div>
                         </div>
                         <div className="mb- flex items-center gap-2">
-                          <div>
-                            <img src="../Delivery.svg" alt="" />
-                          </div>
+                          <img src="../Delivery.svg" alt="" />
                           <div className="text-xs text-[#717171]">
                             {item.senderName}
                           </div>
+                          <ARRPW_FORWARD_ICON
+                            fontSize="small"
+                            className="text-[#717171]"
+                          />
                           <div className="text-xs text-[#717171]">
                             {item.receiver}
                           </div>

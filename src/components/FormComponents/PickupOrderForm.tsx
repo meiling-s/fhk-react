@@ -29,13 +29,17 @@ import {
 import { useTranslation } from 'react-i18next'
 import { displayCreatedDate } from '../../utils/utils'
 import CustomButton from './CustomButton'
-import { localStorgeKeyName } from '../../constants/constant'
+import { Languages, localStorgeKeyName } from '../../constants/constant'
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import { getVehicleDetail } from '../../APICalls/ASTD/recycling'
+import i18n from '../../setups/i18n'
+import { weekDs } from '../SpecializeComponents/RoutineSelect/predefinedOption'
+import NotifContainer from '../../contexts/NotifContainer'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -48,7 +52,7 @@ const PickupOrderForm = ({
 }: // navigateToJobOrder
 {
   onClose?: () => void
-  selectedRow?: Row | null | undefined
+  selectedRow?: PickupOrder | null | undefined
   pickupOrder?: PickupOrder[] | null
   initPickupOrderRequest: () => void
   // navigateToJobOrder: () => void;
@@ -57,6 +61,8 @@ const PickupOrderForm = ({
   const role = localStorage.getItem(localStorgeKeyName.role)
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
   const {dateFormat} = useContainer(CommonTypeContainer)
+  const [vehicleType, setVehicleType] = useState<string>('');
+  const { marginTop } = useContainer(NotifContainer);
 
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -76,6 +82,10 @@ const PickupOrderForm = ({
     }
   }
 
+  const navigateToJobOrder = (picoId: string) => {
+    navigate(`/logistic/createJobOrder/${picoId}?isEdit=false`)
+  }
+
   // const { pickupOrder, initPickupOrderRequest } = useContainer(
   //   CheckInRequestContainer
   // )
@@ -92,7 +102,7 @@ const PickupOrderForm = ({
     }
   }, [selectedRow])
 
-  const initGetPickUpOrderData = async (picoId: number) => {
+  const initGetPickUpOrderData = async (picoId: string) => {
     const result = await getPicoById(picoId.toString())
     if (result) {
       setSelectedPickupOrder(result.data)
@@ -136,9 +146,65 @@ const PickupOrderForm = ({
       alert('No selected pickup order')
     }
   }
+
+  const initVehicleDetail = async () => {
+    try {
+      if(selectedPickupOrder?.vehicleTypeId){
+        const vehicle = await getVehicleDetail(selectedPickupOrder.vehicleTypeId);
+        if(vehicle){
+          let vehicleLang:string = '';
+          if(i18n.language === Languages.ENUS){
+            vehicleLang = vehicle?.data?.vehicleTypeNameEng
+          } else if(i18n.language === Languages.ZHCH){
+            vehicleLang = vehicle?.data?.vehicleTypeNameSchi
+          } else {
+            vehicleLang = vehicle?.data?.vehicleTypeNameTchi
+          }
+          setVehicleType(vehicleLang)
+        }
+      }
+    } catch (error) {
+      
+    }
+  }
+
+  useEffect(() => {
+    initVehicleDetail()
+  }, [selectedPickupOrder?.vehicleTypeId])
+
+  const getDeliveryDate = (deliveryDate:string[]) => {
+    const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat', 'sun'];
+    let delivery = deliveryDate.map(item => item.trim());
+    let isWeek = false;
+
+    for(let deliv of delivery){
+      if(weeks.includes(deliv)){
+        isWeek = true
+      }
+    }
+
+    if(isWeek){
+      delivery = delivery.map(item => {
+        const days = weekDs.find(day => day.id === item);
+        if(days) {
+          if(i18n.language === Languages.ENUS){
+            return days.engName
+          } else if(i18n.language === Languages.ZHCH){
+            return days.schiName
+          } else {
+            return days.tchiName
+          }
+        } else {
+          return ''
+        }
+      })
+    }
+    return delivery.join(',')
+  }
+  
   return (
     <>
-      <Box sx={localstyles.modal} onClick={handleOverlayClick}>
+      <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}>
         <Box sx={localstyles.container}>
           <Box sx={{ display: 'flex', flex: '1', p: 4, alignItems: 'center' }}>
             <Box>
@@ -159,20 +225,28 @@ const PickupOrderForm = ({
                 <CustomButton
                   text={t('pick_up_order.table.create_job_order')}
                   onClick={() => {
-                    // navigateToJobOrder()
+                    navigateToJobOrder(selectedRow.picoId.toString())
                   }}
                 ></CustomButton>
               ) : role === 'logistic' &&
                 selectedRow &&
                 selectedRow.status === 'CREATED' &&
                 selectedRow?.tenantId === tenantId ? (
-                <CustomButton
+                <>
+                 <CustomButton
                   text={t('pick_up_order.item.edit')}
+                  style={{ marginRight: '12px' }}
                   onClick={() => {
                     selectedPickupOrder && handleRowClick(selectedPickupOrder)
                   }}
-                ></CustomButton>
-              ) : role !== 'logistic' ? (
+                />
+                 <CustomButton
+                    text={t('pick_up_order.item.delete')}
+                    outlined
+                    onClick={onDeleteClick}
+                  />
+                </>
+              ) : role !== 'logistic' && selectedRow?.status === 'CREATED'  ? (
                 <>
                   <CustomButton
                     text={t('pick_up_order.item.edit')}
@@ -226,19 +300,23 @@ const PickupOrderForm = ({
             </CustomField>
             <CustomField label={t('pick_up_order.item.recycling_week')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.routine
+                {/* {selectedPickupOrder?.routine
                   .map((routineItem) => routineItem)
-                  .join(' ')}
+                  .join(' ')} */}
+                { selectedPickupOrder?.routine 
+                  && getDeliveryDate(selectedPickupOrder.routine)
+                }
               </Typography>
             </CustomField>
 
             <CustomField label={t('pick_up_order.item.vehicle_category')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.vehicleTypeId === '1'
+                {/* {selectedPickupOrder?.vehicleTypeId === '1'
                   ? t('pick_up_order.card_detail.van')
                   : selectedPickupOrder?.vehicleTypeId === '2'
                   ? t('pick_up_order.card_detail.large_truck')
-                  : ''}
+                  : ''} */}
+                  {vehicleType}
               </Typography>
             </CustomField>
             <CustomField label={t('pick_up_order.item.plat_number')}>
@@ -252,9 +330,9 @@ const PickupOrderForm = ({
               </Typography>
             </CustomField>
 
-            <CustomField label={t('pick_up_order.item.sender_name')}>
+            <CustomField label={t('pick_up_order.item.logistic_company')}>
               <Typography sx={localstyles.typo_fieldContent}>
-                {selectedPickupOrder?.logisticName}
+                {selectedRow?.logisticName}
               </Typography>
             </CustomField>
 
@@ -268,7 +346,7 @@ const PickupOrderForm = ({
               {t('pick_up_order.item.rec_loc_info')}
             </Typography>
 
-            <PickupOrderCard pickupOrderDetail={pickupOrderDetail ?? []} />
+            <PickupOrderCard pickupOrderDetail={selectedRow?.pickupOrderDetail ?? []} />
           </Stack>
         </Box>
       </Box>

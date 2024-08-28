@@ -16,6 +16,7 @@ export type StaffEnquiry = {
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
+  version?: number;
 };
 
 export type CreateStaffEnquiry = {
@@ -50,9 +51,11 @@ export type EditStaffEnquiry = {
   fullTimeFlg: boolean;
   createdBy: string;
   updatedBy: string;
+  version?: number;
 };
 
 export type DeleteStaffEnquiry = {
   status: string;
   updatedBy: string;
+  version?: number;
 };

@@ -10,7 +10,7 @@ import {
   createStaffTitle,
   editStaffTitle
 } from '../../../APICalls/Collector/staffTitle'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import {
   StaffTitle,
@@ -62,6 +62,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
   const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
   const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
+  const [version, setVersion] = useState<number>(0)
 
   const staffField = [
     {
@@ -116,6 +117,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
         remark: sanitizeString(selectedItem.remark)
       })
 
+      setVersion(selectedItem.version ?? 0)
       setEngNameExisting(
         engNameList.filter((item) => item != selectedItem.titleNameEng)
       )
@@ -279,11 +281,23 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     }
    } catch (error:any) {
     const { state } = extractError(error);
+    setTrySubmited(true)
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
     } else {
       setTrySubmited(true)
-      onSubmitData('error', t('common.saveFailed'))
+      if(error?.response?.data?.status === STATUS_CODE[500]){
+        setValidation(
+          [
+            {
+              field: t('common.theNameAlreadyExist'),
+              problem: '',
+              type: 'error'
+            }
+          ]
+        )
+      }
+      // onSubmitData('error', t('common.saveFailed'))
     }
    }
   }
@@ -299,7 +313,8 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       duty: [formData.duty],
       status: 'ACTIVE',
       remark: formData.remark,
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: version,
     }
     if (validation.length === 0) {
       if (selectedItem != null) {
@@ -317,6 +332,11 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
     const { state } = extractError(error);
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
+    } else {
+      setTrySubmited(true)
+      if(error?.response?.data?.status === STATUS_CODE[500]){
+        showErrorToast(error?.response?.data?.message);
+      }
     }
    }
   }
@@ -331,7 +351,8 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       duty: [formData.duty],
       status: 'DELETED',
       remark: formData.remark,
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: version,
     }
     if (selectedItem != null) {
       const result = await editStaffTitle(selectedItem.titleId, editData)
@@ -365,7 +386,8 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>

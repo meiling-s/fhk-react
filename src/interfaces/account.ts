@@ -5,11 +5,13 @@ export type LoginItem = {
 
 //tenant register item
 export type RegisterItem = {
+  lang: string
   contactName: string
   contactNo: string
   companyLogo: string
   brImages: string[]
   epdImages: string[]
+  monetaryValue: string
 }
 
 export type Tenant = {

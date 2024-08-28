@@ -130,8 +130,10 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             isInitialRender.current = false;
             return;
         }
-    
+        
+        setTrySubmitted(false)
         if (action === 'edit') {
+            setTrySubmitted(false)
             if (selectedItem !== null && selectedItem !== undefined) {
                 if (!mainCategory) {
                     const parentData = recyclableType.find(value => value.recycSubType.some(subType => subType.recycSubTypeId === selectedItem.recycSubTypeId));
@@ -194,24 +196,24 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
         tChineseName.trim() === '' &&
         tempV.push({
-            field: 'tChineseName',
-            error: `${t(`common.traditionalChineseName`)} ${t(
+            field: `${t('packaging_unit.traditional_chinese_name')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         sChineseName.trim() === '' &&
         tempV.push({
-            field: 'sChineseName',
-            error: `${t(`common.simplifiedChineseName`)} ${t(
+            field: `${t('packaging_unit.simplified_chinese_name')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         englishName.trim() === '' &&
         tempV.push({
-            field: 'englishName',
-            error: `${t(`common.englishName`)} ${t(
+            field: `${t('packaging_unit.english_name')}`,
+            error: `${t(
             'add_warehouse_page.shouldNotEmpty'
             )}`
         })
@@ -219,15 +221,15 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         if (isMainCategory === false) {
             chosenRecyclableType.trim() === '' &&
             tempV.push({
-                field: 'chosenRecyclableType',
-                error: `${t(`recycling_unit.main_category`)} ${t(
+                field: `${t('recycling_unit.main_category')}`,
+                error: `${t(
                 'add_warehouse_page.shouldNotEmpty'
                 )}`
             })
         }
 
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName, isMainCategory, chosenRecyclableType])
+    }, [tChineseName, sChineseName, englishName, isMainCategory, chosenRecyclableType, i18n, currentLanguage])
 
     const handleDelete = async () => {
         const token = returnApiToken()
@@ -362,49 +364,50 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,
                     onSubmit: handleSubmit,
-                    onDelete: handleDelete
+                    onDelete: handleDelete,
+                    deleteText: t('common.deleteMessage')
                 }}
             >
                 <Divider></Divider>
                 <Box sx={{ marginX: 2 }}>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.traditional_chinese_name')}>
+                        <CustomField label={t('packaging_unit.traditional_chinese_name')} mandatory>
                             <CustomTextField
                                 id="tChineseName"
                                 value={tChineseName}
                                 disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.traditional_chinese_name')}
+                                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                                 onChange={(event) => setTChineseName(event.target.value)}
                                 error={checkString(tChineseName)}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.simplified_chinese_name')}>
+                        <CustomField label={t('packaging_unit.simplified_chinese_name')} mandatory>
                             <CustomTextField
                                 id="sChineseName"
                                 value={sChineseName}
                                 disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.simplified_chinese_name')}
+                                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                                 onChange={(event) => setSChineseName(event.target.value)}
                                 error={checkString(sChineseName)}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.english_name')}>
+                        <CustomField label={t('packaging_unit.english_name')} mandatory>
                             <CustomTextField
                                 id="englishName"
                                 value={englishName}
                                 disabled={action === 'delete' }
-                                placeholder={t('packaging_unit.english_name')}
+                                placeholder={t('packaging_unit.english_name_placeholder')}
                                 onChange={(event) => setEnglishName(event.target.value)}
                                 error={checkString(englishName)}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('recycling_unit.main_category')}>
+                        <CustomField label={t('recycling_unit.main_category')} mandatory>
                             <Switcher
                                 onText={t('add_warehouse_page.yes')}
                                 offText={t('add_warehouse_page.no')}
@@ -419,7 +422,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                     </Box>
                     {!isMainCategory && (
                         <Box sx={{ marginY: 2 }}>
-                            <CustomField label={t('recycling_unit.main_category')}>
+                            <CustomField label={t('recycling_unit.main_category')} mandatory>
                                 <div className="self-stretch flex flex-col items-start justify-start">
                                     <div className="self-stretch ">
                                         <FormControl sx={{ m: 1, width: '100%' }}>
@@ -435,7 +438,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                                 <MenuItem value="">
                                                 <em>-</em>
                                                 </MenuItem>
-                                                {recyclableType.map((item, index) => (
+                                                {recyclableType.length > 0 ? (recyclableType.map((item, index) => (
                                                 <MenuItem value={item.recycTypeId} key={index}>
                                                     {currentLanguage === 'zhhk'
                                                     ? item.recyclableNameTchi
@@ -443,7 +446,10 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                                                     ? item.recyclableNameSchi
                                                     : item.recyclableNameEng}
                                                 </MenuItem>
-                                                ))}
+                                                ))): 
+                                                <MenuItem disabled value="">
+                                                <em>{t('common.noOptions')}</em>
+                                                </MenuItem>}
                                             </Select>
                                         </FormControl>
                                     </div>
@@ -451,24 +457,35 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             </CustomField>
                         </Box>
                     )}
-                    <CustomField label={t('packaging_unit.introduction')} mandatory={false}>
+                    <CustomField label={t('packaging_unit.introduction')}>
                         <CustomTextField
                             id="description"
-                            placeholder={t('packaging_unit.introduction')}
+                            placeholder={t('packaging_unit.introduction_placeholder')}
                             onChange={(event) => setDescription(event.target.value)}
                             multiline={true}
                             defaultValue={description}
                         />
                     </CustomField>
-                    <CustomField label={t('packaging_unit.remark')} mandatory={false}>
+                    <CustomField label={t('packaging_unit.remark')}>
                         <CustomTextField
                             id="remark"
-                            placeholder={t('packaging_unit.remark')}
+                            placeholder={t('packaging_unit.remark_placeholder')}
                             onChange={(event) => setRemark(event.target.value)}
                             multiline={true}
                             defaultValue={remark}
                         />
                     </CustomField>
+                    <Grid item sx={{ width: '92%' }}>
+                        {trySubmited &&
+                            validation.map((val, index) => (
+                            <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={val.error}
+                                type={'error'}
+                            />
+                            ))}
+                    </Grid>
                 </Box>
             </RightOverlayForm>
         </div>

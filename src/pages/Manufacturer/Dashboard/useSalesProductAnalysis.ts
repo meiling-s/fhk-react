@@ -96,43 +96,111 @@ const useSalesProductAnalysis = () => {
       return datasets
    }
 
+   const sortingBasedOnMonth = (array: any[]) => {
+      const length = array.length;
+   
+      for(let i = 0; i < length; i++){
+            // set current index as minimum
+            let min = i;
+            let temp = array[i];
+   
+            for(let j = i+1; j < length; j++){
+               if (array[j].index < array[min].index){
+                  //update minimum if current is lower that what we had previously
+                  min = j;
+               }
+            };
+   
+            array[i] = array[min];
+            array[min] = temp;
+      };
+      return array;
+   };
+
+   const sortingBasedOnYear = (array: any[]) => {
+      const length = array.length;
+   
+      for(let i = 0; i < length; i++){
+            // set current index as minimum
+            let min = i;
+            let temp = array[i];
+   
+            for(let j = i+1; j < length; j++){
+               if (Number(array[j].year) < (array[min].year)){
+                  //update minimum if current is lower that what we had previously
+                  min = j;
+               }
+            };
+   
+            array[i] = array[min];
+            array[min] = temp;
+      };
+
+      return array;
+   };
+
    const initSalesProductAnalysis = async () => {
      try {
       const response = await getSalesProductAnalysis(frmDateProduct.format('YYYY-MM-DD'), toDateProduct.format('YYYY-MM-DD'));
       if (response) {
+            // sort data by year
+            let sortByYear:any[] = sortingBasedOnYear(response)
+
             let cache:any = {}
             const source:any = {}
 
-            for(let product of response){
-               const label = product.month + ' ' + product.year;
+            // sort data by month
+            for(let product of sortByYear){
+               const year= Number(product.year);
+               if(year in source){
+                  let data = source[year];
+                  const currentIndex = indexMonths.indexOf(product.month) as monthSequence
+                  data = [{index: currentIndex, ...product}, ...data]
+                  data = sortingBasedOnMonth(data)
+                  
+                  source[year] = data;
+               } else {
+                  const currentIndex = indexMonths.indexOf(product.month) as monthSequence
+                  source[year] = [{index: currentIndex, ...product}]
+               }
+            }
+            
+            let allData:any = {}
+            for(let item of Object.values(source).flatMap(item => item)) {
+               const product:any = item
+               const label = product?.month + ' ' + product?.year;
                const data:any = {}
                for(let [key, value] of Object.entries(product)){
                   if(!['year', 'month'].includes(key)){
-                        if(cache[key]){
-                           const name:string = cache[key];
-                           data[name] = value
-                        } else {
-                           const type = recycType?.find(item => item.recycTypeId === key);
-                           cache[key] = type?.recyclableNameEng;
-                           const name:string = type?.recyclableNameEng || '';
-                           if(name !== '')  data[name] = value
-                           
-                        }
+                     if(cache[key]){
+                        const name:string = cache[key];
+                        data[name] = value
+                     } else {
+                        const type = recycType?.find(item => item.recycTypeId === key);
+                        cache[key] = type?.recyclableNameEng;
+                        const name:string = type?.recyclableNameEng || '';
+                        if(name !== '')  data[name] = value
+                        
+                     }
                   }
+                  allData[label] = data
                }
-               source[label]= data 
+  
             }
-            // const labels:string[] = Object.keys(source);
-            const labels:{id: number, value: string}[] = response?.map((item:any) => {
-               const index = indexMonths.indexOf(item.month) as monthSequence
+
+            // define label 
+            const labels = Object.keys(allData).map(item => {
+               const currentMonth = item.split(' ')[0];
+               const currentYear = item.split(' ')[1]
+               const index = indexMonths.indexOf(currentMonth) as monthSequence
                const month = getLangMonth(index)
                return{
                   id: index,
-                  value: `${month} ${item.year}`
+                  value: `${month} ${currentYear}`
                }
-            });
+            })
             if(!recycType) return;
-            const datasets = getDataSetLineChart(source, labels.length)
+            const datasets = getDataSetLineChart(allData, labels.length)
             setLabelProduct(labels)
             setDataSetProduct(datasets)
       }

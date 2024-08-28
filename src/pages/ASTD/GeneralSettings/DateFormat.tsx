@@ -202,6 +202,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
                     error={checkString(dateFormat)}
                 />
                 )}
+                noOptionsText={t('common.noOptions')}
             />
             </CustomField>
           </Box>

@@ -1,23 +1,61 @@
 import { useEffect, useState } from 'react'
 import { createContainer } from 'unstated-next'
-import { Notif } from '../interfaces/notif'
+import { Broadcast, Notif } from '../interfaces/notif'
 import {
   getNumUnreadNotif,
   getNotifByUserId,
-  updateFlagNotif
+  updateFlagNotif,
+  getBroadcastMessage
 } from '../APICalls/notify'
 import { returnApiToken } from '../utils/utils'
+import dayjs from 'dayjs'
 
 const Notification = () => {
   const { loginId } = returnApiToken();
   // const loginId: string = localStorage.getItem('loginId') || 'string' //change key based on fixed key for loginId
   const [numOfNotif, setNumOfNotif] = useState(0)
   const [notifList, setNotifList] = useState<Notif[]>([])
+  const [broadcast, setBroadcast] = useState<Broadcast | null>(null)
+  const [showBroadcast, setShowBroadcast] = useState<boolean>(true);
+  const [marginTop, setMarginTop] = useState<string>('0px');
 
+  // useEffect(() => {
+  //  if(loginId){
+  //   const interval = setInterval((a) => {
+  //     setNotifList([])
+  //     setNumOfNotif(0)
+  //     getNumNotif(loginId)
+  //     getNotifList(loginId)
+  //   }, 10000);
+
+  //   return() => {
+  //     clearInterval(interval)
+  //   }
+
+  //  } 
+  // }, [loginId])
+  
   useEffect(() => {
-    getNumNotif(loginId)
-    getNotifList(loginId)
-  }, [loginId])
+    const interval = setInterval(() => {
+      initBroadcastMessage()
+    }, 60 * 60000);
+
+    return() => {
+      clearInterval(interval)
+    }
+  }, [])
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNotifList([])
+      setNumOfNotif(0)
+      getNumNotif(loginId)
+      getNotifList(loginId)
+    }, 20000)
+
+    return() => {
+      clearInterval(interval)
+    }
+  }, [])
 
   const getNumNotif = async (loginId: string) => {
     const result = await getNumUnreadNotif(loginId)
@@ -40,14 +78,66 @@ const Notification = () => {
     await getNotifList(loginId)
   }
 
+  const initBroadcastMessage = async () => {
+    const result = await getBroadcastMessage()
+      if (result?.length >= 1) {
+        let broadcast: Broadcast | null = null
+        for(let message of result){
+          const isBefore = dayjs().isBefore(message.effToDate, 'day');
+          const isSame = dayjs().isSame(message.effToDate, 'day');
+          if(isSame || isBefore){
+            broadcast = {
+              title: message?.title,
+              content: message.content,
+              effFromDate: message.effFromDate,
+              effToDate: message.effToDate
+            }
+        }
+          setBroadcast(prev => {
+            if(prev?.content === broadcast?.content && prev?.title === broadcast?.title){
+              return prev
+            } else {
+              setShowBroadcast(true)
+              setMarginTop('30px')
+              return broadcast
+            }
+          })
+        }
+      }  else {
+        setShowBroadcast(false)
+        setMarginTop('0px')
+        setBroadcast(null)
+      }
+  }
+
+  useEffect(() => {
+    initBroadcastMessage()
+  }, [])
+
+  // useEffect(() => {
+  //   if(showBroadcast){
+  //     setMarginTop('30px')
+  //   } else {
+  //     setMarginTop('0px')
+  //   }
+  // }, [showBroadcast]);
+  
   return {
     numOfNotif,
     notifList,
     updateNotifications,
     setNumOfNotif,
     setNotifList,
+    broadcast,
+    setBroadcast,
+    showBroadcast, 
+    setShowBroadcast,
+    initBroadcastMessage,
+    marginTop,
+    setMarginTop
   }
 }
+
 
 const NotifContainer = createContainer(Notification)
 

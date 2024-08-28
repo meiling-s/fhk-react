@@ -225,8 +225,6 @@ const ChartDistrictSales = () => {
                 color: '#5d6f80',
             },            
         },
-
-
         toolbox: {
             show: false,
             orient: 'vertical',
@@ -303,7 +301,8 @@ const ChartDistrictSales = () => {
                                     areaColor: '#C3DAAC',
                                 }
                             }
-                        });
+                        }
+                    );
                 }
                 setDataValue(values);
                 setDataNameMap(nameMap)
@@ -324,13 +323,78 @@ const ChartDistrictSales = () => {
     useEffect(() => {
         if (chartRef.current) {
             const chart = echarts.getInstanceByDom(chartRef.current);
+            if(recycable?.recycTypeId){
+                const recycTypeId = recycable?.recycTypeId;
+                const values:{name:string, value: number, select: any}[] = [];
+                for(let region of dataSource){
+                    const name = region.district;
+                    const indexLang = districtLang.find(region => region.name === name);
+                    if(!indexLang) continue;
+                    let lang:string = '';
+                    if(i18n.language === Languages.ENUS){
+                        lang = indexLang.name_english
+                    } else if(i18n.language === Languages.ZHCH){
+                        lang = indexLang.name_simplified
+                    } else {
+                        lang = indexLang.name_traditional
+                    }
+    
+                    if(region.recyc_weight[recycTypeId]) {
+                        values.push(
+                            {
+                                name: lang, 
+                                value: Number(region?.recyc_weight[recycTypeId])/Number(region?.total_weight) * Number(region.percentage)/100,
+                                select: {
+                                    label: {
+                                        color: 'black',
+                                        areaColor: '#C3DAAC',
+                                    }
+                                }
+                            }
+                        )
+                    } else {
+                        values.push(
+                            {
+                                name: lang, 
+                                value: 0 , 
+                                select: {
+                                    label: {
+                                        color: 'black',
+                                        areaColor: '#C3DAAC',
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+                option.series[0].data = values
+            }
             chart?.setOption(option);
         }
-    }, [dataValue, dataNameMap, recycable])
+    }, [dataValue, dataNameMap, recycable, i18n.language])
 
     useEffect(() => {
         if (chartRef.current) initChart(chartRef.current);
-    }, []);
+        if(recycable.recycTypeId){
+            const recycableDetail = recycType?.find(item => item.recycTypeId);
+            if(recycableDetail){
+                setRecyable(prev => {
+                    let text = prev.text
+                    if(i18n.language === Languages.ENUS){
+                        text = recycableDetail.recyclableNameEng
+                    } else if(i18n.language === Languages.ZHCH){
+                        text = recycableDetail.recyclableNameSchi
+                    } else {
+                        text = recycableDetail.recyclableNameTchi
+                    }
+                    return {
+                        ...prev,
+                        text, 
+                    }
+                })
+            }
+        }
+    }, [i18n.language]);
 
     const colors:string[] = ['#6FBD33','#88D13D','#AED982','#D3E3C3','#CCCCCC'];
     const { recycType } = useContainer(CommonTypeContainer);
@@ -481,6 +545,7 @@ const ChartDistrictSales = () => {
                                             }}
                                         />
                                     )}
+                                    noOptionsText={t('common.noOptions')}
                                 />
                                 <Grid  item style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: 1, border: '1px solid #E2E2E2', height: '40px', padding: '8px', borderRadius: '6px'}} >
                                     <Typography>
@@ -544,90 +609,6 @@ const ChartDistrictSales = () => {
                         
                         <Grid style={{display: 'flex', justifyContent: 'center', height: '295px', width: '1200px'}}>
                             <div className="w-[1200px] h-[730px]" ref={chartRef} ></div>
-                            {/* <Chart
-                                ref={chartRef}
-                                type="choropleth"
-                                data={{
-                                    labels: location.map((d: any) => d.properties.name),
-                                    datasets: [
-                                        {
-                                            outline: location,
-                                            label: "Completed",
-                                            data: dataset,
-                                        },
-                                    ]
-                                }}
-                                options={{
-                                    showOutline: true,
-                                    showGraticule: false,
-                                    plugins: {
-                                    tooltip: {
-                                        callbacks: {
-                                            label: (context: any) => {
-                                                // return `${context.element.feature.properties.name} - ${context.dataset.label}: ${context.formattedValue}Kg`;
-                                                return ` ${context.element.feature.properties.name} `;
-                                            },
-                                            footer: footerTooltip,
-                                        },
-                                        position: 'nearest',
-                                        usePointStyle: true,
-                                        backgroundColor: '#C3DAAC',
-                                        boxWidth: 50,
-                                        boxHeight: 50,
-                                        bodyColor: '#717171',
-                                        footerColor: '#717171',
-                                        footerAlign: 'center',
-                                        bodyAlign: 'center',
-                                        xAlign: 'center',
-                                        bodyFont: {
-                                            size: 17
-                                        },
-                                        
-                                    },
-                                    legend: {
-                                        display: false
-                                    }
-                                    },
-                                    hover: {
-                                        mode: "nearest"
-                                    },
-                                    scales: {
-                                        xy: {
-                                            axis: 'x',
-                                            projection: "mercator",
-                                            ticks: {
-                                                // Include a dollar sign in the ticks
-                                                callback: function(value, index, ticks) {
-                                                    return '$' + value;
-                                                }
-                                            }
-                                        },
-                                        color: {
-                                            axis: 'x',
-                                            interpolate: (value) => {
-                                                let color:string= ''
-                                                if(value > 0.9){
-                                                    color = '#6FBD33'
-                                                } else if(value > 0.7){
-                                                    color = '#88D13D'
-                                                } else if(value > 0.5){
-                                                    color = '#AED982'
-                                                } else if(value > 0.3){
-                                                    color = '#D3E3C3'
-                                                } else {
-                                                    color = '#CCCCCC'
-                                                }
-                                                return color
-                                            },
-                                            display: false,
-                                            legend: {
-                                                position: "top-right",
-                                                align: "right",
-                                            }
-                                        }
-                                    }
-                                }}
-                            /> */}
                         </Grid>
                     </Grid>
                     

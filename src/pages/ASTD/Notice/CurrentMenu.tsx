@@ -1,20 +1,36 @@
 import { useEffect, useState, FunctionComponent, useCallback } from 'react'
-import { Box, Grid} from '@mui/material'
-import { DataGrid, GridColDef, GridRowParams, GridRowSpacingParams, GridRenderCellParams,} from '@mui/x-data-grid'
-import {  EDIT_OUTLINED_ICON} from '../../../themes/icons'
+import { Box, Grid } from '@mui/material'
+import {
+  DataGrid,
+  GridColDef,
+  GridRowParams,
+  GridRowSpacingParams,
+  GridRenderCellParams
+} from '@mui/x-data-grid'
+import { EDIT_OUTLINED_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { NotifTemplate } from '../../../interfaces/notif'
-import { getListNotifTemplatePO, getListNotifTemplateStaff } from '../../../APICalls/notify'
+import {
+  getListNotifTemplatePO,
+  getListNotifTemplateStaff
+} from '../../../APICalls/notify'
 import { useNavigate } from 'react-router-dom'
-import { Languages, Roles, STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import {
+  Languages,
+  Roles,
+  STATUS_CODE,
+  localStorgeKeyName
+} from '../../../constants/constant'
 import { extractError, returnApiToken } from '../../../utils/utils'
-import { LanguagesNotif,Option } from "../../../interfaces/notif";
+import { LanguagesNotif, Option } from '../../../interfaces/notif'
 import i18n from '../../../setups/i18n'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import CircularLoading from '../../../components/CircularLoading'
 
 function createNotifTemplate(
   templateId: string,
   notiType: string,
-  variables:  string[],
+  variables: string[],
   lang: string,
   title: string,
   senders: string[],
@@ -22,7 +38,7 @@ function createNotifTemplate(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string,
+  updatedAt: string
 ): NotifTemplate {
   return {
     templateId,
@@ -35,65 +51,65 @@ function createNotifTemplate(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt,
+    updatedAt
   }
 }
 
 interface CurrentMenuProps {
-  selectedTab: number,
+  selectedTab: number
 }
 
-const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
-  selectedTab,
-}) => {
+const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({ selectedTab }) => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  
+
   const [notifTemplate, setNotifTemplateList] = useState<NotifTemplate[]>([])
   const [filteredTemplate, setFillteredTemplate] = useState<NotifTemplate[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedRow, setSelectedRow] = useState<NotifTemplate | null>(null)
   const [action, setAction] = useState<'edit'>('edit')
-  const navigate = useNavigate();
-  const { realmApiRoute,  } = returnApiToken()
-  const realm = localStorage.getItem(localStorgeKeyName.realm);
-
+  const navigate = useNavigate()
+  const { realmApiRoute } = returnApiToken()
+  const realm = localStorage.getItem(localStorgeKeyName.realm)
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
   const languages: readonly LanguagesNotif[] = [
     {
-        value: "ZH-CH",
-        langTchi: '簡體中文',
-        langSchi: '简体中文',
-        langEng: 'Simplified Chinese',
+      value: 'ZH-CH',
+      langTchi: '簡體中文',
+      langSchi: '简体中文',
+      langEng: 'Simplified Chinese'
     },
     {
-        value: "ZH-HK",
-        langTchi: '繁體中文',
-        langSchi: '繁体中文',
-        langEng: 'Traditional Chinese',
+      value: 'ZH-HK',
+      langTchi: '繁體中文',
+      langSchi: '繁体中文',
+      langEng: 'Traditional Chinese'
     },
     {
-        value: "EN-US",
-        langTchi: '英語',
-        langSchi: '英语',
-        langEng: 'English',
+      value: 'EN-US',
+      langTchi: '英語',
+      langSchi: '英语',
+      langEng: 'English'
     }
-];
-  
+  ]
+
   useEffect(() => {
-    if(selectedTab === 0) {
+    if (selectedTab === 0) {
       setFillteredTemplate([])
       initRecyclablesList()
-    } else if(selectedTab === 1) {
+    } else if (selectedTab === 1) {
       setFillteredTemplate([])
       initStaffList()
     }
   }, [selectedTab])
 
   const initStaffList = async () => {
+    setIsLoading(true)
     try {
-      const result = await getListNotifTemplateStaff();
+      const result = await getListNotifTemplateStaff()
       if (result) {
         const data = result.data
-      
+
         let notifMappingTemplate: NotifTemplate[] = []
         data.map((item: any) => {
           notifMappingTemplate.push(
@@ -108,22 +124,24 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt,
+              item?.updatedAt
             )
           )
         })
         setNotifTemplateList(notifMappingTemplate)
         setFillteredTemplate(notifMappingTemplate)
       }
-    } catch (error:any) {
-      const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const initRecyclablesList = async () => {
+    setIsLoading(true)
     try {
       const result = await getListNotifTemplatePO()
       if (result) {
@@ -142,19 +160,20 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt,
+              item?.updatedAt
             )
           )
         })
         setNotifTemplateList(notifMappingTemplate)
         setFillteredTemplate(notifMappingTemplate)
       }
-    } catch (error:any) {
-      const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const columns: GridColDef[] = [
@@ -187,8 +206,9 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('notification.menu_staff.edit'),
       width: 300,
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -211,34 +231,31 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
     }
   ]
 
-  const setCurrentLanguage = (lang: string) :string => {
+  const setCurrentLanguage = (lang: string): string => {
     let language: string = ''
-    if(lang === 'ZH-CH' && i18n.language === Languages.ZHCH) {
-        return language = '简体中文'
-    }else if(lang === 'ZH-CH' && i18n.language === Languages.ZHHK) {
-        return language = '簡體中文'
-    }else if(lang === 'ZH-CH' && i18n.language === Languages.ENUS) {
-        return language = 'Simplified Chinese'
-    }else if (lang === 'ZH-HK' && i18n.language === Languages.ZHCH) {
-        return language = '繁体中文'
-    }else if (lang === 'ZH-HK' && i18n.language === Languages.ZHHK) {
-        return language = '繁體中文'
-    }else if (lang === 'ZH-HK' && i18n.language === Languages.ENUS) {
-        return language = 'Traditional Chinese'
+    if (lang === 'ZH-CH' && i18n.language === Languages.ZHCH) {
+      return (language = '简体中文')
+    } else if (lang === 'ZH-CH' && i18n.language === Languages.ZHHK) {
+      return (language = '簡體中文')
+    } else if (lang === 'ZH-CH' && i18n.language === Languages.ENUS) {
+      return (language = 'Simplified Chinese')
+    } else if (lang === 'ZH-HK' && i18n.language === Languages.ZHCH) {
+      return (language = '繁体中文')
+    } else if (lang === 'ZH-HK' && i18n.language === Languages.ZHHK) {
+      return (language = '繁體中文')
+    } else if (lang === 'ZH-HK' && i18n.language === Languages.ENUS) {
+      return (language = 'Traditional Chinese')
     } else if (lang === 'EN-US' && i18n.language === Languages.ZHCH) {
-        return language = '英语'
-    }else if (lang === 'EN-US' && i18n.language === Languages.ZHHK) {
-        return language = '英语'
-    }else if (lang === 'EN-US' && i18n.language === Languages.ENUS) {
-        return language = 'English'
-    } 
+      return (language = '英语')
+    } else if (lang === 'EN-US' && i18n.language === Languages.ZHHK) {
+      return (language = '英语')
+    } else if (lang === 'EN-US' && i18n.language === Languages.ENUS) {
+      return (language = 'English')
+    }
     return language
-}
-  
-  const handleAction = (
-    params: GridRenderCellParams,
-    action: 'edit'
-  ) => {
+  }
+
+  const handleAction = (params: GridRenderCellParams, action: 'edit') => {
     navigate(`/${realm}/notice/${params.row.notiType}/${params.row.templateId}`)
   }
 
@@ -260,30 +277,37 @@ const CurrentMenu: FunctionComponent<CurrentMenuProps> = ({
       >
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
-            <DataGrid
-              rows={filteredTemplate}
-              getRowId={(row) => row.templateId}
-              hideFooter
-              columns={columns}
-              // checkboxSelection
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
+          {isLoading ? (
+            <CircularLoading />
+          ) : ( <DataGrid
+            rows={filteredTemplate}
+            getRowId={(row) => row.templateId}
+            hideFooter
+            columns={columns}
+            // checkboxSelection
+            onRowClick={handleSelectRow}
+            getRowSpacing={getRowSpacing}
+            localeText={localeTextDataGrid}
+            sx={{
+              border: 'none',
+              '& .MuiDataGrid-cell': {
+                border: 'none'
+              },
+              '.MuiDataGrid-columnHeaderTitle': { 
+                fontWeight: 'bold !important',
+                overflow: 'visible !important'
+              },
+              '& .MuiDataGrid-row': {
+                bgcolor: 'white',
+                borderRadius: '10px'
+              },
+              '&>.MuiDataGrid-main': {
+                '&>.MuiDataGrid-columnHeaders': {
+                  borderBottom: 'none'
                 }
-              }}
-            />
+              }
+            }}
+          />)}
           </Box>
         </div>
       </Box>

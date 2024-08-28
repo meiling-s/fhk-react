@@ -37,56 +37,6 @@ const EditPickupOrder = () => {
         return field + ' ' + t('form.error.isInWrongFormat')
     }
   }
-  const validateSchema = Yup.object().shape({
-    effFrmDate: Yup.string().required('This effFrmDate is required'),
-    effToDate: Yup.string().required('This effToDate is required'),
-
-    routine: Yup.lazy((value, schema) => {
-      const routineType = schema.parent.routineType
-      if (routineType === 'specificDate') {
-        return Yup.array()
-          .required('routine is required')
-          .test(
-            'is-in-range',
-            t('pick_up_order.out_of_date_range'),
-            function (value) {
-              const { effFrmDate, effToDate } = schema.parent
-              const fromDate = new Date(effFrmDate)
-              const toDate = new Date(effToDate)
-
-              const datesInDateObjects = value.map((date) => new Date(date))
-
-              return datesInDateObjects.every(
-                (date) => date >= fromDate && date <= toDate
-              )
-            }
-          )
-      } else {
-        return Yup.array().required('routine is required')
-      }
-    }),
-    logisticName: Yup.string().required(
-      getErrorMsg(t('pick_up_order.choose_logistic'), 'empty')
-    ),
-    vehicleTypeId: Yup.string().required(
-      getErrorMsg(t('pick_up_order.vehicle_category'), 'empty')
-    ),
-    platNo: Yup.string().required(
-      getErrorMsg(t('pick_up_order.plat_number'), 'empty')
-    ),
-    contactNo: Yup.number().required(
-      getErrorMsg(t('pick_up_order.contact_number'), 'empty')
-    ),
-    createPicoDetail: Yup.array()
-      .required(getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty'))
-      .test(
-        'has-rows',
-        getErrorMsg(t('pick_up_order.recyle_loc_info'), 'empty')!!,
-        (value) => {
-          return value.length > 0 || addRow.length > 0
-        }
-      )
-  })
 
   const submitEditPickUpOrder = async (pickupOrderId: string, values:EditPo) => {
     try {
@@ -117,18 +67,21 @@ const EditPickupOrder = () => {
       status: 'CREATED',
       reason: 'string',
       normalFlg: true,
-      approvedAt: '2023-12-12T02:17:30.062Z',
-      rejectedAt: '2023-12-12T02:17:30.062Z',
+      approvedAt: '',
+      rejectedAt: '',
       approvedBy: 'string',
       rejectedBy: 'string',
       contractNo: '',
       updatedBy: loginId,
       refPicoId: '',
-      createPicoDetail: []
+      updatePicoDetail: []
     },
-    validationSchema: validateSchema,
+    // validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
-      values.createPicoDetail = addRow
+      values.updatePicoDetail = addRow
+      if(values.picoType === 'AD_HOC'){
+        values.routine = [];
+      }
       const result = await submitEditPickUpOrder(poInfo.picoId, values)
 
       const data = result?.data
@@ -144,8 +97,9 @@ const EditPickupOrder = () => {
 
   const setPickupOrderDetail = () => {
     const picoDetails: CreatePicoDetail[] =
-      poInfo?.pickupOrderDetail?.map((item) => ({
+      poInfo?.pickupOrderDetail?.map((item, index) => ({
         id: item.picoDtlId,
+        picoDtlId: item.picoDtlId,
         picoHisId: item.picoHisId,
         senderId: item.senderId,
         senderName: item.senderName,
@@ -161,7 +115,8 @@ const EditPickupOrder = () => {
         pickupAt: item.pickupAt,
         recycType: item.recycType,
         recycSubType: item.recycSubType,
-        weight: formatWeight(item.weight, decimalVal)
+        weight: formatWeight(item.weight, decimalVal),
+        newDetail: false,
       })) || []
 
     setAddRow(picoDetails)
@@ -188,14 +143,14 @@ const EditPickupOrder = () => {
         status: 'CREATED',
         reason: poInfo.reason,
         normalFlg: true,
-        approvedAt: '2023-12-12T02:17:30.062Z',
-        rejectedAt: '2023-12-12T02:17:30.062Z',
+        approvedAt: '',
+        rejectedAt: '',
         approvedBy: loginId,
         rejectedBy: loginId,
         contractNo: poInfo.contractNo,
         updatedBy: loginId,
-        refPicoId: poInfo.refPicoId,
-        createPicoDetail: []
+        refPicoId: poInfo?.refPicoId,
+        updatePicoDetail: []
       })
     }
   }, [poInfo])

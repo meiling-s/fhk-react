@@ -26,24 +26,34 @@ import {
 } from '../../../themes/icons'
 
 import StaffDetail from './StaffDetail'
-
+import CircularLoading from '../../../components/CircularLoading'
 import { styles } from '../../../constants/styles'
 import { ToastContainer, toast } from 'react-toastify'
 import Tabs from '../../../components/Tabs'
 import { Staff } from '../../../interfaces/staff'
-import { getStaffList } from '../../../APICalls/staff'
+import { il_item } from '../../../components/FormComponents/CustomItemList'
+import { getStaffList, getStaffTitle } from '../../../APICalls/staff'
 
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate, extractError } from '../../../utils/utils'
+import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
+import { displayCreatedDate, extractError, debounce } from '../../../utils/utils'
 import UserGroup from '../UserGroup/UserGroup'
-import { Realm, STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import {
+  Languages,
+  Realm,
+  STATUS_CODE,
+  localStorgeKeyName
+} from '../../../constants/constant'
 import { useNavigate } from 'react-router-dom'
 
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
+import i18n from '../../../setups/i18n'
+import { staffQuery } from '../../../interfaces/staff'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -65,7 +75,9 @@ function createStaff(
   updatedBy: string,
   createdAt: string,
   updatedAt: string,
-  fullTimeFlg?: boolean
+  titleValue: string,
+  version: number,
+  fullTimeFlg?: boolean,
 ): Staff {
   return {
     staffId,
@@ -84,76 +96,160 @@ function createStaff(
     updatedBy,
     createdAt,
     updatedAt,
-    fullTimeFlg
+    fullTimeFlg,
+    titleValue,
+    version
   }
+}
+
+export type Title = {
+  name: string
+  id: string
+  nameEng: string
+  nameSc: string
+  nameTc: string
 }
 
 const StaffManagement: FunctionComponent = () => {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  // const [selectedTab, setSelectedTab] = useState(0)
-  // const tabStaff = [t('staffManagement.list'), t('staffManagement.schedule')]
   const [selectedTab, setSelectedTab] = useState(0)
   const tabStaff = [t('staffManagement.list'), t('staffManagement.userGroup')]
   const [staffList, setStaffList] = useState<Staff[]>([])
   const [filteredStaff, setFillteredStaff] = useState<Staff[]>([])
   const [selectedRow, setSelectedRow] = useState<Staff | null>(null)
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
+  const [staffTitleList, setStaffTitleList] = useState<Title[]>([])
   const [page, setPage] = useState(1)
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const realm = localStorage.getItem(localStorgeKeyName.realm)
   const role = localStorage.getItem(localStorgeKeyName.role)
-  const navigate = useNavigate();
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const navigate = useNavigate()
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const [isTitleInitialized, setIsTitleInitialized] = useState(false)
+  const [query, setQuery] = useState<staffQuery>({
+    staffId: '',
+    staffName: ''
+  })
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  useEffect(() => {
-    initStaffList()
-  }, [page])
-
-  const initStaffList = async () => {
-   try {
-    const result = await getStaffList(page - 1, pageSize)
-
+  const initStaffTitle = async () => {
+    const result = await getStaffTitle()
     if (result) {
       const data = result.data.content
-      var staffMapping: Staff[] = []
-      data.map((item: any) => {
-        const dateInHK = dayjs.utc(item.updatedAt).tz('Asia/Hong_Kong')
-        const updatedAt = dateInHK.format(`${dateFormat} HH:mm`)
-        staffMapping.push(
-          createStaff(
-            item?.staffId,
-            item?.tenantId,
-            item?.staffNameTchi,
-            item?.staffNameSchi,
-            item?.staffNameEng,
-            item?.titleId,
-            item?.contactNo,
-            item?.loginId,
-            item?.status,
-            item?.gender,
-            item?.email,
-            item?.salutation,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            updatedAt,
-            item?.fullTimeFlg
-          )
-        )
+      let staffTitle: Title[] = []
+      data.forEach((item: any) => {
+        let title: Title = {
+          id: item.titleId,
+          name: '',
+          nameEng: item.titleNameEng,
+          nameSc: item.titleNameSchi,
+          nameTc: item.titleNameTchi
+        }
+        switch (i18n.language) {
+          case 'enus':
+            title.name = item.titleNameEng
+            break
+          case 'zhch':
+            title.name = item.titleNameSchi
+            break
+          case 'zhhk':
+            title.name = item.titleNameTchi
+            break
+          default:
+            title.name = item.titleNameTchi
+            break
+        }
+
+        staffTitle.push(title)
       })
-      setStaffList(staffMapping)
-      setFillteredStaff(staffMapping)
-      setTotalData(result.data.totalPages)
+      setStaffTitleList(staffTitle)
     }
-   } catch (error:any) {
-    const { state, realm } = extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
+    setIsTitleInitialized(true)
   }
+
+  const initStaffList = async () => {
+    setIsLoading(true)
+    try {
+      const result = await getStaffList(page - 1, pageSize, query)
+
+      if (result) {
+        const data = result.data.content
+        var staffMapping: Staff[] = []
+        data.map((item: any) => {
+          const dateInHK = dayjs.utc(item.updatedAt).tz('Asia/Hong_Kong')
+          const updatedAt = dateInHK.format(`${dateFormat} HH:mm`)
+
+          staffTitleList.forEach((title: Title) => {
+            if (
+              i18n.language === Languages.ENUS &&
+              item?.titleId === title.id
+            ) {
+              item.titleValue = title.nameEng
+            } else if (
+              i18n.language === Languages.ZHCH &&
+              item?.titleId === title.id
+            ) {
+              item.titleValue = title.nameSc
+            } else if (item?.titleId === title.id) {
+              item.titleValue = title.nameTc
+            }
+          })
+
+          staffMapping.push(
+            createStaff(
+              item?.staffId,
+              item?.tenantId,
+              item?.staffNameTchi,
+              item?.staffNameSchi,
+              item?.staffNameEng,
+              item?.titleId,
+              //position?.name || '-',
+              item?.contactNo,
+              item?.loginId,
+              item?.status,
+              item?.gender,
+              item?.email,
+              item?.salutation,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              updatedAt,
+              item?.titleValue,
+              item?.version,
+              item?.fullTimeFlg,
+            )
+          )
+        })
+        setStaffList(staffMapping)
+        setFillteredStaff(staffMapping)
+        setTotalData(result.data.totalPages)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    const initialize = async () => {
+      setIsTitleInitialized(false)
+      await initStaffTitle()
+      // `initStaffList` will be called in the next `useEffect` once `isTitleInitialized` is true
+    }
+    initialize()
+  }, [page, i18n.language, query])
+
+  useEffect(() => {
+    if (isTitleInitialized) {
+      initStaffList()
+    }
+  }, [isTitleInitialized, page, i18n.language, query])
 
   let columns: GridColDef[] = [
     {
@@ -165,12 +261,18 @@ const StaffManagement: FunctionComponent = () => {
     {
       field: 'staffNameTchi',
       headerName: t('staffManagement.employeeChineseName'),
-      width: 200,
+      width: 220,
+      type: 'string'
+    },
+    {
+      field: 'staffNameSchi',
+      headerName: t('staffManagement.employeeChineseCn'),
+      width: 220,
       type: 'string'
     },
     {
       field: 'staffNameEng',
-      headerName: 'Employee English Name',
+      headerName: t('staffManagement.employeeEnglishName'),
       width: 200,
       type: 'string'
     },
@@ -178,7 +280,13 @@ const StaffManagement: FunctionComponent = () => {
       field: 'titleId',
       headerName: t('staffManagement.position'),
       width: 150,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        const position = staffTitleList.find(
+          (title) => title.id == params.row.titleId
+        )
+        return <div>{position?.name}</div>
+      }
     },
     {
       field: 'loginId',
@@ -196,11 +304,12 @@ const StaffManagement: FunctionComponent = () => {
       field: 'updatedAt',
       headerName: t('staffManagement.lastLogin'),
       width: 200,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -223,7 +332,8 @@ const StaffManagement: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -253,12 +363,18 @@ const StaffManagement: FunctionComponent = () => {
       {
         field: 'staffNameTchi',
         headerName: t('staffManagement.employeeChineseName'),
-        width: 200,
+        width: 220,
+        type: 'string'
+      },
+      {
+        field: 'staffNameSchi',
+        headerName: t('staffManagement.employeeChineseCn'),
+        width: 220,
         type: 'string'
       },
       {
         field: 'staffNameEng',
-        headerName: 'Employee English Name',
+        headerName: t('staffManagement.employeeEnglishName'),
         width: 200,
         type: 'string'
       },
@@ -269,7 +385,7 @@ const StaffManagement: FunctionComponent = () => {
         type: 'boolean'
       },
       {
-        field: 'titleId',
+        field: 'titleValue',
         headerName: t('staffManagement.position'),
         width: 150,
         type: 'string'
@@ -291,49 +407,49 @@ const StaffManagement: FunctionComponent = () => {
         headerName: t('staffManagement.lastLogin'),
         width: 200,
         type: 'string'
-      },
-      {
-        field: 'edit',
-        headerName: '',
-        renderCell: (params) => {
-          return (
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <EDIT_OUTLINED_ICON
-                fontSize="small"
-                className="cursor-pointer text-grey-dark mr-2"
-                onClick={(event) => {
-                  const selected = staffList.find(
-                    (item) => item.loginId == params.row.loginId
-                  )
-                  event.stopPropagation()
-                  handleAction(params, 'edit')
-                  if (selected) setSelectedRow(selected)
-                }}
-                style={{ cursor: 'pointer' }}
-              />
-            </div>
-          )
-        }
-      },
-      {
-        field: 'delete',
-        headerName: '',
-        renderCell: (params) => {
-          return (
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <DELETE_OUTLINED_ICON
-                fontSize="small"
-                className="cursor-pointer text-grey-dark"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  handleAction(params, 'delete')
-                }}
-                style={{ cursor: 'pointer' }}
-              />
-            </div>
-          )
-        }
       }
+      // {
+      //   field: 'edit',
+      //   headerName: t('pick_up_order.item.edit'),
+      //   renderCell: (params) => {
+      //     return (
+      //       <div style={{ display: 'flex', gap: '8px' }}>
+      //         <EDIT_OUTLINED_ICON
+      //           fontSize="small"
+      //           className="cursor-pointer text-grey-dark mr-2"
+      //           onClick={(event) => {
+      //             const selected = staffList.find(
+      //               (item) => item.loginId == params.row.loginId
+      //             )
+      //             event.stopPropagation()
+      //             handleAction(params, 'edit')
+      //             if (selected) setSelectedRow(selected)
+      //           }}
+      //           style={{ cursor: 'pointer' }}
+      //         />
+      //       </div>
+      //     )
+      //   }
+      // },
+      // {
+      //   field: 'delete',
+      //   headerName: t('pick_up_order.item.delete'),
+      //   renderCell: (params) => {
+      //     return (
+      //       <div style={{ display: 'flex', gap: '8px' }}>
+      //         <DELETE_OUTLINED_ICON
+      //           fontSize="small"
+      //           className="cursor-pointer text-grey-dark"
+      //           onClick={(event) => {
+      //             event.stopPropagation()
+      //             handleAction(params, 'delete')
+      //           }}
+      //           style={{ cursor: 'pointer' }}
+      //         />
+      //       </div>
+      //     )
+      //   }
+      // }
     ]
   }
 
@@ -360,68 +476,48 @@ const StaffManagement: FunctionComponent = () => {
     setDrawerOpen(true)
   }
 
-  const showErrorToast = (msg: string) => {
-    toast.error(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
-  }
-
   // const handleTabChange = () => {}
   const handleTabChange = (tab: number) => {
     setSelectedTab(tab)
-  }
-
-  const showSuccessToast = (msg: string) => {
-    toast.info(msg, {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light'
-    })
   }
 
   const onSubmitData = () => {
     initStaffList()
   }
 
-  const onChangeSearch = (searchWord: string) => {
-    const newData = staffList
-    if (searchWord.trim() !== '') {
-      const filteredData: Staff[] = newData.filter((item) => {
-        const lowerCaseSearchWord = searchWord.toLowerCase()
-        const lowerCaseStaffId = item.staffId.toLowerCase()
-        const staffNameEng = item.staffNameEng.toLowerCase()
-        const staffNameTchi = item.staffNameTchi.toLowerCase()
-
-        // Check if staffId starts with the search word
-        return (
-          lowerCaseStaffId.startsWith(lowerCaseSearchWord) ||
-          staffNameEng.startsWith(lowerCaseSearchWord) ||
-          staffNameTchi.startsWith(lowerCaseSearchWord)
-        )
-      })
-      setFillteredStaff(filteredData)
-    } else {
-      setFillteredStaff(staffList)
-    }
+  const updateQuery = (newQuery: Partial<staffQuery>) => {
+    setQuery({ ...query, ...newQuery })
   }
 
+  const handleSearch = debounce((keyName: string, value: string) => {
+    setPage(1)
+    updateQuery({ [keyName]: value })
+  }, 500)
+
+  const searchfield = [
+    {
+      label: t('staffManagement.employeeId'),
+      placeholder: t('staffManagement.enterEmployeeNumber'),
+      field: 'staffId'
+    },
+    {
+      label: t('staffManagement.employeeName'),
+      placeholder: t('staffManagement.enterEmployeeName'),
+      field: 'staffName'
+    }
+  ]
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
+
+  useEffect(() => {
+    if (staffList.length === 0 && page > 1) {
+      // move backward to previous page once data deleted from last page (no data left on last page)
+      setPage((prev) => prev - 1)
+    }
+  }, [staffList])
 
   return (
     <>
@@ -435,19 +531,7 @@ const StaffManagement: FunctionComponent = () => {
         }}
       >
         <ToastContainer></ToastContainer>
-        {/* <Box>
-          <Typography fontSize={16} color="black" fontWeight="bold">
-            {t('staffManagement.staff')}
-          </Typography>
-        </Box>
-        <Box>
-          <Tabs
-            tabs={tabStaff}
-            navigate={handleTabChange}
-            selectedProp={selectedTab}
-            className="lg:px-10 sm:px-4 bg-bg-primary"
-          />
-        </Box> */}
+
         {selectedTab === 0 && (
           <>
             <Box
@@ -472,80 +556,88 @@ const StaffManagement: FunctionComponent = () => {
                 <ADD_ICON /> {t('staffManagement.addNewEmployees')}
               </Button>
             </Box>
-            <Box sx={{ display: 'flex', gap: '8px', maxWidth: '1460px' }}>
-              <TextField
-                id="staffId"
-                onChange={(event) => onChangeSearch(event.target.value)}
-                sx={[localstyles.inputState, { width: '450px' }]}
-                label={t('staffManagement.employeeId')}
-                placeholder={t('staffManagement.enterEmployeeNumber')}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => {}}>
-                        <SEARCH_ICON style={{ color: '#79CA25' }} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
-              <TextField
-                id="staffName"
-                onChange={(event) => onChangeSearch(event.target.value)}
-                sx={[localstyles.inputState, { width: '450px' }]}
-                label={t('staffManagement.employeeName')}
-                placeholder={t('staffManagement.enterEmployeeName')}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => {}}>
-                        <SEARCH_ICON style={{ color: '#79CA25' }} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
+            <Box sx={{ mt: 3, display: 'flex' }}>
+              {searchfield.map((s) => (
+                <CustomSearchField
+                  key={s.field}
+                  label={s.label}
+                  placeholder={s?.placeholder}
+                  field={s.field}
+                  options={[]}
+                  width="400px"
+                  onChange={handleSearch}
+                />
+              ))}
             </Box>
+
             <div className="table-vehicle">
               <Box pr={4} sx={{ flexGrow: 1, maxWidth: '1460px' }}>
-                <DataGrid
-                  rows={filteredStaff}
-                  getRowId={(row) => row.staffId}
-                  hideFooter
-                  columns={columns}
-                  checkboxSelection
-                  onRowClick={handleSelectRow}
-                  getRowSpacing={getRowSpacing}
-                  sx={{
-                    border: 'none',
-                    '& .MuiDataGrid-cell': {
-                      border: 'none'
-                    },
-                    '& .MuiDataGrid-row': {
-                      bgcolor: 'white',
-                      borderRadius: '10px'
-                    },
-                    '&>.MuiDataGrid-main': {
-                      '&>.MuiDataGrid-columnHeaders': {
-                        borderBottom: 'none'
+                {isLoading ? (
+                  <CircularLoading />
+                ) : (
+                  <Box>
+                    {' '}
+                    <DataGrid
+                      rows={filteredStaff}
+                      getRowId={(row) => row.staffId}
+                      hideFooter
+                      columns={columns}
+                      onRowClick={handleSelectRow}
+                      getRowSpacing={getRowSpacing}
+                      localeText={localeTextDataGrid}
+                      getRowClassName={(params) =>
+                        selectedRow && params.id === selectedRow.staffId
+                          ? 'selected-row'
+                          : ''
                       }
-                    }
-                  }}
-                />
-                <Pagination
-                  className="mt-4"
-                  count={Math.ceil(totalData)}
-                  page={page}
-                  onChange={(_, newPage) => {
-                    setPage(newPage)
-                  }}
-                />
+                      initialState={{
+                        sorting: {
+                          sortModel: [{ field: 'staffId', sort: 'asc' }]
+                        }
+                      }}
+                      sx={{
+                        border: 'none',
+                        '& .MuiDataGrid-cell': {
+                          border: 'none'
+                        },
+                        '& .MuiDataGrid-row': {
+                          bgcolor: 'white',
+                          borderRadius: '10px'
+                        },
+                        '&>.MuiDataGrid-main': {
+                          '&>.MuiDataGrid-columnHeaders': {
+                            borderBottom: 'none'
+                          }
+                        },
+                        '.MuiDataGrid-columnHeaderTitle': {
+                          fontWeight: 'bold !important',
+                          overflow: 'visible !important'
+                        },
+                        '& .selected-row': {
+                          backgroundColor: '#F6FDF2 !important',
+                          border: '1px solid #79CA25'
+                        }
+                      }}
+                    />
+                    <Pagination
+                      className="mt-4"
+                      count={Math.ceil(totalData)}
+                      page={page}
+                      onChange={(_, newPage) => {
+                        setPage(newPage)
+                      }}
+                    />
+                  </Box>
+                )}
               </Box>
             </div>
             {/* {selectedRow != null && ( */}
             <StaffDetail
               drawerOpen={drawerOpen}
-              handleDrawerClose={() => setDrawerOpen(false)}
+              handleDrawerClose={() => {
+                setDrawerOpen(false)
+                setSelectedRow(null)
+              }}
               action={action}
               selectedItem={selectedRow}
               staffList={staffList}

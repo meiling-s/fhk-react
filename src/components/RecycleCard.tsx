@@ -64,8 +64,8 @@ const RecycleCard = (
           />
         </Box>
         <Box>
-          <Typography  fontWeight='bold' fontSize='20px'>{recycleName} </Typography>
-          <Typography color ='#9f9f9f'>{recycleType} </Typography>
+          <Typography  fontWeight='bold' fontSize='16px'>{recycleName} </Typography>
+          <Typography color ='#9f9f9f' fontSize='14px'>{recycleType} </Typography>
         </Box>
       </Box>
       <Box alignSelf="center" fontWeight='bold'>{weight} kg</Box>

@@ -42,6 +42,8 @@ import CreatePackagingUnit from './CreatePackagingUnit'
 import StatusCard from '../../../components/StatusCard'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import CircularLoading from '../../../components/CircularLoading'
 
 interface PackagingUnit {
   packagingTypeId: string
@@ -56,6 +58,7 @@ interface PackagingUnit {
   updatedBy: string
   createdAt: string
   updatedAt: string
+  version: number
 }
 
 const GeneralSettings: FunctionComponent = () => {
@@ -74,13 +77,16 @@ const GeneralSettings: FunctionComponent = () => {
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
   const navigate = useNavigate()
-  
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   useEffect(() => {
     getTenantData()
     initPackagingUnit()
   }, [page])
 
   const initPackagingUnit = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllPackagingUnit(page - 1, pageSize)
       const data = result?.data
@@ -89,21 +95,31 @@ const GeneralSettings: FunctionComponent = () => {
       setTchiNameList([])
 
       if (data.content) {
-          setPackagingMapping(data.content)
-          setTotalData(data.totalPages)
+        setPackagingMapping(data.content)
+        setTotalData(data.totalPages)
 
-          data.content.map((item: any, index: any) => {
-            setEngNameList((prevEngName: any) => [...prevEngName, item.packagingNameEng]);
-            setSchiNameList((prevSchiName: any) => [...prevSchiName, item.packagingNameSchi]);
-            setTchiNameList((prevTchiName: any) => [...prevTchiName, item.packagingNameTchi]);
-          })
+        data.content.map((item: any, index: any) => {
+          setEngNameList((prevEngName: any) => [
+            ...prevEngName,
+            item.packagingNameEng
+          ])
+          setSchiNameList((prevSchiName: any) => [
+            ...prevSchiName,
+            item.packagingNameSchi
+          ])
+          setTchiNameList((prevTchiName: any) => [
+            ...prevTchiName,
+            item.packagingNameTchi
+          ])
+        })
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const getTenantData = async () => {
@@ -111,10 +127,10 @@ const GeneralSettings: FunctionComponent = () => {
       const token = returnApiToken()
       const result = await getTenantById(parseInt(token.tenantId))
       const data = result?.data
-      setTenantCurrency(data?.monetaryValue || "")
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+      setTenantCurrency(data?.monetaryValue || '')
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -142,7 +158,7 @@ const GeneralSettings: FunctionComponent = () => {
       field: 'description',
       headerName: t('packaging_unit.introduction'),
       width: 150,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'remark',
@@ -159,7 +175,8 @@ const GeneralSettings: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -178,7 +195,8 @@ const GeneralSettings: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -260,6 +278,13 @@ const GeneralSettings: FunctionComponent = () => {
     setCurrencyDrawerOpen(true)
   }
 
+  useEffect(() => {
+    if (packagingMapping.length === 0 && page > 1) {
+      // move backward to previous page once data deleted from last page (no data left on last page)
+      setPage((prev) => prev - 1)
+    }
+  }, [packagingMapping])
+
   return (
     <>
       <Box
@@ -333,38 +358,44 @@ const GeneralSettings: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%', overflow: 'hidden' }}>
-            <DataGrid
-              rows={packagingMapping}
-              getRowId={(row) => row.packagingTypeId}
-              hideFooter
-              columns={columns}
-              checkboxSelection
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
-                  }
-                }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={packagingMapping}
+                  getRowId={(row) => row.packagingTypeId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         <CreatePackagingUnit

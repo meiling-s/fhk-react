@@ -78,8 +78,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   })
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const [selectedVehicle, setSelectedVehicle] = useState<il_item>({
-    id: '1',
-    name: 'Van'
+    id: '',
+    name: ''
   })
   const [licensePlate, setLicensePlate] = useState('')
   const [pictures, setPictures] = useState<ImageListType>([])
@@ -178,7 +178,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   const resetData = () => {
     setSelectedService(serviceType[0])
-    setSelectedVehicle({ id: '1', name: 'Van' })
+    setSelectedVehicle({ id: '', name: '' })
     setLicensePlate('')
     setPictures([])
     setValidation([])
@@ -216,7 +216,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           problem: formErr.empty,
           type: 'error'
         })
-      selectedVehicle?.toString() == '' &&
+      selectedVehicle?.id.toString() == '' &&
         tempV.push({
           field: t('vehicle.vehicleType'),
           problem: formErr.empty,
@@ -294,7 +294,19 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
       } else {
-        onSubmitData('error', t('common.saveFailed'))
+        // onSubmitData('error', t('common.saveFailed'))
+        if(error?.response?.data?.status === STATUS_CODE[500]){
+          setValidation(
+            [
+              {
+                field: t('common.vehicle'),
+                problem: formErr.alreadyExist,
+                type: 'error'
+              }
+            ]
+          )
+        }
+        setTrySubmited(true)
       }
     }
   }
@@ -355,7 +367,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleDrawerClose,
           onSubmit: handleSubmit,
-          onDelete: handleDelete
+          onDelete: handleDelete,
+          deleteText: t('common.deleteMessage')
         }}
       >
         <Divider></Divider>
@@ -383,9 +396,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   width: '100%'
                 }}
               >
-                <InputLabel id="serviceType">
+                {/* <InputLabel id="serviceType">
                   {t('vehicle.serviceType')}
-                </InputLabel>
+                </InputLabel> */}
                 <Select
                   labelId="serviceType"
                   id="serviceType"
@@ -394,7 +407,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                     borderRadius: '12px'
                   }}
                   disabled={action === 'delete'}
-                  label={t('vehicle.serviceType')}
+                  // label={t('vehicle.serviceType')}
                   //onChange={(event) => setSelectedService(event.target.value)}
                   onChange={(event: SelectChangeEvent<string>) => {
                     const selectedValue = serviceType.find(
@@ -433,6 +446,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   id="vehicleType"
                   value={selectedVehicle.id}
                   disabled={action === 'delete'}
+                  error={checkString(selectedVehicle.id)}
                   sx={{
                     borderRadius: '12px'
                   }}
@@ -462,7 +476,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                 id="licensePlate"
                 value={licensePlate}
                 disabled={action === 'delete'}
-                placeholder={t('vehicle.licensePlate')}
+                placeholder={t('vehicle.please_enter_pla_number')}
                 onChange={(event) => setLicensePlate(event.target.value)}
                 error={checkString(licensePlate)}
               />
@@ -483,7 +497,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                   maxFileSize={imgSettings?.ImgSize}
                   dataURLKey="data_url"
                 >
-                  {({ imageList, onImageUpload, onImageRemove }) => (
+                  {({ imageList, onImageUpload, onImageRemove, errors }) => (
                     <Box className="box">
                       <Card
                         sx={{
@@ -505,6 +519,15 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                           </Typography>
                         </ButtonBase>
                       </Card>
+                      {errors && (
+                        <div>
+                        {errors.maxFileSize && (
+                          <span  style={{color: "red"}}>
+                            Selected file size exceeds maximum file size {imgSettings?.ImgSize/1000000} mb
+                          </span>
+                        )}
+                        </div>
+                      )}
                       <ImageList sx={localstyles.imagesContainer} cols={4}>
                         {imageList.map((image, index) => (
                           <ImageListItem

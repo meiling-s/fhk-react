@@ -3,6 +3,11 @@ import Drawer from '@mui/material/Drawer'
 import StatusCard from './StatusCard'
 import { Button, Typography } from '@mui/material'
 import { styles } from '../constants/styles'
+import { useContainer } from 'unstated-next'
+import NotifContainer from '../contexts/NotifContainer'
+import DeleteModal from './FormComponents/deleteModal'
+import ConfirmModal from './SpecializeComponents/ConfirmationModal'
+import { t } from 'i18next'
 
 type HeaderProps = {
   title?: string
@@ -14,6 +19,7 @@ type HeaderProps = {
   onDelete?: () => void
   action?: 'add' | 'edit' | 'delete' | 'none'
   statusLabel?: string
+  deleteText?: string
 }
 
 type RightOverlayFormProps = {
@@ -24,6 +30,7 @@ type RightOverlayFormProps = {
   showHeader?: boolean
   headerProps?: HeaderProps
   action?: 'add' | 'edit' | 'delete' | 'none'
+  useConfirmModal?: boolean
 }
 
 const HeaderSection: React.FC<HeaderProps> = ({
@@ -35,8 +42,29 @@ const HeaderSection: React.FC<HeaderProps> = ({
   onSubmit,
   onDelete,
   action = 'add',
-  statusLabel
+  statusLabel,
+  deleteText
 }) => {
+  const [openDelete, setOpenDelete] = useState<boolean>(false)
+
+  const onDeleteModal = () => {
+    if (cancelText === t('common.cancel')) {
+      setOpenDelete(false)
+      if (onDelete) {
+        onDelete()
+      }
+    } else {
+      setOpenDelete((prev) => !prev)
+    }
+  }
+
+  const onDeleteClick = async () => {
+    if (onDelete) {
+      await onDelete()
+    }
+    onDeleteModal()
+  }
+
   return (
     <div className="header-section">
       <div className="flex flex-row items-center justify-between p-[25px] gap-[25px">
@@ -77,7 +105,7 @@ const HeaderSection: React.FC<HeaderProps> = ({
                   ]}
                   variant="outlined"
                   disabled={action === 'add'}
-                  onClick={onDelete}
+                  onClick={onDeleteModal}
                 >
                   {cancelText}
                 </Button>
@@ -94,8 +122,14 @@ const HeaderSection: React.FC<HeaderProps> = ({
             />
           </div>
         </div>
-        </div>
       </div>
+      <DeleteModal
+        open={openDelete}
+        onClose={onDeleteModal}
+        onDelete={onDeleteClick}
+        deleteText={deleteText}
+      />
+    </div>
   )
 }
 
@@ -106,15 +140,19 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   anchor = 'left',
   showHeader = true,
   headerProps,
-  action = 'add'
+  action = 'add',
+  useConfirmModal = true
 }) => {
   const [isOpen, setIsOpen] = useState(open)
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
+  const { marginTop } = useContainer(NotifContainer)
 
   useEffect(() => {
     setIsOpen(open)
   }, [open])
 
   const handleClose = () => {
+    setOpenConfirmModal(false)
     if (onClose) {
       onClose()
     }
@@ -124,13 +162,22 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
   return (
     <Drawer
       open={isOpen}
-      onClose={handleClose}
+      onClose={(_, reason) => {
+        action != 'delete' && useConfirmModal
+          ? reason === 'backdropClick' && setOpenConfirmModal(true)
+          : handleClose()
+      }}
       anchor={anchor}
       variant={'temporary'}
+      sx={{
+        '& .MuiDrawer-paper': {
+          marginTop: `${marginTop}`
+        }
+      }}
     >
       <div
         className={`border-b-[1px] border-grey-line h-full ${
-          isOpen ? 'md:w-[550px] w-[100vw]' : 'hidden'
+          isOpen ? `md:w-[550px] w-[100vw] mt-[${marginTop}]` : 'hidden'
         }`}
       >
         {showHeader ? (
@@ -140,6 +187,13 @@ const RightOverlayForm: React.FC<RightOverlayFormProps> = ({
         ) : null}
 
         <div className="">{children}</div>
+        <ConfirmModal
+          isOpen={openConfirmModal && useConfirmModal}
+          onConfirm={() => {
+            handleClose()
+          }}
+          onCancel={() => setOpenConfirmModal(false)}
+        />
       </div>
     </Drawer>
   )

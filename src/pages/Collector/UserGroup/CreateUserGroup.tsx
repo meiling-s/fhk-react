@@ -25,6 +25,7 @@ import {
   editUserGroup
 } from '../../../APICalls/Collector/userGroup'
 import { useNavigate } from 'react-router-dom'
+import i18n from '../../../setups/i18n'
 
 interface Props {
   drawerOpen: boolean
@@ -112,7 +113,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       const tempV: formValidate[] = []
       roleName?.toString() == '' &&
         tempV.push({
-          field: 'roleName',
+          field: t('userGroup.groupName'),
           problem: formErr.empty,
           type: 'error'
         })
@@ -124,7 +125,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
         })
       description?.toString() == '' &&
         tempV.push({
-          field: 'description',
+          field: t('userGroup.description'),
           problem: formErr.empty,
           type: 'error'
         })
@@ -139,7 +140,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
     }
 
     validate()
-  }, [roleName, description, functions])
+  }, [roleName, description, functions, i18n.language])
 
   const handleSubmit = () => {
     const token = returnApiToken()
@@ -227,7 +228,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
       if (result) {
         if (result == 500) {
           setTrySubmited(true)
-          onSubmitData('error', t('notify.userAccountUsed'))
+          onSubmitData('error', t('userGroup.userAccountUsed'))
         } else {
           onSubmitData('success', t('notify.successDeleted'))
           resetData()
@@ -278,7 +279,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
             }}
             className="sm:ml-0 mt-o w-full"
           >
-            <CustomField label={t('userGroup.groupName')}>
+            <CustomField label={t('userGroup.groupName')} mandatory>
               <CustomTextField
                 id="roleName"
                 value={roleName}
@@ -288,7 +289,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                 error={checkString(roleName)}
               />
             </CustomField>
-            <CustomField label={t('userGroup.description')}>
+            <CustomField label={t('userGroup.description')} mandatory>
               <CustomTextField
                 id="description"
                 value={description}
@@ -298,7 +299,7 @@ const CreateUserGroup: FunctionComponent<Props> = ({
                 error={checkString(description)}
               />
             </CustomField>
-            <CustomField label={t('userGroup.availableFeatures')}>
+            <CustomField label={t('userGroup.availableFeatures')} mandatory>
               {functionList.map((item: Functions, index) => (
                 <FunctionList
                   key={index}

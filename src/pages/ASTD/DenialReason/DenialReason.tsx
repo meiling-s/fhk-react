@@ -1,28 +1,51 @@
-import { useEffect, useState, FunctionComponent, useCallback } from "react";
-import { Box, Button, Checkbox, Typography, Pagination, Stack } from "@mui/material";
+import {
+  useEffect,
+  useState,
+  FunctionComponent,
+  useCallback,
+  useRef
+} from 'react'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Typography,
+  Pagination,
+  Stack
+} from '@mui/material'
 import {
   DataGrid,
   GridColDef,
   GridRowParams,
   GridRowSpacingParams,
-  GridRenderCellParams,
-} from "@mui/x-data-grid";
-import { ToastContainer, toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { styles } from "../../../constants/styles";
+  GridRenderCellParams
+} from '@mui/x-data-grid'
+import { ToastContainer, toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
+import { styles } from '../../../constants/styles'
 import {
   ADD_ICON,
   EDIT_OUTLINED_ICON,
-  DELETE_OUTLINED_ICON,
-} from "../../../themes/icons";
-import { getAllDenialReason, getAllDenialReasonByFunctionId } from "../../../APICalls/Collector/denialReason";
-import { DenialReason as DenialReasonItem } from "../../../interfaces/denialReason";
-import CreateDenialReason from "./CreateDenialReason";
-import { getAllFunction } from "../../../APICalls/Collector/userGroup";
-import CustomSearchField from "../../../components/TableComponents/CustomSearchField";
-import { useNavigate } from "react-router-dom";
-import { extractError } from "../../../utils/utils";
-import { STATUS_CODE } from "../../../constants/constant";
+  DELETE_OUTLINED_ICON
+} from '../../../themes/icons'
+import {
+  getAllDenialReason,
+  getAllDenialReasonByFunctionId
+} from '../../../APICalls/Collector/denialReason'
+import { DenialReason as DenialReasonItem } from '../../../interfaces/denialReason'
+import CreateDenialReason from './CreateDenialReason'
+import {
+  getAllFilteredFunction,
+  getAllFunction
+} from '../../../APICalls/Collector/userGroup'
+import CustomSearchField from '../../../components/TableComponents/CustomSearchField'
+import { useNavigate } from 'react-router-dom'
+import { extractError } from '../../../utils/utils'
+import { STATUS_CODE } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import CircularLoading from '../../../components/CircularLoading'
+
+import StatusLabel from '../../../components/StatusLabel'
 
 function createDenialReason(
   reasonId: number,
@@ -38,7 +61,8 @@ function createDenialReason(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  version: number,
 ): DenialReasonItem {
   return {
     reasonId,
@@ -55,85 +79,110 @@ function createDenialReason(
     updatedBy,
     createdAt,
     updatedAt,
-  };
+    version,
+  }
 }
 
 const DenialReason: FunctionComponent = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   const { i18n } = useTranslation()
   const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const [action, setAction] = useState<"add" | "edit" | "delete">("add");
-  const [rowId, setRowId] = useState<number>(1);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [totalData, setTotalData] = useState<number>(0);
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
+  const [rowId, setRowId] = useState<number>(1)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [totalData, setTotalData] = useState<number>(0)
   const [DenialReasonList, setDenialReasonList] = useState<DenialReasonItem[]>(
     []
-  );
-  const [functionList, setFunctionList] = useState<{ functionId: string; functionNameEng: string; functionNameSChi: string; reasonTchi: string; name: string; }[]>([]);
-  const [functionOptions, setFunctionOptions] = useState<{value: string, label: string}[]>([]);
-  const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null);
-  const navigate =  useNavigate()
-  
+  )
+  const [functionList, setFunctionList] = useState<
+    {
+      functionId: string
+      functionNameEng: string
+      functionNameSChi: string
+      reasonTchi: string
+      name: string
+    }[]
+  >([])
+  const [functionOptions, setFunctionOptions] = useState<
+    { value: string; label: string }[]
+  >([])
+  const [selectedRow, setSelectedRow] = useState<DenialReasonItem | null>(null)
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const searchActionRef = useRef(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
     initFunctionList()
-}, [i18n, currentLanguage])
-
+  }, [i18n, currentLanguage])
 
   const initFunctionList = async () => {
-   try {
-    const result = await getAllFunction();
-    const data = result?.data;
-    if (data.length > 0) {
-      let name = ''
-      data.map((item: { functionId: string; functionNameEng: string; functionNameSChi: string; functionNameTChi: string; name: string; }) => {
-        switch (i18n.language) {
-          case 'enus':
-            name = item.functionNameEng
-            break
-          case 'zhch':
-            name = item.functionNameSChi
-            break
-          case 'zhhk':
-            name = item.functionNameTChi
-            break
-          default:
-            name = item.functionNameTChi
-            break
-        }
-        item.name = name
-      })
-    }
-    const options = data.map((item: { name: string; functionId: string; }) => {
-      return {
-        label: item.name,
-        value: item.functionId
+    setIsLoading(true)
+    try {
+      const result = await getAllFilteredFunction('astd')
+      const data = result?.data
+      if (data.length > 0) {
+        let name = ''
+        data.map(
+          (item: {
+            functionId: string
+            functionNameEng: string
+            functionNameSChi: string
+            functionNameTChi: string
+            name: string
+          }) => {
+            switch (i18n.language) {
+              case 'enus':
+                name = item.functionNameEng
+                break
+              case 'zhch':
+                name = item.functionNameSChi
+                break
+              case 'zhhk':
+                name = item.functionNameTChi
+                break
+              default:
+                name = item.functionNameTChi
+                break
+            }
+            item.name = name
+          }
+        )
       }
-    })
-    options.push({
-      label: 'any',
-      value: ''
-    })
-    setFunctionList(data);
-    setFunctionOptions(options)
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    } 
-   }
-  };
+      const options = data.map((item: { name: string; functionId: string }) => {
+        return {
+          label: item.name,
+          value: item.functionId
+        }
+      })
+      options.push({
+        label: t('check_in.any'),
+        value: ''
+      })
+      setFunctionList(data)
+      setFunctionOptions(options)
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
+    }
+    setIsLoading(false)
+  }
 
   const initDenialReasonList = async () => {
     try {
-      const result = await getAllDenialReason(page - 1, pageSize);
-      const data = result?.data;
+      const result = await getAllDenialReason(page - 1, pageSize)
+      const data = result?.data
       if (data) {
-        var denialReasonMapping: DenialReasonItem[] = [];
+        var denialReasonMapping: DenialReasonItem[] = []
         data.content.map((item: any) => {
-          const functionItem = functionList.find((el) => el.functionId === item.functionId)
+          const functionItem = functionList.find(
+            (el) => el.functionId === item.functionId
+          )
           if (functionItem) {
             item.functionName = functionItem.name
           }
@@ -152,210 +201,241 @@ const DenialReason: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              item?.updatedAt,
+              item?.version,
             )
-          );
-        });
-        setDenialReasonList(denialReasonMapping);
-        setTotalData(data.totalPages);
-      }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
-        navigate('/maintenance')
-      } 
-    }
-  };
-  const searchByFunctionId = async (functionId: number) => {
-   try {
-    const result = await getAllDenialReasonByFunctionId(page - 1, pageSize, functionId);
-    const data = result?.data;
-    if (data) {
-      var denialReasonMapping: DenialReasonItem[] = [];
-      data.content.map((item: any) => {
-        const functionItem = functionList.find((el) => el.functionId === item.functionId)
-        if (functionItem) {
-          item.functionName = functionItem.name
-        }
-        denialReasonMapping.push(
-          createDenialReason(
-            item?.reasonId,
-            item?.tenantId,
-            item?.reasonNameTchi,
-            item?.reasonNameSchi,
-            item?.reasonNameEng,
-            item?.description,
-            item?.remark,
-            item?.functionId,
-            item?.functionName,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
           )
-        );
-      });
-      setDenialReasonList(denialReasonMapping);
-      setTotalData(data.totalPages);
+        })
+        setDenialReasonList(denialReasonMapping)
+        setTotalData(data.totalPages)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
+  }
+  const searchByFunctionId = async (functionId: number) => {
+    setIsLoading(true)
+    try {
+      setPage(1)
+      const result = await getAllDenialReasonByFunctionId(
+        0,
+        pageSize,
+        functionId
+      )
+      const data = result?.data
+      if (data) {
+        var denialReasonMapping: DenialReasonItem[] = []
+        data.content.map((item: any) => {
+          const functionItem = functionList.find(
+            (el) => el.functionId === item.functionId
+          )
+          if (functionItem) {
+            item.functionName = functionItem.name
+          }
+          denialReasonMapping.push(
+            createDenialReason(
+              item?.reasonId,
+              item?.tenantId,
+              item?.reasonNameTchi,
+              item?.reasonNameSchi,
+              item?.reasonNameEng,
+              item?.description,
+              item?.remark,
+              item?.functionId,
+              item?.functionName,
+              item?.status,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt,
+              item?.version,
+            )
+          )
+        })
+        setDenialReasonList(denialReasonMapping)
+        setTotalData(data.totalPages)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   }
-  };
+    setIsLoading(false)
+  }
   useEffect(() => {
-    initFunctionList();
+    initFunctionList()
   }, [])
-  
+
   useEffect(() => {
-    initDenialReasonList();
-  }, [functionList, page]);
+    if (!searchActionRef.current) {
+      initDenialReasonList()
+    }
+    searchActionRef.current = false
+  }, [functionList, page])
 
   const columns: GridColDef[] = [
     {
-      field: "reasonNameTchi",
-      headerName: t("denial_reason.reason_name_tchi"),
+      field: 'reasonNameTchi',
+      headerName: t('denial_reason.reason_name_tchi'),
       width: 200,
-      type: "string",
+      type: 'string'
     },
     {
-      field: "reasonNameSchi",
-      headerName: t("denial_reason.reason_name_schi"),
+      field: 'reasonNameSchi',
+      headerName: t('denial_reason.reason_name_schi'),
       width: 200,
-      type: "string",
+      type: 'string'
     },
     {
-      field: "reasonNameEng",
-      headerName: t("denial_reason.reason_name_eng"),
+      field: 'reasonNameEng',
+      headerName: t('denial_reason.reason_name_eng'),
       width: 200,
-      type: "string",
+      type: 'string'
     },
     {
-      field: "functionName",
-      headerName: t("denial_reason.corresponding_functions"),
+      field: 'functionName',
+      headerName: t('denial_reason.corresponding_functions'),
       width: 100,
-      type: "number",
+      type: 'number'
     },
+    // {
+    //   field: 'description',
+    //   headerName: t('denial_reason.description'),
+    //   width: 100,
+    //   type: 'string'
+    // },
     {
-      field: "description",
-      headerName: t("denial_reason.description"),
+      field: 'remark',
+      headerName: t('denial_reason.remark'),
       width: 100,
-      type: "string",
+      type: 'string'
     },
     {
-      field: "remark",
-      headerName: t("denial_reason.remark"),
-      width: 100,
-      type: "string",
-    },
-    {
-      field: "edit",
-      headerName: "",
+      field: 'edit',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
             onClick={(event) => {
-              event.stopPropagation();
-              handleAction(params, "edit");
+              event.stopPropagation()
+              handleAction(params, 'edit')
             }}
           >
             <EDIT_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark mr-2"
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
             />
           </Button>
-        );
-      },
+        )
+      }
     },
     {
-      field: "delete",
-      headerName: "",
+      field: 'delete',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
             onClick={(event) => {
-              event.stopPropagation();
-              handleAction(params, "delete");
+              event.stopPropagation()
+              handleAction(params, 'delete')
             }}
           >
             <DELETE_OUTLINED_ICON
               fontSize="small"
               className="cursor-pointer text-grey-dark"
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
             />
           </Button>
-        );
-      },
-    },
-  ];
+        )
+      }
+    }
+    // {
+    //   field: 'status',
+    //   headerName: t('col.status'),
+    //   width: 100,
+    //   type: 'string',
+    //   renderCell(params) {
+    //     return <StatusLabel status={params.row.status}></StatusLabel>
+    //   }
+    // }
+  ]
 
   const searchfield = [
-    {label:t('denial_reason.corresponding_functions'),width:'100%',options: functionOptions}
+    {
+      label: t('denial_reason.corresponding_functions'),
+      placeholder: t('denial_reason.corresponding_functions'),
+      width: '100%',
+      options: functionOptions
+    }
   ]
 
   const handleAction = (
     params: GridRenderCellParams,
-    action: "add" | "edit" | "delete"
+    action: 'add' | 'edit' | 'delete'
   ) => {
-    setAction(action);
-    setRowId(params.row.id);
-    setSelectedRow(params.row);
-    setDrawerOpen(true);
-  };
+    setAction(action)
+    setRowId(params.row.id)
+    setSelectedRow(params.row)
+    setDrawerOpen(true)
+  }
 
   const handleSelectRow = (params: GridRowParams) => {
-    setAction("edit");
-    setRowId(params.row.id);
-    setSelectedRow(params.row);
-    setDrawerOpen(true);
-  };
+    setAction('edit')
+    setRowId(params.row.id)
+    setSelectedRow(params.row)
+    setDrawerOpen(true)
+  }
 
   const showErrorToast = (msg: string) => {
     toast.error(msg, {
-      position: "top-center",
+      position: 'top-center',
       autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: "light",
-    });
-  };
+      theme: 'light'
+    })
+  }
 
   const showSuccessToast = (msg: string) => {
     toast.info(msg, {
-      position: "top-center",
+      position: 'top-center',
       autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: "light",
-    });
-  };
+      theme: 'light'
+    })
+  }
 
   const onSubmitData = (type: string, msg: string) => {
-    initDenialReasonList();
-    if (type == "success") {
-      showSuccessToast(msg);
+    initDenialReasonList()
+    if (type == 'success') {
+      showSuccessToast(msg)
     } else {
-      showErrorToast(msg);
+      showErrorToast(msg)
     }
-  };
+  }
 
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
-      top: params.isFirstVisible ? 0 : 10,
-    };
-  }, []);
+      top: params.isFirstVisible ? 0 : 10
+    }
+  }, [])
 
   const handleSearch = (keyName: string, value: string) => {
+    searchActionRef.current = true
     if (value) {
       searchByFunctionId(Number(value))
     } else {
@@ -363,95 +443,128 @@ const DenialReason: FunctionComponent = () => {
     }
   }
 
+  useEffect(() => {
+    if (DenialReasonList.length === 0 && page > 1) {
+      setPage((prev) => prev - 1)
+    }
+  }, [DenialReasonList])
+
   return (
     <>
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          pr: 4,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          pr: 4
         }}
       >
         <ToastContainer></ToastContainer>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            marginY: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginY: 4
           }}
         >
           <Typography fontSize={16} color="black" fontWeight="bold">
-            {t("top_menu.denial_reason")}
+            {t('top_menu.denial_reason')}
           </Typography>
           <Button
             sx={[
               styles.buttonOutlinedGreen,
               {
-                width: "max-content",
-                height: "40px",
-              },
+                width: 'max-content',
+                height: '40px'
+              }
             ]}
             variant="outlined"
             onClick={() => {
-              setDrawerOpen(true);
-              setAction("add");
+              setDrawerOpen(true)
+              setAction('add')
             }}
           >
-            <ADD_ICON /> {t("top_menu.add_new")}
+            <ADD_ICON /> {t('top_menu.add_new')}
           </Button>
         </Box>
         <div className="table-vehicle">
-          <Stack direction='row' mt={3} >
-            {searchfield.map((s, i)=>(
-              <CustomSearchField
-                key={i}
-                label={s.label} 
-                options={s.options || []} 
-                onChange={handleSearch} />
-            ))}
-          </Stack>
-          <Box pr={4} sx={{ flexGrow: 1, width: "100%" }}>
-            <DataGrid
-              rows={DenialReasonList}
-              getRowId={(row) => row.reasonId}
-              hideFooter
-              columns={columns}
-              checkboxSelection
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              sx={{
-                border: "none",
-                "& .MuiDataGrid-cell": {
-                  border: "none",
-                },
-                "& .MuiDataGrid-row": {
-                  bgcolor: "white",
-                  borderRadius: "10px",
-                },
-                "&>.MuiDataGrid-main": {
-                  "&>.MuiDataGrid-columnHeaders": {
-                    borderBottom: "none",
-                  },
-                },
-              }}
+          {/* <Stack direction='row' mt={3} > */}
+          {searchfield.map((s, i) => (
+            <CustomSearchField
+              key={i}
+              width="100%"
+              placeholder={s.placeholder}
+              label={s.label}
+              options={s.options || []}
+              onChange={handleSearch}
             />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage);
-              }}
-            />
+          ))}
+          {/* </Stack> */}
+          <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                {' '}
+                <DataGrid
+                  rows={DenialReasonList}
+                  getRowId={(row) => row.reasonId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.reasonId
+                      ? 'selected-row'
+                      : ''
+                  }
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    searchActionRef.current = false
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         {rowId != 0 && (
           <CreateDenialReason
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}
@@ -459,7 +572,7 @@ const DenialReason: FunctionComponent = () => {
         )}
       </Box>
     </>
-  );
-};
+  )
+}
 
-export default DenialReason;
+export default DenialReason

@@ -26,7 +26,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { SEARCH_ICON, LEFT_ARROW_ICON } from '../../themes/icons'
 import { useEffect, useState } from 'react'
 import React from 'react'
-import { primaryColor, styles } from '../../constants/styles'
+import { styles } from '../../constants/styles'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import CheckIcon from '@mui/icons-material/Check'
@@ -35,27 +35,49 @@ import CustomItemList from '../../components/FormComponents/CustomItemList'
 import {
   getAllCheckInRequests,
   updateCheckinStatus,
-  getCheckinReasons
+  getCheckinReasons,
+  updateCheckin,
+  getDetailCheckInRequests
 } from '../../APICalls/Collector/warehouseManage'
-import { updateStatus } from '../../interfaces/warehouse'
+import CircularLoading from '../../components/CircularLoading'
+import { CheckInWarehouse, updateStatus } from '../../interfaces/warehouse'
 import RequestForm from '../../components/FormComponents/RequestForm'
 import { CheckIn } from '../../interfaces/checkin'
-import { STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
-import { displayCreatedDate, extractError, showSuccessToast } from '../../utils/utils'
+import {
+  Languages,
+  STATUS_CODE,
+  localStorgeKeyName
+} from '../../constants/constant'
+import {
+  displayCreatedDate,
+  extractError,
+  getPrimaryColor,
+  showSuccessToast,
+  debounce
+} from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 import { queryCheckIn } from '../../interfaces/checkin'
 import CustomButton from '../../components/FormComponents/CustomButton'
 import i18n from '../../setups/i18n'
 
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
+import useLocaleTextDataGrid from '../../hooks/useLocaleTextDataGrid'
+import { getPicoById } from '../../APICalls/Collector/pickupOrder/pickupOrder'
+import { getTenantById } from '../../APICalls/tenantManage'
+import { getWarehouseById } from '../../APICalls/warehouseManage'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+type CompanyNameLanguages = {
+  labelEnglish: string
+  labelSimpflifed: string
+  labelTraditional: string
+}
 
 const Required = () => {
   return (
@@ -189,7 +211,6 @@ function RejectForm({
           <Box>
             <Typography sx={localstyles.typo}>
               {t('check_in.reject_reasons')}
-              <Required />
             </Typography>
             {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedShipments.length}
@@ -197,7 +218,7 @@ function RejectForm({
             <CustomItemList
               items={reasonList}
               multiSelect={setRejectReasonId}
-              itemColor={{ bgColor: '#F0F9FF', borderColor: primaryColor }}
+              itemColor={{ bgColor: '#F0F9FF', borderColor: getPrimaryColor() }}
             />
           </Box>
 
@@ -234,6 +255,23 @@ type ApproveForm = {
   onApprove?: () => void
 }
 
+interface CheckInDetail {
+  chkInDtlId: number
+  recycTypeId: string
+  recycSubTypeId: string
+  packageTypeId: string
+  weight: number
+  unitId: string
+  itemId: number
+  picoDtlId: number
+  checkinDetailPhoto: {
+    sid: number
+    photo: string
+  }[]
+  createdBy: string
+  updatedBy: string
+}
+
 const ApproveModal: React.FC<ApproveForm> = ({
   open,
   onClose,
@@ -249,7 +287,6 @@ const ApproveModal: React.FC<ApproveForm> = ({
       reason: confirmReason,
       updatedBy: loginId
     }
-    console.log('hit', checkedCheckIn)
 
     const results = await Promise.allSettled(
       checkedCheckIn.map(async (checkInId) => {
@@ -258,6 +295,25 @@ const ApproveModal: React.FC<ApproveForm> = ({
           const data = result?.data
           if (data) {
             // console.log('updated check-in status: ', data)
+
+            // Map over each item in checkinDetail
+            data.checkinDetail.map(async (detail: any) => {
+              const dataCheckin: CheckInWarehouse = {
+                checkInWeight: detail.weight || 0,
+                checkInUnitId: detail.unitId || 0,
+                checkInAt: data.updatedAt || '',
+                checkInBy: data.updatedBy || '',
+                updatedBy: loginId
+              }
+              if (detail.picoDtlId) {
+                return await updateCheckin(
+                  checkInId,
+                  dataCheckin,
+                  detail.picoDtlId
+                )
+              }
+            })
+
             if (onApprove) {
               onApprove()
             }
@@ -332,11 +388,13 @@ function ShipmentManage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [selectedCheckin, setSelectedCheckin] = useState<number[]>([])
+  const [selectedUnCheckin, setSelectedUnCheckin] = useState<number[]>([])
   const [filterShipments, setFilterShipments] = useState<CheckIn[]>([])
   const [rejFormModal, setRejectModal] = useState<boolean>(false)
   const [approveModal, setApproveModal] = useState<boolean>(false)
   const [company, setCompany] = useState('')
   const [location, setLocation] = useState('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [checkedShipments, setCheckedShipments] = useState<CheckIn[]>([])
   const [open, setOpen] = useState<boolean>(false)
   const [selectAll, setSelectAll] = useState(false)
@@ -351,8 +409,13 @@ function ShipmentManage() {
     senderName: '',
     senderAddr: ''
   })
+  const [primaryColor, setPrimaryColor] = useState<string>('#79CA25')
   const [reasonList, setReasonList] = useState<any>([])
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const { dateFormat } = useContainer(CommonTypeContainer)
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const { logisticList, manuList, collectorList, companies, currentTenant } =
+    useContainer(CommonTypeContainer)
+  const role = localStorage.getItem(localStorgeKeyName.role)
 
   const getRejectReason = async () => {
     try {
@@ -381,9 +444,9 @@ function ShipmentManage() {
         )
         setReasonList(result?.data?.content)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -391,47 +454,205 @@ function ShipmentManage() {
   useEffect(() => {
     initCheckInRequest()
     getRejectReason()
-  }, [page, query])
+  }, [page, query, dateFormat, i18n.language])
 
   const transformToTableRow = (item: CheckIn): TableRow => {
     const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
     const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+
     return {
       id: item.chkInId,
       chkInId: item.chkInId,
       createdAt: createdAt,
       senderName: item.senderName,
-      recipientCompany: '-',
+      recipientCompany: item.recipientCompany,
       picoId: item.picoId,
       adjustmentFlg: item.adjustmentFlg,
       logisticName: item.logisticName,
       senderAddr: item.senderAddr,
-      deliveryAddress: '-',
+      deliveryAddress: item.deliveryAddress,
       status: item.status,
       checkinDetail: item.checkinDetail
     }
   }
 
+  const getTranslationCompanyName = (name: string): string => {
+    let companyName: string = ''
+    const logistic = logisticList?.find((item) => {
+      const { logisticNameEng, logisticNameSchi, logisticNameTchi } = item
+      if (
+        logisticNameEng === name ||
+        logisticNameSchi === name ||
+        logisticNameTchi === name
+      ) {
+        return item
+      }
+    })
+
+    if (logistic) {
+      if (i18n.language === Languages.ENUS)
+        companyName = logistic.logisticNameEng
+      if (i18n.language === Languages.ZHCH)
+        companyName = logistic.logisticNameSchi
+      if (i18n.language === Languages.ZHHK)
+        companyName = logistic.logisticNameTchi
+    }
+    return companyName
+  }
+
+  const listTranslationCompanyName = (): CompanyNameLanguages[] => {
+    const manufacturerCompany: CompanyNameLanguages[] =
+      manuList?.map((item) => {
+        return {
+          labelEnglish: item?.manufacturerNameEng ?? '',
+          labelSimpflifed: item?.manufacturerNameSchi ?? '',
+          labelTraditional: item?.manufacturerNameTchi ?? ''
+        }
+      }) ?? []
+
+    const collectorCompany: CompanyNameLanguages[] =
+      collectorList?.map((item) => {
+        return {
+          labelEnglish: item?.collectorId ?? '',
+          labelSimpflifed: item?.collectorNameSchi ?? '',
+          labelTraditional: item?.collectorNameTchi ?? ''
+        }
+      }) ?? []
+
+    return [...manufacturerCompany, ...collectorCompany]
+  }
+
+  const companyReceiverSender = listTranslationCompanyName()
+
+  const getTranslationCompany = (name: string): string => {
+    let companyName: string = ''
+    const company = companyReceiverSender.find((item) => {
+      const { labelEnglish, labelSimpflifed, labelTraditional } = item
+      if (
+        name === labelEnglish ||
+        name === labelSimpflifed ||
+        name === labelTraditional
+      ) {
+        return item
+      }
+    })
+
+    if (company) {
+      if (i18n.language === Languages.ENUS) companyName = company.labelEnglish
+      if (i18n.language === Languages.ZHCH)
+        companyName = company.labelSimpflifed
+      if (i18n.language === Languages.ZHHK)
+        companyName = company.labelTraditional
+    }
+
+    return companyName
+  }
+
+  const getPicoDetail = async (picoId: string) => {
+    try {
+      const picoDetail = await getPicoById(picoId)
+      return picoDetail
+    } catch (error) {
+      return null
+    }
+  }
+
+  const getCompanyNameById = (id: number): string => {
+    let { ENUS, ZHCH, ZHHK } = Languages
+    let companyName: string = ''
+    const company = companies.find((item) => item.id === id)
+    if (company) {
+      if (i18n.language === ENUS) companyName = company.nameEng ?? ''
+      if (i18n.language === ZHCH) companyName = company.nameSchi ?? ''
+      if (i18n.language === ZHHK) companyName = company.nameTchi ?? ''
+    }
+
+    return companyName
+  }
+
+  const getRecepientCompany = (): string => {
+    let recipientCompany: string = ''
+    if (i18n.language === Languages.ENUS)
+      recipientCompany = currentTenant?.nameEng ?? ''
+    if (i18n.language === Languages.ZHCH)
+      recipientCompany = currentTenant?.nameSchi ?? ''
+    if (i18n.language === Languages.ZHHK)
+      recipientCompany = currentTenant?.nameTchi ?? ''
+    return recipientCompany
+  }
+
+  const cacheWarehouse: any = {}
+
+  const getWarehouseAddres = async (warehouseId: number) => {
+    let deliveryAddress: string = ''
+    if (warehouseId in cacheWarehouse) {
+      deliveryAddress = cacheWarehouse[warehouseId].address
+    } else {
+      const warehouse = await getWarehouseDetail(warehouseId)
+
+      if (warehouse) {
+        cacheWarehouse[warehouseId] = {
+          isExist: true,
+          address: warehouse.location
+        }
+        deliveryAddress = warehouse.location
+      } else {
+        cacheWarehouse[warehouseId] = {
+          isExist: false,
+          address: ''
+        }
+      }
+    }
+    return deliveryAddress
+  }
+
   const initCheckInRequest = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllCheckInRequests(page - 1, pageSize, query)
       if (result) {
         const data = result?.data?.content
         if (data && data.length > 0) {
-          const checkinData = data.map(transformToTableRow)
-          setCheckInRequest(data)
-          setFilterShipments(checkinData)
+          const newData: CheckIn[] = []
+          for (let item of data) {
+            const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+            item.createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+
+            if (item?.logisticId) {
+              const companyName = getCompanyNameById(Number(item.logisticId))
+              item.logisticName =
+                companyName === '' ? item.logisticName : companyName
+            }
+
+            if (item.senderId) {
+              const companyName = getCompanyNameById(Number(item.senderId))
+              item.senderName =
+                companyName === '' ? item.senderName : companyName
+            }
+
+            item.recipientCompany = getRecepientCompany()
+
+            if (item.warehouseId) {
+              item.deliveryAddress =
+                (await getWarehouseAddres(item.warehouseId)) ?? ''
+            }
+            newData.push(item)
+          }
+          // const checkinData = newData.map(transformToTableRow)
+          setCheckInRequest(newData)
+          setFilterShipments(newData)
         } else {
           setFilterShipments([])
         }
         setTotalData(result?.data.totalPages)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -443,23 +664,58 @@ function ShipmentManage() {
     setSelectedCheckin(selectedRows)
   }
 
+  useEffect(() => {
+    if (selectAll) {
+      let newIds: number[] = []
+
+      for (let item of filterShipments) {
+        if (!selectedUnCheckin.includes(item.chkInId)) {
+          newIds.push(item.chkInId)
+        }
+      }
+
+      const allId: number[] = [...selectedCheckin, ...newIds]
+      const ids = new Set(allId)
+      setSelectedCheckin(Array.from(ids))
+    }
+  }, [filterShipments])
+
+  useEffect(() => {
+    if (selectedCheckin.length === 0) {
+      setSelectAll(false)
+    }
+  }, [selectedCheckin])
+
   const handleRowCheckboxChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     chkInId: number
   ) => {
     setOpen(false)
+    setSelectedRow(undefined)
 
     const checked = event.target.checked
-    const updatedChecked = checked
-      ? [...selectedCheckin, chkInId]
-      : selectedCheckin.filter((rowId) => rowId != chkInId)
-    setSelectedCheckin(updatedChecked)
+    if (checked) {
+      setSelectedCheckin((prev) => [...prev, chkInId])
+      setSelectedUnCheckin((prev) => {
+        const unCheck = prev.filter((id) => id !== chkInId)
+        return unCheck
+      })
+    } else {
+      const updatedChecked = selectedCheckin.filter((rowId) => rowId != chkInId)
+      setSelectedCheckin(updatedChecked)
+      setSelectedUnCheckin((prev) => [...prev, chkInId])
+    }
+    // const updatedChecked = checked
+    //   ? [...selectedCheckin, chkInId]
+    //   : selectedCheckin.filter((rowId) => rowId != chkInId)
+    // setSelectedCheckin(updatedChecked)
+    // console.log('updatedChecked', updatedChecked)
     // console.log(updatedChecked)
 
-    const allRowsChecked = filterShipments.every((row) =>
-      updatedChecked.includes(row.chkInId)
-    )
-    setSelectAll(allRowsChecked)
+    // const allRowsChecked = filterShipments.every((row) =>
+    //   updatedChecked.includes(row.chkInId)
+    // )
+    // // setSelectAll(allRowsChecked)
   }
 
   const HeaderCheckbox = (
@@ -473,14 +729,14 @@ function ShipmentManage() {
 
   const checkboxColumn: GridColDef = {
     field: 'customCheckbox',
-    headerName: 'Select',
+    headerName: t('localizedTexts.select'),
     width: 80,
     sortable: false,
     filterable: false,
     renderHeader: () => HeaderCheckbox,
     renderCell: (params) => (
       <Checkbox
-        checked={selectAll || selectedCheckin?.includes(params.row?.chkInId)}
+        checked={selectedCheckin?.includes(params.row?.chkInId)}
         onChange={(event) => handleRowCheckboxChange(event, params.row.chkInId)}
         color="primary"
       />
@@ -492,7 +748,7 @@ function ShipmentManage() {
     {
       field: 'createdAt',
       type: 'string',
-      headerName: t('check_in.created_at'),
+      headerName: t('check_in.check_in'),
       width: 150
     },
     {
@@ -547,7 +803,7 @@ function ShipmentManage() {
       type: 'string',
       headerName: t('check_in.receiver_addr'),
       width: 200
-    },
+    }
     // {
     //   field: 'status',
     //   type: 'string',
@@ -560,17 +816,20 @@ function ShipmentManage() {
     setQuery({ ...query, ...newQuery })
   }
 
-  const handleFilterPoNum = (searchWord: string) => {
+  const handleFilterPoNum = debounce((searchWord: string) => {
+    setPage(1)
     updateQuery({ picoId: searchWord })
-  }
+  }, 1000)
 
   const handleComChange = (event: SelectChangeEvent) => {
+    setPage(1)
     setCompany(event.target.value)
     var searchWord = event.target.value
     updateQuery({ senderName: searchWord })
   }
 
   const handleLocChange = (event: SelectChangeEvent) => {
+    setPage(1)
     setLocation(event.target.value)
     var searchWord = event.target.value
     updateQuery({ senderAddr: searchWord })
@@ -626,6 +885,7 @@ function ShipmentManage() {
 
   const handleClose = () => {
     setOpen(false)
+    setSelectedRow(undefined)
   }
 
   const handleSelectRow = (params: GridRowParams) => {
@@ -642,6 +902,21 @@ function ShipmentManage() {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
+
+  useEffect(() => {
+    setPrimaryColor(
+      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
+    )
+  }, [role])
+
+  const getWarehouseDetail = async (id: number) => {
+    try {
+      const warehouse = await getWarehouseById(id)
+      return warehouse.data
+    } catch (error) {
+      return null
+    }
+  }
 
   return (
     <>
@@ -672,16 +947,20 @@ function ShipmentManage() {
         </Grid>
         <Box>
           <Button
-            sx={[
-              styles.buttonFilledGreen,
-              {
-                mt: 3,
-                width: '90px',
-                height: '40px',
-                m: 0.5,
-                cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer'
-              }
-            ]}
+            sx={{
+              mt: 3,
+              width: '90px',
+              height: '40px',
+              m: 0.5,
+              cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer',
+              borderRadius: '20px',
+              backgroundColor: primaryColor,
+              '&.MuiButton-root:hover': { bgcolor: primaryColor },
+              borderColor: primaryColor,
+              marginLeft: '20px',
+              fontWeight: 'bold',
+              color: 'white'
+            }}
             disabled={selectedCheckin.length === 0}
             variant="outlined"
             onClick={() => {
@@ -693,15 +972,18 @@ function ShipmentManage() {
             {t('check_in.approve')}
           </Button>
           <Button
-            sx={[
-              styles.buttonOutlinedGreen,
-              {
-                mt: 3,
-                width: '90px',
-                height: '40px',
-                m: 0.5
-              }
-            ]}
+            sx={{
+              mt: 3,
+              width: '90px',
+              height: '40px',
+              m: 0.5,
+              cursor: selectedCheckin.length === 0 ? 'not-allowed' : 'pointer',
+              borderRadius: '20px',
+              borderColor: primaryColor,
+              borderWidth: 1,
+              fontWeight: 'bold',
+              marginLeft: '20px'
+            }}
             variant="outlined"
             disabled={selectedCheckin.length === 0}
             onClick={() => setRejectModal(selectedCheckin.length > 0)}
@@ -717,7 +999,7 @@ function ShipmentManage() {
               handleFilterPoNum(event.target.value)
             }}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
+            label={t('check_in.pickup_order_no')}
             InputLabelProps={{
               style: { color: primaryColor },
               focused: true
@@ -744,75 +1026,117 @@ function ShipmentManage() {
               label={t('check_in.sender_company')}
               onChange={handleComChange}
             >
+              {checkInRequest
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.senderName === item.senderName)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.senderName}>
+                    {item.senderName}
+                  </MenuItem>
+                ))}
               <MenuItem value="">
                 {' '}
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {checkInRequest?.map((item, index) => (
-                <MenuItem key={index} value={item.senderName}>
-                  {item.senderName}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
             <InputLabel id="location-label" sx={styles.textFieldLabel}>
-              {t('check_in.sender_addr')}
+              {t('check_in.location')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t('check_in.sender_addr')}
+              label={t('check_in.location')}
               onChange={handleLocChange}
             >
+              {checkInRequest
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.senderAddr === item.senderAddr)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.senderAddr}>
+                    {item.senderAddr}
+                  </MenuItem>
+                ))}
               <MenuItem value="">
                 {' '}
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {checkInRequest?.map((item, index) => (
-                <MenuItem key={index} value={item.senderAddr}>
-                  {item.senderAddr}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
         </Box>
         <div className="table-overview">
           <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={filterShipments}
-              getRowId={(row) => row.chkInId}
-              hideFooter
-              columns={headCells}
-              checkboxSelection={false}
-              disableRowSelectionOnClick
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                {' '}
+                <DataGrid
+                  rows={filterShipments}
+                  getRowId={(row) => row.chkInId}
+                  hideFooter
+                  columns={headCells}
+                  disableRowSelectionOnClick
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    `${
+                      selectedRow && params.row.chkInId === selectedRow.chkInId
+                        ? 'selected-row '
+                        : ''
+                    }${
+                      selectedCheckin &&
+                      selectedCheckin.includes(params.row.chkInId)
+                        ? 'checked-row'
+                        : ''
+                    }`
                   }
-                }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.checked-row': {
+                      backgroundColor: `rgba(25, 118, 210, 0.08)`
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         <RejectForm

@@ -15,12 +15,14 @@ import {
   EDIT_OUTLINED_ICON,
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
+import CircularLoading from '../../../components/CircularLoading'
 import { getAllStaffTitle } from '../../../APICalls/Collector/staffTitle'
 import { StaffTitle as StaffTitleItem } from '../../../interfaces/staffTitle'
 import CreateStaffTitle from './CreateStaffTitle'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
 import { extractError } from '../../../utils/utils'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
 
 function createStaffTitle(
   titleId: string,
@@ -35,7 +37,8 @@ function createStaffTitle(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  version?: number,
 ): StaffTitleItem {
   return {
     titleId,
@@ -50,7 +53,8 @@ function createStaffTitle(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    version
   }
 }
 
@@ -60,6 +64,7 @@ const StaffTitle: FunctionComponent = () => {
   const pageSize = 10
   const [action, setAction] = useState<'add' | 'edit' | 'delete'>('add')
   const [rowId, setRowId] = useState<number>(1)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [totalData, setTotalData] = useState<number>(0)
   const [StaffTitleList, setStaffTitleList] = useState<StaffTitleItem[]>([])
@@ -67,51 +72,64 @@ const StaffTitle: FunctionComponent = () => {
   const [engNameList, setEngNameList] = useState<string[]>([])
   const [schiNameList, setSchiNameList] = useState<string[]>([])
   const [tchiNameList, setTchiNameList] = useState<string[]>([])
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
   const initStaffTitleList = async () => {
-   try {
-    const result = await getAllStaffTitle(page - 1, pageSize)
-    const data = result?.data
-    // setStaffTitleList(data);
-    setEngNameList([])
-    setSchiNameList([])
-    setTchiNameList([])
-    if (data) {
-      var staffTitleMapping: StaffTitleItem[] = []
-      data.content.map((item: any) => {
-        staffTitleMapping.push(
-          createStaffTitle(
-            item?.titleId,
-            item?.tenantId,
-            item?.titleNameTchi,
-            item?.titleNameSchi,
-            item?.titleNameEng,
-            item?.duty[0],
-            item?.description,
-            item?.remark,
-            item?.status,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt
+    setIsLoading(true)
+    try {
+      const result = await getAllStaffTitle(page - 1, pageSize)
+      const data = result?.data
+      // setStaffTitleList(data);
+      setEngNameList([])
+      setSchiNameList([])
+      setTchiNameList([])
+      if (data) {
+        var staffTitleMapping: StaffTitleItem[] = []
+        data.content.map((item: any) => {
+          staffTitleMapping.push(
+            createStaffTitle(
+              item?.titleId,
+              item?.tenantId,
+              item?.titleNameTchi,
+              item?.titleNameSchi,
+              item?.titleNameEng,
+              item?.duty[0],
+              item?.description,
+              item?.remark,
+              item?.status,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt,
+              item?.version,
+            )
           )
-        )
 
-        //set namelist for validation
-        setEngNameList((prevEngName: any) => [...prevEngName, item.titleNameEng]);
-        setSchiNameList((prevSchiName: any) => [...prevSchiName, item.titleNameSchi]);
-        setTchiNameList((prevTchiName: any) => [...prevTchiName, item.titleNameTchi]);
-      })
-      setStaffTitleList(staffTitleMapping)
-      setTotalData(data.totalPages)
+          //set namelist for validation
+          setEngNameList((prevEngName: any) => [
+            ...prevEngName,
+            item.titleNameEng
+          ])
+          setSchiNameList((prevSchiName: any) => [
+            ...prevSchiName,
+            item.titleNameSchi
+          ])
+          setTchiNameList((prevTchiName: any) => [
+            ...prevTchiName,
+            item.titleNameTchi
+          ])
+        })
+        setStaffTitleList(staffTitleMapping)
+        setTotalData(data.totalPages)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
+    setIsLoading(false)
   }
   useEffect(() => {
     initStaffTitleList()
@@ -156,7 +174,8 @@ const StaffTitle: FunctionComponent = () => {
     },
     {
       field: 'edit',
-      headerName: '',
+      headerName: t('pick_up_order.item.edit'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -176,7 +195,8 @@ const StaffTitle: FunctionComponent = () => {
     },
     {
       field: 'delete',
-      headerName: '',
+      headerName: t('pick_up_order.item.delete'),
+      filterable: false,
       renderCell: (params) => {
         return (
           <Button
@@ -254,6 +274,12 @@ const StaffTitle: FunctionComponent = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (StaffTitleList.length === 0 && page > 1) {
+      setPage(page - 1)
+    }
+  }, [StaffTitleList])
+
   return (
     <>
       <Box
@@ -296,44 +322,66 @@ const StaffTitle: FunctionComponent = () => {
         </Box>
         <div className="table-vehicle">
           <Box pr={4} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={StaffTitleList}
-              getRowId={(row) => row.titleId}
-              hideFooter
-              columns={columns}
-              checkboxSelection
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={StaffTitleList}
+                  getRowId={(row) => row.titleId}
+                  hideFooter
+                  columns={columns}
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    selectedRow && params.id === selectedRow.titleId
+                      ? 'selected-row'
+                      : ''
                   }
-                }
-              }}
-            />
-            <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
         {rowId != 0 && (
           <CreateStaffTitle
             drawerOpen={drawerOpen}
-            handleDrawerClose={() => setDrawerOpen(false)}
+            handleDrawerClose={() => {
+              setDrawerOpen(false)
+              setSelectedRow(null)
+            }}
             action={action}
             selectedItem={selectedRow}
             onSubmitData={onSubmitData}

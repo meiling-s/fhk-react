@@ -23,6 +23,7 @@ import { format } from '../../constants/constant'
 import { localStorgeKeyName } from "../../constants/constant";
 import { formatWeight } from "../../utils/utils";
 import { getDetailCheckInRequests } from "../../APICalls/Collector/warehouseManage";
+import NotifContainer from "../../contexts/NotifContainer";
 
 type recycItem = {
   recycType: il_item;
@@ -38,6 +39,7 @@ type props = {
 };
 
 const RequestForm = ({ onClose, selectedItem }: props) => {
+  const { marginTop } = useContainer(NotifContainer)
   const handleOverlayClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -195,7 +197,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
 
   return (
     <>
-      <Box sx={localstyles.modal} onClick={handleOverlayClick}>
+      <Box sx={{...localstyles.modal, marginTop}} onClick={handleOverlayClick}>
         <Box sx={localstyles.container} className="md:w-[500px] w-[100vw]">
           <Box sx={localstyles.header}>
             <Box>
@@ -217,8 +219,16 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                 {t('check_in.stock_adjustment')}
               </Alert>
             )}
+            
             <Box>
-              <Typography sx={localstyles.typo_header}>{t('check_in.stock_adjustment')}</Typography>
+              <Typography sx={localstyles.typo_header}>{t('check_in.transport_information')}</Typography>
+            </Box>
+
+            <Box>
+              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.logistic_company')}</Typography>
+              <Typography sx={localstyles.typo_fieldContent}>
+                {selectedItem?.logisticName}
+              </Typography>
             </Box>
 
             <Box>
@@ -230,14 +240,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
 
             <Box>
               <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.receiver_company')}</Typography>
-              <Typography sx={localstyles.typo_fieldContent}>-</Typography>
-            </Box>
-
-            <Box>
-              <Typography sx={localstyles.typo_fieldTitle}>{t('check_in.logistic_company')}</Typography>
-              <Typography sx={localstyles.typo_fieldContent}>
-                {selectedItem?.logisticName}
-              </Typography>
+              <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.recipientCompany ?? '-'}</Typography>
             </Box>
 
             <Typography sx={localstyles.typo_header}>{t('check_in.recyc_loc_info')}</Typography>
@@ -261,7 +264,7 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                   <Typography sx={localstyles.typo_fieldTitle}>
                     {t('check_in.receiver_addr')}
                   </Typography>
-                  <Typography sx={localstyles.typo_fieldContent}>-</Typography>
+                  <Typography sx={localstyles.typo_fieldContent}>{selectedItem?.deliveryAddress ?? '-'}</Typography>
                 </Box>
               </Box>
             </Box>
@@ -283,16 +286,17 @@ const RequestForm = ({ onClose, selectedItem }: props) => {
                 images={item.checkinDetailPhoto}
               />
             ))}
-            <Box>
-              <div className="message">
-                <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
-                  {t('check_out.message')}
+            { selectedItem?.status !== 'CREATED' &&  <Box>
+                <div className="message">
+                  <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
+                    {t('check_out.message')}
+                  </div>
+                  <div className=" text-sm text-[#717171] font-medium tracking-widest">
+                    {messageCheckin}
+                  </div>
                 </div>
-                <div className=" text-sm text-[#717171] font-medium tracking-widest">
-                  {messageCheckin}
-                </div>
-              </div>
-            </Box>
+              </Box>
+            }
           </Stack>
 
         </Box>

@@ -20,9 +20,24 @@ export interface PickupOrderDetail {
     recycType:    string;
     recycSubType: string;
     weight:       number;
+    checkInWeight?: number | null,
+    checkInUnitId?: number | null,
+    checkInAt?: string | null,
+    checkInBy?: string | null,
+    checkInByNameEng?: string | null,
+    checkInByNameSchi?: string | null,
+    checkInByNameTchi?: string | null,
+    checkOutWeight?: number | null,
+    checkOutUnitId?: number | null,
+    checkOutAt?: string | null,
+    checkOutBy?: string | null,
+    checkOutByNameEng?: string | null,
+    checkOutByNameSchi?: string | null,
+    checkOutByNameTchi?: string | null,
 }
 
 export interface PickupOrder {
+    id(id: any): unknown;
     tenantId:         string;
     picoId:            string;
     picoType:          string;
@@ -153,7 +168,7 @@ export interface Row {
     contractNo:    string;
     updatedBy:     string;
     refPicoId:     string ;
-    createPicoDetail: CreatePicoDetail[]
+    updatePicoDetail: CreatePicoDetail[]
     
 }
 
@@ -222,7 +237,7 @@ export interface AssignJobDriver {
     createdBy: string;
     effFrmDate:  string,
     effToDate:  string,
-    status: string  ,
+    status: string,
     updatedBy: string
 }
 

@@ -11,7 +11,9 @@ import {
   siteType,
   vehicleType,
   ProcessType,
-  weightUnit
+  weightUnit,
+  Company,
+  PackagingList
 } from '../interfaces/common'
 import { AXIOS_DEFAULT_CONFIGS } from '../constants/configs'
 import {
@@ -33,6 +35,9 @@ import {
 import { randomBackgroundColor, returnApiToken } from '../utils/utils'
 import axiosInstance from '../constants/axiosInstance'
 import { getWeightUnit } from '../APICalls/ASTD/recycling'
+import { getAllTenant, getTenantById } from '../APICalls/tenantManage'
+import { localStorgeKeyName } from '../constants/constant'
+import { getAllPackagingUnit } from '../APICalls/Collector/packagingUnit'
 
 const CommonType = () => {
   const [colPointType, setColPointType] = useState<colPointType[]>()
@@ -55,7 +60,11 @@ const CommonType = () => {
   const pageSize = 10
   const [decimalVal, setDecimalVal] = useState<number>(0)
   const [dateFormat, setDateFormat] = useState<string>('')
-
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [currentTenant, setCurrentTenant] = useState<Company| null>(null);
+  const [packagingList, setPackagingList] = useState<PackagingList[]>([])
+  const tenantId = localStorage.getItem(localStorgeKeyName.tenantId);
+  
   const getColPointType = async () => {
     var colPointType = []
     try {
@@ -298,6 +307,57 @@ const CommonType = () => {
     }
   }
 
+  const initCompaniesData = async () => {
+    try {
+      const result = await getAllTenant(1 - 1, 1000)
+      if(result){
+        const data = result?.data.content
+        const mappingData:Company[] = data.map((item:any) => {
+          return {
+            id: item?.tenantId,
+            nameEng: item?.companyNameEng,
+            nameSchi: item?.companyNameSchi,
+            nameTchi: item?.companyNameTchi
+          }
+        })
+        if (data.length > 0) {
+          setCompanies(mappingData)
+        }
+      }
+
+    } catch (error: any) {
+      return null
+    }
+  }
+
+  const getTenantLogin = async () => {
+    try {
+      if(!tenantId) return
+      const response =  await getTenantById(Number(tenantId));
+      if(response.data){
+        const tenant:Company = {
+          nameEng: response.data.companyNameEng ?? response.data.companyNameEng ?? '',
+          nameSchi: response.data.companyNameSchi ?? '',
+          nameTchi: response.data.companyNameTchi ?? '',
+        }
+        setCurrentTenant(tenant)
+      }
+    } catch (error) {
+      return null
+    }
+  }
+
+  const getPackagingUnitList = async () => {
+    try {
+      const result = await getAllPackagingUnit(1 - 1, 1000)
+      if (result.data) {
+        setPackagingList(result.data.content)
+      }
+    } catch (error) {
+      return null
+    }
+  }
+
   const updateCommonTypeContainer = () => {
     getColPointType()
     getPremiseType()
@@ -313,6 +373,9 @@ const CommonType = () => {
     getImgSettings()
     getDecimalVal()
     getDateFormat()
+    initCompaniesData()
+    getTenantLogin()
+    getPackagingUnitList()
   }
 
   useEffect(() => {
@@ -332,6 +395,9 @@ const CommonType = () => {
       getDecimalVal()
       initWeightUnit()
       getDateFormat()
+      initCompaniesData()
+      getTenantLogin()
+      getPackagingUnitList()
     }
   }, [])
 
@@ -352,6 +418,9 @@ const CommonType = () => {
     decimalVal,
     weightUnits,
     dateFormat,
+    companies,
+    currentTenant,
+    packagingList,
     updateCommonTypeContainer,
     getColPointType,
     getPremiseType,
@@ -367,7 +436,9 @@ const CommonType = () => {
     getImgSettings,
     getDecimalVal,
     getDateFormat,
-    initWeightUnit
+    initWeightUnit,
+    initCompaniesData,
+    getPackagingUnitList,
   }
 }
 

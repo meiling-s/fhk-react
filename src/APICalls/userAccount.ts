@@ -3,10 +3,13 @@ import {
   GET_USER_ACCOUNT_LIST,
   CREATE_USER_ACCOUNT,
   UPDATE_USER_ACCOUNT,
-  DELETE_USER_ACCOUNT
+  DELETE_USER_ACCOUNT,
+  CREATE_USER_ACTIVITY,
+  GET_USER_ACCOUNT_LIST_PAGING
 } from "../constants/requests";
 import { returnApiToken } from "../utils/utils";
 import axiosInstance from '../constants/axiosInstance'
+import { UserActivity } from '../interfaces/common';
 
 // get all the user account
 export const getAllUserAccount = async () => {
@@ -22,6 +25,24 @@ export const getAllUserAccount = async () => {
         throw(e)
     }
 };
+
+export const getUserAccountPaging = async (page: number, size: number) => {
+    const token = returnApiToken()
+      try {
+          const response = await axiosInstance({
+              baseURL: window.baseURL.collector,
+              ...GET_USER_ACCOUNT_LIST_PAGING(token.tenantId),
+              params: {
+                page,
+                size
+            }
+          });
+          return response;
+      } catch (e) {
+          console.error("Get all User Account failed:", e);
+          throw(e)
+      }
+  };
 
 export const postUserAccount = async (data: any) => {
     try {
@@ -71,3 +92,18 @@ export const deleteUserAccount = async (loginId: string, data: any) => {
         return null;
     }
 };
+
+export const createUserActivity = async (loginId: string, data: UserActivity) => {
+    const token = returnApiToken()
+      try {
+          const response = await axiosInstance({
+              baseURL: window.baseURL.administrator,
+              ...CREATE_USER_ACTIVITY(loginId),
+              data: data
+          });
+          return response;
+      } catch (e) {
+          console.error("createUserActivityfailed:", e);
+          return null;
+      }
+  };

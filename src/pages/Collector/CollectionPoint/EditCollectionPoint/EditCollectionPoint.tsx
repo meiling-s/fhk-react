@@ -57,7 +57,11 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import { localStorgeKeyName } from '../../../../constants/constant'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
-import { displayCreatedDate, extractError } from '../../../../utils/utils'
+import {
+  displayCreatedDate,
+  extractError,
+  validDayjsISODate
+} from '../../../../utils/utils'
 
 function CreateCollectionPoint() {
   const { state } = useLocation()
@@ -134,7 +138,7 @@ function CreateCollectionPoint() {
           frmDate: string
           toDate: string
         }[] = []
-        result?.contract?.content?.map((con) => {
+        result?.contract?.map((con) => {
           conList.push({
             contractNo: con.contractNo,
             isEpd: con.epdFlg,
@@ -144,9 +148,9 @@ function CreateCollectionPoint() {
         })
         setContractList(conList)
       }
-    } catch (error:any) {
-      const { state, realm} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -168,8 +172,15 @@ function CreateCollectionPoint() {
   }, [debouncedSearchValue])
 
   const checkRecyclable = () => {
-    //console.log('checkRecyclable', recyclables)
-    return recyclables.every((item) => item.recycSubTypeId.length > 0)
+    return recyclables.every((item) => {
+      const recycType = typeList.recyc.find(
+        (r) => r.recycTypeId === item.recycTypeId
+      )
+      if (recycType && recycType.recycSubType.length > 0) {
+        return item.recycSubTypeId.length > 0
+      }
+      return true // If no sub-types available, it's okay
+    })
   }
 
   const getTime = (value: string) => {
@@ -185,7 +196,6 @@ function CreateCollectionPoint() {
   const checkTimePeriodNotInvalid = () => {
     return colPtRoutine?.routineContent.every((item) => {
       for (let index = 0; index < item.startTime.length; index++) {
-
         const currStartTime = new Date(item.startTime[index])
         const currEndTime = new Date(item.endTime[index])
 
@@ -217,6 +227,76 @@ function CreateCollectionPoint() {
     return isvalid
   }
 
+  const checkTimeNotOverlapping = () => {
+    return colPtRoutine?.routineContent.every((item) => {
+      const periods = []
+      for (let i = 0; i < item.startTime.length; i++) {
+        const start = new Date(`1970-01-01T${getTime(item.startTime[i])}`)
+        const end = new Date(`1970-01-01T${getTime(item.endTime[i])}`)
+
+        if (isOverlapping([start, end], periods)) {
+          return false
+        }
+
+        periods.push([start, end])
+      }
+      return true
+    })
+  }
+
+  const isOverlapping = (newPeriod, periods) => {
+    const [newStart, newEnd] = newPeriod
+    for (let period of periods) {
+      const [start, end] = period
+      if (
+        (newStart < end && newEnd > start) ||
+        (start < newEnd && end > newStart)
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  const checkRoutineDates = () => {
+    if (colPtRoutine?.routineType !== 'specificDate') {
+      return true
+    }
+
+    const startDate = dayjs(openingPeriod.startDate)
+      .subtract(1, 'day')
+      .startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day')
+
+    return colPtRoutine.routineContent.every((content) => {
+      const contentDate = dayjs(content.id)
+      return contentDate.isAfter(startDate) && contentDate.isBefore(endDate)
+    })
+  }
+
+  const checkEffectiveDate = () => {
+    const startDate = dayjs(openingPeriod.startDate).startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).endOf('day')
+
+    if (startDate.isAfter(endDate)) {
+      return false
+    } else {
+      return true
+    }
+  }
+
+  const isOpeningPeriodValid = () => {
+    return (
+      validDayjsISODate(openingPeriod.startDate) &&
+      validDayjsISODate(openingPeriod.endDate)
+    )
+  }
+
+  const isOpeningPeriodEmpty = () => {
+    console.log('isOpeningPeriodEmpty', openingPeriod.startDate)
+    return !openingPeriod.startDate || !openingPeriod.endDate
+  }
+
   useEffect(() => {
     const validate = async () => {
       //do validation here
@@ -237,7 +317,7 @@ function CreateCollectionPoint() {
       address == ''
         ? tempV.push({
             field: 'col.address',
-            problem: formErr.empty,
+            problem: formErr.incorrectAddress,
             type: 'error'
           })
         : (await checkAddressUsed(contractNo, address)) &&
@@ -277,7 +357,7 @@ function CreateCollectionPoint() {
           type: 'error'
         })
 
-      !checkTimeNotDuplicate() &&
+      !checkTimeNotOverlapping() &&
         tempV.push({
           field: 'time_Period',
           problem: formErr.timeCantDuplicate,
@@ -307,10 +387,36 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
+      isOpeningPeriodEmpty() &&
+        tempV.push({
+          field: `${t('col.effFromDate')}`,
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      !isOpeningPeriodValid() &&
+        tempV.push({
+          field: `${t('col.effFromDate')}`,
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+
+      !checkRoutineDates() &&
+        tempV.push({
+          field: 'date',
+          problem: formErr.dateSpesificIsWrong,
+          type: 'error'
+        })
       !checkRecyclable() &&
         tempV.push({
           field: 'inventory.recyleSubType',
           problem: formErr.empty,
+          type: 'error'
+        })
+      !checkEffectiveDate() &&
+        tempV.push({
+          field: 'col.effDate',
+          problem: formErr.effectiveDateLess,
           type: 'error'
         })
       staffNum == '' &&
@@ -433,6 +539,18 @@ function CreateCollectionPoint() {
       case formErr.startDateBehindEndDate:
         msg = t('form.error.startDateBehindEndDate')
         break
+      case formErr.incorrectAddress:
+        msg = t('form.error.incorrectAddress')
+        break
+      case formErr.dateOutOfRange:
+        msg = t('form.error.dateOutOfRange')
+        break
+      case formErr.effectiveDateLess:
+        msg = t('form.error.effectiveDateLess')
+        break
+      case formErr.dateSpesificIsWrong:
+        msg = t('form.error.dateSpesificIsWrong')
+        break
     }
     return msg
   }
@@ -476,7 +594,7 @@ function CreateCollectionPoint() {
   }
 
   const handleSaveOnClick = async () => {
-    try{
+    try {
       const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
       const cp: updateCP = {
         colPointTypeId: colType,
@@ -535,9 +653,9 @@ function CreateCollectionPoint() {
         //console.log(validation)
         setTrySubmited(true)
       }
-    } catch (error:any) {
-      const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -572,12 +690,20 @@ function CreateCollectionPoint() {
     ? displayCreatedDate(colInfo.createdAt)
     : dayjs(new Date()).format(format.dateFormat1)
 
+  const isIncludeOthersPremis = () => {
+    return (
+      premiseType === 'PT00009' ||
+      premiseType === 'PT00027' ||
+      premiseType === 'PT00028'
+    )
+  }
+
   return (
     <>
       <Box
         sx={
           (styles.innerScreen_container,
-          { paddingLeft: { xs: 0 }, width: '100%' })
+          { paddingLeft: { xs: 0 }, width: '80%' })
         }
       >
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
@@ -640,11 +766,20 @@ function CreateCollectionPoint() {
               </Typography>
             </CustomField>
 
-            <CustomField label={t('col.address')} mandatory={true}>
+            <CustomField
+              label={`${t('col.address')} (${t('col.addressReminder')})`}
+              mandatory={true}
+            >
               <CustomTextField
                 id="address"
                 placeholder={t('col.enterAddress')}
-                onChange={(event) => handleSearchTextChange(event)}
+                // onChange={(event) => handleSearchTextChange(event)}
+                //hardcode the gps
+                onChange={(e) => {
+                  // Handle the onClick event here
+                  setAddress(e.target.value) // Set the hardcoded address
+                  setGPSCode([22.426887, 114.211165]) // Set the hardcoded GPS coordinates
+                }}
                 // endAdornment={locationSelect(setCPLocation)}
                 value={address ? address : searchText}
                 error={checkString(address)}
@@ -690,6 +825,10 @@ function CreateCollectionPoint() {
               label={t('col.startTime')}
               mandatory={true}
               style={{ width: '100%' }}
+              error={!checkTimeNotOverlapping()}
+              helperText={
+                !checkTimeNotOverlapping() ? t('error.timeOverlap') : ''
+              }
             >
               <RoutineSelect
                 setRoutine={setColPtRoutine}
@@ -700,7 +839,7 @@ function CreateCollectionPoint() {
                 }}
               />
             </CustomField>
-            {!checkTimeNotDuplicate() && (
+            {trySubmited && !checkTimeNotOverlapping() && (
               <div className="ml-5 text-red text-sm">
                 {t('form.error.timeCantDuplicate')}
               </div>
@@ -726,17 +865,24 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-            {premiseType === 'PT00009' && (
+            {isIncludeOthersPremis() && (
               <Grid item>
                 {/* <Collapse in={premiseType == "PT00010"} > */}
-                <CustomField label={t('col.premiseRemark')} mandatory={false}>
+                <CustomField
+                  label={
+                    premiseType === 'PT00027'
+                      ? t('col.otherResidentialPremise')
+                      : t('col.otherNonResidentialPremise')
+                  }
+                  mandatory={false}
+                >
                   <CustomTextField
                     id="premiseRemark"
                     disabled={true}
                     placeholder={t('col.enterText')}
                     onChange={(event) => setPremiseRemark(event.target.value)}
-                    defaultValue={colInfo.premiseRemark}
-                    error={checkString(premiseName)}
+                    defaultValue={premiseRemark}
+                    error={checkString(premiseRemark)}
                   />
                 </CustomField>
                 {/* </Collapse> */}
@@ -825,6 +971,7 @@ function CreateCollectionPoint() {
                     }}
                   />
                 )}
+                noOptionsText={t('common.noOptions')}
               />
             </CustomField>
 

@@ -60,7 +60,7 @@ import { FormErrorMsg } from '../../../../components/FormComponents/FormErrorMsg
 import { localStorgeKeyName } from '../../../../constants/constant'
 import { dayjsToLocalDate, toGpsCode } from '../../../../components/Formatter'
 import CustomItemList from '../../../../components/FormComponents/CustomItemList'
-import { extractError } from '../../../../utils/utils'
+import { extractError, validDayjsISODate } from '../../../../utils/utils'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 
@@ -103,9 +103,11 @@ function CreateCollectionPoint() {
     { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
   >([])
   const debouncedSearchValue: string = useDebounce(searchText, 1000)
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const { dateFormat } = useContainer(CommonTypeContainer)
 
   const navigate = useNavigate()
+  console.log(address)
+  console.log(gpsCode)
 
   const { t, i18n } = useTranslation()
 
@@ -120,36 +122,40 @@ function CreateCollectionPoint() {
     initType()
   }, [])
 
+  useEffect(() => {
+    console.log('routine', RoutineSelect, openingPeriod)
+  }, [RoutineSelect])
+
   const initType = async () => {
-   try {
-    const result = await getCommonTypes()
-    if (result) {
-      setTypeList(result)
-    }
-    // console.log('result: ', result)
-    if (result?.contract) {
-      var conList: {
-        contractNo: string
-        isEpd: boolean
-        frmDate: string
-        toDate: string
-      }[] = []
-      result.contract.map((con) => {
-        conList.push({
-          contractNo: con.contractNo,
-          isEpd: con.epdFlg,
-          frmDate: con.contractFrmDate,
-          toDate: con.contractToDate
+    try {
+      const result = await getCommonTypes()
+      if (result) {
+        setTypeList(result)
+      }
+      // console.log('result: ', result)
+      if (result?.contract) {
+        var conList: {
+          contractNo: string
+          isEpd: boolean
+          frmDate: string
+          toDate: string
+        }[] = []
+        result.contract.map((con) => {
+          conList.push({
+            contractNo: con.contractNo,
+            isEpd: con.epdFlg,
+            frmDate: con.contractFrmDate,
+            toDate: con.contractToDate
+          })
         })
-      })
-      setContractList(conList)
+        setContractList(conList)
+      }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
-   } catch (error:any) {
-    const { state, realm } = extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    }
-   }
   }
 
   useEffect(() => {
@@ -170,9 +176,21 @@ function CreateCollectionPoint() {
     }
   }, [debouncedSearchValue])
 
+  // const checkRecyclable = () => {
+  //   //console.log('checkRecyclable', items)
+  //   return recyclables.every((item) => item.recycSubTypeId.length > 0)
+  // }
+
   const checkRecyclable = () => {
-    //console.log('checkRecyclable', items)
-    return recyclables.every((item) => item.recycSubTypeId.length > 0)
+    return recyclables.every((item) => {
+      const recycType = typeList.recyc.find(
+        (r) => r.recycTypeId === item.recycTypeId
+      )
+      if (recycType && recycType.recycSubType.length > 0) {
+        return item.recycSubTypeId.length > 0
+      }
+      return true // If no sub-types available, it's okay
+    })
   }
 
   const checkTimePeriod = () => {
@@ -206,30 +224,81 @@ function CreateCollectionPoint() {
     return value.match(/\d{2}:\d{2}:\d{2}/)[0]
   }
 
-  const checkTimeNotDuplicate = () => {
-    const isvalid = colPtRoutine?.routineContent.every((item) => {
-      for (let index = 0; index < item.startTime.length - 1; index++) {
-        const currPair =
-          getTime(item.startTime[index]) + getTime(item.endTime[index])
+  const checkTimeNotOverlapping = () => {
+    return colPtRoutine?.routineContent.every((item) => {
+      const periods = []
+      for (let i = 0; i < item.startTime.length; i++) {
+        const start = new Date(`1970-01-01T${getTime(item.startTime[i])}`)
+        const end = new Date(`1970-01-01T${getTime(item.endTime[i])}`)
 
-        const nextPair =
-          getTime(item.startTime[index + 1]) + getTime(item.endTime[index + 1])
-
-          console.log(currPair, nextPair)
-        if (currPair === nextPair) {
+        // Check if this period overlaps with any existing periods
+        if (isOverlapping([start, end], periods)) {
           return false
         }
+
+        periods.push([start, end])
       }
       return true
     })
+  }
 
-    return isvalid
+  const isOverlapping = (newPeriod, periods) => {
+    const [newStart, newEnd] = newPeriod
+    for (let period of periods) {
+      const [start, end] = period
+      if (
+        (newStart < end && newEnd > start) ||
+        (start < newEnd && end > newStart)
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  const checkRoutineDates = () => {
+    if (colPtRoutine?.routineType !== 'specificDate') {
+      return true
+    }
+
+    const startDate = dayjs(openingPeriod.startDate)
+      .subtract(1, 'day')
+      .startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).add(1, 'day').endOf('day')
+
+    return colPtRoutine.routineContent.every((content) => {
+      const contentDate = dayjs(content.id)
+      return contentDate.isAfter(startDate) && contentDate.isBefore(endDate)
+    })
+  }
+
+  const checkEffectiveDate = () => {
+    const startDate = dayjs(openingPeriod.startDate).startOf('day')
+    const endDate = dayjs(openingPeriod.endDate).endOf('day')
+
+    if (startDate.isAfter(endDate)) {
+      return false
+    } else {
+      return true
+    }
+  }
+
+  const isOpeningPeriodValid = () => {
+    return (
+      validDayjsISODate(openingPeriod.startDate) &&
+      validDayjsISODate(openingPeriod.endDate)
+    )
+  }
+
+  const isOpeningPeriodEmpty = () => {
+    console.log('isOpeningPeriodEmpty', openingPeriod.startDate)
+    return !openingPeriod.startDate || !openingPeriod.endDate
   }
 
   useEffect(() => {
     //do validation here
     const validate = async () => {
-      console.log('colPtRoutine', colPtRoutine?.routineContent)
+      console.log('colPtRoutine', colPtRoutine)
       const tempV: formValidate[] = [] //temp validation
       colType == '' &&
         tempV.push({
@@ -249,18 +318,18 @@ function CreateCollectionPoint() {
           problem: formErr.exceedsMaxLength,
           type: 'error'
         })
-      // ;(await address) == ''
-      //   ? tempV.push({
-      //       field: 'col.address',
-      //       problem: formErr.empty,
-      //       type: 'error'
-      //     })
-      //   : (await checkAddressUsed(contractNo, address)) &&
-      //     tempV.push({
-      //       field: 'col.address',
-      //       problem: formErr.hasBeenUsed,
-      //       type: 'error'
-      //     })
+      ;(await address) == ''
+        ? tempV.push({
+            field: 'col.address',
+            problem: formErr.incorrectAddress,
+            type: 'error'
+          })
+        : (await checkAddressUsed(contractNo, address)) &&
+          tempV.push({
+            field: 'col.address',
+            problem: formErr.hasBeenUsed,
+            type: 'error'
+          })
       ;(await colName) == ''
         ? tempV.push({
             field: 'col.colName',
@@ -290,22 +359,49 @@ function CreateCollectionPoint() {
           problem: formErr.empty,
           type: 'error'
         })
+      isOpeningPeriodEmpty() &&
+        tempV.push({
+          field: `${t('col.effFromDate')}`,
+          problem: formErr.empty,
+          type: 'error'
+        })
+
+      !isOpeningPeriodValid() &&
+        tempV.push({
+          field: `${t('col.effFromDate')}`,
+          problem: formErr.wrongFormat,
+          type: 'error'
+        })
+
+      !checkRoutineDates() &&
+        tempV.push({
+          field: 'date',
+          problem: formErr.dateSpesificIsWrong,
+          type: 'error'
+        })
       ;(colPtRoutine?.routineContent.length == 0 || !checkTimePeriod()) &&
         tempV.push({
           field: 'time_Period',
           problem: formErr.empty,
           type: 'error'
         })
+
       !checkTimePeriodNotInvalid() &&
-      tempV.push({
-        field: 'time_Period',
-        problem: formErr.startDateBehindEndDate,
-        type: 'error'
-      })
-      !checkTimeNotDuplicate() &&
+        tempV.push({
+          field: 'time_Period',
+          problem: formErr.startDateBehindEndDate,
+          type: 'error'
+        })
+      !checkTimeNotOverlapping() &&
         tempV.push({
           field: 'time_Period',
           problem: formErr.timeCantDuplicate,
+          type: 'error'
+        })
+      !checkEffectiveDate() &&
+        tempV.push({
+          field: 'col.effDate',
+          problem: formErr.effectiveDateLess,
           type: 'error'
         })
       premiseName == '' &&
@@ -321,7 +417,7 @@ function CreateCollectionPoint() {
           type: 'error'
         })
       premiseRemark == '' &&
-        premiseType === 'PT00009' &&
+        isIncludeOthersPremis() &&
         tempV.push({
           field: 'col.premiseRemark',
           problem: formErr.empty,
@@ -469,6 +565,18 @@ function CreateCollectionPoint() {
       case formErr.startDateBehindEndDate:
         msg = t('form.error.startDateBehindEndDate')
         break
+      case formErr.incorrectAddress:
+        msg = t('form.error.incorrectAddress')
+        break
+      case formErr.dateOutOfRange:
+        msg = t('form.error.dateOutOfRange')
+        break
+      case formErr.effectiveDateLess:
+        msg = t('form.error.effectiveDateLess')
+        break
+      case formErr.dateSpesificIsWrong:
+        msg = t('form.error.dateSpesificIsWrong')
+        break
     }
     return msg
   }
@@ -522,7 +630,7 @@ function CreateCollectionPoint() {
       console.log('colPtRoutine', colPtRoutine)
       const loginId = localStorage.getItem(localStorgeKeyName.username)
       const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
-  
+
       if (validation.length == 0) {
         const cp: createCP = {
           tenantId: tenantId,
@@ -560,11 +668,11 @@ function CreateCollectionPoint() {
         setTrySubmited(true)
         //if(validation.incl)
       }
-    } catch (error:any) {
-     const { state, realm}  =  extractError(error);
-     if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-     }
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      }
     }
   }
 
@@ -594,14 +702,25 @@ function CreateCollectionPoint() {
   ]
   const [serviceFlg, setServiceFlg] = useState<string>('basic')
 
-  const createdDate = dayjs.utc(new Date()).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)
+  const createdDate = dayjs
+    .utc(new Date())
+    .tz('Asia/Hong_Kong')
+    .format(`${dateFormat} HH:mm`)
+
+  const isIncludeOthersPremis = () => {
+    return (
+      premiseType === 'PT00009' ||
+      premiseType === 'PT00027' ||
+      premiseType === 'PT00028'
+    )
+  }
 
   return (
     <>
       <Box
         sx={
           (styles.innerScreen_container,
-          { paddingLeft: { xs: 0 }, width: '100%' })
+          { paddingLeft: { xs: 0 }, width: '80%' })
         }
       >
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="zh-cn">
@@ -659,14 +778,25 @@ function CreateCollectionPoint() {
                 placeholder={t('col.enterName')}
                 onChange={(event) => setCOLName(event.target.value)}
                 error={checkString(colName)}
+                maxLength={100}
               />
             </CustomField>
 
-            <CustomField label={t('col.address')} mandatory={true}>
+            <CustomField
+              label={`${t('col.address')} (${t('col.addressReminder')})`}
+              mandatory={true}
+            >
               <CustomTextField
                 id="address"
                 placeholder={t('col.enterAddress')}
-                onChange={(event) => handleSearchTextChange(event)}
+                // onChange={(event) => handleSearchTextChange(event)}
+
+                //hardcode the gps
+                onChange={(e) => {
+                  // Handle the onClick event here
+                  setAddress(e.target.value) // Set the hardcoded address
+                  setGPSCode([22.426887, 114.211165]) // Set the hardcoded GPS coordinates
+                }}
                 multiline={true}
                 // endAdornment={locationSelect(setCPLocation)}
                 value={address ? address : searchText}
@@ -705,7 +835,7 @@ function CreateCollectionPoint() {
               </Box>
             </CustomField>
 
-            <CustomField label={t('col.effFromDate')}>
+            <CustomField label={t('col.effFromDate')} mandatory>
               <CustomPeriodSelect setDate={setOpeningPeriod} />
             </CustomField>
 
@@ -713,17 +843,21 @@ function CreateCollectionPoint() {
               label={t('col.startTime')}
               mandatory={true}
               style={{ maxWidth: '220px' }}
+              error={!checkTimeNotOverlapping()}
+              helperText={
+                !checkTimeNotOverlapping() ? t('error.timeOverlap') : ''
+              }
             >
               <RoutineSelect
                 setRoutine={setColPtRoutine}
                 requiredTimePeriod={true}
               />
             </CustomField>
-            {!checkTimeNotDuplicate() && (
+            {/* {!checkTimeNotOverlapping() && (
               <div className="ml-5 text-red text-sm">
                 {t('form.error.timeCantDuplicate')}
               </div>
-            )}
+            )} */}
 
             <CustomField label={t('col.premiseName')} mandatory={true}>
               <CustomTextField
@@ -742,10 +876,17 @@ function CreateCollectionPoint() {
               />
             </CustomField>
 
-            {premiseType === 'PT00009' && (
+            {isIncludeOthersPremis() && (
               <Grid item>
                 {/* <Collapse in={premiseType == 'PT00010'}> */}
-                <CustomField label={t('col.premiseRemark')} mandatory={true}>
+                <CustomField
+                  label={
+                    premiseType === 'PT00027'
+                      ? t('col.otherResidentialPremise')
+                      : t('col.otherNonResidentialPremise')
+                  }
+                  mandatory={true}
+                >
                   <CustomTextField
                     id="premiseRemark"
                     placeholder={t('col.enterText')}
@@ -836,6 +977,7 @@ function CreateCollectionPoint() {
                     }}
                   />
                 )}
+                noOptionsText={t('common.noOptions')}
               />
             </CustomField>
 
@@ -912,6 +1054,5 @@ const localstyles = {
     mr: 3
   }
 }
-
 
 export default CreateCollectionPoint

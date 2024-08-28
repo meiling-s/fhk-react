@@ -14,7 +14,8 @@ import {
   ImageListItem,
   Card,
   Modal,
-  Divider
+  Divider,
+  TextField
 } from '@mui/material'
 import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
@@ -44,7 +45,7 @@ import { useContainer } from 'unstated-next'
 import { localStorgeKeyName } from '../../constants/constant'
 import { ToastContainer, toast } from 'react-toastify'
 
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 
@@ -69,6 +70,7 @@ function ClosedTenantModal({
   const { t } = useTranslation()
   const [reasonId, setReasonId] = useState<string | null>(null)
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
+  
 
   const handleRejectRequest = async () => {
     const statData: any = {
@@ -104,7 +106,7 @@ function ClosedTenantModal({
           <Divider />
           <Box sx={{ paddingX: 3, paddingTop: 3 }}>
             <Typography sx={localstyles.typo}>
-              {t('check_out.reject_reasons')}
+              {t('tenant.detail.deactivated_reason')}
             </Typography>
             <CustomItemList items={reasons} singleSelect={setReasonId} />
           </Box>
@@ -155,17 +157,21 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const [numOfUplodedPhoto, setNumOfUplodedPhoto] = useState<number>(0)
   const [maxUploadSize, setMaxUploadSize] = useState<string>('1')
   const [defaultLang, setDefaultLang] = useState<string>('ZH-HK')
-  const [selectedStatus, setSelectedStatus] = useState<string>('CREATED')
+  const [selectedStatus, setSelectedStatus] = useState<string>('')
   const [deactiveReason, setDeactiveReason] = useState<string>('-')
   const [modalClosedStatus, setModalClosed] = useState<boolean>(false)
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const [reasons, setReasons] = useState<il_item[]>([])
   const { i18n } = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role) || ''
+  const [translatedTenantType, setTranslatedTenantType] = useState('...')
 
   const footerTenant = `[${tenantDetail?.tenantId}] ${t(
     `status.${tenantDetail?.status.toLocaleLowerCase()}`
-  )} ${dayjs.utc(tenantDetail?.updatedAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`)} `
+  )} ${dayjs
+    .utc(tenantDetail?.updatedAt)
+    .tz('Asia/Hong_Kong')
+    .format(`${dateFormat} HH:mm`)} `
 
   useEffect(() => {
     getCompanyDetail()
@@ -182,13 +188,27 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setNumOfUplodedPhoto(data?.allowImgNum || 0)
     setMaxUploadSize(data?.allowImgSize.toString())
     setDefaultLang(data?.lang || 'ZH-HK')
-    setSelectedStatus(data?.status || 'CREATED')
+    setSelectedStatus(data?.status || '')
+  }
+
+  useEffect(() => {
+    setTranslatedTenantType('...')
+
+    // Memperbarui state dengan terjemahan setelah render pertama
+    const translatedValue = getTranslatorTenantType() || ''
+    setTranslatedTenantType(translatedValue)
+  }, [tenantDetail, t])
+
+  const getTranslatorTenantType = () => {
+    if (tenantDetail) {
+      return t(`tenant.invite_form.${tenantDetail?.tenantType}_company`)
+    }
   }
 
   const mainInfoFields = [
     {
       label: t('tenant.detail.company_category'),
-      value: tenantDetail?.tenantType
+      value: translatedTenantType
     },
     {
       label: t('tenant.detail.company_name_traditional_chinese'),
@@ -209,10 +229,10 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   ]
 
   const statuses: il_item[] = [
-    { id: 'CREATED', name: t('status.created') },
-    { id: 'CONFIRMED', name: t('status.confirmed') },
-    { id: 'REJECTED', name: t('status.rejected') },
-    { id: 'CLOSED', name: t('status.closed') }
+    // { id: 'CREATED', name: t('status.created') },
+    { id: 'CONFIRMED', name: t('tenant.detail.confirm') },
+    { id: 'SUSPEND', name: t('tenant.detail.suspend') },
+    { id: 'CLOSED', name: t('tenant.detail.closed') }
   ]
 
   const ways_of_exits: il_item[] = [
@@ -235,12 +255,6 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     { id: '4', name: '4' },
     { id: '5', name: '5' }
   ]
-
-  // useEffect(() => {
-  //   if (selectedStatus === 'CLOSED') {
-  //     setModalClosed(true)
-  //   }
-  // }, [selectedStatus])
 
   const getReasonList = async () => {
     const result = await getReasonTenant(0, 100, tenantId.toString(), 1)
@@ -347,7 +361,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
         action={'edit'}
         headerProps={{
           title: t('common.details'),
-          subTitle: tenantId.toString(),
+          subTitle: tenantId.toString().padStart(6, '0'),
           submitText: t('add_warehouse_page.save'),
           cancelText: t('common.cancel'),
           onCloseHeader: handleDrawerClose,
@@ -432,7 +446,10 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.creation_date')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  {dayjs.utc(tenantDetail?.createdAt).tz('Asia/Hong_Kong').format(`${dateFormat} HH:mm`) || ''}
+                  {tenantDetail?.createdAt && dayjs
+                    .utc(tenantDetail?.createdAt)
+                    .tz('Asia/Hong_Kong')
+                    .format(`${dateFormat} HH:mm`) || ''}
                 </div>
               </div>
             </Box>
@@ -537,11 +554,18 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   }}
                   defaultValue={tenantDetail?.decimalPlace.toString()}
                 >
-                  {num_option.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>
-                      {item.name}
+                  {num_option.length > 0 ? (
+                    (num_option.map((item, index) => (
+                      <MenuItem key={index} value={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    )))) : (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
                     </MenuItem>
-                  ))}
+                    )
+                    
+                  }
                 </Select>
               </FormControl>
             </Grid>
@@ -583,11 +607,15 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   }}
                   defaultValue={tenantDetail?.allowImgNum.toString()}
                 >
-                  {num_option.map((item, index) => (
+                  { num_option.length >0 ? (num_option.map((item, index) => (
                     <MenuItem key={index} value={item.id}>
                       {item.name}
                     </MenuItem>
-                  ))}
+                  ))): (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
+                    </MenuItem>
+                  )}
                 </Select>
               </FormControl>
             </Grid>
@@ -596,13 +624,24 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 {t('tenant.detail.max_photo_upload_capacity')}
               </Typography>
               <CustomField label="">
-                <CustomTextField
-                  id={'please_enter_capacity_mb'}
+                <TextField
+                  fullWidth
+                  InputProps={{
+                    sx: styles.textField
+                  }}
                   placeholder={t('tenant.detail.please_enter_capacity_mb')}
-                  onChange={(event) => setMaxUploadSize(event.target.value)}
+                  onChange={(event) => {
+                    const numericValue = event.target.value.replace(/\D/g, '')
+                    setMaxUploadSize(numericValue)
+                  }}
+                  sx={localstyles.inputState}
                   value={maxUploadSize}
-                  sx={{ width: '100%' }}
-                ></CustomTextField>
+                  inputProps={{
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*',
+                    maxLength: 6
+                  }}
+                />
               </CustomField>
             </Box>
             <Grid item className="field-default-lang">
@@ -619,11 +658,15 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   }}
                   onChange={(event) => setDefaultLang(event.target.value)}
                 >
-                  {lang_option.map((item, index) => (
+                  {lang_option.length > 0 ? (lang_option.map((item, index) => (
                     <MenuItem key={index + item.id} value={item?.id}>
                       {item.name}
                     </MenuItem>
-                  ))}
+                  ))) : (
+                    <MenuItem disabled value="">
+                      <em>{t('common.noOptions')}</em>
+                    </MenuItem>
+                  )}
                 </Select>
               </FormControl>
             </Grid>
@@ -640,7 +683,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 />
               </div>
             </Grid>
-            <Grid item className="field-reason_for_deactivation">
+            {/* <Grid item className="field-reason_for_deactivation">
               <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
                 {t('tenant.detail.reason_for_deactivation')}
               </Typography>
@@ -655,7 +698,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   sx={{ width: '100%' }}
                 ></CustomTextField>
               </CustomField>
-            </Grid>
+            </Grid> */}
             <Box>
               <div className="field-tenant-footer">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">
@@ -744,6 +787,21 @@ let localstyles = {
     backgroundColor: 'white',
     border: 'none',
     borderRadius: 5
+  },
+  inputState: {
+    '& .MuiInputLabel-root': {
+      color: '#ACACAC'
+      /* Add any other custom styles here */
+    },
+    '& .MuiOutlinedInput-root': {
+      margin: 0,
+      '&:not(.Mui-disabled):hover fieldset': {
+        borderColor: '#79CA25'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#79CA25'
+      }
+    }
   }
 }
 

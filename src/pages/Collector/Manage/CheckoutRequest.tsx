@@ -33,26 +33,40 @@ import CustomItemList from '../../../components/FormComponents/CustomItemList'
 import {
   getAllCheckoutRequest,
   updateCheckoutRequestStatus,
-  getCheckoutReasons
+  getCheckoutReasons,
+  updateCheckout
 } from '../../../APICalls/Collector/checkout'
 import { LEFT_ARROW_ICON, SEARCH_ICON } from '../../../themes/icons'
 import CheckInDetails from './CheckOutDetails'
-import { updateStatus } from '../../../interfaces/warehouse'
+import { CheckOutWarehouse, updateStatus } from '../../../interfaces/warehouse'
 import { CheckOut } from '../../../interfaces/checkout'
 
 import { useTranslation } from 'react-i18next'
-import { styles, primaryColor } from '../../../constants/styles'
+import { styles } from '../../../constants/styles'
 import { queryCheckout } from '../../../interfaces/checkout'
-import { STATUS_CODE, localStorgeKeyName } from "../../../constants/constant";
-import { displayCreatedDate, extractError, showSuccessToast } from '../../../utils/utils'
+import {
+  Languages,
+  STATUS_CODE,
+  localStorgeKeyName
+} from '../../../constants/constant'
+import {
+  displayCreatedDate,
+  extractError,
+  getPrimaryColor,
+  showSuccessToast,
+  debounce
+} from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import i18n from '../../../setups/i18n'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
-
-import dayjs from 'dayjs';
+import CircularLoading from '../../../components/CircularLoading'
+import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import { getPicoById } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
+import { getTenantById, searchTenantById } from '../../../APICalls/tenantManage'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -127,7 +141,7 @@ const ApproveModal: React.FC<ApproveForm> = ({
   onApprove
 }) => {
   const { t } = useTranslation()
-  const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+  const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
     const statReason: updateStatus = {
@@ -142,7 +156,24 @@ const ApproveModal: React.FC<ApproveForm> = ({
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
-            // console.log('updated check-in status: ', data)
+            // console.log('updated check-iout status: ', data)
+            data.checkoutDetail.map(async (detail: any) => {
+              const dataCheckout: CheckOutWarehouse = {
+                checkOutWeight: detail.weight || 0,
+                checkOutUnitId: detail.unitId || 0,
+                checkOutAt: data.updatedAt || '',
+                checkOutBy: data.updatedBy || '',
+                updatedBy: loginId
+              }
+              if (detail.picoDtlId) {
+                return await updateCheckout(
+                  chkOutId,
+                  dataCheckout,
+                  detail.picoDtlId
+                )
+              }
+            })
+
             if (onApprove) {
               onApprove()
             }
@@ -184,12 +215,23 @@ const ApproveModal: React.FC<ApproveForm> = ({
           </Box> */}
 
           <Box sx={{ alignSelf: 'center' }}>
-            <CustomButton text={t('check_out.confirm_approve_btn')} color="blue" style={{width: '150px', marginRight: '10px'}} onClick={() => {
-              handleApproveRequest()
-            }} />
-            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '150px', marginRight: '10px'}} onClick={() => {
-              onClose()
-            }} />
+            <CustomButton
+              text={t('check_out.confirm_approve_btn')}
+              color="blue"
+              style={{ width: '150px', marginRight: '10px' }}
+              onClick={() => {
+                handleApproveRequest()
+              }}
+            />
+            <CustomButton
+              text={t('check_in.cancel')}
+              color="blue"
+              outlined
+              style={{ width: '150px', marginRight: '10px' }}
+              onClick={() => {
+                onClose()
+              }}
+            />
           </Box>
         </Stack>
       </Box>
@@ -209,10 +251,12 @@ const RejectModal: React.FC<RejectForm> = ({
 
   const handleRejectRequest = async (rejectReasonId: string[]) => {
     const rejectReason = rejectReasonId.map((id) => {
-      const reasonItem = reasonList.find((reason: { id: string }) => reason.id === id)
+      const reasonItem = reasonList.find(
+        (reason: { id: string }) => reason.id === id
+      )
       return reasonItem ? reasonItem.name : ''
     })
-    const loginId = localStorage.getItem(localStorgeKeyName.username) || ""
+    const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
     const statReason: updateStatus = {
       status: 'REJECTED',
       reason: rejectReason,
@@ -225,7 +269,6 @@ const RejectModal: React.FC<RejectForm> = ({
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
-            // console.log('updated check-out status: ', data)
             if (onRejected) {
               onRejected()
             }
@@ -267,26 +310,43 @@ const RejectModal: React.FC<RejectForm> = ({
             {/* <Typography sx={localstyles.typo}>
               {t('check_out.total_checkout') + checkedCheckOut.length}
             </Typography> */}
-            <CustomItemList items={reasonList} multiSelect={setRejectReasonId} itemColor={{bgColor: '#F0F9FF', borderColor: primaryColor}} />
+            <CustomItemList
+              items={reasonList}
+              multiSelect={setRejectReasonId}
+              itemColor={{ bgColor: '#F0F9FF', borderColor: getPrimaryColor() }}
+            />
           </Box>
 
           <Box sx={{ alignSelf: 'center' }}>
-            <CustomButton text={t('check_in.confirm')} color="blue" style={{width: '175px', marginRight: '10px'}} onClick={
-              () => {
+            <CustomButton
+              text={t('check_in.confirm')}
+              color="blue"
+              style={{ width: '175px', marginRight: '10px' }}
+              onClick={() => {
                 handleRejectRequest(rejectReasonId)
                 onClose()
-              }
-            } />
-            <CustomButton text={t('check_in.cancel')} color="blue" outlined style={{width: '175px'}} onClick={
-              () => {
+              }}
+            />
+            <CustomButton
+              text={t('check_in.cancel')}
+              color="blue"
+              outlined
+              style={{ width: '175px' }}
+              onClick={() => {
                 onClose()
-              }
-            } />
+              }}
+            />
           </Box>
         </Stack>
       </Box>
     </Modal>
   )
+}
+
+type CompanyNameLanguages = {
+  labelEnglish: string
+  labelSimpflifed: string
+  labelTraditional: string
 }
 
 const CheckoutRequest: FunctionComponent = () => {
@@ -297,11 +357,13 @@ const CheckoutRequest: FunctionComponent = () => {
   const approveLabel = t('check_out.approve')
   const rejectLabel = t('check_out.reject')
   const [location, setLocation] = useState('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [rejFormModal, setRejectModal] = useState<boolean>(false)
   const [approveModal, setApproveModal] = useState<boolean>(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState<CheckOut>()
   const [checkedCheckOut, setCheckedCheckOut] = useState<number[]>([])
+  const [unCheckedCheckOut, setUnCheckedCheckOut] = useState<number[]>([])
   const [company, setCompany] = useState('')
   const [filterCheckOut, setFilterCheckOut] = useState<CheckOut[]>([])
   const [checkOutRequest, setCheckoutRequest] = useState<CheckOut[]>([])
@@ -311,18 +373,20 @@ const CheckoutRequest: FunctionComponent = () => {
   const pageSize = 10
   const [totalData, setTotalData] = useState<number>(0)
   const [query, setQuery] = useState<queryCheckout>({
-    picoId: "",
-    receiverName: "",
-    receiverAddr: "",
-  });
+    picoId: '',
+    receiverName: '',
+    receiverAddr: ''
+  })
   const [reasonList, setReasonList] = useState<any>([])
-  const {dateFormat} = useContainer(CommonTypeContainer)
+  const { dateFormat, manuList, collectorList, logisticList, companies } =
+    useContainer(CommonTypeContainer)
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
 
-  const getRejectReason = async() => {
+  const getRejectReason = async () => {
     try {
       let result = await getCheckoutReasons()
-      if ( result?.data?.content.length > 0) {
-        let reasonName = ""
+      if (result?.data?.content.length > 0) {
+        let reasonName = ''
         switch (i18n.language) {
           case 'enus':
             reasonName = 'reasonNameEng'
@@ -337,15 +401,17 @@ const CheckoutRequest: FunctionComponent = () => {
             reasonName = 'reasonNameEng'
             break
         }
-        result?.data?.content.map((item: { [x: string]: any; id: any; reasonId: any; name: any; }) => {
-          item.id = item.reasonId
-          item.name = item[reasonName]
-        })
+        result?.data?.content.map(
+          (item: { [x: string]: any; id: any; reasonId: any; name: any }) => {
+            item.id = item.reasonId
+            item.name = item[reasonName]
+          }
+        )
         setReasonList(result?.data?.content)
       }
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
@@ -366,18 +432,33 @@ const CheckoutRequest: FunctionComponent = () => {
     chkOutId: number
   ) => {
     setDrawerOpen(false)
+    setSelectedRow(undefined)
 
     const checked = event.target.checked
-    const updatedChecked = checked
-      ? [...checkedCheckOut, chkOutId]
-      : checkedCheckOut.filter((rowId) => rowId != chkOutId)
-    setCheckedCheckOut(updatedChecked)
+
+    if (checked) {
+      setCheckedCheckOut((prev) => [...prev, chkOutId])
+      setUnCheckedCheckOut((prev) => {
+        const unCheck = prev.filter((id) => id !== chkOutId)
+        return unCheck
+      })
+    } else {
+      const updatedChecked = checkedCheckOut.filter(
+        (rowId) => rowId != chkOutId
+      )
+      setCheckedCheckOut(updatedChecked)
+      setUnCheckedCheckOut((prev) => [...prev, chkOutId])
+    }
+    // const updatedChecked = checked
+    //   ? [...checkedCheckOut, chkOutId]
+    //   : checkedCheckOut.filter((rowId) => rowId != chkOutId)
+    // setCheckedCheckOut(updatedChecked)
     // console.log(updatedChecked)
 
-    const allRowsChecked = filterCheckOut.every((row) =>
-      updatedChecked.includes(row.chkOutId)
-    )
-    setSelectAll(allRowsChecked)
+    // const allRowsChecked = filterCheckOut.every((row) =>
+    //   updatedChecked.includes(row.chkOutId)
+    // )
+    // setSelectAll(allRowsChecked)
   }
 
   const HeaderCheckbox = (
@@ -389,16 +470,37 @@ const CheckoutRequest: FunctionComponent = () => {
     />
   )
 
+  useEffect(() => {
+    if (selectAll) {
+      const newIds: number[] = []
+      filterCheckOut.map((item) => item.chkOutId)
+      for (let item of filterCheckOut) {
+        if (!unCheckedCheckOut.includes(item.chkOutId)) {
+          newIds.push(item.chkOutId)
+        }
+      }
+      const allId: number[] = [...checkedCheckOut, ...newIds]
+      const ids = new Set(allId)
+      setCheckedCheckOut(Array.from(ids))
+    }
+  }, [filterCheckOut])
+
+  useEffect(() => {
+    if (checkedCheckOut.length === 0) {
+      setSelectAll(false)
+    }
+  }, [checkedCheckOut])
+
   const checkboxColumn: GridColDef = {
     field: 'customCheckbox',
-    headerName: 'Select',
+    headerName: t('localizedTexts.select'),
     width: 80,
     sortable: false,
     filterable: false,
     renderHeader: () => HeaderCheckbox,
     renderCell: (params) => (
       <Checkbox
-        checked={selectAll || checkedCheckOut.includes(params.row?.chkOutId)}
+        checked={checkedCheckOut.includes(params.row?.chkOutId)}
         onChange={(event) =>
           handleRowCheckboxChange(event, params.row.chkOutId)
         }
@@ -416,7 +518,7 @@ const CheckoutRequest: FunctionComponent = () => {
       width: 200
     },
     {
-      field: 'vehicleTypeId',
+      field: 'senderName',
       headerName: t('check_out.shipping_company'),
       width: 150,
       type: 'string'
@@ -464,7 +566,7 @@ const CheckoutRequest: FunctionComponent = () => {
     },
     {
       field: 'receiverAddr',
-      headerName: t('check_out.receiver_addr'),
+      headerName: t('check_out.arrival_location'),
       width: 200,
       type: 'string'
     }
@@ -488,58 +590,130 @@ const CheckoutRequest: FunctionComponent = () => {
     }
   }
 
+  const getPicoDetail = async (picoId: string) => {
+    try {
+      const pico = await getPicoById(picoId)
+      if (pico) {
+        return pico.data
+      }
+    } catch (error) {
+      return null
+    }
+  }
+
+  const getCompanyNameById = (id: number): string => {
+    let { ENUS, ZHCH, ZHHK } = Languages
+    let companyName: string = ''
+    const company = companies.find((item) => item.id === id)
+    if (company) {
+      if (i18n.language === ENUS) companyName = company.nameEng ?? ''
+      if (i18n.language === ZHCH) companyName = company.nameSchi ?? ''
+      if (i18n.language === ZHHK) companyName = company.nameTchi ?? ''
+    }
+
+    return companyName
+  }
+
+  const getReceiverCompany = async (id: string) => {
+    let companyName: string = ''
+    const result = await getTenantById(Number(id))
+    const data = result.data
+    if (i18n.language === 'enus') {
+      companyName = data.companyNameEng
+    } else if (i18n.language === 'zhch') {
+      companyName = data.companyNameSchi
+    } else {
+      companyName = data.companyNameTchi
+    }
+
+    return companyName
+  }
+
   const getCheckoutRequest = async () => {
+    setIsLoading(true)
     try {
       const result = await getAllCheckoutRequest(page - 1, pageSize, query)
       const data = result?.data.content
       if (data && data.length > 0) {
-        const checkoutData = data
-          .map(transformToTableRow)
-          .filter((item: CheckOut) => item.status === 'CREATED')
-        setCheckoutRequest(
-          data.filter((item: CheckOut) => item.status === 'CREATED')
-        )
+        let checkoutData: CheckOut[] = []
+        for (let item of data) {
+          if (item.status !== 'CREATED') continue
+          const dateInHK = dayjs.utc(item.createdAt).tz('Asia/Hong_Kong')
+          const createdAt = dateInHK.format(`${dateFormat} HH:mm`)
+          item.createdAt = createdAt
+          if (item.picoId) {
+            const picoDetail = await getPicoDetail(item.picoId)
+            if (picoDetail?.pickupOrderDetail[0]) {
+              const pico = picoDetail?.pickupOrderDetail[0]
+              item.senderName = pico.senderName
+              item.senderAddr = pico.senderAddr
+            }
+          }
+          if (item?.logisticId) {
+            const companyName = getCompanyNameById(Number(item?.logisticId))
+            item.logisticName =
+              companyName !== '' ? companyName : item.logisticName
+          }
+          if (item.receiverId) {
+            const companyName = await getReceiverCompany(item.receiverId)
+            item.receiverName =
+              item.receiverId !== '' ? companyName : item.receiverName
+          }
+          if (item.senderName) {
+            const companyName = getTranslationCompany(item.senderName)
+            item.senderName = companyName !== '' ? companyName : item.senderName
+          }
+
+          checkoutData.push(item)
+        }
+
+        setCheckoutRequest(checkoutData)
         setFilterCheckOut(checkoutData)
       } else {
         setFilterCheckOut([])
       }
       setTotalData(result?.data.totalPages)
-    } catch (error:any) {
-      const {state, realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
+    setIsLoading(false)
   }
 
   useEffect(() => {
     getCheckoutRequest()
     getRejectReason()
-  }, [page, query.picoId, query.receiverName, query.receiverName])
+  }, [page, query, dateFormat, i18n.language])
 
   const updateQuery = (newQuery: Partial<queryCheckout>) => {
-    setQuery({ ...query, ...newQuery });
-  };
-
-  const handleSearchByPoNumb = (searchWord: string) => {
-    updateQuery({picoId: searchWord})
+    setQuery({ ...query, ...newQuery })
   }
+
+  const handleSearchByPoNumb = debounce((searchWord: string) => {
+    setPage(1)
+    updateQuery({ picoId: searchWord })
+  }, 1000)
 
   const handleCompanyChange = (event: SelectChangeEvent) => {
     // console.log("company", event.target.value)
+    setPage(1)
     setCompany(event.target.value)
-    var searchWord =  event.target.value
-    updateQuery({receiverName: searchWord})
+    var searchWord = event.target.value
+    updateQuery({ receiverName: searchWord })
   }
 
   const handleLocChange = (event: SelectChangeEvent) => {
+    setPage(1)
     setLocation(event.target.value)
     var searchWord = event.target.value
-    updateQuery({receiverAddr: searchWord})
+    updateQuery({ receiverAddr: searchWord })
   }
 
   const handleDrawerClose = () => {
     setDrawerOpen(false)
+    setSelectedRow(undefined)
   }
 
   const handleSelectRow = (params: GridRowParams) => {
@@ -548,6 +722,7 @@ const CheckoutRequest: FunctionComponent = () => {
     const selectedItem = checkOutRequest?.find(
       (item) => item.chkOutId === row.chkOutId
     )
+
     setSelectedRow(selectedItem)
 
     setDrawerOpen(true)
@@ -569,14 +744,90 @@ const CheckoutRequest: FunctionComponent = () => {
   const role = localStorage.getItem(localStorgeKeyName.role)
 
   useEffect(() => {
-    setPrimaryColor(role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25')
+    setPrimaryColor(
+      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
+    )
   }, [role])
+
+  const getTranslationCompanyName = (name: string): string => {
+    let companyName: string = ''
+    const logistic = logisticList?.find((item) => {
+      const { logisticNameEng, logisticNameSchi, logisticNameTchi } = item
+      if (
+        logisticNameEng === name ||
+        logisticNameSchi === name ||
+        logisticNameTchi === name
+      ) {
+        return item
+      }
+    })
+
+    if (logistic) {
+      if (i18n.language === Languages.ENUS)
+        companyName = logistic.logisticNameEng
+      if (i18n.language === Languages.ZHCH)
+        companyName = logistic.logisticNameSchi
+      if (i18n.language === Languages.ZHHK)
+        companyName = logistic.logisticNameTchi
+    }
+    return companyName
+  }
+
+  const listTranslationCompanyName = (): CompanyNameLanguages[] => {
+    const manufacturerCompany: CompanyNameLanguages[] =
+      manuList?.map((item) => {
+        return {
+          labelEnglish: item?.manufacturerNameEng ?? '',
+          labelSimpflifed: item?.manufacturerNameSchi ?? '',
+          labelTraditional: item?.manufacturerNameTchi ?? ''
+        }
+      }) ?? []
+
+    const collectorCompany: CompanyNameLanguages[] =
+      collectorList?.map((item) => {
+        return {
+          labelEnglish: item?.collectorId ?? '',
+          labelSimpflifed: item?.collectorNameSchi ?? '',
+          labelTraditional: item?.collectorNameTchi ?? ''
+        }
+      }) ?? []
+
+    return [...manufacturerCompany, ...collectorCompany]
+  }
+
+  const companyReceiverSender = listTranslationCompanyName()
+
+  const getTranslationCompany = (name: string): string => {
+    let companyName: string = ''
+    const company = companyReceiverSender.find((item) => {
+      const { labelEnglish, labelSimpflifed, labelTraditional } = item
+      if (
+        name === labelEnglish ||
+        name === labelSimpflifed ||
+        name === labelTraditional
+      ) {
+        return item
+      }
+    })
+
+    if (company) {
+      if (i18n.language === Languages.ENUS) companyName = company.labelEnglish
+      if (i18n.language === Languages.ZHCH)
+        companyName = company.labelSimpflifed
+      if (i18n.language === Languages.ZHHK)
+        companyName = company.labelTraditional
+    }
+
+    return companyName
+  }
 
   return (
     <Box className="container-wrapper w-full mr-11">
       <div className="overview-page bg-bg-primary">
-        <div className="header-page flex justify-start items-center mb-4 cursor-pointer"
-          onClick={() => navigate('/warehouse')}>
+        <div
+          className="header-page flex justify-start items-center mb-4 cursor-pointer"
+          onClick={() => navigate('/warehouse')}
+        >
           <LEFT_ARROW_ICON fontSize="large" />
           <div className="title font-bold text-3xl pl-4 ">{titlePage}</div>
         </div>
@@ -586,12 +837,13 @@ const CheckoutRequest: FunctionComponent = () => {
               styles.buttonFilledGreen,
               {
                 mt: 3,
-                width: "90px",
-                height: "40px",
+                width: '90px',
+                height: '40px',
                 m: 0.5,
-                backgroundPositionXackground: checkedCheckOut.length === 0 ? 'white' : '',
+                backgroundPositionXackground:
+                  checkedCheckOut.length === 0 ? 'white' : '',
                 cursor: checkedCheckOut.length === 0 ? 'not-allowed' : 'pointer'
-              },
+              }
             ]}
             disabled={checkedCheckOut.length === 0}
             variant="outlined"
@@ -604,10 +856,10 @@ const CheckoutRequest: FunctionComponent = () => {
               styles.buttonOutlinedGreen,
               {
                 mt: 3,
-                width: "90px",
-                height: "40px",
-                m: 0.5,
-              },
+                width: '90px',
+                height: '40px',
+                m: 0.5
+              }
             ]}
             disabled={checkedCheckOut.length === 0}
             variant="outlined"
@@ -621,8 +873,8 @@ const CheckoutRequest: FunctionComponent = () => {
             id="searchShipment"
             onChange={(event) => handleSearchByPoNumb(event.target.value)}
             sx={styles.inputStyle}
-            label={t('check_in.search')}
-            placeholder={t('check_in.search_input')}
+            label={t('check_in.pickup_order_no')}
+            placeholder={t('check_in.input_po_no')}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -634,81 +886,125 @@ const CheckoutRequest: FunctionComponent = () => {
             }}
           />
           <FormControl sx={styles.inputStyle}>
-            <InputLabel id="company-label"  sx={styles.textFieldLabel} >{t('check_out.company')}</InputLabel>
+            <InputLabel id="company-label" sx={styles.textFieldLabel}>
+              {t('check_out.receiver_company')}
+            </InputLabel>
             <Select
               labelId="company-label"
               id="company"
               value={company}
-              label={t('check_out.company')}
+              label={t('check_in.receiver_company')}
               onChange={handleCompanyChange}
             >
+              {filterCheckOut
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.receiverName === item.receiverName)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.receiverName}>
+                    {item.receiverName}
+                  </MenuItem>
+                ))}
               <MenuItem value="">
                 <em>{t('check_in.any')}</em>
               </MenuItem>
-              {filterCheckOut.map((item, index) => (
-                <MenuItem key={index} value={item.receiverName}>
-                  {item.receiverName}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
           <FormControl sx={styles.inputStyle}>
-            <InputLabel id="location-label"  sx={styles.textFieldLabel}>
-              {t('check_out.receiver_addr')}
+            <InputLabel id="location-label" sx={styles.textFieldLabel}>
+              {t('check_out.location')}
             </InputLabel>
             <Select
               labelId="location-label"
               id="location"
               value={location}
-              label={t('check_out.receiver_addr')}
+              label={t('check_out.location')}
               onChange={handleLocChange}
             >
+              {filterCheckOut
+                ?.filter(
+                  (item, index, self) =>
+                    index ===
+                    self.findIndex((t) => t.receiverAddr === item.receiverAddr)
+                )
+                .map((item, index) => (
+                  <MenuItem key={index} value={item.receiverAddr}>
+                    {item.receiverAddr}
+                  </MenuItem>
+                ))}
               <MenuItem value="">
                 <em>{t('check_out.any')}</em>
               </MenuItem>
-              {filterCheckOut.map((item, index) => (
-                <MenuItem key={index} value={item.receiverAddr}>
-                  {item.receiverAddr}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
         </div>
-        <div className="table-overview">
+        <div className="table-overview w-full">
           <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
-            <DataGrid
-              rows={filterCheckOut}
-              getRowId={(row) => row.chkOutId}
-              hideFooter
-              columns={checkoutHeader}
-              checkboxSelection={false}
-              disableRowSelectionOnClick
-              onRowClick={handleSelectRow}
-              getRowSpacing={getRowSpacing}
-              sx={{
-                border: 'none',
-                '& .MuiDataGrid-cell': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  bgcolor: 'white',
-                  borderRadius: '10px'
-                },
-                '&>.MuiDataGrid-main': {
-                  '&>.MuiDataGrid-columnHeaders': {
-                    borderBottom: 'none'
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
+              <Box>
+                <DataGrid
+                  rows={filterCheckOut}
+                  getRowId={(row) => row.chkOutId}
+                  hideFooter
+                  columns={checkoutHeader}
+                  disableRowSelectionOnClick
+                  onRowClick={handleSelectRow}
+                  getRowSpacing={getRowSpacing}
+                  localeText={localeTextDataGrid}
+                  getRowClassName={(params) =>
+                    `${
+                      selectedRow &&
+                      params.row.chkOutId === selectedRow.chkOutId
+                        ? 'selected-row '
+                        : ''
+                    }${
+                      checkedCheckOut &&
+                      checkedCheckOut.includes(params.row.chkOutId)
+                        ? 'checked-row'
+                        : ''
+                    }`
                   }
-                }
-              }}
-            />
-             <Pagination
-              className="mt-4"
-              count={Math.ceil(totalData)}
-              page={page}
-              onChange={(_, newPage) => {
-                setPage(newPage)
-              }}
-            />
+                  sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell': {
+                      border: 'none'
+                    },
+                    '& .MuiDataGrid-row': {
+                      bgcolor: 'white',
+                      borderRadius: '10px'
+                    },
+                    '&>.MuiDataGrid-main': {
+                      '&>.MuiDataGrid-columnHeaders': {
+                        borderBottom: 'none'
+                      }
+                    },
+                    '.checked-row': {
+                      backgroundColor: `rgba(25, 118, 210, 0.08)`
+                    },
+                    '.MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold !important',
+                      overflow: 'visible !important'
+                    },
+                    '& .selected-row': {
+                      backgroundColor: '#F6FDF2 !important',
+                      border: '1px solid #79CA25'
+                    }
+                  }}
+                />
+                <Pagination
+                  className="mt-4"
+                  count={Math.ceil(totalData)}
+                  page={page}
+                  onChange={(_, newPage) => {
+                    setPage(newPage)
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import axiosInstance from '../../constants/axiosInstance'
 import {
   ADD_PREMISE_TYPE,
-    ADD_RECYC_TYPE, ADD_SITE_TYPE, ADD_SUB_RECYC_TYPE, CREATE_PACKAGING, CREATE_VEHICLE_TYPE, CREATE_WEIGHT_UNIT, DELETE_PREMISE_TYPE, DELETE_RECYC_TYPE, DELETE_SITE_TYPE, DELETE_SUB_RECYC_TYPE, DELETE_VEHICLE_TYPE, DELETE_WEIGHT_UNIT, EDIT_PACKAGING, EDIT_PREMISE_TYPE, EDIT_SITE_TYPE, GET_PACKAGING_LIST, GET_PREMISE_TYPE, GET_RECYC_CODE, GET_SITE_TYPE, GET_VEHICLE_TYPE, GET_WEIGHT_UNIT, UPDATE_RECYC_TYPE, UPDATE_SUB_RECYC_TYPE, UPDATE_VEHICLE_TYPE, UPDATE_WEIGHT_UNIT
+    ADD_RECYC_TYPE, ADD_SITE_TYPE, ADD_SUB_RECYC_TYPE, CREATE_PACKAGING, CREATE_VEHICLE_TYPE, CREATE_WEIGHT_UNIT, DELETE_PREMISE_TYPE, DELETE_RECYC_TYPE, DELETE_SITE_TYPE, DELETE_SUB_RECYC_TYPE, DELETE_VEHICLE_TYPE, DELETE_WEIGHT_UNIT, EDIT_PACKAGING, EDIT_PREMISE_TYPE, EDIT_SITE_TYPE, GET_PACKAGING_LIST, GET_PREMISE_TYPE, GET_RECYC_CODE, GET_SITE_TYPE, GET_VEHICLE_DETAIL, GET_VEHICLE_TYPE, GET_WEIGHT_UNIT, UPDATE_RECYC_TYPE, UPDATE_SUB_RECYC_TYPE, UPDATE_VEHICLE_TYPE, UPDATE_WEIGHT_UNIT
 } from '../../constants/requests'
 import { AXIOS_DEFAULT_CONFIGS } from '../../constants/configs';
 import { returnApiToken } from '../../utils/utils';
@@ -437,6 +437,20 @@ export const deleteRecyclingPoint = async (siteTypeId: string, data: any) => {
     return response
   } catch (error) {
     console.error('Post Recycling Failed:', error)
+    throw(error)
+  }
+}
+
+export const getVehicleDetail = async (vehicleId: string) => {
+  try {
+      const response = await axiosInstance({
+        baseURL: window.baseURL.administrator,
+        ...GET_VEHICLE_DETAIL(vehicleId),
+      })
+
+      return response
+  } catch (error) {
+    console.error('getVehicleDetail Failed:', error)
     throw(error)
   }
 }

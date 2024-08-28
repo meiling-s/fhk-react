@@ -35,7 +35,8 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
             receivers: [], 
             updatedBy: '', 
             effFromDate: dayjs().format('YYYY-MM-DD'), 
-            effToDate: dayjs().format('YYYY-MM-DD') 
+            effToDate: dayjs().format('YYYY-MM-DD'),
+            version: 0
         }
     );
     const navigate = useNavigate();
@@ -136,7 +137,8 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                     updatedBy: notif?.updatedBy,
                     effFromDate: notif?.effFromDate,
                     effToDate: notif?.effToDate,
-                    variables: notif?.variables
+                    variables: notif?.variables,
+                    version: notif?.version
                 }
             })
             setCurrentLanguage(notif.lang)
@@ -182,15 +184,14 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
             showErrorToast(t('common.editFailed'))
             return
         } else {
-            const response = await updateNotifTemplateBroadcast(templateId, notifTemplate, realmApiRoute)
-            if (response) {
+            const result = await updateNotifTemplateBroadcast(templateId, notifTemplate, realmApiRoute)
+            if (result?.response?.status === 500) {
+                showErrorToast(result.response.data.message);
+            } else {
                 showSuccessToast(t('common.editSuccessfully'))
                 setTimeout(() => {
                     navigate(`/${realm}/notice`)
-                }, 2000);
-
-            } else {
-                showErrorToast(t('common.editFailed'))
+                }, 1000)
             }
         }
     }
@@ -314,8 +315,12 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
         }
     }
 
+    const onDragHandler = (event: any, item: string) => {
+        event.dataTransfer.setData("text/plain", item);
+    }
+
     return (
-        <Box className="container-wrapper w-full mr-11">
+        <Box className="container-wrapper w-max mr-11">
             <LocalizationProvider
                 dateAdapter={AdapterDayjs}
                 adapterLocale="zh-cn"
@@ -386,6 +391,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
                                 sx: styles.inputProps
                                 }} 
                             />}
+                            noOptionsText={t('common.noOptions')}
                         />
                         <Typography style={{ fontSize: '13px', color: 'red', fontWeight: '500' }}>
                             {errors.lang.status ? t('form.error.shouldNotBeEmpty') : ''}
@@ -484,17 +490,24 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
 
                     <Grid display={'flex'} direction={'row'} style={{ gap: 2 }}>
                         {notifTemplate.variables.map((item, index) => {
-                            // return <button
-                            //     key={index}
-                            //     className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
-                            //     style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
-                            //     onClick={(event) => onChangeContent(index)}
-                            // > [{item}] </button>
-                            return <FileUploadCard
-                                index={index}
-                                item={item} 
-                                onHandleUpload={onHandleUpload}
-                            />
+                            // // return <button
+                            // //     key={index}
+                            // //     className="bg-[#FBFBFB] py-1 px-2 hover:cursor-pointer text-[##717171]"
+                            // //     style={{ borderRadius: '4px', borderColor: '#E2E2E2' }}
+                            // //     onClick={(event) => onChangeContent(index)}
+                            // // > [{item}] </button>
+                            // return <FileUploadCard
+                            //     index={index}
+                            //     item={item} 
+                            //     onHandleUpload={onHandleUpload}
+                            return <div 
+                                key={index} 
+                                className="mr-2 text-[#717171] text-md py-1 px-2 hover:cursor-pointer  bg-[#FBFBFB]"
+                                id ={`drag-${index}`} 
+                                onDragStart={(event) => onDragHandler(event, ` [${item}] `)}
+                                draggable="true">{`{${item}}`}
+                            </div>
+                            // />
                         })}
 
                     </Grid>

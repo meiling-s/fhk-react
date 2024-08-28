@@ -9,6 +9,7 @@ import {
     Autocomplete,
     Box,
     Divider,
+    Grid,
     TextField,
 } from '@mui/material'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
@@ -21,6 +22,7 @@ import { createRecyc, deleteEngineData, editEngineData, sendEngineData, sendWeig
 import { styles } from '../../../constants/styles'
 import { useNavigate } from 'react-router-dom'
 import { STATUS_CODE } from '../../../constants/constant'
+import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 
 interface engineDataProps {
     createdAt: string
@@ -31,6 +33,7 @@ interface engineDataProps {
     premiseTypeNameTchi: string
     registeredFlg: boolean
     remark: string
+    description: string
     residentalFlg: boolean
     serviceType: string
     status: string
@@ -67,6 +70,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const [englishName, setEnglishName] = useState('')
     const [registeredFlg, setRegisteredFlg] = useState(false)
     const [residentalFlg, setResidentalFlg] = useState(false)
+    const [description, setDescription] = useState('')
     const [remark, setRemark] = useState('')
     const [selectedService, setSelectedService] = useState('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
@@ -87,6 +91,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     }, [i18n, currentLanguage])
 
     useEffect(() => {
+        setTrySubmitted(false)
         if (action === 'edit' || action === 'delete') {
             if (selectedItem !== null && selectedItem !== undefined) {
                 const newServiceValue = serviceTypeSelect.filter(value => value.value === selectedItem.serviceType)[0]
@@ -96,6 +101,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 setRegisteredFlg(selectedItem.registeredFlg)
                 setResidentalFlg(selectedItem.residentalFlg)
                 setSelectedService(newServiceValue.name)
+                setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
             }
         } else if (action === 'add') {
@@ -110,6 +116,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         setRegisteredFlg(false)
         setResidentalFlg(false)
         setSelectedService('')
+        setDescription('')
         setRemark('')
     }
 
@@ -144,7 +151,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         tChineseName.trim() === '' &&
             tempV.push({
-                field: 'tChineseName',
+                field: `${t('packaging_unit.traditional_chinese_name')}`,
                 error: `${t(`common.traditionalChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -152,7 +159,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         sChineseName.trim() === '' &&
             tempV.push({
-                field: 'sChineseName',
+                field: `${t('packaging_unit.simplified_chinese_name')}`,
                 error: `${t(`common.simplifiedChineseName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -160,7 +167,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         englishName.trim() === '' &&
             tempV.push({
-                field: 'englishName',
+                field: `${t('packaging_unit.english_name')}`,
                 error: `${t(`common.englishName`)} ${t(
                     'add_warehouse_page.shouldNotEmpty'
                 )}`
@@ -168,14 +175,14 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         selectedService.trim() === '' &&
         tempV.push({
-            field: 'selectedService',
+            field: `${t('recycling_point.service_type')}`,
             error: `${t(`recycling_point.service_type`)} ${t(
                 'add_warehouse_page.shouldNotEmpty'
             )}`
         })
 
         setValidation(tempV)
-    }, [tChineseName, sChineseName, englishName, selectedService])
+    }, [tChineseName, sChineseName, englishName, selectedService, i18n, currentLanguage])
 
     const handleDelete = async () => {
         const token = returnApiToken()
@@ -214,6 +221,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             residentalFlg: residentalFlg,
             registeredFlg: registeredFlg,
             remark: remark,
+            description: description,
             status: 'ACTIVE',
             serviceType: serviceValue.value,
             createdBy: loginId,
@@ -289,7 +297,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                     cancelText: t('add_warehouse_page.delete'),
                     onCloseHeader: handleDrawerClose,
                     onSubmit: handleSubmit,
-                    onDelete: handleDelete
+                    onDelete: handleDelete,
+                    deleteText: t('common.deleteMessage')
                 }}
             >
                 <Divider></Divider>
@@ -300,7 +309,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 id="tChineseName"
                                 value={tChineseName}
                                 disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.traditional_chinese_name')}
+                                placeholder={t('packaging_unit.traditional_chinese_name_placeholder')}
                                 onChange={(event) => setTChineseName(event.target.value)}
                                 error={checkString(tChineseName)}
                             />
@@ -312,7 +321,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 id="sChineseName"
                                 value={sChineseName}
                                 disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.simplified_chinese_name')}
+                                placeholder={t('packaging_unit.simplified_chinese_name_placeholder')}
                                 onChange={(event) => setSChineseName(event.target.value)}
                                 error={checkString(sChineseName)}
                             />
@@ -324,7 +333,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 id="englishName"
                                 value={englishName}
                                 disabled={action === 'delete'}
-                                placeholder={t('packaging_unit.english_name')}
+                                placeholder={t('packaging_unit.english_name_placeholder')}
                                 onChange={(event) => setEnglishName(event.target.value)}
                                 error={checkString(englishName)}
                             />
@@ -378,20 +387,43 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                     error={checkString(selectedService)}
                                 />
                                 )}
+                                noOptionsText={t('common.noOptions')}
                             />
                         </CustomField>
                     </Box>
                     <Box sx={{ marginY: 2 }}>
-                        <CustomField label={t('packaging_unit.remark')} mandatory={false}>
+                        <CustomField label={t('packaging_unit.introduction')}>
+                            <CustomTextField
+                                id="introduction"
+                                placeholder={t('packaging_unit.introduction_placeholder')}
+                                onChange={(event) => setDescription(event.target.value)}
+                                multiline={true}
+                                defaultValue={description}
+                            />
+                        </CustomField>
+                    </Box>
+                    <Box sx={{ marginY: 2 }}>
+                        <CustomField label={t('packaging_unit.remark')}>
                             <CustomTextField
                                 id="remark"
-                                placeholder={t('packaging_unit.remark')}
+                                placeholder={t('packaging_unit.remark_placeholder')}
                                 onChange={(event) => setRemark(event.target.value)}
                                 multiline={true}
                                 defaultValue={remark}
                             />
                         </CustomField>
                     </Box>
+                    <Grid item sx={{ width: '92%' }}>
+                        {trySubmited &&
+                            validation.map((val, index) => (
+                            <FormErrorMsg
+                                key={index}
+                                field={t(val.field)}
+                                errorMsg={val.error}
+                                type={'error'}
+                            />
+                            ))}
+                    </Grid>
                 </Box>
             </RightOverlayForm>
         </div>

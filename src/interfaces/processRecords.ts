@@ -28,6 +28,7 @@ export type processOutImage = {
     address: string
     packageTypeId: string
     packageName: string
+    labelId?: string
   }
   
   export type CreateRecyclable = {
@@ -41,4 +42,10 @@ export type processOutImage = {
     processoutDetailPhoto: processOutImage[]
     createdBy: string
     updatedBy: string
+  }
+
+  export type queryProcessRecord = {
+    processOutId: number | null;
+    processType: string;
+    processAddress: string;
   }

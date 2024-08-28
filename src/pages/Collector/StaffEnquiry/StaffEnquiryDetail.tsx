@@ -28,6 +28,7 @@ import {
   EditStaffEnquiry,
   StaffEnquiry,
 } from "../../../interfaces/staffEnquiry";
+import { version } from "os";
 
 interface CreateVehicleProps {
   drawerOpen: boolean;
@@ -70,6 +71,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
   const [validation, setValidation] = useState<formValidate[]>([]);
   const loginName = localStorage.getItem(localStorgeKeyName.username) || "";
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || "";
+  const [version, setVersion] = useState<number>(0)
 
   const staffField = [
     {
@@ -131,6 +133,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
   useEffect(() => {
     initLoginIdList();
     initStaffTitle();
+    resetFormData()
   }, [drawerOpen]);
 
   const initLoginIdList = async () => {
@@ -177,6 +180,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
         fullTimeFlg: selectedItem.fullTimeFlg ? "true" : "false",
       });
       setSelectedLoginId(selectedItem.loginId);
+      setVersion(selectedItem.version ?? 0)
     }
   };
 
@@ -273,6 +277,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
 
   const handleCreateStaff = async (staffData: CreateStaffEnquiry) => {
     validate();
+    console.log("validation", validation)
     if (validation.length === 0) {
       const result = await createStaffEnquiry(staffData);
       if (result?.data) {
@@ -304,6 +309,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
       salutation: "salutation",
       updatedBy: loginName,
       createdBy: loginName,
+      version: version,
     };
     if (validation.length == 0) {
       if (selectedItem != null) {
@@ -323,6 +329,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
     const editData: DeleteStaffEnquiry = {
       status: "DELETED",
       updatedBy: loginName,
+      version: version,
     };
     if (selectedItem != null) {
       const result = await deleteStaffEnquiry(editData, selectedItem.staffId);
@@ -433,6 +440,7 @@ const StaffEnquiryDetail: FunctionComponent<CreateVehicleProps> = ({
                           )}
                         />
                       )}
+                      noOptionsText={t('common.noOptions')}
                     />
                   ) : (
                     <TextField

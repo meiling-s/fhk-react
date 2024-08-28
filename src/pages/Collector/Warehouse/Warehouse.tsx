@@ -17,7 +17,7 @@ import {
   DELETE_OUTLINED_ICON
 } from '../../../themes/icons'
 import AddWarehouse from './AddWarehouse'
-// import TableBase from '../../../components/TableBase'
+import CircularLoading from '../../../components/CircularLoading'
 import StatusLabel from '../../../components/StatusLabel'
 import { useTranslation } from 'react-i18next'
 import {
@@ -25,8 +25,9 @@ import {
   getRecycleType
 } from '../../../APICalls/warehouseManage'
 import { extractError } from '../../../utils/utils'
-import { STATUS_CODE } from '../../../constants/constant'
-
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
+import useLocaleTextDataGrid from '../../../hooks/useLocaleTextDataGrid'
+import { set } from 'date-fns'
 
 interface RecyleItem {
   recycTypeId: string
@@ -73,6 +74,10 @@ const Warehouse: FunctionComponent = () => {
   const pageSize = 10 // change page size lowerg to testing
   const [totalData, setTotalData] = useState<number>(0)
   const navigate = useNavigate()
+  const { localeTextDataGrid } = useLocaleTextDataGrid()
+  const [primaryColor, setPrimaryColor] = useState<string>('')
+  const role = localStorage.getItem(localStorgeKeyName.role)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const columns: GridColDef[] = [
     {
@@ -120,7 +125,8 @@ const Warehouse: FunctionComponent = () => {
     },
     {
       field: 'actions',
-      headerName: 'actions',
+      headerName: t('pick_up_order.item.actions'),
+      filterable: false,
       renderCell: (params) => {
         //console.log(params, 'params warehouse')
         return (
@@ -166,6 +172,12 @@ const Warehouse: FunctionComponent = () => {
     setDrawerOpen(false)
   }
 
+  useEffect(() => {
+    if (warehouseItems.length === 0 && page > 1) {
+      setPage(page - 1)
+    }
+  }, [warehouseItems])
+
   const getRecycleData = async () => {
     try {
       const response = await getRecycleType()
@@ -184,15 +196,16 @@ const Warehouse: FunctionComponent = () => {
         })
         fetchData()
       }
-    } catch (error:any) {
-      const {state , realm} =  extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+    } catch (error: any) {
+      const { state, realm } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       }
     }
   }
 
   const fetchData = async () => {
+    setIsLoading(true)
     try {
       const response = await getAllWarehouse(page - 1, pageSize)
       if (response) {
@@ -204,6 +217,7 @@ const Warehouse: FunctionComponent = () => {
     } catch (error) {
       console.error(error)
     }
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -277,6 +291,7 @@ const Warehouse: FunctionComponent = () => {
 
   const handleDrawerClose = () => {
     setDrawerOpen(false)
+    setSelectedRow(null)
     fetchData()
   }
 
@@ -285,6 +300,12 @@ const Warehouse: FunctionComponent = () => {
       top: params.isFirstVisible ? 0 : 10
     }
   }, [])
+
+  useEffect(() => {
+    setPrimaryColor(
+      role === 'manufacturer' || role === 'customer' ? '#6BC7FF' : '#79CA25'
+    )
+  }, [role])
 
   return (
     <Box
@@ -305,12 +326,16 @@ const Warehouse: FunctionComponent = () => {
                 }`}
               >
                 <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
-                  <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-grey-dark">
-                    <b className="relative tracking-[0.08em] leading-[28px]">
+                  <div className="settings-header self-stretch flex flex-row items-center justify-start gap-[12px] text-base text-black">
+                    <b
+                      className="relative leading-[28px] font-bold fill-neutral-950"
+                      style={{ fontWeight: 900 }}
+                    >
                       {t('top_menu.workshop')}
                     </b>
                     <div
-                      className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi text-green-primary border-[1px] border-solid border-green-pale"
+                      className="rounded-6xl bg-white overflow-hidden flex flex-row items-center justify-center py-2 pr-5 pl-3 gap-[5px] cursor-pointer text-smi border-[1px] border-solid"
+                      style={{ borderColor: primaryColor, color: primaryColor }}
                       onClick={addDataWarehouse}
                     >
                       <ADD_ICON />
@@ -320,37 +345,56 @@ const Warehouse: FunctionComponent = () => {
                     </div>
                   </div>
                   <Box pr={4} pt={3} sx={{ flexGrow: 1, width: '100%' }}>
-                    <DataGrid
-                      rows={warehouseItems}
-                      hideFooter
-                      columns={columns}
-                      checkboxSelection
-                      disableRowSelectionOnClick
-                      onRowClick={handleRowClick}
-                      getRowSpacing={getRowSpacing}
-                      sx={{
-                        border: 'none',
-                        '& .MuiDataGrid-cell': {
-                          border: 'none'
-                        },
-                        '& .MuiDataGrid-row': {
-                          bgcolor: 'white',
-                          borderRadius: '10px'
-                        },
-                        '&>.MuiDataGrid-main': {
-                          '&>.MuiDataGrid-columnHeaders': {
-                            borderBottom: 'none'
+                    {isLoading ? (
+                      <CircularLoading />
+                    ) : (
+                      <Box>
+                        <DataGrid
+                          rows={warehouseItems}
+                          hideFooter
+                          columns={columns}
+                          disableRowSelectionOnClick
+                          onRowClick={handleRowClick}
+                          getRowSpacing={getRowSpacing}
+                          localeText={localeTextDataGrid}
+                          getRowClassName={(params) =>
+                            selectedRow && params.id === selectedRow.id
+                              ? 'selected-row'
+                              : ''
                           }
-                        }
-                      }}
-                    />
-                    <Pagination
-                      count={Math.ceil(totalData)}
-                      page={page}
-                      onChange={(_, newPage) => {
-                        setPage(newPage)
-                      }}
-                    />
+                          sx={{
+                            border: 'none',
+                            '& .MuiDataGrid-cell': {
+                              border: 'none'
+                            },
+                            '& .MuiDataGrid-row': {
+                              bgcolor: 'white',
+                              borderRadius: '10px'
+                            },
+                            '&>.MuiDataGrid-main': {
+                              '&>.MuiDataGrid-columnHeaders': {
+                                borderBottom: 'none'
+                              }
+                            },
+                            '.MuiDataGrid-columnHeaderTitle': {
+                              fontWeight: 'bold !important',
+                              overflow: 'visible !important'
+                            },
+                            '& .selected-row': {
+                              backgroundColor: '#F6FDF2 !important',
+                              border: '1px solid #79CA25'
+                            }
+                          }}
+                        />
+                        <Pagination
+                          count={Math.ceil(totalData)}
+                          page={page}
+                          onChange={(_, newPage) => {
+                            setPage(newPage)
+                          }}
+                        />
+                      </Box>
+                    )}
                   </Box>
                 </div>
               </div>

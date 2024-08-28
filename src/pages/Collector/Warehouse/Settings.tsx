@@ -90,21 +90,21 @@ const Settings: FunctionComponent = () => {
   const collectorSettingTab = () => {
     return (
       selectedTab === 0 ? (
-        <GeneralSettings/>
+        <GeneralSettings/> 
       ) : selectedTab === 1 ? (
-        <PackagingUnit/>
+        <PackagingUnit/> 
       ) : selectedTab === 2 ? (
-        <Warehouse />
+        <Warehouse /> 
       ) : selectedTab === 3 ? (
-        <Vehicle />
+        <Vehicle /> 
       ) : selectedTab === 4 ? (
-        <Company />
+        <Company /> 
       ) : selectedTab === 5 ? (
-        <DisposalLocation />
+        <DisposalLocation /> 
       ) : selectedTab === 6 ? (
-        <StaffTitle />
+        <StaffTitle /> 
       ) : selectedTab === 7 ? (
-        <DenialReason />
+        <DenialReason /> 
       ) : (
         <div className="p-4 text-center">content not available</div>
       )
@@ -114,15 +114,15 @@ const Settings: FunctionComponent = () => {
   const logisticSettingTab = () => {
     return (
       selectedTab === 0 ? (
-        <GeneralSettings/>
+        <GeneralSettings/> 
       ) : selectedTab === 1 ? (
-        <PackagingUnit/>
+        <PackagingUnit/> 
       ) : selectedTab === 2 ? (
-        <Company />
+        <Company /> 
       ) : selectedTab === 3 ? (
-        <StaffTitle />
+        <StaffTitle /> 
       ) : selectedTab === 4 ? (
-        <DenialReason />
+        <DenialReason /> 
       ) : (
         <div className="p-4 text-center">content not available</div>
       )
@@ -145,7 +145,7 @@ const Settings: FunctionComponent = () => {
         ) : selectedTab === 5 ? (
           <ASTDStaff />
         ) : selectedTab === 6 ? (
-          <ASTDDenialReason/>
+          <ASTDDenialReason/> 
         ) :
       (
           <div className="p-4 text-center">content not available</div>
@@ -155,11 +155,11 @@ const Settings: FunctionComponent = () => {
   const customerSettingTab = () => {
     return (
       selectedTab === 0 ? (
-        <CustomerGeneralSettings/>
+        <CustomerGeneralSettings/> 
       ): selectedTab === 1 ? (
-        <Company/>
+        <Company/> 
       ) : selectedTab === 2 ? (
-        <StaffTitle/>
+        <StaffTitle/> 
       ) :
       (
         <div className="p-4 text-center">content not available</div>
@@ -170,19 +170,19 @@ const Settings: FunctionComponent = () => {
   const manufacturerSettingTab = () => {
     return (
       selectedTab === 0 ? (
-        <GeneralSettings/>
+        <GeneralSettings/> 
       ) : selectedTab === 1 ? (
-        <PackagingUnit/>
+        <PackagingUnit/> 
       ) : selectedTab === 2 ? (
-        <Warehouse />
+        <Warehouse /> 
       ) : selectedTab === 3 ? (
-        <Company />
+        <Company /> 
       ) : selectedTab === 4 ? (
-        <DisposalLocation />
+        <DisposalLocation /> 
       ) : selectedTab === 5 ? (
-        <StaffTitle />
+        <StaffTitle /> 
       ) : selectedTab === 6? (
-        <DenialReason />
+        <DenialReason /> 
       ) : (
         <div className="p-4 text-center">content not available</div>
       )
@@ -190,7 +190,7 @@ const Settings: FunctionComponent = () => {
   }
 
   return (
-    <Box className="container-wrapper w-full">
+    <Box className="container-wrapper w-max">
       <div className="settings-page bg-bg-primary">
         <div className="title font-bold text-3xl mb-10">{titlePage}</div>
         <Tabs

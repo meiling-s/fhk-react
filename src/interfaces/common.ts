@@ -207,3 +207,47 @@ export type errorState = {
     code: number,
     message: string
 }
+
+export type StaffTitle = {
+    createdAt: string
+    createdBy: string
+    description: string
+    titleName: string
+    duty: string[]
+    remark: string
+    status: string
+    titleId: string
+    titleNameEng: string
+    titleNameSchi: string
+    titleNameTchi: string
+    updatedAt: string
+}
+
+export type UserActivity = {
+    operation: string
+    ip: string
+    createdBy: string
+    updatedBy: string
+}
+
+export type Company =  {
+    id?: number
+    nameEng?: string
+    nameSchi?: string
+    nameTchi?: string
+}
+
+export type PackagingList = {
+    packagingTypeId: string,
+    tenantId: string,
+    packagingNameTchi: string,
+    packagingNameSchi: string,
+    packagingNameEng: string,
+    description: string,
+    remark: string,
+    status: string,
+    createdBy: string,
+    updatedBy: string,
+    createdAt: string,
+    updatedAt: string
+}

@@ -14,7 +14,7 @@ const Driver = () => {
     }
 
     const tabSettings = [t('driver.tabs.driver'), t('driver.tabs.cars')]
-    return <Box className="container-wrapper w-full">
+    return <Box className="container-wrapper w-max">
         <div className="settings-page bg-bg-primary">
             <div className="title font-bold text-3xl mb-10">{t('driver.title')}</div>
             <Tabs
