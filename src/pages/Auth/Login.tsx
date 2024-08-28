@@ -34,12 +34,12 @@ import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { setLanguage } from '../../setups/i18n'
 import { extractError, returnApiToken } from '../../utils/utils'
 import { getTenantById } from '../../APICalls/tenantManage'
-import axiosInstance, { parseJwtToken } from '../../constants/axiosInstance'
+import { parseJwtToken } from '../../constants/axiosInstance'
 import NotifContainer from '../../contexts/NotifContainer'
 import axios from 'axios'
 import { createUserActivity } from '../../APICalls/userAccount'
 import { UserActivity } from '../../interfaces/common'
-import JSEncrypt from 'jsencrypt';
+import JSEncrypt from 'jsencrypt'
 
 const Login = () => {
   const { i18n } = useTranslation()
@@ -53,7 +53,7 @@ const Login = () => {
   const { t } = useTranslation()
   const commonTypeContainer = useContainer(CommonTypeContainer)
   const { initBroadcastMessage } = useContainer(NotifContainer)
-  const [publicKey, setPublicKey] = useState('');
+  const [publicKey, setPublicKey] = useState('')
   // overwrite select style
   //todo : make select as component
   const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -73,47 +73,49 @@ const Login = () => {
 
   const fetchPublicKey = async () => {
     try {
-      const response = await fetch(`${window.baseURL.collector}api/v1/administrator/getPublicKey`);
+      const response = await fetch(
+        `${window.baseURL.collector}api/v1/administrator/getPublicKey`
+      )
       if (response.ok) {
-        const publicKeyPem = await response.text();
-        setPublicKey(publicKeyPem);
+        const publicKeyPem = await response.text()
+        setPublicKey(publicKeyPem)
       } else {
-        console.log('Failed to fetch public key, retrying...');
-        setTimeout(fetchPublicKey, 3000); // Retry after 3 seconds
+        console.log('Failed to fetch public key, retrying...')
+        setTimeout(fetchPublicKey, 3000) // Retry after 3 seconds
       }
     } catch (error) {
-      console.log('Error fetching public key:', error);
-      setTimeout(fetchPublicKey, 3000); // Retry after 3 seconds
+      console.log('Error fetching public key:', error)
+      setTimeout(fetchPublicKey, 3000) // Retry after 3 seconds
     }
-  };
+  }
 
   const handleEncrypt = async (userName: string, password: string) => {
     if (!userName || !password) {
-      setWarningMsg('Username and password are required.');
-      return;
+      setWarningMsg('Username and password are required.')
+      return
     }
-    await encryptData(userName, password);
-  };
+    await encryptData(userName, password)
+  }
 
   const encryptData = async (userName: string, password: string) => {
     if (!publicKey) {
-      console.log('No public key available, trying to fetch it again...');
-      await fetchPublicKey();
+      console.log('No public key available, trying to fetch it again...')
+      await fetchPublicKey()
     }
 
     if (publicKey) {
-      const encryptor = new JSEncrypt();
-      encryptor.setPublicKey(publicKey);
-      const encrypted = encryptor.encrypt(password);
+      const encryptor = new JSEncrypt()
+      encryptor.setPublicKey(publicKey)
+      const encrypted = encryptor.encrypt(password)
       if (encrypted) {
-        onLoginButtonClick(userName, encrypted);
+        onLoginButtonClick(userName, encrypted)
       } else {
-        setWarningMsg('Encryption failed. Please try again.');
+        setWarningMsg('Encryption failed. Please try again.')
       }
     } else {
-      setWarningMsg('Public key is not available. Please try again later.');
+      setWarningMsg('Public key is not available. Please try again later.')
     }
-  };
+  }
 
   const getTenantData = async () => {
     const token = returnApiToken()
@@ -131,8 +133,8 @@ const Login = () => {
   }
 
   const getIpAddress = async () => {
-    const response = await axios.get("https://api.ipify.org/?format=json");
-    if(response){
+    const response = await axios.get('https://api.ipify.org/?format=json')
+    if (response) {
       localStorage.setItem('ipAddress', response?.data?.ip)
     }
   }
@@ -170,8 +172,8 @@ const Login = () => {
         if (result && result.access_token) {
           localStorage.setItem(localStorgeKeyName.role, result?.realm || '')
           const ipAddress = localStorage.getItem('ipAddress')
-          if(ipAddress){
-            const userActivity:UserActivity = {
+          if (ipAddress) {
+            const userActivity: UserActivity = {
               operation: 'Login',
               ip: ipAddress,
               createdBy: userName,
@@ -255,7 +257,6 @@ const Login = () => {
           setLanguage(selectedLang)
 
           commonTypeContainer.updateCommonTypeContainer()
-         
         } else {
           // if(errCode === STATUS_CODE[503]){
           //   return navigate('/maintenance')
@@ -282,7 +283,6 @@ const Login = () => {
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
       } else {
-        
         /**handling err code from BE for reset PW and showing err category */
         if (error?.response) {
           const errCode = returnErrCode(error)
@@ -357,7 +357,7 @@ const Login = () => {
         }
       }
     }
-    getIpAddress();
+    getIpAddress()
   }, [])
 
   return (
@@ -382,6 +382,7 @@ const Login = () => {
           <Box>
             <Typography sx={styles.typo}>用戶名稱</Typography>
             <TextField
+              data-testid="astd-username-input"
               fullWidth
               placeholder="請輸入用戶名稱"
               InputProps={{
@@ -397,6 +398,7 @@ const Login = () => {
           <Box>
             <Typography sx={styles.typo}>密碼</Typography>
             <TextField
+              data-testid="astd-pass-input"
               fullWidth
               placeholder="請輸入密碼"
               type={showPassword ? 'text' : 'password'}
@@ -417,22 +419,9 @@ const Login = () => {
               }}
             />
           </Box>
-          {/* <FormControl fullWidth>
-            <Typography sx={styles.typo}>Login to (for testing)</Typography>
-            <Select
-              id="user-option"
-              value={loginTo}
-              label="Age"
-              onChange={(event) => setLoginTo(event.target.value)}
-              input={<BootstrapInput />}
-            >
-              <MenuItem value={'astd'}>ASTD</MenuItem>
-              <MenuItem value={'collector'}>Collector</MenuItem>
-              <MenuItem value={'warehouse'}>Warehouse</MenuItem>
-            </Select>
-          </FormControl> */}
           <Box>
             <LoadingButton
+              data-testid="astd-login-btn"
               fullWidth
               loading={loggingIn}
               type="submit"
@@ -448,7 +437,9 @@ const Login = () => {
             </LoadingButton>
           </Box>
           {warningMsg != ' ' && (
-            <FormHelperText error>{warningMsg}</FormHelperText>
+            <FormHelperText data-testid="astd-err-login" error>
+              {warningMsg}
+            </FormHelperText>
           )}
           <Box>
             <Button
