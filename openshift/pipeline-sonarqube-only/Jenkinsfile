@@ -59,6 +59,9 @@ pipeline {
               withCredentials([usernamePassword(credentialsId: "cicd-opaque-sonarqube-auth-secret", usernameVariable: "SONARQUBE_USER", passwordVariable: "SONARQUBE_PWD")]) {
                 def var_ScannerHome = tool 'SonarQubeScanner'
                 def var_SonarProjectKey = "${inputDevProject}-${config_Component}" // e.g. astd-react
+                sh "pwd"
+                sh "ls"
+                sh "yarn jest --coverage"
                 sh "${var_ScannerHome}/bin/sonar-scanner \
                 -Dsonar.host.url=http://sonarqube:9000 \
                 -Dsonar.token=${SONARQUBE_PWD} \
