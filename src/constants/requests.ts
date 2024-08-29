@@ -664,7 +664,7 @@ export const EDIT_VEHICLE = (
   vehicleId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/vehicle/${table}/${vehicleId}`
+  url: `api/v1/${realmApiRoute}/vehicle${realmApiRoute === 'collectors' ? '/V2/' : '/'}${table}/${vehicleId}`
 })
 
 //inventory
