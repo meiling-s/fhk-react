@@ -28,10 +28,28 @@ spec:
         intent: apps
       containers:
         - name: web-api
-          image: 307426213411.dkr.ecr.ap-east-1.amazonaws.com/astd/react:1-0-0beta-308
+          image: 307426213411.dkr.ecr.ap-east-1.amazonaws.com/astd/react:1-0-0beta-310
           ports:
             - name: http
               containerPort: 3000
+          livenessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 120
+            successThreshold: 1
+            timeoutSeconds: 10
+          readinessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 100
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
           volumeMounts:
             - name: public-config-js
               mountPath: /opt/app-root/src/public/config.js
