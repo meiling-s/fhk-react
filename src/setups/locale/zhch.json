@@ -594,7 +594,8 @@
       "confirm": "启用",
       "suspend": "未启用",
       "closed": "已停用",
-      "deactivated_reason": "停用原因”"
+      "deactivated_reason": "停用原因”",
+      "companyImgLogo": "*您最多可以上传 1 张公司徽标图片。要更改徽标，请先删除现有徽标。"
     }
   },
   "report": {
