@@ -12,6 +12,7 @@ export type DisposalLocation = {
     updatedBy: string;
     createdAt: string;
     updatedAt: string;
+    version: number;
   };
   
   export type CreateDisposalLocation = {
@@ -38,5 +39,6 @@ export type DisposalLocation = {
     remark: string;
     status: string;
     updatedBy?: string;
+    version: number;
   };
   

@@ -60,6 +60,7 @@ import CustomItemList from '../../../../components/FormComponents/CustomItemList
 import {
   displayCreatedDate,
   extractError,
+  showErrorToast,
   validDayjsISODate
 } from '../../../../utils/utils'
 
@@ -640,7 +641,8 @@ function CreateCollectionPoint() {
           normalFlg: true,
           updatedBy: loginId,
           colPtRecyc: recyclables,
-          roster: []
+          roster: [],
+          version: colInfo.version
         }
         const result = await updateCollectionPoint(colInfo.colId, cp)
         const data = result?.data
@@ -657,6 +659,8 @@ function CreateCollectionPoint() {
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
       }
     }
   }

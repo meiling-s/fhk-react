@@ -637,65 +637,83 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleEditStaff = async () => {
-    const editData: EditStaff = {
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'ACTIVE',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      updatedBy: loginName,
-      version: version
-    }
-
-    if (realm === Realm.collector) {
-      editData.fullTimeFlg = contractType === 0 ? true : false
-    }
-
-    if (validation.length == 0) {
-      if (selectedItem != null) {
-        const result = await editStaff(editData, selectedItem.staffId)
-        if (result?.status === 200) {
-          onSubmitData()
-          resetFormData()
-          handleDrawerClose()
-          showSuccessToast(t('notify.SuccessEdited'))
-        } else if (result?.status === 500) {
-          showErrorToast(result?.data?.message)
-        }
+    try {
+      const editData: EditStaff = {
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'ACTIVE',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        updatedBy: loginName,
+        version: version
       }
-    } else {
-      setTrySubmited(true)
-      showErrorToast(t('notify.errorEdited'))
+  
+      if (realm === Realm.collector) {
+        editData.fullTimeFlg = contractType === 0 ? true : false
+      }
+  
+      if (validation.length == 0) {
+        if (selectedItem != null) {
+          const result = await editStaff(editData, selectedItem.staffId)
+          if (result?.status === 200) {
+            onSubmitData()
+            resetFormData()
+            handleDrawerClose()
+            showSuccessToast(t('notify.SuccessEdited'))
+          } else if (result?.status === 500) {
+            showErrorToast(result?.data?.message)
+          }
+        }
+      } else {
+        setTrySubmited(true)
+        showErrorToast(t('notify.errorEdited'))
+      }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message)
+      }
     }
   }
 
   const handleDelete = async () => {
-    const editData: EditStaff = {
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'DELETED',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      updatedBy: loginName,
-      version: version
-    }
-    if (selectedItem != null) {
-      const result = await editStaff(editData, selectedItem.staffId)
-      if (result) {
-        onSubmitData()
-        resetFormData()
-        handleDrawerClose()
-        showSuccessToast(t('notify.successDeleted'))
+    try {
+      const editData: EditStaff = {
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'DELETED',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        updatedBy: loginName,
+        version: version
+      }
+      if (selectedItem != null) {
+        const result = await editStaff(editData, selectedItem.staffId)
+        if (result) {
+          onSubmitData()
+          resetFormData()
+          handleDrawerClose()
+          showSuccessToast(t('notify.successDeleted'))
+        }
+      }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message)
       }
     }
   }

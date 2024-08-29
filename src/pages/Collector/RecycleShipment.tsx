@@ -53,7 +53,8 @@ import {
   extractError,
   getPrimaryColor,
   showSuccessToast,
-  debounce
+  debounce,
+  showErrorToast
 } from '../../utils/utils'
 import { useTranslation } from 'react-i18next'
 import { queryCheckIn } from '../../interfaces/checkin'
@@ -141,6 +142,8 @@ type rejectForm = {
   checkedShipments: number[]
   onRejected?: () => void
   reasonList: any
+  checkInData: CheckIn[]
+  navigate: (url: string) => void
 }
 
 function RejectForm({
@@ -148,7 +151,9 @@ function RejectForm({
   onClose,
   checkedShipments,
   onRejected,
-  reasonList
+  reasonList,
+  checkInData,
+  navigate,
 }: rejectForm) {
   const { t } = useTranslation()
 
@@ -162,15 +167,17 @@ function RejectForm({
       return reasonItem ? reasonItem.name : ''
     })
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-    const statReason: updateStatus = {
-      status: 'REJECTED',
-      reason: rejectReason,
-      updatedBy: loginId
-    }
 
     const results = await Promise.allSettled(
       checkedShipments.map(async (checkInId) => {
+        const selected = checkInData.find(value => value.chkInId === checkInId)
         try {
+          const statReason: updateStatus = {
+            status: 'REJECTED',
+            reason: rejectReason,
+            updatedBy: loginId,
+            version: selected?.version ?? 0
+          }
           const result = await updateCheckinStatus(checkInId, statReason)
           const data = result?.data
           if (data) {
@@ -179,11 +186,13 @@ function RejectForm({
               onRejected()
             }
           }
-        } catch (error) {
-          console.error(
-            `Failed to update check-in status for id ${checkInId}: `,
-            error
-          )
+        } catch (error: any) {
+          const { state } = extractError(error)
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]) {
+            showErrorToast(error?.response?.data?.message)
+          }
         }
       })
     )
@@ -253,6 +262,8 @@ type ApproveForm = {
   onClose: () => void
   checkedCheckIn: number[]
   onApprove?: () => void
+  checkInData: CheckIn[]
+  navigate: (url: string) => void
 }
 
 interface CheckInDetail {
@@ -276,21 +287,26 @@ const ApproveModal: React.FC<ApproveForm> = ({
   open,
   onClose,
   checkedCheckIn,
-  onApprove
+  onApprove,
+  checkInData,
+  navigate
+
 }) => {
   const { t } = useTranslation()
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
-    const statReason: updateStatus = {
-      status: 'CONFIRMED',
-      reason: confirmReason,
-      updatedBy: loginId
-    }
 
     const results = await Promise.allSettled(
       checkedCheckIn.map(async (checkInId) => {
+        const selected = checkInData.find(value => value.chkInId === checkInId)
         try {
+          const statReason: updateStatus = {
+            status: 'CONFIRMED',
+            reason: confirmReason,
+            updatedBy: loginId,
+            version: selected?.version ?? 0
+          }
           const result = await updateCheckinStatus(checkInId, statReason)
           const data = result?.data
           if (data) {
@@ -318,11 +334,13 @@ const ApproveModal: React.FC<ApproveForm> = ({
               onApprove()
             }
           }
-        } catch (error) {
-          console.error(
-            `Failed to update check-in status for id ${checkInId}: `,
-            error
-          )
+        } catch (error: any) {
+          const { state } = extractError(error)
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]) {
+            showErrorToast(error?.response?.data?.message)
+          }
         }
       })
     )
@@ -1008,7 +1026,7 @@ function ShipmentManage() {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={() => {}}>
+                  <IconButton onClick={() => { }}>
                     <SEARCH_ICON style={{ color: primaryColor }} />
                   </IconButton>
                 </InputAdornment>
@@ -1089,15 +1107,13 @@ function ShipmentManage() {
                   getRowSpacing={getRowSpacing}
                   localeText={localeTextDataGrid}
                   getRowClassName={(params) =>
-                    `${
-                      selectedRow && params.row.chkInId === selectedRow.chkInId
-                        ? 'selected-row '
-                        : ''
-                    }${
-                      selectedCheckin &&
+                    `${selectedRow && params.row.chkInId === selectedRow.chkInId
+                      ? 'selected-row '
+                      : ''
+                    }${selectedCheckin &&
                       selectedCheckin.includes(params.row.chkInId)
-                        ? 'checked-row'
-                        : ''
+                      ? 'checked-row'
+                      : ''
                     }`
                   }
                   sx={{
@@ -1147,6 +1163,8 @@ function ShipmentManage() {
             setRejectModal(false)
           }}
           onRejected={onRejectCheckin}
+          checkInData={checkInRequest ?? []}
+          navigate={navigate}
         />
 
         <ApproveModal
@@ -1161,6 +1179,8 @@ function ShipmentManage() {
             // setConfirmModal(true)
           }}
           checkedCheckIn={selectedCheckin}
+          checkInData={checkInRequest ?? []}
+          navigate={navigate}
         />
         <ConfirmModal open={confirmModal} onClose={resetPage} />
       </Box>

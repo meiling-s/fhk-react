@@ -54,7 +54,8 @@ import {
   extractError,
   getPrimaryColor,
   showSuccessToast,
-  debounce
+  debounce,
+  showErrorToast
 } from '../../../utils/utils'
 import CustomButton from '../../../components/FormComponents/CustomButton'
 import i18n from '../../../setups/i18n'
@@ -80,6 +81,8 @@ type ApproveForm = {
   onClose: () => void
   checkedCheckOut: number[]
   onApprove?: () => void
+  checkOutData: CheckOut[]
+  navigate: (url: string) => void
 }
 
 type RejectForm = {
@@ -88,6 +91,8 @@ type RejectForm = {
   checkedCheckOut: number[]
   onRejected?: () => void
   reasonList: any
+  checkOutData: CheckOut[]
+  navigate: (url: string) => void
 }
 
 type Confirm = {
@@ -138,21 +143,25 @@ const ApproveModal: React.FC<ApproveForm> = ({
   open,
   onClose,
   checkedCheckOut,
-  onApprove
+  onApprove,
+  checkOutData,
+  navigate,
 }) => {
   const { t } = useTranslation()
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const handleApproveRequest = async () => {
     const confirmReason: string[] = ['Confirmed']
-    const statReason: updateStatus = {
-      status: 'CONFIRMED',
-      reason: confirmReason,
-      updatedBy: loginId
-    }
-
+    
     const results = await Promise.allSettled(
       checkedCheckOut.map(async (chkOutId) => {
+        const selected = checkOutData.find(value => value.chkOutId === chkOutId)
         try {
+          const statReason: updateStatus = {
+            status: 'CONFIRMED',
+            reason: confirmReason,
+            updatedBy: loginId,
+            version: selected?.version ?? 0
+          }
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
@@ -178,11 +187,13 @@ const ApproveModal: React.FC<ApproveForm> = ({
               onApprove()
             }
           }
-        } catch (error) {
-          console.error(
-            `Failed to update check-in status for id ${chkOutId}: `,
-            error
-          )
+        } catch (error: any) {
+          const { state } = extractError(error)
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]) {
+            showErrorToast(error?.response?.data?.message)
+          }
         }
       })
     )
@@ -244,7 +255,9 @@ const RejectModal: React.FC<RejectForm> = ({
   onClose,
   checkedCheckOut,
   onRejected,
-  reasonList
+  reasonList,
+  checkOutData,
+  navigate
 }) => {
   const { t } = useTranslation()
   const [rejectReasonId, setRejectReasonId] = useState<string[]>([])
@@ -257,15 +270,17 @@ const RejectModal: React.FC<RejectForm> = ({
       return reasonItem ? reasonItem.name : ''
     })
     const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-    const statReason: updateStatus = {
-      status: 'REJECTED',
-      reason: rejectReason,
-      updatedBy: loginId
-    }
-
+    
     const results = await Promise.allSettled(
       checkedCheckOut.map(async (chkOutId) => {
+        const selected = checkOutData.find(value => value.chkOutId === chkOutId)
         try {
+          const statReason: updateStatus = {
+            status: 'REJECTED',
+            reason: rejectReason,
+            updatedBy: loginId,
+            version: selected?.version ?? 0
+          }
           const result = await updateCheckoutRequestStatus(chkOutId, statReason)
           const data = result?.data
           if (data) {
@@ -273,11 +288,13 @@ const RejectModal: React.FC<RejectForm> = ({
               onRejected()
             }
           }
-        } catch (error) {
-          console.error(
-            `Failed to update check-in status for id ${chkOutId}: `,
-            error
-          )
+        } catch (error: any) {
+          const { state } = extractError(error)
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]) {
+            showErrorToast(error?.response?.data?.message)
+          }
         }
       })
     )
@@ -1021,6 +1038,8 @@ const CheckoutRequest: FunctionComponent = () => {
           resetPage()
           // setConfirmModal(true)
         }}
+        checkOutData={checkOutRequest ?? []}
+        navigate={navigate}
       />
       <ApproveModal
         open={approveModal}
@@ -1034,6 +1053,8 @@ const CheckoutRequest: FunctionComponent = () => {
           // setConfirmModal(true)
         }}
         checkedCheckOut={checkedCheckOut}
+        checkOutData={checkOutRequest ?? []}
+        navigate={navigate}
       />
       <ConfirmModal open={confirmModal} onClose={resetPage} />
       <CheckInDetails
