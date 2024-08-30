@@ -59,6 +59,7 @@ export const createStaff = async (data: any) => {
 export const editStaff = async (data: any, staffId: string) => {
   try {
     const token = returnApiToken()
+    console.log(token, 'token')
 
     const response = await axiosInstance({
         baseURL: window.baseURL.collector,
@@ -67,7 +68,7 @@ export const editStaff = async (data: any, staffId: string) => {
     })
     return response
   } catch (e: any) {
-    return e.response
+    throw (e)
   }
 }
 

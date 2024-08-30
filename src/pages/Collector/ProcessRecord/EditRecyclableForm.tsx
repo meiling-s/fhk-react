@@ -46,6 +46,7 @@ type createRecyclable = {
   processoutDetailPhoto: processOutImage[]
   createdBy: string
   updatedBy: string
+  version: number
 }
 
 type RecycItem = {
@@ -56,6 +57,7 @@ type RecycItem = {
   weight: number
   images: string[]
   unitId?: string
+  version: number
 }
 interface EditProcessRecordProps {
   drawerOpen: boolean
@@ -180,7 +182,8 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
       status: "ACTIVE",
       processoutDetailPhoto: imgItems,
       createdBy: loginId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      version: editedData?.version ?? 0
     }
 
     if (validation.length === 0) {

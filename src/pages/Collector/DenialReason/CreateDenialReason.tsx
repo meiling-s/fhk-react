@@ -460,7 +460,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         remark: formData.remark,
         updatedBy: loginName,
         ...(isCollectors() && { weatherFlg: weatherFlg }),
-        ...(role === 'logistic' && {version: version})
+        ...(role === 'logistic' && {version: version}),
+        ...(role === 'collector' && {version: version})
       }
       if (validation.length === 0) {
         if (selectedItem != null) {
@@ -490,7 +491,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[500]) {
+      } else if (state.code === STATUS_CODE[409]) {
         showErrorToast(error?.response?.data?.message)
       }
     }

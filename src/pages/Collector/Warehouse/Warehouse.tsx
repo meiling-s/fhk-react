@@ -47,6 +47,7 @@ interface Warehouse {
   contractNo: string[]
   status: string
   warehouseRecyc: RecyleItem[]
+  version: number
 }
 
 type TableRow = {
@@ -256,7 +257,8 @@ const Warehouse: FunctionComponent = () => {
       physicalFlg: warehouse.physicalFlg ? t('yes') : t('no'),
       status: warehouse.status,
       contractNo: warehouse.contractNo,
-      warehouseRecyc: recyleType
+      warehouseRecyc: recyleType,
+      version: warehouse.version
     }
   }
 

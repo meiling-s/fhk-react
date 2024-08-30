@@ -334,7 +334,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       navigate('/maintenance')
     } else {
       setTrySubmited(true)
-      if(error?.response?.data?.status === STATUS_CODE[500]){
+      if(error?.response?.data?.status === STATUS_CODE[409]){
         showErrorToast(error?.response?.data?.message);
       }
     }

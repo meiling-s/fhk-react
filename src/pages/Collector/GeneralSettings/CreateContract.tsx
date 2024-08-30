@@ -277,7 +277,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else if (state.code === STATUS_CODE[500]){
+      } else if (state.code === STATUS_CODE[409]){
         showErrorToast(error.response.data.message);
       }
     }

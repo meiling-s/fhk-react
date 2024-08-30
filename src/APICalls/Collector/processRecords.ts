@@ -110,8 +110,7 @@ export const editProcessRecordItem = async (
 
     return response
   } catch (e) {
-    console.error('create process item failed:', e)
-    return null
+    throw (e)
   }
 }
 
@@ -128,8 +127,7 @@ export const deleteProcessOutRecord = async (
 
     return response
   } catch (e) {
-    console.error('deleteProcessOutRecord failed:', e)
-    return null
+    return e
   }
 }
 

@@ -10,7 +10,7 @@ import {
   editDisposalLocation,
   createDisposalLocation
 } from '../../../APICalls/Collector/disposalLocation'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import {
   DisposalLocation,
@@ -288,7 +288,8 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
       remark: formData.remark,
       updatedBy: loginName,
       location: '',
-      locationGps: []
+      locationGps: [],
+      version: selectedItem?.version ?? 0
     }
     if (validation.length == 0) {
       if (selectedItem != null) {
@@ -309,6 +310,8 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     const {state} =  extractError(error);
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
+    } else if (state.code === STATUS_CODE[409]) {
+      showErrorToast(error.response.data.message)
     }
    }
   }
@@ -325,7 +328,8 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
       remark: formData.remark,
       updatedBy: loginName,
       location: '',
-      locationGps: []
+      locationGps: [],
+      version: selectedItem?.version ?? 0
     }
     if (selectedItem != null) {
       const result = await editDisposalLocation(
@@ -342,6 +346,8 @@ const DisposalLocationDetail: FunctionComponent<CreateDisposalLocation> = ({
     const {state} =  extractError(error);
     if(state.code === STATUS_CODE[503] ){
       navigate('/maintenance')
+    } else if (state.code === STATUS_CODE[409]) {
+      showErrorToast(error.response.data.message)
     }
    }
   }

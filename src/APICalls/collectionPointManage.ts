@@ -71,7 +71,7 @@ export const updateCollectionPoint = async (collectionPointId: string, data: upd
   const auth = returnApiToken()
   const tenantId = auth.tenantId
   const axiosConfig = Object.assign({}, UPDATE_COLLECTIONPOINT);
-  axiosConfig.url = UPDATE_COLLECTIONPOINT.url + `/${tenantId}/${collectionPointId}`;
+  axiosConfig.url = UPDATE_COLLECTIONPOINT.url + `/V2/${tenantId}/${collectionPointId}`;
 
   try {
     const response = await axiosInstance({
