@@ -298,7 +298,7 @@ const CreatePackagingUnit: FunctionComponent<CreatePackagingProps> = ({
       //   ]
       // )
       // setTrySubmited(true)
-      if (state.code === 500) {
+      if (state.code === 409) {
         showErrorToast(error?.response?.data?.message);
       }
     }

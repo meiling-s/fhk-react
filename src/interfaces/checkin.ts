@@ -147,7 +147,8 @@ export type CheckIn = {
     createdAt: string;
     updatedAt: string;
     recipientCompany?: string;
-    deliveryAddress?: string
+    deliveryAddress?: string;
+    version: number;
   }
   
   export type queryCheckIn = {
