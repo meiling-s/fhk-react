@@ -4,7 +4,7 @@ export type InventoryDetail = {
     sourcePicoDtlId: number
 }
 
-export type InventoryItem = {
+export type git InventoryItem = {
     itemId: number
     warehouseId: number
     recyclingNumber?: string

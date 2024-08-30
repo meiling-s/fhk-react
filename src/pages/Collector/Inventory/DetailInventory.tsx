@@ -122,8 +122,8 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
           anchor={'right'}
           action={'none'}
           headerProps={{
-            title: t('recyclables'),
-            subTitle: selectedRow?.recyName,
+            title: t('inventory.recyclingNumber'),
+            subTitle: `${selectedRow?.itemId}`,
             onCloseHeader: handleDrawerClose
           }}
         >
