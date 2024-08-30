@@ -71,6 +71,7 @@ interface VehicleDataProps {
   vehicleTypeNameSchi: string
   vehicleTypeNameTchi: string
   vehicleTypeLimit: string
+  version: number
 }
 
 const Vehicle: FunctionComponent = () => {

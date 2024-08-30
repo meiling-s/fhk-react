@@ -71,6 +71,7 @@ interface recyleTypeData {
     updatedAt: string
     updatedBy: string
     recycSubTypeId: string
+    version: number
 }
 
 interface RecyclingFormatProps {
@@ -106,17 +107,18 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         { contractNo: string; isEpd: boolean; frmDate: string; toDate: string }[]
     >([])
     const [pysicalLocation, setPysicalLocation] = useState<boolean>(false) // pysical location field
-    const [status, setStatus] = useState(true) // status field
-    const [trySubmited, setTrySubmitted] = useState(false)
-    const [tChineseName, setTChineseName] = useState('')
-    const [sChineseName, setSChineseName] = useState('')
-    const [englishName, setEnglishName] = useState('')
-    const [description, setDescription] = useState('')
-    const [remark, setRemark] = useState('')
-    const [isMainCategory, setMainCategory] = useState(true)
-    const [chosenRecyclableType, setChosenRecyclableType] = useState('')
-    const [subTypeId, setSubTypeId] = useState('')
-    const [mainTypeId, setMainTypeId] = useState('')
+    const [status, setStatus] = useState<boolean>(true) // status field
+    const [trySubmited, setTrySubmitted] = useState<boolean>(false)
+    const [tChineseName, setTChineseName] = useState<string>('')
+    const [sChineseName, setSChineseName] = useState<string>('')
+    const [englishName, setEnglishName] = useState<string>('')
+    const [description, setDescription] = useState<string>('')
+    const [remark, setRemark] = useState<string>('')
+    const [isMainCategory, setMainCategory] = useState<boolean>(true)
+    const [chosenRecyclableType, setChosenRecyclableType] = useState<string>('')
+    const [subTypeId, setSubTypeId] = useState<string>('')
+    const [mainTypeId, setMainTypeId] = useState<string>('')
+    const [version, setVersion] = useState<number>(0)
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
     const navigate = useNavigate();
@@ -135,6 +137,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         if (action === 'edit') {
             setTrySubmitted(false)
             if (selectedItem !== null && selectedItem !== undefined) {
+                console.log(selectedItem, 'selected')
                 if (!mainCategory) {
                     const parentData = recyclableType.find(value => value.recycSubType.some(subType => subType.recycSubTypeId === selectedItem.recycSubTypeId));
                     setSubTypeId(selectedItem.recycSubTypeId);
@@ -148,6 +151,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 setDescription(selectedItem.description);
                 setRemark(selectedItem.remark);
                 setMainCategory(mainCategory);
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm();
@@ -236,7 +240,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         
         const recyclingForm = {
             status: 'INACTIVE',
-            updatedBy: token.loginId
+            updatedBy: token.loginId,
+            version: version
         }
 
         try {
@@ -256,12 +261,11 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             }
         } catch (error:any) {
             const {state} =  extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('notify.errorDeleted'))
-            }
+              } else if (state.code === STATUS_CODE[409]){
+                showErrorToast(error.response.data.message);
+              }
            
         }
     }
@@ -278,6 +282,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             status: 'ACTIVE',
             createdBy: loginId,
             updatedBy: loginId,
+            ...(action === 'edit' && {version: version})
         }
 
         const isError = validation.length == 0
@@ -320,7 +325,6 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const editRecycData = async (addRecyclingForm: any) => {
         try {
             if (isMainCategory) {
-                console.log(mainTypeId, 'aaa')
                 const response = await updateRecyc(addRecyclingForm, mainTypeId)
                 if (response) {
                     showSuccessToast(t('notify.SuccessEdited'))
@@ -335,12 +339,11 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             }
         } catch (error:any) {
             const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('errorCreated.errorCreated'))
-            }
+              } else if (state.code === STATUS_CODE[409]){
+                showErrorToast(error.response.data.message);
+              }
             
         }
     }

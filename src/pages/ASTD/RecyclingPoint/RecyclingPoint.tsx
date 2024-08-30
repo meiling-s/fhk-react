@@ -73,6 +73,7 @@ interface siteTypeDataProps {
   status: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface engineDataProps {
@@ -90,6 +91,7 @@ interface engineDataProps {
   status: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 const RecyclingPoint: FunctionComponent = () => {

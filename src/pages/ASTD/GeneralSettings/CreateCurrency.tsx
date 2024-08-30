@@ -24,6 +24,7 @@ interface CurrencyListProps {
   status: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface CreateCurrencyProps {
@@ -48,6 +49,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<{field: string; error: string}[]>([])
   const [showError, setShowError] = useState<boolean>(false)
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate();
   
   useEffect (() => {
@@ -58,6 +60,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         setMonetary(selectedItem.monetary)
         setRemark(selectedItem.remark)
         setDescription(selectedItem.description)
+        setVersion(selectedItem.version)
       }
     }
   }, [selectedItem, action, drawerOpen])
@@ -66,6 +69,7 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
     setMonetary('')
     setRemark('')
     setDescription('')
+    setVersion(0)
   }
 
   const checkString = (s: string) => {
@@ -81,7 +85,8 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
     const token = returnApiToken()
     const currencyForm = {
       status: 'INACTIVE',
-      updatedBy: token.loginId
+      updatedBy: token.loginId,
+      version: version
     }
     if (selectedItem !== null && selectedItem !== undefined ) {
       try {
@@ -92,14 +97,12 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
           resetData()
         }
       } catch (error:any) {
-        console.error(error)
         const {state} =  extractError(error);
-        if(state.code === STATUS_CODE[503] ){
+        if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
-        } else {
-          showErrorToast(t('notify.errorDeleted'))
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
         }
-       
       }
     }
   }
@@ -113,7 +116,8 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
       remark: remark,
       status: selectedItem?.status ?? 'ACTIVE',
       createdBy: loginId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      ...(action === 'edit' && {version: version})
     }
     if (isInputFieldsEmpty()){
       setShowError(true)
@@ -135,7 +139,6 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         resetData()
       }
     } catch (error:any) {
-      console.error(error)
       const {state} = extractError(error);
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
@@ -156,12 +159,11 @@ const CreateCurrency: FunctionComponent<CreateCurrencyProps> = ({
         resetData()
       }
     } catch (error:any) {
-      console.error(error)
       const {state} =  extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else {
-        showErrorToast(t('errorCreated.errorEdited'))
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
       }
     }
    }
