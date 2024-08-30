@@ -594,7 +594,8 @@
       "confirm": "ACTIVATE",
       "suspend": "SUSPEND",
       "closed": "DEACTIVATE",
-      "deactivated_reason": "Deactivated Reason(s)"
+      "deactivated_reason": "Deactivated Reason(s)",
+      "companyImgLogo": "*You can upload max 1 image for company logo. To change the logo, please remove the existing one first."
     }
   },
   "report": {

@@ -6,11 +6,11 @@ import {
   Roles,
   Realm,
   RealmApi,
-  STATUS_CODE
+  STATUS_CODE,
+  fieldNameRecycables
 } from '../constants/constant'
 import dayjs, { Dayjs } from 'dayjs'
 import { toast } from 'react-toastify'
-import { fieldNameRecycables } from '../constants/constant'
 import { errorState } from '../interfaces/common'
 import i18n from '../setups/i18n'
 import { recycType } from '../interfaces/common'
