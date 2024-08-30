@@ -59,7 +59,7 @@ export const editContract = async (data: CreateContract) => {
     return response
   } catch (e) {
     console.error('Create a contract failed:', e)
-    throw(e)
+    return e
   }
 }
 

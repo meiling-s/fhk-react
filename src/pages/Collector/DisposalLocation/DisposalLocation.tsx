@@ -37,7 +37,8 @@ function createDisposalLocation(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  version: number
 ): DisposalLocationItem {
   return {
     disposalLocId,
@@ -52,7 +53,8 @@ function createDisposalLocation(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    version
   }
 }
 
@@ -97,7 +99,8 @@ const DisposalLocation: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              item?.updatedAt,
+              item?.version
             )
           )
         })

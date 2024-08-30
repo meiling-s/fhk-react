@@ -72,6 +72,7 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const [existingEmail, setExistingEmail] = useState<string[]>([])
   const [showModalConfirm, setShowModalConfirm] = useState(false)
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate()
 
   const staffField = [
@@ -189,6 +190,7 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
         titleId: selectedItem.titleId
       })
       setSelectedLoginId(selectedItem.loginId)
+      setVersion(selectedItem.version)
     }
   }
 
@@ -293,7 +295,7 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
     email: formData.email,
     salutation: 'salutation',
     createdBy: loginName,
-    updatedBy: loginName
+    updatedBy: loginName,
   })
 
   const handleCreateOrEditStaff = () => {
@@ -357,7 +359,8 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
       gender: 'M',
       email: formData.email,
       salutation: 'salutation',
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: version,
     }
     if (validation.length == 0) {
       if (selectedItem != null) {
@@ -388,7 +391,8 @@ const StaffManufacturerDetails: FunctionComponent<CreateVehicleProps> = ({
       gender: 'M',
       email: formData.email,
       salutation: 'salutation',
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: version,
     }
     if (selectedItem != null) {
       const result = await updateUserManufacturer(

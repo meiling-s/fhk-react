@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { createStaffTitle, editStaffTitle } from '../../../APICalls/Collector/staffTitle'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import { StaffTitle, CreateStaffTitle as CreateStaffTitleItem, UpdateStaffTitle } from '../../../interfaces/staffTitle'
 import { useNavigate } from 'react-router-dom'
@@ -242,30 +242,41 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
     }
    } catch (error:any) {
     const {state} =  extractError(error)
-      if(state.code === STATUS_CODE[503] ){
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message)
       }
-   }
+    }
   }
 
   const handleDelete = async () => {
-    const editData: UpdateStaffTitle = {
-      titleId: selectedItem?.titleId || '',
-      titleNameTchi: formData.titleNameTchi,
-      titleNameSchi: formData.titleNameSchi,
-      titleNameEng: formData.titleNameEng,
-      description: formData.description,
-      duty: [formData.duty],
-      status: 'DELETED',
-      remark: formData.remark,
-      updatedBy: loginName
-    }
-    if (selectedItem != null) {
-      const result = await editStaffTitle(selectedItem.titleId, editData)
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+      const editData: UpdateStaffTitle = {
+        titleId: selectedItem?.titleId || '',
+        titleNameTchi: formData.titleNameTchi,
+        titleNameSchi: formData.titleNameSchi,
+        titleNameEng: formData.titleNameEng,
+        description: formData.description,
+        duty: [formData.duty],
+        status: 'DELETED',
+        remark: formData.remark,
+        updatedBy: loginName
+      }
+      if (selectedItem != null) {
+        const result = await editStaffTitle(selectedItem.titleId, editData)
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        }
+      }
+    } catch (error: any) {
+      const {state} =  extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message)
       }
     }
   }

@@ -20,6 +20,7 @@ import {
   extractError,
   getPrimaryColor,
   returnErrorMsg,
+  showErrorToast,
   validDayjsISODate
 } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
@@ -70,6 +71,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
   const [whether, setWhether] = useState(false)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+  const [version, setVersion] = useState<number>(0)
   const [existingContract, setExistingContract] = useState<Contract[]>([])
   const { dateFormat } = useContainer(CommonTypeContainer)
   const navigate = useNavigate()
@@ -78,6 +80,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
     resetData()
     if (action === 'edit') {
       if (selectedItem !== null && selectedItem !== undefined) {
+        console.log(selectedItem, 'item')
         setContractNo(selectedItem?.contractNo)
         setReferenceNumber(selectedItem?.parentContractNo)
         setContractStatus(selectedItem?.status === 'ACTIVE' ? true : false)
@@ -85,6 +88,7 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
         setEndDate(dayjs(selectedItem?.contractToDate))
         setRemark(selectedItem?.remark)
         setWhether(selectedItem?.epdFlg)
+        setVersion(selectedItem?.version ?? 0)
 
         setExistingContract(
           contractList.filter(
@@ -204,7 +208,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       remark: remark,
       epdFlg: whether,
       createdBy: loginId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      ...(action === 'edit' && {version: version})
     }
 
     if (action == 'add') {
@@ -272,23 +277,8 @@ const CreateContract: FunctionComponent<CreateVehicleProps> = ({
       const { state, realm } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else {
-        let field = t('common.saveFailed');
-        let problem = ''
-        if(error?.response?.data?.status === STATUS_CODE[500]){
-          field = t('general_settings.contract_number')
-          problem = formErr.alreadyExist
-        } 
-        setValidation(
-          [
-            {
-              field,
-              problem,
-              type: 'error'
-            }
-          ]
-        )
-        setTrySubmited(true)
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
       }
     }
   }

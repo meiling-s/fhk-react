@@ -23,7 +23,8 @@ import {
   createWarehouse,
   getWarehouseById,
   editWarehouse,
-  getRecycleType
+  getRecycleType,
+  editWarehouseStatus
 } from '../../../APICalls/warehouseManage'
 import { getLocation } from '../../../APICalls/getLocation'
 import { getCommonTypes } from '../../../APICalls/commonManage'
@@ -148,6 +149,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     recyleTypeOption[]
   >([])
   const [existingWarehouse, setExisitingWarehouse] = useState<Warehouse[]>([])
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate()
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
 
@@ -260,6 +262,7 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         setExisitingWarehouse(
           warehouseList.filter((item) => item.id != warehouse.warehouseId)
         )
+        setVersion(warehouse.version)
       }
     } catch (error: any) {
       const { state } = extractError(error)
@@ -640,22 +643,37 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const editWarehouseData = async (addWarehouseForm: any, type: string) => {
     try {
-      const response = await editWarehouse(addWarehouseForm, rowId)
-      if (response) {
-        showSuccessToast(
-          type == 'edit'
-            ? t('common.editSuccessfully')
-            : t('common.deletedSuccessfully')
-        )
-        handleDrawerClose()
+      if (type === 'delete') {
+        const warehouseForm = {
+          status: "DELETED",
+          version: version
+        }
+        if (role === 'collector') {
+          const response = await editWarehouseStatus(warehouseForm, rowId)
+          if (response) {
+            showSuccessToast(t('common.deletedSuccessfully'))
+            handleDrawerClose()
+          }
+        } else {
+          const response = await editWarehouse(addWarehouseForm, rowId)
+          if (response) {
+            showSuccessToast(t('common.deletedSuccessfully'))
+            handleDrawerClose()
+          }
+        }
+      } else {
+        const response = await editWarehouse(addWarehouseForm, rowId)
+        if (response) {
+          showSuccessToast(t('common.editSuccessfully'))
+          handleDrawerClose()
+        }
       }
     } catch (error: any) {
-      showErrorToast(
-        type == 'edit' ? t('common.editFailed') : t('common.deleteFailed')
-      )
       const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
       }
     }
   }
@@ -681,7 +699,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       createdBy: 'string',
       updatedBy: 'string',
       warehouseRecyc: recycleCategory,
-      ...(role === 'collector' && { workshopFlg: workshopFlg })
+      ...(role === 'collector' && { workshopFlg: workshopFlg }),
+      ...(role === 'collector' && {version: version})
     }
 
     const isError = validation.length == 0
@@ -758,7 +777,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       status: 'DELETED',
       createdBy: 'string',
       updatedBy: 'string',
-      warehouseRecyc: recycleCategory
+      warehouseRecyc: recycleCategory,
+      version: version
     }
 
     editWarehouseData(deleteform, 'delete')

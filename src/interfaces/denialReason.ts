@@ -13,6 +13,7 @@ export type DenialReason = {
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
+  version: number;
 };
 
 export type CreateDenialReason = {
@@ -37,6 +38,7 @@ export type UpdateDenialReason = {
   functionId: string;
   status: string;
   updatedBy?: string;
+  version?: number;
 };
 
 
@@ -56,6 +58,7 @@ export type DenialReasonCollectors = {
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
+  version: number
 };
 
 export type CreateDenialReasonCollectors = {
@@ -70,6 +73,7 @@ export type CreateDenialReasonCollectors = {
   createdBy?: string;
   updatedBy?: string;
   weatherFlg: boolean;
+  version: number
 };
 
 export type UpdateDenialReasonCollectors = {
@@ -82,4 +86,5 @@ export type UpdateDenialReasonCollectors = {
   status: string;
   updatedBy?: string;
   weatherFlg: boolean;
+  version: number
 };

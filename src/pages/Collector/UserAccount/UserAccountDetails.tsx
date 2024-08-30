@@ -201,10 +201,7 @@ const UserAccountDetails: FunctionComponent<UserAccountDetailsProps> = ({
     prohibitedLoginId: string[]
   ) => {
     const lowerCaseLoginId = loginId?.toLowerCase()
-    return (
-      prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase()) ||
-      /admin/.test(loginId.toLocaleLowerCase())
-    )
+    return prohibitedLoginId.includes(lowerCaseLoginId.toLowerCase())
   }
 
   useEffect(() => {

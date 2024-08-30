@@ -58,6 +58,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const [validation, setValidation] = useState<formValidate[]>([])
+  const [version, setVersion] = useState<number>(0)
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
   const [functionList, setFunctionList] = useState<
@@ -186,6 +187,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         // description: selectedItem.description,
         remark: selectedItem.remark
       })
+      setVersion(selectedItem.version)
       //setStatus(selectedItem.status === 'ACTIVE' ? true : false)
     }
   }
@@ -340,7 +342,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         status: 'ACTIVE',
         //status: status ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
-        updatedBy: loginName
+        updatedBy: loginName,
+        version: version,
       }
       if (validation.length === 0) {
         if (selectedItem != null) {
@@ -377,7 +380,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       functionId: formData.functionId,
       status: 'DELETED',
       remark: formData.remark,
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: version,
     }
     if (selectedItem != null) {
       const result = await editDenialReason(selectedItem.reasonId, editData)

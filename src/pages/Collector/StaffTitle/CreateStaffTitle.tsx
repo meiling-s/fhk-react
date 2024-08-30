@@ -10,7 +10,7 @@ import {
   createStaffTitle,
   editStaffTitle
 } from '../../../APICalls/Collector/staffTitle'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import {
   StaffTitle,
@@ -62,6 +62,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
   const [engNameExisting, setEngNameExisting] = useState<string[]>([])
   const [schiNameExisting, setSchiNameExisting] = useState<string[]>([])
   const [tchiNameExisting, setTchiNameExisting] = useState<string[]>([])
+  const [version, setVersion] = useState<number>(0)
 
   const staffField = [
     {
@@ -116,6 +117,7 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
         remark: sanitizeString(selectedItem.remark)
       })
 
+      setVersion(selectedItem.version ?? 0)
       setEngNameExisting(
         engNameList.filter((item) => item != selectedItem.titleNameEng)
       )
@@ -311,7 +313,8 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       duty: [formData.duty],
       status: 'ACTIVE',
       remark: formData.remark,
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: version,
     }
     if (validation.length === 0) {
       if (selectedItem != null) {
@@ -331,16 +334,8 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       navigate('/maintenance')
     } else {
       setTrySubmited(true)
-      if(error?.response?.data?.status === STATUS_CODE[500]){
-        setValidation(
-          [
-            {
-              field: t('common.theNameAlreadyExist'),
-              problem: '',
-              type: 'error'
-            }
-          ]
-        )
+      if(error?.response?.data?.status === STATUS_CODE[409]){
+        showErrorToast(error?.response?.data?.message);
       }
     }
    }
@@ -356,7 +351,8 @@ const StaffTitleDetail: FunctionComponent<CreateStaffTitle> = ({
       duty: [formData.duty],
       status: 'DELETED',
       remark: formData.remark,
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: version,
     }
     if (selectedItem != null) {
       const result = await editStaffTitle(selectedItem.titleId, editData)

@@ -559,7 +559,7 @@
       "invite_success": "Success send invitation",
       "invite_failed": "Failed send invitation",
       "validaity_to_date": "Validity Date To",
-      "err_date":"Ensure the `Validity Date From` is not later than the `Validity Date To`",
+      "err_date": "Ensure the `Validity Date From` is not later than the `Validity Date To`",
       "err_duplicated": "Company number/Company name/Business Reg. No. already exist",
       "err_duplicated_br_no": "Business Reg. No. already exist",
       "err_duplicated_company_number": "Company number already exist",
@@ -594,7 +594,8 @@
       "confirm": "ACTIVATE",
       "suspend": "SUSPEND",
       "closed": "DEACTIVATE",
-      "deactivated_reason": "Deactivated Reason(s)"
+      "deactivated_reason": "Deactivated Reason(s)",
+      "companyImgLogo": "*You can upload max 1 image for company logo. To change the logo, please remove the existing one first."
     }
   },
   "report": {
@@ -1445,5 +1446,12 @@
     "place": "Place",
     "po_number": "Enter PO number",
     "jo_number": "Enter JO number"
+  },
+  "dashboardOverview": {
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "createdAt": "Checkout/in Datetime",
+    "shippingCompany": "Sender Company",
+    "inventoryLocation": "Sender Location"
   }
 }

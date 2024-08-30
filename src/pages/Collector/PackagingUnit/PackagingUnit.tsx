@@ -57,7 +57,8 @@ function createPackagingUnit(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  version: number,
 ): PackagingUnitItem {
   return {
     id,
@@ -72,7 +73,8 @@ function createPackagingUnit(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    version
   }
 }
 
@@ -128,7 +130,8 @@ const PackagingUnit: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              item?.updatedAt,
+              item?.version
             )
           )
 

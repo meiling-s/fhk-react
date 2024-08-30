@@ -74,11 +74,13 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const [vehicleWeight, setVehicleWeight] = useState<string>('')
   const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
+  const [version, setVersion] = useState<number>(0)
   const mappingData = () => {
     if (selectedItem != null) {
       setLicensePlate(selectedItem.plateNo)
       setVehicleTypeId(selectedItem.vehicleTypeId)
       setVehicleWeight(selectedItem.netWeight.toString())
+      setVersion(selectedItem.version)
 
       const imageList: any = selectedItem.photo.map(
         (url: string, index: number) => {
@@ -264,7 +266,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       createdBy: loginId,
       updatedBy: loginId,
       vehicleTypeId: vehicleTypeId,
-      netWeight: Number(vehicleWeight)
+      netWeight: Number(vehicleWeight),
+      ...(action === 'edit' && {version: version})
     }
     //console.log('iamge', ImageToBase64(pictures))
     if (action == 'add') {
@@ -305,6 +308,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const handleEditVehicle = async (formData: CreateLogisticVehicle) => {
     if (validation.length === 0) {
       if (selectedItem != null) {
+        console.log('hitt')
+        console.log(formData, 'form data')
         const result = await editVehicle(formData, selectedItem.vehicleId)
         if (result) {
           onSubmitData('success', t('common.editSuccessfully'))
@@ -318,9 +323,12 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleDelete = async () => {
-    const status = 'DELETED'
+    const formData = {
+      status: 'DELETED',
+      version: version,
+    }
     if (selectedItem != null) {
-      const result = await deleteVehicle(status, selectedItem.vehicleId)
+      const result = await deleteVehicle(formData, selectedItem.vehicleId)
       if (result) {
         onSubmitData('success', t('common.deletedSuccessfully'))
         resetData()

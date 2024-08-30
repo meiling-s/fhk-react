@@ -160,7 +160,8 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({
             senders: notif?.senders,
             receivers: notif?.receivers,
             updatedBy: notif?.updatedBy,
-            variables: notif?.variables
+            variables: notif?.variables,
+            version: notif?.version
           }
         })
         setCurrentLanguage(notif.lang)
@@ -242,18 +243,14 @@ const AppTemplate: FunctionComponent<TemplateProps> = ({
       showErrorToast(t('common.editFailed'))
       return
     } else {
-      const response = await updateNotifTemplate(
-        templateId,
-        notifTemplate,
-        realmApiRoute
-      )
-      if (response) {
+      const result = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
+      if (result?.response?.status === 500) {
+        showErrorToast(result.response.data.message);
+      } else {
         showSuccessToast(t('common.editSuccessfully'))
         setTimeout(() => {
           navigate(`/${realm}/notice`)
         }, 1000)
-      } else {
-        showErrorToast(t('common.editFailed'))
       }
     }
   }

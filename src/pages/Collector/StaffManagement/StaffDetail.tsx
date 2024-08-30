@@ -90,7 +90,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
     staffNameSchi: '',
     contactNo: '',
     email: '',
-    titleId: ''
+    titleId: '',
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [loginIdList, setLoginIdList] = useState<il_item[]>([])
@@ -106,6 +106,7 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   const [staffListExisting, setStaffListExisting] = useState<Staff[]>([])
   const [existingEmail, setExistingEmail] = useState<string[]>([])
   const [showModalConfirm, setShowModalConfirm] = useState(false)
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate()
 
   let staffField = [
@@ -220,7 +221,6 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         })
 
         setExistingEmail(tempEmail)
-        console.log('existing', existingEmail)
       }
     } catch (error: any) {
       const { state, realm } = extractError(error)
@@ -267,8 +267,9 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
         staffNameSchi: selectedItem.staffNameSchi,
         contactNo: selectedItem.contactNo,
         email: selectedItem.email,
-        titleId: selectedItem.titleId
+        titleId: selectedItem.titleId,
       })
+      setVersion(selectedItem.version)
       setSelectedLoginId(selectedItem.loginId)
       if (realm === Realm.collector && selectedItem?.fullTimeFlg) {
         setContractType(0)
@@ -636,61 +637,83 @@ const StaffDetail: FunctionComponent<CreateVehicleProps> = ({
   }
 
   const handleEditStaff = async () => {
-    const editData: EditStaff = {
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'ACTIVE',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      updatedBy: loginName
+    try {
+      const editData: EditStaff = {
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'ACTIVE',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        updatedBy: loginName,
+        version: version
+      }
+  
+      if (realm === Realm.collector) {
+        editData.fullTimeFlg = contractType === 0 ? true : false
+      }
+  
+      if (validation.length == 0) {
+        if (selectedItem != null) {
+          const result = await editStaff(editData, selectedItem.staffId)
+          if (result?.status === 200) {
+            onSubmitData()
+            resetFormData()
+            handleDrawerClose()
+            showSuccessToast(t('notify.SuccessEdited'))
+          } else if (result?.status === 500) {
+            showErrorToast(result?.data?.message)
+          }
+        }
+      } else {
+        setTrySubmited(true)
+        showErrorToast(t('notify.errorEdited'))
+      }
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message)
+      }
     }
+  }
 
-    if (realm === Realm.collector) {
-      editData.fullTimeFlg = contractType === 0 ? true : false
-    }
-
-    if (validation.length == 0) {
+  const handleDelete = async () => {
+    try {
+      const editData: EditStaff = {
+        staffNameTchi: formData.staffNameTchi,
+        staffNameSchi: formData.staffNameSchi,
+        staffNameEng: formData.staffNameEng,
+        titleId: formData.titleId,
+        contactNo: formData.contactNo,
+        loginId: formData.loginId,
+        status: 'DELETED',
+        gender: 'M',
+        email: formData.email,
+        salutation: 'salutation',
+        updatedBy: loginName,
+        version: version
+      }
       if (selectedItem != null) {
         const result = await editStaff(editData, selectedItem.staffId)
         if (result) {
           onSubmitData()
           resetFormData()
           handleDrawerClose()
-          showSuccessToast(t('notify.SuccessEdited'))
+          showSuccessToast(t('notify.successDeleted'))
         }
       }
-    } else {
-      setTrySubmited(true)
-      showErrorToast(t('notify.errorEdited'))
-    }
-  }
-
-  const handleDelete = async () => {
-    const editData: EditStaff = {
-      staffNameTchi: formData.staffNameTchi,
-      staffNameSchi: formData.staffNameSchi,
-      staffNameEng: formData.staffNameEng,
-      titleId: formData.titleId,
-      contactNo: formData.contactNo,
-      loginId: formData.loginId,
-      status: 'DELETED',
-      gender: 'M',
-      email: formData.email,
-      salutation: 'salutation',
-      updatedBy: loginName
-    }
-    if (selectedItem != null) {
-      const result = await editStaff(editData, selectedItem.staffId)
-      if (result) {
-        onSubmitData()
-        resetFormData()
-        handleDrawerClose()
-        showSuccessToast(t('notify.successDeleted'))
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message)
       }
     }
   }

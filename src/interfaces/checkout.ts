@@ -57,6 +57,7 @@ export type CheckOut = {
   updatedAt: string
   senderName?: string
   senderAddr?: string
+  version: number
 }
 
 export type queryCheckout = {

@@ -16,7 +16,7 @@ import {
 } from '../../../APICalls/Collector/denialReasonCollectors'
 import { styles } from '../../../constants/styles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import {
   DenialReason,
   CreateDenialReason,
@@ -64,6 +64,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   }
   const [formData, setFormData] = useState<FormValues>(initialFormValues)
   const [weatherFlg, setWeatherFlg] = useState<boolean>(true)
+  const [version, setVersion] = useState<number>(0)
   const [status, setStatus] = useState<boolean>(true)
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>('')
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
@@ -212,6 +213,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         //description: selectedItem.description,
         remark: selectedItem.remark
       })
+      setVersion(selectedItem.version ?? 0)
 
       //set weather Flag
       if (
@@ -457,7 +459,9 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         status: status === true ? 'ACTIVE' : 'INACTIVE',
         remark: formData.remark,
         updatedBy: loginName,
-        ...(isCollectors() && { weatherFlg: weatherFlg })
+        ...(isCollectors() && { weatherFlg: weatherFlg }),
+        ...(role === 'logistic' && {version: version}),
+        ...(role === 'collector' && {version: version})
       }
       if (validation.length === 0) {
         if (selectedItem != null) {
@@ -487,6 +491,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error?.response?.data?.message)
       }
     }
   }
@@ -506,7 +512,8 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
       functionId: formData.functionId,
       status: 'DELETED',
       remark: formData.remark,
-      updatedBy: loginName
+      updatedBy: loginName,
+      ...(role === 'logistic' && {version: version})
     }
     if (selectedItem != null) {
       const result = await editDenialReason(selectedItem.reasonId, editData)

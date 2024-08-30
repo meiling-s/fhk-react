@@ -59,6 +59,7 @@ export const createStaff = async (data: any) => {
 export const editStaff = async (data: any, staffId: string) => {
   try {
     const token = returnApiToken()
+    console.log(token, 'token')
 
     const response = await axiosInstance({
         baseURL: window.baseURL.collector,
@@ -66,9 +67,8 @@ export const editStaff = async (data: any, staffId: string) => {
       data: data
     })
     return response
-  } catch (e) {
-    console.error(`Edit staff ${staffId} failed:`, e)
-    return null
+  } catch (e: any) {
+    throw (e)
   }
 }
 
