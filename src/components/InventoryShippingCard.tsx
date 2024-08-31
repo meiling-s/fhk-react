@@ -1,10 +1,12 @@
-import { Box, Icon, Stack, Typography } from "@mui/material"
-import EastIcon from '@mui/icons-material/East';
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
-import { t } from "i18next";
-import dayjs from "dayjs";
-import { format } from "../constants/constant";
+import { Box, Icon, Stack, Typography } from '@mui/material'
+import EastIcon from '@mui/icons-material/East'
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined'
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
+import { t } from 'i18next'
+import dayjs from 'dayjs'
+import { format } from '../constants/constant'
 
 export interface ShippingDataType {
   senderName: string
@@ -18,86 +20,120 @@ export interface ShippingDataType {
   plateNo: string
 }
 
-const InventoryShippingCard = ({shippingData}: {shippingData: ShippingDataType[]}) => {
+const InventoryShippingCard = ({
+  shippingData
+}: {
+  shippingData: ShippingDataType[]
+}) => {
   return (
     <>
       {shippingData.map((shipping, index) => (
         <Stack
-          key={index}
+          key={shipping.picoId}
           borderColor="#e2e2e2"
           p={2}
           borderRadius="12px"
-          sx={{ borderWidth: '1px', borderStyle: 'solid'}}
+          sx={{ borderWidth: '1px', borderStyle: 'solid' }}
           mt={1}
           spacing={1}
         >
-          <Box display="flex">
-            <Typography style={localstyles.name}>
-              {shipping.senderName}
+          <Box display="flex" alignItems={'center'} className="po-number">
+            <Typography style={localstyles.name} width={'150px'}>
+              {t('pick_up_order.table.pico_id')}
             </Typography>
-            <Icon
-              sx={{
-                justifySelf: 'center',
-                display: 'flex',
-                mx: '5px',
-                color: '#acacac'
-              }}
-            >
-              <EastIcon />
-            </Icon>
-            <Typography style={localstyles.name}>
-              {shipping.receiverName}
+            <Typography style={{ ...localstyles.poNumber, marginLeft: '60px' }}>
+              {shipping.picoId}
             </Typography>
           </Box>
-          <Typography style={localstyles.poNumber}>
-            {shipping.picoId}
-          </Typography>
-          <Box>
-            <Box display='flex' alignItems={'center'}>
+          <Box display="flex" alignItems={'center'}>
+            <Box display="flex" width={'150px'} flexShrink={0}>
               <Icon
                 sx={{
                   justifySelf: 'center',
                   display: 'flex',
-                  mr: '10px',
+                  mr: '5px',
                   color: '#acacac'
                 }}
               >
                 <LocalShippingOutlinedIcon />
               </Icon>
-              <Typography style={localstyles.logisticName}>
-                {shipping.logisticName}
+              <Typography style={localstyles.mini_title}>
+                {t('check_out.logistic_company')}
               </Typography>
             </Box>
-            <Box display='flex' alignItems={'center'}>
+            <Box
+              ml={'60px'}
+              width={'400px'}
+              sx={{ overflowWrap: 'break-word' }}
+            >
+              <Typography style={localstyles.mini_value}>
+                {shipping?.logisticName}
+              </Typography>
+            </Box>
+          </Box>
+          <Box display="flex">
+            <Box display="flex" width={'150px'} flexShrink={0}>
               <Icon
                 sx={{
                   justifySelf: 'center',
                   display: 'flex',
-                  mr: '10px',
+                  mr: '5px',
                   color: '#acacac'
                 }}
               >
-                <LocationOnOutlinedIcon />
+                <Inventory2OutlinedIcon />
               </Icon>
-              <Typography style={localstyles.logisticName}>
-                {shipping.senderAddr}
+              <Typography style={localstyles.mini_title}>
+                {t('pick_up_order.card_detail.sender_and_receiver_company')}
               </Typography>
+            </Box>
+            <Box
+              ml={'60px'}
+              width={'400px'}
+              sx={{ overflowWrap: 'break-word' }}
+            >
+              <Typography
+                sx={{ overflowWrap: 'break-word' }}
+                style={localstyles.mini_value}
+              >
+                {shipping?.senderName} → {shipping?.receiverName}
+              </Typography>
+            </Box>
+          </Box>
+          <Box display="flex">
+            <Box display="flex" width={'150px'} height={'30px'} flexShrink={0}>
               <Icon
                 sx={{
                   justifySelf: 'center',
                   display: 'flex',
-                  mx: '5px',
+                  mr: '5px',
                   color: '#acacac'
                 }}
               >
-                <EastIcon />
+                <PlaceOutlinedIcon />
               </Icon>
-              <Typography style={localstyles.logisticName}>
-                {shipping.receiverAddr}
+              <Typography style={localstyles.mini_title}>
+                {t('pick_up_order.card_detail.sender_and_receiver_location')}
               </Typography>
             </Box>
+            <Box
+              ml={'60px'}
+              width={'400px'}
+              sx={{ overflowWrap: 'break-word' }}
+            >
+              <Typography style={localstyles.mini_value}>
+                {shipping?.senderAddr} → {shipping.receiverAddr}
+              </Typography>
+            </Box>
+          </Box>
+          <Box>
             <Box style={localstyles.informationContainer}>
-              <Typography style={localstyles.information}>{t('inventory.at')} {dayjs(new Date(shipping.pickupAt)).format(format.dateFormat1)} {t('inventory.handover')}【{shipping.driverName} {shipping.plateNo}】</Typography>
+              <Typography style={localstyles.information}>
+                {t('inventory.at')}{' '}
+                {dayjs(new Date(shipping.pickupAt)).format(format.dateFormat1)}{' '}
+                {t('inventory.handover')}【{shipping.driverName}{' '}
+                {shipping.plateNo}】
+              </Typography>
             </Box>
           </Box>
         </Stack>
@@ -111,7 +147,7 @@ export default InventoryShippingCard
 const localstyles = {
   name: {
     fontSize: 15,
-    fontWeight: 700,
+    fontWeight: 700
   },
   poNumber: {
     fontSize: 13,
@@ -133,5 +169,15 @@ const localstyles = {
     fontSize: 12,
     fontWeight: 400,
     color: '#79CA25'
+  },
+  mini_title: {
+    fontSize: '12px',
+    color: '#acacac',
+    letterSpacing: '1px'
+  },
+  mini_value: {
+    fontSize: '13px',
+    color: '#535353',
+    letterSpacing: '1px'
   }
 }
