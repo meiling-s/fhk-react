@@ -66,7 +66,8 @@ pipeline {
                 sh "${var_ScannerHome}/bin/sonar-scanner \
                 -Dsonar.host.url=http://sonarqube:9000 \
                 -Dsonar.token=${SONARQUBE_PWD} \
-                -Dsonar.projectKey=${var_SonarProjectKey}"
+                -Dsonar.projectKey=${var_SonarProjectKey} \
+                -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info"
               }
             }
           }
