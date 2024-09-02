@@ -197,7 +197,7 @@ export const GET_PICK_UP_ORDER_BY_ID = (
 
 export const GET_PICK_UP_ORDER_DETAIL: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/administrator/pico/details'
+  url: 'api/v1/administrator/pico/V2/details'
 }
 export const ADD_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'post',
@@ -264,15 +264,15 @@ export const GET_MANULIST = (
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',
-  url: 'api/v1/administrator/pico/new'
+  url: 'api/v1/administrator/pico/V3'
 }
 export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/v1/administrator/pico/status'
+  url: 'api/v1/administrator/pico/V2/status'
 }
 export const UPDATE_PICK_UP_ORDER_DETAIL_STATUS: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/v1/administrator/pico/detail/status'
+  url: 'api/v1/administrator/pico/V2/detail/status'
 }
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
@@ -1445,7 +1445,7 @@ export const UPDATE_PURCHASE_ORDER_STATUS = (
   poId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/po/${poId}`
+  url: `api/v1/administrator/po/V2/${poId}`
 })
 
 export const GET_ALL_REASON_MANUFACTURER = (
@@ -1563,7 +1563,7 @@ export const GET_IMG_SETTINGS = (tenantId: string): AxiosRequestConfig => ({
 
 export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/po/${poId}`
+  url: `api/v1/administrator/po/V3/${poId}`
 })
 
 export const GET_COLPOINTRECYCABLES_DASHBOARD = (

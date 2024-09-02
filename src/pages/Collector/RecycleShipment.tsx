@@ -314,14 +314,18 @@ const ApproveModal: React.FC<ApproveForm> = ({
 
             // Map over each item in checkinDetail
             data.checkinDetail.map(async (detail: any) => {
-              const dataCheckin: CheckInWarehouse = {
-                checkInWeight: detail.weight || 0,
-                checkInUnitId: detail.unitId || 0,
-                checkInAt: data.updatedAt || '',
-                checkInBy: data.updatedBy || '',
-                updatedBy: loginId
-              }
               if (detail.picoDtlId) {
+                const picoAPI = await getPicoById(selected?.picoId ?? '')
+                const picoResult = picoAPI.data.pickupOrderDetail.find((value: { picoDtlId: number }) => value.picoDtlId === detail.picoDtlId)
+  
+                const dataCheckin: CheckInWarehouse = {
+                  checkInWeight: detail.weight || 0,
+                  checkInUnitId: detail.unitId || 0,
+                  checkInAt: data.updatedAt || '',
+                  checkInBy: data.updatedBy || '',
+                  updatedBy: loginId,
+                  version: picoResult.version
+                }
                 return await updateCheckin(
                   checkInId,
                   dataCheckin,
