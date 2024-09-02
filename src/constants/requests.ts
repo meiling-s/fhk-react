@@ -1201,7 +1201,7 @@ export const UPDATE_STAFF_TITLE = (
   titleId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/stafftitle/V2/${table}/${titleId}`
+  url: `/api/v1/${realmApiRoute}/stafftitle${realmApiRoute !== 'account' ? '/V2/' : '/'}${table}/${titleId}`
 })
 
 //get disposal location
@@ -1315,7 +1315,7 @@ export const EDIT_PACKAGING = (
   packagingTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/packaginglist/V2/${tenantId}/${packagingTypeId}`
+  url: `api/v1/${realmApiRoute}/packaginglist${realmApiRoute === 'account' ? '/' : '/V2/'}${tenantId}/${packagingTypeId}`
 })
 
 export const GET_DETAIL_NOTIF_TEMPLATE = (

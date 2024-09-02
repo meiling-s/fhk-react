@@ -36,7 +36,8 @@ function createCompany(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  companyType: string
 ): CompanyItem {
   return {
     companyId,
@@ -50,7 +51,8 @@ function createCompany(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    companyType
   }
 }
 
@@ -123,7 +125,8 @@ const Company: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              item?.updatedAt,
+              companyType
             )
           )
         })
@@ -182,7 +185,8 @@ const Company: FunctionComponent = () => {
               item?.createdBy,
               item?.updatedBy,
               item?.createdAt,
-              item?.updatedAt
+              item?.updatedAt,
+              item?.companyType
             )
           )
         })
@@ -322,6 +326,7 @@ const Company: FunctionComponent = () => {
             onClick={(event) => {
               event.stopPropagation()
               handleAction(params, 'edit')
+              setSelectCompanyType(params.row.companyType)
             }}
           >
             <EDIT_OUTLINED_ICON
