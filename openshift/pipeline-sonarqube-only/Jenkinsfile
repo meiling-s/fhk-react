@@ -61,6 +61,7 @@ pipeline {
                 def var_SonarProjectKey = "${inputDevProject}-${config_Component}" // e.g. astd-react
                 sh "pwd"
                 sh "ls"
+                sh "npm install jest --global"
                 sh "npm run test --coverage"
                 sh "${var_ScannerHome}/bin/sonar-scanner \
                 -Dsonar.host.url=http://sonarqube:9000 \
