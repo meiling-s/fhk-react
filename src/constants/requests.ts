@@ -341,12 +341,12 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
 
 export const UPDATE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/recycType/V2/${recycTypeId}`
+  url: `api/v1/administrator/recycType/${recycTypeId}`
 })
 
 export const DELETE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/recycType/V2/${recycTypeId}`
+  url: `api/v1/administrator/recycType/${recycTypeId}`
 })
 
 export const ADD_SUB_RECYC_TYPE = (
