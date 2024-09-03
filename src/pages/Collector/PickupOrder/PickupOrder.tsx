@@ -840,8 +840,6 @@ const PickupOrders = () => {
   }
 
   useEffect(() => {
-    // const mappingData = () => {
-
     const tempRows: any[] = (
       pickupOrder?.map((item) => ({
         ...item,

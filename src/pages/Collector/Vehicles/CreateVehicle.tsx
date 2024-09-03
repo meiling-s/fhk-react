@@ -28,7 +28,7 @@ import {
   CreateVehicle as CreateVehicleForm
 } from '../../../interfaces/vehicles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { returnErrorMsg, ImageToBase64, extractError } from '../../../utils/utils'
+import { returnErrorMsg, ImageToBase64, extractError, showErrorToast } from '../../../utils/utils'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -265,9 +265,9 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       photo: ImageToBase64(pictures),
       status: 'ACTIVE',
       createdBy: loginId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      ...(action === 'edit' && {version: selectedItem?.version})
     }
-    console.log('iamge', ImageToBase64(pictures))
     if (action == 'add') {
       handleCreateVehicle(formData)
     } else {
@@ -330,6 +330,8 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       const {state} = extractError(error);
       if(state.code === STATUS_CODE[503] ){
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
       }
     }
   }

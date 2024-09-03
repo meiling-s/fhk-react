@@ -60,7 +60,8 @@ function createProcessRecord(
   address: string,
   packageTypeId: string,
   packageName: string,
-  labelId?: string
+  version: number,
+  labelId?: string,
 ): ProcessOut {
   return {
     processOutId,
@@ -74,6 +75,7 @@ function createProcessRecord(
     address,
     packageTypeId,
     packageName,
+    version,
     labelId
   }
 }
@@ -143,7 +145,8 @@ const ProcessRecord: FunctionComponent = () => {
                 item?.address,
                 item?.processTypeId,
                 processName || '-',
-                item.labelId
+                item.version,
+                item.labelId,
               )
             )
           })

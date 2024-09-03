@@ -16,7 +16,7 @@ import {
 } from '../../../interfaces/processRecords'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
 import dayjs from 'dayjs'
-import { format } from '../../../constants/constant'
+import { STATUS_CODE, format } from '../../../constants/constant'
 import { useTranslation } from 'react-i18next'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 import { useContainer } from 'unstated-next'
@@ -27,9 +27,10 @@ import { createProcessRecordItem,
   deleteProcessOutItem, 
   getProcessRecordDetail, 
 deleteProcessOutRecord} from '../../../APICalls/Collector/processRecords'
-import { displayCreatedDate, formatWeight } from '../../../utils/utils'
+import { displayCreatedDate, extractError, formatWeight } from '../../../utils/utils'
 import { ToastContainer, toast } from 'react-toastify'
 import { ProcessType } from '../../../interfaces/common'
+import { useNavigate } from 'react-router-dom'
 
 type RecycItem = {  
   itemId: number
@@ -39,6 +40,7 @@ type RecycItem = {
   weight: number
   images: string[]
   unitId?: string
+  version: number
 }
 
 interface EditProcessRecordProps {
@@ -63,6 +65,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   const [reloadData, setReloadData] = useState(false);
   const [recycItem, setRecycItem] = useState<RecycItem[]>([])
   const [selectedItem, setSelectedItem] = useState<RecycItem | null>(null)
+  const navigate = useNavigate()
 
   const mappingProcessName = (processTypeId: string) => {
     
@@ -218,7 +221,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
               images: detail.processoutDetailPhoto.map((item) => {
                 return `data:image/jpeg;base64,${item.photo}`
               }),
-              unitId: detail.unitId
+              unitId: detail.unitId,
+              version: detail.version
             })
           }
         })
@@ -235,7 +239,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
    
   }
 
-  const constractForm = (data: CreateRecyclable) => {
+  const constractForm = (data: CreateRecyclable, type: string) => {
     const imgItems: processOutImage[] =  data.processoutDetailPhoto.map((item, idx) => {
       return {
         sid: idx,
@@ -253,7 +257,8 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
       status: data.status,
       processoutDetailPhoto: imgItems,
       createdBy: loginId,
-      updatedBy: loginId
+      updatedBy: loginId,
+      ...(type === 'edit' && {version: data.version})
     }
 
     return createItemsProcessOut
@@ -261,7 +266,7 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const handleCreateRecyc = async (data: CreateRecyclable) => {
-    const createItemsProcessOut:CreateRecyclable[] = [constractForm(data)]
+    const createItemsProcessOut:CreateRecyclable[] = [constractForm(data, 'create')]
     const result = await createProcessRecordItem(createItemsProcessOut, selectedRow!!.processOutId)
   
     if (result) {
@@ -274,17 +279,24 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
   }
 
   const handleEditRecyc = async (data: CreateRecyclable, processOutDtlId: number) =>{
-    const editItemsProcessOut:CreateRecyclable = constractForm(data)
-    const response = await editProcessRecordItem(editItemsProcessOut,  selectedRow!!.processOutId, processOutDtlId)
-  
-    if (response) {
-      setReloadData(true);
-      showSuccessToast(t('processRecord.editProcessOutSuccess'))
-    } else {
-      showErrorToast(t('processRecord.editProcessOutFailed'))
+    try {
+      const editItemsProcessOut:CreateRecyclable = constractForm(data, 'edit')
+      const result = await editProcessRecordItem(editItemsProcessOut,  selectedRow!!.processOutId, processOutDtlId)
+      if (result) {
+        setReloadData(true);
+        showSuccessToast(t('processRecord.editProcessOutSuccess'))
+      }
+      
+      setSelectedItem(null)
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
+      }
     }
 
-    setSelectedItem(null)
   }
 
   const handleDeleteRecyc = async (processOutDtlId: number) => {

@@ -1,7 +1,8 @@
 export type updateStatus = {
     status: string,
     reason: string[],
-    updatedBy: string
+    updatedBy: string,
+    version: number
 }
 
 export type CheckInWarehouse = {

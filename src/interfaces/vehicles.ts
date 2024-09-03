@@ -11,6 +11,7 @@ export type Vehicle = {
     updatedBy: string
     createdAt: string
     updatedAt: string
+    version: number
 }
 
 export type CreateVehicle = {
