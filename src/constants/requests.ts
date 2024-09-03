@@ -167,7 +167,7 @@ export const UPDATE_CHECK_IN_STATUS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/checkin/V2/${table}/status/${chkInId}`
+  url: `api/v1/${realmApiRoute}/checkin${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/status/${chkInId}`
 })
 
 //get checkin reason list
@@ -554,7 +554,7 @@ export const UPDATE_CHECKOUT_REQUEST_STATUS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/checkout/V2/${table}/status/${chkOutId}`
+  url: `api/v1/${realmApiRoute}/checkout${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/status/${chkOutId}`
 })
 
 //get checkout reason list
@@ -1201,7 +1201,7 @@ export const UPDATE_STAFF_TITLE = (
   titleId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/stafftitle${realmApiRoute !== 'account' ? '/V2/' : '/'}${table}/${titleId}`
+  url: `/api/v1/${realmApiRoute}/stafftitle${realmApiRoute !== 'account' && realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/${titleId}`
 })
 
 //get disposal location
@@ -1315,7 +1315,7 @@ export const EDIT_PACKAGING = (
   packagingTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/packaginglist${realmApiRoute === 'account' ? '/' : '/V2/'}${tenantId}/${packagingTypeId}`
+  url: `api/v1/${realmApiRoute}/packaginglist${realmApiRoute === 'manufacturer' ? '/' : '/V2/'}${tenantId}/${packagingTypeId}`
 })
 
 export const GET_DETAIL_NOTIF_TEMPLATE = (
@@ -1333,7 +1333,7 @@ export const UPDATE_NOTIF_TEMPLATE = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${path}/notiTemplate${path === 'logistic' ? '/V2/' : path === 'customer' ? '/V2/' : path === 'collectors' ? '/V2/':'/'}${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate${path !== 'manufacturer' ? '/V2/' : '/'}${tenantId}/${templateId}`
 })
 
 //logistics driver
