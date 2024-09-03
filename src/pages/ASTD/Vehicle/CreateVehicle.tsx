@@ -59,6 +59,7 @@ interface VehicleDataProps {
     vehicleTypeNameSchi: string
     vehicleTypeNameTchi: string
     vehicleTypeLimit: string
+    version: number
 }
 
 
@@ -82,14 +83,15 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
     const [errorMsgList, setErrorMsgList] = useState<string[]>([])
     const [openDelete, setOpenDelete] = useState<boolean>(false)
-    const [trySubmited, setTrySubmitted] = useState(false)
-    const [tChineseName, setTChineseName] = useState('')
-    const [sChineseName, setSChineseName] = useState('')
-    const [englishName, setEnglishName] = useState('')
-    const [weight, setWeight] = useState('0')
-    const [description, setDescription] = useState('')
-    const [remark, setRemark] = useState('')
-    const [vehicleTypeId, setVehicleTypeId] = useState('')
+    const [trySubmited, setTrySubmitted] = useState<boolean>(false)
+    const [tChineseName, setTChineseName] = useState<string>('')
+    const [sChineseName, setSChineseName] = useState<string>('')
+    const [englishName, setEnglishName] = useState<string>('')
+    const [weight, setWeight] = useState<string>('0')
+    const [description, setDescription] = useState<string>('')
+    const [remark, setRemark] = useState<string>('')
+    const [vehicleTypeId, setVehicleTypeId] = useState<string>('')
+    const [version, setVersion] = useState<number>(0)
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const isInitialRender = useRef(true) // Add this line
     const navigate = useNavigate();
@@ -108,6 +110,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 setDescription(selectedItem.description)
                 setWeight(selectedItem.vehicleTypeLimit)
                 setRemark(selectedItem.remark)
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm()
@@ -196,7 +199,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
 
         const vehicleForm = {
             status: "DELETED",
-            updatedBy: token.loginId
+            updatedBy: token.loginId,
+            version: version
         }
 
         if (vehicleForm) {
@@ -209,11 +213,11 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 }
             } catch (error:any) {
                 const {state} =  extractError(error);
-                if(state.code === STATUS_CODE[503] ){
+                if (state.code === STATUS_CODE[503]) {
                     navigate('/maintenance')
-                } else {
-                    showErrorToast(t('notify.errorDeleted'))
-                }
+                  } else if (state.code === STATUS_CODE[409]){
+                    showErrorToast(error.response.data.message);
+                  }
                 
             }
         }
@@ -231,7 +235,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             remark: remark,
             status: 'ACTIVE',
             createdBy: loginId,
-            updatedBy: loginId
+            updatedBy: loginId,
+            ...(action === 'edit' && {version: version})
         }
 
         const isError = validation.length == 0
@@ -254,7 +259,6 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 onSubmit('vehicle')
             }
         } catch (error:any) {
-            console.error(error)
             const {state} = extractError(error);
             if(state.code === STATUS_CODE[503] ){
                 navigate('/maintenance')
@@ -272,13 +276,12 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 onSubmit('vehicle')
             }
         } catch (error:any) {
-            console.error(error)
             const {state} = extractError(error);
-            if(state.code === STATUS_CODE[503] ){
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                showErrorToast(t('notify.errorCreated'))
-            }
+              } else if (state.code === STATUS_CODE[409]){
+                showErrorToast(error.response.data.message);
+              }
         }
     }
 

@@ -57,6 +57,7 @@ interface siteTypeDataProps {
     status: string
     updatedAt: string
     updatedBy: string
+    version: number
 }
 
 interface SiteTypeProps {
@@ -81,16 +82,15 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
     const [errorMsgList, setErrorMsgList] = useState<string[]>([])
     const [openDelete, setOpenDelete] = useState<boolean>(false)
-    const [trySubmited, setTrySubmitted] = useState(false)
-    const [tChineseName, setTChineseName] = useState('')
-    const [sChineseName, setSChineseName] = useState('')
-    const [englishName, setEnglishName] = useState('')
-    const [equivalent, setEquivalent] = useState('')
-    const [description, setDescription] = useState('')
-    const [remark, setRemark] = useState('')
-    const [isMainCategory, setMainCategory] = useState(true)
-    const [chosenRecyclableType, setChosenRecyclableType] = useState('')
+    const [trySubmited, setTrySubmitted] = useState<boolean>(false)
+    const [tChineseName, setTChineseName] = useState<string>('')
+    const [sChineseName, setSChineseName] = useState<string>('')
+    const [englishName, setEnglishName] = useState<string>('')
+    const [equivalent, setEquivalent] = useState<string>('')
+    const [description, setDescription] = useState<string>('')
+    const [remark, setRemark] = useState<string>('')
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
+    const [version, setVersion] = useState<number>(0)
     const isInitialRender = useRef(true) // Add this line
     const navigate = useNavigate();
 
@@ -107,6 +107,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
                 setEnglishName(selectedItem.siteTypeNameEng)
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm()
@@ -120,6 +121,7 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
         setEquivalent('')
         setDescription('')
         setRemark('')
+        setVersion(0)
     }
 
     const checkString = (s: string) => {
@@ -182,7 +184,8 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
         const { loginId } = returnApiToken();
         const recyclingPointForm = {
             status: 'DELETED',
-            updatedBy: loginId
+            updatedBy: loginId,
+            version: version
         }
         
         try {
@@ -195,12 +198,11 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
             }
         } catch (error:any) {
             const {state} =  extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.log(error)
-                showErrorToast(t('notify.errorDeleted'))
-            }
+              } else if (state.code === STATUS_CODE[409]){
+                showErrorToast(error.response.data.message);
+              }
         }
     }
 
@@ -215,7 +217,8 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
             remark: remark,
             status: 'ACTIVE',
             createdBy: loginId,
-            updatedBy: loginId
+            updatedBy: loginId,
+            ...(action === 'edit' && {version: version})
         }
 
         const isError = validation.length == 0
@@ -258,12 +261,11 @@ const CreateRecyclingPoint: FunctionComponent<SiteTypeProps> = ({
             }
         } catch (error:any) {
             const {state} =  extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('errorCreated.errorCreated'))
-            }
+              } else if (state.code === STATUS_CODE[409]){
+                showErrorToast(error.response.data.message);
+              }
             
         }
     }

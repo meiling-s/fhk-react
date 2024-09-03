@@ -5,12 +5,13 @@ import { Box, Button, Typography } from '@mui/material'
 import { styles } from '../constants/styles'
 import { useContainer } from 'unstated-next'
 import NotifContainer from '../contexts/NotifContainer'
-import { Roles, localStorgeKeyName } from '../constants/constant'
+import { Roles, STATUS_CODE, localStorgeKeyName } from '../constants/constant'
 import CustomButton from './FormComponents/CustomButton'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PickupOrder } from '../interfaces/pickupOrder'
 import { editPickupOrderDetailStatus, editPickupOrderStatus, getPicoById } from '../APICalls/Collector/pickupOrder/pickupOrder'
+import { extractError, showErrorToast } from '../utils/utils'
 
 type HeaderProps = {
   title?: string
@@ -73,11 +74,13 @@ const HeaderSection: React.FC<HeaderProps> = ({
       const updatePoStatus = {
         status: 'CLOSED',
         reason: selectedRow.reason,
-        updatedBy: selectedRow.updatedBy
+        updatedBy: selectedRow.updatedBy,
+        version: selectedRow.version
       }
       const updatePoDtlStatus = {
         status: 'CLOSED',
-        updatedBy: selectedRow.updatedBy
+        updatedBy: selectedRow.updatedBy,
+        version: selectedRow.version
       }
       try {
         const result = await editPickupOrderStatus(
@@ -97,8 +100,13 @@ const HeaderSection: React.FC<HeaderProps> = ({
         }
         onCloseHeader && onCloseHeader()
         navigate('/collector/PickupOrder')
-      } catch (error) {
-        //console.error('Error updating field:', error)
+      } catch (error: any) {
+        const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
       }
     } else {
       alert('No selected pickup order')

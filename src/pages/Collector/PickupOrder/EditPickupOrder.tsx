@@ -43,10 +43,10 @@ const EditPickupOrder = () => {
       return await editPickupOrder(pickupOrderId, values)
     } catch (error:any) {
       const { state, realm } = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else {
-        return null
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
       }
     }
   }
@@ -74,7 +74,8 @@ const EditPickupOrder = () => {
       contractNo: '',
       updatedBy: loginId,
       refPicoId: '',
-      updatePicoDetail: []
+      updatePicoDetail: [],
+      version: 0,
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: EditPo) => {
@@ -117,6 +118,7 @@ const EditPickupOrder = () => {
         recycSubType: item.recycSubType,
         weight: formatWeight(item.weight, decimalVal),
         newDetail: false,
+        version: poInfo.version
       })) || []
 
     setAddRow(picoDetails)
@@ -150,7 +152,8 @@ const EditPickupOrder = () => {
         contractNo: poInfo.contractNo,
         updatedBy: loginId,
         refPicoId: poInfo?.refPicoId,
-        updatePicoDetail: []
+        updatePicoDetail: [],
+        version: poInfo.version ?? 0
       })
     }
   }, [poInfo])

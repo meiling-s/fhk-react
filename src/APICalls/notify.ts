@@ -135,7 +135,7 @@ export const updateNotifTemplateBroadcast = async (
     })
     return response.data
   } catch (e) {
-    return null
+    return e
   }
 }
 

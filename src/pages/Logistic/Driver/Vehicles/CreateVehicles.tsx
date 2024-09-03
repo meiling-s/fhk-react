@@ -28,8 +28,8 @@ import {
   LogisticVehicle,
   CreateLogisticVehicle
 } from '../../../../interfaces/vehicles'
-import { formErr } from '../../../../constants/constant'
-import { returnErrorMsg, ImageToBase64 } from '../../../../utils/utils'
+import { STATUS_CODE, formErr } from '../../../../constants/constant'
+import { returnErrorMsg, ImageToBase64, extractError } from '../../../../utils/utils'
 import { localStorgeKeyName } from '../../../../constants/constant'
 import {
   createVehicles,
@@ -41,6 +41,7 @@ import { il_item } from '../../../../components/FormComponents/CustomItemList'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 interface CreateVehicleProps {
   drawerOpen: boolean
@@ -75,6 +76,7 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
   const { vehicleType, imgSettings } = useContainer(CommonTypeContainer)
   const [vehicleTypeList, setVehicleType] = useState<il_item[]>([])
   const [version, setVersion] = useState<number>(0)
+  const navigate = useNavigate();
   const mappingData = () => {
     if (selectedItem != null) {
       setLicensePlate(selectedItem.plateNo)
@@ -307,14 +309,21 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
 
   const handleEditVehicle = async (formData: CreateLogisticVehicle) => {
     if (validation.length === 0) {
-      if (selectedItem != null) {
-        console.log('hitt')
-        console.log(formData, 'form data')
-        const result = await editVehicle(formData, selectedItem.vehicleId)
-        if (result) {
-          onSubmitData('success', t('common.editSuccessfully'))
-          resetData()
-          handleDrawerClose()
+      try {
+        if (selectedItem != null) {
+          const result = await editVehicle(formData, selectedItem.vehicleId)
+          if (result) {
+            onSubmitData('success', t('common.editSuccessfully'))
+            resetData()
+            handleDrawerClose()
+          }
+        }
+      } catch (error: any) {
+        const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
         }
       }
     } else {
@@ -327,14 +336,21 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
       status: 'DELETED',
       version: version,
     }
-    if (selectedItem != null) {
-      const result = await deleteVehicle(formData, selectedItem.vehicleId)
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetData()
-        handleDrawerClose()
-      } else {
-        onSubmitData('error', t('common.deleteFailed'))
+    try {
+      if (selectedItem != null) {
+        const result = await deleteVehicle(formData, selectedItem.vehicleId)
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetData()
+          handleDrawerClose()
+        }
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
       }
     }
   }

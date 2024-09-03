@@ -49,6 +49,7 @@ import timezone from 'dayjs/plugin/timezone'
 import useLocaleText from '../../../hooks/useLocaleTextDataGrid'
 import { weekDs } from '../../../components/SpecializeComponents/RoutineSelect/predefinedOption'
 import { getAllTenant } from '../../../APICalls/tenantManage'
+import { useNavigation } from 'react-router-dom'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -57,16 +58,18 @@ type Approve = {
   open: boolean
   onClose: () => void
   selectedRow: any
+  navigate: (url: string) => void
 }
 
-const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
+const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow, navigate }) => {
   const { t } = useTranslation()
 
   const onApprove = async () => {
     const updatePoStatus = {
       status: 'CONFIRMED',
       reason: selectedRow.reason,
-      updatedBy: selectedRow.updatedBy
+      updatedBy: selectedRow.updatedBy,
+      version: selectedRow.version
     }
     try {
       const result = await editPickupOrderStatus(
@@ -86,8 +89,13 @@ const ApproveModal: React.FC<Approve> = ({ open, onClose, selectedRow }) => {
         })
         onClose()
       }
-    } catch (error) {
-      console.error('Error approve:', error)
+    } catch (error: any) {
+      const {state} = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
+      }
     }
   }
 
@@ -153,9 +161,10 @@ type rejectForm = {
   onClose: () => void
   selectedRow: any
   reasonList: any
+  navigate: (url: string) => void
 }
 
-function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
+function RejectForm({ open, onClose, selectedRow, reasonList, navigate }: rejectForm) {
   const { t } = useTranslation()
   const [rejectReasonId, setRejectReasonId] = useState<string>('')
   const handleConfirmRejectOnClick = async (rejectReasonId: string) => {
@@ -166,7 +175,8 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
     const updatePoStatus = {
       status: 'REJECTED',
       reason: reason,
-      updatedBy: selectedRow.updatedBy
+      updatedBy: selectedRow.updatedBy,
+      version: selectedRow.version
     }
     try {
       const result = await editPickupOrderStatus(
@@ -186,8 +196,13 @@ function RejectForm({ open, onClose, selectedRow, reasonList }: rejectForm) {
         })
         onClose()
       }
-    } catch (error) {
-      console.error('Error reject:', error)
+    } catch (error: any) {
+      const {state} = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
+      }
     }
   }
 
@@ -1014,11 +1029,13 @@ const PickupOrders = () => {
       const updatePoStatus = {
         status: 'CLOSED',
         reason: selectedRow.reason,
-        updatedBy: selectedRow.updatedBy
+        updatedBy: selectedRow.updatedBy,
+        version: selectedRow.version
       }
       const updatePoDtlStatus = {
         status: 'CLOSED',
-        updatedBy: selectedRow.updatedBy
+        updatedBy: selectedRow.updatedBy,
+        version: selectedRow.version
       }
       try {
         const result = await editPickupOrderStatus(
@@ -1041,9 +1058,13 @@ const PickupOrders = () => {
         }
 
         // navigate('/collector/PickupOrder')
-      } catch (error) {
-        showErrorToast(t('pick_up_order.error.failedDeletePickupOrder'))
-        //console.error('Error updating field:', error)
+      } catch (error: any) {
+        const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
       }
     } else {
       alert('No selected pickup order')
@@ -1166,6 +1187,7 @@ const PickupOrders = () => {
           open={approveModal}
           onClose={resetPage}
           selectedRow={selectedRow}
+          navigate={navigate}
         />
         <RejectForm
           open={rejectModal}
@@ -1175,6 +1197,7 @@ const PickupOrders = () => {
           }}
           selectedRow={selectedRow}
           reasonList={reasonList}
+          navigate={navigate}
         />
         <DeleteModal
           open={openDelete}

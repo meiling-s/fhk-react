@@ -154,16 +154,26 @@ const CreatePickupOrder = () => {
       values.createPicoDetail = addRow
       const result = await submitPickUpOrder(values)
       const data = result?.data
+
       if (data) {
         const updatePoStatus = {
           status: Status.CONFIRMED,
           updatedBy: loginId,
           picoId: data?.picoId,
+          version: state.version
         }
-        const approve = await updateStatusPurchaseOrder(poInfo.poId, updatePoStatus)
-        if(approve){
-          const routeName = role
-          navigate(`/${routeName}/purchaseOrder`, { state: 'created' })
+        try {
+          const approve = await updateStatusPurchaseOrder(poInfo.poId, updatePoStatus)
+          if(approve){
+            const routeName = role
+            navigate(`/${routeName}/purchaseOrder`, { state: 'created' })
+          }
+        } catch (error: any) {
+          if (state.code === STATUS_CODE[503]) {
+            navigate('/maintenance')
+          } else if (state.code === STATUS_CODE[409]){
+            showErrorToast(error.response.data.message);
+          }
         }
       } else {
         showErrorToast('fail to create pickup order')

@@ -54,6 +54,7 @@ interface DateFormat {
   dateFormatId: number
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface DateFormatProps {
@@ -76,6 +77,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
   const [dateFormatList, setDateFormatList] = useState<DateFormat[]>([])
   const [dateFormatId, setDateFormatId] = useState(0)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate();
   
   useEffect (() => {
@@ -84,6 +86,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
       if (dateformat) {
         setDateFormat(dateformat.dateFormat)
         setDateFormatId(dateformat.dateFormatId)
+        setVersion(dateformat.version)
       }
     }
   }, [dateformat, action, drawerOpen])
@@ -106,6 +109,7 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
           dateFormatId: item.dateFormatId,
           updatedAt: item.updatedAt,
           updatedBy: item.updatedBy,
+          version: item.version
         })
       })
       setDateFormatList(dateList);
@@ -129,7 +133,8 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
 
     const formData = {
       status: "ACTIVE",
-      updatedBy: loginId
+      updatedBy: loginId,
+      version: version
     }
 
     if (formData) {
@@ -149,8 +154,10 @@ const DateFormat: FunctionComponent<DateFormatProps> = ({
     }
    } catch (error:any) {
     const {state } = extractError(error);
-    if(state.code === STATUS_CODE[503] ){
+    if (state.code === STATUS_CODE[503]) {
       navigate('/maintenance')
+    } else if (state.code === STATUS_CODE[409]){
+      showErrorToast(error.response.data.message);
     }
    }
   }

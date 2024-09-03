@@ -64,6 +64,7 @@ export interface PickupOrder {
     createdAt:         string;
     refPicoId:         string;
     pickupOrderDetail: PickupOrderDetail[];
+    version?: number;
 }
 
 export interface PickupOrderItem {
@@ -117,6 +118,7 @@ export interface CreatePicoDetail {
     recycType:    string;
     recycSubType: string;
     weight:       string;
+    version?: number;
     
 }
 
@@ -169,6 +171,7 @@ export interface Row {
     updatedBy:     string;
     refPicoId:     string ;
     updatePicoDetail: CreatePicoDetail[]
+    version?: number;
     
 }
 

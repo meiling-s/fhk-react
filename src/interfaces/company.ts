@@ -8,6 +8,7 @@ export type Company = {
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
+  companyType: string;
 };
 
 export type CreateCompany = {
