@@ -399,6 +399,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 onChange={(event) => setDescription(event.target.value)}
                                 multiline={true}
                                 defaultValue={description}
+                                disabled={action === 'delete'}
                             />
                         </CustomField>
                     </Box>
@@ -410,6 +411,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 onChange={(event) => setRemark(event.target.value)}
                                 multiline={true}
                                 defaultValue={remark}
+                                disabled={action === 'delete'}
                             />
                         </CustomField>
                     </Box>
