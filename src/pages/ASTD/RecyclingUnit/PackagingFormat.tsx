@@ -58,6 +58,7 @@ interface PackagingUnitProps {
     tenantId: string
     updatedAt: string
     updatedBy: string
+    version: number
 }
 
 interface RecyclingFormatProps {
@@ -209,7 +210,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             remark: remark,
             status: 'ACTIVE',
             createdBy: loginId,
-            updatedBy: loginId
+            updatedBy: loginId,
+            ...(action == 'edit' && {version: selectedItem?.version ?? 0})
         }
 
         const isError = validation.length == 0
@@ -254,12 +256,11 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 }
             }
         } catch (error:any) {
-            const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+            const {state} = extractError(error);
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('notify.errorEdited'))
+            } else if (state.code === STATUS_CODE[409]){
+                showErrorToast(error.response.data.message);
             }
         }
     }
