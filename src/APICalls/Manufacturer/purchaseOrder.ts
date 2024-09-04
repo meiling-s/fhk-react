@@ -84,7 +84,7 @@ export const updateStatusPurchaseOrder = async (poId: string, data: any) => {
 
     return response
   } catch (e) {
-    return null
+    throw (e)
   }
 }
 

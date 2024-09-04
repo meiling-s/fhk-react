@@ -83,6 +83,7 @@ interface CodeFormatProps {
   status: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface PackagingUnitProps {
@@ -114,6 +115,7 @@ interface WeightFormatProps {
   updatedAt: string
   updatedBy: string
   weight: number
+  version: number
 }
 
 interface recyleSubtyeData {
@@ -142,6 +144,7 @@ interface recyleTypeData {
   updatedAt: string
   updatedBy: string
   recycSubTypeId: string
+  version: number
 }
 
 type DeleteForm = {

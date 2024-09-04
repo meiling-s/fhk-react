@@ -39,6 +39,7 @@ interface engineDataProps {
     status: string
     updatedAt: string
     updatedBy: string
+    version: number
 }
 
 
@@ -64,15 +65,16 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
     const [errorMsgList, setErrorMsgList] = useState<string[]>([])
     const [openDelete, setOpenDelete] = useState<boolean>(false)
-    const [trySubmited, setTrySubmitted] = useState(false)
-    const [tChineseName, setTChineseName] = useState('')
-    const [sChineseName, setSChineseName] = useState('')
-    const [englishName, setEnglishName] = useState('')
-    const [registeredFlg, setRegisteredFlg] = useState(false)
-    const [residentalFlg, setResidentalFlg] = useState(false)
-    const [description, setDescription] = useState('')
-    const [remark, setRemark] = useState('')
-    const [selectedService, setSelectedService] = useState('')
+    const [trySubmited, setTrySubmitted] = useState<boolean>(false)
+    const [tChineseName, setTChineseName] = useState<string>('')
+    const [sChineseName, setSChineseName] = useState<string>('')
+    const [englishName, setEnglishName] = useState<string>('')
+    const [registeredFlg, setRegisteredFlg] = useState<boolean>(false)
+    const [residentalFlg, setResidentalFlg] = useState<boolean>(false)
+    const [description, setDescription] = useState<string>('')
+    const [remark, setRemark] = useState<string>('')
+    const [selectedService, setSelectedService] = useState<string>('')
+    const [version, setVersion] = useState<number>(0)
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const navigate = useNavigate();
 
@@ -103,6 +105,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 setSelectedService(newServiceValue.name)
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm()
@@ -188,7 +191,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
         const token = returnApiToken()
         const premiseTypeForm = {
             status: 'DELETED',
-            updatedBy: token.loginId
+            updatedBy: token.loginId,
+            version: version
         }
         
         if (selectedItem !== null && selectedItem !== undefined) {
@@ -200,12 +204,11 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                 }
             } catch (error:any) {
                 const { state } = extractError(error)
-                if(state.code === STATUS_CODE[503] ){
+                if (state.code === STATUS_CODE[503]) {
                     navigate('/maintenance')
-                } else {
-                    console.log(error)
-                    showErrorToast(t('notify.errorDeleted'))
-                }
+                  } else if (state.code === STATUS_CODE[409]){
+                    showErrorToast(error.response.data.message);
+                  }
             }
         }
     }
@@ -225,7 +228,8 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
             status: 'ACTIVE',
             serviceType: serviceValue.value,
             createdBy: loginId,
-            updatedBy: loginId
+            updatedBy: loginId,
+            ...(action === 'edit' && {version: version})
         }
 
         const isError = validation.length == 0
@@ -261,19 +265,18 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
     const editRecyclingPointData = async (premiseTypeForm: any) => {
         if (selectedItem !== null && selectedItem !== undefined) {
             try {
-                const response = await editEngineData(selectedItem?.premiseTypeId, premiseTypeForm)
+            const response = await editEngineData(selectedItem?.premiseTypeId, premiseTypeForm)
                 if (response) {
                     handleOnSubmitData('premiseType')
                     showSuccessToast(t('notify.SuccessEdited'))
                 }
             } catch (error:any) {
                 const {state} =  extractError(error);
-                if(state.code === STATUS_CODE[503] ){
+                if (state.code === STATUS_CODE[503]) {
                     navigate('/maintenance')
-                } else {
-                    console.error(error)
-                    showErrorToast(t('notify.errorEdited'))
-                }
+                  } else if (state.code === STATUS_CODE[409]){
+                    showErrorToast(error.response.data.message);
+                  }
             }
         }
     }
@@ -399,6 +402,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 onChange={(event) => setDescription(event.target.value)}
                                 multiline={true}
                                 defaultValue={description}
+                                disabled={action === 'delete'}
                             />
                         </CustomField>
                     </Box>
@@ -410,6 +414,7 @@ const CreateEngineData: FunctionComponent<SiteTypeProps> = ({
                                 onChange={(event) => setRemark(event.target.value)}
                                 multiline={true}
                                 defaultValue={remark}
+                                disabled={action === 'delete'}
                             />
                         </CustomField>
                     </Box>

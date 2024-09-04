@@ -59,6 +59,7 @@ interface CurrencyListProps {
   status: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface DecimalValueProps {
@@ -68,6 +69,7 @@ interface DecimalValueProps {
   decimalValId: number
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface DateFormatProps {
@@ -77,6 +79,7 @@ interface DateFormatProps {
   dateFormatId: number
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface WeightToleranceProps {
@@ -86,6 +89,7 @@ interface WeightToleranceProps {
   updatedBy: string
   weightVariance: string
   weightVarianceId: number
+  version: number
 }
 
 const ASTDSettings: FunctionComponent = () => {

@@ -167,14 +167,18 @@ const ApproveModal: React.FC<ApproveForm> = ({
           if (data) {
             // console.log('updated check-iout status: ', data)
             data.checkoutDetail.map(async (detail: any) => {
-              const dataCheckout: CheckOutWarehouse = {
-                checkOutWeight: detail.weight || 0,
-                checkOutUnitId: detail.unitId || 0,
-                checkOutAt: data.updatedAt || '',
-                checkOutBy: data.updatedBy || '',
-                updatedBy: loginId
-              }
               if (detail.picoDtlId) {
+                const picoAPI = await getPicoById(selected?.picoId ?? '')
+                const picoResult = picoAPI.data.pickupOrderDetail.find((value: { picoDtlId: number }) => value.picoDtlId === detail.picoDtlId)
+  
+                const dataCheckout: CheckOutWarehouse = {
+                  checkOutWeight: detail.weight || 0,
+                  checkOutUnitId: detail.unitId || 0,
+                  checkOutAt: data.updatedAt || '',
+                  checkOutBy: data.updatedBy || '',
+                  updatedBy: loginId,
+                  version: picoResult.version,
+                }
                 return await updateCheckout(
                   chkOutId,
                   dataCheckout,

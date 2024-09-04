@@ -34,7 +34,8 @@ function createCompany(
   createdBy: string,
   updatedBy: string,
   createdAt: string,
-  updatedAt: string
+  updatedAt: string,
+  companyType: string,
 ): CompanyItem {
   return {
     companyId,
@@ -48,7 +49,8 @@ function createCompany(
     createdBy,
     updatedBy,
     createdAt,
-    updatedAt
+    updatedAt,
+    companyType,
   }
 }
 
@@ -84,6 +86,7 @@ const Company: FunctionComponent = () => {
   const [manuList, setManuList] = useState<CompanyItem[]>([])
   const [customerList, setCustomerList] = useState<CompanyItem[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  console.log(selectCompanyType, 'a')
 
   const initCompanyList = async (companyType: string) => {
     setIsLoading(true)
@@ -114,7 +117,8 @@ const Company: FunctionComponent = () => {
             item?.createdBy,
             item?.updatedBy,
             item?.createdAt,
-            item?.updatedAt
+            item?.updatedAt,
+            companyType,
           )
         )
       })
@@ -138,7 +142,6 @@ const Company: FunctionComponent = () => {
         ...prevTotalData,
         [companyType]: data.totalPages
       }))
-      console.log('data', totalData, 'page', page)
     }
     setIsLoading(false)
   }
@@ -232,7 +235,7 @@ const Company: FunctionComponent = () => {
               event.stopPropagation()
               handleAction(params, 'edit')
               console.log({ params })
-              // setSelectCompanyType()
+              setSelectCompanyType(params.row.companyType)
             }}
           >
             <EDIT_OUTLINED_ICON

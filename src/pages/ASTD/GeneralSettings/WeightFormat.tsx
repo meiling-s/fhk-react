@@ -53,6 +53,7 @@ interface WeightToleranceProps {
   updatedBy: string
   weightVariance: string
   weightVarianceId: number
+  version: number
 }
 
 interface DateFormatProps {
@@ -74,6 +75,7 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
   const [weightFormat, setWeightFormat] = useState('')
   const [weightFormatId, setWeightFormatId] = useState(0)
   const [showError, setShowError] = useState<boolean>(false)
+  const [version, setVersion] = useState<number>(0)
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
   const navigate = useNavigate();
   
@@ -83,6 +85,7 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
         setShowError(false)
         setWeightFormat(weightformat.weightVariance)
         setWeightFormatId(weightformat.weightVarianceId)
+        setVersion(weightformat.version)
       }
     }
   }, [weightformat, action, drawerOpen])
@@ -102,7 +105,8 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
 
     const formData = {
       weightVariance: weightFormat,
-      updatedBy: loginId
+      updatedBy: loginId,
+      version: version
     }
 
     if (weightFormat.trim() === '') {
@@ -127,10 +131,10 @@ const WeightFormat: FunctionComponent<DateFormatProps> = ({
       }
     } catch (error:any) {
       const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
+      if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
-      } else {
-        showErrorToast(t('notify.errorEdited'))
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
       }
     }
   }

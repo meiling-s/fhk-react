@@ -185,7 +185,7 @@ const BroadcastTemplate: FunctionComponent<TemplateProps> = ({ templateId, realm
             return
         } else {
             const result = await updateNotifTemplateBroadcast(templateId, notifTemplate, realmApiRoute)
-            if (result?.response?.status === 500) {
+            if (result?.response?.status === 409) {
                 showErrorToast(result.response.data.message);
             } else {
                 showSuccessToast(t('common.editSuccessfully'))

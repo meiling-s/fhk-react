@@ -20,17 +20,12 @@ import {
 import { CAMERA_OUTLINE_ICON } from '../../themes/icons'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
 import ImageUploading, { ImageListType } from 'react-images-uploading'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Select from '@mui/material/Select'
 import CustomField from '../../components/FormComponents/CustomField'
-import CustomTextField from '../../components/FormComponents/CustomTextField'
 import CustomItemList, {
   il_item
 } from '../../components/FormComponents/CustomItemList'
-import {
-  displayCreatedDate,
-  showSuccessToast,
-  showErrorToast
-} from '../../utils/utils'
+import { showSuccessToast, showErrorToast } from '../../utils/utils'
 import { styles } from '../../constants/styles'
 import { ImageToBase64 } from '../../utils/utils'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
@@ -70,7 +65,6 @@ function ClosedTenantModal({
   const { t } = useTranslation()
   const [reasonId, setReasonId] = useState<string | null>(null)
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
-  
 
   const handleRejectRequest = async () => {
     const statData: any = {
@@ -158,12 +152,10 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
   const [maxUploadSize, setMaxUploadSize] = useState<string>('1')
   const [defaultLang, setDefaultLang] = useState<string>('ZH-HK')
   const [selectedStatus, setSelectedStatus] = useState<string>('')
-  const [deactiveReason, setDeactiveReason] = useState<string>('-')
   const [modalClosedStatus, setModalClosed] = useState<boolean>(false)
   const loginName = localStorage.getItem(localStorgeKeyName.username) || ''
   const [reasons, setReasons] = useState<il_item[]>([])
   const { i18n } = useTranslation()
-  const role = localStorage.getItem(localStorgeKeyName.role) || ''
   const [translatedTenantType, setTranslatedTenantType] = useState('...')
 
   const footerTenant = `[${tenantDetail?.tenantId}] ${t(
@@ -184,6 +176,22 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     setTenantDetails(data)
 
     ///mapping data
+    if (data?.companyLogo != '') {
+      const format = 'jpeg'
+      const imgdata = `data:image/${format};base64,${data?.companyLogo}`
+
+      const tempLogo: any = []
+      tempLogo.push({
+        data_url: imgdata,
+        file: {
+          name: `image_logo${data?.tenantId}`,
+          size: 0,
+          type: 'image/jpeg'
+        }
+      })
+      setCompanyLogo(tempLogo)
+    }
+
     setNumOfAccount(data?.decimalPlace || 0)
     setNumOfUplodedPhoto(data?.allowImgNum || 0)
     setMaxUploadSize(data?.allowImgSize.toString())
@@ -260,7 +268,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
     const result = await getReasonTenant(0, 100, tenantId.toString(), 1)
     const data = result?.data
     if (data) {
-      var tempReasons: il_item[] = []
+      let tempReasons: il_item[] = []
       data.content.map((item: any) => {
         tempReasons.push({
           id: item.reasonId,
@@ -446,10 +454,12 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   {t('tenant.detail.creation_date')}
                 </div>
                 <div className=" text-sm text-black font-bold tracking-widest">
-                  {tenantDetail?.createdAt && dayjs
-                    .utc(tenantDetail?.createdAt)
-                    .tz('Asia/Hong_Kong')
-                    .format(`${dateFormat} HH:mm`) || ''}
+                  {(tenantDetail?.createdAt &&
+                    dayjs
+                      .utc(tenantDetail?.createdAt)
+                      .tz('Asia/Hong_Kong')
+                      .format(`${dateFormat} HH:mm`)) ||
+                    ''}
                 </div>
               </div>
             </Box>
@@ -458,6 +468,11 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
                   {t('tenant.detail.company_logo')}
                 </Typography>
+                <div className="note">
+                  <p className="text-2xs text-gray">
+                    {t('tenant.detail.companyImgLogo')}
+                  </p>
+                </div>
                 <ImageUploading
                   multiple
                   value={companyLogo}
@@ -555,17 +570,16 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   defaultValue={tenantDetail?.decimalPlace.toString()}
                 >
                   {num_option.length > 0 ? (
-                    (num_option.map((item, index) => (
+                    num_option.map((item, index) => (
                       <MenuItem key={index} value={item.id}>
                         {item.name}
                       </MenuItem>
-                    )))) : (
+                    ))
+                  ) : (
                     <MenuItem disabled value="">
                       <em>{t('common.noOptions')}</em>
                     </MenuItem>
-                    )
-                    
-                  }
+                  )}
                 </Select>
               </FormControl>
             </Grid>
@@ -607,11 +621,13 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   }}
                   defaultValue={tenantDetail?.allowImgNum.toString()}
                 >
-                  { num_option.length >0 ? (num_option.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>
-                      {item.name}
-                    </MenuItem>
-                  ))): (
+                  {num_option.length > 0 ? (
+                    num_option.map((item, index) => (
+                      <MenuItem key={index} value={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    ))
+                  ) : (
                     <MenuItem disabled value="">
                       <em>{t('common.noOptions')}</em>
                     </MenuItem>
@@ -658,11 +674,13 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                   }}
                   onChange={(event) => setDefaultLang(event.target.value)}
                 >
-                  {lang_option.length > 0 ? (lang_option.map((item, index) => (
-                    <MenuItem key={index + item.id} value={item?.id}>
-                      {item.name}
-                    </MenuItem>
-                  ))) : (
+                  {lang_option.length > 0 ? (
+                    lang_option.map((item, index) => (
+                      <MenuItem key={index + item.id} value={item?.id}>
+                        {item.name}
+                      </MenuItem>
+                    ))
+                  ) : (
                     <MenuItem disabled value="">
                       <em>{t('common.noOptions')}</em>
                     </MenuItem>
@@ -683,22 +701,7 @@ const TenantDetails: FunctionComponent<TenantDetailsProps> = ({
                 />
               </div>
             </Grid>
-            {/* <Grid item className="field-reason_for_deactivation">
-              <Typography sx={{ ...styles.header3, marginBottom: 2 }}>
-                {t('tenant.detail.reason_for_deactivation')}
-              </Typography>
-              <CustomField label="">
-                <CustomTextField
-                  id={'reason_for_deactivation'}
-                  placeholder={t('tenant.detail.please_enter_the_reason')}
-                  multiline={true}
-                  rows={4}
-                  onChange={(event) => setDeactiveReason(event.target.value)}
-                  value={deactiveReason}
-                  sx={{ width: '100%' }}
-                ></CustomTextField>
-              </CustomField>
-            </Grid> */}
+
             <Box>
               <div className="field-tenant-footer">
                 <div className="text-[13px] text-[#ACACAC] font-normal tracking-widest mb-2">

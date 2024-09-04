@@ -216,7 +216,7 @@ const EmailTemplate: FunctionComponent<TemplateProps> = ({ templateId, realmApiR
             return
         }
         const result = await updateNotifTemplate(templateId, notifTemplate, realmApiRoute)
-        if (result?.response?.status === 500) {
+        if (result?.response?.status === 409) {
             showErrorToast(result.response.data.message);
         } else {
             showSuccessToast(t('common.editSuccessfully'))

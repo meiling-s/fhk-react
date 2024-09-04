@@ -44,6 +44,7 @@ export type PurChaseOrder = {
   createdAt: string
   updatedAt: string
   purchaseOrderDetail: PurchaseOrderDetail[]
+  version?: number
 }
 
 export type queryPurchaseOrder = {
