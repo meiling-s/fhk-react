@@ -99,6 +99,7 @@ interface PackagingUnitProps {
   tenantId: string
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface WeightFormatProps {

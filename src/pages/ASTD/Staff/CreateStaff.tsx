@@ -226,7 +226,8 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
       duty: [formData.duty],
       status: 'ACTIVE',
       remark: formData.remark,
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: selectedItem?.version ?? 0
     }
     if (validation.length === 0) {
       if (selectedItem != null) {
@@ -261,7 +262,8 @@ const CreateStaff: FunctionComponent<CreateStaffTitle> = ({
         duty: [formData.duty],
         status: 'DELETED',
         remark: formData.remark,
-        updatedBy: loginName
+        updatedBy: loginName,
+        version: selectedItem?.version ?? 0
       }
       if (selectedItem != null) {
         const result = await editStaffTitle(selectedItem.titleId, editData)
