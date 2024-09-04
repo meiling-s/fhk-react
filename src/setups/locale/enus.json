@@ -205,7 +205,10 @@
     "shouldNotEmpty": "should not empty",
     "shouldNotDuplicate": "should not duplicate",
     "shouldNotDuplicated": "The address of warehouse had been used",
-    "workshopFlag": "Is workshop"
+    "workshopFlag": "Is workshop",
+    "warningCloseWarehouse": "There are stocks in the warehouse, are you sure to close the warehouse?",
+    "warningDeleteExistingRecy": "There are stocks in the warehouse, are you sure to delete the warehouse?",
+    "warningDeleteWarehouse": "Are you sure to delete?"
   },
   "check_in": {
     "transport_information": "Transport Information",
