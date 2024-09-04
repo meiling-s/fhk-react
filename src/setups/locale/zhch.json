@@ -1053,7 +1053,9 @@
       "picture": "图片",
       "license_plate_number_placeholder": "请输入车辆编码",
       "vehicle_type_placeholder": "请输入车辆载货量",
-      "vehicle_cargo_capacity_placeholder": "请输入体重"
+      "vehicle_cargo_capacity_placeholder": "请输入体重",
+      "max_number_photo": "所选图片数量超出最大数量",
+      "max_size_upload": "您嘗試上載的檔案大於大小上限"
     }
   },
   "general_settings": {

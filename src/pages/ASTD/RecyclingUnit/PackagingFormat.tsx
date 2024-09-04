@@ -333,6 +333,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             onChange={(event) => setDescription(event.target.value)}
                             multiline={true}
                             defaultValue={description}
+                            disabled={action === 'delete'}
                         />
                     </CustomField>
                     <CustomField label={t('packaging_unit.remark')}>
@@ -342,6 +343,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                             onChange={(event) => setRemark(event.target.value)}
                             multiline={true}
                             defaultValue={remark}
+                            disabled={action === 'delete'}
                         />
                     </CustomField>
                     <Grid item sx={{ width: '92%' }}>

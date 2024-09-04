@@ -513,10 +513,11 @@ const CreateVehicle: FunctionComponent<CreateVehicleProps> = ({
                       {errors && (
                         <div>
                         {errors.maxFileSize && (
-                          <span onClick={() => showErrorToast(`Selected file size exceeds maximum file size ${imgSettings?.ImgSize/1000000} Mb`)} style={{color: "red"}}>
-                            Selected file size exceeds maximum file size {imgSettings?.ImgSize/1000000} mb
+                          <span style={{color: "red"}}>
+                            {t('driver.vehicleMenu.max_size_upload')} {imgSettings?.ImgSize/1000000} MB
                           </span>
                         )}
+                        {errors.maxNumber && <span style={{color: "red"}}>{t('driver.vehicleMenu.max_number_photo')}</span>}
                         </div>
                       )}
                       <ImageList sx={localstyles.imagesContainer} cols={4}>

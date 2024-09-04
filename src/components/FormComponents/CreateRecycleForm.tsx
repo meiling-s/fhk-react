@@ -88,11 +88,11 @@ export interface InitValue {
 
 const initValue: InitValue = {
   picoHisId: '',
-  senderId: '1',
+  senderId: '',
   senderName: '',
   senderAddr: '',
   senderAddrGps: [0, 0],
-  receiverId: '1',
+  receiverId: '',
   receiverName: '',
   receiverAddr: '',
   receiverAddrGps: [0, 0],
@@ -142,7 +142,7 @@ const CreateRecycleForm = ({
       recycTypeId: picoDtl.recycType,
       recycSubTypeId: picoDtl.recycSubType
     }
-    console.log("set def", defRecyc);
+    console.log('set def', defRecyc)
     setDefaultRecyc(defRecyc)
   }
 
@@ -154,15 +154,12 @@ const CreateRecycleForm = ({
         setEditRow(editR)
       }
     } else if (editRowId == null && index && editMode) {
-     
       const editR = data.find((item) => item.id === index)
       if (editR) {
-
         setDefRecyc(editR)
         setEditRow(editR)
       }
     } else if (editMode) {
-      
       setDefaultRecyc(undefined)
       initValue.id = data.length
       formik.setValues(initValue)
@@ -308,6 +305,7 @@ const CreateRecycleForm = ({
     validationSchema: validateSchema,
 
     onSubmit: (values, { resetForm }) => {
+      console.log('values', values)
       if (isDetailDouble) return
       if (isEditing) {
         //editing row
@@ -554,7 +552,7 @@ const CreateRecycleForm = ({
                     }
                     recycL={recycType ?? []}
                     setState={(values) => {
-                      console.log("recycSubType", values?.recycSubTypeId)
+                      console.log('recycSubType', values?.recycSubTypeId)
                       formik.setFieldValue('recycType', values?.recycTypeId)
                       formik.setFieldValue(
                         'recycSubType',
@@ -644,7 +642,31 @@ const CreateRecycleForm = ({
                         onChange={(
                           _: SyntheticEvent,
                           newValue: string | null
-                        ) => formik.setFieldValue(it.id, newValue)}
+                        ) => {
+                          formik.setFieldValue(it.id, newValue)
+
+                          const optionId =
+                            collectorList?.find(
+                              (item) =>
+                                item.collectorNameEng === newValue ||
+                                item.collectorNameEng === newValue ||
+                                item.collectorNameEng === newValue
+                            )?.collectorId ||
+                            manuList?.find(
+                              (manu) =>
+                                manu.manufacturerNameEng === newValue ||
+                                manu.manufacturerNameSchi === newValue ||
+                                manu.manufacturerNameTchi === newValue
+                            )?.manufacturerId ||
+                            ''
+
+                          //set receiverId and senderId
+                          if (it.id === 'senderName') {
+                            formik.setFieldValue('senderId', optionId)
+                          } else {
+                            formik.setFieldValue('receiverId', optionId)
+                          }
+                        }}
                         onInputChange={(event: any, newInputValue: string) => {
                           formik.setFieldValue(it.id, newInputValue) // Update the formik field value if needed
                         }}
