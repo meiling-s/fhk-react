@@ -373,6 +373,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                                 onChange={(event) => setDescription(event.target.value)}
                                 multiline={true}
                                 defaultValue={description}
+                                disabled={action === 'delete'}
                             />
                         </CustomField>
                     </Box>
@@ -384,6 +385,7 @@ const WeightFormat: FunctionComponent<WeightFormatProps> = ({
                                 onChange={(event) => setRemark(event.target.value)}
                                 multiline={true}
                                 defaultValue={remark}
+                                disabled={action === 'delete'}
                             />
                         </CustomField>
                     </Box>
