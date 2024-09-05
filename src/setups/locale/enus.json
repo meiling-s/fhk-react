@@ -597,7 +597,8 @@
       "confirm": "ACTIVATE",
       "suspend": "SUSPEND",
       "closed": "DEACTIVATE",
-      "deactivated_reason": "Deactivated Reason(s)"
+      "deactivated_reason": "Deactivated Reason(s)",
+      "companyImgLogo": "*You can upload max 1 image for company logo. To change the logo, please remove the existing one first."
     }
   },
   "report": {
@@ -1057,7 +1058,9 @@
       "picture": "Picture",
       "license_plate_number_placeholder": "Please enter vehicle plate number",
       "vehicle_type_placeholder": "Please enter vehicle type",
-      "vehicle_cargo_capacity_placeholder": "Please enter weight"
+      "vehicle_cargo_capacity_placeholder": "Please enter weight",
+      "max_number_photo": "Number of selected images exceed max number",
+      "max_size_upload": "The file you are trying to upload is larger than the maximum size"
     }
   },
   "general_settings": {

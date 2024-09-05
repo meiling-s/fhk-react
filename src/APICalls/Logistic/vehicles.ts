@@ -75,7 +75,7 @@ export const editVehicle = async (
     return response
   } catch (e) {
     console.error('Edit a vehicle failed:', e)
-    return null
+    throw (e)
   }
 }
 

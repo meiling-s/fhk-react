@@ -167,7 +167,7 @@ export const UPDATE_CHECK_IN_STATUS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/checkin/V2/${table}/status/${chkInId}`
+  url: `api/v1/${realmApiRoute}/checkin${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/status/${chkInId}`
 })
 
 //get checkin reason list
@@ -197,7 +197,7 @@ export const GET_PICK_UP_ORDER_BY_ID = (
 
 export const GET_PICK_UP_ORDER_DETAIL: AxiosRequestConfig = {
   method: 'get',
-  url: 'api/v1/administrator/pico/details'
+  url: 'api/v1/administrator/pico/V2/details'
 }
 export const ADD_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'post',
@@ -264,15 +264,15 @@ export const GET_MANULIST = (
 
 export const UPDATE_PICK_UP_ORDER: AxiosRequestConfig = {
   method: 'put',
-  url: 'api/v1/administrator/pico/new'
+  url: 'api/v1/administrator/pico/V3'
 }
 export const UPDATE_PICK_UP_ORDER_STATUS: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/v1/administrator/pico/status'
+  url: 'api/v1/administrator/pico/V2/status'
 }
 export const UPDATE_PICK_UP_ORDER_DETAIL_STATUS: AxiosRequestConfig = {
   method: 'patch',
-  url: 'api/v1/administrator/pico/detail/status'
+  url: 'api/v1/administrator/pico/V2/detail/status'
 }
 //common
 export const GET_COLLECTIONPOINT_TYPE: AxiosRequestConfig = {
@@ -299,14 +299,14 @@ export const EDIT_PREMISE_TYPE = (
   premiseTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/premiseType/${premiseTypeId}`
+  url: `api/v1/administrator/premiseType/V2/${premiseTypeId}`
 })
 
 export const DELETE_PREMISE_TYPE = (
   premiseTypeId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/premiseType/${premiseTypeId}`
+  url: `api/v1/administrator/premiseType/V2/${premiseTypeId}`
 })
 
 export const GET_SITE_TYPE: AxiosRequestConfig = {
@@ -321,12 +321,12 @@ export const ADD_SITE_TYPE: AxiosRequestConfig = {
 
 export const EDIT_SITE_TYPE = (siteTypeId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/siteType/${siteTypeId}`
+  url: `api/v1/administrator/siteType/V2/${siteTypeId}`
 })
 
 export const DELETE_SITE_TYPE = (siteTypeId: string): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/siteType/${siteTypeId}`
+  url: `api/v1/administrator/siteType/V2/${siteTypeId}`
 })
 
 export const GET_RECYC_TYPE: AxiosRequestConfig = {
@@ -341,12 +341,12 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
 
 export const UPDATE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/recycType/${recycTypeId}`
+  url: `api/v1/administrator/recycType/V2/${recycTypeId}`
 })
 
 export const DELETE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/recycType/${recycTypeId}`
+  url: `api/v1/administrator/recycType/V2/${recycTypeId}`
 })
 
 export const ADD_SUB_RECYC_TYPE = (
@@ -360,14 +360,14 @@ export const UPDATE_SUB_RECYC_TYPE = (
   recycTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/recycSubType/${recycTypeId}`
+  url: `api/v1/administrator/recycSubType/V2/${recycTypeId}`
 })
 
 export const DELETE_SUB_RECYC_TYPE = (
   recycTypeId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/recycSubType/${recycTypeId}`
+  url: `api/v1/administrator/recycSubType/V2/${recycTypeId}`
 })
 
 export const CREATE_VEHICLE_TYPE: AxiosRequestConfig = {
@@ -382,12 +382,12 @@ export const GET_VEHICLE_TYPE: AxiosRequestConfig = {
 
 export const UPDATE_VEHICLE_TYPE = (vehicleId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/vehicleType/${vehicleId}`
+  url: `api/v1/administrator/vehicleType/V2/${vehicleId}`
 })
 
 export const DELETE_VEHICLE_TYPE = (vehicleId: string): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/vehicleType/${vehicleId}`
+  url: `api/v1/administrator/vehicleType/V2/${vehicleId}`
 })
 
 export const GET_NUM_UNREAD_NOTIF = (loginId: string): AxiosRequestConfig => ({
@@ -554,7 +554,7 @@ export const UPDATE_CHECKOUT_REQUEST_STATUS = (
   table: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/${realmApiRoute}/checkout/V2/${table}/status/${chkOutId}`
+  url: `api/v1/${realmApiRoute}/checkout${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/status/${chkOutId}`
 })
 
 //get checkout reason list
@@ -1164,7 +1164,7 @@ export const UPDATE_DENIAL_REASON = (
   reasonId: number
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/reason${realmApiRoute === 'logistic' ? `/V2/` : `/`}${tenantId}/${reasonId}`
+  url: `/api/v1/${realmApiRoute}/reason${realmApiRoute === 'logistic' ? `/V2/` : realmApiRoute === 'account' ? '/V2/' : `/`}${tenantId}/${reasonId}`
 })
 
 //get staff title
@@ -1201,7 +1201,7 @@ export const UPDATE_STAFF_TITLE = (
   titleId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/stafftitle/V2/${table}/${titleId}`
+  url: `/api/v1/${realmApiRoute}/stafftitle${realmApiRoute !== 'account' && realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/${titleId}`
 })
 
 //get disposal location
@@ -1260,7 +1260,7 @@ export const UPDATE_COMPANY = (
   companyId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/${companyType}/${table}/${companyId}`
+  url: `/api/v1/${realmApiRoute}/${companyType}${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/${companyId}`
 })
 
 export const GET_CONTRACT_LIST = (
@@ -1315,7 +1315,7 @@ export const EDIT_PACKAGING = (
   packagingTypeId: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/packaginglist/V2/${tenantId}/${packagingTypeId}`
+  url: `api/v1/${realmApiRoute}/packaginglist${realmApiRoute === 'manufacturer' ? '/' : '/V2/'}${tenantId}/${packagingTypeId}`
 })
 
 export const GET_DETAIL_NOTIF_TEMPLATE = (
@@ -1333,7 +1333,7 @@ export const UPDATE_NOTIF_TEMPLATE = (
   path: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${path}/notiTemplate${path === 'logistic' ? '/V2/' : path === 'customer' ? '/V2/' : path === 'collectors' ? '/V2/':'/'}${tenantId}/${templateId}`
+  url: `api/v1/${path}/notiTemplate${path !== 'manufacturer' ? '/V2/' : '/'}${tenantId}/${templateId}`
 })
 
 //logistics driver
@@ -1445,7 +1445,7 @@ export const UPDATE_PURCHASE_ORDER_STATUS = (
   poId: string
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/po/${poId}`
+  url: `api/v1/administrator/po/V2/${poId}`
 })
 
 export const GET_ALL_REASON_MANUFACTURER = (
@@ -1467,12 +1467,12 @@ export const CREATE_RECYC_CODE: AxiosRequestConfig = {
 
 export const UPDATE_RECYC_CODE = (codeId: number): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/recycCode/${codeId}`
+  url: `api/v1/administrator/recycCode/V2/${codeId}`
 })
 
 export const DELETE_RECYC_CODE = (codeId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/recycCode/${codeId}`
+  url: `api/v1/administrator/recycCode/V2/${codeId}`
 })
 
 export const GET_WEIGHT_UNIT: AxiosRequestConfig = {
@@ -1487,12 +1487,12 @@ export const CREATE_WEIGHT_UNIT: AxiosRequestConfig = {
 
 export const UPDATE_WEIGHT_UNIT = (unitId: number): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/weightUnit/${unitId}`
+  url: `api/v1/administrator/weightUnit/V2/${unitId}`
 })
 
 export const DELETE_WEIGHT_UNIT = (unitId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/weightUnit/${unitId}`
+  url: `api/v1/administrator/weightUnit/V2/${unitId}`
 })
 
 export const CREATE_CURRENCY: AxiosRequestConfig = {
@@ -1502,12 +1502,12 @@ export const CREATE_CURRENCY: AxiosRequestConfig = {
 
 export const EDIT_CURRENCY = (currencyId: number): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/currencyList/${currencyId}`
+  url: `api/v1/administrator/currencyList/V2/${currencyId}`
 })
 
 export const DELETE_CURRENCY = (currencyId: number): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/currencyList/${currencyId}`
+  url: `api/v1/administrator/currencyList/V2/${currencyId}`
 })
 
 export const GET_DECIMAL_VALUE: AxiosRequestConfig = {
@@ -1524,7 +1524,7 @@ export const UPDATE_DECIMAL_VALUE = (
   decimalValId: number
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/decimalVal/${decimalValId}`
+  url: `api/v1/administrator/decimalVal/V2/${decimalValId}`
 })
 
 export const GET_DATE_FORMAT: AxiosRequestConfig = {
@@ -1541,7 +1541,7 @@ export const UPDATE_DATE_FORMAT = (
   dateFormatId: number
 ): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/dateFormat/${dateFormatId}`
+  url: `api/v1/administrator/dateFormat/V2/${dateFormatId}`
 })
 
 export const GET_WEIGHT_TOLERANCE: AxiosRequestConfig = {
@@ -1553,7 +1553,7 @@ export const UPDATE_WEIGHT_TOLERANCE = (
   weightId: number
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/weightTolerance/${weightId}`
+  url: `api/v1/administrator/weightTolerance/V2/${weightId}`
 })
 // get upload img setting
 export const GET_IMG_SETTINGS = (tenantId: string): AxiosRequestConfig => ({
@@ -1563,7 +1563,7 @@ export const GET_IMG_SETTINGS = (tenantId: string): AxiosRequestConfig => ({
 
 export const UPDATE_PURCHASE_ORDER = (poId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/po/${poId}`
+  url: `api/v1/administrator/po/V3/${poId}`
 })
 
 export const GET_COLPOINTRECYCABLES_DASHBOARD = (

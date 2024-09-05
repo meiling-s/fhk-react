@@ -10,7 +10,8 @@ export type CheckInWarehouse = {
     checkInUnitId: number,
     checkInAt: string,
     checkInBy: string,
-    updatedBy: string
+    updatedBy: string,
+    version: number,
 }
 
 export type CheckOutWarehouse = {
@@ -18,7 +19,8 @@ export type CheckOutWarehouse = {
     checkOutUnitId: number,
     checkOutAt: string,
     checkOutBy: string,
-    updatedBy: string
+    updatedBy: string,
+    version: number
 }
 
 export type CheckInOutWarehouse = {

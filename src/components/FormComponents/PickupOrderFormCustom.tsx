@@ -29,9 +29,9 @@ import {
   getPicoById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate, getPrimaryColor } from '../../utils/utils'
+import { displayCreatedDate, extractError, getPrimaryColor, showErrorToast } from '../../utils/utils'
 import CustomButton from './CustomButton'
-import { Languages, localStorgeKeyName } from '../../constants/constant'
+import { Languages, STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'
@@ -183,11 +183,13 @@ const PickupOrderForm = ({
       const updatePoStatus = {
         status: 'CLOSED',
         reason: selectedPickupOrder.reason,
-        updatedBy: selectedPickupOrder.updatedBy
+        updatedBy: selectedPickupOrder.updatedBy,
+        version: selectedPickupOrder.version
       }
       const updatePoDtlStatus = {
         status: 'CLOSED',
-        updatedBy: selectedPickupOrder.updatedBy
+        updatedBy: selectedPickupOrder.updatedBy,
+        version: selectedPickupOrder.version
       }
       try {
         const result = await editPickupOrderStatus(
@@ -207,8 +209,13 @@ const PickupOrderForm = ({
         }
         onClose && onClose()
         navigate('/collector/PickupOrder')
-      } catch (error) {
-        //console.error('Error updating field:', error)
+      } catch (error: any) {
+        const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
       }
     } else {
       alert('No selected pickup order')

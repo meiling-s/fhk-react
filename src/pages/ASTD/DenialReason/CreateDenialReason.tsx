@@ -12,7 +12,7 @@ import {
 } from '../../../APICalls/Collector/denialReason'
 import { styles } from '../../../constants/styles'
 import { STATUS_CODE, formErr } from '../../../constants/constant'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import {
   DenialReason,
   CreateDenialReason,
@@ -358,37 +358,48 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         setTrySubmited(true)
       }
     } catch (error: any) {
-      const { state } = extractError(error)
+      const {state} = extractError(error);
       if (state.code === STATUS_CODE[503]) {
         navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
       }
     }
   }
 
   const handleDelete = async () => {
-    const selectedValue = functionList.find(
-      (el) => el.name === formData.functionId
-    )
-    if (selectedValue) {
-      formData.functionId = selectedValue.functionId
-    }
-    const editData: UpdateDenialReason = {
-      reasonNameTchi: formData.reasonNameTchi,
-      reasonNameSchi: formData.reasonNameSchi,
-      reasonNameEng: formData.reasonNameEng,
-      description: formData.description ?? '',
-      functionId: formData.functionId,
-      status: 'DELETED',
-      remark: formData.remark,
-      updatedBy: loginName,
-      version: version,
-    }
-    if (selectedItem != null) {
-      const result = await editDenialReason(selectedItem.reasonId, editData)
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+      const selectedValue = functionList.find(
+        (el) => el.name === formData.functionId
+      )
+      if (selectedValue) {
+        formData.functionId = selectedValue.functionId
+      }
+      const editData: UpdateDenialReason = {
+        reasonNameTchi: formData.reasonNameTchi,
+        reasonNameSchi: formData.reasonNameSchi,
+        reasonNameEng: formData.reasonNameEng,
+        description: formData.description ?? '',
+        functionId: formData.functionId,
+        status: 'DELETED',
+        remark: formData.remark,
+        updatedBy: loginName,
+        version: version,
+      }
+      if (selectedItem != null) {
+        const result = await editDenialReason(selectedItem.reasonId, editData)
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        }
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
       }
     }
   }

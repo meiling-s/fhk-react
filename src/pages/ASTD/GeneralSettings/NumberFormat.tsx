@@ -54,6 +54,7 @@ interface DecimalValueProps {
   decimalValId: number
   updatedAt: string
   updatedBy: string
+  version: number
 }
 
 interface NumberFormatProps {
@@ -76,6 +77,7 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
   const [decimalValId, setDecimalValId] = useState(0)
   const [decimalValList, setDecimalValList] = useState<DecimalValueProps[]>([])
   const [trySubmited, setTrySubmited] = useState<boolean>(false)
+  const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate();
   
   useEffect (() => {
@@ -84,6 +86,7 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
       if (numberFormat) {
         setNumFormat(numberFormat.decimalVal)
         setDecimalValId(numberFormat.decimalValId)
+        setVersion(numberFormat.version)
       }
     }
   }, [numberFormat, action, drawerOpen])
@@ -106,6 +109,7 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
           decimalValId: item.decimalValId,
           updatedAt: item.updatedAt,
           updatedBy: item.updatedBy,
+          version: item.version
         })
       })
       setDecimalValList(decimalList);
@@ -129,7 +133,8 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
 
     const formData = {
       status: "ACTIVE",
-      updatedBy: loginId
+      updatedBy: loginId,
+      version: version
     }
 
     if (formData) {
@@ -151,10 +156,10 @@ const NumberFormat: FunctionComponent<NumberFormatProps> = ({
         }
       } catch (error:any) {
         const {state} =  extractError(error);
-        if(state.code === STATUS_CODE[503] ){
+        if (state.code === STATUS_CODE[503]) {
           navigate('/maintenance')
-        } else {
-          showErrorToast(t('notify.errorEdited'))
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
         }
       }
   }

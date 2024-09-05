@@ -498,30 +498,39 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
   }
 
   const handleDelete = async () => {
-    const selectedValue = functionList.find(
-      (el) => el.name === formData.functionId
-    )
-    if (selectedValue) {
-      formData.functionId = selectedValue.functionId
-    }
-    const editData: UpdateDenialReason = {
-      reasonNameTchi: formData.reasonNameTchi,
-      reasonNameSchi: formData.reasonNameSchi,
-      reasonNameEng: formData.reasonNameEng,
-      description: '',
-      functionId: formData.functionId,
-      status: 'DELETED',
-      remark: formData.remark,
-      updatedBy: loginName,
-      ...(role === 'logistic' && {version: version})
-    }
-    if (selectedItem != null) {
-      const result = await editDenialReason(selectedItem.reasonId, editData)
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+      const selectedValue = functionList.find(
+        (el) => el.name === formData.functionId
+      )
+      if (selectedValue) {
+        formData.functionId = selectedValue.functionId
       }
+      const editData: UpdateDenialReason = {
+        reasonNameTchi: formData.reasonNameTchi,
+        reasonNameSchi: formData.reasonNameSchi,
+        reasonNameEng: formData.reasonNameEng,
+        description: '',
+        functionId: formData.functionId,
+        status: 'DELETED',
+        remark: formData.remark,
+        updatedBy: loginName,
+        ...(role === 'logistic' && {version: version})
+      }
+      if (selectedItem != null) {
+        const result = await editDenialReason(selectedItem.reasonId, editData)
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        }
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
   }
 
