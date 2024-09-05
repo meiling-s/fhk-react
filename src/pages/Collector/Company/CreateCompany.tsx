@@ -55,6 +55,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     localStorage.getItem(localStorgeKeyName.username) ?? ''
   const [prefixItemName, setPrefixItemName] = useState<string>('')
   const [existingCompanyList, setExistingCompanyList] = useState<Company[]>([])
+  const role = localStorgeKeyName.realm
   const staffField = [
     {
       label: t('common.traditionalChineseName'),
@@ -307,7 +308,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
 
   const handleEditCompany = async () => {
     try {
-      const editData: UpdateCompany = {
+      const editData = {
         companyId: selectedItem?.companyId || '',
         nameTchi: formData.nameTchi,
         nameSchi: formData.nameSchi,
@@ -317,7 +318,8 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         remark: formData.remark,
         status: 'ACTIVE',
         createdBy: formData.createdBy,
-        updatedBy: loginName
+        updatedBy: loginName,
+        version: selectedItem?.version.toString() ?? "0"
       }
       const data: {
         brNo: string
@@ -326,6 +328,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         status: string
         createdBy: string
         updatedBy: string
+        version: string
         [key: string]: string
       } = {
         brNo: editData.brNo,
@@ -333,7 +336,8 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         remark: editData.remark,
         status: editData.status,
         createdBy: editData.createdBy,
-        updatedBy: editData.updatedBy
+        updatedBy: editData.updatedBy,
+        version: editData.version
       }
       data[`${prefixItemName}NameTchi`] = editData.nameTchi
       data[`${prefixItemName}NameSchi`] = editData.nameSchi
@@ -363,7 +367,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
   }
 
   const handleDelete = async () => {
-    const editData: UpdateCompany = {
+    const editData = {
       companyId: selectedItem?.companyId || '',
       nameTchi: formData.nameTchi,
       nameSchi: formData.nameSchi,
@@ -373,14 +377,17 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       remark: formData.remark,
       status: 'DELETED',
       createdBy: formData.createdBy,
-      updatedBy: loginName
+      updatedBy: loginName,
+      version: selectedItem?.version.toString() ?? "0"
     }
     const data: {
       brNo: string
       description: string
       remark: string
       status: string
+      createdBy: string
       updatedBy: string
+      version: string
       [key: string]: string
     } = {
       brNo: editData.brNo,
@@ -388,7 +395,8 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       remark: editData.remark,
       status: editData.status,
       createdBy: editData.createdBy,
-      updatedBy: editData.updatedBy
+      updatedBy: editData.updatedBy,
+      version: editData.version
     }
     data[`${prefixItemName}NameTchi`] = editData.nameTchi
     data[`${prefixItemName}NameSchi`] = editData.nameSchi

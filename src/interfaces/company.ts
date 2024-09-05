@@ -9,6 +9,7 @@ export type Company = {
   createdAt: string;
   updatedAt: string;
   companyType: string;
+  version: string;
 };
 
 export type CreateCompany = {
@@ -27,5 +28,7 @@ export type UpdateCompany = {
   description: string;
   remark: string;
   status: string;
+  createdBy: string;
   updatedBy: string;
+  version: string;
 };

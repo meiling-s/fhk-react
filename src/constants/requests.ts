@@ -1260,7 +1260,7 @@ export const UPDATE_COMPANY = (
   companyId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/${companyType}/${table}/${companyId}`
+  url: `/api/v1/${realmApiRoute}/${companyType}${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/${companyId}`
 })
 
 export const GET_CONTRACT_LIST = (
