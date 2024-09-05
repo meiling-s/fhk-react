@@ -36,6 +36,7 @@ function createCompany(
   createdAt: string,
   updatedAt: string,
   companyType: string,
+  version: string,
 ): CompanyItem {
   return {
     companyId,
@@ -51,6 +52,7 @@ function createCompany(
     createdAt,
     updatedAt,
     companyType,
+    version,
   }
 }
 
@@ -86,7 +88,6 @@ const Company: FunctionComponent = () => {
   const [manuList, setManuList] = useState<CompanyItem[]>([])
   const [customerList, setCustomerList] = useState<CompanyItem[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  console.log(selectCompanyType, 'a')
 
   const initCompanyList = async (companyType: string) => {
     setIsLoading(true)
@@ -119,6 +120,7 @@ const Company: FunctionComponent = () => {
             item?.createdAt,
             item?.updatedAt,
             companyType,
+            item?.version
           )
         )
       })

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { FormErrorMsg } from '../../../components/FormComponents/FormErrorMsg'
 import { formValidate } from '../../../interfaces/common'
 import { editCompany, createCompany } from '../../../APICalls/Collector/company'
-import { extractError, returnErrorMsg } from '../../../utils/utils'
+import { extractError, returnErrorMsg, showErrorToast } from '../../../utils/utils'
 import { STATUS_CODE, formErr, localStorgeKeyName } from '../../../constants/constant'
 import {
   Company,
@@ -55,6 +55,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
     localStorage.getItem(localStorgeKeyName.username) ?? ''
   const [prefixItemName, setPrefixItemName] = useState<string>('')
   const [existingCompanyList, setExistingCompanyList] = useState<Company[]>([])
+  const role = localStorgeKeyName.realm
   const staffField = [
     {
       label: t('common.traditionalChineseName'),
@@ -307,7 +308,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
 
   const handleEditCompany = async () => {
     try {
-      const editData: UpdateCompany = {
+      const editData = {
         companyId: selectedItem?.companyId || '',
         nameTchi: formData.nameTchi,
         nameSchi: formData.nameSchi,
@@ -317,7 +318,8 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         remark: formData.remark,
         status: 'ACTIVE',
         createdBy: formData.createdBy,
-        updatedBy: loginName
+        updatedBy: loginName,
+        version: selectedItem?.version.toString() ?? "0"
       }
       const data: {
         brNo: string
@@ -326,6 +328,7 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         status: string
         createdBy: string
         updatedBy: string
+        version: string
         [key: string]: string
       } = {
         brNo: editData.brNo,
@@ -333,7 +336,8 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
         remark: editData.remark,
         status: editData.status,
         createdBy: editData.createdBy,
-        updatedBy: editData.updatedBy
+        updatedBy: editData.updatedBy,
+        version: editData.version
       }
       data[`${prefixItemName}NameTchi`] = editData.nameTchi
       data[`${prefixItemName}NameSchi`] = editData.nameSchi
@@ -356,54 +360,69 @@ const CompanyDetail: FunctionComponent<CreateCompany> = ({
       }
     } catch (error:any) {
       const {state} = extractError(error);
-      if(state.code === STATUS_CODE[503] ){
-        navigate('/maintenance')
-      }
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
   }
 
   const handleDelete = async () => {
-    const editData: UpdateCompany = {
-      companyId: selectedItem?.companyId || '',
-      nameTchi: formData.nameTchi,
-      nameSchi: formData.nameSchi,
-      nameEng: formData.nameEng,
-      brNo: formData.brNo,
-      description: formData.description,
-      remark: formData.remark,
-      status: 'DELETED',
-      createdBy: formData.createdBy,
-      updatedBy: loginName
-    }
-    const data: {
-      brNo: string
-      description: string
-      remark: string
-      status: string
-      updatedBy: string
-      [key: string]: string
-    } = {
-      brNo: editData.brNo,
-      description: editData.description,
-      remark: editData.remark,
-      status: editData.status,
-      createdBy: editData.createdBy,
-      updatedBy: editData.updatedBy
-    }
-    data[`${prefixItemName}NameTchi`] = editData.nameTchi
-    data[`${prefixItemName}NameSchi`] = editData.nameSchi
-    data[`${prefixItemName}NameEng`] = editData.nameEng
-    if (selectedItem != null) {
-      const result = await editCompany(
-        companyType,
-        selectedItem.companyId,
-        data
-      )
-      if (result) {
-        onSubmitData('success', t('common.deletedSuccessfully'))
-        resetFormData()
-        handleDrawerClose()
+    try {
+      const editData = {
+        companyId: selectedItem?.companyId || '',
+        nameTchi: formData.nameTchi,
+        nameSchi: formData.nameSchi,
+        nameEng: formData.nameEng,
+        brNo: formData.brNo,
+        description: formData.description,
+        remark: formData.remark,
+        status: 'DELETED',
+        createdBy: formData.createdBy,
+        updatedBy: loginName,
+        version: selectedItem?.version.toString() ?? "0"
       }
+      const data: {
+        brNo: string
+        description: string
+        remark: string
+        status: string
+        createdBy: string
+        updatedBy: string
+        version: string
+        [key: string]: string
+      } = {
+        brNo: editData.brNo,
+        description: editData.description,
+        remark: editData.remark,
+        status: editData.status,
+        createdBy: editData.createdBy,
+        updatedBy: editData.updatedBy,
+        version: editData.version
+      }
+      data[`${prefixItemName}NameTchi`] = editData.nameTchi
+      data[`${prefixItemName}NameSchi`] = editData.nameSchi
+      data[`${prefixItemName}NameEng`] = editData.nameEng
+      if (selectedItem != null) {
+        const result = await editCompany(
+          companyType,
+          selectedItem.companyId,
+          data
+        )
+        if (result) {
+          onSubmitData('success', t('common.deletedSuccessfully'))
+          resetFormData()
+          handleDrawerClose()
+        }
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
   }
 

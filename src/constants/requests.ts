@@ -341,12 +341,12 @@ export const ADD_RECYC_TYPE: AxiosRequestConfig = {
 
 export const UPDATE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/administrator/recycType/${recycTypeId}`
+  url: `api/v1/administrator/recycType/V2/${recycTypeId}`
 })
 
 export const DELETE_RECYC_TYPE = (recycTypeId: string): AxiosRequestConfig => ({
   method: 'patch',
-  url: `api/v1/administrator/recycType/${recycTypeId}`
+  url: `api/v1/administrator/recycType/V2/${recycTypeId}`
 })
 
 export const ADD_SUB_RECYC_TYPE = (
@@ -1164,7 +1164,7 @@ export const UPDATE_DENIAL_REASON = (
   reasonId: number
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/reason${realmApiRoute === 'logistic' ? `/V2/` : `/`}${tenantId}/${reasonId}`
+  url: `/api/v1/${realmApiRoute}/reason${realmApiRoute === 'logistic' ? `/V2/` : realmApiRoute === 'account' ? '/V2/' : `/`}${tenantId}/${reasonId}`
 })
 
 //get staff title
@@ -1260,7 +1260,7 @@ export const UPDATE_COMPANY = (
   companyId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/${companyType}/${table}/${companyId}`
+  url: `/api/v1/${realmApiRoute}/${companyType}${realmApiRoute !== 'manufacturer' ? '/V2/' : '/'}${table}/${companyId}`
 })
 
 export const GET_CONTRACT_LIST = (

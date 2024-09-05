@@ -37,7 +37,8 @@ function createCompany(
   updatedBy: string,
   createdAt: string,
   updatedAt: string,
-  companyType: string
+  companyType: string,
+  version: string,
 ): CompanyItem {
   return {
     companyId,
@@ -52,7 +53,8 @@ function createCompany(
     updatedBy,
     createdAt,
     updatedAt,
-    companyType
+    companyType,
+    version,
   }
 }
 
@@ -126,7 +128,8 @@ const Company: FunctionComponent = () => {
               item?.updatedBy,
               item?.createdAt,
               item?.updatedAt,
-              companyType
+              companyType,
+              item?.version ?? "0"
             )
           )
         })
@@ -186,7 +189,8 @@ const Company: FunctionComponent = () => {
               item?.updatedBy,
               item?.createdAt,
               item?.updatedAt,
-              item?.companyType
+              item?.companyType,
+              item?.version
             )
           )
         })
