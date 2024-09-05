@@ -18,7 +18,7 @@ import * as Yup from 'yup'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 const EditPickupOrder = () => {
-  const { t } = useTranslation()
+  const { t, i18n} = useTranslation()
   const navigate = useNavigate()
   const { state } = useLocation()
   const [addRow, setAddRow] = useState<CreatePicoDetail[]>([])

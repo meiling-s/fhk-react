@@ -976,8 +976,8 @@ const PickupOrders = () => {
     }
   }, [])
   const handleCloses = () => {
-    setOpenModal(false)
     setSelectedRow(null)
+    setOpenModal(false)
   }
   const handleRowClick = (params: GridRowParams) => {
     const row = params.row as PickupOrder
