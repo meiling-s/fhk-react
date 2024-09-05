@@ -32,12 +32,10 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import { useNavigate } from 'react-router-dom'
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid'
 import { DELETE_OUTLINED_ICON, EDIT_OUTLINED_ICON } from '../../themes/icons'
-import { t } from 'i18next'
 import CustomAutoComplete from './CustomAutoComplete'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import PicoRoutineSelect from '../SpecializeComponents/PicoRoutineSelect'
 import PickupOrderList from '../../components/PickupOrderList'
-import i18n from '../../setups/i18n'
 import { useTranslation } from 'react-i18next'
 import { Languages, format } from '../../constants/constant'
 import { localStorgeKeyName } from '../../constants/constant'
@@ -87,7 +85,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   onDelete,
   editMode
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   return (
     <Modal
       open={open}
@@ -159,6 +157,7 @@ const PickupOrderCreateForm = ({
   const [id, setId] = useState<number>(0)
   const [picoRefId, setPicoRefId] = useState('')
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const {t, i18n} = useTranslation()
   const {
     logisticList,
     contractType,
@@ -544,34 +543,36 @@ const PickupOrderCreateForm = ({
   }
 
   const getCurrentLogisticName = (value: string) => {
+    console.log(value, 'valuee')
+    console.log(prevLang, 'prevlang')
     let logisticName: string = ''
     if (!logisticCompany) return logisticName
-    if (prevLang === Languages.ENUS) {
-      const logistic = logisticCompany.find(
-        (item) => item.logisticNameEng === value
-      )
-      if (i18n.language === Languages.ZHCH) {
-        logisticName = logistic?.logisticNameSchi ?? ''
-      } else if (i18n.language === Languages.ZHHK) {
-        logisticName = logistic?.logisticNameTchi ?? ''
+    const logisticSimplified = logisticCompany.find((item) => item.logisticNameSchi === value)
+    const logisticEnglish = logisticCompany.find((item) => item.logisticNameEng === value)
+    const logisticTraditional = logisticCompany.find((item) => item.logisticNameTchi === value)
+    if (logisticSimplified !== undefined) {
+      if (i18n.language === 'enus') {
+        logisticName = logisticSimplified?.logisticNameEng ?? ''
+      } else if (i18n.language === 'zhhk') {
+        logisticName = logisticSimplified?.logisticNameTchi ?? ''
+      } else if (i18n.language === 'zhch') {
+        logisticName = logisticSimplified?.logisticNameSchi ?? ''
       }
-    } else if (prevLang === Languages.ZHCH) {
-      const logistic = logisticCompany.find(
-        (item) => item.logisticNameSchi === value
-      )
-      if (i18n.language === Languages.ENUS) {
-        logisticName = logistic?.logisticNameEng ?? ''
-      } else if (i18n.language === Languages.ZHHK) {
-        logisticName = logistic?.logisticNameTchi ?? ''
+    } else if (logisticEnglish !== undefined) {
+      if (i18n.language === 'zhch') {
+        logisticName = logisticEnglish?.logisticNameSchi ?? ''
+      } else if (i18n.language === 'zhhk') {
+        logisticName = logisticEnglish?.logisticNameTchi ?? ''
+      } else if (i18n.language === 'enus') {
+        logisticName = logisticEnglish?.logisticNameEng ?? ''
       }
-    } else if (prevLang === Languages.ZHHK) {
-      const logistic = logisticCompany.find(
-        (item) => item.logisticNameTchi === value
-      )
-      if (i18n.language === Languages.ZHCH) {
-        logisticName = logistic?.logisticNameSchi ?? ''
-      } else if (i18n.language === Languages.ENUS) {
-        logisticName = logistic?.logisticNameEng ?? ''
+    } else if (logisticTraditional !== undefined) {
+      if (i18n.language === 'zhch') {
+        logisticName = logisticTraditional?.logisticNameSchi ?? ''
+      } else if (i18n.language === 'enus') {
+        logisticName = logisticTraditional?.logisticNameEng ?? ''
+      } else if (i18n.language === 'zhhk') {
+        logisticName = logisticTraditional?.logisticNameTchi ?? ''
       }
     }
     formik.setFieldValue('logisticName', logisticName)
