@@ -501,7 +501,7 @@ export const UPDATE_WAREHOUSE_STATUS_BY_ID = (
   warehouseId: number,
   table: string
 ): AxiosRequestConfig => ({
-  method: 'put',
+  method: 'patch',
   url: `api/v1/collectors/warehouse/V2/${table}/${warehouseId}/status`
 })
 
