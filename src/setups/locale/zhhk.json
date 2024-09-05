@@ -232,7 +232,7 @@
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
     "reject_reasons": "拒絕原因（可多選）",
-    "confirm": "確認拒絕",
+    "confirm": "確認",
     "cancel": "取消",
     "search_input": "輸入運單編號",
     "check_in": "送入日期及時間"
