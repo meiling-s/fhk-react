@@ -6,6 +6,7 @@ export type InventoryDetail = {
 
 export type InventoryItem = {
   itemId: number
+  labelId: string
   warehouseId: number
   recyclingNumber?: string
   recycTypeId: string
@@ -26,7 +27,7 @@ export type InventoryItem = {
 }
 
 export type InventoryQuery = {
-  itemId: number | null
+  labelId: string | null
   warehouseId: number | null
   recycTypeId: string
   recycSubTypeId: string

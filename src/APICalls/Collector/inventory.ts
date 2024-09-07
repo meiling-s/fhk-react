@@ -20,7 +20,7 @@ export const getAllInventory = async (
       page: page,
       size: size
     }
-    if (query?.itemId) params.itemId = query.itemId
+    if (query?.labelId) params.labelId = query.labelId
     if (query?.warehouseId) params.warehouseId = query.warehouseId
     if (query?.recycTypeId) params.recycTypeId = query.recycTypeId
     if (query?.recycSubTypeId) params.recycSubTypeId = query.recycSubTypeId
@@ -71,7 +71,7 @@ export const astdGetAllInventory = async (
       page: page,
       size: size
     }
-    if (query?.itemId) params.itemId = query.itemId
+    if (query?.labelId) params.labelId = query.labelId
     if (query?.warehouseId) params.warehouseId = query.warehouseId
     if (query?.recycTypeId) params.recycTypeId = query.recycTypeId
     if (query?.recycSubTypeId) params.recycSubTypeId = query.recycSubTypeId

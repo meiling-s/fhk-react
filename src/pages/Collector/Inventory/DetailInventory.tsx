@@ -82,7 +82,6 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
       let result
       if (token.realmApiRoute === 'account') {
         // TODO document why this block is empty
-      
       } else {
         result = await getItemTrackInventory(
           token.realmApiRoute,
@@ -105,9 +104,10 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
         onClose={handleDrawerClose}
         anchor={'right'}
         action={'none'}
+        useConfirmModal={false}
         headerProps={{
           title: t('inventory.recyclingNumber'),
-          subTitle: `${selectedRow?.itemId}`,
+          subTitle: `${selectedRow?.labelIdgit }`,
           onCloseHeader: handleDrawerClose
         }}
       >
