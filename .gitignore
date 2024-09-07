@@ -64,3 +64,8 @@ docs/
 
 # History folder
 .history/
+
+
+# Don't ignore the lcov.info file inside the coverage directory
+coverage/*
+!coverage/.gitkeep
