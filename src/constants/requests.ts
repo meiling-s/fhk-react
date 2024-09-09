@@ -1229,7 +1229,7 @@ export const UPDATE_DISPOSAL_LOCATION = (
   disposalLocId: string
 ): AxiosRequestConfig => ({
   method: 'PUT',
-  url: `/api/v1/${realmApiRoute}/V2/${table}/${disposalLocId}`
+  url: `/api/v1/${realmApiRoute}/disposallocation/V2/${table}/${disposalLocId}`
 })
 
 //get company (collectorlist || logisticlist || manulist || customerlist)

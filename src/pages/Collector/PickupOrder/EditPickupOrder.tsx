@@ -90,8 +90,6 @@ const EditPickupOrder = () => {
         //navigate('/collector/PickupOrder', { state: 'updated' })
         const routeName = role
         navigate(`/${routeName}/PickupOrder`, { state: 'updated' })
-      } else {
-        showErrorToast('fail to create pickup order')
       }
     }
   })
