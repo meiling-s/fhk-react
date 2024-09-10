@@ -1,22 +1,31 @@
 import { Box, Icon, Stack, Typography } from '@mui/material'
-import EastIcon from '@mui/icons-material/East'
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined'
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
+import CommonTypeContainer from '../contexts/CommonTypeContainer'
 import { t } from 'i18next'
 import dayjs from 'dayjs'
 import { format } from '../constants/constant'
+import { useEffect, useState } from 'react'
+import { useContainer } from 'unstated-next'
+import i18n from '../setups/i18n'
+import { Languages } from '../constants/constant'
+import { getDriverDetailById } from '../APICalls/jobOrder'
 
 export interface ShippingDataType {
-  senderName: string
-  receiverName: string
+  senderId: string
+  receiverId: string
+  senderName?: string
+  receiverName?: string
   picoId: string
-  logisticName: string
+  logisticId: string
+  logisticName?: string
+  pickupAt: string
+  driverTable: string
+  driverId: string
+  driverName?: string
   senderAddr: string
   receiverAddr: string
-  pickupAt: string
-  driverName: string
   plateNo: string
 }
 
@@ -25,9 +34,90 @@ const InventoryShippingCard = ({
 }: {
   shippingData: ShippingDataType[]
 }) => {
+  const { companies } = useContainer(CommonTypeContainer)
+  const [shippingDataNew, setShippingDataNew] =
+    useState<ShippingDataType[]>(shippingData)
+
+  const getDriverDetail = async (driverId: string, driverTable: string) => {
+    const result = await getDriverDetailById(driverId, driverTable)
+    if (result?.data) {
+      const driverDetail = result?.data
+      if (i18n.language === Languages.ENUS) return driverDetail.driverNameEng
+      if (i18n.language === Languages.ZHCH) return driverDetail.driverNameSchi
+      if (i18n.language === Languages.ZHHK) return driverDetail.driverNameTchi
+    }
+  }
+
+  const updateShippingDataWithDriverName = async () => {
+    const updatedShippingData = await Promise.all(
+      shippingData.map(async (item) => {
+        if (item.driverId && item.driverTable) {
+          const driverName = await getDriverDetail(
+            item.driverId,
+            item.driverTable
+          )
+          return { ...item, driverName }
+        }
+        return item
+      })
+    )
+
+    setShippingDataNew(updatedShippingData)
+  }
+
+  useEffect(() => {
+    updateShippingDataWithDriverName()
+  }, [shippingData])
+
+  shippingData.map((item: ShippingDataType) => {
+    if (item.logisticId) {
+      const logistic = companies.find(
+        (company) => company.id?.toString() == item.logisticId
+      )
+      if (logistic) {
+        if (i18n.language === Languages.ENUS)
+          item.logisticName = logistic.nameEng
+        if (i18n.language === Languages.ZHCH)
+          item.logisticName = logistic.nameSchi
+        if (i18n.language === Languages.ZHHK)
+          item.logisticName = logistic.nameTchi
+      }
+    }
+
+    if (item.receiverId) {
+      const receiverName = companies.find(
+        (company) => company.id?.toString() == item.receiverId
+      )
+
+      if (receiverName) {
+        if (i18n.language === Languages.ENUS)
+          item.receiverName = receiverName.nameEng
+        if (i18n.language === Languages.ZHCH)
+          item.receiverName = receiverName.nameSchi
+        if (i18n.language === Languages.ZHHK)
+          item.receiverName = receiverName.nameTchi
+      }
+    }
+
+    if (item.senderId) {
+      const senderName = companies.find(
+        (company) => company.id?.toString() == item.senderId
+      )
+
+      if (senderName) {
+        if (i18n.language === Languages.ENUS)
+          item.senderName = senderName.nameEng
+        if (i18n.language === Languages.ZHCH)
+          item.senderName = senderName.nameSchi
+        if (i18n.language === Languages.ZHHK)
+          item.senderName = senderName.nameTchi
+      }
+    }
+  })
+
   return (
     <>
-      {shippingData.map((shipping, index) => (
+      {shippingDataNew.map((shipping, index) => (
         <Stack
           key={shipping.picoId}
           borderColor="#e2e2e2"
@@ -131,7 +221,7 @@ const InventoryShippingCard = ({
               <Typography style={localstyles.information}>
                 {t('inventory.at')}{' '}
                 {dayjs(new Date(shipping.pickupAt)).format(format.dateFormat1)}{' '}
-                {t('inventory.handover')}【{shipping.driverName}{' '}
+                {t('inventory.handover')}【{shipping.driverName}
                 {shipping.plateNo}】
               </Typography>
             </Box>

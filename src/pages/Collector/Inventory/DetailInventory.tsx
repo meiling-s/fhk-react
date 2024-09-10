@@ -3,6 +3,7 @@ import React, { FunctionComponent, useEffect, useState } from 'react'
 import { styles } from '../../../constants/styles'
 import RightOverlayForm from '../../../components/RightOverlayForm'
 import CustomField from '../../../components/FormComponents/CustomField'
+import CircularLoading from '../../../components/CircularLoading'
 import {
   InventoryItem,
   InventoryDetail as InvDetails
@@ -31,6 +32,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   const { t } = useTranslation()
   const [shippingData, setShippingData] = useState<any[]>([])
   const { decimalVal } = useContainer(CommonTypeContainer)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const getPicoDtl = (picoId: string, dtlId: number) => {
     if (selectedPico) {
       const pico = selectedPico.find((pico) => pico.picoId == picoId)
@@ -76,6 +78,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
   }, [selectedRow])
 
   const initItemTrackInventory = async () => {
+    setIsLoading(true)
     const token = returnApiToken()
     setShippingData([])
     if (selectedRow !== null && selectedRow !== undefined) {
@@ -95,6 +98,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
         }
       }
     }
+    setIsLoading(false)
   }
 
   return (
@@ -143,13 +147,19 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
                 </CustomField>
               </Grid>
             ))}
-            {shippingData.length > 0 && (
+            {isLoading ? (
+              <CircularLoading />
+            ) : (
               <Grid item>
-                <Typography sx={styles.header2}>
-                  {t('pick_up_order.item.shipping_info')}
-                </Typography>
-                <InventoryShippingCard shippingData={shippingData} />
-              </Grid>
+                {shippingData.length > 0 && (
+                  <Grid>
+                    <Typography sx={styles.header2}>
+                      {t('pick_up_order.item.shipping_info')}
+                    </Typography>
+                    <InventoryShippingCard shippingData={shippingData} />
+                  </Grid>
+                )}
+             </Grid>
             )}
           </Grid>
         </Box>
