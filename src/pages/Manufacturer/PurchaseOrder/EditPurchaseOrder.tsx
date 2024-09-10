@@ -87,11 +87,11 @@ const EditPurchaseOrder = () => {
       return await UpdatePurchaseOrder(poId, values)
     } catch (error:any) {
       const {state, realm} =  extractError(error);
-    if(state.code === STATUS_CODE[503] ){
-      navigate('/maintenance')
-    } else {
-      return null
-    }
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]){
+        showErrorToast(error.response.data.message);
+      }
     }
   }
   
@@ -119,7 +119,8 @@ const EditPurchaseOrder = () => {
       updatedBy: loginId,
       createdAt: currentDate,
       updatedAt: currentDate,
-      purchaseOrderDetail: []
+      purchaseOrderDetail: [],
+      version: 0
     },
     // validationSchema: validateSchema,
     onSubmit: async (values: PurChaseOrder) => {
@@ -155,6 +156,7 @@ const EditPurchaseOrder = () => {
         updatedBy: loginId,
         pickupAt: item.pickupAt,
         receiverAddr: poInfo.receiverAddr,
+        version: poInfo.version
       })) || []
 
     setAddRow(picoDetails)
@@ -188,7 +190,8 @@ const EditPurchaseOrder = () => {
         updatedBy: loginId,
         createdAt: currentDate,
         updatedAt: currentDate,
-        purchaseOrderDetail: []
+        purchaseOrderDetail: [],
+        version: poInfo.version
       })
     }
   }, [poInfo])

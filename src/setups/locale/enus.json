@@ -205,7 +205,10 @@
     "shouldNotEmpty": "should not empty",
     "shouldNotDuplicate": "should not duplicate",
     "shouldNotDuplicated": "The address of warehouse had been used",
-    "workshopFlag": "Is workshop"
+    "workshopFlag": "Is workshop",
+    "warningCloseWarehouse": "There are stocks in the warehouse, are you sure to close the warehouse?",
+    "warningDeleteExistingRecy": "There are stocks in the warehouse, are you sure to delete the warehouse?",
+    "warningDeleteWarehouse": "Are you sure to delete?"
   },
   "check_in": {
     "transport_information": "Transport Information",
@@ -1055,7 +1058,9 @@
       "picture": "Picture",
       "license_plate_number_placeholder": "Please enter vehicle plate number",
       "vehicle_type_placeholder": "Please enter vehicle type",
-      "vehicle_cargo_capacity_placeholder": "Please enter weight"
+      "vehicle_cargo_capacity_placeholder": "Please enter weight",
+      "max_number_photo": "Number of selected images exceed max number",
+      "max_size_upload": "The file you are trying to upload is larger than the maximum size"
     }
   },
   "general_settings": {

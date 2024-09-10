@@ -10,14 +10,15 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Switcher from '../../../components/FormComponents/CustomSwitch'
 import LabelField from '../../../components/FormComponents/CustomField'
+import DeleteModal from '../../../components/FormComponents/deleteModal'
 import { ADD_CIRCLE_ICON, REMOVE_CIRCLE_ICON } from '../../../themes/icons'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer } from 'react-toastify'
 import {
   extractError,
-  // returnErrorMsg,
   showErrorToast,
-  showSuccessToast
+  showSuccessToast,
+  returnApiToken
 } from '../../../utils/utils'
 import {
   createWarehouse,
@@ -26,6 +27,7 @@ import {
   getRecycleType,
   editWarehouseStatus
 } from '../../../APICalls/warehouseManage'
+import { getWeightbySubtype } from '../../../APICalls/warehouseDashboard'
 import { getLocation } from '../../../APICalls/getLocation'
 import { getCommonTypes } from '../../../APICalls/commonManage'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
@@ -103,19 +105,6 @@ interface recyleSubtypeOption {
   [key: string]: recyleSubtyeData[]
 }
 
-interface WarehouseFormData {
-  id: number
-  warehouseId: number
-  warehouseNameTchi: string
-  warehouseNameSchi: string
-  warehouseNameEng: string
-  location: string
-  physicalFlg: string | boolean
-  contractNo: string[]
-  status: string
-  warehouseRecyc: recyleItem[]
-}
-
 interface nameFields {
   warehouseNameTchi: string
   warehouseNameSchi: string
@@ -152,6 +141,9 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
   const [version, setVersion] = useState<number>(0)
   const navigate = useNavigate()
   const role = localStorage.getItem(localStorgeKeyName.role) || 'collector'
+  const [onDeleteWarehouseMsg, setOnDeleteWarehouseMsg] = useState<string>('')
+  const [openWHDeleteModal, setOpenWHDeleteModal] = useState<boolean>(false)
+  const [openWHCloseModal, setOpenWHCloseModal] = useState<boolean>(false)
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage)
@@ -360,13 +352,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
     return filteredArr.length === 1
   })
-
-  // const isRecycleSubUnique = recycleCategory.every((item, index, arr) => {
-  //   const filteredArr = arr.filter(
-  //     (i) => i.recycSubTypeId === item.recycSubTypeId
-  //   )
-  //   return filteredArr.length === 1
-  // })
 
   // validation input text
   useEffect(() => {
@@ -643,9 +628,10 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
 
   const editWarehouseData = async (addWarehouseForm: any, type: string) => {
     try {
+      const isError = validation.length == 0
       if (type === 'delete') {
         const warehouseForm = {
-          status: "DELETED",
+          status: 'DELETED',
           version: version
         }
         if (role === 'collector') {
@@ -665,9 +651,20 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
         const response = await editWarehouse(addWarehouseForm, rowId)
         if (response) {
           showSuccessToast(t('common.editSuccessfully'))
+          setOpenWHCloseModal(false)
           handleDrawerClose()
+
+          if (
+            onSubmitData &&
+            typeof onSubmitData === 'function' &&
+            typeof rowId === 'number'
+          ) {
+            onSubmitData(action, rowId, !isError)
+          }
         }
       }
+      setOpenWHDeleteModal(false)
+      setOnDeleteWarehouseMsg('')
     } catch (error: any) {
       const { state } = extractError(error)
       if (state.code === STATUS_CODE[503]) {
@@ -678,15 +675,12 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     }
   }
 
-  //submit data
-  const handleSubmit = async () => {
+  const constructFormData = () => {
     let statusWarehouse = status ? 'ACTIVE' : 'INACTIVE'
     if (action == 'delete') {
       statusWarehouse = 'DELETED'
     }
-
     const filteredContractNum = contractNum.filter((num) => num !== '')
-
     const addWarehouseForm = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
@@ -700,31 +694,23 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       updatedBy: 'string',
       warehouseRecyc: recycleCategory,
       ...(role === 'collector' && { workshopFlg: workshopFlg }),
-      ...(role === 'collector' && {version: version})
+      ...(role === 'collector' && { version: version })
     }
 
-    const isError = validation.length == 0
+    return addWarehouseForm
+  }
+
+  //submit data
+  const handleSubmit = async () => {
+    const addWarehouseForm = constructFormData()
     getFormErrorMsg()
-
-    // console.log('addWarehouseForm', validation)
-
     if (validation.length == 0) {
       action === 'add'
         ? //MOVE API CAL TO PARENT DATA, ONLY PARSING DATA HERE
           createWareHouseData(addWarehouseForm)
-        : editWarehouseData(addWarehouseForm, 'edit')
-
-      if (
-        onSubmitData &&
-        typeof onSubmitData === 'function' &&
-        typeof rowId === 'number'
-      ) {
-        onSubmitData(action, rowId, !isError)
-      }
-      // console.log(addWarehouseForm)
+        : handleEditWH(addWarehouseForm)
       setValidation([])
     } else {
-      // console.log(validation)
       setTrySubmited(true)
     }
   }
@@ -751,10 +737,6 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     setErrorMsgList(errorList)
   }
 
-  const handleDelete = () => {
-    setOpenDelete(true)
-  }
-
   const handleClose = () => {
     setValidation([])
     setErrorMsgList([])
@@ -762,10 +744,34 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
     handleDrawerClose()
   }
 
-  const onDeleteModal = () => {
-    //handleSubmit()
-    //setOpenDelete(false)
-    // console.log('rowId', rowId)
+  const checkWarehouseRecycble = async () => {
+    const token = returnApiToken()
+    const result = await getWeightbySubtype(rowId, token.decodeKeycloack)
+
+    if (result) {
+      console.log(result.data, Object.keys(result.data).length)
+      return Object.keys(result.data).length != 0
+    }
+    return false
+  }
+
+  const handleEditWH = async (editWarehouseForm: any) => {
+    const isRecybleExist = await checkWarehouseRecycble()
+
+    console.log(editWarehouseForm.status, isRecybleExist)
+    if (editWarehouseForm.status === 'INACTIVE' && isRecybleExist) {
+      setOpenWHCloseModal(true)
+    } else {
+      editWarehouseData(editWarehouseForm, 'edit')
+    }
+  }
+
+  const handleCloseWH = () => {
+    const editWarehouseForm = constructFormData()
+    editWarehouseData(editWarehouseForm, 'edit')
+  }
+
+  const handleDeleteWH = () => {
     const deleteform = {
       warehouseNameTchi: nameValue.warehouseNameTchi,
       warehouseNameSchi: nameValue.warehouseNameSchi,
@@ -780,8 +786,25 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
       warehouseRecyc: recycleCategory,
       version: version
     }
-
     editWarehouseData(deleteform, 'delete')
+  }
+
+  const onDeleteHeaderWH = async () => {
+    try {
+      // Check if warehouse recyclable data exists
+      const isRecybleExist = await checkWarehouseRecycble()
+      setOnDeleteWarehouseMsg('')
+      if (!isRecybleExist) {
+        setOnDeleteWarehouseMsg(t('add_warehouse_page.warningDeleteWarehouse'))
+      } else {
+        setOnDeleteWarehouseMsg(
+          t('add_warehouse_page.warningDeleteExistingRecy')
+        )
+      }
+      setOpenWHDeleteModal(true)
+    } catch (error) {
+      console.error('Error checking warehouse recyclable:', error)
+    }
   }
 
   return (
@@ -804,8 +827,8 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
           cancelText: t('add_warehouse_page.delete'),
           onCloseHeader: handleClose,
           onSubmit: handleSubmit,
-          onDelete: onDeleteModal,
-          deleteText: t('common.deleteMessage')
+          onDelete: onDeleteHeaderWH,
+          useDeleteConfirmation: false
         }}
       >
         {/* form warehouse */}
@@ -1159,6 +1182,18 @@ const AddWarehouse: FunctionComponent<AddWarehouseProps> = ({
               </Grid>
             )}
           </div>
+          <DeleteModal
+            open={openWHDeleteModal}
+            onClose={() => setOpenWHDeleteModal(false)}
+            onDelete={handleDeleteWH}
+            deleteText={onDeleteWarehouseMsg}
+          />
+          <DeleteModal
+            open={openWHCloseModal}
+            onClose={() => setOpenWHCloseModal(false)}
+            onDelete={handleCloseWH}
+            deleteText={t('add_warehouse_page.warningCloseWarehouse')}
+          />
         </div>
       </RightOverlayForm>
     </div>

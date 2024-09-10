@@ -38,6 +38,7 @@ interface CodeFormatProps {
     status: string
     updatedAt: string
     updatedBy: string
+    version: number
   }
 
 interface RecyclingFormatProps {
@@ -59,14 +60,14 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
     const { i18n } = useTranslation()
     const currentLanguage = localStorage.getItem('selectedLanguage') || 'zhhk'
     const [errorMsgList, setErrorMsgList] = useState<string[]>([])
-
-    const [trySubmited, setTrySubmitted] = useState(false)
-    const [description, setDescription] = useState('')
-    const [remark, setRemark] = useState('')
-    const [codeId, setCodeId] = useState(0)
-    const [codeName, setCodeName] = useState('')
-    const [mainName, setMainName] = useState('')
-    const [subName, setSubName] = useState('')
+    const [trySubmited, setTrySubmitted] = useState<boolean>(false)
+    const [description, setDescription] = useState<string>('')
+    const [remark, setRemark] = useState<string>('')
+    const [codeId, setCodeId] = useState<number>(0)
+    const [codeName, setCodeName] = useState<string>('')
+    const [mainName, setMainName] = useState<string>('')
+    const [subName, setSubName] = useState<string>('')
+    const [version, setVersion] = useState<number>(0)
     const [validation, setValidation] = useState<{ field: string; error: string }[]>([])
     const navigate = useNavigate();
 
@@ -85,6 +86,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
                 setSubName(selectedItem.recycSubTypeId)
                 setDescription(selectedItem.description)
                 setRemark(selectedItem.remark)
+                setVersion(selectedItem.version)
             }
         } else if (action === 'add') {
             resetForm()
@@ -98,6 +100,7 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
         setSubName('')
         setDescription('')
         setRemark('')
+        setVersion(0)
     }
 
     const checkString = (s: string) => {
@@ -161,7 +164,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
 
         const codeForm = {
             status: "INACTIVE",
-            updatedBy: loginId
+            updatedBy: loginId,
+            version: version
         }
 
        if (codeForm) {
@@ -174,12 +178,11 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             }
         } catch (error:any) {
             const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('notify.errorDeleted'))
-            }
+              } else if (state.code === STATUS_CODE[409]){
+                showErrorToast(error.response.data.message);
+              }
         }
        }
     }
@@ -195,7 +198,8 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             remark: remark,
             status: 'ACTIVE',
             createdBy: loginId,
-            updatedBy: loginId
+            updatedBy: loginId,
+            ...(action === 'edit' && {version: version})
         }
 
         const isError = validation.length == 0
@@ -238,12 +242,11 @@ const RecyclingFormat: FunctionComponent<RecyclingFormatProps> = ({
             }
         } catch (error:any) {
             const {state} = extractError(error)
-            if(state.code === STATUS_CODE[503] ){
+            if (state.code === STATUS_CODE[503]) {
                 navigate('/maintenance')
-            } else {
-                console.error(error)
-                showErrorToast(t('notify.errorEdited'))
-            }
+              } else if (state.code === STATUS_CODE[409]){
+                showErrorToast(error.response.data.message);
+              }
 
         }
     }

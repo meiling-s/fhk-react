@@ -204,7 +204,10 @@
     "shouldNotEmpty": "不應為空",
     "shouldNotDuplicate": "不應重複",
     "shouldNotDuplicated": " 货仓地址已经被使用",
-    "workshopFlag": "是否工場"
+    "workshopFlag": "是否工場",
+    "warningCloseWarehouse": "倉庫裡還有庫存, 確定要關閉倉庫嗎?",
+    "warningDeleteExistingRecy": "倉庫裡還有庫存, 確定要刪除倉庫嗎?",
+    "warningDeleteWarehouse": "你確定要刪除嗎？"
   },
   "check_in": {
     "transport_information": "運輸資料",
@@ -229,7 +232,7 @@
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
     "reject_reasons": "拒絕原因（可多選）",
-    "confirm": "確認拒絕",
+    "confirm": "確認",
     "cancel": "取消",
     "search_input": "輸入運單編號",
     "check_in": "送入日期及時間"
@@ -1052,7 +1055,9 @@
       "picture": "圖片",
       "license_plate_number_placeholder": "請輸入車牌號",
       "vehicle_type_placeholder": "請輸入車輛類型",
-      "vehicle_cargo_capacity_placeholder": "請輸入體重"
+      "vehicle_cargo_capacity_placeholder": "請輸入體重",
+      "max_number_photo": "所選影像數量超過最大數量",
+      "max_size_upload": "您嘗試上載的檔案大於大小上限"
     }
   },
   "general_settings": {

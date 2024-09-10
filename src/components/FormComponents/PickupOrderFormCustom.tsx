@@ -29,9 +29,9 @@ import {
   getPicoById
 } from '../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useTranslation } from 'react-i18next'
-import { displayCreatedDate, getPrimaryColor } from '../../utils/utils'
+import { displayCreatedDate, extractError, getPrimaryColor, showErrorToast } from '../../utils/utils'
 import CustomButton from './CustomButton'
-import { Languages, localStorgeKeyName } from '../../constants/constant'
+import { Languages, STATUS_CODE, localStorgeKeyName } from '../../constants/constant'
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'
@@ -39,7 +39,6 @@ import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { getVehicleDetail } from '../../APICalls/ASTD/recycling'
-import i18n from '../../setups/i18n'
 import { weekDs } from '../SpecializeComponents/RoutineSelect/predefinedOption'
 import NotifContainer from '../../contexts/NotifContainer'
 import RightOverlayForm from '../RightOverlayFormPickupOrder'
@@ -124,7 +123,7 @@ const PickupOrderForm = ({
   onDeleteModal: () => void
   // navigateToJobOrder: () => void;
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n} = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role)
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
   const {dateFormat} = useContainer(CommonTypeContainer)
@@ -183,11 +182,13 @@ const PickupOrderForm = ({
       const updatePoStatus = {
         status: 'CLOSED',
         reason: selectedPickupOrder.reason,
-        updatedBy: selectedPickupOrder.updatedBy
+        updatedBy: selectedPickupOrder.updatedBy,
+        version: selectedPickupOrder.version
       }
       const updatePoDtlStatus = {
         status: 'CLOSED',
-        updatedBy: selectedPickupOrder.updatedBy
+        updatedBy: selectedPickupOrder.updatedBy,
+        version: selectedPickupOrder.version
       }
       try {
         const result = await editPickupOrderStatus(
@@ -207,8 +208,13 @@ const PickupOrderForm = ({
         }
         onClose && onClose()
         navigate('/collector/PickupOrder')
-      } catch (error) {
-        //console.error('Error updating field:', error)
+      } catch (error: any) {
+        const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
       }
     } else {
       alert('No selected pickup order')
@@ -238,7 +244,7 @@ const PickupOrderForm = ({
 
   useEffect(() => {
     initVehicleDetail()
-  }, [selectedPickupOrder?.vehicleTypeId])
+  }, [selectedPickupOrder?.vehicleTypeId, i18n.language])
 
   const getDeliveryDate = (deliveryDate:string[]) => {
     const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat', 'sun'];
