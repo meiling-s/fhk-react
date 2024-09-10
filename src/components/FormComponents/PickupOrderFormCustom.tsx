@@ -39,7 +39,6 @@ import timezone from 'dayjs/plugin/timezone'
 import { useContainer } from 'unstated-next'
 import CommonTypeContainer from '../../contexts/CommonTypeContainer'
 import { getVehicleDetail } from '../../APICalls/ASTD/recycling'
-import i18n from '../../setups/i18n'
 import { weekDs } from '../SpecializeComponents/RoutineSelect/predefinedOption'
 import NotifContainer from '../../contexts/NotifContainer'
 import RightOverlayForm from '../RightOverlayFormPickupOrder'
@@ -124,7 +123,7 @@ const PickupOrderForm = ({
   onDeleteModal: () => void
   // navigateToJobOrder: () => void;
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n} = useTranslation()
   const role = localStorage.getItem(localStorgeKeyName.role)
   const tenantId = localStorage.getItem(localStorgeKeyName.tenantId)
   const {dateFormat} = useContainer(CommonTypeContainer)
@@ -245,7 +244,7 @@ const PickupOrderForm = ({
 
   useEffect(() => {
     initVehicleDetail()
-  }, [selectedPickupOrder?.vehicleTypeId])
+  }, [selectedPickupOrder?.vehicleTypeId, i18n.language])
 
   const getDeliveryDate = (deliveryDate:string[]) => {
     const weeks = ['mon', 'tue', 'wed', 'thur', 'fri', 'sat', 'sun'];

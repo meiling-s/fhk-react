@@ -204,7 +204,10 @@
     "shouldNotEmpty": "不應為空",
     "shouldNotDuplicate": "不應重複",
     "shouldNotDuplicated": " 货仓地址已经被使用",
-    "workshopFlag": "是否工場"
+    "workshopFlag": "是否工場",
+    "warningCloseWarehouse": "倉庫裡還有庫存, 確定要關閉倉庫嗎?",
+    "warningDeleteExistingRecy": "倉庫裡還有庫存, 確定要刪除倉庫嗎?",
+    "warningDeleteWarehouse": "你確定要刪除嗎？"
   },
   "check_in": {
     "transport_information": "運輸資料",
@@ -229,7 +232,7 @@
     "message": "訊息",
     "confirm_reject": "確認拒絕送入請求嗎?",
     "reject_reasons": "拒絕原因（可多選）",
-    "confirm": "確認拒絕",
+    "confirm": "確認",
     "cancel": "取消",
     "search_input": "輸入運單編號",
     "check_in": "送入日期及時間"
