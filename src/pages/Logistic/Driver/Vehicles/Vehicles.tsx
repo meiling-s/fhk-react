@@ -28,6 +28,7 @@ import {
 } from '../../../../interfaces/vehicles'
 import {
   getAllVehicles,
+  getVehicleImages,
   searchVehicle
 } from '../../../../APICalls/Logistic/vehicles'
 import { ToastContainer, toast } from 'react-toastify'
@@ -39,6 +40,7 @@ import CommonTypeContainer from '../../../../contexts/CommonTypeContainer'
 import i18n from '../../../../setups/i18n'
 import { useContainer } from 'unstated-next'
 import useLocaleTextDataGrid from '../../../../hooks/useLocaleTextDataGrid'
+import { localStorgeKeyName } from '../../../../constants/constant'
 
 type TableRow = {
   id: number
@@ -97,32 +99,37 @@ const Vehicles: FunctionComponent = () => {
 
   const initVehicleList = useCallback(async () => {
     setIsLoading(true)
+    setVehicleList([])
     const result = await getAllVehicles(page - 1, pageSize)
     const data = result?.data
     const newPlateList: string[] = []
+    const table = localStorage.getItem(localStorgeKeyName.decodeKeycloack) || ''
+  
     if (data) {
-      console.log(data, 'data')
-      var vehicleMapping: VehicleItem[] = []
-      data.content.map((item: any) => {
-        vehicleMapping.push(
-          createVehicles(
-            item?.vehicleId,
-            item?.vehicleTypeId,
-            item?.plateNo,
-            item?.photo,
-            item?.status,
-            item?.netWeight,
-            item?.createdBy,
-            item?.updatedBy,
-            item?.createdAt,
-            item?.updatedAt,
-            item?.version,
-          )
-        )
-
-        //mappping plate list
-        newPlateList.push(item?.plateNo)
-      })
+      const vehicleMapping: VehicleItem[] = await Promise.all(
+        data.content.map(async (item: any) => {
+          const result = await getVehicleImages(table, item.vehicleId)
+          const vehicleImages = result?.data
+          if (result) {
+            const vehicle = createVehicles(
+              item?.vehicleId,
+              item?.vehicleTypeId,
+              item?.plateNo,
+              vehicleImages.photo,
+              item?.status,
+              item?.netWeight,
+              item?.createdBy,
+              item?.updatedBy,
+              item?.createdAt,
+              item?.updatedAt,
+              item?.version,
+            )
+            newPlateList.push(item?.plateNo)
+            return vehicle
+          }
+          return null
+        }).filter(Boolean)
+      )
       setVehicleList(vehicleMapping)
     }
     setTotalData(data.totalPages)
