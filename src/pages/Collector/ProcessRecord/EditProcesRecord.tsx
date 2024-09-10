@@ -25,8 +25,7 @@ import { localStorgeKeyName } from '../../../constants/constant'
 import { createProcessRecordItem, 
   editProcessRecordItem, 
   deleteProcessOutItem, 
-  getProcessRecordDetail, 
-deleteProcessOutRecord} from '../../../APICalls/Collector/processRecords'
+  getProcessRecordDetail} from '../../../APICalls/Collector/processRecords'
 import { displayCreatedDate, extractError, formatWeight } from '../../../utils/utils'
 import { ToastContainer, toast } from 'react-toastify'
 import { ProcessType } from '../../../interfaces/common'
@@ -299,32 +298,27 @@ const EditProcessRecord: FunctionComponent<EditProcessRecordProps> = ({
 
   }
 
-  const handleDeleteRecyc = async (processOutDtlId: number) => {
-    const result = await deleteProcessOutItem('INACTIVE', processOutDtlId)
-    if(result) {
-      setReloadData(true);
-      showSuccessToast(t('processRecord.deleteProcessOutSuccess'))
-    } else {
-      showErrorToast(t('processRecord.deleteProcessOutFailed'))
-    } 
-    setSelectedItem(null)
-  }
-
-  const handleDeleteProcessOut = async () => {
-    if(selectedRow){
-      const result = await deleteProcessOutRecord(selectedRow.processOutId)
-      if(result){
-        handleDrawerClose()
-        showSuccessToast("刪除進程成功")
-      } else {
-        showErrorToast("刪除進程失敗")
-      } 
+  const handleDeleteRecyc = async (version: number, processOutDtlId: number) => {
+    try {
+      const data = {
+        status: "INACTIVE",
+        version: version
+      }
+      const result = await deleteProcessOutItem(data, processOutDtlId)
+      if(result) {
+        setReloadData(true);
+        showSuccessToast(t('processRecord.deleteProcessOutSuccess'))
+      }
+      setSelectedItem(null)
+    } catch (error: any) {
+      const { state } = extractError(error)
+      if (state.code === STATUS_CODE[503]) {
+        navigate('/maintenance')
+      } else if (state.code === STATUS_CODE[409]) {
+        showErrorToast(error.response.data.message)
+      }
     }
   }
-
-  // const getWeightUnitList = async () => {
-  //   const result = await getWeightUnitList
-  // }
 
   return (
     <>

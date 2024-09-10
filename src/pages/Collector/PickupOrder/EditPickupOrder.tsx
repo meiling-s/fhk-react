@@ -8,13 +8,12 @@ import {
 import PickupOrderCreateForm from '../../../components/FormComponents/PickupOrderCreateForm'
 import { useFormik } from 'formik'
 import {
-  editPickupOrder,
+  editPickupOrder, getPicoById,
 } from '../../../APICalls/Collector/pickupOrder/pickupOrder'
 import { useContainer } from 'unstated-next'
 import { useTranslation } from 'react-i18next'
 import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import { extractError, formatWeight, showErrorToast } from '../../../utils/utils'
-import * as Yup from 'yup'
 import CommonTypeContainer from '../../../contexts/CommonTypeContainer'
 
 const EditPickupOrder = () => {
@@ -26,6 +25,8 @@ const EditPickupOrder = () => {
   const loginId = localStorage.getItem(localStorgeKeyName.username) || ''
   const role = localStorage.getItem(localStorgeKeyName.role)
   const { decimalVal } = useContainer(CommonTypeContainer)
+
+  console.log(poInfo, 'poInfo')
   
   const getErrorMsg = (field: string, type: string) => {
     switch (type) {
@@ -90,15 +91,13 @@ const EditPickupOrder = () => {
         //navigate('/collector/PickupOrder', { state: 'updated' })
         const routeName = role
         navigate(`/${routeName}/PickupOrder`, { state: 'updated' })
-      } else {
-        showErrorToast('fail to create pickup order')
       }
     }
   })
 
-  const setPickupOrderDetail = () => {
+  const setPickupOrderDetail = (data: any) => {
     const picoDetails: CreatePicoDetail[] =
-      poInfo?.pickupOrderDetail?.map((item, index) => ({
+      data?.pickupOrderDetail?.map((item: any) => ({
         id: item.picoDtlId,
         picoDtlId: item.picoDtlId,
         picoHisId: item.picoHisId,
@@ -124,37 +123,44 @@ const EditPickupOrder = () => {
     setAddRow(picoDetails)
     return picoDetails
   }
-
+  
+  const initGetPickUpOrderData = async (picoId: string) => {
+    const result = await getPicoById(picoId.toString())
+    if (result) {
+      const data = result.data
+      if (data) {
+        const createPicoDetail: CreatePicoDetail[] = setPickupOrderDetail(data)
+        updatePickupOrder.setValues({
+          tenantId: data.tenantId,
+          picoType: data.picoType,
+          effFrmDate: data.effFrmDate,
+          effToDate: data.effToDate,
+          routineType: data.routineType,
+          routine: data.routine,
+          logisticId: data.logisticId,
+          logisticName: data.logisticName,
+          vehicleTypeId: data.vehicleTypeId,
+          platNo: data.platNo,
+          contactNo: data.contactNo,
+          status: 'CREATED',
+          reason: data.reason,
+          normalFlg: true,
+          approvedAt: '',
+          rejectedAt: '',
+          approvedBy: loginId,
+          rejectedBy: loginId,
+          contractNo: data.contractNo,
+          updatedBy: loginId,
+          refPicoId: data?.refPicoId,
+          updatePicoDetail: [],
+          version: data.version ?? 0
+        })
+      }
+    }
+  }
   useEffect(() => {
     if (poInfo) {
-      //console.log('selectedPo:', poInfo)
-      const createPicoDetail: CreatePicoDetail[] = setPickupOrderDetail()
-
-      updatePickupOrder.setValues({
-        tenantId: poInfo.tenantId,
-        picoType: poInfo.picoType,
-        effFrmDate: poInfo.effFrmDate,
-        effToDate: poInfo.effToDate,
-        routineType: poInfo.routineType,
-        routine: poInfo.routine,
-        logisticId: poInfo.logisticId,
-        logisticName: poInfo.logisticName,
-        vehicleTypeId: poInfo.vehicleTypeId,
-        platNo: poInfo.platNo,
-        contactNo: poInfo.contactNo,
-        status: 'CREATED',
-        reason: poInfo.reason,
-        normalFlg: true,
-        approvedAt: '',
-        rejectedAt: '',
-        approvedBy: loginId,
-        rejectedBy: loginId,
-        contractNo: poInfo.contractNo,
-        updatedBy: loginId,
-        refPicoId: poInfo?.refPicoId,
-        updatePicoDetail: [],
-        version: poInfo.version ?? 0
-      })
+      initGetPickUpOrderData(poInfo.picoId)
     }
   }, [poInfo])
 

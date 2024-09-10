@@ -64,7 +64,7 @@ interface EditProcessRecordProps {
   handleDrawerClose: () => void
   onCreateRecycle: (data: createRecyclable) => void
   onEditRecycle: (data: createRecyclable, processOutDtlId: number ) => void
-  onDeleteItem: (itemId: number) => void
+  onDeleteItem: (version: number, itemId: number) => void
   editedData: RecycItem | null
   processOut?: ProcessOut | null
   action: 'none' | 'add' | 'edit' | 'delete' | undefined
@@ -197,7 +197,7 @@ const EditRecyclableForm: FunctionComponent<EditProcessRecordProps> = ({
 
   const onHandleDelete = () => {
     if (editedData != null) {
-      onDeleteItem(editedData.processOutDtlId)
+      onDeleteItem(editedData?.version ?? 0, editedData.processOutDtlId)
       resetData()
       handleDrawerClose()
     }

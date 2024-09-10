@@ -460,8 +460,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         remark: formData.remark,
         updatedBy: loginName,
         ...(isCollectors() && { weatherFlg: weatherFlg }),
-        ...(role === 'logistic' && {version: version}),
-        ...(role === 'collector' && {version: version})
+        version: version,
       }
       if (validation.length === 0) {
         if (selectedItem != null) {
@@ -514,7 +513,7 @@ const DenialReasonDetail: FunctionComponent<CreateDenialReasonProps> = ({
         status: 'DELETED',
         remark: formData.remark,
         updatedBy: loginName,
-        ...(role === 'logistic' && {version: version})
+        version: version,
       }
       if (selectedItem != null) {
         const result = await editDenialReason(selectedItem.reasonId, editData)
