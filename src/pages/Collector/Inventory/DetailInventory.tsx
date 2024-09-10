@@ -107,7 +107,7 @@ const InventoryDetail: FunctionComponent<InventoryDetailProps> = ({
         useConfirmModal={false}
         headerProps={{
           title: t('inventory.recyclingNumber'),
-          subTitle: `${selectedRow?.labelIdgit }`,
+          subTitle: `${selectedRow?.gi}`,
           onCloseHeader: handleDrawerClose
         }}
       >
