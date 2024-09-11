@@ -621,6 +621,11 @@ export const GET_LOGISTIC_VEHICLE_BY_ID = (
   url: `api/v1/logistic/vehicle/${table}/${vehicleId}`
 })
 
+export const GET_VEHICLE_PHOTO =  (table: string, vehicleId: number): AxiosRequestConfig => ({
+  method: 'get',
+  url: `api/v1/logistic/vehicle/${table}/photo/${vehicleId}`
+})
+
 export const SEARCH_LOGISTIC_VEHICLE = (
   table: string,
   vehicleId: string
