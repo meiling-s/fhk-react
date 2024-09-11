@@ -1187,6 +1187,7 @@
       "payment_method": "Payment Method",
       "payment_method_placeholder": "Please choose",
       "order_information": "Order Information",
+      "order_information_details": "Order Information Details",
       "recycling_plant": "Recycling Plant",
       "receipt_date_and_time": "Receipt Datetime",
       "main_category": "Main category",
