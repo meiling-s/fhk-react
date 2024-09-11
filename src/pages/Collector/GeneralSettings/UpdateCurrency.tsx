@@ -14,18 +14,21 @@ import { styles } from '../../../constants/styles'
 import { useTranslation } from 'react-i18next'
 import { formValidate } from '../../../interfaces/common'
 import { il_item } from '../../../components/FormComponents/CustomItemList'
-import { localStorgeKeyName } from '../../../constants/constant'
+import { STATUS_CODE, localStorgeKeyName } from '../../../constants/constant'
 import {
   updateUserCurrency,
   getCurrencyList
 } from '../../../APICalls/Collector/currency'
 import { Currency } from '../../../interfaces/currency'
+import { extractError, showErrorToast } from '../../../utils/utils'
+import { useNavigate } from 'react-router-dom'
 
 interface UpdateCurrencyProps {
   drawerOpen: boolean
   handleDrawerClose: () => void
   action: 'edit'
   tenantCurrency: string
+  monetaryVersion: number
   onSubmitData: (type: string, msg: string) => void
 }
 
@@ -34,44 +37,11 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
   handleDrawerClose,
   action,
   tenantCurrency,
-  onSubmitData
+  onSubmitData,
+  monetaryVersion
 }) => {
   const { t } = useTranslation()
   const [currencyList, setCurrencyList] = useState<il_item[]>([])
-  // const currencyList: il_item[] = [
-  //   {
-  //     id: 'HKD',
-  //     name: 'HKD'
-  //   },
-  //   {
-  //     id: 'RMB',
-  //     name: 'RMB'
-  //   },
-  //   {
-  //       id: 'USD',
-  //       name: 'USD'
-  //     },
-  //     {
-  //       id: 'SGD',
-  //       name: 'SGD'
-  //     },
-  //     {
-  //       id: 'THB',
-  //       name: 'THB'
-  //     },
-  //     {
-  //       id: 'AUD',
-  //       name: 'AUD'
-  //     },
-  //     {
-  //       id: 'EUR',
-  //       name: 'EUR'
-  //     },
-  //     {
-  //       id: 'GBP',
-  //       name: 'GBP'
-  //     },
-  // ]
 
   const [currencyType, setCurrencyType] = useState<il_item[]>(currencyList)
   const [selectedCurrency, setSelectedCurrency] = useState<il_item>({
@@ -79,6 +49,7 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
     name: tenantCurrency
   })
   const [validation, setValidation] = useState<formValidate[]>([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     setSelectedCurrency({
@@ -110,17 +81,27 @@ const UpdateCurrency: FunctionComponent<UpdateCurrencyProps> = ({
   }
 
   const handleSubmit = async () => {
-    const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
-    const username = localStorage.getItem(localStorgeKeyName.username) || ''
-
-    const result = await updateUserCurrency(
-      tenantId,
-      selectedCurrency.id,
-      username
-    )
-    if (result) {
-      onSubmitData('success', t('common.saveSuccessfully'))
-      handleDrawerClose()
+    try {
+      const tenantId = localStorage.getItem(localStorgeKeyName.tenantId) || ''
+      const username = localStorage.getItem(localStorgeKeyName.username) || ''
+  
+      const result = await updateUserCurrency(
+        tenantId,
+        selectedCurrency.id,
+        username,
+        monetaryVersion
+      )
+      if (result) {
+        onSubmitData('success', t('common.saveSuccessfully'))
+        handleDrawerClose()
+      }
+    } catch (error: any) {
+      const {state} = extractError(error);
+        if (state.code === STATUS_CODE[503]) {
+          navigate('/maintenance')
+        } else if (state.code === STATUS_CODE[409]){
+          showErrorToast(error.response.data.message);
+        }
     }
   }
 

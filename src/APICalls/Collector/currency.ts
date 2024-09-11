@@ -18,26 +18,24 @@ export const getCurrencyList = async () => {
         })
         return response
     } catch (e) {
-        console.error('get currency list failed:', e)
       return null
     }
 }
 
 
-export const updateUserCurrency = async (tenantId: string, monetaryValue: string, updatedBy: string) => {
+export const updateUserCurrency = async (tenantId: string, monetaryValue: string, updatedBy: string, version: number) => {
     try {
         const token = returnApiToken()
 
         const response = await axiosInstance({
             baseURL: window.baseURL.account,
-            ...UPDATE_TENANT_CURRENCY(tenantId, monetaryValue, updatedBy),
+            ...UPDATE_TENANT_CURRENCY(tenantId, monetaryValue, updatedBy, version),
             headers: {
                 AuthToken: token.authToken
             }
         })
         return response
     } catch (e) {
-        console.error('update currency failed:', e)
-      return null
+      throw (e)
     }
 }
