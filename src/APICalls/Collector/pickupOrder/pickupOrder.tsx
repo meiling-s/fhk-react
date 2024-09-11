@@ -161,7 +161,7 @@ export const editPickupOrderStatus = async (pickupOrderId: string, data:PoStatus
       return response
   } catch (e) {
       // console.error('Update pickup order status failed:', e);
-      return null;
+      throw (e)
   }
 
 }
