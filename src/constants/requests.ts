@@ -53,7 +53,7 @@ export const UPDATE_TENANT_REGISTER = (
 
 export const UPDATE_TENANT_INFO = (tenantId: string): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/account/t/${tenantId}`
+  url: `api/v1/account/t/V2/${tenantId}`
 })
 
 export const GET_TENANT_BY_TENANT_ID = (
@@ -741,7 +741,7 @@ export const EDIT_PROCESS_OUT_DETAIL_ITEM = (
   realmApiRoute: string
 ): AxiosRequestConfig => ({
   method: 'put',
-  url: `api/v1/${realmApiRoute}/processout/V2/${table}/processout/${processOutId}/proecessoutDtl/${processOutDtlId}`
+  url: `api/v1/${realmApiRoute}/processout/V2/${table}${realmApiRoute === 'manufacturer' ? `/processout/${processOutId}/` : `/${processOutId}/`}proecessoutDtl/${processOutDtlId}`
 })
 
 export const DELETE_PROCESS_OUT_RECORD = (
@@ -883,7 +883,7 @@ export const EDIT_STAFF = (
   realmApi: string
 ): AxiosRequestConfig => ({
   method: realmApi === 'logistic' ? 'put' : realmApi === 'customer' ? 'put' : realmApi === 'collectors' ? 'put' : 'patch',
-  url: `api/v1/${realmApi}/staff${realmApi === 'logistic' ? `/V2/` : realmApi === 'customer' ? `/V2/` : realmApi === 'collectors' ? `/V2/` : '/'}${tenantId}/${staffId}`
+  url: `api/v1/${realmApi}/staff/V2/${tenantId}/${staffId}`
 })
 
 export const GET_LOGINID_LIST = (tenantId: string): AxiosRequestConfig => ({
